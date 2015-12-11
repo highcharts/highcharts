@@ -129,6 +129,245 @@
     Highcharts = win.Highcharts ? error(16, true) : {};
 
     Highcharts.seriesTypes = seriesTypes;
+    var timers = [],
+        getStyle,
+
+        // Previous adapter functions
+        inArray,
+        each,
+        grep,
+        offset,
+        map,
+        addEvent,
+        removeEvent,
+        fireEvent,
+        animate,
+        stop;
+
+    /**
+     * An animator object. One instance applies to one property (attribute or style prop) 
+     * on one element.
+     * 
+     * @param {object} elem    The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
+     * @param {object} options Animation options, including duration, easing, step and complete.
+     * @param {object} prop    The property to animate.
+     */
+    function Fx(elem, options, prop) {
+        this.options = options;
+        this.elem = elem;
+        this.prop = prop;
+    }
+    Fx.prototype = {
+    
+        /**
+         * Animating a path definition on SVGElement
+         * @returns {undefined} 
+         */
+        dSetter: function () {
+            var start = this.paths[0],
+                end = this.paths[1],
+                ret = [],
+                now = this.now,
+                i = start.length,
+                startVal;
+
+            if (now === 1) { // land on the final path without adjustment points appended in the ends
+                ret = this.toD;
+
+            } else if (i === end.length && now < 1) {
+                while (i--) {
+                    startVal = parseFloat(start[i]);
+                    ret[i] =
+                        isNaN(startVal) ? // a letter instruction like M or L
+                                start[i] :
+                                now * (parseFloat(end[i] - startVal)) + startVal;
+
+                }
+            } else { // if animation is finished or length not matching, land on right value
+                ret = end;
+            }
+            this.elem.attr('d', ret);
+        },
+
+        /**
+         * Update the element with the current animation step
+         * @returns {undefined}
+         */
+        update: function () {
+            var elem = this.elem,
+                prop = this.prop, // if destroyed, it is null
+                now = this.now,
+                step = this.options.step;
+
+            // Animation setter defined from outside
+            if (this[prop + 'Setter']) {
+                this[prop + 'Setter']();
+
+            // Other animations on SVGElement
+            } else if (elem.attr) {
+                if (elem.element) {
+                    elem.attr(prop, now);
+                }
+
+            // HTML styles, raw HTML content like container size
+            } else {
+                elem.style[prop] = now + this.unit;
+            }
+        
+            if (step) {
+                step.call(elem, now, this);
+            }
+
+        },
+
+        /**
+         * Run an animation
+         */
+        run: function (from, to, unit) {
+            var self = this,
+                t = function (gotoEnd) {
+                    return self.step(gotoEnd);
+                },
+                i;
+
+            this.startTime = +new Date();
+            this.start = from;
+            this.end = to;
+            this.unit = unit;
+            this.now = this.start;
+            this.pos = 0;
+
+            t.elem = this.elem;
+
+            if (t() && timers.push(t) === 1) {
+                t.timerId = setInterval(function () {
+                
+                    for (i = 0; i < timers.length; i++) {
+                        if (!timers[i]()) {
+                            timers.splice(i--, 1);
+                        }
+                    }
+
+                    if (!timers.length) {
+                        clearInterval(t.timerId);
+                    }
+                }, 13);
+            }
+        },
+    
+        /**
+         * Run a single step in the animation
+         * @param   {Boolean} gotoEnd Whether to go to then endpoint of the animation after abort
+         * @returns {Boolean} True if animation continues
+         */
+        step: function (gotoEnd) {
+            var t = +new Date(),
+                ret,
+                done,
+                options = this.options,
+                elem = this.elem,
+                complete = options.complete,
+                duration = options.duration,
+                curAnim = options.curAnim,
+                i;
+        
+            if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
+                ret = false;
+
+            } else if (gotoEnd || t >= duration + this.startTime) {
+                this.now = this.end;
+                this.pos = 1;
+                this.update();
+
+                curAnim[this.prop] = true;
+
+                done = true;
+                for (i in curAnim) {
+                    if (curAnim[i] !== true) {
+                        done = false;
+                    }
+                }
+
+                if (done && complete) {
+                    complete.call(elem);
+                }
+                ret = false;
+
+            } else {
+                this.pos = options.easing((t - this.startTime) / duration);
+                this.now = this.start + ((this.end - this.start) * this.pos);
+                this.update();
+                ret = true;
+            }
+            return ret;
+        },
+
+        /**
+         * Prepare start and end values so that the path can be animated one to one
+         */
+        initPath: function (elem, fromD, toD) {
+            fromD = fromD || '';
+            var shift = elem.shift,
+                bezier = fromD.indexOf('C') > -1,
+                numParams = bezier ? 7 : 3,
+                endLength,
+                slice,
+                i,
+                start = fromD.split(' '),
+                end = [].concat(toD), // copy
+                startBaseLine,
+                endBaseLine,
+                sixify = function (arr) { // in splines make move points have six parameters like bezier curves
+                    i = arr.length;
+                    while (i--) {
+                        if (arr[i] === M) {
+                            arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
+                        }
+                    }
+                };
+
+            if (bezier) {
+                sixify(start);
+                sixify(end);
+            }
+
+            // pull out the base lines before padding
+            if (elem.isArea) {
+                startBaseLine = start.splice(start.length - 6, 6);
+                endBaseLine = end.splice(end.length - 6, 6);
+            }
+
+            // if shifting points, prepend a dummy point to the end path
+            if (shift <= end.length / numParams && start.length === end.length) {
+                while (shift--) {
+                    end = [].concat(end).splice(0, numParams).concat(end);
+                }
+            }
+            elem.shift = 0; // reset for following animations
+
+            // copy and append last point until the length matches the end length
+            if (start.length) {
+                endLength = end.length;
+                while (start.length < endLength) {
+
+                    //bezier && sixify(start);
+                    slice = [].concat(start).splice(start.length - numParams, numParams);
+                    if (bezier) { // disable first control point
+                        slice[numParams - 6] = slice[numParams - 2];
+                        slice[numParams - 5] = slice[numParams - 1];
+                    }
+                    start = start.concat(slice);
+                }
+            }
+
+            if (startBaseLine) { // append the base lines for areas
+                start = start.concat(startBaseLine);
+                end = end.concat(endBaseLine);
+            }
+            return [start, end];
+        }
+    }; // End of Fx prototype
+
 
     /**
      * Extend an object with the members of another
@@ -785,24 +1024,6 @@
                 (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
     };
 
-
-    var timers = [],
-        getStyle;
-
-    // Adapter functions
-    var inArray,
-        each,
-        Fx,
-        grep,
-        offset,
-        map,
-        addEvent,
-        removeEvent,
-        fireEvent,
-        animate,
-        stop;
-
-
     /**
      * Easing definition // docs: Note in API where easing is mentioned, jQuery no longer supported
      * @param   {Number} pos Current position, ranging from 0 to 1
@@ -1055,228 +1276,8 @@
         }
     };
 
-
     /**
-     * Create an animator object. One instance is created per property, per object.
-     */
-    Fx = function (elem, options, prop) {
-        this.options = options;
-        this.elem = elem;
-        this.prop = prop;
-    };
-    Fx.prototype = {
-    
-        /**
-         * Animating a path definition on SVGElement
-         * @returns {undefined} 
-         */
-        dSetter: function () {
-            var start = this.paths[0],
-                end = this.paths[1],
-                ret = [],
-                now = this.now,
-                i = start.length,
-                startVal;
-
-            if (now === 1) { // land on the final path without adjustment points appended in the ends
-                ret = this.toD;
-
-            } else if (i === end.length && now < 1) {
-                while (i--) {
-                    startVal = parseFloat(start[i]);
-                    ret[i] =
-                        isNaN(startVal) ? // a letter instruction like M or L
-                                start[i] :
-                                now * (parseFloat(end[i] - startVal)) + startVal;
-
-                }
-            } else { // if animation is finished or length not matching, land on right value
-                ret = end;
-            }
-            this.elem.attr('d', ret);
-        },
-
-        /**
-         * Update the element with the current animation step
-         * @returns {undefined}
-         */
-        update: function () {
-            var elem = this.elem,
-                prop = this.prop, // if destroyed, it is null
-                now = this.now,
-                step = this.options.step;
-
-            // Animation setter defined from outside
-            if (this[prop + 'Setter']) {
-                this[prop + 'Setter']();
-
-            // Other animations on SVGElement
-            } else if (elem.attr) {
-                if (elem.element) {
-                    elem.attr(prop, now);
-                }
-
-            // HTML styles, raw HTML content like container size
-            } else {
-                elem.style[prop] = now + this.unit;
-            }
-        
-            if (step) {
-                step.call(elem, now, this);
-            }
-
-        },
-
-        /**
-         * Run an animation
-         */
-        run: function (from, to, unit) {
-            var self = this,
-                t = function (gotoEnd) {
-                    return self.step(gotoEnd);
-                },
-                i;
-
-            this.startTime = +new Date();
-            this.start = from;
-            this.end = to;
-            this.unit = unit;
-            this.now = this.start;
-            this.pos = 0;
-
-            t.elem = this.elem;
-
-            if (t() && timers.push(t) === 1) {
-                t.timerId = setInterval(function () {
-                
-                    for (i = 0; i < timers.length; i++) {
-                        if (!timers[i]()) {
-                            timers.splice(i--, 1);
-                        }
-                    }
-
-                    if (!timers.length) {
-                        clearInterval(t.timerId);
-                    }
-                }, 13);
-            }
-        },
-    
-        /**
-         * Run a single step in the animation
-         * @param   {Boolean} gotoEnd Whether to go to then endpoint of the animation after abort
-         * @returns {Boolean} True if animation continues
-         */
-        step: function (gotoEnd) {
-            var t = +new Date(),
-                ret,
-                done,
-                options = this.options,
-                elem = this.elem,
-                complete = options.complete,
-                duration = options.duration,
-                curAnim = options.curAnim,
-                i;
-        
-            if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
-                ret = false;
-
-            } else if (gotoEnd || t >= duration + this.startTime) {
-                this.now = this.end;
-                this.pos = 1;
-                this.update();
-
-                curAnim[this.prop] = true;
-
-                done = true;
-                for (i in curAnim) {
-                    if (curAnim[i] !== true) {
-                        done = false;
-                    }
-                }
-
-                if (done && complete) {
-                    complete.call(elem);
-                }
-                ret = false;
-
-            } else {
-                this.pos = options.easing((t - this.startTime) / duration);
-                this.now = this.start + ((this.end - this.start) * this.pos);
-                this.update();
-                ret = true;
-            }
-            return ret;
-        },
-
-        /**
-         * Prepare start and end values so that the path can be animated one to one
-         */
-        initPath: function (elem, fromD, toD) {
-            fromD = fromD || '';
-            var shift = elem.shift,
-                bezier = fromD.indexOf('C') > -1,
-                numParams = bezier ? 7 : 3,
-                endLength,
-                slice,
-                i,
-                start = fromD.split(' '),
-                end = [].concat(toD), // copy
-                startBaseLine,
-                endBaseLine,
-                sixify = function (arr) { // in splines make move points have six parameters like bezier curves
-                    i = arr.length;
-                    while (i--) {
-                        if (arr[i] === M) {
-                            arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
-                        }
-                    }
-                };
-
-            if (bezier) {
-                sixify(start);
-                sixify(end);
-            }
-
-            // pull out the base lines before padding
-            if (elem.isArea) {
-                startBaseLine = start.splice(start.length - 6, 6);
-                endBaseLine = end.splice(end.length - 6, 6);
-            }
-
-            // if shifting points, prepend a dummy point to the end path
-            if (shift <= end.length / numParams && start.length === end.length) {
-                while (shift--) {
-                    end = [].concat(end).splice(0, numParams).concat(end);
-                }
-            }
-            elem.shift = 0; // reset for following animations
-
-            // copy and append last point until the length matches the end length
-            if (start.length) {
-                endLength = end.length;
-                while (start.length < endLength) {
-
-                    //bezier && sixify(start);
-                    slice = [].concat(start).splice(start.length - numParams, numParams);
-                    if (bezier) { // disable first control point
-                        slice[numParams - 6] = slice[numParams - 2];
-                        slice[numParams - 5] = slice[numParams - 1];
-                    }
-                    start = start.concat(slice);
-                }
-            }
-
-            if (startBaseLine) { // append the base lines for areas
-                start = start.concat(startBaseLine);
-                end = end.concat(endBaseLine);
-            }
-            return [start, end];
-        }
-    };
-
-    /**
-     * The adapter animate method
+     * The global animate method, which uses Fx to create individual animators.
      */
     animate = function (el, params, opt) {
         var start,
