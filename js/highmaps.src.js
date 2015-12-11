@@ -885,7 +885,7 @@
      */
     addEvent = function (el, type, fn) {
     
-        var events = el.hcEvents = {};
+        var events = el.hcEvents = el.hcEvents || {};
 
         function wrappedFn(e) {
             e.target = e.srcElement || win; // #2820
