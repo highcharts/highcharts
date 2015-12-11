@@ -770,12 +770,12 @@ addEvent = function (el, type, fn) {
 	// Handle old IE implementation
 	} else if (el.attachEvent) {
 
-		if (!el.hcProxiedMethods) {
-			el.hcProxiedMethods = {};
+		if (!el.hcEventsIE) {
+			el.hcEventsIE = {};
 		}
 
 		// Link wrapped fn with original fn, so we can get this in removeEvent
-		el.hcProxiedMethods[fn.toString()] = wrappedFn;
+		el.hcEventsIE[fn.toString()] = wrappedFn;
 
 		el.attachEvent('on' + type, wrappedFn);
 	}
@@ -800,7 +800,7 @@ removeEvent = function (el, type, fn) {
 		if (el.removeEventListener) {
 			el.removeEventListener(type, fn, false);
 		} else if (el.attachEvent) {
-			fn = el.hcProxiedMethods[fn.toString()];
+			fn = el.hcEventsIE[fn.toString()];
 			el.detachEvent('on' + type, fn);
 		}
 	}
