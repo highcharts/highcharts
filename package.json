@@ -33,6 +33,7 @@
     "gzip-size": "^3.0.0",
     "request": "^2.65.0",
     "vinyl-ftp": "^0.4.5",
+    "webpack": "^1.12.9",
     "xml2js": "^0.4.13"
   },
   "license": "https://www.highcharts.com/license"

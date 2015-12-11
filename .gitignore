@@ -48,3 +48,4 @@ nbproject/
 
 *.log
 samples/highcharts/common-js/browserify/demo.js
+samples/highcharts/common-js/webpack/demo.js

@@ -1,0 +1,8 @@
+---
+ name: Highcharts Browserify Demo
+ authors:
+   - Jon Arild Nygård
+ resources:
+   - http://code.jquery.com/qunit/qunit-1.19.0.js
+   - http://code.jquery.com/qunit/qunit-1.19.0.css
+...

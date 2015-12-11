@@ -1,0 +1,15 @@
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<script type="text/javascript">
+	QUnit.done(function (details) {
+		if (details.total === 0) {
+			throw Error("No unit tests ran! Most likely demo.js does not exist. Run gulp common in command line to build this file.");
+		}
+	});
+</script>
+
+<p class="warning">This sample will check if Highcharts works properly with Browserify. Before running this test, run "gulp common" in command line first.</p>
+<div id="container" style="width: 600px;"></div>
+<div id="container-jquery" style="width: 600px;"></div>
+<div id="container-stock" style="width: 600px;"></div>
+<div id="container-map" style="width: 600px;"></div>
