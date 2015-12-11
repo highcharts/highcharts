@@ -672,9 +672,12 @@ var inArray,
 	stop;
 
 
-
-Math.easeInOutSine = function (t, b, c, d) {
-	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+/**
+ * Easing definition // docs: Note in API where easing is mentioned, jQuery no longer supported
+ * @param   {Number} pos Current position, ranging from 0 to 1
+ */
+Math.easeInOutSine = function (pos) {
+	return -pos / 2 * (Math.cos(Math.PI * pos) - 1);
 };
 
 /**
@@ -1042,8 +1045,7 @@ Fx.prototype = {
 			complete = options.complete,
 			duration = options.duration,
 			curAnim = options.curAnim,
-			i,
-			n;
+			i;
 		
 		if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
 			ret = false;
@@ -1068,8 +1070,7 @@ Fx.prototype = {
 			ret = false;
 
 		} else {
-			n = t - this.startTime;
-			this.pos = options.easing(n, 0, 1, duration);
+			this.pos = options.easing((t - this.startTime) / duration);
 			this.now = this.start + ((this.end - this.start) * this.pos);
 			this.update();
 			ret = true;
