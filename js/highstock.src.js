@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.10-modified (2015-12-10)
+ * @license Highstock JS v2.1.10-modified (2015-12-11)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -126,10 +126,7 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
-        Highcharts.loadAdapter(adapter);
-        return Highcharts;
-    };
+    Highcharts = win.Highcharts ? error(16, true) : {};
 
     Highcharts.seriesTypes = seriesTypes;
 
@@ -267,7 +264,7 @@
     }
 
     /**
-     * Returns true if the object is not null or undefined. Like MooTools' $.defined.
+     * Returns true if the object is not null or undefined.
      * @param {Object} obj
      */
     function defined(obj) {
@@ -306,8 +303,7 @@
         return ret;
     }
     /**
-     * Check if an element is an array, and if not, make it into an array. Like
-     * MooTools' $.splat.
+     * Check if an element is an array, and if not, make it into an array.
      */
     function splat(obj) {
         return isArray(obj) ? obj : [obj];
@@ -329,7 +325,7 @@
 
 
     /**
-     * Return the first value that is defined. Like MooTools' $.pick.
+     * Return the first value that is defined.
      */
     var pick = Highcharts.pick = function () {
         var args = arguments,
@@ -848,7 +844,7 @@
     };
 
     /**
-     * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+     * Get the element's offset position, corrected by overflow:auto.
      */
     offset = function (el) {
         var docElem = doc.documentElement,
@@ -878,7 +874,7 @@
     };
 
     /**
-     * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+     * Utility for iterating over an array.
      * @param {Array} arr
      * @param {Function} fn
      */
@@ -2058,7 +2054,7 @@
         /**
          * Animate a given attribute
          * @param {Object} params
-         * @param {Number} options The same options as in jQuery animation
+         * @param {Number} options Options include duration, easing, step and complete
          * @param {Function} complete Function to perform at the end of animation
          */
         animate: function (params, options, complete) {
@@ -6094,7 +6090,6 @@
      * @param {Function} callback
      */
     function getScript(scriptLocation, callback) {
-        // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
         var head = doc.getElementsByTagName('head')[0],
             script = doc.createElement('script');
 
@@ -12019,7 +12014,7 @@
             renderer.draw();
 
             // fire the event
-            fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
+            fireEvent(chart, 'redraw');
 
             if (isHiddenChart) {
                 chart.cloneRenderTo(true);
@@ -12448,7 +12443,7 @@
                 renderTo = chart.renderTo,
                 width = optionsChart.width || getStyle(renderTo, 'width'),
                 height = optionsChart.height || getStyle(renderTo, 'height'),
-                target = e ? e.target : win; // #805 - MooTools doesn't supply e
+                target = e.target;
 
             // Width and height checks for display:none. Target is doc in IE8 and Opera,
             // win in Firefox, Chrome and IE9.
@@ -13395,8 +13390,7 @@
         },
 
         /**
-         * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-         * causes a name clash in MooTools
+         * Fire an event on the Point object.
          * @param {String} eventType
          * @param {Object} eventArgs Additional event arguments
          * @param {Function} defaultFunction Default event handler
@@ -16072,35 +16066,24 @@
          * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
          *    configuration
          */
-
         remove: function (redraw, animation) {
             var series = this,
                 chart = series.chart;
-            redraw = pick(redraw, true);
 
-            if (!series.isRemoving) {  /* prevent triggering native event in jQuery
-                    (calling the remove function from the remove event) */
-                series.isRemoving = true;
+            // Fire the event with a default handler of removing the point
+            fireEvent(series, 'remove', null, function () {
 
-                // fire the event with a default handler of removing the point
-                fireEvent(series, 'remove', null, function () {
+                // Destroy elements
+                series.destroy();
 
+                // Redraw
+                chart.isDirtyLegend = chart.isDirtyBox = true;
+                chart.linkSeries();
 
-                    // destroy elements
-                    series.destroy();
-
-
-                    // redraw
-                    chart.isDirtyLegend = chart.isDirtyBox = true;
-                    chart.linkSeries();
-
-                    if (redraw) {
-                        chart.redraw(animation);
-                    }
-                });
-
-            }
-            series.isRemoving = false;
+                if (pick(redraw, true)) {
+                    chart.redraw(animation);
+                }
+            });
         },
 
         /**
@@ -19904,7 +19887,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.10-modified (2015-12-10)
+     * Highstock JS v2.1.10-modified (2015-12-11)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
