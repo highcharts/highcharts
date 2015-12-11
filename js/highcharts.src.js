@@ -225,8 +225,8 @@
          */
         run: function (from, to, unit) {
             var self = this,
-                t = function (gotoEnd) {
-                    return self.step(gotoEnd);
+                timer = function (gotoEnd) {
+                    return timer.stopped ? false : self.step(gotoEnd);
                 },
                 i;
 
@@ -237,10 +237,10 @@
             this.now = this.start;
             this.pos = 0;
 
-            t.elem = this.elem;
+            timer.elem = this.elem;
 
-            if (t() && timers.push(t) === 1) {
-                t.timerId = setInterval(function () {
+            if (timer() && timers.push(timer) === 1) {
+                timer.timerId = setInterval(function () {
                 
                     for (i = 0; i < timers.length; i++) {
                         if (!timers[i]()) {
@@ -249,7 +249,7 @@
                     }
 
                     if (!timers.length) {
-                        clearInterval(t.timerId);
+                        clearInterval(timer.timerId);
                     }
                 }, 13);
             }
@@ -1081,18 +1081,21 @@
     };
 
     /**
-     * Stop running animation
+     * Stop running animation.
+     * A possible extension to this would be to stop a single property, when
+     * we want to continue animating others. Then assign the prop to the timer
+     * in the Fx.run method, and check for the prop here. This would be an improvement
+     * in all cases where we stop the animation from .attr. Instead of stopping
+     * everything, we can just stop the actual attributes we're setting.
      */
     stop = function (el) {
 
-        var i = timers.length,
-            timer;
+        var i = timers.length;
 
         // Remove timers related to this element (#4519)
         while (i--) {
-            timer = timers[i];
-            if (timer.elem === el) {
-                timers.splice(i, 1);
+            if (timers[i].elem === el) {
+                timers[i].stopped = true; // #4667
             }
         }
     };
