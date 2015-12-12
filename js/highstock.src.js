@@ -19910,8 +19910,7 @@
 
     (function (factory) {
         
-            factory(Highcharts);
-        
+        factory(Highcharts);
     
     }(function (H) {
 

@@ -9,12 +9,10 @@
 	/*= if (!build.assembly) { =*/
 	if (typeof module === 'object' && module.exports) {
 		module.exports = factory;
-	} else {
-	/*= } =*/
-		factory(Highcharts);
-	/*= if (!build.assembly) { =*/
+		return;
 	}
 	/*= } =*/
+	factory(Highcharts);
 	
 }(function (H) {
 
