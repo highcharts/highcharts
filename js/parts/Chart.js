@@ -1,13 +1,14 @@
 /**
- * The chart class
+ * The Chart class
+ * @param {String|Object} renderTo The DOM element to render to, or its id // docs
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
 var Chart = Highcharts.Chart = function () {
-	this.init.apply(this, arguments);
+	this.getArgs.apply(this, arguments);
 };
 
-Highcharts.chart = function (a, b, c) {
+Highcharts.chart = function (a, b, c) { // docs
 	return new Chart(a, b, c);
 };
 
@@ -17,6 +18,21 @@ Chart.prototype = {
 	 * Hook for modules
 	 */
 	callbacks: [],
+
+	/**
+	 * Handle the arguments passed to the constructor
+	 * @returns {Array} Arguments without renderTo
+	 */
+	getArgs: function () {
+		var args = [].slice.call(arguments);
+		
+		// Remove the optional first argument, renderTo, and
+		// set it on this.
+		if (isString(args[0]) || args[0].nodeName) {
+			this.renderTo = args.shift();
+		}
+		this.init(args[0], args[1]);
+	},
 
 	/**
 	 * Initialize the chart
@@ -568,15 +584,16 @@ Chart.prototype = {
 			optionsChart = options.chart,
 			chartWidth,
 			chartHeight,
-			renderTo,
+			renderTo = chart.renderTo,
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId;
+			containerId = 'highcharts-' + idCounter++;
 
-		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = PREFIX + idCounter++;
-
+		if (!renderTo) {
+			chart.renderTo = renderTo = optionsChart.renderTo;
+		}
+		
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = doc.getElementById(renderTo);
 		}

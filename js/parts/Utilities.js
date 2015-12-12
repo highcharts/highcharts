@@ -1225,9 +1225,7 @@ if (win.jQuery) {
 
 			// Create the chart
 			if (options !== UNDEFINED) {
-				options.chart = options.chart || {};
-				options.chart.renderTo = this[0];
-				ret = new Highcharts[constr](options, args[1]);
+				new Highcharts[constr](this[0], options, args[1]); // eslint-disable-line no-new
 				ret = this;
 			}
 

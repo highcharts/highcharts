@@ -1354,9 +1354,7 @@
 
                 // Create the chart
                 if (options !== UNDEFINED) {
-                    options.chart = options.chart || {};
-                    options.chart.renderTo = this[0];
-                    ret = new Highcharts[constr](options, args[1]);
+                    new Highcharts[constr](this[0], options, args[1]); // eslint-disable-line no-new
                     ret = this;
                 }
 
@@ -11261,15 +11259,16 @@
         });
     }
     /**
-     * The chart class
+     * The Chart class
+     * @param {String|Object} renderTo The DOM element to render to, or its id // docs
      * @param {Object} options
      * @param {Function} callback Function to run when the chart has loaded
      */
     var Chart = Highcharts.Chart = function () {
-        this.init.apply(this, arguments);
+        this.getArgs.apply(this, arguments);
     };
 
-    Highcharts.chart = function (a, b, c) {
+    Highcharts.chart = function (a, b, c) { // docs
         return new Chart(a, b, c);
     };
 
@@ -11279,6 +11278,21 @@
          * Hook for modules
          */
         callbacks: [],
+
+        /**
+         * Handle the arguments passed to the constructor
+         * @returns {Array} Arguments without renderTo
+         */
+        getArgs: function () {
+            var args = [].slice.call(arguments);
+        
+            // Remove the optional first argument, renderTo, and
+            // set it on this.
+            if (isString(args[0]) || args[0].nodeName) {
+                this.renderTo = args.shift();
+            }
+            this.init(args[0], args[1]);
+        },
 
         /**
          * Initialize the chart
@@ -11830,15 +11844,16 @@
                 optionsChart = options.chart,
                 chartWidth,
                 chartHeight,
-                renderTo,
+                renderTo = chart.renderTo,
                 indexAttrName = 'data-highcharts-chart',
                 oldChartIndex,
                 Ren,
-                containerId;
+                containerId = 'highcharts-' + idCounter++;
 
-            chart.renderTo = renderTo = optionsChart.renderTo;
-            containerId = PREFIX + idCounter++;
-
+            if (!renderTo) {
+                chart.renderTo = renderTo = optionsChart.renderTo;
+            }
+        
             if (isString(renderTo)) {
                 chart.renderTo = renderTo = doc.getElementById(renderTo);
             }
@@ -19199,9 +19214,11 @@
     /**
      * A wrapper for Chart with all the default values for a Map
      */
-    Highcharts.Map = Highcharts.mapChart = function (options, callback) {
+    Highcharts.Map = Highcharts.mapChart = function (a, b, c) { // docs: lowercase constructor without new
 
-        var hiddenAxis = {
+        var hasRenderToArg = typeof a === 'string' || a.nodeName,
+            options = arguments[hasRenderToArg ? 1 : 0],
+            hiddenAxis = {
                 endOnTick: false,
                 gridLineWidth: 0,
                 lineWidth: 0,
@@ -19245,7 +19262,9 @@
         options.series = seriesOptions;
 
 
-        return new Chart(options, callback);
+        return hasRenderToArg ? 
+            new Chart(a, options, c) :
+            new Chart(options, b);
     };
 
     /**

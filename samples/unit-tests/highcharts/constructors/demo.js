@@ -337,4 +337,130 @@ $(function () {
             'Is map chart'
         );
     });
+
+    QUnit.test('renderTo as first argument', function (assert) {
+        var chart,
+            calledBack;
+
+        chart = new Highcharts.Chart('container', {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].yData.join(','),
+            '1,2,3,4',
+            'String renderTo, new Chart'
+        );
+
+
+        chart = Highcharts.chart('container', {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].yData.join(','),
+            '1,2,3,4',
+            'String renderTo'
+        );
+
+        chart = Highcharts.chart(document.getElementById('container'), {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].yData.join(','),
+            '1,2,3,4',
+            'DOM renderTo'
+        );
+
+        chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].yData.join(','),
+            '1,2,3,4',
+            'stockChart constructor, string renderTo'
+        );
+
+        assert.strictEqual(
+            typeof chart.rangeSelector,
+            'object',
+            'Is stock chart'
+        );
+
+        chart = Highcharts.mapChart('container', {
+            series: [{
+                data: [{
+                    path: 'M 0 0 L 100 0 100 100 0 100',
+                    value: 1
+                }]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points.length,
+            1,
+            'mapChart constructor, string renderTo'
+        );
+        assert.strictEqual(
+            chart.series[0].type,
+            'map',
+            'Is map chart'
+        );
+
+        calledBack = false;
+        chart = Highcharts.chart('container', {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }, function () {
+            calledBack = true;
+        });
+        assert.strictEqual(
+            calledBack,
+            true,
+            'chart constructor, string renderTo, callback'
+        );
+
+        calledBack = false;
+        chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        }, function () {
+            calledBack = true;
+        });
+        assert.strictEqual(
+            calledBack,
+            true,
+            'stockChart constructor, string renderTo, callback'
+        );
+
+        calledBack = false;
+        chart = Highcharts.mapChart('container', {
+            series: [{
+                data: [{
+                    path: 'M 0 0 L 100 0 100 100 0 100',
+                    value: 1
+                }]
+            }]
+        }, function () {
+            calledBack = true;
+        });
+        assert.strictEqual(
+            calledBack,
+            true,
+            'mapChart constructor, string renderTo, callback'
+        );
+
+    });
 });
