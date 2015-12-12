@@ -1210,18 +1210,15 @@ animate = function (el, params, opt) {
  */
 if (win.jQuery) {
 	win.jQuery.fn.highcharts = function () {
-		var constr = 'Chart', // default constructor
-			args = [].slice.call(arguments);
+		var args = [].slice.call(arguments);
 
 		if (this[0]) { // this[0] is the renderTo div
 
-			if (isString(args[0])) {
-				constr = args.shift();
-			}
-
 			// Create the chart
 			if (args[0]) {
-				new Highcharts[constr](this[0], args[0], args[1]); // eslint-disable-line no-new
+				new Highcharts[ // eslint-disable-line no-new
+					isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
+				](this[0], args[0], args[1]);
 				return this;
 			}
 
