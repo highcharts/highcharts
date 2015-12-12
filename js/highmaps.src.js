@@ -1340,31 +1340,23 @@
     if (win.jQuery) {
         win.jQuery.fn.highcharts = function () {
             var constr = 'Chart', // default constructor
-                args = arguments,
-                options,
-                ret;
+                args = [].slice.call(arguments);
 
-            if (this[0]) {
+            if (this[0]) { // this[0] is the renderTo div
 
                 if (isString(args[0])) {
-                    constr = args[0];
-                    args = Array.prototype.slice.call(args, 1);
+                    constr = args.shift();
                 }
-                options = args[0];
 
                 // Create the chart
-                if (options !== UNDEFINED) {
-                    new Highcharts[constr](this[0], options, args[1]); // eslint-disable-line no-new
-                    ret = this;
+                if (args[0]) {
+                    new Highcharts[constr](this[0], args[0], args[1]); // eslint-disable-line no-new
+                    return this;
                 }
 
-                // When called without parameters or with the return argument, get a predefined chart
-                if (options === UNDEFINED) {
-                    ret = charts[attr(this[0], 'data-highcharts-chart')];
-                }
+                // When called without parameters or with the return argument, return an existing chart
+                return charts[attr(this[0], 'data-highcharts-chart')];
             }
-
-            return ret;
         };
     }
 
