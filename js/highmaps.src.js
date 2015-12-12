@@ -11269,6 +11269,10 @@
         this.init.apply(this, arguments);
     };
 
+    Highcharts.chart = function (a, b, c) {
+        return new Chart(a, b, c);
+    };
+
     Chart.prototype = {
 
         /**
@@ -19195,7 +19199,7 @@
     /**
      * A wrapper for Chart with all the default values for a Map
      */
-    Highcharts.Map = function (options, callback) {
+    Highcharts.Map = Highcharts.mapChart = function (options, callback) {
 
         var hiddenAxis = {
                 endOnTick: false,

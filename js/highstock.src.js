@@ -11736,6 +11736,10 @@
         this.init.apply(this, arguments);
     };
 
+    Highcharts.chart = function (a, b, c) {
+        return new Chart(a, b, c);
+    };
+
     Chart.prototype = {
 
         /**
@@ -19906,7 +19910,7 @@
         
     
     }(function (H) {
-    console.log('Running breaks')
+
         'use strict';
 
         var pick = H.pick,
@@ -23517,7 +23521,7 @@
     /**
      * A wrapper for Chart with all the default values for a Stock chart
      */
-    Highcharts.StockChart = function (options, callback) {
+    Highcharts.StockChart = Highcharts.stockChart = function (options, callback) {
         var seriesOptions = options.series, // to increase performance, don't merge the data
             opposite,
 

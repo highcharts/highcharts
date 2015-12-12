@@ -11736,6 +11736,10 @@
         this.init.apply(this, arguments);
     };
 
+    Highcharts.chart = function (a, b, c) {
+        return new Chart(a, b, c);
+    };
+
     Chart.prototype = {
 
         /**
