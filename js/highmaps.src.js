@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.10-modified (2015-12-11)
+ * @license Highmaps JS v1.1.10-modified (2015-12-12)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -19136,7 +19136,7 @@
         path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
-        path = path.split(/[ ,]+/);
+        path = path.split(/[ ]+/);
 
         // Parse numbers
         for (i = 0; i < path.length; i++) {

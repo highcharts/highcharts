@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.10-modified (2015-12-07)
+ * @license Highcharts JS v4.1.10-modified (2015-12-12)
  *
  * 3D features for Highcharts JS
  *

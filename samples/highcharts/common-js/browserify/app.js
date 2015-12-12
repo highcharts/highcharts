@@ -11,7 +11,7 @@ function addJQuery() {
     window.jQuery = window.$ = jQueryParked;
 }
 
-QUnit.test("Highcharts in use with the standalone-framework.", function (assert) {
+QUnit.test("Highcharts", function (assert) {
     removeJQuery();
 
     var Highcharts = require('../../../../js/highcharts.src'),
@@ -90,7 +90,7 @@ QUnit.test("Highcharts in use with the standalone-framework.", function (assert)
     addJQuery();
 });
 
-QUnit.test("Highcharts More.", function (assert) {
+QUnit.test("Highcharts More", function (assert) {
     removeJQuery();
 
     var Highcharts = require('../../../../js/highcharts.src');
@@ -131,7 +131,7 @@ QUnit.test("Highcharts More.", function (assert) {
     addJQuery();
 });
 
-QUnit.test("Highstock.", function (assert) {
+QUnit.test("Highstock", function (assert) {
     removeJQuery();
 
     var Highcharts = require('../../../../js/highstock.src');
@@ -159,10 +159,15 @@ QUnit.test("Highstock.", function (assert) {
         }]
     });
 
-    assert.strictEqual(
-        chart.series[0].points.length,
-        365,
+    assert.ok(
+        chart.series[0].points.length > 300,
         "Stock chart is generated"
+    );
+
+    assert.strictEqual(
+        typeof chart.xAxis[0].breakArray,
+        'object',
+        "Breaks are handled"
     );
 
     assert.strictEqual(
@@ -186,7 +191,7 @@ QUnit.test("Highstock.", function (assert) {
     addJQuery();
 });
 
-QUnit.test("Highmaps.", function (assert) {
+QUnit.test("Highmaps", function (assert) {
     removeJQuery();
 
     var Highcharts = require('../../../../js/highmaps.src');
@@ -268,7 +273,7 @@ QUnit.test("Highmaps.", function (assert) {
     addJQuery();
 });
 
-QUnit.test("Highcharts in use with modules.", function (assert) {
+QUnit.test("Highcharts in use with modules", function (assert) {
 
     removeJQuery();
 

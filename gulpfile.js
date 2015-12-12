@@ -170,7 +170,7 @@ gulp.task('lint', ['scripts'], function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        //.pipe(eslint.failOnError())
+        // .pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
 
 });
@@ -179,7 +179,7 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        //.pipe(eslint.failOnError())
+        // .pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
 
 });
@@ -302,16 +302,21 @@ gulp.task('scripts', function () {
      * Micro-optimize code based on the build object.
      *
      * @param {String} tpl The concatenated JavaScript template to process
+     * @param {Object} build The build configuration
      *
      * @returns {String} The processed JavaScript
      */
-    function preprocess(tpl) {
+    function preprocess(tpl, build) {
+
+        var func;
+
         // Windows newlines
         tpl = tpl.replace(/\r\n/g, '\n');
 
-        /*
+
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
+        tpl = tpl.replace('/[ ,]/', '___rep3___'); // Conflicts with trailing comma removal below
         tpl = tpl.replace(/\\/g, '\\\\');
 
 
@@ -331,15 +336,16 @@ gulp.task('scripts', function () {
         // fs.writeFile('temp.js', tpl, 'utf8');
 
         // The evaluation function for the ready built supercode
-        func = new Function('build', tpl);
+        func = new Function('build', tpl); // eslint-disable-line no-new-func
 
         tpl = func(build);
-        tpl = tpl.replace(/___doublequote___/g, '"');
 
-        // Collect trailing commas left when the tamplate engine has removed
+        // Collect trailing commas left when the template engine has removed
         // object literal properties or array items
         tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
-        */
+
+        tpl = tpl.replace(/___doublequote___/g, '"');
+        tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
 
         return tpl;
     }
@@ -447,6 +453,7 @@ gulp.task('scripts', function () {
             fs.writeFileSync(
                 path,
                 preprocess(tpl, {
+                    assembly: true,
                     classic: true
                 }),
                 'utf8'
