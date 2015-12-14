@@ -1247,7 +1247,7 @@ Chart.prototype = {
 			)
 			.on('click', function () {
 				if (credits.href) {
-					location.href = credits.href;
+					win.location.href = credits.href;
 				}
 			})
 			.attr({

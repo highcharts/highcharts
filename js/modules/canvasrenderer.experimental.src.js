@@ -106,7 +106,7 @@
             element = boxWrapper.element;
 
             
-            this.canvas = document.createElement('canvas');
+            this.canvas = Highcharts.win.doc.createElement('canvas');
             container.appendChild(this.canvas);
             this.ctx = this.canvas.getContext('2d');
 

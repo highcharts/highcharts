@@ -13,6 +13,6 @@
         	factory(root) : 
             factory;
     } else {
-        root.Highcharts = factory();
+        root.Highcharts = factory(root);
     }
-}(typeof window !== 'undefined' ? window : this, function (w) {
+}(typeof window !== 'undefined' ? window : this, function (win) { // eslint-disable-line no-undef

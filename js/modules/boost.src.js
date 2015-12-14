@@ -54,7 +54,9 @@
 
     'use strict';
 
-    var noop = function () {},
+    var win = H.win,
+        doc = win.document,
+        noop = function () {},
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,
@@ -198,7 +200,7 @@
                 };
 
             if (!this.canvas) {
-                this.canvas = document.createElement('canvas');
+                this.canvas = doc.createElement('canvas');
                 this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
                 this.ctx = ctx = this.canvas.getContext('2d');
                 if (chart.inverted) {

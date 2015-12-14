@@ -1,6 +1,5 @@
 // encapsulated variables
 var UNDEFINED,
-	win = w || window,
 	doc = win.document,
 	math = Math,
 	mathRound = math.round,
@@ -104,6 +103,6 @@ function error(code, stop) {
 }
 
 // The Highcharts namespace
-Highcharts = win.Highcharts ? error(16, true) : {};
+Highcharts = win.Highcharts ? error(16, true) : { win: win };
 
 Highcharts.seriesTypes = seriesTypes;

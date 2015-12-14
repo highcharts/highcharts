@@ -1227,7 +1227,6 @@ SVGRenderer.prototype = {
 	 */
 	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
-			loc = location,
 			boxWrapper,
 			element,
 			desc;
@@ -1253,7 +1252,7 @@ SVGRenderer.prototype = {
 
 		// Page url used for internal references. #24, #672, #1070
 		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
-				loc.href
+				win.location.href
 					.replace(/#.*?$/, '') // remove the hash
 					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
 					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
@@ -2065,7 +2064,7 @@ SVGRenderer.prototype = {
 								position: ABSOLUTE,
 								top: '-999em'
 							});
-							document.body.appendChild(this);
+							doc.body.appendChild(this);
 						}
 
 						// Center the image

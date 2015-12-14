@@ -13,11 +13,11 @@
             factory(root) : 
             factory;
     } else {
-        root.Highcharts = factory();
+        root.Highcharts = factory(root);
     }
-}(typeof window !== 'undefined' ? window : this, function (w) {// encapsulated variables
+}(typeof window !== 'undefined' ? window : this, function (win) { // eslint-disable-line no-undef
+// encapsulated variables
     var UNDEFINED,
-        win = w || window,
         doc = win.document,
         math = Math,
         mathRound = math.round,
@@ -121,7 +121,7 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts ? error(16, true) : {};
+    Highcharts = win.Highcharts ? error(16, true) : { win: win };
 
     Highcharts.seriesTypes = seriesTypes;
     var timers = [],
@@ -3242,7 +3242,6 @@
          */
         init: function (container, width, height, style, forExport, allowHTML) {
             var renderer = this,
-                loc = location,
                 boxWrapper,
                 element,
                 desc;
@@ -3268,7 +3267,7 @@
 
             // Page url used for internal references. #24, #672, #1070
             renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
-                    loc.href
+                    win.location.href
                         .replace(/#.*?$/, '') // remove the hash
                         .replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
                         .replace(/ /g, '%20') : // replace spaces (needed for Safari only)
@@ -4080,7 +4079,7 @@
                                     position: ABSOLUTE,
                                     top: '-999em'
                                 });
-                                document.body.appendChild(this);
+                                doc.body.appendChild(this);
                             }
 
                             // Center the image
@@ -9470,7 +9469,7 @@
                 ePos;
 
             // IE normalizing
-            e = e || window.event;
+            e = e || win.event;
             if (!e.target) {
                 e.target = e.srcElement;
             }
@@ -12493,7 +12492,7 @@
                 )
                 .on('click', function () {
                     if (credits.href) {
-                        location.href = credits.href;
+                        win.location.href = credits.href;
                     }
                 })
                 .attr({
@@ -17317,7 +17316,7 @@
 
     // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
     // diffent logic (#3218)
-    var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
+    var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
     /**
      * Extend the default options with map options
@@ -18349,7 +18348,7 @@
 
         // Add the mousewheel event
         if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
-            addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+            addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
                 chart.pointer.onContainerMouseWheel(e);
                 return false;
             });
@@ -18889,7 +18888,7 @@
      * Get point from latLon using specified transform definition
      */
     Chart.prototype.transformFromLatLon = function (latLon, transform) {
-        if (window.proj4 === undefined) {
+        if (win.proj4 === undefined) {
             error(21);
             return {
                 x: 0,
@@ -18897,7 +18896,7 @@
             };
         }
 
-        var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+        var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
             cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
             sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
             rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
@@ -18912,7 +18911,7 @@
      * Get latLon from point using specified transform definition
      */
     Chart.prototype.transformToLatLon = function (point, transform) {
-        if (window.proj4 === undefined) {
+        if (win.proj4 === undefined) {
             error(21);
             return;
         }
@@ -18924,7 +18923,7 @@
             cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
             sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
             // Note: Inverted sinAngle to reverse rotation direction
-            projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+            projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
                 x: normalized.x * cosAngle + normalized.y * -sinAngle,
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);

@@ -9,6 +9,7 @@
 
 (function (Highcharts) {
 	var UNDEFINED,
+		win = Highcharts.win,
 		DIV = 'div',
 		ABSOLUTE = 'absolute',
 		RELATIVE = 'relative',
@@ -199,7 +200,7 @@
 		 */
 		draw: function () {
 			var renderer = this;
-			window.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
+			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
 }(Highcharts));

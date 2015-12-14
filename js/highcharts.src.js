@@ -15,12 +15,11 @@
             factory(root) : 
             factory;
     } else {
-        root.Highcharts = factory();
+        root.Highcharts = factory(root);
     }
-}(typeof window !== 'undefined' ? window : this, function (w) {
+}(typeof window !== 'undefined' ? window : this, function (win) { // eslint-disable-line no-undef
 // encapsulated variables
     var UNDEFINED,
-        win = w || window,
         doc = win.document,
         math = Math,
         mathRound = math.round,
@@ -124,7 +123,7 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts ? error(16, true) : {};
+    Highcharts = win.Highcharts ? error(16, true) : { win: win };
 
     Highcharts.seriesTypes = seriesTypes;
     var timers = [],
@@ -3245,7 +3244,6 @@
          */
         init: function (container, width, height, style, forExport, allowHTML) {
             var renderer = this,
-                loc = location,
                 boxWrapper,
                 element,
                 desc;
@@ -3271,7 +3269,7 @@
 
             // Page url used for internal references. #24, #672, #1070
             renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
-                    loc.href
+                    win.location.href
                         .replace(/#.*?$/, '') // remove the hash
                         .replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
                         .replace(/ /g, '%20') : // replace spaces (needed for Safari only)
@@ -4083,7 +4081,7 @@
                                     position: ABSOLUTE,
                                     top: '-999em'
                                 });
-                                document.body.appendChild(this);
+                                doc.body.appendChild(this);
                             }
 
                             // Center the image
@@ -9938,7 +9936,7 @@
                 ePos;
 
             // IE normalizing
-            e = e || window.event;
+            e = e || win.event;
             if (!e.target) {
                 e.target = e.srcElement;
             }
@@ -12961,7 +12959,7 @@
                 )
                 .on('click', function () {
                     if (credits.href) {
-                        location.href = credits.href;
+                        win.location.href = credits.href;
                     }
                 })
                 .attr({

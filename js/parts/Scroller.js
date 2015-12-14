@@ -542,7 +542,7 @@ Scroller.prototype = {
 		_events = [
 			[container, 'mousedown', mouseDownHandler],
 			[container, 'mousemove', mouseMoveHandler],
-			[document, 'mouseup', mouseUpHandler]
+			[doc, 'mouseup', mouseUpHandler]
 		];
 
 		// Touch events
@@ -550,7 +550,7 @@ Scroller.prototype = {
 			_events.push(
 				[container, 'touchstart', mouseDownHandler],
 				[container, 'touchmove', mouseMoveHandler],
-				[document, 'touchend', mouseUpHandler]
+				[doc, 'touchend', mouseUpHandler]
 			);
 		}
 

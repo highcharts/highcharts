@@ -62,7 +62,7 @@ Pointer.prototype = {
 			ePos;
 
 		// IE normalizing
-		e = e || window.event;
+		e = e || win.event;
 		if (!e.target) {
 			e.target = e.srcElement;
 		}
