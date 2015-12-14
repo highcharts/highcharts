@@ -2168,7 +2168,7 @@
         path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
-        path = path.split(/[ ]+/);
+        path = path.split(/[ ,]+/);
 
         // Parse numbers
         for (i = 0; i < path.length; i++) {

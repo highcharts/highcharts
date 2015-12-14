@@ -186,7 +186,7 @@ gulp.task('lint-samples', function () {
 });
 
 // Watch changes to CSS files
-gulp.task('default', function () {
+gulp.task('default', ['scripts'], function () {
     // gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
 });
@@ -318,6 +318,7 @@ gulp.task('scripts', function () {
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
         tpl = tpl.replace('/[ ,]/', '___rep3___'); // Conflicts with trailing comma removal below
+        tpl = tpl.replace('/[ ,]+/', '___rep4___'); // Conflicts with trailing comma removal below
         tpl = tpl.replace(/\\/g, '\\\\');
 
 
@@ -347,6 +348,7 @@ gulp.task('scripts', function () {
 
         tpl = tpl.replace(/___doublequote___/g, '"');
         tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
+        tpl = tpl.replace(/___rep4___/g, '/[ ,]+/');
 
         return tpl;
     }
