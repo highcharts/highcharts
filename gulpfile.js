@@ -6,9 +6,10 @@ var colors = require('colors'),
     eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
+    gulpif = require('gulp-if'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
-    // argv = require('yargs').argv,
+    argv = require('yargs').argv,
     fs = require('fs'),
     // sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
@@ -170,7 +171,7 @@ gulp.task('lint', ['scripts'], function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        // .pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
         .pipe(eslint.formatEach());
 
 });
@@ -179,7 +180,7 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        // .pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
         .pipe(eslint.formatEach());
 
 });
