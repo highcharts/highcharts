@@ -2,7 +2,7 @@
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+hasTouch = doc && doc.documentElement.ontouchstart !== UNDEFINED;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.

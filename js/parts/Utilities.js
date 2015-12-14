@@ -1233,7 +1233,7 @@ if (win.jQuery) {
  * Compatibility section to add support for legacy IE. This can be removed if old IE 
  * support is not needed.
  */
-if (!doc.defaultView) {
+if (doc && !doc.defaultView) {
 	getStyle = function (el, prop) {
 		var val,
 			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];

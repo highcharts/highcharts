@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.10-modified (2015-12-12)
+ * @license Highstock JS v2.1.10-modified (2015-12-14)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -11,11 +11,9 @@
 
 (function (root, factory) {
     if (typeof module === 'object' && module.exports) {
-        module.exports = root.document ? 
-        factory(root) :
-        function (w) {
-            return factory(w);
-        };
+        module.exports = root.document ?
+            factory(root) : 
+            factory;
     } else {
         root.Highcharts = factory();
     }
@@ -38,17 +36,17 @@
 
 
         // some variables
-        userAgent = navigator.userAgent,
+        userAgent = (win.navigator && win.navigator.userAgent) || '',
         isOpera = win.opera,
         isMS = /(msie|trident|edge)/i.test(userAgent) && !isOpera,
-        docMode8 = doc.documentMode === 8,
+        docMode8 = doc && doc.documentMode === 8,
         isWebKit = !isMS && /AppleWebKit/.test(userAgent),
         isFirefox = /Firefox/.test(userAgent),
         isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
         SVG_NS = 'http://www.w3.org/2000/svg',
-        hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+        hasSVG = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
         hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-        useCanVG = !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
+        useCanVG = doc && !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
         Renderer,
         hasTouch,
         symbolSizes = {},
@@ -1364,7 +1362,7 @@
      * Compatibility section to add support for legacy IE. This can be removed if old IE 
      * support is not needed.
      */
-    if (!doc.defaultView) {
+    if (doc && !doc.defaultView) {
         getStyle = function (el, prop) {
             var val,
                 alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
@@ -1809,7 +1807,7 @@
             SET = useUTC ? 'setUTC' : 'set';
 
 
-        Date = globalOptions.Date || window.Date;
+        Date = globalOptions.Date || win.Date;
         timezoneOffset = useUTC && globalOptions.timezoneOffset;
         getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
         makeTime = function (year, month, date, hours, minutes, seconds) {
@@ -9880,7 +9878,7 @@
     var hoverChartIndex;
 
     // Global flag for touch support
-    hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+    hasTouch = doc && doc.documentElement.ontouchstart !== UNDEFINED;
 
     /**
      * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
@@ -19902,7 +19900,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.10-modified (2015-12-12)
+     * Highstock JS v2.1.10-modified (2015-12-14)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

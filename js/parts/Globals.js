@@ -16,17 +16,17 @@ var UNDEFINED,
 
 
 	// some variables
-	userAgent = navigator.userAgent,
+	userAgent = (win.navigator && win.navigator.userAgent) || '',
 	isOpera = win.opera,
 	isMS = /(msie|trident|edge)/i.test(userAgent) && !isOpera,
-	docMode8 = doc.documentMode === 8,
+	docMode8 = doc && doc.documentMode === 8,
 	isWebKit = !isMS && /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasSVG = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
+	useCanVG = doc && !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
