@@ -9,16 +9,20 @@ _For NPM users, please note that this module replaces the previous [Highcharts S
 * Issues [Repo guidelines](repo-guidelines.md)
 
 ## Example Usage in Node/Browserify/Webpack
-Please note that this is only one way to use Highcharts. For general installation instructions, see [the docs](http://www.highcharts.com/docs/getting-started/installation).
+Please note that there are several ways to use Highcharts. For general installation instructions, see [the docs](http://www.highcharts.com/docs/getting-started/installation).
+
+```
+npm install highcharts
+```
+
 ```js
-// Load the framework first. Alternatively, load jQuery and pass it to Highcharts.
-var hcFramework = require('highcharts/lib/adapters/standalone-framework');
-var Highcharts = require('highcharts')(hcFramework);
+// Load Highcharts
+var Highcharts = require('highcharts');
 
 // Alternatively, this is how to load Highstock. Highmaps is similar.
 // var Highcharts = require('highcharts/lib/highstock');
 
-// This is how a module is loaded
+// This is how a module is loaded. Pass in Highcharts as a parameter.
 require('highcharts/lib/modules/exporting')(Highcharts);
 
 // Generate the chart
