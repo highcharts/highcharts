@@ -19,7 +19,7 @@ $(function () {
 
         assert.strictEqual(
             chart.series[0].points.length,
-            2,
+            3,
             'Rendered succesfully'
         );
         assert.strictEqual(
