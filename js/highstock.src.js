@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.10-modified (2015-12-14)
+ * @license Highstock JS v2.1.10-modified (2015-12-15)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -19898,7 +19898,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.10-modified (2015-12-14)
+     * Highstock JS v2.1.10-modified (2015-12-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
