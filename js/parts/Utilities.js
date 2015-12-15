@@ -898,7 +898,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
  * @param   {Number} pos Current position, ranging from 0 to 1
  */
 Math.easeInOutSine = function (pos) {
-	return -pos / 2 * (Math.cos(Math.PI * pos) - 1);
+	return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
 
 /**
