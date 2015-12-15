@@ -1,7 +1,7 @@
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) { // docs: lowercase constructor without new
+Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 	var hasRenderToArg = isString(a) || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],
 		seriesOptions = options.series, // to increase performance, don't merge the data

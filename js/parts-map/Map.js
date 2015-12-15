@@ -120,7 +120,7 @@ if (Renderer === VMLRenderer) {
 /**
  * A wrapper for Chart with all the default values for a Map
  */
-Highcharts.Map = Highcharts.mapChart = function (a, b, c) { // docs: lowercase constructor without new
+Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
 
 	var hasRenderToArg = typeof a === 'string' || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],

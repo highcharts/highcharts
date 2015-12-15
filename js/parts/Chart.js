@@ -1,6 +1,6 @@
 /**
  * The Chart class
- * @param {String|Object} renderTo The DOM element to render to, or its id // docs
+ * @param {String|Object} renderTo The DOM element to render to, or its id
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
@@ -8,7 +8,7 @@ var Chart = Highcharts.Chart = function () {
 	this.getArgs.apply(this, arguments);
 };
 
-Highcharts.chart = function (a, b, c) { // docs
+Highcharts.chart = function (a, b, c) {
 	return new Chart(a, b, c);
 };
 

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.10-modified (2015-12-15)
+ * @license Highstock JS v4.2.0 (2105-12-15)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '2.1.10-modified',
+        VERSION = '4.2.0',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1022,7 +1022,7 @@
     };
 
     /**
-     * Easing definition // docs: Note in API where easing is mentioned, jQuery no longer supported
+     * Easing definition
      * @param   {Number} pos Current position, ranging from 0 to 1
      */
     Math.easeInOutSine = function (pos) {
@@ -1481,7 +1481,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.10-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.0/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -11712,7 +11712,7 @@
     }
     /**
      * The Chart class
-     * @param {String|Object} renderTo The DOM element to render to, or its id // docs
+     * @param {String|Object} renderTo The DOM element to render to, or its id
      * @param {Object} options
      * @param {Function} callback Function to run when the chart has loaded
      */
@@ -11720,7 +11720,7 @@
         this.getArgs.apply(this, arguments);
     };
 
-    Highcharts.chart = function (a, b, c) { // docs
+    Highcharts.chart = function (a, b, c) {
         return new Chart(a, b, c);
     };
 
@@ -19888,7 +19888,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.10-modified (2015-12-15)
+     * Highstock JS v4.2.0 (2105-12-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23510,7 +23510,7 @@
     /**
      * A wrapper for Chart with all the default values for a Stock chart
      */
-    Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) { // docs: lowercase constructor without new
+    Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
         var hasRenderToArg = isString(a) || a.nodeName,
             options = arguments[hasRenderToArg ? 1 : 0],
             seriesOptions = options.series, // to increase performance, don't merge the data

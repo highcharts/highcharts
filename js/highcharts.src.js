@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.10-modified (2015-12-15)
+ * @license Highcharts JS v4.2.0 (2105-12-15)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
-        VERSION = '4.1.10-modified',
+        VERSION = '4.2.0',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1022,7 +1022,7 @@
     };
 
     /**
-     * Easing definition // docs: Note in API where easing is mentioned, jQuery no longer supported
+     * Easing definition
      * @param   {Number} pos Current position, ranging from 0 to 1
      */
     Math.easeInOutSine = function (pos) {
@@ -1481,7 +1481,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/4.1.10-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.0/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -11712,7 +11712,7 @@
     }
     /**
      * The Chart class
-     * @param {String|Object} renderTo The DOM element to render to, or its id // docs
+     * @param {String|Object} renderTo The DOM element to render to, or its id
      * @param {Object} options
      * @param {Function} callback Function to run when the chart has loaded
      */
@@ -11720,7 +11720,7 @@
         this.getArgs.apply(this, arguments);
     };
 
-    Highcharts.chart = function (a, b, c) { // docs
+    Highcharts.chart = function (a, b, c) {
         return new Chart(a, b, c);
     };
 

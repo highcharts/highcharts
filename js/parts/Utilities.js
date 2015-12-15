@@ -894,7 +894,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 };
 
 /**
- * Easing definition // docs: Note in API where easing is mentioned, jQuery no longer supported
+ * Easing definition
  * @param   {Number} pos Current position, ranging from 0 to 1
  */
 Math.easeInOutSine = function (pos) {

@@ -535,6 +535,7 @@ var HighchartsConfig = {
 		"Modules": {
 			"description": ""
 		},
+		
 		"Dynamics and Interaction": {
 			"description": "Leaving these out makes your chart completely static"
 		}
