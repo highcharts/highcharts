@@ -742,7 +742,7 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || getStyle(renderTo, 'width'),
 			height = optionsChart.height || getStyle(renderTo, 'height'),
-			target = e.target;
+			target = e ? e.target : win;
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
