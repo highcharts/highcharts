@@ -10043,8 +10043,8 @@
                 });
                 // Find absolute nearest point
                 each(kdpoints, function (p) {
-                    pointDistance = shared || p.series.kdDimensions === 1 ? p.distX : p.dist; // #4645
-                
+                    pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
+
                     if (p && typeof pointDistance === 'number' && pointDistance < distance) {
                         distance = pointDistance;
                         kdpoint = p;
