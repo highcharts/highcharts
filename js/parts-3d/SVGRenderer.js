@@ -119,7 +119,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1], zIndex: paths[4] });
 			this.side.attr({ d: paths[2], zIndex: paths[5] });
 		} else {
-			Highcharts.SVGElement.prototype.attr.call(this, args);
+			return Highcharts.SVGElement.prototype.attr.call(this, args); // getter returns value
 		}
 
 		return this;
@@ -131,6 +131,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.front.attr({ zIndex: paths[3] }).animate({ d: paths[0] }, duration, complete);
 			this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
 			this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
+			this.attr({
+				zIndex: -paths[6] // #4774
+			});
 		} else if (args.opacity) {
 			this.front.animate(args, duration, complete);
 			this.top.animate(args, duration, complete);
@@ -151,7 +154,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	// Apply the Z index to the cuboid group
-	result.attr({ zIndex: -paths[3] });
+	result.attr({ zIndex: -paths[6] });
 
 	return result;
 };
@@ -189,15 +192,13 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		return pArr[i];
 	}
 	var pickShape = function (path1, path2) {
-		var ret;
+		var ret = [];
 		path1 = map(path1, mapPath);
 		path2 = map(path2, mapPath);
 		if (shapeArea(path1) < 0) {
 			ret = path1;
 		} else if (shapeArea(path2) < 0) {
 			ret = path2;
-		} else {
-			ret = [];
 		}
 		return ret;
 	};
@@ -217,7 +218,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var left = [0, 7, 4, 3];
 	var path3 = pickShape(right, left);
 
-	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
+	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3), averageZ(map(bottom, mapPath)) * 9e9]; // #4774
 };
 
 ////// SECTORS //////

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2015-12-15)
+ * @license Highmaps JS v4.2.0-modified (2015-12-16)
  *
  * (c) 2011-2014 Torstein Honsi
  *
