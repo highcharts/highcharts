@@ -379,39 +379,29 @@ extend(Series.prototype, {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-
 	remove: function (redraw, animation) {
 		var series = this,
 			chart = series.chart;
-		redraw = pick(redraw, true);
 
-		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
-				(calling the remove function from the remove event) */
-			series.isRemoving = true;
+		// Fire the event with a default handler of removing the point
+		fireEvent(series, 'remove', null, function () {
 
-			// fire the event with a default handler of removing the point
-			fireEvent(series, 'remove', null, function () {
+			// Destroy elements
+			series.destroy();
 
-
-				// destroy elements
-				series.destroy();
-
-				// update series' indexes - #2859
-				each(chart.series, function (s, i) {
-					s.index = i;
-				});
-
-				// redraw
-				chart.isDirtyLegend = chart.isDirtyBox = true;
-				chart.linkSeries();
-
-				if (redraw) {
-					chart.redraw(animation);
-				}
+			// update series' indexes - #2859
+			each(chart.series, function (s, i) {
+				s.index = i;
 			});
 
-		}
-		series.isRemoving = false;
+			// Redraw
+			chart.isDirtyLegend = chart.isDirtyBox = true;
+			chart.linkSeries();
+
+			if (pick(redraw, true)) {
+				chart.redraw(animation);
+			}
+		});
 	},
 
 	/**

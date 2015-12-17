@@ -6,9 +6,10 @@ var colors = require('colors'),
     eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
+    gulpif = require('gulp-if'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
-    // argv = require('yargs').argv,
+    argv = require('yargs').argv,
     fs = require('fs'),
     // sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
@@ -170,7 +171,7 @@ gulp.task('lint', ['scripts'], function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        //.pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
         .pipe(eslint.formatEach());
 
 });
@@ -179,13 +180,13 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        //.pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
         .pipe(eslint.formatEach());
 
 });
 
 // Watch changes to CSS files
-gulp.task('default', function () {
+gulp.task('default', ['scripts'], function () {
     // gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
 });
@@ -302,16 +303,22 @@ gulp.task('scripts', function () {
      * Micro-optimize code based on the build object.
      *
      * @param {String} tpl The concatenated JavaScript template to process
+     * @param {Object} build The build configuration
      *
      * @returns {String} The processed JavaScript
      */
-    function preprocess(tpl) {
+    function preprocess(tpl, build) {
+
+        var func;
+
         // Windows newlines
         tpl = tpl.replace(/\r\n/g, '\n');
 
-        /*
+
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
+        tpl = tpl.replace('/[ ,]/', '___rep3___'); // Conflicts with trailing comma removal below
+        tpl = tpl.replace('/[ ,]+/', '___rep4___'); // Conflicts with trailing comma removal below
         tpl = tpl.replace(/\\/g, '\\\\');
 
 
@@ -331,15 +338,17 @@ gulp.task('scripts', function () {
         // fs.writeFile('temp.js', tpl, 'utf8');
 
         // The evaluation function for the ready built supercode
-        func = new Function('build', tpl);
+        func = new Function('build', tpl); // eslint-disable-line no-new-func
 
         tpl = func(build);
-        tpl = tpl.replace(/___doublequote___/g, '"');
 
-        // Collect trailing commas left when the tamplate engine has removed
+        // Collect trailing commas left when the template engine has removed
         // object literal properties or array items
         tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
-        */
+
+        tpl = tpl.replace(/___doublequote___/g, '"');
+        tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
+        tpl = tpl.replace(/___rep4___/g, '/[ ,]+/');
 
         return tpl;
     }
@@ -447,6 +456,7 @@ gulp.task('scripts', function () {
             fs.writeFileSync(
                 path,
                 preprocess(tpl, {
+                    assembly: true,
                     classic: true
                 }),
                 'utf8'
@@ -494,7 +504,7 @@ gulp.task('scripts', function () {
     });
 });
 
-gulp.task('common', function () {
+gulp.task('browserify', function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
@@ -504,3 +514,19 @@ gulp.task('common', function () {
             fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
         });
 });
+
+gulp.task('webpack', function () {
+    var webpack = require('webpack');
+    webpack({
+        entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
+        output: {
+            filename: './samples/highcharts/common-js/webpack/demo.js'
+        }
+    }, function (err) {
+        if (err) {
+            throw new Error('Webpack failed.');
+        }
+    });
+});
+
+gulp.task('common', ['scripts', 'browserify', 'webpack']);

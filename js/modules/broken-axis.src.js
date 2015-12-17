@@ -6,11 +6,14 @@
  */
 
 (function (factory) {
+	/*= if (!build.assembly) { =*/
 	if (typeof module === 'object' && module.exports) {
 		module.exports = factory;
-	} else {
-		factory(Highcharts);
+		return;
 	}
+	/*= } =*/
+	factory(Highcharts);
+	
 }(function (H) {
 
 	'use strict';

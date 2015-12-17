@@ -6,11 +6,6 @@ var HighchartsConfig = {
 		"Highstock": "2.0.1-modified"
 	}],
 	"parts": [{
-		"name": "standalone-framework.src",
-		"component": "Standalone framework",
-		"group": "Adapters",
-		"baseUrl": "adapters"
-	}, {
 		"name": "Intro",
 		"component": "Core",
 		"group": "Core",
@@ -22,21 +17,6 @@ var HighchartsConfig = {
 		"baseUrl": "parts"
 	}, {
 		"name": "Utilities",
-		"component": "Core",
-		"group": "Core",
-		"baseUrl": "parts"
-	}, {
-		"name": "PathAnimation",
-		"component": "Core",
-		"group": "Core",
-		"baseUrl": "parts"
-	}, {
-		"name": "JQueryAdapter",
-		"component": "jQuery adapter",
-		"group": "Adapters",
-		"baseUrl": "parts"
-	}, {
-		"name": "Adapters",
 		"component": "Core",
 		"group": "Core",
 		"baseUrl": "parts"
@@ -555,20 +535,12 @@ var HighchartsConfig = {
 		"Modules": {
 			"description": ""
 		},
+		
 		"Dynamics and Interaction": {
 			"description": "Leaving these out makes your chart completely static"
-		},
-		"Adapters": {
-			"description": "Choose your own library to run Highcharts. Use Highcharts standalone framework when you want minimum bandwidth use, web apps built on other frameworks, or just a simple website where you want to keep it clean."
 		}
 	},
 	"components": {
-		"Standalone framework": {
-			"description": "If you don't want to load JQuery in your page"
-		},
-		"jQuery adapter": {
-			"description": "Run Highcharts on top of JQuery"
-		},
 		"Core": {
 			"description": "This module is required for all other modules."
 		},

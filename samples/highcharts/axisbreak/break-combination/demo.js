@@ -17,7 +17,7 @@ $(function () {
             });
         }
     }
-    function breakEffect1(item) {
+    function pointBreak(item) {
         var point = item.point,
             brk = item.brk,
             axis = this,
@@ -31,7 +31,7 @@ $(function () {
         breakEffect(this, point, path, '#F0F0F0');
     }
 
-    function breakEffect2(item) {
+    function pointInBreak(item) {
         var point = item.point,
             brk = item.brk,
             axis = this,
@@ -70,8 +70,8 @@ $(function () {
                 color: '#F0F0F0'
             }],
             events: {
-                pointBreak: breakEffect1,
-                pointInBreak: breakEffect2
+                pointBreak: pointBreak,
+                pointInBreak: pointInBreak
             }
         },
         plotOptions: {

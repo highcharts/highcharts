@@ -380,6 +380,7 @@ ob_start();
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Sample</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
@@ -401,6 +402,8 @@ ob_start();
 	</body>
 </html>
 <?php 
-file_put_contents('../draft/index.html', ob_get_clean());
+$draft = ob_get_clean();
+$draft = str_replace('cache.php?file=', '', $draft);
+file_put_contents('../draft/index.html', $draft);
 
 ?>

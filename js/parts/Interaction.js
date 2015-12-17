@@ -354,9 +354,9 @@ extend(Chart.prototype, {
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
 				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
 				goingLeft = startPos > mousePos; // #3613
-
+			
 			if (axis.series.length &&
-					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;

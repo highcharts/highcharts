@@ -1,7 +1,20 @@
 /* eslint-env node*/
-QUnit.test("Highcharts in use with the standalone-framework.", function (assert) {
-    var hcFramework = require('../../../../js/adapters/standalone-framework.src'),
-        Highcharts = require('../../../../js/highcharts.src')(hcFramework),
+
+// Run the tests without jQuery
+var jQueryParked = window.jQuery;
+
+function removeJQuery() {
+    delete window.jQuery;
+    delete window.$;
+}
+function addJQuery() {
+    window.jQuery = window.$ = jQueryParked;
+}
+
+QUnit.test("Highcharts", function (assert) {
+    removeJQuery();
+
+    var Highcharts = require('../../../../js/highcharts.src'),
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container'
@@ -37,82 +50,10 @@ QUnit.test("Highcharts in use with the standalone-framework.", function (assert)
                 verticalAlign: 'middle',
                 borderWidth: 0
             },
-            series: [{
-                name: 'Tokyo',
-                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-            }, {
-                name: 'New York',
-                data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
-            }, {
-                name: 'Berlin',
-                data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-            }, {
-                name: 'London',
-                data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-            }]
-        });
-
-    assert.strictEqual(
-        window.HighchartsAdapter,
-        undefined,
-        "No global HighchartsAdapter variable."
-    );
-
-    assert.strictEqual(
-        window.Highcharts,
-        undefined,
-        "No global Highcharts variable."
-    );
-
-    assert.strictEqual(
-        Highcharts.product,
-        'Highcharts',
-        'Highcharts is loaded.'
-    );
-    // @todo test which version of adapter is running.
-    // assert.strictEqual(
-    //     H.adapter,
-    //     'Standalone Adapter',
-    //     'This Highcharts version runs the standalone adapter.'
-    // );
-});
-
-QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts.src')(jQuery),
-        chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'container-jquery'
-            },
-            title: {
-                text: 'Monthly Average Temperature',
-                x: -20 //center
-            },
-            subtitle: {
-                text: 'Source: WorldClimate.com',
-                x: -20
-            },
-            xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            },
-            yAxis: {
-                title: {
-                    text: 'Temperature (°C)'
-                },
-                plotLines: [{
-                    value: 0,
-                    width: 1,
-                    color: '#808080'
-                }]
-            },
-            tooltip: {
-                valueSuffix: '°C'
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle',
-                borderWidth: 0
+            plotOptions: {
+                dataLabels: {
+                    enabled: true
+                }
             },
             series: [{
                 name: 'Tokyo',
@@ -146,17 +87,13 @@ QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
         'Highcharts',
         'Highcharts is loaded.'
     );
-
-    // @todo test which version of adapter is running.
-    // assert.strictEqual(
-    //     H.adapter,
-    //     undefined,
-    //     'This Highcharts version runs the jQuery adapter.'
-    // );
+    addJQuery();
 });
 
-QUnit.test("Highcharts More.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts.src')(jQuery);
+QUnit.test("Highcharts More", function (assert) {
+    removeJQuery();
+
+    var Highcharts = require('../../../../js/highcharts.src');
     require('../../../../js/highcharts-more.src')(Highcharts);
 
     assert.strictEqual(
@@ -190,30 +127,48 @@ QUnit.test("Highcharts More.", function (assert) {
         'function',
         "Solid Gauge is loaded."
     );
+
+    addJQuery();
 });
 
-QUnit.test("Highstock.", function (assert) {
-    var Highcharts = require('../../../../js/highstock.src')(jQuery);
-    jQuery.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
-        var chart = new Highcharts.StockChart({
-            chart: {
-                renderTo: 'container-stock'
-            },
-            rangeSelector : {
-                selected : 1
-            },
-            title : {
-                text : 'AAPL Stock Price'
-            },
-            series : [{
-                name : 'AAPL',
-                data : data,
-                tooltip: {
-                    valueDecimals: 2
-                }
+QUnit.test("Highstock", function (assert) {
+    removeJQuery();
+
+    var Highcharts = require('../../../../js/highstock.src');
+
+    var chart = new Highcharts.StockChart({
+        chart: {
+            renderTo: 'container-stock'
+        },
+        xAxis: {
+            breaks: [{
+                from: Date.UTC(2015, 6, 3),
+                to: Date.UTC(2015, 7, 6)
             }]
-        });
+        },
+        series : [{
+            name : 'AAPL',
+            data : Highcharts.map(new Array(365), function (undef, i) { 
+                return i;
+            }),
+            pointStart: Date.UTC(2015, 0, 1),
+            pointInterval: 24 * 36e5,
+            tooltip: {
+                valueDecimals: 2
+            }
+        }]
     });
+
+    assert.ok(
+        chart.series[0].points.length > 300,
+        "Stock chart is generated"
+    );
+
+    assert.strictEqual(
+        typeof chart.xAxis[0].breakArray,
+        'object',
+        "Breaks are handled"
+    );
 
     assert.strictEqual(
         window.HighchartsAdapter,
@@ -232,12 +187,16 @@ QUnit.test("Highstock.", function (assert) {
         'Highstock',
         'Highstock is loaded.'
     );
+
+    addJQuery();
 });
 
-QUnit.test("Highmaps.", function (assert) {
-    var Highcharts = require('../../../../js/highmaps.src')(jQuery);
+QUnit.test("Highmaps", function (assert) {
+    removeJQuery();
+
+    var Highcharts = require('../../../../js/highmaps.src');
     Highcharts.maps["countries/us/us-all"] = require('./us-all');
-    jQuery.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
+    jQueryParked.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
         // Make codes uppercase to match the map data
         jQuery.each(data, function () {
             this.code = this.code.toUpperCase();
@@ -310,10 +269,15 @@ QUnit.test("Highmaps.", function (assert) {
         'Highmaps',
         'Highmaps is loaded.'
     );
+
+    addJQuery();
 });
 
-QUnit.test("Highcharts in use with modules.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts.src')(jQuery);
+QUnit.test("Highcharts in use with modules", function (assert) {
+
+    removeJQuery();
+
+    var Highcharts = require('../../../../js/highcharts.src');
     // Annotations
     require('../../../../js/modules/annotations.src')(Highcharts);
     assert.strictEqual(
@@ -412,4 +376,7 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         true,
         "Treemap is loaded."
     );
+
+    addJQuery();
 });
+

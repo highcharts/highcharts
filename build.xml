@@ -152,9 +152,6 @@
             <file name="parts/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -197,9 +194,6 @@
             <file name="parts/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -326,9 +320,6 @@
             <file name="parts-map/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -384,7 +375,6 @@
 
         <!-- Files for the Cloud -->
         <filelist id="highstock-all.files" dir="${dist.dir}">
-            <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highstock/js/${highstock.minified.name}"/>
             <file name="highstock/js/${highchartsmore.minified.name}"/>
             <file name="highstock/js/${highcharts3d.minified.name}"/>

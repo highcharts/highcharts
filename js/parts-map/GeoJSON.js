@@ -22,7 +22,7 @@ function pointInPolygon(point, polygon) {
  * Get point from latLon using specified transform definition
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-	if (window.proj4 === undefined) {
+	if (win.proj4 === undefined) {
 		error(21);
 		return {
 			x: 0,
@@ -30,7 +30,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 		};
 	}
 
-	var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+	var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
@@ -45,7 +45,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  * Get latLon from point using specified transform definition
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-	if (window.proj4 === undefined) {
+	if (win.proj4 === undefined) {
 		error(21);
 		return;
 	}
@@ -57,7 +57,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		// Note: Inverted sinAngle to reverse rotation direction
-		projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+		projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
 			x: normalized.x * cosAngle + normalized.y * -sinAngle,
 			y: normalized.x * sinAngle + normalized.y * cosAngle
 		} : normalized);

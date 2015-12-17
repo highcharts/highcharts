@@ -15,7 +15,6 @@ extend(ColorAxis.prototype, {
 		minPadding: 0,
 		maxPadding: 0,
 		gridLineWidth: 1,
-		tickPixelInterval: 72,
 		startOnTick: true,
 		endOnTick: true,
 		offset: 0,
@@ -27,7 +26,8 @@ extend(ColorAxis.prototype, {
 			width: 0.01
 		},
 		labels: {
-			overflow: 'justify'
+			overflow: 'justify',
+			rotation: 0
 		},
 		minColor: '#EFEFFF',
 		maxColor: '#003875',
@@ -40,6 +40,7 @@ extend(ColorAxis.prototype, {
 		// Build the options
 		options = merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
+			tickPixelInterval: horiz ? 100 : 72,
 			reversed: !horiz
 		}, userOptions, {
 			opposite: !horiz,
@@ -452,9 +453,9 @@ extend(ColorAxis.prototype, {
  * Handle animation of the color attributes directly
  */
 each(['fill', 'stroke'], function (prop) {
-	Highcharts.addAnimSetter(prop, function (fx) {
-		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
-	});
+	Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+		this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+	};
 });
 
 /**
