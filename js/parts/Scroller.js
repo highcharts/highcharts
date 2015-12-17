@@ -983,6 +983,7 @@ Scroller.prototype = {
 			yAxis: 'navigator-y-axis',
 			name: 'Navigator',
 			showInLegend: false,
+			stacking: false, // We only allow one series anyway (#4823)
 			isInternal: true,
 			visible: true
 		});
