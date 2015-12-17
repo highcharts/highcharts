@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-16)
+ * @license Highcharts JS v4.2.0-modified (2015-12-17)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -51,7 +51,6 @@
             minPadding: 0,
             maxPadding: 0,
             gridLineWidth: 1,
-            tickPixelInterval: 72,
             startOnTick: true,
             endOnTick: true,
             offset: 0,
@@ -63,7 +62,8 @@
                 width: 0.01
             },
             labels: {
-                overflow: 'justify'
+                overflow: 'justify',
+                rotation: 0
             },
             minColor: '#EFEFFF',
             maxColor: '#003875',
@@ -76,6 +76,7 @@
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
                 side: horiz ? 2 : 1,
+                tickPixelInterval: horiz ? 100 : 72,
                 reversed: !horiz
             }, userOptions, {
                 opposite: !horiz,
