@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
- * @license Highmaps JS v1.1.10-modified (2015-12-09)
-=======
  * @license Highmaps JS v4.2.0-modified (2015-12-17)
->>>>>>> master
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -15211,15 +15207,13 @@
             // Fire the event with a default handler of removing the point
             fireEvent(series, 'remove', null, function () {
 
-<<<<<<< HEAD
-                    // update series' indexes - #2859
-                    each(chart.series, function (s, i) {
-                        s.index = i;
-                    });
-=======
                 // Destroy elements
                 series.destroy();
->>>>>>> master
+
+                // update series' indexes - #2859
+                each(chart.series, function (s, i) {
+                    s.index = i;
+                });
 
                 // Redraw
                 chart.isDirtyLegend = chart.isDirtyBox = true;
@@ -15464,14 +15458,9 @@
             } else {
                 each(chart.series, function (otherSeries) {
                     var otherOptions = otherSeries.options,
-<<<<<<< HEAD
-                        otherYAxis = otherSeries.yAxis;
-                    if (otherSeries.type === series.type && (otherSeries.visible || chart.options.chart.ignoreHiddenSeries === false) &&
-=======
                         otherYAxis = otherSeries.yAxis,
                         columnIndex;
                     if (otherSeries.type === series.type && otherSeries.visible &&
->>>>>>> master
                             yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;

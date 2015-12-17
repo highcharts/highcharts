@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
- * @license Highcharts JS v4.1.10-modified (2015-12-09)
-=======
  * @license Highcharts JS v4.2.0-modified (2015-12-17)
->>>>>>> master
  *
  * (c) 2011-2014 Torstein Honsi
  *
