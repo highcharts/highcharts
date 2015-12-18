@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-16)
+ * @license Highcharts JS v4.2.0-modified (2015-12-18)
  *
  * 3D features for Highcharts JS
  *
@@ -748,7 +748,7 @@
             plotOptions,
             pieOptions;
 
-        if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+        if (args[0].chart && args[0].chart.options3d && args[0].chart.options3d.enabled) {
             // Normalize alpha and beta to (-360, 360) range
             args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
             args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
