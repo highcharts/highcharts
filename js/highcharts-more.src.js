@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-15)
+ * @license Highcharts JS v4.2.0-modified (2015-12-18)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1627,12 +1627,14 @@ var arrayMin = Highcharts.arrayMin,
                 previousY,
                 previousIntermediate,
                 range,
+                minPointLength = pick(options.minPointLength, 5),
                 threshold = options.threshold,
                 stacking = options.stacking,
                 tooltipY;
 
             // run column series translate
             seriesTypes.column.prototype.translate.apply(this);
+            series.minPointLengthOffset = 0;
 
             previousY = previousIntermediate = threshold;
             points = series.points;
@@ -1664,11 +1666,11 @@ var arrayMin = Highcharts.arrayMin,
                 // sum points
                 if (point.isSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
+                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
                 } else if (point.isIntermediateSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
+                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
                     previousIntermediate = range[1];
 
                 // If it's not the sum point, update previous stack end position and get
@@ -1691,8 +1693,15 @@ var arrayMin = Highcharts.arrayMin,
                 shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
                 point.yBottom = shapeArgs.y + shapeArgs.height;
 
+                if (shapeArgs.height <= minPointLength) {
+                    shapeArgs.height = minPointLength;
+                    series.minPointLengthOffset += minPointLength;
+                }
+
+                shapeArgs.y -= series.minPointLengthOffset;
+
                 // Correct tooltip placement (#3014)
-                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
                 if (series.chart.inverted) {
                     point.tooltipPos[0] = yAxis.len - tooltipY;
                 } else {
