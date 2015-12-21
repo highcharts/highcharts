@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2015-12-17)
+ * @license Highmaps JS v4.2.0-modified (2015-12-16)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -165,6 +165,7 @@
             minPadding: 0,
             maxPadding: 0,
             gridLineWidth: 1,
+            tickPixelInterval: 72,
             startOnTick: true,
             endOnTick: true,
             offset: 0,
@@ -176,8 +177,7 @@
                 width: 0.01
             },
             labels: {
-                overflow: 'justify',
-                rotation: 0
+                overflow: 'justify'
             },
             minColor: '#EFEFFF',
             maxColor: '#003875',
@@ -190,7 +190,6 @@
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
                 side: horiz ? 2 : 1,
-                tickPixelInterval: horiz ? 100 : 72,
                 reversed: !horiz
             }, userOptions, {
                 opposite: !horiz,
