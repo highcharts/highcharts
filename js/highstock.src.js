@@ -2,11 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
-<<<<<<< HEAD
- * @license Highstock JS v4.2.0-modified (2015-12-18)
-=======
- * @license Highstock JS v4.2.0-modified (2015-12-16)
->>>>>>> parent of ee8d567... Fixed #4816, legend values got overlapped on color axis.
+ * @license Highstock JS v4.2.1 (2015-12-21)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -63,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '4.2.0-modified',
+        VERSION = '4.2.1',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1485,7 +1481,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.0-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.1/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -19892,11 +19888,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-<<<<<<< HEAD
-     * Highstock JS v4.2.0-modified (2015-12-18)
-=======
-     * Highstock JS v4.2.0-modified (2015-12-16)
->>>>>>> parent of ee8d567... Fixed #4816, legend values got overlapped on color axis.
+     * Highstock JS v4.2.1 (2015-12-21)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
