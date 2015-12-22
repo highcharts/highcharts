@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2015-12-21)
+ * @license Highstock JS v4.2.0-modified (2015-12-22)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -13947,6 +13947,7 @@
                 getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
                 xExtremes,
+                val2lin = xAxis.val2lin,
                 min,
                 max;
 
@@ -13982,8 +13983,11 @@
 
 
             // Find the closest distance between processed points
-            for (i = processedXData.length - 1; i >= 0; i--) {
-                distance = processedXData[i] - processedXData[i - 1];
+            i = processedXData.length;
+            while (--i) {
+                distance = xAxis.isLog ?
+                    val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
+                    processedXData[i] - processedXData[i - 1];
 
                 if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
                     closestPointRange = distance;
@@ -19889,7 +19893,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2015-12-21)
+     * Highstock JS v4.2.0-modified (2015-12-22)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
