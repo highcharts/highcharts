@@ -6661,7 +6661,6 @@
                 label = plotLine.label,
                 renderer = plotLine.axis.chart.renderer,
                 attribs,
-                zIndex,
                 xs,
                 ys,
                 x,

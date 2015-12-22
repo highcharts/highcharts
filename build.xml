@@ -269,6 +269,7 @@
             <file name="SVGRenderer.js"/>
             <file name="Chart.js"/>
             <file name="Axis.js"/>
+            <file name="PlotLineOrBand.js"/>
             <file name="Column.js"/>
             <file name="Pie.js"/>
             <file name="Scatter.js"/>
