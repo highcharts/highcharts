@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2015-12-17)
+ * @license Highstock JS v4.2.0-modified (2015-12-22)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1008,17 +1008,18 @@
         var lang = defaultOptions.lang,
             // http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
             n = +number || 0,
+            origDec = (n.toString().split('.')[1] || '').length,
             c = decimals === -1 ?
-                    Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
+                    Math.min(origDec, 20) : // Preserve decimals. Not huge numbers (#3793).
                     (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
             d = decPoint === undefined ? lang.decimalPoint : decPoint,
             t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
             s = n < 0 ? '-' : '',
-            i = String(pInt(n = mathAbs(n).toFixed(c))),
+            i = String(pInt(mathAbs(n).toFixed(c))),
             j = i.length > 3 ? i.length % 3 : 0;
 
         return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
-                (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
+                (c ? d + Math.abs(n - i + Math.pow(10, -Math.max(c, origDec) - 1)).toFixed(c).slice(2) : '')); // Add power for #4573
     };
 
     /**
@@ -8392,7 +8393,7 @@
                 margin = chart.margin,
                 slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
                 slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-                    ((this.staggerLines || 1) * this.len) / slotCount) ||
+                    ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
                     (!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
                 attr = {},
@@ -10018,7 +10019,6 @@
                 noSharedTooltip,
                 stickToHoverSeries,
                 directTouch,
-                pointDistance,
                 kdpoints = [],
                 kdpoint,
                 kdpointT;
@@ -10056,10 +10056,8 @@
                 });
                 // Find absolute nearest point
                 each(kdpoints, function (p) {
-                    pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
-
-                    if (p && typeof pointDistance === 'number' && pointDistance < distance) {
-                        distance = pointDistance;
+                    if (p && typeof p.dist === 'number' && p.dist < distance) {
+                        distance = p.dist;
                         kdpoint = p;
                     }
                 });
@@ -13963,6 +13961,7 @@
                 getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
                 xExtremes,
+                val2lin = xAxis.val2lin,
                 min,
                 max;
 
@@ -13998,8 +13997,11 @@
 
 
             // Find the closest distance between processed points
-            for (i = processedXData.length - 1; i >= 0; i--) {
-                distance = processedXData[i] - processedXData[i - 1];
+            i = processedXData.length;
+            while (--i) {
+                distance = xAxis.isLog ?
+                    val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
+                    processedXData[i] - processedXData[i - 1];
 
                 if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
                     closestPointRange = distance;
@@ -19969,7 +19971,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2015-12-17)
+     * Highstock JS v4.2.0-modified (2015-12-22)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
