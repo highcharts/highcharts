@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2015-12-22)
+ * @license Highstock JS v4.2.0-modified (2015-12-23)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -19890,7 +19890,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2015-12-22)
+     * Highstock JS v4.2.0-modified (2015-12-23)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21180,6 +21180,7 @@
                 lastPoint,
                 optionsOnSeries = options.onSeries,
                 onSeries = optionsOnSeries && chart.get(optionsOnSeries),
+                onKey = options.onKey || 'y', // docs. Added to API, marked next.
                 step = onSeries && onSeries.options.step,
                 onData = onSeries && onSeries.points,
                 i = onData && onData.length,
@@ -21200,22 +21201,22 @@
                     return (a.x - b.x);
                 });
 
+                onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
                 while (i-- && points[cursor]) {
                     point = points[cursor];
                     leftPoint = onData[i];
-
-                    if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
+                    if (leftPoint.x <= point.x && leftPoint[onKey] !== undefined) {
                         if (point.x <= lastX) { // #803
 
-                            point.plotY = leftPoint.plotY;
+                            point.plotY = leftPoint[onKey];
 
                             // interpolate between points, #666
                             if (leftPoint.x < point.x && !step) {
                                 rightPoint = onData[i + 1];
-                                if (rightPoint && rightPoint.plotY !== UNDEFINED) {
+                                if (rightPoint && rightPoint[onKey] !== UNDEFINED) {
                                     point.plotY +=
                                         ((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
-                                        (rightPoint.plotY - leftPoint.plotY); // the y distance
+                                        (rightPoint[onKey] - leftPoint[onKey]); // the y distance
                                 }
                             }
                         }
