@@ -10815,14 +10815,14 @@
                     legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
                 }
 
-                // Colorize the items
-                legend.colorizeItem(item, item.visible);
-
                 // add the HTML checkbox on top
                 if (showCheckbox) {
                     legend.createCheckboxForItem(item);
                 }
             }
+
+            // Colorize the items
+            legend.colorizeItem(item, item.visible);
 
             // Always update the text
             legend.setText(item);
