@@ -515,7 +515,6 @@ Series.prototype = {
 			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
-			val2lin = xAxis.val2lin,
 			min,
 			max;
 
@@ -553,8 +552,8 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		i = processedXData.length;
 		while (--i) {
-			distance = xAxis.isLog ?
-				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
+			distance = xAxis && xAxis.isLog ?
+				xAxis.val2lin(processedXData[i]) - xAxis.val2lin(processedXData[i - 1]) :
 				processedXData[i] - processedXData[i - 1];
 
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
