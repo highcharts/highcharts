@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2015-12-29)
+ * @license Highmaps JS v4.2.0-modified (2015-12-30)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -19111,7 +19111,7 @@
 
         proceed.call(this, credits);
 
-        if (this.credits) {
+        if (this.credits && this.mapCreditsFull) {
             this.credits.attr({
                 title: this.mapCreditsFull
             });
