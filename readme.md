@@ -20,10 +20,10 @@ npm install highcharts
 var Highcharts = require('highcharts');
 
 // Alternatively, this is how to load Highstock. Highmaps is similar.
-// var Highcharts = require('highcharts/lib/highstock');
+// var Highcharts = require('highcharts/highstock');
 
 // This is how a module is loaded. Pass in Highcharts as a parameter.
-require('highcharts/lib/modules/exporting')(Highcharts);
+require('highcharts/modules/exporting')(Highcharts);
 
 // Generate the chart
 var chart = new Highcharts.Chart({
