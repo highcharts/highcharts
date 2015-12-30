@@ -34,7 +34,8 @@ var chart = new Highcharts.Chart({
 });
 ```
 
-Example of using Highcarts in `ES2015`:
+Example of using Highcharts in `ES2015`:
+
 ```js
 // load Highcharts
 import Highcharts from 'highcharts';
