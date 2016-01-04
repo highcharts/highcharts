@@ -885,6 +885,7 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 		decimalComponent,
 		strinteger,
 		thousands,
+		absNumber = Math.abs(number),
 		ret;
 
 	if (decimals === -1) {
@@ -894,7 +895,7 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 	}
 
 	// A string containing the positive integer component of the number
-	strinteger = String(pInt(Math.abs(number).toFixed(decimals)));
+	strinteger = String(pInt(absNumber.toFixed(decimals)));
 
 	// Leftover after grouping into thousands. Can be 0, 1 or 3.
 	thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
@@ -915,8 +916,9 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 
 	// Add the decimal point and the decimal component
 	if (decimals) {
-		decimalComponent = Math.abs(number - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
-		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2); // Add power for #4573
+		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
+		decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
+		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
 	}
 
 	return ret;
