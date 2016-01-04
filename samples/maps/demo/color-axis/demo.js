@@ -52,7 +52,7 @@ $(function () {
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {
                     enabled: true,
-                    color: 'white',
+                    color: '#FFFFFF',
                     format: '{point.code}'
                 },
                 name: 'Population density',

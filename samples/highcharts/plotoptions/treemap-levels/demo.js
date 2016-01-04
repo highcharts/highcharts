@@ -10,8 +10,8 @@ $(function () {
                     enabled: true,
                     align: 'left',
                     verticalAlign: 'top',
-                    color: 'white',
                     style: {
+                        color: '#FFFFFF',
                         fontWeight: 'bold'
                     }
                 }
