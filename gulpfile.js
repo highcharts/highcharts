@@ -276,7 +276,9 @@ gulp.task('filesize', function () {
                                 oldSize = gzipSize.sync(result);
                                 report();
                                 exec('git stash apply && git stash drop', function (error) {
-                                    console.log(colors.red('Error in stash apply: ' + error));
+                                    if (error) {
+                                        console.log(colors.red('Error in stash apply: ' + error));
+                                    }
                                 });
                             } else {
                                 console.log('Compilation error: ' + error);

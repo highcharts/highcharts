@@ -1001,25 +1001,53 @@
      * Format a number and return a string based on input settings
      * @param {Number} number The input number to format
      * @param {Number} decimals The amount of decimals
-     * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+     * @param {String} decimalPoint The decimal point, defaults to the one given in the lang options
      * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
      */
-    Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-        var lang = defaultOptions.lang,
-            // http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-            n = +number || 0,
-            origDec = (n.toString().split('.')[1] || '').length,
-            c = decimals === -1 ?
-                    Math.min(origDec, 20) : // Preserve decimals. Not huge numbers (#3793).
-                    (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
-            d = decPoint === undefined ? lang.decimalPoint : decPoint,
-            t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-            s = n < 0 ? '-' : '',
-            i = String(pInt(mathAbs(n).toFixed(c))),
-            j = i.length > 3 ? i.length % 3 : 0;
+    Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
-        return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
-                (c ? d + Math.abs(n - i + Math.pow(10, -Math.max(c, origDec) - 1)).toFixed(c).slice(2) : '')); // Add power for #4573
+        number = +number || 0;
+
+        var lang = defaultOptions.lang,
+            origDec = (number.toString().split('.')[1] || '').length,
+            decimalComponent,
+            strinteger,
+            thousands,
+            ret;
+
+        if (decimals === -1) {
+            decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
+        } else if (isNaN(decimals)) {
+            decimals = 2;
+        }
+
+        // A string containing the positive integer component of the number
+        strinteger = String(pInt(Math.abs(number).toFixed(decimals)));
+
+        // Leftover after grouping into thousands. Can be 0, 1 or 3.
+        thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
+
+        // Language
+        decimalPoint = pick(decimalPoint, lang.decimalPoint);
+        thousandsSep = pick(thousandsSep, lang.thousandsSep);
+
+        // Start building the return
+        ret = number < 0 ? '-' : '';
+
+        // Add the leftover after grouping into thousands. For example, in the number 42 000 000,
+        // this line adds 42.
+        ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
+
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+
+        // Add the decimal point and the decimal component
+        if (decimals) {
+            decimalComponent = Math.abs(number - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
+            ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2); // Add power for #4573
+        }
+
+        return ret;
     };
 
     /**
