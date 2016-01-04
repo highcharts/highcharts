@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-22)
+ * @license Highcharts JS v4.2.0-modified (2016-01-04)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -16433,7 +16433,7 @@
                         zIndex: 0 // #1069
                     };
                     if (!prop[2]) {
-                        attr['fill-opacity'] = options.fillOpacity || 0.75;
+                        attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
                     }
                     series[areaKey] = series.chart.renderer.path(areaPath)
                         .attr(attr)
