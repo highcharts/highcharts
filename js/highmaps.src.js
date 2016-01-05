@@ -9890,6 +9890,7 @@
 
             if (this.selectionMarker) {
                 var selectionData = {
+                        originalEvent: e, // #4890
                         xAxis: [],
                         yAxis: []
                     },
