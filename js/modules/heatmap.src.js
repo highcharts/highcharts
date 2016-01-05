@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-21)
+ * @license Highcharts JS v4.2.0-modified (2016-01-05)
  *
- * (c) 2011-2014 Torstein Honsi
+ * (c) 2011-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
