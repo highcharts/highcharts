@@ -205,7 +205,7 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	proceed.call(this, credits);
 
-	if (this.credits) {
+	if (this.credits && this.mapCreditsFull) {
 		this.credits.attr({
 			title: this.mapCreditsFull
 		});
