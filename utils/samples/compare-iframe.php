@@ -124,9 +124,20 @@ function getHTML($which) {
 		$exporting = $leftExporting;
 		
 	} else {
+
+		// These are the files we want to test. Append a time stamp to ensure we're not loading
+		// from browser cache.
+		$s = preg_replace_callback(
+			'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
+			function ($matches) {
+				global $rightPath;
+				$src = $rightPath . $matches[1];
+				$src = str_replace('.js', '.js?' . mktime(), $src);
+				return $src;
+			},
+			$s
+		);
 		
-		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
-		$s = str_replace('.js"', '.js?' . mktime() . '"', $s);
 		$exporting = $rightExporting;
 	}
 
