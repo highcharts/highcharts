@@ -7729,14 +7729,18 @@
 
             if (startOnTick) {
                 this.min = roundedMin;
-            } else if (this.min - minPointOffset > roundedMin) {
-                tickPositions.shift();
+            } else {
+                while (this.min - minPointOffset > tickPositions[0]) {
+                    tickPositions.shift();
+                }
             }
 
             if (endOnTick) {
                 this.max = roundedMax;
-            } else if (this.max + minPointOffset < roundedMax) {
-                tickPositions.pop();
+            } else {
+                while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+                    tickPositions.pop();
+                }
             }
 
             // If no tick are left, set one tick in the middle (#3195)
