@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2015-12-29)
+ * @license Highcharts JS v4.2.0-modified (2015-12-22)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -13960,6 +13960,7 @@
                 getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
                 xExtremes,
+                val2lin = xAxis.val2lin,
                 min,
                 max;
 
@@ -13997,8 +13998,8 @@
             // Find the closest distance between processed points
             i = processedXData.length;
             while (--i) {
-                distance = xAxis && xAxis.isLog ?
-                    xAxis.val2lin(processedXData[i]) - xAxis.val2lin(processedXData[i - 1]) :
+                distance = xAxis.isLog ?
+                    val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
                     processedXData[i] - processedXData[i - 1];
 
                 if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
