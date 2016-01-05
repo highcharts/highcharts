@@ -552,7 +552,7 @@ Series.prototype = {
 
 
 		// Find the closest distance between processed points
-		i = processedXData.length;
+		i = processedXData.length || 1;
 		while (--i) {
 			distance = isLog ?
 				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :

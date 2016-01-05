@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-04)
+ * @license Highmaps JS v4.2.0-modified (2016-01-05)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -13504,7 +13504,7 @@
 
 
             // Find the closest distance between processed points
-            i = processedXData.length;
+            i = processedXData.length || 1;
             while (--i) {
                 distance = isLog ?
                     val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
