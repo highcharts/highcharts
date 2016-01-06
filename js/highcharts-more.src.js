@@ -2424,7 +2424,7 @@ var arrayMin = Highcharts.arrayMin,
          * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in
          * line-like series.
          */
-        wrap(seriesProto, 'getGraphPath', function (proceed, points, nullsAsZeroes) {
+        wrap(seriesProto, 'getGraphPath', function (proceed, points) {
             var series = this;
         
             // Connect the path
@@ -2445,7 +2445,7 @@ var arrayMin = Highcharts.arrayMin,
             }
 
             // Run uber method
-            return proceed.call(this, points, nullsAsZeroes);
+            return proceed.apply(this, [].slice.call(arguments, 1));
     
         });
 

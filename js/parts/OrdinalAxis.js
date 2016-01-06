@@ -630,7 +630,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getGraphPath by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points, nullsAsZeroes) {
+wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points) {
 
 	var gapSize = this.options.gapSize,
 		xAxis = this.xAxis,
@@ -654,7 +654,7 @@ wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points, nullsAsZer
 	}
 
 	// Call base method
-	return proceed.call(this, points, nullsAsZeroes);
+	return proceed.apply(this, [].slice.call(arguments, 1));
 
 });
 
