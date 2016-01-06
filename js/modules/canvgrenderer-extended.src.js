@@ -2,13 +2,14 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * CanVGRenderer Extension module
  *
- * (c) 2011-2012 Torstein Honsi, Erik Olsson
+ * (c) 2011-2016 Torstein Honsi, Erik Olsson
  *
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts) { // encapsulate
+(function (Highcharts) {
 	var UNDEFINED,
+		win = Highcharts.win,
 		DIV = 'div',
 		ABSOLUTE = 'absolute',
 		RELATIVE = 'relative',
@@ -199,7 +200,7 @@
 		 */
 		draw: function () {
 			var renderer = this;
-			window.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
+			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
 }(Highcharts));

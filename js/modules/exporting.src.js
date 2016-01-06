@@ -2,19 +2,27 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2014 Torstein Honsi
+ * (c) 2010-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 /* eslint indent:0 */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 // create shortcuts
-var Chart = Highcharts.Chart,
+var win = Highcharts.win,
+	doc = win.document,
+	Chart = Highcharts.Chart,
 	addEvent = Highcharts.addEvent,
 	removeEvent = Highcharts.removeEvent,
-	fireEvent = HighchartsAdapter.fireEvent,
+	fireEvent = Highcharts.fireEvent,
 	createElement = Highcharts.createElement,
 	discardElement = Highcharts.discardElement,
 	css = Highcharts.css,
@@ -24,8 +32,6 @@ var Chart = Highcharts.Chart,
 	splat = Highcharts.splat,
 	math = Math,
 	mathMax = math.max,
-	doc = document,
-	win = window,
 	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
@@ -255,7 +261,7 @@ extend(Chart.prototype, {
 			cssHeight,
 			html,
 			options = merge(chart.options, additionalOptions), // copy the options and add extra options
-			allowHTML = options.exporting.allowHTML; // docs: experimental, see #2473
+			allowHTML = options.exporting.allowHTML;
 			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -533,9 +539,9 @@ extend(Chart.prototype, {
 
 
 			// Hide it on clicking or touching outside the menu (#2258, #2335, #2407)
-			addEvent(document, 'mouseup', docMouseUpHandler);
+			addEvent(doc, 'mouseup', docMouseUpHandler);
 			addEvent(chart, 'destroy', function () {
-				removeEvent(document, 'mouseup', docMouseUpHandler);
+				removeEvent(doc, 'mouseup', docMouseUpHandler);
 			});
 
 
@@ -771,4 +777,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}(Highcharts));
+}));

@@ -14,8 +14,8 @@ QUnit.test('Drill down on points or categories', function (assert) {
         'Check first series'
     );
 
-    // Run click through jQuery just like the adapter would...
-    $(chart.series[0].points[0]).click();
+    // Click first point
+    Highcharts.fireEvent(chart.series[0].points[0], 'click');
     assert.equal(
         chart.series.length,
         1,

@@ -129,8 +129,9 @@ function getResources() {
 					return;
 				}
 
-
-				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+				if (typeof Highcharts !== 'undefined') {
+					$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+				}
 
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document;
@@ -176,9 +177,11 @@ function getResources() {
 					$('#main-content').css({
 						width: checked ? '50%' : '100%'
 					});
-					$.each(Highcharts.charts, function () {
-						this.reflow();
-					});
+					if (typeof Highcharts !== 'undefined') {
+						$.each(Highcharts.charts, function () {
+							this.reflow();
+						});
+					}
 
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
@@ -220,85 +223,91 @@ function getResources() {
 			
 			var checkbox = $('#record')[0],
 				pre = $('pre#recording')[0];
-			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
-				if (checkbox.checked) {
-					pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
-						"    type: 'mousedown',\n" +
-						"    pageX: " + e.pageX + ",\n" + 
-						"    pageY: " + e.pageY + "\n" + 
-						"});\n\n";
-				}
-				return proceed.call(this, e);
-			});
-			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
-				if (checkbox.checked) {
-					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-						"    type: 'mousemove',\n" +
-						"    pageX: " + e.pageX + ",\n" + 
-						"    pageY: " + e.pageY + ",\n" +  
-						"    target: chart.container\n" + 
-						"});\n\n";
-				}
-				return proceed.call(this, e);
-			});
-			Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
-				if (checkbox.checked) {
-					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-						"    type: 'mouseup'\n" + 
-						"});\n\n";
-				}
-				return proceed.call(this, e);
-			});
+			if (typeof Highcharts !== 'undefined') {
+				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
+					if (checkbox.checked) {
+						pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
+							"    type: 'mousedown',\n" +
+							"    pageX: " + e.pageX + ",\n" + 
+							"    pageY: " + e.pageY + "\n" + 
+							"});\n\n";
+					}
+					return proceed.call(this, e);
+				});
+				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
+					if (checkbox.checked) {
+						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+							"    type: 'mousemove',\n" +
+							"    pageX: " + e.pageX + ",\n" + 
+							"    pageY: " + e.pageY + ",\n" +  
+							"    target: chart.container\n" + 
+							"});\n\n";
+					}
+					return proceed.call(this, e);
+				});
+				Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
+					if (checkbox.checked) {
+						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+							"    type: 'mouseup'\n" + 
+							"});\n\n";
+					}
+					return proceed.call(this, e);
+				});
+			}
 		});
 		
 
 		<?php if (@$_GET['profile']) : ?>
 		$(function () {
-			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
-				var chart,
-					start;
+			if (typeof Highcharts !== 'undefined') {
+				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+					var chart,
+						start;
 
-				// Start profile
-				if (window.console && console.profileEnd) {
-					console.profile('<?php echo $path ?>');
-				}
-				
-				chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+					// Start profile
+					if (window.console && console.profileEnd) {
+						console.profile('<?php echo $path ?>');
+					}
+					
+					chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-				if (window.console && console.profileEnd) {
-			 		console.profileEnd();
-			 	}
+					if (window.console && console.profileEnd) {
+				 		console.profileEnd();
+				 	}
 
-			 	return chart;
+				 	return chart;
 
-			});
+				});
+			}
 		});
 		<?php endif ?>
 		<?php if (@$_GET['time']) : ?>
 		$(function () {
-			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
-				var chart,
-					start;
+			if (typeof Highcharts !== 'undefined') {
+				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+					var chart,
+						start;
 
-				// Start profile
-				if (window.console && console.time) {
-					console.time('<?php echo $path ?>');
-				} else {
-					start = +new Date();
-				}
+					// Start profile
+					if (window.console && console.time) {
+						console.time('<?php echo $path ?>');
+					} else {
+						start = +new Date();
+					}
 
 
-				chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+					chart = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-				if (window.console && console.time) {
-					console.timeEnd('<?php echo $path ?>');
-				} else if (window.console) {
-					console.log('<?php echo $path ?>: ' + (new Date() - start) + 'ms');
-				}
-				
-			 	return chart;
+					if (window.console && console.time) {
+						console.timeEnd('<?php echo $path ?>');
+					} else if (window.console) {
+						console.log('<?php echo $path ?>: ' + (new Date() - start) + 'ms');
+					}
+					
+				 	return chart;
 
-			});
+				});
+			}
 		});
 		<?php endif ?>
 
@@ -339,7 +348,7 @@ function getResources() {
 				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
 				<a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">jsFiddle</a>
 
 				<a id="view-source" class="button" href="javascript:;">View source</a>
@@ -371,6 +380,7 @@ ob_start();
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Sample</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script type="text/javascript">
@@ -392,6 +402,8 @@ ob_start();
 	</body>
 </html>
 <?php 
-file_put_contents('../draft/index.html', ob_get_clean());
+$draft = ob_get_clean();
+$draft = str_replace('cache.php?file=', '', $draft);
+file_put_contents('../draft/index.html', $draft);
 
 ?>

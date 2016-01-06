@@ -1,7 +1,7 @@
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
 // diffent logic (#3218)
-var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
+var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options

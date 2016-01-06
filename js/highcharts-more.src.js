@@ -2,14 +2,20 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-24)
+ * @license Highcharts JS v4.2.0-modified (2016-01-06)
  *
- * (c) 2009-2014 Torstein Honsi
+ * (c) 2009-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts, UNDEFINED) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 var arrayMin = Highcharts.arrayMin,
         arrayMax = Highcharts.arrayMax,
         each = Highcharts.each,
@@ -35,7 +41,8 @@ var arrayMin = Highcharts.arrayMin,
         mathFloor = math.floor,
         mathMax = math.max,
         Color = Highcharts.Color,
-        noop = function () {};/**
+        noop = function () {},
+        UNDEFINED;/**
      * The Pane object allows options that are common to a set of X and Y axes.
      *
      * In the future, this can be extended to basic Highcharts and Highstock.
@@ -953,6 +960,8 @@ var arrayMin = Highcharts.arrayMin,
             translate: function () {
                 var series = this,
                     yAxis = series.yAxis,
+                    xAxis = series.xAxis,
+                    chart = series.chart,
                     plotHigh;
 
                 colProto.translate.apply(series);
@@ -965,7 +974,6 @@ var arrayMin = Highcharts.arrayMin,
                         height,
                         y;
 
-                    point.tooltipPos = null; // don't inherit from column
                     point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
                     point.plotLow = point.plotY;
 
@@ -987,6 +995,17 @@ var arrayMin = Highcharts.arrayMin,
 
                     shapeArgs.height = height;
                     shapeArgs.y = y;
+
+                    point.tooltipPos = chart.inverted ? 
+                        [ 
+                            yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+                            xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+                            height
+                        ] : [
+                            xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+                            yAxis.pos - chart.plotTop + y + height / 2, 
+                            height
+                        ]; // don't inherit from column tooltip position - #3372
                 });
             },
             directTouch: true,
@@ -1158,7 +1177,8 @@ var arrayMin = Highcharts.arrayMin,
                             stroke: dialOptions.borderColor || 'none',
                             'stroke-width': dialOptions.borderWidth || 0,
                             fill: dialOptions.backgroundColor || 'black',
-                            rotation: shapeArgs.rotation // required by VML when animation is false
+                            rotation: shapeArgs.rotation, // required by VML when animation is false
+                            zIndex: 1
                         })
                         .add(series.group);
                 }
@@ -1175,7 +1195,8 @@ var arrayMin = Highcharts.arrayMin,
                     .attr({
                         'stroke-width': pivotOptions.borderWidth || 0,
                         stroke: pivotOptions.borderColor || 'silver',
-                        fill: pivotOptions.backgroundColor || 'black'
+                        fill: pivotOptions.backgroundColor || 'black',
+                        zIndex: 2
                     })
                     .translate(center[0], center[1])
                     .add(series.group);
@@ -1600,12 +1621,14 @@ var arrayMin = Highcharts.arrayMin,
                 previousY,
                 previousIntermediate,
                 range,
+                minPointLength = pick(options.minPointLength, 5),
                 threshold = options.threshold,
                 stacking = options.stacking,
                 tooltipY;
 
             // run column series translate
             seriesTypes.column.prototype.translate.apply(this);
+            series.minPointLengthOffset = 0;
 
             previousY = previousIntermediate = threshold;
             points = series.points;
@@ -1637,11 +1660,11 @@ var arrayMin = Highcharts.arrayMin,
                 // sum points
                 if (point.isSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
+                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
                 } else if (point.isIntermediateSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
+                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
                     previousIntermediate = range[1];
 
                 // If it's not the sum point, update previous stack end position and get
@@ -1664,8 +1687,15 @@ var arrayMin = Highcharts.arrayMin,
                 shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
                 point.yBottom = shapeArgs.y + shapeArgs.height;
 
+                if (shapeArgs.height <= minPointLength) {
+                    shapeArgs.height = minPointLength;
+                    series.minPointLengthOffset += minPointLength;
+                }
+
+                shapeArgs.y -= series.minPointLengthOffset;
+
                 // Correct tooltip placement (#3014)
-                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
                 if (series.chart.inverted) {
                     point.tooltipPos[0] = yAxis.len - tooltipY;
                 } else {
@@ -2623,4 +2653,4 @@ var arrayMin = Highcharts.arrayMin,
 
     }());
 
-}(Highcharts));
+}));

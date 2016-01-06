@@ -1,25 +1,25 @@
 $(function () {
     QUnit.test('3d pie with zeroes', function (assert) {
-		var chart = $('#container').highcharts({
-			chart: {
-				options3d: {
-					enabled: true,
-					alpha: 45
-				}
-			},		
-			series: [{
-				type: 'pie',
-				depth: 50,
-				borderColor: 'green',
-				data: [null,1]
-			}]
-		},function (chart) {
-			chart.series[0].addPoint({y:2});
-		}).highcharts();
-			
+        var chart = $('#container').highcharts({
+            chart: {
+                options3d: {
+                    enabled: true,
+                    alpha: 45
+                }
+            },
+            series: [{
+                type: 'pie',
+                depth: 50,
+                borderColor: 'green',
+                data: [null,1]
+            }]
+        },function () {
+            this.series[0].addPoint({ y: 2 });
+        }).highcharts();
+
         assert.strictEqual(
             chart.series[0].points.length,
-            2,
+            3,
             'Rendered succesfully'
         );
         assert.strictEqual(
@@ -37,7 +37,7 @@ $(function () {
             false,
             'Null point does not have data label'
         );
-		assert.strictEqual(
+        assert.strictEqual(
             chart.series[0].points[1].graphic instanceof Highcharts.SVGElement,
             true,
             'Not null point has graphic'
@@ -52,6 +52,5 @@ $(function () {
             true,
             'Not null point has data label'
         );
-        
     });
 });

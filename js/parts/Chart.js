@@ -1,10 +1,15 @@
 /**
- * The chart class
+ * The Chart class
+ * @param {String|Object} renderTo The DOM element to render to, or its id
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
 var Chart = Highcharts.Chart = function () {
-	this.init.apply(this, arguments);
+	this.getArgs.apply(this, arguments);
+};
+
+Highcharts.chart = function (a, b, c) {
+	return new Chart(a, b, c);
 };
 
 Chart.prototype = {
@@ -13,6 +18,21 @@ Chart.prototype = {
 	 * Hook for modules
 	 */
 	callbacks: [],
+
+	/**
+	 * Handle the arguments passed to the constructor
+	 * @returns {Array} Arguments without renderTo
+	 */
+	getArgs: function () {
+		var args = [].slice.call(arguments);
+		
+		// Remove the optional first argument, renderTo, and
+		// set it on this.
+		if (isString(args[0]) || args[0].nodeName) {
+			this.renderTo = args.shift();
+		}
+		this.init(args[0], args[1]);
+	},
 
 	/**
 	 * Initialize the chart
@@ -292,7 +312,7 @@ Chart.prototype = {
 		renderer.draw();
 
 		// fire the event
-		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
+		fireEvent(chart, 'redraw');
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -502,12 +522,12 @@ Chart.prototype = {
 			heightOption = optionsChart.height,
 			renderTo = chart.renderToClone || chart.renderTo;
 
-		// get inner width and height from jQuery (#824)
+		// Get inner width and height
 		if (!defined(widthOption)) {
-			chart.containerWidth = adapterRun(renderTo, 'width');
+			chart.containerWidth = getStyle(renderTo, 'width');
 		}
 		if (!defined(heightOption)) {
-			chart.containerHeight = adapterRun(renderTo, 'height');
+			chart.containerHeight = getStyle(renderTo, 'height');
 		}
 
 		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
@@ -564,15 +584,16 @@ Chart.prototype = {
 			optionsChart = options.chart,
 			chartWidth,
 			chartHeight,
-			renderTo,
+			renderTo = chart.renderTo,
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId;
+			containerId = 'highcharts-' + idCounter++;
 
-		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = PREFIX + idCounter++;
-
+		if (!renderTo) {
+			chart.renderTo = renderTo = optionsChart.renderTo;
+		}
+		
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = doc.getElementById(renderTo);
 		}
@@ -719,9 +740,9 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			width = optionsChart.width || adapterRun(renderTo, 'width'),
-			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : win; // #805 - MooTools doesn't supply e
+			width = optionsChart.width || getStyle(renderTo, 'width'),
+			height = optionsChart.height || getStyle(renderTo, 'height'),
+			target = e ? e.target : win;
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
@@ -1169,7 +1190,7 @@ Chart.prototype = {
 
 		// If the plot area size has changed significantly, calculate tick positions again
 		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-		redoVertical = tempHeight / chart.plotHeight > 1.1;
+		redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
 
 		if (redoHorizontal || redoVertical) {
 
@@ -1226,7 +1247,7 @@ Chart.prototype = {
 			)
 			.on('click', function () {
 				if (credits.href) {
-					location.href = credits.href;
+					win.location.href = credits.href;
 				}
 			})
 			.attr({

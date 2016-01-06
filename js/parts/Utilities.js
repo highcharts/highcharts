@@ -1,3 +1,242 @@
+var timers = [],
+	getStyle,
+
+	// Previous adapter functions
+	inArray,
+	each,
+	grep,
+	offset,
+	map,
+	addEvent,
+	removeEvent,
+	fireEvent,
+	animate,
+	stop;
+
+/**
+ * An animator object. One instance applies to one property (attribute or style prop) 
+ * on one element.
+ * 
+ * @param {object} elem    The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
+ * @param {object} options Animation options, including duration, easing, step and complete.
+ * @param {object} prop    The property to animate.
+ */
+function Fx(elem, options, prop) {
+	this.options = options;
+	this.elem = elem;
+	this.prop = prop;
+}
+Fx.prototype = {
+	
+	/**
+	 * Animating a path definition on SVGElement
+	 * @returns {undefined} 
+	 */
+	dSetter: function () {
+		var start = this.paths[0],
+			end = this.paths[1],
+			ret = [],
+			now = this.now,
+			i = start.length,
+			startVal;
+
+		if (now === 1) { // land on the final path without adjustment points appended in the ends
+			ret = this.toD;
+
+		} else if (i === end.length && now < 1) {
+			while (i--) {
+				startVal = parseFloat(start[i]);
+				ret[i] =
+					isNaN(startVal) ? // a letter instruction like M or L
+							start[i] :
+							now * (parseFloat(end[i] - startVal)) + startVal;
+
+			}
+		} else { // if animation is finished or length not matching, land on right value
+			ret = end;
+		}
+		this.elem.attr('d', ret);
+	},
+
+	/**
+	 * Update the element with the current animation step
+	 * @returns {undefined}
+	 */
+	update: function () {
+		var elem = this.elem,
+			prop = this.prop, // if destroyed, it is null
+			now = this.now,
+			step = this.options.step;
+
+		// Animation setter defined from outside
+		if (this[prop + 'Setter']) {
+			this[prop + 'Setter']();
+
+		// Other animations on SVGElement
+		} else if (elem.attr) {
+			if (elem.element) {
+				elem.attr(prop, now);
+			}
+
+		// HTML styles, raw HTML content like container size
+		} else {
+			elem.style[prop] = now + this.unit;
+		}
+		
+		if (step) {
+			step.call(elem, now, this);
+		}
+
+	},
+
+	/**
+	 * Run an animation
+	 */
+	run: function (from, to, unit) {
+		var self = this,
+			timer = function (gotoEnd) {
+				return timer.stopped ? false : self.step(gotoEnd);
+			},
+			i;
+
+		this.startTime = +new Date();
+		this.start = from;
+		this.end = to;
+		this.unit = unit;
+		this.now = this.start;
+		this.pos = 0;
+
+		timer.elem = this.elem;
+
+		if (timer() && timers.push(timer) === 1) {
+			timer.timerId = setInterval(function () {
+				
+				for (i = 0; i < timers.length; i++) {
+					if (!timers[i]()) {
+						timers.splice(i--, 1);
+					}
+				}
+
+				if (!timers.length) {
+					clearInterval(timer.timerId);
+				}
+			}, 13);
+		}
+	},
+	
+	/**
+	 * Run a single step in the animation
+	 * @param   {Boolean} gotoEnd Whether to go to then endpoint of the animation after abort
+	 * @returns {Boolean} True if animation continues
+	 */
+	step: function (gotoEnd) {
+		var t = +new Date(),
+			ret,
+			done,
+			options = this.options,
+			elem = this.elem,
+			complete = options.complete,
+			duration = options.duration,
+			curAnim = options.curAnim,
+			i;
+		
+		if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
+			ret = false;
+
+		} else if (gotoEnd || t >= duration + this.startTime) {
+			this.now = this.end;
+			this.pos = 1;
+			this.update();
+
+			curAnim[this.prop] = true;
+
+			done = true;
+			for (i in curAnim) {
+				if (curAnim[i] !== true) {
+					done = false;
+				}
+			}
+
+			if (done && complete) {
+				complete.call(elem);
+			}
+			ret = false;
+
+		} else {
+			this.pos = options.easing((t - this.startTime) / duration);
+			this.now = this.start + ((this.end - this.start) * this.pos);
+			this.update();
+			ret = true;
+		}
+		return ret;
+	},
+
+	/**
+	 * Prepare start and end values so that the path can be animated one to one
+	 */
+	initPath: function (elem, fromD, toD) {
+		fromD = fromD || '';
+		var shift = elem.shift,
+			bezier = fromD.indexOf('C') > -1,
+			numParams = bezier ? 7 : 3,
+			endLength,
+			slice,
+			i,
+			start = fromD.split(' '),
+			end = [].concat(toD), // copy
+			startBaseLine,
+			endBaseLine,
+			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
+				i = arr.length;
+				while (i--) {
+					if (arr[i] === M) {
+						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
+					}
+				}
+			};
+
+		if (bezier) {
+			sixify(start);
+			sixify(end);
+		}
+
+		// pull out the base lines before padding
+		if (elem.isArea) {
+			startBaseLine = start.splice(start.length - 6, 6);
+			endBaseLine = end.splice(end.length - 6, 6);
+		}
+
+		// if shifting points, prepend a dummy point to the end path
+		if (shift <= end.length / numParams && start.length === end.length) {
+			while (shift--) {
+				end = [].concat(end).splice(0, numParams).concat(end);
+			}
+		}
+		elem.shift = 0; // reset for following animations
+
+		// copy and append last point until the length matches the end length
+		if (start.length) {
+			endLength = end.length;
+			while (start.length < endLength) {
+
+				//bezier && sixify(start);
+				slice = [].concat(start).splice(start.length - numParams, numParams);
+				if (bezier) { // disable first control point
+					slice[numParams - 6] = slice[numParams - 2];
+					slice[numParams - 5] = slice[numParams - 1];
+				}
+				start = start.concat(slice);
+			}
+		}
+
+		if (startBaseLine) { // append the base lines for areas
+			start = start.concat(startBaseLine);
+			end = end.concat(endBaseLine);
+		}
+		return [start, end];
+	}
+}; // End of Fx prototype
+
 
 /**
  * Extend an object with the members of another
@@ -133,7 +372,7 @@ function erase(arr, item) {
 }
 
 /**
- * Returns true if the object is not null or undefined. Like MooTools' $.defined.
+ * Returns true if the object is not null or undefined.
  * @param {Object} obj
  */
 function defined(obj) {
@@ -172,8 +411,7 @@ function attr(elem, prop, value) {
 	return ret;
 }
 /**
- * Check if an element is an array, and if not, make it into an array. Like
- * MooTools' $.splat.
+ * Check if an element is an array, and if not, make it into an array.
  */
 function splat(obj) {
 	return isArray(obj) ? obj : [obj];
@@ -181,10 +419,10 @@ function splat(obj) {
 
 /**
  * Set a timeout if the delay is given, otherwise perform the function synchronously
- * @param   {Function} fn      The function to perform
+ * @param   {Function} fn	  The function to perform
  * @param   {Number}   delay   Delay in milliseconds
  * @param   {Ojbect}   context The context
- * @returns {Nubmer}           An identifier for the timeout
+ * @returns {Nubmer}		   An identifier for the timeout
  */
 function syncTimeout(fn, delay, context) {
 	if (delay) {
@@ -195,7 +433,7 @@ function syncTimeout(fn, delay, context) {
 
 
 /**
- * Return the first value that is defined. Like MooTools' $.pick.
+ * Return the first value that is defined.
  */
 var pick = Highcharts.pick = function () {
 	var args = arguments,
@@ -635,22 +873,490 @@ timeUnits = {
  * Format a number and return a string based on input settings
  * @param {Number} number The input number to format
  * @param {Number} decimals The amount of decimals
- * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+ * @param {String} decimalPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
-		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = +number || 0,
-		c = decimals === -1 ?
-				Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-				(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
-		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? '-' : '',
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
+Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
-	return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
+	number = +number || 0;
+
+	var lang = defaultOptions.lang,
+		origDec = (number.toString().split('.')[1] || '').length,
+		decimalComponent,
+		strinteger,
+		thousands,
+		absNumber = Math.abs(number),
+		ret;
+
+	if (decimals === -1) {
+		decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
+	} else if (isNaN(decimals)) {
+		decimals = 2;
+	}
+
+	// A string containing the positive integer component of the number
+	strinteger = String(pInt(absNumber.toFixed(decimals)));
+
+	// Leftover after grouping into thousands. Can be 0, 1 or 3.
+	thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
+
+	// Language
+	decimalPoint = pick(decimalPoint, lang.decimalPoint);
+	thousandsSep = pick(thousandsSep, lang.thousandsSep);
+
+	// Start building the return
+	ret = number < 0 ? '-' : '';
+
+	// Add the leftover after grouping into thousands. For example, in the number 42 000 000,
+	// this line adds 42.
+	ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
+
+	// Add the remaining thousands groups, joined by the thousands separator
+	ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+
+	// Add the decimal point and the decimal component
+	if (decimals) {
+		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
+		decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
+		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
+	}
+
+	return ret;
 };
+
+/**
+ * Easing definition
+ * @param   {Number} pos Current position, ranging from 0 to 1
+ */
+Math.easeInOutSine = function (pos) {
+	return -0.5 * (Math.cos(Math.PI * pos) - 1);
+};
+
+/**
+ * Internal method to return CSS value for given element and property
+ */
+getStyle = function (el, prop) {
+	var style = win.getComputedStyle(el, undefined);
+	return style && pInt(style.getPropertyValue(prop));
+};
+
+/**
+ * Return the index of an item in an array, or -1 if not found
+ */
+inArray = function (item, arr) {
+	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
+};
+
+/**
+ * Filter an array
+ */
+grep = function (elements, callback) {
+	return [].filter.call(elements, callback);
+};
+
+/**
+ * Map an array
+ */
+map = function (arr, fn) {
+	var results = [], i = 0, len = arr.length;
+
+	for (; i < len; i++) {
+		results[i] = fn.call(arr[i], arr[i], i, arr);
+	}
+
+	return results;
+};
+
+/**
+ * Get the element's offset position, corrected by overflow:auto.
+ */
+offset = function (el) {
+	var docElem = doc.documentElement,
+		box = el.getBoundingClientRect();
+
+	return {
+		top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+		left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+	};
+};
+
+/**
+ * Stop running animation.
+ * A possible extension to this would be to stop a single property, when
+ * we want to continue animating others. Then assign the prop to the timer
+ * in the Fx.run method, and check for the prop here. This would be an improvement
+ * in all cases where we stop the animation from .attr. Instead of stopping
+ * everything, we can just stop the actual attributes we're setting.
+ */
+stop = function (el) {
+
+	var i = timers.length;
+
+	// Remove timers related to this element (#4519)
+	while (i--) {
+		if (timers[i].elem === el) {
+			timers[i].stopped = true; // #4667
+		}
+	}
+};
+
+/**
+ * Utility for iterating over an array.
+ * @param {Array} arr
+ * @param {Function} fn
+ */
+each = function (arr, fn) { // modern browsers
+	return Array.prototype.forEach.call(arr, fn);
+};
+
+/**
+ * Add an event listener
+ */
+addEvent = function (el, type, fn) {
+	
+	var events = el.hcEvents = el.hcEvents || {};
+
+	function wrappedFn(e) {
+		e.target = e.srcElement || win; // #2820
+		fn.call(el, e);
+	}
+
+	// Handle DOM events in modern browsers
+	if (el.addEventListener) {
+		el.addEventListener(type, fn, false);
+
+	// Handle old IE implementation
+	} else if (el.attachEvent) {
+
+		if (!el.hcEventsIE) {
+			el.hcEventsIE = {};
+		}
+
+		// Link wrapped fn with original fn, so we can get this in removeEvent
+		el.hcEventsIE[fn.toString()] = wrappedFn;
+
+		el.attachEvent('on' + type, wrappedFn);
+	}
+
+	if (!events[type]) {
+		events[type] = [];
+	}
+
+	events[type].push(fn);
+};
+
+/**
+ * Remove event added with addEvent
+ */
+removeEvent = function (el, type, fn) {
+	
+	var events,
+		hcEvents = el.hcEvents,
+		index;
+
+	function removeOneEvent(type, fn) {
+		if (el.removeEventListener) {
+			el.removeEventListener(type, fn, false);
+		} else if (el.attachEvent) {
+			fn = el.hcEventsIE[fn.toString()];
+			el.detachEvent('on' + type, fn);
+		}
+	}
+
+	function removeAllEvents() {
+		var types,
+			len,
+			n;
+
+		if (!el.nodeName) {
+			return; // break on non-DOM events
+		}
+
+		if (type) {
+			types = {};
+			types[type] = true;
+		} else {
+			types = hcEvents;
+		}
+
+		for (n in types) {
+			if (hcEvents[n]) {
+				len = hcEvents[n].length;
+				while (len--) {
+					removeOneEvent(n, hcEvents[n][len]);
+				}
+			}
+		}
+	}
+
+	if (hcEvents) {
+		if (type) {
+			events = hcEvents[type] || [];
+			if (fn) {
+				index = inArray(fn, events);
+				if (index > -1) {
+					events.splice(index, 1);
+					hcEvents[type] = events;
+				}
+				removeOneEvent(type, fn);
+
+			} else {
+				removeAllEvents();
+				hcEvents[type] = [];
+			}
+		} else {
+			removeAllEvents();
+			el.hcEvents = {};
+		}
+	}
+};
+
+/**
+ * Fire an event on a custom object
+ */
+fireEvent = function (el, type, eventArguments, defaultFunction) {
+	var e,
+		hcEvents = el.hcEvents,
+		events,
+		len,
+		i,
+		preventDefault,
+		fn;
+
+	eventArguments = eventArguments || {};
+
+	if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+		e = doc.createEvent('Events');
+		e.initEvent(type, true, true);
+		e.target = el;
+
+		extend(e, eventArguments);
+
+		if (el.dispatchEvent) {
+			el.dispatchEvent(e);
+		} else {
+			el.fireEvent(type, e);
+		}
+
+	} else if (hcEvents) {
+		
+		events = hcEvents[type] || [];
+		len = events.length;
+
+		// Attach a simple preventDefault function to skip default handler if called
+		preventDefault = function () {
+			eventArguments.defaultPrevented = true;
+		};
+		
+		for (i = 0; i < len; i++) {
+			fn = events[i];
+
+			// eventArguments is never null here
+			if (eventArguments.stopped) {
+				return;
+			}
+
+			eventArguments.preventDefault = preventDefault;
+			eventArguments.target = el;
+
+			// If the type is not set, we're running a custom event (#2297). If it is set,
+			// we're running a browser event, and setting it will cause en error in
+			// IE8 (#2465).
+			if (!eventArguments.type) {
+				eventArguments.type = type;
+			}
+			
+			// If the event handler return false, prevent the default handler from executing
+			if (fn.call(el, eventArguments) === false) {
+				eventArguments.preventDefault();
+			}
+		}
+	}
+
+	// Run the default if not prevented
+	if (defaultFunction && !eventArguments.defaultPrevented) {
+		defaultFunction(eventArguments);
+	}
+};
+
+/**
+ * The global animate method, which uses Fx to create individual animators.
+ */
+animate = function (el, params, opt) {
+	var start,
+		unit = '',
+		end,
+		fx,
+		args,
+		prop;
+
+	if (!isObject(opt)) { // Number or undefined/null
+		args = arguments;
+		opt = {
+			duration: args[2],
+			easing: args[3],
+			complete: args[4]
+		};
+	}
+	if (!isNumber(opt.duration)) {
+		opt.duration = 400;
+	}
+	opt.easing = Math[opt.easing] || Math.easeInOutSine;
+	opt.curAnim = merge(params);
+
+	for (prop in params) {
+		fx = new Fx(el, opt, prop);
+		end = null;
+
+		if (prop === 'd') {
+			fx.paths = fx.initPath(
+				el,
+				el.d,
+				params.d
+			);
+			fx.toD = params.d;
+			start = 0;
+			end = 1;
+		} else if (el.attr) {
+			start = el.attr(prop);
+		} else {
+			start = parseFloat(getStyle(el, prop)) || 0;
+			if (prop !== 'opacity') {
+				unit = 'px';
+			}
+		}
+
+		if (!end) {
+			end = params[prop];
+		}
+		if (end.match && end.match('px')) {
+			end = end.replace(/px/g, ''); // #4351
+		}
+		fx.run(start, end, unit);
+	}
+};
+
+/**
+ * Register Highcharts as a plugin in jQuery
+ */
+if (win.jQuery) {
+	win.jQuery.fn.highcharts = function () {
+		var args = [].slice.call(arguments);
+
+		if (this[0]) { // this[0] is the renderTo div
+
+			// Create the chart
+			if (args[0]) {
+				new Highcharts[ // eslint-disable-line no-new
+					isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
+				](this[0], args[0], args[1]);
+				return this;
+			}
+
+			// When called without parameters or with the return argument, return an existing chart
+			return charts[attr(this[0], 'data-highcharts-chart')];
+		}
+	};
+}
+
+
+/**
+ * Compatibility section to add support for legacy IE. This can be removed if old IE 
+ * support is not needed.
+ */
+if (doc && !doc.defaultView) {
+	getStyle = function (el, prop) {
+		var val,
+			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
+			
+		if (el.style[prop]) {
+			return pInt(el.style[prop]);
+		}
+		if (prop === 'opacity') {
+			prop = 'filter';
+		}
+
+		// Getting the rendered width and height
+		if (alias) {
+			el.style.zoom = 1;
+			return el[alias] - 2 * getStyle(el, 'padding');
+		}
+		
+		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
+			return b.toUpperCase();
+		})];
+		if (prop === 'filter') {
+			val = val.replace(
+				/alpha\(opacity=([0-9]+)\)/, 
+				function (a, b) { 
+					return b / 100; 
+				}
+			);
+		}
+		
+		return val === '' ? 1 : pInt(val);
+	};
+}
+
+if (!Array.prototype.forEach) {
+	each = function (arr, fn) { // legacy
+		var i = 0, 
+			len = arr.length;
+		for (; i < len; i++) {
+			if (fn.call(arr[i], arr[i], i, arr) === false) {
+				return i;
+			}
+		}
+	};
+}
+
+if (!Array.prototype.indexOf) {
+	inArray = function (item, arr) {
+		var len, 
+			i = 0;
+
+		if (arr) {
+			len = arr.length;
+			
+			for (; i < len; i++) {
+				if (arr[i] === item) {
+					return i;
+				}
+			}
+		}
+
+		return -1;
+	};
+}
+
+if (!Array.prototype.filter) {
+	grep = function (elements, fn) {
+		var ret = [],
+			i = 0,
+			length = elements.length;
+
+		for (; i < length; i++) {
+			if (fn(elements[i], i)) {
+				ret.push(elements[i]);
+			}
+		}
+
+		return ret;
+	};
+}
+
+//--- End compatibility section ---
+
+// Expose utilities
+Highcharts.Fx = Fx;
+Highcharts.inArray = inArray;
+Highcharts.each = each;
+Highcharts.grep = grep;
+Highcharts.offset = offset;
+Highcharts.map = map;
+Highcharts.addEvent = addEvent;
+Highcharts.removeEvent = removeEvent;
+Highcharts.fireEvent = fireEvent;
+Highcharts.animate = animate;
+Highcharts.stop = stop;
+

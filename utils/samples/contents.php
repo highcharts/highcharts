@@ -69,9 +69,23 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 					window.location.reload();
 				});
 
+				var fails = 0;
 				$('#fails-only').click(function () {
-					$('#filtered').css('display', 'block');
-					$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
+
+					fails = (fails + 1) % 3;
+					if (fails === 1) { // Hide passed tests
+						$('#filtered').css('display', 'block');
+						$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
+					
+					} else if (fails === 2) { // Hide manual tests
+						$('#main-nav li.manual').css('display', 'none');
+					
+					} else if (fails === 0) { // Reset
+						$('#filtered').css('display', 'none');
+						$('#main-nav li').css('display', '');	
+					}
+
+					
 				});
 
 				$("#slider").slider({
@@ -266,7 +280,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 	<div id="main-nav">
 
 	<div id="filtered">
-		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
+		Showing only failed samples. Click "Fails only" again to change.
 	</div>
 	<?php
 	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');

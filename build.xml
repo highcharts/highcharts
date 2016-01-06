@@ -127,11 +127,6 @@
         <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
         <property name="gcc.jar" location="${gcc.dir}/compiler.jar"/>
 
-        <!-- YUI compressor -->
-        <property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
-        <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar"/>
-        <property name="yuicomp.output.name" value="highcharts.min-yui.js"/>
-
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
         <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.5.jar"/>
@@ -157,9 +152,6 @@
             <file name="parts/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -202,9 +194,6 @@
             <file name="parts/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -331,9 +320,6 @@
             <file name="parts-map/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
-            <file name="parts/PathAnimation.js"/>
-            <file name="parts/JQueryAdapter.js"/>
-            <file name="parts/Adapters.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
             <file name="parts/SvgRenderer.js"/>
@@ -389,7 +375,6 @@
 
         <!-- Files for the Cloud -->
         <filelist id="highstock-all.files" dir="${dist.dir}">
-            <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highstock/js/${highstock.minified.name}"/>
             <file name="highstock/js/${highchartsmore.minified.name}"/>
             <file name="highstock/js/${highcharts3d.minified.name}"/>
@@ -440,8 +425,11 @@
 
     <!-- Runs jslint on generated source code. -->
     <target name="lint">
-        <exec dir="${basedir}" executable="gulp" outputproperty="output">
+        <exec osfamily="mac" dir="${basedir}" executable="gulp" outputproperty="output">
             <arg line="lint" />
+        </exec>
+        <exec osfamily="windows" dir="${basedir}" executable="cmd" outputproperty="output">
+            <arg value="/c gulp lint"/>
         </exec>
         <echo message="${output}" />
         
@@ -517,7 +505,7 @@
         <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'."/>
     </target>
 
-    <!-- Runs google closure compiler and yui compressor on src. -->
+    <!-- Runs google closure compiler on src. -->
     <target name="compile">
         <!-- This command sets the logging level in current task to only include echo messages. -->
         <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
@@ -531,31 +519,16 @@
             <arg value="--js_output_file"/>
             <arg value="${param.out}"/>
         </java>
-        <java jar="${yuicomp.jar}" fork="true">
-            <arg value="--type"/>
-            <arg value="js"/>
-            <arg value="-o"/>
-            <arg value="${param.out}.yui-min.js"/>
-            <arg value="--charset"/>
-            <arg value="UTF-8"/>
-            <arg value="${param.src}"/>
-        </java>
-
+        
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
         <copy file="${param.out}" tofile="${build.dir}/zipme.js"/>
         <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js"/>
         <length file="${build.dir}/zipped.zip" property="zipped.output.length"/>
-        <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
-        <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js"/>
-        <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js"/>
-        <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length"/>
         <!-- We are not distributing this file, its only used to make sure compilation works. -->
-        <delete file="${param.out}.yui-min.js" quiet="true"/>
         <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)."/>
-        <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)."/>
         <echo message=""/>
     </target>
 
@@ -731,6 +704,32 @@
         <listfiles></listfiles>
     </target>
 
+    <target name="create-dist" depends="set.properties">
+        <mkdir dir="${basedir}/lib"/>
+        <!-- Delete all files in lib -->
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}/lib" includes="**/*"/>
+        </delete>
+        <!-- Additional distribution files in Highstock -->
+        <filelist id="dist.additional.stock" dir="${dist.dir}/highstock/js">
+            <file name="highstock.js"/>
+            <file name="highstock.src.js"/>
+        </filelist>        
+        <!-- Additional distribution files in Highmaps -->
+        <filelist id="dist.additional.maps" dir="${dist.dir}/highmaps/js">
+            <file name="highmaps.js"/>
+            <file name="highmaps.src.js"/>
+            <file name="modules/map.js"/>
+            <file name="modules/map.src.js"/>
+        </filelist>
+        <!-- Copy all distribution files to dist folder -->
+        <copy todir="${basedir}/lib">
+            <fileset dir="${dist.dir}/highcharts/js"/>
+            <filelist refid="dist.additional.stock"/>
+            <filelist refid="dist.additional.maps"/>
+        </copy>
+    </target>
+
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
         <echo message=""/>
@@ -762,22 +761,31 @@
         <echo message=""/>
         <echo message="Building offline api for highcharts, be patient.." />
         <echo message=""/>
-        <exec dir="./" executable="grunt" outputproperty="output">
+        <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
             <arg line="download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
+        </exec>
+        <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
+            <arg line="/c grunt download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
         </exec>
         <echo message="${output}" />
         <echo message=""/>
         <echo message="Building offline api for highstock, be patient.." />
         <echo message=""/>
-        <exec dir="./" executable="grunt" outputproperty="output">
+        <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
             <arg line="download-api:highstock:${highstock.product.version}" /> <!-- version number -->
+        </exec>
+        <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
+            <arg line="/c grunt download-api:highstock:${highstock.product.version}" /> <!-- version number -->
         </exec>
         <echo message="${output}" />
         <echo message=""/>
         <echo message="Building offline api for highmaps, be patient.." />
         <echo message=""/>
-        <exec dir="./" executable="grunt" outputproperty="output">
+        <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
             <arg line="download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
+        </exec>
+        <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
+            <arg line="/c grunt download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
         </exec>
         <echo message="${output}" />
 
@@ -798,7 +806,7 @@
                 }
             }
         </echo>
-        <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
+        <!-- 2.1 Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
@@ -926,6 +934,9 @@
             <fileset dir="${themes.dir}"/>
         </copy>
 
+        <!-- 2.2 Copy all release files to dist folder -->
+        <antcall target="create-dist" />
+
         <!-- 3. Create samples -->
         <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
         <antcall target="create-samples">
@@ -982,51 +993,6 @@
             <fileset dir="samples/graphics"/>
         </copy>
 
-        <!-- 4. Copy export server -->
-        <fileset id="export.module.files" dir="${dist.dir}/highcharts/js/modules/">
-            <exclude name="**/*.src.js"/>
-            <exclude name="canv*"/>
-            <exclude name="map.js"/>
-            <exclude name="map-parser.js"/>
-            <exclude name="exporting*"/>
-        </fileset>
-
-        <!-- update the highcharts export-server (GitHub) with newest js from the files in the dist -->
-        <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highmaps/js/highmaps.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highmaps/js/modules/map.js" todir="exporting-server/phantomjs/"/>
-        <copy todir="exporting-server/phantomjs/">
-            <fileset refid="export.module.files"/>
-        </copy>
-
-        <!-- copy files from phantomjs to java export server (GitHub)-->
-        <delete includeemptydirs="true">
-            <fileset dir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs" includes="**/*"/>
-        </delete>
-        <copy todir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs">
-            <fileset dir="exporting-server/phantomjs/">
-                <exclude name="*.md"/>
-                <exclude name="tmp"/>
-            </fileset>
-        </copy>
-
-        <!-- finally copy highcharts export-server (GitHub) to the distribution folder-->
-        <copy todir="${dist.dir}/highcharts/exporting-server">
-            <fileset dir="exporting-server"/>
-        </copy>
-
-        <delete file="${dist.dir}/highcharts/exporting-server/phantomjs/highstock.js" />
-        <replace file="${dist.dir}/highcharts/exporting-server/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
-        <delete file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highstock.js" />
-        <replace file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
-
-        <!-- copy highstock export-server to distribution folder -->
-        <copy todir="${dist.dir}/highstock/exporting-server">
-            <fileset dir="exporting-server"/>
-        </copy>
         <!-- Make sure files in the zip have lf line endings -->
         <!-- even if being built on windows -->
         <sleep seconds="5"/>
@@ -1688,7 +1654,7 @@
     </target>
 
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
-    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository highcharts.com.site">
+    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
@@ -1703,7 +1669,7 @@
             <fileset dir="errors"/>
         </copy>
         <copy todir="${highcharts.site.dir}/lib">
-            <fileset dir="lib"/>
+            <fileset dir="vendor"/>
         </copy>
     </target>
 

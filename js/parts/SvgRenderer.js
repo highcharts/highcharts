@@ -9,7 +9,7 @@ SVGElement.prototype = {
 	// Default base for animation
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
+	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
 		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 
 	/**
@@ -28,7 +28,7 @@ SVGElement.prototype = {
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
-	 * @param {Number} options The same options as in jQuery animation
+	 * @param {Number} options Options include duration, easing, step and complete
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
@@ -260,7 +260,8 @@ SVGElement.prototype = {
 			element = this.element,
 			hasSetSymbolSize,
 			ret = this,
-			skipAttr;
+			skipAttr,
+			setter;
 
 		// single key-value pair
 		if (typeof hash === 'string' && val !== UNDEFINED) {
@@ -295,12 +296,13 @@ SVGElement.prototype = {
 				}
 
 				if (!skipAttr) {
-					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
-				}
+					setter = this[key + 'Setter'] || this._defaultSetter;
+					setter.call(this, value, key, element);
 
-				// Let the shadow follow the main element
-				if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-					this.updateShadows(key, value);
+					// Let the shadow follow the main element
+					if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+						this.updateShadows(key, value, setter);
+					}
 				}
 			}
 
@@ -321,15 +323,25 @@ SVGElement.prototype = {
 		return ret;
 	},
 
-	updateShadows: function (key, value) {
+	/**
+	 * Update the shadow elements with new attributes
+	 * @param   {String}        key    The attribute name
+	 * @param   {String|Number} value  The value of the attribute
+	 * @param   {Function}      setter The setter function, inherited from the parent wrapper
+	 * @returns {undefined}
+	 */
+	updateShadows: function (key, value, setter) {
 		var shadows = this.shadows,
 			i = shadows.length;
+
 		while (i--) {
-			shadows[i].setAttribute(
-				key,
+			setter.call(
+				null, 
 				key === 'height' ?
-						Math.max(value - (shadows[i].cutHeight || 0), 0) :
-						key === 'd' ? this.d : value
+					Math.max(value - (shadows[i].cutHeight || 0), 0) :
+					key === 'd' ? this.d : value, 
+				key, 
+				shadows[i]
 			);
 		}
 	},
@@ -698,16 +710,16 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function (reload, rotation) {
+	getBBox: function (reload, rot) {
 		var wrapper = this,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
-			rotation = pick(rotation, wrapper.rotation),
+			rotation,
+			rad,
 			element = wrapper.element,
 			styles = wrapper.styles,
-			rad = rotation * deg2rad,
 			textStr = wrapper.textStr,
 			textShadow,
 			elemStyle = element.style,
@@ -715,6 +727,9 @@ SVGElement.prototype = {
 			cache = renderer.cache,
 			cacheKeys = renderer.cacheKeys,
 			cacheKey;
+
+		rotation = pick(rot, wrapper.rotation);
+		rad = rotation * deg2rad;
 
 		if (textStr !== UNDEFINED) {
 
@@ -1224,7 +1239,6 @@ SVGRenderer.prototype = {
 	 */
 	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
-			loc = location,
 			boxWrapper,
 			element,
 			desc;
@@ -1250,7 +1264,7 @@ SVGRenderer.prototype = {
 
 		// Page url used for internal references. #24, #672, #1070
 		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
-				loc.href
+				win.location.href
 					.replace(/#.*?$/, '') // remove the hash
 					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
 					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
@@ -1813,12 +1827,11 @@ SVGRenderer.prototype = {
 		var attr = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
-		wrapper.xSetter = function (value) {
-			this.element.setAttribute('cx', value);
+		// Setting x or y translates to cx and cy
+		wrapper.xSetter = wrapper.ySetter = function (value, key, element) {
+			element.setAttribute('c' + key, value);
 		};
-		wrapper.ySetter = function (value) {
-			this.element.setAttribute('cy', value);
-		};
+
 		return wrapper.attr(attr);
 	},
 
@@ -2062,7 +2075,7 @@ SVGRenderer.prototype = {
 								position: ABSOLUTE,
 								top: '-999em'
 							});
-							document.body.appendChild(this);
+							doc.body.appendChild(this);
 						}
 
 						// Center the image

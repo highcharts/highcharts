@@ -816,10 +816,23 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
+				// Find the closestPointRange across all series
 				each(axis.series, function (series) {
-					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-						pointPlacement = series.options.pointPlacement,
-						seriesClosestPointRange = series.closestPointRange;
+					var seriesClosest = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosest)) {
+						closestPointRange = defined(closestPointRange) ?
+							mathMin(closestPointRange, seriesClosest) :
+							seriesClosest;
+					}
+				});
+
+				each(axis.series, function (series) {
+					var seriesPointRange = hasCategories ? 
+						1 : 
+						(isXAxis ? 
+							pick(series.options.pointRange, closestPointRange, 0) : 
+							(axis.axisPointRange || 0)), // #2806
+						pointPlacement = series.options.pointPlacement;
 
 					pointRange = mathMax(pointRange, seriesPointRange);
 
@@ -838,13 +851,6 @@ Axis.prototype = {
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
-					}
-
-					// Set the closestPointRange
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
 					}
 				});
 			}
@@ -1044,8 +1050,8 @@ Axis.prototype = {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
 
-		// In column-like charts, don't cramp in more ticks than there are points (#1943)
-		if (axis.pointRange) {
+		// In column-like charts, don't cramp in more ticks than there are points (#1943, #4184)
+		if (axis.pointRange && !tickIntervalOption) {
 			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
 		}
 
@@ -1167,14 +1173,18 @@ Axis.prototype = {
 
 		if (startOnTick) {
 			this.min = roundedMin;
-		} else if (this.min - minPointOffset > roundedMin) {
-			tickPositions.shift();
+		} else {
+			while (this.min - minPointOffset > tickPositions[0]) {
+				tickPositions.shift();
+			}
 		}
 
 		if (endOnTick) {
 			this.max = roundedMax;
-		} else if (this.max + minPointOffset < roundedMax) {
-			tickPositions.pop();
+		} else {
+			while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+				tickPositions.pop();
+			}
 		}
 
 		// If no tick are left, set one tick in the middle (#3195)
@@ -1198,9 +1208,11 @@ Axis.prototype = {
 					horiz = axis.horiz,
 					key = [
 						horiz ? otherOptions.left : otherOptions.top, 
-						horiz ? otherOptions.width : otherOptions.height, 
+						otherOptions.width,
+						otherOptions.height, 
 						otherOptions.pane
 					].join(',');
+
 
 				if (axis.series.length) { // #4442
 					if (others[key]) {
@@ -1752,7 +1764,7 @@ Axis.prototype = {
 
 
 			// Left side must be align: right and right side must have align: left for labels
-			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 ||
 					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
 				each(tickPositions, function (pos) {
 

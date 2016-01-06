@@ -20,7 +20,7 @@ $(function () {
                 joinBy: ['iso-a2', 'code'],
                 dataLabels: {
                     enabled: true,
-                    color: 'white',
+                    color: '#FFFFFF',
                     formatter: function () {
                         if (this.point.properties && this.point.properties.labelrank.toString() < 5) {
                             return this.point.properties['iso-a2'];

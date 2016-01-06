@@ -349,7 +349,6 @@ Series.prototype = {
 
 			// Reset properties
 			series.xIncrement = null;
-			series.pointRange = hasCategories ? 1 : options.pointRange;
 
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
 
@@ -472,6 +471,8 @@ Series.prototype = {
 			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
+			val2lin = xAxis && xAxis.val2lin,
+			isLog = xAxis && xAxis.isLog,
 			min,
 			max;
 
@@ -507,8 +508,11 @@ Series.prototype = {
 
 
 		// Find the closest distance between processed points
-		for (i = processedXData.length - 1; i >= 0; i--) {
-			distance = processedXData[i] - processedXData[i - 1];
+		i = processedXData.length || 1;
+		while (--i) {
+			distance = isLog ?
+				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
+				processedXData[i] - processedXData[i - 1];
 
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -526,9 +530,6 @@ Series.prototype = {
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
 
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = closestPointRange || 1;
-		}
 		series.closestPointRange = closestPointRange;
 
 	},
@@ -1543,7 +1544,6 @@ Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					visibility: visibility,
 					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
@@ -1552,7 +1552,7 @@ Series.prototype = {
 		}
 
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
+		group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;
 	},
 

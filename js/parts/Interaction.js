@@ -352,9 +352,9 @@ extend(Chart.prototype, {
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
 				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
 				goingLeft = startPos > mousePos; // #3613
-
+			
 			if (axis.series.length &&
-					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
@@ -387,7 +387,7 @@ extend(Point.prototype, {
 
 		selected = pick(selected, !point.selected);
 
-		// fire the event with the defalut handler
+		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
@@ -597,7 +597,8 @@ extend(Point.prototype, {
 			halo.attr(extend({
 				fill: point.color || series.color,
 				'fill-opacity': haloOptions.opacity
-			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+			},
+			haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {

@@ -280,8 +280,7 @@ seriesProto.processData = function () {
 			plotSizeX = chart.plotSizeX,
 			xAxis = series.xAxis,
 			ordinal = xAxis.options.ordinal,
-			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
-			nonGroupedPointRange = series.pointRange;
+			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
 
 		// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 		if (groupPixelWidth) {
@@ -319,9 +318,6 @@ seriesProto.processData = function () {
 
 			// record what data grouping values were used
 			series.currentDataGrouping = groupPositions.info;
-			if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-				series.pointRange = groupPositions.info.totalRange;
-			}
 			series.closestPointRange = groupPositions.info.totalRange;
 
 			// Make sure the X axis extends to show the first group (#2533)
@@ -337,7 +333,6 @@ seriesProto.processData = function () {
 			series.processedYData = groupedYData;
 		} else {
 			series.currentDataGrouping = null;
-			series.pointRange = nonGroupedPointRange;
 		}
 		series.hasGroupedData = hasGroupedData;
 	}

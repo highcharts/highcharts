@@ -138,7 +138,7 @@ Series.prototype.drawDataLabels = function () {
 					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
-						-999,
+						-9999,
 						options.shape,
 						null,
 						null,
@@ -166,15 +166,16 @@ Series.prototype.drawDataLabels = function () {
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.plotX, -9999),
+		plotY = pick(point.plotY, -9999),
 		bBox = dataLabel.getBBox(),
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
-		alignAttr; // the final position;
+		alignAttr, // the final position;
+		justify = pick(options.overflow, 'justify') === 'justify';
 
 	if (visible) {
 
@@ -193,28 +194,22 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		});
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
-		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+		if (options.rotation) {
+			justify = false; // Not supported for rotated text
 			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
-			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-					y: alignTo.y + options.y + alignTo.height / 2
-				})
+			alignAttr = {
+				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
+				y: alignTo.y + options.y + alignTo.height / 2
+			};
+			dataLabel
+				[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
 					align: options.align
 				});
+
 		} else {
 			dataLabel.align(options, null, alignTo);
 			alignAttr = dataLabel.alignAttr;
-
-			// Handle justify or crop
-			if (pick(options.overflow, 'justify') === 'justify') {
-				this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
-
-			} else if (pick(options.crop, true)) {
-				// Now check that the data label is within the plot area
-				visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
-
-			}
 
 			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
 			if (options.shape) {
@@ -223,14 +218,22 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 					anchorY: point.plotY
 				});
 			}
+		}
 
+		// Handle justify or crop
+		if (justify) {
+			this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+			
+		// Now check that the data label is within the plot area
+		} else if (pick(options.crop, true)) {
+			visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
 		}
 	}
 
 	// Show or hide based on the final aligned position
 	if (!visible) {
 		stop(dataLabel);
-		dataLabel.attr({ y: -999 });
+		dataLabel.attr({ y: -9999 });
 		dataLabel.placed = false; // don't animate back in
 	}
 
@@ -631,7 +634,7 @@ if (seriesTypes.pie) {
 					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
 					dataLabel.moved = true;
 				} else if (dataLabel) {
-					dataLabel.attr({ y: -999 });
+					dataLabel.attr({ y: -9999 });
 				}
 			}
 		});

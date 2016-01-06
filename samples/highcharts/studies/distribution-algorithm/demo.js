@@ -1,3 +1,4 @@
+var renderer;
 $(function () {
 
     var each = Highcharts.each,
@@ -127,13 +128,13 @@ $(function () {
 
 
     /// Visualize
-    var ren = new Highcharts.Renderer(
+    renderer = new Highcharts.Renderer(
         document.getElementById('container'),
         len,
         300
     );
 
-    ren.path(['M', 0, 55, 'L', len, 55])
+    renderer.path(['M', 0, 55, 'L', len, 55])
     .attr({
         stroke: 'silver',
         'stroke-width': 2
@@ -142,7 +143,7 @@ $(function () {
 
     each(boxes, function (box, i) {
         if (box.pos !== undefined) {
-            ren.rect(box.pos + 0.5, 10.5, box.size - 1, 20)
+            renderer.rect(box.pos + 0.5, 10.5, box.size - 1, 20)
             .attr({
                 'fill': 'rgba(0, 0, 0, 0.1)',
                 'stroke-width': 1,
@@ -150,7 +151,7 @@ $(function () {
             })
             .add();
 
-            ren.path(['M', box.pos + box.size / 2, 30, 'L', box.target, 55, 'z'])
+            renderer.path(['M', box.pos + box.size / 2, 30, 'L', box.target, 55, 'z'])
             .attr({
                 'stroke-width': 1,
                 'stroke': Highcharts.getOptions().colors[i % 10]
@@ -158,7 +159,7 @@ $(function () {
             .add();
         }
 
-        ren.circle(box.target, 55, 2)
+        renderer.circle(box.target, 55, 2)
         .attr({
             fill: 'blue'
         })

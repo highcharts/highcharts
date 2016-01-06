@@ -10,8 +10,8 @@ QUnit.test('Async drilldown', function (assert) {
         'Warming up'
     );
 
-    // Run click through jQuery just like the adapter would...
-    $(chart.series[0].points[0]).click();
+    // Click first point
+    Highcharts.fireEvent(chart.series[0].points[0], 'click');
     assert.equal(
         chart.series[0].name,
         'Things',
@@ -43,6 +43,8 @@ QUnit.test('Async drilldown', function (assert) {
             false,
             '1200 ms - loading hidden'
         );
+
+        done();
     }, 1200);
 
 });

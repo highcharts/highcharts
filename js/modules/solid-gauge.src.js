@@ -2,12 +2,18 @@
  * @license  @product.name@ JS v@product.version@ (@product.date@)
  * Solid angular gauge module
  *
- * (c) 2010-2014 Torstein Honsi
+ * (c) 2010-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 	'use strict';
 
 	var defaultPlotOptions = H.getOptions().plotOptions,
@@ -131,7 +137,7 @@
 
 			// Unsupported color, return to-color (#3920)
 			if (!to.rgba.length || !from.rgba.length) {
-				ret = to.raw || 'none';
+				ret = to.input || 'none';
 
 			// Interpolate
 			} else {
@@ -152,9 +158,9 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		HighchartsAdapter.addAnimSetter(prop, function (fx) {
-			fx.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
-		});
+		H.Fx.prototype[prop + 'Setter'] = function () {
+			this.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+		};
 	});
 
 	// The series prototype
@@ -264,4 +270,4 @@
 		}
 	});
 
-}(Highcharts));
+}));

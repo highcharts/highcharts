@@ -2,21 +2,26 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-18)
+ * @license Highcharts JS v4.2.0-modified (2015-12-21)
  *
  * 3D features for Highcharts JS
  *
- * @author: Stephane Vanraes, Torstein Honsi
  * @license: www.highcharts.com/license
  */
 
-(function (Highcharts) {
-    /**
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
+/**
         Shorthands for often used function
     */
     var each = Highcharts.each,
         extend = Highcharts.extend,
-        inArray = HighchartsAdapter.inArray,
+        inArray = Highcharts.inArray,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         wrap = Highcharts.wrap;
@@ -246,7 +251,7 @@
                 this.top.attr({ d: paths[1], zIndex: paths[4] });
                 this.side.attr({ d: paths[2], zIndex: paths[5] });
             } else {
-                Highcharts.SVGElement.prototype.attr.call(this, args);
+                return Highcharts.SVGElement.prototype.attr.call(this, args); // getter returns value
             }
 
             return this;
@@ -258,6 +263,9 @@
                 this.front.attr({ zIndex: paths[3] }).animate({ d: paths[0] }, duration, complete);
                 this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
                 this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
+                this.attr({
+                    zIndex: -paths[6] // #4774
+                });
             } else if (args.opacity) {
                 this.front.animate(args, duration, complete);
                 this.top.animate(args, duration, complete);
@@ -278,7 +286,7 @@
         };
 
         // Apply the Z index to the cuboid group
-        result.attr({ zIndex: -paths[3] });
+        result.attr({ zIndex: -paths[6] });
 
         return result;
     };
@@ -316,15 +324,13 @@
             return pArr[i];
         }
         var pickShape = function (path1, path2) {
-            var ret;
+            var ret = [];
             path1 = map(path1, mapPath);
             path2 = map(path2, mapPath);
             if (shapeArea(path1) < 0) {
                 ret = path1;
             } else if (shapeArea(path2) < 0) {
                 ret = path2;
-            } else {
-                ret = [];
             }
             return ret;
         };
@@ -344,7 +350,7 @@
         var left = [0, 7, 4, 3];
         var path3 = pickShape(right, left);
 
-        return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
+        return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3), averageZ(map(bottom, mapPath)) * 9e9]; // #4774
     };
 
     ////// SECTORS //////
@@ -572,19 +578,63 @@
         ]);
         top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
         top = top.concat(['Z']);
-
         // OUTSIDE
         var b = (beta > 0 ? PI / 2 : 0),
             a = (alpha > 0 ? 0 : PI / 2);
 
         var start2 = start > -b ? start : (end > -b ? -b : start),
-            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
+            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
+            midEnd = 2 * PI - a;
+    
+        // When slice goes over bottom middle, need to add both, left and right outer side.
+        // Additionally, when we cross right hand edge, create sharp edge. Outer shape/wall:
+        //
+        //            -------
+        //          /    ^    \
+        //    4)   /   /   \   \  1)
+        //        /   /     \   \
+        //       /   /       \   \
+        // (c)=> ====         ==== <=(d) 
+        //       \   \       /   /
+        //        \   \<=(a)/   /
+        //         \   \   /   / <=(b)
+        //    3)    \    v    /  2)
+        //            -------
+        //
+        // (a) - inner side
+        // (b) - outer side
+        // (c) - left edge (sharp)
+        // (d) - right edge (sharp)
+        // 1..n - rendering order for startAngle = 0, when set to e.g 90, order changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative startAngle
 
         var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
         out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
-        // When slice goes over middle, need to add both, left and right outer side:
-        if (end > PI - a && start < PI - a) {
+        if (end > midEnd && start < midEnd) { // When shape is wide, it can cross both, (c) and (d) edges, when using startAngle
+            // Go to outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+            ]);
+            // Curve to the right edge of the slice (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            // Go to the inner side
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Curve to the true end of the slice
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            // Go to the outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
+            ]);
+            // Go back to middle (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Go back to the left edge
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+        } else if (end > PI - a && start < PI - a) { // But shape can cross also only (c) edge:
             // Go to outer side
             out = out.concat([
                 'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
@@ -698,7 +748,7 @@
             plotOptions,
             pieOptions;
 
-        if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+        if (args[0].chart && args[0].chart.options3d && args[0].chart.options3d.enabled) {
             // Normalize alpha and beta to (-360, 360) range
             args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
             args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
@@ -1239,7 +1289,7 @@
                         break;
                     }
                 }
-                z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) + (reversedStacks ? i : -i); // #4369
 
                 // In case when axis is reversed, columns are also reversed inside the group (#3737)
                 if (!this.xAxis.reversed) {
@@ -1659,4 +1709,4 @@
 
     }
 
-}(Highcharts));
+}));

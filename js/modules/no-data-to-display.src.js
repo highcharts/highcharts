@@ -2,13 +2,19 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Plugin for displaying a message when there is no data visible in chart.
  *
- * (c) 2010-2014 Highsoft AS
+ * (c) 2010-2016 Highsoft AS
  * Author: Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -36,7 +42,7 @@
 			fontSize: '12px',
 			color: '#60606a'		
 		}
-		// useHTML: false // docs
+		// useHTML: false
 	};
 
 	/**
@@ -134,4 +140,4 @@
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
 
-}(Highcharts));
+}));

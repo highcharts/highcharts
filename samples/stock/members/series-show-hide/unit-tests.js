@@ -4,9 +4,9 @@ QUnit.test('Show-hide series', function (assert) {
         series = chart.series[0];
 
     assert.strictEqual(
-        series.group.attr('visibility'),
-        'visible',
-        'Series visible'
+        series.group.element.getAttribute('visibility'),
+        null,
+        'Series visible, visibility attribute not set'
     );
 
     assert.strictEqual(
@@ -31,9 +31,9 @@ QUnit.test('Show-hide series', function (assert) {
     // Show series
     series.show();
     assert.strictEqual(
-        series.group.attr('visibility'),
-        'visible',
-        'Series visible'
+        series.group.element.getAttribute('visibility'),
+        null,
+        'Series visible, no visibility attribute means inherited'
     );
     assert.strictEqual(
         series.yAxis.hasData(),

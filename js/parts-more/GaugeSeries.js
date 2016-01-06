@@ -155,7 +155,8 @@ var GaugeSeries = {
 						stroke: dialOptions.borderColor || 'none',
 						'stroke-width': dialOptions.borderWidth || 0,
 						fill: dialOptions.backgroundColor || 'black',
-						rotation: shapeArgs.rotation // required by VML when animation is false
+						rotation: shapeArgs.rotation, // required by VML when animation is false
+						zIndex: 1
 					})
 					.add(series.group);
 			}
@@ -172,7 +173,8 @@ var GaugeSeries = {
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
-					fill: pivotOptions.backgroundColor || 'black'
+					fill: pivotOptions.backgroundColor || 'black',
+					zIndex: 2
 				})
 				.translate(center[0], center[1])
 				.add(series.group);

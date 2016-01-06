@@ -9,6 +9,12 @@ QUnit.test('Chart select points by drag', function (assert) {
         left: 0
     });
 
+    setTimeout(function () {
+        $('#container').css({
+            position: 'static'
+        });
+    }, 0);
+
 
     assert.strictEqual(
         chart.getSelectedPoints().length,

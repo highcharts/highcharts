@@ -1,12 +1,18 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-31)
+ * @license Highcharts JS v4.2.0-modified (2016-01-05)
  *
- * (c) 2011-2014 Torstein Honsi
+ * (c) 2011-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 
     var UNDEFINED,
@@ -482,9 +488,9 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        HighchartsAdapter.addAnimSetter(prop, function (fx) {
-            fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
-        });
+        Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+            this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+        };
     });
 
     /**
@@ -640,7 +646,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {
@@ -702,4 +708,4 @@
     }));
 
 
-}(Highcharts));
+}));

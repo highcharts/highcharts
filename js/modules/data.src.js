@@ -2,18 +2,26 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Data module
  *
- * (c) 2012-2014 Torstein Honsi
+ * (c) 2012-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 /*global jQuery */
-(function (Highcharts) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts) {
 	
 	// Utilities
-	var each = Highcharts.each,
+	var win = Highcharts.win,
+		doc = win.document,
+		each = Highcharts.each,
 		pick = Highcharts.pick,
-		inArray = HighchartsAdapter.inArray,
+		inArray = Highcharts.inArray,
 		splat = Highcharts.splat,
 		SeriesBuilder;
 	
@@ -234,7 +242,7 @@
 			if (table) {
 				
 				if (typeof table === 'string') {
-					table = document.getElementById(table);
+					table = doc.getElementById(table);
 				}
 				
 				each(table.getElementsByTagName('tr'), function (tr, rowNo) {
@@ -948,4 +956,4 @@
 
 
 
-}(Highcharts));
+}));

@@ -2,12 +2,18 @@
  * @license 
  * Highcharts funnel module
  *
- * (c) 2010-2014 Torstein Honsi
+ * (c) 2010-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 /* eslint indent:0 */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 	
 'use strict';
 
@@ -313,4 +319,4 @@ Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.f
 	type: 'pyramid'
 });
 
-}(Highcharts));
+}));

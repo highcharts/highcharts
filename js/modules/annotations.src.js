@@ -1,6 +1,12 @@
 
 
-(function (Highcharts, HighchartsAdapter) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts) {
 
 	var UNDEFINED,
 		ALIGN_FACTOR,
@@ -22,7 +28,7 @@
 
 
 	// Highcharts helper methods
-	var inArray = HighchartsAdapter.inArray,
+	var inArray = Highcharts.inArray,
 		merge = Highcharts.merge;
 
 	function defaultOptions(shapeType) {
@@ -397,4 +403,4 @@
 			chart.annotations.redraw();
 		});
 	});
-}(Highcharts, HighchartsAdapter));
+}));

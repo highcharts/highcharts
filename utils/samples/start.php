@@ -16,7 +16,7 @@
 			<li>By default, visual tests compare against the latest stable release.
 				To compare against a specific commit in a visual browser, set the <code>leftPath</code> to the commit id in the <code>settings.php</code>
 				file.</li>
-			<li>See the <a href="https://github.com/highslide-software/highcharts.com/tree/master/utils#tests">GitHub readme file</a> 
+			<li>See the <a href="https://github.com/highcharts/highcharts/tree/master/utils#tests">GitHub readme file</a> 
 				for guidelines on setting up the tests.</li>
 			<li>Tests can also run in <strong>PhantomJS</strong>, which is faster than a visual browser. Navigate to the <code>/utils/samples</code> directory and
 				run <code>phantomjs phantomtest.js</code>. If there are errors, they can be inspected in a browser by clicking "View

@@ -268,21 +268,24 @@ var AreaSeries = extendClass(Series, {
 		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
-				area = series[areaKey];
+				area = series[areaKey],
+				attr;
 
 			// Create or update the area
 			if (area) { // update
 				area.animate({ d: areaPath });
 
 			} else { // create
+				attr = {
+					fill: prop[2] || prop[1],
+					zIndex: 0 // #1069
+				};
+				if (!prop[2]) {
+					attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
+				}
 				series[areaKey] = series.chart.renderer.path(areaPath)
-					.attr({
-						fill: pick(
-							prop[2],
-							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
-						),
-						zIndex: 0 // #1069
-					}).add(series.group);
+					.attr(attr)
+					.add(series.group);
 			}
 		});
 	},

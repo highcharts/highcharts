@@ -185,8 +185,9 @@ extend(Point.prototype, {
 				names[point.x] = point.name;
 			}
 
-			// Record the raw options to options.data (#4701)
-			seriesOptions.data[i] = options;
+			// Record the options to options.data. If there is an object from before,
+			// use point options, otherwise use raw options. (#4701)
+			seriesOptions.data[i] = isObject(seriesOptions.data[i]) ? point.options : options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
@@ -373,35 +374,24 @@ extend(Series.prototype, {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-
 	remove: function (redraw, animation) {
 		var series = this,
 			chart = series.chart;
-		redraw = pick(redraw, true);
 
-		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
-				(calling the remove function from the remove event) */
-			series.isRemoving = true;
+		// Fire the event with a default handler of removing the point
+		fireEvent(series, 'remove', null, function () {
 
-			// fire the event with a default handler of removing the point
-			fireEvent(series, 'remove', null, function () {
+			// Destroy elements
+			series.destroy();
 
+			// Redraw
+			chart.isDirtyLegend = chart.isDirtyBox = true;
+			chart.linkSeries();
 
-				// destroy elements
-				series.destroy();
-
-
-				// redraw
-				chart.isDirtyLegend = chart.isDirtyBox = true;
-				chart.linkSeries();
-
-				if (redraw) {
-					chart.redraw(animation);
-				}
-			});
-
-		}
-		series.isRemoving = false;
+			if (pick(redraw, true)) {
+				chart.redraw(animation);
+			}
+		});
 	},
 
 	/**

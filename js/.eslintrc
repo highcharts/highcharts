@@ -1,9 +1,11 @@
 globals:
+    clearInterval: true
+    clearTimeout: true
+    console: true
     Highcharts: true
-    HighchartsAdapter: true
-
-env:
-    browser: true
+    module: true
+    setInterval: true
+    setTimeout: true
 
 rules:
     camelcase: [2, {"properties": "always"}]

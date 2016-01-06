@@ -347,7 +347,7 @@ function setTimeMethods() {
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = globalOptions.Date || window.Date;
+	Date = globalOptions.Date || win.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
 	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	makeTime = function (year, month, date, hours, minutes, seconds) {

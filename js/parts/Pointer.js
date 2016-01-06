@@ -2,7 +2,7 @@
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+hasTouch = doc && doc.documentElement.ontouchstart !== UNDEFINED;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
@@ -61,13 +61,8 @@ Pointer.prototype = {
 			chartY,
 			ePos;
 
-		// common IE normalizing
-		e = e || window.event;
-
-		// Framework specific normalizing (#1165)
-		e = washMouseEvent(e);
-
-		// More IE normalizing, needs to go after washMouseEvent
+		// IE normalizing
+		e = e || win.event;
 		if (!e.target) {
 			e.target = e.srcElement;
 		}
@@ -136,7 +131,6 @@ Pointer.prototype = {
 			noSharedTooltip,
 			stickToHoverSeries,
 			directTouch,
-			pointDistance,
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
@@ -174,10 +168,8 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
-
-				if (p && typeof pointDistance === 'number' && pointDistance < distance) {
-					distance = pointDistance;
+				if (p && typeof p.dist === 'number' && p.dist < distance) {
+					distance = p.dist;
 					kdpoint = p;
 				}
 			});
@@ -460,9 +452,9 @@ Pointer.prototype = {
 
 		if (this.selectionMarker) {
 			var selectionData = {
+					originalEvent: e, // #4890
 					xAxis: [],
-					yAxis: [],
-					originalEvent: e.originalEvent || e
+					yAxis: []
 				},
 				selectionBox = this.selectionMarker,
 				selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
@@ -622,7 +614,6 @@ Pointer.prototype = {
 			plotTop = chart.plotTop;
 
 		e = this.normalize(e);
-		e.originalEvent = e; // #3913
 
 		if (!chart.cancelClick) {
 

@@ -691,7 +691,7 @@ Meteogram.prototype.parseYrData = function () {
         }
 
         // Populate the parallel arrays
-        meteogram.symbols.push(time.symbol['@attributes'].var.match(/[0-9]{2}[dnm]?/)[0]);
+        meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]); // eslint-disable-line dot-notation
         meteogram.symbolNames.push(time.symbol['@attributes'].name);
 
         meteogram.temperatures.push({
@@ -740,12 +740,12 @@ $(function () { // On DOM ready...
         //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
         //place = 'United_States/California/San_Francisco';
         //place = 'United_States/Minnesota/Minneapolis';
-        location.hash = 'http://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
+        location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 
     }
 
     // Then get the XML file through Highcharts' jsonp provider, see
-    // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/jsonp.php
+    // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
     // for source code.
     $.getJSON(
         'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
