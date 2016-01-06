@@ -1348,7 +1348,7 @@ Series.prototype = {
 			props = [['graph', options.lineColor || this.color, options.dashStyle]],
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
-			graphPath = this.getGraphPath(),
+			graphPath = (this.gappedPath || this.getGraphPath).call(this),
 			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
 			zones = this.zones;
 
