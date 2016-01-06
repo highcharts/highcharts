@@ -14241,7 +14241,13 @@
                 if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
                     gap = true; // ... and continue
                 }
-                if (point.isNull && !nullsAsZeroes) {
+
+                // Line series, nullsAsZeroes is not handled
+                if (point.isNull && !defined(nullsAsZeroes)) {
+                    gap = !options.connectNulls;
+
+                // Area series, nullsAsZeroes is set
+                } else if (point.isNull && !nullsAsZeroes) {
                     gap = true;
 
                 } else {
@@ -14295,7 +14301,7 @@
                     gap = false;
                 }
             });
-        
+
             series.graphPath = graphPath;
 
             return graphPath;
