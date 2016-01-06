@@ -16293,7 +16293,7 @@
                 i,
                 x;
 
-            if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
+            if (this.options.stacking) {
                 // Create a map where we can quickly look up the points by their X value.
                 for (i = 0; i < points.length; i++) {
                     pointMap[points[i].x] = points[i];
@@ -16438,12 +16438,12 @@
                     if (top !== undefined) {
                         graphPoints.push({
                             plotX: plotX,
-                            plotY: yAxis.toPixels(top, true),
+                            plotY: top === null ? translatedThreshold : yAxis.toPixels(top, true),
                             isNull: isNull
                         });
                         bottomPoints.push({
                             plotX: plotX,
-                            plotY: yAxis.toPixels(bottom, true)
+                            plotY: bottom === null ? translatedThreshold : yAxis.toPixels(bottom, true)
                         });
                     }
                 };
