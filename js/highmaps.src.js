@@ -19763,13 +19763,15 @@
             }
 
             each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-                var mousePos = e[isX ? 'chartX' : 'chartY'],
-                    axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+                    horiz = axis.horiz,
+                    mousePos = e[horiz ? 'chartX' : 'chartY'],
+                    mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
+                    startPos = chart[mouseDown],
                     halfPointRange = (axis.pointRange || 0) / 2,
                     extremes = axis.getExtremes(),
                     newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-                    newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+                    newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
                     goingLeft = startPos > mousePos; // #3613
             
                 if (axis.series.length &&
@@ -19779,7 +19781,7 @@
                     doRedraw = true;
                 }
 
-                chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+                chart[mouseDown] = mousePos; // set new reference for next run
             });
 
             if (doRedraw) {
