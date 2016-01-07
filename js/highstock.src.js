@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-06)
+ * @license Highstock JS v4.2.0-modified (2016-01-07)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -16271,7 +16271,7 @@
      */
     var AreaSeries = extendClass(Series, {
         type: 'area',
-
+        singleStacks: false,
         /** 
          * Return an array of stacked points, where null and missing points are replaced by 
          * dummy points in order for gaps to be drawn correctly in stacks.
@@ -19979,7 +19979,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-06)
+     * Highstock JS v4.2.0-modified (2016-01-07)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

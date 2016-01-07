@@ -15,7 +15,7 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
-
+	singleStacks: false,
 	/** 
 	 * Return an array of stacked points, where null and missing points are replaced by 
 	 * dummy points in order for gaps to be drawn correctly in stacks.
