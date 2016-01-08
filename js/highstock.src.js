@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-07)
+ * @license Highstock JS v4.2.0-modified (2016-01-08)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -2760,7 +2760,7 @@
          */
         getBBox: function (reload, rot) {
             var wrapper = this,
-                bBox,// = wrapper.bBox,
+                bBox, // = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
@@ -6015,7 +6015,7 @@
                     ret.push(
                         'e',
                         M,
-                        x,// - innerRadius,
+                        x, // - innerRadius,
                         y// - innerRadius
                     );
                 }
@@ -19941,7 +19941,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-07)
+     * Highstock JS v4.2.0-modified (2016-01-08)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

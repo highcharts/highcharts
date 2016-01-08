@@ -712,7 +712,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload, rot) {
 		var wrapper = this,
-			bBox,// = wrapper.bBox,
+			bBox, // = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-07)
+ * @license Highmaps JS v4.2.0-modified (2016-01-08)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -2758,7 +2758,7 @@
          */
         getBBox: function (reload, rot) {
             var wrapper = this,
-                bBox,// = wrapper.bBox,
+                bBox, // = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
@@ -6013,7 +6013,7 @@
                     ret.push(
                         'e',
                         M,
-                        x,// - innerRadius,
+                        x, // - innerRadius,
                         y// - innerRadius
                     );
                 }
