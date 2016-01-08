@@ -1,7 +1,7 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-05)
+ * @license Highmaps JS v4.2.0-modified (2016-01-08)
  *
- * (c) 2011-2014 Torstein Honsi
+ * (c) 2011-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -999,25 +999,55 @@
      * Format a number and return a string based on input settings
      * @param {Number} number The input number to format
      * @param {Number} decimals The amount of decimals
-     * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+     * @param {String} decimalPoint The decimal point, defaults to the one given in the lang options
      * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
      */
-    Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-        var lang = defaultOptions.lang,
-            // http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-            n = +number || 0,
-            origDec = (n.toString().split('.')[1] || '').length,
-            c = decimals === -1 ?
-                    Math.min(origDec, 20) : // Preserve decimals. Not huge numbers (#3793).
-                    (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
-            d = decPoint === undefined ? lang.decimalPoint : decPoint,
-            t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-            s = n < 0 ? '-' : '',
-            i = String(pInt(mathAbs(n).toFixed(c))),
-            j = i.length > 3 ? i.length % 3 : 0;
+    Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
-        return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
-                (c ? d + Math.abs(n - i + Math.pow(10, -Math.max(c, origDec) - 1)).toFixed(c).slice(2) : '')); // Add power for #4573
+        number = +number || 0;
+
+        var lang = defaultOptions.lang,
+            origDec = (number.toString().split('.')[1] || '').length,
+            decimalComponent,
+            strinteger,
+            thousands,
+            absNumber = Math.abs(number),
+            ret;
+
+        if (decimals === -1) {
+            decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
+        } else if (isNaN(decimals)) {
+            decimals = 2;
+        }
+
+        // A string containing the positive integer component of the number
+        strinteger = String(pInt(absNumber.toFixed(decimals)));
+
+        // Leftover after grouping into thousands. Can be 0, 1 or 3.
+        thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
+
+        // Language
+        decimalPoint = pick(decimalPoint, lang.decimalPoint);
+        thousandsSep = pick(thousandsSep, lang.thousandsSep);
+
+        // Start building the return
+        ret = number < 0 ? '-' : '';
+
+        // Add the leftover after grouping into thousands. For example, in the number 42 000 000,
+        // this line adds 42.
+        ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
+
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+
+        // Add the decimal point and the decimal component
+        if (decimals) {
+            // Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
+            decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
+            ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
+        }
+
+        return ret;
     };
 
     /**
@@ -2276,7 +2306,8 @@
                 element = this.element,
                 hasSetSymbolSize,
                 ret = this,
-                skipAttr;
+                skipAttr,
+                setter;
 
             // single key-value pair
             if (typeof hash === 'string' && val !== UNDEFINED) {
@@ -2311,12 +2342,13 @@
                     }
 
                     if (!skipAttr) {
-                        (this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
-                    }
+                        setter = this[key + 'Setter'] || this._defaultSetter;
+                        setter.call(this, value, key, element);
 
-                    // Let the shadow follow the main element
-                    if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-                        this.updateShadows(key, value);
+                        // Let the shadow follow the main element
+                        if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+                            this.updateShadows(key, value, setter);
+                        }
                     }
                 }
 
@@ -2337,15 +2369,25 @@
             return ret;
         },
 
-        updateShadows: function (key, value) {
+        /**
+         * Update the shadow elements with new attributes
+         * @param   {String}        key    The attribute name
+         * @param   {String|Number} value  The value of the attribute
+         * @param   {Function}      setter The setter function, inherited from the parent wrapper
+         * @returns {undefined}
+         */
+        updateShadows: function (key, value, setter) {
             var shadows = this.shadows,
                 i = shadows.length;
+
             while (i--) {
-                shadows[i].setAttribute(
-                    key,
+                setter.call(
+                    null, 
                     key === 'height' ?
-                            Math.max(value - (shadows[i].cutHeight || 0), 0) :
-                            key === 'd' ? this.d : value
+                        Math.max(value - (shadows[i].cutHeight || 0), 0) :
+                        key === 'd' ? this.d : value, 
+                    key, 
+                    shadows[i]
                 );
             }
         },
@@ -3831,12 +3873,11 @@
             var attr = isObject(x) ? x : { x: x, y: y, r: r },
                 wrapper = this.createElement('circle');
 
-            wrapper.xSetter = function (value) {
-                this.element.setAttribute('cx', value);
+            // Setting x or y translates to cx and cy
+            wrapper.xSetter = wrapper.ySetter = function (value, key, element) {
+                element.setAttribute('c' + key, value);
             };
-            wrapper.ySetter = function (value) {
-                this.element.setAttribute('cy', value);
-            };
+
             return wrapper.attr(attr);
         },
 
@@ -6370,13 +6411,13 @@
          */
         getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
             return renderer.crispLine([
-                    M,
-                    x,
-                    y,
-                    L,
-                    x + (horiz ? 0 : -tickLength),
-                    y + (horiz ? tickLength : 0)
-                ], tickWidth);
+                M,
+                x,
+                y,
+                L,
+                x + (horiz ? 0 : -tickLength),
+                y + (horiz ? tickLength : 0)
+            ], tickWidth);
         },
 
         /**
@@ -7699,14 +7740,18 @@
 
             if (startOnTick) {
                 this.min = roundedMin;
-            } else if (this.min - minPointOffset > roundedMin) {
-                tickPositions.shift();
+            } else {
+                while (this.min - minPointOffset > tickPositions[0]) {
+                    tickPositions.shift();
+                }
             }
 
             if (endOnTick) {
                 this.max = roundedMax;
-            } else if (this.max + minPointOffset < roundedMax) {
-                tickPositions.pop();
+            } else {
+                while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+                    tickPositions.pop();
+                }
             }
 
             // If no tick are left, set one tick in the middle (#3195)
@@ -9860,6 +9905,7 @@
 
             if (this.selectionMarker) {
                 var selectionData = {
+                        originalEvent: e, // #4890
                         xAxis: [],
                         yAxis: []
                     },
@@ -13441,7 +13487,8 @@
                 getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
                 xExtremes,
-                val2lin = xAxis.val2lin,
+                val2lin = xAxis && xAxis.val2lin,
+                isLog = xAxis && xAxis.isLog,
                 min,
                 max;
 
@@ -13477,9 +13524,9 @@
 
 
             // Find the closest distance between processed points
-            i = processedXData.length;
+            i = processedXData.length || 1;
             while (--i) {
-                distance = xAxis.isLog ?
+                distance = isLog ?
                     val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
                     processedXData[i] - processedXData[i - 1];
 
@@ -15943,7 +15990,8 @@
             // Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
             visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
                 (alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
-            alignAttr; // the final position;
+            alignAttr, // the final position;
+            justify = pick(options.overflow, 'justify') === 'justify';
 
         if (visible) {
 
@@ -15962,28 +16010,22 @@
             });
 
             // Allow a hook for changing alignment in the last moment, then do the alignment
-            if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+            if (options.rotation) {
+                justify = false; // Not supported for rotated text
                 rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
-                dataLabel[isNew ? 'attr' : 'animate']({
-                        x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-                        y: alignTo.y + options.y + alignTo.height / 2
-                    })
+                alignAttr = {
+                    x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
+                    y: alignTo.y + options.y + alignTo.height / 2
+                };
+                dataLabel
+                    [isNew ? 'attr' : 'animate'](alignAttr)
                     .attr({ // #3003
                         align: options.align
                     });
+
             } else {
                 dataLabel.align(options, null, alignTo);
                 alignAttr = dataLabel.alignAttr;
-
-                // Handle justify or crop
-                if (pick(options.overflow, 'justify') === 'justify') {
-                    this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
-
-                } else if (pick(options.crop, true)) {
-                    // Now check that the data label is within the plot area
-                    visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
-
-                }
 
                 // When we're using a shape, make it possible with a connector or an arrow pointing to thie point
                 if (options.shape) {
@@ -15992,7 +16034,15 @@
                         anchorY: point.plotY
                     });
                 }
+            }
 
+            // Handle justify or crop
+            if (justify) {
+                this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+            
+            // Now check that the data label is within the plot area
+            } else if (pick(options.crop, true)) {
+                visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
             }
         }
 
@@ -16116,10 +16166,14 @@
             // run parent method
             Series.prototype.drawDataLabels.apply(series);
 
-            // arrange points for detection collision
             each(data, function (point) {
                 if (point.dataLabel && point.visible) { // #407, #2510
+
+                    // Arrange points for detection collision
                     halves[point.half].push(point);
+
+                    // Reset positions (#4905)
+                    point.dataLabel._pos = null;
                 }
             });
 
@@ -16454,12 +16508,7 @@
                 center[2] = newSize;
                 center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
                 this.translate(center);
-                each(this.points, function (point) {
-                    if (point.dataLabel) {
-                        point.dataLabel._pos = null; // reset
-                    }
-                });
-
+            
                 if (this.drawDataLabels) {
                     this.drawDataLabels();
                 }
@@ -19753,13 +19802,15 @@
             }
 
             each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-                var mousePos = e[isX ? 'chartX' : 'chartY'],
-                    axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+                    horiz = axis.horiz,
+                    mousePos = e[horiz ? 'chartX' : 'chartY'],
+                    mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
+                    startPos = chart[mouseDown],
                     halfPointRange = (axis.pointRange || 0) / 2,
                     extremes = axis.getExtremes(),
                     newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-                    newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+                    newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
                     goingLeft = startPos > mousePos; // #3613
             
                 if (axis.series.length &&
@@ -19769,7 +19820,7 @@
                     doRedraw = true;
                 }
 
-                chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+                chart[mouseDown] = mousePos; // set new reference for next run
             });
 
             if (doRedraw) {

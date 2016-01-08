@@ -38,7 +38,7 @@ $(function () {
             joinBy: ['iso-a2', 'code'],
             dataLabels: {
                 enabled: true,
-                color: 'white',
+                color: '#FFFFFF',
                 formatter: function () {
                     if (this.point.value) {
                         return this.point.name;

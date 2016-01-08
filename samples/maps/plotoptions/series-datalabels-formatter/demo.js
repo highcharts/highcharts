@@ -45,7 +45,7 @@ $(function () {
                 joinBy: 'hasc',
                 dataLabels: {
                     enabled: true,
-                    color: 'white',
+                    color: '#FFFFFF',
                     formatter: function () {
                         if (this.point.graphic.getBBox().width > 30) {
                             return Highcharts.numberFormat(this.point.value, 1);
