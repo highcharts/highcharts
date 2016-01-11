@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-08)
+ * @license Highcharts JS v4.2.0-modified (2016-01-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -18354,6 +18354,8 @@
                 isIntersecting,
                 pos1,
                 pos2,
+                parent1,
+                parent2,
                 padding,
                 intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
                     return !(
@@ -18389,14 +18391,16 @@
                     if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
                         pos1 = label1.alignAttr;
                         pos2 = label2.alignAttr;
+                        parent1 = label1.parentGroup; // Different panes have different positions
+                        parent2 = label2.parentGroup;
                         padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
                         isIntersecting = intersectRect(
-                            pos1.x,
-                            pos1.y,
+                            pos1.x + parent1.translateX,
+                            pos1.y + parent1.translateY,
                             label1.width - padding,
                             label1.height - padding,
-                            pos2.x,
-                            pos2.y,
+                            pos2.x + parent2.translateX,
+                            pos2.y + parent2.translateY,
                             label2.width - padding,
                             label2.height - padding
                         );
