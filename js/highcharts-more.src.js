@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-05)
+ * @license Highcharts JS v4.2.0-modified (2016-01-06)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -710,22 +710,6 @@ var arrayMin = Highcharts.arrayMin,
         },
 
         /**
-         * Extend getSegments to force null points if the higher value is null. #1703.
-         */
-        getSegments: function () {
-            var series = this;
-
-            each(series.points, function (point) {
-                if (!series.options.connectNulls && (point.low === null || point.high === null)) {
-                    point.y = null;
-                } else if (point.low === null && point.high !== null) {
-                    point.y = point.high;
-                }
-            });
-            Series.prototype.getSegments.call(this);
-        },
-
-        /**
          * Translate data points from raw values x and y to plotX and plotY
          */
         translate: function () {
@@ -741,14 +725,8 @@ var arrayMin = Highcharts.arrayMin,
                     high = point.high,
                     plotY = point.plotY;
 
-                if (high === null && low === null) {
-                    point.y = null;
-                } else if (low === null) {
-                    point.plotLow = point.plotY = null;
-                    point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
-                } else if (high === null) {
-                    point.plotLow = plotY;
-                    point.plotHigh = null;
+                if (high === null || low === null) {
+                    point.isNull = true;
                 } else {
                     point.plotLow = plotY;
                     point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
@@ -767,44 +745,60 @@ var arrayMin = Highcharts.arrayMin,
          * Extend the line series' getSegmentPath method by applying the segment
          * path to both lower and higher values of the range
          */
-        getSegmentPath: function (segment) {
-
-            var lowSegment,
-                highSegment = [],
-                i = segment.length,
-                baseGetSegmentPath = Series.prototype.getSegmentPath,
+        getGraphPath: function () {
+        
+            var points = this.points,
+                highPoints = [],
+                highAreaPoints = [],
+                i = points.length,
+                getGraphPath = Series.prototype.getGraphPath,
                 point,
+                pointShim,
                 linePath,
                 lowerPath,
                 options = this.options,
                 step = options.step,
-                higherPath;
+                higherPath,
+                higherAreaPath;
 
-            // Remove nulls from low segment
-            lowSegment = Highcharts.grep(segment, function (point) {
-                return point.plotLow !== null;
-            });
-
-            // Make a segment with plotX and plotY for the top values
+            // Create the top line and the top part of the area fill. The area fill compensates for 
+            // null points by drawing down to the lower graph, moving across the null gap and 
+            // starting again at the lower graph.
+            i = points.length;
             while (i--) {
-                point = segment[i];
-                if (point.plotHigh !== null) {
-                    highSegment.push({
-                        plotX: point.plotHighX || point.plotX, // plotHighX is for polar charts
-                        plotY: point.plotHigh
+                point = points[i];
+        
+                if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
+                    highAreaPoints.push({
+                        plotX: point.plotX,
+                        plotY: point.plotLow
+                    });
+                }
+                pointShim = {
+                    plotX: point.plotX,
+                    plotY: point.plotHigh,
+                    isNull: point.isNull
+                };
+                highAreaPoints.push(pointShim);
+                highPoints.push(pointShim);
+                if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
+                    highAreaPoints.push({
+                        plotX: point.plotX,
+                        plotY: point.plotLow
                     });
                 }
             }
 
             // Get the paths
-            lowerPath = baseGetSegmentPath.call(this, lowSegment);
+            lowerPath = getGraphPath.call(this, points);
             if (step) {
                 if (step === true) {
                     step = 'left';
                 }
-                options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getSegmentPath
+                options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getGraphPath
             }
-            higherPath = baseGetSegmentPath.call(this, highSegment);
+            higherPath = getGraphPath.call(this, highPoints);
+            higherAreaPath = getGraphPath.call(this, highAreaPoints);
             options.step = step;
 
             // Create a line on both top and bottom of the range
@@ -812,10 +806,10 @@ var arrayMin = Highcharts.arrayMin,
 
             // For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
             if (!this.chart.polar) {
-                higherPath[0] = 'L'; // this probably doesn't work for spline
+                higherAreaPath[0] = 'L'; // this probably doesn't work for spline        
             }
-            this.areaPath = this.areaPath.concat(lowerPath, higherPath);
-
+            this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+        
             return linePath;
         },
 
@@ -2292,40 +2286,6 @@ var arrayMin = Highcharts.arrayMin,
             }
         };
 
-        /**
-         * Add some special init logic to areas and areasplines
-         */
-        function initArea(proceed, chart, options) {
-            proceed.call(this, chart, options);
-            if (this.chart.polar) {
-
-                /**
-                 * Overridden method to close a segment path. While in a cartesian plane the area
-                 * goes down to the threshold, in the polar chart it goes to the center.
-                 */
-                this.closeSegment = function (path) {
-                    var center = this.xAxis.center;
-                    path.push(
-                        'L',
-                        center[0],
-                        center[1]
-                    );
-                };
-
-                // Instead of complicated logic to draw an area around the inner area in a stack,
-                // just draw it behind
-                this.closedStacks = true;
-            }
-        }
-
-
-        if (seriesTypes.area) {
-            wrap(seriesTypes.area.prototype, 'init', initArea);
-        }
-        if (seriesTypes.areaspline) {
-            wrap(seriesTypes.areaspline.prototype, 'init', initArea);
-        }
-
         if (seriesTypes.spline) {
             /**
              * Overridden method for calculating a spline from one point to the next
@@ -2464,20 +2424,29 @@ var arrayMin = Highcharts.arrayMin,
          * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in
          * line-like series.
          */
-        wrap(seriesProto, 'getSegmentPath', function (proceed, segment) {
-
-            var points = this.points;
-
+        wrap(seriesProto, 'getGraphPath', function (proceed, points) {
+            var series = this;
+        
             // Connect the path
-            if (this.chart.polar && this.options.connectEnds !== false &&
-                    segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
-                this.connectEnds = true; // re-used in splines
-                segment = [].concat(segment, [points[0]]);
+            if (this.chart.polar) {
+                points = points || this.points;
+    
+                if (this.options.connectEnds !== false && points[0].y !== null) {
+                    this.connectEnds = true; // re-used in splines
+                    points.splice(points.length, 0, points[0]);
+                }
+
+                // For area charts, pseudo points are added to the graph, now we need to translate these
+                each(points, function (point) {
+                    if (point.polarPlotY === undefined) {
+                        series.toXY(point);
+                    }
+                });
             }
 
             // Run uber method
-            return proceed.call(this, segment);
-
+            return proceed.apply(this, [].slice.call(arguments, 1));
+    
         });
 
 

@@ -16,29 +16,28 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 	singleStacks: false,
-	/**
-	 * For stacks, don't split segments on null values. Instead, draw null values with
-	 * no marker. Also insert dummy points for any X position that exists in other series
-	 * in the stack.
+	/** 
+	 * Return an array of stacked points, where null and missing points are replaced by 
+	 * dummy points in order for gaps to be drawn correctly in stacks.
 	 */
-	getSegments: function () {
+	getStackPoints: function () {
 		var series = this,
-			segments = [],
 			segment = [],
 			keys = [],
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			stack = yAxis.stacks[this.stackKey],
 			pointMap = {},
-			plotX,
-			plotY,
 			points = this.points,
-			connectNulls = this.options.connectNulls,
-			stackIndicator,
+			seriesIndex = series.index,
+			yAxisSeries = yAxis.series,
+			seriesLength = yAxisSeries.length,
+			visibleSeries,
+			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
 			i,
 			x;
 
-		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
+		if (this.options.stacking) {
 			// Create a map where we can quickly look up the points by their X value.
 			for (i = 0; i < points.length; i++) {
 				pointMap[points[i].x] = points[i];
@@ -54,113 +53,192 @@ var AreaSeries = extendClass(Series, {
 				return a - b;
 			});
 
-			each(keys, function (x) {
-				var threshold = null,
+			visibleSeries = map(yAxisSeries, function () {
+				return this.visible;
+			});
+
+			each(keys, function (x, idx) {
+				var y = 0,
 					stackPoint,
-					skip = connectNulls && (!pointMap[x] || pointMap[x].y === null); // #1836
+					stackedValues;
 
-				if (!skip) {
+				if (pointMap[x] && !pointMap[x].isNull) {
+					segment.push(pointMap[x]);
 
-					// The point exists, push it to the segment
-					if (pointMap[x]) {
-						segment.push(pointMap[x]);
+					// Find left and right cliff. -1 goes left, 1 goes right.
+					each([-1, 1], function (direction) {
+						var nullName = direction === 1 ? 'rightNull' : 'leftNull',
+							cliffName = direction === 1 ? 'rightCliff' : 'leftCliff',
+							cliff = 0,
+							otherStack = stack[keys[idx + direction]];
 
-					// There is no point for this X value in this series, so we
-					// insert a dummy point in order for the areas to be drawn
-					// correctly.
-					} else {
+						// If there is a stack next to this one, to the left or to the right...
+						if (otherStack) {
+							i = seriesIndex;
+							while (i >= 0 && i < seriesLength) { // Can go either up or down, depending on reversedStacks
+								stackPoint = otherStack.points[i];
+								if (!stackPoint) {
+									// If the next point in this series is missing, mark the point
+									// with point.leftNull or point.rightNull = true.
+									if (i === seriesIndex) {
+										pointMap[x][nullName] = true;
 
-						// Loop down the stack to find the series below this one that has
-						// a value (#1991)
-						for (i = series.index; i <= yAxis.series.length; i++) {
-							stackIndicator = series.getStackIndicator(null, x, i);
-							stackPoint = stack[x].points[stackIndicator.key];
-							if (stackPoint) {
-								threshold = stackPoint[1];
-								break;
-							}
+									// If there are missing points in the next stack in any of the 
+									// series below this one, we need to substract the missing values
+									// and add a hiatus to the left or right.
+									} else if (visibleSeries[i]) {
+										stackedValues = stack[x].points[i];
+										if (stackedValues) {
+											cliff -= stackedValues[1] - stackedValues[0];
+										}
+									}
+								}
+								// When reversedStacks is true, loop up, else loop down
+								i += upOrDown; 
+							}					
 						}
+						pointMap[x][cliffName] = cliff;
+					});
 
-						plotX = xAxis.translate(x);
-						plotY = yAxis.getThreshold(threshold);
-						segment.push({
-							y: null,
-							plotX: plotX,
-							clientX: plotX,
-							plotY: plotY,
-							yBottom: plotY,
-							onMouseOver: noop
-						});
+
+				// There is no point for this X value in this series, so we 
+				// insert a dummy point in order for the areas to be drawn
+				// correctly.
+				} else {
+
+					// Loop down the stack to find the series below this one that has
+					// a value (#1991)
+					i = seriesIndex;
+					while (i >= 0 && i < seriesLength) {
+						stackPoint = stack[x].points[i];
+						if (stackPoint) {
+							y = stackPoint[1];
+							break;
+						}
+						// When reversedStacks is true, loop up, else loop down
+						i += upOrDown;
 					}
+
+					y = yAxis.toPixels(y, true);
+					segment.push({ 
+						isNull: true,
+						plotX: xAxis.toPixels(x, true),
+						plotY: y,
+						yBottom: y
+					});
 				}
 			});
 
-			if (segment.length) {
-				segments.push(segment);
-			}
+		} 
 
-		} else {
-			Series.prototype.getSegments.call(this);
-			segments = this.segments;
-		}
-
-		this.segments = segments;
+		return segment;
 	},
 
-	/**
-	 * Extend the base Series getSegmentPath method by adding the path for the area.
-	 * This path is pushed to the series.areaPath property.
-	 */
-	getSegmentPath: function (segment) {
-
-		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
-			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
-			i,
+	getGraphPath: function (points) {
+		var getGraphPath = Series.prototype.getGraphPath,
+			graphPath,
 			options = this.options,
-			segLength = segmentPath.length,
-			translatedThreshold = this.yAxis.getThreshold(options.threshold), // #2181
-			yBottom;
+			stacking = options.stacking,
+			yAxis = this.yAxis,
+			topPath,
+			//topPoints = [],
+			bottomPath,
+			bottomPoints = [],
+			graphPoints = [],
+			seriesIndex = this.index,
+			i,
+			areaPath,
+			plotX,
+			stacks = yAxis.stacks[this.stackKey],
+			threshold = options.threshold,
+			translatedThreshold = yAxis.getThreshold(options.threshold),
+			isNull,
+			yBottom,
+			connectNulls = options.connectNulls || stacking === 'percent',
+			/**
+			 * To display null points in underlying stacked series, this series graph must be 
+			 * broken, and the area also fall down to fill the gap left by the null point. #2069
+			 */
+			addDummyPoints = function (i, otherI, side) {
+				var point = points[i],
+					stackedValues = stacking && stacks[point.x].points[seriesIndex],
+					nullVal = point[side + 'Null'] || 0,
+					cliffVal = point[side + 'Cliff'] || 0,
+					top,
+					bottom,
+					isNull = true;
 
-		if (segLength === 3) { // for animation from 1 to two points
-			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
-		}
-		if (options.stacking && !this.closedStacks) {
+				if (cliffVal || nullVal) {
 
-			// Follow stack back. Later, implement areaspline. A general solution could be to
-			// reverse the entire graphPath of the previous series, though may be hard with
-			// splines and with series with different extremes
-			for (i = segment.length - 1; i >= 0; i--) {
-
-				yBottom = pick(segment[i].yBottom, translatedThreshold);
-
-				// step line?
-				if (i < segment.length - 1 && options.step) {
-					areaSegmentPath.push(segment[i + 1].plotX, yBottom);
+					top = (nullVal ? stackedValues[0] : stackedValues[1]) + cliffVal;
+					bottom = stackedValues[0] + cliffVal;
+					isNull = !!nullVal;
+				
+				} else if (!stacking && points[otherI] && points[otherI].isNull) {
+					top = bottom = threshold;
 				}
 
-				areaSegmentPath.push(segment[i].plotX, yBottom);
-			}
+				// Add to the top and bottom line of the area
+				if (top !== undefined) {
+					graphPoints.push({
+						plotX: plotX,
+						plotY: top === null ? translatedThreshold : yAxis.toPixels(top, true),
+						isNull: isNull
+					});
+					bottomPoints.push({
+						plotX: plotX,
+						plotY: bottom === null ? translatedThreshold : yAxis.toPixels(bottom, true)
+					});
+				}
+			};
 
-		} else { // follow zero line back
-			this.closeSegment(areaSegmentPath, segment, translatedThreshold);
+		// Find what points to use
+		points = points || this.points;
+
+		
+		// Fill in missing points
+		if (stacking) {
+			points = this.getStackPoints();
 		}
-		this.areaPath = this.areaPath.concat(areaSegmentPath);
-		return segmentPath;
-	},
 
-	/**
-	 * Extendable method to close the segment path of an area. This is overridden in polar
-	 * charts.
-	 */
-	closeSegment: function (path, segment, translatedThreshold) {
-		path.push(
-			L,
-			segment[segment.length - 1].plotX,
-			translatedThreshold,
-			L,
-			segment[0].plotX,
-			translatedThreshold
-		);
+		for (i = 0; i < points.length; i++) {
+			isNull = points[i].isNull;
+			plotX = pick(points[i].rectPlotX, points[i].plotX);
+			yBottom = pick(points[i].yBottom, translatedThreshold);
+
+			if (!isNull || connectNulls) {
+
+				if (!connectNulls) {
+					addDummyPoints(i, i - 1, 'left');
+				}
+
+				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
+					graphPoints.push(points[i]);
+					bottomPoints.push({
+						x: i,
+						plotX: plotX,
+						plotY: yBottom
+					});
+				}
+
+				if (!connectNulls) {
+					addDummyPoints(i, i + 1, 'right');
+				}
+			}
+		}
+
+		topPath = getGraphPath.call(this, graphPoints, true, true);
+		
+		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), true, true);
+		if (bottomPath.length) {
+			bottomPath[0] = L;
+		}
+
+		areaPath = topPath.concat(bottomPath);
+		graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
+
+		this.areaPath = areaPath;
+		return graphPath;
 	},
 
 	/**

@@ -12,22 +12,21 @@ var SplineSeries = extendClass(Series, {
 	/**
 	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */
-	getPointSpline: function (segment, point, i) {
+	getPointSpline: function (points, point, i) {
 		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint = segment[i - 1],
-			nextPoint = segment[i + 1],
+			lastPoint = points[i - 1],
+			nextPoint = points[i + 1],
 			leftContX,
 			leftContY,
 			rightContX,
 			rightContY,
 			ret;
 
-		// find control points
-		if (lastPoint && nextPoint) {
-
+		// Find control points
+		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -67,6 +66,7 @@ var SplineSeries = extendClass(Series, {
 			point.rightContX = rightContX;
 			point.rightContY = rightContY;
 
+			
 		}
 
 		// Visualize control points for debugging
@@ -101,23 +101,17 @@ var SplineSeries = extendClass(Series, {
 				})
 				.add();
 		}
-		*/
-
-		// moveTo or lineTo
-		if (!i) {
-			ret = [M, plotX, plotY];
-		} else { // curve from last point to this
-			ret = [
-				'C',
-				lastPoint.rightContX || lastPoint.plotX,
-				lastPoint.rightContY || lastPoint.plotY,
-				leftContX || plotX,
-				leftContY || plotY,
-				plotX,
-				plotY
-			];
-			lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
-		}
+		// */
+		ret = [
+			'C',
+			lastPoint.rightContX || lastPoint.plotX,
+			lastPoint.rightContY || lastPoint.plotY,
+			leftContX || plotX,
+			leftContY || plotY,
+			plotX,
+			plotY
+		];
+		lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
 		return ret;
 	}
 });

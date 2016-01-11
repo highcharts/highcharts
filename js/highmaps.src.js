@@ -310,12 +310,12 @@
                 i,
                 start = fromD.split(' '),
                 end = [].concat(toD), // copy
-                startBaseLine,
-                endBaseLine,
+                isArea = elem.isArea,
+                positionFactor = isArea ? 2 : 1,
                 sixify = function (arr) { // in splines make move points have six parameters like bezier curves
                     i = arr.length;
                     while (i--) {
-                        if (arr[i] === M) {
+                        if (arr[i] === M || arr[i] === L) {
                             arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
                         }
                     }
@@ -326,39 +326,49 @@
                 sixify(end);
             }
 
-            // pull out the base lines before padding
-            if (elem.isArea) {
-                startBaseLine = start.splice(start.length - 6, 6);
-                endBaseLine = end.splice(end.length - 6, 6);
-            }
-
-            // if shifting points, prepend a dummy point to the end path
+            // If shifting points, prepend a dummy point to the end path. For areas,
+            // prepend both at the beginning and end of the path.
             if (shift <= end.length / numParams && start.length === end.length) {
                 while (shift--) {
-                    end = [].concat(end).splice(0, numParams).concat(end);
+                    end = end.slice(0, numParams).concat(end);
+                    if (isArea) {
+                        end = end.concat(end.slice(end.length - numParams));
+                    }
                 }
             }
             elem.shift = 0; // reset for following animations
 
-            // copy and append last point until the length matches the end length
+        
+            // Copy and append last point until the length matches the end length
             if (start.length) {
                 endLength = end.length;
                 while (start.length < endLength) {
 
-                    //bezier && sixify(start);
-                    slice = [].concat(start).splice(start.length - numParams, numParams);
-                    if (bezier) { // disable first control point
+                    // Pull out the slice that is going to be appended or inserted. In a line graph,
+                    // the positionFactor is 1, and the last point is sliced out. In an area graph,
+                    // the positionFactor is 2, causing the middle two points to be sliced out, since
+                    // an area path starts at left, follows the upper path then turns and follows the
+                    // bottom back. 
+                    slice = start.slice().splice(
+                        (start.length / positionFactor) - numParams, 
+                        numParams * positionFactor
+                    );
+                
+                    // Disable first control point
+                    if (bezier) {
                         slice[numParams - 6] = slice[numParams - 2];
                         slice[numParams - 5] = slice[numParams - 1];
                     }
-                    start = start.concat(slice);
+                
+                    // Now insert the slice, either in the middle (for areas) or at the end (for lines)
+                    [].splice.apply(
+                        start, 
+                        [(start.length / positionFactor), 0].concat(slice)
+                    );
+
                 }
             }
 
-            if (startBaseLine) { // append the base lines for areas
-                start = start.concat(startBaseLine);
-                end = end.concat(endBaseLine);
-            }
             return [start, end];
         }
     }; // End of Fx prototype
@@ -12777,6 +12787,7 @@
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
+            point.isNull = point.y === null;
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
@@ -13172,51 +13183,7 @@
             this.xIncrement = xIncrement + pointInterval;
             return xIncrement;
         },
-
-        /**
-         * Divide the series data into segments divided by null values.
-         */
-        getSegments: function () {
-            var series = this,
-                lastNull = -1,
-                segments = [],
-                i,
-                points = series.points,
-                pointsLength = points.length;
-
-            if (pointsLength) { // no action required for []
-
-                // if connect nulls, just remove null points
-                if (series.options.connectNulls) {
-                    i = pointsLength;
-                    while (i--) {
-                        if (points[i].y === null) {
-                            points.splice(i, 1);
-                        }
-                    }
-                    if (points.length) {
-                        segments = [points];
-                    }
-
-                // else, split on null points
-                } else {
-                    each(points, function (point, i) {
-                        if (point.y === null) {
-                            if (i > lastNull + 1) {
-                                segments.push(points.slice(lastNull + 1, i));
-                            }
-                            lastNull = i;
-                        } else if (i === pointsLength - 1) { // last value
-                            segments.push(points.slice(lastNull + 1, i + 1));
-                        }
-                    });
-                }
-            }
-
-            // register it
-            series.segments = segments;
-        },
-
+    
         /**
          * Set the series options by merging from the options tree
          * @param {Object} itemOptions
@@ -13749,7 +13716,7 @@
 
 
                 // Calculate the bottom y value for stacked series
-                if (stacking && series.visible && stack && stack[xValue]) {
+                if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
                     stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
                     pointStack = stack[xValue];
                     stackValues = pointStack.points[stackIndicator.key];
@@ -13806,11 +13773,16 @@
                 lastPlotX = plotX;
 
             }
-
             series.closestPointRangePx = closestPointRangePx;
+        },
 
-            // now that we have the cropped data, build the segments
-            series.getSegments();
+        /**
+         * Return the series points with null points filtered out
+         */
+        getValidPoints: function () {
+            return grep(this.points, function (point) {
+                return !point.isNull;
+            });
         },
 
         /**
@@ -14260,92 +14232,89 @@
         },
 
         /**
-         * Return the graph path of a segment
+         * Get the graph path
          */
-        getSegmentPath: function (segment) {
+        getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
             var series = this,
-                segmentPath = [],
-                step = series.options.step;
+                options = series.options,
+                step = options.step,
+                graphPath = [],
+                gap;
 
-            // build the segment line
-            each(segment, function (point, i) {
+            points = points || series.points;
+
+            // Build the line
+            each(points, function (point, i) {
 
                 var plotX = point.plotX,
                     plotY = point.plotY,
-                    lastPoint;
+                    lastPoint = points[i - 1],                
+                    pathToPoint; // the path to this point from the previous
 
-                if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-                    segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+                if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
+                    gap = true; // ... and continue
+                }
+
+                // Line series, nullsAsZeroes is not handled
+                if (point.isNull && !defined(nullsAsZeroes)) {
+                    gap = !options.connectNulls;
+
+                // Area series, nullsAsZeroes is set
+                } else if (point.isNull && !nullsAsZeroes) {
+                    gap = true;
 
                 } else {
 
-                    // moveTo or lineTo
-                    segmentPath.push(i ? L : M);
+                    if (i === 0 || gap) {
+                        pathToPoint = [M, point.plotX, point.plotY];
+                
+                    } else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+                    
+                        pathToPoint = series.getPointSpline(points, point, i);
 
-                    // step line?
-                    if (step && i) {
-                        lastPoint = segment[i - 1];
+                    } else if (step) {
+
                         if (step === 'right') {
-                            segmentPath.push(
+                            pathToPoint = [
+                                L,
                                 lastPoint.plotX,
-                                plotY,
-                                L
-                            );
-
+                                plotY
+                            ];
+                        
                         } else if (step === 'center') {
-                            segmentPath.push(
+                            pathToPoint = [
+                                L,
                                 (lastPoint.plotX + plotX) / 2,
                                 lastPoint.plotY,
                                 L,
                                 (lastPoint.plotX + plotX) / 2,
-                                plotY,
-                                L
-                            );
-
+                                plotY
+                            ];
+                        
                         } else {
-                            segmentPath.push(
+                            pathToPoint = [
+                                L,
                                 plotX,
-                                lastPoint.plotY,
-                                L
-                            );
+                                lastPoint.plotY
+                            ];
                         }
+                        pathToPoint.push(L, plotX, plotY);
+
+                    } else {
+                        // normal line to next point
+                        pathToPoint = [
+                            L,
+                            plotX,
+                            plotY
+                        ];
                     }
 
-                    // normal line to next point
-                    segmentPath.push(
-                        point.plotX,
-                        point.plotY
-                    );
+
+                    graphPath.push.apply(graphPath, pathToPoint);
+                    gap = false;
                 }
             });
 
-            return segmentPath;
-        },
-
-        /**
-         * Get the graph path
-         */
-        getGraphPath: function () {
-            var series = this,
-                graphPath = [],
-                segmentPath,
-                singlePoints = []; // used in drawTracker
-
-            // Divide into segments and build graph and area paths
-            each(series.segments, function (segment) {
-
-                segmentPath = series.getSegmentPath(segment);
-
-                // add the segment to the graph, or a single point for tracking
-                if (segment.length > 1) {
-                    graphPath = graphPath.concat(segmentPath);
-                } else {
-                    singlePoints.push(segment[0]);
-                }
-            });
-
-            // Record it for use in drawGraph and drawTracker, and return graphPath
-            series.singlePoints = singlePoints;
             series.graphPath = graphPath;
 
             return graphPath;
@@ -14361,7 +14330,7 @@
                 props = [['graph', options.lineColor || this.color, options.dashStyle]],
                 lineWidth = options.lineWidth,
                 roundCap = options.linecap !== 'square',
-                graphPath = this.getGraphPath(),
+                graphPath = (this.gappedPath || this.getGraphPath).call(this),
                 fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
                 zones = this.zones;
 
@@ -19501,8 +19470,6 @@
                 tracker = series.tracker,
                 cursor = options.cursor,
                 css = cursor && { cursor: cursor },
-                singlePoints = series.singlePoints,
-                singlePoint,
                 i,
                 onMouseOver = function () {
                     if (chart.hoverSeries !== series) {
@@ -19538,11 +19505,11 @@
             }
 
             // handle single points
-            for (i = 0; i < singlePoints.length; i++) {
+            /*for (i = 0; i < singlePoints.length; i++) {
                 singlePoint = singlePoints[i];
                 trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
                 L, singlePoint.plotX + snap, singlePoint.plotY);
-            }
+            }*/
 
             // draw the tracker
             if (tracker) {

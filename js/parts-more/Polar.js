@@ -76,40 +76,6 @@
 		}
 	};
 
-	/**
-	 * Add some special init logic to areas and areasplines
-	 */
-	function initArea(proceed, chart, options) {
-		proceed.call(this, chart, options);
-		if (this.chart.polar) {
-
-			/**
-			 * Overridden method to close a segment path. While in a cartesian plane the area
-			 * goes down to the threshold, in the polar chart it goes to the center.
-			 */
-			this.closeSegment = function (path) {
-				var center = this.xAxis.center;
-				path.push(
-					'L',
-					center[0],
-					center[1]
-				);
-			};
-
-			// Instead of complicated logic to draw an area around the inner area in a stack,
-			// just draw it behind
-			this.closedStacks = true;
-		}
-	}
-
-
-	if (seriesTypes.area) {
-		wrap(seriesTypes.area.prototype, 'init', initArea);
-	}
-	if (seriesTypes.areaspline) {
-		wrap(seriesTypes.areaspline.prototype, 'init', initArea);
-	}
-
 	if (seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
@@ -248,20 +214,29 @@
 	 * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in
 	 * line-like series.
 	 */
-	wrap(seriesProto, 'getSegmentPath', function (proceed, segment) {
-
-		var points = this.points;
-
+	wrap(seriesProto, 'getGraphPath', function (proceed, points) {
+		var series = this;
+		
 		// Connect the path
-		if (this.chart.polar && this.options.connectEnds !== false &&
-				segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
-			this.connectEnds = true; // re-used in splines
-			segment = [].concat(segment, [points[0]]);
+		if (this.chart.polar) {
+			points = points || this.points;
+	
+			if (this.options.connectEnds !== false && points[0].y !== null) {
+				this.connectEnds = true; // re-used in splines
+				points.splice(points.length, 0, points[0]);
+			}
+
+			// For area charts, pseudo points are added to the graph, now we need to translate these
+			each(points, function (point) {
+				if (point.polarPlotY === undefined) {
+					series.toXY(point);
+				}
+			});
 		}
 
 		// Run uber method
-		return proceed.call(this, segment);
-
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	
 	});
 
 
