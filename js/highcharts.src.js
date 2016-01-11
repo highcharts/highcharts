@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-08)
+ * @license Highcharts JS v4.2.0-modified (2016-01-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -6604,7 +6604,7 @@
                 addEvent,
                 eventType,
                 color = options.color,
-                zIndex = options.zIndex,
+                zIndex = pick(options.zIndex, 0),
                 events = options.events,
                 attribs = {},
                 renderer = axis.chart.renderer;
@@ -6640,9 +6640,7 @@
                 return;
             }
             // zIndex
-            if (defined(zIndex)) {
-                attribs.zIndex = zIndex;
-            }
+            attribs.zIndex = zIndex;
 
             // common for lines and bands
             if (svgElem) {
@@ -6713,9 +6711,9 @@
                     align: optionsLabel.textAlign || optionsLabel.align,
                     rotation: optionsLabel.rotation
                 };
-                if (defined(zIndex)) {
-                    attribs.zIndex = zIndex;
-                }
+            
+                attribs.zIndex = zIndex;
+            
                 plotLine.label = label = renderer.text(
                         optionsLabel.text,
                         0,

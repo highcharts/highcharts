@@ -35,7 +35,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			addEvent,
 			eventType,
 			color = options.color,
-			zIndex = options.zIndex,
+			zIndex = pick(options.zIndex, 0),
 			events = options.events,
 			attribs = {},
 			renderer = axis.chart.renderer;
@@ -71,9 +71,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			return;
 		}
 		// zIndex
-		if (defined(zIndex)) {
-			attribs.zIndex = zIndex;
-		}
+		attribs.zIndex = zIndex;
 
 		// common for lines and bands
 		if (svgElem) {
@@ -144,9 +142,9 @@ Highcharts.PlotLineOrBand.prototype = {
 				align: optionsLabel.textAlign || optionsLabel.align,
 				rotation: optionsLabel.rotation
 			};
-			if (defined(zIndex)) {
-				attribs.zIndex = zIndex;
-			}
+			
+			attribs.zIndex = zIndex;
+			
 			plotLine.label = label = renderer.text(
 					optionsLabel.text,
 					0,
