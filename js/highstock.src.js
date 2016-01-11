@@ -20570,8 +20570,8 @@
                     interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
                     groupPositions = xAxis.getTimeTicks(
                         xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
-                        xMin,
-                        xMax,
+                        Math.min(xMin, processedXData[0]), // Processed data may extend beyond axis (#4907)
+                        Math.max(xMax, processedXData[processedXData.length - 1]),
                         xAxis.options.startOfWeek,
                         processedXData,
                         series.closestPointRange
