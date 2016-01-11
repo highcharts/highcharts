@@ -3,6 +3,11 @@ ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
 
+// Server variables
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
+
 if (isset($_GET['commit'])) {
 	$leftPath = $_GET['commit']; // used by PhantomJS command line
 } elseif (isset($_SESSION['leftPath'])) {
@@ -10,7 +15,7 @@ if (isset($_GET['commit'])) {
 } else {
 	$leftPath = Settings::$leftPath;
 }
-$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
+$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
 
 // A commit is given, insert the full path
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
@@ -23,12 +28,6 @@ $rightExporting = "$rightPath/modules/exporting.src.js";
 
 $leftFramework = 'jQuery';
 $rightFramework = 'jQuery';
-
-$httpHost = $_SERVER['HTTP_HOST'];
-$httpHost = explode('.', $httpHost);
-$topDomain = $httpHost[sizeof($httpHost) - 1];
-
-
 
 $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
