@@ -204,7 +204,6 @@ var AreaSeries = extendClass(Series, {
 		for (i = 0; i < points.length; i++) {
 			isNull = points[i].isNull;
 			plotX = pick(points[i].rectPlotX, points[i].plotX);
-			plotY = points[i].plotY;
 			yBottom = pick(points[i].yBottom, translatedThreshold);
 
 			if (!isNull || connectNulls) {

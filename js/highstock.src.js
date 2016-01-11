@@ -16470,7 +16470,6 @@
             for (i = 0; i < points.length; i++) {
                 isNull = points[i].isNull;
                 plotX = pick(points[i].rectPlotX, points[i].plotX);
-                plotY = points[i].plotY;
                 yBottom = pick(points[i].yBottom, translatedThreshold);
 
                 if (!isNull || connectNulls) {
@@ -19961,9 +19960,8 @@
     Series.prototype.gappedPath = function () {
         var gapSize = this.options.gapSize,
             xAxis = this.xAxis,
+            points = this.points.slice(),
             i;
-
-        points = this.points.slice();
 
         if (gapSize) {
 

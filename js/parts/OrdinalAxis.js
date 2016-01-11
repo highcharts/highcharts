@@ -633,9 +633,8 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 Series.prototype.gappedPath = function () {
 	var gapSize = this.options.gapSize,
 		xAxis = this.xAxis,
+		points = this.points.slice(),
 		i;
-
-	points = this.points.slice();
 
 	if (gapSize) {
 
