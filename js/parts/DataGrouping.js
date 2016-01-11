@@ -57,7 +57,8 @@ var DATA_GROUPING = 'dataGrouping',
 	},
 
 	// units are defined in a separate array to allow complete overriding in case of a user option
-	defaultDataGroupingUnits = [[
+	defaultDataGroupingUnits = [
+		[
 			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 		], [

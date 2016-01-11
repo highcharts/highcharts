@@ -70,20 +70,20 @@
         plotOptions = H.getOptions().plotOptions,
         CHUNK_SIZE = 50000;
 
-    function eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, treshold) {
+    function eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold) {
         i = i || 0;
         chunkSize = chunkSize || CHUNK_SIZE;
-        treshold = i + chunkSize;
+        threshold = i + chunkSize;
         proceed = true;
 
-        while (proceed && (i < treshold)) {
+        while (proceed && (i < threshold)) {
             proceed = fn(arr[i], i);
             i = i + 1;
         }
         if (proceed) {
             if (i + chunkSize < arr.length) {
                 setTimeout(function () {
-                    eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, treshold);
+                    eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold);
                 });
             } else if (finalFunc) {
                 finalFunc();

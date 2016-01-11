@@ -26,6 +26,7 @@
   ],
   "devDependencies": {
     "browserify": "^12.0.1",
+    "closurecompiler": "^1.5.2",
     "colors": "~1.1.2",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
@@ -35,7 +36,8 @@
     "request": "^2.65.0",
     "vinyl-ftp": "^0.4.5",
     "webpack": "^1.12.9",
-    "xml2js": "^0.4.13"
+    "xml2js": "^0.4.13",
+    "yargs": "^3.31.0"
   },
   "license": "https://www.highcharts.com/license"
 }
