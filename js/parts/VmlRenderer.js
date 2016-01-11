@@ -989,7 +989,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				ret.push(
 					'e',
 					M,
-					x,// - innerRadius,
+					x, // - innerRadius,
 					y// - innerRadius
 				);
 			}

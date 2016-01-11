@@ -2768,7 +2768,7 @@
          */
         getBBox: function (reload, rot) {
             var wrapper = this,
-                bBox,// = wrapper.bBox,
+                bBox, // = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
@@ -6023,7 +6023,7 @@
                     ret.push(
                         'e',
                         M,
-                        x,// - innerRadius,
+                        x, // - innerRadius,
                         y// - innerRadius
                     );
                 }
@@ -8018,11 +8018,14 @@
                 left = pick(options.left, chart.plotLeft + offsetLeft),
                 percentRegex = /%$/;
 
-            // Check for percentage based input values
+            // Check for percentage based input values. Rounding fixes problems with
+            // column overflow and plot line filtering (#4898, #4899)
             if (percentRegex.test(height)) {
+                //height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
                 height = parseFloat(height) / 100 * chart.plotHeight;
             }
             if (percentRegex.test(top)) {
+                //top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
                 top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
             }
 
@@ -16111,10 +16114,14 @@
             // run parent method
             Series.prototype.drawDataLabels.apply(series);
 
-            // arrange points for detection collision
             each(data, function (point) {
                 if (point.dataLabel && point.visible) { // #407, #2510
+
+                    // Arrange points for detection collision
                     halves[point.half].push(point);
+
+                    // Reset positions (#4905)
+                    point.dataLabel._pos = null;
                 }
             });
 
@@ -16449,12 +16456,7 @@
                 center[2] = newSize;
                 center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
                 this.translate(center);
-                each(this.points, function (point) {
-                    if (point.dataLabel) {
-                        point.dataLabel._pos = null; // reset
-                    }
-                });
-
+            
                 if (this.drawDataLabels) {
                     this.drawDataLabels();
                 }
@@ -16587,6 +16589,8 @@
                 isIntersecting,
                 pos1,
                 pos2,
+                parent1,
+                parent2,
                 padding,
                 intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
                     return !(
@@ -16622,14 +16626,16 @@
                     if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
                         pos1 = label1.alignAttr;
                         pos2 = label2.alignAttr;
+                        parent1 = label1.parentGroup; // Different panes have different positions
+                        parent2 = label2.parentGroup;
                         padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
                         isIntersecting = intersectRect(
-                            pos1.x,
-                            pos1.y,
+                            pos1.x + parent1.translateX,
+                            pos1.y + parent1.translateY,
                             label1.width - padding,
                             label1.height - padding,
-                            pos2.x,
-                            pos2.y,
+                            pos2.x + parent2.translateX,
+                            pos2.y + parent2.translateY,
                             label2.width - padding,
                             label2.height - padding
                         );
@@ -18100,6 +18106,8 @@
                 isIntersecting,
                 pos1,
                 pos2,
+                parent1,
+                parent2,
                 padding,
                 intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
                     return !(
@@ -18135,14 +18143,16 @@
                     if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
                         pos1 = label1.alignAttr;
                         pos2 = label2.alignAttr;
+                        parent1 = label1.parentGroup; // Different panes have different positions
+                        parent2 = label2.parentGroup;
                         padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
                         isIntersecting = intersectRect(
-                            pos1.x,
-                            pos1.y,
+                            pos1.x + parent1.translateX,
+                            pos1.y + parent1.translateY,
                             label1.width - padding,
                             label1.height - padding,
-                            pos2.x,
-                            pos2.y,
+                            pos2.x + parent2.translateX,
+                            pos2.y + parent2.translateY,
                             label2.width - padding,
                             label2.height - padding
                         );
@@ -19731,13 +19741,15 @@
             }
 
             each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-                var mousePos = e[isX ? 'chartX' : 'chartY'],
-                    axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+                    horiz = axis.horiz,
+                    mousePos = e[horiz ? 'chartX' : 'chartY'],
+                    mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
+                    startPos = chart[mouseDown],
                     halfPointRange = (axis.pointRange || 0) / 2,
                     extremes = axis.getExtremes(),
                     newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-                    newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+                    newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
                     goingLeft = startPos > mousePos; // #3613
             
                 if (axis.series.length &&
@@ -19747,7 +19759,7 @@
                     doRedraw = true;
                 }
 
-                chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+                chart[mouseDown] = mousePos; // set new reference for next run
             });
 
             if (doRedraw) {
