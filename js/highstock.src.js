@@ -8271,11 +8271,14 @@
                 left = pick(options.left, chart.plotLeft + offsetLeft),
                 percentRegex = /%$/;
 
-            // Check for percentage based input values
+            // Check for percentage based input values. Rounding fixes problems with
+            // column overflow and plot line filtering (#4898, #4899)
             if (percentRegex.test(height)) {
+                //height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
                 height = parseFloat(height) / 100 * chart.plotHeight;
             }
             if (percentRegex.test(top)) {
+                //top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
                 top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
             }
 
