@@ -89,7 +89,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 			// #4584 Check if has graphic - null points don't have it
 			if (graphic) {
 				// Hide null or 0 points (#3006, 3650)
-				graphic[point.y ? 'show' : 'hide']();
+				graphic[point.y && point.visible ? 'show' : 'hide']();
 			}
 		});		
 	}
