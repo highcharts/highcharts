@@ -19,7 +19,11 @@ if (!is_dir('cache')) {
 	mkdir('cache');
 }
 if (!is_file($cachePath)) {
-	file_put_contents($cachePath, file_get_contents($file));
+	$content = file_get_contents($file);
+	if (!$content) {
+		$content = 'console.log("Could not download ' . $file . '. Make sure PHP server is set up for SSL.");';
+	}
+	file_put_contents($cachePath, $content);
 }
 
 if (substr($file, strlen($file) - 2) == 'js') {

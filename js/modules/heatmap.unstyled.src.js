@@ -1,7 +1,7 @@
 /**
- * @license Highcharts JS v5.0-dev (2015-10-26)
+ * @license Highcharts JS v5.0-dev (2016-01-12)
  *
- * (c) 2011-2014 Torstein Honsi
+ * (c) 2011-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -98,7 +98,7 @@
 
             // Unsupported color, return to-color (#3920)
             if (!to.rgba.length || !from.rgba.length) {
-                ret = to.raw || 'none';
+                ret = to.input || 'none';
 
             // Interpolate
             } else {
@@ -471,9 +471,9 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        H.addAnimSetter(prop, function (fx) {
-            fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
-        });
+        Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+            this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+        };
     });
 
     /**
@@ -647,7 +647,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {
@@ -710,4 +710,4 @@
 
         return H;
     }(Highcharts));
-
+    

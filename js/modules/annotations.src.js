@@ -1,10 +1,18 @@
 
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts) {
 
 	var defined = H.defined,
 		isNumber = H.isNumber,
+		inArray = H.inArray,
 		isArray = H.isArray,
+		merge = H.merge,
 
 		ALIGN_FACTOR,
 		ALLOWED_SHAPES,
@@ -22,11 +30,6 @@
 		bottom: 1,
 		right: 1
 	};
-
-
-	// Highcharts helper methods
-	var inArray = HighchartsAdapter.inArray,
-		merge = Highcharts.merge;
 
 	function defaultOptions(shapeType) {
 		var shapeOptions,
@@ -388,4 +391,4 @@
 			chart.annotations.redraw();
 		});
 	});
-}(Highcharts));
+}));

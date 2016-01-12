@@ -66,6 +66,7 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
+		point.isNull = point.y === null;
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -252,8 +253,7 @@ Point.prototype = {
 	},
 
 	/**
-	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-	 * causes a name clash in MooTools
+	 * Fire an event on the Point object.
 	 * @param {String} eventType
 	 * @param {Object} eventArgs Additional event arguments
 	 * @param {Function} defaultFunction Default event handler

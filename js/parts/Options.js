@@ -393,7 +393,7 @@ function setTimeMethods() {
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
-	H.Date = Date = globalOptions.Date || window.Date; // Allow using a different Date class
+	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
 	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {

@@ -3,6 +3,11 @@ ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
 
+// Server variables
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
+
 if (isset($_GET['commit'])) {
 	$leftPath = $_GET['commit']; // used by PhantomJS command line
 } elseif (isset($_SESSION['leftPath'])) {
@@ -10,7 +15,7 @@ if (isset($_GET['commit'])) {
 } else {
 	$leftPath = Settings::$leftPath;
 }
-$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
+$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
 
 // A commit is given, insert the full path
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
@@ -24,16 +29,11 @@ $rightExporting = "$rightPath/modules/exporting.src.js";
 $leftFramework = 'jQuery';
 $rightFramework = 'jQuery';
 
-$httpHost = $_SERVER['HTTP_HOST'];
-$httpHost = explode('.', $httpHost);
-$topDomain = $httpHost[sizeof($httpHost) - 1];
-
-
-
 $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
+$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 
 $path = "../../samples/$path";
 
@@ -99,7 +99,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest;
 	$bogus = md5('bogus');
 	
 	// No idea why file_get_contents doesn't work here...
@@ -107,23 +107,43 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 
+	if (strstr($s, 'http://')) {
+		$s .= '<script>console.warn("Do not use http in demo.html. Use secure https.")</script>';
+	}
+	if (strstr($s, '.src.js')) {
+		$s .= '<script>console.warn("Do not use src.js files in demos. Use .js compiled files.")</script>';
+	}
+
 	$s = cachify($s);
 
 	$s = str_replace('cache.php?file=https://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
 		$s = str_replace('cache.php?file=https://code.highcharts.com', $leftPath, $s);
-		$exporting = $rightExporting;
+		$exporting = $leftExporting;
 		
 	} else {
+
+		// These are the files we want to test. Append a time stamp to ensure we're not loading
+		// from browser cache.
+		$s = preg_replace_callback(
+			'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
+			function ($matches) {
+				global $rightPath;
+				$src = $rightPath . $matches[1];
+				$src = str_replace('.js', '.js?' . mktime(), $src);
+				return $src;
+			},
+			$s
+		);
 		
-		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
-		$exporting = $leftExporting;
+		$exporting = $rightExporting;
 	}
 
 	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
 	
-	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
+	// If the export module is not loaded, add it so we can run compare
+	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false && !$isUnitTest) {
 		$s .= '<script src="' . $exporting . '"></script>';
 	}
 	
@@ -192,7 +212,10 @@ function getExportInnerHTML() {
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
 					QUnit.done(function (e) {
-						if (e.passed === e.total) {
+						if (e.total === 0) {
+							window.parent.onDifferent('Error');
+							console.warn('No unit tests ran');
+						} else if (e.passed === e.total) {
 							window.parent.onIdentical();
 						} else {
 							window.parent.onDifferent(e.passed + '/' + e.total);

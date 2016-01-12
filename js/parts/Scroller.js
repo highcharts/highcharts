@@ -208,7 +208,8 @@ Scroller.prototype = {
 			elementsToDestroy.push(tempElem);
 
 			// the rifles
-			tempElem = renderer.path([
+			tempElem = renderer
+				.path([
 					'M',
 					-1.5, 4,
 					'L',
@@ -260,7 +261,8 @@ Scroller.prototype = {
 				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 
-			tempElem = renderer.path([
+			tempElem = renderer
+				.path([
 					'M',
 					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
 					'L',
@@ -564,7 +566,7 @@ Scroller.prototype = {
 		_events = [
 			[container, 'mousedown', mouseDownHandler],
 			[container, 'mousemove', mouseMoveHandler],
-			[document, 'mouseup', mouseUpHandler]
+			[doc, 'mouseup', mouseUpHandler]
 		];
 
 		// Touch events
@@ -572,7 +574,7 @@ Scroller.prototype = {
 			_events.push(
 				[container, 'touchstart', mouseDownHandler],
 				[container, 'touchmove', mouseMoveHandler],
-				[document, 'touchend', mouseUpHandler]
+				[doc, 'touchend', mouseUpHandler]
 			);
 		}
 
@@ -782,6 +784,11 @@ Scroller.prototype = {
 					fixedMin = scroller.fixedExtreme;
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
+				}
+
+				// Snap to right edge (#4076)
+				if (scroller.zoomedMax === scroller.navigatorWidth) {
+					fixedMax = scroller.getUnionExtremes().dataMax;
 				}
 
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
@@ -994,10 +1001,12 @@ Scroller.prototype = {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
+			pointValKey: inArray('close', baseSeries.pointArrayMap || []) > -1 && 'close', // #1905
 			xAxis: 'navigator-x-axis',
 			yAxis: 'navigator-y-axis',
 			name: 'Navigator',
 			showInLegend: false,
+			stacking: false, // We only allow one series anyway (#4823)
 			isInternal: true,
 			visible: true
 		});

@@ -1,7 +1,6 @@
 (function (H) {
 	var CanVGRenderer,
-	
-		getScript = H.getScript,
+		doc = H.win.doc,
 		useCanVG = H.useCanVG;
 
 /* ****************************************************************************
@@ -10,6 +9,23 @@
  * TARGETING THAT SYSTEM.                                                     *
  *                                                                            *
  *****************************************************************************/
+
+/**
+ * Downloads a script and executes a callback when done.
+ * @param {String} scriptLocation
+ * @param {Function} callback
+ */
+function getScript(scriptLocation, callback) {
+	var head = doc.getElementsByTagName('head')[0],
+		script = doc.createElement('script');
+
+	script.type = 'text/javascript';
+	script.src = scriptLocation;
+	script.onload = callback;
+
+	head.appendChild(script);
+}
+
 if (useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.

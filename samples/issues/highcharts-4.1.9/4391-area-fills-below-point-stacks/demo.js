@@ -48,7 +48,7 @@ $(function () {
             }, {
                 x: 2,
                 y: 2
-            }, ],
+            }]
         }, {
             name: "Series 02",
             data: [{

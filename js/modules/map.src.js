@@ -1,8 +1,8 @@
 /**
- * @license Highmaps JS v2.0-dev (2015-10-26)
+ * @license Highmaps JS v2.0-dev (2016-01-12)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
- * (c) 2011-2014 Torstein Honsi
+ * (c) 2011-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -212,7 +212,7 @@
 
             // Unsupported color, return to-color (#3920)
             if (!to.rgba.length || !from.rgba.length) {
-                ret = to.raw || 'none';
+                ret = to.input || 'none';
 
             // Interpolate
             } else {
@@ -585,9 +585,9 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        H.addAnimSetter(prop, function (fx) {
-            fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
-        });
+        Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+            this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+        };
     });
 
     /**
@@ -891,7 +891,7 @@
 
         // Add the mousewheel event
         if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
-            addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+            addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
                 chart.pointer.onContainerMouseWheel(e);
                 return false;
             });
@@ -990,11 +990,8 @@
         return H;
     }(Highcharts));
     (function (H) {
-        var 
-            
-            Color = H.Color,
+        var Color = H.Color,
             ColorAxis = H.ColorAxis,
-            
             colorPointMixin = H.colorPointMixin,
             colorSeriesMixin = H.colorSeriesMixin,
             defaultPlotOptions = H.defaultPlotOptions,
@@ -1012,7 +1009,7 @@
 
     // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
     // diffent logic (#3218)
-    var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
+    var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
     /**
      * Extend the default options with map options
@@ -1909,7 +1906,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {
@@ -2002,7 +1999,7 @@
      * Get point from latLon using specified transform definition
      */
     Chart.prototype.transformFromLatLon = function (latLon, transform) {
-        if (window.proj4 === undefined) {
+        if (win.proj4 === undefined) {
             error(21);
             return {
                 x: 0,
@@ -2010,7 +2007,7 @@
             };
         }
 
-        var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+        var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
             cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
             sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
             rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
@@ -2025,7 +2022,7 @@
      * Get latLon from point using specified transform definition
      */
     Chart.prototype.transformToLatLon = function (point, transform) {
-        if (window.proj4 === undefined) {
+        if (win.proj4 === undefined) {
             error(21);
             return;
         }
@@ -2037,7 +2034,7 @@
             cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
             sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
             // Note: Inverted sinAngle to reverse rotation direction
-            projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+            projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
                 x: normalized.x * cosAngle + normalized.y * -sinAngle,
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);
@@ -2061,7 +2058,7 @@
             }
         }
 
-        return this.transformToLatLon(point, transforms.default);
+        return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
     };
 
     Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -2086,7 +2083,7 @@
             }
         }
 
-        return this.transformFromLatLon(latLon, transforms.default);
+        return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
     };
 
     /**
@@ -2185,7 +2182,7 @@
 
         proceed.call(this, credits);
 
-        if (this.credits) {
+        if (this.credits && this.mapCreditsFull) {
             this.credits.attr({
                 title: this.mapCreditsFull
             });
@@ -2325,9 +2322,11 @@
     /**
      * A wrapper for Chart with all the default values for a Map
      */
-    H.Map = function (options, callback) {
-    
-        var hiddenAxis = {
+    Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
+
+        var hasRenderToArg = typeof a === 'string' || a.nodeName,
+            options = arguments[hasRenderToArg ? 1 : 0],
+            hiddenAxis = {
                 endOnTick: false,
                 gridLineWidth: 0,
                 lineWidth: 0,
@@ -2371,9 +2370,11 @@
         options.series = seriesOptions;
 
 
-        return new Chart(options, callback);
+        return hasRenderToArg ? 
+            new Chart(a, options, c) :
+            new Chart(options, b);
     };
 
         return H;
     }(Highcharts));
-
+    

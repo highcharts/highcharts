@@ -6,7 +6,13 @@
  *
  */
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 
 	'use strict';
 
@@ -41,7 +47,7 @@
 
 		// Unsupported color, return to-color (#3920)
 		if (!to.rgba.length || !from.rgba.length) {
-			ret = to.raw || 'none';
+			ret = to.input || 'none';
 
 		// Interpolate
 		} else {
@@ -60,9 +66,9 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		addAnimSetter(prop, function (fx) {
-			fx.elem.attr(prop, tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
-		});
+		H.Fx.prototype[prop + 'Setter'] = function () {
+			this.elem.attr(prop, tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+		};
 	});
 
 	// Add language
@@ -709,4 +715,4 @@
 		}
 	}
 		
-}(Highcharts));
+}));

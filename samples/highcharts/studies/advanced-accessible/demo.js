@@ -325,7 +325,7 @@ $(function () {
                             /*for (var i = 0; i < chart.exportDivElements.length; ++i) {
                                 HighchartsAdapter.fireEvent(chart.exportDivElements[i], 'mouseleave');
                             }*/
-                            HighchartsAdapter.fireEvent(document, 'mouseup');
+                            Highcharts.fireEvent(document, 'mouseup');
                             exportList[chart.highlightedExportItem].onmouseout();
                             chart.highlightedExportItem = 0;
                             chart.renderTo.focus();
@@ -358,7 +358,7 @@ $(function () {
                         if (reachedEnd) {
                             chart.isExporting = false;
                             for (ix = 0; ix < chart.exportDivElements.length; ++ix) {
-                                HighchartsAdapter.fireEvent(chart.exportDivElements[ix], 'mouseleave');
+                                Highcharts.fireEvent(chart.exportDivElements[ix], 'mouseleave');
                             }
                             exportList[chart.highlightedExportItem].onmouseout();
                             chart.highlightedExportItem = 0;

@@ -4,12 +4,11 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * (c) 2009-2014 Torstein Honsi
+ * (c) 2009-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
 /*(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(function () {

@@ -27,8 +27,10 @@
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-H.StockChart = function (options, callback) {
-	var seriesOptions = options.series, // to increase performance, don't merge the data 
+H.StockChart = H.stockChart = function (a, b, c) {
+	var hasRenderToArg = isString(a) || a.nodeName,
+		options = arguments[hasRenderToArg ? 1 : 0],
+		seriesOptions = options.series, // to increase performance, don't merge the data
 		opposite,
 
 		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
@@ -147,8 +149,9 @@ H.StockChart = function (options, callback) {
 
 	options.series = seriesOptions;
 
-
-	return new Chart(options, callback);
+	return hasRenderToArg ? 
+		new Chart(a, options, c) :
+		new Chart(options, b);
 };
 
 // Implement the pinchType option
@@ -387,10 +390,10 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			align: options.align || align,
 			zIndex: 12,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 8), // docs: new default
+			padding: pick(options.padding, 8),
 			stroke: options.borderColor || '',
 			'stroke-width': options.borderWidth || 0,
-			r: pick(options.borderRadius, 3) // docs
+			r: pick(options.borderRadius, 3)
 		})
 		.css(extend({
 			color: 'white',
@@ -537,7 +540,7 @@ seriesProto.processData = function () {
 
 		// find the first value for comparison
 		for (i = 0; i < length; i++) {
-			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min && processedYData[i] !== 0) {
 				series.compareValue = processedYData[i];
 				break;
 			}

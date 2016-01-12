@@ -95,8 +95,8 @@ TrackerMixin = H.TrackerMixin = {
 			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
-			singlePoints = series.singlePoints,
-			singlePoint,
+			cursor = options.cursor,
+			css = cursor && { cursor: cursor },
 			i,
 			lineWidth,
 			onMouseOver = function () {
@@ -139,11 +139,11 @@ TrackerMixin = H.TrackerMixin = {
 		}
 
 		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
+		/*for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
-			trackerPath.push('M', singlePoint.plotX - snap, singlePoint.plotY,
-			'L', singlePoint.plotX + snap, singlePoint.plotY);
-		}
+			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
+			L, singlePoint.plotX + snap, singlePoint.plotY);
+		}*/
 
 		// draw the tracker
 		if (tracker) {
@@ -396,23 +396,25 @@ extend(Chart.prototype, {
 		}
 
 		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-			var mousePos = e[isX ? 'chartX' : 'chartY'],
-				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+			var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+				horiz = axis.horiz,
+				mousePos = e[horiz ? 'chartX' : 'chartY'],
+				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
+				startPos = chart[mouseDown],
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
 				goingLeft = startPos > mousePos; // #3613
-
-			if (axis.series.length && 
-					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) && 
+			
+			if (axis.series.length &&
+					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
 
-			chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+			chart[mouseDown] = mousePos; // set new reference for next run
 		});
 
 		if (doRedraw) {
@@ -439,7 +441,7 @@ extend(Point.prototype, {
 
 		selected = pick(selected, !point.selected);
 
-		// fire the event with the defalut handler
+		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
@@ -660,9 +662,11 @@ extend(Point.prototype, {
 			halo.attr(extend({
 				fill: point.color || series.color,
 				'fill-opacity': haloOptions.opacity
-			}, haloOptions.attributes));
+			},
+			haloOptions.attributes))[move ? 'animate' : 'attr']({
+				d: point.haloPath(haloOptions.size)
+			});
 			/*= } =*/
-
 		} else if (halo) {
 			halo.attr({ d: [] });
 		}

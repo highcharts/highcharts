@@ -192,7 +192,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 
 	// Add the mousewheel event
 	if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
-		addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+		addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 			chart.pointer.onContainerMouseWheel(e);
 			return false;
 		});

@@ -2,17 +2,13 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2015-10-26)
+ * @license Highcharts JS v5.0-dev (2016-01-12)
  *
  * 3D features for Highcharts JS
  *
- * @author: Stephane Vanraes, Torstein Honsi
  * @license: www.highcharts.com/license
  */
-/**
-        Shorthands for often used function
-    */
-    (function (H) {
+(function (H) {
     /**
      *    Mathematical Functionility
      */
@@ -70,12 +66,31 @@
             y = (inverted ? point.x : point.y) - ye;
             z = (point.z || 0) - ze;
 
-            //Apply 3-D rotation
+            // Apply 3-D rotation
+            // Euler Angles (XYZ): cosA = cos(Alfa|Roll), cosB = cos(Beta|Pitch), cosG = cos(Gamma|Yaw) 
+            // 
+            // Composite rotation:
+            // |          cosB * cosG             |           cosB * sinG            |    -sinB    |
+            // | sinA * sinB * cosG - cosA * sinG | sinA * sinB * sinG + cosA * cosG | sinA * cosB |
+            // | cosA * sinB * cosG + sinA * sinG | cosA * sinB * sinG - sinA * cosG | cosA * cosB |
+            // 
+            // Now, Gamma/Yaw is not used (angle=0), so we assume cosG = 1 and sinG = 0, so we get:
+            // |     cosB    |   0    |   - sinB    |
+            // | sinA * sinB |  cosA  | sinA * cosB |
+            // | cosA * sinB | - sinA | cosA * cosB |
+            // 
+            // But in browsers, y is reversed, so we get sinA => -sinA. The general result is:
+            // |      cosB     |   0    |    - sinB     |     | x |     | px |
+            // | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py | 
+            // |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
+            //
+            // Result: 
             px = c1 * x - s1 * z;
-            py = -s1 * s2 * x - c1 * s2 * z + c2 * y;
-            pz = s1 * c2 * x + c1 * c2 * z + s2 * y;
+            py = -s1 * s2 * x + c2 * y - c1 * s2 * z;
+            pz = s1 * c2 * x + s2 * y + c1 * c2 * z;
 
-            //Apply perspective
+
+            // Apply perspective
             if ((vd > 0) && (vd < Number.POSITIVE_INFINITY)) {
                 px = px * (vd / (pz + ze + vd));
                 py = py * (vd / (pz + ze + vd));
@@ -103,16 +118,23 @@
             defined = H.defined,
             deg2rad = H.deg2rad,
             each = H.each,
+            extend = H.extend,
+            inArray = H.inArray,
             map = H.map,
             merge = H.merge,
             perspective = H.perspective,
+            PI = Math.PI,
+            pick = H.pick,
             SVGElement = H.SVGElement,
-            SVGRenderer = H.SVGRenderer;
+            SVGRenderer = H.SVGRenderer,
+            wrap = H.wrap;
     /*** 
         EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
         ***/
     ////// HELPER METHODS //////
-    var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
+
+    var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+
 
     //Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
     function shapeArea(vertexes) {
@@ -225,7 +247,7 @@
                 this.top.attr({ d: paths[1], zIndex: paths[4] });
                 this.side.attr({ d: paths[2], zIndex: paths[5] });
             } else {
-                SVGElement.prototype.attr.call(this, args);
+                return Highcharts.SVGElement.prototype.attr.call(this, args); // getter returns value
             }
 
             return this;
@@ -237,6 +259,9 @@
                 this.front.attr({ zIndex: paths[3] }).animate({ d: paths[0] }, duration, complete);
                 this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
                 this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
+                this.attr({
+                    zIndex: -paths[6] // #4774
+                });
             } else if (args.opacity) {
                 this.front.animate(args, duration, complete);
                 this.top.animate(args, duration, complete);
@@ -257,7 +282,7 @@
         };
 
         // Apply the Z index to the cuboid group
-        result.attr({ zIndex: -paths[3] });
+        result.attr({ zIndex: -paths[6] });
 
         return result;
     };
@@ -294,15 +319,13 @@
             return pArr[i];
         }
         var pickShape = function (path1, path2) {
-            var ret;
+            var ret = [];
             path1 = map(path1, mapPath);
             path2 = map(path2, mapPath);
             if (shapeArea(path1) < 0) {
                 ret = path1;
             } else if (shapeArea(path2) < 0) {
                 ret = path2;
-            } else {
-                ret = [];
             }
             return ret;
         };
@@ -322,117 +345,174 @@
         var left = [0, 7, 4, 3];
         var path3 = pickShape(right, left);
 
-        return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
+        return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3), averageZ(map(bottom, mapPath)) * 9e9]; // #4774
     };
 
     ////// SECTORS //////
-    SVGRenderer.prototype.arc3d = function (shapeArgs) {
+    Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 
-        shapeArgs.alpha *= deg2rad;
-        shapeArgs.beta *= deg2rad;
-        var result = this.g(),
-            paths = this.arc3dPath(shapeArgs),
-            renderer = result.renderer;
+        var wrapper = this.g(),
+            renderer = wrapper.renderer,
+            customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
 
-        var zIndex = paths.zTop * 100;
-
-        result.shapeArgs = shapeArgs;    // Store for later use
-
-        // create the different sub sections of the shape
-        result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({ zIndex: paths.zTop }).add(result);
-        result.side1 = renderer.path(paths.side2).attr({ zIndex: paths.zSide1 });
-        result.side2 = renderer.path(paths.side1).attr({ zIndex: paths.zSide2 });
-        result.inn = renderer.path(paths.inn).attr({ zIndex: paths.zInn });
-        result.out = renderer.path(paths.out).attr({ zIndex: paths.zOut });
-
-        // apply the fill to the top and a darker shade to the sides
-        result.fillSetter = function (color) {
-            this.color = color;
-
-            var c0 = color,
-                c2 = Highcharts.Color(color).brighten(-0.1).get();
-
-            this.side1.attr({ fill: c2 });
-            this.side2.attr({ fill: c2 });
-            this.inn.attr({ fill: c2 });
-            this.out.attr({ fill: c2 });
-            this.top.attr({ fill: c0 });
-            return this;
-        };
-
-        // apply the translation to all
-        result.translateXSetter = function (value) {
-            this.out.attr({ translateX: value });
-            this.inn.attr({ translateX: value });
-            this.side1.attr({ translateX: value });
-            this.side2.attr({ translateX: value });
-            this.top.attr({ translateX: value });
-        };
-
-        result.translateYSetter = function (value) {
-            this.out.attr({ translateY: value });
-            this.inn.attr({ translateY: value });
-            this.side1.attr({ translateY: value });
-            this.side2.attr({ translateY: value });
-            this.top.attr({ translateY: value });
-        };
-
-        result.animate = function (args, duration, complete) {
-            if (defined(args.end) || defined(args.start)) {
-                this._shapeArgs = this.shapeArgs;
-
-                SVGElement.prototype.animate.call(this, {
-                    _args: args
-                }, {
-                    duration: duration,
-                    start: function () {
-                        var args = arguments,
-                            fx = args[0],
-                            elem = fx.elem,
-                            end = elem._shapeArgs;
-
-                        if (end.fill !== elem.color) {
-                            elem.attr({
-                                fill: end.fill
-                            });
-                        }
-                    },
-                    step: function () {
-                        var args = arguments,
-                            fx = args[1],
-                            result = fx.elem,
-                            start = result._shapeArgs,
-                            end = fx.end,
-                            pos = fx.pos,
-                            sA = merge(start, {
-                                x: start.x + ((end.x - start.x) * pos),
-                                y: start.y + ((end.y - start.y) * pos),
-                                r: start.r + ((end.r - start.r) * pos),
-                                innerR: start.innerR + ((end.innerR - start.innerR) * pos),
-                                start: start.start + ((end.start - start.start) * pos),
-                                end: start.end + ((end.end - start.end) * pos)
-                            });
-
-                        var paths = result.renderer.arc3dPath(sA);
-
-                        result.shapeArgs = sA;
-
-                        result.top.attr({ d: paths.top, zIndex: paths.zTop });
-                        result.inn.attr({ d: paths.inn, zIndex: paths.zInn });
-                        result.out.attr({ d: paths.out, zIndex: paths.zOut });
-                        result.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
-                        result.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
-
-                    }
-                }, complete);
-            } else {        
-                SVGElement.prototype.animate.call(this, args, duration, complete);
+        /**
+         * Get custom attributes. Mutate the original object and return an object with only custom attr.
+         */
+        function suckOutCustom(params) {
+            var hasCA = false,
+                ca = {};
+            for (var key in params) {
+                if (inArray(key, customAttribs) !== -1) {
+                    ca[key] = params[key];
+                    delete params[key];
+                    hasCA = true;
+                }
             }
+            return hasCA ? ca : false;
+        }
+
+        attribs = merge(attribs);
+
+        attribs.alpha *= deg2rad;
+        attribs.beta *= deg2rad;
+    
+        // Create the different sub sections of the shape
+        wrapper.top = renderer.path();
+        wrapper.side1 = renderer.path();
+        wrapper.side2 = renderer.path();
+        wrapper.inn = renderer.path();
+        wrapper.out = renderer.path();
+
+        /**
+         * Add all faces
+         */
+        wrapper.onAdd = function () {
+            var parent = wrapper.parentGroup;
+            wrapper.top.add(wrapper);
+            wrapper.out.add(parent);
+            wrapper.inn.add(parent);
+            wrapper.side1.add(parent);
+            wrapper.side2.add(parent);
+        };
+
+        /**
+         * Compute the transformed paths and set them to the composite shapes
+         */
+        wrapper.setPaths = function (attribs) {
+
+            var paths = wrapper.renderer.arc3dPath(attribs),
+                zIndex = paths.zTop * 100;
+
+            wrapper.attribs = attribs;
+
+            wrapper.top.attr({ d: paths.top, zIndex: paths.zTop });
+            wrapper.inn.attr({ d: paths.inn, zIndex: paths.zInn });
+            wrapper.out.attr({ d: paths.out, zIndex: paths.zOut });
+            wrapper.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
+            wrapper.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
+
+
+            // show all children
+            wrapper.zIndex = zIndex;
+            wrapper.attr({ zIndex: zIndex });
+
+            // Set the radial gradient center the first time
+            if (attribs.center) {
+                wrapper.top.setRadialReference(attribs.center);
+                delete attribs.center;
+            }
+        };
+        wrapper.setPaths(attribs);
+
+        // Apply the fill to the top and a darker shade to the sides
+        wrapper.fillSetter = function (value) {
+            var darker = Highcharts.Color(value).brighten(-0.1).get();
+        
+            this.fill = value;
+
+            this.side1.attr({ fill: darker });
+            this.side2.attr({ fill: darker });
+            this.inn.attr({ fill: darker });
+            this.out.attr({ fill: darker });
+            this.top.attr({ fill: value });
             return this;
         };
+
+        // Apply the same value to all. These properties cascade down to the children
+        // when set to the composite arc3d.
+        each(['opacity', 'translateX', 'translateY', 'visibility'], function (setter) {
+            wrapper[setter + 'Setter'] = function (value, key) {
+                wrapper[key] = value;
+                each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+                    wrapper[el].attr(key, value);
+                });
+            };
+        });
+
+        /**
+         * Override attr to remove shape attributes and use those to set child paths
+         */
+        wrap(wrapper, 'attr', function (proceed, params, val) {
+            var ca;
+            if (typeof params === 'object') {
+                ca = suckOutCustom(params);
+                if (ca) {
+                    extend(wrapper.attribs, ca);
+                    wrapper.setPaths(wrapper.attribs);
+                }
+            }
+            return proceed.call(this, params, val);
+        });
+
+        /**
+         * Override the animate function by sucking out custom parameters related to the shapes directly,
+         * and update the shapes from the animation step.
+         */
+        wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
+            var ca,
+                from = this.attribs,
+                to;
+
+            // Attribute-line properties connected to 3D. These shouldn't have been in the 
+            // attribs collection in the first place.
+            delete params.center;
+            delete params.z;
+            delete params.depth;
+            delete params.alpha;
+            delete params.beta;
+
+            animation = pick(animation, this.renderer.globalAnimation);
+        
+            if (animation) {
+                if (typeof animation !== 'object') {
+                    animation = {};
+                }
+            
+                params = merge(params); // Don't mutate the original object
+                ca = suckOutCustom(params);
+            
+                if (ca) {
+                    to = ca;
+                    animation.step = function (a, fx) {
+                        function interpolate(key) {
+                            return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
+                        }
+                        fx.elem.setPaths(merge(from, {
+                            x: interpolate('x'),
+                            y: interpolate('y'),
+                            r: interpolate('r'),
+                            innerR: interpolate('innerR'),
+                            start: interpolate('start'),
+                            end: interpolate('end')
+                        }));
+                    };
+                }
+            }
+            return proceed.call(this, params, animation, complete);
+        });
 
         // destroy all children
-        result.destroy = function () {
+        wrapper.destroy = function () {
             this.top.destroy();
             this.out.destroy();
             this.inn.destroy();
@@ -442,24 +522,21 @@
             SVGElement.prototype.destroy.call(this);
         };
         // hide all children
-        result.hide = function () {
+        wrapper.hide = function () {
             this.top.hide();
             this.out.hide();
             this.inn.hide();
             this.side1.hide();
             this.side2.hide();
         };
-        result.show = function () {
+        wrapper.show = function () {
             this.top.show();
             this.out.show();
             this.inn.show();
             this.side1.show();
             this.side2.show();
         };
-        // show all children
-        result.zIndex = zIndex;
-        result.attr({ zIndex: zIndex });
-        return result;
+        return wrapper;
     };
 
     /**
@@ -496,19 +573,63 @@
         ]);
         top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
         top = top.concat(['Z']);
-
         // OUTSIDE
         var b = (beta > 0 ? Math.PI / 2 : 0),
             a = (alpha > 0 ? 0 : Math.PI / 2);
 
         var start2 = start > -b ? start : (end > -b ? -b : start),
-            end2 = end < Math.PI - a ? end : (start < Math.PI - a ? Math.PI - a : end);
+            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
+            midEnd = 2 * PI - a;
     
-        var out = ['M', cx + (rx * Math.cos(start2)), cy + (ry * Math.sin(start2))];
+        // When slice goes over bottom middle, need to add both, left and right outer side.
+        // Additionally, when we cross right hand edge, create sharp edge. Outer shape/wall:
+        //
+        //            -------
+        //          /    ^    \
+        //    4)   /   /   \   \  1)
+        //        /   /     \   \
+        //       /   /       \   \
+        // (c)=> ====         ==== <=(d) 
+        //       \   \       /   /
+        //        \   \<=(a)/   /
+        //         \   \   /   / <=(b)
+        //    3)    \    v    /  2)
+        //            -------
+        //
+        // (a) - inner side
+        // (b) - outer side
+        // (c) - left edge (sharp)
+        // (d) - right edge (sharp)
+        // 1..n - rendering order for startAngle = 0, when set to e.g 90, order changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative startAngle
+
+        var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
         out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
-        // When slice goes over middle, need to add both, left and right outer side:
-        if (end > Math.PI - a && start < Math.PI - a) {
+        if (end > midEnd && start < midEnd) { // When shape is wide, it can cross both, (c) and (d) edges, when using startAngle
+            // Go to outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+            ]);
+            // Curve to the right edge of the slice (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            // Go to the inner side
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Curve to the true end of the slice
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            // Go to the outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
+            ]);
+            // Go back to middle (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Go back to the left edge
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+        } else if (end > PI - a && start < PI - a) { // But shape can cross also only (c) edge:
             // Go to outer side
             out = out.concat([
             'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
@@ -631,7 +752,7 @@
             plotOptions,
             pieOptions;
 
-        if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+        if (args[0].chart && args[0].chart.options3d && args[0].chart.options3d.enabled) {
             // Normalize alpha and beta to (-360, 360) range
             args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
             args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
@@ -940,15 +1061,28 @@
         return proceed.call(this, xy);
     });
 
-    wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
-        var pos = proceed.apply(this, [].slice.call(arguments, 1));
+    Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
+        var is3d = this.chart.is3d(),
+            pos,
+            axisTitleMargin;
 
-        // Do not do this if the chart is not 3D
-        if (!this.chart.is3d()) {
-            return pos;
+        // Pull out the axis title margin, that is not subject to the perspective
+        if (is3d) {
+            axisTitleMargin = this.axisTitleMargin;
+            this.axisTitleMargin = 0;
         }
 
-        pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+        pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+        if (is3d) {
+            pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+
+            // Re-apply the axis title margin outside the perspective
+            pos[this.horiz ? 'y' : 'x'] += (this.horiz ? 1 : -1) * // horizontal axis reverses the margin ...
+                (this.opposite ? -1 : 1) * // ... so does opposite axes
+                axisTitleMargin;
+            this.axisTitleMargin = axisTitleMargin;
+        }
         return pos;
     });
 
@@ -1173,8 +1307,9 @@
             var seriesOptions = this.options,
                 grouping = seriesOptions.grouping,
                 stacking = seriesOptions.stacking,
+                reversedStacks = pick(this.yAxis.options.reversedStacks, true),
                 z = 0;
-
+        
             if (!(grouping !== undefined && !grouping)) {
                 var stacks = this.chart.retrieveStacks(stacking),
                     stack = seriesOptions.stack || 0,
@@ -1184,7 +1319,12 @@
                         break;
                     }
                 }
-                z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) + (reversedStacks ? i : -i); // #4369
+
+                // In case when axis is reversed, columns are also reversed inside the group (#3737)
+                if (!this.xAxis.reversed) {
+                    z = (stacks.totalStacks * 10) - z;
+                }
             }
 
             seriesOptions.zIndex = z;
@@ -1272,12 +1412,6 @@
             cylOptions = options.plotOptions.cylinder,
             options3d = options.chart.options3d,
             depth = cylOptions.depth || 0,
-            origin = {
-                x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-                y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2,
-                z: options3d.depth,
-                vd: options3d.viewDistance
-            },
             alpha = options3d.alpha;
 
         var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
@@ -1298,7 +1432,6 @@
             shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
             shapeArgs.alpha = 90 - alpha;
             shapeArgs.beta = 0;
-            shapeArgs.origin = origin;
         });
     });
     */
@@ -1331,11 +1464,6 @@
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
             options3d = options.chart.options3d,
-            origin = {
-                x: chart.plotWidth / 2,
-                y: chart.plotHeight / 2,
-                z: options3d.depth
-            },
             alpha = options3d.alpha,
             beta = options3d.beta,
             z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
@@ -1347,6 +1475,7 @@
         }
 
         each(series.data, function (point) {
+
             var shapeArgs = point.shapeArgs,
                 angle;
 
@@ -1354,7 +1483,6 @@
 
             shapeArgs.z = z;
             shapeArgs.depth = depth * 0.75;
-            shapeArgs.origin = origin;
             shapeArgs.alpha = alpha;
             shapeArgs.beta = beta;
             shapeArgs.center = series.center;
@@ -1386,40 +1514,42 @@
     });
 
     wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-        var seriesGroup = this.group;
-
         proceed.apply(this, [].slice.call(arguments, 1));
 
-        if (this.chart.is3d()) {    
+        if (this.chart.is3d()) {
             each(this.points, function (point) {
                 var graphic = point.graphic;
 
-                graphic.out.add(seriesGroup);
-                graphic.inn.add(seriesGroup);
-                graphic.side1.add(seriesGroup);
-                graphic.side2.add(seriesGroup);
-
-                // Hide null or 0 points (#3006, 3650)
-                graphic[point.y ? 'show' : 'hide']();
-            });
+                // #4584 Check if has graphic - null points don't have it
+                if (graphic) {
+                    // Hide null or 0 points (#3006, 3650)
+                    graphic[point.y ? 'show' : 'hide']();
+                }
+            });    
         }
     });
 
     wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
         if (this.chart.is3d()) {
-            var series = this;
+            var series = this,
+                chart = series.chart,
+                options3d = chart.options.chart.options3d;
             each(series.data, function (point) {
                 var shapeArgs = point.shapeArgs,
                     r = shapeArgs.r,
-                    d = shapeArgs.depth,
-                    a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+                    a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+                    b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                     a2 = (shapeArgs.start + shapeArgs.end) / 2,
-                    labelPos = point.labelPos;
+                    labelPos = point.labelPos,
+                    labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
+                    yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)), // + (sin(a2) > 0 ? sin(a1) * d : 0)
+                    xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
-                labelPos[1] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
-                labelPos[3] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
-                labelPos[5] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
-
+                // Apply perspective on label positions
+                each(labelIndexes, function (index) {
+                    labelPos[index] += xOffset;
+                    labelPos[index + 1] += yOffset;
+                });
             });
         }
 
@@ -1623,4 +1753,4 @@
     }
         return H;
     }(Highcharts));
-
+    

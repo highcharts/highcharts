@@ -4,6 +4,10 @@ $(function () {
         // Create the chart
         $('#container').highcharts('StockChart', {
 
+            chart: {
+                height: 300
+            },
+
             rangeSelector : {
                 allButtonsEnabled: true,
                 buttons: [{
@@ -44,6 +48,10 @@ $(function () {
                 text: 'Custom data grouping tied to range selector'
             },
 
+            _navigator: {
+                enabled: false
+            },
+
             series : [{
                 name : 'AAPL',
                 data : data,
@@ -58,6 +66,9 @@ $(function () {
                 }
             }]
         });
+
+        console.log('--- exporting ---');
+        $('#container').append($('#container').highcharts().getSVG())
     });
 
 });

@@ -222,51 +222,7 @@ H.Series.prototype = {
 		this.xIncrement = xIncrement + pointInterval;
 		return xIncrement;
 	},
-
-	/**
-	 * Divide the series data into segments divided by null values.
-	 */
-	getSegments: function () {
-		var series = this,
-			lastNull = -1,
-			segments = [],
-			i,
-			points = series.points,
-			pointsLength = points.length;
-
-		if (pointsLength) { // no action required for []
-
-			// if connect nulls, just remove null points
-			if (series.options.connectNulls) {
-				i = pointsLength;
-				while (i--) {
-					if (points[i].y === null) {
-						points.splice(i, 1);
-					}
-				}
-				if (points.length) {
-					segments = [points];
-				}
-
-			// else, split on null points
-			} else {
-				each(points, function (point, i) {
-					if (point.y === null) {
-						if (i > lastNull + 1) {
-							segments.push(points.slice(lastNull + 1, i));
-						}
-						lastNull = i;
-					} else if (i === pointsLength - 1) { // last value
-						segments.push(points.slice(lastNull + 1, i + 1));
-					}
-				});
-			}
-		}
-
-		// register it
-		series.segments = segments;
-	},
-
+	
 	/**
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
@@ -555,6 +511,8 @@ H.Series.prototype = {
 			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
+			val2lin = xAxis && xAxis.val2lin,
+			isLog = xAxis && xAxis.isLog,
 			min,
 			max;
 
@@ -590,9 +548,12 @@ H.Series.prototype = {
 
 
 		// Find the closest distance between processed points
-		for (i = processedXData.length - 1; i >= 0; i--) {
-			distance = processedXData[i] - processedXData[i - 1];
-			
+		i = processedXData.length || 1;
+		while (--i) {
+			distance = isLog ?
+				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
+				processedXData[i] - processedXData[i - 1];
+
 			if (distance > 0 && (closestPointRange === undefined || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -813,7 +774,7 @@ H.Series.prototype = {
 
 
 			// Calculate the bottom y value for stacked series
-			if (stacking && series.visible && stack && stack[xValue]) {
+			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
 				stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
 				pointStack = stack[xValue];
 				stackValues = pointStack.points[stackIndicator.key];
@@ -870,11 +831,16 @@ H.Series.prototype = {
 			lastPlotX = plotX;
 
 		}
-
 		series.closestPointRangePx = closestPointRangePx;
+	},
 
-		// now that we have the cropped data, build the segments
-		series.getSegments();
+	/**
+	 * Return the series points with null points filtered out
+	 */
+	getValidPoints: function () {
+		return grep(this.points, function (point) {
+			return !point.isNull;
+		});
 	},
 
 	/**
@@ -1185,92 +1151,89 @@ H.Series.prototype = {
 	},
 
 	/**
-	 * Return the graph path of a segment
+	 * Get the graph path
 	 */
-	getSegmentPath: function (segment) {
+	getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
 		var series = this,
-			segmentPath = [],
-			step = series.options.step;
+			options = series.options,
+			step = options.step,
+			graphPath = [],
+			gap;
 
-		// build the segment line
-		each(segment, function (point, i) {
+		points = points || series.points;
+
+		// Build the line
+		each(points, function (point, i) {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint;
+				lastPoint = points[i - 1],					
+				pathToPoint; // the path to this point from the previous
 
-			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
+			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
+				gap = true; // ... and continue
+			}
+
+			// Line series, nullsAsZeroes is not handled
+			if (point.isNull && !defined(nullsAsZeroes)) {
+				gap = !options.connectNulls;
+
+			// Area series, nullsAsZeroes is set
+			} else if (point.isNull && !nullsAsZeroes) {
+				gap = true;
 
 			} else {
 
-				// moveTo or lineTo
-				segmentPath.push(i ? 'L' : 'M');
+				if (i === 0 || gap) {
+					pathToPoint = ['M', point.plotX, point.plotY];
+				
+				} else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+					
+					pathToPoint = series.getPointSpline(points, point, i);
 
-				// step line?
-				if (step && i) {
-					lastPoint = segment[i - 1];
+				} else if (step) {
+
 					if (step === 'right') {
-						segmentPath.push(
+						pathToPoint = [
+							'L',
 							lastPoint.plotX,
-							plotY,
-							'L'
-						);
-
+							plotY
+						];
+						
 					} else if (step === 'center') {
-						segmentPath.push(
+						pathToPoint = [
+							'L',
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
 							'L',
 							(lastPoint.plotX + plotX) / 2,
-							plotY,
-							'L'
-						);
-
+							plotY
+						];
+						
 					} else {
-						segmentPath.push(
+						pathToPoint = [
+							'L',
 							plotX,
-							lastPoint.plotY,
-							'L'
-						);
+							lastPoint.plotY
+						];
 					}
+					pathToPoint.push('L', plotX, plotY);
+
+				} else {
+					// normal line to next point
+					pathToPoint = [
+						'L',
+						plotX,
+						plotY
+					];
 				}
 
-				// normal line to next point
-				segmentPath.push(
-					point.plotX,
-					point.plotY
-				);
+
+				graphPath.push.apply(graphPath, pathToPoint);
+				gap = false;
 			}
 		});
 
-		return segmentPath;
-	},
-
-	/**
-	 * Get the graph path
-	 */
-	getGraphPath: function () {
-		var series = this,
-			graphPath = [],
-			segmentPath,
-			singlePoints = []; // used in drawTracker
-
-		// Divide into segments and build graph and area paths
-		each(series.segments, function (segment) {
-
-			segmentPath = series.getSegmentPath(segment);
-
-			// add the segment to the graph, or a single point for tracking
-			if (segment.length > 1) {
-				graphPath = graphPath.concat(segmentPath);
-			} else {
-				singlePoints.push(segment[0]);
-			}
-		});
-
-		// Record it for use in drawGraph and drawTracker, and return graphPath
-		series.singlePoints = singlePoints;
 		series.graphPath = graphPath;
 
 		return graphPath;
@@ -1283,26 +1246,15 @@ H.Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			graphPath = this.getGraphPath(),
-			props = [[
-				'graph', 
-				'highcharts-graph', 
-				/*= if (build.classic) { =*/
-				options.lineColor || this.color, 
-				options.dashStyle
-				/*= } =*/
-			]];
+			props = [['graph', options.lineColor || this.color, options.dashStyle]],
+			lineWidth = options.lineWidth,
+			roundCap = options.linecap !== 'square',
+			graphPath = (this.gappedPath || this.getGraphPath).call(this),
+			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
+			zones = this.zones;
 
-		// Add the zone properties if any
-		each(this.zones, function (zone, i) {
-			props.push([
-				'zone-graph-' + i,
-				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
-				/*= if (build.classic) { =*/
-				zone.color || series.color, 
-				zone.dashStyle || options.dashStyle
-				/*= } =*/
-			]);
+		each(zones, function (threshold, i) {
+			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 
 		// Draw the graph
@@ -1506,7 +1458,6 @@ H.Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					visibility: visibility,
 					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
@@ -1516,7 +1467,7 @@ H.Series.prototype = {
 		}
 
 		// Place it on first and subsequent (redraw) calls
-		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
+		group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;
 	},
 

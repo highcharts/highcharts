@@ -52,7 +52,7 @@ $(function () {
     }
 
     // Get the data. The contents of the data file can be viewed at
-    // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/activity.json
+    // https://github.com/highcharts/highcharts/blob/master/samples/data/activity.json
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 

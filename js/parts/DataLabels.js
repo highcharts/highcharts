@@ -203,7 +203,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
-		alignAttr; // the final position;
+		alignAttr, // the final position;
+		justify = pick(options.overflow, 'justify') === 'justify';
 
 	if (visible) {
 
@@ -228,28 +229,22 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		});
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
-		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+		if (options.rotation) {
+			justify = false; // Not supported for rotated text
 			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
-			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-					y: alignTo.y + options.y + alignTo.height / 2
-				})
+			alignAttr = {
+				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
+				y: alignTo.y + options.y + alignTo.height / 2
+			};
+			dataLabel
+				[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
 					align: options.align
 				});
+
 		} else {
 			dataLabel.align(options, null, alignTo);
 			alignAttr = dataLabel.alignAttr;
-
-			// Handle justify or crop
-			if (pick(options.overflow, 'justify') === 'justify') {
-				this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
-
-			} else if (pick(options.crop, true)) {
-				// Now check that the data label is within the plot area
-				visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
-
-			}
 
 			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
 			if (options.shape) {
@@ -258,7 +253,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 					anchorY: point.plotY
 				});
 			}
+		}
 
+		// Handle justify or crop
+		if (justify) {
+			this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+			
+		// Now check that the data label is within the plot area
+		} else if (pick(options.crop, true)) {
+			visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
 		}
 	}
 
@@ -382,10 +385,14 @@ if (seriesTypes.pie) {
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 
-		// arrange points for detection collision
 		each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
+
+				// Arrange points for detection collision
 				halves[point.half].push(point);
+
+				// Reset positions (#4905)
+				point.dataLabel._pos = null;
 			}
 		});
 
@@ -720,12 +727,7 @@ if (seriesTypes.pie) {
 			center[2] = newSize;
 			center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
 			this.translate(center);
-			each(this.points, function (point) {
-				if (point.dataLabel) {
-					point.dataLabel._pos = null; // reset
-				}
-			});
-
+			
 			if (this.drawDataLabels) {
 				this.drawDataLabels();
 			}

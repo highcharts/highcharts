@@ -15,11 +15,9 @@ defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
  */
 seriesTypes.areaspline = extendClass(seriesTypes.spline, {
 		type: 'areaspline',
-		closedStacks: true, // instead of following the previous graph back, follow the threshold back
-
-		// Mix in methods from the area series
-		getSegmentPath: areaProto.getSegmentPath,
-		closeSegment: areaProto.closeSegment,
+		getStackPoints: areaProto.getStackPoints,
+		getGraphPath: areaProto.getGraphPath,
+		setStackCliffs: areaProto.setStackCliffs,
 		drawGraph: areaProto.drawGraph,
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});

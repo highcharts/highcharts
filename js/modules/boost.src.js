@@ -44,11 +44,19 @@
  */
 
 /* eslint indent: [2, 4] */
-(function (H) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
 
     'use strict';
 
-    var noop = function () {},
+    var win = H.win,
+        doc = win.document,
+        noop = function () {},
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,
@@ -62,16 +70,24 @@
         plotOptions = H.getOptions().plotOptions,
         CHUNK_SIZE = 50000;
 
-    function eachAsync(arr, fn, finalFunc, chunkSize, i) {
+    function eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold) {
         i = i || 0;
         chunkSize = chunkSize || CHUNK_SIZE;
-        each(arr.slice(i, i + chunkSize), fn);
-        if (i + chunkSize < arr.length) {
-            setTimeout(function () {
-                eachAsync(arr, fn, finalFunc, chunkSize, i + chunkSize);
-            });
-        } else if (finalFunc) {
-            finalFunc();
+        threshold = i + chunkSize;
+        proceed = true;
+
+        while (proceed && (i < threshold)) {
+            proceed = fn(arr[i], i);
+            i = i + 1;
+        }
+        if (proceed) {
+            if (i + chunkSize < arr.length) {
+                setTimeout(function () {
+                    eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold);
+                });
+            } else if (finalFunc) {
+                finalFunc();
+            }
         }
     }
 
@@ -192,7 +208,7 @@
                 };
 
             if (!this.canvas) {
-                this.canvas = document.createElement('canvas');
+                this.canvas = doc.createElement('canvas');
                 this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
                 this.ctx = ctx = this.canvas.getContext('2d');
                 if (chart.inverted) {
@@ -232,7 +248,6 @@
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 ctx,
-                i,
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
@@ -384,97 +399,97 @@
             }
 
             // Loop over the points
-            i = 0;
-            eachAsync(isStacked ? series.data : (xData || rawData), function (d) {
-
+            eachAsync(isStacked ? series.data : (xData || rawData), function (d, i) {
                 var x,
                     y,
                     clientX,
                     plotY,
                     isNull,
                     low,
+                    chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
 
-                if (useRaw) {
-                    x = d[0];
-                    y = d[1];
-                } else {
-                    x = d;
-                    y = yData[i];
-                }
-
-                // Resolve low and high for range series
-                if (isRange) {
+                if (!chartDestroyed) {
                     if (useRaw) {
-                        y = d.slice(1, 3);
-                    }
-                    low = y[0];
-                    y = y[1];
-                } else if (isStacked) {
-                    x = d.x;
-                    y = d.stackY;
-                    low = y - d.y;
-                }
-
-                isNull = y === null;
-
-                // Optimize for scatter zooming
-                if (!requireSorting) {
-                    isYInside = y >= yMin && y <= yMax;
-                }
-
-                if (!isNull && x >= xMin && x <= xMax && isYInside) {
-
-                    clientX = Math.round(xAxis.toPixels(x, true));
-
-                    if (sampling) {
-                        if (minI === undefined || clientX === lastClientX) {
-                            if (!isRange) {
-                                low = y;
-                            }
-                            if (maxI === undefined || y > maxVal) {
-                                maxVal = y;
-                                maxI = i;
-                            }
-                            if (minI === undefined || low < minVal) {
-                                minVal = low;
-                                minI = i;
-                            }
-
-                        }
-                        if (clientX !== lastClientX) { // Add points and reset
-                            if (minI !== undefined) { // then maxI is also a number
-                                plotY = yAxis.toPixels(maxVal, true);
-                                yBottom = yAxis.toPixels(minVal, true);
-                                drawPoint(
-                                    clientX,
-                                    hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
-                                    hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
-                                );
-                                addKDPoint(clientX, plotY, maxI);
-                                if (yBottom !== plotY) {
-                                    addKDPoint(clientX, yBottom, minI);
-                                }
-                            }
-
-
-                            minI = maxI = undefined;
-                            lastClientX = clientX;
-                        }
+                        x = d[0];
+                        y = d[1];
                     } else {
-                        plotY = Math.round(yAxis.toPixels(y, true));
-                        drawPoint(clientX, plotY, yBottom);
-                        addKDPoint(clientX, plotY, i);
+                        x = d;
+                        y = yData[i];
+                    }
+
+                    // Resolve low and high for range series
+                    if (isRange) {
+                        if (useRaw) {
+                            y = d.slice(1, 3);
+                        }
+                        low = y[0];
+                        y = y[1];
+                    } else if (isStacked) {
+                        x = d.x;
+                        y = d.stackY;
+                        low = y - d.y;
+                    }
+
+                    isNull = y === null;
+
+                    // Optimize for scatter zooming
+                    if (!requireSorting) {
+                        isYInside = y >= yMin && y <= yMax;
+                    }
+
+                    if (!isNull && x >= xMin && x <= xMax && isYInside) {
+
+                        clientX = Math.round(xAxis.toPixels(x, true));
+
+                        if (sampling) {
+                            if (minI === undefined || clientX === lastClientX) {
+                                if (!isRange) {
+                                    low = y;
+                                }
+                                if (maxI === undefined || y > maxVal) {
+                                    maxVal = y;
+                                    maxI = i;
+                                }
+                                if (minI === undefined || low < minVal) {
+                                    minVal = low;
+                                    minI = i;
+                                }
+
+                            }
+                            if (clientX !== lastClientX) { // Add points and reset
+                                if (minI !== undefined) { // then maxI is also a number
+                                    plotY = yAxis.toPixels(maxVal, true);
+                                    yBottom = yAxis.toPixels(minVal, true);
+                                    drawPoint(
+                                        clientX,
+                                        hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
+                                        hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
+                                    );
+                                    addKDPoint(clientX, plotY, maxI);
+                                    if (yBottom !== plotY) {
+                                        addKDPoint(clientX, yBottom, minI);
+                                    }
+                                }
+
+
+                                minI = maxI = undefined;
+                                lastClientX = clientX;
+                            }
+                        } else {
+                            plotY = Math.round(yAxis.toPixels(y, true));
+                            drawPoint(clientX, plotY, yBottom);
+                            addKDPoint(clientX, plotY, i);
+                        }
+                    }
+                    wasNull = isNull && !connectNulls;
+
+                    if (i % CHUNK_SIZE === 0) {
+                        series.canvasToSVG();
                     }
                 }
-                wasNull = isNull && !connectNulls;
 
-                i = i + 1;
-
-                if (i % CHUNK_SIZE === 0) {
-                    series.canvasToSVG();
-                }
-
+                return !chartDestroyed;
             }, function () {
 
                 var loadingDiv = chart.loadingDiv,
@@ -555,19 +570,33 @@
     });
 
     /**
+     * Return a full Point object based on the index. The boost module uses stripped point objects
+     * for performance reasons.
+     * @param   {Number} boostPoint A stripped-down point object
+     * @returns {Object}   A Point object as per http://api.highcharts.com/highcharts#Point
+     */
+    Series.prototype.getPoint = function (boostPoint) {
+        var point = boostPoint;
+
+        if (boostPoint && !(boostPoint instanceof this.pointClass)) {
+            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+            point.category = point.x;
+
+            point.dist = boostPoint.dist;
+            point.distX = boostPoint.distX;
+            point.plotX = boostPoint.plotX;
+            point.plotY = boostPoint.plotY;
+        }
+
+        return point;
+    };
+
+    /**
      * Return a point instance from the k-d-tree
      */
     wrap(Series.prototype, 'searchPoint', function (proceed) {
-        var point = proceed.apply(this, [].slice.call(arguments, 1)),
-            ret = point;
-
-        if (point && !(point instanceof this.pointClass)) {
-            ret = (new this.pointClass()).init(this, this.options.data[point.i]);
-            ret.dist = point.dist;
-            ret.category = ret.x;
-            ret.plotX = point.plotX;
-            ret.plotY = point.plotY;
-        }
-        return ret;
+        return this.getPoint(
+            proceed.apply(this, [].slice.call(arguments, 1))
+        );
     });
-}(Highcharts));
+}));

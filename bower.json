@@ -1,13 +1,29 @@
 {
-    "name": "Highcharts Working Repo",
-    "main": "main.js",
+    "name": "highcharts",
+    "version": "4.2.0",
+    "description": "JavaScript charting framework",
+    "main": "lib/highcharts.js",
+    "authors": [
+        "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)"
+    ],
+    "keywords": [
+        "charts",
+        "graphs",
+        "visualization",
+        "data",
+        "browserify",
+        "webpack"
+    ],
     "ignore": [
         "build",
+        "copy-release.js",
         "errors",
         "exporting-server",
-        "gfx",
+        "generate-changelog.js",
+        "grunt-tasks",
+        "gruntfile.js",
         "js",
-        "lib",
+        "vendor",
         "samples",
         "studies",
         "test",
@@ -17,7 +33,6 @@
         "ant",
         "build.md",
         "build.properties",
-        "build.xml",
-        "readme.md"
+        "build.xml"
     ]
 }

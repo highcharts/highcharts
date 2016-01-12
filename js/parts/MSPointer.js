@@ -31,7 +31,6 @@ if (window.PointerEvent || window.MSPointerEvent) {
 		},
 		translateMSPointer = function (e, method, wktype, func) {
 			var p;
-			e = e.originalEvent || e;
 			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
 				func(e);
 				p = charts[H.hoverChartIndex].pointer;

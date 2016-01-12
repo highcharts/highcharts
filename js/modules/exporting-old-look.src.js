@@ -5,7 +5,13 @@
  * Author: Torstein Honsi
  */
 
-(function (Highcharts) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts) {
 
 	var defaultOptions = Highcharts.getOptions(),
 		symbols = Highcharts.Renderer.prototype.symbols,
@@ -127,4 +133,4 @@
 		]);
 	};
 
-}(Highcharts));
+}));

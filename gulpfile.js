@@ -1,14 +1,15 @@
 /* eslint-env node */
-/* eslint no-console:0 */
+/* eslint no-console:0, valid-jsdoc:0 */
 
 'use strict';
 var colors = require('colors'),
     eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
+    gulpif = require('gulp-if'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
-    // argv = require('yargs').argv,
+    argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
@@ -170,7 +171,7 @@ gulp.task('lint', ['scripts'], function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        .pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
         .pipe(eslint.formatEach());
 
 });
@@ -180,6 +181,7 @@ gulp.task('lint-parts', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint-parts --failonerror
         .pipe(eslint.formatEach());
 
 });
@@ -189,13 +191,13 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        .pipe(eslint.failOnError())
+        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint-samples --failonerror
         .pipe(eslint.formatEach());
 
 });
 
 // Watch changes to CSS files
-gulp.task('default', function () {
+gulp.task('default', ['scripts'], function () {
     // gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
 });
@@ -267,24 +269,28 @@ gulp.task('filesize', function () {
     closureCompiler.compile(
         ['js/highcharts.src.js'],
         null,
-        function (error, result) {
-            if (result) {
+        function (error, ccResult) {
+            if (ccResult) {
 
-                newSize = gzipSize.sync(result);
+                newSize = gzipSize.sync(ccResult);
 
-                exec('git stash', function (error, stdout, stderr) {
-                    if (error !== null) {
-                        console.log('exec error: ' + error);
+                exec('git stash', function (stashError) {
+                    if (stashError !== null) {
+                        console.log('Error in stash: ' + stashError);
                     }
 
                     closureCompiler.compile(
                         ['js/highcharts.src.js'],
                         null,
-                        function (error, result) {
-                            if (result) {
-                                oldSize = gzipSize.sync(result);
+                        function (ccError, ccResultOld) {
+                            if (ccResultOld) {
+                                oldSize = gzipSize.sync(ccResultOld);
                                 report();
-                                exec('git stash apply && git stash drop');
+                                exec('git stash apply && git stash drop', function (applyError) {
+                                    if (applyError) {
+                                        console.log(colors.red('Error in stash apply: ' + applyError));
+                                    }
+                                });
                             } else {
                                 console.log('Compilation error: ' + error);
                             }
@@ -312,6 +318,7 @@ gulp.task('scripts', function () {
      * Micro-optimize code based on the build object.
      *
      * @param {String} tpl The concatenated JavaScript template to process
+     * @param {Object} build The build configuration
      *
      * @returns {String} The processed JavaScript
      */
@@ -322,8 +329,11 @@ gulp.task('scripts', function () {
         // Windows newlines
         tpl = tpl.replace(/\r\n/g, '\n');
 
+
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
+        tpl = tpl.replace('/[ ,]/', '___rep3___'); // Conflicts with trailing comma removal below
+        tpl = tpl.replace('/[ ,]+/', '___rep4___'); // Conflicts with trailing comma removal below
         tpl = tpl.replace(/\\/g, '\\\\');
 
 
@@ -346,11 +356,14 @@ gulp.task('scripts', function () {
         func = new Function('build', tpl); // eslint-disable-line no-new-func
 
         tpl = func(build);
-        tpl = tpl.replace(/___doublequote___/g, '"');
 
-        // Collect trailing commas left when the tamplate engine has removed
+        // Collect trailing commas left when the template engine has removed
         // object literal properties or array items
         tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
+
+        tpl = tpl.replace(/___doublequote___/g, '"');
+        tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
+        tpl = tpl.replace(/___rep4___/g, '/[ ,]+/');
 
         return tpl;
     }
@@ -458,6 +471,7 @@ gulp.task('scripts', function () {
             fs.writeFileSync(
                 path,
                 preprocess(tpl, {
+                    assembly: true,
                     classic: true
                 }),
                 'utf8'
@@ -475,7 +489,7 @@ gulp.task('scripts', function () {
     });
 
     // Special case
-    var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+    var files = ['./vendor/canvg-1.1/rgbcolor.js', './vendor/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
         js = '';
 
     /**
@@ -502,3 +516,30 @@ gulp.task('scripts', function () {
         fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
     });
 });
+
+gulp.task('browserify', function () {
+    var browserify = require('browserify');
+    browserify('./samples/highcharts/common-js/browserify/app.js')
+        .bundle(function (err, buf) {
+            if (err) {
+                // @todo Do something meaningful with err
+            }
+            fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
+        });
+});
+
+gulp.task('webpack', function () {
+    var webpack = require('webpack');
+    webpack({
+        entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
+        output: {
+            filename: './samples/highcharts/common-js/webpack/demo.js'
+        }
+    }, function (err) {
+        if (err) {
+            throw new Error('Webpack failed.');
+        }
+    });
+});
+
+gulp.task('common', ['scripts', 'browserify', 'webpack']);

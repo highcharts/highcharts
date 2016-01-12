@@ -9,7 +9,7 @@ $(function () {
         yAxis: {
             stackLabels: {
                 style: {
-                    color: 'white',
+                    color: '#FFFFFF',
                     fontWeight: 'bold'
                 },
                 enabled: true,

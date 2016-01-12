@@ -1205,14 +1205,18 @@ H.Axis.prototype = {
 
 		if (startOnTick) {
 			this.min = roundedMin;
-		} else if (this.min - minPointOffset > roundedMin) {
-			tickPositions.shift();
+		} else {
+			while (this.min - minPointOffset > tickPositions[0]) {
+				tickPositions.shift();
+			}
 		}
 
 		if (endOnTick) {
 			this.max = roundedMax;
-		} else if (this.max + minPointOffset < roundedMax) {
-			tickPositions.pop();
+		} else {
+			while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+				tickPositions.pop();
+			}
 		}
 
 		// If no tick are left, set one tick in the middle (#3195)
@@ -1236,9 +1240,11 @@ H.Axis.prototype = {
 					horiz = axis.horiz,
 					key = [
 						horiz ? otherOptions.left : otherOptions.top, 
-						horiz ? otherOptions.width : otherOptions.height, 
+						otherOptions.width,
+						otherOptions.height, 
 						otherOptions.pane
 					].join(',');
+
 
 				if (axis.series.length) { // #4442
 					if (others[key]) {
@@ -1467,11 +1473,14 @@ H.Axis.prototype = {
 			left = pick(options.left, chart.plotLeft + offsetLeft),
 			percentRegex = /%$/;
 
-		// Check for percentage based input values
+		// Check for percentage based input values. Rounding fixes problems with
+		// column overflow and plot line filtering (#4898, #4899)
 		if (percentRegex.test(height)) {
+			//height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
 			height = parseFloat(height) / 100 * chart.plotHeight;
 		}
 		if (percentRegex.test(top)) {
+			//top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
 			top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
 		}
 
@@ -1790,7 +1799,7 @@ H.Axis.prototype = {
 
 
 			// Left side must be align: right and right side must have align: left for labels
-			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 ||
 					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
 				each(tickPositions, function (pos) {
 

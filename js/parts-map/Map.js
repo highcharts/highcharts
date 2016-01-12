@@ -129,9 +129,11 @@ if (Renderer === VMLRenderer) {
 /**
  * A wrapper for Chart with all the default values for a Map
  */
-H.Map = function (options, callback) {
-	
-	var hiddenAxis = {
+Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
+
+	var hasRenderToArg = typeof a === 'string' || a.nodeName,
+		options = arguments[hasRenderToArg ? 1 : 0],
+		hiddenAxis = {
 			endOnTick: false,
 			gridLineWidth: 0,
 			lineWidth: 0,
@@ -175,7 +177,9 @@ H.Map = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Chart(options, callback);
+	return hasRenderToArg ? 
+		new Chart(a, options, c) :
+		new Chart(options, b);
 };
 
 	return H;

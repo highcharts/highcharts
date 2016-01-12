@@ -181,7 +181,8 @@ Legend.prototype = {
 	positionCheckboxes: function (scrollOffset) {
 		var alignAttr = this.group.alignAttr,
 			translateY,
-			clipHeight = this.clipHeight || this.legendHeight;
+			clipHeight = this.clipHeight || this.legendHeight,
+			titleHeight = this.titleHeight;
 
 		if (alignAttr) {
 			translateY = alignAttr.translateY;
@@ -190,7 +191,7 @@ Legend.prototype = {
 					top;
 
 				if (checkbox) {
-					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					top = translateY + titleHeight + checkbox.y + (scrollOffset || 0) + 3;
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
@@ -320,14 +321,14 @@ Legend.prototype = {
 				legend.setItemEvents(item, li, useHTML);
 			}			
 
-			// Colorize the items
-			legend.colorizeItem(item, item.visible);
-
 			// add the HTML checkbox on top
 			if (showCheckbox) {
 				legend.createCheckboxForItem(item);
 			}
 		}
+
+		// Colorize the items
+		legend.colorizeItem(item, item.visible);
 
 		// Always update the text
 		legend.setText(item);
@@ -843,7 +844,8 @@ H.LegendSymbolMixin = {
 				(symbolWidth / 2) - radius,
 				verticalCenter - radius,
 				2 * radius,
-				2 * radius
+				2 * radius,
+				markerOptions
 			)
 			.addClass('highcharts-point')
 			.add(legendItemGroup);

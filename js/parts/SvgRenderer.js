@@ -41,7 +41,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	SVG_NS: SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
+	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
 		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 
 	/**
@@ -60,7 +60,7 @@ SVGElement.prototype = {
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
-	 * @param {Number} options The same options as in jQuery animation
+	 * @param {Number} options Options include duration, easing, step and complete
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
@@ -292,7 +292,8 @@ SVGElement.prototype = {
 			element = this.element,
 			hasSetSymbolSize,
 			ret = this,
-			skipAttr;
+			skipAttr,
+			setter;
 
 		// single key-value pair
 		if (typeof hash === 'string' && val !== undefined) {
@@ -327,12 +328,13 @@ SVGElement.prototype = {
 				}
 
 				if (!skipAttr) {
-					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
-				}
+					setter = this[key + 'Setter'] || this._defaultSetter;
+					setter.call(this, value, key, element);
 
-				// Let the shadow follow the main element
-				if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-					this.updateShadows(key, value);
+					// Let the shadow follow the main element
+					if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+						this.updateShadows(key, value, setter);
+					}
 				}
 			}
 
@@ -353,15 +355,25 @@ SVGElement.prototype = {
 		return ret;
 	},
 
-	updateShadows: function (key, value) {
+	/**
+	 * Update the shadow elements with new attributes
+	 * @param   {String}        key    The attribute name
+	 * @param   {String|Number} value  The value of the attribute
+	 * @param   {Function}      setter The setter function, inherited from the parent wrapper
+	 * @returns {undefined}
+	 */
+	updateShadows: function (key, value, setter) {
 		var shadows = this.shadows,
 			i = shadows.length;
+
 		while (i--) {
-			shadows[i].setAttribute(
-				key,
+			setter.call(
+				null, 
 				key === 'height' ?
 					Math.max(value - (shadows[i].cutHeight || 0), 0) :
-					key === 'd' ? this.d : value
+					key === 'd' ? this.d : value, 
+				key, 
+				shadows[i]
 			);
 		}
 	},
@@ -776,8 +788,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload) {
 		var wrapper = this,
-			numRegex = /^[0-9]+$/,
-			bBox,// = wrapper.bBox,
+			bBox, // = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -1309,7 +1320,6 @@ SVGRenderer.prototype = {
 	 */
 	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
-			loc = location,
 			boxWrapper,
 			element,
 			desc;
@@ -1337,8 +1347,8 @@ SVGRenderer.prototype = {
 		renderer.alignedObjects = [];
 
 		// Page url used for internal references. #24, #672, #1070
-		renderer.url = (isFirefox || isWebKit) && document.getElementsByTagName('base').length ?
-				loc.href
+		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
+				win.location.href
 					.replace(/#.*?$/, '') // remove the hash
 					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
 					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
@@ -1912,12 +1922,11 @@ SVGRenderer.prototype = {
 		var attribs = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
-		wrapper.xSetter = function (value) {
-			this.element.setAttribute('cx', value);
+		// Setting x or y translates to cx and cy
+		wrapper.xSetter = wrapper.ySetter = function (value, key, element) {
+			element.setAttribute('c' + key, value);
 		};
-		wrapper.ySetter = function (value) {
-			this.element.setAttribute('cy', value);
-		};
+
 		return wrapper.attr(attribs);
 	},
 
@@ -2189,32 +2198,22 @@ SVGRenderer.prototype = {
 				createElement('img', {
 					onload: function () {
 
-						if (obj.element) { // Meaning not destroyed
+						// Special case for SVGs on IE11, the width is not accessible until the image is 
+						// part of the DOM (#2854).
+						if (this.width === 0) {
+							css(this, {
+								position: 'absolute',
+								top: '-999em'
+							});
+							doc.body.appendChild(this);
+						}
 
-							// Special case for SVGs on IE11, the width is not accessible until the image is 
-							// part of the DOM (#2854).
-							if (this.width === 0) { 
-								css(this, {
-									position: 'absolute',
-									top: '-999em'
-								});
-								document.body.appendChild(this);
-							}
+						// Center the image
+						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
 
-							// Center the image
-							symbolSizes[imageSrc] = { // Cache for next	
-								width: this.width,
-								height: this.height
-							};
-							obj.imgwidth = this.width;
-							obj.imgheight = this.height;
-							centerImage();
-							
-
-							// Clean up after #2854 workaround.
-							if (this.parentNode) {
-								this.parentNode.removeChild(this);
-							}
+						// Clean up after #2854 workaround.
+						if (this.parentNode) {
+							this.parentNode.removeChild(this);
 						}
 					},
 					src: imageSrc

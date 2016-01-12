@@ -90,6 +90,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
+			onKey = options.onKey || 'y', // docs. Added to API, marked next.
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
@@ -110,22 +111,22 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				return (a.x - b.x);
 			});
 
+			onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
-				
-				if (leftPoint.x <= point.x && leftPoint.plotY !== undefined) {
+				if (leftPoint.x <= point.x && leftPoint[onKey] !== undefined) {
 					if (point.x <= lastX) { // #803
 
-						point.plotY = leftPoint.plotY;
+						point.plotY = leftPoint[onKey];
 
 						// interpolate between points, #666
 						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
-							if (rightPoint && rightPoint.plotY !== undefined) {
-								point.plotY += 
-									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
-									(rightPoint.plotY - leftPoint.plotY); // the y distance
+							if (rightPoint && rightPoint[onKey] !== undefined) {
+								point.plotY +=
+									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
+									(rightPoint[onKey] - leftPoint[onKey]); // the y distance
 							}
 						}
 					}

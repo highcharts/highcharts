@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2015-10-26)
+ * @license Highcharts JS v5.0-dev (2016-01-12)
  *
- * (c) 2009-2014 Torstein Honsi
+ * (c) 2009-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -725,22 +725,6 @@
         },
 
         /**
-         * Extend getSegments to force null points if the higher value is null. #1703.
-         */
-        getSegments: function () {
-            var series = this;
-
-            each(series.points, function (point) {
-                if (!series.options.connectNulls && (point.low === null || point.high === null)) {
-                    point.y = null;
-                } else if (point.low === null && point.high !== null) {
-                    point.y = point.high;
-                }
-            });
-            Series.prototype.getSegments.call(this);
-        },
-
-        /**
          * Translate data points from raw values x and y to plotX and plotY
          */
         translate: function () {
@@ -756,14 +740,8 @@
                     high = point.high,
                     plotY = point.plotY;
 
-                if (high === null && low === null) {
-                    point.y = null;
-                } else if (low === null) {
-                    point.plotLow = point.plotY = null;
-                    point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
-                } else if (high === null) {
-                    point.plotLow = plotY;
-                    point.plotHigh = null;
+                if (high === null || low === null) {
+                    point.isNull = true;
                 } else {
                     point.plotLow = plotY;
                     point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
@@ -782,44 +760,60 @@
          * Extend the line series' getSegmentPath method by applying the segment
          * path to both lower and higher values of the range
          */
-        getSegmentPath: function (segment) {
-
-            var lowSegment,
-                highSegment = [],
-                i = segment.length,
-                baseGetSegmentPath = Series.prototype.getSegmentPath,
+        getGraphPath: function () {
+        
+            var points = this.points,
+                highPoints = [],
+                highAreaPoints = [],
+                i = points.length,
+                getGraphPath = Series.prototype.getGraphPath,
                 point,
+                pointShim,
                 linePath,
                 lowerPath,
                 options = this.options,
                 step = options.step,
-                higherPath;
+                higherPath,
+                higherAreaPath;
 
-            // Remove nulls from low segment
-            lowSegment = grep(segment, function (point) {
-                return point.plotLow !== null;
-            });
-
-            // Make a segment with plotX and plotY for the top values
+            // Create the top line and the top part of the area fill. The area fill compensates for 
+            // null points by drawing down to the lower graph, moving across the null gap and 
+            // starting again at the lower graph.
+            i = points.length;
             while (i--) {
-                point = segment[i];
-                if (point.plotHigh !== null) {
-                    highSegment.push({
-                        plotX: point.plotHighX || point.plotX, // plotHighX is for polar charts
-                        plotY: point.plotHigh
+                point = points[i];
+        
+                if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
+                    highAreaPoints.push({
+                        plotX: point.plotX,
+                        plotY: point.plotLow
+                    });
+                }
+                pointShim = {
+                    plotX: point.plotX,
+                    plotY: point.plotHigh,
+                    isNull: point.isNull
+                };
+                highAreaPoints.push(pointShim);
+                highPoints.push(pointShim);
+                if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
+                    highAreaPoints.push({
+                        plotX: point.plotX,
+                        plotY: point.plotLow
                     });
                 }
             }
 
             // Get the paths
-            lowerPath = baseGetSegmentPath.call(this, lowSegment);
+            lowerPath = getGraphPath.call(this, points);
             if (step) {
                 if (step === true) {
                     step = 'left';
                 }
-                options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getSegmentPath
+                options.step = { left: 'right', center: 'center', right: 'left' }[step]; // swap for reading in getGraphPath
             }
-            higherPath = baseGetSegmentPath.call(this, highSegment);
+            higherPath = getGraphPath.call(this, highPoints);
+            higherAreaPath = getGraphPath.call(this, highAreaPoints);
             options.step = step;
 
             // Create a line on both top and bottom of the range
@@ -827,10 +821,10 @@
 
             // For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
             if (!this.chart.polar) {
-                higherPath[0] = 'L'; // this probably doesn't work for spline
+                higherAreaPath[0] = 'L'; // this probably doesn't work for spline        
             }
-            this.areaPath = this.areaPath.concat(lowerPath, higherPath);
-
+            this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+        
             return linePath;
         },
 
@@ -878,13 +872,14 @@
                             if (!align) {
                                 dataLabelOptions.align = up ? 'right' : 'left';
                             }
-                            dataLabelOptions.x = dataLabelOptions.xHigh;
                         } else {
                             if (!verticalAlign) {
                                 dataLabelOptions.verticalAlign = up ? 'top' : 'bottom';
                             }
-                            dataLabelOptions.y = dataLabelOptions.yHigh;
                         }
+
+                        dataLabelOptions.x = dataLabelOptions.xHigh;
+                        dataLabelOptions.y = dataLabelOptions.yHigh;
                     }
                 }
 
@@ -913,13 +908,15 @@
                             if (!align) {
                                 dataLabelOptions.align = up ? 'left' : 'right';
                             }
-                            dataLabelOptions.x = dataLabelOptions.xLow;
                         } else {
                             if (!verticalAlign) {
                                 dataLabelOptions.verticalAlign = up ? 'bottom' : 'top';
                             }
-                            dataLabelOptions.y = dataLabelOptions.yLow;
+                        
                         }
+
+                        dataLabelOptions.x = dataLabelOptions.xLow;
+                        dataLabelOptions.y = dataLabelOptions.yLow;
                     }
                 }
                 if (seriesProto.drawDataLabels) {
@@ -995,6 +992,8 @@
             translate: function () {
                 var series = this,
                     yAxis = series.yAxis,
+                    xAxis = series.xAxis,
+                    chart = series.chart,
                     plotHigh;
 
                 colProto.translate.apply(series);
@@ -1007,7 +1006,6 @@
                         height,
                         y;
 
-                    point.tooltipPos = null; // don't inherit from column
                     point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
                     point.plotLow = point.plotY;
 
@@ -1029,6 +1027,17 @@
 
                     shapeArgs.height = height;
                     shapeArgs.y = y;
+
+                    point.tooltipPos = chart.inverted ? 
+                        [ 
+                            yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+                            xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+                            height
+                        ] : [
+                            xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+                            yAxis.pos - chart.plotTop + y + height / 2, 
+                            height
+                        ]; // don't inherit from column tooltip position - #3372
                 });
             },
             directTouch: true,
@@ -1216,7 +1225,8 @@
                             stroke: dialOptions.borderColor || 'none',
                             'stroke-width': dialOptions.borderWidth || 0,
                             fill: dialOptions.backgroundColor || 'black',
-                            rotation: shapeArgs.rotation // required by VML when animation is false
+                            rotation: shapeArgs.rotation, // required by VML when animation is false
+                            zIndex: 1
                         })
                         .add(series.group);
                 }
@@ -1233,7 +1243,8 @@
                     .attr({
                         'stroke-width': pivotOptions.borderWidth || 0,
                         stroke: pivotOptions.borderColor || 'silver',
-                        fill: pivotOptions.backgroundColor || 'black'
+                        fill: pivotOptions.backgroundColor || 'black',
+                        zIndex: 2
                     })
                     .translate(center[0], center[1])
                     .add(series.group);
@@ -1694,12 +1705,14 @@
                 previousY,
                 previousIntermediate,
                 range,
+                minPointLength = pick(options.minPointLength, 5),
                 threshold = options.threshold,
                 stacking = options.stacking,
                 tooltipY;
 
             // run column series translate
             seriesTypes.column.prototype.translate.apply(this);
+            series.minPointLengthOffset = 0;
 
             previousY = previousIntermediate = threshold;
             points = series.points;
@@ -1731,11 +1744,11 @@
                 // sum points
                 if (point.isSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
+                    shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
                 } else if (point.isIntermediateSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1);
-                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
+                    shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
                     previousIntermediate = range[1];
 
                 // If it's not the sum point, update previous stack end position and get
@@ -1758,8 +1771,15 @@
                 shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
                 point.yBottom = shapeArgs.y + shapeArgs.height;
 
+                if (shapeArgs.height <= minPointLength) {
+                    shapeArgs.height = minPointLength;
+                    series.minPointLengthOffset += minPointLength;
+                }
+
+                shapeArgs.y -= series.minPointLengthOffset;
+
                 // Correct tooltip placement (#3014)
-                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+                tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
                 if (series.chart.inverted) {
                     point.tooltipPos[0] = yAxis.len - tooltipY;
                 } else {
@@ -2350,40 +2370,6 @@
             }
         };
 
-        /**
-         * Add some special init logic to areas and areasplines
-         */
-        function initArea(proceed, chart, options) {
-            proceed.call(this, chart, options);
-            if (this.chart.polar) {
-
-                /**
-                 * Overridden method to close a segment path. While in a cartesian plane the area
-                 * goes down to the threshold, in the polar chart it goes to the center.
-                 */
-                this.closeSegment = function (path) {
-                    var center = this.xAxis.center;
-                    path.push(
-                        'L',
-                        center[0],
-                        center[1]
-                    );
-                };
-
-                // Instead of complicated logic to draw an area around the inner area in a stack,
-                // just draw it behind
-                this.closedStacks = true;
-            }
-        }
-
-
-        if (seriesTypes.area) {
-            wrap(seriesTypes.area.prototype, 'init', initArea);
-        }
-        if (seriesTypes.areaspline) {
-            wrap(seriesTypes.areaspline.prototype, 'init', initArea);
-        }
-
         if (seriesTypes.spline) {
             /**
              * Overridden method for calculating a spline from one point to the next
@@ -2522,20 +2508,29 @@
          * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in
          * line-like series.
          */
-        wrap(seriesProto, 'getSegmentPath', function (proceed, segment) {
-
-            var points = this.points;
-
+        wrap(seriesProto, 'getGraphPath', function (proceed, points) {
+            var series = this;
+        
             // Connect the path
-            if (this.chart.polar && this.options.connectEnds !== false &&
-                    segment[segment.length - 1] === points[points.length - 1] && points[0].y !== null) {
-                this.connectEnds = true; // re-used in splines
-                segment = [].concat(segment, [points[0]]);
+            if (this.chart.polar) {
+                points = points || this.points;
+    
+                if (this.options.connectEnds !== false && points[0].y !== null) {
+                    this.connectEnds = true; // re-used in splines
+                    points.splice(points.length, 0, points[0]);
+                }
+
+                // For area charts, pseudo points are added to the graph, now we need to translate these
+                each(points, function (point) {
+                    if (point.polarPlotY === undefined) {
+                        series.toXY(point);
+                    }
+                });
             }
 
             // Run uber method
-            return proceed.call(this, segment);
-
+            return proceed.apply(this, [].slice.call(arguments, 1));
+    
         });
 
 
@@ -2742,4 +2737,4 @@
 
         return H;
     }(Highcharts));
-
+    

@@ -6,7 +6,6 @@ globals:
     ADBE: true
     GOOGL: true
     Highcharts: true
-    HighchartsAdapter: true
     hs: true                    # Highslide
     jQuery: true
     moment: true                # moment.js, used in gettimezoneoffset demo

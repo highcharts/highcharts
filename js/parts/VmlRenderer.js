@@ -94,6 +94,9 @@ VMLElement = {
 				parent.element || parent :
 				box;
 
+		if (parent) {
+			this.parentGroup = parent;
+		}
 
 		// if the parent group is inverted, apply inversion on all children
 		if (inverted) { // only on groups
@@ -432,6 +435,14 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
+	'fill-opacitySetter': function (value, key, element) {
+		createElement(
+			this.renderer.prepVML(['<', key.split('-')[0], ' opacity="', value, '"/>']),
+			null,
+			null,
+			element
+		);
+	},
 	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style;
@@ -442,7 +453,7 @@ VMLElement = {
 		style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
-		this.setAttr('strokecolor', this.renderer.color(value, element, key));
+		this.setAttr('strokecolor', this.renderer.color(value, element, key, this));
 	},
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
@@ -509,6 +520,7 @@ VMLElement = {
 	}
 };
 H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
+VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -798,14 +810,13 @@ VMLRendererExtension = { // inherit SVGRenderer
 				ret = stopColor;
 			}
 
-		// if the color is an rgba color, split it and add a fill node
+		// If the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
 			colorObject = Color(color);
 
-			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			createElement(this.prepVML(markup), null, null, elem);
+			wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
 
 			ret = colorObject.get('rgb');
 
