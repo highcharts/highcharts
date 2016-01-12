@@ -1,5 +1,5 @@
 /* eslint-env node */
-/* eslint no-console:0 */
+/* eslint no-console:0, valid-jsdoc:0 */
 
 'use strict';
 var colors = require('colors'),
@@ -258,26 +258,26 @@ gulp.task('filesize', function () {
     closureCompiler.compile(
         ['js/highcharts.src.js'],
         null,
-        function (error, result) {
-            if (result) {
+        function (error, ccResult) {
+            if (ccResult) {
 
-                newSize = gzipSize.sync(result);
+                newSize = gzipSize.sync(ccResult);
 
-                exec('git stash', function (error, stdout, stderr) {
-                    if (error !== null) {
-                        console.log('Error in stash: ' + error);
+                exec('git stash', function (stashError) {
+                    if (stashError !== null) {
+                        console.log('Error in stash: ' + stashError);
                     }
 
                     closureCompiler.compile(
                         ['js/highcharts.src.js'],
                         null,
-                        function (error, result) {
-                            if (result) {
-                                oldSize = gzipSize.sync(result);
+                        function (ccError, ccResultOld) {
+                            if (ccResultOld) {
+                                oldSize = gzipSize.sync(ccResultOld);
                                 report();
-                                exec('git stash apply && git stash drop', function (error) {
-                                    if (error) {
-                                        console.log(colors.red('Error in stash apply: ' + error));
+                                exec('git stash apply && git stash drop', function (applyError) {
+                                    if (applyError) {
+                                        console.log(colors.red('Error in stash apply: ' + applyError));
                                     }
                                 });
                             } else {
