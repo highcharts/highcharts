@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-11)
+ * @license Highmaps JS v4.2.0-modified (2016-01-12)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -10017,7 +10017,9 @@
 
             var chart = this.chart;
 
-            hoverChartIndex = chart.index;
+            if (!defined(hoverChartIndex) || !charts[hoverChartIndex].mouseIsDown) {
+                hoverChartIndex = chart.index;
+            }
 
             e = this.normalize(e);
             e.returnValue = false; // #2251, #3224
