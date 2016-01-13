@@ -26,7 +26,7 @@
 (function () {
 
     var win = window,
-        doc = win.doc;
+        doc = win.document;
 
     var SVG_NS = 'http://www.w3.org/2000/svg',
         userAgent = (win.navigator && win.navigator.userAgent) || '',
@@ -69,7 +69,6 @@ var timers = [];
 
 var attr = H.attr,
     charts = H.charts,
-    defaultOptions = H.defaultOptions,
     doc = H.doc,
     win = H.win;
 
@@ -957,7 +956,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
     number = +number || 0;
 
-    var lang = defaultOptions.lang,
+    var lang = H.defaultOptions.lang,
         origDec = (number.toString().split('.')[1] || '').length,
         decimalComponent,
         strinteger,
@@ -15243,12 +15242,26 @@ H.Series.prototype = {
     drawGraph: function () {
         var series = this,
             options = this.options,
-            props = [['graph', options.lineColor || this.color, options.dashStyle]],
-            graphPath = (this.gappedPath || this.getGraphPath).call(this),
-            zones = this.zones;
+            graphPath = this.getGraphPath(),
+            props = [[
+                'graph', 
+                'highcharts-graph', 
+                
+                options.lineColor || this.color, 
+                options.dashStyle
+                
+            ]];
 
-        each(zones, function (threshold, i) {
-            props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+        // Add the zone properties if any
+        each(this.zones, function (zone, i) {
+            props.push([
+                'zone-graph-' + i,
+                'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+                
+                zone.color || series.color, 
+                zone.dashStyle || options.dashStyle
+                
+            ]);
         });
 
         // Draw the graph

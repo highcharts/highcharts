@@ -1249,12 +1249,26 @@ H.Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color, options.dashStyle]],
-			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			zones = this.zones;
+			graphPath = this.getGraphPath(),
+			props = [[
+				'graph', 
+				'highcharts-graph', 
+				/*= if (build.classic) { =*/
+				options.lineColor || this.color, 
+				options.dashStyle
+				/*= } =*/
+			]];
 
-		each(zones, function (threshold, i) {
-			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		// Add the zone properties if any
+		each(this.zones, function (zone, i) {
+			props.push([
+				'zone-graph-' + i,
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+				/*= if (build.classic) { =*/
+				zone.color || series.color, 
+				zone.dashStyle || options.dashStyle
+				/*= } =*/
+			]);
 		});
 
 		// Draw the graph

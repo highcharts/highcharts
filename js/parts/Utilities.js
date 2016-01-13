@@ -3,7 +3,6 @@ var timers = [];
 
 var attr = H.attr,
 	charts = H.charts,
-	defaultOptions = H.defaultOptions,
 	doc = H.doc,
 	win = H.win;
 
@@ -891,7 +890,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 	number = +number || 0;
 
-	var lang = defaultOptions.lang,
+	var lang = H.defaultOptions.lang,
 		origDec = (number.toString().split('.')[1] || '').length,
 		decimalComponent,
 		strinteger,

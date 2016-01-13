@@ -2,7 +2,7 @@
 (function () {
 
 	var win = window,
-		doc = win.doc;
+		doc = win.document;
 
 	var SVG_NS = 'http://www.w3.org/2000/svg',
 		userAgent = (win.navigator && win.navigator.userAgent) || '',
