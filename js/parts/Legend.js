@@ -13,6 +13,7 @@
 		pick = H.pick,
 		setAnimation = H.setAnimation,
 		stableSort = H.stableSort,
+		win = H.win,
 		wrap = H.wrap;
 /**
  * The overview of the chart's series
@@ -858,7 +859,7 @@ H.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // Explore if there's a general cause for this. The problem may be related
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
+if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)

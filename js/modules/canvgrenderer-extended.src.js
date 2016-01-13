@@ -7,15 +7,16 @@
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts) { // encapsulate
-	var css = Highcharts.css,
-		CanVGRenderer = Highcharts.CanVGRenderer,
-		SVGRenderer = Highcharts.SVGRenderer,
-		extend = Highcharts.extend,
-		merge = Highcharts.merge,
-		addEvent = Highcharts.addEvent,
-		createElement = Highcharts.createElement,
-		discardElement = Highcharts.discardElement;
+(function (H) { // encapsulate
+	var css = H.css,
+		CanVGRenderer = H.CanVGRenderer,
+		SVGRenderer = H.SVGRenderer,
+		extend = H.extend,
+		merge = H.merge,
+		addEvent = H.addEvent,
+		createElement = H.createElement,
+		discardElement = H.discardElement,
+		win = H.win;
 
 	// Extend CanVG renderer on demand, inherit from SVGRenderer
 	extend(CanVGRenderer.prototype, SVGRenderer.prototype);

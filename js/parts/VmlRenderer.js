@@ -10,6 +10,7 @@
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		discardElement = H.discardElement,
+		doc = H.doc,
 		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
@@ -24,7 +25,8 @@
 		svg = H.svg,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer,
-		useCanVG = H.useCanVG;
+		useCanVG = H.useCanVG,
+		win = H.win;
 
 /* ****************************************************************************
  *                                                                            *
@@ -45,6 +47,8 @@ if (!svg && !useCanVG) {
  */
 VMLElement = {
 
+	docMode8: doc && doc.documentMode === 8,
+
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
 	 * to minimize DOM traffic.
@@ -56,8 +60,6 @@ VMLElement = {
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', 'absolute', ';'],
 			isDiv = nodeName === 'div';
-
-		wrapper.docMode8 = document.documentMode === 8;
 
 		// divs and shapes need size
 		if (nodeName === 'shape' || isDiv) {
@@ -295,7 +297,7 @@ VMLElement = {
 	on: function (eventType, handler) {
 		// simplest possible event model for internal use
 		this.element['on' + eventType] = function () {
-			var evt = window.event;
+			var evt = win.event;
 			evt.target = evt.srcElement;
 			handler(evt);
 		};
@@ -535,7 +537,7 @@ VMLElement.prototype.ySetter =
 VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
-	isIE8: navigator.userAgent.indexOf('MSIE 8.0') > -1,
+	isIE8: win.navigator.userAgent.indexOf('MSIE 8.0') > -1,
 
 
 	/**
@@ -572,17 +574,17 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
 		// seems to be to add the xmlns attribute and the behaviour style inline.
-		if (!document.namespaces.hcv) {
+		if (!doc.namespaces.hcv) {
 
-			document.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
+			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
 			// Setup default CSS (#2153, #2368, #2384)
 			css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 			try {
-				document.createStyleSheet().cssText = css;
+				doc.createStyleSheet().cssText = css;
 			} catch (e) {
-				document.styleSheets[0].cssText += css;
+				doc.styleSheets[0].cssText += css;
 			}
 
 		}
@@ -1089,9 +1091,9 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
-	var measuringSpan = document.createElement('span'),
+	var measuringSpan = doc.createElement('span'),
 		offsetWidth,
-		textNode = document.createTextNode(text);
+		textNode = doc.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);

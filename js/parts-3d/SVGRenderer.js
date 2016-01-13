@@ -1,4 +1,9 @@
 (function (H) {
+	var cos = Math.cos,
+		PI = Math.PI,
+		sin = Math.sin;
+		
+
 	var charts = H.charts,
 		Color = H.Color,
 		defined = H.defined,
@@ -9,7 +14,6 @@
 		map = H.map,
 		merge = H.merge,
 		perspective = H.perspective,
-		PI = Math.PI,
 		pick = H.pick,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer,

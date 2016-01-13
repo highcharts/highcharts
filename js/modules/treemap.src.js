@@ -214,8 +214,7 @@
 				childrenTotal = 0,
 				children = [],
 				val,
-				point = series.points[tree.i],
-				levelDynamic;
+				point = series.points[tree.i];
 
 			// First give the children some values
 			each(tree.children, function (child) {
@@ -248,7 +247,6 @@
 			});
 			// Set the values
 			val = pick(point && point.value, childrenTotal);
-			levelDynamic = (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level));
 			extend(tree, {
 				children: children,
 				childrenTotal: childrenTotal,

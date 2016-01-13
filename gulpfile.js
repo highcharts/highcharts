@@ -85,13 +85,15 @@ function assemble(assemblies) {
                             file = file.replace(/\t/g, '    ');
 
                             // Indent all files so we can use jsLints whitespace
+                            /*
                             if (item.$.name.indexOf('Intro') === -1 && item.$.name.indexOf('Outro') === -1) {
                                 file = file.replace(/\n/g, '\n    ');
                             }
+                            */
                             tpl += file;
                         });
 
-                        tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
+                        //tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
 
                         tpl = tpl.replace(
                             'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
@@ -350,7 +352,7 @@ gulp.task('scripts', function () {
         tpl = tpl.replace(/$/, '";\nreturn s;');
 
         // Uncomment to preview generated supercode
-         fs.writeFile('temp.js', tpl, 'utf8');
+        // fs.writeFile('temp.js', tpl, 'utf8');
 
         // The evaluation function for the ready built supercode
         func = new Function('build', tpl); // eslint-disable-line no-new-func

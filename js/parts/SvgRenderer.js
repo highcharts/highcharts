@@ -3,6 +3,7 @@
 		SVGRenderer,
 
 		addEvent = H.addEvent,
+		animate = H.animate,
 		attr = H.attr,
 		Color = H.Color,
 		css = H.css,
@@ -10,6 +11,7 @@
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		destroyObjectProperties = H.destroyObjectProperties,
+		doc = H.doc,
 		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
@@ -25,9 +27,11 @@
 		pick = H.pick,
 		pInt = H.pInt,
 		removeEvent = H.removeEvent,
+		stop = H.stop,
 		svg = H.svg,
 		SVG_NS = H.SVG_NS,
-		useCanVG = H.useCanVG;
+		useCanVG = H.useCanVG,
+		win = H.win;
 
 /**
  * A wrapper object for SVG elements
@@ -53,7 +57,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
 				createElement(nodeName) :
-				document.createElementNS(wrapper.SVG_NS, nodeName);
+				doc.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
 
@@ -65,13 +69,13 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, this.renderer.globalAnimation, true);
-		HighchartsAdapter.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
+		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
-			HighchartsAdapter.animate(this, params, animOptions);
+			animate(this, params, animOptions);
 		} else {
 			this.attr(params, null, complete);
 		}
@@ -545,7 +549,7 @@ SVGElement.prototype = {
 	 * Get a computed style
 	 */
 	getStyle: function (prop) {
-		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
+		return win.getComputedStyle(this.element || this, '').getPropertyValue(prop);
 	},
 
 	/**
@@ -562,7 +566,7 @@ SVGElement.prototype = {
 
 		// Other values like em, pt etc need to be measured
 		} else {
-			dummy = document.createElementNS(SVG_NS, 'rect');
+			dummy = doc.createElementNS(SVG_NS, 'rect');
 			attr(dummy, {
 				'width': val,
 				'stroke-width': 0
@@ -591,7 +595,7 @@ SVGElement.prototype = {
 				handler.call(element, e);
 			};
 			element.onclick = function (e) {												
-				if (navigator.userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
+				if (win.navigator.userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
 					handler.call(element, e);
 				}
 			};
@@ -812,7 +816,7 @@ SVGElement.prototype = {
 			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 			// we assume that a label of n characters has the same bounding box as others
 			// of the same length.
-			if (textStr === '' || numRegex.test(textStr)) {
+			if (textStr === '' || /^[0-9]+$/.test(textStr)) {
 				cacheKey = 'num:' + textStr.toString().length + cacheKey;
 
 			// Caching all strings reduces rendering time by 4-5%.
@@ -1011,7 +1015,7 @@ SVGElement.prototype = {
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
-		HighchartsAdapter.stop(wrapper); // stop running animations
+		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
 			wrapper.clipPath = wrapper.clipPath.destroy();
@@ -1182,11 +1186,11 @@ SVGElement.prototype = {
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
-			titleNode = document.createElementNS(this.SVG_NS, 'title');
+			titleNode = doc.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
 		titleNode.appendChild(
-			document.createTextNode(
+			doc.createTextNode(
 				(String(pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
 			)
 		);
@@ -1356,7 +1360,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(document.createTextNode('Created with @product.name@ @product.version@'));
+		desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -1391,7 +1395,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(window, 'resize', subPixelFix);
+			addEvent(win, 'resize', subPixelFix);
 		}
 	},
 	/*= if (build.classic) { =*/
@@ -1437,7 +1441,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			removeEvent(window, 'resize', renderer.subPixelFix);
+			removeEvent(win, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -1521,7 +1525,7 @@ SVGRenderer.prototype = {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(document.createTextNode(unescapeAngleBrackets(textStr)));
+			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
 		// Complex strings, add more logic
 		} else {
@@ -1562,7 +1566,7 @@ SVGRenderer.prototype = {
 				each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
-							tspan = document.createElementNS(renderer.SVG_NS, 'tspan'),
+							tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'),
 							spanStyle; // #390
 						if (styleRegex.test(span)) {
 							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
@@ -1579,7 +1583,7 @@ SVGRenderer.prototype = {
 						if (span !== ' ') {
 
 							// add the text node
-							tspan.appendChild(document.createTextNode(span));
+							tspan.appendChild(doc.createTextNode(span));
 
 							if (!spanNo) { // first span in a line, align it to the left
 								if (lineNo && parentX !== null) {
@@ -1669,7 +1673,7 @@ SVGRenderer.prototype = {
 
 										if (words.length) {
 											
-											tspan = document.createElementNS(renderer.SVG_NS, 'tspan');
+											tspan = doc.createElementNS(renderer.SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
 												x: parentX
@@ -1687,7 +1691,7 @@ SVGRenderer.prototype = {
 										rest.unshift(words.pop());
 									}
 									if (words.length) {
-										tspan.appendChild(document.createTextNode(words.join(' ').replace(/- /g, '-')));
+										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
 								if (wasTooLong) {

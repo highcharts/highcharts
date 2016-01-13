@@ -6,7 +6,8 @@
 		each = H.each,
 		erase = H.erase,
 		log2lin = H.log2lin,
-		merge = H.merge;
+		merge = H.merge,
+		pick = H.pick;
 /*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
@@ -42,10 +43,6 @@ H.PlotLineOrBand.prototype = {
 			path = [],
 			addEvent,
 			eventType,
-			xs,
-			ys,
-			x,
-			y,
 			color = options.color,
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,

@@ -2,11 +2,13 @@
 	var dateFormat = H.dateFormat,
 		each = H.each,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
 		format = H.format,
 		isNumber = H.isNumber,
 		map = H.map,
 		pick = H.pick,
 		splat = H.splat,
+		stop = H.stop,
 		syncTimeout = H.syncTimeout,
 		timeUnits = H.timeUnits,
 		useCanVG = H.useCanVG;
@@ -381,7 +383,7 @@ H.Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				HighchartsAdapter.stop(label);
+				stop(label);
 				label.attr('opacity', 1).show();
 			}
 
@@ -405,12 +407,12 @@ H.Tooltip.prototype = {
 
 			this.isHidden = false;
 		}
-		HighchartsAdapter.fireEvent(chart, 'tooltipRefresh', {
-				text: text,
-				x: x + chart.plotLeft,
-				y: y + chart.plotTop,
-				borderColor: borderColor
-			});
+		fireEvent(chart, 'tooltipRefresh', {
+			text: text,
+			x: x + chart.plotLeft,
+			y: y + chart.plotTop,
+			borderColor: borderColor
+		});
 	},
 
 	/**

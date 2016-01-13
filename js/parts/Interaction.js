@@ -95,8 +95,6 @@ TrackerMixin = H.TrackerMixin = {
 			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
-			cursor = options.cursor,
-			css = cursor && { cursor: cursor },
 			i,
 			lineWidth,
 			onMouseOver = function () {

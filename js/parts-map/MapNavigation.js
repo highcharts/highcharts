@@ -1,6 +1,7 @@
 (function (H) {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
+		doc = H.doc,
 		each = H.each,
 		extend = H.extend,
 		merge = H.merge,

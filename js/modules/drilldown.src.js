@@ -16,8 +16,7 @@
 
 	'use strict';
 
-	var addAnimSetter = H.addAnimSetter,
-		noop = H.noop,
+	var noop = H.noop,
 		defaultOptions = H.defaultOptions,
 		each = H.each,
 		extend = H.extend,

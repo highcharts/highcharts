@@ -1,18 +1,11 @@
 (function (H) {
-var timers = [],
-	getStyle,
+var timers = [];
 
-	// Previous adapter functions
-	inArray,
-	each,
-	grep,
-	offset,
-	map,
-	addEvent,
-	removeEvent,
-	fireEvent,
-	animate,
-	stop;
+var attr = H.attr,
+	charts = H.charts,
+	defaultOptions = H.defaultOptions,
+	doc = H.doc,
+	win = H.win;
 
 /**
  * An animator object. One instance applies to one property (attribute or style prop) 
@@ -22,12 +15,12 @@ var timers = [],
  * @param {object} options Animation options, including duration, easing, step and complete.
  * @param {object} prop    The property to animate.
  */
-function Fx(elem, options, prop) {
+H.Fx = function (elem, options, prop) {
 	this.options = options;
 	this.elem = elem;
 	this.prop = prop;
-}
-Fx.prototype = {
+};
+H.Fx.prototype = {
 	
 	/**
 	 * Animating a path definition on SVGElement
@@ -190,7 +183,7 @@ Fx.prototype = {
 			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
 				i = arr.length;
 				while (i--) {
-					if (arr[i] === M || arr[i] === L) {
+					if (arr[i] === 'M' || arr[i] === 'L') {
 						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
 					}
 				}
@@ -482,7 +475,7 @@ H.css = function (el, styles) {
  * @param {Object} nopad
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
-	var el = document.createElement(tag),
+	var el = doc.createElement(tag),
 		css = H.css;
 	if (attribs) {
 		H.extend(el, attribs);
@@ -913,14 +906,14 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	}
 
 	// A string containing the positive integer component of the number
-	strinteger = String(pInt(absNumber.toFixed(decimals)));
+	strinteger = String(H.pInt(absNumber.toFixed(decimals)));
 
 	// Leftover after grouping into thousands. Can be 0, 1 or 3.
 	thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
 	// Language
-	decimalPoint = pick(decimalPoint, lang.decimalPoint);
-	thousandsSep = pick(thousandsSep, lang.thousandsSep);
+	decimalPoint = H.pick(decimalPoint, lang.decimalPoint);
+	thousandsSep = H.pick(thousandsSep, lang.thousandsSep);
 
 	// Start building the return
 	ret = number < 0 ? '-' : '';
@@ -953,29 +946,29 @@ Math.easeInOutSine = function (pos) {
 /**
  * Internal method to return CSS value for given element and property
  */
-getStyle = function (el, prop) {
+H.getStyle = function (el, prop) {
 	var style = win.getComputedStyle(el, undefined);
-	return style && pInt(style.getPropertyValue(prop));
+	return style && H.pInt(style.getPropertyValue(prop));
 };
 
 /**
  * Return the index of an item in an array, or -1 if not found
  */
-inArray = function (item, arr) {
+H.inArray = function (item, arr) {
 	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
 };
 
 /**
  * Filter an array
  */
-grep = function (elements, callback) {
+H.grep = function (elements, callback) {
 	return [].filter.call(elements, callback);
 };
 
 /**
  * Map an array
  */
-map = function (arr, fn) {
+H.map = function (arr, fn) {
 	var results = [], i = 0, len = arr.length;
 
 	for (; i < len; i++) {
@@ -988,7 +981,7 @@ map = function (arr, fn) {
 /**
  * Get the element's offset position, corrected by overflow:auto.
  */
-offset = function (el) {
+H.offset = function (el) {
 	var docElem = doc.documentElement,
 		box = el.getBoundingClientRect();
 
@@ -1006,7 +999,7 @@ offset = function (el) {
  * in all cases where we stop the animation from .attr. Instead of stopping
  * everything, we can just stop the actual attributes we're setting.
  */
-stop = function (el) {
+H.stop = function (el) {
 
 	var i = timers.length;
 
@@ -1023,14 +1016,14 @@ stop = function (el) {
  * @param {Array} arr
  * @param {Function} fn
  */
-each = function (arr, fn) { // modern browsers
+H.each = function (arr, fn) { // modern browsers
 	return Array.prototype.forEach.call(arr, fn);
 };
 
 /**
  * Add an event listener
  */
-addEvent = function (el, type, fn) {
+H.addEvent = function (el, type, fn) {
 	
 	var events = el.hcEvents = el.hcEvents || {};
 
@@ -1066,7 +1059,7 @@ addEvent = function (el, type, fn) {
 /**
  * Remove event added with addEvent
  */
-removeEvent = function (el, type, fn) {
+H.removeEvent = function (el, type, fn) {
 	
 	var events,
 		hcEvents = el.hcEvents,
@@ -1111,7 +1104,7 @@ removeEvent = function (el, type, fn) {
 		if (type) {
 			events = hcEvents[type] || [];
 			if (fn) {
-				index = inArray(fn, events);
+				index = H.inArray(fn, events);
 				if (index > -1) {
 					events.splice(index, 1);
 					hcEvents[type] = events;
@@ -1132,7 +1125,7 @@ removeEvent = function (el, type, fn) {
 /**
  * Fire an event on a custom object
  */
-fireEvent = function (el, type, eventArguments, defaultFunction) {
+H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	var e,
 		hcEvents = el.hcEvents,
 		events,
@@ -1148,7 +1141,7 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 		e.initEvent(type, true, true);
 		e.target = el;
 
-		extend(e, eventArguments);
+		H.extend(e, eventArguments);
 
 		if (el.dispatchEvent) {
 			el.dispatchEvent(e);
@@ -1200,7 +1193,7 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 /**
  * The global animate method, which uses Fx to create individual animators.
  */
-animate = function (el, params, opt) {
+H.animate = function (el, params, opt) {
 	var start,
 		unit = '',
 		end,
@@ -1208,7 +1201,7 @@ animate = function (el, params, opt) {
 		args,
 		prop;
 
-	if (!isObject(opt)) { // Number or undefined/null
+	if (!H.isObject(opt)) { // Number or undefined/null
 		args = arguments;
 		opt = {
 			duration: args[2],
@@ -1216,14 +1209,14 @@ animate = function (el, params, opt) {
 			complete: args[4]
 		};
 	}
-	if (!isNumber(opt.duration)) {
+	if (!H.isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
 	opt.easing = Math[opt.easing] || Math.easeInOutSine;
-	opt.curAnim = merge(params);
+	opt.curAnim = H.merge(params);
 
 	for (prop in params) {
-		fx = new Fx(el, opt, prop);
+		fx = new H.Fx(el, opt, prop);
 		end = null;
 
 		if (prop === 'd') {
@@ -1238,7 +1231,7 @@ animate = function (el, params, opt) {
 		} else if (el.attr) {
 			start = el.attr(prop);
 		} else {
-			start = parseFloat(getStyle(el, prop)) || 0;
+			start = parseFloat(H.getStyle(el, prop)) || 0;
 			if (prop !== 'opacity') {
 				unit = 'px';
 			}
@@ -1266,7 +1259,7 @@ if (win.jQuery) {
 			// Create the chart
 			if (args[0]) {
 				new Highcharts[ // eslint-disable-line no-new
-					isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
+					H.isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
 				](this[0], args[0], args[1]);
 				return this;
 			}
@@ -1283,12 +1276,12 @@ if (win.jQuery) {
  * support is not needed.
  */
 if (doc && !doc.defaultView) {
-	getStyle = function (el, prop) {
+	H.getStyle = function (el, prop) {
 		var val,
 			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
 			
 		if (el.style[prop]) {
-			return pInt(el.style[prop]);
+			return H.pInt(el.style[prop]);
 		}
 		if (prop === 'opacity') {
 			prop = 'filter';
@@ -1297,7 +1290,7 @@ if (doc && !doc.defaultView) {
 		// Getting the rendered width and height
 		if (alias) {
 			el.style.zoom = 1;
-			return el[alias] - 2 * getStyle(el, 'padding');
+			return el[alias] - 2 * H.getStyle(el, 'padding');
 		}
 		
 		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
@@ -1312,12 +1305,12 @@ if (doc && !doc.defaultView) {
 			);
 		}
 		
-		return val === '' ? 1 : pInt(val);
+		return val === '' ? 1 : H.pInt(val);
 	};
 }
 
 if (!Array.prototype.forEach) {
-	each = function (arr, fn) { // legacy
+	H.each = function (arr, fn) { // legacy
 		var i = 0, 
 			len = arr.length;
 		for (; i < len; i++) {
@@ -1329,7 +1322,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-	inArray = function (item, arr) {
+	H.inArray = function (item, arr) {
 		var len, 
 			i = 0;
 
@@ -1348,7 +1341,7 @@ if (!Array.prototype.indexOf) {
 }
 
 if (!Array.prototype.filter) {
-	grep = function (elements, fn) {
+	H.grep = function (elements, fn) {
 		var ret = [],
 			i = 0,
 			length = elements.length;
@@ -1364,19 +1357,6 @@ if (!Array.prototype.filter) {
 }
 
 //--- End compatibility section ---
-
-// Expose utilities
-Highcharts.Fx = Fx;
-Highcharts.inArray = inArray;
-Highcharts.each = each;
-Highcharts.grep = grep;
-Highcharts.offset = offset;
-Highcharts.map = map;
-Highcharts.addEvent = addEvent;
-Highcharts.removeEvent = removeEvent;
-Highcharts.fireEvent = fireEvent;
-Highcharts.animate = animate;
-Highcharts.stop = stop;
 
 	return H;
 }(Highcharts));

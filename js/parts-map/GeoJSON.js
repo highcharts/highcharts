@@ -4,6 +4,7 @@
 		each = H.each,
 		extend = H.extend,
 		error = H.error,
+		win = H.win,
 		wrap = H.wrap;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.

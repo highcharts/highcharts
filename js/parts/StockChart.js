@@ -7,6 +7,8 @@
 		each = H.each,
 		extend = H.extend,
 		format = H.format,
+		inArray = H.inArray,
+		isString = H.isString,
 		map = H.map,
 		merge = H.merge,
 		pick = H.pick,
@@ -15,6 +17,7 @@
 		Renderer = H.Renderer,
 		Series = H.Series,
 		splat = H.splat,
+		stop = H.stop,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer,
 		wrap = H.wrap,
@@ -249,7 +252,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
 	each(axes, function (axis2) {
-		if (HighchartsAdapter.inArray(axis2, uniqueAxes) === -1) {
+		if (inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
 		}
 	});
@@ -614,7 +617,7 @@ wrap(Series.prototype, 'render', function (proceed) {
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
-			HighchartsAdapter.stop(this.chart[this.sharedClipKey]); // #2998
+			stop(this.chart[this.sharedClipKey]); // #2998
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
 				height: this.yAxis.len

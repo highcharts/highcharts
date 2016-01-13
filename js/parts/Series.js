@@ -10,6 +10,8 @@
 		erase = H.erase,
 		error = H.error,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
+		grep = H.grep,
 		isArray = H.isArray,
 		isNumber = H.isNumber,
 		isObject = H.isObject,
@@ -23,7 +25,8 @@
 		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
 		syncTimeout = H.syncTimeout,
-		useCanVG = H.useCanVG;
+		useCanVG = H.useCanVG,
+		win = H.win;
 
 /**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -945,7 +948,7 @@ H.Series.prototype = {
 	 */
 	afterAnimate: function () {
 		this.setClip();
-		HighchartsAdapter.fireEvent(this, 'afterAnimate');
+		fireEvent(this, 'afterAnimate');
 	},
 
 	/**
@@ -1084,7 +1087,7 @@ H.Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
-			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
+			issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
 			destroy,
 			i,
 			data = series.data || [],
@@ -1093,7 +1096,7 @@ H.Series.prototype = {
 			axis;
 
 		// add event hook
-		HighchartsAdapter.fireEvent(series, 'destroy');
+		fireEvent(series, 'destroy');
 
 		// remove all events
 		removeEvent(series);
@@ -1247,10 +1250,7 @@ H.Series.prototype = {
 		var series = this,
 			options = this.options,
 			props = [['graph', options.lineColor || this.color, options.dashStyle]],
-			lineWidth = options.lineWidth,
-			roundCap = options.linecap !== 'square',
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
@@ -1625,7 +1625,7 @@ H.Series.prototype = {
 		series.translate();
 		series.render();
 		if (wasDirtyData) {
-			HighchartsAdapter.fireEvent(series, 'updatedData');
+			fireEvent(series, 'updatedData');
 		}
 		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
 			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
@@ -1683,7 +1683,7 @@ H.Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = HighchartsAdapter.grep(series.points || [], function (point) { // #4390
+			var points = grep(series.points || [], function (point) { // #4390
 				return point.y !== null;
 			});
 

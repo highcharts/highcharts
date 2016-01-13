@@ -3,6 +3,7 @@
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
+		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
 

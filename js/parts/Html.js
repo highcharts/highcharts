@@ -12,6 +12,7 @@
 		pInt = H.pInt,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer,
+		win = H.win,
 		wrap = H.wrap;
 
 // extend SvgElement for useHTML option
@@ -164,7 +165,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : win.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';

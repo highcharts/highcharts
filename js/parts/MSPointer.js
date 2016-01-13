@@ -2,17 +2,19 @@
 	var addEvent = H.addEvent,
 		charts = H.charts,
 		css = H.css,
+		doc = H.doc,
 		extend = H.extend,
 		noop = H.noop,
 		Pointer = H.Pointer,
 		removeEvent = H.removeEvent,
+		win = H.win,
 		wrap = H.wrap;
 
-if (window.PointerEvent || window.MSPointerEvent) {
+if (win.PointerEvent || win.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
-		hasPointerEvent = !!window.PointerEvent,
+		hasPointerEvent = !!win.PointerEvent,
 		getWebkitTouches = function () {
 			var key, fake = [];
 			fake.item = function (i) {
@@ -72,7 +74,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 		batchMSEvents: function (fn) {
 			fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
 			fn(this.chart.container, hasPointerEvent ? 'pointermove' : 'MSPointerMove', this.onContainerPointerMove);
-			fn(document, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
+			fn(doc, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
 		}
 	});
 

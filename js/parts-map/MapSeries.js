@@ -4,6 +4,7 @@
 		colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
 		defaultPlotOptions = H.defaultPlotOptions,
+		doc = H.doc,
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,

@@ -2,7 +2,6 @@
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
-		grep = H.grep,
 		merge = H.merge,
 		noop = H.noop,
 		Series = H.Series,

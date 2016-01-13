@@ -6,19 +6,19 @@
 	} else {
 		factory(Highcharts);
 	}
-}(function (Highcharts) {
+}(function (H) {
 
 	var defined = H.defined,
 		isNumber = H.isNumber,
 		inArray = H.inArray,
 		isArray = H.isArray,
 		merge = H.merge,
+		Chart = H.Chart,
+		extend = H.extend,
+		each = H.each;
 
-		ALIGN_FACTOR,
-		ALLOWED_SHAPES,
-		Chart = Highcharts.Chart,
-		extend = Highcharts.extend,
-		each = Highcharts.each;
+	var ALIGN_FACTOR,
+		ALLOWED_SHAPES;
 
 	ALLOWED_SHAPES = ['path', 'rect', 'circle'];
 
@@ -166,8 +166,8 @@
 				y;
 
 			if (linkedTo) {
-				linkType = (linkedTo instanceof Highcharts.Point) ? 'point' :
-							(linkedTo instanceof Highcharts.Series) ? 'series' : null;
+				linkType = (linkedTo instanceof H.Point) ? 'point' :
+							(linkedTo instanceof H.Series) ? 'series' : null;
 
 				if (linkType === 'point') {
 					options.xValue = linkedTo.x;
@@ -387,7 +387,7 @@
 		}
 
 		// update annotations after chart redraw
-		Highcharts.addEvent(chart, 'redraw', function () {
+		H.addEvent(chart, 'redraw', function () {
 			chart.annotations.redraw();
 		});
 	});

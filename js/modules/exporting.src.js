@@ -14,25 +14,26 @@
     } else {
         factory(Highcharts);
     }
-}(function (Highcharts) {
+}(function (H) {
 
 // create shortcuts
-var win = Highcharts.win,
-	doc = win.document,
-	Chart = Highcharts.Chart,
-	addEvent = Highcharts.addEvent,
-	removeEvent = Highcharts.removeEvent,
-	fireEvent = Highcharts.fireEvent,
-	createElement = Highcharts.createElement,
-	discardElement = Highcharts.discardElement,
-	css = Highcharts.css,
-	merge = Highcharts.merge,
-	each = Highcharts.each,
-	extend = Highcharts.extend,
-	splat = Highcharts.splat,
-	isTouchDevice = Highcharts.isTouchDevice,
-	symbols = Highcharts.Renderer.prototype.symbols,
-	defaultOptions = Highcharts.getOptions(),
+var defaultOptions = H.defaultOptions,
+	doc = H.doc,
+	Chart = H.Chart,
+	addEvent = H.addEvent,
+	removeEvent = H.removeEvent,
+	fireEvent = H.fireEvent,
+	createElement = H.createElement,
+	discardElement = H.discardElement,
+	css = H.css,
+	merge = H.merge,
+	each = H.each,
+	extend = H.extend,
+	splat = H.splat,
+	isTouchDevice = H.isTouchDevice,
+	win = H.win;
+
+var symbols = H.Renderer.prototype.symbols,
 	buttonOffset;
 
 	// Add language
@@ -152,8 +153,8 @@ defaultOptions.exporting = {
 	}
 };
 
-// Add the Highcharts.post utility
-Highcharts.post = function (url, data, formAttributes) {
+// Add the H.post utility
+H.post = function (url, data, formAttributes) {
 	var name,
 		form;
 
@@ -164,7 +165,7 @@ Highcharts.post = function (url, data, formAttributes) {
 		enctype: 'multipart/form-data'
 	}, formAttributes), {
 		display: 'none'
-	}, document.body);
+	}, doc.body);
 
 	// add the data
 	for (name in data) {
@@ -254,9 +255,9 @@ extend(Chart.prototype, {
 			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
-		if (!document.createElementNS) {
-			document.createElementNS = function (ns, tagName) {
-				return document.createElement(tagName);
+		if (!doc.createElementNS) {
+			doc.createElementNS = function (ns, tagName) {
+				return doc.createElement(tagName);
 			};
 		}
 
@@ -266,7 +267,7 @@ extend(Chart.prototype, {
 			top: '-9999em',
 			width: chart.chartWidth + 'px',
 			height: chart.chartHeight + 'px'
-		}, document.body);
+		}, doc.body);
 
 		// get the source size
 		cssWidth = chart.renderTo.style.width;
@@ -317,7 +318,7 @@ extend(Chart.prototype, {
 		}
 
 		// generate the chart copy
-		chartCopy = new Highcharts.Chart(options, chart.callback);
+		chartCopy = new H.Chart(options, chart.callback);
 
 		// reflect axis extremes in the export
 		each(['xAxis', 'yAxis'], function (axisType) {
@@ -393,7 +394,7 @@ extend(Chart.prototype, {
 		options = merge(this.options.exporting, options);
 
 		// do the post
-		Highcharts.post(options.url, {
+		H.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
 			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
@@ -412,7 +413,7 @@ extend(Chart.prototype, {
 			container = chart.container,
 			origDisplay = [],
 			origParent = container.parentNode,
-			body = document.body,
+			body = doc.body,
 			childNodes = body.childNodes;
 
 		if (chart.isPrinting) { // block the button while in printing mode
@@ -436,8 +437,8 @@ extend(Chart.prototype, {
 		body.appendChild(container);
 
 		// print
-		window.focus(); // #1510
-		window.print();
+		win.focus(); // #1510
+		win.print();
 
 		// allow the browser to prepare before reverting
 		setTimeout(function () {
@@ -654,7 +655,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = Highcharts.pick(attr.paddingLeft, 25);
+			attr.paddingLeft = H.pick(attr.paddingLeft, 25);
 
 		} else if (!btnOptions.text) {
 			extend(attr, {
@@ -688,7 +689,7 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: Highcharts.pick(btnOptions.x, buttonOffset) // #1654
+				x: H.pick(btnOptions.x, buttonOffset) // #1654
 			}), true, 'spacingBox');
 
 		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);

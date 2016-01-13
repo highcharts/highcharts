@@ -4,14 +4,17 @@ var addEvent = H.addEvent,
 	charts = H.charts,
 	css = H.css,
 	defined = H.defined,
+	doc = H.doc,
 	each = H.each,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
+	offset = H.offset,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
 	splat = H.splat,
 	Tooltip = H.Tooltip,
-	useCanVG = H.useCanVg;
+	useCanVG = H.useCanVg,
+	win = H.win;
 
 // Global flag for touch support
 H.hasTouch = doc && doc.documentElement.ontouchstart !== undefined;
@@ -84,7 +87,7 @@ H.Pointer.prototype = {
 
 		// Get mouse position
 		if (!chartPosition) {
-			this.chartPosition = chartPosition = HighchartsAdapter.offset(this.chart.container);
+			this.chartPosition = chartPosition = offset(this.chart.container);
 		}
 
 		// chartX and chartY
@@ -231,7 +234,7 @@ H.Pointer.prototype = {
 					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
-			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
 
 		// Crosshair
@@ -307,7 +310,7 @@ H.Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -680,7 +683,7 @@ H.Pointer.prototype = {
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
 		if (H.chartCount === 1) {
-			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
+			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (H.hasTouch) {
 			container.ontouchstart = function (e) {
@@ -690,7 +693,7 @@ H.Pointer.prototype = {
 				pointer.onContainerTouchMove(e);
 			};
 			if (H.chartCount === 1) {
-				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
+				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
 
@@ -704,8 +707,8 @@ H.Pointer.prototype = {
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!H.chartCount) {
-			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
-			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
+			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
 		}
 
 		// memory and CPU leak

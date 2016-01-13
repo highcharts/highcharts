@@ -153,7 +153,7 @@ PiePoint = extendClass(Point, {
 
 		// if called without an argument, toggle
 		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
-		series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = sliced ? point.slicedTranslation : {
 			translateX: 0,

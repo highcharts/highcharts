@@ -4,7 +4,8 @@
 		isTouchDevice = H.isTouchDevice,
 		merge = H.merge,
 		pick = H.pick,
-		svg = H.svg;
+		svg = H.svg,
+		win = H.win;
 		
 /* ****************************************************************************
  * Handle the options                                                         *
