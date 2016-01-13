@@ -57,9 +57,14 @@
 			l,
 			fallbackToExportServer = function () {
 				if (options.fallbackToExportServer === false) {
-					throw 'Fallback to export server disabled';
+					if (options.error) {
+						options.error();
+					} else {
+						throw 'Fallback to export server disabled';
+					}
+				} else {
+					chart.exportChart(options);
 				}
-				chart.exportChart(options);
 			},
 			// Get data:URL from image URL
 			// Pass in callbacks to handle results. finallyCallback is always called at the end of the process. Supplying this callback is optional.
