@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-12)
+ * @license Highcharts JS v4.2.0-modified (2016-01-13)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1053,7 +1053,7 @@
         ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
         // Add the decimal point and the decimal component
-        if (decimals) {
+        if (+decimals) {
             // Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
             decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
             ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
