@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-13)
+ * @license Highmaps JS v2.0-dev (2016-01-14)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -2723,9 +2723,9 @@ SVGElement.prototype = {
     /**
      * Get the bounding box (width, height, x and y) for the element
      */
-    getBBox: function (reload) {
+    getBBox: function (reload, rot) {
         var wrapper = this,
-            bBox, // = wrapper.bBox,
+            bBox,// = wrapper.bBox,
             renderer = wrapper.renderer,
             width,
             height,
@@ -2740,6 +2740,9 @@ SVGElement.prototype = {
             cache = renderer.cache,
             cacheKeys = renderer.cacheKeys,
             cacheKey;
+
+        rotation = pick(rot, wrapper.rotation);
+        rad = rotation * deg2rad;
 
         if (textStr !== undefined) {
 
@@ -2792,7 +2795,7 @@ SVGElement.prototype = {
                         // Canvas renderer and legacy IE in export mode
                         {
                             width: element.offsetWidth,
-                            height: element.offsetHeight    
+                            height: element.offsetHeight
                         };
 
                     // #3842
@@ -2801,7 +2804,7 @@ SVGElement.prototype = {
                     } else if (toggleTextShadowShim) {
                         toggleTextShadowShim('');
                     }
-                } catch (ignore) {}
+                } catch (e) {}
 
                 // If the bBox is not set, the try-catch block above failed. The other condition
                 // is for Opera that returns a width of -Infinity on hidden elements.
@@ -8522,6 +8525,7 @@ H.Axis.prototype = {
             }
 
             if (showAxis) {
+                console.log(axis.axisTitle.getBBox().width)
                 titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
                 titleOffsetOption = axisTitleOptions.offset;
                 titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);

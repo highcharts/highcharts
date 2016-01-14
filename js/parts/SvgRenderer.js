@@ -361,9 +361,9 @@ SVGElement.prototype = {
 
 	/**
 	 * Update the shadow elements with new attributes
-	 * @param   {String}        key    The attribute name
+	 * @param   {String}		key	The attribute name
 	 * @param   {String|Number} value  The value of the attribute
-	 * @param   {Function}      setter The setter function, inherited from the parent wrapper
+	 * @param   {Function}	  setter The setter function, inherited from the parent wrapper
 	 * @returns {undefined}
 	 */
 	updateShadows: function (key, value, setter) {
@@ -790,9 +790,9 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function (reload) {
+	getBBox: function (reload, rot) {
 		var wrapper = this,
-			bBox, // = wrapper.bBox,
+			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -807,6 +807,9 @@ SVGElement.prototype = {
 			cache = renderer.cache,
 			cacheKeys = renderer.cacheKeys,
 			cacheKey;
+
+		rotation = pick(rot, wrapper.rotation);
+		rad = rotation * deg2rad;
 
 		if (textStr !== undefined) {
 
@@ -859,7 +862,7 @@ SVGElement.prototype = {
 						// Canvas renderer and legacy IE in export mode
 						{
 							width: element.offsetWidth,
-							height: element.offsetHeight	
+							height: element.offsetHeight
 						};
 
 					// #3842
@@ -868,7 +871,7 @@ SVGElement.prototype = {
 					} else if (toggleTextShadowShim) {
 						toggleTextShadowShim('');
 					}
-				} catch (ignore) {}
+				} catch (e) {}
 
 				// If the bBox is not set, the try-catch block above failed. The other condition
 				// is for Opera that returns a width of -Infinity on hidden elements.
