@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-13)
+ * @license Highmaps JS v4.2.0-modified (2016-01-14)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -8250,7 +8250,10 @@
             }
 
             // Set the explicit or automatic label alignment
-            this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+            this.labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+            if (this.labelAlign) {
+                attr.align = this.labelAlign;
+            }
 
             // Apply general and specific CSS
             each(tickPositions, function (pos) {

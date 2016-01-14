@@ -1673,7 +1673,10 @@ Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		this.labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		if (this.labelAlign) {
+			attr.align = this.labelAlign;
+		}
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
