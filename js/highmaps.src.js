@@ -1272,7 +1272,7 @@ if (win.jQuery) {
             }
 
             // When called without parameters or with the return argument, return an existing chart
-            return charts[attr(this[0], 'data-highcharts-chart')];
+            return charts[H.attr(this[0], 'data-highcharts-chart')];
         }
     };
 }
