@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-14)
+ * @license Highstock JS v4.2.0-modified (2016-01-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -19627,7 +19627,9 @@
                     axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
                 }
             }
-            axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
+            if (!axis.doPostTranslate) { // already set by broken axis, don't unset it (#4926)
+                axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
+            }
             axis.groupIntervalFactor = null; // reset for next run
         },
         /**
@@ -20014,7 +20016,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-14)
+     * Highstock JS v4.2.0-modified (2016-01-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
