@@ -128,6 +128,7 @@ extend(SVGElement.prototype, {
 						display: '',
 						whiteSpace: (styles && styles.whiteSpace) || 'nowrap'
 					});
+					width = pick(wrapper.elemWidth, elem.offsetWidth);
 				}
 
 				wrapper.getSpanCorrection(width, baseline, alignCorrection, rotation, align);
