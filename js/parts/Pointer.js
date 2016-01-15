@@ -223,10 +223,13 @@ Pointer.prototype = {
 		}
 
 		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		each(shared ? kdpoints : [pick(kdpoint, hoverPoint)], function (point) {
+			var series = point.series;
+			if (series.xAxis) {
+				series.xAxis.drawCrosshair(e, point);
+				series.yAxis.drawCrosshair(e, point);
+			}
 		});
-
 
 	},
 

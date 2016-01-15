@@ -2205,9 +2205,7 @@ Axis.prototype = {
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(options.snap, true)) === false) ||
-			// Not on this axis (#4095, #2888)
-			(point && point.series && point.series[this.coll] !== this)
+			((defined(point) || !pick(options.snap, true)) === false)
 		) {
 			this.hideCrosshair();
 
