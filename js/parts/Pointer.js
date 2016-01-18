@@ -98,9 +98,9 @@ Pointer.prototype = {
 	 */
 	getCoordinates: function (e) {
 		var coordinates = {
-				xAxis: [],
-				yAxis: []
-			};
+			xAxis: [],
+			yAxis: []
+		};
 
 		each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({

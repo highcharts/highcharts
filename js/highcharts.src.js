@@ -6623,10 +6623,6 @@
                 path = [],
                 addEvent,
                 eventType,
-                xs,
-                ys,
-                x,
-                y,
                 color = options.color,
                 zIndex = pick(options.zIndex, 0),
                 events = options.events,
@@ -10056,9 +10052,9 @@
          */
         getCoordinates: function (e) {
             var coordinates = {
-                    xAxis: [],
-                    yAxis: []
-                };
+                xAxis: [],
+                yAxis: []
+            };
 
             each(this.chart.axes, function (axis) {
                 coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
