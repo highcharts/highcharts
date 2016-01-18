@@ -1411,8 +1411,10 @@ Chart.prototype = {
 			}
 		});
 
-		// Fire the load event
-		fireEvent(chart, 'load');
+		// Fire the load event if there are no external images
+		if (!chart.renderer.imgCount) {
+			fireEvent(chart, 'load');
+		}
 
 		// If the chart was rendered outside the top container, put it back in (#3679)
 		chart.cloneRenderTo(true);

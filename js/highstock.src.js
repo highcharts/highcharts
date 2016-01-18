@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-15)
+ * @license Highstock JS v4.2.0-modified (2016-01-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3339,6 +3339,7 @@
             renderer.gradients = {}; // Object where gradient SvgElements are stored
             renderer.cache = {}; // Cache for numerical bounding boxes
             renderer.cacheKeys = [];
+            renderer.imgCount = 0;
 
             renderer.setSize(width, height, false);
 
@@ -4049,7 +4050,8 @@
          */
         symbol: function (symbol, x, y, width, height, options) {
 
-            var obj,
+            var ren = this,
+                obj,
 
                 // get the symbol definition function
                 symbolFn = this.symbols[symbol],
@@ -4143,10 +4145,17 @@
                             if (this.parentNode) {
                                 this.parentNode.removeChild(this);
                             }
+
+                            // Fire the load event when all external images are loaded
+                            ren.imgCount--;
+                            if (!ren.imgCount) {
+                                fireEvent(charts[ren.chartIndex], 'load'); // docs: Load is now waiting for images
+                            }
                         },
                         src: imageSrc
                     });
                 }
+                this.imgCount++;
             }
 
             return obj;
@@ -5575,6 +5584,7 @@
             renderer.gradients = {};
             renderer.cache = {}; // Cache for numerical bounding boxes
             renderer.cacheKeys = [];
+            renderer.imgCount = 0;
 
 
             renderer.setSize(width, height, false);
@@ -13200,8 +13210,10 @@
                 }
             });
 
-            // Fire the load event
-            fireEvent(chart, 'load');
+            // Fire the load event if there are no external images
+            if (!chart.renderer.imgCount) {
+                fireEvent(chart, 'load');
+            }
 
             // If the chart was rendered outside the top container, put it back in (#3679)
             chart.cloneRenderTo(true);
@@ -20017,7 +20029,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-15)
+     * Highstock JS v4.2.0-modified (2016-01-18)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
