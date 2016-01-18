@@ -500,9 +500,11 @@ seriesProto.setCompare = function (compare) {
 seriesProto.processData = function () {
 	var series = this,
 		i,
+		keyIndex = -1,
 		processedXData,
 		processedYData,
-		length;
+		length,
+		compareValue;
 
 	// call base method
 	seriesProcessData.apply(this, arguments);
@@ -514,10 +516,19 @@ seriesProto.processData = function () {
 		processedYData = series.processedYData;
 		length = processedYData.length;
 
+		// For series with more than one value (range, OHLC etc), compare against
+		// the pointValKey (#4922)
+		if (series.pointArrayMap) {
+			keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+		}
+
 		// find the first value for comparison
 		for (i = 0; i < length; i++) {
-			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min && processedYData[i] !== 0) {
-				series.compareValue = processedYData[i];
+			compareValue = keyIndex > -1 ? 
+				processedYData[i][keyIndex] :
+				processedYData[i];
+			if (typeof compareValue === 'number' && processedXData[i] >= series.xAxis.min && compareValue !== 0) {
+				series.compareValue = compareValue;
 				break;
 			}
 		}
