@@ -1081,8 +1081,8 @@ H.stop = function (el) {
  * @param {Array} arr
  * @param {Function} fn
  */
-H.each = function (arr, fn) { // modern browsers
-    return Array.prototype.forEach.call(arr, fn);
+H.each = function (arr, fn, ctx) { // modern browsers
+    return Array.prototype.forEach.call(arr, fn, ctx);
 };
 
 /**
@@ -1375,11 +1375,11 @@ if (doc && !doc.defaultView) {
 }
 
 if (!Array.prototype.forEach) {
-    H.each = function (arr, fn) { // legacy
+    H.each = function (arr, fn, ctx) { // legacy
         var i = 0, 
             len = arr.length;
         for (; i < len; i++) {
-            if (fn.call(arr[i], arr[i], i, arr) === false) {
+            if (fn.call(ctx, arr[i], i, arr) === false) {
                 return i;
             }
         }
@@ -12406,45 +12406,31 @@ Chart.prototype = {
      */
     layOutTitles: function (redraw) {
         var titleOffset = 0,
-            title = this.title,
-            subtitle = this.subtitle,
-            options = this.options,
-            titleOptions = options.title,
-            subtitleOptions = options.subtitle,
             requiresDirtyBox,
             renderer = this.renderer,
-            titleSize,
-            subtitleSize,
             autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
-        if (title) {
-            
-            titleSize = renderer.fontMetrics(titleSize, title).b;
-            
-            title
-                .css({ width: (titleOptions.width || autoWidth) + 'px' })
-                .align(extend({ 
-                    y: titleSize - 3
-                }, titleOptions), false, 'spacingBox');
+        // Lay out the title and the subtitle respectively
+        each(['title', 'subtitle'], function (key) {
+            var title = this[key],
+                titleOptions = this.options[key],
+                titleSize;
 
-            if (!titleOptions.floating && !titleOptions.verticalAlign) {
-                titleOffset = title.getBBox().height;
-            }
-        }
-        if (subtitle) {
-            
-            subtitleSize = renderer.fontMetrics(subtitleSize, subtitle).b;
-            
-            subtitle
-                .css({ width: (subtitleOptions.width || autoWidth) + 'px' })
-                .align(extend({ 
-                    y: titleOffset + (titleOptions.margin - 13) + subtitleSize
-                }, subtitleOptions), false, 'spacingBox');
+            if (title) {
+                
+                titleSize = renderer.fontMetrics(titleSize, title).b;
+                
+                title
+                    .css({ width: (titleOptions.width || autoWidth) + 'px' })
+                    .align(extend({ 
+                        y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
+                    }, titleOptions), false, 'spacingBox');
 
-            if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
-                titleOffset = Math.ceil(titleOffset + subtitle.getBBox().height);
+                if (!titleOptions.floating && !titleOptions.verticalAlign) {
+                    titleOffset = Math.ceil(titleOffset + title.getBBox().height);
+                }
             }
-        }
+        }, this);
 
         requiresDirtyBox = this.titleOffset !== titleOffset;
         this.titleOffset = titleOffset; // used in getMargins

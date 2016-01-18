@@ -1015,8 +1015,8 @@ H.stop = function (el) {
  * @param {Array} arr
  * @param {Function} fn
  */
-H.each = function (arr, fn) { // modern browsers
-	return Array.prototype.forEach.call(arr, fn);
+H.each = function (arr, fn, ctx) { // modern browsers
+	return Array.prototype.forEach.call(arr, fn, ctx);
 };
 
 /**
@@ -1309,11 +1309,11 @@ if (doc && !doc.defaultView) {
 }
 
 if (!Array.prototype.forEach) {
-	H.each = function (arr, fn) { // legacy
+	H.each = function (arr, fn, ctx) { // legacy
 		var i = 0, 
 			len = arr.length;
 		for (; i < len; i++) {
-			if (fn.call(arr[i], arr[i], i, arr) === false) {
+			if (fn.call(ctx, arr[i], i, arr) === false) {
 				return i;
 			}
 		}
