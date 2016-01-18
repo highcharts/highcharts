@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-12)
+ * @license Highstock JS v4.2.0-modified (2016-01-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20028,7 +20028,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-12)
+     * Highstock JS v4.2.0-modified (2016-01-11)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20323,17 +20323,15 @@
                 breaks,
                 threshold,
                 axisName = 'Axis',
-                yName = 'y',
-                xName = 'x',
                 eventName,
                 y;
 
-            each([[yName, yName], [yName, 'high'], [xName, xName]], function (key) { // #4868
-                axis = series[key[0] + axisName];
+            each(['y', 'x'], function (key) {
+                axis = series[key + axisName];
                 breaks = axis.breakArray || [];
                 threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
                 each(points, function (point) {
-                    y = pick(point['stack' + key[1].toUpperCase()], point[key[1]]);
+                    y = pick(point['stack' + key.toUpperCase()], point[key]);
                     each(breaks, function (brk) {
                         eventName = false;
 

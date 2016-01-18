@@ -299,17 +299,15 @@
 			breaks,
 			threshold,
 			axisName = 'Axis',
-			yName = 'y',
-			xName = 'x',
 			eventName,
 			y;
 
-		each([[yName, yName], [yName, 'high'], [xName, xName]], function (key) { // #4868
-			axis = series[key[0] + axisName];
+		each(['y', 'x'], function (key) {
+			axis = series[key + axisName];
 			breaks = axis.breakArray || [];
 			threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
 			each(points, function (point) {
-				y = pick(point['stack' + key[1].toUpperCase()], point[key[1]]);
+				y = pick(point['stack' + key.toUpperCase()], point[key]);
 				each(breaks, function (brk) {
 					eventName = false;
 
