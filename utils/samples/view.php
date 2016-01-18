@@ -25,12 +25,14 @@ $previous = $i - 1;
 $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
 
-// Get HTML and use dev server
-ob_start();
-@include("$fullpath/demo.html");
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
+
+
+// Get HTML and use dev server
+ob_start();
+@include("$fullpath/demo.html");
 $html = ob_get_clean();
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
@@ -357,10 +359,10 @@ function getResources() {
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<?php if (!$unstyled) { ?>
-				<a class="button" 
+				<a class="button" title="View this sample with CSS and no inline styling"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=true">Unstyled</button>
 				<?php } else { ?>
-				<a class="button active" 
+				<a class="button active" title="View this sample with CSS and no inline styling"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=false">Unstyled</button>
 				<?php } ?>
 				<a class="button"
