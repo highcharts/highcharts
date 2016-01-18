@@ -19128,8 +19128,9 @@
                         .add(chart.seriesGroup);
                 }
                 halo.attr(extend({
-                    fill: point.color || series.color,
-                    'fill-opacity': haloOptions.opacity
+                    'fill': point.color || series.color,
+                    'fill-opacity': haloOptions.opacity,
+                    'zIndex': -1 // #4929, IE8 added halo above everything
                 },
                 haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
