@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-01-14)
+ * @license Highstock JS v3.0-dev (2016-01-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -12414,6 +12414,7 @@ Chart.prototype = {
             requiresDirtyBox,
             renderer = this.renderer,
             titleSize,
+            subtitleSize,
             autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
         if (title) {
@@ -12431,10 +12432,13 @@ Chart.prototype = {
             }
         }
         if (subtitle) {
+            
+            subtitleSize = renderer.fontMetrics(subtitleSize, subtitle).b;
+            
             subtitle
                 .css({ width: (subtitleOptions.width || autoWidth) + 'px' })
                 .align(extend({ 
-                    y: titleOffset + (titleOptions.margin - 13) + (titleSize || 0)
+                    y: titleOffset + (titleOptions.margin - 13) + subtitleSize
                 }, subtitleOptions), false, 'spacingBox');
 
             if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
@@ -20259,7 +20263,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-01-14)
+ * Highstock JS v3.0-dev (2016-01-18)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license
