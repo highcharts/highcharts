@@ -988,8 +988,8 @@ Scroller.prototype = {
 			visible: true
 		});
 
-		// set the data back
-		mergedNavSeriesOptions.data = navigatorData || baseData;
+		// Set the data. Do a slice to avoid mutating the navigator options from base series (#4923).
+		mergedNavSeriesOptions.data = navigatorData || baseData.slice(0);
 
 		// add the series
 		this.series = this.chart.initSeries(mergedNavSeriesOptions);
