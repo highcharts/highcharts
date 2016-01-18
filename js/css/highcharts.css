@@ -57,6 +57,9 @@
   pointer-events: none;
   white-space: nowrap; }
 
+.highcharts-tooltip .highcharts-header {
+  font-size: 0.85em; }
+
 .highcharts-tooltip-box {
   stroke-width: 1px;
   fill: #f9f9f9;

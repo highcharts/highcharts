@@ -159,7 +159,7 @@ gulp.task('build', function () {
     var buildFiles = fs.readdirSync(paths.buildsDir);
     buildFiles.forEach(bundleHighcharts);
 });
-
+*/
 gulp.task('styles', function () {
     var dir = './js/css/';
 
@@ -167,7 +167,6 @@ gulp.task('styles', function () {
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(dir));
 });
-*/
 gulp.task('lint', ['scripts'], function () {
     return gulp.src(paths.assemblies.concat(paths.modules))
 
@@ -199,8 +198,8 @@ gulp.task('lint-samples', function () {
 });
 
 // Watch changes to CSS files
-gulp.task('default', ['scripts'], function () {
-    // gulp.watch('./js/css/*.scss',['styles']);
+gulp.task('default', ['scripts', 'styles'], function () {
+    gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
 });
 

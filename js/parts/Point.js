@@ -40,6 +40,8 @@ Point.prototype = {
 			if (series.colorCounter === colors.length) {
 				series.colorCounter = 0;
 			}
+		} else {
+			point.colorIndex = series.colorIndex;
 		}
 
 		series.chart.pointCount++;

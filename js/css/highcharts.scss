@@ -58,6 +58,9 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     pointer-events: none;
     white-space: nowrap;
 }
+.highcharts-tooltip .highcharts-header {
+    font-size: 0.85em;
+}
 .highcharts-tooltip-box {
     stroke-width: 1px;
     fill: #f9f9f9;

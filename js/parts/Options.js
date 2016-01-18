@@ -337,15 +337,19 @@ H.defaultOptions = {
 		/* todo: em font-size when finished comparing against HC4
 		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
 		*/
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		padding: 8, // docs
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+
 		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
-		/*= if (build.classic) { =*/
+		/*= if (!build.classic) { =*/
+		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		/*= } else { =*/
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		style: {
 			color: '#333333',

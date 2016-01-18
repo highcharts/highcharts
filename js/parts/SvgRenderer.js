@@ -1491,6 +1491,7 @@ SVGRenderer.prototype = {
 			hasMarkup = textStr.indexOf('<') !== -1,
 			lines,
 			childNodes = textNode.childNodes,
+			clsRegex,
 			styleRegex,
 			hrefRegex,
 			parentX = attr(textNode, 'x'),
@@ -1533,6 +1534,7 @@ SVGRenderer.prototype = {
 		// Complex strings, add more logic
 		} else {
 
+			clsRegex = /<.*class="([^"]+)".*>/;
 			styleRegex = /<.*style="([^"]+)".*>/;
 			hrefRegex = /<.*href="(http[^"]+)".*>/;
 
@@ -1570,7 +1572,12 @@ SVGRenderer.prototype = {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
 							tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'),
+							spanCls,
 							spanStyle; // #390
+						if (clsRegex.test(span)) {
+							spanCls = span.match(clsRegex)[1];
+							attr(tspan, 'class', spanCls);
+						}
 						if (styleRegex.test(span)) {
 							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
 							attr(tspan, 'style', spanStyle);

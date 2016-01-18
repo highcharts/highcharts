@@ -1701,15 +1701,16 @@ H.defaultOptions = {
         /* todo: em font-size when finished comparing against HC4
         headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
         */
-        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
         padding: 8, // docs
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+
         //shape: 'callout',
         //shared: false,
         snap: isTouchDevice ? 25 : 10,
         
         backgroundColor: 'rgba(249, 249, 249, .85)',
         borderWidth: 1,
+        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
         shadow: true,
         style: {
             color: '#333333',
@@ -3424,6 +3425,7 @@ SVGRenderer.prototype = {
             hasMarkup = textStr.indexOf('<') !== -1,
             lines,
             childNodes = textNode.childNodes,
+            clsRegex,
             styleRegex,
             hrefRegex,
             parentX = attr(textNode, 'x'),
@@ -3466,6 +3468,7 @@ SVGRenderer.prototype = {
         // Complex strings, add more logic
         } else {
 
+            clsRegex = /<.*class="([^"]+)".*>/;
             styleRegex = /<.*style="([^"]+)".*>/;
             hrefRegex = /<.*href="(http[^"]+)".*>/;
 
@@ -3503,7 +3506,12 @@ SVGRenderer.prototype = {
                     if (span !== '' || spans.length === 1) {
                         var attributes = {},
                             tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'),
+                            spanCls,
                             spanStyle; // #390
+                        if (clsRegex.test(span)) {
+                            spanCls = span.match(clsRegex)[1];
+                            attr(tspan, 'class', spanCls);
+                        }
                         if (styleRegex.test(span)) {
                             spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
                             attr(tspan, 'style', spanStyle);
@@ -13120,6 +13128,8 @@ Point.prototype = {
             if (series.colorCounter === colors.length) {
                 series.colorCounter = 0;
             }
+        } else {
+            point.colorIndex = series.colorIndex;
         }
 
         series.chart.pointCount++;
