@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-11)
+ * @license Highstock JS v4.2.0-modified (2016-01-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20034,7 +20034,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-11)
+     * Highstock JS v4.2.0-modified (2016-01-18)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20319,21 +20319,19 @@
 
         function drawPointsWrapped(proceed) {
             proceed.apply(this);
-            this.drawBreaks();
+            this.drawBreaks(this.xAxis, ['x']);
+            this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
         }
 
-        H.Series.prototype.drawBreaks = function () {
+        H.Series.prototype.drawBreaks = function (axis, keys) {
             var series = this,
                 points = series.points,
-                axis,
                 breaks,
                 threshold,
-                axisName = 'Axis',
                 eventName,
                 y;
 
-            each(['y', 'x'], function (key) {
-                axis = series[key + axisName];
+            each(keys, function (key) {
                 breaks = axis.breakArray || [];
                 threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
                 each(points, function (point) {
