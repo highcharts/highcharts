@@ -9701,8 +9701,8 @@
 
             // Crosshair
             each(shared ? kdpoints : [pick(kdpoint, hoverPoint)], function (point) {
-                var series = point.series;
-                if (series.xAxis) {
+                var series = point && point.series;
+                if (series && series.xAxis) {
                     series.xAxis.drawCrosshair(e, point);
                     series.yAxis.drawCrosshair(e, point);
                 }
