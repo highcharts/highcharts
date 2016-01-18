@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-12)
+ * @license Highcharts JS v4.2.0-modified (2016-01-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -16664,10 +16664,10 @@
             } else { // curve from last point to this
                 ret = [
                     'C',
-                    lastPoint.rightContX || lastPoint.plotX,
-                    lastPoint.rightContY || lastPoint.plotY,
-                    leftContX || plotX,
-                    leftContY || plotY,
+                    pick(lastPoint.rightContX, lastPoint.plotX),
+                    pick(lastPoint.rightContY, lastPoint.plotY),
+                    pick(leftContX, plotX),
+                    pick(leftContY, plotY),
                     plotX,
                     plotY
                 ];
