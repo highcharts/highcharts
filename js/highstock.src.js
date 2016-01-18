@@ -16695,10 +16695,10 @@
             // */
             ret = [
                 'C',
-                lastPoint.rightContX || lastPoint.plotX,
-                lastPoint.rightContY || lastPoint.plotY,
-                leftContX || plotX,
-                leftContY || plotY,
+                pick(lastPoint.rightContX, lastPoint.plotX),
+                pick(lastPoint.rightContY, lastPoint.plotY),
+                pick(leftContX, plotX),
+                pick(leftContY, plotY),
                 plotX,
                 plotY
             ];
