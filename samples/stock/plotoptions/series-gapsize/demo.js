@@ -1,12 +1,16 @@
 $(function () {
     $('#container').highcharts('StockChart', {
 
+        chart: {
+            type: 'area'
+        },
+
         rangeSelector: {
             selected: 1
         },
 
         plotOptions: {
-            line: {
+            series: {
                 gapSize: 2
             }
         },

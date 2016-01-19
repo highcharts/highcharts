@@ -392,11 +392,11 @@ Tooltip.prototype = {
 			this.isHidden = false;
 		}
 		fireEvent(chart, 'tooltipRefresh', {
-				text: text,
-				x: x + chart.plotLeft,
-				y: y + chart.plotTop,
-				borderColor: borderColor
-			});
+			text: text,
+			x: x + chart.plotLeft,
+			y: y + chart.plotTop,
+			borderColor: borderColor
+		});
 	},
 
 	/**
@@ -513,10 +513,10 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it.
 	 */
 	bodyFormatter: function (items) {
-        return map(items, function (item) {
-            var tooltipOptions = item.series.tooltipOptions;
-            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
-        });
-    }
+		return map(items, function (item) {
+			var tooltipOptions = item.series.tooltipOptions;
+			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
+		});
+	}
 
 };

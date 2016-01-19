@@ -1673,7 +1673,10 @@ Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		this.labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		if (this.labelAlign) {
+			attr.align = this.labelAlign;
+		}
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
@@ -2202,9 +2205,7 @@ Axis.prototype = {
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(options.snap, true)) === false) ||
-			// Not on this axis (#4095, #2888)
-			(point && point.series && point.series[this.coll] !== this)
+			((defined(point) || !pick(options.snap, true)) === false)
 		) {
 			this.hideCrosshair();
 

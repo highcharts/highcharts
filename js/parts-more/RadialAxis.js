@@ -442,6 +442,17 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 });
 
 /**
+ * Wrap auto label align to avoid setting axis-wide rotation on radial axes (#4920)
+ * @param   {Function} proceed
+ * @returns {String} Alignment
+ */
+wrap(axisProto, 'autoLabelAlign', function (proceed) {
+	if (!this.isRadial) {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	} // else return undefined
+});
+
+/**
  * Add special cases within the Tick class' methods for radial axes.
  */
 wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {

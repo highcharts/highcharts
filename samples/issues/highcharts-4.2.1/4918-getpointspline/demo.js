@@ -17,11 +17,6 @@ $(function () {
         }
 
         assert.strictEqual(
-            pathToString(getPointSpline(segment, segment[0], 0)),
-            pathToString(["M", -5, 10]),
-            'Path to point.0 is correct'
-        );
-        assert.strictEqual(
             pathToString(getPointSpline(segment, segment[1], 1)),
             pathToString(['C', -5, 10, 142, 250, 240, 250]),
             'Path to point.1 is correct'

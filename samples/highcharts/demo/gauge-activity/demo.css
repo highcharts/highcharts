@@ -1,0 +1,6 @@
+.highcharts-series path {
+    stroke-linejoin: round;
+}
+.highcharts-tooltip text {
+    transform: translate(0, 50px);
+}

@@ -98,9 +98,9 @@ Pointer.prototype = {
 	 */
 	getCoordinates: function (e) {
 		var coordinates = {
-				xAxis: [],
-				yAxis: []
-			};
+			xAxis: [],
+			yAxis: []
+		};
 
 		each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
@@ -229,10 +229,13 @@ Pointer.prototype = {
 		}
 
 		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint[1], hoverPoint));
+		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+			var series = point && point.series;
+			if (series && series.xAxis) {
+				series.xAxis.drawCrosshair(e, point);
+				series.yAxis.drawCrosshair(e, point);
+			}
 		});
-
 
 	},
 
@@ -554,9 +557,9 @@ Pointer.prototype = {
 	/**
 	 * When mouse leaves the container, hide the tooltip.
 	 */
-	onContainerMouseLeave: function () {
+	onContainerMouseLeave: function (e) {
 		var chart = charts[hoverChartIndex];
-		if (chart) {
+		if (chart && (e.relatedTarget || e.toElement)) { // #4886, MS Touch end fires mouseleave but with no related target
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
 		}
@@ -610,7 +613,7 @@ Pointer.prototype = {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
 
-		if (series && !series.options.stickyTracking &&
+		if (series && relatedTarget && !series.options.stickyTracking && // #4886
 				!this.inClass(relatedTarget, PREFIX + 'tooltip') &&
 				!this.inClass(relatedTarget, PREFIX + 'series-' + series.index)) { // #2499, #4465
 			series.onMouseOut();
