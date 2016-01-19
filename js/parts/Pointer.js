@@ -126,13 +126,13 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = Number.MAX_VALUE, // #4511
+			distance = [Number.MAX_VALUE, Number.MAX_VALUE], // #4511
 			anchor,
 			noSharedTooltip,
 			stickToHoverSeries,
 			directTouch,
 			kdpoints = [],
-			kdpoint,
+			kdpoint = [],
 			kdpointT;
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
@@ -150,7 +150,7 @@ Pointer.prototype = {
 		// search the k-d tree.
 		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
 		if (stickToHoverSeries && hoverPoint) {
-			kdpoint = hoverPoint;
+			kdpoint = [hoverPoint];
 
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
@@ -168,20 +168,25 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && typeof p.dist === 'number' && p.dist < distance) {
-					distance = p.dist;
-					kdpoint = p;
+				if (p) {
+					// Store both closest points, using point.dist and point.distX comparisons (#4645):
+					each(['dist', 'distX'], function (dist, k) {
+						if (typeof p[dist] === 'number' && p[dist] < distance[k]) {
+							distance[k] = p[dist];
+							kdpoint[k] = p;
+						}
+					});
 				}
 			});
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoint && (kdpoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+		if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
-			if (shared && !kdpoint.series.noSharedTooltip) {
+			if (shared && !kdpoint[0].series.noSharedTooltip) {
 				i = kdpoints.length;
 				while (i--) {
-					if (kdpoints[i].clientX !== kdpoint.clientX || kdpoints[i].series.noSharedTooltip) {
+					if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
 						kdpoints.splice(i, 1);
 					}
 				}
@@ -191,17 +196,18 @@ Pointer.prototype = {
 
 				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
-					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
+					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[0]));
 				});
+				this.prevKDPoint = kdpoint[1];
 			} else {
 				if (tooltip) {
-					tooltip.refresh(kdpoint, e);
+					tooltip.refresh(kdpoint[0], e);
 				}
 				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					kdpoint.onMouseOver(e);
+					kdpoint[0].onMouseOver(e);
 				}
+				this.prevKDPoint = kdpoint[0];
 			}
-			this.prevKDPoint = kdpoint;
 
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
@@ -223,7 +229,7 @@ Pointer.prototype = {
 		}
 
 		// Crosshair
-		each(shared ? kdpoints : [pick(kdpoint, hoverPoint)], function (point) {
+		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
 			var series = point && point.series;
 			if (series && series.xAxis) {
 				series.xAxis.drawCrosshair(e, point);
