@@ -122,6 +122,13 @@ extend(SVGElement.prototype, {
 						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
 					width = textWidth;
+				} else {
+					css(elem, {
+						width: '',
+						display: '',
+						whiteSpace: (styles && styles.whiteSpace) || 'nowrap'
+					});
+					width = pick(wrapper.elemWidth, elem.offsetWidth);
 				}
 
 				wrapper.getSpanCorrection(width, baseline, alignCorrection, rotation, align);
