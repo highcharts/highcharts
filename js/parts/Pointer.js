@@ -126,7 +126,7 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = Number.MAX_VALUE, // #4511
+			closestX = Number.MAX_VALUE,
 			anchor,
 			noSharedTooltip,
 			stickToHoverSeries,
@@ -134,6 +134,13 @@ Pointer.prototype = {
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
+
+		function sort(points, prop) {
+			stableSort(points, function (a, b) {
+				return a[prop] - b[prop];
+			});
+			return points;
+		}
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
@@ -162,29 +169,30 @@ Pointer.prototype = {
 				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
 					if (kdpointT) {
+						kdpointT.seriesIdx = s.index;
 						kdpoints.push(kdpointT);
 					}
 				}
 			});
 			// Find absolute nearest point
-			each(kdpoints, function (p) {
-				if (p && typeof p.dist === 'number' && p.dist < distance) {
-					distance = p.dist;
-					kdpoint = p;
-				}
-			});
+			kdpoint = sort(kdpoints, 'dist')[0];
 		}
-
+		
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
 		if (kdpoint && (kdpoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
-				i = kdpoints.length;
-				while (i--) {
-					if (kdpoints[i].clientX !== kdpoint.clientX || kdpoints[i].series.noSharedTooltip) {
-						kdpoints.splice(i, 1);
-					}
-				}
+				// Remove points that belong to a different X stack
+				closestX = sort(kdpoints, 'distX')[0].distX;
+				kdpoints = grep(kdpoints, function (p) {
+					return p.distX === closestX;
+				});
+
+				// In case kdpoint is removed, we need to re-locate it in the filtered kdpoints
+				kdpoint = sort(kdpoints, 'dist')[0];
+
+				// Sort in tooltip order and display tooltip
+				sort(kdpoints, 'seriesIdx');
 				if (kdpoints.length && tooltip) {
 					tooltip.refresh(kdpoints, e);
 				}
