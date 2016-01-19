@@ -9663,16 +9663,20 @@
                 });
             }
 
+            // Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
+            if (shared) {
+                i = kdpoints.length;
+                while (i--) {
+                    if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+                        kdpoints.splice(i, 1);
+                    }
+                }
+            }
+
             // Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
             if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
                 // Draw tooltip if necessary
                 if (shared && !kdpoint[0].series.noSharedTooltip) {
-                    i = kdpoints.length;
-                    while (i--) {
-                        if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
-                            kdpoints.splice(i, 1);
-                        }
-                    }
                     if (kdpoints.length && tooltip) {
                         tooltip.refresh(kdpoints, e);
                     }
