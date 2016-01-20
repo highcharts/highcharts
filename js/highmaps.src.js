@@ -15514,7 +15514,7 @@
                     var otherOptions = otherSeries.options,
                         otherYAxis = otherSeries.yAxis,
                         columnIndex;
-                    if (otherSeries.type === series.type && otherSeries.visible &&
+                    if (otherSeries.type === series.type && (otherSeries.visible || !chart.options.chart.ignoreHiddenSeries) &&
                             yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
