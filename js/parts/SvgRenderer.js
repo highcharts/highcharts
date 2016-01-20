@@ -390,7 +390,7 @@ SVGElement.prototype = {
 			currentClassName = attr(element, 'class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
-			attr(element, 'class', currentClassName + (currentClassName ? ' ' : '') + className);
+			attr(element, 'class', (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' '));
 		}
 		return this;
 	},

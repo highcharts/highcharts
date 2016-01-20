@@ -583,9 +583,12 @@ extend(Point.prototype, {
 		// Apply hover styles to the existing point
 		if (point.graphic) {
 
-			point.graphic
-				.removeClass('highcharts-point-' + point.state)
-				.addClass('highcharts-point-' + state);
+			if (point.state) {
+				point.graphic.removeClass('highcharts-point-' + point.state);
+			}
+			if (state) {
+				point.graphic.addClass('highcharts-point-' + state);
+			}
 
 			attribs = radius ? { // new symbol attributes (#507, #612)
 				x: plotX - radius,

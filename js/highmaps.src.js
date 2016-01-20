@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-19)
+ * @license Highmaps JS v2.0-dev (2016-01-20)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -2357,7 +2357,7 @@ SVGElement.prototype = {
             currentClassName = attr(element, 'class') || '';
 
         if (currentClassName.indexOf(className) === -1) {
-            attr(element, 'class', currentClassName + (currentClassName ? ' ' : '') + className);
+            attr(element, 'class', (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' '));
         }
         return this;
     },
@@ -20579,9 +20579,12 @@ extend(Point.prototype, {
         // Apply hover styles to the existing point
         if (point.graphic) {
 
-            point.graphic
-                .removeClass('highcharts-point-' + point.state)
-                .addClass('highcharts-point-' + state);
+            if (point.state) {
+                point.graphic.removeClass('highcharts-point-' + point.state);
+            }
+            if (state) {
+                point.graphic.addClass('highcharts-point-' + state);
+            }
 
             attribs = radius ? { // new symbol attributes (#507, #612)
                 x: plotX - radius,

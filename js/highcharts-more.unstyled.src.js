@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-19)
+ * @license Highcharts JS v5.0-dev (2016-01-20)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1395,10 +1395,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
             medianPath,
             crispCorr,
             crispX = 0,
-            stemX,
-            stemPath,
             boxPath,
-            whiskersPath,
             width,
             left,
             right,
@@ -1411,6 +1408,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
         each(points, function (point) {
 
             var graphic = point.graphic,
+                verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs; // the box
 
             
@@ -1427,99 +1425,16 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
                 highPlot = Math.floor(point.highPlot);
                 lowPlot = Math.floor(point.lowPlot);
 
-                stemX = left + halfWidth;
-                
-                
-
-                stemPath = [
-                    // stem up
-                    'M',
-                    stemX, q3Plot,
-                    'L',
-                    stemX, highPlot,
-
-                    // stem down
-                    'M',
-                    stemX, q1Plot,
-                    'L',
-                    stemX, lowPlot
-                ];
-
-                // The box
-                if (doQuartiles) {
-                    
-                    boxPath = [
-                        'M',
-                        left, q3Plot,
-                        'L',
-                        left, q1Plot,
-                        'L',
-                        right, q1Plot,
-                        'L',
-                        right, q3Plot,
-                        'L',
-                        left, q3Plot,
-                        'z'
-                    ];
-                }
-
-                // The whiskers
-                if (whiskerLength) {
-                    
-                    pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
-                    whiskersPath = [
-                        // High whisker
-                        'M',
-                        stemX - pointWiskerLength,
-                        highPlot,
-                        'L',
-                        stemX + pointWiskerLength,
-                        highPlot,
-
-                        // Low whisker
-                        'M',
-                        stemX - pointWiskerLength,
-                        lowPlot,
-                        'L',
-                        stemX + pointWiskerLength,
-                        lowPlot
-                    ];
-                }
-
-                // The median
-                medianPlot = Math.round(point.medianPlot);
-                
-                medianPath = [
-                    'M',
-                    left,
-                    medianPlot,
-                    'L',
-                    right,
-                    medianPlot
-                ];
-
-                // Create or update the graphics
-                if (graphic) { // update
-
-                    point.stem.animate({ d: stemPath });
-                    if (whiskerLength) {
-                        point.whiskers.animate({ d: whiskersPath });
-                    }
-                    if (doQuartiles) {
-                        point.box.animate({ d: boxPath });
-                    }
-                    point.medianShape.animate({ d: medianPath });
-
-                } else { // create new
-                    point.graphic = graphic = renderer.g()
+                if (!graphic) {
+                    point.graphic = graphic = renderer.g('point')
                         .add(series.group);
 
-                    point.stem = renderer.path(stemPath)
+                    point.stem = renderer.path()
                         .addClass('highcharts-boxplot-stem')
                         .add(graphic);
 
                     if (whiskerLength) {
-                        point.whiskers = renderer.path(whiskersPath)
+                        point.whiskers = renderer.path()
                             .addClass('highcharts-boxplot-whisker')
                             .add(graphic);
                     }
@@ -1532,8 +1447,98 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
                         .addClass('highcharts-boxplot-median')
                         .add(graphic);
 
+
                     
                 }
+                
+                
+
+                // The stem
+                
+                crispCorr = (point.stem.pxStyle('stroke-width') % 2) / 2;
+                
+
+                crispX = left + halfWidth + crispCorr;
+                point.stem[verb]({ d: [
+                    // stem up
+                    'M',
+                    crispX, q3Plot,
+                    'L',
+                    crispX, highPlot,
+
+                    // stem down
+                    'M',
+                    crispX, q1Plot,
+                    'L',
+                    crispX, lowPlot
+                ] });
+
+                // The box
+                if (doQuartiles) {
+                    
+                    crispCorr = (point.box.pxStyle('stroke-width') % 2) / 2;
+                    
+                    q1Plot = Math.floor(q1Plot) + crispCorr;
+                    q3Plot = Math.floor(q3Plot) + crispCorr;
+                    left += crispCorr;
+                    right += crispCorr;
+                    point.box[verb]({ d: [
+                        'M',
+                        left, q3Plot,
+                        'L',
+                        left, q1Plot,
+                        'L',
+                        right, q1Plot,
+                        'L',
+                        right, q3Plot,
+                        'L',
+                        left, q3Plot,
+                        'z'
+                    ] });
+                }
+
+                // The whiskers
+                if (whiskerLength) {
+                    
+                    crispCorr = (point.whiskers.pxStyle('stroke-width') % 2) / 2;
+                    
+                    highPlot = highPlot + crispCorr;
+                    lowPlot = lowPlot + crispCorr;
+                    pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
+                    point.whiskers[verb]({ d: [
+                        // High whisker
+                        'M',
+                        crispX - pointWiskerLength,
+                        highPlot,
+                        'L',
+                        crispX + pointWiskerLength,
+                        highPlot,
+
+                        // Low whisker
+                        'M',
+                        crispX - pointWiskerLength,
+                        lowPlot,
+                        'L',
+                        crispX + pointWiskerLength,
+                        lowPlot
+                    ] });
+                }
+
+                // The median
+                medianPlot = Math.round(point.medianPlot);
+                
+                crispCorr = (point.medianShape.pxStyle('stroke-width') % 2) / 2;
+                
+                medianPlot = medianPlot + crispCorr;
+                
+                point.medianShape[verb]({ d: [
+                    'M',
+                    left,
+                    medianPlot,
+                    'L',
+                    right,
+                    medianPlot
+                ] });
             }
         });
 

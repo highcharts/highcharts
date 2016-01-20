@@ -140,8 +140,7 @@ g.highcharts-series, .highcharts-point {
   fill-opacity: 0.75; }
 
 .highcharts-markers path, .highcharts-point {
-  stroke-width: 1px;
-  stroke: #ffffff; }
+  stroke-width: 1px; }
 
 .highcharts-point-select {
   fill: #FFFFFF !important;
