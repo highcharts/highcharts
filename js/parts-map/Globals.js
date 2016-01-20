@@ -19,6 +19,7 @@ var UNDEFINED,
 	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
+	format = Highcharts.format,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
@@ -26,5 +27,3 @@ var UNDEFINED,
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap,
 	noop = function () {};
-
-	
