@@ -557,6 +557,7 @@ extend(Point.prototype, {
 			radius,
 			halo = series.halo,
 			haloOptions,
+			attribs,
 			newSymbol;
 
 		state = state || ''; // empty string
@@ -586,15 +587,18 @@ extend(Point.prototype, {
 				.removeClass('highcharts-point-' + point.state)
 				.addClass('highcharts-point-' + state);
 
-			point.graphic.attr(merge(
-				series.pointAttribs(point, state),
-				radius ? { // new symbol attributes (#507, #612)
-					x: plotX - radius,
-					y: plotY - radius,
-					width: 2 * radius,
-					height: 2 * radius
-				} : {}
-			));
+			attribs = radius ? { // new symbol attributes (#507, #612)
+				x: plotX - radius,
+				y: plotY - radius,
+				width: 2 * radius,
+				height: 2 * radius
+			} : {};
+
+			/*= if (build.classic) { =*/
+			attribs = merge(series.pointAttribs(point, state), attribs);
+			/*= } =*/
+
+			point.graphic.attr(attribs);
 
 			// Zooming in from a range with no markers to a range with markers
 			if (stateMarkerGraphic) {

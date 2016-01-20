@@ -1852,7 +1852,6 @@ H.Axis.prototype = {
 			}
 
 			if (showAxis) {
-				console.log(axis.axisTitle.getBBox().width)
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);

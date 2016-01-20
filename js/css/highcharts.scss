@@ -101,12 +101,9 @@ g.highcharts-series, .highcharts-point {
 /* Default colors */
 @for $i from 1 through length($colors) {
   $color: nth($colors, $i);
-  .highcharts-color-#{$i - 1} .highcharts-graph {
-    stroke: $color;
-  }
-
   .highcharts-color-#{$i - 1} {
     fill: $color;
+    stroke: $color;
   }
 }
 
@@ -142,6 +139,7 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-halo {
     fill-opacity: 0.25;
+    stroke-width: 0;
 }
 
 
@@ -199,6 +197,14 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-axis-line {
     fill: none;
+}
+
+/* Highcharts More */
+.highcharts-boxplot-box {
+    fill: white;
+}
+.highcharts-boxplot-median {
+    stroke-width: 2px;
 }
 
 

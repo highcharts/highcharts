@@ -354,9 +354,13 @@ gulp.task('scripts', function () {
         // fs.writeFile('temp.js', tpl, 'utf8');
 
         // The evaluation function for the ready built supercode
-        func = new Function('build', tpl); // eslint-disable-line no-new-func
+        try {
+            func = new Function('build', tpl); // eslint-disable-line no-new-func
+            tpl = func(build);
+        } catch (e) {
+            console.log('Function preprocess failed:\n    ' + e.message.red);
+        }
 
-        tpl = func(build);
 
         // Collect trailing commas left when the template engine has removed
         // object literal properties or array items

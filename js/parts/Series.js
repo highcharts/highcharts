@@ -1037,6 +1037,7 @@ H.Series.prototype = {
 
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
 	 */
@@ -1080,7 +1081,7 @@ H.Series.prototype = {
 			'fill': fill
 		};
 	},
-
+	/*= } =*/
 	/**
 	 * Clear DOM objects and free up memory
 	 */

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-18)
+ * @license Highcharts JS v5.0-dev (2016-01-19)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -664,7 +664,9 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
     marker: null,
     threshold: null,
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+        
+        pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+        
     },
     trackByArea: true,
     dataLabels: {
@@ -1326,13 +1328,14 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
     //stemWidth: null,
     threshold: null,
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+        
+        pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
             'Maximum: {point.high}<br/>' +
             'Upper quartile: {point.q3}<br/>' +
             'Median: {point.median}<br/>' +
             'Lower quartile: {point.q1}<br/>' +
             'Minimum: {point.low}<br/>'
-
+        
     },
     //whiskerColor: null,
     whiskerLength: '50%',
@@ -1348,19 +1351,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
     },
     pointValKey: 'high', // defines the top of the tracker
 
-    /**
-     * Get presentational attributes
-     */
-    pointAttribs: function (point) {
-        var options = this.options,
-            color = (point && point.color) || this.color;
-
-        return {
-            'fill': options.fillColor || color,
-            'stroke': options.lineColor || color,
-            'stroke-width': options.lineWidth || 0
-        };
-    },
+    
 
     /**
      * Disable data labels for box plot
@@ -1396,28 +1387,22 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
             options = series.options,
             chart = series.chart,
             renderer = chart.renderer,
-            boxAttr,
             q1Plot,
             q3Plot,
             highPlot,
             lowPlot,
             medianPlot,
+            medianPath,
             crispCorr,
-            crispX,
-            graphic,
+            crispX = 0,
+            stemX,
             stemPath,
-            stemAttr,
             boxPath,
             whiskersPath,
-            whiskersAttr,
-            medianPath,
-            medianAttr,
             width,
             left,
             right,
             halfWidth,
-            shapeArgs,
-            color,
             doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
             pointWiskerLength,
             whiskerLength = series.options.whiskerLength;
@@ -1425,12 +1410,10 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
         each(points, function (point) {
 
-            graphic = point.graphic;
-            shapeArgs = point.shapeArgs; // the box
-            stemAttr = {};
-            whiskersAttr = {};
-            medianAttr = {};
-            color = point.color || series.color;
+            var graphic = point.graphic,
+                shapeArgs = point.shapeArgs; // the box
+
+            
             
             if (point.plotY !== undefined) {
 
@@ -1439,51 +1422,32 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
                 left = Math.floor(shapeArgs.x);
                 right = left + width;
                 halfWidth = Math.round(width / 2);
-                //crispX = Math.round(left + halfWidth) + crispCorr;
-                q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
-                q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
-                highPlot = Math.floor(point.highPlot);// + crispCorr;
-                lowPlot = Math.floor(point.lowPlot);// + crispCorr;
-                
-                // Stem attributes
-                stemAttr.stroke = point.stemColor || options.stemColor || color;
-                stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-                
-                
-                // Whiskers attributes
-                whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
-                whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
+                q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
+                q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
+                highPlot = Math.floor(point.highPlot);
+                lowPlot = Math.floor(point.lowPlot);
 
-                // Median attributes
-                medianAttr.stroke = point.medianColor || options.medianColor || color;
-                medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+                stemX = left + halfWidth;
+                
+                
 
-                // The stem
-                crispCorr = (stemAttr['stroke-width'] % 2) / 2;
-                crispX = left + halfWidth + crispCorr;
                 stemPath = [
                     // stem up
                     'M',
-                    crispX, q3Plot,
+                    stemX, q3Plot,
                     'L',
-                    crispX, highPlot,
+                    stemX, highPlot,
 
                     // stem down
                     'M',
-                    crispX, q1Plot,
+                    stemX, q1Plot,
                     'L',
-                    crispX, lowPlot
+                    stemX, lowPlot
                 ];
 
                 // The box
                 if (doQuartiles) {
-                    boxAttr = series.pointAttribs(point);
-                    crispCorr = (boxAttr['stroke-width'] % 2) / 2;
-                    crispX = Math.floor(crispX) + crispCorr;
-                    q1Plot = Math.floor(q1Plot) + crispCorr;
-                    q3Plot = Math.floor(q3Plot) + crispCorr;
-                    left += crispCorr;
-                    right += crispCorr;
+                    
                     boxPath = [
                         'M',
                         left, q3Plot,
@@ -1501,32 +1465,30 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
                 // The whiskers
                 if (whiskerLength) {
-                    crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
-                    highPlot = highPlot + crispCorr;
-                    lowPlot = lowPlot + crispCorr;
+                    
                     pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
                     whiskersPath = [
                         // High whisker
                         'M',
-                        crispX - pointWiskerLength,
+                        stemX - pointWiskerLength,
                         highPlot,
                         'L',
-                        crispX + pointWiskerLength,
+                        stemX + pointWiskerLength,
                         highPlot,
 
                         // Low whisker
                         'M',
-                        crispX - pointWiskerLength,
+                        stemX - pointWiskerLength,
                         lowPlot,
                         'L',
-                        crispX + pointWiskerLength,
+                        stemX + pointWiskerLength,
                         lowPlot
                     ];
                 }
 
                 // The median
-                crispCorr = (medianAttr['stroke-width'] % 2) / 2;                
-                medianPlot = Math.round(point.medianPlot) + crispCorr;
+                medianPlot = Math.round(point.medianPlot);
+                
                 medianPath = [
                     'M',
                     left,
@@ -1553,22 +1515,24 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
                         .add(series.group);
 
                     point.stem = renderer.path(stemPath)
-                        .attr(stemAttr)
+                        .addClass('highcharts-boxplot-stem')
                         .add(graphic);
 
                     if (whiskerLength) {
                         point.whiskers = renderer.path(whiskersPath)
-                            .attr(whiskersAttr)
+                            .addClass('highcharts-boxplot-whisker')
                             .add(graphic);
                     }
                     if (doQuartiles) {
                         point.box = renderer.path(boxPath)
-                            .attr(boxAttr)
+                            .addClass('highcharts-boxplot-box')
                             .add(graphic);
                     }
                     point.medianShape = renderer.path(medianPath)
-                        .attr(medianAttr)
+                        .addClass('highcharts-boxplot-median')
                         .add(graphic);
+
+                    
                 }
             }
         });

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-01-18)
+ * @license Highstock JS v3.0-dev (2016-01-19)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -8730,7 +8730,6 @@ H.Axis.prototype = {
             }
 
             if (showAxis) {
-                console.log(axis.axisTitle.getBBox().width)
                 titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
                 titleOffsetOption = axisTitleOptions.offset;
                 titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
@@ -9559,7 +9558,7 @@ H.Tooltip.prototype = {
         // create the label
         this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
             .attr({
-                padding: options.padding,
+                padding: options.padding, // docs
                 r: options.borderRadius,
                 zIndex: 8
             })
@@ -14704,50 +14703,7 @@ H.Series.prototype = {
 
     },
 
-    /**
-     * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
-     */
-    pointAttribs: function (point, state) {
-        var seriesMarkerOptions = this.options.marker,
-            seriesStateOptions,
-            pointMarkerOptions = (point && point.options && point.options.marker) || {},
-            pointStateOptions,
-            strokeWidth = seriesMarkerOptions.lineWidth,
-            color = this.color,
-            pointColorOption = point && point.options.color,
-            pointColor = point && point.color,
-            zoneColor,
-            fill,
-            stroke,
-            zone;
-
-        if (point && this.zones.length) {
-            zone = point.getZone();
-            if (zone && zone.color) {
-                zoneColor = zone.color;
-            }
-        }
-
-        color = pointColorOption || zoneColor || pointColor || color;
-        fill = pointMarkerOptions.fillColor || seriesMarkerOptions.fillColor || color;
-        stroke = pointMarkerOptions.lineColor || seriesMarkerOptions.lineColor || color;
-
-        // Handle hover and select states
-        if (state) {
-            seriesStateOptions = seriesMarkerOptions.states[state];
-            pointStateOptions = (pointMarkerOptions.states && pointMarkerOptions.states[state]) || {};
-            strokeWidth = seriesStateOptions.lineWidth || strokeWidth + seriesStateOptions.lineWidthPlus;
-            fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
-            stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
-        }
-        
-        return {
-            'stroke': stroke,
-            'stroke-width': strokeWidth,
-            'fill': fill
-        };
-    },
-
+    
     /**
      * Clear DOM objects and free up memory
      */
@@ -19254,6 +19210,7 @@ extend(Point.prototype, {
             radius,
             halo = series.halo,
             haloOptions,
+            attribs,
             newSymbol;
 
         state = state || ''; // empty string
@@ -19283,15 +19240,16 @@ extend(Point.prototype, {
                 .removeClass('highcharts-point-' + point.state)
                 .addClass('highcharts-point-' + state);
 
-            point.graphic.attr(merge(
-                series.pointAttribs(point, state),
-                radius ? { // new symbol attributes (#507, #612)
-                    x: plotX - radius,
-                    y: plotY - radius,
-                    width: 2 * radius,
-                    height: 2 * radius
-                } : {}
-            ));
+            attribs = radius ? { // new symbol attributes (#507, #612)
+                x: plotX - radius,
+                y: plotY - radius,
+                width: 2 * radius,
+                height: 2 * radius
+            } : {};
+
+            
+
+            point.graphic.attr(attribs);
 
             // Zooming in from a range with no markers to a range with markers
             if (stateMarkerGraphic) {
@@ -20260,7 +20218,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-01-18)
+ * Highstock JS v3.0-dev (2016-01-19)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license

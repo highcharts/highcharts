@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-18)
+ * @license Highmaps JS v2.0-dev (2016-01-19)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -8533,7 +8533,6 @@ H.Axis.prototype = {
             }
 
             if (showAxis) {
-                console.log(axis.axisTitle.getBBox().width)
                 titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
                 titleOffsetOption = axisTitleOptions.offset;
                 titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
@@ -9146,7 +9145,7 @@ H.Tooltip.prototype = {
         // create the label
         this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
             .attr({
-                padding: options.padding,
+                padding: options.padding, // docs
                 r: options.borderRadius,
                 zIndex: 8
             })
@@ -14409,6 +14408,7 @@ H.Series.prototype = {
 
     },
 
+    
     /**
      * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
      */
@@ -14452,7 +14452,7 @@ H.Series.prototype = {
             'fill': fill
         };
     },
-
+    
     /**
      * Clear DOM objects and free up memory
      */
@@ -20553,6 +20553,7 @@ extend(Point.prototype, {
             radius,
             halo = series.halo,
             haloOptions,
+            attribs,
             newSymbol;
 
         state = state || ''; // empty string
@@ -20582,15 +20583,18 @@ extend(Point.prototype, {
                 .removeClass('highcharts-point-' + point.state)
                 .addClass('highcharts-point-' + state);
 
-            point.graphic.attr(merge(
-                series.pointAttribs(point, state),
-                radius ? { // new symbol attributes (#507, #612)
-                    x: plotX - radius,
-                    y: plotY - radius,
-                    width: 2 * radius,
-                    height: 2 * radius
-                } : {}
-            ));
+            attribs = radius ? { // new symbol attributes (#507, #612)
+                x: plotX - radius,
+                y: plotY - radius,
+                width: 2 * radius,
+                height: 2 * radius
+            } : {};
+
+            
+            attribs = merge(series.pointAttribs(point, state), attribs);
+            
+
+            point.graphic.attr(attribs);
 
             // Zooming in from a range with no markers to a range with markers
             if (stateMarkerGraphic) {

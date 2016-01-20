@@ -45,7 +45,7 @@ H.Tooltip.prototype = {
 		// create the label
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
-				padding: options.padding,
+				padding: options.padding, // docs
 				r: options.borderRadius,
 				zIndex: 8
 			})
