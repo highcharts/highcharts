@@ -1356,8 +1356,7 @@ Chart.prototype = {
 	 */
 	firstRender: function () {
 		var chart = this,
-			options = chart.options,
-			callback = chart.callback;
+			options = chart.options;
 
 		// Check whether the chart is ready to render
 		if (!chart.isReadyToRender()) {
@@ -1401,12 +1400,26 @@ Chart.prototype = {
 
 		// add canvas
 		chart.renderer.draw();
-		// run callbacks
-		if (callback) {
-			callback.apply(chart, [chart]);
+		
+		// Fire the load event if there are no external images
+		if (!chart.renderer.imgCount) {
+			chart.onload();
 		}
-		each(chart.callbacks, function (fn) {
-			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+
+		// If the chart was rendered outside the top container, put it back in (#3679)
+		chart.cloneRenderTo(true);
+
+	},
+
+	/** 
+	 * On chart load
+	 */
+	onload: function () {
+		var chart = this;
+
+		// Run callbacks
+		each(this.callbacks.concat(this.callback), function (fn) {
+			if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
 		});
@@ -1415,10 +1428,6 @@ Chart.prototype = {
 		if (!chart.renderer.imgCount) {
 			fireEvent(chart, 'load');
 		}
-
-		// If the chart was rendered outside the top container, put it back in (#3679)
-		chart.cloneRenderTo(true);
-
 	},
 
 	/**

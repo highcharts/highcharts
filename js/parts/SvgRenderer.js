@@ -2091,7 +2091,7 @@ SVGRenderer.prototype = {
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
 						if (!ren.imgCount) {
-							fireEvent(charts[ren.chartIndex], 'load'); // docs: Load is now waiting for images
+							charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
 						}
 					},
 					src: imageSrc

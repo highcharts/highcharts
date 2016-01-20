@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-19)
+ * @license Highstock JS v4.2.0-modified (2016-01-20)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -4149,7 +4149,7 @@
                             // Fire the load event when all external images are loaded
                             ren.imgCount--;
                             if (!ren.imgCount) {
-                                fireEvent(charts[ren.chartIndex], 'load'); // docs: Load is now waiting for images
+                                charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
                             }
                         },
                         src: imageSrc
@@ -13162,8 +13162,7 @@
          */
         firstRender: function () {
             var chart = this,
-                options = chart.options,
-                callback = chart.callback;
+                options = chart.options;
 
             // Check whether the chart is ready to render
             if (!chart.isReadyToRender()) {
@@ -13207,12 +13206,26 @@
 
             // add canvas
             chart.renderer.draw();
-            // run callbacks
-            if (callback) {
-                callback.apply(chart, [chart]);
+        
+            // Fire the load event if there are no external images
+            if (!chart.renderer.imgCount) {
+                chart.onload();
             }
-            each(chart.callbacks, function (fn) {
-                if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+
+            // If the chart was rendered outside the top container, put it back in (#3679)
+            chart.cloneRenderTo(true);
+
+        },
+
+        /** 
+         * On chart load
+         */
+        onload: function () {
+            var chart = this;
+
+            // Run callbacks
+            each(this.callbacks.concat(this.callback), function (fn) {
+                if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
                     fn.apply(chart, [chart]);
                 }
             });
@@ -13221,10 +13234,6 @@
             if (!chart.renderer.imgCount) {
                 fireEvent(chart, 'load');
             }
-
-            // If the chart was rendered outside the top container, put it back in (#3679)
-            chart.cloneRenderTo(true);
-
         },
 
         /**
@@ -20037,7 +20046,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-19)
+     * Highstock JS v4.2.0-modified (2016-01-20)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

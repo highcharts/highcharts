@@ -2,13 +2,14 @@
 $(function () {
 
     QUnit.test('Load event without images', function (assert) {
-        var loaded = false,
+        var flagLoad = false,
+            flagCallback = false,
             chart = Highcharts.chart('container', {
 
                 chart: {
                     events: {
                         load: function (e) {
-                            loaded = true;
+                            flagLoad = true;
                         }
                     }
                 },
@@ -18,18 +19,28 @@ $(function () {
                     data: [1, 2, 3]
                 }]
 
+            }, function () {
+                flagCallback = true;
             });
 
         assert.strictEqual(
-            loaded,
+            flagLoad,
             true,
-            'Chart load is synchronous'
+            'Chart events.load is synchronous'
+        );
+
+        assert.strictEqual(
+            flagCallback,
+            true,
+            'Chart callback is synchronous'
         );
 
     });
 
     QUnit.test('Load event with images is async', function (assert) {
-        var loaded = false,
+
+        var flagLoad = false,
+            flagCallback = false,
             done = assert.async(),
             chart = Highcharts.chart('container', {
 
@@ -39,11 +50,13 @@ $(function () {
                             assert.strictEqual(
                                 chart.container.querySelector('image').getAttribute('width'),
                                 '30',
-                                'Image width is set async'
+                                'events.load: Image width is set async'
                             );
-                            loaded = true;
+                            flagLoad = true;
 
-                            done();
+                            if (flagLoad && flagCallback) {
+                                done();
+                            }
                         }
                     }
                 },
@@ -56,12 +69,29 @@ $(function () {
                     }
                 }]
 
+            }, function () {
+                assert.strictEqual(
+                    this.container.querySelector('image').getAttribute('width'),
+                    '30',
+                    'callback: Image width is set async'
+                );
+
+                flagCallback = true;
+
+                if (flagLoad && flagCallback) {
+                    done();
+                }
             });
 
         assert.strictEqual(
-            loaded,
+            flagLoad,
             false,
-            'Chart load is not synchronous'
+            'Chart events.load is not synchronous'
+        );
+        assert.strictEqual(
+            flagCallback,
+            false,
+            'Chart callback is not synchronous'
         );
 
     });
