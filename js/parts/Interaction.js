@@ -96,7 +96,6 @@ TrackerMixin = H.TrackerMixin = {
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
 			i,
-			lineWidth,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
 					series.onMouseOver();
@@ -115,12 +114,6 @@ TrackerMixin = H.TrackerMixin = {
 			 * Opera: 0.00000000001 (unlimited)
 			 */
 			TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-
-		/*= if (!build.classic) { =*/
-		lineWidth = series.graph.pxStyle('stroke-width');
-		/*= } else { =*/
-		lineWidth = options.lineWidth;
-		/*= } =*/
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -154,7 +147,7 @@ TrackerMixin = H.TrackerMixin = {
 				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : 'none',
-				'stroke-width': lineWidth + (trackByArea ? 0 : 2 * snap),
+				'stroke-width': series.graph.strokeWidth() + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);

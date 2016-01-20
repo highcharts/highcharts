@@ -451,7 +451,7 @@ SVGElement.prototype = {
 			attribs = {},
 			normalizer;
 
-		strokeWidth = strokeWidth || rect.strokeWidth || wrapper.strokeWidth || 0;
+		strokeWidth = strokeWidth || rect.strokeWidth || 0;
 		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
@@ -544,7 +544,12 @@ SVGElement.prototype = {
 		return elemWrapper;
 	},
 
-	/*= if (!build.classic) { =*/
+	/*= if (build.classic) { =*/
+	strokeWidth: function () {
+		return this['stroke-width'] || 0;
+	},
+
+	/*= } else { =*/
 	/**
 	 * Get a computed style
 	 */
@@ -555,8 +560,8 @@ SVGElement.prototype = {
 	/**
 	 * Get a computed style in pixel values
 	 */
-	pxStyle: function (prop) {
-		var val = this.getStyle(prop),
+	strokeWidth: function () {
+		var val = this.getStyle('stroke-width'),
 			ret,
 			dummy;
 
@@ -1278,6 +1283,7 @@ SVGElement.prototype = {
 		return inserted;
 	},
 	_defaultSetter: function (value, key, element) {
+		// if (key === 'width' && isNaN(value)) debugger;
 		element.setAttribute(key, value);
 	}
 };
@@ -1298,7 +1304,6 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
-		this.strokeWidth = this['stroke-width'];
 		SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
 		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
@@ -2554,7 +2559,7 @@ SVGRenderer.prototype = {
 		/*= if (!build.classic) { =*/
 		needsBox = true; // for styling
 		getCrispAdjust = function () {
-			return box.pxStyle('stroke-width') % 2 / 2;
+			return box.strokeWidth() % 2 / 2;
 		};
 		/*= } else { =*/
 		needsBox = false;

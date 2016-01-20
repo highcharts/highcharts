@@ -987,7 +987,6 @@ Chart.prototype = {
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			/*= } =*/
-			plotBorderWidth,
 			mgn,
 			bgAttr,
 			plotLeft = chart.plotLeft,
@@ -1007,10 +1006,8 @@ Chart.prototype = {
 			verb = 'attr';
 		}
 
-		/*= if (!build.classic) { =*/
-		chartBorderWidth = mgn = chartBackground.pxStyle('stroke-width');
-		/*= } else { =*/
-
+		/*= if (build.classic) { =*/
+		// Presentational
 		chartBorderWidth = optionsChart.borderWidth || 0;
 		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
@@ -1027,6 +1024,7 @@ Chart.prototype = {
 			.shadow(optionsChart.shadow);
 		/*= } =*/
 
+		chartBorderWidth = mgn = chartBackground.strokeWidth();
 		chartBackground[verb]({
 			x: mgn / 2,
 			y: mgn / 2,
@@ -1085,14 +1083,12 @@ Chart.prototype = {
 				})
 				.add();
 		}
-		/*= if (!build.classic) { =*/
-		plotBorderWidth = plotBorder.pxStyle('stroke-width');
 
-		/*= } else { =*/
-		plotBorderWidth = optionsChart.plotBorderWidth || 0;
+		/*= if (build.classic) { =*/
+		// Presentational
 		plotBorder.attr({
 			stroke: optionsChart.plotBorderColor,
-			'stroke-width': plotBorderWidth,
+			'stroke-width': optionsChart.plotBorderWidth || 0,
 			fill: 'none'
 		});
 		/*= } =*/
@@ -1102,7 +1098,7 @@ Chart.prototype = {
 			y: plotTop,
 			width: plotWidth,
 			height: plotHeight
-		}, -plotBorderWidth)); //#3282 plotBorder should be negative;
+		}, -plotBorder.strokeWidth())); //#3282 plotBorder should be negative;
 
 		// reset
 		chart.isDirtyBox = false;

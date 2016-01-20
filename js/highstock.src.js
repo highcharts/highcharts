@@ -2476,7 +2476,7 @@ SVGElement.prototype = {
             attribs = {},
             normalizer;
 
-        strokeWidth = strokeWidth || rect.strokeWidth || wrapper.strokeWidth || 0;
+        strokeWidth = strokeWidth || rect.strokeWidth || 0;
         normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
         // normalize for crisp edges
@@ -2567,6 +2567,11 @@ SVGElement.prototype = {
         }
 
         return elemWrapper;
+    },
+
+    
+    strokeWidth: function () {
+        return this['stroke-width'] || 0;
     },
 
     
@@ -3270,6 +3275,7 @@ SVGElement.prototype = {
         return inserted;
     },
     _defaultSetter: function (value, key, element) {
+        // if (key === 'width' && isNaN(value)) debugger;
         element.setAttribute(key, value);
     }
 };
@@ -3290,7 +3296,6 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
     this[key] = value;
     // Only apply the stroke attribute if the stroke width is defined and larger than 0
     if (this.stroke && this['stroke-width']) {
-        this.strokeWidth = this['stroke-width'];
         SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
         element.setAttribute('stroke-width', this['stroke-width']);
         this.hasStroke = true;
@@ -11808,7 +11813,7 @@ Legend.prototype = {
         } 
 
         
-        borderWidth = options.borderWidth || 0;
+        // Presentational
         box.attr({
                 stroke: options.borderColor,
                 'stroke-width': options.borderWidth || 0,
@@ -11819,7 +11824,7 @@ Legend.prototype = {
 
         if (legendWidth > 0 && legendHeight > 0) {
             box[box.isNew ? 'attr' : 'animate'](
-                box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, borderWidth)
+                box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, box.strokeWidth())
             );
             box.isNew = false;
         }
@@ -13149,7 +13154,6 @@ Chart.prototype = {
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
             
-            plotBorderWidth,
             mgn,
             bgAttr,
             plotLeft = chart.plotLeft,
@@ -13170,7 +13174,7 @@ Chart.prototype = {
         }
 
         
-
+        // Presentational
         chartBorderWidth = optionsChart.borderWidth || 0;
         mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
@@ -13187,6 +13191,7 @@ Chart.prototype = {
             .shadow(optionsChart.shadow);
         
 
+        chartBorderWidth = mgn = chartBackground.strokeWidth();
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
@@ -13245,11 +13250,12 @@ Chart.prototype = {
                 })
                 .add();
         }
+
         
-        plotBorderWidth = optionsChart.plotBorderWidth || 0;
+        // Presentational
         plotBorder.attr({
             stroke: optionsChart.plotBorderColor,
-            'stroke-width': plotBorderWidth,
+            'stroke-width': optionsChart.plotBorderWidth || 0,
             fill: 'none'
         });
         
@@ -13259,7 +13265,7 @@ Chart.prototype = {
             y: plotTop,
             width: plotWidth,
             height: plotHeight
-        }, -plotBorderWidth)); //#3282 plotBorder should be negative;
+        }, -plotBorder.strokeWidth())); //#3282 plotBorder should be negative;
 
         // reset
         chart.isDirtyBox = false;
@@ -19266,7 +19272,6 @@ TrackerMixin = H.TrackerMixin = {
             snap = chart.options.tooltip.snap,
             tracker = series.tracker,
             i,
-            lineWidth,
             onMouseOver = function () {
                 if (chart.hoverSeries !== series) {
                     series.onMouseOver();
@@ -19285,10 +19290,6 @@ TrackerMixin = H.TrackerMixin = {
              * Opera: 0.00000000001 (unlimited)
              */
             TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-
-        
-        lineWidth = options.lineWidth;
-        
 
         // Extend end points. A better way would be to use round linecaps,
         // but those are not clickable in VML.
@@ -19322,7 +19323,7 @@ TrackerMixin = H.TrackerMixin = {
                 visibility: series.visible ? 'visible' : 'hidden',
                 stroke: TRACKER_FILL,
                 fill: trackByArea ? TRACKER_FILL : 'none',
-                'stroke-width': lineWidth + (trackByArea ? 0 : 2 * snap),
+                'stroke-width': series.graph.strokeWidth() + (trackByArea ? 0 : 2 * snap),
                 zIndex: 2
             })
             .add(series.group);

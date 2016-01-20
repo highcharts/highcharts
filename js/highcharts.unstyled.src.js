@@ -2391,7 +2391,7 @@ SVGElement.prototype = {
             attribs = {},
             normalizer;
 
-        strokeWidth = strokeWidth || rect.strokeWidth || wrapper.strokeWidth || 0;
+        strokeWidth = strokeWidth || rect.strokeWidth || 0;
         normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
         // normalize for crisp edges
@@ -2495,8 +2495,8 @@ SVGElement.prototype = {
     /**
      * Get a computed style in pixel values
      */
-    pxStyle: function (prop) {
-        var val = this.getStyle(prop),
+    strokeWidth: function () {
+        var val = this.getStyle('stroke-width'),
             ret,
             dummy;
 
@@ -3193,6 +3193,7 @@ SVGElement.prototype = {
         return inserted;
     },
     _defaultSetter: function (value, key, element) {
+        // if (key === 'width' && isNaN(value)) debugger;
         element.setAttribute(key, value);
     }
 };
@@ -4425,7 +4426,7 @@ SVGRenderer.prototype = {
         
         needsBox = true; // for styling
         getCrispAdjust = function () {
-            return box.pxStyle('stroke-width') % 2 / 2;
+            return box.strokeWidth() % 2 / 2;
         };
         
 
@@ -11577,12 +11578,10 @@ Legend.prototype = {
         } 
 
         
-        borderWidth = box.pxStyle('stroke-width');
-        
 
         if (legendWidth > 0 && legendHeight > 0) {
             box[box.isNew ? 'attr' : 'animate'](
-                box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, borderWidth)
+                box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, box.strokeWidth())
             );
             box.isNew = false;
         }
@@ -12870,7 +12869,6 @@ Chart.prototype = {
             plotBorder = chart.plotBorder,
             chartBorderWidth,
             
-            plotBorderWidth,
             mgn,
             bgAttr,
             plotLeft = chart.plotLeft,
@@ -12891,9 +12889,8 @@ Chart.prototype = {
         }
 
         
-        chartBorderWidth = mgn = chartBackground.pxStyle('stroke-width');
-        
 
+        chartBorderWidth = mgn = chartBackground.strokeWidth();
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
@@ -12935,8 +12932,6 @@ Chart.prototype = {
                 })
                 .add();
         }
-        
-        plotBorderWidth = plotBorder.pxStyle('stroke-width');
 
         
 
@@ -12945,7 +12940,7 @@ Chart.prototype = {
             y: plotTop,
             width: plotWidth,
             height: plotHeight
-        }, -plotBorderWidth)); //#3282 plotBorder should be negative;
+        }, -plotBorder.strokeWidth())); //#3282 plotBorder should be negative;
 
         // reset
         chart.isDirtyBox = false;
@@ -18762,7 +18757,6 @@ TrackerMixin = H.TrackerMixin = {
             snap = chart.options.tooltip.snap,
             tracker = series.tracker,
             i,
-            lineWidth,
             onMouseOver = function () {
                 if (chart.hoverSeries !== series) {
                     series.onMouseOver();
@@ -18781,10 +18775,6 @@ TrackerMixin = H.TrackerMixin = {
              * Opera: 0.00000000001 (unlimited)
              */
             TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-
-        
-        lineWidth = series.graph.pxStyle('stroke-width');
-        
 
         // Extend end points. A better way would be to use round linecaps,
         // but those are not clickable in VML.
@@ -18818,7 +18808,7 @@ TrackerMixin = H.TrackerMixin = {
                 visibility: series.visible ? 'visible' : 'hidden',
                 stroke: TRACKER_FILL,
                 fill: trackByArea ? TRACKER_FILL : 'none',
-                'stroke-width': lineWidth + (trackByArea ? 0 : 2 * snap),
+                'stroke-width': series.graph.strokeWidth() + (trackByArea ? 0 : 2 * snap),
                 zIndex: 2
             })
             .add(series.group);

@@ -1515,10 +1515,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
                 
 
                 // The stem
-                
-                crispCorr = (stemAttr['stroke-width'] % 2) / 2;
-                
-
+                crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
                 point.stem[verb]({ d: [
                     // stem up
@@ -1536,9 +1533,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
                 // The box
                 if (doQuartiles) {
-                    
-                    crispCorr = (boxAttr['stroke-width'] % 2) / 2;
-                    
+                    crispCorr = (point.box.strokeWidth() % 2) / 2;
                     q1Plot = Math.floor(q1Plot) + crispCorr;
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
@@ -1560,9 +1555,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
                 // The whiskers
                 if (whiskerLength) {
-                    
-                    crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
-                    
+                    crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
                     highPlot = highPlot + crispCorr;
                     lowPlot = lowPlot + crispCorr;
                     pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
@@ -1587,9 +1580,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
                 // The median
                 medianPlot = Math.round(point.medianPlot);
-                
-                crispCorr = (medianAttr['stroke-width'] % 2) / 2;
-                
+                crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
                 medianPlot = medianPlot + crispCorr;
                 
                 point.medianShape[verb]({ d: [

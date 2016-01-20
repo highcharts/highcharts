@@ -516,10 +516,8 @@ Legend.prototype = {
 			box.isNew = true;
 		} 
 
-		/*= if (!build.classic) { =*/
-		borderWidth = box.pxStyle('stroke-width');
-		/*= } else { =*/
-		borderWidth = options.borderWidth || 0;
+		/*= if (build.classic) { =*/
+		// Presentational
 		box.attr({
 				stroke: options.borderColor,
 				'stroke-width': options.borderWidth || 0,
@@ -530,7 +528,7 @@ Legend.prototype = {
 
 		if (legendWidth > 0 && legendHeight > 0) {
 			box[box.isNew ? 'attr' : 'animate'](
-				box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, borderWidth)
+				box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, box.strokeWidth())
 			);
 			box.isNew = false;
 		}
