@@ -1083,8 +1083,6 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
         enabled: true,
         defer: false,
         y: 15,
-        borderWidth: 1,
-        borderColor: 'silver',
         borderRadius: 3,
         crop: false,
         verticalAlign: 'top',
@@ -1111,6 +1109,15 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
     },
     showInLegend: false
 });
+
+
+merge(true, defaultPlotOptions.gauge, {
+    dataLabels: {
+        borderWidth: 1,
+        borderColor: 'silver'
+    }
+});
+
 
 /**
  * Extend the point object
@@ -1223,13 +1230,20 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
             } else {
                 point.graphic = renderer[point.shapeType](shapeArgs)
                     .attr({
-                        stroke: dialOptions.borderColor || 'none',
-                        'stroke-width': dialOptions.borderWidth || 0,
-                        fill: dialOptions.backgroundColor || 'black',
                         rotation: shapeArgs.rotation, // required by VML when animation is false
                         zIndex: 1
                     })
+                    .addClass('highcharts-dial')
                     .add(series.group);
+
+                
+                // Presentational attributes
+                point.graphic.attr({
+                    stroke: dialOptions.borderColor || 'none',
+                    'stroke-width': dialOptions.borderWidth || 0,
+                    fill: dialOptions.backgroundColor || 'black'
+                });
+                
             }
         });
 
@@ -1242,13 +1256,20 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
         } else {
             series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
                 .attr({
-                    'stroke-width': pivotOptions.borderWidth || 0,
-                    stroke: pivotOptions.borderColor || 'silver',
-                    fill: pivotOptions.backgroundColor || 'black',
                     zIndex: 2
                 })
+                .addClass('highcharts-pivot')
                 .translate(center[0], center[1])
                 .add(series.group);
+
+            
+            // Presentational attributes
+            series.pivot.attr({
+                'stroke-width': pivotOptions.borderWidth || 0,
+                stroke: pivotOptions.borderColor || 'silver',
+                fill: pivotOptions.backgroundColor || 'black'
+            });
+            
         }
     },
 

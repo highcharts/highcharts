@@ -1,0 +1,27 @@
+.outer-pane {
+	fill: #EFEFEF;
+}
+.middle-pane {
+	stroke-width: 1px;
+	stroke: #AAA;
+}
+.inner-pane {
+	fill: #DDDDDD;
+}
+.green-band {
+	fill: #55BF3B;
+}
+.yellow-band {
+	fill: #DDDF0D;
+}
+.red-band {
+	fill: #DF5353;
+}
+.highcharts-gauge-series .highcharts-pivot {
+	stroke-width: 1px;
+	stroke: black;
+	fill-opacity: 0.3;
+}
+.highcharts-gauge-series .highcharts-dial {
+	fill: gray;
+}

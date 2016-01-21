@@ -215,6 +215,13 @@ g.highcharts-series, .highcharts-point {
 .highcharts-errorbar-series .highcharts-point {
     stroke: black;
 }
-
+.highcharts-gauge-series .highcharts-data-label-box {
+    stroke: silver;
+    stroke-width: 1px;
+}
+.highcharts-gauge-series .highcharts-dial {
+    fill: black;
+    stroke-width: 0;
+}
 
 
