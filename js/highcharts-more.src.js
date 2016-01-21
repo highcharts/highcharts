@@ -1984,11 +1984,13 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
         verticalAlign: 'middle'
     },
     // displayNegative: true,
+    
     marker: {
         // fillOpacity: 0.5,
         lineColor: null, // inherit from series.color
         lineWidth: 1
     },
+    
     minSize: 8,
     maxSize: '20%',
     // negativeColor: null,
@@ -2025,6 +2027,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
     trackerGroups: ['group', 'dataLabelsGroup'],
     bubblePadding: true,
     zoneAxis: 'z',
+
     
     pointAttribs: function (point, state) {
         var markerOptions = this.options.marker,
@@ -2037,6 +2040,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 
         return attr;
     },
+    
 
     /**
      * Get the radius for each point based on the minSize, maxSize and each point's Z value. This

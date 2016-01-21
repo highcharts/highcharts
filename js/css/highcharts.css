@@ -236,3 +236,6 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-boxplot-median {
   stroke-width: 2px; }
+
+.highcharts-bubble-series .highcharts-point {
+  fill-opacity: 0.5; }
