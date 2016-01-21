@@ -8362,6 +8362,7 @@ H.Axis.prototype = {
         }
 
         if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
+            console.log(axisTitleOptions.className)
             if (!axis.axisTitle) {
                 axis.axisTitle = renderer.text(
                     axisTitleOptions.text,
@@ -8380,7 +8381,7 @@ H.Axis.prototype = {
                             high: opposite ? 'left' : 'right'
                         }[axisTitleOptions.align]
                 })
-                .addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title')
+                .addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title ' + (axisTitleOptions.className || ''))
                 
                 .add(axis.axisGroup);
                 axis.axisTitle.isNew = true;

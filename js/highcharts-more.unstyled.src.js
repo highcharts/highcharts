@@ -1559,7 +1559,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
-    color: '#000000',
+    
     grouping: false,
     linkedTo: ':previous',
     tooltip: {
