@@ -1825,7 +1825,6 @@ H.Axis.prototype = {
 		}
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
-			console.log(axisTitleOptions.className)
 			if (!axis.axisTitle) {
 				axis.axisTitle = renderer.text(
 					axisTitleOptions.text,

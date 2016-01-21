@@ -24,20 +24,23 @@ Point.prototype = {
 	init: function (series, options, x) {
 
 		var point = this,
-			colors;
+			colors,
+			colorCount = series.chart.colorCount;
+
 		point.series = series;
 		point.color = series.color; // #3445
 		point.applyOptions(options, x);
 
 		if (series.options.colorByPoint) {
-			colors = series.options.colors || series.chart.options.colors;
 			/*= if (build.classic) { =*/
+			colors = series.options.colors || series.chart.options.colors;
 			point.color = point.color || colors[series.colorCounter];
+			colorCount = colors.length;
 			/*= } =*/
 			point.colorIndex = series.colorCounter;
 			series.colorCounter++;
 			// loop back to zero
-			if (series.colorCounter === colors.length) {
+			if (series.colorCounter === colorCount) {
 				series.colorCounter = 0;
 			}
 		} else {

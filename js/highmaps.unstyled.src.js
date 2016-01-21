@@ -8362,7 +8362,6 @@ H.Axis.prototype = {
         }
 
         if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
-            console.log(axisTitleOptions.className)
             if (!axis.axisTitle) {
                 axis.axisTitle = renderer.text(
                     axisTitleOptions.text,
@@ -12807,18 +12806,19 @@ Point.prototype = {
     init: function (series, options, x) {
 
         var point = this,
-            colors;
+            colors,
+            colorCount = series.chart.colorCount;
+
         point.series = series;
         point.color = series.color; // #3445
         point.applyOptions(options, x);
 
         if (series.options.colorByPoint) {
-            colors = series.options.colors || series.chart.options.colors;
             
             point.colorIndex = series.colorCounter;
             series.colorCounter++;
             // loop back to zero
-            if (series.colorCounter === colors.length) {
+            if (series.colorCounter === colorCount) {
                 series.colorCounter = 0;
             }
         } else {
@@ -15607,6 +15607,11 @@ seriesTypes.column = extendClass(Series, {
                     point.graphic = graphic = renderer[point.shapeType](shapeArgs)
                         .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
                         .add(point.group || series.group);
+
+                    // Color by point
+                    if (options.colorByPoint) {
+                        graphic.addClass('highcharts-color-' + point.colorIndex);
+                    }
 
                     
                 }

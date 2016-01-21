@@ -373,6 +373,11 @@ seriesTypes.column = extendClass(Series, {
 						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
 						.add(point.group || series.group);
 
+					// Color by point
+					if (options.colorByPoint) {
+						graphic.addClass('highcharts-color-' + point.colorIndex);
+					}
+
 					/*= if (build.classic) { =*/
 					// Presentational
 					graphic
