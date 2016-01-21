@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-20)
+ * @license Highcharts JS v4.2.0-modified (bugfix)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -12829,6 +12829,7 @@
                     height: clipBox.height
                 });
             }
+        
 
             // Plot area border
             if (plotBorderWidth) {

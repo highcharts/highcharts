@@ -369,7 +369,7 @@ gulp.task('scripts', function () {
         return tpl
             .replace(/@product\.name@/g, product.name)
             .replace(/@product\.version@/g, product.version)
-            .replace(/@product\.date@/g, product.date)
+            .replace(/@product\.date@/g, 'bugfix') // Avoid updating dates in bugfix branch, since it raises daily merge conflicts
             .replace(/@product\.cdnpath@/g, product.cdnpath);
     }
 

@@ -1015,6 +1015,7 @@ Chart.prototype = {
 				height: clipBox.height
 			});
 		}
+		
 
 		// Plot area border
 		if (plotBorderWidth) {

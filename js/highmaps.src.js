@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-20)
+ * @license Highmaps JS v4.2.0-modified (bugfix)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -12352,6 +12352,7 @@
                     height: clipBox.height
                 });
             }
+        
 
             // Plot area border
             if (plotBorderWidth) {
