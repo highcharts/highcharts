@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-20)
+ * @license Highmaps JS v4.2.0-modified (2016-01-21)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -4917,7 +4917,17 @@
         html: function (str, x, y) {
             var wrapper = this.createElement('span'),
                 element = wrapper.element,
-                renderer = wrapper.renderer;
+                renderer = wrapper.renderer,
+                addSetters = function (element, style) {
+                    // These properties are set as attributes on the SVG group, and as
+                    // identical CSS properties on the div. (#3542)
+                    each(['opacity', 'visibility'], function (prop) {
+                        wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
+                            proceed.call(this, value, key, elem);
+                            style[key] = value;
+                        });
+                    });            
+                };
 
             // Text setter
             wrapper.textSetter = function (value) {
@@ -4927,6 +4937,7 @@
                 element.innerHTML = this.textStr = value;
                 wrapper.htmlUpdateTransform();
             };
+            addSetters(wrapper, wrapper.element.style);
 
             // Various setters which rely on update transform
             wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
@@ -5016,15 +5027,7 @@
                                         parentGroup.doTransform = true;
                                     }
                                 });
-
-                                // These properties are set as attributes on the SVG group, and as
-                                // identical CSS properties on the div. (#3542)
-                                each(['opacity', 'visibility'], function (prop) {
-                                    wrap(parentGroup, prop + 'Setter', function (proceed, value, key, elem) {
-                                        proceed.call(this, value, key, elem);
-                                        htmlGroupStyle[key] = value;
-                                    });
-                                });
+                                addSetters(parentGroup, htmlGroupStyle);
                             });
 
                         }
