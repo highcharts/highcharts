@@ -158,7 +158,7 @@ H.Tick.prototype = {
 
 		if (textWidth) {
 			css.width = textWidth;
-			if (!axis.options.labels.style.textOverflow) {
+			if (!(axis.options.labels.style || {}).textOverflow) {
 				css.textOverflow = 'ellipsis';
 			}
 			label.css(css);

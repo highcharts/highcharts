@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-20)
+ * @license Highmaps JS v2.0-dev (2016-01-21)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -6453,7 +6453,7 @@ H.Tick.prototype = {
 
         if (textWidth) {
             css.width = textWidth;
-            if (!axis.options.labels.style.textOverflow) {
+            if (!(axis.options.labels.style || {}).textOverflow) {
                 css.textOverflow = 'ellipsis';
             }
             label.css(css);

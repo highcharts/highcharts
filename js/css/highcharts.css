@@ -139,7 +139,11 @@ g.highcharts-series, .highcharts-point {
 .highcharts-area {
   fill-opacity: 0.75; }
 
-.highcharts-markers path, .highcharts-point {
+.highcharts-markers path {
+  stroke-width: 1px;
+  stroke: #ffffff; }
+
+.highcharts-point {
   stroke-width: 1px; }
 
 .highcharts-point-select {
@@ -218,6 +222,10 @@ g.highcharts-series, .highcharts-point {
 /* Plot bands and polar pane backgrounds */
 .highcharts-plot-band {
   fill: none; }
+
+.highcharts-plot-line {
+  stroke: gray;
+  stroke-width: 1px; }
 
 .highcharts-axis-line {
   fill: none; }
