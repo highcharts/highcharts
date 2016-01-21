@@ -19289,7 +19289,8 @@
                 title: null,
                 tickPositions: []
             },
-            seriesOptions;
+            seriesOptions,
+            defaultCreditsOptions = Highcharts.getOptions().credits;
 
         /* For visual testing
         hiddenAxis.gridLineWidth = 1;
@@ -19308,8 +19309,8 @@
                     type: 'map'
                 },
                 credits: {
-                    mapText: ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>',
-                    mapTextFull: '{geojson.copyright}'
+                    mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
+                    mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
                 },
                 xAxis: hiddenAxis,
                 yAxis: merge(hiddenAxis, { reversed: true })
