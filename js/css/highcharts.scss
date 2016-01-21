@@ -121,11 +121,11 @@ g.highcharts-series, .highcharts-point {
     fill: #FFFFFF !important;
     stroke: #000000 !important;
 }
-.highcharts-column-series rect {
+.highcharts-column-series .highcharts-point {
     stroke: #ffffff;
     transition: fill-opacity 250ms;
 }
-.highcharts-column-series rect:hover {
+.highcharts-column-series .highcharts-point:hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
 }

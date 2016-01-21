@@ -16,10 +16,6 @@
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	/*= if (build.classic) { =*/
-	borderColor: '#FFFFFF',
-	//borderWidth: 1,
-	/*= } =*/
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -32,19 +28,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
-			halo: false,
-			/*= if (build.classic) { =*/
-			brightness: 0.1,
-			shadow: false
-			/*= } =*/
-		},
-		/*= if (build.classic) { =*/
-		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
-			shadow: false
+			halo: false
 		}
-		/*= } =*/
 	},
 	dataLabels: {
 		align: null, // auto
@@ -59,6 +44,25 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	},
 	threshold: 0
 });
+
+/*= if (build.classic) { =*/
+// Presentational options
+merge(true, defaultPlotOptions.column, {
+	borderColor: '#FFFFFF',
+	// borderWidth: 1,
+	states: {
+		hover: {
+			brightness: 0.1,
+			shadow: false
+		},
+		select: {
+			color: '#C0C0C0',
+			borderColor: '#000000',
+			shadow: false
+		}
+	}
+});
+/*= } =*/
 
 /**
  * ColumnSeries object
@@ -285,6 +289,7 @@ seriesTypes.column = extendClass(Series, {
 	 */
 	drawGraph: noop,
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Get presentational attributes
 	 */
@@ -334,6 +339,7 @@ seriesTypes.column = extendClass(Series, {
 
 		return ret;
 	},
+	/*= } =*/
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates

@@ -16823,7 +16823,6 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
-    
     borderRadius: 0,
     //colorByPoint: undefined,
     groupPadding: 0.2,
@@ -16837,9 +16836,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
     states: {
         hover: {
             halo: false
-            
         }
-        
     },
     dataLabels: {
         align: null, // auto
@@ -16854,6 +16851,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
     },
     threshold: 0
 });
+
+
 
 /**
  * ColumnSeries object
@@ -17080,55 +17079,7 @@ seriesTypes.column = extendClass(Series, {
      */
     drawGraph: noop,
 
-    /**
-     * Get presentational attributes
-     */
-    pointAttribs: function (point, state) {
-        var options = this.options,
-            stateOptions,
-            ret,
-            p2o = this.pointAttrToOptions || {},
-            strokeOption = p2o.stroke || 'borderColor',
-            strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
-            fill = (point && point.color) || this.color,
-            stroke = options[strokeOption] || this.color,
-            dashstyle = options.dashStyle,
-            zone,
-            brightness;
-        
-        if (point && this.zones.length) {
-            zone = point.getZone();
-            if (zone && zone.color) {
-                fill = zone.color;
-            }
-        }
-
-        // Select or hover states
-        if (state) {
-            stateOptions = options.states[state];
-            brightness = stateOptions.brightness;
-            fill = stateOptions.color || 
-                (brightness !== undefined && Color(fill).brighten(stateOptions.brightness).get()) ||
-                fill;
-            stroke = stateOptions[strokeOption] || stroke;
-            dashstyle = stateOptions.dashStyle || dashstyle;
-        }
-
-        ret = {
-            'fill': fill,
-            'stroke': stroke,
-            'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
-        };
-        if (options.borderRadius) {
-            ret.r = options.borderRadius;
-        }
-
-        if (dashstyle) {
-            ret.dashstyle = dashstyle;
-        }
-
-        return ret;
-    },
+    
 
     /**
      * Draw the columns. For bars, the series.group is rotated, so the same coordinates
