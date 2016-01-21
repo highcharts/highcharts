@@ -370,7 +370,7 @@ seriesTypes.column = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
 						.add(point.group || series.group);
 
 					/*= if (build.classic) { =*/

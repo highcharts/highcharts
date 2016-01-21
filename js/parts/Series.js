@@ -1019,7 +1019,7 @@ H.Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
-						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
 						.attr({ r: radius })
 						.add(markerGroup);
 

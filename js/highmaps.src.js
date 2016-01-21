@@ -14396,7 +14396,7 @@ H.Series.prototype = {
                             2 * radius,
                             hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
                         )
-                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
                         .attr({ r: radius })
                         .add(markerGroup);
 
@@ -16093,7 +16093,7 @@ seriesTypes.column = extendClass(Series, {
 
                 } else {
                     point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
                         .add(point.group || series.group);
 
                     

@@ -10,3 +10,6 @@
 .highcharts-area.highcharts-negative {
 	fill: blue;
 }
+.highcharts-point.highcharts-negative {
+	fill: blue;
+}
