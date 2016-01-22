@@ -13873,7 +13873,7 @@
             dataLength = data.length;
             redraw = pick(redraw, true);
 
-            // If the point count is the same as is was, just run Point.update which is
+            // If the point count is the same as it was, just run Point.update which is
             // cheaper, allows animation, and keeps references to points.
             if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
                 each(data, function (point, i) {
