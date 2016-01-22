@@ -152,6 +152,10 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
 				panning: 'xy',
 				type: 'map'
 			},
+			credits: {
+				mapText: ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>',
+				mapTextFull: '{geojson.copyright}'
+			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })
 		},

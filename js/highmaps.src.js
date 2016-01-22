@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-21)
+ * @license Highmaps JS v4.2.0-modified (2016-01-22)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -19125,9 +19125,8 @@
 
         // Create a credits text that includes map source, to be picked up in Chart.showCredits
         if (series && geojson.copyrightShort) {
-            series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
-                '<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
-            series.chart.mapCreditsFull = geojson.copyright;
+            series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
+            series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
         }
 
         return mapData;
@@ -19138,13 +19137,16 @@
      */
     wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-        if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
-            credits.text = this.mapCredits;
+        // Disable credits link if map credits enabled. This to allow for in-text anchors.
+        if (this.mapCredits) {
             credits.href = null;
         }
 
-        proceed.call(this, credits);
+        proceed.call(this, Highcharts.merge(credits, {
+            text: credits.text + (this.mapCredits || '') // Add map credits to credits text
+        }));
 
+        // Add full map credits to hover
         if (this.credits && this.mapCreditsFull) {
             this.credits.attr({
                 title: this.mapCreditsFull
@@ -19304,6 +19306,10 @@
                 chart: {
                     panning: 'xy',
                     type: 'map'
+                },
+                credits: {
+                    mapText: ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>',
+                    mapTextFull: '{geojson.copyright}'
                 },
                 xAxis: hiddenAxis,
                 yAxis: merge(hiddenAxis, { reversed: true })

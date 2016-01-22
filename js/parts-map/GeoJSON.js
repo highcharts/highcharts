@@ -185,9 +185,8 @@ Highcharts.geojson = function (geojson, hType, series) {
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits
 	if (series && geojson.copyrightShort) {
-		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
-			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
-		series.chart.mapCreditsFull = geojson.copyright;
+		series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
+		series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
 	}
 
 	return mapData;
@@ -198,13 +197,16 @@ Highcharts.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
-		credits.text = this.mapCredits;
+	// Disable credits link if map credits enabled. This to allow for in-text anchors.
+	if (this.mapCredits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, credits);
+	proceed.call(this, Highcharts.merge(credits, {
+		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
+	}));
 
+	// Add full map credits to hover
 	if (this.credits && this.mapCreditsFull) {
 		this.credits.attr({
 			title: this.mapCreditsFull
