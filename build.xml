@@ -311,6 +311,7 @@
         <!-- This is the list of files for Highmaps -->
         <filelist id="highmaps.files" dir="${basedir}/js">
             <file name="parts-map/Intro.js"/>
+            <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
             <file name="parts/Options.js"/>
             <file name="parts/Color.js"/>
