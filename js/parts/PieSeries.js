@@ -274,7 +274,7 @@ seriesTypes.pie = extendClass(Series, {
 			precision = 1000, // issue #172
 			options = series.options,
 			slicedOffset = options.slicedOffset,
-			connectorOffset = slicedOffset + options.borderWidth,
+			connectorOffset = slicedOffset + (options.borderWidth || 0),
 			start,
 			end,
 			angle,

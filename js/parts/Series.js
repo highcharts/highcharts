@@ -1546,11 +1546,6 @@ H.Series.prototype = {
 			series.animate(true);
 		}
 
-		/*= if (build.classic) { =*/
-		// cache attributes for shapes
-		//series.getAttribs();
-		/*= } =*/
-
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
 		group.inverted = series.isCartesian ? chart.inverted : false;
 

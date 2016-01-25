@@ -168,10 +168,10 @@ H.defaultOptions = {
 					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
 				/*= if (!build.classic) { =*/
-				style: {
+				/*style: {
 					color: 'contrast',
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
-				},
+				},*/
 				/*= } else { =*/
 				style: {
 					fontSize: '11px',

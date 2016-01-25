@@ -611,6 +611,8 @@ if (seriesTypes.pie) {
 			// Draw the connectors
 			if (outside && connectorWidth) {
 				each(this.points, function (point) {
+					var isNew;
+
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -637,19 +639,23 @@ if (seriesTypes.pie) {
 							labelPos[4], labelPos[5] // base
 						];
 
-						if (connector) {
-							connector.animate({ d: connectorPath });
-							connector.attr('visibility', visibility);
+						isNew = !connector;
 
-						} else {
-							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+						if (isNew) {
+							point.connector = connector = chart.renderer.path()
+								.addClass('highcharts-data-label-connector highcharts-color-' + point.colorIndex)
+								.add(series.dataLabelsGroup);
+
+							/*= if (build.classic) { =*/
+							connector.attr({
 								'stroke-width': connectorWidth,
-								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility
-								//zIndex: 0 // #2722 (reversed)
-							})
-							.add(series.dataLabelsGroup);
+								'stroke': options.connectorColor || point.color || '#606060',
+							});
+							/*= } =*/
 						}
+						connector[isNew ? 'attr' : 'animate']({ d: connectorPath });
+						connector.attr('visibility', visibility);
+
 					} else if (connector) {
 						point.connector = connector.destroy();
 					}

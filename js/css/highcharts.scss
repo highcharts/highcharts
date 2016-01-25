@@ -113,20 +113,21 @@ g.highcharts-series, .highcharts-point {
 .highcharts-point {
     stroke-width: 1px;
 }
-.highcharts-point-select {
-    fill: #FFFFFF !important;
-    stroke: #000000 !important;
-}
 .highcharts-column-series .highcharts-point {
     stroke: #ffffff;
     transition: fill-opacity 250ms;
 }
-.highcharts-column-series .highcharts-point:hover {
+.highcharts-column-series .highcharts-point-hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
 }
 .highcharts-pie-series .highcharts-point {
     stroke-linejoin: round;
+    stroke: #ffffff;
+}
+.highcharts-pie-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
 }
 .highcharts-data-label {
     font-size: 0.9em;
@@ -136,10 +137,21 @@ g.highcharts-series, .highcharts-point {
     fill: none;
     stroke-width: 0;
 }
+.highcharts-data-label text {
+    fill: #333;
+}
+.highcharts-data-label-connector {
+    fill: none;
+}
 .highcharts-halo {
     fill-opacity: 0.25;
     stroke-width: 0;
 }
+.highcharts-point-select:not(.highcharts-pie-series .highcharts-point-select) {
+    fill: #FFFFFF !important;
+    stroke: #000000 !important;
+}
+
 
 
 /* Legend */

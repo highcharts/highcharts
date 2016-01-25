@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-22)
+ * @license Highcharts JS v5.0-dev (2016-01-25)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1565,10 +1565,10 @@ H.defaultOptions = {
                     return this.y === null ? '' : H.numberFormat(this.y, -1);
                 },
                 
-                style: {
+                /*style: {
                     color: 'contrast',
                     textShadow: '0 0 6px contrast, 0 0 3px contrast'
-                },
+                },*/
                 
                 verticalAlign: 'bottom', // above singular point
                 x: 0,
@@ -15150,8 +15150,6 @@ H.Series.prototype = {
             series.animate(true);
         }
 
-        
-
         // SVGRenderer needs to know this before drawing elements (#1089, #1795)
         group.inverted = series.isCartesian ? chart.inverted : false;
 
@@ -17509,7 +17507,7 @@ seriesTypes.pie = extendClass(Series, {
             precision = 1000, // issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
-            connectorOffset = slicedOffset + options.borderWidth,
+            connectorOffset = slicedOffset + (options.borderWidth || 0),
             start,
             end,
             angle,
@@ -18292,6 +18290,8 @@ if (seriesTypes.pie) {
             // Draw the connectors
             if (outside && connectorWidth) {
                 each(this.points, function (point) {
+                    var isNew;
+
                     connector = point.connector;
                     labelPos = point.labelPos;
                     dataLabel = point.dataLabel;
@@ -18318,19 +18318,18 @@ if (seriesTypes.pie) {
                             labelPos[4], labelPos[5] // base
                         ];
 
-                        if (connector) {
-                            connector.animate({ d: connectorPath });
-                            connector.attr('visibility', visibility);
+                        isNew = !connector;
 
-                        } else {
-                            point.connector = connector = series.chart.renderer.path(connectorPath).attr({
-                                'stroke-width': connectorWidth,
-                                stroke: options.connectorColor || point.color || '#606060',
-                                visibility: visibility
-                                //zIndex: 0 // #2722 (reversed)
-                            })
-                            .add(series.dataLabelsGroup);
+                        if (isNew) {
+                            point.connector = connector = chart.renderer.path()
+                                .addClass('highcharts-data-label-connector highcharts-color-' + point.colorIndex)
+                                .add(series.dataLabelsGroup);
+
+                            
                         }
+                        connector[isNew ? 'attr' : 'animate']({ d: connectorPath });
+                        connector.attr('visibility', visibility);
+
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }

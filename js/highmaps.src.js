@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-22)
+ * @license Highmaps JS v2.0-dev (2016-01-25)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -14968,11 +14968,6 @@ H.Series.prototype = {
             series.animate(true);
         }
 
-        
-        // cache attributes for shapes
-        //series.getAttribs();
-        
-
         // SVGRenderer needs to know this before drawing elements (#1089, #1795)
         group.inverted = series.isCartesian ? chart.inverted : false;
 
@@ -16872,6 +16867,8 @@ if (seriesTypes.pie) {
             // Draw the connectors
             if (outside && connectorWidth) {
                 each(this.points, function (point) {
+                    var isNew;
+
                     connector = point.connector;
                     labelPos = point.labelPos;
                     dataLabel = point.dataLabel;
@@ -16898,19 +16895,23 @@ if (seriesTypes.pie) {
                             labelPos[4], labelPos[5] // base
                         ];
 
-                        if (connector) {
-                            connector.animate({ d: connectorPath });
-                            connector.attr('visibility', visibility);
+                        isNew = !connector;
 
-                        } else {
-                            point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+                        if (isNew) {
+                            point.connector = connector = chart.renderer.path()
+                                .addClass('highcharts-data-label-connector highcharts-color-' + point.colorIndex)
+                                .add(series.dataLabelsGroup);
+
+                            
+                            connector.attr({
                                 'stroke-width': connectorWidth,
-                                stroke: options.connectorColor || point.color || '#606060',
-                                visibility: visibility
-                                //zIndex: 0 // #2722 (reversed)
-                            })
-                            .add(series.dataLabelsGroup);
+                                'stroke': options.connectorColor || point.color || '#606060'
+                            });
+                            
                         }
+                        connector[isNew ? 'attr' : 'animate']({ d: connectorPath });
+                        connector.attr('visibility', visibility);
+
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
