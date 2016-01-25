@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-22)
+ * @license Highstock JS v4.2.0-modified (2016-01-25)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -9208,6 +9208,7 @@
             var time = minDate.getTime(),
                 minMonth = minDate[getMonth](),
                 minDateDate = minDate[getDate](),
+                variableDayLength = !useUTC || !!getTimezoneOffset, // #4951
                 localTimezoneOffset = (timeUnits.day +
                         (useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
                     ) % timeUnits.day; // #950, #3359
@@ -9226,7 +9227,7 @@
 
                 // if we're using global time, the interval is not fixed as it jumps
                 // one hour at the DST crossover
-                } else if (!useUTC && (interval === timeUnits.day || interval === timeUnits.week)) {
+                } else if (variableDayLength && (interval === timeUnits.day || interval === timeUnits.week)) {
                     time = makeTime(minYear, minMonth, minDateDate +
                         i * count * (interval === timeUnits.day ? 1 : 7));
 
@@ -20051,7 +20052,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-22)
+     * Highstock JS v4.2.0-modified (2016-01-25)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
