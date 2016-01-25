@@ -504,6 +504,8 @@ SVGElement.prototype = {
 			}
 		}
 
+		if (styles) { elem.usesCustomTitle = styles.usesCustomTitle; }
+
 		return elemWrapper;
 	},
 
@@ -1600,7 +1602,8 @@ SVGRenderer.prototype = {
 										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
-								if (wasTooLong) {
+								var usesCustomTitle = (wrapper.element.parentElement) ?  wrapper.element.parentElement.usesCustomTitle : false;
+								if (wasTooLong && !usesCustomTitle) {
 									wrapper.attr('title', wrapper.textStr);
 								}
 								wrapper.rotation = rotation;
