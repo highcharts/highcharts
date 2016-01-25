@@ -25,7 +25,8 @@ $(function () {
     Highcharts.chart('container', {
 
         chart: {
-            type: 'solidgauge'
+            type: 'solidgauge',
+            marginTop: 50
         },
 
         title: {
@@ -56,12 +57,12 @@ $(function () {
             }, { // Track for Exercise
                 outerRadius: '87%',
                 innerRadius: '63%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
                 borderWidth: 0
             }, { // Track for Stand
                 outerRadius: '62%',
                 innerRadius: '38%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[3]).setOpacity(0.3).get(),
                 borderWidth: 0
             }]
         },
@@ -77,15 +78,7 @@ $(function () {
             solidgauge: {
                 borderWidth: '34px',
                 dataLabels: {
-                    borderWidth: 0,
-                    enabled: true,
-                    useHTML: true,
-                    format: '<i class="fa {point.series.options.icon}"></i>',
-                    style: {
-                        fontSize: '30px',
-                        fontWeight: 'bold'
-                    },
-                    zIndex: 4
+                    enabled: false
                 },
                 stickyTracking: false
             }
@@ -99,41 +92,68 @@ $(function () {
                 radius: '100%',
                 innerRadius: '100%',
                 y: 80
-            }],
-            dataLabels: {
-                x: -5,
-                y: -165
-            },
-            icon: 'fa-angle-right'
+            }]
         }, {
             name: 'Exercise',
-            borderColor: Highcharts.getOptions().colors[1],
-            data: [{
-                color: Highcharts.getOptions().colors[1],
-                radius: '75%',
-                innerRadius: '75%',
-                y: 65
-            }],
-            dataLabels: {
-                x: -5,
-                y: -130
-            },
-            icon: 'fa-angle-double-right'
-        }, {
-            name: 'Stand',
             borderColor: Highcharts.getOptions().colors[2],
             data: [{
                 color: Highcharts.getOptions().colors[2],
+                radius: '75%',
+                innerRadius: '75%',
+                y: 65
+            }]
+        }, {
+            name: 'Stand',
+            borderColor: Highcharts.getOptions().colors[3],
+            data: [{
+                color: Highcharts.getOptions().colors[3],
                 radius: '50%',
                 innerRadius: '50%',
                 y: 50
-            }],
-            dataLabels: {
-                x: -5,
-                y: -95
-            },
-            icon: 'fa-angle-up'
+            }]
         }]
+    },
+
+    /**
+     * In the chart load callback, add icons on top of the circular shapes
+     */
+    function callback() {
+
+        // Move icon
+        this.renderer.path(['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8])
+            .attr({
+                'stroke': '#000000',
+                'stroke-linecap': 'round',
+                'stroke-linejoin': 'round',
+                'stroke-width': 4,
+                'zIndex': 10
+            })
+            .translate(190, 26)
+            .add(this.series[2].group);
+
+        // Exercise icon
+        this.renderer.path(['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8, 'M', 8, -8, 'L', 16, 0, 8, 8])
+            .attr({
+                'stroke': '#000000',
+                'stroke-linecap': 'round',
+                'stroke-linejoin': 'round',
+                'stroke-width': 4,
+                'zIndex': 10
+            })
+            .translate(190, 61)
+            .add(this.series[2].group);
+
+        // Stand icon
+        this.renderer.path(['M', 0, 8, 'L', 0, -8, 'M', -8, 0, 'L', 0, -8, 8, 0])
+            .attr({
+                'stroke': '#000000',
+                'stroke-linecap': 'round',
+                'stroke-linejoin': 'round',
+                'stroke-width': 4,
+                'zIndex': 10
+            })
+            .translate(190, 96)
+            .add(this.series[2].group);
     });
 
 
