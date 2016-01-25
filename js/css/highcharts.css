@@ -65,7 +65,7 @@
   fill: #4572A7;
   fill-opacity: 0.25; }
 
-.highcharts-graph {
+.highcharts-graph:not(.highcharts-polygon-series .highcharts-graph) {
   fill: none;
   stroke-width: 2;
   stroke-linecap: round;
@@ -256,4 +256,7 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-gauge-series .highcharts-dial {
   fill: black;
+  stroke-width: 0; }
+
+.highcharts-polygon-series .highcharts-graph {
   stroke-width: 0; }

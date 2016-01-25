@@ -1968,8 +1968,8 @@ seriesTypes.polygon = extendClass(seriesTypes.scatter, {
     type: 'polygon',
     fillGraph: true,
     // Close all segments
-    getSegmentPath: function (segment) {
-        return Series.prototype.getSegmentPath.call(this, segment).concat('z');
+    getGraphPath: function (segment) {
+        return Series.prototype.getGraphPath.call(this, segment).concat('z');
     },
     drawGraph: Series.prototype.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
