@@ -204,7 +204,8 @@ g.highcharts-series, .highcharts-point {
 
 /* Plot bands and polar pane backgrounds */
 .highcharts-plot-band {
-    fill: none;
+    fill: black;
+    fill-opacity: 0.05; 
 }
 .highcharts-plot-line {
     stroke: gray;
