@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-22)
+ * @license Highmaps JS v4.2.0-modified (2016-01-26)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -15209,7 +15209,7 @@
                 chart = series.chart,
                 remove = function () {
 
-                    if (data.length === points.length) {
+                    if (points && points.length === data.length) { // #4935
                         points.splice(i, 1);
                     }
                     data.splice(i, 1);
