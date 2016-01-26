@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-25)
+ * @license Highcharts JS v5.0-dev (2016-01-26)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1596,10 +1596,12 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 }(Highcharts));
 (function (H) {
     var defaultPlotOptions = H.defaultPlotOptions,
+        each = H.each,
         extendClass = H.extendClass,
         merge = H.merge,
         noop = H.noop,
         pick = H.pick,
+        Point = H.Point,
         Series = H.Series,
         seriesTypes = H.seriesTypes;
 
@@ -1609,24 +1611,29 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 
 // 1 - set default options
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
-    lineWidth: 1,
-    lineColor: '#333',
-    dashStyle: 'dot',
-    borderColor: '#333',
     dataLabels: {
         inside: true
-    },
-    states: {
-        hover: {
-            lineWidthPlus: 0 // #3126
-        }
     }
+    
 });
 
 
 // 2 - Create the series object
 seriesTypes.waterfall = extendClass(seriesTypes.column, {
     type: 'waterfall',
+
+    pointClass: extendClass(Point, {
+        getClassName: function () {
+            var className = Point.prototype.getClassName.call(this);
+
+            if (this.isSum) {
+                className += ' highcharts-sum';
+            } else if (this.isIntermediateSum) {
+                className += ' highcharts-intermediate-sum';
+            }
+            return className;
+        }
+    }),
 
     pointValKey: 'y',
 
@@ -1788,36 +1795,24 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
         return pt.y;
     },
 
+    
+
     /**
-     * Postprocess mapping between options and SVG attributes
+     * Return an empty path initially, because we need to know the stroke-width in order 
+     * to set the final path.
      */
-    pointAttribs: function (point, state) {
-
-        var upColor = this.options.upColor,
-            attr;
-
-        // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color) {
-            point.color = point.y > 0 ? upColor : null;
-        }
-
-        attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
-
-        // The dashStyle option in waterfall applies to the graph, not
-        // the points
-        delete attr.dashstyle;
-
-        return attr;
+    getGraphPath: function () {
+        return ['M', 0, 0];
     },
 
     /**
      * Draw columns' connector lines
      */
-    getGraphPath: function () {
+    getCrispPath: function () {
 
         var data = this.data,
             length = data.length,
-            lineWidth = this.options.lineWidth + this.borderWidth,
+            lineWidth = this.graph.strokeWidth() + this.borderWidth,
             normalizer = Math.round(lineWidth) % 2 / 2,
             path = [],
             prevArgs,
@@ -1848,11 +1843,22 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
     },
 
     /**
+     * The graph is initally drawn with an empty definition, then updated with
+     * crisp rendering.
+     */
+    drawGraph: function () {
+        Series.prototype.drawGraph.call(this);
+        this.graph.attr({
+            d: this.getCrispPath()
+        });
+    },
+
+    /**
      * Extremes are recorded in processData
      */
-    getExtremes: noop,
+    getExtremes: noop
 
-    drawGraph: Series.prototype.drawGraph
+
 });
 
 /* ****************************************************************************

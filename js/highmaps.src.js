@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-25)
+ * @license Highmaps JS v2.0-dev (2016-01-26)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -13163,7 +13163,9 @@ Point.prototype = {
             colorCount = series.chart.colorCount;
 
         point.series = series;
+        
         point.color = series.color; // #3445
+        
         point.applyOptions(options, x);
 
         if (series.options.colorByPoint) {
@@ -13266,6 +13268,14 @@ Point.prototype = {
             }
         }
         return ret;
+    },
+
+    /**
+     * Get the CSS class names for individual points
+     * @returns {String} The class name
+     */
+    getClassName: function () {
+        return 'highcharts-point' + (this.selected ? ' highcharts-point-select' : '') + (this.negative ? ' highcharts-negative' : '');
     },
 
     /**
@@ -14441,7 +14451,7 @@ H.Series.prototype = {
                             2 * radius,
                             hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
                         )
-                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
+                        .addClass(point.getClassName())
                         .attr({ r: radius })
                         .add(markerGroup);
 
@@ -16133,7 +16143,7 @@ seriesTypes.column = extendClass(Series, {
 
                 } else {
                     point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-                        .addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : '') + (point.negative ? ' highcharts-negative' : ''))
+                        .addClass(point.getClassName())
                         .add(point.group || series.group);
 
                     // Color by point

@@ -239,5 +239,9 @@ g.highcharts-series, .highcharts-point {
 .highcharts-polygon-series .highcharts-graph {
     stroke-width: 0;
 }
+.highcharts-waterfall-series .highcharts-graph {
+    stroke: #333;
+    stroke-dasharray: 1, 3;
+}
 
 

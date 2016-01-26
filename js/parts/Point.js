@@ -28,7 +28,9 @@ Point.prototype = {
 			colorCount = series.chart.colorCount;
 
 		point.series = series;
+		/*= if (build.classic) { =*/
 		point.color = series.color; // #3445
+		/*= } =*/
 		point.applyOptions(options, x);
 
 		if (series.options.colorByPoint) {
@@ -131,6 +133,14 @@ Point.prototype = {
 			}
 		}
 		return ret;
+	},
+
+	/**
+	 * Get the CSS class names for individual points
+	 * @returns {String} The class name
+	 */
+	getClassName: function () {
+		return 'highcharts-point' + (this.selected ? ' highcharts-point-select' : '') + (this.negative ? ' highcharts-negative' : '');
 	},
 
 	/**

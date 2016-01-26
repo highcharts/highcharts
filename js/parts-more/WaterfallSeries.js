@@ -1,9 +1,11 @@
 (function (H) {
 	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
+		Point = H.Point,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
 
@@ -13,24 +15,39 @@
 
 // 1 - set default options
 defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+	dataLabels: {
+		inside: true
+	},
+	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
 	borderColor: '#333',
-	dataLabels: {
-		inside: true
-	},
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126
 		}
 	}
+	/*= } =*/
 });
 
 
 // 2 - Create the series object
 seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
+
+	pointClass: extendClass(Point, {
+		getClassName: function () {
+			var className = Point.prototype.getClassName.call(this);
+
+			if (this.isSum) {
+				className += ' highcharts-sum';
+			} else if (this.isIntermediateSum) {
+				className += ' highcharts-intermediate-sum';
+			}
+			return className;
+		}
+	}),
 
 	pointValKey: 'y',
 
@@ -192,6 +209,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		return pt.y;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
@@ -213,15 +231,24 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		return attr;
 	},
+	/*= } =*/
+
+	/**
+	 * Return an empty path initially, because we need to know the stroke-width in order 
+	 * to set the final path.
+	 */
+	getGraphPath: function () {
+		return ['M', 0, 0];
+	},
 
 	/**
 	 * Draw columns' connector lines
 	 */
-	getGraphPath: function () {
+	getCrispPath: function () {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.borderWidth,
+			lineWidth = this.graph.strokeWidth() + this.borderWidth,
 			normalizer = Math.round(lineWidth) % 2 / 2,
 			path = [],
 			prevArgs,
@@ -252,11 +279,22 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	},
 
 	/**
+	 * The graph is initally drawn with an empty definition, then updated with
+	 * crisp rendering.
+	 */
+	drawGraph: function () {
+		Series.prototype.drawGraph.call(this);
+		this.graph.attr({
+			d: this.getCrispPath()
+		});
+	},
+
+	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: noop,
+	getExtremes: noop
 
-	drawGraph: Series.prototype.drawGraph
+
 });
 
 /* ****************************************************************************
