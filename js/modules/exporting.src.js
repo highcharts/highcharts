@@ -678,7 +678,8 @@ extend(Chart.prototype, {
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.attr({
 				title: chart.options.lang[btnOptions._titleKey],
-				'stroke-linecap': 'round'
+				'stroke-linecap': 'round',
+				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
 
