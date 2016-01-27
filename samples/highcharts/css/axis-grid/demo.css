@@ -3,10 +3,14 @@
 	max-width: 800px;
 	margin: 0 auto;
 }
-.highcharts-xaxis-grid .highcharts-gridline {
-	stroke-width: 1px;
-	stroke-dasharray: 2, 2;
+.highcharts-xaxis-grid .highcharts-grid-line {
+	stroke-width: 2px;
+	stroke: #d8d8d8;
 }
 .highcharts-xaxis .highcharts-tick {
+	stroke-width: 2px;
+	stroke: #d8d8d8;
+}
+.highcharts-minor-grid-line {
 	stroke-dasharray: 2, 2;
 }

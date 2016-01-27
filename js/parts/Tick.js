@@ -286,7 +286,7 @@ H.Tick.prototype = {
 		// Create the grid line
 		if (gridLine === undefined) {
 			/*= if (build.classic) { =*/
-			attribs.stroke = gridLineColor,
+			attribs.stroke = gridLineColor;
 			attribs['stroke-width'] = gridLineWidth;
 			if (dashStyle) {
 				attribs.dashstyle = dashStyle;
@@ -300,7 +300,7 @@ H.Tick.prototype = {
 			}
 			tick.gridLine = gridLine = renderer.path()
 				.attr(attribs)
-				.addClass('highcharts-gridline')
+				.addClass('highcharts-' + (type ? type + '-' : '') + 'grid-line')
 				.add(axis.gridGroup);
 		}
 
@@ -328,7 +328,7 @@ H.Tick.prototype = {
 			// First time, create it
 			if (isNewMark) {
 				tick.mark = mark = renderer.path()
-					.addClass('highcharts-tick')
+					.addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
 					.add(axis.axisGroup);
 
 				/*= if (build.classic) { =*/

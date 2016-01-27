@@ -6623,7 +6623,7 @@ H.Tick.prototype = {
         // Create the grid line
         if (gridLine === undefined) {
             
-            attribs.stroke = gridLineColor,
+            attribs.stroke = gridLineColor;
             attribs['stroke-width'] = gridLineWidth;
             if (dashStyle) {
                 attribs.dashstyle = dashStyle;
@@ -6637,7 +6637,7 @@ H.Tick.prototype = {
             }
             tick.gridLine = gridLine = renderer.path()
                 .attr(attribs)
-                .addClass('highcharts-gridline')
+                .addClass('highcharts-' + (type ? type + '-' : '') + 'grid-line')
                 .add(axis.gridGroup);
         }
 
@@ -6665,7 +6665,7 @@ H.Tick.prototype = {
             // First time, create it
             if (isNewMark) {
                 tick.mark = mark = renderer.path()
-                    .addClass('highcharts-tick')
+                    .addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
                     .add(axis.axisGroup);
 
                 
@@ -6809,14 +6809,9 @@ H.Axis.prototype = {
         minPadding: 0.01,
         maxPadding: 0.01,
         //minRange: null,
-        minorGridLineColor: '#E0E0E0',
-        // minorGridLineDashStyle: null,
-        minorGridLineWidth: 1,
-        minorTickColor: '#A0A0A0',
         //minorTickInterval: null,
         minorTickLength: 2,
         minorTickPosition: 'outside', // inside or outside
-        //minorTickWidth: 0,
         //opposite: false,
         //offset: 0,
         //plotBands: [{
@@ -6857,6 +6852,11 @@ H.Axis.prototype = {
         type: 'linear', // linear, logarithmic or datetime
         //visible: true
         
+        minorGridLineColor: '#E0E0E0',
+        // minorGridLineDashStyle: null,
+        minorGridLineWidth: 1,
+        minorTickColor: '#A0A0A0',
+        //minorTickWidth: 0,
         lineColor: '#C0D0E0',
         lineWidth: 1,
         gridLineColor: '#D8D8D8',

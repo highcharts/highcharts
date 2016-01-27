@@ -46,10 +46,10 @@
   cursor: default;
   font-size: 0.9em; }
 
-.highcharts-gridline {
+.highcharts-grid-line {
   stroke: #D8D8D8; }
 
-.highcharts-xaxis-grid .highcharts-gridline {
+.highcharts-xaxis-grid .highcharts-grid-hline {
   stroke-width: 0; }
 
 .highcharts-tick {
@@ -57,6 +57,9 @@
 
 .highcharts-yaxis .highcharts-tick {
   stroke-width: 0; }
+
+.highcharts-minor-grid-line {
+  stroke: #e0e0e0; }
 
 /* Credits */
 .highcharts-credits {

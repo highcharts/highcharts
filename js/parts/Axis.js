@@ -83,14 +83,9 @@ H.Axis.prototype = {
 		minPadding: 0.01,
 		maxPadding: 0.01,
 		//minRange: null,
-		minorGridLineColor: '#E0E0E0',
-		// minorGridLineDashStyle: null,
-		minorGridLineWidth: 1,
-		minorTickColor: '#A0A0A0',
 		//minorTickInterval: null,
 		minorTickLength: 2,
 		minorTickPosition: 'outside', // inside or outside
-		//minorTickWidth: 0,
 		//opposite: false,
 		//offset: 0,
 		//plotBands: [{
@@ -131,6 +126,11 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
+		minorGridLineColor: '#E0E0E0',
+		// minorGridLineDashStyle: null,
+		minorGridLineWidth: 1,
+		minorTickColor: '#A0A0A0',
+		//minorTickWidth: 0,
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		gridLineColor: '#D8D8D8',

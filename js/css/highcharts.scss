@@ -49,10 +49,10 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     cursor: default;
     font-size: 0.9em;
 }
-.highcharts-gridline {
+.highcharts-grid-line {
     stroke: #D8D8D8;
 }
-.highcharts-xaxis-grid .highcharts-gridline {
+.highcharts-xaxis-grid .highcharts-grid-hline {
     stroke-width: 0;
 }
 .highcharts-tick {
@@ -60,6 +60,9 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 }
 .highcharts-yaxis .highcharts-tick {
     stroke-width: 0;
+}
+.highcharts-minor-grid-line {
+    stroke: #e0e0e0;
 }
 
 
