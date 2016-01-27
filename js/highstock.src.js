@@ -1074,7 +1074,18 @@
      * Internal method to return CSS value for given element and property
      */
     getStyle = function (el, prop) {
-        var style = win.getComputedStyle(el, undefined);
+
+        var style;
+
+        // For width and height, return the actual inner pixel size (#4913)
+        if (prop === 'width') {
+            return el.scrollWidth - getStyle(el, 'padding-left') - getStyle(el, 'padding-right');
+        } else if (prop === 'height') {
+            return el.scrollHeight - getStyle(el, 'padding-top') - getStyle(el, 'padding-bottom');
+        }
+
+        // Otherwise, get the computed style
+        style = win.getComputedStyle(el, undefined);
         return style && pInt(style.getPropertyValue(prop));
     };
 
