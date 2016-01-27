@@ -7140,8 +7140,10 @@ H.Axis.prototype = {
                 return this.value;
             },*/
         },
+        
         lineColor: '#C0D0E0',
         lineWidth: 1,
+        
         //linkedTo: null,
         //max: undefined,
         //min: undefined,
@@ -7211,7 +7213,9 @@ H.Axis.prototype = {
             x: -8,
             y: 3
         },
+        
         lineWidth: 0,
+        
         maxPadding: 0.05,
         minPadding: 0.05,
         startOnTick: true,
@@ -8820,6 +8824,7 @@ H.Axis.prototype = {
             clip,
             directionFactor = [-1, 1, 1, -1][side],
             n,
+            className = options.className, // docs
             axisParent = axis.axisParent, // Used in color axis
             lineHeightCorrection;
 
@@ -8837,10 +8842,11 @@ H.Axis.prototype = {
                 .add(axisParent);
             axis.axisGroup = renderer.g('axis')
                 .attr({ zIndex: options.zIndex || 2 })
+                .addClass('highcharts-' + this.coll.toLowerCase() + ' ' + (className || '')) // docs: className
                 .add(axisParent);
             axis.labelGroup = renderer.g('axis-labels')
                 .attr({ zIndex: labelOptions.zIndex || 7 })
-                .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels')
+                .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
                 .add(axisParent);
         }
 
@@ -8903,7 +8909,7 @@ H.Axis.prototype = {
                             high: opposite ? 'left' : 'right'
                         }[axisTitleOptions.align]
                 })
-                .addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title ' + (axisTitleOptions.className || ''))
+                .addClass('highcharts-axis-title')
                 
                 .css(axisTitleOptions.style)
                 
@@ -8921,6 +8927,9 @@ H.Axis.prototype = {
             axis.axisTitle[showAxis ? 'show' : 'hide'](true);
         }
 
+        // Render the axis line
+        axis.renderLine();
+
         // handle automatic or user set offset
         axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
@@ -8937,7 +8946,7 @@ H.Axis.prototype = {
         );
 
         // Decide the clipping needed to keep the graph inside the plot area and axis lines
-        clip = options.offset ? 0 : Math.floor(options.lineWidth / 2) * 2; // #4308, #4371
+        clip = options.offset ? 0 : Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
         clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
     },
 
@@ -8973,6 +8982,26 @@ H.Axis.prototype = {
                     lineTop :
                     chart.chartHeight - this.bottom
             ], lineWidth);
+    },
+
+    /**
+     * Render the axis line
+     * @returns {[type]} [description]
+     */
+    renderLine: function () {
+        if (!this.axisLine) {
+            this.axisLine = this.chart.renderer.path()
+                .addClass('highcharts-axis-line')
+                .add(this.axisGroup);
+
+            
+            this.axisLine.attr({
+                stroke: this.options.lineColor,
+                'stroke-width': this.options.lineWidth,
+                zIndex: 7
+            });
+            
+        }
     },
 
     /**
@@ -9034,8 +9063,7 @@ H.Axis.prototype = {
             stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
-            lineWidth = options.lineWidth,
-            linePath,
+            axisLine = axis.axisLine,
             hasRendered = chart.hasRendered,
             slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
             showAxis = axis.showAxis,
@@ -9173,27 +9201,14 @@ H.Axis.prototype = {
             );
         });
 
-        // Static items. As the axis group is cleared on subsequent calls
-        // to render, these items are added outside the group.
-        // axis line
-        if (lineWidth) {
-            linePath = axis.getLinePath(lineWidth);
-            if (!axis.axisLine) {
-                axis.axisLine = renderer.path(linePath)
-                    .addClass('highcharts-axis-line')
-                    .attr({
-                        stroke: options.lineColor,
-                        'stroke-width': lineWidth,
-                        zIndex: 7
-                    })
-                    .add(axis.axisGroup);
-            } else {
-                axis.axisLine.animate({ d: linePath });
-            }
+        // Set the axis line path
+        axisLine[axisLine.isPlaced ? 'animate' : 'attr']({
+            d: this.getLinePath(axisLine.strokeWidth())
+        });
+        axisLine.isPlaced = true;
 
-            // show or hide the line depending on options.showEmpty
-            axis.axisLine[showAxis ? 'show' : 'hide'](true);
-        }
+        // Show or hide the line depending on options.showEmpty
+        axisLine[showAxis ? 'show' : 'hide'](true);
 
         if (axisTitle && showAxis) {
 
