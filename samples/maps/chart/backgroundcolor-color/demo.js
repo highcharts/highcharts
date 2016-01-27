@@ -6,8 +6,7 @@ $(function () {
         $('#container').highcharts('Map', {
 
             chart: {
-                backgroundColor: '#4b96af',
-                map: Highcharts.maps['custom/world']
+                backgroundColor: '#4b96af'
             },
 
             title : {
@@ -41,6 +40,7 @@ $(function () {
 
             series : [{
                 data : data,
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 borderColor: '#555',

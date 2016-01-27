@@ -7,8 +7,7 @@ $(function () {
 
             chart: {
                 width: 500,
-                height: 300,
-                mapData: 'custom/invalid'
+                height: 300
             },
 
             title : {
