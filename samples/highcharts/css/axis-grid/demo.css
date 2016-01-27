@@ -1,0 +1,12 @@
+#container {
+	height: 400px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+.highcharts-xaxis-grid .highcharts-gridline {
+	stroke-width: 1px;
+	stroke-dasharray: 2, 2;
+}
+.highcharts-xaxis .highcharts-tick {
+	stroke-dasharray: 2, 2;
+}

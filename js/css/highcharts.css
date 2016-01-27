@@ -22,12 +22,21 @@
 .highcharts-plot-border, .highcharts-plot-background {
   fill: none; }
 
+/* Titles */
 .highcharts-title {
   fill: #333333;
   font-size: 1.5em; }
 
 .highcharts-subtitle {
   fill: #555555; }
+
+/* Axes */
+.highcharts-axis-line {
+  fill: none;
+  stroke: #C0D0E0; }
+
+.highcharts-yaxis .highcharts-axis-line {
+  stroke-width: 0; }
 
 .highcharts-axis-title {
   fill: #707070; }
@@ -37,6 +46,19 @@
   cursor: default;
   font-size: 0.9em; }
 
+.highcharts-gridline {
+  stroke: #D8D8D8; }
+
+.highcharts-xaxis-grid .highcharts-gridline {
+  stroke-width: 0; }
+
+.highcharts-tick {
+  stroke: #C0D0E0; }
+
+.highcharts-yaxis .highcharts-tick {
+  stroke-width: 0; }
+
+/* Credits */
 .highcharts-credits {
   cursor: pointer;
   fill: #909090;
@@ -47,6 +69,7 @@
   fill: black;
   font-size: 1em; }
 
+/* Tooltip */
 .highcharts-tooltip {
   fill: #333333;
   cursor: default;
@@ -234,9 +257,6 @@ g.highcharts-series, .highcharts-point {
 .highcharts-plot-line {
   stroke: gray;
   stroke-width: 1px; }
-
-.highcharts-axis-line {
-  fill: none; }
 
 /* Highcharts More */
 .highcharts-boxplot-box {

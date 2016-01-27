@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-26)
+ * @license Highcharts JS v5.0-dev (2016-01-27)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -6476,20 +6476,14 @@ H.Tick.prototype = {
             pos = tick.pos,
             labelOptions = options.labels,
             gridLine = tick.gridLine,
-            gridPrefix = type ? type + 'Grid' : 'grid',
             tickPrefix = type ? type + 'Tick' : 'tick',
-            gridLineWidth = options[gridPrefix + 'LineWidth'],
-            gridLineColor = options[gridPrefix + 'LineColor'],
-            
-            tickLength = options[tickPrefix + 'Length'],
-            tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
-            tickColor = options[tickPrefix + 'Color'],
             tickPosition = options[tickPrefix + 'Position'],
+            tickLength = options[tickPrefix + 'Length'],
             gridLinePath,
             mark = tick.mark,
-            markPath,
-            step = /*axis.labelStep || */labelOptions.step,
-            attribs,
+            isNewMark = !mark,
+            step = labelOptions.step,
+            attribs = {},
             show = true,
             tickmarkOffset = axis.tickmarkOffset,
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
@@ -6497,44 +6491,38 @@ H.Tick.prototype = {
             y = xy.y,
             reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        
+
         opacity = pick(opacity, 1);
         this.isActive = true;
 
-        // create the grid line
-        if (gridLineWidth) {
-            gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
-
-            if (gridLine === undefined) {
-                attribs = {
-                    stroke: gridLineColor,
-                    'stroke-width': gridLineWidth
-                };
-                
-                if (!type) {
-                    attribs.zIndex = 1;
-                }
-                if (old) {
-                    attribs.opacity = 0;
-                }
-                tick.gridLine = gridLine =
-                    gridLineWidth ?
-                        renderer.path(gridLinePath)
-                            .attr(attribs).add(axis.gridGroup) :
-                        null;
+        // Create the grid line
+        if (gridLine === undefined) {
+            
+            if (!type) {
+                attribs.zIndex = 1;
             }
-
-            // If the parameter 'old' is set, the current call will be followed
-            // by another call, therefore do not do any animations this time
-            if (!old && gridLine && gridLinePath) {
-                gridLine[tick.isNew ? 'attr' : 'animate']({
-                    d: gridLinePath,
-                    opacity: opacity
-                });
+            if (old) {
+                attribs.opacity = 0;
             }
+            tick.gridLine = gridLine = renderer.path()
+                .attr(attribs)
+                .addClass('highcharts-gridline')
+                .add(axis.gridGroup);
+        }
+
+        // If the parameter 'old' is set, the current call will be followed
+        // by another call, therefore do not do any animations this time
+        if (!old && gridLine) {
+            gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
+            gridLine[tick.isNew ? 'attr' : 'animate']({
+                d: gridLinePath,
+                opacity: opacity
+            });
         }
 
         // create the tick mark
-        if (tickWidth && tickLength) {
+        if (tickLength) {
 
             // negate the length
             if (tickPosition === 'inside') {
@@ -6544,21 +6532,19 @@ H.Tick.prototype = {
                 tickLength = -tickLength;
             }
 
-            markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-            if (mark) { // updating
-                mark.animate({
-                    d: markPath,
-                    opacity: opacity
-                });
-            } else { // first time
-                tick.mark = renderer.path(
-                    markPath
-                ).attr({
-                    stroke: tickColor,
-                    'stroke-width': tickWidth,
-                    opacity: opacity
-                }).add(axis.axisGroup);
+            // First time, create it
+            if (isNewMark) {
+                tick.mark = mark = renderer.path()
+                    .addClass('highcharts-tick')
+                    .add(axis.axisGroup);
+
+                
             }
+            mark[isNewMark ? 'attr' : 'animate']({
+                d: tick.getMarkPath(x, y, tickLength, mark.strokeWidth() * reverseCrisp, horiz, renderer),
+                opacity: opacity
+            });
+            
         }
 
         // the label is created on init - now move it into place
@@ -6956,9 +6942,6 @@ H.Axis.prototype = {
             year: '%Y'
         },
         endOnTick: false,
-        gridLineColor: '#D8D8D8',
-        // gridLineDashStyle: 'solid',
-        // gridLineWidth: 0,
         // reversed: false,
 
         labels: {
@@ -6973,8 +6956,6 @@ H.Axis.prototype = {
                 return this.value;
             },*/
         },
-        lineColor: '#C0D0E0',
-        lineWidth: 1,
         //linkedTo: null,
         //max: undefined,
         //min: undefined,
@@ -7007,13 +6988,11 @@ H.Axis.prototype = {
         // showLastLabel: true,
         startOfWeek: 1,
         startOnTick: false,
-        tickColor: '#C0D0E0',
         //tickInterval: null,
         tickLength: 10,
         tickmarkPlacement: 'between', // on or between
         tickPixelInterval: 100,
         tickPosition: 'outside',
-        //tickWidth: 1,
         title: {
             //text: null,
             align: 'middle', // low, middle or high
@@ -7024,8 +7003,9 @@ H.Axis.prototype = {
             //x: 0,
             //y: 0
         },
-        type: 'linear' // linear, logarithmic or datetime
+        type: 'linear', // linear, logarithmic or datetime
         //visible: true
+                
     },
 
     /**
@@ -7033,18 +7013,15 @@ H.Axis.prototype = {
      */
     defaultYAxisOptions: {
         endOnTick: true,
-        gridLineWidth: 1,
         tickPixelInterval: 72,
         showLastLabel: true,
         labels: {
             x: -8,
             y: 3
         },
-        lineWidth: 0,
         maxPadding: 0.05,
         minPadding: 0.05,
         startOnTick: true,
-        //tickWidth: 0,
         title: {
             rotation: 270,
             text: 'Values'
@@ -7062,6 +7039,7 @@ H.Axis.prototype = {
             },
             style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
         }
+        
     },
 
     /**
@@ -8649,6 +8627,7 @@ H.Axis.prototype = {
             clip,
             directionFactor = [-1, 1, 1, -1][side],
             n,
+            className = options.className, // docs
             axisParent = axis.axisParent, // Used in color axis
             lineHeightCorrection;
 
@@ -8663,13 +8642,15 @@ H.Axis.prototype = {
         if (!axis.axisGroup) {
             axis.gridGroup = renderer.g('grid')
                 .attr({ zIndex: options.gridZIndex || 1 })
+                .addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' + (className || '')) // docs: className
                 .add(axisParent);
             axis.axisGroup = renderer.g('axis')
                 .attr({ zIndex: options.zIndex || 2 })
+                .addClass('highcharts-' + this.coll.toLowerCase() + ' ' + (className || '')) // docs: className
                 .add(axisParent);
             axis.labelGroup = renderer.g('axis-labels')
                 .attr({ zIndex: labelOptions.zIndex || 7 })
-                .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels')
+                .addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
                 .add(axisParent);
         }
 
@@ -8732,7 +8713,7 @@ H.Axis.prototype = {
                             high: opposite ? 'left' : 'right'
                         }[axisTitleOptions.align]
                 })
-                .addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title ' + (axisTitleOptions.className || ''))
+                .addClass('highcharts-axis-title')
                 
                 .add(axis.axisGroup);
                 axis.axisTitle.isNew = true;
@@ -8747,6 +8728,9 @@ H.Axis.prototype = {
             // hide or show the title depending on whether showEmpty is set
             axis.axisTitle[showAxis ? 'show' : 'hide'](true);
         }
+
+        // Render the axis line
+        axis.renderLine();
 
         // handle automatic or user set offset
         axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
@@ -8764,7 +8748,7 @@ H.Axis.prototype = {
         );
 
         // Decide the clipping needed to keep the graph inside the plot area and axis lines
-        clip = options.offset ? 0 : Math.floor(options.lineWidth / 2) * 2; // #4308, #4371
+        clip = options.offset ? 0 : Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
         clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
     },
 
@@ -8800,6 +8784,20 @@ H.Axis.prototype = {
                     lineTop :
                     chart.chartHeight - this.bottom
             ], lineWidth);
+    },
+
+    /**
+     * Render the axis line
+     * @returns {[type]} [description]
+     */
+    renderLine: function () {
+        if (!this.axisLine) {
+            this.axisLine = this.chart.renderer.path()
+                .addClass('highcharts-axis-line')
+                .add(this.axisGroup);
+
+            
+        }
     },
 
     /**
@@ -8861,8 +8859,7 @@ H.Axis.prototype = {
             stackLabelOptions = options.stackLabels,
             alternateGridColor = options.alternateGridColor,
             tickmarkOffset = axis.tickmarkOffset,
-            lineWidth = options.lineWidth,
-            linePath,
+            axisLine = axis.axisLine,
             hasRendered = chart.hasRendered,
             slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
             showAxis = axis.showAxis,
@@ -9000,27 +8997,14 @@ H.Axis.prototype = {
             );
         });
 
-        // Static items. As the axis group is cleared on subsequent calls
-        // to render, these items are added outside the group.
-        // axis line
-        if (lineWidth) {
-            linePath = axis.getLinePath(lineWidth);
-            if (!axis.axisLine) {
-                axis.axisLine = renderer.path(linePath)
-                    .addClass('highcharts-axis-line')
-                    .attr({
-                        stroke: options.lineColor,
-                        'stroke-width': lineWidth,
-                        zIndex: 7
-                    })
-                    .add(axis.axisGroup);
-            } else {
-                axis.axisLine.animate({ d: linePath });
-            }
+        // Set the axis line path
+        axisLine[axisLine.isPlaced ? 'animate' : 'attr']({
+            d: this.getLinePath(axisLine.strokeWidth())
+        });
+        axisLine.isPlaced = true;
 
-            // show or hide the line depending on options.showEmpty
-            axis.axisLine[showAxis ? 'show' : 'hide'](true);
-        }
+        // Show or hide the line depending on options.showEmpty
+        axisLine[showAxis ? 'show' : 'hide'](true);
 
         if (axisTitle && showAxis) {
 
