@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-26)
+ * @license Highmaps JS v2.0-dev (2016-01-27)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1279,6 +1279,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
      */
     setData: function (data, redraw) {
         var options = this.options,
+            globalMapData = this.chart.options.chart && this.chart.options.chart.map,
             mapData = options.mapData,
             joinBy = options.joinBy,
             joinByNull = joinBy === null,
@@ -1288,6 +1289,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
             mapTransforms,
             props,
             i;
+
+        // Collect mapData from chart options if not defined on series
+        if (!mapData && globalMapData) {
+            mapData = typeof globalMapData === 'string' ? Highcharts.maps[globalMapData] : globalMapData;
+        }
 
         if (joinByNull) {
             joinBy = '_i';

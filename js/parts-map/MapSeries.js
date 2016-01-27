@@ -323,6 +323,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	setData: function (data, redraw) {
 		var options = this.options,
+			globalMapData = this.chart.options.chart && this.chart.options.chart.map,
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
@@ -332,6 +333,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			mapTransforms,
 			props,
 			i;
+
+		// Collect mapData from chart options if not defined on series
+		if (!mapData && globalMapData) {
+			mapData = typeof globalMapData === 'string' ? Highcharts.maps[globalMapData] : globalMapData;
+		}
 
 		if (joinByNull) {
 			joinBy = '_i';
