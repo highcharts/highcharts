@@ -20,7 +20,7 @@ $(function () {
             }
         });
     }
-    */
+    // */
 
     Highcharts.chart('container', {
 
@@ -43,7 +43,13 @@ $(function () {
             style: {
                 fontSize: '16px'
             },
-            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>'
+            pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
+            positioner: function (labelWidth, labelHeight) {
+                return {
+                    x: 200 - labelWidth / 2,
+                    y: 180
+                };
+            }
         },
 
         pane: {
@@ -57,12 +63,12 @@ $(function () {
             }, { // Track for Exercise
                 outerRadius: '87%',
                 innerRadius: '63%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.3).get(),
                 borderWidth: 0
             }, { // Track for Stand
                 outerRadius: '62%',
                 innerRadius: '38%',
-                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[3]).setOpacity(0.3).get(),
+                backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.3).get(),
                 borderWidth: 0
             }]
         },
@@ -80,6 +86,7 @@ $(function () {
                 dataLabels: {
                     enabled: false
                 },
+                linecap: 'round',
                 stickyTracking: false
             }
         },
@@ -95,18 +102,18 @@ $(function () {
             }]
         }, {
             name: 'Exercise',
-            borderColor: Highcharts.getOptions().colors[2],
+            borderColor: Highcharts.getOptions().colors[1],
             data: [{
-                color: Highcharts.getOptions().colors[2],
+                color: Highcharts.getOptions().colors[1],
                 radius: '75%',
                 innerRadius: '75%',
                 y: 65
             }]
         }, {
             name: 'Stand',
-            borderColor: Highcharts.getOptions().colors[3],
+            borderColor: Highcharts.getOptions().colors[2],
             data: [{
-                color: Highcharts.getOptions().colors[3],
+                color: Highcharts.getOptions().colors[2],
                 radius: '50%',
                 innerRadius: '50%',
                 y: 50
@@ -122,10 +129,10 @@ $(function () {
         // Move icon
         this.renderer.path(['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8])
             .attr({
-                'stroke': '#000000',
+                'stroke': '#303030',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
-                'stroke-width': 4,
+                'stroke-width': 2,
                 'zIndex': 10
             })
             .translate(190, 26)
@@ -134,10 +141,10 @@ $(function () {
         // Exercise icon
         this.renderer.path(['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8, 'M', 8, -8, 'L', 16, 0, 8, 8])
             .attr({
-                'stroke': '#000000',
+                'stroke': '#303030',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
-                'stroke-width': 4,
+                'stroke-width': 2,
                 'zIndex': 10
             })
             .translate(190, 61)
@@ -146,10 +153,10 @@ $(function () {
         // Stand icon
         this.renderer.path(['M', 0, 8, 'L', 0, -8, 'M', -8, 0, 'L', 0, -8, 8, 0])
             .attr({
-                'stroke': '#000000',
+                'stroke': '#303030',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
-                'stroke-width': 4,
+                'stroke-width': 2,
                 'zIndex': 10
             })
             .translate(190, 96)
