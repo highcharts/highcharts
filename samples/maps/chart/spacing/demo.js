@@ -12,7 +12,8 @@ $(function () {
                 spacingBottom: 100,
                 spacingLeft: 100,
                 // spacing: [100, 100, 100, 100], // equivalent of the above
-                plotBackgroundColor: '#E0E0E0'
+                plotBackgroundColor: '#E0E0E0',
+                map: Highcharts.maps['custom/asia']
             },
 
             title : {

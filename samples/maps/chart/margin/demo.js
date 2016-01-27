@@ -12,7 +12,8 @@ $(function () {
                 marginBottom: 100,
                 marginLeft: 100,
                 // margin: [100, 100, 100, 100], // equivalent of the above
-                plotBackgroundColor: '#E0E0E0'
+                plotBackgroundColor: '#E0E0E0',
+                map: 'custom/world'
             },
 
             title : {
@@ -40,7 +41,6 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
