@@ -6609,22 +6609,14 @@ H.Tick.prototype = {
             pos = tick.pos,
             labelOptions = options.labels,
             gridLine = tick.gridLine,
-            gridPrefix = type ? type + 'Grid' : 'grid',
             tickPrefix = type ? type + 'Tick' : 'tick',
-            gridLineWidth = options[gridPrefix + 'LineWidth'],
-            gridLineColor = options[gridPrefix + 'LineColor'],
-            
-            dashStyle = options[gridPrefix + 'LineDashStyle'],
-            
-            tickLength = options[tickPrefix + 'Length'],
-            tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
-            tickColor = options[tickPrefix + 'Color'],
             tickPosition = options[tickPrefix + 'Position'],
+            tickLength = options[tickPrefix + 'Length'],
             gridLinePath,
             mark = tick.mark,
-            markPath,
-            step = /*axis.labelStep || */labelOptions.step,
-            attribs,
+            isNewMark = !mark,
+            step = labelOptions.step,
+            attribs = {},
             show = true,
             tickmarkOffset = axis.tickmarkOffset,
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
@@ -6632,48 +6624,51 @@ H.Tick.prototype = {
             y = xy.y,
             reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+        
+        var gridPrefix = type ? type + 'Grid' : 'grid',
+            gridLineWidth = options[gridPrefix + 'LineWidth'],
+            gridLineColor = options[gridPrefix + 'LineColor'],
+            dashStyle = options[gridPrefix + 'LineDashStyle'],
+            tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
+            tickColor = options[tickPrefix + 'Color'];
+        
+
         opacity = pick(opacity, 1);
         this.isActive = true;
 
-        // create the grid line
-        if (gridLineWidth) {
-            gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
-
-            if (gridLine === undefined) {
-                attribs = {
-                    stroke: gridLineColor,
-                    'stroke-width': gridLineWidth
-                };
-                
-                if (dashStyle) {
-                    attribs.dashstyle = dashStyle;
-                }
-                
-                if (!type) {
-                    attribs.zIndex = 1;
-                }
-                if (old) {
-                    attribs.opacity = 0;
-                }
-                tick.gridLine = gridLine =
-                    gridLineWidth ?
-                        renderer.path(gridLinePath)
-                            .attr(attribs).add(axis.gridGroup) :
-                        null;
+        // Create the grid line
+        if (gridLine === undefined) {
+            
+            attribs.stroke = gridLineColor,
+            attribs['stroke-width'] = gridLineWidth;
+            if (dashStyle) {
+                attribs.dashstyle = dashStyle;
             }
-
-            // If the parameter 'old' is set, the current call will be followed
-            // by another call, therefore do not do any animations this time
-            if (!old && gridLine && gridLinePath) {
-                gridLine[tick.isNew ? 'attr' : 'animate']({
-                    d: gridLinePath,
-                    opacity: opacity
-                });
+            
+            if (!type) {
+                attribs.zIndex = 1;
             }
+            if (old) {
+                attribs.opacity = 0;
+            }
+            tick.gridLine = gridLine = renderer.path()
+                .attr(attribs)
+                .addClass('highcharts-gridline')
+                .add(axis.gridGroup);
+        }
+
+        // If the parameter 'old' is set, the current call will be followed
+        // by another call, therefore do not do any animations this time
+        if (!old && gridLine) {
+            gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
+            gridLine[tick.isNew ? 'attr' : 'animate']({
+                d: gridLinePath,
+                opacity: opacity
+            });
         }
 
         // create the tick mark
-        if (tickWidth && tickLength) {
+        if (tickLength) {
 
             // negate the length
             if (tickPosition === 'inside') {
@@ -6683,21 +6678,24 @@ H.Tick.prototype = {
                 tickLength = -tickLength;
             }
 
-            markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-            if (mark) { // updating
-                mark.animate({
-                    d: markPath,
-                    opacity: opacity
-                });
-            } else { // first time
-                tick.mark = renderer.path(
-                    markPath
-                ).attr({
+            // First time, create it
+            if (isNewMark) {
+                tick.mark = mark = renderer.path()
+                    .addClass('highcharts-tick')
+                    .add(axis.axisGroup);
+
+                
+                mark.attr({
                     stroke: tickColor,
-                    'stroke-width': tickWidth,
-                    opacity: opacity
-                }).add(axis.axisGroup);
+                    'stroke-width': tickWidth
+                });
+                
             }
+            mark[isNewMark ? 'attr' : 'animate']({
+                d: tick.getMarkPath(x, y, tickLength, mark.strokeWidth() * reverseCrisp, horiz, renderer),
+                opacity: opacity
+            });
+            
         }
 
         // the label is created on init - now move it into place
@@ -7117,9 +7115,6 @@ H.Axis.prototype = {
             year: '%Y'
         },
         endOnTick: false,
-        gridLineColor: '#D8D8D8',
-        // gridLineDashStyle: 'solid',
-        // gridLineWidth: 0,
         // reversed: false,
 
         labels: {
@@ -7140,10 +7135,6 @@ H.Axis.prototype = {
                 return this.value;
             },*/
         },
-        
-        lineColor: '#C0D0E0',
-        lineWidth: 1,
-        
         //linkedTo: null,
         //max: undefined,
         //min: undefined,
@@ -7176,13 +7167,11 @@ H.Axis.prototype = {
         // showLastLabel: true,
         startOfWeek: 1,
         startOnTick: false,
-        tickColor: '#C0D0E0',
         //tickInterval: null,
         tickLength: 10,
         tickmarkPlacement: 'between', // on or between
         tickPixelInterval: 100,
         tickPosition: 'outside',
-        //tickWidth: 1,
         title: {
             //text: null,
             align: 'middle', // low, middle or high
@@ -7197,8 +7186,17 @@ H.Axis.prototype = {
             //x: 0,
             //y: 0
         },
-        type: 'linear' // linear, logarithmic or datetime
+        type: 'linear', // linear, logarithmic or datetime
         //visible: true
+        
+        lineColor: '#C0D0E0',
+        lineWidth: 1,
+        gridLineColor: '#D8D8D8',
+        // gridLineDashStyle: 'solid',
+        // gridLineWidth: 0,
+        tickColor: '#C0D0E0'
+        // tickWidth: 1
+                
     },
 
     /**
@@ -7206,20 +7204,15 @@ H.Axis.prototype = {
      */
     defaultYAxisOptions: {
         endOnTick: true,
-        gridLineWidth: 1,
         tickPixelInterval: 72,
         showLastLabel: true,
         labels: {
             x: -8,
             y: 3
         },
-        
-        lineWidth: 0,
-        
         maxPadding: 0.05,
         minPadding: 0.05,
         startOnTick: true,
-        //tickWidth: 0,
         title: {
             rotation: 270,
             text: 'Values'
@@ -7236,7 +7229,12 @@ H.Axis.prototype = {
                 return H.numberFormat(this.total, -1);
             },
             style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
-        }
+        },
+        
+        gridLineWidth: 1,        
+        lineWidth: 0
+        // tickWidth: 0
+        
     },
 
     /**
@@ -8839,6 +8837,7 @@ H.Axis.prototype = {
         if (!axis.axisGroup) {
             axis.gridGroup = renderer.g('grid')
                 .attr({ zIndex: options.gridZIndex || 1 })
+                .addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' + (className || '')) // docs: className
                 .add(axisParent);
             axis.axisGroup = renderer.g('axis')
                 .attr({ zIndex: options.zIndex || 2 })

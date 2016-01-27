@@ -57,9 +57,6 @@ H.Axis.prototype = {
 			year: '%Y'
 		},
 		endOnTick: false,
-		gridLineColor: '#D8D8D8',
-		// gridLineDashStyle: 'solid',
-		// gridLineWidth: 0,
 		// reversed: false,
 
 		labels: {
@@ -80,10 +77,6 @@ H.Axis.prototype = {
 				return this.value;
 			},*/
 		},
-		/*= if (build.classic) { =*/
-		lineColor: '#C0D0E0',
-		lineWidth: 1,
-		/*= } =*/
 		//linkedTo: null,
 		//max: undefined,
 		//min: undefined,
@@ -116,13 +109,11 @@ H.Axis.prototype = {
 		// showLastLabel: true,
 		startOfWeek: 1,
 		startOnTick: false,
-		tickColor: '#C0D0E0',
 		//tickInterval: null,
 		tickLength: 10,
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
-		//tickWidth: 1,
 		title: {
 			//text: null,
 			align: 'middle', // low, middle or high
@@ -137,8 +128,17 @@ H.Axis.prototype = {
 			//x: 0,
 			//y: 0
 		},
-		type: 'linear' // linear, logarithmic or datetime
+		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
+		/*= if (build.classic) { =*/
+		lineColor: '#C0D0E0',
+		lineWidth: 1,
+		gridLineColor: '#D8D8D8',
+		// gridLineDashStyle: 'solid',
+		// gridLineWidth: 0,
+		tickColor: '#C0D0E0'
+		// tickWidth: 1
+		/*= } =*/		
 	},
 
 	/**
@@ -146,20 +146,15 @@ H.Axis.prototype = {
 	 */
 	defaultYAxisOptions: {
 		endOnTick: true,
-		gridLineWidth: 1,
 		tickPixelInterval: 72,
 		showLastLabel: true,
 		labels: {
 			x: -8,
 			y: 3
 		},
-		/*= if (build.classic) { =*/
-		lineWidth: 0,
-		/*= } =*/
 		maxPadding: 0.05,
 		minPadding: 0.05,
 		startOnTick: true,
-		//tickWidth: 0,
 		title: {
 			rotation: 270,
 			text: 'Values'
@@ -176,7 +171,12 @@ H.Axis.prototype = {
 				return H.numberFormat(this.total, -1);
 			},
 			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
-		}
+		},
+		/*= if (build.classic) { =*/
+		gridLineWidth: 1,		
+		lineWidth: 0
+		// tickWidth: 0
+		/*= } =*/
 	},
 
 	/**
@@ -1779,6 +1779,7 @@ H.Axis.prototype = {
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
+				.addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' + (className || '')) // docs: className
 				.add(axisParent);
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })

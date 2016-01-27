@@ -35,8 +35,8 @@
   fill: none;
   stroke: #C0D0E0; }
 
-.highcharts-xaxis .highcharts-axis-line {
-  stroke-width: 1px; }
+.highcharts-yaxis .highcharts-axis-line {
+  stroke-width: 0; }
 
 .highcharts-axis-title {
   fill: #707070; }
@@ -45,6 +45,18 @@
   fill: #606060;
   cursor: default;
   font-size: 0.9em; }
+
+.highcharts-gridline {
+  stroke: #D8D8D8; }
+
+.highcharts-xaxis-grid .highcharts-gridline {
+  stroke-width: 0; }
+
+.highcharts-tick {
+  stroke: #C0D0E0; }
+
+.highcharts-yaxis .highcharts-tick {
+  stroke-width: 0; }
 
 /* Credits */
 .highcharts-credits {
