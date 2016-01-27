@@ -2,8 +2,6 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-        var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
-
         // Correct UK to GB in data
         $.each(data, function () {
             if (this.code === 'UK') {
@@ -13,7 +11,8 @@ $(function () {
 
         $('#container').highcharts('Map', {
             chart : {
-                borderWidth : 1
+                borderWidth : 1,
+                map: 'custom/world'
             },
 
             title: {
@@ -37,12 +36,10 @@ $(function () {
 
             series : [{
                 name: 'Countries',
-                mapData: mapData,
                 color: '#E0E0E0',
                 enableMouseTracking: false
             }, {
                 type: 'mapbubble',
-                mapData: mapData,
                 name: 'Population 2013',
                 joinBy: ['iso-a2', 'code'],
                 data: data,
