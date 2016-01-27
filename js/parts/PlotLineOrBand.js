@@ -48,7 +48,7 @@ H.PlotLineOrBand.prototype = {
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,
 			attribs = {
-				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '')
+				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '') // docs: className
 			},
 			groupAttribs = {},
 			renderer = axis.chart.renderer,

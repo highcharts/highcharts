@@ -1463,7 +1463,6 @@ H.defaultOptions = {
         defaultSeriesType: 'line',
         ignoreHiddenSeries: true,
         //inverted: false,
-        //shadow: false,
         spacing: [10, 10, 15, 10],
         //spacingTop: 10,
         //spacingRight: 10,
@@ -1588,13 +1587,13 @@ H.defaultOptions = {
                 // backgroundColor: undefined,
                 // borderColor: undefined,
                 // borderWidth: undefined,
+                // shadow: false
                 
                 verticalAlign: 'bottom', // above singular point
                 x: 0,
                 y: 0,
                 // borderRadius: undefined,
                 padding: 5
-                // shadow: false
             },
             cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
             pointRange: 0,
@@ -1663,7 +1662,6 @@ H.defaultOptions = {
         },
         // margin: 20,
         // reversed: false,
-        shadow: false,
         // backgroundColor: null,
         /*style: {
             padding: '5px'
@@ -1681,6 +1679,7 @@ H.defaultOptions = {
         itemHiddenStyle: {
             color: '#CCC'
         },
+        shadow: false,
         
         itemCheckboxStyle: {
             position: 'absolute',
@@ -2344,10 +2343,12 @@ SVGElement.prototype = {
                     setter = this[key + 'Setter'] || this._defaultSetter;
                     setter.call(this, value, key, element);
 
+                    
                     // Let the shadow follow the main element
                     if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
                         this.updateShadows(key, value, setter);
                     }
+                    
                 }
             }
 
@@ -2368,6 +2369,7 @@ SVGElement.prototype = {
         return ret;
     },
 
+    
     /**
      * Update the shadow elements with new attributes
      * @param   {String}        key    The attribute name
@@ -2390,6 +2392,7 @@ SVGElement.prototype = {
             );
         }
     },
+    
 
     /**
      * Add a class name to an element
@@ -2991,7 +2994,6 @@ SVGElement.prototype = {
     destroy: function () {
         var wrapper = this,
             element = wrapper.element || {},
-            shadows = wrapper.shadows,
             parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
             grandParent,
             key,
@@ -3016,12 +3018,15 @@ SVGElement.prototype = {
         // remove element
         wrapper.safeRemoveChild(element);
 
-        // destroy shadows
+        
+        // Destroy shadows
+        var shadows = wrapper.shadows;
         if (shadows) {
             each(shadows, function (shadow) {
                 wrapper.safeRemoveChild(shadow);
             });
         }
+        
 
         // In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393, #2697).
         while (parentToClean && parentToClean.div && parentToClean.div.childNodes.length === 0) {
@@ -3043,6 +3048,7 @@ SVGElement.prototype = {
         return null;
     },
 
+    
     /**
      * Add a shadow to the element. Must be done after the element is added to the DOM
      * @param {Boolean|Object} shadowOptions
@@ -3096,6 +3102,7 @@ SVGElement.prototype = {
         return this;
 
     },
+    
 
     xGetter: function (key) {
         if (this.element.nodeName === 'circle') {
@@ -4762,6 +4769,7 @@ SVGRenderer.prototype = {
                     y: bBox.y - padding
                 };
             },
+            
             /**
              * Apply the shadow to the box
              */
@@ -4772,6 +4780,7 @@ SVGRenderer.prototype = {
                 }
                 return wrapper;
             },
+            
             /**
              * Destroy and release memory.
              */
@@ -4892,7 +4901,6 @@ extend(SVGElement.prototype, {
             y = wrapper.y || 0,
             align = wrapper.textAlign || 'left',
             alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-            shadows = wrapper.shadows,
             styles = wrapper.styles;
 
         // apply translate
@@ -4900,14 +4908,17 @@ extend(SVGElement.prototype, {
             marginLeft: translateX,
             marginTop: translateY
         });
-        if (shadows) { // used in labels/tooltip
-            each(shadows, function (shadow) {
+
+        
+        if (wrapper.shadows) { // used in labels/tooltip
+            each(wrapper.shadows, function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,
                     marginTop: translateY + 1
                 });
             });
         }
+        
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
@@ -5133,6 +5144,7 @@ extend(SVGRenderer.prototype, {
 
     return H;
 }(Highcharts));
+
 (function (H) {
     var VMLRenderer,
         VMLRendererExtension,
@@ -6247,6 +6259,8 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
     
     return H;
 }(Highcharts));
+
+
 (function (H) {
     var CanVGRenderer,
         doc = H.win.doc,

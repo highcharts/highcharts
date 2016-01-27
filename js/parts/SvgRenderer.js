@@ -335,10 +335,12 @@ SVGElement.prototype = {
 					setter = this[key + 'Setter'] || this._defaultSetter;
 					setter.call(this, value, key, element);
 
+					/*= if (build.classic) { =*/
 					// Let the shadow follow the main element
 					if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
 						this.updateShadows(key, value, setter);
 					}
+					/*= } =*/
 				}
 			}
 
@@ -359,6 +361,7 @@ SVGElement.prototype = {
 		return ret;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Update the shadow elements with new attributes
 	 * @param   {String}		key	The attribute name
@@ -381,6 +384,7 @@ SVGElement.prototype = {
 			);
 		}
 	},
+	/*= } =*/
 
 	/**
 	 * Add a class name to an element
@@ -1015,7 +1019,6 @@ SVGElement.prototype = {
 	destroy: function () {
 		var wrapper = this,
 			element = wrapper.element || {},
-			shadows = wrapper.shadows,
 			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
 			grandParent,
 			key,
@@ -1040,12 +1043,15 @@ SVGElement.prototype = {
 		// remove element
 		wrapper.safeRemoveChild(element);
 
-		// destroy shadows
+		/*= if (build.classic) { =*/
+		// Destroy shadows
+		var shadows = wrapper.shadows;
 		if (shadows) {
 			each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
 		}
+		/*= } =*/
 
 		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393, #2697).
 		while (parentToClean && parentToClean.div && parentToClean.div.childNodes.length === 0) {
@@ -1067,6 +1073,7 @@ SVGElement.prototype = {
 		return null;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Add a shadow to the element. Must be done after the element is added to the DOM
 	 * @param {Boolean|Object} shadowOptions
@@ -1120,6 +1127,7 @@ SVGElement.prototype = {
 		return this;
 
 	},
+	/*= } =*/
 
 	xGetter: function (key) {
 		if (this.element.nodeName === 'circle') {
@@ -2797,6 +2805,7 @@ SVGRenderer.prototype = {
 					y: bBox.y - padding
 				};
 			},
+			/*= if (build.classic) { =*/
 			/**
 			 * Apply the shadow to the box
 			 */
@@ -2807,6 +2816,7 @@ SVGRenderer.prototype = {
 				}
 				return wrapper;
 			},
+			/*= } =*/
 			/**
 			 * Destroy and release memory.
 			 */

@@ -52,7 +52,6 @@ H.defaultOptions = {
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
-		//shadow: false,
 		spacing: [10, 10, 15, 10],
 		//spacingTop: 10,
 		//spacingRight: 10,
@@ -182,13 +181,13 @@ H.defaultOptions = {
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderWidth: undefined,
+				// shadow: false
 				/*= } =*/
 				verticalAlign: 'bottom', // above singular point
 				x: 0,
 				y: 0,
 				// borderRadius: undefined,
 				padding: 5
-				// shadow: false
 			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
@@ -257,7 +256,6 @@ H.defaultOptions = {
 		},
 		// margin: 20,
 		// reversed: false,
-		shadow: false,
 		// backgroundColor: null,
 		/*style: {
 			padding: '5px'
@@ -275,6 +273,7 @@ H.defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
+		shadow: false,
 		/*= } =*/
 		itemCheckboxStyle: {
 			position: 'absolute',

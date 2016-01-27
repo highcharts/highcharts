@@ -87,7 +87,6 @@ extend(SVGElement.prototype, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			shadows = wrapper.shadows,
 			styles = wrapper.styles;
 
 		// apply translate
@@ -95,14 +94,17 @@ extend(SVGElement.prototype, {
 			marginLeft: translateX,
 			marginTop: translateY
 		});
-		if (shadows) { // used in labels/tooltip
-			each(shadows, function (shadow) {
+
+		/*= if (build.classic) { =*/
+		if (wrapper.shadows) { // used in labels/tooltip
+			each(wrapper.shadows, function (shadow) {
 				css(shadow, {
 					marginLeft: translateX + 1,
 					marginTop: translateY + 1
 				});
 			});
 		}
+		/*= } =*/
 
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group

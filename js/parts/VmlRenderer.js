@@ -1,3 +1,4 @@
+/*= if (build.classic) { =*/
 (function (H) {
 	var VMLRenderer,
 		VMLRendererExtension,
@@ -1112,3 +1113,5 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	
 	return H;
 }(Highcharts));
+
+/*= } =*/

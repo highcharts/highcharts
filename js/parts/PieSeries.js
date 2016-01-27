@@ -387,15 +387,16 @@ seriesTypes.pie = extendClass(Series, {
 			//center,
 			graphic,
 			//group,
-			shadow = series.options.shadow,
-			shadowGroup,
 			pointAttr,
 			shapeArgs;
 
+		/*= if (build.classic) { =*/
+		var shadow = series.options.shadow;
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
 				.add(series.group);
 		}
+		/*= } =*/
 
 		// draw the slices
 		each(series.points, function (point) {
@@ -409,7 +410,7 @@ seriesTypes.pie = extendClass(Series, {
 
 				/*= if (build.classic) { =*/
 				// Put the shadow behind all points
-				shadowGroup = point.shadowGroup;
+				var shadowGroup = point.shadowGroup;
 				if (shadow && !shadowGroup) {
 					shadowGroup = point.shadowGroup = renderer.g('shadow')
 						.add(series.shadowGroup);
