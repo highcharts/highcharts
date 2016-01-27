@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-22)
+ * @license Highmaps JS v4.2.0-modified (2016-01-27)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1078,7 +1078,7 @@
         onMouseOut: function () {
             var point = this,
                 start = +new Date(),
-                normalColor = Color(point.color),
+                normalColor = Color(point.pointAttr[''].fill),
                 hoverColor = Color(point.pointAttr.hover.fill),
                 animation = point.series.options.states.normal.animation,
                 duration = animation && (animation.duration || 500),

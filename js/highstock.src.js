@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-01-26)
+ * @license Highstock JS v4.2.0-modified (2016-01-27)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -14674,7 +14674,7 @@
                         // Handle colors for column and pies
                         if (!seriesOptions.marker || (point.negative && !pointStateOptionsHover.fillColor && !stateOptionsHover.fillColor)) { // column, bar, point or negative threshold for series with markers (#3636)
                             // If no hover color is given, brighten the normal color. #1619, #2579
-                            pointStateOptionsHover[series.pointAttrToOptions.fill] = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
+                            pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
                                 Color(point.color)
                                     .brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
                                     .get();
@@ -20052,7 +20052,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-01-26)
+     * Highstock JS v4.2.0-modified (2016-01-27)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
