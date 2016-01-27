@@ -24,6 +24,7 @@ var arrayMin = Highcharts.arrayMin,
         map = Highcharts.map,
         pick = Highcharts.pick,
         pInt = Highcharts.pInt,
+        correctFloat = Highcharts.correctFloat,
         defaultPlotOptions = Highcharts.getOptions().plotOptions,
         seriesTypes = Highcharts.seriesTypes,
         extendClass = Highcharts.extendClass,
@@ -1658,9 +1659,9 @@ var arrayMin = Highcharts.arrayMin,
                 // override point value for sums
                 // #3710 Update point does not propagate to sum
                 if (point.isSum) {
-                    point.y = yValue;
+                    point.y = correctFloat(yValue);
                 } else if (point.isIntermediateSum) {
-                    point.y = yValue - previousIntermediate; // #3840
+                    point.y = correctFloat(yValue - previousIntermediate); // #3840
                 }
                 // up points
                 y = mathMax(previousY, previousY + point.y) + range[0];
@@ -1740,9 +1741,9 @@ var arrayMin = Highcharts.arrayMin,
                 point = points && points[i] ? points[i] : {};
 
                 if (y === 'sum' || point.isSum) {
-                    yData[i] = sum;
+                    yData[i] = correctFloat(sum);
                 } else if (y === 'intermediateSum' || point.isIntermediateSum) {
-                    yData[i] = subSum;
+                    yData[i] = correctFloat(subSum);
                 } else {
                     sum += y;
                     subSum += y;

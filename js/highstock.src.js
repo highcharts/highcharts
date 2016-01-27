@@ -24346,6 +24346,7 @@
         arrayMin: arrayMin,
         arrayMax: arrayMax,
         charts: charts,
+        correctFloat: correctFloat,
         dateFormat: dateFormat,
         error: error,
         format: format,
