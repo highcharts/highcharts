@@ -18865,9 +18865,10 @@ extend(Point.prototype, {
                             2 * radius,
                             2 * radius
                         )
-                        .attr(series.pointAttribs(point, state))
                         .add(series.markerGroup);
                         stateMarkerGraphic.currentSymbol = newSymbol;
+
+                        
                     }
 
                 // Move the existing graphic
