@@ -285,7 +285,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = Math.round(axisTop + axis.height - translatedValue);
+				y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {

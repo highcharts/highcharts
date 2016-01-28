@@ -86,7 +86,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		var time = minDate.getTime(),
 			minMonth = minDate[Date.hcGetMonth](),
 			minDateDate = minDate[Date.hcGetDate](),
-			variableDayLength = !useUTC || !!getTimezoneOffset, // #4951
+			variableDayLength = !useUTC || !!Date.hcGetTimezoneOffset, // #4951
 			localTimezoneOffset = (timeUnits.day +
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359

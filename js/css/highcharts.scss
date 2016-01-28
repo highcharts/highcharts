@@ -52,7 +52,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-grid-line {
     stroke: #D8D8D8;
 }
-.highcharts-xaxis-grid .highcharts-grid-hline {
+.highcharts-xaxis-grid .highcharts-grid-line {
     stroke-width: 0;
 }
 .highcharts-tick {
@@ -137,6 +137,7 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-area {
     fill-opacity: 0.75;
+    stroke-width: 0;
 }
 .highcharts-markers {
     stroke-width: 1px;
@@ -279,4 +280,43 @@ g.highcharts-series, .highcharts-point {
     stroke-dasharray: 1, 3;
 }
 
-
+/* Highstock */
+.highcharts-navigator-mask {
+    fill: rgba(128,179,236,0.3); /* navigator.maskFill option */
+}
+.highcharts-navigator-mask-inside {
+    fill: rgba(128,179,236,0.3); /* navigator.maskFill option */
+    cursor: ew-resize;
+}
+.highcharts-navigator-outline {
+    stroke: #b2b1b6;
+    fill: none;
+}
+.highcharts-navigator-handle {
+    stroke: #b2b1b6;
+    fill: #ebe7e8;
+    cursor: ew-resize;
+}
+.highcharts-navigator-series {
+    fill: #4572A7;
+    stroke: #4572A7;
+}
+.highcharts-navigator-series .highcharts-graph {
+    stroke-width: 1px;
+}
+.highcharts-navigator-series .highcharts-area {
+    fill-opacity: 0.05;
+}
+.highcharts-navigator-xaxis .highcharts-axis-line {
+    stroke-width: 0;
+}
+.highcharts-navigator-xaxis .highcharts-grid-line {
+    stroke-width: 1px;
+    stroke: #eee;
+}
+.highcharts-navigator-xaxis.highcharts-axis-labels {
+    fill: #888;
+}
+.highcharts-navigator-yaxis .highcharts-grid-line {
+    stroke-width: 0;
+}

@@ -11,6 +11,7 @@
 		discardElement = H.discardElement,
 		each = H.each,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
 		HCDate = H.Date,
 		merge = H.merge,
 		pick = H.pick,
@@ -272,7 +273,6 @@ RangeSelector.prototype = {
 
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
-			fireEvent = fireEvent,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
 			blurInputs = rangeSelector.blurInputs = function () {

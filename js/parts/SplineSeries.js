@@ -3,6 +3,7 @@
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
+		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
 

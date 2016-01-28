@@ -51,21 +51,26 @@ defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline'
 extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
+		height: 40,
+		margin: 25,
+		maskInside: true,
+		/*= if (build.classic) { =*/
 		handles: {
 			backgroundColor: '#ebe7e8',
 			borderColor: '#b2b1b6'
 		},
-		height: 40,
-		margin: 25,
 		maskFill: 'rgba(128,179,236,0.3)',
-		maskInside: true,
 		outlineColor: '#b2b1b6',
 		outlineWidth: 1,
+		/*= } =*/
 		series: {
 			type: defaultSeriesType,
+			/*= if (build.classic) { =*/
 			color: '#4572A7',
-			compare: null,
 			fillOpacity: 0.05,
+			lineWidth: 1,
+			/*= } =*/
+			compare: null,
 			dataGrouping: {
 				approximation: 'average',
 				enabled: true,
@@ -78,8 +83,8 @@ extend(defaultOptions, {
 				zIndex: 2 // #1839
 			},
 			id: 'highcharts-navigator-series',
+			className: 'highcharts-navigator-series',
 			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
-			lineWidth: 1,
 			marker: {
 				enabled: false
 			},
@@ -89,23 +94,31 @@ extend(defaultOptions, {
 		},
 		//top: undefined,
 		xAxis: {
-			tickWidth: 0,
+			className: 'highcharts-navigator-xaxis',
+			tickLength: 0,
+			/*= if (build.classic) { =*/
 			lineWidth: 0,
 			gridLineColor: '#EEE',
 			gridLineWidth: 1,
+			/*= } =*/
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
+				/*= if (build.classic) { =*/
 				style: {
 					color: '#888'
 				},
+				/*= } =*/
 				x: 3,
 				y: -4
 			},
 			crosshair: false
 		},
 		yAxis: {
+			className: 'highcharts-navigator-yaxis',
+			/*= if (build.classic) { =*/
 			gridLineWidth: 0,
+			/*= } =*/
 			startOnTick: false,
 			endOnTick: false,
 			minPadding: 0.1,
@@ -117,7 +130,7 @@ extend(defaultOptions, {
 			title: {
 				text: null
 			},
-			tickWidth: 0
+			tickLength: 0
 		}
 	},
 	scrollbar: {
@@ -185,33 +198,21 @@ Scroller.prototype = {
 		var scroller = this,
 			chart = scroller.chart,
 			renderer = chart.renderer,
-			elementsToDestroy = scroller.elementsToDestroy,
-			handles = scroller.handles,
-			handlesOptions = scroller.navigatorOptions.handles,
-			attr = {
-				fill: handlesOptions.backgroundColor,
-				stroke: handlesOptions.borderColor,
-				'stroke-width': 1
-			},
-			tempElem;
+			handles = scroller.handles;
 
 		// create the elements
 		if (!scroller.rendered) {
-			// the group
-			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
-				.css({ cursor: 'ew-resize' })
-				.attr({ zIndex: 10 - index }) // zIndex = 3 for right handle, 4 for left / 10 - #2908
-				.add();
-
-			// the rectangle
-			tempElem = renderer.rect(-4.5, 0, 9, 16, 0, 1)
-				.attr(attr)
-				.add(handles[index]);
-			elementsToDestroy.push(tempElem);
 
 			// the rifles
-			tempElem = renderer
+			handles[index] = renderer
 				.path([
+					'M',
+					-4.5, 0.5,
+					'L',
+					4.5, 0.5,
+					4.5, 15.5,
+					-4.5, 15.5,
+					-4.5, 0.5,
 					'M',
 					-1.5, 4,
 					'L',
@@ -220,9 +221,20 @@ Scroller.prototype = {
 					0.5, 4,
 					'L',
 					0.5, 12
-				]).attr(attr)
-				.add(handles[index]);
-			elementsToDestroy.push(tempElem);
+				])
+				.attr({ zIndex: 10 - index }) // zIndex = 3 for right handle, 4 for left / 10 - #2908
+				.addClass('highcharts-navigator-handle highcharts-navigator-handle-' + ['left', 'right'][index])
+				.add();
+
+			/*= if (build.classic) { =*/
+			var handlesOptions = scroller.navigatorOptions.handles;
+			handles[index].attr({
+					fill: handlesOptions.backgroundColor,
+					stroke: handlesOptions.borderColor,
+					'stroke-width': 1
+				})
+				.css({ cursor: 'ew-resize' });
+			/*= } =*/
 		}
 
 		// Place it
@@ -309,11 +321,13 @@ Scroller.prototype = {
 			navigatorOptions = scroller.navigatorOptions,
 			scrollbarOptions = scroller.scrollbarOptions,
 			scrollbarMinWidth = scrollbarOptions.minWidth,
+			maskInside = navigatorOptions.maskInside,
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
-			outlineWidth = navigatorOptions.outlineWidth,
-			halfOutline = outlineWidth / 2,
+			outlineWidth,
+			halfOutline,
+			outlineTop,
 			zoomedMin,
 			zoomedMax,
 			range,
@@ -325,7 +339,6 @@ Scroller.prototype = {
 			strokeWidth,
 			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
 			centerBarX,
-			outlineTop = top + halfOutline,
 			verb,
 			unionExtremes;
 
@@ -391,25 +404,35 @@ Scroller.prototype = {
 					.add();
 
 				scroller.leftShade = renderer.rect()
+					.addClass('highcharts-navigator-mask' + (maskInside ? '-inside' : ''))
+					/*= if (build.classic) { =*/
 					.attr({
 						fill: navigatorOptions.maskFill
-					}).add(navigatorGroup);
+					})
+					.css(maskInside && { cursor: 'ew-resize' })
+					/*= } =*/
+					.add(navigatorGroup);
 
-				if (navigatorOptions.maskInside) {
-					scroller.leftShade.css({ cursor: 'ew-resize' });
-				} else {
+				if (!maskInside) {
 					scroller.rightShade = renderer.rect()
+						.addClass('highcharts-navigator-mask')
+						/*= if (build.classic) { =*/
 						.attr({
 							fill: navigatorOptions.maskFill
-						}).add(navigatorGroup);
+						})
+						/*= } =*/
+						.add(navigatorGroup);
 				}
 
 
 				scroller.outline = renderer.path()
+					.addClass('highcharts-navigator-outline')
+					/*= if (build.classic) { =*/
 					.attr({
-						'stroke-width': outlineWidth,
+						'stroke-width': navigatorOptions.outlineWidth,
 						stroke: navigatorOptions.outlineColor
 					})
+					/*= } =*/
 					.add(navigatorGroup);
 			}
 
@@ -453,6 +476,11 @@ Scroller.prototype = {
 
 		// place elements
 		verb = chart.isResizing ? 'animate' : 'attr';
+		outlineWidth = scroller.outline.strokeWidth();
+		halfOutline = outlineWidth / 2;
+		outlineTop = top + halfOutline;
+
+		console.log(outlineWidth)
 
 		if (navigatorEnabled) {
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {

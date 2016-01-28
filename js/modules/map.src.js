@@ -1107,8 +1107,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
     onMouseOut: function () {
         var point = this,
             start = +new Date(),
-            normalColor = Color(point.color),
-            hoverColor = Color(point.series.pointAttribs(point, 'hover').fill),
+            normalColor = Color(point.pointAttr[''].fill),
+            hoverColor = Color(point.pointAttr.hover.fill),
             animation = point.series.options.states.normal.animation,
             duration = animation && (animation.duration || 500);
 
@@ -2173,9 +2173,8 @@ H.geojson = function (geojson, hType, series) {
 
     // Create a credits text that includes map source, to be picked up in Chart.showCredits
     if (series && geojson.copyrightShort) {
-        series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
-            '<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
-        series.chart.mapCreditsFull = geojson.copyright;
+        series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
+        series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
     }
 
     return mapData;
@@ -2186,13 +2185,16 @@ H.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-    if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
-        credits.text = this.mapCredits;
+    // Disable credits link if map credits enabled. This to allow for in-text anchors.
+    if (this.mapCredits) {
         credits.href = null;
     }
 
-    proceed.call(this, credits);
+    proceed.call(this, Highcharts.merge(credits, {
+        text: credits.text + (this.mapCredits || '') // Add map credits to credits text
+    }));
 
+    // Add full map credits to hover
     if (this.credits && this.mapCreditsFull) {
         this.credits.attr({
             title: this.mapCreditsFull
@@ -2347,7 +2349,8 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
             title: null,
             tickPositions: []
         },
-        seriesOptions;
+        seriesOptions,
+        defaultCreditsOptions = Highcharts.getOptions().credits;
 
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
@@ -2364,6 +2367,10 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
             chart: {
                 panning: 'xy',
                 type: 'map'
+            },
+            credits: {
+                mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
+                mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
             },
             xAxis: hiddenAxis,
             yAxis: merge(hiddenAxis, { reversed: true })
