@@ -90,6 +90,7 @@ function getJS() {
 	ob_start();
 	include("$path/demo.js");
 	$s = ob_get_clean();
+	$_SESSION['js'] = $s; // for issue-by-commit
 
 
 	// Use local data
@@ -106,6 +107,17 @@ function getHTML($which) {
 	ob_start();
 	include("$path/demo.html");
 	$s = ob_get_clean();
+
+	// for issue-by-commit
+	$issueHTML = $s;
+	$issueHTML = str_replace('https://code.highcharts.com/stock/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/maps/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/mapdata/', $bogus, $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace($bogus, 'https://code.highcharts.com/mapdata/', $issueHTML);
+	
+	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;
+	$_SESSION['html'] = $issueHTML;
 
 	if (strstr($s, 'http://')) {
 		$s .= '<script>console.warn("Do not use http in demo.html. Use secure https.")</script>';

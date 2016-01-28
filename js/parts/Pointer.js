@@ -113,9 +113,9 @@ H.Pointer.prototype = {
 	 */
 	getCoordinates: function (e) {
 		var coordinates = {
-				xAxis: [],
-				yAxis: []
-			};
+			xAxis: [],
+			yAxis: []
+		};
 
 		each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
@@ -141,13 +141,13 @@ H.Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = Number.MAX_VALUE, // #4511
+			distance = [Number.MAX_VALUE, Number.MAX_VALUE], // #4511
 			anchor,
 			noSharedTooltip,
 			stickToHoverSeries,
 			directTouch,
 			kdpoints = [],
-			kdpoint,
+			kdpoint = [],
 			kdpointT;
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
@@ -165,7 +165,7 @@ H.Pointer.prototype = {
 		// search the k-d tree.
 		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
 		if (stickToHoverSeries && hoverPoint) {
-			kdpoint = hoverPoint;
+			kdpoint = [hoverPoint];
 
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
@@ -183,40 +183,50 @@ H.Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && typeof p.dist === 'number' && p.dist < distance) {
-					distance = p.dist;
-					kdpoint = p;
+				if (p) {
+					// Store both closest points, using point.dist and point.distX comparisons (#4645):
+					each(['dist', 'distX'], function (dist, k) {
+						if (typeof p[dist] === 'number' && p[dist] < distance[k]) {
+							distance[k] = p[dist];
+							kdpoint[k] = p;
+						}
+					});
 				}
 			});
 		}
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoint && (kdpoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
-			// Draw tooltip if necessary
-			if (shared && !kdpoint.series.noSharedTooltip) {
-				i = kdpoints.length;
-				while (i--) {
-					if (kdpoints[i].clientX !== kdpoint.clientX || kdpoints[i].series.noSharedTooltip) {
-						kdpoints.splice(i, 1);
-					}
+		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
+		if (shared) {
+			i = kdpoints.length;
+			while (i--) {
+				if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+					kdpoints.splice(i, 1);
 				}
+			}
+		}
+
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
+		if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+			// Draw tooltip if necessary
+			if (shared && !kdpoint[0].series.noSharedTooltip) {
 				if (kdpoints.length && tooltip) {
 					tooltip.refresh(kdpoints, e);
 				}
 
 				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
-					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
+					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[0]));
 				});
+				this.prevKDPoint = kdpoint[1];
 			} else {
 				if (tooltip) {
-					tooltip.refresh(kdpoint, e);
+					tooltip.refresh(kdpoint[0], e);
 				}
 				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					kdpoint.onMouseOver(e);
+					kdpoint[0].onMouseOver(e);
 				}
+				this.prevKDPoint = kdpoint[0];
 			}
-			this.prevKDPoint = kdpoint;
 
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
@@ -238,10 +248,13 @@ H.Pointer.prototype = {
 		}
 
 		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+			var series = point && point.series;
+			if (series && series.xAxis) {
+				series.xAxis.drawCrosshair(e, point);
+				series.yAxis.drawCrosshair(e, point);
+			}
 		});
-
 
 	},
 
@@ -564,9 +577,9 @@ H.Pointer.prototype = {
 	/**
 	 * When mouse leaves the container, hide the tooltip.
 	 */
-	onContainerMouseLeave: function () {
+	onContainerMouseLeave: function (e) {
 		var chart = charts[H.hoverChartIndex];
-		if (chart) {
+		if (chart && (e.relatedTarget || e.toElement)) { // #4886, MS Touch end fires mouseleave but with no related target
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
 		}
@@ -577,7 +590,9 @@ H.Pointer.prototype = {
 
 		var chart = this.chart;
 
-		H.hoverChartIndex = chart.index;
+		if (!defined(H.hoverChartIndex) || !charts[H.hoverChartIndex].mouseIsDown) {
+			H.hoverChartIndex = chart.index;
+		}
 
 		e = this.normalize(e);
 		e.returnValue = false; // #2251, #3224
@@ -618,7 +633,7 @@ H.Pointer.prototype = {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
 		
-		if (series && !series.options.stickyTracking && 
+		if (series && relatedTarget && !series.options.stickyTracking && 
 				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
 				!this.inClass(relatedTarget, 'highcharts-series-' + series.index)) { // #2499, #4465
 			series.onMouseOut();

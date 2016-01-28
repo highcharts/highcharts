@@ -86,7 +86,8 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		var time = minDate.getTime(),
 			minMonth = minDate[Date.hcGetMonth](),
 			minDateDate = minDate[Date.hcGetDate](),
-			localTimezoneOffset = (timeUnits.day + 
+			variableDayLength = !useUTC || !!getTimezoneOffset, // #4951
+			localTimezoneOffset = (timeUnits.day +
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 
@@ -104,7 +105,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
-			} else if (!useUTC && (interval === timeUnits.day || interval === timeUnits.week)) {
+			} else if (variableDayLength && (interval === timeUnits.day || interval === timeUnits.week)) {
 				time = makeTime(minYear, minMonth, minDateDate +
 					i * count * (interval === timeUnits.day ? 1 : 7));
 

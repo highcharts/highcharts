@@ -115,8 +115,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 	onMouseOut: function () {
 		var point = this,
 			start = +new Date(),
-			normalColor = Color(point.color),
-			hoverColor = Color(point.series.pointAttribs(point, 'hover').fill),
+			normalColor = Color(point.pointAttr[''].fill),
+			hoverColor = Color(point.pointAttr.hover.fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500);
 

@@ -10,9 +10,9 @@ var attr = H.attr,
  * An animator object. One instance applies to one property (attribute or style prop) 
  * on one element.
  * 
- * @param {object} elem    The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
+ * @param {object} elem	The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
  * @param {object} options Animation options, including duration, easing, step and complete.
- * @param {object} prop    The property to animate.
+ * @param {object} prop	The property to animate.
  */
 H.Fx = function (elem, options, prop) {
 	this.options = options;
@@ -925,7 +925,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
 	// Add the decimal point and the decimal component
-	if (decimals) {
+	if (+decimals) {
 		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
 		decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
@@ -946,7 +946,18 @@ Math.easeInOutSine = function (pos) {
  * Internal method to return CSS value for given element and property
  */
 H.getStyle = function (el, prop) {
-	var style = win.getComputedStyle(el, undefined);
+
+	var style;
+
+	// For width and height, return the actual inner pixel size (#4913)
+	if (prop === 'width') {
+		return el.scrollWidth - H.getStyle(el, 'padding-left') - H.getStyle(el, 'padding-right');
+	} else if (prop === 'height') {
+		return el.scrollHeight - H.getStyle(el, 'padding-top') - H.getStyle(el, 'padding-bottom');
+	}
+
+	// Otherwise, get the computed style
+	style = win.getComputedStyle(el, undefined);
 	return style && H.pInt(style.getPropertyValue(prop));
 };
 

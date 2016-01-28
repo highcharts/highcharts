@@ -1480,12 +1480,10 @@ H.Axis.prototype = {
 		// Check for percentage based input values. Rounding fixes problems with
 		// column overflow and plot line filtering (#4898, #4899)
 		if (percentRegex.test(height)) {
-			//height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
-			height = parseFloat(height) / 100 * chart.plotHeight;
+			height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
 		}
 		if (percentRegex.test(top)) {
-			//top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
-			top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
+			top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
 		}
 
 		// Expose basic values to use in Series object and navigator
@@ -1709,7 +1707,10 @@ H.Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		this.labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		if (this.labelAlign) {
+			attr.align = this.labelAlign;
+		}
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
@@ -2253,9 +2254,7 @@ H.Axis.prototype = {
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(options.snap, true)) === false) ||
-			// Not on this axis (#4095, #2888)
-			(point && point.series && point.series[this.coll] !== this)
+			((defined(point) || !pick(options.snap, true)) === false)
 		) {
 			this.hideCrosshair();
 

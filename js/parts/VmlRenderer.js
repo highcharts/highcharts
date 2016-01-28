@@ -568,6 +568,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.gradients = {};
 		renderer.cache = {}; // Cache for numerical bounding boxes
 		renderer.cacheKeys = [];
+		renderer.imgCount = 0;
 
 
 		renderer.setSize(width, height, false);

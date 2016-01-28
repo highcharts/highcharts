@@ -68,7 +68,8 @@
         pick = H.pick,
         wrap = H.wrap,
         plotOptions = H.getOptions().plotOptions,
-        CHUNK_SIZE = 50000;
+        CHUNK_SIZE = 50000,
+        destroyLoadingDiv;
 
     function eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold) {
         i = i || 0;
@@ -389,13 +390,9 @@
                         opacity: 1
                     }
                 });
+                clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
-                if (chart.loadingShown === true) {
-                    chart.loadingShown = 1;
-                } else {
-                    chart.loadingShown = chart.loadingShown + 1;
-                }
             }
 
             // Loop over the points
@@ -491,10 +488,8 @@
 
                 return !chartDestroyed;
             }, function () {
-
                 var loadingDiv = chart.loadingDiv,
-                    loadingShown = +chart.loadingShown;
-
+                    loadingShown = chart.loadingShown;
                 stroke();
                 series.canvasToSVG();
 
@@ -503,22 +498,18 @@
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
                 // change hideLoading so we can skip this block.
-                if (loadingShown === 1) {
+                if (loadingShown) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
                         opacity: 0
                     });
-
                     chart.loadingShown = false;
-                    setTimeout(function () {
+                    destroyLoadingDiv = setTimeout(function () {
                         if (loadingDiv.parentNode) { // In exporting it is falsy
                             loadingDiv.parentNode.removeChild(loadingDiv);
                         }
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
-                }
-                if (loadingShown) {
-                    chart.loadingShown = loadingShown - 1;
                 }
 
                 // Pass tests in Pointer. 

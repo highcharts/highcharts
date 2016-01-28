@@ -115,10 +115,10 @@ extend(SVGElement.prototype, {
 
 		if (elem.tagName === 'SPAN') {
 
-			var width,
-				rotation = wrapper.rotation,
+			var rotation = wrapper.rotation,
 				baseline,
 				textWidth = pInt(wrapper.textWidth),
+				whiteSpace = styles && styles.whiteSpace,
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth, wrapper.textAlign].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
@@ -131,19 +131,24 @@ extend(SVGElement.prototype, {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
-				width = pick(wrapper.elemWidth, elem.offsetWidth);
-
 				// Update textWidth
-				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
+				if (elem.offsetWidth > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + 'px',
 						display: 'block',
-						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
+						whiteSpace: whiteSpace || 'normal' // #3331
 					});
-					width = textWidth;
+					wrapper.hasTextWidth = true;
+				} else if (wrapper.hasTextWidth) { // #4928
+					css(elem, {
+						width: '',
+						display: '',
+						whiteSpace: whiteSpace || 'nowrap'
+					});
+					wrapper.hasTextWidth = false;
 				}
 
-				wrapper.getSpanCorrection(width, baseline, alignCorrection, rotation, align);
+				wrapper.getSpanCorrection(wrapper.hasTextWidth ? textWidth : elem.offsetWidth, baseline, alignCorrection, rotation, align);
 			}
 
 			// apply position with correction
@@ -196,7 +201,17 @@ extend(SVGRenderer.prototype, {
 	html: function (str, x, y) {
 		var wrapper = this.createElement('span'),
 			element = wrapper.element,
-			renderer = wrapper.renderer;
+			renderer = wrapper.renderer,
+			addSetters = function (element, style) {
+				// These properties are set as attributes on the SVG group, and as
+				// identical CSS properties on the div. (#3542)
+				each(['opacity', 'visibility'], function (prop) {
+					wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
+						proceed.call(this, value, key, elem);
+						style[key] = value;
+					});
+				});				
+			};
 
 		// Text setter
 		wrapper.textSetter = function (value) {
@@ -206,6 +221,7 @@ extend(SVGRenderer.prototype, {
 			element.innerHTML = this.textStr = value;
 			wrapper.htmlUpdateTransform();
 		};
+		addSetters(wrapper, wrapper.element.style);
 
 		// Various setters which rely on update transform
 		wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
@@ -297,15 +313,7 @@ extend(SVGRenderer.prototype, {
 									parentGroup.doTransform = true;
 								}
 							});
-
-							// These properties are set as attributes on the SVG group, and as
-							// identical CSS properties on the div. (#3542)
-							each(['opacity', 'visibility'], function (prop) {
-								wrap(parentGroup, prop + 'Setter', function (proceed, value, key, elem) {
-									proceed.call(this, value, key, elem);
-									htmlGroupStyle[key] = value;
-								});
-							});
+							addSetters(parentGroup, htmlGroupStyle);
 						});
 
 					}

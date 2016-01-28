@@ -202,7 +202,8 @@
 					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
 					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
 					minAngle,
-					maxAngle;
+					maxAngle,
+					attribs;
 
 				if (toColor === 'none') { // #3708
 					toColor = point.color || series.color || 'none';
@@ -243,14 +244,18 @@
 					if (d) {
 						shapeArgs.d = d; // animate alters it
 					}
-				} else {					
+				} else {
+					attribs = {
+						stroke: options.borderColor || 'none',
+						'stroke-width': options.borderWidth || 0,
+						fill: toColor,
+						'sweep-flag': 0
+					};
+					if (options.linecap !== 'square') { // docs
+						attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
+					}
 					point.graphic = renderer.arc(shapeArgs)
-						.attr({
-							stroke: options.borderColor || 'none',
-							'stroke-width': options.borderWidth || 0,
-							fill: toColor,
-							'sweep-flag': 0
-						})
+						.attr(attribs)
 						.add(series.group);
 				}
 			});
