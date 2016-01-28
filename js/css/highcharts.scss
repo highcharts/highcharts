@@ -99,7 +99,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     fill-opacity: 0.25;
 }
 
-.highcharts-graph:not(.highcharts-polygon-series .highcharts-graph) {
+.highcharts-graph {
     fill: none;
     stroke-width: 2;
     stroke-linecap: round;
@@ -138,29 +138,14 @@ g.highcharts-series, .highcharts-point {
 .highcharts-area {
     fill-opacity: 0.75;
 }
-.highcharts-markers path {
+.highcharts-markers {
     stroke-width: 1px;
     stroke: #ffffff;
 }
 .highcharts-point {
     stroke-width: 1px;
 }
-.highcharts-column-series .highcharts-point {
-    stroke: #ffffff;
-    transition: fill-opacity 250ms;
-}
-.highcharts-column-series .highcharts-point-hover {
-    fill-opacity: 0.75;
-    transition: fill-opacity 50ms;
-}
-.highcharts-pie-series .highcharts-point {
-    stroke-linejoin: round;
-    stroke: #ffffff;
-}
-.highcharts-pie-series .highcharts-point-hover {
-    fill-opacity: 0.75;
-    transition: fill-opacity 50ms;
-}
+
 .highcharts-data-label {
     font-size: 0.9em;
     font-weight: bold;
@@ -179,9 +164,29 @@ g.highcharts-series, .highcharts-point {
     fill-opacity: 0.25;
     stroke-width: 0;
 }
-.highcharts-point-select:not(.highcharts-pie-series .highcharts-point-select) {
-    fill: #FFFFFF !important;
-    stroke: #000000 !important;
+.highcharts-point-select {
+    fill: #FFFFFF;
+    stroke: #000000;
+}
+.highcharts-column-series .highcharts-point {
+    stroke: #ffffff;
+    transition: fill-opacity 250ms;
+}
+.highcharts-column-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+.highcharts-pie-series .highcharts-point {
+    stroke-linejoin: round;
+    stroke: #ffffff;
+}
+.highcharts-pie-series .highcharts-point-hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+.highcharts-pie-series .highcharts-point-select {
+    fill: inherit;
+    stroke: inherit;
 }
 
 
@@ -266,6 +271,7 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 0;
 }
 .highcharts-polygon-series .highcharts-graph {
+    fill: inherit;
     stroke-width: 0;
 }
 .highcharts-waterfall-series .highcharts-graph {

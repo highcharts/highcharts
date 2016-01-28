@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-01-27)
+ * @license Highstock JS v3.0-dev (2016-01-28)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -18943,7 +18943,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-01-27)
+ * Highstock JS v3.0-dev (2016-01-28)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license
