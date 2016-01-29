@@ -169,7 +169,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			stackIndex,
 			anchorX,
 			anchorY,
-			outsideRight;
+			outsideRight,
+			yAxis = series.yAxis;
 
 		i = points.length;
 		while (i--) {
@@ -225,7 +226,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 
 				// Set the tooltip anchor position
-				point.tooltipPos = [plotX, plotY];
+				point.tooltipPos = chart.inverted ? [yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - plotX] : [plotX, plotY];
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
