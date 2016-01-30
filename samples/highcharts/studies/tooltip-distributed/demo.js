@@ -1,29 +1,39 @@
 $(function() {
     /**
      * Highcharts plugin to display tooltip labels next to each point in a shared tooltip.
-     * TODO:
-     * - tooltip.hide()
-     * - at the left side of the chart, show the labels to the right
      */
     (function (H) {
         var each = H.each,
             pick = H.pick,
-            splat = H.splat;
-        H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, point, mouseEvent) {
-            var points,
+            splat = H.splat,
+            Tooltip = H.Tooltip,
+            wrap = H.wrap;
+
+        wrap(Tooltip.prototype, 'init', function (proceed) {
+            proceed.apply(this, [].slice.call(arguments, 1));
+
+            this.label = this.chart.renderer.g('tooltip')
+                .attr({
+                    zIndex: 8
+                })
+                .add();
+        });
+
+        wrap(Tooltip.prototype, 'refresh', function (proceed, point, mouseEvent) {
+            var tooltip = this,
+                points,
                 pointConfig = [],
                 boxes = [],
                 labels,
                 ren = this.chart.renderer,
                 chart = this.chart,
                 options = chart.options.tooltip,
-                hoverPoints = chart.hoverPoints;
+                hoverPoints = chart.hoverPoints,
+                rightAligned = true;
                 
-            if (options.shared && options.distributed) {
+            if (options.shared && options.distributed && !chart.inverted) {
                 points = splat(point);
-                points.sort(function (a, b) {
-                    return a.plotY - b.plotY;
-                });
+                
                 // hide previous hoverPoints and set new
                 chart.hoverPoints = points;
                 if (hoverPoints) {
@@ -36,62 +46,105 @@ $(function() {
 
                     pointConfig.push(item.getLabelConfig());
                 });
-                labels = this.bodyFormatter(pointConfig);
-                
+
+                // Do excactly like Tooltip.prototype.defaultFormatter,
+                // except we use the array without joining.
+                labels = [this.tooltipFooterHeaderFormatter(pointConfig[0])]
+                    .concat(this.bodyFormatter(pointConfig));
+
                 // Create the individual labels
                 each(labels, function (str, i) {
-                    var point = points[i],
-                        series = point.series;
-                    if (!series.tt) {
-                        series.tt = ren.label()
+                    var point = points[i - 1] ||
+                             // Item 0 is the header. Instead of this, we could also use the crosshair label
+                            { isHeader: true, plotX: points[0].plotX },
+                        owner = point.series || tooltip,
+                        tt = owner.tt,
+                        series = point.series || {},
+                        x;
+                    
+                    // Store the tooltip referance on the series
+                    if (!tt) {
+                        owner.tt = tt = ren.label()
                             .attr({
                                 'fill': options.backgroundColor,
                                 'r': options.borderRadius,
-                                'stroke': point.color || series.color || 'silver',
-                                'stroke-width': options.borderWidth,
-                                'zIndex': 8
+                                'stroke': point.color || series.color || 'transparent',
+                                'stroke-width': options.borderWidth
                             })
-                            .add();
+                            .add(tooltip.label);
                             
                         // Add a connector back to the point
-                        series.tt.connector = ren.path()
-                            .attr({
-                                'stroke-width': 1,
-                                'stroke': point.color || series.color || 'silver'
-                            })
-                            .add();
+                        if (point.series) {
+                            tt.connector = ren.path()
+                                .attr({
+                                    'stroke-width': series.options.lineWidth || 2,
+                                    'stroke': point.color || series.color || 'silver'
+                                })
+                                .add(tooltip.label);
+                        }
                     }
-                    series.tt.attr({
+                    tt.attr({
                         text: str
                     });
+
+                    // Get X position now, so we can move all to the other side in case of overflow
+                    x = point.plotX + chart.plotLeft - pick(options.distance, 16) - 
+                        tt.getBBox().width;
+
+                    // If overflow left, we don't use this x in the next loop
+                    if (x < 0) {
+                        rightAligned = false;
+                    }
+                    
+
                     // Prepare for distribution
                     boxes.push({
-                        target: point.plotY,
-                        size: series.tt.getBBox().height
+                        target: point.plotY || 0,
+                        rank: point.isHeader ? 1 : 0,
+                        size: owner.tt.getBBox().height + 1,
+                        point: point,
+                        x: x,
+                        tt: tt
                     });
+
+
                     
                 });
                 
                 // Distribute and put in place
                 H.distribute(boxes, chart.plotHeight);
-                each(points, function (point, i) {
-                    var tt = point.series.tt;
+                each(boxes, function (box, i) {
+                    var point = box.point,
+                        tt = box.tt;
+
+                    // Put the label in place
                     tt.attr({
-                        x: point.plotX + chart.plotLeft - pick(options.distance, 16) - 
-                            tt.getBBox().width,
-                        y: boxes[i].pos + chart.plotTop
+                        x: rightAligned ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16),
+                        y: box.pos + chart.plotTop
                     });
-                    tt.connector.attr({
-                        d: [
-                            'M',
-                            point.plotX + chart.plotLeft,
-                            point.plotY + chart.plotTop, 
-                            'L',
-                            point.plotX + chart.plotLeft - pick(options.distance, 16),
-                            boxes[i].pos + chart.plotTop + tt.getBBox().height / 2
-                        ]
-                    });
+
+                    // Draw the connector to the point
+                    if (!point.isHeader) {
+                        tt.connector.attr({
+                            d: [
+                                'M',
+                                point.plotX + chart.plotLeft,
+                                point.plotY + chart.plotTop, 
+                                'L',
+                                rightAligned ? 
+                                    point.plotX + chart.plotLeft - pick(options.distance, 16) :
+                                    point.plotX + chart.plotLeft + pick(options.distance, 16),
+                                box.pos + chart.plotTop + tt.getBBox().height / 2
+                            ]
+                        });
+                    }
                 });
+                // show it
+                if (tooltip.isHidden) {
+                    stop(tooltip.label);
+                    tooltip.label.attr('opacity', 1).show();
+                }
+                tooltip.isHidden = false;
             } else {
                 return proceed.call(this, point, mouseEvent);
             }
@@ -112,15 +165,13 @@ $(function() {
         tooltip: {
             valueSuffix: '°C',
             shared: true,
-            distributed: true
+            distributed: true,
+            distance: 30
         },
         
         xAxis: {
             crosshair: {
-                enabled: true,
-                label: {
-                    enabled: true
-                }
+                enabled: true
             }
         },
 
