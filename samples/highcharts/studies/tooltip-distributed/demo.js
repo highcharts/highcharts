@@ -43,7 +43,7 @@ $(function() {
                     var point = points[i],
                         series = point.series;
                     if (!series.tt) {
-                        series.tt = ren.label(str)
+                        series.tt = ren.label()
                             .attr({
                                 'fill': options.backgroundColor,
                                 'r': options.borderRadius,
@@ -61,6 +61,9 @@ $(function() {
                             })
                             .add();
                     }
+                    series.tt.attr({
+                        text: str
+                    });
                     // Prepare for distribution
                     boxes.push({
                         target: point.plotY,
