@@ -978,7 +978,6 @@ Scroller.prototype = {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
-			pointValKey: inArray('close', baseSeries.pointArrayMap || []) > -1 && 'close', // #1905
 			xAxis: 'navigator-x-axis',
 			yAxis: 'navigator-y-axis',
 			name: 'Navigator',
