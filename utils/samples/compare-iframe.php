@@ -197,7 +197,10 @@ function getExportInnerHTML() {
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
-			<?php @include("$path/demo.css"); ?>
+			<?php 
+			$_SESSION['css'] = @file_get_contents("$path/demo.css");
+			echo $_SESSION['css'];
+			?>
 		</style>
 		
 		<script type="text/javascript">

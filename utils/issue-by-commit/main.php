@@ -47,6 +47,9 @@
 	if (@$_POST['html']) {
 		$_SESSION['html'] = stripslashes($_POST['html']);
 	}
+	if (@$_POST['css']) {
+		$_SESSION['css'] = stripslashes($_POST['css']);
+	}
 	if (@$_POST['js']) {
 		$_SESSION['js'] = stripslashes($_POST['js']);
 	}
@@ -54,6 +57,8 @@
 
 	// Get demo code
 	$html = isset($_SESSION['html']) ? $_SESSION['html'] : file_get_contents('demo.html');
+
+	$css = isset($_SESSION['css']) ? $_SESSION['css'] : @file_get_contents('demo.css');
 	$js = isset($_SESSION['js']) ? $_SESSION['js'] : file_get_contents('demo.js');
 
 
@@ -71,6 +76,9 @@
 			font-family: monospace;
 			color: green;
 		}
+
+		/* Styles from demo.css */
+		<?php echo $css ?>
 		</style>
 		<?php if (@$_POST['branch']) : ?>
 		<script>
@@ -112,6 +120,10 @@
 <textarea name="html" rows="6" style="width: 100%"><?php echo $html; ?></textarea>
 
 <br/>
+<b>Paste CSS</b> here:<br/>
+<textarea name="css" rows="6" style="width: 100%"><?php echo $css; ?></textarea>
+
+<br/>
 <b>Paste JS</b> here:<br/>
 <textarea name="js" rows="30" style="width: 100%"><?php echo $js; ?></textarea><br/>
 
@@ -151,8 +163,9 @@ ob_start();
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Sample</title>
-
-
+<style type="text/css">
+<?php echo $css ?>
+</style>
 	</head>
 	<body style="margin: 0">
 
