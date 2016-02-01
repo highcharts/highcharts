@@ -1079,9 +1079,9 @@
 
         // For width and height, return the actual inner pixel size (#4913)
         if (prop === 'width') {
-            return el.scrollWidth - getStyle(el, 'padding-left') - getStyle(el, 'padding-right');
+            return Math.min(el.offsetWidth, el.scrollWidth) - getStyle(el, 'padding-left') - getStyle(el, 'padding-right');
         } else if (prop === 'height') {
-            return el.scrollHeight - getStyle(el, 'padding-top') - getStyle(el, 'padding-bottom');
+            return Math.min(el.offsetHeight, el.scrollHeight) - getStyle(el, 'padding-top') - getStyle(el, 'padding-bottom');
         }
 
         // Otherwise, get the computed style
