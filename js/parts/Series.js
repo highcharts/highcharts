@@ -1275,7 +1275,7 @@ Series.prototype = {
 			}
 
 			// Line series, nullsAsZeroes is not handled
-			if (point.isNull && !defined(nullsAsZeroes)) {
+			if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
 				gap = !options.connectNulls;
 
 			// Area series, nullsAsZeroes is set
