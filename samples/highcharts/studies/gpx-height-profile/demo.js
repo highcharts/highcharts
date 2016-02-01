@@ -4,25 +4,29 @@ var dl = {
         enabled: true,
         format: 'Start - Lunde',
         rotation: 45,
-        align: 'right'
+        align: 'right',
+        crop: false
     },
     31: {
         enabled: true,
         format: 'End of road',
         rotation: 45,
-        align: 'right'
+        align: 'right',
+        crop: false
     },
     98: {
         enabled: true,
         format: 'Drinking station',
         rotation: 45,
-        align: 'right'
+        align: 'right',
+        crop: false
     },
     161: {
         enabled: true,
         format: 'Finish - Vidasetvarden ',
         rotation: 0,
-        align: 'right'
+        align: 'right',
+        crop: false
     }
 };
 
