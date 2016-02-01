@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.0-modified (2016-01-27)
+ * @license Highmaps JS v4.2.0-modified (2016-02-01)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -13999,6 +13999,7 @@
 
                         if (graphic) { // update
                             graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
+                                .attr(pointAttr) // #4759
                                 .animate(extend({
                                     x: plotX - radius,
                                     y: plotY - radius

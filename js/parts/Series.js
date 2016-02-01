@@ -963,6 +963,7 @@ Series.prototype = {
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
+							.attr(pointAttr) // #4759
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
