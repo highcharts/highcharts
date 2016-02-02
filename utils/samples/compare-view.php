@@ -87,6 +87,16 @@
 					location.href = commentHref;
 				});
 
+				$('#commits').click(function () {
+					var frameset = window.parent.document.querySelector('frameset'),
+						frame = window.parent.document.createElement('frame');
+					
+					frameset.setAttribute('cols', '400, *, 400');
+					frameset.appendChild(frame);
+					frame.setAttribute('src', '/issue-by-commit/commits.php');
+					commentFrame.remove();
+				});
+
 				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
@@ -655,7 +665,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
-				<a class="button" id="issue-by-commit" target="_blank" style="margin-left: 1em" href="/issue-by-commit">Issue by commit</a>
+				<a class="button" id="commits" style="margin-left: 1em" >Test by commit</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
