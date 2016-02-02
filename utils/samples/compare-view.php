@@ -92,6 +92,7 @@
 						frame = window.parent.document.getElementById('commits-frame');
 
 					if (frame) {
+						frame.setAttribute('src', 'about:blank');
 						frameset.removeChild(frame);
 						frameset.setAttribute('cols', '400, *');
 					} else {
