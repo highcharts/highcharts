@@ -9,12 +9,13 @@ $(function () {
                 events: {
                     click: function (e) {
                         var x = Math.round(e.xAxis[0].value),
-                            y = Math.round(e.yAxis[0].value);
+                            y = Math.round(e.yAxis[0].value),
+                            latLon = this.fromPointToLatLon({ x: x, y: y });
 
                         this.get('clicks').addPoint({
                             x: x,
                             y: y,
-                            name: '[' + x + ', ' + y + ']'
+                            name: '[N' + latLon.lat.toFixed(2) + ', E' + latLon.lon.toFixed(2) + ']'
                         });
                     }
                 }
@@ -53,7 +54,8 @@ $(function () {
             }, {
                 type: 'mappoint',
                 id: 'clicks',
-                name: 'Clicks'
+                name: 'Clicks',
+                data: []
             }]
         });
     });
