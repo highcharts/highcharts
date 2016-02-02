@@ -407,6 +407,7 @@
 				display: block;
 				color: silver;
 				font-style: italic;
+				padding: 1em 1em 0 1em;
 			}
 
 			
