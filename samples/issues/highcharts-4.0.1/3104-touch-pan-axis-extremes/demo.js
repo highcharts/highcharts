@@ -27,8 +27,6 @@ $(function () {
             data: [1,4,3,4,5,5,4],
             pointStart: 3
         }]
-    }, function (chart) {
-        chart.xAxis[0].setExtremes(2, 6, true, false);
     });
 
 });
