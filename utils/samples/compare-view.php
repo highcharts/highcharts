@@ -89,12 +89,18 @@
 
 				$('#commits').click(function () {
 					var frameset = window.parent.document.querySelector('frameset'),
+						frame = window.parent.document.getElementById('commits-frame');
+
+					if (frame) {
+						frameset.removeChild(frame);
+						frameset.setAttribute('cols', '400, *');
+					} else {
 						frame = window.parent.document.createElement('frame');
-					
-					frameset.setAttribute('cols', '400, *, 400');
-					frameset.appendChild(frame);
-					frame.setAttribute('src', '/issue-by-commit/commits.php');
-					commentFrame.remove();
+						frameset.setAttribute('cols', '400, *, 400');
+						frameset.appendChild(frame);
+						frame.setAttribute('id', 'commits-frame');
+						frame.setAttribute('src', '/issue-by-commit/commits.php');
+					}
 				});
 
 				$(window).bind('keydown', parent.keyDown);
