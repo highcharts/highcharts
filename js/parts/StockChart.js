@@ -277,22 +277,38 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 });
 
 // Override getPlotBandPath to allow for multipane charts
-Axis.prototype.getPlotBandPath = function (from, to) {
-	var toPath = this.getPlotLinePath(to, null, null, true),
-		path = this.getPlotLinePath(from, null, null, true),
-		result = [],
-		i;
+    Axis.prototype.getPlotBandPath = function (from, to) {
+        var min = this.min,
+            max = this.max,
+            toPath = this.getPlotLinePath(to, null, null, true),
+            path = this.getPlotLinePath(from, null, null, true),
+            isXAxis  = defined(this.isXAxis),
+            inverted = this.chart.inverted,
+            rotated  = (isXAxis && inverted) || (!isXAxis), //#4964 check if chart is inverted or plotband is on yAxis
+            isInside = (from >= min && to <= max), 
+            result = [],
+            i;
 
-	if (path && toPath && path.toString() !== toPath.toString()) {
-		// Go over each subpath
-		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
-		}
-	} else { // outside the axis area
-		result = null;
-	}
+        if (path && toPath && isInside) {
+            // Go over each subpath
+            for (i = 0; i < path.length; i += 6) {
+                result.push(
+                    'M', path[i + 1], 
+                    path[i + 2], 
+                    'L', 
+                    path[i + 4], 
+                    path[i + 5], 
+                    !rotated && toPath[i + 4] === path[i + 4] ? toPath[i + 4] + 1 : toPath[i + 4], 
+                     rotated && toPath[i + 5] === path[i + 5] ? toPath[i + 5] + 1 : toPath[i + 5],
+                    !rotated && toPath[i + 1] === path[i + 1] ? toPath[i + 1] + 1 : toPath[i + 1],
+                     rotated && toPath[i + 2] === path[i + 2] ? toPath[i + 2] + 1 : toPath[i + 2]
+                );
+            }
+        } else { // outside the axis area
+            result = null;
+        }
 
-	return result;
+        return result;
 };
 
 // Function to crisp a line with multiple segments
