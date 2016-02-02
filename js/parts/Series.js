@@ -417,8 +417,7 @@ Series.prototype = {
 			}
 
 			series.data = [];
-			series.options.data = data;
-			//series.zData = zData;
+			series.options.data = series.userOptions.data = data;
 
 			// destroy old points
 			i = oldDataLength;

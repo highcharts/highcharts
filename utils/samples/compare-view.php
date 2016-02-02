@@ -165,7 +165,7 @@
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, ''),
+									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									<?php if ($isUnitTest) : ?>
 									title: 'How many unit tests passed out of the total' ,
@@ -188,7 +188,7 @@
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, ''),
+									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									title: 'Compare'
 								})
