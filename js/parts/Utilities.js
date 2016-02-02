@@ -927,7 +927,7 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 	// Add the decimal point and the decimal component
 	if (+decimals) {
 		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
-		decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
+		decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
 	}
 
