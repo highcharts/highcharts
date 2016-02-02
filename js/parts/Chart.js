@@ -1418,7 +1418,7 @@ Chart.prototype = {
 		var chart = this;
 
 		// Run callbacks
-		each(this.callbacks.concat(this.callback), function (fn) {
+		each([this.callback].concat(this.callbacks), function (fn) {
 			if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
