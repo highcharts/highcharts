@@ -8,15 +8,13 @@ $(function () {
                 numSeries = series.length,
                 numXAxes = chart.xAxis.length,
                 numYAxes = chart.yAxis.length,
-                div = document.createElement('div'),
+           //     div = document.createElement('div'),
                 tableSummary = document.createElement('caption'),
                 titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title'),
                 descElement = chart.container.getElementsByTagName('desc')[0],
                 textElements = chart.container.getElementsByTagName('text'),
                 titleId = 'highcharts-title-' + chart.index,
                 descId = 'highcharts-desc-' + chart.index,
-                tooltipInfo = document.createElement('div'),
-                tooltipInfoId = 'highcharts-tooltip-info-' + chart.index,
                 ariaTable,
                 tableHeaders,
                 chartDesc,
@@ -78,7 +76,7 @@ $(function () {
                     chartDesc += '"' + (chart.yAxis[0].options.title && chart.yAxis[0].options.title.text) + '".';
                 } else {
                     for (i = 0; i < numYAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', "' : '"') + (chart.yAxis[i].options.title +
+                        chartDesc += (i > 0 ? ', "' : '"') + (chart.yAxis[i].options.title &&
                                 chart.yAxis[i].options.title.text) + '"';
                     }
                     chartDesc += ' and "' + (chart.yAxis[numYAxes - 1].options.title && chart.yAxis[numYAxes - 1].options.title.text) +
@@ -102,12 +100,17 @@ $(function () {
             }
 
             // Add SVG title/desc tags
+            /*
             titleElement.innerHTML = options.title.text || 'Chart';
             titleElement.id = titleId;
             descElement.innerHTML += '. ' + chartDesc;
             descElement.id = descId;
-            descElement.parentNode.insertBefore(titleElement, descElement);
+            descElement.parentNode.insertBefore(titleElement, descElement);*/
+           // chart.renderTo.setAttribute('aria-labelledby', titleId + ' ' + descId);
+            chart.renderTo.setAttribute('role', 'region');
+            chart.renderTo.setAttribute('aria-label', chartDesc);
 
+/*
             // Create table
             div.innerHTML = chart.getTable();
             ariaTable = div.getElementsByTagName('table')[0];
@@ -119,15 +122,15 @@ $(function () {
             } else {
                 ariaTable.appendChild(tableSummary);
             }
-
-            // Add tooltip info div
-            tooltipInfo.id = chart.tooltipInfoDiv = tooltipInfoId;
-            tooltipInfo.role = 'region';
-            tooltipInfo['aria-live'] = 'assertive';
-            div.insertBefore(tooltipInfo, ariaTable);
+            ariaTable.setAttribute('aria-label', 'A tabular view of the chart "' + titleElement.innerHTML + '"');
+            for (i = 0; i < tableHeaders.length; ++i) {
+                tableHeaders[i].setAttribute('scope', 'col');
+            }
+*/
 
     /*
             // Hide table and tooltip info
+            // Consider using Highcharts.css()???
             div.style.position = 'absolute';
             div.style.left = '-9999em';
             div.style.width = '1px';
@@ -135,23 +138,9 @@ $(function () {
             div.style.overflow = 'hidden';
     //*/
 
-            // Set accessibility attributes
-            chart.renderTo.setAttribute('aria-labelledby', titleId + ' ' + descId);
-            ariaTable.setAttribute('aria-label', 'A tabular view of the chart "' + titleElement.innerHTML + '"');
-            for (i = 0; i < tableHeaders.length; ++i) {
-                tableHeaders[i].setAttribute('scope', 'col');
-            }
-
-            /* Add keyboard navigation */
-
-            if (options.accessibility && options.accessibility.keyboardNavigation === false) {
-                return;
-            }
-
-            // Function for highlighting a point. Returns highlighted point
-            H.Point.prototype.highlight = function () {
-                var point = this,
-                    tooltipKeys = [
+            // Return string with information about point
+            function buildPointInfoString(point) {
+                var infoKeys = [
                         ['Name', 'name', '"'], // 3rd element determines whether value should be in quotation marks
                         ['ID', 'id', '"'],
                         ['Category', 'category', '"'],
@@ -167,15 +156,69 @@ $(function () {
                         ['Q1', 'q1'],
                         ['Q3', 'q3']
                     ],
-                    tooltipString = '';
-                H.each(tooltipKeys, function (keyArray) {
-                    var value = point[keyArray[1]],
-                        quote = keyArray[2] || '';
-                    tooltipString += value !== undefined ? '. ' + keyArray[0] + ': ' + quote + value + quote : '';
+                    infoString = '';
+
+                H.each(infoKeys, function (keyArray) {
+                    var quote = keyArray[2] || '',
+                        value = point[keyArray[1]];
+                    infoString += value !== undefined ? '. ' + keyArray[0] + ' = ' + quote + value + quote : '';
                 });
-                document.getElementById(point.series.chart.tooltipInfoDiv).innerHTML = '"' +
-                    (point.series.name || point.series.index + 1) + '", type: ' + point.series.type +
-                    '. Data point ' + (point.index + 1) + tooltipString; // Update tooltip info div
+                return 'Point ' + (point.index + 1) + ' of ' + point.series.points.length + ', series ' +
+                        (point.series.index + 1) + ' of ' + point.series.chart.series.length + infoString;
+            }
+
+            // Put info on points of a series
+            function setPointInfo(dataSeries) {
+                H.each(dataSeries.points, function (point) {
+
+                // Wrap point element in <a> tag
+/*                    var origEl = point.graphic.element,
+                        parent = origEl.parentNode,
+                        linkEl = document.createElement('a');
+
+                    linkEl.setAttribute('tabindex', '-1');
+                    linkEl.setAttribute('aria-label', buildPointInfoString(point));
+                    linkEl.appendChild(origEl.cloneNode(true));
+
+                    parent.insertBefore(linkEl, origEl);
+                    parent.removeChild(origEl);
+*/
+
+/*
+                    // Add descriptive child element
+                    //var infoEl = document.createElement('desc');
+                    //var infoEl = document.createElement('title');
+                    var infoEl = document.createElement('text');
+                    infoEl.innerHTML = 'Info: ' + buildPointInfoString(point);
+                    point.graphic.element.appendChild(infoEl);
+                    // TODO: Add aria-describedby/aria-labelledby='id' to point graphic & SVG root (or container??). NB: aria-describedby might not be widely supported
+//*/
+
+                    // Set aria label on point
+                    point.graphic.element.setAttribute('role', 'img');
+                    point.graphic.element.setAttribute('tabindex', '-1');
+                    point.graphic.element.setAttribute('aria-label', buildPointInfoString(point));
+
+                });
+            }
+            H.each(series, setPointInfo);
+
+            H.wrap(H.Series.prototype, 'drawPoints', function (proceed) {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                setPointInfo(this);
+            });
+
+
+            /* Add keyboard navigation */
+
+            if (options.accessibility && options.accessibility.keyboardNavigation === false) {
+                return;
+            }
+
+            // Function for highlighting a point
+            H.Point.prototype.highlight = function () {
+                var point = this;
+                point.graphic.element.focus();
                 point.onMouseOver(); // Show the hover marker
                 point.series.chart.tooltip.refresh(point); // Show the tooltip
             };
@@ -188,13 +231,13 @@ $(function () {
 
             // Function to show the export menu and focus the first item (if exists)
             H.Chart.prototype.showExportMenu = function () {
-                var exportList, ix;
+                var exportList;
                 this.exportSVGElements[0].element.onclick();
                 exportList = chart.exportDivElements;
                 if (exportList) {
                     // Set tabindex on the menu items to allow focusing by script
-                    for (ix = 0; ix < exportList.length; ++ix) {
-                        exportList[i].setAttribute('tabindex', -1);
+                    for (var i = 0; i < exportList.length; ++i) {
+                        exportList[i].setAttribute("tabindex", -1);
                     }
                     exportList[0].focus();
                     exportList[0].onmouseover();
@@ -205,23 +248,23 @@ $(function () {
             // Function to highlight next/previous point in chart, optionally wrapping around to first point.
             // Returns true on success, false on failure (no adjacent point to highlight in chosen direction)
             H.Chart.prototype.highlightAdjacentPoint = function (next, wrap) {
-                var curSeries = this.series,
+                var series = this.series,
                     curPoint = this.highlightedPoint,
                     newSeries,
                     newPoint;
 
                 // If no points, return false
-                if (!curSeries[0] || !curSeries[0].points) {
+                if (!series[0] || !series[0].points) {
                     return false;
                 }
 
                 // Use first point if none already highlighted
                 if (!curPoint) {
-                    curSeries[0].points[0].highlight();
+                    series[0].points[0].highlight();
                     return true;
                 }
 
-                newSeries = curSeries[curPoint.series.index + (next ? 1 : -1)];
+                newSeries = series[curPoint.series.index + (next ? 1 : -1)];
                 newPoint = next ?
                     // Try to grab next point
                     curPoint.series.points[curPoint.index + 1] || newSeries && newSeries.points[0] :
@@ -234,8 +277,8 @@ $(function () {
                     if (!wrap) {
                         return false;
                     }
-                    newPoint = next ? curSeries[0].points[0] :
-                        curSeries[curSeries.length - 1].points[curSeries[curSeries.length - 1].points.length - 1];
+                    newPoint = next ? series[0].points[0] :
+                        series[series.length - 1].points[series[series.length - 1].points.length - 1];
                 }
 
                 // There is an adjacent point, highlight it
@@ -245,7 +288,7 @@ $(function () {
 
             H.addEvent(chart.renderTo, 'keydown', function (ev) {
                 var e = ev || window.event,
-                    shift = e.shiftKey,
+                    keyCode = e.which,
                     highlightedExportItem = chart.highlightedExportItem,
                     wrap = true,
                     newSeries,
@@ -253,27 +296,27 @@ $(function () {
                     doExporting = chart.options.exporting && chart.options.exporting.enabled !== false,
                     exportList,
                     reachedEnd,
-                    ix;
+                    i;
 
                 // Tab = right, Shift+Tab = left
-                if (e.which === 9) {
-                    e.which = shift ? 37 : 39;
-                    wrap = false;
+                if (keyCode === 9) {
+                    keyCode = e.shiftKey ? 37 : 39;
+                    wrap = false; // Don't wrap on tab, only on arrow keys
                 }
 
                 if (!chart.isExporting) {
-                    switch (e.which) {
+                    switch (keyCode) {
                     case 37: // Left
                     case 39: // Right
-                        if (!chart.highlightAdjacentPoint(e.which === 39, !doExporting && wrap)) {
+                        if (!chart.highlightAdjacentPoint(keyCode === 39, !doExporting && wrap)) {
                             if (doExporting && wrap) {
                                 // Start export menu navigation
                                 chart.isExporting = true;
                                 chart.showExportMenu();
                             } else {
-                                // Return as if user tabbed or shift+tabbed
+                                // Try to return as if user tabbed or shift+tabbed
+                                // Some browsers won't allow mutation of event object, but try anyway
                                 e.which = e.keyCode = 9;
-                                shift = e.which === 37;
                                 return;
                             }
                         }
@@ -282,7 +325,7 @@ $(function () {
                     case 38: // Up
                     case 40: // Down
                         if (chart.highlightedPoint) {
-                            newSeries = series[chart.highlightedPoint.series.index + (e.which === 38 ? 1 : -1)];
+                            newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? 1 : -1)];
                             if (newSeries && newSeries.points[0]) {
                                 newSeries.points[0].highlight();
                             } else if (doExporting) {
@@ -303,29 +346,26 @@ $(function () {
                     }
                 } else {
                     // Keyboard nav for exporting menu
-                    switch (e.which) {
+                    switch (keyCode) {
                     case 37: // Left
                     case 38: // Up
                         exportList = chart.exportDivElements;
-                        ix = highlightedExportItem = highlightedExportItem || 0;
+                        i = highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
-                        while (ix--) {
-                            if (exportList[ix] && exportList[ix].tagName === 'DIV' &&
-                                    !(exportList[ix].children && exportList[ix].children.length)) {
-                                exportList[ix].focus();
+                        while (i--) {
+                            if (exportList[i] && exportList[i].tagName === 'DIV' &&
+                                    !(exportList[i].children && exportList[i].children.length)) {
+                                exportList[i].focus();
                                 exportList[chart.highlightedExportItem].onmouseout();
-                                exportList[ix].onmouseover();
-                                chart.highlightedExportItem = ix;
+                                exportList[i].onmouseover();
+                                chart.highlightedExportItem = i;
                                 reachedEnd = false;
                                 break;
                             }
                         }
                         if (reachedEnd) {
                             chart.isExporting = false;
-                            /*for (var i = 0; i < chart.exportDivElements.length; ++i) {
-                                HighchartsAdapter.fireEvent(chart.exportDivElements[i], 'mouseleave');
-                            }*/
-                            Highcharts.fireEvent(document, 'mouseup');
+                            H.fireEvent(document, 'mouseup');
                             exportList[chart.highlightedExportItem].onmouseout();
                             chart.highlightedExportItem = 0;
                             chart.renderTo.focus();
@@ -344,7 +384,7 @@ $(function () {
                         exportList = chart.exportDivElements;
                         highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
-                        for (ix = highlightedExportItem + 1; ix < exportList.length; ++ix) {
+                        for (var ix = highlightedExportItem + 1; ix < exportList.length; ++ix) {
                             if (exportList[ix] && exportList[ix].tagName === 'DIV' &&
                                     !(exportList[ix].children && exportList[ix].children.length)) {
                                 exportList[ix].focus();
@@ -357,16 +397,17 @@ $(function () {
                         }
                         if (reachedEnd) {
                             chart.isExporting = false;
-                            for (ix = 0; ix < chart.exportDivElements.length; ++ix) {
-                                Highcharts.fireEvent(chart.exportDivElements[ix], 'mouseleave');
+                            for (var a = 0; a < chart.exportDivElements.length; ++a) {
+                                H.fireEvent(chart.exportDivElements[a], 'mouseleave');
                             }
                             exportList[chart.highlightedExportItem].onmouseout();
                             chart.highlightedExportItem = 0;
                             chart.renderTo.focus();
                             if (!wrap) {
-                                // Return as if user tabbed
+                                // Try to return as if user tabbed
+                                // Some browsers won't allow mutation of event object, but try anyway
                                 e.which = e.keyCode = 9;
-                                shift = false;
+                                e.shiftKey = false;
                                 return;
                             }
                             series[0].points[0].highlight(); // Otherwise highlight first point to wrap
