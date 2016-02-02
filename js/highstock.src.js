@@ -10207,9 +10207,12 @@
             // Crosshair
             each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
                 var series = point && point.series;
-                if (series && series.xAxis) {
-                    series.xAxis.drawCrosshair(e, point);
-                    series.yAxis.drawCrosshair(e, point);
+                if (series) {
+                    each(['xAxis', 'yAxis', 'colorAxis'], function (coll) {
+                        if (series[coll]) {
+                            series[coll].drawCrosshair(e, point);
+                        }
+                    });
                 }
             });
 
