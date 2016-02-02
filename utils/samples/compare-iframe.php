@@ -15,11 +15,19 @@ if (isset($_GET['commit'])) {
 } else {
 	$leftPath = Settings::$leftPath;
 }
-$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
+
+if (isset($_GET['rightcommit'])) {
+	$rightPath = $_GET['rightcommit']; // used by issue-by-commit link
+} else {
+	$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
+}
 
 // A commit is given, insert the full path
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
 	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
+}
+if (preg_match('/^[a-z0-9]+$/', $rightPath)) {
+	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
 }
 
 
@@ -135,19 +143,22 @@ function getHTML($which) {
 		$exporting = $leftExporting;
 		
 	} else {
-
-		// These are the files we want to test. Append a time stamp to ensure we're not loading
-		// from browser cache.
-		$s = preg_replace_callback(
-			'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
-			function ($matches) {
-				global $rightPath;
-				$src = $rightPath . $matches[1];
-				$src = str_replace('.js', '.js?' . mktime(), $src);
-				return $src;
-			},
-			$s
-		);
+		if (strstr($rightPath, 'github') !== false) {
+			$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
+		} else {
+			// These are the files we want to test. Append a time stamp to ensure we're not loading
+			// from browser cache.
+			$s = preg_replace_callback(
+				'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
+				function ($matches) {
+					global $rightPath;
+					$src = $rightPath . $matches[1];
+					$src = str_replace('.js', '.js?' . mktime(), $src);
+					return $src;
+				},
+				$s
+			);
+		}
 		
 		$exporting = $rightExporting;
 	}
