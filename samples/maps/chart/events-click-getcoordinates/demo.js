@@ -1,5 +1,6 @@
 function showMap(mapKey) {
 
+    var supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
     // Initiate the chart
     $('#container').highcharts('Map', {
@@ -7,11 +8,14 @@ function showMap(mapKey) {
         chart: {
             events: {
                 click: function (e) {
-                    var x = Math.round(e.xAxis[0].value),
-                        y = Math.round(e.yAxis[0].value),
-                        seriesId = $('input[name=series]:checked').val();
+                    var series = this.get($('input[name=series]:checked').val()),
+                        x = Math.round(e.xAxis[0].value),
+                        y = Math.round(e.yAxis[0].value);
 
-                    this.get(seriesId).addPoint({
+                    series.addPoint(supportsLatLon ? this.fromPointToLatLon({
+                        x: x,
+                        y: y
+                    }) : {
                         x: x,
                         y: y
                     });
@@ -24,6 +28,13 @@ function showMap(mapKey) {
             text : 'Draw your own points or lines'
         },
 
+        subtitle: supportsLatLon ? {} : {
+            text: 'This map does not support latitude/longitude - x/y coordinates will be used',
+            style: {
+                color: 'red'
+            }
+        },
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -33,6 +44,30 @@ function showMap(mapKey) {
 
         legend: {
             enabled: false
+        },
+
+        tooltip: {
+            pointFormatter: function () {
+                return supportsLatLon ? 'Lat: ' + this.lat.toFixed(3) + ', Lon: ' + this.lon.toFixed(3) : 'x: ' + this.x + ', y: ' + this.y;
+            }
+        },
+
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        // Update lat/lon properties after dragging point
+                        drop: function (e) {
+                            var newLatLon;
+                            if (supportsLatLon) {
+                                newLatLon = this.series.chart.fromPointToLatLon(this);
+                                this.lat = newLatLon.lat;
+                                this.lon = newLatLon.lon;
+                            }
+                        }
+                    }
+                }
+            }
         },
 
         series: [{
@@ -92,20 +127,21 @@ $(function () {
             points,
             html = '';
 
+        function getPointConfigString(point) {
+            return point.lat ? '{ lat: ' + point.lat + ', lon: ' + point.lon + ' }' :
+                '{ x: ' + point.x + ', y: ' + point.y + ' }';
+        }
+
         if (chart.get('points').data.length) {
             points = '{\n    type: "mappoint",\n    data: [\n        ' +
-                $.map(chart.get('points').data, function (point) {
-                    return '{ x: ' + point.x + ', y: ' + point.y + ' }';
-                }).join(",\n        ") +
+                $.map(chart.get('points').data, getPointConfigString).join(",\n        ") +
                 '\n    ]\n}';
             html += '<h3>Points configuration</h3><pre>' + points + '</pre>';
         }
 
         if (chart.get('connected-points').data.length) {
             points = '{\n    type: "mappoint",\n    lineWidth: 2,\n    data: [\n        ' +
-                $.map(chart.get('connected-points').data, function (point) {
-                    return '{ x: ' + point.x + ', y: ' + point.y + ' }';
-                }).join(",\n        ") +
+                $.map(chart.get('connected-points').data, getPointConfigString).join(",\n        ") +
                 '\n    ]\n}';
             html += '<h3>Connected points configuration</h3><pre>' + points + '</pre>';
         }
