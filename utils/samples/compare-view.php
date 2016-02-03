@@ -69,7 +69,7 @@
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
-				if (!commentFrame && !rightcommit) {
+				if (!commentFrame) {
 					commentFrame = $('<iframe>')
 						.attr({
 							id: 'comment-iframe',
@@ -133,7 +133,7 @@
 					showCommentBox();
 				}
 
-				if (isUnitTest && rightcommit) {
+				if ((isUnitTest || isManual) && rightcommit) {
 					report += 'Testing commit <a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + rightcommit + '</a>';
 					$('#report').css({
 						color: 'gray',
@@ -716,13 +716,13 @@
 
 			<div id="report" class="test-report"></div>
 			
+			<div id="comment-placeholder"></div>
 			<div id="frame-row">
 				<?php if (!$isUnitTest && !$isManual) : ?>
 				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				<?php endif; ?>
 				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				
-				<div id="comment-placeholder"></div>
 			</div>
 			<pre id="svg"></pre>
 			
