@@ -14170,7 +14170,7 @@
                         // Handle colors for column and pies
                         if (!seriesOptions.marker || (point.negative && !pointStateOptionsHover.fillColor && !stateOptionsHover.fillColor)) { // column, bar, point or negative threshold for series with markers (#3636)
                             // If no hover color is given, brighten the normal color. #1619, #2579
-                            pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
+                            pointStateOptionsHover[series.pointAttrToOptions.fill] = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
                                 Color(point.color)
                                     .brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
                                     .get();
@@ -17492,7 +17492,7 @@
         onMouseOut: function () {
             var point = this,
                 start = +new Date(),
-                normalColor = Color(point.pointAttr[''].fill),
+                normalColor = Color(point.color),
                 hoverColor = Color(point.pointAttr.hover.fill),
                 animation = point.series.options.states.normal.animation,
                 duration = animation && (animation.duration || 500),
