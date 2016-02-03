@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-02-02)
+ * @license Highcharts JS v4.2.0-modified (2016-02-03)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7387,7 +7387,7 @@
                 localMin = old ? axis.oldMin : axis.min,
                 returnValue,
                 minPixelPadding = axis.minPixelPadding,
-                doPostTranslate = (axis.doPostTranslate || (axis.isLog && handleLog)) && axis.lin2val;
+                doPostTranslate = (axis.isOrdinal || axis.isBroken || (axis.isLog && handleLog)) && axis.lin2val;
 
             if (!localA) {
                 localA = axis.transA;

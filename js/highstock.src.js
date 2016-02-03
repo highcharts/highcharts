@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.0-modified (2016-02-02)
+ * @license Highstock JS v4.2.0-modified (2016-02-03)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7387,7 +7387,7 @@
                 localMin = old ? axis.oldMin : axis.min,
                 returnValue,
                 minPixelPadding = axis.minPixelPadding,
-                doPostTranslate = (axis.doPostTranslate || (axis.isLog && handleLog)) && axis.lin2val;
+                doPostTranslate = (axis.isOrdinal || axis.isBroken || (axis.isLog && handleLog)) && axis.lin2val;
 
             if (!localA) {
                 localA = axis.transA;
@@ -19678,9 +19678,7 @@
                     axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
                 }
             }
-            if (!axis.doPostTranslate) { // already set by broken axis, don't unset it (#4926)
-                axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
-            }
+            axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
             axis.groupIntervalFactor = null; // reset for next run
         },
         /**
@@ -20067,7 +20065,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.0-modified (2016-02-02)
+     * Highstock JS v4.2.0-modified (2016-02-03)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20172,7 +20170,7 @@
 
                 var axis = this;
             
-                axis.doPostTranslate = true;
+                axis.isBroken = true;
 
                 this.val2lin = function (val) {
                     var nval = val,
