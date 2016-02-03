@@ -109,7 +109,7 @@
 
 			var axis = this;
 			
-			axis.doPostTranslate = true;
+			axis.isBroken = true;
 
 			this.val2lin = function (val) {
 				var nval = val,

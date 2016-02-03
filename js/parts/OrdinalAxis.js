@@ -273,9 +273,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 		}
-		if (!axis.doPostTranslate) { // already set by broken axis, don't unset it (#4926)
-			axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
-		}
+		axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
 		axis.groupIntervalFactor = null; // reset for next run
 	},
 	/**
