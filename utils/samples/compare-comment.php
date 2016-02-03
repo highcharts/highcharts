@@ -113,7 +113,7 @@ $symbols = array('check', 'exclamation-sign');
 
 		<div class="top-bar">
 			
-			<h2 style="margin: 0">Comparison Comment</h2>
+			<h2 style="margin: 0; height: auto">Comparison Comment</h2>
 			<div><?php echo $path ?></div>
 
 		</div>
