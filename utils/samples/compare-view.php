@@ -63,7 +63,8 @@
 				i = '<?php echo $i ?>',
 				_continue = '<?php echo $continue ?>',
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
-				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>;
+				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
+				isUnitTest = <?php echo $isUnitTest; ?>;
 
 
 			function showCommentBox() {
@@ -130,6 +131,14 @@
 
 				if (isManual) {
 					showCommentBox();
+				}
+
+				if (isUnitTest && rightcommit) {
+					report += 'Testing commit <a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + rightcommit + '</a>';
+					$('#report').css({
+						color: 'gray',
+						display: 'block'
+					}).html(report);
 				}
 			});
 
