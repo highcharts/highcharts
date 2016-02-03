@@ -11,22 +11,19 @@ var dl = {
         enabled: true,
         format: 'End of road',
         rotation: 45,
-        align: 'right',
-        crop: false
+        align: 'right'
     },
     98: {
         enabled: true,
         format: 'Drinking station',
         rotation: 45,
-        align: 'right',
-        crop: false
+        align: 'right'
     },
     161: {
         enabled: true,
         format: 'Finish - Vidasetvarden ',
         rotation: 0,
-        align: 'right',
-        crop: false
+        align: 'right'
     }
 };
 

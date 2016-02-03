@@ -17828,6 +17828,9 @@
             bBox = dataLabel.getBBox(),
             baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
             rotation = options.rotation,
+            normRotation,
+            negRotation,
+            align = options.align,
             rotCorr, // rotation correction
             // Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
             visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
@@ -17864,6 +17867,21 @@
                     .attr({ // #3003
                         align: options.align
                     });
+
+                // Compensate for the rotated label sticking out on the sides
+                normRotation = (rotation + 720) % 360;
+                negRotation = normRotation > 180 && normRotation < 360;
+
+                if (align === 'left') {
+                    alignAttr.y -= negRotation ? bBox.height : 0;
+                } else if (align === 'center') {
+                    alignAttr.x -= bBox.width / 2;
+                    alignAttr.y -= bBox.height / 2;
+                } else if (align === 'right') {
+                    alignAttr.x -= bBox.width;
+                    alignAttr.y -= negRotation ? 0 : bBox.height;
+                }
+            
 
             } else {
                 dataLabel.align(options, null, alignTo);

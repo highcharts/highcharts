@@ -64,7 +64,7 @@
 				_continue = '<?php echo $continue ?>',
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
-				isUnitTest = <?php echo $isUnitTest; ?>;
+				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
 
 
 			function showCommentBox() {
