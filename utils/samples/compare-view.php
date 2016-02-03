@@ -5,6 +5,7 @@
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
+	$rightcommit = @$_GET['rightcommit'];
 
 	if (file_exists('temp/compare.json')) {
 		$compare = json_decode(file_get_contents('temp/compare.json'));
@@ -61,12 +62,13 @@
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>',
 				_continue = '<?php echo $continue ?>',
-				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>;
+				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
+				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>;
 
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
-				if (!commentFrame) {
+				if (!commentFrame && !rightcommit) {
 					commentFrame = $('<iframe>')
 						.attr({
 							id: 'comment-iframe',
@@ -191,7 +193,6 @@
 								})
 								.html(diff)
 								.appendTo(li);
-
 
 							showCommentBox();
 
@@ -635,7 +636,10 @@
 						console.log("Warning: Left and right versions are equal.");
 					}
 					
-					report += '<div>Left version: '+ leftVersion +'; right version: '+ rightVersion +'</div>';
+					report += '<div>Left version: '+ leftVersion +'; right version: '+ 
+						(rightcommit ? '<a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + 
+							rightcommit + '</a>' : rightVersion) +
+						'</div>';
 					
 					report += identical ?
 						'<div>The innerHTML is identical</div>' :
@@ -700,7 +704,7 @@
 			</div>
 
 			<?php } else { ?>
-		
+
 			<div id="report" class="test-report"></div>
 			
 			<div id="frame-row">
