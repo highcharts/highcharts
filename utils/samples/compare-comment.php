@@ -29,6 +29,7 @@ $symbols = array('check', 'exclamation-sign');
 		
 		<style type="text/css">
 			.top-bar {
+				display: none;
 				color: white;
 				font-family: Arial, sans-serif; 
 				font-size: 0.8em; 
@@ -56,8 +57,8 @@ $symbols = array('check', 'exclamation-sign');
 			}
 			textarea {
 				vertical-align: top;
-				min-width: 200px;
-				height: 5em;
+				min-width: 400px;
+				height: 2em;
 			}
 			input[type=submit] {
 				float: right;
@@ -138,23 +139,23 @@ $symbols = array('check', 'exclamation-sign');
 								?>
 							</select>
 						</td>
-					</tr>
-					<tr>
+					<!-- /tr>
+					<tr -->
 						<td>Approved diff</td>
 						<td><input type="text" id="diff" name="diff" value="<?php echo (@$comment->diff ? $comment->diff : $diff) ?>" /></td>
-					</tr>
-					<tr>
+					<!-- /tr>
+					<tr -->
 						<td>Title</td>
 						<td><textarea type="text" id="title" name="title"><?php echo @$comment->title ?></textarea></td>
-					</tr>
-					<tr>
+					<!-- /tr>
+					<tr -->
 						<td></td>
 						<td>
-							<input type="submit" id="submit" name="submit" value="OK" />
+							<input type="submit" id="submit" name="submit" class="button" value="Approve" />
 
 							<?php
 							if (isset($comment) && $comment->diff != $diff) {
-								echo "<input type='submit' name='submit-actual' id='submit-actual' data-diff='$diff' value='Approve $diff' />";
+								echo "<input type='submit' name='submit-actual' id='submit-actual' data-diff='$diff' class='button' value='Approve $diff' />";
 							}
 							?>
 						</td>

@@ -38,7 +38,7 @@ body.page h1 {
 	transition: width 500ms;
 }
 
-.buttons a, a.button, button {
+.buttons a, a.button, button, input.button {
 	border: none;
 	border-radius: 0.3em;
 	background: #a4edba;
@@ -52,11 +52,11 @@ body.page h1 {
 	line-height: 1.5em;
 	display: inline-block;
 }
-.buttons a:hover, a.button:hover, button:hover {
+.buttons a:hover, a.button:hover, button:hover, input.button:hover {
 	background: #40818b;
 	color: white;
 }
-.buttons a.active, a.button.active, button.active {
+.buttons a.active, a.button.active, button.active, input.button:active {
 	background: #40818b;
 	color: white;
 }
@@ -73,12 +73,8 @@ body.page h1 {
 #frame-row {
 	width: 1360px;
 }
-#comment-placeholder {
-	width: 300px;
-	display: inline-block;
-}
 #comment-iframe {
-	height: 400px;
+	height: 85px;
 	width: calc(100% - 2px);
 	border: 1px solid silver;
 }
@@ -125,7 +121,7 @@ body.unit iframe {
 	border: none;
 }
 body.manual iframe {
-	width: calc(100% - 320px);
+	width: 100%;
 	height: 600px;
 	border: none;
 }
