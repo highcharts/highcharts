@@ -23,6 +23,10 @@ body.page h1 {
 	background: #34343e;
 	box-shadow: 0px 0px 8px #888;
 }
+.top-bar h2 {
+	height: 0;
+	overflow: visible;
+}
 #source-box {
 	width: 0;
 	float: left;
@@ -44,8 +48,9 @@ body.page h1 {
 	font-size: 1em;
 	white-space: nowrap;
 	cursor: pointer;
-	margin: 0 0.3em;
-	line-height: 2.5em;
+	margin: 0.3em;
+	line-height: 1.5em;
+	display: inline-block;
 }
 .buttons a:hover, a.button:hover, button:hover {
 	background: #40818b;
