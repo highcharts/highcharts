@@ -413,7 +413,7 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
+			strokeWidth = wrapper.strokeWidth || 0;
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
@@ -1888,7 +1888,7 @@ SVGRenderer.prototype = {
 			};
 
 		if (strokeWidth !== UNDEFINED) {
-			attribs.strokeWidth = strokeWidth;
+			wrapper.strokeWidth = strokeWidth;
 			attribs = wrapper.crisp(attribs);
 		}
 

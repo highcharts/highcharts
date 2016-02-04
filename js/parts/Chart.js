@@ -1028,8 +1028,9 @@ Chart.prototype = {
 					})
 					.add();
 			} else {
+				plotBorder.strokeWidth = -plotBorderWidth;
 				plotBorder.animate(
-					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight, strokeWidth: -plotBorderWidth }) //#3282 plotBorder should be negative
+					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight }) //#3282 plotBorder should be negative
 				);
 			}
 		}
