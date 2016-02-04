@@ -164,8 +164,6 @@ SVGElement.prototype = {
 	 * and apply strokes to the copy.
 	 *
 	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
-	 *
-	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -2091,7 +2089,7 @@ SVGRenderer.prototype = {
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
 						if (!ren.imgCount) {
-							charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
+							charts[ren.chartIndex].onload();
 						}
 					},
 					src: imageSrc

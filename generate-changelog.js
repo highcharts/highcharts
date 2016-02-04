@@ -61,7 +61,7 @@
         log.forEach(function (item) {
 
             // Keep only the commits after the last release
-            if (proceed && (new RegExp('^---.+' + name + '.+official release ---$')).test(item)) {
+            if (proceed && (new RegExp('official release ---$')).test(item)) {
                 proceed = false;
             }
 

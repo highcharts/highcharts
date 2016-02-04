@@ -70,7 +70,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
-			onKey = options.onKey || 'y', // docs. Added to API, marked next.
+			onKey = options.onKey || 'y',
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-01-14)
+ * @license Highcharts JS v4.2.2 (2016-02-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1294,7 +1294,7 @@ var arrayMin = Highcharts.arrayMin,
         //stemWidth: null,
         threshold: null,
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
                 'Maximum: {point.high}<br/>' +
                 'Upper quartile: {point.q3}<br/>' +
                 'Median: {point.median}<br/>' +
@@ -1556,7 +1556,7 @@ var arrayMin = Highcharts.arrayMin,
         grouping: false,
         linkedTo: ':previous',
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
         },
         whiskerWidth: null
     });

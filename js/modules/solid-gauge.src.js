@@ -253,7 +253,7 @@
 						fill: toColor,
 						'sweep-flag': 0
 					};
-					if (options.linecap !== 'square') { // docs
+					if (options.linecap !== 'square') {
 						attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 					}
 					point.graphic = renderer.arc(shapeArgs)
