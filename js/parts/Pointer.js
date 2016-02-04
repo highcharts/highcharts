@@ -575,7 +575,7 @@ Pointer.prototype = {
 
 		var chart = this.chart;
 
-		if (!defined(hoverChartIndex) || !charts[hoverChartIndex].mouseIsDown) {
+		if (!defined(hoverChartIndex) || !charts[hoverChartIndex] || !charts[hoverChartIndex].mouseIsDown) {
 			hoverChartIndex = chart.index;
 		}
 
