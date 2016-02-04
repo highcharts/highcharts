@@ -439,7 +439,7 @@ Series.prototype = {
 
 		// Typically for pie series, points need to be processed and generated
 		// prior to rendering the legend
-		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
+		if (options.legendType === 'point') {
 			this.processData();
 			this.generatePoints();
 		}

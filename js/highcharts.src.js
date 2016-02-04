@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-02-03)
+ * @license Highcharts JS v4.2.2 (2016-02-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
-        VERSION = '4.2.0-modified',
+        VERSION = '4.2.2',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1533,7 +1533,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.0-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.2/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -2233,8 +2233,6 @@
          * and apply strokes to the copy.
          *
          * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
-         *
-         * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
          */
         applyTextShadow: function (textShadow) {
             var elem = this.element,
@@ -4160,7 +4158,7 @@
                             // Fire the load event when all external images are loaded
                             ren.imgCount--;
                             if (!ren.imgCount) {
-                                charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
+                                charts[ren.chartIndex].onload();
                             }
                         },
                         src: imageSrc
@@ -13996,7 +13994,7 @@
 
             // Typically for pie series, points need to be processed and generated
             // prior to rendering the legend
-            if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
+            if (options.legendType === 'point') {
                 this.processData();
                 this.generatePoints();
             }
