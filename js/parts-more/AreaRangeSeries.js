@@ -151,11 +151,10 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		linePath = [].concat(lowerPath, higherPath);
 
 		// For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-		if (!this.chart.polar) {
+		if (!this.chart.polar && higherAreaPath[0] === 'M') {
 			higherAreaPath[0] = 'L'; // this probably doesn't work for spline			
 		}
 		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
-		
 		return linePath;
 	},
 
