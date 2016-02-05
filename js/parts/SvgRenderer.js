@@ -1896,8 +1896,8 @@ SVGRenderer.prototype = {
 			attribs.r = r;
 		}
 
-		wrapper.rSetter = function (value) {
-			attr(this.element, {
+		wrapper.rSetter = function (value, key, element) {
+			attr(element, {
 				rx: value,
 				ry: value
 			});
