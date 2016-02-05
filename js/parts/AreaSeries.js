@@ -229,7 +229,8 @@ var AreaSeries = extendClass(Series, {
 
 		topPath = getGraphPath.call(this, graphPoints, true, true);
 		
-		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), true, true);
+		bottomPoints.reversed = true;
+		bottomPath = getGraphPath.call(this, bottomPoints, true, true);
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}

@@ -1256,11 +1256,23 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			step = options.step,
+			reversed,
 			graphPath = [],
 			gap;
 
 		points = points || series.points;
 
+		// Bottom of a stack is reversed
+		reversed = points.reversed;
+		if (reversed) {
+			points.reverse();
+		}
+		// Reverse the steps (#5004)
+		step = { right: 1, center: 2 }[step] || (step && 3);
+		if (step && reversed) {
+			step = 4 - step;
+		}
+		
 		// Build the line
 		each(points, function (point, i) {
 
@@ -1292,14 +1304,14 @@ Series.prototype = {
 
 				} else if (step) {
 
-					if (step === 'right') {
+					if (step === 1) { // right
 						pathToPoint = [
 							L,
 							lastPoint.plotX,
 							plotY
 						];
 						
-					} else if (step === 'center') {
+					} else if (step === 2) { // center
 						pathToPoint = [
 							L,
 							(lastPoint.plotX + plotX) / 2,
