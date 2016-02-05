@@ -20,6 +20,7 @@ $(function () {
                             color: 'white'
                         }
                     }
+                    // disabled: { ... }
                 }
             },
             inputBoxBorderColor: 'gray',
