@@ -247,7 +247,6 @@ function getExportInnerHTML() {
 							window.parent.onDifferent(e.passed + '/' + e.total);
 						}
 					});
-				
 
 				// Else, prepare for async
 				} else {

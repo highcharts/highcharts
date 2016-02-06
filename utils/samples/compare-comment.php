@@ -10,7 +10,7 @@ $updateContents = false;
 
 if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
 	$compare->$path->comment = (object) $_POST;
-	file_put_contents('temp/compare.json', json_encode($compare));
+	file_put_contents('temp/compare.json', json_encode($compare, JSON_PRETTY_PRINT));
 	$updateContents = true;
 }
 

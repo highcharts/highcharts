@@ -6,6 +6,7 @@
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
 	$rightcommit = @$_GET['rightcommit'];
+	$commit = @$_GET['commit']; // Used from Phantom test
 
 	if (file_exists('temp/compare.json')) {
 		$compare = json_decode(file_get_contents('temp/compare.json'));
@@ -64,6 +65,7 @@
 				_continue = '<?php echo $continue ?>',
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
+				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
 				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
 
 
@@ -306,14 +308,24 @@
 			}
 				
 			function onIdentical() {
-				$.get('compare-update-report.php', { path: path, diff: 0 });
+				$.get('compare-update-report.php', {
+					path: path,
+					diff: 0,
+					commit: commit || '',
+					rightcommit: rightcommit || ''
+				});
 				markList("identical");
 				proceed();
 			}
 			
 			function onDifferent(diff) {
 				// Save it for refreshes
-				$.get('compare-update-report.php', { path: path, diff: diff });
+				$.get('compare-update-report.php', {
+					path: path,
+					diff: diff,
+					commit: commit || '',
+					rightcommit: rightcommit || ''
+				});
 				markList("different", diff);
 				proceed();
 			}

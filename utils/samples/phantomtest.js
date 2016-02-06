@@ -6,6 +6,7 @@ phantomjs [arguments] phantomtest.js
 
 Arguments:
 --commit What commit number to run visual tests against.
+--rightcommit What commit to test (on the right side).
 --start  What sample number to start from. Use this to resume after error.
 
 Status
@@ -33,11 +34,14 @@ Status
 
     page = page.create();
 
+    // Parse arguments into the params object
     args.forEach(function (arg, j) {
         if (arg === '--start') {
             params.start = parseInt(args[j + 1], 10);
         } else if (arg === '--commit') {
             params.commit = args[j + 1];
+        } else if (arg === '--rightcommit') {
+            params.rightcommit = args[j + 1];
         }
     });
 
@@ -93,6 +97,9 @@ Status
 
         if (params.commit) {
             qs.push('commit=' + params.commit);
+        }
+        if (params.rightcommit) {
+            qs.push('rightcommit=' + params.rightcommit);
         }
 
         page.open('http://utils.highcharts.local/samples/compare-view.php?' + qs.join('&'));
