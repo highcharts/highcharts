@@ -13,6 +13,7 @@ var colors = require('colors'),
     fs = require('fs'),
     // sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    spawn = require('child_process').spawn,
     xml2js = require('xml2js');
 
 var paths = {
@@ -221,6 +222,16 @@ gulp.task('ftp', function () {
 
 gulp.task('ftp-watch', function () {
     gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
+});
+
+/**
+ * Run the test suite. The task spawns a child process running PhantomJS.
+ */
+gulp.task('test', function () {
+    spawn('phantomjs', ['phantomtest.js'], {
+        cwd: 'utils/samples',
+        stdio: 'inherit'
+    });
 });
 
 gulp.task('filesize', function () {
