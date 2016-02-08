@@ -228,7 +228,7 @@ gulp.task('ftp-watch', function () {
  * Run the test suite. The task spawns a child process running PhantomJS.
  */
 gulp.task('test', function () {
-    spawn('phantomjs', ['phantomtest.js'], {
+    spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
     });
