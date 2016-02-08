@@ -1,4 +1,5 @@
 <?php 
+	ini_set('display_errors', 'true');
 
 	require_once('functions.php');
 	$path = $_GET['path'];
@@ -13,6 +14,8 @@
 		$comment = @$compare->$path->comment;
 	}
 
+	$nightly = json_decode(file_get_contents('nightly/nightly.json'));
+	$nightly = $nightly->results->$path;
 
 	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 
@@ -727,6 +730,21 @@
 			<?php } else { ?>
 
 			<div id="report" class="test-report"></div>
+
+			<?php
+			if ($nightly) {
+				$changes = array();
+				foreach ($nightly->changes as $change) {
+					$changes[] = "<a target='_blank' href='https://github.com/highcharts/highcharts/commit/{$change->hash}'>{$change->hash}</a>";
+				}
+				$changes = join($changes, ', ');
+				echo "
+				<div class='nightly'>This test was affected by
+				$changes
+				</div>
+				";
+			}
+			?>
 			
 			<div id="comment-placeholder"></div>
 			<div id="frame-row">

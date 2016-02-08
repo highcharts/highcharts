@@ -8,8 +8,8 @@ $commit = @$_GET['commit'];
 
 $reportFile = 'temp/compare.json';
 // Commit-specific reports go in a separate file
-if ($commit || $rightcommit) {
-	$reportFile = 'temp/compare-' . $commit . '-' .  $rightcommit . '.json';
+if ($rightcommit) {
+	$reportFile = 'temp/compare-' . $rightcommit . '.json';
 }
 
 $compare = file_exists($reportFile) ? json_decode(file_get_contents($reportFile)) : new stdClass;

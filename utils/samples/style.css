@@ -133,6 +133,11 @@ body.manual #comment-placeholder {
 	vertical-align: top;
 }
 
+.nightly {
+	font-size: 0.8em;
+	padding: 0.5em 0;
+}
+
 /* QUnit, follow the theme */
 #qunit-tests li li.fail {
 	border-left: 10px solid #f15c80;

@@ -47,6 +47,7 @@ Status
 
     i = params.start;
 
+    // Add all the samples to the samples array
     ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
