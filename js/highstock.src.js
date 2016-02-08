@@ -16747,7 +16747,6 @@
                     .add();
             }
             // */
-            if (isNaN(pick(lastPoint.rightContY, lastPoint.plotY))) console.error('bugger')
             ret = [
                 'C',
                 pick(lastPoint.rightContX, lastPoint.plotX),
