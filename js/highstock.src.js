@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.2-modified (2016-02-05)
+ * @license Highstock JS v4.2.2-modified (2016-02-08)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -13365,8 +13365,8 @@
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
-            if (point.x === UNDEFINED && series) {
-                point.x = x === UNDEFINED ? series.autoIncrement() : x;
+            if (typeof point.x !== 'number' && series) {
+                point.x = x === undefined ? series.autoIncrement() : x;
             }
 
             return point;
@@ -20095,7 +20095,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.2-modified (2016-02-05)
+     * Highstock JS v4.2.2-modified (2016-02-08)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
