@@ -41,7 +41,11 @@ $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
-$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
+
+$details = @file_get_contents("../../samples/$path/demo.details");
+$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
+$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
+
 
 $path = "../../samples/$path";
 
@@ -329,19 +333,20 @@ function getExportInnerHTML() {
 				});
 
 				if (window.Highcharts) {
+					var animation = <?php echo ($isManual ? 'undefined' : 'false') ?>;
 					Highcharts.setOptions({
 						chart: {
-							animation: false
+							animation: animation
 						},
 						plotOptions: {
 							series: {
-								animation: false,
+								animation: animation,
 								kdNow: true,
 								kdSync: true // 4.1.9 and older, remove when not testing against those
 							}
 						},
 						tooltip: {
-							animation: false
+							animation: animation
 						}
 					});
 

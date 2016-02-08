@@ -17,9 +17,8 @@
 	$nightly = json_decode(file_get_contents('nightly/nightly.json'));
 	$nightly = $nightly->results->$path;
 
-	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
-
 	$details = file_get_contents("../../samples/$path/demo.details");
+	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
 	$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
 	$skipTest = (strstr($details, 'skipTest: true') !== false);
 
