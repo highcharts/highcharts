@@ -20069,12 +20069,11 @@
         var gapSize = this.options.gapSize,
             xAxis = this.xAxis,
             points = this.points.slice(),
-            i;
+            i = points.length - 1;
 
-        if (gapSize) {
+        if (gapSize && i > 0) { // #5008
 
             // extension for ordinal breaks
-            i = points.length - 1;
             while (i--) {
                 if (points[i + 1].x - points[i].x > xAxis.closestPointRange * gapSize) {
                     points.splice( // insert after this one
