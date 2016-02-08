@@ -16674,16 +16674,18 @@
                     lastY = lastPoint.plotY,
                     nextX = nextPoint.plotX,
                     nextY = nextPoint.plotY,
-                    correction;
+                    correction = 0;
 
                 leftContX = (smoothing * plotX + lastX) / denom;
                 leftContY = (smoothing * plotY + lastY) / denom;
                 rightContX = (smoothing * plotX + nextX) / denom;
                 rightContY = (smoothing * plotY + nextY) / denom;
 
-                // have the two control points make a straight line through main point
-                correction = ((rightContY - leftContY) * (rightContX - plotX)) /
-                    (rightContX - leftContX) + plotY - rightContY;
+                // Have the two control points make a straight line through main point
+                if (rightContX !== leftContX) { // #5016, division by zero
+                    correction = ((rightContY - leftContY) * (rightContX - plotX)) /
+                        (rightContX - leftContX) + plotY - rightContY;
+                }
 
                 leftContY += correction;
                 rightContY += correction;
@@ -16745,6 +16747,7 @@
                     .add();
             }
             // */
+            if (isNaN(pick(lastPoint.rightContY, lastPoint.plotY))) console.error('bugger')
             ret = [
                 'C',
                 pick(lastPoint.rightContX, lastPoint.plotX),
