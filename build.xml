@@ -731,64 +731,49 @@
     </target>
 
     <!-- Builds the source and assembles a distribution package. -->
-    <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
+    <target name="dist" depends="set.properties" description="Builds the source and assembles distribution packages.">
+
+        <!--
         <echo message=""/>
-        <echo message="--- Building distribution packages for ---"/>
+        <echo message="Building distribution packages for"/>
         <echo message=""/>
         <echo message=" ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})"/>
         <echo message=" ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})"/>
         <echo message=" ${highmaps.product.name} - ${highmaps.product.version} (${highmaps.product.date})"/>
         <echo message=""/>
 
-        <!-- 1. Check for any console statements -->
-        <!-- fail message="Source contains console or alert statements">
-            <condition>
-                <or>
-                    <resourcecontains resource="${highcharts.src.file}" substring="console."/>
-                    <resourcecontains resource="${highstock.src.file}" substring="console."/>
-                    <resourcecontains resource="${mootools.src.file}" substring="console."/>
-                    <resourcecontains resource="${prototype.src.file}" substring="console."/>
-                    <resourcecontains resource="${exporting.src.file}" substring="console."/>
-                    <resourcecontains resource="${highcharts.src.file}" substring="alert("/>
-                    <resourcecontains resource="${highstock.src.file}" substring="alert("/>
-                    <resourcecontains resource="${mootools.src.file}" substring="alert("/>
-                    <resourcecontains resource="${prototype.src.file}" substring="alert("/>
-                    <resourcecontains resource="${exporting.src.file}" substring="alert("/>
-                </or>
-            </condition>
-        </fail -->
 
         <echo message=""/>
         <echo message="Building offline api for highcharts, be patient.." />
         <echo message=""/>
         <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
-            <arg line="download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
+            <arg line="download-api:highcharts:${highcharts.product.version}" /> 
         </exec>
         <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
-            <arg line="/c grunt download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
+            <arg line="/c grunt download-api:highcharts:${highcharts.product.version}" />
         </exec>
         <echo message="${output}" />
         <echo message=""/>
         <echo message="Building offline api for highstock, be patient.." />
         <echo message=""/>
         <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
-            <arg line="download-api:highstock:${highstock.product.version}" /> <!-- version number -->
+            <arg line="download-api:highstock:${highstock.product.version}" />
         </exec>
         <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
-            <arg line="/c grunt download-api:highstock:${highstock.product.version}" /> <!-- version number -->
+            <arg line="/c grunt download-api:highstock:${highstock.product.version}" />
         </exec>
         <echo message="${output}" />
         <echo message=""/>
         <echo message="Building offline api for highmaps, be patient.." />
         <echo message=""/>
         <exec osfamily="mac" dir="./" executable="grunt" outputproperty="output">
-            <arg line="download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
+            <arg line="download-api:highmaps:${highmaps.product.version}" /> 
         </exec>
         <exec osfamily="windows" dir="./" executable="cmd" outputproperty="output">
-            <arg line="/c grunt download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
+            <arg line="/c grunt download-api:highmaps:${highmaps.product.version}" /> 
         </exec>
         <echo message="${output}" />
-
+        -->
 
         <echo file="${dist.dir}/products.js" append="false">
             var products = {

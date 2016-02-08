@@ -1,38 +1,9 @@
-<p>Highcharts 4.2.2 (2016-02-04)</p>
+<p>Highcharts 4.2.3 (2016-02-08)</p>
 <ul>
-    <li>Added new option, <a href="http://api.highcharts.com#plotOptions.solidgauge.linecap">linecap</a>, to allow round corners on solid gauge.</li>
-    <li>Changed <a href="http://api.highcharts.com#chart.events.load">chart.load</a> event to wait for external symbol images, so that their size is set correctly in the SVG. This comes in handy for export and server generated images.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1977">#1977</a>, bubble series shadow was not moved when moving bubbles.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4077">#4077</a>, panning was not supported on inverted charts.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4086">#4086</a>, tick marks and labels were not trimmed to axis extremes when tickPositions option was used.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4573">#4573</a>, wrong number rounding in some cases.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4622">#4622</a>, updating point didn't change legend's item.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4759">#4759</a>, a regression which did not update point markers in point.update().</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4779">#4779</a>, data labels were not cropped when rotated.</li>
-    
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4859">#4859</a>, no easy way to catch offline export failed exception.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4861">#4861</a>, where offline export would fail in some cases with embedded images.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4870">#4870</a>, column width calculation not correct on logarithmic X axis.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4886">#4886</a>, pie slicing failed and tooltip disappeared too quickly on Windows phone.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4888">#4888</a>, fillOpacity of 0 did not take effect on area charts.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4889">#4889</a>, plotLine and plotBand should be rendered with higher zIndex than frames in 3D view.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4890">#4890</a>, originalEvent was missing from selection event since 4.2.0.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4898">#4898</a>, rounding issues with Y axis causing columns to exceed threshold value, and plot lines to be filtered out.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4904">#4904</a>, async loading of points kept running after chart was destroyed in boost module.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4905">#4905</a>, pie data labels were not hidden when scaling down.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4906">#4906</a>, chart did not zoom when drag and drop was dropped on a different chart.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4911">#4911</a>, false detection of overlapping data labels in multiple panes.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4912">#4912</a>, specific export data label style didn't take effect for pies.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4913">#4913</a>, regression in box size detection causing chart to overflow the container in some cases.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4914">#4914</a>, boost module loadingDiv was destroyed before redraw was finished.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4918">#4918</a>, spline curved wrongly when plotX or Y had a value of 0.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4920">#4920</a>, polar X axis labels misaligned after chart redraw.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4927">#4927</a>, crosshair only worked for one Y axis.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4928">#4928</a>, HTML label lengths were not reset on resize.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4929">#4929</a>, halo covered point and disallowed point click in IE8.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4938">#4938</a>, HTML elements were missing visibility and opacity setters.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4951">#4951</a>, X axis daily ticks did not render on midnight around a DST crossover when the getTimezoneOffset callback was used.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4955">#4955</a>, export button was hidden by category crosshair.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2069">#2069</a>, null points in stacked areas were rendered as zero instead of gaps.</li>
-    
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4989">#4989</a>, Chart.getSVG function produced invalid SVG.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4999">#4999</a>, a regression causing JS error on hovering columns having a shadow.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5001">#5001</a>, a regression causing empty arearange series to fail with JS error.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5004">#5004</a>, a regression causing stacked step areas to render incorrectly.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5015">#5015</a>, a regression causing splines with null points and connectNulls: true not to render.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5016">#5016</a>, a regression where a spline with equal X values failed to show.</li>
 </ul>
