@@ -13834,8 +13834,8 @@
         /**
          * Return the series points with null points filtered out
          */
-        getValidPoints: function () {
-            return grep(this.points, function (point) {
+        getValidPoints: function (points) {
+            return grep(points || this.points, function (point) {
                 return !point.isNull;
             });
         },
@@ -14310,7 +14310,12 @@
             if (step && reversed) {
                 step = 4 - step;
             }
-        
+
+            // Remove invalid points, especially in spline (#5015)
+            if (options.connectNulls && !nullsAsZeroes && !connectCliffs) {
+                points = this.getValidPoints(points);
+            }
+
             // Build the line
             each(points, function (point, i) {
 
@@ -14822,11 +14827,7 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                var points = grep(series.points || [], function (point) { // #4390
-                    return point.y !== null;
-                });
-
-                series.kdTree = _kdtree(points, dimensions, dimensions);
+                series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
             }
             delete series.kdTree;
 
