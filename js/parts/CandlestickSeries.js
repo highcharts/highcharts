@@ -69,7 +69,6 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 		each(points, function (point) {
 
 			var graphic = point.graphic,
-				pointAttr,
 				plotOpen,
 				plotClose,
 				topBox,

@@ -327,3 +327,6 @@ g.highcharts-series, .highcharts-point {
 .highcharts-candlestick-series .highcharts-point-up {
     fill: white;
 }
+.highcharts-ohlc-series .highcharts-point-hover {
+    stroke-width: 3px;
+}

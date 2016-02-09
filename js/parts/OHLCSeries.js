@@ -28,13 +28,15 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 			'Close: {point.close}<br/>'
 		/*= } =*/
 	},
+	threshold: null,
+	/*= if (build.classic) { =*/
 	states: {
 		hover: {
 			lineWidth: 3
 		}
-	},
-	threshold: null
+	}
 	//upColor: undefined
+	/*= } =*/
 });
 
 // 2 - Create the OHLCSeries object
@@ -43,7 +45,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 
 	// Override the point class
 	pointClass: extendClass(Point, {
-	 	/**
+		/**
 	 	 * Add up or down to the class name
 	 	 */
 		getClassName: function () {
@@ -102,25 +104,34 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,
 			points = series.points,
-			chart = series.chart,
-			pointAttr,
-			plotOpen,
-			plotClose,
-			crispCorr,
-			halfWidth,
-			path,
-			graphic,
-			crispX;
+			chart = series.chart;
 
 
 		each(points, function (point) {
+			var pointAttr,
+				plotOpen,
+				plotClose,
+				crispCorr,
+				halfWidth,
+				path,
+				graphic = point.graphic,
+				crispX,
+				isNew = !graphic;
+
 			if (point.plotY !== undefined) {
 
-				graphic = point.graphic;
-				pointAttr = series.pointAttribs(point, point.selected && 'select');
+				// Create and/or update the graphic
+				if (!graphic) {
+					point.graphic = graphic = chart.renderer.path()
+						.add(series.group);
+				}
+
+				/*= if (build.classic) { =*/
+				graphic.attr(series.pointAttribs(point, point.selected && 'select')) // #3897
+				/*= } =*/
 
 				// crisp vector coordinates
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispCorr = (graphic.strokeWidth() % 2) / 2;
 				crispX = Math.round(point.plotX) - crispCorr;  // #2596
 				halfWidth = Math.round(point.shapeArgs.width / 2);
 
@@ -158,16 +169,8 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 					);
 				}
 
-				// create and/or update the graphic
-				if (graphic) {
-					graphic
-						.attr(pointAttr) // #3897
-						.animate({ d: path });
-				} else {
-					point.graphic = chart.renderer.path(path)
-						.attr(pointAttr)
-						.add(series.group);
-				}
+				graphic[isNew ? 'attr' : 'animate']({ d: path })
+					.addClass(point.getClassName(), true);
 
 			}
 

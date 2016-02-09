@@ -1,0 +1,7 @@
+---
+ name: Highcharts Stock Demo
+ resources:
+   - http://code.highcharts.local/css/highcharts.css
+ authors:
+   - Torstein Hønsi
+ ...
