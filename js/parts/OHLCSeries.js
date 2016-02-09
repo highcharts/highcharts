@@ -3,6 +3,7 @@
 		each = H.each,
 		extendClass = H.extendClass,
 		merge = H.merge,
+		Point = H.Point,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
@@ -13,11 +14,19 @@
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+		/*= if (!build.classic) { =*/
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
+			'Open: {point.open}<br/>' +
+			'High: {point.high}<br/>' +
+			'Low: {point.low}<br/>' +
+			'Close: {point.close}<br/>',
+		/*= } else { =*/
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
 			'Close: {point.close}<br/>'
+		/*= } =*/
 	},
 	states: {
 		hover: {
@@ -31,12 +40,24 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 // 2 - Create the OHLCSeries object
 seriesTypes.ohlc = extendClass(seriesTypes.column, {
 	type: 'ohlc',
+
+	// Override the point class
+	pointClass: extendClass(Point, {
+	 	/**
+	 	 * Add up or down to the class name
+	 	 */
+		getClassName: function () {
+			return Point.prototype.getClassName.call(this) +
+				(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
+		}
+	}),
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
 	},
 	pointValKey: 'high',
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
@@ -51,6 +72,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 
 		return attribs;
 	},
+	/*= } =*/
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY

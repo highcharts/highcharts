@@ -2293,12 +2293,15 @@ SVGElement.prototype = {
     /**
      * Add a class name to an element
      */
-    addClass: function (className) {
+    addClass: function (className, replace) {
         var element = this.element,
             currentClassName = attr(element, 'class') || '';
 
         if (currentClassName.indexOf(className) === -1) {
-            attr(element, 'class', (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' '));
+            if (!replace) {
+                className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
+            }
+            attr(element, 'class', className);
         }
         return this;
     },
@@ -12943,11 +12946,14 @@ H.Series.prototype = {
                             2 * radius,
                             hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
                         )
-                        .addClass(point.getClassName())
                         .attr({ r: radius })
                         .add(markerGroup);
 
                         
+                    }
+
+                    if (graphic) {
+                        graphic.addClass(point.getClassName(), true);
                     }
 
                 } else if (graphic) {

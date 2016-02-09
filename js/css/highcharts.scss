@@ -320,3 +320,10 @@ g.highcharts-series, .highcharts-point {
 .highcharts-navigator-yaxis .highcharts-grid-line {
     stroke-width: 0;
 }
+.highcharts-candlestick-series .highcharts-point {
+    stroke: black;
+    stroke-width: 1px;
+}
+.highcharts-candlestick-series .highcharts-point-up {
+    fill: white;
+}

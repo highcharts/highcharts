@@ -2424,12 +2424,15 @@ SVGElement.prototype = {
     /**
      * Add a class name to an element
      */
-    addClass: function (className) {
+    addClass: function (className, replace) {
         var element = this.element,
             currentClassName = attr(element, 'class') || '';
 
         if (currentClassName.indexOf(className) === -1) {
-            attr(element, 'class', (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' '));
+            if (!replace) {
+                className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
+            }
+            attr(element, 'class', className);
         }
         return this;
     },
@@ -15131,7 +15134,6 @@ H.Series.prototype = {
                             2 * radius,
                             hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
                         )
-                        .addClass(point.getClassName())
                         .attr({ r: radius })
                         .add(markerGroup);
 
@@ -15139,6 +15141,10 @@ H.Series.prototype = {
                         // Presentational attributes
                         graphic.attr(series.pointAttribs(point, point.selected && 'select'));
                         
+                    }
+
+                    if (graphic) {
+                        graphic.addClass(point.getClassName(), true);
                     }
 
                 } else if (graphic) {
@@ -21818,6 +21824,7 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
         each = H.each,
         extendClass = H.extendClass,
         merge = H.merge,
+        Point = H.Point,
         seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
@@ -21828,11 +21835,13 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
     lineWidth: 1,
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+        
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
             'Open: {point.open}<br/>' +
             'High: {point.high}<br/>' +
             'Low: {point.low}<br/>' +
             'Close: {point.close}<br/>'
+        
     },
     states: {
         hover: {
@@ -21846,12 +21855,24 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 // 2 - Create the OHLCSeries object
 seriesTypes.ohlc = extendClass(seriesTypes.column, {
     type: 'ohlc',
+
+    // Override the point class
+    pointClass: extendClass(Point, {
+         /**
+          * Add up or down to the class name
+          */
+        getClassName: function () {
+            return Point.prototype.getClassName.call(this) +
+                (this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
+        }
+    }),
     pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
     toYData: function (point) { // return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
     },
     pointValKey: 'high',
 
+    
     /**
      * Postprocess mapping between options and SVG attributes
      */
@@ -21866,6 +21887,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 
         return attribs;
     },
+    
 
     /**
      * Translate data points from raw values x and y to plotX and plotY
@@ -21993,8 +22015,6 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 
 // 1 - set default options
 defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-    lineColor: 'black',
-    lineWidth: 1,
     states: {
         hover: {
             lineWidth: 2
@@ -22002,14 +22022,19 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
     },
     tooltip: defaultPlotOptions.ohlc.tooltip,
     threshold: null,
+    
+    lineColor: 'black',
+    lineWidth: 1,
     upColor: 'white'
     // upLineColor: null
+    
 });
 
 // 2 - Create the CandlestickSeries object
 seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
     type: 'candlestick',
 
+    
     /**
      * Postprocess mapping between options and SVG attributes
      */
@@ -22035,37 +22060,47 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 
         return attribs;
     },
-
+    
     /**
      * Draw the data points
      */
     drawPoints: function () {
         var series = this,  //state = series.state,
             points = series.points,
-            chart = series.chart,
-            pointAttr,
-            plotOpen,
-            plotClose,
-            topBox,
-            bottomBox,
-            hasTopWhisker,
-            hasBottomWhisker,
-            crispCorr,
-            crispX,
-            graphic,
-            path,
-            halfWidth;
+            chart = series.chart;
 
 
         each(points, function (point) {
 
-            graphic = point.graphic;
+            var graphic = point.graphic,
+                pointAttr,
+                plotOpen,
+                plotClose,
+                topBox,
+                bottomBox,
+                hasTopWhisker,
+                hasBottomWhisker,
+                crispCorr,
+                crispX,
+                path,
+                halfWidth,
+                isNew = !graphic;
+
             if (point.plotY !== undefined) {
 
-                pointAttr = series.pointAttribs(point, point.selected && 'select');
+                if (!graphic) {
+                    point.graphic = graphic = chart.renderer.path()
+                        .add(series.group);
+                }
 
-                // crisp vector coordinates
-                crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+                
+                graphic
+                    .attr(series.pointAttribs(point, point.selected && 'select')) // #3897
+                    .shadow(series.options.shadow);
+                
+
+                // Crisp vector coordinates
+                crispCorr = (graphic.strokeWidth() % 2) / 2;
                 crispX = Math.round(point.plotX) - crispCorr; // #2596
                 plotOpen = point.plotOpen;
                 plotClose = point.plotClose;
@@ -22098,16 +22133,8 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
                     crispX, hasBottomWhisker ? Math.round(point.yBottom) : bottomBox // #460, #2094
                 ];
 
-                if (graphic) {
-                    graphic
-                        .attr(pointAttr) // #3897
-                        .animate({ d: path });
-                } else {
-                    point.graphic = chart.renderer.path(path)
-                        .attr(pointAttr)
-                        .add(series.group)
-                        .shadow(series.options.shadow);
-                }
+                graphic[isNew ? 'attr' : 'animate']({ d: path })
+                    .addClass(point.getClassName(), true);
 
             }
         });
