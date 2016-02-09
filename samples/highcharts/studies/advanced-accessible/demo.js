@@ -8,7 +8,6 @@ $(function () {
                 numSeries = series.length,
                 numXAxes = chart.xAxis.length,
                 numYAxes = chart.yAxis.length,
-           //     div = document.createElement('div'),
                 tableSummary = document.createElement('caption'),
                 titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title'),
                 descElement = chart.container.getElementsByTagName('desc')[0],
@@ -56,6 +55,21 @@ $(function () {
                 chartDesc += '.';
             }
 
+            // Add series info
+            if (numSeries) {
+                chartDesc += ' The chart displays ' + numSeries + ' series, containing ';
+                if (numSeries < 2) {
+                    chartDesc += series[0].points.length + ' data point' + (series[0].points.length === 1 ? '.' : 's.');
+                } else {
+                    for (i = 0; i < numSeries - 1; ++i) {
+                        chartDesc += (i > 0 ? ', ' : '') + series[i].points.length;
+                    }
+                    chartDesc += ' and ' + series[numSeries - 1].points.length + ' data points respectively.';
+                }
+            } else {
+                chartDesc += ' The chart is empty.';
+            }
+
             // Add axis info
             if (numXAxes) {
                 chartDesc += ' The chart has ' + numXAxes + (numXAxes > 1 ? ' X-axes' : ' X-axis') + ' displaying ';
@@ -82,21 +96,6 @@ $(function () {
                     chartDesc += ' and "' + (chart.yAxis[numYAxes - 1].options.title && chart.yAxis[numYAxes - 1].options.title.text) +
                                 '" respectively.';
                 }
-            }
-
-            // Add series info
-            if (numSeries) {
-                chartDesc += ' The chart displays ' + numSeries + ' series, containing ';
-                if (numSeries < 2) {
-                    chartDesc += series[0].points.length + ' data point' + (series[0].points.length === 1 ? '.' : 's.');
-                } else {
-                    for (i = 0; i < numSeries - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + series[i].points.length;
-                    }
-                    chartDesc += ' and ' + series[numSeries - 1].points.length + ' data points respectively.';
-                }
-            } else {
-                chartDesc += ' The chart is empty.';
             }
 
             // Add SVG title/desc tags
@@ -163,12 +162,21 @@ $(function () {
                         value = point[keyArray[1]];
                     infoString += value !== undefined ? '. ' + keyArray[0] + ' = ' + quote + value + quote : '';
                 });
-                return 'Point ' + (point.index + 1) + ' of ' + point.series.points.length + ', series ' +
-                        (point.series.index + 1) + ' of ' + point.series.chart.series.length + infoString;
+                /*return 'Point ' + (point.index + 1) + ' of ' + point.series.points.length + ', series ' +
+                        (point.series.index + 1) + ' of ' + point.series.chart.series.length + infoString;*/
+
+                return (point.index + 1) + ' of ' + point.series.points.length + infoString;
+            }
+
+            function buildSeriesInfoString(dataSeries) {
+                return 'Series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '.';
             }
 
             // Put info on points of a series
             function setPointInfo(dataSeries) {
+                dataSeries.group.element.setAttribute('role', 'region');
+                dataSeries.group.element.setAttribute('tabindex', '-1');
+                dataSeries.group.element.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
                 H.each(dataSeries.points, function (point) {
 
                 // Wrap point element in <a> tag
