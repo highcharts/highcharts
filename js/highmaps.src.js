@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-02-08)
+ * @license Highmaps JS v4.2.3-modified (2016-02-09)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -3527,13 +3527,13 @@
 
 
                 // build the lines
-                each(lines, function (line, lineNo) {
+                each(lines, function buildTextLines(line, lineNo) {
                     var spans, spanNo = 0;
 
                     line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
                     spans = line.split('|||');
 
-                    each(spans, function (span) {
+                    each(spans, function buildTextSpans(span) {
                         if (span !== '' || spans.length === 1) {
                             var attributes = {},
                                 tspan = doc.createElementNS(SVG_NS, 'tspan'),
@@ -3718,7 +3718,7 @@
                     pos += increment;
                 }
             }
-            console.log(finalPos, node.getSubStringLength(0, finalPos))
+            console.log('width', width, 'stringWidth', node.getSubStringLength(0, finalPos))
         },
         */
 
