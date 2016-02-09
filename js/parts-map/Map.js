@@ -4,6 +4,7 @@
 		each = H.each,
 		extend = H.extend,
 		merge = H.merge,
+		pick = H.pick,
 		Renderer = H.Renderer,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer;

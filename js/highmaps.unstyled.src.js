@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-28)
+ * @license Highmaps JS v2.0-dev (2016-02-09)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -17781,6 +17781,7 @@ if (seriesTypes.bubble) {
         each = H.each,
         extend = H.extend,
         error = H.error,
+        format = H.format,
         win = H.win,
         wrap = H.wrap;
 /** 
@@ -18006,6 +18007,7 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
         each = H.each,
         extend = H.extend,
         merge = H.merge,
+        pick = H.pick,
         Renderer = H.Renderer,
         SVGRenderer = H.SVGRenderer,
         VMLRenderer = H.VMLRenderer;

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-28)
+ * @license Highmaps JS v2.0-dev (2016-02-09)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1937,6 +1937,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         each = H.each,
         extend = H.extend,
         error = H.error,
+        format = H.format,
         win = H.win,
         wrap = H.wrap;
 /** 
@@ -2162,6 +2163,7 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
         each = H.each,
         extend = H.extend,
         merge = H.merge,
+        pick = H.pick,
         Renderer = H.Renderer,
         SVGRenderer = H.SVGRenderer,
         VMLRenderer = H.VMLRenderer;

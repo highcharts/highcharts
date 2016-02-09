@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-01-28)
+ * @license Highmaps JS v2.0-dev (2016-02-09)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1107,8 +1107,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
     onMouseOut: function () {
         var point = this,
             start = +new Date(),
-            normalColor = Color(point.pointAttr[''].fill),
-            hoverColor = Color(point.pointAttr.hover.fill),
+            normalColor = Color(this.series.pointAttribs(point).fill),
+            hoverColor = Color(this.series.pointAttribs(point, 'hover').fill),
             animation = point.series.options.states.normal.animation,
             duration = animation && (animation.duration || 500);
 
@@ -1985,6 +1985,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         each = H.each,
         extend = H.extend,
         error = H.error,
+        format = H.format,
         win = H.win,
         wrap = H.wrap;
 /** 
@@ -2210,6 +2211,7 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
         each = H.each,
         extend = H.extend,
         merge = H.merge,
+        pick = H.pick,
         Renderer = H.Renderer,
         SVGRenderer = H.SVGRenderer,
         VMLRenderer = H.VMLRenderer;

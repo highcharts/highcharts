@@ -4,6 +4,7 @@
 		each = H.each,
 		extend = H.extend,
 		error = H.error,
+		format = H.format,
 		win = H.win,
 		wrap = H.wrap;
 /** 
