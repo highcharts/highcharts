@@ -34,7 +34,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, true)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});

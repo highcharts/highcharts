@@ -19,7 +19,8 @@ var PI = Math.PI,
 function perspective(points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
 		inverted = false,
-		origin;
+		origin,
+		scale = chart.scale3d || 1;
 
 	if (insidePlotArea) {
 		inverted = chart.inverted;
@@ -88,10 +89,12 @@ function perspective(points, chart, insidePlotArea) {
 			py = py * (vd / (pz + ze + vd));
 		}
 
+
 		//Apply translation
-		px = px + xe;
-		py = py + ye;
-		pz = pz + ze;
+		px = px * scale + xe;
+		py = py * scale + ye;
+		pz = pz * scale + ze;
+
 
 		result.push({
 			x: (inverted ? py : px),
