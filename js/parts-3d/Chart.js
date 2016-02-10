@@ -6,6 +6,106 @@ Highcharts.Chart.prototype.is3d = function () {
 	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
+/**
+ * Extend the getMargins method to calculate scale of the 3D view. That is required to
+ * fit chart's 3D projection into the actual plotting area. Reported as #4933.
+ */
+Highcharts.wrap(Highcharts.Chart.prototype, 'getMargins', function (proceed) {
+	var chart = this,
+		options3d = chart.options.chart.options3d,
+		bbox3d = {
+			minX: Number.MAX_VALUE,
+			maxX: -Number.MAX_VALUE,
+			minY: Number.MAX_VALUE,
+			maxY: -Number.MAX_VALUE
+		},
+		plotLeft = chart.plotLeft,
+		plotRight = chart.plotWidth + plotLeft,
+		plotTop = chart.plotTop,
+		plotBottom = chart.plotHeight + plotTop,
+		originX = plotLeft + chart.plotWidth / 2,
+		originY = plotTop + chart.plotHeight / 2,
+		scale = 1,
+		corners = [],
+		i;
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.is3d()) {
+		if (options3d.fitToPlot === true) { // docs
+			// Clear previous scale in case of updates:
+			chart.scale3d = 1;
+
+			// Top left corners:
+			corners = [{
+				x: plotLeft,
+				y: plotTop,
+				z: 0
+			}, {
+				x: plotLeft,
+				y: plotTop,
+				z: options3d.depth
+			}];
+
+			// Top right corners:
+			for (i = 0; i < 2; i++) {
+				corners.push({
+					x: plotRight,
+					y: corners[i].y,
+					z: corners[i].z
+				});
+			}
+
+			// All bottom corners:
+			for (i = 0; i < 4; i++) {
+				corners.push({
+					x: corners[i].x,
+					y: plotBottom,
+					z: corners[i].z
+				});
+			}
+
+			// Calculate 3D corners:
+			corners = perspective(corners, chart, false);
+
+			// Get bounding box of 3D element:
+			each(corners, function (corner) {
+				bbox3d.minX = Math.min(bbox3d.minX, corner.x);
+				bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
+				bbox3d.minY = Math.min(bbox3d.minY, corner.y);
+				bbox3d.maxY = Math.max(bbox3d.maxY, corner.y);
+			});
+
+			// Left edge:
+			if (plotLeft > bbox3d.minX) {
+				scale = Math.min(scale, 1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1);
+			}
+
+			// Right edge:
+			if (plotRight < bbox3d.maxX) {
+				scale = Math.min(scale, (plotRight - originX) / (bbox3d.maxX - originX));
+			}
+
+			// Top edge:
+			if (plotTop > bbox3d.minY) {
+				if (bbox3d.minY < 0) {
+					scale = Math.min(scale, (plotTop + originY) / (-bbox3d.minY + plotTop + originY));
+				} else {
+					scale = Math.min(scale, 1 - (plotTop + originY) / (bbox3d.minY + originY) % 1);
+				}
+			}
+
+			// Bottom edge:
+			if (plotBottom < bbox3d.maxY) {
+				scale = Math.min(scale, Math.abs((plotBottom - originY) / (bbox3d.maxY - originY)));
+			}
+
+			// Set scale, used later in perspective method():
+			chart.scale3d = scale;
+		}
+	}
+});
+
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
 	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
@@ -16,6 +116,7 @@ defaultChartOptions.chart.options3d = {
 	alpha: 0,
 	beta: 0,
 	depth: 100,
+	fitToPlot: true,
 	viewDistance: 25,
 	frame: {
 		bottom: { size: 1, color: 'rgba(255,255,255,0)' },

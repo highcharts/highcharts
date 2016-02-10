@@ -4,7 +4,6 @@ $(function () {
         chart: {
             renderTo: 'container',
             type: 'column',
-            margin: 75,
             options3d: {
                 enabled: true,
                 alpha: 15,

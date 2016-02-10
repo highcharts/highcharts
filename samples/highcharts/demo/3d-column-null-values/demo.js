@@ -2,7 +2,6 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: 'column',
-            margin: 75,
             options3d: {
                 enabled: true,
                 alpha: 10,
