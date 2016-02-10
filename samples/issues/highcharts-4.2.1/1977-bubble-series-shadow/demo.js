@@ -74,4 +74,30 @@ $(function () {
         );
 
     });
+
+
+    QUnit.test('Updating shadow on column', function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            chart: {
+                type: 'column',
+                animation: false
+            },
+
+            plotOptions: {
+                series: {
+                    shadow: true
+                }
+            },
+
+            series: [{
+                data: [1, 2, 3]
+            }]
+
+        });
+
+        chart.series[0].points[0].setState('hover');
+        assert.ok(true, 'No JS error thrown');
+
+    });
 });

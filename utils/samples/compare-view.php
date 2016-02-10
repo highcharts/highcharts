@@ -1,20 +1,24 @@
 <?php 
+	ini_set('display_errors', 'true');
 
 	require_once('functions.php');
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
+	$rightcommit = @$_GET['rightcommit'];
+	$commit = @$_GET['commit']; // Used from Phantom test
 
 	if (file_exists('temp/compare.json')) {
 		$compare = json_decode(file_get_contents('temp/compare.json'));
 		$comment = @$compare->$path->comment;
 	}
 
-
-	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
+	$nightly = json_decode(file_get_contents('nightly/nightly.json'));
+	$nightly = $nightly->results->$path;
 
 	$details = file_get_contents("../../samples/$path/demo.details");
+	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
 	$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
 	$skipTest = (strstr($details, 'skipTest: true') !== false);
 
@@ -61,7 +65,10 @@
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>',
 				_continue = '<?php echo $continue ?>',
-				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>;
+				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
+				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
+				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
+				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
 
 
 			function showCommentBox() {
@@ -87,6 +94,33 @@
 					location.href = commentHref;
 				});
 
+				$('#commits').click(function () {
+					var frameset = window.parent.document.querySelector('frameset'),
+						frame = window.parent.document.getElementById('commits-frame'),
+						checked;
+
+					$(this).toggleClass('active');
+					checked = $(this).hasClass('active');
+
+					if (checked) {
+						window.parent.commits = {};
+
+						if (!frame) {
+							frame = window.parent.document.createElement('frame');
+							frame.setAttribute('id', 'commits-frame');
+							frame.setAttribute('src', '/issue-by-commit/commits.php');
+						} else {
+							frame.contentWindow.location.reload();
+						}
+
+						frameset.setAttribute('cols', '400, *, 400');
+						frameset.appendChild(frame);
+					} else {
+						frameset.setAttribute('cols', '400, *');
+					}
+
+				});
+
 				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
@@ -101,6 +135,14 @@
 
 				if (isManual) {
 					showCommentBox();
+				}
+
+				if ((isUnitTest || isManual) && rightcommit) {
+					report += 'Testing commit <a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + rightcommit + '</a>';
+					$('#report').css({
+						color: 'gray',
+						display: 'block'
+					}).html(report);
 				}
 			});
 
@@ -149,7 +191,7 @@
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, ''),
+									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									<?php if ($isUnitTest) : ?>
 									title: 'How many unit tests passed out of the total' ,
@@ -165,14 +207,13 @@
 								.html(diff)
 								.appendTo(li);
 
-
 							showCommentBox();
 
 						} else {
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, ''),
+									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									title: 'Compare'
 								})
@@ -269,14 +310,24 @@
 			}
 				
 			function onIdentical() {
-				$.get('compare-update-report.php', { path: path, diff: 0 });
+				$.get('compare-update-report.php', {
+					path: path,
+					diff: 0,
+					commit: commit || '',
+					rightcommit: rightcommit || ''
+				});
 				markList("identical");
 				proceed();
 			}
 			
 			function onDifferent(diff) {
 				// Save it for refreshes
-				$.get('compare-update-report.php', { path: path, diff: diff });
+				$.get('compare-update-report.php', {
+					path: path,
+					diff: diff,
+					commit: commit || '',
+					rightcommit: rightcommit || ''
+				});
 				markList("different", diff);
 				proceed();
 			}
@@ -608,7 +659,10 @@
 						console.log("Warning: Left and right versions are equal.");
 					}
 					
-					report += '<div>Left version: '+ leftVersion +'; right version: '+ rightVersion +'</div>';
+					report += '<div>Left version: '+ leftVersion +'; right version: '+ 
+						(rightcommit ? '<a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + 
+							rightcommit + '</a>' : rightVersion) +
+						'</div>';
 					
 					report += identical ?
 						'<div>The innerHTML is identical</div>' :
@@ -655,6 +709,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
+				<a class="button" id="commits" style="margin-left: 1em" >Test by commit</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
@@ -672,16 +727,31 @@
 			</div>
 
 			<?php } else { ?>
-		
+
 			<div id="report" class="test-report"></div>
+
+			<?php
+			if ($nightly) {
+				$changes = array();
+				foreach ($nightly->changes as $change) {
+					$changes[] = "<a target='_blank' href='https://github.com/highcharts/highcharts/commit/{$change->hash}'>{$change->hash}</a>";
+				}
+				$changes = join($changes, ', ');
+				echo "
+				<div class='nightly'>This test was affected by
+				$changes
+				</div>
+				";
+			}
+			?>
 			
+			<div id="comment-placeholder"></div>
 			<div id="frame-row">
 				<?php if (!$isUnitTest && !$isManual) : ?>
 				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				<?php endif; ?>
 				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				
-				<div id="comment-placeholder"></div>
 			</div>
 			<pre id="svg"></pre>
 			

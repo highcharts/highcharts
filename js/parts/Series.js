@@ -417,8 +417,7 @@ Series.prototype = {
 			}
 
 			series.data = [];
-			series.options.data = data;
-			//series.zData = zData;
+			series.options.data = series.userOptions.data = data;
 
 			// destroy old points
 			i = oldDataLength;
@@ -440,7 +439,7 @@ Series.prototype = {
 
 		// Typically for pie series, points need to be processed and generated
 		// prior to rendering the legend
-		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
+		if (options.legendType === 'point') {
 			this.processData();
 			this.generatePoints();
 		}
@@ -797,8 +796,8 @@ Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function () {
-		return grep(this.points, function (point) {
+	getValidPoints: function (points) {
+		return grep(points || this.points, function (point) {
 			return !point.isNull;
 		});
 	},
@@ -1265,10 +1264,27 @@ Series.prototype = {
 		var series = this,
 			options = series.options,
 			step = options.step,
+			reversed,
 			graphPath = [],
 			gap;
 
 		points = points || series.points;
+
+		// Bottom of a stack is reversed
+		reversed = points.reversed;
+		if (reversed) {
+			points.reverse();
+		}
+		// Reverse the steps (#5004)
+		step = { right: 1, center: 2 }[step] || (step && 3);
+		if (step && reversed) {
+			step = 4 - step;
+		}
+
+		// Remove invalid points, especially in spline (#5015)
+		if (options.connectNulls && !nullsAsZeroes && !connectCliffs) {
+			points = this.getValidPoints(points);
+		}
 
 		// Build the line
 		each(points, function (point, i) {
@@ -1283,7 +1299,7 @@ Series.prototype = {
 			}
 
 			// Line series, nullsAsZeroes is not handled
-			if (point.isNull && !defined(nullsAsZeroes)) {
+			if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
 				gap = !options.connectNulls;
 
 			// Area series, nullsAsZeroes is set
@@ -1301,14 +1317,14 @@ Series.prototype = {
 
 				} else if (step) {
 
-					if (step === 'right') {
+					if (step === 1) { // right
 						pathToPoint = [
 							L,
 							lastPoint.plotX,
 							plotY
 						];
 						
-					} else if (step === 'center') {
+					} else if (step === 2) { // center
 						pathToPoint = [
 							L,
 							(lastPoint.plotX + plotX) / 2,
@@ -1781,11 +1797,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points || [], function (point) { // #4390
-				return point.y !== null;
-			});
-
-			series.kdTree = _kdtree(points, dimensions, dimensions);
+			series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
 		}
 		delete series.kdTree;
 

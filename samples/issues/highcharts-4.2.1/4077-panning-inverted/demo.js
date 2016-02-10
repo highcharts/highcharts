@@ -101,8 +101,8 @@ $(function () {
             'Has panned'
         );
         assert.strictEqual(
-            chart.xAxis[0].max - chart.xAxis[0].min,
-            firstZoom.max - firstZoom.min,
+            (chart.xAxis[0].max - chart.xAxis[0].min).toFixed(2),
+            (firstZoom.max - firstZoom.min).toFixed(2),
             'Has preserved range'
         );
 

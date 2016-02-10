@@ -109,7 +109,7 @@
 
 			var axis = this;
 			
-			axis.doPostTranslate = true;
+			axis.isBroken = true;
 
 			this.val2lin = function (val) {
 				var nval = val,
@@ -312,7 +312,7 @@
 					if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
 						eventName = 'pointBreak';
 					} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
-						eventName = 'pointInBreak'; // docs
+						eventName = 'pointInBreak';
 					} 
 					if (eventName) {
 						fireEvent(axis, eventName, { point: point, brk: brk });

@@ -307,7 +307,7 @@ extend(Chart.prototype, {
 		// prepare for replicating the chart
 		options.series = [];
 		each(chart.series, function (serie) {
-			seriesOptions = merge(serie.options, {
+			seriesOptions = merge(serie.userOptions, { // #4912
 				animation: false, // turn off animation
 				enableMouseTracking: false,
 				showCheckbox: false,
@@ -679,7 +679,8 @@ extend(Chart.prototype, {
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.attr({
 				title: pick(chart.options.lang[btnOptions._titleKey], ''),
-				'stroke-linecap': 'round'
+				'stroke-linecap': 'round',
+				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
 

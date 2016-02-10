@@ -170,6 +170,10 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotY = pick(point.plotY, -9999),
 		bBox = dataLabel.getBBox(),
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotation = options.rotation,
+		normRotation,
+		negRotation,
+		align = options.align,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
@@ -194,9 +198,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		});
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
-		if (options.rotation) {
+		if (rotation) {
 			justify = false; // Not supported for rotated text
-			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
+			rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
 			alignAttr = {
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 				y: alignTo.y + options.y + alignTo.height / 2
@@ -207,17 +211,24 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 					align: options.align
 				});
 
+			// Compensate for the rotated label sticking out on the sides
+			normRotation = (rotation + 720) % 360;
+			negRotation = normRotation > 180 && normRotation < 360;
+
+			if (align === 'left') {
+				alignAttr.y -= negRotation ? bBox.height : 0;
+			} else if (align === 'center') {
+				alignAttr.x -= bBox.width / 2;
+				alignAttr.y -= bBox.height / 2;
+			} else if (align === 'right') {
+				alignAttr.x -= bBox.width;
+				alignAttr.y -= negRotation ? 0 : bBox.height;
+			}
+			
+
 		} else {
 			dataLabel.align(options, null, alignTo);
 			alignAttr = dataLabel.alignAttr;
-
-			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
-			if (options.shape) {
-				dataLabel.attr({
-					anchorX: point.plotX,
-					anchorY: point.plotY
-				});
-			}
 		}
 
 		// Handle justify or crop
@@ -227,6 +238,14 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		// Now check that the data label is within the plot area
 		} else if (pick(options.crop, true)) {
 			visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
+		}
+
+		// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
+		if (options.shape && !rotation) {
+			dataLabel.attr({
+				anchorX: point.plotX,
+				anchorY: point.plotY
+			});
 		}
 	}
 

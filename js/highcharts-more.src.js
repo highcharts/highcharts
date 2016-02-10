@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.0-modified (2016-02-02)
+ * @license Highcharts JS v4.2.3-modified (bugfix)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -817,11 +817,10 @@ var arrayMin = Highcharts.arrayMin,
             linePath = [].concat(lowerPath, higherPath);
 
             // For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-            if (!this.chart.polar) {
+            if (!this.chart.polar && higherAreaPath[0] === 'M') {
                 higherAreaPath[0] = 'L'; // this probably doesn't work for spline        
             }
             this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
-        
             return linePath;
         },
 
@@ -1295,7 +1294,7 @@ var arrayMin = Highcharts.arrayMin,
         //stemWidth: null,
         threshold: null,
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
                 'Maximum: {point.high}<br/>' +
                 'Upper quartile: {point.q3}<br/>' +
                 'Median: {point.median}<br/>' +
@@ -1557,7 +1556,7 @@ var arrayMin = Highcharts.arrayMin,
         grouping: false,
         linkedTo: ':previous',
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
         },
         whiskerWidth: null
     });

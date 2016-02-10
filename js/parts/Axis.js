@@ -508,7 +508,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			doPostTranslate = (axis.doPostTranslate || (axis.isLog && handleLog)) && axis.lin2val;
+			doPostTranslate = (axis.isOrdinal || axis.isBroken || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -1444,12 +1444,10 @@ Axis.prototype = {
 		// Check for percentage based input values. Rounding fixes problems with
 		// column overflow and plot line filtering (#4898, #4899)
 		if (percentRegex.test(height)) {
-			//height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
-			height = parseFloat(height) / 100 * chart.plotHeight;
+			height = Math.round(parseFloat(height) / 100 * chart.plotHeight);
 		}
 		if (percentRegex.test(top)) {
-			//top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
-			top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
+			top = Math.round(parseFloat(top) / 100 * chart.plotHeight + chart.plotTop);
 		}
 
 		// Expose basic values to use in Series object and navigator

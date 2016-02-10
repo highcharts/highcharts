@@ -342,7 +342,7 @@ extend(Series.prototype, {
 			chart = series.chart,
 			remove = function () {
 
-				if (data.length === points.length) {
+				if (points && points.length === data.length) { // #4935
 					points.splice(i, 1);
 				}
 				data.splice(i, 1);

@@ -184,10 +184,10 @@ extend(SVGRenderer.prototype, {
 			element = wrapper.element,
 			renderer = wrapper.renderer,
 			addSetters = function (element, style) {
+				// These properties are set as attributes on the SVG group, and as
+				// identical CSS properties on the div. (#3542)
 				each(['opacity', 'visibility'], function (prop) {
 					wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
-						// These properties are set as attributes on the SVG group, and as
-						// identical CSS properties on the div. (#3542)
 						proceed.call(this, value, key, elem);
 						style[key] = value;
 					});
