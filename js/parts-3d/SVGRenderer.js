@@ -354,13 +354,9 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		delete params.alpha;
 		delete params.beta;
 
-		animation = pick(animation, this.renderer.globalAnimation);
+		animation = animObject(pick(animation, this.renderer.globalAnimation));
 		
-		if (animation) {
-			if (typeof animation !== 'object') {
-				animation = {};	
-			}
-			
+		if (animation.duration) {
 			params = merge(params); // Don't mutate the original object
 			ca = suckOutCustom(params);
 			

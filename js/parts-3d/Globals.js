@@ -1,7 +1,8 @@
 /**
 	Shorthands for often used function
 */
-var each = Highcharts.each,
+var animObject = Highcharts.animObject,
+	each = Highcharts.each,
 	extend = Highcharts.extend,
 	inArray = Highcharts.inArray,
 	merge = Highcharts.merge,

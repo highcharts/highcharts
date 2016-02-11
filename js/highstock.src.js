@@ -993,6 +993,14 @@
     }
 
     /**
+     * Get the animation in object form, where a disabled animation is always
+     * returned with duration: 0
+     */
+    function animObject(animation) {
+        return isObject(animation) ? merge(animation) : { duration: animation ? 500 : 0 };
+    }
+
+    /**
      * The time unit lookup
      */
     timeUnits = {
@@ -1507,6 +1515,7 @@
     Highcharts.removeEvent = removeEvent;
     Highcharts.fireEvent = fireEvent;
     Highcharts.animate = animate;
+    Highcharts.animObject = animObject;
     Highcharts.stop = stop;
 
     /* ****************************************************************************
@@ -2104,7 +2113,6 @@
             var animOptions = pick(options, this.renderer.globalAnimation, true);
             stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
             if (animOptions) {
-                animOptions = merge(animOptions, {}); //#2625
                 if (complete) { // allows using a callback with the global animation without overwriting it
                     animOptions.complete = complete;
                 }
@@ -8833,7 +8841,7 @@
                 hasRendered = chart.hasRendered,
                 slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
                 showAxis = axis.showAxis,
-                globalAnimation = renderer.globalAnimation,
+                animation = animObject(renderer.globalAnimation),
                 from,
                 to;
 
@@ -8936,7 +8944,7 @@
                 var pos,
                     i,
                     forDestruction = [],
-                    delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+                    delay = animation.duration,
                     destroyInactiveItems = function () {
                         i = forDestruction.length;
                         while (i--) {
@@ -12676,14 +12684,13 @@
             fireEvent(chart, 'resize');
 
             // Fire endResize and set isResizing back. If animation is disabled, fire without delay
-            globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
             syncTimeout(function () {
                 if (chart) {
                     fireEvent(chart, 'endResize', null, function () {
                         chart.isResizing -= 1;
                     });
                 }
-            }, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
+            }, animObject(globalAnimation).duration);
         },
 
         /**
@@ -15174,10 +15181,9 @@
                 chart = series.chart,
                 group,
                 options = series.options,
-                animation = options.animation,
                 // Animation doesn't work in IE8 quirks when the group div is hidden,
                 // and looks bad in other oldIE
-                animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+                animDuration = !!series.animate && chart.renderer.isSVG && animObject(options.animation).duration,
                 visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
                 hasRendered = series.hasRendered,
@@ -17136,9 +17142,15 @@
 
                 } else { // run the animation
 
-                    attr.scaleY = 1;
                     attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
-                    series.group.animate(attr, series.options.animation);
+                    series.group.animate(attr, extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth updating (#5030)
+                        step: function (val, fx) {
+                            series.group.attr({
+                                scaleY: fx.pos
+                            });
+                        }
+                    }));
 
                     // delete this function to allow it only once
                     series.animate = null;

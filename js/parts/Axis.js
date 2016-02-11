@@ -1956,7 +1956,7 @@ Axis.prototype = {
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
-			globalAnimation = renderer.globalAnimation,
+			animation = animObject(renderer.globalAnimation),
 			from,
 			to;
 
@@ -2059,7 +2059,7 @@ Axis.prototype = {
 			var pos,
 				i,
 				forDestruction = [],
-				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				delay = animation.duration,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {

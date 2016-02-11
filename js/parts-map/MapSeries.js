@@ -95,7 +95,7 @@ var MapAreaPoint = extendClass(Point, extend({
 			normalColor = Color(point.color),
 			hoverColor = Color(point.pointAttr.hover.fill),
 			animation = point.series.options.states.normal.animation,
-			duration = animation && (animation.duration || 500),
+			duration = animObject(animation).duration,
 			fill;
 
 		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
