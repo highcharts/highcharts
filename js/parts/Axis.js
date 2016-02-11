@@ -794,6 +794,22 @@ Axis.prototype = {
 	},
 
 	/**
+	 * Find the closestPointRange across all series
+	 */
+	getClosest: function () {
+		var ret;
+		each(this.series, function (series) {
+			var seriesClosest = series.closestPointRange;
+			if (!series.noSharedTooltip && defined(seriesClosest)) {
+				ret = defined(ret) ?
+					mathMin(ret, seriesClosest) :
+					seriesClosest;
+			}
+		});
+		return ret;
+	},
+
+	/**
 	 * Update translation information
 	 */
 	setAxisTranslation: function (saveOld) {
@@ -816,15 +832,9 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
-				// Find the closestPointRange across all series
-				each(axis.series, function (series) {
-					var seriesClosest = series.closestPointRange;
-					if (!series.noSharedTooltip && defined(seriesClosest)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosest) :
-							seriesClosest;
-					}
-				});
+				
+				// Get the closest points
+				closestPointRange = axis.getClosest();
 
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
