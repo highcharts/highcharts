@@ -797,7 +797,7 @@ Series.prototype = {
 	 * Return the series points with null points filtered out
 	 */
 	getValidPoints: function (points) {
-		return grep(points || this.points, function (point) {
+		return grep(points || this.points || [], function (point) { // #5029
 			return !point.isNull;
 		});
 	},
