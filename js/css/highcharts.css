@@ -346,3 +346,16 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-ohlc-series .highcharts-point-hover {
   stroke-width: 3px; }
+
+.highcharts-flags-series .highcharts-point {
+  stroke: gray;
+  fill: white; }
+
+.highcharts-flags-series .highcharts-point-hover {
+  stroke: black;
+  fill: #FCFFC5; }
+
+.highcharts-flags-series .highcharts-point text {
+  fill: black;
+  font-size: 0.9em;
+  font-weight: bold; }

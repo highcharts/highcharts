@@ -2567,6 +2567,7 @@ SVGRenderer.prototype = {
 			height,
 			wrapperX,
 			wrapperY,
+			textAlign,
 			deferredAttr = {},
 			strokeWidth,
 			baselineOffset,
@@ -2599,7 +2600,7 @@ SVGRenderer.prototype = {
 				crispAdjust,
 				attribs = {};
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) &&
+			bBox = (width === undefined || height === undefined || textAlign) && defined(text.textStr) &&
 				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -2639,9 +2640,7 @@ SVGRenderer.prototype = {
 		 * This function runs after setting text or padding, but only if padding is changed
 		 */
 		updateTextPadding = function () {
-			var styles = wrapper.styles,
-				textAlign = styles && styles.textAlign,
-				textX = paddingLeft + padding,
+			var textX = paddingLeft + padding,
 				textY;
 
 			// determin y based on the baseline
@@ -2709,6 +2708,9 @@ SVGRenderer.prototype = {
 		wrapper.heightSetter = function (value) {
 			height = value;
 		};
+		wrapper['text-alignSetter'] = function (value) {
+			textAlign = value;
+		};
 		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
 				padding = wrapper.padding = value;
@@ -2748,7 +2750,7 @@ SVGRenderer.prototype = {
 			if (value) {
 				needsBox = true;
 			}
-			strokeWidth = value;
+			strokeWidth = this['stroke-width'] = value;
 			boxAttr(key, value);
 		};
 		/*= if (!build.classic) { =*/
@@ -2822,9 +2824,11 @@ SVGRenderer.prototype = {
 			 * Apply the shadow to the box
 			 */
 			shadow: function (b) {
-				updateBoxSize();
-				if (box) {
-					box.shadow(b);
+				if (b) {
+					updateBoxSize();
+					if (box) {
+						box.shadow(b);
+					}
 				}
 				return wrapper;
 			},

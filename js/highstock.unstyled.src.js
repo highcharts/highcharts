@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-02-09)
+ * @license Highstock JS v3.0-dev (2016-02-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -4352,6 +4352,7 @@ SVGRenderer.prototype = {
             height,
             wrapperX,
             wrapperY,
+            textAlign,
             deferredAttr = {},
             strokeWidth,
             baselineOffset,
@@ -4378,7 +4379,7 @@ SVGRenderer.prototype = {
                 crispAdjust,
                 attribs = {};
 
-            bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) &&
+            bBox = (width === undefined || height === undefined || textAlign) && defined(text.textStr) &&
                 text.getBBox(); //#3295 && 3514 box failure when string equals 0
             wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -4418,9 +4419,7 @@ SVGRenderer.prototype = {
          * This function runs after setting text or padding, but only if padding is changed
          */
         updateTextPadding = function () {
-            var styles = wrapper.styles,
-                textAlign = styles && styles.textAlign,
-                textX = paddingLeft + padding,
+            var textX = paddingLeft + padding,
                 textY;
 
             // determin y based on the baseline
@@ -4488,6 +4487,9 @@ SVGRenderer.prototype = {
         wrapper.heightSetter = function (value) {
             height = value;
         };
+        wrapper['text-alignSetter'] = function (value) {
+            textAlign = value;
+        };
         wrapper.paddingSetter =  function (value) {
             if (defined(value) && value !== padding) {
                 padding = wrapper.padding = value;
@@ -4527,7 +4529,7 @@ SVGRenderer.prototype = {
             if (value) {
                 needsBox = true;
             }
-            strokeWidth = value;
+            strokeWidth = this['stroke-width'] = value;
             boxAttr(key, value);
         };
         
@@ -19007,7 +19009,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-02-09)
+ * Highstock JS v3.0-dev (2016-02-11)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license
@@ -20222,28 +20224,17 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
-    fillColor: 'white',
-    lineWidth: 1,
     pointRange: 0, // #673
     //radius: 2,
     shape: 'flag',
     stackDistance: 12,
-    states: {
-        hover: {
-            lineColor: 'black',
-            fillColor: '#FCFFC5'
-        }
-    },
-    style: {
-        fontSize: '11px',
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
+    textAlign: 'center', // docs: No longer a style, but an option
     tooltip: {
         pointFormat: '{point.text}<br/>'
     },
     threshold: null,
     y: -30
+    
 });
 
 // 2 - Create the CandlestickSeries object
@@ -20259,24 +20250,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
      * Inherit the initialization from base Series
      */
     init: Series.prototype.init,
-    /**
-     * Get presentational attributes
-     */
-    pointAttribs: function (point, state) {
-        var options = this.options,
-            color = (point && point.color) || this.color,
-            fill = options.fillColor;
 
-        if (state) {
-            fill = options.states[state].fillColor;
-        }
+    
 
-        return {
-            'fill': fill || color,
-            'stroke': options.lineColor || color,
-            'stroke-width': (point && point.lineWidth) || options.lineWidth || 0
-        };
-    },
     /**
      * Extend the translate method by placing the point on the related series
      */
@@ -20376,7 +20352,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
      */
     drawPoints: function () {
         var series = this,
-            pointAttr,
             points = series.points,
             chart = series.chart,
             renderer = chart.renderer,
@@ -20398,9 +20373,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
             point = points[i];
             outsideRight = point.plotX > series.xAxis.len;
             plotX = point.plotX;
-            if (plotX > 0) { // #3119
-                plotX -= pick(point.lineWidth, options.lineWidth) % 2; // #4285
-            }
             stackIndex = point.stackIndex;
             shape = point.options.shape || options.shape;
             plotY = point.plotY;
@@ -20413,38 +20385,44 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
             graphic = point.graphic;
 
-            // only draw the point if y is defined and the flag is within the visible area
+            // Only draw the point if y is defined and the flag is within the visible area
             if (plotY !== undefined && plotX >= 0 && !outsideRight) {
-                // shortcuts
-                pointAttr = series.pointAttribs(point);
-                if (graphic) { // update
-                    graphic.attr({
-                        x: plotX,
-                        y: plotY,
-                        anchorX: anchorX,
-                        anchorY: anchorY
-                    });
-                } else {
+                
+                // Create the flag
+                if (!graphic) {
                     graphic = point.graphic = renderer.label(
                         point.options.title || options.title || 'A',
-                        plotX,
-                        plotY,
+                        null,
+                        null,
                         shape,
-                        anchorX,
-                        anchorY,
+                        null,
+                        null,
                         options.useHTML
                     )
-                    .css(merge(options.style, point.style))
-                    .attr(pointAttr)
+                    
                     .attr({
                         align: shape === 'flag' ? 'left' : 'center',
                         width: options.width,
-                        height: options.height
+                        height: options.height,
+                        'text-align': options.textAlign
                     })
-                    .add(series.markerGroup)
-                    .shadow(options.shadow);
+                    .addClass('highcharts-point')
+                    .add(series.markerGroup);
 
+                    
                 }
+
+                if (plotX > 0) { // #3119
+                    plotX -= graphic.strokeWidth() % 2; // #4285
+                }
+
+                // Plant the flag
+                graphic.attr({
+                    x: plotX,
+                    y: plotY,
+                    anchorX: anchorX,
+                    anchorY: anchorY
+                });
 
                 // Set the tooltip anchor position
                 point.tooltipPos = [plotX, plotY];
@@ -21001,8 +20979,6 @@ Scroller.prototype = {
         outlineWidth = scroller.outline.strokeWidth();
         halfOutline = outlineWidth / 2;
         outlineTop = top + halfOutline;
-
-        console.log(outlineWidth)
 
         if (navigatorEnabled) {
             scroller.leftShade[verb](navigatorOptions.maskInside ? {
@@ -22396,8 +22372,8 @@ RangeSelector.prototype = {
                         states && states.select,
                         states && states.disabled
                     )
-                    .css({
-                        textAlign: 'center'
+                    .attr({
+                        'text-align': 'center'
                     })
                     .add(buttonGroup);
 

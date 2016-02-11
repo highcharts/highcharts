@@ -19,12 +19,20 @@
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
-	fillColor: 'white',
-	lineWidth: 1,
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
 	stackDistance: 12,
+	textAlign: 'center', // docs: No longer a style, but an option
+	tooltip: {
+		pointFormat: '{point.text}<br/>'
+	},
+	threshold: null,
+	y: -30,
+	/*= if (build.classic) { =*/
+	fillColor: 'white',
+	// lineColor: color,
+	lineWidth: 1,
 	states: {
 		hover: {
 			lineColor: 'black',
@@ -33,14 +41,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	},
 	style: {
 		fontSize: '11px',
-		fontWeight: 'bold',
-		textAlign: 'center'
-	},
-	tooltip: {
-		pointFormat: '{point.text}<br/>'
-	},
-	threshold: null,
-	y: -30
+		fontWeight: 'bold'
+	}
+	/*= } =*/
 });
 
 // 2 - Create the CandlestickSeries object
@@ -56,6 +59,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Inherit the initialization from base Series
 	 */
 	init: Series.prototype.init,
+
+	/*= if (build.classic) { =*/
 	/**
 	 * Get presentational attributes
 	 */
@@ -74,6 +79,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			'stroke-width': (point && point.lineWidth) || options.lineWidth || 0
 		};
 	},
+	/*= } =*/
+
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */
@@ -173,7 +180,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 */
 	drawPoints: function () {
 		var series = this,
-			pointAttr,
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -195,9 +201,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			point = points[i];
 			outsideRight = point.plotX > series.xAxis.len;
 			plotX = point.plotX;
-			if (plotX > 0) { // #3119
-				plotX -= pick(point.lineWidth, options.lineWidth) % 2; // #4285
-			}
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
@@ -210,38 +213,49 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			graphic = point.graphic;
 
-			// only draw the point if y is defined and the flag is within the visible area
+			// Only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== undefined && plotX >= 0 && !outsideRight) {
-				// shortcuts
-				pointAttr = series.pointAttribs(point);
-				if (graphic) { // update
-					graphic.attr({
-						x: plotX,
-						y: plotY,
-						anchorX: anchorX,
-						anchorY: anchorY
-					});
-				} else {
+				
+				// Create the flag
+				if (!graphic) {
 					graphic = point.graphic = renderer.label(
 						point.options.title || options.title || 'A',
-						plotX,
-						plotY,
+						null,
+						null,
 						shape,
-						anchorX,
-						anchorY,
+						null,
+						null,
 						options.useHTML
 					)
+					/*= if (build.classic) { =*/
+					.attr(series.pointAttribs(point))
 					.css(merge(options.style, point.style))
-					.attr(pointAttr)
+					/*= } =*/
 					.attr({
 						align: shape === 'flag' ? 'left' : 'center',
 						width: options.width,
-						height: options.height
+						height: options.height,
+						'text-align': options.textAlign
 					})
-					.add(series.markerGroup)
-					.shadow(options.shadow);
+					.addClass('highcharts-point')
+					.add(series.markerGroup);
 
+					/*= if (build.classic) { =*/
+					graphic.shadow(options.shadow);
+					/*= } =*/
 				}
+
+				if (plotX > 0) { // #3119
+					plotX -= graphic.strokeWidth() % 2; // #4285
+				}
+
+				// Plant the flag
+				graphic.attr({
+					x: plotX,
+					y: plotY,
+					anchorX: anchorX,
+					anchorY: anchorY
+				});
 
 				// Set the tooltip anchor position
 				point.tooltipPos = [plotX, plotY];

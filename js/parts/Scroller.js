@@ -480,8 +480,6 @@ Scroller.prototype = {
 		halfOutline = outlineWidth / 2;
 		outlineTop = top + halfOutline;
 
-		console.log(outlineWidth)
-
 		if (navigatorEnabled) {
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {
 				x: navigatorLeft + zoomedMin,

@@ -653,8 +653,8 @@ RangeSelector.prototype = {
 						states && states.select,
 						states && states.disabled
 					)
-					.css({
-						textAlign: 'center'
+					.attr({
+						'text-align': 'center'
 					})
 					.add(buttonGroup);
 
