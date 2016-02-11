@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-02-09)
+ * @license Highstock JS v4.2.3-modified (2016-02-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -13365,7 +13365,7 @@
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
-            if (typeof point.x !== 'number' && series) {
+            if (point.x === undefined && series) {
                 point.x = x === undefined ? series.autoIncrement() : x;
             }
 
@@ -16395,7 +16395,7 @@
                 // Sort the keys (#1651)
                 for (x in stack) {
                     if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
-                        keys.push(+x);
+                        keys.push(x);
                     }
                 }
                 keys.sort(function (a, b) {
@@ -20097,7 +20097,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-02-09)
+     * Highstock JS v4.2.3-modified (2016-02-11)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

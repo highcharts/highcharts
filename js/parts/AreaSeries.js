@@ -46,7 +46,7 @@ var AreaSeries = extendClass(Series, {
 			// Sort the keys (#1651)
 			for (x in stack) {
 				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
-					keys.push(+x);
+					keys.push(x);
 				}
 			}
 			keys.sort(function (a, b) {
