@@ -178,34 +178,12 @@ $(function () {
                 dataSeries.group.element.setAttribute('tabindex', '-1');
                 dataSeries.group.element.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
                 H.each(dataSeries.points, function (point) {
-
-                // Wrap point element in <a> tag
-/*                    var origEl = point.graphic.element,
-                        parent = origEl.parentNode,
-                        linkEl = document.createElement('a');
-
-                    linkEl.setAttribute('tabindex', '-1');
-                    linkEl.setAttribute('aria-label', buildPointInfoString(point));
-                    linkEl.appendChild(origEl.cloneNode(true));
-
-                    parent.insertBefore(linkEl, origEl);
-                    parent.removeChild(origEl);
-*/
-
-/*
-                    // Add descriptive child element
-                    //var infoEl = document.createElement('desc');
-                    //var infoEl = document.createElement('title');
-                    var infoEl = document.createElement('text');
-                    infoEl.innerHTML = 'Info: ' + buildPointInfoString(point);
-                    point.graphic.element.appendChild(infoEl);
-                    // TODO: Add aria-describedby/aria-labelledby='id' to point graphic & SVG root (or container??). NB: aria-describedby might not be widely supported
-//*/
-
                     // Set aria label on point
-                    point.graphic.element.setAttribute('role', 'img');
-                    point.graphic.element.setAttribute('tabindex', '-1');
-                    point.graphic.element.setAttribute('aria-label', buildPointInfoString(point));
+                    if (point.graphic) {
+                        point.graphic.element.setAttribute('role', 'img');
+                        point.graphic.element.setAttribute('tabindex', '-1');
+                        point.graphic.element.setAttribute('aria-label', buildPointInfoString(point));
+                    }
 
                 });
             }
@@ -226,7 +204,9 @@ $(function () {
             // Function for highlighting a point
             H.Point.prototype.highlight = function () {
                 var point = this;
-                point.graphic.element.focus();
+                if (point.graphic && point.graphic.element.focus) {
+                    point.graphic.element.focus();
+                }
                 point.onMouseOver(); // Show the hover marker
                 point.series.chart.tooltip.refresh(point); // Show the tooltip
             };
@@ -247,7 +227,9 @@ $(function () {
                     for (var i = 0; i < exportList.length; ++i) {
                         exportList[i].setAttribute("tabindex", -1);
                     }
-                    exportList[0].focus();
+                    if (exportList[0].focus) {
+                        exportList[0].focus();
+                    }
                     exportList[0].onmouseover();
                     this.highlightedExportItem = 0; // Keep reference to focused item index
                 }
@@ -296,7 +278,7 @@ $(function () {
 
             H.addEvent(chart.renderTo, 'keydown', function (ev) {
                 var e = ev || window.event,
-                    keyCode = e.which,
+                    keyCode = e.which || e.keyCode,
                     highlightedExportItem = chart.highlightedExportItem,
                     wrap = true,
                     newSeries,
@@ -423,6 +405,7 @@ $(function () {
                         break;
 
                     case 13: // Enter
+                    case 32: // Spacebar
                         if (highlightedExportItem !== undefined) {
                             fakeEvent = document.createEvent('Events');
                             fakeEvent.initEvent('click', true, false);
