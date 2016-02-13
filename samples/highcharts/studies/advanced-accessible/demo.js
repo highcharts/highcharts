@@ -9,7 +9,6 @@ $(function () {
                 numSeries = series.length,
                 numXAxes = chart.xAxis.length,
                 numYAxes = chart.yAxis.length,
-                tableSummary = document.createElement('caption'),
                 titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title'),
                 descElement = chart.container.getElementsByTagName('desc')[0],
                 textElements = chart.container.getElementsByTagName('text'),
@@ -100,14 +99,13 @@ $(function () {
             }
 
             // Add SVG title/desc tags
-            /*
             titleElement.innerHTML = options.title.text || 'Chart';
             titleElement.id = titleId;
             descElement.innerHTML += '. ' + chartDesc;
             descElement.id = descId;
-            descElement.parentNode.insertBefore(titleElement, descElement);*/
-           // chart.renderTo.setAttribute('aria-labelledby', titleId + ' ' + descId);
+            descElement.parentNode.insertBefore(titleElement, descElement);
             chart.renderTo.setAttribute('role', 'region');
+            chart.renderTo.setAttribute('aria-labelledby', titleId + ' ' + descId);
             chart.renderTo.setAttribute('aria-label', chartDesc);
 
             // Return string with information about point
@@ -145,11 +143,26 @@ $(function () {
                 return 'Series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '.';
             }
 
-            // Put info on points of a series
-            function setPointInfo(dataSeries) {
-                dataSeries.group.element.setAttribute('role', 'region');
-                dataSeries.group.element.setAttribute('tabindex', '-1');
-                dataSeries.group.element.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
+            function reverseChildNodes(node) {
+                var i = node.childNodes.length;
+                while (i--) {
+                    node.appendChild(node.childNodes[i]);
+                }
+            }
+
+            // Put info on series and points of a series
+            function setSeriesInfo(dataSeries) {
+                var firstPointEl = dataSeries.points && dataSeries.points[0].graphic && dataSeries.points[0].graphic.element,
+                    seriesEl = firstPointEl && firstPointEl.parentNode;
+                if (seriesEl) {
+                    seriesEl.setAttribute('role', 'region');
+                    seriesEl.setAttribute('tabindex', '-1');
+                    seriesEl.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
+                    // For some series types the order of elements do not match the order of points in series
+                    if (seriesEl.lastChild === firstPointEl) {
+                        reverseChildNodes(seriesEl);
+                    }
+                }
                 H.each(dataSeries.points, function (point) {
                     // Set aria label on point
                     if (point.graphic) {
@@ -157,14 +170,13 @@ $(function () {
                         point.graphic.element.setAttribute('tabindex', '-1');
                         point.graphic.element.setAttribute('aria-label', buildPointInfoString(point));
                     }
-
                 });
             }
-            H.each(series, setPointInfo);
+            H.each(series, setSeriesInfo);
 
             H.wrap(H.Series.prototype, 'drawPoints', function (proceed) {
                 proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-                setPointInfo(this);
+                setSeriesInfo(this);
             });
 
 
