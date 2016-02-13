@@ -4,6 +4,7 @@ $(function () {
     (function (H) {
         H.Chart.prototype.callbacks.push(function (chart) {
             var options = chart.options,
+                acsOptions = options.accessibility || {},
                 series = chart.series,
                 numSeries = series.length,
                 numXAxes = chart.xAxis.length,
@@ -22,7 +23,7 @@ $(function () {
                 typeStartsWithVowel,
                 i;
 
-            if (options.accessibility && options.accessibility.enabled === false) {
+            if (!acsOptions.enabled) {
                 return;
             }
 
@@ -50,7 +51,7 @@ $(function () {
             chartDesc = (typeStartsWithVowel ? 'An ' : 'A ') + chartType + ' chart.' +
                         (options.title.text ? ' Title: ' + options.title.text + '.' : '') +
                         (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '');
-            chartDesc += options.accessibility.description ? ' ' + options.accessibility.description : '';
+            chartDesc += acsOptions.description ? ' ' + acsOptions.description : '';
             if (chartDesc.slice(-1) !== '.') {
                 chartDesc += '.';
             }
@@ -197,19 +198,25 @@ $(function () {
 
             /* Add keyboard navigation */
 
-            if (options.accessibility && options.accessibility.keyboardNavigation === false) {
+            if (acsOptions.keyboardNavigation && acsOptions.keyboardNavigation.enabled === false) {
                 return;
             }
 
             // Function for highlighting a point
             H.Point.prototype.highlight = function () {
-                var point = this;
+                var point = this,
+                    chart = point.series.chart;
                 if (point.graphic && point.graphic.element.focus) {
                     point.graphic.element.focus();
                 }
-                point.series.chart.highlightedPoint = point;
-                point.onMouseOver(); // Show the hover marker
-                point.series.chart.tooltip.refresh(point); // Show the tooltip
+                if (!point.isNull) {
+                    point.onMouseOver(); // Show the hover marker
+                    chart.tooltip.refresh(point); // Show the tooltip
+                } else {
+                    chart.tooltip.hide(0);
+                    // Don't call blur on the element, as it messes up the chart div's focus
+                }
+                chart.highlightedPoint = point;
             };
 
             // Function to show the export menu and focus the first item (if exists)
@@ -260,6 +267,13 @@ $(function () {
                 // If there is no adjacent point, we return false
                 if (newPoint === undefined) {
                     return false;
+                }
+
+                // Recursively skip null points
+                if (newPoint.isNull && this.options.accessibility.keyboardNavigation &&
+                        this.options.accessibility.keyboardNavigation.skipNullPoints) {
+                    this.highlightedPoint = newPoint;
+                    return this.highlightAdjacentPoint(next);
                 }
 
                 // There is an adjacent point, highlight it
@@ -421,7 +435,10 @@ $(function () {
 
         accessibility: {
             enabled: true,
-            description: 'Chart displays arbitrary values throughout the year, with a clear drop during the winter months.' // Content description for screen readers
+            description: 'Chart displays arbitrary values throughout the year, with a clear drop during the winter months.',
+            keyboardNavigation: {
+                skipNullPoints: true
+            }
         },
 
         title: {
@@ -453,7 +470,7 @@ $(function () {
             data: [29.9, 110, 43, 0]
         }, //*
         {
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            data: [29.9, 71.5, null, 106.4, 129.2, null, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
             type: 'column'
         }, //*/
         //*
