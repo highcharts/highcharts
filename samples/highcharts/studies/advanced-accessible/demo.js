@@ -226,9 +226,18 @@ $(function () {
                 exportList = chart.exportDivElements;
                 if (exportList) {
                     // Set tabindex on the menu items to allow focusing by script
+                    // Set role to give screen readers a chance to pick up the contents
                     for (var i = 0; i < exportList.length; ++i) {
-                        exportList[i].setAttribute("tabindex", -1);
+                        if (exportList[i].tagName === 'DIV' &&
+                            !(exportList[i].children && exportList[i].children.length)) {
+                            exportList[i].setAttribute('role', 'menuitem');
+                            exportList[i].setAttribute('tabindex', -1);
+                        }
                     }
+                    // Set screen reader properties on menu parent div
+                    exportList[0].parentNode.setAttribute('role', 'menu');
+                    exportList[0].parentNode.setAttribute('aria-label', 'Chart export');
+                    // Focus first menu item
                     if (exportList[0].focus) {
                         exportList[0].focus();
                     }
