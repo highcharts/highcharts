@@ -207,15 +207,10 @@ $(function () {
                 if (point.graphic && point.graphic.element.focus) {
                     point.graphic.element.focus();
                 }
+                point.series.chart.highlightedPoint = point;
                 point.onMouseOver(); // Show the hover marker
                 point.series.chart.tooltip.refresh(point); // Show the tooltip
             };
-
-            // Keep track of which point is highlighted
-            H.wrap(H.Point.prototype, 'onMouseOver', function (proceed) {
-                this.series.chart.highlightedPoint = this;
-                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-            });
 
             // Function to show the export menu and focus the first item (if exists)
             H.Chart.prototype.showExportMenu = function () {
@@ -235,9 +230,9 @@ $(function () {
                 }
             };
 
-            // Function to highlight next/previous point in chart, optionally wrapping around to first point.
+            // Function to highlight next/previous point in chart
             // Returns true on success, false on failure (no adjacent point to highlight in chosen direction)
-            H.Chart.prototype.highlightAdjacentPoint = function (next, wrap) {
+            H.Chart.prototype.highlightAdjacentPoint = function (next) {
                 var series = this.series,
                     curPoint = this.highlightedPoint,
                     newSeries,
@@ -262,13 +257,9 @@ $(function () {
                     curPoint.series.points[curPoint.index - 1] ||
                         newSeries && newSeries.points[newSeries.points.length - 1];
 
-                // If there is no adjacent point, we either wrap to first/last point in chart, or return false
-                if (!newPoint) {
-                    if (!wrap) {
-                        return false;
-                    }
-                    newPoint = next ? series[0].points[0] :
-                        series[series.length - 1].points[series[series.length - 1].points.length - 1];
+                // If there is no adjacent point, we return false
+                if (newPoint === undefined) {
+                    return false;
                 }
 
                 // There is an adjacent point, highlight it
@@ -280,7 +271,6 @@ $(function () {
                 var e = ev || window.event,
                     keyCode = e.which || e.keyCode,
                     highlightedExportItem = chart.highlightedExportItem,
-                    wrap = true,
                     newSeries,
                     fakeEvent,
                     doExporting = chart.options.exporting && chart.options.exporting.enabled !== false,
@@ -291,16 +281,16 @@ $(function () {
                 // Tab = right, Shift+Tab = left
                 if (keyCode === 9) {
                     keyCode = e.shiftKey ? 37 : 39;
-                    wrap = false; // Don't wrap on tab, only on arrow keys
                 }
 
                 if (!chart.isExporting) {
                     switch (keyCode) {
                     case 37: // Left
                     case 39: // Right
-                        if (!chart.highlightAdjacentPoint(keyCode === 39, !doExporting && wrap)) {
-                            if (doExporting && wrap) {
+                        if (!chart.highlightAdjacentPoint(keyCode === 39)) {
+                            if (keyCode === 39 && doExporting) {
                                 // Start export menu navigation
+                                chart.highlightedPoint = null;
                                 chart.isExporting = true;
                                 chart.showExportMenu();
                             } else {
@@ -315,11 +305,12 @@ $(function () {
                     case 38: // Up
                     case 40: // Down
                         if (chart.highlightedPoint) {
-                            newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? 1 : -1)];
+                            newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)];
                             if (newSeries && newSeries.points[0]) {
                                 newSeries.points[0].highlight();
-                            } else if (doExporting) {
+                            } else if (keyCode === 40 && doExporting) {
                                 // Start export menu navigation
+                                chart.highlightedPoint = null;
                                 chart.isExporting = true;
                                 chart.showExportMenu();
                             }
@@ -327,6 +318,7 @@ $(function () {
                         break;
 
                     case 13: // Enter
+                    case 32: // Spacebar
                         if (chart.highlightedPoint) {
                             chart.highlightedPoint.firePointEvent('click');
                         }
@@ -336,16 +328,18 @@ $(function () {
                     }
                 } else {
                     // Keyboard nav for exporting menu
+                    exportList = chart.exportDivElements;
                     switch (keyCode) {
                     case 37: // Left
                     case 38: // Up
-                        exportList = chart.exportDivElements;
                         i = highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         while (i--) {
                             if (exportList[i] && exportList[i].tagName === 'DIV' &&
                                     !(exportList[i].children && exportList[i].children.length)) {
-                                exportList[i].focus();
+                                if (exportList[i].focus) {
+                                    exportList[i].focus();
+                                }
                                 exportList[chart.highlightedExportItem].onmouseout();
                                 exportList[i].onmouseover();
                                 chart.highlightedExportItem = i;
@@ -371,7 +365,6 @@ $(function () {
 
                     case 39: // Right
                     case 40: // Down
-                        exportList = chart.exportDivElements;
                         highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         for (var ix = highlightedExportItem + 1; ix < exportList.length; ++ix) {
@@ -393,14 +386,11 @@ $(function () {
                             exportList[chart.highlightedExportItem].onmouseout();
                             chart.highlightedExportItem = 0;
                             chart.renderTo.focus();
-                            if (!wrap) {
-                                // Try to return as if user tabbed
-                                // Some browsers won't allow mutation of event object, but try anyway
-                                e.which = e.keyCode = 9;
-                                e.shiftKey = false;
-                                return;
-                            }
-                            series[0].points[0].highlight(); // Otherwise highlight first point to wrap
+                            // Try to return as if user tabbed
+                            // Some browsers won't allow mutation of event object, but try anyway
+                            e.which = e.keyCode = 9;
+                            e.shiftKey = false;
+                            return;
                         }
                         break;
 
@@ -409,7 +399,7 @@ $(function () {
                         if (highlightedExportItem !== undefined) {
                             fakeEvent = document.createEvent('Events');
                             fakeEvent.initEvent('click', true, false);
-                            chart.exportDivElements[highlightedExportItem].onclick(fakeEvent);
+                            exportList[highlightedExportItem].onclick(fakeEvent);
                         }
                         break;
 
