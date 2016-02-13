@@ -110,34 +110,6 @@ $(function () {
             chart.renderTo.setAttribute('role', 'region');
             chart.renderTo.setAttribute('aria-label', chartDesc);
 
-/*
-            // Create table
-            div.innerHTML = chart.getTable();
-            ariaTable = div.getElementsByTagName('table')[0];
-            tableHeaders = ariaTable.getElementsByTagName('th');
-            chart.container.parentNode.appendChild(div);
-            tableSummary.innerHTML = chartDesc;
-            if (ariaTable.firstChild) {
-                ariaTable.insertBefore(tableSummary, ariaTable.firstChild);
-            } else {
-                ariaTable.appendChild(tableSummary);
-            }
-            ariaTable.setAttribute('aria-label', 'A tabular view of the chart "' + titleElement.innerHTML + '"');
-            for (i = 0; i < tableHeaders.length; ++i) {
-                tableHeaders[i].setAttribute('scope', 'col');
-            }
-*/
-
-    /*
-            // Hide table and tooltip info
-            // Consider using Highcharts.css()???
-            div.style.position = 'absolute';
-            div.style.left = '-9999em';
-            div.style.width = '1px';
-            div.style.height = '1px';
-            div.style.overflow = 'hidden';
-    //*/
-
             // Return string with information about point
             function buildPointInfoString(point) {
                 var infoKeys = [
@@ -301,6 +273,29 @@ $(function () {
                     reachedEnd,
                     i;
 
+                function highlightExportItem(i) {
+                    if (exportList[i] && exportList[i].tagName === 'DIV' &&
+                            !(exportList[i].children && exportList[i].children.length)) {
+                        if (exportList[i].focus) {
+                            exportList[i].focus();
+                        }
+                        exportList[highlightedExportItem].onmouseout();
+                        exportList[i].onmouseover();
+                        chart.highlightedExportItem = i;
+                        return true;
+                    }
+                }
+
+                function hideExporting() {
+                    for (var a = 0; a < exportList.length; ++a) {
+                        H.fireEvent(exportList[a], 'mouseleave');
+                    }
+                    exportList[highlightedExportItem].onmouseout();
+                    chart.highlightedExportItem = 0;
+                    chart.renderTo.focus();
+                    chart.isExporting = false;
+                }
+
                 // Tab = right, Shift+Tab = left
                 if (keyCode === 9) {
                     keyCode = e.shiftKey ? 37 : 39;
@@ -358,24 +353,13 @@ $(function () {
                         i = highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         while (i--) {
-                            if (exportList[i] && exportList[i].tagName === 'DIV' &&
-                                    !(exportList[i].children && exportList[i].children.length)) {
-                                if (exportList[i].focus) {
-                                    exportList[i].focus();
-                                }
-                                exportList[chart.highlightedExportItem].onmouseout();
-                                exportList[i].onmouseover();
-                                chart.highlightedExportItem = i;
+                            if (highlightExportItem(i)) {
                                 reachedEnd = false;
                                 break;
                             }
                         }
                         if (reachedEnd) {
-                            chart.isExporting = false;
-                            H.fireEvent(document, 'mouseup');
-                            exportList[chart.highlightedExportItem].onmouseout();
-                            chart.highlightedExportItem = 0;
-                            chart.renderTo.focus();
+                            hideExporting();
                             // Wrap to last point
                             if (series && series.length) {
                                 newSeries = series[series.length - 1];
@@ -391,24 +375,13 @@ $(function () {
                         highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         for (var ix = highlightedExportItem + 1; ix < exportList.length; ++ix) {
-                            if (exportList[ix] && exportList[ix].tagName === 'DIV' &&
-                                    !(exportList[ix].children && exportList[ix].children.length)) {
-                                exportList[ix].focus();
-                                exportList[chart.highlightedExportItem].onmouseout();
-                                exportList[ix].onmouseover();
-                                chart.highlightedExportItem = ix;
+                            if (highlightExportItem(ix)) {
                                 reachedEnd = false;
                                 break;
                             }
                         }
                         if (reachedEnd) {
-                            chart.isExporting = false;
-                            for (var a = 0; a < chart.exportDivElements.length; ++a) {
-                                H.fireEvent(chart.exportDivElements[a], 'mouseleave');
-                            }
-                            exportList[chart.highlightedExportItem].onmouseout();
-                            chart.highlightedExportItem = 0;
-                            chart.renderTo.focus();
+                            hideExporting();
                             // Try to return as if user tabbed
                             // Some browsers won't allow mutation of event object, but try anyway
                             e.which = e.keyCode = 9;
