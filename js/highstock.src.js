@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-02-11)
+ * @license Highstock JS v4.2.3-modified (2016-02-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -8544,9 +8544,13 @@
                             // Reset ellipsis in order to get the correct bounding box (#4070)
                             if (label.styles.textOverflow === 'ellipsis') {
                                 label.css({ textOverflow: 'clip' });
+
+                            // Set the correct width in order to read the bounding box height (#4678, #5034)
+                            } else if (ticks[pos].labelLength > slotWidth) {
+                                label.css({ width: slotWidth + 'px' });
                             }
-                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-                                    ticks[pos].labelLength > slotWidth) { // #4678
+
+                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
                                 label.specCss = { textOverflow: 'ellipsis' };
                             }
                         }
@@ -20119,7 +20123,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-02-11)
+     * Highstock JS v4.2.3-modified (2016-02-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
