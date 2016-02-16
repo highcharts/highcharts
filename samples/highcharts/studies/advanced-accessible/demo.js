@@ -68,9 +68,9 @@ $(function () {
             }
 
             // Add SVG title/desc tags
-            titleElement.innerHTML = options.title.text || 'Chart';
+            titleElement.textContent = options.title.text || 'Chart';
             titleElement.id = titleId;
-            descElement.innerHTML += '. ' + chartDesc;
+            descElement.textContent += '. ' + chartDesc;
             descElement.id = descId;
             descElement.parentNode.insertBefore(titleElement, descElement);
             chart.renderTo.setAttribute('role', 'region');
@@ -79,11 +79,12 @@ $(function () {
 
             // Return string with information about point
             function buildPointInfoString(point) {
-                var infoKeys = [
+                var isPie = point.series.type === 'pie',
+                    infoKeys = [
                         ['ID', 'id'],
                         ['Category', 'category'],
                         ['X', 'x'],
-                        ['Y', 'y'],
+                        [isPie ? 'Value' : 'Y', 'y'],
                         ['Z', 'z'],
                         ['Value', 'value'],
                         ['Open', 'open'],
@@ -99,9 +100,9 @@ $(function () {
 
                 H.each(infoKeys, function (keyArray) {
                     var value = point[keyArray[1]];
-                    if (value !== undefined && !(hasCategory && keyArray[1] === 'x')) {
+                    if (value !== undefined && !((hasCategory || isPie) && keyArray[1] === 'x')) {
                         infoString += '. ' + keyArray[0] + ' = ' + value;
-                        // Don't include X if category is defined
+                        // Don't include X if category is defined, or series type is pie
                         hasCategory = hasCategory || keyArray[1] === 'category';
                     }
                 });
