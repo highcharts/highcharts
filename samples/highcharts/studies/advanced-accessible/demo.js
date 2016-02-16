@@ -18,6 +18,12 @@ $(function () {
                 chartTypes = [],
                 i;
 
+            // Get label for axis (x or y)
+            function getAxisLabel(axis) {
+                return axis.description || axis.axisTitle && axis.axisTitle.textStr ||
+                        axis.id || axis.categories && 'categories' || 'Undeclared';
+            }
+
             if (!acsOptions.enabled) {
                 return;
             }
@@ -42,28 +48,28 @@ $(function () {
             chartDesc += (chartDesc.slice(-1) !== '.' ? '.' : '') +
                         (!numSeries ? ' The chart is empty.' : '');
 
-            // Add axis info
-            if (numXAxes) {
-                chartDesc += ' The chart has ' + numXAxes + (numXAxes > 1 ? ' X-axes' : ' X-axis') + ' displaying ';
+            // Add axis info - but not for pies
+            if (numXAxes && !(chartTypes.length === 1 && chartTypes[0] === 'pie')) {
+                chartDesc += ' The chart has ' + numXAxes + (numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
                 if (numXAxes < 2) {
-                    chartDesc += (chart.xAxis[0].axisTitle && chart.xAxis[0].axisTitle.textStr) + '.';
+                    chartDesc += getAxisLabel(chart.xAxis[0]) + '.';
                 } else {
                     for (i = 0; i < numXAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + (chart.xAxis[i].axisTitle && chart.xAxis[i].axisTitle.textStr);
+                        chartDesc += (i > 0 ? ', ' : '') + getAxisLabel(chart.xAxis[i]);
                     }
-                    chartDesc += ' and ' + (chart.xAxis[numXAxes - 1].axisTitle && chart.xAxis[numXAxes - 1].axisTitle.textStr) + '.';
+                    chartDesc += ' and ' + getAxisLabel(chart.xAxis[numXAxes - 1]) + '.';
                 }
             }
 
-            if (numYAxes) {
-                chartDesc += ' The chart has ' + numYAxes + (numYAxes > 1 ? ' Y-axes' : ' Y-axis') + ' displaying ';
+            if (numYAxes && !(chartTypes.length === 1 && chartTypes[0] === 'pie')) {
+                chartDesc += ' The chart has ' + numYAxes + (numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
                 if (numYAxes < 2) {
-                    chartDesc += (chart.yAxis[0].axisTitle && chart.yAxis[0].axisTitle.textStr) + '.';
+                    chartDesc += getAxisLabel(chart.yAxis[0]) + '.';
                 } else {
                     for (i = 0; i < numYAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + (chart.yAxis[i].axisTitle && chart.yAxis[i].axisTitle.textStr);
+                        chartDesc += (i > 0 ? ', ' : '') + getAxisLabel(chart.yAxis[i]);
                     }
-                    chartDesc += ' and ' + (chart.yAxis[numYAxes - 1].axisTitle && chart.yAxis[numYAxes - 1].axisTitle.textStr) + '.';
+                    chartDesc += ' and ' + getAxisLabel(chart.yAxis[numYAxes - 1]) + '.';
                 }
             }
 
@@ -119,10 +125,8 @@ $(function () {
                     (chartTypes.length > 1 && dataSeries.type ? dataSeries.type + ' series with ' : '') +
                     (dataSeries.points.length + ' points. ') +
                     (dataSeries.description ? dataSeries.description : '') +
-                    (numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + (dataSeries.yAxis.axisTitle && dataSeries.yAxis.axisTitle.textStr ||
-                        dataSeries.yAxis.id || 'Undeclared') : '') +
-                    (numXAxes > 1 && dataSeries.xAxis ? 'X axis = ' + (dataSeries.xAxis.axisTitle && dataSeries.xAxis.axisTitle.textStr ||
-                        dataSeries.xAxis.id || 'Undeclared') : '');
+                    (numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + getAxisLabel(dataSeries.yAxis) : '') +
+                    (numXAxes > 1 && dataSeries.xAxis ? 'X axis = ' + getAxisLabel(dataSeries.xAxis) : '');
             }
 
             function reverseChildNodes(node) {
