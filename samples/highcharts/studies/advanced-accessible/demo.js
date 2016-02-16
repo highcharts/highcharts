@@ -14,12 +14,8 @@ $(function () {
                 textElements = chart.container.getElementsByTagName('text'),
                 titleId = 'highcharts-title-' + chart.index,
                 descId = 'highcharts-desc-' + chart.index,
-                ariaTable,
-                tableHeaders,
                 chartDesc,
                 chartTypes = [],
-                chartType,
-                typeStartsWithVowel,
                 i;
 
             if (!acsOptions.enabled) {
@@ -31,70 +27,43 @@ $(function () {
                 textElements[i].setAttribute('aria-hidden', 'true');
             }
 
-            // Make chart type string
+            // Enumerate chart types
             for (i = 0; i < numSeries; ++i) {
                 if (chartTypes.indexOf(series[i].type) < 0) {
                     chartTypes.push(series[i].type);
                 }
             }
-            chartType = chartTypes[0];
-            for (i = 1; i < chartTypes.length - 1; ++i) {
-                chartType += ', ' + chartTypes[i];
-            }
-            if (chartTypes.length > 1) {
-                chartType += ' and ' + chartTypes[chartTypes.length - 1] + ' combination';
-            }
-            typeStartsWithVowel = !chartType || 'aeiouy'.indexOf(chartType.charAt(0)) > -1;
 
             // Build chart description
-            chartDesc = (typeStartsWithVowel ? 'An ' : 'A ') + chartType + ' chart.' +
+            chartDesc = (chartTypes.length === 1 ? chartTypes[0] + ' chart, ' : '') +
                         (options.title.text ? ' Title: ' + options.title.text + '.' : '') +
-                        (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '');
-            chartDesc += acsOptions.description ? ' ' + acsOptions.description : '';
-            if (chartDesc.slice(-1) !== '.') {
-                chartDesc += '.';
-            }
-
-            // Add series info
-            if (numSeries) {
-                chartDesc += ' The chart displays ' + numSeries + ' series, containing ';
-                if (numSeries < 2) {
-                    chartDesc += series[0].points.length + ' data point' + (series[0].points.length === 1 ? '.' : 's.');
-                } else {
-                    for (i = 0; i < numSeries - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + series[i].points.length;
-                    }
-                    chartDesc += ' and ' + series[numSeries - 1].points.length + ' data points respectively.';
-                }
-            } else {
-                chartDesc += ' The chart is empty.';
-            }
+                        (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '') +
+                        (acsOptions.description ? ' ' + acsOptions.description : '');
+            chartDesc += (chartDesc.slice(-1) !== '.' ? '.' : '') +
+                        (!numSeries ? ' The chart is empty.' : '');
 
             // Add axis info
             if (numXAxes) {
                 chartDesc += ' The chart has ' + numXAxes + (numXAxes > 1 ? ' X-axes' : ' X-axis') + ' displaying ';
                 if (numXAxes < 2) {
-                    chartDesc += '"' + (chart.xAxis[0].options.title && chart.xAxis[0].options.title.text) + '".';
+                    chartDesc += (chart.xAxis[0].axisTitle && chart.xAxis[0].axisTitle.textStr) + '.';
                 } else {
                     for (i = 0; i < numXAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', "' : '"') + (chart.xAxis[i].options.title &&
-                                chart.xAxis[i].options.title.text) + '"';
+                        chartDesc += (i > 0 ? ', ' : '') + (chart.xAxis[i].axisTitle && chart.xAxis[i].axisTitle.textStr);
                     }
-                    chartDesc += ' and "' + (chart.xAxis[numXAxes - 1].options.title && chart.xAxis[numXAxes - 1].options.title.text) +
-                                '" respectively.';
+                    chartDesc += ' and ' + (chart.xAxis[numXAxes - 1].axisTitle && chart.xAxis[numXAxes - 1].axisTitle.textStr) + '.';
                 }
             }
+
             if (numYAxes) {
                 chartDesc += ' The chart has ' + numYAxes + (numYAxes > 1 ? ' Y-axes' : ' Y-axis') + ' displaying ';
                 if (numYAxes < 2) {
-                    chartDesc += '"' + (chart.yAxis[0].options.title && chart.yAxis[0].options.title.text) + '".';
+                    chartDesc += (chart.yAxis[0].axisTitle && chart.yAxis[0].axisTitle.textStr) + '.';
                 } else {
                     for (i = 0; i < numYAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', "' : '"') + (chart.yAxis[i].options.title &&
-                                chart.yAxis[i].options.title.text) + '"';
+                        chartDesc += (i > 0 ? ', ' : '') + (chart.yAxis[i].axisTitle && chart.yAxis[i].axisTitle.textStr);
                     }
-                    chartDesc += ' and "' + (chart.yAxis[numYAxes - 1].options.title && chart.yAxis[numYAxes - 1].options.title.text) +
-                                '" respectively.';
+                    chartDesc += ' and ' + (chart.yAxis[numYAxes - 1].axisTitle && chart.yAxis[numYAxes - 1].axisTitle.textStr) + '.';
                 }
             }
 
@@ -111,13 +80,12 @@ $(function () {
             // Return string with information about point
             function buildPointInfoString(point) {
                 var infoKeys = [
-                        ['Name', 'name', '"'], // 3rd element determines whether value should be in quotation marks
-                        ['ID', 'id', '"'],
-                        ['Category', 'category', '"'],
-                        ['X value', 'x'],
-                        ['Y value', 'y'],
-                        ['Z value', 'z'],
-                        ['Value', 'value', '"'],
+                        ['ID', 'id'],
+                        ['Category', 'category'],
+                        ['X', 'x'],
+                        ['Y', 'y'],
+                        ['Z', 'z'],
+                        ['Value', 'value'],
                         ['Open', 'open'],
                         ['High', 'high'],
                         ['Median', 'median'],
@@ -126,21 +94,34 @@ $(function () {
                         ['Q1', 'q1'],
                         ['Q3', 'q3']
                     ],
-                    infoString = '';
+                    infoString = '',
+                    hasCategory = false;
 
                 H.each(infoKeys, function (keyArray) {
-                    var quote = keyArray[2] || '',
-                        value = point[keyArray[1]];
-                    infoString += value !== undefined ? '. ' + keyArray[0] + ' = ' + quote + value + quote : '';
+                    var value = point[keyArray[1]];
+                    if (value !== undefined && !(hasCategory && keyArray[1] === 'x')) {
+                        infoString += '. ' + keyArray[0] + ' = ' + value;
+                        // Don't include X if category is defined
+                        hasCategory = hasCategory || keyArray[1] === 'category';
+                    }
                 });
-                /*return 'Point ' + (point.index + 1) + ' of ' + point.series.points.length + ', series ' +
-                        (point.series.index + 1) + ' of ' + point.series.chart.series.length + infoString;*/
 
-                return (point.index + 1) + ' of ' + point.series.points.length + infoString;
+                return (point.index + 1) + // ' of ' + point.series.points.length +
+                        (point.name ? '. ' + point.name : '') +
+                        (point.description ? '. ' + point.description : '') + infoString;
             }
 
+            // Return string with information about series
             function buildSeriesInfoString(dataSeries) {
-                return 'Series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '.';
+                return 'Series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
+                    (dataSeries.name ? dataSeries.name + ', ' : '') +
+                    (chartTypes.length > 1 && dataSeries.type ? dataSeries.type + ' series with ' : '') +
+                    (dataSeries.points.length + ' points. ') +
+                    (dataSeries.description ? dataSeries.description : '') +
+                    (numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + (dataSeries.yAxis.axisTitle && dataSeries.yAxis.axisTitle.textStr ||
+                        dataSeries.yAxis.id || 'Undeclared') : '') +
+                    (numXAxes > 1 && dataSeries.xAxis ? 'X axis = ' + (dataSeries.xAxis.axisTitle && dataSeries.xAxis.axisTitle.textStr ||
+                        dataSeries.xAxis.id || 'Undeclared') : '');
             }
 
             function reverseChildNodes(node) {
@@ -461,14 +442,17 @@ $(function () {
         },
 
         series: [{
+            name: 'Test1',
             data: [29.9, 110, 43, 0]
         }, //*
         {
+            name: 'Test2',
             data: [29.9, 71.5, null, 106.4, 129.2, null, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
             type: 'column'
         }, //*/
         //*
         {
+            name: 'Test3',
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
             type: 'pie'
         }//*/
