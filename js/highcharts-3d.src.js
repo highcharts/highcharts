@@ -19,7 +19,8 @@
 /**
         Shorthands for often used function
     */
-    var each = Highcharts.each,
+    var animObject = Highcharts.animObject,
+        each = Highcharts.each,
         extend = Highcharts.extend,
         inArray = Highcharts.inArray,
         merge = Highcharts.merge,
@@ -489,13 +490,9 @@
             delete params.alpha;
             delete params.beta;
 
-            animation = pick(animation, this.renderer.globalAnimation);
+            animation = animObject(pick(animation, this.renderer.globalAnimation));
         
-            if (animation) {
-                if (typeof animation !== 'object') {
-                    animation = {};
-                }
-            
+            if (animation.duration) {
                 params = merge(params); // Don't mutate the original object
                 ca = suckOutCustom(params);
             

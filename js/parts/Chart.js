@@ -842,14 +842,13 @@ Chart.prototype = {
 		fireEvent(chart, 'resize');
 
 		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
-		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
 		syncTimeout(function () {
 			if (chart) {
 				fireEvent(chart, 'endResize', null, function () {
 					chart.isResizing -= 1;
 				});
 			}
-		}, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
+		}, animObject(globalAnimation).duration);
 	},
 
 	/**

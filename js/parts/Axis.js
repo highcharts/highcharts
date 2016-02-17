@@ -794,6 +794,22 @@ Axis.prototype = {
 	},
 
 	/**
+	 * Find the closestPointRange across all series
+	 */
+	getClosest: function () {
+		var ret;
+		each(this.series, function (series) {
+			var seriesClosest = series.closestPointRange;
+			if (!series.noSharedTooltip && defined(seriesClosest)) {
+				ret = defined(ret) ?
+					mathMin(ret, seriesClosest) :
+					seriesClosest;
+			}
+		});
+		return ret;
+	},
+
+	/**
 	 * Update translation information
 	 */
 	setAxisTranslation: function (saveOld) {
@@ -816,15 +832,9 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
-				// Find the closestPointRange across all series
-				each(axis.series, function (series) {
-					var seriesClosest = series.closestPointRange;
-					if (!series.noSharedTooltip && defined(seriesClosest)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosest) :
-							seriesClosest;
-					}
-				});
+				
+				// Get the closest points
+				closestPointRange = axis.getClosest();
 
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
@@ -1649,9 +1659,13 @@ Axis.prototype = {
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
+
+						// Set the correct width in order to read the bounding box height (#4678, #5034)
+						} else if (ticks[pos].labelLength > slotWidth) {
+							label.css({ width: slotWidth + 'px' });
 						}
-						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-								ticks[pos].labelLength > slotWidth) { // #4678
+
+						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
@@ -1946,7 +1960,7 @@ Axis.prototype = {
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
-			globalAnimation = renderer.globalAnimation,
+			animation = animObject(renderer.globalAnimation),
 			from,
 			to;
 
@@ -2049,7 +2063,7 @@ Axis.prototype = {
 			var pos,
 				i,
 				forDestruction = [],
-				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				delay = animation.duration,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {

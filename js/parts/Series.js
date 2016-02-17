@@ -797,7 +797,7 @@ Series.prototype = {
 	 * Return the series points with null points filtered out
 	 */
 	getValidPoints: function (points) {
-		return grep(points || this.points, function (point) {
+		return grep(points || this.points || [], function (point) { // #5029
 			return !point.isNull;
 		});
 	},
@@ -1616,10 +1616,9 @@ Series.prototype = {
 			chart = series.chart,
 			group,
 			options = series.options,
-			animation = options.animation,
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
-			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+			animDuration = !!series.animate && chart.renderer.isSVG && animObject(options.animation).duration,
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,

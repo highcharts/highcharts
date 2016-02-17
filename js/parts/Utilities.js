@@ -865,6 +865,14 @@ function setAnimation(animation, chart) {
 }
 
 /**
+ * Get the animation in object form, where a disabled animation is always
+ * returned with duration: 0
+ */
+function animObject(animation) {
+	return isObject(animation) ? merge(animation) : { duration: animation ? 500 : 0 };
+}
+
+/**
  * The time unit lookup
  */
 timeUnits = {
@@ -1379,5 +1387,6 @@ Highcharts.addEvent = addEvent;
 Highcharts.removeEvent = removeEvent;
 Highcharts.fireEvent = fireEvent;
 Highcharts.animate = animate;
+Highcharts.animObject = animObject;
 Highcharts.stop = stop;
 

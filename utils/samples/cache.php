@@ -9,6 +9,7 @@ $file = $_GET['file'];
 // Remove maps or stock folder from github requests
 $file = preg_replace('/(github\.highcharts\.com\/[a-z0-9]+\/)(maps|stock)\//', '$1', $file);
 $file = preg_replace('/^\/\//', 'http://', $file);
+$file = str_replace('https:', 'http:', $file);
 
 $cachePath = $file;
 $cachePath = str_replace('/', '-', $cachePath);

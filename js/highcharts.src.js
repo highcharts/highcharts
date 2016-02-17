@@ -993,6 +993,14 @@
     }
 
     /**
+     * Get the animation in object form, where a disabled animation is always
+     * returned with duration: 0
+     */
+    function animObject(animation) {
+        return isObject(animation) ? merge(animation) : { duration: animation ? 500 : 0 };
+    }
+
+    /**
      * The time unit lookup
      */
     timeUnits = {
@@ -1507,6 +1515,7 @@
     Highcharts.removeEvent = removeEvent;
     Highcharts.fireEvent = fireEvent;
     Highcharts.animate = animate;
+    Highcharts.animObject = animObject;
     Highcharts.stop = stop;
 
     /* ****************************************************************************
@@ -2104,7 +2113,6 @@
             var animOptions = pick(options, this.renderer.globalAnimation, true);
             stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
             if (animOptions) {
-                animOptions = merge(animOptions, {}); //#2625
                 if (complete) { // allows using a callback with the global animation without overwriting it
                     animOptions.complete = complete;
                 }
@@ -7675,6 +7683,22 @@
         },
 
         /**
+         * Find the closestPointRange across all series
+         */
+        getClosest: function () {
+            var ret;
+            each(this.series, function (series) {
+                var seriesClosest = series.closestPointRange;
+                if (!series.noSharedTooltip && defined(seriesClosest)) {
+                    ret = defined(ret) ?
+                        mathMin(ret, seriesClosest) :
+                        seriesClosest;
+                }
+            });
+            return ret;
+        },
+
+        /**
          * Update translation information
          */
         setAxisTranslation: function (saveOld) {
@@ -7697,15 +7721,9 @@
                     pointRangePadding = linkedParent.pointRangePadding;
 
                 } else {
-                    // Find the closestPointRange across all series
-                    each(axis.series, function (series) {
-                        var seriesClosest = series.closestPointRange;
-                        if (!series.noSharedTooltip && defined(seriesClosest)) {
-                            closestPointRange = defined(closestPointRange) ?
-                                mathMin(closestPointRange, seriesClosest) :
-                                seriesClosest;
-                        }
-                    });
+                
+                    // Get the closest points
+                    closestPointRange = axis.getClosest();
 
                     each(axis.series, function (series) {
                         var seriesPointRange = hasCategories ? 
@@ -8530,9 +8548,13 @@
                             // Reset ellipsis in order to get the correct bounding box (#4070)
                             if (label.styles.textOverflow === 'ellipsis') {
                                 label.css({ textOverflow: 'clip' });
+
+                            // Set the correct width in order to read the bounding box height (#4678, #5034)
+                            } else if (ticks[pos].labelLength > slotWidth) {
+                                label.css({ width: slotWidth + 'px' });
                             }
-                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-                                    ticks[pos].labelLength > slotWidth) { // #4678
+
+                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
                                 label.specCss = { textOverflow: 'ellipsis' };
                             }
                         }
@@ -8827,7 +8849,7 @@
                 hasRendered = chart.hasRendered,
                 slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
                 showAxis = axis.showAxis,
-                globalAnimation = renderer.globalAnimation,
+                animation = animObject(renderer.globalAnimation),
                 from,
                 to;
 
@@ -8930,7 +8952,7 @@
                 var pos,
                     i,
                     forDestruction = [],
-                    delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+                    delay = animation.duration,
                     destroyInactiveItems = function () {
                         i = forDestruction.length;
                         while (i--) {
@@ -12674,14 +12696,13 @@
             fireEvent(chart, 'resize');
 
             // Fire endResize and set isResizing back. If animation is disabled, fire without delay
-            globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
             syncTimeout(function () {
                 if (chart) {
                     fireEvent(chart, 'endResize', null, function () {
                         chart.isResizing -= 1;
                     });
                 }
-            }, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
+            }, animObject(globalAnimation).duration);
         },
 
         /**
@@ -13374,7 +13395,7 @@
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
-            if (typeof point.x !== 'number' && series) {
+            if (point.x === undefined && series) {
                 point.x = x === undefined ? series.autoIncrement() : x;
             }
 
@@ -14362,7 +14383,7 @@
          * Return the series points with null points filtered out
          */
         getValidPoints: function (points) {
-            return grep(points || this.points, function (point) {
+            return grep(points || this.points || [], function (point) { // #5029
                 return !point.isNull;
             });
         },
@@ -15181,10 +15202,9 @@
                 chart = series.chart,
                 group,
                 options = series.options,
-                animation = options.animation,
                 // Animation doesn't work in IE8 quirks when the group div is hidden,
                 // and looks bad in other oldIE
-                animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+                animDuration = !!series.animate && chart.renderer.isSVG && animObject(options.animation).duration,
                 visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
                 hasRendered = series.hasRendered,
@@ -16425,7 +16445,7 @@
                 // Sort the keys (#1651)
                 for (x in stack) {
                     if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
-                        keys.push(+x);
+                        keys.push(x);
                     }
                 }
                 keys.sort(function (a, b) {
@@ -17156,9 +17176,15 @@
 
                 } else { // run the animation
 
-                    attr.scaleY = 1;
                     attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
-                    series.group.animate(attr, series.options.animation);
+                    series.group.animate(attr, extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth updating (#5030)
+                        step: function (val, fx) {
+                            series.group.attr({
+                                scaleY: fx.pos
+                            });
+                        }
+                    }));
 
                     // delete this function to allow it only once
                     series.animate = null;

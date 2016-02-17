@@ -29,7 +29,8 @@
  *
  * Notes for boost mode
  * - Area lines are not drawn
- * - Point markers are not drawn
+ * - Point markers are not drawn on line-type series
+ * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
  *

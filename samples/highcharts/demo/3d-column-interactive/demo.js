@@ -29,18 +29,14 @@ $(function () {
     });
 
     function showValues() {
-        $('#R0-value').html(chart.options.chart.options3d.alpha);
-        $('#R1-value').html(chart.options.chart.options3d.beta);
+        $('#alpha-value').html(chart.options.chart.options3d.alpha);
+        $('#beta-value').html(chart.options.chart.options3d.beta);
+        $('#depth-value').html(chart.options.chart.options3d.depth);
     }
 
     // Activate the sliders
-    $('#R0').on('change', function () {
-        chart.options.chart.options3d.alpha = this.value;
-        showValues();
-        chart.redraw(false);
-    });
-    $('#R1').on('change', function () {
-        chart.options.chart.options3d.beta = this.value;
+    $('#sliders input').on('input change', function () {
+        chart.options.chart.options3d[this.id] = this.value;
         showValues();
         chart.redraw(false);
     });
