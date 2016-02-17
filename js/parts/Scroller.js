@@ -343,8 +343,7 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax, 0), navigatorWidth);
-		scroller.zoomedMin =
-			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
+		scroller.zoomedMin = mathMin(mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0), navigatorWidth);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
