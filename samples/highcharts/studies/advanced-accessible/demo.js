@@ -20,8 +20,8 @@ $(function () {
 
             // Get label for axis (x or y)
             function getAxisLabel(axis) {
-                return axis.description || axis.axisTitle && axis.axisTitle.textStr ||
-                        axis.id || axis.categories && 'categories' || 'Undeclared';
+                return axis.userOptions && axis.userOptions.description || axis.axisTitle && axis.axisTitle.textStr ||
+                        axis.options.id || axis.categories && 'categories' || 'Undeclared';
             }
 
             if (!acsOptions.enabled) {
@@ -120,8 +120,8 @@ $(function () {
 
             // Return string with information about series
             function buildSeriesInfoString(dataSeries) {
-                return 'Series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
-                    (dataSeries.name ? dataSeries.name + ', ' : '') +
+                return (dataSeries.name ? dataSeries.name + ', ' : '') +
+                     'series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
                     (chartTypes.length > 1 && dataSeries.type ? dataSeries.type + ' series with ' : '') +
                     (dataSeries.points.length + ' points. ') +
                     (dataSeries.description ? dataSeries.description : '') +
@@ -154,7 +154,8 @@ $(function () {
                     if (point.graphic) {
                         point.graphic.element.setAttribute('role', 'img');
                         point.graphic.element.setAttribute('tabindex', '-1');
-                        point.graphic.element.setAttribute('aria-label', buildPointInfoString(point));
+                        point.graphic.element.setAttribute('aria-label', acsOptions.pointInfoFormatter && acsOptions.pointInfoFormatter(point) ||
+                            buildPointInfoString(point));
                     }
                 });
             }
