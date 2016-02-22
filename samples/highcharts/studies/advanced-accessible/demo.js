@@ -80,42 +80,40 @@ $(function () {
             descElement.id = descId;
             descElement.parentNode.insertBefore(titleElement, descElement);
             chart.renderTo.setAttribute('role', 'region');
-            chart.renderTo.setAttribute('aria-labelledby', titleId + ' ' + descId);
-            chart.renderTo.setAttribute('aria-label', chartDesc);
+            chart.renderTo.setAttribute('aria-labelledby', titleId);
+            chart.renderTo.setAttribute('aria-describedby', descId);
+            chart.renderTo.setAttribute('aria-label', options.title.text || 'Chart');
 
             // Return string with information about point
             function buildPointInfoString(point) {
                 var isPie = point.series.type === 'pie',
-                    infoKeys = [
-                        ['ID', 'id'],
-                        ['Category', 'category'],
-                        ['X', 'x'],
-                        [isPie ? 'Value' : 'Y', 'y'],
-                        ['Z', 'z'],
-                        ['Value', 'value'],
-                        ['Open', 'open'],
-                        ['High', 'high'],
-                        ['Median', 'median'],
-                        ['Low', 'low'],
-                        ['Close', 'close'],
-                        ['Q1', 'q1'],
-                        ['Q3', 'q3']
-                    ],
-                    infoString = '',
-                    hasCategory = false;
+                    commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
+                    specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'],
+                    infoString,
+                    hasSpecialKey = false;
 
-                H.each(infoKeys, function (keyArray) {
-                    var value = point[keyArray[1]];
-                    if (value !== undefined && !((hasCategory || isPie) && keyArray[1] === 'x')) {
-                        infoString += '. ' + keyArray[0] + ' = ' + value;
-                        // Don't include X if category is defined, or series type is pie
-                        hasCategory = hasCategory || keyArray[1] === 'category';
+                for (var i = 0; i < specialKeys.length; ++i) {
+                    if (point[specialKeys[i]] !== undefined) {
+                        hasSpecialKey = true;
+                        break;
                     }
-                });
+                }
 
-                return (point.index + 1) + // ' of ' + point.series.points.length +
-                        (point.name ? '. ' + point.name : '') +
-                        (point.description ? '. ' + point.description : '') + infoString;
+                // If the point has one of the less common properties defined, display all that are defined
+                if (hasSpecialKey) {
+                    H.each(commonKeys.concat(specialKeys), function (key) {
+                        var value = point[key];
+                        if (value !== undefined) {
+                            infoString += '. ' + key + ', ' + value;
+                        }
+                    });
+                } else {
+                    // Pick and choose properties for a succint label
+                    infoString = (point.name || point.category || point.id || 'x, ' + point.x) + ', ' +
+                        (point.value !== undefined ? point.value : point.y);
+                }
+
+                return (point.index + 1) + '. ' + infoString + (point.description ? '. ' + point.description : '');
             }
 
             // Return string with information about series
