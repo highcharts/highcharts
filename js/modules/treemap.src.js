@@ -79,10 +79,12 @@
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
 		levelIsConstant: true,
+		opacity: 0.15,
 		states: {
 			hover: {
 				borderColor: '#A0A0A0',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				opacity: 0.75,
 				shadow: false
 			}
 		},
@@ -661,14 +663,16 @@
 				attr.fill = 'none';
 				attr['stroke-width'] = 0;
 			} else if (!point.node.isLeaf) {
-				// If not a leaf, then remove fill
-				// @todo let users set the opacity
-				attr.fill = pick(options.interactByLeaf, !options.allowDrillToNode) ? 'none' : Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+				// If not a leaf, either set opacity or remove fill
+				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
+					attr.fill = 'none';
+				} else {
+					attr.opacity = pick(stateOptions.opacity, options.opacity);
+				}
 			} else if (state) {
 				// Brighten and hoist the hover nodes
 				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
 			}
-
 			return attr;
 		},
 
