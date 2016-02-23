@@ -80,6 +80,10 @@ jQuery(function () {
                 pointAttribs = function (point, state) {
                     return Highcharts.seriesTypes.treemap.prototype.pointAttribs.call(series, point, state);
                 },
+                getOpacity = function (color) {
+                    console.log(color);
+                    return (color.indexOf('rgba') > -1) ? (+color.replace('rgba(', '').replace(')', '').split(',')[3]) : 1;
+                },
                 userOptions = {
                     opacity: 1,
                     states: {
@@ -89,12 +93,12 @@ jQuery(function () {
                     }
                 };
             assert.strictEqual(
-                pointAttribs(point, undefined).opacity,
+                getOpacity(pointAttribs(point, undefined).fill),
                 0.15,
                 'Default opacity is expected to be 0.25'
             );
             assert.strictEqual(
-                pointAttribs(point, 'hover').opacity,
+                getOpacity(pointAttribs(point, 'hover').fill),
                 0.75,
                 'Default hover opacity is expected to be 0.75'
             );
@@ -104,12 +108,12 @@ jQuery(function () {
                 return p.name === 'Apples';
             });
             assert.strictEqual(
-                pointAttribs(point, undefined).opacity,
+                getOpacity(pointAttribs(point, undefined).fill),
                 1,
                 'userOption opacity is expected to be 1'
             );
             assert.strictEqual(
-                pointAttribs(point, 'hover').opacity,
+                getOpacity(pointAttribs(point, 'hover').fill),
                 0.5,
                 'userOption hover opacity is expected to be 0.5'
             );
@@ -118,13 +122,13 @@ jQuery(function () {
                 return p.name === 'Susanne';
             });
             assert.strictEqual(
-                pointAttribs(point, undefined).opacity,
-                undefined,
+                getOpacity(pointAttribs(point, undefined).fill),
+                1,
                 'Leaf node opacity is expected to be undefined'
             );
             assert.strictEqual(
-                pointAttribs(point, 'hover').opacity,
-                undefined,
+                getOpacity(pointAttribs(point, 'hover').fill),
+                1,
                 'Leaf node hover opacity is expected to be undefined'
             );
         });
