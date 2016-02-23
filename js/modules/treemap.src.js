@@ -646,7 +646,8 @@
 			var level = this.levelMap[point.node.levelDynamic] || {},
 				options = this.options,
 				attr,
-				stateOptions = (state && options.states[state]) || {};
+				stateOptions = (state && options.states[state]) || {},
+				opacity;
 
 			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
 			// because it can be 0.
@@ -667,7 +668,8 @@
 				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
 					attr.fill = 'none';
 				} else {
-					attr.opacity = pick(stateOptions.opacity, options.opacity);
+					opacity = pick(stateOptions.opacity, options.opacity);
+					attr.fill = Color(attr.fill).setOpacity(opacity).get();
 				}
 			} else if (state) {
 				// Brighten and hoist the hover nodes
