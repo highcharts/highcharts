@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-02-15)
+ * @license Highmaps JS v4.2.3-modified (2016-02-24)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -2409,7 +2409,7 @@
 
             while (i--) {
                 setter.call(
-                    null, 
+                    shadows[i], 
                     key === 'height' ?
                         Math.max(value - (shadows[i].cutHeight || 0), 0) :
                         key === 'd' ? this.d : value, 

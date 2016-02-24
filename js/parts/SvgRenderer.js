@@ -333,7 +333,7 @@ SVGElement.prototype = {
 
 		while (i--) {
 			setter.call(
-				null, 
+				shadows[i], 
 				key === 'height' ?
 					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value, 

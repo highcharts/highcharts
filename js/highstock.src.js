@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-02-15)
+ * @license Highstock JS v4.2.3-modified (2016-02-24)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -2411,7 +2411,7 @@
 
             while (i--) {
                 setter.call(
-                    null, 
+                    shadows[i], 
                     key === 'height' ?
                         Math.max(value - (shadows[i].cutHeight || 0), 0) :
                         key === 'd' ? this.d : value, 
@@ -20123,7 +20123,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-02-15)
+     * Highstock JS v4.2.3-modified (2016-02-24)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
