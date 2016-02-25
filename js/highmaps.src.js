@@ -9790,7 +9790,7 @@
                 if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
                     each(chart.axes, function (axis) {
-                        if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+                        if (pick(axis.crosshair && axis.crosshair.snap, true)) {
                             axis.drawCrosshair(null, hoverPoint);
                         }  else {
                             axis.hideCrosshair();
