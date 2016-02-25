@@ -232,21 +232,17 @@ Pointer.prototype = {
 			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
 
-		// Crosshair
+		// Crosshair. For each hover point, loop over axes and draw cross if that point
+		// belongs to the axis (#4927).
 		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
-			var series = point && point.series;
-			if (series) {
-				each(['xAxis', 'yAxis', 'colorAxis'], function (coll) {
-					if (series[coll]) {
-						series[coll].drawCrosshair(e, point);
-					}	
-				});
-			}
+			each(chart.axes, function (axis) {
+				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
+				if (!point || point.series[axis.coll] === axis) {
+					axis.drawCrosshair(e, point);
+				}
+			});
 		});
-
 	},
-
-
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
