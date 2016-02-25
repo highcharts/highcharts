@@ -223,8 +223,8 @@
                 ctx.clearRect(0, 0, width, height);
             }
 
-            this.canvas.setAttribute('width', width);
-            this.canvas.setAttribute('height', height);
+            this.canvas.width = width;
+            this.canvas.height = height;
             this.image.attr({
                 width: width,
                 height: height
@@ -535,7 +535,6 @@
 
     // Rect is twice as fast as arc, should be used for small markers
     seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
-        ctx.moveTo(clientX, plotY);
         ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
     };
     seriesTypes.scatter.prototype.fill = true;
