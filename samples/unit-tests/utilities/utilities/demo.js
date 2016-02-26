@@ -339,6 +339,14 @@ $(function () {
 
         assertEquals(assert, 'Hours in 24 hours format', '5:55', dateFormat('%k:%M',
             Date.UTC(2015, 0, 1, 5, 55, 0)));
+
+        // Issue #5060
+        assertEquals(
+            assert,
+            'Issue #5060, %e padding',
+            'Jan,  1',
+            dateFormat('%b, %e', Date.UTC(2015, 0, 1))
+        );
     });
 
 

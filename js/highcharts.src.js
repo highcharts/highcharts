@@ -643,8 +643,8 @@
      * @param {Number} number
      * @param {Number} length
      */
-    function pad(number, length) {
-        return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+    function pad(number, length, padder) {
+        return new Array((length || 2) + 1 - String(number).length).join(padder || 0) + number;
     }
 
     /**
@@ -706,7 +706,7 @@
                 'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
                 'A': langWeekdays[day], // Long weekday, like 'Monday'
                 'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
-                'e': dayOfMonth, // Day of the month, 1 through 31
+                'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
                 'w': day,
 
                 // Week (none implemented)
