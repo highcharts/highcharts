@@ -40,13 +40,44 @@ $(function () {
                 pos;
             point.plotX += this.chart.pointer.chartPosition.left;
             point.plotY += this.chart.pointer.chartPosition.top;
+
+            // Temporary set the chart size to the full document, so that the tooltip positioner picks it up
             chart.chartWidth = $(document).width();
             chart.chartHeight = $(document).height();
+
+            // Compute the tooltip position
             pos = proceed.call(this, boxWidth, boxHeight, point);
+
+            // Reset chart size
             chart.chartWidth = chartWidth;
             chart.chartHeight = chartHeight;
+
             return pos;
         });
+
+        /**
+         * Find the new position and perform the move
+         */
+        /* Problem: anchor is offset from point
+        H.Tooltip.prototype.updatePosition = function (point) {
+            var chart = this.chart,
+                label = this.label,
+                pos = (this.options.positioner || this.getPosition).call(
+                    this,
+                    label.width,
+                    label.height,
+                    point
+                );
+
+            // do the move
+            this.move(
+                Math.round(pos.x),
+                Math.round(pos.y || 0), // can be undefined (#3977)
+                point.plotX + chart.plotLeft - chart.pointer.chartPosition.left,
+                point.plotY + chart.plotTop - chart.pointer.chartPosition.top
+            );
+        };
+        */
 
     }(Highcharts));
 
@@ -56,6 +87,10 @@ $(function () {
         chart: {
             type: 'column',
             borderWidth: 1
+        },
+
+        title: {
+            text: 'Tooltip outside the box'
         },
 
         xAxis: {
