@@ -88,9 +88,11 @@ $(function () {
                 events: {
                     drilldown: function (event) {
                         // do not drilldown for categories
-                        if (Number.isInteger(event.category)) return;
+                        if (Number.isInteger(event.category)) {
+                            return;
+                        }
 
-                        drilldownCfg.forEach(function(item) {
+                        drilldownCfg.forEach(function (item) {
                             this.addSingleSeriesAsDrilldown(event.point, item);
                         }, this);
 
@@ -142,6 +144,5 @@ $(function () {
             done();
         }, 800);
 
-        
     });
 });
