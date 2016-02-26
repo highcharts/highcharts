@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-02-25)
+ * @license Highmaps JS v4.2.3-modified (2016-02-26)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -15101,7 +15101,7 @@
 
                 // Record the options to options.data. If there is an object from before,
                 // use point options, otherwise use raw options. (#4701)
-                seriesOptions.data[i] = isObject(seriesOptions.data[i]) ? point.options : options;
+                seriesOptions.data[i] =  (isObject(seriesOptions.data[i]) && !isArray(seriesOptions.data[i])) ? point.options : options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;

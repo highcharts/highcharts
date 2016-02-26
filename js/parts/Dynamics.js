@@ -187,7 +187,7 @@ extend(Point.prototype, {
 
 			// Record the options to options.data. If there is an object from before,
 			// use point options, otherwise use raw options. (#4701)
-			seriesOptions.data[i] = isObject(seriesOptions.data[i]) ? point.options : options;
+			seriesOptions.data[i] =  (isObject(seriesOptions.data[i]) && !isArray(seriesOptions.data[i])) ? point.options : options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
