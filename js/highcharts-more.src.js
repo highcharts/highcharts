@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-02-08)
+ * @license Highcharts JS v4.2.3-modified (2016-02-26)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1097,6 +1097,7 @@ var arrayMin = Highcharts.arrayMin,
         // chart.angular will be set to true when a gauge series is present, and this will
         // be used on the axes
         angular: true,
+        directTouch: true, // #5063
         drawGraph: noop,
         fixedBox: true,
         forceDL: true,
