@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-02-11)
+ * @license Highcharts JS v4.2.3-modified (2016-02-26)
  *
  * 3D features for Highcharts JS
  *
@@ -1596,7 +1596,7 @@
                 // #4584 Check if has graphic - null points don't have it
                 if (graphic) {
                     // Hide null or 0 points (#3006, 3650)
-                    graphic[point.y ? 'show' : 'hide']();
+                    graphic[point.y && point.visible ? 'show' : 'hide']();
                 }
             });    
         }
