@@ -7,15 +7,16 @@ $(function () {
     (function (H) {
         H.wrap(H.Tooltip.prototype, 'init', function (proceed, chart, options) {
 
-            var chartRenderer = chart.renderer;
+            var chartRenderer = chart.renderer,
+                box;
 
             if (!this.renderer) {
-                var div = this.div = document.createElement('div');
-                this.div.style.position = 'absolute';
-                this.div.style.left = 0;
-                this.div.style.top = 0;
-                document.body.appendChild(this.div);
-                var ren = this.renderer = new H.Renderer(this.div, 400, 60);
+                this.renderer = new H.Renderer(document.body, 400, 60);
+                box = this.renderer.boxWrapper;
+                box.css({
+                    position: 'absolute',
+                    top: '-9999px'
+                });
             }
             chart.renderer = this.renderer;
             proceed.call(this, chart, options);
@@ -26,10 +27,10 @@ $(function () {
                 y: 0
             });
             this.label.xSetter = function (value) {
-                div.style.left = value + 'px';
+                box.element.style.left = value + 'px';
             };
             this.label.ySetter = function (value) {
-                div.style.top = value + 'px';
+                box.element.style.top = value + 'px';
             };
         });
 
