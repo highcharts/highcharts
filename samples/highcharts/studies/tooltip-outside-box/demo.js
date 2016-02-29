@@ -57,9 +57,9 @@ $(function () {
         });
 
         /**
-         * Find the new position and perform the move
+         * Find the new position and perform the move. This override is identical
+         * to the core function, except the anchorX and anchorY arguments to move().
          */
-        /* Problem: anchor is offset from point
         H.Tooltip.prototype.updatePosition = function (point) {
             var chart = this.chart,
                 label = this.label,
@@ -74,19 +74,54 @@ $(function () {
             this.move(
                 Math.round(pos.x),
                 Math.round(pos.y || 0), // can be undefined (#3977)
-                point.plotX + chart.plotLeft - chart.pointer.chartPosition.left,
-                point.plotY + chart.plotTop - chart.pointer.chartPosition.top
+                point.plotX + chart.plotLeft - pos.x,
+                point.plotY + chart.plotTop - pos.y
             );
         };
-        */
 
     }(Highcharts));
 
 
-    $('#container').highcharts({
+    $('#container1').highcharts({
 
         chart: {
             type: 'column',
+            borderWidth: 1
+        },
+
+        title: {
+            text: 'Tooltip outside the box'
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr']
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        series: [{
+            name: 'Really, really long series name 1',
+            data: [1,4,2,3]
+        }, {
+            name: 'Really, really long series name 2',
+            data: [4,2,5,3]
+        }, {
+            name: 'Really, really long series name 2',
+            data: [6,5,3,1]
+        }, {
+            name: 'Really, really long series name 2',
+            data: [6,4,2,1]
+        }]
+
+    });
+
+
+    $('#container2').highcharts({
+
+        chart: {
+            type: 'line',
             borderWidth: 1
         },
 
