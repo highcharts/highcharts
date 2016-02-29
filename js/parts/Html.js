@@ -272,7 +272,8 @@ extend(SVGRenderer.prototype, {
 							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
 								position: ABSOLUTE,
 								left: (parentGroup.translateX || 0) + PX,
-								top: (parentGroup.translateY || 0) + PX
+								top: (parentGroup.translateY || 0) + PX,
+								opacity: parentGroup.opacity // #5075
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut

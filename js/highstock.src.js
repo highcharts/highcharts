@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-02-26)
+ * @license Highstock JS v4.2.3-modified (2016-02-29)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -5026,7 +5026,8 @@
                                 htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
                                     position: ABSOLUTE,
                                     left: (parentGroup.translateX || 0) + PX,
-                                    top: (parentGroup.translateY || 0) + PX
+                                    top: (parentGroup.translateY || 0) + PX,
+                                    opacity: parentGroup.opacity // #5075
                                 }, htmlGroup || container); // the top group is appended to container
 
                                 // Shortcut
@@ -20119,7 +20120,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-02-26)
+     * Highstock JS v4.2.3-modified (2016-02-29)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
