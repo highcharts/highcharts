@@ -4937,6 +4937,7 @@
             var wrapper = this.createElement('span'),
                 element = wrapper.element,
                 renderer = wrapper.renderer,
+                isSVG = renderer.isSVG,
                 addSetters = function (element, style) {
                     // These properties are set as attributes on the SVG group, and as
                     // identical CSS properties on the div. (#3542)
@@ -4956,7 +4957,11 @@
                 element.innerHTML = this.textStr = value;
                 wrapper.htmlUpdateTransform();
             };
-            addSetters(wrapper, wrapper.element.style);
+
+            // Add setters for the element itself (#4938)
+            if (isSVG) { // #4938, only for HTML within SVG
+                addSetters(wrapper, wrapper.element.style);
+            }
 
             // Various setters which rely on update transform
             wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
@@ -4987,7 +4992,7 @@
             wrapper.css = wrapper.htmlCss;
 
             // This is specific for HTML within SVG
-            if (renderer.isSVG) {
+            if (isSVG) {
                 wrapper.add = function (svgGroupWrapper) {
 
                     var htmlGroup,
