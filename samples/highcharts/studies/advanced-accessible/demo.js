@@ -14,18 +14,22 @@ $(function () {
                 textElements = chart.container.getElementsByTagName('text'),
                 titleId = 'highcharts-title-' + chart.index,
                 descId = 'highcharts-desc-' + chart.index,
+                tableId = 'highcharts-data-table-' + chart.index,
+                oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
+                topLevelColumns = [],
+                chartTitle = options.title.text || 'Chart',
                 chartDesc,
                 chartTypes = [],
                 i;
+
+            if (!acsOptions.enabled) {
+                return;
+            }
 
             // Get label for axis (x or y)
             function getAxisLabel(axis) {
                 return axis.userOptions && axis.userOptions.description || axis.axisTitle && axis.axisTitle.textStr ||
                         axis.options.id || axis.categories && 'categories' || 'Undeclared';
-            }
-
-            if (!acsOptions.enabled) {
-                return;
             }
 
             // Hide text elements from screen readers
@@ -41,10 +45,9 @@ $(function () {
             }
 
             // Build chart description
-            chartDesc = (chartTypes.length === 1 ? chartTypes[0] + ' chart, ' : '') +
-                        (options.title.text ? ' Title: ' + options.title.text + '.' : '') +
-                        (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '') +
-                        (acsOptions.description ? ' ' + acsOptions.description : '');
+            chartDesc = (chartTypes.length === 1 && acsOptions.typeDescription !== null ?
+                            (acsOptions.typeDescription || chartTypes[0]) + ' chart. ' : '') +
+                        (acsOptions.description ? acsOptions.description : '');
             chartDesc += (chartDesc.slice(-1) !== '.' ? '.' : '') +
                         (!numSeries ? ' The chart is empty.' : '');
 
@@ -74,20 +77,18 @@ $(function () {
             }
 
             // Add SVG title/desc tags
-            titleElement.textContent = options.title.text || 'Chart';
+            titleElement.textContent = chartTitle;
             titleElement.id = titleId;
-            descElement.textContent += '. ' + chartDesc;
+            descElement.textContent = chartDesc + ' ' + descElement.textContent;
             descElement.id = descId;
             descElement.parentNode.insertBefore(titleElement, descElement);
             chart.renderTo.setAttribute('role', 'region');
-            chart.renderTo.setAttribute('aria-labelledby', titleId);
             chart.renderTo.setAttribute('aria-describedby', descId);
-            chart.renderTo.setAttribute('aria-label', options.title.text || 'Chart');
+            chart.renderTo.setAttribute('aria-label', chartTitle);
 
             // Return string with information about point
             function buildPointInfoString(point) {
-                var isPie = point.series.type === 'pie',
-                    commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
+                var commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
                     specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'],
                     infoString,
                     hasSpecialKey = false;
@@ -164,12 +165,82 @@ $(function () {
                 setSeriesInfo(this);
             });
 
+            /* Wrap table functionality */
+
+            // Keep track of columns
+            options.exporting = H.merge(options.exporting, {
+                csv: {
+                    columnHeaderFormatter: function (series, key, keyLength) {
+                        var prevCol = topLevelColumns[topLevelColumns.length - 1];
+                        if (keyLength > 1) {
+                            // Populate a list of columns to add in addition to the ones added by the export-csv module
+                            // Objects don't preserve order, so use array
+                            if ((prevCol && prevCol.text) !== series.name) {
+                                topLevelColumns.push({
+                                    text: series.name,
+                                    span: keyLength
+                                });
+                            }
+                        }
+                        if (oldColumnHeaderFormatter) {
+                            return oldColumnHeaderFormatter.call(this, series, key, keyLength);
+                        }
+                        return keyLength > 1 ? key : series.name;
+                    }
+                }
+            });
+
+            // Add ID and title/caption to table HTML
+            H.wrap(H.Chart.prototype, 'getTable', function (proceed) {
+                return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
+                    .replace('<table>', '<table id="' + tableId + '" summary="Table representation of chart. ' +
+                        (acsOptions.description ? acsOptions.description : '') + '"><caption>' + chartTitle + '</caption>');
+            });
+
+            // Add accessibility attributes and top level columns
+            H.wrap(H.Chart.prototype, 'viewData', function (proceed) {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                var table = document.getElementById(tableId),
+                    body = table.getElementsByTagName('tbody')[0],
+                    firstRow = body.firstChild.children,
+                    columnHeaderRow = '<tr><th scope="col" aria-hidden="true"></th>',
+                    cell,
+                    newCell,
+                    i;
+
+                // Create row headers
+                for (i = 0; i < body.children.length; ++i) {
+                    cell = body.children[i].firstChild;
+                    newCell = document.createElement('th');
+                    newCell.setAttribute('scope', 'row');
+                    newCell.innerHTML = cell.innerHTML;
+                    cell.parentNode.replaceChild(newCell, cell);
+                }
+
+                // Set scope for column headers
+                for (i = 0; i < firstRow.length; ++i) {
+                    if (firstRow[i].tagName === 'TH') {
+                        firstRow[i].setAttribute('scope', 'col');
+                    }
+                }
+
+                // Add top level columns
+                for (i = 0; i < topLevelColumns.length; ++i) {
+                    columnHeaderRow += '<th scope="col" colspan="' + topLevelColumns[i].span + '">' +
+                         topLevelColumns[i].text + '</th>';
+                }
+                body.insertAdjacentHTML('afterbegin', columnHeaderRow);
+            });
+
 
             /* Add keyboard navigation */
 
             if (acsOptions.keyboardNavigation && acsOptions.keyboardNavigation.enabled === false) {
                 return;
             }
+
+            // Make chart reachable by tab
+            chart.renderTo.setAttribute('tabindex', '0');
 
             // Function for highlighting a point
             H.Point.prototype.highlight = function () {
@@ -408,59 +479,88 @@ $(function () {
     // Set up demo charts
 
     $('#container').highcharts({
-        chart: {
-            type: 'area'
-        },
-
         accessibility: {
             enabled: true,
             description: 'Chart displays arbitrary values throughout the year, with a clear drop during the winter months.',
             keyboardNavigation: {
                 skipNullPoints: true
+            },
+            pointInfoFormatter: function (point) {
+                return point.category + ', low ' + point.low + ', average ' + point.median + ', high ' + point.high;
             }
         },
-
+        chart: {
+            type: 'boxplot'
+        },
         title: {
-            text: 'Accessible Highcharts'
+            text: 'Daily company fruit consumption 2015'
         },
-
-        subtitle: {
-            text: 'A hidden but machine readable HTML table contains this chart\'s data'
-        },
-
         xAxis: [{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        }, {}, { title: { text: 'This is a test' } }],
-
+            description: 'Months of the year',
+            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        }],
+        yAxis: {
+            title: {
+                text: 'Fruits consumed'
+            },
+            min: 0
+        },
         plotOptions: {
             series: {
-                point: {
-                    events: {
-                        click: function () {
-                            alert('Clicked point with value ' + this.y);
-                        }
-                    }
-                }
+                keys: ['low', 'median', 'high']
             }
         },
-
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Avg: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
+        },
         series: [{
-            name: 'Test1',
-            data: [29.9, 110, 43, 0]
-        }, //*
-        {
-            name: 'Test2',
-            data: [29.9, 71.5, null, 106.4, 129.2, null, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'column'
-        }, //*/
-        //*
-        {
-            name: 'Test3',
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'pie'
-        }//*/
-        ]
+            name: 'Plums',
+            data: [
+             [0, 8, 19],
+             [1, 11, 23],
+             [3, 16, 28],
+             [2, 15, 28],
+             [1, 15, 27],
+             [0, 9, 21],
+             [1, 6, 15],
+             [2, 5, 12],
+             [1, 6, 19],
+             [2, 8, 21],
+             [2, 9, 22],
+             [1, 11, 19]
+            ]
+        }, {
+            name: 'Bananas',
+            data: [
+             [0, 3, 6],
+             [1, 2, 4],
+             [0, 2, 5],
+             [2, 2, 5],
+             [1, 3, 6],
+             [0, 1, 3],
+             [1, 1, 2],
+             [0, 1, 3],
+             [1, 1, 3],
+             [0, 2, 4],
+             [1, 2, 5],
+             [1, 3, 5]
+            ]
+        }, {
+            name: 'Apples',
+            data: [
+             [1, 4, 6],
+             [2, 4, 5],
+             [1, 3, 6],
+             [2, 3, 6],
+             [1, 3, 4],
+             [0, 2, 4],
+             [0, 1, 2],
+             [0, 1, 2],
+             [0, 1, 2],
+             [0, 2, 4],
+             [1, 2, 4],
+             [1, 3, 4]
+            ]
+        }]
     });
-
 });
