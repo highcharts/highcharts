@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-02-29)
+ * @license Highstock JS v4.2.3-modified (2016-03-01)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -4165,14 +4165,14 @@
 
                             // Fire the load event when all external images are loaded
                             ren.imgCount--;
-                            if (!ren.imgCount) {
+                            if (!ren.imgCount && charts[ren.chartIndex].onload) {
                                 charts[ren.chartIndex].onload();
                             }
                         },
                         src: imageSrc
                     });
+                    this.imgCount++;
                 }
-                this.imgCount++;
             }
 
             return obj;
@@ -13250,7 +13250,7 @@
             chart.renderer.draw();
         
             // Fire the load event if there are no external images
-            if (!chart.renderer.imgCount) {
+            if (!chart.renderer.imgCount && chart.onload) {
                 chart.onload();
             }
 
@@ -13272,10 +13272,10 @@
                 }
             });
 
-            // Fire the load event if there are no external images
-            if (!chart.renderer.imgCount) {
-                fireEvent(chart, 'load');
-            }
+            fireEvent(chart, 'load');
+
+            // Don't run again
+            this.onload = null;
         },
 
         /**
@@ -20125,7 +20125,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-02-29)
+     * Highstock JS v4.2.3-modified (2016-03-01)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

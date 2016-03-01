@@ -1402,7 +1402,7 @@ Chart.prototype = {
 		chart.renderer.draw();
 		
 		// Fire the load event if there are no external images
-		if (!chart.renderer.imgCount) {
+		if (!chart.renderer.imgCount && chart.onload) {
 			chart.onload();
 		}
 
@@ -1424,10 +1424,10 @@ Chart.prototype = {
 			}
 		});
 
-		// Fire the load event if there are no external images
-		if (!chart.renderer.imgCount) {
-			fireEvent(chart, 'load');
-		}
+		fireEvent(chart, 'load');
+
+		// Don't run again
+		this.onload = null;
 	},
 
 	/**

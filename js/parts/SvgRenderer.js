@@ -2087,14 +2087,14 @@ SVGRenderer.prototype = {
 
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
-						if (!ren.imgCount) {
+						if (!ren.imgCount && charts[ren.chartIndex].onload) {
 							charts[ren.chartIndex].onload();
 						}
 					},
 					src: imageSrc
 				});
+				this.imgCount++;
 			}
-			this.imgCount++;
 		}
 
 		return obj;
