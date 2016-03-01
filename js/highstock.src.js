@@ -15885,14 +15885,16 @@
             var key = isX ? 'xAxis' : 'yAxis',
                 chartOptions = this.options;
 
-            new Axis(this, merge(options, { // eslint-disable-line no-new
+            var userOptions = merge(options, {
                 index: this[key].length,
                 isX: isX
-            }));
+            });
+
+            new Axis(this, userOptions);
 
             // Push the new axis options to the chart options
             chartOptions[key] = splat(chartOptions[key] || {});
-            chartOptions[key].push(options);
+            chartOptions[key].push(userOptions);
 
             if (pick(redraw, true)) {
                 this.redraw(animation);
