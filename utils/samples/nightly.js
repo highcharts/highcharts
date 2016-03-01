@@ -9,7 +9,7 @@
         fs = require('fs');
 
     var spawn = childProcess.spawn,
-        latest = 'v4.2.2',
+        latest = 'v4.2.3',
         nightlyFile = 'nightly/nightly.json',
         commits = [];
 
