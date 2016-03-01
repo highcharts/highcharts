@@ -94,6 +94,9 @@ $(function () {
             'Chart callback is not synchronous'
         );
 
+        // Fail safe
+        setTimeout(done, 2000);
+
     });
 
     QUnit.test('Image in a module', function (assert) {
@@ -145,6 +148,8 @@ $(function () {
                     done();
                 }
             });
+        // Fail safe
+        setTimeout(done, 2000);
 
     });
 
@@ -152,7 +157,7 @@ $(function () {
 
         var count = 0,
             done = assert.async(),
-            symbol = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4AISFiQGWmDmBwAAAAd0RVh0QXV0aG9yAKmuzEgAAAAMdEVYdERlc2NyaXB0aW9uABMJISMAAAAKdEVYdENvcHlyaWdodACsD8w6AAAADnRFWHRDcmVhdGlvbiB0aW1lADX3DwkAAAAJdEVYdFNvZnR3YXJlAF1w/zoAAAALdEVYdERpc2NsYWltZXIAt8C0jwAAAAh0RVh0V2FybmluZwDAG+aHAAAAB3RFWHRTb3VyY2UA9f+D6wAAAAh0RVh0Q29tbWVudAD2zJa/AAAABnRFWHRUaXRsZQCo7tInAAABCklEQVQokY2OsUrDUBSGv2YTdHSzDgUfoO/gIr6GCN36IC6FUokYh0jAzYKUIB3sYrcKZrBBJ02oiUiCNZWSm3IdvIJtQ80//efjfIeDzM2rfKrvybv6lXzPX5AaOZn0DT5dAW6LoJ/krZAjDvGbPdUFadMkLCLGnRZf8V9wSdgJ/hGTW0a6C5Ua23aXqn3ORgVmusFzskIMrQapAMKA7IeQeYDoEVtDxRbF6Jq3tvpxkiJ+uSqyfcpLtCSm+Nbx3MXlOIyte6ZqKkkpZeZd8HBoMFspApRZPzljpwwaRHi6uSDts2l3qdpHrM1xj0S/YQxoU8fkYyAonEGDkZNSejzYlYlf3ANgq8Y32NWhiQdfoqsAAAAASUVORK5CYII=)"
+            symbol = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4AISFiQGWmDmBwAAAAd0RVh0QXV0aG9yAKmuzEgAAAAMdEVYdERlc2NyaXB0aW9uABMJISMAAAAKdEVYdENvcHlyaWdodACsD8w6AAAADnRFWHRDcmVhdGlvbiB0aW1lADX3DwkAAAAJdEVYdFNvZnR3YXJlAF1w/zoAAAALdEVYdERpc2NsYWltZXIAt8C0jwAAAAh0RVh0V2FybmluZwDAG+aHAAAAB3RFWHRTb3VyY2UA9f+D6wAAAAh0RVh0Q29tbWVudAD2zJa/AAAABnRFWHRUaXRsZQCo7tInAAABCklEQVQokY2OsUrDUBSGv2YTdHSzDgUfoO/gIr6GCN36IC6FUokYh0jAzYKUIB3sYrcKZrBBJ02oiUiCNZWSm3IdvIJtQ80//efjfIeDzM2rfKrvybv6lXzPX5AaOZn0DT5dAW6LoJ/krZAjDvGbPdUFadMkLCLGnRZf8V9wSdgJ/hGTW0a6C5Ua23aXqn3ORgVmusFzskIMrQapAMKA7IeQeYDoEVtDxRbF6Jq3tvpxkiJ+uSqyfcpLtCSm+Nbx3MXlOIyte6ZqKkkpZeZd8HBoMFspApRZPzljpwwaRHi6uSDts2l3qdpHrM1xj0S/YQxoU8fkYyAonEGDkZNSejzYlYlf3ANgq8Y32NWhiQdfoqsAAAAASUVORK5CYII=)";
 
         function finito() {
             assert.strictEqual(
@@ -200,6 +205,9 @@ $(function () {
         setTimeout(function () {
             buildChart();
         }, 200);
+
+        // Fail safe
+        setTimeout(done, 2000);
 
     });
 
