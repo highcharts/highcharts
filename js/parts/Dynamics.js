@@ -39,14 +39,13 @@ extend(Chart.prototype, {
      */
 	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
-			chartOptions = this.options;
+			chartOptions = this.options,
+			userOptions = merge(options, {
+				index: this[key].length,
+				isX: isX
+			});
 
-		var userOptions = merge(options, {
-			index: this[key].length,
-			isX: isX
-		});
-
-		new Axis(this, userOptions);
+		new Axis(this, userOptions); // eslint-disable-line no-new
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
