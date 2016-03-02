@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-01)
+ * @license Highmaps JS v4.2.3-modified (2016-03-02)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -6350,7 +6350,8 @@
                 rotation = this.rotation,
                 factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
                 labelWidth = label.getBBox().width,
-                slotWidth = axis.slotWidth,
+                slotWidth = axis.getSlotWidth(),
+                modifiedSlotWidth = slotWidth,
                 xCorrection = factor,
                 goRight = 1,
                 leftPos,
@@ -6365,21 +6366,21 @@
                 rightPos = pxPos + (1 - factor) * labelWidth;
 
                 if (leftPos < leftBound) {
-                    slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
+                    modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
                 } else if (rightPos > rightBound) {
-                    slotWidth = rightBound - xy.x + slotWidth * factor;
+                    modifiedSlotWidth = rightBound - xy.x + modifiedSlotWidth * factor;
                     goRight = -1;
                 }
 
-                slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
-                if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
-                    xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));
+                modifiedSlotWidth = mathMin(slotWidth, modifiedSlotWidth); // #4177
+                if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
+                    xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - mathMin(labelWidth, modifiedSlotWidth)));
                 }
                 // If the label width exceeds the available space, set a text width to be
                 // picked up below. Also, if a width has been set before, we need to set a new
                 // one because the reported labelWidth will be limited by the box (#3938).
-                if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
-                    textWidth = slotWidth;
+                if (labelWidth > modifiedSlotWidth || (axis.autoRotation && label.styles.width)) {
+                    textWidth = modifiedSlotWidth;
                 }
 
             // Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
@@ -8214,6 +8215,26 @@
             return newTickInterval;
         },
 
+        /**
+         * Get the general slot width for this axis. This may change between the pre-render (from Axis.getOffset) 
+         * and the final tick rendering and placement (#5086).
+         */
+        getSlotWidth: function () {
+            var chart = this.chart,
+                horiz = this.horiz,
+                labelOptions = this.options.labels,
+                slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+                marginLeft = chart.margin[3];
+
+            return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
+                ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
+                (!horiz && ((marginLeft && (marginLeft - chart.spacing[3])) || chart.chartWidth * 0.33)); // #1580, #1931
+
+        },
+
+        /**
+         * Render the axis labels and determine whether ellipsis or rotation need to be applied
+         */
         renderUnsquish: function () {
             var chart = this.chart,
                 renderer = chart.renderer,
@@ -8221,11 +8242,7 @@
                 ticks = this.ticks,
                 labelOptions = this.options.labels,
                 horiz = this.horiz,
-                margin = chart.margin,
-                slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-                slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-                    ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
-                    (!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
+                slotWidth = this.getSlotWidth(),
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
                 attr = {},
                 labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),

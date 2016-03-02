@@ -107,7 +107,8 @@ Tick.prototype = {
 			rotation = this.rotation,
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
 			labelWidth = label.getBBox().width,
-			slotWidth = axis.slotWidth,
+			slotWidth = axis.getSlotWidth(),
+			modifiedSlotWidth = slotWidth,
 			xCorrection = factor,
 			goRight = 1,
 			leftPos,
@@ -122,21 +123,21 @@ Tick.prototype = {
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
-				slotWidth = rightBound - xy.x + slotWidth * factor;
+				modifiedSlotWidth = rightBound - xy.x + modifiedSlotWidth * factor;
 				goRight = -1;
 			}
 
-			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
-			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));
+			modifiedSlotWidth = mathMin(slotWidth, modifiedSlotWidth); // #4177
+			if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
+				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - mathMin(labelWidth, modifiedSlotWidth)));
 			}
 			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
-			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
-				textWidth = slotWidth;
+			if (labelWidth > modifiedSlotWidth || (axis.autoRotation && label.styles.width)) {
+				textWidth = modifiedSlotWidth;
 			}
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart

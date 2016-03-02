@@ -1596,6 +1596,26 @@ Axis.prototype = {
 		return newTickInterval;
 	},
 
+	/**
+	 * Get the general slot width for this axis. This may change between the pre-render (from Axis.getOffset) 
+	 * and the final tick rendering and placement (#5086).
+	 */
+	getSlotWidth: function () {
+		var chart = this.chart,
+			horiz = this.horiz,
+			labelOptions = this.options.labels,
+			slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+			marginLeft = chart.margin[3];
+
+		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
+			((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
+			(!horiz && ((marginLeft && (marginLeft - chart.spacing[3])) || chart.chartWidth * 0.33)); // #1580, #1931
+
+	},
+
+	/**
+	 * Render the axis labels and determine whether ellipsis or rotation need to be applied
+	 */
 	renderUnsquish: function () {
 		var chart = this.chart,
 			renderer = chart.renderer,
@@ -1603,11 +1623,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			margin = chart.margin,
-			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-			slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
-				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
+			slotWidth = this.getSlotWidth(),
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
