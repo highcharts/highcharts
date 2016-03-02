@@ -1436,7 +1436,7 @@
             // Getting the rendered width and height
             if (alias) {
                 el.style.zoom = 1;
-                return el[alias] - 2 * getStyle(el, 'padding');
+                return Math.max(el[alias] - 2 * getStyle(el, 'padding'), 0);
             }
         
             val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
