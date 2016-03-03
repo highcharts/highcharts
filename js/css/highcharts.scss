@@ -320,6 +320,31 @@ g.highcharts-series, .highcharts-point {
 .highcharts-navigator-yaxis .highcharts-grid-line {
     stroke-width: 0;
 }
+.highcharts-scrollbar-thumb {
+    fill: #bfc8d1;
+    stroke: #bfc8d1;
+    stroke-width: 1px;
+}
+.highcharts-scrollbar-button {
+    fill: #ebe7e8;
+    stroke: #bbb;
+    stroke-width: 1px;
+}
+.highcharts-scrollbar-arrow {
+    fill: #666;
+}
+.highcharts-scrollbar-rifles {
+    stroke: #666;
+    stroke-width: 1px;
+}
+.highcharts-scrollbar-track {
+    fill: #eeeeee;
+    stroke: #eeeeee;
+    stroke-width: 1px;
+}
+
+
+
 .highcharts-candlestick-series .highcharts-point {
     stroke: black;
     stroke-width: 1px;
