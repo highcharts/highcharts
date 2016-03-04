@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-03)
+ * @license Highmaps JS v2.0-dev (2016-03-04)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -3784,8 +3784,16 @@ SVGRenderer.prototype = {
      */
     button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape) {
         var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
-            curState = 0,
-            stateOptions,
+            curState = 0;
+
+        label.attr(merge({
+            r: 2,
+            padding: 5
+        }, normalState));
+
+        
+        // Presentational
+        var stateOptions,
             stateStyle,
             normalStyle,
             hoverStyle,
@@ -3804,8 +3812,6 @@ SVGRenderer.prototype = {
                     [1, '#F6F6F6']
                 ]
             },
-            r: 2,
-            padding: 5,
             style: {
                 color: 'black'
             }
@@ -3816,13 +3822,7 @@ SVGRenderer.prototype = {
         // Hover state
         hoverState = merge(normalState, {
             stroke: '#68A',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#FFF'],
-                    [1, '#ACF']
-                ]
-            }
+            fill: '#f7f7f7'
         }, hoverState);
         hoverStyle = hoverState.style;
         delete hoverState.style;
@@ -3849,47 +3849,49 @@ SVGRenderer.prototype = {
         }, disabledState);
         disabledStyle = disabledState.style;
         delete disabledState.style;
+        
 
         // Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
         addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
             if (curState !== 3) {
-                label.attr(hoverState)
-                    .css(hoverStyle);
+                label.setState(1);
             }
         });
         addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
             if (curState !== 3) {
-                stateOptions = [normalState, hoverState, pressedState];
-                stateOptions = stateOptions[curState];
-                stateStyle = [normalStyle, hoverStyle, pressedStyle];
-                stateStyle = stateStyle[curState];
-                label.attr(stateOptions)
-                    .css(stateStyle);
+                label.setState(curState);
             }
         });
 
         label.setState = function (state) {
-            label.state = curState = state;
-            if (!state) {
-                label.attr(normalState)
-                    .css(normalStyle);
-            } else if (state === 2) {
-                label.attr(pressedState)
-                    .css(pressedStyle);
-            } else if (state === 3) {
-                label.attr(disabledState)
-                    .css(disabledStyle);
+            // Hover state is temporary, don't record it
+            if (state !== 1) {
+                label.state = curState = state;
             }
+            // Update visuals
+            label.attr({
+                'class': 'highcharts-button highcharts-button' + ['', '-hover', '-pressed', '-disabled'][state || 0]
+            });
+            
+            label.attr([normalState, hoverState, pressedState, disabledState][state || 0])
+                .css([normalStyle, hoverStyle, pressedStyle, disabledStyle][state || 0]);
+            
         };
+
+
+        
+        // Presentational attributes
+        label
+            .attr(normalState)
+            .css(extend({ cursor: 'default' }, normalStyle));
+        
 
         return label
             .on('click', function (e) {
                 if (curState !== 3) {
                     callback.call(label, e);
                 }
-            })
-            .attr(normalState)
-            .css(extend({ cursor: 'default' }, normalStyle));
+            });
     },
 
     /**

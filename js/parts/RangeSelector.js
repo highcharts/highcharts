@@ -31,16 +31,17 @@ extend(defaultOptions, {
 		buttonTheme: {
 			width: 28,
 			height: 18,
-			fill: '#f7f7f7',
 			padding: 2,
 			r: 0,
+			zIndex: 7, // #484, #852
+			// TODO: Combine this with with the default buttons so we don't have two styles
+			fill: '#f7f7f7',
 			'stroke-width': 0,
 			style: {
 				color: '#444',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			},
-			zIndex: 7, // #484, #852
 			states: {
 				hover: {
 					fill: '#e7e7e7'

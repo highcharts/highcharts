@@ -342,7 +342,32 @@ g.highcharts-series, .highcharts-point {
     stroke: #eeeeee;
     stroke-width: 1px;
 }
-
+.highcharts-button {
+    cursor: default;
+    fill: #f6f6f6; /* todo: gradient */
+    stroke: #CCC;
+    stroke-width: 1px;
+    transition: fill 250ms;
+}
+.highcharts-button text {
+    fill: black;
+}
+.highcharts-button-hover {
+    fill: #acf;
+    stroke: #68A;
+    transition: fill 0ms;
+}
+.highcharts-button-pressed {
+    fill: #cdf;
+    stroke: #68A;
+    font-weight: bold;
+}
+.highcharts-button-disabled text {
+    fill: #ccc;
+}
+.highcharts-range-selector-buttons .highcharts-button {
+    stroke-width: 0;
+}
 
 
 .highcharts-candlestick-series .highcharts-point {

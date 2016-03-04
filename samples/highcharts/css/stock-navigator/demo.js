@@ -7,7 +7,7 @@ $(function () {
 
         series: [{
             name: 'USD to EUR',
-            data: usdeur
+            data: usdeur.slice(0, 200)
         }]
     });
 });

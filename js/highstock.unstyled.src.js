@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-03-03)
+ * @license Highstock JS v3.0-dev (2016-03-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3595,112 +3595,48 @@ SVGRenderer.prototype = {
      */
     button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape) {
         var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
-            curState = 0,
-            stateOptions,
-            stateStyle,
-            normalStyle,
-            hoverStyle,
-            pressedStyle,
-            disabledStyle,
-            verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
+            curState = 0;
 
-        // Normal state - prepare the attributes
-        normalState = merge({
-            'stroke-width': 1,
-            stroke: '#CCCCCC',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#FEFEFE'],
-                    [1, '#F6F6F6']
-                ]
-            },
+        label.attr(merge({
             r: 2,
-            padding: 5,
-            style: {
-                color: 'black'
-            }
-        }, normalState);
-        normalStyle = normalState.style;
-        delete normalState.style;
+            padding: 5
+        }, normalState));
 
-        // Hover state
-        hoverState = merge(normalState, {
-            stroke: '#68A',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#FFF'],
-                    [1, '#ACF']
-                ]
-            }
-        }, hoverState);
-        hoverStyle = hoverState.style;
-        delete hoverState.style;
-
-        // Pressed state
-        pressedState = merge(normalState, {
-            stroke: '#68A',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#9BD'],
-                    [1, '#CDF']
-                ]
-            }
-        }, pressedState);
-        pressedStyle = pressedState.style;
-        delete pressedState.style;
-
-        // Disabled state
-        disabledState = merge(normalState, {
-            style: {
-                color: '#CCC'
-            }
-        }, disabledState);
-        disabledStyle = disabledState.style;
-        delete disabledState.style;
+        
 
         // Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
         addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
             if (curState !== 3) {
-                label.attr(hoverState)
-                    .css(hoverStyle);
+                label.setState(1);
             }
         });
         addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
             if (curState !== 3) {
-                stateOptions = [normalState, hoverState, pressedState];
-                stateOptions = stateOptions[curState];
-                stateStyle = [normalStyle, hoverStyle, pressedStyle];
-                stateStyle = stateStyle[curState];
-                label.attr(stateOptions)
-                    .css(stateStyle);
+                label.setState(curState);
             }
         });
 
         label.setState = function (state) {
-            label.state = curState = state;
-            if (!state) {
-                label.attr(normalState)
-                    .css(normalStyle);
-            } else if (state === 2) {
-                label.attr(pressedState)
-                    .css(pressedStyle);
-            } else if (state === 3) {
-                label.attr(disabledState)
-                    .css(disabledStyle);
+            // Hover state is temporary, don't record it
+            if (state !== 1) {
+                label.state = curState = state;
             }
+            // Update visuals
+            label.attr({
+                'class': 'highcharts-button highcharts-button' + ['', '-hover', '-pressed', '-disabled'][state || 0]
+            });
+            
         };
+
+
+        
 
         return label
             .on('click', function (e) {
                 if (curState !== 3) {
                     callback.call(label, e);
                 }
-            })
-            .attr(normalState)
-            .css(extend({ cursor: 'default' }, normalStyle));
+            });
     },
 
     /**
@@ -19009,7 +18945,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-03-03)
+ * Highstock JS v3.0-dev (2016-03-04)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license
@@ -21750,16 +21686,17 @@ extend(defaultOptions, {
         buttonTheme: {
             width: 28,
             height: 18,
-            fill: '#f7f7f7',
             padding: 2,
             r: 0,
+            zIndex: 7, // #484, #852
+            // TODO: Combine this with with the default buttons so we don't have two styles
+            fill: '#f7f7f7',
             'stroke-width': 0,
             style: {
                 color: '#444',
                 cursor: 'pointer',
                 fontWeight: 'normal'
             },
-            zIndex: 7, // #484, #852
             states: {
                 hover: {
                     fill: '#e7e7e7'
