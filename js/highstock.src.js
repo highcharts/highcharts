@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-02)
+ * @license Highstock JS v4.2.3-modified (2016-03-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -11628,7 +11628,7 @@
 
             // Reset the legend height and adjust the clipping rectangle
             pages.length = 0;
-            if (legendHeight > spaceHeight) {
+            if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled
 
                 this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
                 this.currentPage = pick(this.currentPage, 1);
@@ -20143,7 +20143,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-02)
+     * Highstock JS v4.2.3-modified (2016-03-04)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
