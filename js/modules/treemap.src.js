@@ -589,11 +589,13 @@
 			}
 
 			// Update axis extremes according to the root node.
-			val = this.nodeMap[this.rootNode].pointValues;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
-			this.xAxis.setScale();
-			this.yAxis.setScale();
+			if (this.options.allowDrillToNode) {
+				val = this.nodeMap[this.rootNode].pointValues;
+				this.xAxis.setExtremes(val.x, val.x + val.width, false);
+				this.yAxis.setExtremes(val.y, val.y + val.height, false);
+				this.xAxis.setScale();
+				this.yAxis.setScale();
+			}
 
 			// Assign values to points.
 			this.setPointValues();
