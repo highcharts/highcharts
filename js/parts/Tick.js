@@ -252,10 +252,8 @@ Tick.prototype = {
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
-			tickLength = options[tickPrefix + 'Length'],
-			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
+			tickSize = axis.tickSize(tickPrefix),
 			tickColor = options[tickPrefix + 'Color'],
-			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
@@ -307,17 +305,11 @@ Tick.prototype = {
 		}
 
 		// create the tick mark
-		if (tickWidth && tickLength) {
-
-			// negate the length
-			if (tickPosition === 'inside') {
-				tickLength = -tickLength;
-			}
+		if (tickSize) {
 			if (axis.opposite) {
-				tickLength = -tickLength;
+				tickSize[0] = -tickSize[0];
 			}
-
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+			markPath = tick.getMarkPath(x, y, tickSize[0], tickSize[1] * reverseCrisp, horiz, renderer);
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -328,7 +320,7 @@ Tick.prototype = {
 					markPath
 				).attr({
 					stroke: tickColor,
-					'stroke-width': tickWidth,
+					'stroke-width': tickSize[1],
 					opacity: opacity
 				}).add(axis.axisGroup);
 			}

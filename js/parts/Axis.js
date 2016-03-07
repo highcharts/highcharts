@@ -1532,6 +1532,27 @@ Axis.prototype = {
 	},
 
 	/**
+	 * Get the tick length and width for the axis.
+	 * @param   {String} prefix 'tick' or 'minorTick'
+	 * @returns {Array}        An array of tickLength and tickWidth
+	 */
+	tickSize: function (prefix) {
+		var options = this.options,
+			tickLength = options[prefix + 'Length'],
+			tickWidth = pick(options[prefix + 'Width'], prefix === 'tick' && this.isXAxis ? 1 : 0); // X axis defaults to 1
+
+		if (tickWidth && tickLength) {
+			// Negate the length
+			if (options[prefix + 'Position'] === 'inside') {
+				tickLength = -tickLength;
+			}
+			console.log(tickLength, tickWidth)
+			return [tickLength, tickWidth];
+		}
+			
+	},
+
+	/**
 	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
 	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
 	 * On a vertical axis remove ticks and add ellipsis.
@@ -1760,7 +1781,8 @@ Axis.prototype = {
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
 			axisParent = axis.axisParent, // Used in color axis
-			lineHeightCorrection;
+			lineHeightCorrection,
+			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
 		hasData = axis.hasData();
@@ -1870,7 +1892,8 @@ Axis.prototype = {
 		axisOffset[side] = mathMax(
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
-			labelOffsetPadded // #3027
+			labelOffsetPadded, // #3027
+			hasData && tickPositions.length && tickSize ? tickSize[0] : 0 // #4866
 		);
 
 		// Decide the clipping needed to keep the graph inside the plot area and axis lines
