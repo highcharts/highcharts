@@ -3144,7 +3144,14 @@
             this[key] = value;
         },
         dashstyleSetter: function (value) {
-            var i;
+            var i,
+                strokeWidth = this['stroke-width'];
+        
+            // If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new strokeWidth 
+            // function, we should be able to use that instead.
+            if (strokeWidth === 'inherit') {
+                strokeWidth = 1;
+            }
             value = value && value.toLowerCase();
             if (value) {
                 value = value
@@ -3160,10 +3167,10 @@
 
                 i = value.length;
                 while (i--) {
-                    value[i] = pInt(value[i]) * this['stroke-width'];
+                    value[i] = pInt(value[i]) * strokeWidth;
                 }
                 value = value.join(',')
-                    .replace('NaN', 'none'); // #3226
+                    .replace(/NaN/g, 'none'); // #3226
                 this.element.setAttribute('stroke-dasharray', value);
             }
         },
