@@ -18,12 +18,94 @@ $(function () {
                 oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
                 topLevelColumns = [],
                 chartTitle = options.title.text || 'Chart',
-                chartDesc,
+                hiddenSection = document.createElement('div'),
+                hiddenSectionContent = '',
+                tableShortcut = document.createElement('h3'),
+                tableShortcutAnchor = document.createElement('a'),
+                xAxisDesc,
+                yAxisDesc,
                 chartTypes = [],
+                chartTypeDesc,
+                // Descriptions for exotic chart types
+                typeDescriptionMap = {
+                    boxplot: ' Box plot charts are typically used to display groups of statistical data. ' +
+                             'Each data point in the chart can have up to 5 values: minimum, lower quartile, median, upper quartile and maximum. ',
+                    arearange: ' Arearange charts are line charts displaying a range between a lower and higher value for each point. ',
+                    areasplinerange: ' These charts are line charts displaying a range between a lower and higher value for each point. ',
+                    bubble: ' Bubble charts are scatter charts where each data point also has a size value. ',
+                    columnrange: ' Columnrange charts are column charts displaying a range between a lower and higher value for each point. ',
+                    errorbar: ' Errorbar series are used to display the variability of the data. ',
+                    funnel: ' Funnel charts are used to display reduction of data in stages. ',
+                    pyramid: ' Pyramid charts consist of a single pyramid with item heights corresponding to each point value. ',
+                    waterfall: ' A waterfall chart is a column chart where each column contributes towards a total end value. '
+                },
+                // Human readable description of series and each point in singular and plural
+                typeToSeriesMap = {
+                    'default': ['series', 'data point', 'data point'],
+                    'line': ['line', 'data point', 'data points'],
+                    'spline': ['line', 'data point', 'data points'],
+                    'area': ['line', 'data point', 'data points'],
+                    'areaspline': ['line', 'data point', 'data points'],
+                    'pie': ['pie', 'slice', 'slices'],
+                    'column': ['column series', 'column', 'columns'],
+                    'bar': ['bar series', 'bar', 'bars'],
+                    'scatter': ['scatter series', 'data point', 'data points'],
+                    'boxplot': ['boxplot series', 'box', 'boxes'],
+                    'arearange': ['arearange series', 'data point', 'data points'],
+                    'areasplinerange': ['areasplinerange series', 'data point', 'data points'],
+                    'bubble': ['bubble series', 'bubble', 'bubbles'],
+                    'columnrange': ['columnrange series', 'column', 'columns'],
+                    'errorbar': ['errorbar series', 'errorbar', 'errorbars'],
+                    'funnel': ['funnel', 'data point', 'data points'],
+                    'pyramid': ['pyramid', 'data point', 'data points'],
+                    'waterfall': ['waterfall series', 'column', 'columns']
+                },
+                yValueDesc,
+                commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
+                specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'],
+                yKeys = specialKeys.concat(['y']),
+                yValues = [],
                 i;
 
             if (!acsOptions.enabled) {
                 return;
+            }
+
+            // Add SVG title/desc tags
+            titleElement.textContent = chartTitle;
+            titleElement.id = titleId;
+            descElement.parentNode.insertBefore(titleElement, descElement);
+            chart.renderTo.setAttribute('role', 'region');
+            chart.renderTo.setAttribute('aria-label', chartTitle);
+
+            // Set attribs on context menu
+            function setContextMenuAttribs() {
+                var exportList = chart.exportDivElements;
+                if (exportList) {
+                    // Set tabindex on the menu items to allow focusing by script
+                    // Set role to give screen readers a chance to pick up the contents
+                    for (var i = 0; i < exportList.length; ++i) {
+                        if (exportList[i].tagName === 'DIV' &&
+                            !(exportList[i].children && exportList[i].children.length)) {
+                            exportList[i].setAttribute('role', 'menuitem');
+                            exportList[i].setAttribute('tabindex', -1);
+                        }
+                    }
+                    // Set accessibility properties on parent div
+                    exportList[0].parentNode.setAttribute('role', 'menu');
+                    exportList[0].parentNode.setAttribute('aria-label', 'Chart export');
+                }
+            }
+
+            // Set screen reader properties on menu parent div
+            if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
+                var oldExportCallback = chart.exportSVGElements[0].element.onclick;
+                chart.exportSVGElements[0].element.onclick = function () {
+                    oldExportCallback.apply(this, Array.prototype.slice.call(arguments));
+                    setContextMenuAttribs();
+                };
+                chart.exportSVGElements[0].element.setAttribute('role', 'button');
+                chart.exportSVGElements[0].element.setAttribute('aria-label', 'Chart export menu');
             }
 
             // Get label for axis (x or y)
@@ -44,53 +126,84 @@ $(function () {
                 }
             }
 
-            // Build chart description
-            chartDesc = (chartTypes.length === 1 && acsOptions.typeDescription !== null ?
-                            (acsOptions.typeDescription || chartTypes[0]) + ' chart. ' : '') +
-                        (acsOptions.description ? acsOptions.description : '');
-            chartDesc += (chartDesc.slice(-1) !== '.' ? '.' : '') +
-                        (!numSeries ? ' The chart is empty.' : '');
+            // Simplify description of chart type. Some types will not be familiar to most screen reader users, but we try.
+            if (chartTypes.length > 1) {
+                chartTypeDesc = 'Combination chart.';
+            } else if (chartTypes[0] === 'spline' || chartTypes[0] === 'area' || chartTypes[0] === 'areaspline') {
+                chartTypeDesc = 'Line chart.';
+            } else {
+                chartTypeDesc = chartTypes[0] + ' chart.' + (typeDescriptionMap[chartTypes[0]] || '');
+            }
 
-            // Add axis info - but not for pies
-            if (numXAxes && !(chartTypes.length === 1 && chartTypes[0] === 'pie')) {
-                chartDesc += ' The chart has ' + numXAxes + (numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
-                if (numXAxes < 2) {
-                    chartDesc += getAxisLabel(chart.xAxis[0]) + '.';
-                } else {
-                    for (i = 0; i < numXAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + getAxisLabel(chart.xAxis[i]);
+            // Add axis info - but not for pies. Consider not adding for other types as well (funnel, pyramid?)
+            if (!(chartTypes.length === 1 && chartTypes[0] === 'pie')) {
+                if (numXAxes) {
+                    xAxisDesc = 'The chart has ' + numXAxes + (numXAxes > 1 ? ' X axes' : ' X axis') + ' displaying ';
+                    if (numXAxes < 2) {
+                        xAxisDesc += getAxisLabel(chart.xAxis[0]) + '.';
+                    } else {
+                        for (i = 0; i < numXAxes - 1; ++i) {
+                            xAxisDesc += (i ? ', ' : '') + getAxisLabel(chart.xAxis[i]);
+                        }
+                        xAxisDesc += ' and ' + getAxisLabel(chart.xAxis[i]) + '.';
                     }
-                    chartDesc += ' and ' + getAxisLabel(chart.xAxis[numXAxes - 1]) + '.';
+                }
+
+                if (numYAxes) {
+                    yAxisDesc = 'The chart has ' + numYAxes + (numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
+                    if (numYAxes < 2) {
+                        yAxisDesc += getAxisLabel(chart.yAxis[0]) + '.';
+                    } else {
+                        for (i = 0; i < numYAxes - 1; ++i) {
+                            yAxisDesc += (i ? ', ' : '') + getAxisLabel(chart.yAxis[i]);
+                        }
+                        yAxisDesc += ' and ' + getAxisLabel(chart.yAxis[i]) + '.';
+                    }
                 }
             }
 
-            if (numYAxes && !(chartTypes.length === 1 && chartTypes[0] === 'pie')) {
-                chartDesc += ' The chart has ' + numYAxes + (numYAxes > 1 ? ' Y axes' : ' Y axis') + ' displaying ';
-                if (numYAxes < 2) {
-                    chartDesc += getAxisLabel(chart.yAxis[0]) + '.';
-                } else {
-                    for (i = 0; i < numYAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', ' : '') + getAxisLabel(chart.yAxis[i]);
-                    }
-                    chartDesc += ' and ' + getAxisLabel(chart.yAxis[numYAxes - 1]) + '.';
-                }
-            }
 
-            // Add SVG title/desc tags
-            titleElement.textContent = chartTitle;
-            titleElement.id = titleId;
-            descElement.textContent = chartDesc + ' ' + descElement.textContent;
-            descElement.id = descId;
-            descElement.parentNode.insertBefore(titleElement, descElement);
-            chart.renderTo.setAttribute('role', 'region');
-            chart.renderTo.setAttribute('aria-describedby', descId);
-            chart.renderTo.setAttribute('aria-label', chartTitle);
+            /* Add secret HTML section */
+
+            hiddenSection.setAttribute('role', 'region');
+            hiddenSection.setAttribute('aria-label', 'Chart screen reader information');
+
+            var chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
+            hiddenSectionContent = '<p>Use regions/landmarks to skip ahead to chart' +
+                (numSeries > 1 ? ' and navigate between data series' : '') + '.</p><h3>Summary</h3><p>' + chartTitle +
+                (options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
+                '</p><h3>Long description</h3><p>' + (acsOptions.description || 'No description available.') + '</p><h3>Structure</h3><p>' +
+                (acsOptions.typeDescription || chartTypeDesc) + '</p>' +
+                (numSeries === 1 ? '<p>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
+                    (series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</p>' : '') + '<p>' +
+                (xAxisDesc ? (' ' + xAxisDesc) : '') +
+                (yAxisDesc ? (' ' + yAxisDesc) : '') + '</p>';
+
+            tableShortcutAnchor.innerHTML = 'View as data table';
+            tableShortcutAnchor.href = '#tableId';
+            tableShortcutAnchor.onclick = function (e) {
+                chart.viewData();
+                document.getElementById(tableId).focus();
+            };
+            tableShortcut.appendChild(tableShortcutAnchor);
+
+            hiddenSection.innerHTML = hiddenSectionContent;
+            hiddenSection.appendChild(tableShortcut);
+            chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
+
+            // Shamelessly hide the hidden section
+            hiddenSection.style.position = 'absolute';
+            hiddenSection.style.left = '-9999em';
+            hiddenSection.style.width = '1px';
+            hiddenSection.style.height = '1px';
+            hiddenSection.style.overflow = 'hidden';
+
+
+            /* Put info on points and series groups */
 
             // Return string with information about point
             function buildPointInfoString(point) {
-                var commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
-                    specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'],
-                    infoString,
+                var infoString,
                     hasSpecialKey = false;
 
                 for (var i = 0; i < specialKeys.length; ++i) {
@@ -119,11 +232,12 @@ $(function () {
 
             // Return string with information about series
             function buildSeriesInfoString(dataSeries) {
+                var typeInfo = typeToSeriesMap[dataSeries.type] || typeToSeriesMap.default;
                 return (dataSeries.name ? dataSeries.name + ', ' : '') +
-                     'series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
-                    (chartTypes.length > 1 && dataSeries.type ? dataSeries.type + ' series with ' : '') +
-                    (dataSeries.points.length + ' points. ') +
-                    (dataSeries.description ? dataSeries.description : '') +
+                    ' series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
+                    typeInfo[0] + ' with ' +
+                    (dataSeries.points.length + ' ' + (dataSeries.points.length === 1 ? typeInfo[1] : typeInfo[2]) + '.') +
+                    (dataSeries.description || '') +
                     (numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + getAxisLabel(dataSeries.yAxis) : '') +
                     (numXAxes > 1 && dataSeries.xAxis ? 'X axis = ' + getAxisLabel(dataSeries.xAxis) : '');
             }
@@ -138,11 +252,13 @@ $(function () {
             // Put info on series and points of a series
             function setSeriesInfo(dataSeries) {
                 var firstPointEl = dataSeries.points && dataSeries.points[0].graphic && dataSeries.points[0].graphic.element,
-                    seriesEl = firstPointEl && firstPointEl.parentNode;
+                    seriesEl = firstPointEl && firstPointEl.parentNode; // Could be tracker series depending on series type
                 if (seriesEl) {
-                    seriesEl.setAttribute('role', 'region');
-                    seriesEl.setAttribute('tabindex', '-1');
-                    seriesEl.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
+                    if (numSeries > 1) {
+                        seriesEl.setAttribute('role', 'region');
+                        seriesEl.setAttribute('tabindex', '-1');
+                        seriesEl.setAttribute('aria-label', buildSeriesInfoString(dataSeries));
+                    }
                     // For some series types the order of elements do not match the order of points in series
                     if (seriesEl.lastChild === firstPointEl) {
                         reverseChildNodes(seriesEl);
@@ -164,6 +280,7 @@ $(function () {
                 proceed.apply(this, Array.prototype.slice.call(arguments, 1));
                 setSeriesInfo(this);
             });
+
 
             /* Wrap table functionality */
 
@@ -193,43 +310,47 @@ $(function () {
             // Add ID and title/caption to table HTML
             H.wrap(H.Chart.prototype, 'getTable', function (proceed) {
                 return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
-                    .replace('<table>', '<table id="' + tableId + '" summary="Table representation of chart. ' +
-                        (acsOptions.description ? acsOptions.description : '') + '"><caption>' + chartTitle + '</caption>');
+                    .replace('<table>', '<table id="' + tableId + '" summary="Table representation of chart"><caption>' + chartTitle + '</caption>');
             });
 
             // Add accessibility attributes and top level columns
             H.wrap(H.Chart.prototype, 'viewData', function (proceed) {
-                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-                var table = document.getElementById(tableId),
-                    body = table.getElementsByTagName('tbody')[0],
-                    firstRow = body.firstChild.children,
-                    columnHeaderRow = '<tr><th scope="col" aria-hidden="true"></th>',
-                    cell,
-                    newCell,
-                    i;
+                if (!this.insertedTable) {
+                    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+                    var table = document.getElementById(tableId),
+                        body = table.getElementsByTagName('tbody')[0],
+                        firstRow = body.firstChild.children,
+                        columnHeaderRow = '<tr><th scope="col" aria-hidden="true"></th>',
+                        cell,
+                        newCell,
+                        i;
 
-                // Create row headers
-                for (i = 0; i < body.children.length; ++i) {
-                    cell = body.children[i].firstChild;
-                    newCell = document.createElement('th');
-                    newCell.setAttribute('scope', 'row');
-                    newCell.innerHTML = cell.innerHTML;
-                    cell.parentNode.replaceChild(newCell, cell);
-                }
+                    // Make table focusable by script
+                    table.setAttribute('tabindex', '-1');
 
-                // Set scope for column headers
-                for (i = 0; i < firstRow.length; ++i) {
-                    if (firstRow[i].tagName === 'TH') {
-                        firstRow[i].setAttribute('scope', 'col');
+                    // Create row headers
+                    for (i = 0; i < body.children.length; ++i) {
+                        cell = body.children[i].firstChild;
+                        newCell = document.createElement('th');
+                        newCell.setAttribute('scope', 'row');
+                        newCell.innerHTML = cell.innerHTML;
+                        cell.parentNode.replaceChild(newCell, cell);
                     }
-                }
 
-                // Add top level columns
-                for (i = 0; i < topLevelColumns.length; ++i) {
-                    columnHeaderRow += '<th scope="col" colspan="' + topLevelColumns[i].span + '">' +
-                         topLevelColumns[i].text + '</th>';
+                    // Set scope for column headers
+                    for (i = 0; i < firstRow.length; ++i) {
+                        if (firstRow[i].tagName === 'TH') {
+                            firstRow[i].setAttribute('scope', 'col');
+                        }
+                    }
+
+                    // Add top level columns
+                    for (i = 0; i < topLevelColumns.length; ++i) {
+                        columnHeaderRow += '<th scope="col" colspan="' + topLevelColumns[i].span + '">' +
+                             topLevelColumns[i].text + '</th>';
+                    }
+                    body.insertAdjacentHTML('afterbegin', columnHeaderRow);
                 }
-                body.insertAdjacentHTML('afterbegin', columnHeaderRow);
             });
 
 
@@ -265,18 +386,6 @@ $(function () {
                 this.exportSVGElements[0].element.onclick();
                 exportList = chart.exportDivElements;
                 if (exportList) {
-                    // Set tabindex on the menu items to allow focusing by script
-                    // Set role to give screen readers a chance to pick up the contents
-                    for (var i = 0; i < exportList.length; ++i) {
-                        if (exportList[i].tagName === 'DIV' &&
-                            !(exportList[i].children && exportList[i].children.length)) {
-                            exportList[i].setAttribute('role', 'menuitem');
-                            exportList[i].setAttribute('tabindex', -1);
-                        }
-                    }
-                    // Set screen reader properties on menu parent div
-                    exportList[0].parentNode.setAttribute('role', 'menu');
-                    exportList[0].parentNode.setAttribute('aria-label', 'Chart export');
                     // Focus first menu item
                     if (exportList[0].focus) {
                         exportList[0].focus();
@@ -507,7 +616,8 @@ $(function () {
         },
         plotOptions: {
             series: {
-                keys: ['low', 'median', 'high']
+                keys: ['low', 'median', 'high'],
+                whiskerWidth: 5
             }
         },
         tooltip: {
