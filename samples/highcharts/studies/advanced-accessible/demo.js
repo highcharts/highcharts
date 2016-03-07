@@ -585,92 +585,77 @@ $(function () {
     }(Highcharts));
 
 
-    // Set up demo charts
+    // Set up demo chart
 
     $('#container').highcharts({
         accessibility: {
             enabled: true,
-            description: 'Chart displays arbitrary values throughout the year, with a clear drop during the winter months.',
+            description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey.',
             keyboardNavigation: {
                 skipNullPoints: true
-            },
-            pointInfoFormatter: function (point) {
-                return point.category + ', low ' + point.low + ', average ' + point.median + ', high ' + point.high;
             }
         },
-        chart: {
-            type: 'boxplot'
-        },
+
         title: {
-            text: 'Daily company fruit consumption 2015'
+            text: 'Desktop screen readers from 2009 to 2015'
         },
-        xAxis: [{
-            description: 'Months of the year',
-            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-        }],
-        yAxis: {
+
+        subtitle: {
+            text: 'Click on point to visit official website'
+        },
+
+        xAxis: {
             title: {
-                text: 'Fruits consumed'
+                text: 'Time'
             },
-            min: 0
+            categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
         },
+
         plotOptions: {
             series: {
-                keys: ['low', 'median', 'high'],
-                whiskerWidth: 5
+                events: {
+                    click: function () {
+                        window.location.href = this.options.website;
+                    }
+                },
+                cursor: 'pointer'
             }
         },
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Avg: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
-        },
-        series: [{
-            name: 'Plums',
-            data: [
-             [0, 8, 19],
-             [1, 11, 23],
-             [3, 16, 28],
-             [2, 15, 28],
-             [1, 15, 27],
-             [0, 9, 21],
-             [1, 6, 15],
-             [2, 5, 12],
-             [1, 6, 19],
-             [2, 8, 21],
-             [2, 9, 22],
-             [1, 11, 19]
-            ]
-        }, {
-            name: 'Bananas',
-            data: [
-             [0, 3, 6],
-             [1, 2, 4],
-             [0, 2, 5],
-             [2, 2, 5],
-             [1, 3, 6],
-             [0, 1, 3],
-             [1, 1, 2],
-             [0, 1, 3],
-             [1, 1, 3],
-             [0, 2, 4],
-             [1, 2, 5],
-             [1, 3, 5]
-            ]
-        }, {
-            name: 'Apples',
-            data: [
-             [1, 4, 6],
-             [2, 4, 5],
-             [1, 3, 6],
-             [2, 3, 6],
-             [1, 3, 4],
-             [0, 2, 4],
-             [0, 1, 2],
-             [0, 1, 2],
-             [0, 1, 2],
-             [0, 2, 4],
-             [1, 2, 4],
-             [1, 3, 4]
-            ]
-        }]
+
+        series: [
+            {
+                name: 'JAWS',
+                data: [74, 69.6, 63.7, 63.9, 43.7],
+                website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
+            }, {
+                name: 'NVDA',
+                data: [8, 34.8, 43.0, 51.2, 41.4],
+                website: 'https://www.nvaccess.org'
+            }, {
+                name: 'VoiceOver',
+                data: [6, 20.2, 30.7, 36.8, 30.9],
+                website: 'http://www.apple.com/accessibility/osx/voiceover'
+            }, {
+                name: 'Window-Eyes',
+                data: [23, 19.0, 20.7, 13.9, 29.6],
+                website: 'http://www.gwmicro.com/window-eyes'
+            }, {
+                name: 'ZoomText',
+                data: [0, 6.1, 6.8, 5.3, 27.5],
+                website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
+            }, {
+                name: 'System Access To Go',
+                data: [0, 16.2, 22.1, 26.2, 6.9],
+                website: 'https://www.satogo.com'
+            }, {
+                name: 'ChromeVox',
+                data: [0, 0, 2.8, 4.8, 2.8],
+                website: 'http://www.chromevox.com'
+            }, {
+                name: 'Other',
+                data: [0, 7.4, 5.9, 9.3, 6.5],
+                website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
+            }
+        ]
     });
 });
