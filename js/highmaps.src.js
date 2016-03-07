@@ -13865,7 +13865,7 @@
                 }
 
                 // Set the the plotY value, reset it for redraws
-                point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
+                point.plotY = plotY = !point.isNull ?
                     mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
                     UNDEFINED;
                 point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -13881,11 +13881,13 @@
                 point.category = categories && categories[point.x] !== UNDEFINED ?
                     categories[point.x] : point.x;
 
-                // Determine auto enabling of markers (#3635)
-                if (i) {
-                    closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+                // Determine auto enabling of markers (#3635, #5099)
+                if (!point.isNull) {
+                    if (lastPlotX !== undefined) {
+                        closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+                    }
+                    lastPlotX = plotX;
                 }
-                lastPlotX = plotX;
 
             }
             series.closestPointRangePx = closestPointRangePx;
