@@ -1546,7 +1546,6 @@ Axis.prototype = {
 			if (options[prefix + 'Position'] === 'inside') {
 				tickLength = -tickLength;
 			}
-			console.log(tickLength, tickWidth)
 			return [tickLength, tickWidth];
 		}
 			
@@ -1857,8 +1856,7 @@ Axis.prototype = {
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
 					align: 
-						axisTitleOptions.textAlign ||
-						{ 
+						axisTitleOptions.textAlign || { 
 							low: opposite ? 'right' : 'left',
 							middle: 'center',
 							high: opposite ? 'left' : 'right'
