@@ -1,6 +1,6 @@
 $(function () {
 
-    // Plugin for increasing chart accessibility
+    // Plugin prototype for increasing chart accessibility
     (function (H) {
         H.Chart.prototype.callbacks.push(function (chart) {
             var options = chart.options,
@@ -10,6 +10,7 @@ $(function () {
                 numXAxes = chart.xAxis.length,
                 numYAxes = chart.yAxis.length,
                 titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title'),
+                exportGroupElement = document.createElementNS('http://www.w3.org/2000/svg', 'g'),
                 descElement = chart.container.getElementsByTagName('desc')[0],
                 textElements = chart.container.getElementsByTagName('text'),
                 titleId = 'highcharts-title-' + chart.index,
@@ -76,7 +77,7 @@ $(function () {
             titleElement.id = titleId;
             descElement.parentNode.insertBefore(titleElement, descElement);
             chart.renderTo.setAttribute('role', 'region');
-            chart.renderTo.setAttribute('aria-label', chartTitle);
+            chart.renderTo.setAttribute('aria-label', chartTitle + '. Use up and down arrows to navigate.');
 
             // Set attribs on context menu
             function setContextMenuAttribs() {
@@ -99,13 +100,20 @@ $(function () {
 
             // Set screen reader properties on menu parent div
             if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
-                var oldExportCallback = chart.exportSVGElements[0].element.onclick;
+                var oldExportCallback = chart.exportSVGElements[0].element.onclick,
+                    parent = chart.exportSVGElements[0].element.parentNode;
                 chart.exportSVGElements[0].element.onclick = function () {
                     oldExportCallback.apply(this, Array.prototype.slice.call(arguments));
                     setContextMenuAttribs();
+                    chart.focusExportItem(0);
+                    chart.isExporting = true;
                 };
                 chart.exportSVGElements[0].element.setAttribute('role', 'button');
-                chart.exportSVGElements[0].element.setAttribute('aria-label', 'Chart export menu');
+                chart.exportSVGElements[0].element.setAttribute('aria-label', 'View export menu');
+                exportGroupElement.appendChild(chart.exportSVGElements[0].element);
+                exportGroupElement.setAttribute('role', 'region');
+                exportGroupElement.setAttribute('aria-label', 'Chart export menu');
+                parent.appendChild(exportGroupElement);
             }
 
             // Get label for axis (x or y)
@@ -169,15 +177,15 @@ $(function () {
             hiddenSection.setAttribute('aria-label', 'Chart screen reader information');
 
             var chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
-            hiddenSectionContent = '<p>Use regions/landmarks to skip ahead to chart' +
-                (numSeries > 1 ? ' and navigate between data series' : '') + '.</p><h3>Summary</h3><p>' + chartTitle +
+            hiddenSectionContent = '<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
+                (numSeries > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary</h3><div>' + chartTitle +
                 (options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
-                '</p><h3>Long description</h3><p>' + (acsOptions.description || 'No description available.') + '</p><h3>Structure</h3><p>' +
-                (acsOptions.typeDescription || chartTypeDesc) + '</p>' +
-                (numSeries === 1 ? '<p>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
-                    (series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</p>' : '') + '<p>' +
-                (xAxisDesc ? (' ' + xAxisDesc) : '') +
-                (yAxisDesc ? (' ' + yAxisDesc) : '') + '</p>';
+                '</div><h3>Long description</h3><div>' + (acsOptions.description || 'No description available.') +
+                '</div><h3>Structure</h3><p><div>Chart type: ' + (acsOptions.typeDescription || chartTypeDesc) + '</div>' +
+                (numSeries === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
+                    (series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
+                (xAxisDesc ? ('<div>' + xAxisDesc + '</div>') : '') +
+                (yAxisDesc ? ('<div>' + yAxisDesc + '</div>') : '') + '</p>';
 
             tableShortcutAnchor.innerHTML = 'View as data table';
             tableShortcutAnchor.href = '#tableId';
@@ -189,9 +197,17 @@ $(function () {
 
             hiddenSection.innerHTML = hiddenSectionContent;
             hiddenSection.appendChild(tableShortcut);
+            var chartHeading = document.createElement('h3');
+            chartHeading.innerHTML = 'Chart graphic';
+            chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
             chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
 
-            // Shamelessly hide the hidden section
+            // Shamelessly hide the hidden section and the chart heading
+            chartHeading.style.position = 'absolute';
+            chartHeading.style.left = '-9999em';
+            chartHeading.style.width = '1px';
+            chartHeading.style.height = '1px';
+            chartHeading.style.overflow = 'hidden';
             hiddenSection.style.position = 'absolute';
             hiddenSection.style.left = '-9999em';
             hiddenSection.style.width = '1px';
@@ -203,7 +219,7 @@ $(function () {
 
             // Return string with information about point
             function buildPointInfoString(point) {
-                var infoString,
+                var infoString = '',
                     hasSpecialKey = false;
 
                 for (var i = 0; i < specialKeys.length; ++i) {
@@ -218,7 +234,7 @@ $(function () {
                     H.each(commonKeys.concat(specialKeys), function (key) {
                         var value = point[key];
                         if (value !== undefined) {
-                            infoString += '. ' + key + ', ' + value;
+                            infoString += (infoString ? '. ' : '') + key + ', ' + value;
                         }
                     });
                 } else {
@@ -227,15 +243,15 @@ $(function () {
                         (point.value !== undefined ? point.value : point.y);
                 }
 
-                return (point.index + 1) + '. ' + infoString + (point.description ? '. ' + point.description : '');
+                return (point.index + 1) + '. ' + infoString + (point.description ? '. ' + point.description : '') + '.';
             }
 
             // Return string with information about series
             function buildSeriesInfoString(dataSeries) {
                 var typeInfo = typeToSeriesMap[dataSeries.type] || typeToSeriesMap.default;
                 return (dataSeries.name ? dataSeries.name + ', ' : '') +
-                    ' series ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) + '. ' +
-                    typeInfo[0] + ' with ' +
+                    (chartTypes.length === 1 ? typeInfo[0] : 'series') + ' ' + (dataSeries.index + 1) + ' of ' + (dataSeries.chart.series.length) +
+                    (chartTypes.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
                     (dataSeries.points.length + ' ' + (dataSeries.points.length === 1 ? typeInfo[1] : typeInfo[2]) + '.') +
                     (dataSeries.description || '') +
                     (numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + getAxisLabel(dataSeries.yAxis) : '') +
@@ -320,7 +336,7 @@ $(function () {
                     var table = document.getElementById(tableId),
                         body = table.getElementsByTagName('tbody')[0],
                         firstRow = body.firstChild.children,
-                        columnHeaderRow = '<tr><th scope="col" aria-hidden="true"></th>',
+                        columnHeaderRow = '<tr><td></td>',
                         cell,
                         newCell,
                         i;
@@ -382,16 +398,21 @@ $(function () {
 
             // Function to show the export menu and focus the first item (if exists)
             H.Chart.prototype.showExportMenu = function () {
-                var exportList;
                 this.exportSVGElements[0].element.onclick();
-                exportList = chart.exportDivElements;
-                if (exportList) {
+                this.focusExportItem(0);
+            };
+
+            H.Chart.prototype.focusExportItem = function (ix) {
+                var listItem = chart.exportDivElements && chart.exportDivElements[ix];
+                if (listItem) {
                     // Focus first menu item
-                    if (exportList[0].focus) {
-                        exportList[0].focus();
+                    if (listItem.focus) {
+                        listItem.focus();
                     }
-                    exportList[0].onmouseover();
-                    this.highlightedExportItem = 0; // Keep reference to focused item index
+                    if (listItem.onmouseover) {
+                        listItem.onmouseover();
+                    }
+                    this.highlightedExportItem = ix; // Keep reference to focused item index
                 }
             };
 
@@ -473,10 +494,18 @@ $(function () {
                     chart.isExporting = false;
                 }
 
-                // Tab = right, Shift+Tab = left
+                // Handle tabbing
                 if (keyCode === 9) {
+                    // If we reached end of chart, we need to let this tab slip through to allow users to tab further
+                    if (chart.slipNextTab && !e.shiftKey) {
+                        chart.slipNextTab = false;
+                        return;
+                    }
+                    // Interpret tab as left/right
                     keyCode = e.shiftKey ? 37 : 39;
                 }
+                // If key was not tab, or shift+tab instead, don't slip the next tab
+                chart.slipNextTab = false;
 
                 if (!chart.isExporting) {
                     switch (keyCode) {
@@ -563,6 +592,7 @@ $(function () {
                             // Some browsers won't allow mutation of event object, but try anyway
                             e.which = e.keyCode = 9;
                             e.shiftKey = false;
+                            chart.slipNextTab = true; // Allow next tab to slip through without processing
                             return;
                         }
                         break;
@@ -596,66 +626,79 @@ $(function () {
             }
         },
 
+        chart: {
+            type: 'boxplot'
+        },
         title: {
-            text: 'Desktop screen readers from 2009 to 2015'
+            text: 'Daily company fruit consumption 2015'
         },
-
-        subtitle: {
-            text: 'Click on point to visit official website'
-        },
-
-        xAxis: {
+        xAxis: [{
+            description: 'Months of the year',
+            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        }],
+        yAxis: {
             title: {
-                text: 'Time'
+                text: 'Fruits consumed'
             },
-            categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
+            min: 0
         },
-
         plotOptions: {
             series: {
-                events: {
-                    click: function () {
-                        window.location.href = this.options.website;
-                    }
-                },
-                cursor: 'pointer'
+                keys: ['low', 'median', 'high'],
+                whiskerWidth: 5
             }
         },
-
-        series: [
-            {
-                name: 'JAWS',
-                data: [74, 69.6, 63.7, 63.9, 43.7],
-                website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
-            }, {
-                name: 'NVDA',
-                data: [8, 34.8, 43.0, 51.2, 41.4],
-                website: 'https://www.nvaccess.org'
-            }, {
-                name: 'VoiceOver',
-                data: [6, 20.2, 30.7, 36.8, 30.9],
-                website: 'http://www.apple.com/accessibility/osx/voiceover'
-            }, {
-                name: 'Window-Eyes',
-                data: [23, 19.0, 20.7, 13.9, 29.6],
-                website: 'http://www.gwmicro.com/window-eyes'
-            }, {
-                name: 'ZoomText',
-                data: [0, 6.1, 6.8, 5.3, 27.5],
-                website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
-            }, {
-                name: 'System Access To Go',
-                data: [0, 16.2, 22.1, 26.2, 6.9],
-                website: 'https://www.satogo.com'
-            }, {
-                name: 'ChromeVox',
-                data: [0, 0, 2.8, 4.8, 2.8],
-                website: 'http://www.chromevox.com'
-            }, {
-                name: 'Other',
-                data: [0, 7.4, 5.9, 9.3, 6.5],
-                website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
-            }
-        ]
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Avg: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
+        },
+        series: [{
+            name: 'Plums',
+            data: [
+             [0, 8, 19],
+             [1, 11, 23],
+             [3, 16, 28],
+             [2, 15, 28],
+             [1, 15, 27],
+             [0, 9, 21],
+             [1, 6, 15],
+             [2, 5, 12],
+             [1, 6, 19],
+             [2, 8, 21],
+             [2, 9, 22],
+             [1, 11, 19]
+            ]
+        }, {
+            name: 'Bananas',
+            data: [
+             [0, 3, 6],
+             [1, 2, 4],
+             [0, 2, 5],
+             [2, 2, 5],
+             [1, 3, 6],
+             [0, 1, 3],
+             [1, 1, 2],
+             [0, 1, 3],
+             [1, 1, 3],
+             [0, 2, 4],
+             [1, 2, 5],
+             [1, 3, 5]
+            ]
+        }, {
+            name: 'Apples',
+            data: [
+             [1, 4, 6],
+             [2, 4, 5],
+             [1, 3, 6],
+             [2, 3, 6],
+             [1, 3, 4],
+             [0, 2, 4],
+             [0, 1, 2],
+             [0, 1, 2],
+             [0, 1, 2],
+             [0, 2, 4],
+             [1, 2, 4],
+             [1, 3, 4]
+            ]
+        }]
     });
 });
