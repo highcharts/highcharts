@@ -174,20 +174,20 @@ $(function () {
             /* Add secret HTML section */
 
             hiddenSection.setAttribute('role', 'region');
-            hiddenSection.setAttribute('aria-label', 'Chart screen reader information');
+            hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
             var chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
             hiddenSectionContent = '<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
-                (numSeries > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary</h3><div>' + chartTitle +
+                (numSeries > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + chartTitle +
                 (options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
-                '</div><h3>Long description</h3><div>' + (acsOptions.description || 'No description available.') +
-                '</div><h3>Structure</h3><p><div>Chart type: ' + (acsOptions.typeDescription || chartTypeDesc) + '</div>' +
+                '</div><h3>Long description.</h3><div>' + (acsOptions.description || 'No description available.') +
+                '</div><h3>Structure.</h3><p><div>Chart type: ' + (acsOptions.typeDescription || chartTypeDesc) + '</div>' +
                 (numSeries === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
                     (series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
                 (xAxisDesc ? ('<div>' + xAxisDesc + '</div>') : '') +
                 (yAxisDesc ? ('<div>' + yAxisDesc + '</div>') : '') + '</p>';
 
-            tableShortcutAnchor.innerHTML = 'View as data table';
+            tableShortcutAnchor.innerHTML = 'View as data table.';
             tableShortcutAnchor.href = '#tableId';
             tableShortcutAnchor.setAttribute('tabindex', '-1'); // Don't make this reachable by user tabbing
             tableShortcutAnchor.onclick = function (e) {
@@ -199,7 +199,7 @@ $(function () {
             hiddenSection.innerHTML = hiddenSectionContent;
             hiddenSection.appendChild(tableShortcut);
             var chartHeading = document.createElement('h3');
-            chartHeading.innerHTML = 'Chart graphic';
+            chartHeading.innerHTML = 'Chart graphic.';
             chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
             chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
 
