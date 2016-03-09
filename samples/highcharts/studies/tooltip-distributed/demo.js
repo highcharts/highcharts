@@ -31,7 +31,7 @@ $(function() {
                 hoverPoints = chart.hoverPoints,
                 rightAligned = true;
                 
-            if (options.shared && options.distributed && !chart.inverted) {
+            if (options.shared && options.split && !chart.inverted) {
                 points = splat(point);
                 
                 // hide previous hoverPoints and set new
@@ -165,7 +165,7 @@ $(function() {
         tooltip: {
             valueSuffix: '°C',
             shared: true,
-            distributed: true,
+            split: true,
             distance: 30
         },
         
