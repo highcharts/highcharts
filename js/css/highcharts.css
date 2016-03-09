@@ -64,6 +64,13 @@
 .highcharts-minor-grid-line {
   stroke: #e0e0e0; }
 
+.highcharts-crosshair-thin {
+  stroke-width: 1px;
+  stroke: #c0c0c0; }
+
+.highcharts-crosshair-category {
+  stroke: rgba(155, 200, 255, 0.2); }
+
 /* Credits */
 .highcharts-credits {
   cursor: pointer;

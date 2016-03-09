@@ -7543,7 +7543,8 @@ H.Axis.prototype = {
             pos,
             attribs,
             categorized,
-            strokeWidth;
+            strokeWidth,
+            graphic = this.cross;
 
         if (
             // Disabled in options
@@ -7574,26 +7575,31 @@ H.Axis.prototype = {
             }
 
             categorized = this.categories && !this.isRadial;
-            strokeWidth = pick(options.width, (categorized ? this.transA : 1));
-
+            
             // Draw the cross
-            if (this.cross) {
-                this.cross
+            if (!graphic) {
+                this.cross = graphic = this.chart.renderer
+                    .path()
+                    .addClass('highcharts-crosshair highcharts-crosshair-' + 
+                        (categorized ? 'category ' : 'thin ') + options.className) // docs: className
                     .attr({
-                        d: path,
-                        visibility: 'visible',
-                        'stroke-width': strokeWidth // #4737
-                    });
-            } else {
-                attribs = {
-                    'stroke-width': strokeWidth,
-                    stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
-                    zIndex: pick(options.zIndex, 2)
-                };
+                        zIndex: pick(options.zIndex, 2)
+                    })
+                    .add();
+
                 
-                this.cross = this.chart.renderer.path(path).attr(attribs).add();
+                
             }
 
+            graphic.show().attr({
+                d: path
+            });
+
+            if (categorized) {
+                graphic.attr({
+                    'stroke-width': this.transA
+                });
+            }
         }
 
     },

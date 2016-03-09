@@ -67,6 +67,13 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-minor-grid-line {
     stroke: #e0e0e0;
 }
+.highcharts-crosshair-thin {
+    stroke-width: 1px;
+    stroke: #c0c0c0;
+}
+.highcharts-crosshair-category {
+    stroke: rgba(155,200,255,0.2);
+}
 
 
 /* Credits */
