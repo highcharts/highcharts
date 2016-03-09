@@ -365,7 +365,6 @@ g.highcharts-series, .highcharts-point {
 .highcharts-button {
   cursor: default;
   fill: #f6f6f6;
-  /* todo: gradient */
   stroke: #CCC;
   stroke-width: 1px;
   transition: fill 250ms; }
