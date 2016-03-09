@@ -2321,7 +2321,6 @@ SVGElement.prototype = {
         }
         return this;
     },
-    /* hasClass and removeClass are not (yet) needed */
     hasClass: function (className) {
         return attr(this.element, 'class').indexOf(className) !== -1;
     },
@@ -8576,7 +8575,6 @@ H.Tooltip.prototype = {
             pointConfig = [],
             formatter = options.formatter || tooltip.defaultFormatter,
             hoverPoints = chart.hoverPoints,
-            borderColor,
             shared = tooltip.shared,
             currentSeries;
 
@@ -8640,11 +8638,12 @@ H.Tooltip.prototype = {
                 text: text
             });
 
-            // set the stroke color of the box
-            borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
-            label.attr({
-                stroke: borderColor
-            });
+            // Set the stroke color of the box to reflect the point
+            label.removeClass(/highcharts-color-[\d]+/g)
+                .addClass('highcharts-color-' + pick(point.colorIndex, currentSeries.colorIndex));
+
+            
+
             tooltip.updatePosition({
                 plotX: x,
                 plotY: y,
@@ -8655,12 +8654,6 @@ H.Tooltip.prototype = {
 
             this.isHidden = false;
         }
-        fireEvent(chart, 'tooltipRefresh', {
-            text: text,
-            x: x + chart.plotLeft,
-            y: y + chart.plotTop,
-            borderColor: borderColor
-        });
     },
 
     /**

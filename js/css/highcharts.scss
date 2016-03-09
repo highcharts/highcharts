@@ -87,10 +87,13 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 
 /* Tooltip */
 .highcharts-tooltip {
-    fill: #333333;
     cursor: default;
     pointer-events: none;
     white-space: nowrap;
+    transition: stroke 150ms;
+}
+.highcharts-tooltip text {
+    fill: #333333;
 }
 .highcharts-tooltip .highcharts-header {
     font-size: 0.85em;

@@ -401,7 +401,6 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
