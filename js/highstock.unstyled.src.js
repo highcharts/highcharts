@@ -22939,22 +22939,16 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
     // If the label does not exist yet, create it.
     if (!crossLabel) {
         crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
-        .attr({
-            align: options.align || align,
-            zIndex: 12,
-            fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-            padding: pick(options.padding, 8),
-            stroke: options.borderColor || '',
-            'stroke-width': options.borderWidth || 0,
-            r: pick(options.borderRadius, 3)
-        })
-        .css(extend({
-            color: 'white',
-            fontWeight: 'normal',
-            fontSize: '11px',
-            textAlign: 'center'
-        }, options.style))
-        .add();
+            .addClass('highcharts-crosshair-label' + (this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
+            .attr({
+                align: options.align || align,
+                padding: pick(options.padding, 8),
+                r: pick(options.borderRadius, 3),
+                zIndex: 2
+            })
+            .add(this.labelGroup);
+
+        
     }
 
     if (horiz) {
