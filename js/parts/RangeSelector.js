@@ -31,29 +31,7 @@ extend(defaultOptions, {
 		buttonTheme: {
 			width: 28,
 			height: 18,
-			padding: 2,
-			r: 0,
-			zIndex: 7, // #484, #852
-			// TODO: Combine this with with the default buttons so we don't have two styles
-			fill: '#f7f7f7',
-			'stroke-width': 0,
-			style: {
-				color: '#444',
-				cursor: 'pointer',
-				fontWeight: 'normal'
-			},
-			states: {
-				hover: {
-					fill: '#e7e7e7'
-				},
-				select: {
-					fill: '#e7f0f9',
-					style: {
-						color: 'black',
-						fontWeight: 'bold'
-					}
-				}
-			}
+			zIndex: 7 // #484, #852
 		},
 		height: 35, // reserved space for buttons and input
 		inputPosition: {

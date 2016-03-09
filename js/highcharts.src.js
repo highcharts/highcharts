@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-03-04)
+ * @license Highcharts JS v5.0-dev (2016-03-09)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3803,33 +3803,24 @@ SVGRenderer.prototype = {
             curState = 0;
 
         label.attr(merge({
-            r: 2,
-            padding: 5
+            'padding': 2,
+            'stroke-width': 0
         }, normalState));
 
         
         // Presentational
-        var stateOptions,
-            stateStyle,
-            normalStyle,
+        var normalStyle,
             hoverStyle,
             pressedStyle,
-            disabledStyle,
-            verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
+            disabledStyle;
 
         // Normal state - prepare the attributes
         normalState = merge({
-            'stroke-width': 1,
-            stroke: '#CCCCCC',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#FEFEFE'],
-                    [1, '#F6F6F6']
-                ]
-            },
+            fill: '#f7f7f7',
             style: {
-                color: 'black'
+                color: '#444444',
+                cursor: 'pointer',
+                fontWeight: 'normal'
             }
         }, normalState);
         normalStyle = normalState.style;
@@ -3837,21 +3828,17 @@ SVGRenderer.prototype = {
 
         // Hover state
         hoverState = merge(normalState, {
-            stroke: '#68A',
-            fill: '#f7f7f7'
+            fill: '#e7e7e7'
         }, hoverState);
         hoverStyle = hoverState.style;
         delete hoverState.style;
 
         // Pressed state
         pressedState = merge(normalState, {
-            stroke: '#68A',
-            fill: {
-                linearGradient: verticalGradient,
-                stops: [
-                    [0, '#9BD'],
-                    [1, '#CDF']
-                ]
+            fill: '#e7f0f9',
+            style: {
+                color: '#000000',
+                fontWeight: 'bold'
             }
         }, pressedState);
         pressedStyle = pressedState.style;

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-04)
+ * @license Highmaps JS v2.0-dev (2016-03-09)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -3582,8 +3582,8 @@ SVGRenderer.prototype = {
             curState = 0;
 
         label.attr(merge({
-            r: 2,
-            padding: 5
+            'padding': 2,
+            'stroke-width': 0
         }, normalState));
 
         
