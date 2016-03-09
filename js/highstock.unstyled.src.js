@@ -4274,7 +4274,7 @@ SVGRenderer.prototype = {
     label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
         var renderer = this,
-            wrapper = renderer.g(className),
+            wrapper = renderer.g(className || 'label'),
             text = renderer.text('', 0, 0, useHTML)
                 .attr({
                     zIndex: 1
@@ -21695,11 +21695,8 @@ extend(defaultOptions, {
         // inputDateFormat: '%b %e, %Y',
         // inputEditDateFormat: '%Y-%m-%d',
         // inputEnabled: true,
-        // inputStyle: {},
-        labelStyle: {
-            color: '#666'
-        }
         // selected: undefined
+        
     }
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
@@ -22106,27 +22103,25 @@ RangeSelector.prototype = {
 
         // Create the text label
         this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
+            .addClass('highcharts-range-label')
             .attr({
                 padding: 2
             })
-            .css(merge(chartStyle, options.labelStyle))
             .add(inputGroup);
         inputGroup.offset += label.width + 5;
 
         // Create an SVG label that shows updated date ranges and and records click events that
         // bring in the HTML input.
         this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
+            .addClass('highcharts-range-input')
             .attr({
                 padding: 2,
                 width: options.inputBoxWidth || 90,
                 height: options.inputBoxHeight || 17,
                 stroke: options.inputBoxBorderColor || 'silver',
-                'stroke-width': 1
+                'stroke-width': 1,
+                'text-align': 'center'
             })
-            .css(merge({
-                textAlign: 'center',
-                color: '#444'
-            }, chartStyle, options.inputStyle))
             .on('click', function () {
                 rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
                 rangeSelector[name + 'Input'].focus();
@@ -22141,18 +22136,11 @@ RangeSelector.prototype = {
             name: name,
             className: 'highcharts-range-selector',
             type: 'text'
-        }, extend({
-            position: 'absolute',
-            border: 0,
-            width: '1px', // Chrome needs a pixel to see it
-            height: '1px',
-            padding: 0,
-            textAlign: 'center',
-            fontSize: chartStyle.fontSize,
-            fontFamily: chartStyle.fontFamily,
-            left: '-9em', // #4798
+        }, {
             top: chart.plotTop + 'px' // prevent jump on focus in Firefox
-        }, options.inputStyle), div);
+        }, div);
+
+        
 
         // Blow up the input box
         input.onfocus = function () {

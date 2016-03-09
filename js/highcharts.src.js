@@ -4542,7 +4542,7 @@ SVGRenderer.prototype = {
     label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
         var renderer = this,
-            wrapper = renderer.g(className),
+            wrapper = renderer.g(className || 'label'),
             text = renderer.text('', 0, 0, useHTML)
                 .attr({
                     zIndex: 1

@@ -16,6 +16,9 @@
 .highcharts-root text {
   stroke-width: 0; }
 
+.highcharts-label rect {
+  fill: none; }
+
 .highcharts-background {
   fill: #ffffff; }
 
@@ -385,6 +388,23 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-range-selector-buttons .highcharts-button {
   stroke-width: 0; }
+
+.highcharts-range-label text {
+  fill: #666; }
+
+.highcharts-range-input text {
+  fill: #444; }
+
+input.highcharts-range-selector {
+  position: absolute;
+  border: 0;
+  width: 1px;
+  /* Chrome needs a pixel to see it */
+  height: 1px;
+  padding: 0;
+  text-align: center;
+  left: -9em;
+  /* #4798 */ }
 
 .highcharts-candlestick-series .highcharts-point {
   stroke: black;
