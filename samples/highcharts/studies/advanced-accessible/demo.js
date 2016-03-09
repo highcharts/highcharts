@@ -189,6 +189,7 @@ $(function () {
 
             tableShortcutAnchor.innerHTML = 'View as data table';
             tableShortcutAnchor.href = '#tableId';
+            tableShortcutAnchor.setAttribute('tabindex', '-1'); // Don't make this reachable by user tabbing
             tableShortcutAnchor.onclick = function (e) {
                 chart.viewData();
                 document.getElementById(tableId).focus();
