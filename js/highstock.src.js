@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-09)
+ * @license Highstock JS v4.2.3-modified (2016-03-14)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -14413,9 +14413,14 @@
         /**
          * Return the series points with null points filtered out
          */
-        getValidPoints: function (points) {
+        getValidPoints: function (points, cropByX) {
+            var axisLen = this.xAxis.len;
             return grep(points || this.points || [], function (point) { // #5029
-                return !point.isNull;
+                var keep = !point.isNull;
+                if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
+                    keep = false;
+                }
+                return keep;
             });
         },
 
@@ -15405,7 +15410,7 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
+                series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
             }
             delete series.kdTree;
 
@@ -20164,7 +20169,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-09)
+     * Highstock JS v4.2.3-modified (2016-03-14)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
