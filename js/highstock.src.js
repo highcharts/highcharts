@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2016-03-09)
+ * @license Highstock JS v3.0-dev (2016-03-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -11470,7 +11470,7 @@ Legend.prototype = {
             legendSymbol = item.legendSymbol,
             hiddenColor = legend.itemHiddenStyle.color,
             textColor = visible ? options.itemStyle.color : hiddenColor,
-            symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
+            symbolColor = visible ? (item.color || '#CCC') : hiddenColor,
             markerOptions = item.options && item.options.marker,
             symbolAttr = { fill: symbolColor },
             key;
@@ -20908,7 +20908,7 @@ Series.prototype.gappedPath = function () {
     return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2016-03-09)
+ * Highstock JS v3.0-dev (2016-03-15)
  * Highcharts Broken Axis module
  * 
  * License: www.highcharts.com/license

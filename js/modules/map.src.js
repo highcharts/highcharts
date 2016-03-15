@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-09)
+ * @license Highmaps JS v2.0-dev (2016-03-15)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -635,6 +635,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
     return allItems.concat(proceed.call(this));
 });
 
+wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
+    proceed.call(this, item, visible);
+    if (visible && item.legendColor) {
+        item.legendSymbol.attr({
+            fill: item.legendColor
+        });
+    }
+});
+
     return H;
 }(Highcharts));
 (function (H) {
@@ -671,7 +680,9 @@ H.colorSeriesMixin = {
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
 
+    
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    
     
     /**
      * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -693,6 +704,15 @@ H.colorSeriesMixin = {
                 point.color = color;
             }
         });
+    },
+
+    /**
+     * Get the color attibutes to apply on the graphic
+     */
+    colorAttribs: function (point) {
+        return {
+            fill: point.color
+        };
     }
 };
     return H;
@@ -1085,6 +1105,7 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
         return point;
     },
 
+    
     /**
      * Stop the fade-out
      */
@@ -1096,8 +1117,6 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
             this.series.onMouseOut(e);
         }
     },
-    
-    // Todo: check unstyled
     /**
      * Custom animation for tweening out the colors. Animation reduces blinking when hovering
      * over islands and coast lines. We run a custom implementation of animation becuase we
@@ -1107,8 +1126,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
     onMouseOut: function () {
         var point = this,
             start = +new Date(),
-            normalColor = Color(this.series.pointAttribs(point).fill),
-            hoverColor = Color(this.series.pointAttribs(point, 'hover').fill),
+            normalColor = Color(this.series.colorAttribs(point).fill),
+            hoverColor = Color(this.series.colorAttribs(point, 'hover').fill),
             animation = point.series.options.states.normal.animation,
             duration = animation && (animation.duration || 500);
 
@@ -1459,6 +1478,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         series.translateColors();
     },
 
+    
     /**
      * Get presentational attributes
      */
@@ -1481,6 +1501,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
         return attr;
     },
+    
     
     /** 
      * Use the drawPoints method of column, that is able to handle simple shapeArgs.
@@ -1514,19 +1535,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         // Draw the shapes again
         if (series.doFullTranslate()) {
 
-            // Individual point actions. TODO: Check unstyled.
-            
-            if (chart.hasRendered) {
-                each(series.points, function (point) {
-
-                    // Restore state color on update/redraw (#3529)
-                    if (point.shapeArgs) {
-                        point.shapeArgs.fill = series.pointAttribs(point, point.state).fill;
-                    }
-                });
-            }
-            
-
             // Draw them in transformGroup
             series.group = series.transformGroup;
             seriesTypes.column.prototype.drawPoints.apply(series);
@@ -1541,6 +1549,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
                     if (point.properties && point.properties['hc-key']) {
                         point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
                     }
+                    point.graphic.attr(series.colorAttribs(point, point.state));
                 }
             });
 

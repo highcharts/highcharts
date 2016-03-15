@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-09)
+ * @license Highmaps JS v2.0-dev (2016-03-15)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -16085,6 +16085,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
     return allItems.concat(proceed.call(this));
 });
 
+wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
+    proceed.call(this, item, visible);
+    if (visible && item.legendColor) {
+        item.legendSymbol.attr({
+            fill: item.legendColor
+        });
+    }
+});
+
     return H;
 }(Highcharts));
 (function (H) {
@@ -16121,7 +16130,7 @@ H.colorSeriesMixin = {
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
 
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    
     
     /**
      * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -16143,6 +16152,15 @@ H.colorSeriesMixin = {
                 point.color = color;
             }
         });
+    },
+
+    /**
+     * Get the color attibutes to apply on the graphic
+     */
+    colorAttribs: function (point) {
+        return {
+            fill: point.color
+        };
     }
 };
     return H;
@@ -16242,17 +16260,6 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
         return point;
     },
 
-    /**
-     * Stop the fade-out
-     */
-    onMouseOver: function (e) {
-        clearTimeout(this.colorInterval);
-        if (this.value !== null) {
-            Point.prototype.onMouseOver.call(this, e);
-        } else { //#3401 Tooltip doesn't hide when hovering over null points
-            this.series.onMouseOut(e);
-        }
-    },
     
 
     /**
@@ -16580,28 +16587,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         series.translateColors();
     },
 
-    /**
-     * Get presentational attributes
-     */
-    pointAttribs: function (point, state) {
-        var attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
-
-        // Prevent flickering whan called from setState
-        if (point.isFading) {
-            delete attr.fill;
-        }
-
-        // If vector-effect is not supported, we set the stroke-width on the group element
-        // and let all point graphics inherit. That way we don't have to iterate over all 
-        // points to update the stroke-width on zooming. TODO: Check unstyled
-        if (supportsVectorEffect) {
-            attr['vector-effect'] = 'non-scaling-stroke';
-        } else {
-            attr['stroke-width'] = 'inherit';
-        }
-
-        return attr;
-    },
+    
     
     /** 
      * Use the drawPoints method of column, that is able to handle simple shapeArgs.
@@ -16635,9 +16621,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         // Draw the shapes again
         if (series.doFullTranslate()) {
 
-            // Individual point actions. TODO: Check unstyled.
-            
-
             // Draw them in transformGroup
             series.group = series.transformGroup;
             seriesTypes.column.prototype.drawPoints.apply(series);
@@ -16652,6 +16635,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
                     if (point.properties && point.properties['hc-key']) {
                         point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
                     }
+                    point.graphic.attr(series.colorAttribs(point, point.state));
                 }
             });
 

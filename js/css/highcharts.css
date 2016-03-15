@@ -247,6 +247,10 @@ g.highcharts-series, .highcharts-point {
 .highcharts-legend-nav-inactive {
   fill: #c0c0c0; }
 
+.highcharts-legend-title-box {
+  fill: none;
+  stroke-width: 0; }
+
 /* Loading */
 .highcharts-loading {
   position: absolute;
@@ -444,3 +448,12 @@ input.highcharts-range-selector {
   fill: black;
   font-size: 0.9em;
   font-weight: bold; }
+
+/* Highmaps */
+.highcharts-map-series .highcharts-point {
+  transition: fill 500ms, fill-opacity 500ms, stroke-width 250ms; }
+
+.highcharts-map-series .highcharts-point-hover {
+  transition: fill 0ms, fill-opacity 0ms;
+  fill-opacity: 0.5;
+  stroke-width: 2px; }

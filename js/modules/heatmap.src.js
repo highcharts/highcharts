@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v5.0-dev (2016-03-09)
+ * @license Highcharts JS v5.0-dev (2016-03-15)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -521,6 +521,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
     return allItems.concat(proceed.call(this));
 });
 
+wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
+    proceed.call(this, item, visible);
+    if (visible && item.legendColor) {
+        item.legendSymbol.attr({
+            fill: item.legendColor
+        });
+    }
+});
+
     return H;
 }(Highcharts));
 (function (H) {
@@ -557,7 +566,9 @@ H.colorSeriesMixin = {
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
 
+    
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    
     
     /**
      * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -579,6 +590,15 @@ H.colorSeriesMixin = {
                 point.color = color;
             }
         });
+    },
+
+    /**
+     * Get the color attibutes to apply on the graphic
+     */
+    colorAttribs: function (point) {
+        return {
+            fill: point.color
+        };
     }
 };
     return H;
