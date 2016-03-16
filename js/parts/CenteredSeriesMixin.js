@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var pick = H.pick,
 		relativeLength = H.relativeLength;
 
@@ -41,5 +43,4 @@ H.CenteredSeriesMixin = {
 	}
 };
 
-	return H;
-}(Highcharts));
+}());
