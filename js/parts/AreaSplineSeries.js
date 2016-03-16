@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Legend.js';
+import './AreaSeries.js';
+import './SplineSeries.js';
+(function () {
 	var areaProto = H.seriesTypes.area.prototype,
 		defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
@@ -22,5 +27,4 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
 
-	return H;
-}(Highcharts));
+}());
