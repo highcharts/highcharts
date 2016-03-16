@@ -65,7 +65,7 @@ H.colorSeriesMixin = {
 	colorAttribs: function (point) {
 		var ret = {};
 		if (defined(point.color)) {
-			ret.fill = point.color;
+			ret[this.colorProp || 'fill'] = point.color;
 		}
 		return ret;
 	}

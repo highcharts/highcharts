@@ -34,8 +34,10 @@ extend(ColorAxis.prototype, {
 			animation: {
 				duration: 50
 			},
-			color: 'gray',
-			width: 0.01
+			width: 0.01,
+			/*= if (build.classic) { =*/
+			color: 'gray'
+			/*= } =*/
 		},
 		labels: {
 			overflow: 'justify'
@@ -358,10 +360,15 @@ extend(ColorAxis.prototype, {
 
 			if (this.cross) {
 				this.cross
-					.attr({
-						fill: this.crosshair.color
-					})
+					.addClass('highcharts-coloraxis-marker')
 					.add(this.legendGroup);
+
+				/*= if (build.classic) { =*/
+				this.cross.attr({
+					fill: this.crosshair.color
+				});
+				/*= } =*/
+					
 			}
 		}
 	},

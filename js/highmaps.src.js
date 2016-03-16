@@ -17573,8 +17573,10 @@ extend(ColorAxis.prototype, {
             animation: {
                 duration: 50
             },
-            color: 'gray',
-            width: 0.01
+            width: 0.01,
+            
+            color: 'gray'
+            
         },
         labels: {
             overflow: 'justify'
@@ -17897,10 +17899,15 @@ extend(ColorAxis.prototype, {
 
             if (this.cross) {
                 this.cross
-                    .attr({
-                        fill: this.crosshair.color
-                    })
+                    .addClass('highcharts-coloraxis-marker')
                     .add(this.legendGroup);
+
+                
+                this.cross.attr({
+                    fill: this.crosshair.color
+                });
+                
+                    
             }
         }
     },
@@ -18137,7 +18144,7 @@ H.colorSeriesMixin = {
     colorAttribs: function (point) {
         var ret = {};
         if (defined(point.color)) {
-            ret.fill = point.color;
+            ret[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }
@@ -19346,11 +19353,15 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 
 // The mapline series type
 defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
+    
     lineWidth: 1,
     fillColor: 'none'
+    
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
     type: 'mapline',
+    colorProp: 'stroke',
+    
     pointAttrToOptions: {
         'stroke-width': 'lineWidth'
     },
@@ -19361,11 +19372,11 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
         var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
 
         // The difference from a map series is that the stroke takes the point color
-        attr.stroke = attr.fill;
         attr.fill = this.options.fillColor;
 
         return attr;
     },
+    
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
     return H;

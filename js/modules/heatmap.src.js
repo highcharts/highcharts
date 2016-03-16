@@ -43,8 +43,10 @@ extend(ColorAxis.prototype, {
             animation: {
                 duration: 50
             },
-            color: 'gray',
-            width: 0.01
+            width: 0.01,
+            
+            color: 'gray'
+            
         },
         labels: {
             overflow: 'justify'
@@ -367,10 +369,15 @@ extend(ColorAxis.prototype, {
 
             if (this.cross) {
                 this.cross
-                    .attr({
-                        fill: this.crosshair.color
-                    })
+                    .addClass('highcharts-coloraxis-marker')
                     .add(this.legendGroup);
+
+                
+                this.cross.attr({
+                    fill: this.crosshair.color
+                });
+                
+                    
             }
         }
     },
@@ -607,7 +614,7 @@ H.colorSeriesMixin = {
     colorAttribs: function (point) {
         var ret = {};
         if (defined(point.color)) {
-            ret.fill = point.color;
+            ret[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }
