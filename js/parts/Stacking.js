@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Chart.js';
+import './Series.js';
+(function () {
 	var Axis = H.Axis,
 		Chart = H.Chart,
 		correctFloat = H.correctFloat,
@@ -414,5 +419,4 @@ Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
 	return stackIndicator;
 };
 
-	return H;
-}(Highcharts));
+}());
