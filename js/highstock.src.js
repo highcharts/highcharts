@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-14)
+ * @license Highstock JS v4.2.3-modified (2016-03-16)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -14408,7 +14408,7 @@
          * Return the series points with null points filtered out
          */
         getValidPoints: function (points, cropByX) {
-            var axisLen = this.xAxis.len;
+            var axisLen = this.xAxis && this.xAxis.len;
             return grep(points || this.points || [], function (point) { // #5029
                 var keep = !point.isNull;
                 if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
@@ -20163,7 +20163,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-14)
+     * Highstock JS v4.2.3-modified (2016-03-16)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

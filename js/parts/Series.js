@@ -799,7 +799,7 @@ Series.prototype = {
 	 * Return the series points with null points filtered out
 	 */
 	getValidPoints: function (points, cropByX) {
-		var axisLen = this.xAxis.len;
+		var axisLen = this.xAxis && this.xAxis.len;
 		return grep(points || this.points || [], function (point) { // #5029
 			var keep = !point.isNull;
 			if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
