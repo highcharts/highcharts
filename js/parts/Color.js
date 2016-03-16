@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 
 	var each = H.each,
 		isNumber = H.isNumber,
@@ -142,4 +144,4 @@ H.Color.prototype = {
 	}
 };
 
-}(Highcharts));
+}());
