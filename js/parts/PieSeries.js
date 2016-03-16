@@ -1,4 +1,12 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './ColumnSeries.js';
+import './CenteredSeriesMixin.js';
+import './Legend.js';
+import './Options.js';
+import './Point.js';
+import './Series.js';
+(function () {
 	var PiePoint,
 		
 		addEvent = H.addEvent,
@@ -480,6 +488,4 @@ seriesTypes.pie = extendClass(Series, {
 	getSymbol: noop
 
 });
-
-	return H;
-}(Highcharts));
+}());
