@@ -15,7 +15,9 @@
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+	/*= if (build.classic) { =*/
 	lineWidth: 1,
+	/*= } =*/
 	marker: null,
 	threshold: null,
 	tooltip: {

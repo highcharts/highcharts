@@ -671,7 +671,7 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
  * Extend the default options with map options
  */
 defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
-    lineWidth: 1,
+    
     marker: null,
     threshold: null,
     tooltip: {
@@ -1085,19 +1085,16 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
     },
     dial: {
         // radius: '80%',
-        // backgroundColor: 'black',
-        // borderColor: 'silver',
-        // borderWidth: 0,
         // baseWidth: 3,
         // topWidth: 1,
         // baseLength: '70%' // of radius
         // rearLength: '10%'
+        
+        
     },
     pivot: {
-        //radius: 5,
-        //borderWidth: 0
-        //borderColor: 'silver',
-        //backgroundColor: 'black'
+        //radius: 5
+        
     },
     tooltip: {
         headerFormat: ''
@@ -1325,18 +1322,6 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 
 // Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
-    fillColor: '#FFFFFF',
-    lineWidth: 1,
-    //medianColor: null,
-    medianWidth: 2,
-    states: {
-        hover: {
-            brightness: -0.3
-        }
-    },
-    //stemColor: null,
-    //stemDashStyle: 'solid'
-    //stemWidth: null,
     threshold: null,
     tooltip: {
         
@@ -1348,9 +1333,8 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
             'Minimum: {point.low}<br/>'
         
     },
-    //whiskerColor: null,
-    whiskerLength: '50%',
-    whiskerWidth: 2
+    whiskerLength: '50%'
+    
 });
 
 // Create the series object
@@ -1899,7 +1883,7 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
  */
 seriesTypes.polygon = extendClass(seriesTypes.scatter, {
     type: 'polygon',
-    fillGraph: true,
+    
     // Close all segments
     getGraphPath: function (segment) {
         return Series.prototype.getGraphPath.call(this, segment).concat('z');

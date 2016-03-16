@@ -19,7 +19,9 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
  */
 seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 	type: 'polygon',
+	/*= if (build.classic) { =*/
 	fillGraph: true,
+	/*= } =*/
 	// Close all segments
 	getGraphPath: function (segment) {
 		return Series.prototype.getGraphPath.call(this, segment).concat('z');

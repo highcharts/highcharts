@@ -33,19 +33,24 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	},
 	dial: {
 		// radius: '80%',
-		// backgroundColor: 'black',
-		// borderColor: 'silver',
-		// borderWidth: 0,
 		// baseWidth: 3,
 		// topWidth: 1,
 		// baseLength: '70%' // of radius
 		// rearLength: '10%'
+		/*= if (build.classic) { =*/
+		// backgroundColor: 'black',
+		// borderColor: 'silver',
+		// borderWidth: 0,
+		/*= } =*/
+		
 	},
 	pivot: {
 		//radius: 5,
+		/*= if (build.classic) { =*/
 		//borderWidth: 0
 		//borderColor: 'silver',
 		//backgroundColor: 'black'
+		/*= } =*/
 	},
 	tooltip: {
 		headerFormat: ''
