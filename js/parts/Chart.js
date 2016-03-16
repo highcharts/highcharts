@@ -1,4 +1,11 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './CanVGRenderer'
+import './Legend.js';
+import './Options.js';
+import './Pointer.js';
+(function () {
 	var addEvent = H.addEvent,
 		animate = H.animate,
 		attr = H.attr,
@@ -38,11 +45,11 @@
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-var Chart = Highcharts.Chart = function () {
+var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
 };
 
-Highcharts.chart = function (a, b, c) {
+H.chart = function (a, b, c) {
 	return new Chart(a, b, c);
 };
 
@@ -693,7 +700,7 @@ Chart.prototype = {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		Ren = Highcharts[optionsChart.renderer] || Renderer;
+		Ren = H[optionsChart.renderer] || Renderer;
 		chart.renderer = new Ren(
 			container,
 			chartWidth,
@@ -1513,5 +1520,4 @@ Chart.prototype = {
 	}
 }; // end Chart
 
-	return H;
-}(Highcharts));
+}());
