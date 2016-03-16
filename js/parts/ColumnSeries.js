@@ -1,4 +1,10 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+import './Legend.js';
+import './Series.js';
+import './Options.js';
+(function () {
 	var Color = H.Color,
 		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
@@ -448,5 +454,4 @@ seriesTypes.column = extendClass(Series, {
 	}
 });
 
-	return H;
-}(Highcharts));
+}());
