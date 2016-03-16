@@ -110,6 +110,7 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
+			colorCount = chart.colorCount,
 			options = this.options,
 			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];
@@ -122,10 +123,16 @@ extend(ColorAxis.prototype, {
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
+					/*= if (build.classic) { =*/
 					colors = chart.options.colors;
-					dataClass.color = colors[colorCounter++];
-					// loop back to zero
-					if (colorCounter === colors.length) {
+					colorCount = colors.length;
+					dataClass.color = colors[colorCounter];
+					/*= } =*/
+					dataClass.colorIndex = colorCounter;
+
+					// increase and loop back to zero
+					colorCounter++;
+					if (colorCounter === colorCount) {
 						colorCounter = 0;
 					}
 				} else {
@@ -204,6 +211,7 @@ extend(ColorAxis.prototype, {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
+						point.colorIndex = dataClass.colorIndex;
 					}
 					break;
 				}

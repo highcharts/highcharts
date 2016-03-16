@@ -8,6 +8,7 @@
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
@@ -536,6 +537,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+					if (!point.color && isNumber(point.colorIndex)) {
+						point.graphic.addClass('highcharts-color-' + point.colorIndex);
 					}
 					point.graphic.attr(series.colorAttribs(point, point.state));
 				}

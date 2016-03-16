@@ -119,6 +119,7 @@ extend(ColorAxis.prototype, {
             chart = this.chart,
             dataClasses,
             colorCounter = 0,
+            colorCount = chart.colorCount,
             options = this.options,
             len = userOptions.dataClasses.length;
         this.dataClasses = dataClasses = [];
@@ -131,10 +132,12 @@ extend(ColorAxis.prototype, {
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {
-                    colors = chart.options.colors;
-                    dataClass.color = colors[colorCounter++];
-                    // loop back to zero
-                    if (colorCounter === colors.length) {
+                    
+                    dataClass.colorIndex = colorCounter;
+
+                    // increase and loop back to zero
+                    colorCounter++;
+                    if (colorCounter === colorCount) {
                         colorCounter = 0;
                     }
                 } else {
@@ -213,6 +216,7 @@ extend(ColorAxis.prototype, {
                     color = dataClass.color;
                     if (point) {
                         point.dataClass = i;
+                        point.colorIndex = dataClass.colorIndex;
                     }
                     break;
                 }
@@ -533,7 +537,8 @@ wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
     return H;
 }(Highcharts));
 (function (H) {
-    var each = H.each,
+    var defined = H.defined,
+        each = H.each,
         noop = H.noop,
         seriesTypes = H.seriesTypes;
 
@@ -594,9 +599,11 @@ H.colorSeriesMixin = {
      * Get the color attibutes to apply on the graphic
      */
     colorAttribs: function (point) {
-        return {
-            fill: point.color
-        };
+        var ret = {};
+        if (defined(point.color)) {
+            ret.fill = point.color;
+        }
+        return ret;
     }
 };
     return H;

@@ -1,5 +1,6 @@
 (function (H) {
-	var each = H.each,
+	var defined = H.defined,
+		each = H.each,
 		noop = H.noop,
 		seriesTypes = H.seriesTypes;
 
@@ -62,9 +63,11 @@ H.colorSeriesMixin = {
 	 * Get the color attibutes to apply on the graphic
 	 */
 	colorAttribs: function (point) {
-		return {
-			fill: point.color
-		};
+		var ret = {};
+		if (defined(point.color)) {
+			ret.fill = point.color;
+		}
+		return ret;
 	}
 };
 	return H;

@@ -2144,13 +2144,15 @@ H.Axis.prototype = {
 		});
 
 		// Set the axis line path
-		axisLine[axisLine.isPlaced ? 'animate' : 'attr']({
-			d: this.getLinePath(axisLine.strokeWidth())
-		});
-		axisLine.isPlaced = true;
+		if (axisLine) {
+			axisLine[axisLine.isPlaced ? 'animate' : 'attr']({
+				d: this.getLinePath(axisLine.strokeWidth())
+			});
+			axisLine.isPlaced = true;
 
-		// Show or hide the line depending on options.showEmpty
-		axisLine[showAxis ? 'show' : 'hide'](true);
+			// Show or hide the line depending on options.showEmpty
+			axisLine[showAxis ? 'show' : 'hide'](true);
+		}
 
 		if (axisTitle && showAxis) {
 
