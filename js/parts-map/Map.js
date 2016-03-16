@@ -26,6 +26,8 @@ defaultOptions.mapNavigation = {
 		x: 0,
 		width: 18,
 		height: 18,
+		padding: 5, // docs
+		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '15px',
 			fontWeight: 'bold',
@@ -34,6 +36,7 @@ defaultOptions.mapNavigation = {
 		theme: {
 			'stroke-width': 1
 		}
+		/*= } =*/
 	},
 	buttons: {
 		zoomIn: {
@@ -136,13 +139,10 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
 		options = arguments[hasRenderToArg ? 1 : 0],
 		hiddenAxis = {
 			endOnTick: false,
-			gridLineWidth: 0,
-			lineWidth: 0,
+			visible: false,
 			minPadding: 0,
 			maxPadding: 0,
-			startOnTick: false,
-			title: null,
-			tickPositions: []
+			startOnTick: false
 		},
 		seriesOptions,
 		defaultCreditsOptions = Highcharts.getOptions().credits;

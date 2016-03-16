@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-15)
+ * @license Highmaps JS v2.0-dev (2016-03-16)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -3785,9 +3785,10 @@ SVGRenderer.prototype = {
         var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
             curState = 0;
 
+        // Default, non-stylable attributes
         label.attr(merge({
             'padding': 2,
-            'stroke-width': 0
+            'r': 2
         }, normalState));
 
         
@@ -3800,6 +3801,7 @@ SVGRenderer.prototype = {
         // Normal state - prepare the attributes
         normalState = merge({
             fill: '#f7f7f7',
+            'stroke-width': 1,
             style: {
                 color: '#444444',
                 cursor: 'pointer',
@@ -3855,9 +3857,9 @@ SVGRenderer.prototype = {
                 label.state = curState = state;
             }
             // Update visuals
-            label.attr({
-                'class': 'highcharts-button highcharts-button' + ['', '-hover', '-pressed', '-disabled'][state || 0]
-            });
+            label.removeClass(/highcharts-button-(normal|hover|pressed|disabled)/)
+                .addClass('highcharts-button-' + ['normal', 'hover', 'pressed', 'disabled'][state || 0]);
+            
             
             label.attr([normalState, hoverState, pressedState, disabledState][state || 0])
                 .css([normalStyle, hoverStyle, pressedStyle, disabledStyle][state || 0]);
@@ -18915,6 +18917,8 @@ extend(Chart.prototype, {
             buttonOptions,
             attr,
             states,
+            hoverStates,
+            selectStates,
             stopEvent = function (e) {
                 if (e) {
                     if (e.preventDefault) {
@@ -18935,24 +18939,33 @@ extend(Chart.prototype, {
             for (n in buttons) {
                 if (buttons.hasOwnProperty(n)) {
                     buttonOptions = merge(options.buttonOptions, buttons[n]);
+
+                    
+                    // Presentational
                     attr = buttonOptions.theme;
                     attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
                     states = attr.states;
+                    hoverStates = states && states.hover;
+                    selectStates = states && states.select;
+                    
+
                     button = chart.renderer.button(
                             buttonOptions.text,
                             0,
                             0,
                             outerHandler,
                             attr,
-                            states && states.hover,
-                            states && states.select,
+                            hoverStates,
+                            selectStates,
                             0,
                             n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                         )
+                        .addClass('highcharts-map-navigation')
                         .attr({
                             width: buttonOptions.width,
                             height: buttonOptions.height,
                             title: chart.options.lang[n],
+                            padding: buttonOptions.padding,
                             zIndex: 5
                         })
                         .add();
@@ -19897,6 +19910,8 @@ defaultOptions.mapNavigation = {
         x: 0,
         width: 18,
         height: 18,
+        padding: 5, // docs
+        
         style: {
             fontSize: '15px',
             fontWeight: 'bold',
@@ -19905,6 +19920,7 @@ defaultOptions.mapNavigation = {
         theme: {
             'stroke-width': 1
         }
+        
     },
     buttons: {
         zoomIn: {
@@ -20007,13 +20023,10 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
         options = arguments[hasRenderToArg ? 1 : 0],
         hiddenAxis = {
             endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 0,
+            visible: false,
             minPadding: 0,
             maxPadding: 0,
-            startOnTick: false,
-            title: null,
-            tickPositions: []
+            startOnTick: false
         },
         seriesOptions,
         defaultCreditsOptions = Highcharts.getOptions().credits;

@@ -436,9 +436,18 @@ input.highcharts-range-selector {
 /* Highmaps */
 .highcharts-map-series .highcharts-point {
     transition: fill 500ms, fill-opacity 500ms, stroke-width 250ms;
+    stroke: silver;
 }
 .highcharts-map-series .highcharts-point-hover {
     transition: fill 0ms, fill-opacity 0ms;
     fill-opacity: 0.5;
     stroke-width: 2px;
+}
+.highcharts-map-navigation {
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+}
+.highcharts-coloraxis {
+    stroke-width: 0;
 }

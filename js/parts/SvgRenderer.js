@@ -1799,9 +1799,10 @@ SVGRenderer.prototype = {
 		var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
 			curState = 0;
 
+		// Default, non-stylable attributes
 		label.attr(merge({
 			'padding': 2,
-			'stroke-width': 0
+			'r': 2
 		}, normalState));
 
 		/*= if (build.classic) { =*/
@@ -1814,6 +1815,7 @@ SVGRenderer.prototype = {
 		// Normal state - prepare the attributes
 		normalState = merge({
 			fill: '#f7f7f7',
+			'stroke-width': 1,
 			style: {
 				color: '#444444',
 				cursor: 'pointer',
@@ -1869,9 +1871,9 @@ SVGRenderer.prototype = {
 				label.state = curState = state;
 			}
 			// Update visuals
-			label.attr({
-				'class': 'highcharts-button highcharts-button' + ['', '-hover', '-pressed', '-disabled'][state || 0]
-			});
+			label.removeClass(/highcharts-button-(normal|hover|pressed|disabled)/)
+				.addClass('highcharts-button-' + ['normal', 'hover', 'pressed', 'disabled'][state || 0]);
+			
 			/*= if (build.classic) { =*/
 			label.attr([normalState, hoverState, pressedState, disabledState][state || 0])
 				.css([normalStyle, hoverStyle, pressedStyle, disabledStyle][state || 0]);

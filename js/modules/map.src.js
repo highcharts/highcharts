@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v2.0-dev (2016-03-15)
+ * @license Highmaps JS v2.0-dev (2016-03-16)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -738,6 +738,8 @@ extend(Chart.prototype, {
             buttonOptions,
             attr,
             states,
+            hoverStates,
+            selectStates,
             stopEvent = function (e) {
                 if (e) {
                     if (e.preventDefault) {
@@ -758,24 +760,33 @@ extend(Chart.prototype, {
             for (n in buttons) {
                 if (buttons.hasOwnProperty(n)) {
                     buttonOptions = merge(options.buttonOptions, buttons[n]);
+
+                    
+                    // Presentational
                     attr = buttonOptions.theme;
                     attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
                     states = attr.states;
+                    hoverStates = states && states.hover;
+                    selectStates = states && states.select;
+                    
+
                     button = chart.renderer.button(
                             buttonOptions.text,
                             0,
                             0,
                             outerHandler,
                             attr,
-                            states && states.hover,
-                            states && states.select,
+                            hoverStates,
+                            selectStates,
                             0,
                             n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                         )
+                        .addClass('highcharts-map-navigation')
                         .attr({
                             width: buttonOptions.width,
                             height: buttonOptions.height,
                             title: chart.options.lang[n],
+                            padding: buttonOptions.padding,
                             zIndex: 5
                         })
                         .add();
@@ -2242,6 +2253,8 @@ defaultOptions.mapNavigation = {
         x: 0,
         width: 18,
         height: 18,
+        padding: 5, // docs
+        
         style: {
             fontSize: '15px',
             fontWeight: 'bold',
@@ -2250,6 +2263,7 @@ defaultOptions.mapNavigation = {
         theme: {
             'stroke-width': 1
         }
+        
     },
     buttons: {
         zoomIn: {
@@ -2352,13 +2366,10 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
         options = arguments[hasRenderToArg ? 1 : 0],
         hiddenAxis = {
             endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 0,
+            visible: false,
             minPadding: 0,
             maxPadding: 0,
-            startOnTick: false,
-            title: null,
-            tickPositions: []
+            startOnTick: false
         },
         seriesOptions,
         defaultCreditsOptions = Highcharts.getOptions().credits;

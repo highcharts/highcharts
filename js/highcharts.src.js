@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-03-15)
+ * @license Highcharts JS v5.0-dev (2016-03-16)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3801,9 +3801,10 @@ SVGRenderer.prototype = {
         var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
             curState = 0;
 
+        // Default, non-stylable attributes
         label.attr(merge({
             'padding': 2,
-            'stroke-width': 0
+            'r': 2
         }, normalState));
 
         
@@ -3816,6 +3817,7 @@ SVGRenderer.prototype = {
         // Normal state - prepare the attributes
         normalState = merge({
             fill: '#f7f7f7',
+            'stroke-width': 1,
             style: {
                 color: '#444444',
                 cursor: 'pointer',
@@ -3871,9 +3873,9 @@ SVGRenderer.prototype = {
                 label.state = curState = state;
             }
             // Update visuals
-            label.attr({
-                'class': 'highcharts-button highcharts-button' + ['', '-hover', '-pressed', '-disabled'][state || 0]
-            });
+            label.removeClass(/highcharts-button-(normal|hover|pressed|disabled)/)
+                .addClass('highcharts-button-' + ['normal', 'hover', 'pressed', 'disabled'][state || 0]);
+            
             
             label.attr([normalState, hoverState, pressedState, disabledState][state || 0])
                 .css([normalStyle, hoverStyle, pressedStyle, disabledStyle][state || 0]);
