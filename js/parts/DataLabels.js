@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Series.js';
+(function () {
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,
 		defined = H.defined,
@@ -809,5 +812,4 @@ if (seriesTypes.column) {
 	};
 }
 
-	return H;
-}(Highcharts));
+}());
