@@ -1050,9 +1050,6 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
     allAreas: true,
 
     animation: false, // makes the complex shapes slow
-    nullColor: '#F8F8F8',
-    borderColor: 'silver',
-    borderWidth: 1,
     marker: null,
     stickyTracking: false,
     dataLabels: {
@@ -1070,18 +1067,16 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
         followPointer: true,
         pointFormat: '{point.name}: {point.value}<br/>'
     },
+    
     states: {
         normal: {
             animation: true
         },
         hover: {
-            brightness: 0.2,
             halo: null
-        },
-        select: {
-            color: '#C0C0C0'
         }
     }
+    
 });
 
 /**
@@ -1493,6 +1488,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
                     if (!point.color && isNumber(point.colorIndex)) {
                         point.graphic.addClass('highcharts-color-' + point.colorIndex);
                     }
+                    if (point.value === null) {
+                        point.graphic.addClass('highcharts-null-point');
+                    }
                     point.graphic.attr(series.colorAttribs(point, point.state));
                 }
             });
@@ -1903,15 +1901,14 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         });
 
         series.translateColors();
-
-        // Make sure colors are updated on colorAxis update (#2893)
-        if (this.chart.hasRendered) {
-            each(series.points, function (point) {
-                point.shapeArgs.fill = point.options.color || point.color; // #3311
-            });
-        }
     },
-    drawPoints: seriesTypes.column.prototype.drawPoints,
+    drawPoints: function () {
+        seriesTypes.column.prototype.drawPoints.call(this);
+
+        each(this.points, function (point) {
+            point.graphic.attr(this.colorAttribs(point, point.state));
+        }, this);
+    },
     animate: noop,
     getBox: noop,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

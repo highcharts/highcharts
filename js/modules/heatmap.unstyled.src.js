@@ -708,15 +708,14 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         });
 
         series.translateColors();
-
-        // Make sure colors are updated on colorAxis update (#2893)
-        if (this.chart.hasRendered) {
-            each(series.points, function (point) {
-                point.shapeArgs.fill = point.options.color || point.color; // #3311
-            });
-        }
     },
-    drawPoints: seriesTypes.column.prototype.drawPoints,
+    drawPoints: function () {
+        seriesTypes.column.prototype.drawPoints.call(this);
+
+        each(this.points, function (point) {
+            point.graphic.attr(this.colorAttribs(point, point.state));
+        }, this);
+    },
     animate: noop,
     getBox: noop,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

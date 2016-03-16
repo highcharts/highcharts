@@ -459,6 +459,9 @@ input.highcharts-range-selector {
   fill-opacity: 0.5;
   stroke-width: 2px; }
 
+.highcharts-heatmap-series .highcharts-point {
+  stroke-width: 0; }
+
 .highcharts-map-navigation {
   font-size: 1.3em;
   font-weight: bold;
@@ -466,3 +469,6 @@ input.highcharts-range-selector {
 
 .highcharts-coloraxis {
   stroke-width: 0; }
+
+.highcharts-null-point {
+  fill: #f8f8f8; }

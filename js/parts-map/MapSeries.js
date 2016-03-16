@@ -29,9 +29,6 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
-	nullColor: '#F8F8F8',
-	borderColor: 'silver',
-	borderWidth: 1,
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
@@ -49,6 +46,10 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		followPointer: true,
 		pointFormat: '{point.name}: {point.value}<br/>'
 	},
+	/*= if (build.classic) { =*/
+	nullColor: '#F8F8F8',
+	borderColor: 'silver',
+	borderWidth: 1,
 	states: {
 		normal: {
 			animation: true
@@ -60,7 +61,17 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		select: {
 			color: '#C0C0C0'
 		}
+	},
+	/*= } else { =*/
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			halo: null
+		}
 	}
+	/*= } =*/
 });
 
 /**
@@ -540,6 +551,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (!point.color && isNumber(point.colorIndex)) {
 						point.graphic.addClass('highcharts-color-' + point.colorIndex);
+					}
+					if (point.value === null) {
+						point.graphic.addClass('highcharts-null-point');
 					}
 					point.graphic.attr(series.colorAttribs(point, point.state));
 				}
