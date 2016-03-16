@@ -1,5 +1,9 @@
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+import './SVGRenderer.js';
 /*= if (build.classic) { =*/
-(function (H) {
+(function () {
 	var VMLRenderer,
 		VMLRendererExtension,
 		VMLElement,
@@ -1112,7 +1116,6 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
  *                                                                            *
  *****************************************************************************/
 	
-	return H;
-}(Highcharts));
+}());
 
 /*= } =*/
