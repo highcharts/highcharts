@@ -1,4 +1,5 @@
-(function (H) {
+import H from './Globals.js';
+(function () {
 var timers = [];
 
 var attr = H.attr,
@@ -1367,6 +1368,4 @@ if (!Array.prototype.filter) {
 }
 
 //--- End compatibility section ---
-
-	return H;
-}(Highcharts));
+}());
