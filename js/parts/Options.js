@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var each = H.each,
 		getTZOffset = H.getTZOffset,
 		isTouchDevice = H.isTouchDevice,
@@ -456,5 +458,4 @@ H.defaultSeriesOptions = H.defaultPlotOptions.line;
 // set the default time methods
 setTimeMethods();
 
-	return H;
-}(Highcharts));
+}());
