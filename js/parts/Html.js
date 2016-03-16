@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './SVGRenderer.js';
+(function () {
 	var attr = H.attr,
 		createElement = H.createElement,
 		css = H.css,
@@ -335,6 +338,4 @@ extend(SVGRenderer.prototype, {
 		return wrapper;
 	}
 });
-
-	return H;
-}(Highcharts));
+}());
