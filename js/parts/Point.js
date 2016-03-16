@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var Point,
 
 		each = H.each,
@@ -297,6 +299,4 @@ Point.prototype = {
 	},
 	visible: true
 };
-
-	return H;
-}(Highcharts));
+}());
