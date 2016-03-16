@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var correctFloat = H.correctFloat,
 		defined = H.defined,
 		destroyObjectProperties = H.destroyObjectProperties,
@@ -385,5 +387,4 @@ H.Tick.prototype = {
 	}
 };
 
-	return H;
-}(Highcharts));
+}());
