@@ -1,4 +1,8 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Options.js';
+import './Series.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		extendClass = H.extendClass,
@@ -125,6 +129,4 @@ seriesTypes.spline  = extendClass(Series, {
 	}
 });
 
-
-	return H;
-}(Highcharts));
+}());
