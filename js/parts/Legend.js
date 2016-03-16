@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var Legend,
 		
 		addEvent = H.addEvent,
@@ -874,5 +876,4 @@ if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
 	});
 }
 
-	return H;
-}(Highcharts));
+}());
