@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+(function () {
 	var SVGElement,
 		SVGRenderer,
 
@@ -2861,6 +2864,4 @@ SVGRenderer.prototype = {
 
 // general renderer
 H.Renderer = SVGRenderer;
-
-	return H;
-}(Highcharts));
+}());
