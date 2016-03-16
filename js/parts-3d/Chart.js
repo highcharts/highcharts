@@ -22,6 +22,7 @@ defaultChartOptions.chart.options3d = {
 	alpha: 0,
 	beta: 0,
 	depth: 100,
+	fitToPlot: true,
 	viewDistance: 25,
 	frame: {
 		bottom: { size: 1, color: 'rgba(255,255,255,0)' },

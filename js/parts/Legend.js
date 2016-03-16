@@ -621,7 +621,7 @@ Legend.prototype = {
 
 		// Reset the legend height and adjust the clipping rectangle
 		pages.length = 0;
-		if (legendHeight > spaceHeight) {
+		if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled. Added to API, marked "next"
 
 			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
 			this.currentPage = pick(this.currentPage, 1);

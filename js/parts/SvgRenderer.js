@@ -71,7 +71,6 @@ SVGElement.prototype = {
 		var animOptions = pick(options, this.renderer.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
-			animOptions = merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -200,8 +199,6 @@ SVGElement.prototype = {
 	 * and apply strokes to the copy.
 	 *
 	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
-	 *
-	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -375,7 +372,7 @@ SVGElement.prototype = {
 
 		while (i--) {
 			setter.call(
-				null, 
+				shadows[i], 
 				key === 'height' ?
 					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value, 
@@ -1169,7 +1166,14 @@ SVGElement.prototype = {
 	},
 	/*= if (build.classic) { =*/
 	dashstyleSetter: function (value) {
-		var i;
+		var i,
+			strokeWidth = this['stroke-width'];
+		
+		// If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new strokeWidth 
+		// function, we should be able to use that instead.
+		if (strokeWidth === 'inherit') {
+			strokeWidth = 1;
+		}
 		value = value && value.toLowerCase();
 		if (value) {
 			value = value
@@ -1185,10 +1189,10 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
+				value[i] = pInt(value[i]) * strokeWidth;
 			}
 			value = value.join(',')
-				.replace('NaN', 'none'); // #3226
+				.replace(/NaN/g, 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
@@ -1578,13 +1582,13 @@ SVGRenderer.prototype = {
 
 
 			// build the lines
-			each(lines, function (line, lineNo) {
+			each(lines, function buildTextLines(line, lineNo) {
 				var spans, spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
-				each(spans, function (span) {
+				each(spans, function buildTextSpans(span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
 							tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'),
@@ -1773,7 +1777,7 @@ SVGRenderer.prototype = {
 				pos += increment;
 			}
 		}
-		console.log(finalPos, node.getSubStringLength(0, finalPos))
+		console.log('width', width, 'stringWidth', node.getSubStringLength(0, finalPos))
 	},
 	*/
 
@@ -2016,8 +2020,8 @@ SVGRenderer.prototype = {
 			attribs.r = r;
 		}
 
-		wrapper.rSetter = function (value) {
-			attr(this.element, {
+		wrapper.rSetter = function (value, key, element) {
+			attr(element, {
 				rx: value,
 				ry: value
 			});
@@ -2240,14 +2244,14 @@ SVGRenderer.prototype = {
 
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
-						if (!ren.imgCount) {
-							charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
+						if (!ren.imgCount && charts[ren.chartIndex].onload) {
+							charts[ren.chartIndex].onload();
 						}
 					},
 					src: imageSrc
 				});
+				this.imgCount++;
 			}
-			this.imgCount++;
 		}
 
 		return obj;

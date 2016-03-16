@@ -15,11 +15,19 @@ if (isset($_GET['commit'])) {
 } else {
 	$leftPath = Settings::$leftPath;
 }
-$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
+
+if (isset($_GET['rightcommit'])) {
+	$rightPath = $_GET['rightcommit']; // used by issue-by-commit link
+} else {
+	$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
+}
 
 // A commit is given, insert the full path
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
 	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
+}
+if (preg_match('/^[a-z0-9]+$/', $rightPath)) {
+	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
 }
 
 
@@ -33,7 +41,11 @@ $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
-$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
+
+$details = @file_get_contents("../../samples/$path/demo.details");
+$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
+$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
+
 
 $path = "../../samples/$path";
 
@@ -135,19 +147,22 @@ function getHTML($which) {
 		$exporting = $leftExporting;
 		
 	} else {
-
-		// These are the files we want to test. Append a time stamp to ensure we're not loading
-		// from browser cache.
-		$s = preg_replace_callback(
-			'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
-			function ($matches) {
-				global $rightPath;
-				$src = $rightPath . $matches[1];
-				$src = str_replace('.js', '.js?' . mktime(), $src);
-				return $src;
-			},
-			$s
-		);
+		if (strstr($rightPath, 'github') !== false) {
+			$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
+		} else {
+			// These are the files we want to test. Append a time stamp to ensure we're not loading
+			// from browser cache.
+			$s = preg_replace_callback(
+				'/cache\.php\?file=https:\/\/code\.highcharts\.com([a-z\/\-\.]+)/',
+				function ($matches) {
+					global $rightPath;
+					$src = $rightPath . $matches[1];
+					$src = str_replace('.js', '.js?' . mktime(), $src);
+					return $src;
+				},
+				$s
+			);
+		}
 		
 		$exporting = $rightExporting;
 	}
@@ -197,7 +212,10 @@ function getExportInnerHTML() {
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
-			<?php @include("$path/demo.css"); ?>
+			<?php 
+			$_SESSION['css'] = @file_get_contents("$path/demo.css");
+			echo $_SESSION['css'];
+			?>
 		</style>
 		
 		<script type="text/javascript">
@@ -233,7 +251,6 @@ function getExportInnerHTML() {
 							window.parent.onDifferent(e.passed + '/' + e.total);
 						}
 					});
-				
 
 				// Else, prepare for async
 				} else {
@@ -316,19 +333,20 @@ function getExportInnerHTML() {
 				});
 
 				if (window.Highcharts) {
+					var animation = <?php echo ($isManual ? 'undefined' : 'false') ?>;
 					Highcharts.setOptions({
 						chart: {
-							animation: false
+							animation: animation
 						},
 						plotOptions: {
 							series: {
-								animation: false,
+								animation: animation,
 								kdNow: true,
 								kdSync: true // 4.1.9 and older, remove when not testing against those
 							}
 						},
 						tooltip: {
-							animation: false
+							animation: animation
 						}
 					});
 

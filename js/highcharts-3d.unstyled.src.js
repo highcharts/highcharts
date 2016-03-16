@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2016-01-26)
+ * @license Highcharts JS v5.0-dev (2016-03-16)
  *
  * 3D features for Highcharts JS
  *
@@ -27,7 +27,8 @@ var deg2rad = H.deg2rad,
 H.perspective = function (points, chart, insidePlotArea) {
     var options3d = chart.options.chart.options3d,
         inverted = false,
-        origin;
+        origin,
+        scale = chart.scale3d || 1;
 
     if (insidePlotArea) {
         inverted = chart.inverted;
@@ -96,10 +97,12 @@ H.perspective = function (points, chart, insidePlotArea) {
             py = py * (vd / (pz + ze + vd));
         }
 
+
         //Apply translation
-        px = px + xe;
-        py = py + ye;
-        pz = pz + ze;
+        px = px * scale + xe;
+        py = py * scale + ye;
+        pz = pz * scale + ze;
+
 
         result.push({
             x: (inverted ? py : px),
@@ -118,7 +121,8 @@ H.perspective = function (points, chart, insidePlotArea) {
         sin = Math.sin;
         
 
-    var charts = H.charts,
+    var animObject = H.animObject,
+        charts = H.charts,
         Color = H.Color,
         defined = H.defined,
         deg2rad = H.deg2rad,
@@ -485,13 +489,9 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
         delete params.alpha;
         delete params.beta;
 
-        animation = pick(animation, this.renderer.globalAnimation);
+        animation = animObject(pick(animation, this.renderer.globalAnimation));
         
-        if (animation) {
-            if (typeof animation !== 'object') {
-                animation = {};    
-            }
-            
+        if (animation.duration) {
             params = merge(params); // Don't mutate the original object
             ca = suckOutCustom(params);
             
@@ -743,6 +743,7 @@ defaultChartOptions.chart.options3d = {
     alpha: 0,
     beta: 0,
     depth: 100,
+    fitToPlot: true,
     viewDistance: 25,
     frame: {
         bottom: { size: 1, color: 'rgba(255,255,255,0)' },
@@ -1247,7 +1248,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
             shapeArgs.insidePlotArea = true;
 
             // Translate the tooltip position in 3d space
-            tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+            tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, true)[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
         }
     });
@@ -1527,7 +1528,7 @@ wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
             // #4584 Check if has graphic - null points don't have it
             if (graphic) {
                 // Hide null or 0 points (#3006, 3650)
-                graphic[point.y ? 'show' : 'hide']();
+                graphic[point.y && point.visible ? 'show' : 'hide']();
             }
         });        
     }

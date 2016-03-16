@@ -4,6 +4,8 @@ function test(chart) {
         return this[i];
     };
 
+    chart.xAxis[0].setExtremes(2, 6, true, false);
+
 
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',

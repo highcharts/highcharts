@@ -29,7 +29,8 @@
  *
  * Notes for boost mode
  * - Area lines are not drawn
- * - Point markers are not drawn
+ * - Point markers are not drawn on line-type series
+ * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
  *
@@ -71,20 +72,21 @@
         CHUNK_SIZE = 50000,
         destroyLoadingDiv;
 
-    function eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold) {
+    function eachAsync(arr, fn, finalFunc, chunkSize, i) {
         i = i || 0;
         chunkSize = chunkSize || CHUNK_SIZE;
-        threshold = i + chunkSize;
-        proceed = true;
+        
+        var threshold = i + chunkSize,
+            proceed = true;
 
-        while (proceed && (i < threshold)) {
+        while (proceed && i < threshold && i < arr.length) {
             proceed = fn(arr[i], i);
             i = i + 1;
         }
         if (proceed) {
-            if (i + chunkSize < arr.length) {
+            if (i < arr.length) {
                 setTimeout(function () {
-                    eachAsync(arr, fn, finalFunc, chunkSize, i, proceed, threshold);
+                    eachAsync(arr, fn, finalFunc, chunkSize, i);
                 });
             } else if (finalFunc) {
                 finalFunc();
@@ -221,8 +223,8 @@
                 ctx.clearRect(0, 0, width, height);
             }
 
-            this.canvas.setAttribute('width', width);
-            this.canvas.setAttribute('height', height);
+            this.canvas.width = width;
+            this.canvas.height = height;
             this.image.attr({
                 width: width,
                 height: height
@@ -533,7 +535,6 @@
 
     // Rect is twice as fast as arc, should be used for small markers
     seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
-        ctx.moveTo(clientX, plotY);
         ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
     };
     seriesTypes.scatter.prototype.fill = true;

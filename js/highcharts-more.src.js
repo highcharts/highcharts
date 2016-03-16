@@ -832,11 +832,10 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
         linePath = [].concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-        if (!this.chart.polar) {
+        if (!this.chart.polar && higherAreaPath[0] === 'M') {
             higherAreaPath[0] = 'L'; // this probably doesn't work for spline            
         }
         this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
-        
         return linePath;
     },
 
@@ -1153,6 +1152,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
     // chart.angular will be set to true when a gauge series is present, and this will
     // be used on the axes
     angular: true,
+    directTouch: true, // #5063
     drawGraph: noop,
     fixedBox: true,
     forceDL: true,
@@ -1658,7 +1658,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
     grouping: false,
     linkedTo: ':previous',
     tooltip: {
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
     },
     whiskerWidth: null
 });
@@ -1690,8 +1690,8 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 
 }(Highcharts));
 (function (H) {
-    var defaultPlotOptions = H.defaultPlotOptions,
-        each = H.each,
+    var correctFloat = H.correctFloat,
+        defaultPlotOptions = H.defaultPlotOptions,
         extendClass = H.extendClass,
         merge = H.merge,
         noop = H.noop,
@@ -1787,9 +1787,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
             // override point value for sums
             // #3710 Update point does not propagate to sum
             if (point.isSum) {
-                point.y = yValue;
+                point.y = correctFloat(yValue);
             } else if (point.isIntermediateSum) {
-                point.y = yValue - previousIntermediate; // #3840
+                point.y = correctFloat(yValue - previousIntermediate); // #3840
             }
             // up points
             y = Math.max(previousY, previousY + point.y) + range[0];
@@ -1869,9 +1869,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
             point = points && points[i] ? points[i] : {};
 
             if (y === 'sum' || point.isSum) {
-                yData[i] = sum;
+                yData[i] = correctFloat(sum);
             } else if (y === 'intermediateSum' || point.isIntermediateSum) {
-                yData[i] = subSum;
+                yData[i] = correctFloat(subSum);
             } else {
                 sum += y;
                 subSum += y;

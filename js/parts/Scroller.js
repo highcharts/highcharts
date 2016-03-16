@@ -402,8 +402,7 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), navigatorWidth);
-		scroller.zoomedMin = 
-			Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0);
+		scroller.zoomedMin = Math.min(Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0), navigatorWidth);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = Math.round(scroller.zoomedMax);
 		zoomedMin = Math.round(scroller.zoomedMin);
@@ -1068,7 +1067,6 @@ Scroller.prototype = {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
-			pointValKey: inArray('close', baseSeries.pointArrayMap || []) > -1 && 'close', // #1905
 			xAxis: 'navigator-x-axis',
 			yAxis: 'navigator-y-axis',
 			name: 'Navigator',

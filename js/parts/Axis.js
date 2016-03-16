@@ -1,5 +1,6 @@
 (function (H) {
 	var addEvent = H.addEvent,
+		animObject = H.animObject,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
@@ -544,7 +545,7 @@ H.Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			doPostTranslate = (axis.doPostTranslate || (axis.isLog && handleLog)) && axis.lin2val;
+			doPostTranslate = (axis.isOrdinal || axis.isBroken || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -830,6 +831,22 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Find the closestPointRange across all series
+	 */
+	getClosest: function () {
+		var ret;
+		each(this.series, function (series) {
+			var seriesClosest = series.closestPointRange;
+			if (!series.noSharedTooltip && defined(seriesClosest)) {
+				ret = defined(ret) ?
+					Math.min(ret, seriesClosest) :
+					seriesClosest;
+			}
+		});
+		return ret;
+	},
+
+	/**
 	 * Update translation information
 	 */
 	setAxisTranslation: function (saveOld) {
@@ -852,15 +869,9 @@ H.Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
-				// Find the closestPointRange across all series
-				each(axis.series, function (series) {
-					var seriesClosest = series.closestPointRange;
-					if (!series.noSharedTooltip && defined(seriesClosest)) {
-						closestPointRange = defined(closestPointRange) ?
-							Math.min(closestPointRange, seriesClosest) :
-							seriesClosest;
-					}
-				});
+				
+				// Get the closest points
+				closestPointRange = axis.getClosest();
 
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
@@ -1558,6 +1569,26 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Get the tick length and width for the axis.
+	 * @param   {String} prefix 'tick' or 'minorTick'
+	 * @returns {Array}        An array of tickLength and tickWidth
+	 */
+	tickSize: function (prefix) {
+		var options = this.options,
+			tickLength = options[prefix + 'Length'],
+			tickWidth = pick(options[prefix + 'Width'], prefix === 'tick' && this.isXAxis ? 1 : 0); // X axis defaults to 1
+
+		if (tickWidth && tickLength) {
+			// Negate the length
+			if (options[prefix + 'Position'] === 'inside') {
+				tickLength = -tickLength;
+			}
+			return [tickLength, tickWidth];
+		}
+			
+	},
+
+	/**
 	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
 	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
 	 * On a vertical axis remove ticks and add ellipsis.
@@ -1622,6 +1653,26 @@ H.Axis.prototype = {
 		return newTickInterval;
 	},
 
+	/**
+	 * Get the general slot width for this axis. This may change between the pre-render (from Axis.getOffset) 
+	 * and the final tick rendering and placement (#5086).
+	 */
+	getSlotWidth: function () {
+		var chart = this.chart,
+			horiz = this.horiz,
+			labelOptions = this.options.labels,
+			slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+			marginLeft = chart.margin[3];
+
+		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
+			((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
+			(!horiz && ((marginLeft && (marginLeft - chart.spacing[3])) || chart.chartWidth * 0.33)); // #1580, #1931
+
+	},
+
+	/**
+	 * Render the axis labels and determine whether ellipsis or rotation need to be applied
+	 */
 	renderUnsquish: function () {
 		var chart = this.chart,
 			renderer = chart.renderer,
@@ -1629,11 +1680,7 @@ H.Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			margin = chart.margin,
-			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-			slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
-				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
+			slotWidth = this.getSlotWidth(),
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style && labelOptions.style.fontSize, ticks[0] && ticks[0].label),
@@ -1685,9 +1732,13 @@ H.Axis.prototype = {
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles && label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
+
+						// Set the correct width in order to read the bounding box height (#4678, #5034)
+						} else if (ticks[pos].labelLength > slotWidth) {
+							label.css({ width: slotWidth + 'px' });
 						}
-						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-								ticks[pos].labelLength > slotWidth) { // #4678
+
+						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
@@ -1767,7 +1818,8 @@ H.Axis.prototype = {
 			n,
 			className = options.className, // docs
 			axisParent = axis.axisParent, // Used in color axis
-			lineHeightCorrection;
+			lineHeightCorrection,
+			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
 		hasData = axis.hasData();
@@ -1844,8 +1896,7 @@ H.Axis.prototype = {
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
 					align: 
-						axisTitleOptions.textAlign ||
-						{ 
+						axisTitleOptions.textAlign || { 
 							low: opposite ? 'right' : 'left',
 							middle: 'center',
 							high: opposite ? 'left' : 'right'
@@ -1884,7 +1935,8 @@ H.Axis.prototype = {
 		axisOffset[side] = Math.max(
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
-			labelOffsetPadded // #3027
+			labelOffsetPadded, // #3027
+			hasData && tickPositions.length && tickSize ? tickSize[0] : 0 // #4866
 		);
 
 		// Decide the clipping needed to keep the graph inside the plot area and axis lines
@@ -2009,7 +2061,7 @@ H.Axis.prototype = {
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
-			globalAnimation = renderer.globalAnimation,
+			animation = animObject(renderer.globalAnimation),
 			from,
 			to;
 
@@ -2112,7 +2164,7 @@ H.Axis.prototype = {
 			var pos,
 				i,
 				forDestruction = [],
-				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				delay = animation.duration,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {

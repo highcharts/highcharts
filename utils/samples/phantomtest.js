@@ -1,27 +1,30 @@
 /**
 Experimental PhantomJS runner for the sample suite.
 
-Usage: 
+Usage:
 phantomjs [arguments] phantomtest.js
 
 Arguments:
 --commit What commit number to run visual tests against.
+--rightcommit What commit to test (on the right side).
 --start  What sample number to start from. Use this to resume after error.
 
 Status
 - Requires PhantomJS 2
 */
-
-/*global console, phantom, require*/
+/* eslint-env node */
+/* eslint no-console:0, valid-jsdoc:0 */
+/* global phantom */
 (function () {
 
     'use strict';
 
     var colors = require('colors'),
-        page = require('webpage').create(),
+        page = require('webpage'),
         fs = require('fs'),
-        samples = [],
-        system = require('system'),
+        system = require('system');
+
+    var samples = [],
         args = system.args,
         params = {
             start: 0
@@ -29,20 +32,26 @@ Status
         i,
         retries = 0;
 
-    args.forEach(function(arg, j) {
+    page = page.create();
+
+    // Parse arguments into the params object
+    args.forEach(function (arg, j) {
         if (arg === '--start') {
             params.start = parseInt(args[j + 1], 10);
         } else if (arg === '--commit') {
             params.commit = args[j + 1];
+        } else if (arg === '--rightcommit') {
+            params.rightcommit = args[j + 1];
         }
     });
 
     i = params.start;
 
+    // Add all the samples to the samples array
     ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
-            if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) &&  fs.isDirectory('../../samples/' + section + group)) {
+            if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) && fs.isDirectory('../../samples/' + section + group)) {
                 group = group + '/';
                 fs.list('../../samples/' + section + group).forEach(function (sample) {
                     var details;
@@ -79,13 +88,31 @@ Status
         return left ? padding + s : s + padding;
     }
 
-    /** 
+    /**
+     * Run the test on each sample
+     */
+    function runRecursive() {
+        var qs = ['path=' + samples[i]];
+
+        retries = 0;
+
+        if (params.commit) {
+            qs.push('commit=' + params.commit);
+        }
+        if (params.rightcommit) {
+            qs.push('rightcommit=' + params.rightcommit);
+        }
+
+        page.open('http://utils.highcharts.local/samples/compare-view.php?' + qs.join('&'));
+    }
+
+    /**
      * On page error, it may be that files are temporarily not loaded (typically jQuery),
      * so we try again three times.
      */
-    page.onError = function(msg, trace) {
+    page.onError = function () {
 
-        var msgStack = [msg];
+        // var msgStack = [msg];
 
         /*
         if (retries === 0) {
@@ -125,26 +152,13 @@ Status
         }
     };
 
-
-    function runRecursive() {
-        var qs = ['path=' + samples[i]];
-
-        retries = 0;
-
-        if (params.commit) {
-            qs.push('commit=' + params.commit);
-        }
-
-        page.open('http://utils.highcharts.local/samples/compare-view.php?' + qs.join('&'));
-    }
-
     page.onConsoleMessage = function (m) {
         var color = m[m.length - 1] === '.' ? 'green' : 'red';
         if (m.indexOf('@proceed') === 0) {
 
             // Output the results of the finished test
             console.log(
-                colors.gray(pad(i, 4, true)) + 
+                colors.gray(pad(i, 4, true)) +
                 colors[color](' ' + m.replace('@proceed ', ''))
             );
 

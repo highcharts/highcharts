@@ -11,6 +11,10 @@
 		<script type="text/javascript">
 			var ren,
 				paths = [];
+
+			var mainFrame = window.parent.document.querySelector('frame#main'),
+				mainLocation = mainFrame && mainFrame.contentWindow.location.href,
+				isComparing = mainLocation && mainLocation.indexOf('compare-view') > -1;
 			
 			// Draw the lines connecting the dots
 			function drawGraph() {
@@ -136,6 +140,10 @@
 					commits,
 					parentHierarchy = {};
 
+				if (isComparing) {
+					document.body.className = 'compare';
+				}
+
 				var colors = [
 					   '#2f7ed8', 
 					   '#0d233a', 
@@ -221,11 +229,11 @@
 									';margin-left:' + marginLeft + 'px"></div>')
 								.appendTo($li);
 
-
-								
 							$('<a>')
 								.attr({
-									href: 'main.php?commit='+ commit,
+									href: isComparing ? 
+										mainLocation + '&rightcommit=' + commit :
+										'main.php?commit='+ commit,
 									target: 'main',
 									'class': 'message'
 								})
@@ -388,6 +396,20 @@
 				left: 20px;
 				top: 0;
 			}
+			#compare-header {
+				display: none;
+			}
+
+			.compare #topnav {
+				display: none;
+			}
+			.compare #compare-header {
+				display: block;
+				color: silver;
+				font-style: italic;
+				padding: 1em 1em 0 1em;
+			}
+
 			
 		</style>
 	</head>
@@ -396,6 +418,9 @@
 		<div id="topnav">
 			<span id="loaded"></span>
 			<a href="main.php" target="main">Set new test data</a>
+		</div>
+		<div id="compare-header">
+		Click commit messages to compare the left side (usually the latest stable version) on the left, with the actual commit on the right.
 		</div>
 		<div id="graph"></div>
 		<ul id="ul"></ul>

@@ -1,5 +1,6 @@
 (function (H) {
 	var addEvent = H.addEvent,
+		animObject = H.animObject,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		Date = H.Date,
@@ -460,8 +461,7 @@ H.Series.prototype = {
 			}
 
 			series.data = [];
-			series.options.data = data;
-			//series.zData = zData;
+			series.options.data = series.userOptions.data = data;
 
 			// destroy old points
 			i = oldDataLength;
@@ -483,7 +483,7 @@ H.Series.prototype = {
 
 		// Typically for pie series, points need to be processed and generated
 		// prior to rendering the legend
-		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
+		if (options.legendType === 'point') {
 			this.processData();
 			this.generatePoints();
 		}
@@ -811,7 +811,7 @@ H.Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
+			point.plotY = plotY = !point.isNull ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				undefined;
 			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -827,11 +827,13 @@ H.Series.prototype = {
 			point.category = categories && categories[point.x] !== undefined ?
 				categories[point.x] : point.x;
 
-			// Determine auto enabling of markers (#3635)
-			if (i) {
-				closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
+			// Determine auto enabling of markers (#3635, #5099)
+			if (!point.isNull) {
+				if (lastPlotX !== undefined) {
+					closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
+				}
+				lastPlotX = plotX;
 			}
-			lastPlotX = plotX;
 
 		}
 		series.closestPointRangePx = closestPointRangePx;
@@ -840,9 +842,14 @@ H.Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function () {
-		return grep(this.points, function (point) {
-			return !point.isNull;
+	getValidPoints: function (points, cropByX) {
+		var axisLen = this.xAxis && this.xAxis.len;
+		return grep(points || this.points || [], function (point) { // #5029
+			var keep = !point.isNull;
+			if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
+				keep = false;
+			}
+			return keep;
 		});
 	},
 
@@ -1003,6 +1010,7 @@ H.Series.prototype = {
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
+							.attr(pointAttr) // #4759
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -1164,10 +1172,27 @@ H.Series.prototype = {
 		var series = this,
 			options = series.options,
 			step = options.step,
+			reversed,
 			graphPath = [],
 			gap;
 
 		points = points || series.points;
+
+		// Bottom of a stack is reversed
+		reversed = points.reversed;
+		if (reversed) {
+			points.reverse();
+		}
+		// Reverse the steps (#5004)
+		step = { right: 1, center: 2 }[step] || (step && 3);
+		if (step && reversed) {
+			step = 4 - step;
+		}
+
+		// Remove invalid points, especially in spline (#5015)
+		if (options.connectNulls && !nullsAsZeroes && !connectCliffs) {
+			points = this.getValidPoints(points);
+		}
 
 		// Build the line
 		each(points, function (point, i) {
@@ -1182,7 +1207,7 @@ H.Series.prototype = {
 			}
 
 			// Line series, nullsAsZeroes is not handled
-			if (point.isNull && !defined(nullsAsZeroes)) {
+			if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
 				gap = !options.connectNulls;
 
 			// Area series, nullsAsZeroes is set
@@ -1200,14 +1225,14 @@ H.Series.prototype = {
 
 				} else if (step) {
 
-					if (step === 'right') {
+					if (step === 1) { // right
 						pathToPoint = [
 							'L',
 							lastPoint.plotX,
 							plotY
 						];
 						
-					} else if (step === 'center') {
+					} else if (step === 2) { // center
 						pathToPoint = [
 							'L',
 							(lastPoint.plotX + plotX) / 2,
@@ -1518,10 +1543,9 @@ H.Series.prototype = {
 			chart = series.chart,
 			group,
 			options = series.options,
-			animation = options.animation,
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
-			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+			animDuration = !!series.animate && chart.renderer.isSVG && animObject(options.animation).duration,
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -1696,11 +1720,7 @@ H.Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points || [], function (point) { // #4390
-				return point.y !== null;
-			});
-
-			series.kdTree = _kdtree(points, dimensions, dimensions);
+			series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
 		}
 		delete series.kdTree;
 

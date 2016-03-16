@@ -508,8 +508,8 @@ H.extendClass = function (Parent, members) {
  * @param {Number} number
  * @param {Number} length
  */
-H.pad = function (number, length) {
-	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+H.pad = function (number, length, padder) {
+	return new Array((length || 2) + 1 - String(number).length).join(padder || 0) + number;
 };
 
 /**
@@ -574,7 +574,7 @@ H.dateFormat = function (format, timestamp, capitalize) {
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
-			'e': dayOfMonth, // Day of the month, 1 through 31
+			'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
 			'w': day,
 
 			// Week (none implemented)
@@ -866,6 +866,14 @@ H.setAnimation = function (animation, chart) {
 };
 
 /**
+ * Get the animation in object form, where a disabled animation is always
+ * returned with duration: 0
+ */
+H.animObject = function (animation) {
+	return H.isObject(animation) ? H.merge(animation) : { duration: animation ? 500 : 0 };
+};
+
+/**
  * The time unit lookup
  */
 H.timeUnits = {
@@ -927,7 +935,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	// Add the decimal point and the decimal component
 	if (+decimals) {
 		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
-		decimalComponent = absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1);
+		decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
 	}
 
@@ -951,9 +959,9 @@ H.getStyle = function (el, prop) {
 
 	// For width and height, return the actual inner pixel size (#4913)
 	if (prop === 'width') {
-		return el.scrollWidth - H.getStyle(el, 'padding-left') - H.getStyle(el, 'padding-right');
+		return Math.min(el.offsetWidth, el.scrollWidth) - H.getStyle(el, 'padding-left') - H.getStyle(el, 'padding-right');
 	} else if (prop === 'height') {
-		return el.scrollHeight - H.getStyle(el, 'padding-top') - H.getStyle(el, 'padding-bottom');
+		return Math.min(el.offsetHeight, el.scrollHeight) - H.getStyle(el, 'padding-top') - H.getStyle(el, 'padding-bottom');
 	}
 
 	// Otherwise, get the computed style
@@ -1141,7 +1149,6 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events,
 		len,
 		i,
-		preventDefault,
 		fn;
 
 	eventArguments = eventArguments || {};
@@ -1164,38 +1171,33 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events = hcEvents[type] || [];
 		len = events.length;
 
-		// Attach a simple preventDefault function to skip default handler if called
-		preventDefault = function () {
-			eventArguments.defaultPrevented = true;
+		// Attach a simple preventDefault function to skip default handler if called. Set
+		// a custom prop because the built-in defaultPrevented property is not overwritable (#5112)
+		eventArguments.preventDefault = function () {
+			eventArguments.dftPrev = true;
 		};
+
+		eventArguments.target = el;
+
+		// If the type is not set, we're running a custom event (#2297). If it is set,
+		// we're running a browser event, and setting it will cause en error in
+		// IE8 (#2465).
+		if (!eventArguments.type) {
+			eventArguments.type = type;
+		}
 		
 		for (i = 0; i < len; i++) {
 			fn = events[i];
 
-			// eventArguments is never null here
-			if (eventArguments.stopped) {
-				return;
-			}
-
-			eventArguments.preventDefault = preventDefault;
-			eventArguments.target = el;
-
-			// If the type is not set, we're running a custom event (#2297). If it is set,
-			// we're running a browser event, and setting it will cause en error in
-			// IE8 (#2465).
-			if (!eventArguments.type) {
-				eventArguments.type = type;
-			}
-			
 			// If the event handler return false, prevent the default handler from executing
 			if (fn.call(el, eventArguments) === false) {
 				eventArguments.preventDefault();
 			}
 		}
 	}
-
+			
 	// Run the default if not prevented
-	if (defaultFunction && !eventArguments.defaultPrevented) {
+	if (defaultFunction && !eventArguments.defaultPrevented && !eventArguments.dftPrev) {
 		defaultFunction(eventArguments);
 	}
 };
@@ -1300,7 +1302,7 @@ if (doc && !doc.defaultView) {
 		// Getting the rendered width and height
 		if (alias) {
 			el.style.zoom = 1;
-			return el[alias] - 2 * H.getStyle(el, 'padding');
+			return Math.max(el[alias] - 2 * getStyle(el, 'padding'), 0);
 		}
 		
 		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
