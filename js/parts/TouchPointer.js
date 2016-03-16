@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var charts = H.charts,
 		each = H.each,
 		extend = H.extend,
@@ -234,6 +236,4 @@ extend(Pointer.prototype, {
 	}
 
 });
-
-	return H;
-}(Highcharts));
+}());
