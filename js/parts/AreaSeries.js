@@ -1,4 +1,10 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+import './Legend.js';
+import './Series.js';
+import './Options.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		extendClass = H.extendClass,
@@ -317,5 +323,4 @@ seriesTypes.area = extendClass(Series, {
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-	return H;
-}(Highcharts));
+}());
