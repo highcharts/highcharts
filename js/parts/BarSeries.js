@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './ColumnSeries.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
@@ -14,6 +17,4 @@ seriesTypes.bar = extendClass(seriesTypes.column, {
 	type: 'bar',
 	inverted: true
 });
-
-    return H;
-}(Highcharts));
+}());
