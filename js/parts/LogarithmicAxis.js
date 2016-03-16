@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var Axis = H.Axis,
 		getMagnitude = H.getMagnitude,
 		lin2log = H.lin2log,
@@ -107,5 +109,4 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	return positions;
 };
 
-	return H;
-}(Highcharts));
+}());
