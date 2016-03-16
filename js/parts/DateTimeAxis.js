@@ -1,4 +1,6 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+(function () {
 	var Axis = H.Axis,
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
@@ -217,5 +219,4 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	};
 };
 
-	return H;
-}(Highcharts));
+}());
