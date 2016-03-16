@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Options.js';
+import './PlotLineOrBand.js';
+import './Tick.js';
+(function () {
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
@@ -2318,6 +2323,4 @@ H.Axis.prototype = {
 }; // end Axis
 
 extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
-
-	return H;
-}(Highcharts));
+}());
