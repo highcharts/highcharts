@@ -1,4 +1,10 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Options.js';
+import './Legend.js';
+import './Point.js';
+import './SVGRenderer.js';
+(function () {
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
@@ -1769,5 +1775,4 @@ H.Series.prototype = {
 
 }; // end Series prototype
 
-	return H;
-}(Highcharts));
+}());
