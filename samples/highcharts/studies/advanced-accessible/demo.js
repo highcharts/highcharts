@@ -181,11 +181,11 @@ $(function () {
                 (numSeries > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + chartTitle +
                 (options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
                 '</div><h3>Long description.</h3><div>' + (acsOptions.description || 'No description available.') +
-                '</div><h3>Structure.</h3><p><div>Chart type: ' + (acsOptions.typeDescription || chartTypeDesc) + '</div>' +
+                '</div><h3>Structure.</h3><div>Chart type: ' + (acsOptions.typeDescription || chartTypeDesc) + '</div>' +
                 (numSeries === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
                     (series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
                 (xAxisDesc ? ('<div>' + xAxisDesc + '</div>') : '') +
-                (yAxisDesc ? ('<div>' + yAxisDesc + '</div>') : '') + '</p>';
+                (yAxisDesc ? ('<div>' + yAxisDesc + '</div>') : '');
 
             tableShortcutAnchor.innerHTML = 'View as data table.';
             tableShortcutAnchor.href = '#tableId';
