@@ -798,9 +798,14 @@ Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function (points) {
+	getValidPoints: function (points, cropByX) {
+		var axisLen = this.xAxis && this.xAxis.len;
 		return grep(points || this.points || [], function (point) { // #5029
-			return !point.isNull;
+			var keep = !point.isNull;
+			if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
+				keep = false;
+			}
+			return keep;
 		});
 	},
 
@@ -1790,7 +1795,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
+			series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
 		}
 		delete series.kdTree;
 

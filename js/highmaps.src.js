@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-09)
+ * @license Highmaps JS v4.2.3-modified (2016-03-16)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -1275,7 +1275,6 @@
             events,
             len,
             i,
-            preventDefault,
             fn;
 
         eventArguments = eventArguments || {};
@@ -1298,38 +1297,33 @@
             events = hcEvents[type] || [];
             len = events.length;
 
-            // Attach a simple preventDefault function to skip default handler if called
-            preventDefault = function () {
-                eventArguments.defaultPrevented = true;
+            // Attach a simple preventDefault function to skip default handler if called. Set
+            // a custom prop because the built-in defaultPrevented property is not overwritable (#5112)
+            eventArguments.preventDefault = function () {
+                eventArguments.dftPrev = true;
             };
+
+            eventArguments.target = el;
+
+            // If the type is not set, we're running a custom event (#2297). If it is set,
+            // we're running a browser event, and setting it will cause en error in
+            // IE8 (#2465).
+            if (!eventArguments.type) {
+                eventArguments.type = type;
+            }
         
             for (i = 0; i < len; i++) {
                 fn = events[i];
 
-                // eventArguments is never null here
-                if (eventArguments.stopped) {
-                    return;
-                }
-
-                eventArguments.preventDefault = preventDefault;
-                eventArguments.target = el;
-
-                // If the type is not set, we're running a custom event (#2297). If it is set,
-                // we're running a browser event, and setting it will cause en error in
-                // IE8 (#2465).
-                if (!eventArguments.type) {
-                    eventArguments.type = type;
-                }
-            
                 // If the event handler return false, prevent the default handler from executing
                 if (fn.call(el, eventArguments) === false) {
                     eventArguments.preventDefault();
                 }
             }
         }
-
+            
         // Run the default if not prevented
-        if (defaultFunction && !eventArguments.defaultPrevented) {
+        if (defaultFunction && !eventArguments.defaultPrevented && !eventArguments.dftPrev) {
             defaultFunction(eventArguments);
         }
     };
@@ -12122,7 +12116,7 @@
             // pre-render axes to get labels offset width
             if (chart.hasCartesianSeries) {
                 each(chart.axes, function (axis) {
-                    if (axis.visible) {
+                    if (axis.visible && axis.isDirty) { // #5124
                         axis.getOffset();
                     }
                 });
@@ -13895,9 +13889,14 @@
         /**
          * Return the series points with null points filtered out
          */
-        getValidPoints: function (points) {
+        getValidPoints: function (points, cropByX) {
+            var axisLen = this.xAxis && this.xAxis.len;
             return grep(points || this.points || [], function (point) { // #5029
-                return !point.isNull;
+                var keep = !point.isNull;
+                if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
+                    keep = false;
+                }
+                return keep;
             });
         },
 
@@ -14887,7 +14886,7 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
+                series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
             }
             delete series.kdTree;
 
