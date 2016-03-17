@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-16)
+ * @license Highmaps JS v4.2.3-modified (2016-03-17)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -1297,11 +1297,13 @@
             events = hcEvents[type] || [];
             len = events.length;
 
-            // Attach a simple preventDefault function to skip default handler if called. Set
-            // a custom prop because the built-in defaultPrevented property is not overwritable (#5112)
-            eventArguments.preventDefault = function () {
-                eventArguments.dftPrev = true;
-            };
+            // Attach a simple preventDefault function to skip default handler if called. 
+            // The built-in defaultPrevented property is not overwritable (#5112)
+            if (!eventArguments.preventDefault) {
+                eventArguments.preventDefault = function () {
+                    eventArguments.defaultPrevented = true;
+                };
+            }
 
             eventArguments.target = el;
 
@@ -1323,7 +1325,7 @@
         }
             
         // Run the default if not prevented
-        if (defaultFunction && !eventArguments.defaultPrevented && !eventArguments.dftPrev) {
+        if (defaultFunction && !eventArguments.defaultPrevented) {
             defaultFunction(eventArguments);
         }
     };
