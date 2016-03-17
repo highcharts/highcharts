@@ -43,11 +43,11 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
 if ($unstyled) {
-	$html = str_replace('highcharts.js', 'highcharts.unstyled.src.js', $html);
-	$html = str_replace('highcharts-more.js', 'highcharts-more.unstyled.src.js', $html);
-	$html = str_replace('highcharts-3d.js', 'highcharts-3d.unstyled.src.js', $html);
-	$html = str_replace('highstock.js', 'highstock.unstyled.src.js', $html);
-	$html = str_replace('highmaps.js', 'highmaps.unstyled.src.js', $html);
+	$html = str_replace('highcharts.js', 'js/highcharts.js', $html);
+	$html = str_replace('highcharts-more.js', 'js/highcharts-more.js', $html);
+	$html = str_replace('highcharts-3d.js', 'js/highcharts-3d.js', $html);
+	$html = str_replace('highstock.js', 'js/highstock.js', $html);
+	$html = str_replace('highmaps.js', 'js/highmaps.js', $html);
 }
 
 
