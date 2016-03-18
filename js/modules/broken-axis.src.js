@@ -1,20 +1,8 @@
-/**
- * @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts Broken Axis module
- * 
- * License: www.highcharts.com/license
- */
-
-(function (factory) {
-	/*= if (!build.assembly) { =*/
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-		return;
-	}
-	/*= } =*/
-	factory(Highcharts);
-	
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Series.js';
+(function () {
 
 	'use strict';
 
@@ -327,4 +315,4 @@
 	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
 
-}));
+}());
