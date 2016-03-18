@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Axis.js';
+import './Chart.js';
+(function () {
 	var addEvent = H.addEvent,
 		Axis = H.Axis,
 		Chart = H.Chart,
@@ -846,5 +849,4 @@ H.RangeSelector = RangeSelector;
  * End Range Selector code													*
  *****************************************************************************/
 
-	return H;
-}(Highcharts));
+}());
