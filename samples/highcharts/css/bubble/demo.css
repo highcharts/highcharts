@@ -1,3 +1,5 @@
+@import 'http://code.highcharts.local/css/highcharts.css';
+
 .highcharts-plot-border {
 	stroke-width: 1px;
 	stroke: silver;
