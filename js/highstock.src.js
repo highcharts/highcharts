@@ -4636,7 +4636,7 @@
                 if (value !== alignFactor) {
                     alignFactor = value;
                     if (bBox) { // Bounding box exists, means we're dynamically changing
-                        wrapper.attr({ x: x });
+                        wrapper.attr({ x: wrapperX }); // #5134
                     }
                 }
             };
