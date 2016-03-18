@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Chart.js';
+import './Series.js';
+(function () {
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
@@ -1216,4 +1221,4 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
  * End Scroller code														  *
  *****************************************************************************/
 
-}(Highcharts));
+}());
