@@ -1,4 +1,7 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Chart.js';
+(function () {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
 		removeEvent = H.removeEvent,
@@ -73,5 +76,4 @@ Chart.prototype.callbacks.push(function (chart) {
 	addEvent(chart, 'destroy', destroyEvents);
 });
 
-	return H;
-}(Highcharts));
+}());
