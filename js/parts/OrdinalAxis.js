@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Axis.js';
+import './Utilities.js';
+import './Chart.js';
+import './Series.js';
+(function () {
 	var addEvent = H.addEvent,
 		Axis = H.Axis,
 		Chart = H.Chart,
@@ -676,5 +681,4 @@ Series.prototype.gappedPath = function () {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 
-	return H;
-}(Highcharts));
+}());
