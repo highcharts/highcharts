@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-17)
+ * @license Highstock JS v4.2.3-modified (2016-03-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -4636,7 +4636,7 @@
                 if (value !== alignFactor) {
                     alignFactor = value;
                     if (bBox) { // Bounding box exists, means we're dynamically changing
-                        wrapper.attr({ x: x });
+                        wrapper.attr({ x: wrapperX }); // #5134
                     }
                 }
             };
@@ -12596,7 +12596,7 @@
             // pre-render axes to get labels offset width
             if (chart.hasCartesianSeries) {
                 each(chart.axes, function (axis) {
-                    if (axis.visible && axis.isDirty) { // #5124
+                    if (axis.visible) {
                         axis.getOffset();
                     }
                 });
@@ -17753,6 +17753,7 @@
             hasRendered = series.hasRendered || 0,
             str,
             dataLabelsGroup,
+            defer = pick(options.defer, true),
             renderer = series.chart.renderer;
 
         if (options.enabled || series._hasPointLabels) {
@@ -17766,11 +17767,11 @@
             dataLabelsGroup = series.plotGroup(
                 'dataLabelsGroup',
                 'data-labels',
-                options.defer ? HIDDEN : VISIBLE,
+                defer && !hasRendered ? 'hidden' : 'visible', // #5133
                 options.zIndex || 6
             );
 
-            if (pick(options.defer, true)) {
+            if (defer) {
                 dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
                 if (!hasRendered) {
                     addEvent(series, 'afterAnimate', function () {
@@ -20165,7 +20166,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-17)
+     * Highstock JS v4.2.3-modified (2016-03-18)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

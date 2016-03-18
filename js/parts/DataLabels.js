@@ -13,6 +13,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
+		defer = pick(options.defer, true),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
@@ -26,11 +27,11 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? HIDDEN : VISIBLE,
+			defer && !hasRendered ? 'hidden' : 'visible', // #5133
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (defer) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
 				addEvent(series, 'afterAnimate', function () {
