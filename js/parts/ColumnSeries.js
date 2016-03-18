@@ -5,10 +5,12 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 (function () {
-	var Color = H.Color,
+	var animObject = H.animObject,
+		Color = H.Color,
 		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		each = H.each,
+		extend = H.extend,
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
@@ -423,9 +425,15 @@ seriesTypes.column = extendClass(Series, {
 
 			} else { // run the animation
 
-				attr.scaleY = 1;
 				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
-				series.group.animate(attr, series.options.animation);
+				series.group.animate(attr, extend(animObject(series.options.animation), {
+					// Do the scale synchronously to ensure smooth updating (#5030)
+					step: function (val, fx) {
+						series.group.attr({
+							scaleY: fx.pos
+						});
+					}
+				}));
 
 				// delete this function to allow it only once
 				series.animate = null;

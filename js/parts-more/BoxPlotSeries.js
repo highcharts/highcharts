@@ -13,18 +13,6 @@
 
 // Set default options
 defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
-	fillColor: '#FFFFFF',
-	lineWidth: 1,
-	//medianColor: null,
-	medianWidth: 2,
-	states: {
-		hover: {
-			brightness: -0.3
-		}
-	},
-	//stemColor: null,
-	//stemDashStyle: 'solid'
-	//stemWidth: null,
 	threshold: null,
 	tooltip: {
 		/*= if (!build.classic) { =*/
@@ -43,9 +31,24 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Minimum: {point.low}<br/>'
 		/*= } =*/
 	},
-	//whiskerColor: null,
 	whiskerLength: '50%',
+	/*= if (build.classic) { =*/
+	fillColor: '#FFFFFF',
+	lineWidth: 1,
+	//medianColor: null,
+	medianWidth: 2,
+	states: {
+		hover: {
+			brightness: -0.3
+		}
+	},
+	//stemColor: null,
+	//stemDashStyle: 'solid'
+	//stemWidth: null,
+
+	//whiskerColor: null,
 	whiskerWidth: 2
+	/*= } =*/
 });
 
 // Create the series object

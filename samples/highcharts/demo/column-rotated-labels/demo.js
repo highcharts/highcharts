@@ -36,7 +36,7 @@ $(function () {
             data: [
                 ['Shanghai', 23.7],
                 ['Lagos', 16.1],
-                ['Instanbul', 14.2],
+                ['Istanbul', 14.2],
                 ['Karachi', 14.0],
                 ['Mumbai', 12.5],
                 ['Moscow', 12.1],

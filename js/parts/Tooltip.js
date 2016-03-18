@@ -213,7 +213,7 @@ H.Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop, chart.plotTop, chart.plotTop + chart.plotHeight],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft, chart.plotLeft, chart.plotLeft + chart.plotWidth],
 			// The far side is right or bottom
-			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
+			preferFarSide = !this.followPointer && pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -330,7 +330,6 @@ H.Tooltip.prototype = {
 			pointConfig = [],
 			formatter = options.formatter || tooltip.defaultFormatter,
 			hoverPoints = chart.hoverPoints,
-			borderColor,
 			shared = tooltip.shared,
 			currentSeries;
 
@@ -394,11 +393,16 @@ H.Tooltip.prototype = {
 				text: text
 			});
 
-			// set the stroke color of the box
-			borderColor = options.borderColor || point.color || currentSeries.color || '#606060';
+			// Set the stroke color of the box to reflect the point
+			label.removeClass(/highcharts-color-[\d]+/g)
+				.addClass('highcharts-color-' + pick(point.colorIndex, currentSeries.colorIndex));
+
+			/*= if (build.classic) { =*/
 			label.attr({
-				stroke: borderColor
+				stroke: options.borderColor || point.color || currentSeries.color || '#606060'
 			});
+			/*= } =*/
+
 			tooltip.updatePosition({
 				plotX: x,
 				plotY: y,
@@ -409,12 +413,6 @@ H.Tooltip.prototype = {
 
 			this.isHidden = false;
 		}
-		fireEvent(chart, 'tooltipRefresh', {
-			text: text,
-			x: x + chart.plotLeft,
-			y: y + chart.plotTop,
-			borderColor: borderColor
-		});
 	},
 
 	/**

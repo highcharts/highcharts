@@ -1,6 +1,5 @@
 $(function () {
     $('#container').highcharts({
-
         chart: {
             type: 'column',
             options3d: {
@@ -9,9 +8,7 @@ $(function () {
                 beta: 15,
                 viewDistance: 25,
                 depth: 40
-            },
-            marginTop: 80,
-            marginRight: 40
+            }
         },
 
         title: {

@@ -64,4 +64,30 @@ $(function () {
 
 
     });
+
+    QUnit.test('#5034: No ellipsis for multiline labels where there is room', function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            chart: {
+                "type": "bar"
+            },
+            xAxis: {
+                "categories": ["Cat1", "Cat2 bla bla bla bla bla bla bla bla bla bla", "Cat3 bla bla bla bla bla bla bla"]
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.ok(
+            chart.xAxis[0].ticks[1].label.getBBox().height > chart.xAxis[0].ticks[0].label.getBBox().height,
+            'Second label is multiple lines'
+        );
+
+        assert.strictEqual(
+            chart.xAxis[0].ticks[1].label.getBBox().height,
+            chart.xAxis[0].ticks[2].label.getBBox().height,
+            'Third label is same as second'
+        );
+    });
 });

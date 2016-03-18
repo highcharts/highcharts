@@ -8,6 +8,7 @@
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
@@ -28,9 +29,6 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
-	nullColor: '#F8F8F8',
-	borderColor: 'silver',
-	borderWidth: 1,
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
@@ -48,6 +46,10 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		followPointer: true,
 		pointFormat: '{point.name}: {point.value}<br/>'
 	},
+	/*= if (build.classic) { =*/
+	nullColor: '#F8F8F8',
+	borderColor: 'silver',
+	borderWidth: 1,
 	states: {
 		normal: {
 			animation: true
@@ -59,7 +61,17 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		select: {
 			color: '#C0C0C0'
 		}
+	},
+	/*= } else { =*/
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			halo: null
+		}
 	}
+	/*= } =*/
 });
 
 /**
@@ -93,6 +105,7 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 		return point;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Stop the fade-out
 	 */
@@ -104,8 +117,6 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 			this.series.onMouseOut(e);
 		}
 	},
-	/*= if (build.classic) { =*/
-	// Todo: check unstyled
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
 	 * over islands and coast lines. We run a custom implementation of animation becuase we
@@ -115,8 +126,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 	onMouseOut: function () {
 		var point = this,
 			start = +new Date(),
-			normalColor = Color(this.series.pointAttribs(point).fill),
-			hoverColor = Color(this.series.pointAttribs(point, 'hover').fill),
+			normalColor = Color(this.series.colorAttribs(point).fill),
+			hoverColor = Color(this.series.colorAttribs(point, 'hover').fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500);
 
@@ -328,6 +339,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
 			dataUsed = [],
+			mapMap = {},
 			mapPoint,
 			transform,
 			mapTransforms,
@@ -377,9 +389,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				mapData = H.geojson(mapData, this.type, this);
 			}
 
-			this.getBox(mapData);
 			this.mapData = mapData;
-			this.mapMap = {};
 
 			for (i = 0; i < mapData.length; i++) {
 				mapPoint = mapData[i];
@@ -390,28 +400,35 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-				this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			}
+			this.mapMap = mapMap;
+
+			// Registered the point codes that actually hold data
+			if (joinBy[1]) {
+				each(data, function (point) {
+					if (mapMap[point[joinBy[1]]]) {
+						dataUsed.push(mapMap[point[joinBy[1]]]);
+					}
+				});
 			}
 
 			if (options.allAreas) {
-
-				data = data || [];
-
-				// Registered the point codes that actually hold data
-				if (joinBy[1]) {
-					each(data, function (point) {
-						dataUsed.push(point[joinBy[1]]);
-					});
-				}
+				this.getBox(mapData);
+				data = data || [];				
 
 				// Add those map points that don't correspond to data, which will be drawn as null points
-				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf
-
+				dataUsed = '|' + dataUsed.map(function (point) { 
+					return point[joinBy[0]]; 
+				}).join('|') + '|'; // String search is faster than array.indexOf
+				
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 						data.push(merge(mapPoint, { value: null }));
 					}
 				});
+			} else {
+				this.getBox(dataUsed); // Issue #4784
 			}
 		}
 		Series.prototype.setData.call(this, data, redraw);
@@ -467,6 +484,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		series.translateColors();
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Get presentational attributes
 	 */
@@ -489,6 +507,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		return attr;
 	},
+	/*= } =*/
 	
 	/** 
 	 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
@@ -522,19 +541,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions. TODO: Check unstyled.
-			/*= if (build.classic) { =*/
-			if (chart.hasRendered) {
-				each(series.points, function (point) {
-
-					// Restore state color on update/redraw (#3529)
-					if (point.shapeArgs) {
-						point.shapeArgs.fill = series.pointAttribs(point, point.state).fill;
-					}
-				});
-			}
-			/*= } =*/
-
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
@@ -549,6 +555,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
 					}
+					if (!point.color && isNumber(point.colorIndex)) {
+						point.graphic.addClass('highcharts-color-' + point.colorIndex);
+					}
+					if (point.value === null) {
+						point.graphic.addClass('highcharts-null-point');
+					}
+					point.graphic.attr(series.colorAttribs(point, point.state));
 				}
 			});
 

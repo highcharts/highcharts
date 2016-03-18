@@ -97,7 +97,7 @@ import '../parts/Series.js';
 
 			var axis = this;
 			
-			axis.doPostTranslate = true;
+			axis.isBroken = true;
 
 			this.val2lin = function (val) {
 				var nval = val,
@@ -277,21 +277,19 @@ import '../parts/Series.js';
 
 	function drawPointsWrapped(proceed) {
 		proceed.apply(this);
-		this.drawBreaks();
+		this.drawBreaks(this.xAxis, ['x']);
+		this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
 	}
 
-	H.Series.prototype.drawBreaks = function () {
+	H.Series.prototype.drawBreaks = function (axis, keys) {
 		var series = this,
 			points = series.points,
-			axis,
 			breaks,
 			threshold,
-			axisName = 'Axis',
 			eventName,
 			y;
 
-		each(['y', 'x'], function (key) {
-			axis = series[key + axisName];
+		each(keys, function (key) {
 			breaks = axis.breakArray || [];
 			threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
 			each(points, function (point) {
@@ -302,7 +300,7 @@ import '../parts/Series.js';
 					if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
 						eventName = 'pointBreak';
 					} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
-						eventName = 'pointInBreak'; // docs
+						eventName = 'pointInBreak';
 					} 
 					if (eventName) {
 						fireEvent(axis, eventName, { point: point, brk: brk });

@@ -262,6 +262,7 @@ $(function () {
         assertEquals(assert, 'Rounding', "29.1150", numberFormat(29.115, 4));
         assertEquals(assert, 'Rounding negative (#4573)', "-342 000.00", numberFormat(-342000, 2));
         assertEquals(assert, 'String decimal count', "2 016", numberFormat(2016, '0'));
+        assertEquals(assert, 'Rounding', "2.0", numberFormat(1.96, 1));
     });
 
 
@@ -338,6 +339,14 @@ $(function () {
 
         assertEquals(assert, 'Hours in 24 hours format', '5:55', dateFormat('%k:%M',
             Date.UTC(2015, 0, 1, 5, 55, 0)));
+
+        // Issue #5060
+        assertEquals(
+            assert,
+            'Issue #5060, %e padding',
+            'Jan,  1',
+            dateFormat('%b, %e', Date.UTC(2015, 0, 1))
+        );
     });
 
 

@@ -141,22 +141,24 @@ extend(defaultOptions, {
 	scrollbar: {
 		//enabled: true
 		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: '#bfc8d1',
+		// trackBorderRadius: 0,
 		barBorderRadius: 0,
-		barBorderWidth: 1,
+		buttonBorderRadius: 0,
+		liveRedraw: svg && !isTouchDevice,
+		minWidth: 6,
+		/*= if (build.classic) { =*/
+		barBackgroundColor: '#bfc8d1',
 		barBorderColor: '#bfc8d1',
+		barBorderWidth: 1,
 		buttonArrowColor: '#666',
 		buttonBackgroundColor: '#ebe7e8',
 		buttonBorderColor: '#bbb',
-		buttonBorderRadius: 0,
 		buttonBorderWidth: 1,
-		minWidth: 6,
 		rifleColor: '#666',
 		trackBackgroundColor: '#eeeeee',
 		trackBorderColor: '#eeeeee',
-		trackBorderWidth: 1,
-		// trackBorderRadius: 0
-		liveRedraw: svg && !isTouchDevice
+		trackBorderWidth: 1
+		/*= } =*/
 	}
 });
 
@@ -266,18 +268,29 @@ Scroller.prototype = {
 		if (!scroller.rendered) {
 			scrollbarButtons[index] = renderer.g().add(scroller.scrollbarGroup);
 
-			tempElem = renderer.rect(
-					-0.5,
-					-0.5,
-					scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
-					scrollbarHeight + 1,
-					scrollbarOptions.buttonBorderRadius,
-					scrollbarOptions.buttonBorderWidth
-				).attr({
-					stroke: scrollbarOptions.buttonBorderColor,
-					'stroke-width': scrollbarOptions.buttonBorderWidth,
-					fill: scrollbarOptions.buttonBackgroundColor
-				}).add(scrollbarButtons[index]);
+			// Create a rectangle for the scrollbar button
+			tempElem = renderer.rect()
+				.addClass('highcharts-scrollbar-button')
+				.add(scrollbarButtons[index]);
+
+			/*= if (build.classic) { =*/
+			// Presentational attributes
+			tempElem.attr({
+				stroke: scrollbarOptions.buttonBorderColor,
+				'stroke-width': scrollbarOptions.buttonBorderWidth,
+				fill: scrollbarOptions.buttonBackgroundColor
+			});
+			/*= } =*/
+
+			// Place the rectangle based on the rendered stroke width
+			tempElem.attr(tempElem.crisp({
+				x: -0.5,
+				y: -0.5,
+				width: scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
+				height: scrollbarHeight + 1,
+				r: scrollbarOptions.buttonBorderRadius
+			}, tempElem.strokeWidth()));
+					
 			elementsToDestroy.push(tempElem);
 
 			tempElem = renderer
@@ -287,9 +300,16 @@ Scroller.prototype = {
 					'L',
 					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
 					scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
-				]).attr({
-					fill: scrollbarOptions.buttonArrowColor
-				}).add(scrollbarButtons[index]);
+				])
+				.addClass('highcharts-scrollbar-arrow')
+				.add(scrollbarButtons[index]);
+
+			/*= if (build.classic) { =*/
+			tempElem.attr({
+				fill: scrollbarOptions.buttonArrowColor
+			});
+			/*= } =*/
+
 			elementsToDestroy.push(tempElem);
 		}
 
@@ -387,8 +407,7 @@ Scroller.prototype = {
 
 		// handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), navigatorWidth);
-		scroller.zoomedMin = 
-			Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0);
+		scroller.zoomedMin = Math.min(Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0), navigatorWidth);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = Math.round(scroller.zoomedMax);
 		zoomedMin = Math.round(scroller.zoomedMin);
@@ -447,37 +466,55 @@ Scroller.prototype = {
 				scroller.scrollbarGroup = scrollbarGroup = renderer.g('scrollbar').add();
 
 				// the scrollbar track
-				strokeWidth = scrollbarOptions.trackBorderWidth;
-				scroller.scrollbarTrack = scrollbarTrack = renderer.rect().attr({
-					x: 0,
-					y: -strokeWidth % 2 / 2,
+				scroller.scrollbarTrack = scrollbarTrack = renderer.rect()
+					.addClass('highcharts-scrollbar-track')
+					.attr({
+						x: 0,
+						r: scrollbarOptions.trackBorderRadius || 0,
+						height: scrollbarHeight
+					}).add(scrollbarGroup);
+				/*= if (build.classic) { =*/
+				scroller.scrollbarTrack.attr({
 					fill: scrollbarOptions.trackBackgroundColor,
 					stroke: scrollbarOptions.trackBorderColor,
-					'stroke-width': strokeWidth,
-					r: scrollbarOptions.trackBorderRadius || 0,
-					height: scrollbarHeight
-				}).add(scrollbarGroup);
+					'stroke-width': scrollbarOptions.trackBorderWidth
+				});
+				/*= } =*/
+				strokeWidth = scroller.scrollbarTrack.strokeWidth();
+				scroller.scrollbarTrack.attr({
+					y: -strokeWidth % 2 / 2
+				});
 
+				
 				// the scrollbar itself
 				scroller.scrollbar = scrollbar = renderer.rect()
+					.addClass('highcharts-scrollbar-thumb')
 					.attr({
-						y: -scrollbarStrokeWidth % 2 / 2,
 						height: scrollbarHeight,
-						fill: scrollbarOptions.barBackgroundColor,
-						stroke: scrollbarOptions.barBorderColor,
-						'stroke-width': scrollbarStrokeWidth,
 						r: barBorderRadius
 					})
 					.add(scrollbarGroup);
 
 				scroller.scrollbarRifles = renderer.path()
-					.attr({
-						stroke: scrollbarOptions.rifleColor,
-						'stroke-width': 1
-					})
+					.addClass('highcharts-scrollbar-rifles')
 					.add(scrollbarGroup);
+
+				/*= if (build.classic) { =*/
+				scrollbar.attr({
+					fill: scrollbarOptions.barBackgroundColor,
+					stroke: scrollbarOptions.barBorderColor,
+					'stroke-width': scrollbarOptions.barBorderWidth
+				});
+				scroller.scrollbarRifles.attr({
+					stroke: scrollbarOptions.rifleColor,
+					'stroke-width': 1
+				});
+				/*= } =*/
 			}
 		}
+
+		// Get rendered strokes
+		scrollbarStrokeWidth = scrollbar.strokeWidth();
 
 		// place elements
 		verb = chart.isResizing ? 'animate' : 'attr';
@@ -555,6 +592,7 @@ Scroller.prototype = {
 			scroller.scrollbarPad = scrollbarPad;
 			scrollbar[verb]({
 				x: Math.floor(scrX) + (scrollbarStrokeWidth % 2 / 2),
+				y: -scrollbarStrokeWidth % 2 / 2,
 				width: scrWidth
 			});
 
@@ -1034,7 +1072,6 @@ Scroller.prototype = {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
-			pointValKey: inArray('close', baseSeries.pointArrayMap || []) > -1 && 'close', // #1905
 			xAxis: 'navigator-x-axis',
 			yAxis: 'navigator-y-axis',
 			name: 'Navigator',

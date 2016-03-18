@@ -4,7 +4,8 @@ var dl = {
         enabled: true,
         format: 'Start - Lunde',
         rotation: 45,
-        align: 'right'
+        align: 'right',
+        crop: false
     },
     31: {
         enabled: true,

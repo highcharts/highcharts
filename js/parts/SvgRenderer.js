@@ -74,7 +74,6 @@ SVGElement.prototype = {
 		var animOptions = pick(options, this.renderer.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
-			animOptions = merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -203,8 +202,6 @@ SVGElement.prototype = {
 	 * and apply strokes to the copy.
 	 *
 	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
-	 *
-	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -378,7 +375,7 @@ SVGElement.prototype = {
 
 		while (i--) {
 			setter.call(
-				null, 
+				shadows[i], 
 				key === 'height' ?
 					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value, 
@@ -404,7 +401,6 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
@@ -1173,7 +1169,14 @@ SVGElement.prototype = {
 	},
 	/*= if (build.classic) { =*/
 	dashstyleSetter: function (value) {
-		var i;
+		var i,
+			strokeWidth = this['stroke-width'];
+		
+		// If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new strokeWidth 
+		// function, we should be able to use that instead.
+		if (strokeWidth === 'inherit') {
+			strokeWidth = 1;
+		}
 		value = value && value.toLowerCase();
 		if (value) {
 			value = value
@@ -1189,10 +1192,10 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
+				value[i] = pInt(value[i]) * strokeWidth;
 			}
 			value = value.join(',')
-				.replace('NaN', 'none'); // #3226
+				.replace(/NaN/g, 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
@@ -1582,13 +1585,13 @@ SVGRenderer.prototype = {
 
 
 			// build the lines
-			each(lines, function (line, lineNo) {
+			each(lines, function buildTextLines(line, lineNo) {
 				var spans, spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
-				each(spans, function (span) {
+				each(spans, function buildTextSpans(span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
 							tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'),
@@ -1777,7 +1780,7 @@ SVGRenderer.prototype = {
 				pos += increment;
 			}
 		}
-		console.log(finalPos, node.getSubStringLength(0, finalPos))
+		console.log('width', width, 'stringWidth', node.getSubStringLength(0, finalPos))
 	},
 	*/
 
@@ -1801,30 +1804,29 @@ SVGRenderer.prototype = {
 	 */
 	button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape) {
 		var label = this.label(text, x, y, shape, null, null, null, null, 'button'),
-			curState = 0,
-			stateOptions,
-			stateStyle,
-			normalStyle,
+			curState = 0;
+
+		// Default, non-stylable attributes
+		label.attr(merge({
+			'padding': 2,
+			'r': 2
+		}, normalState));
+
+		/*= if (build.classic) { =*/
+		// Presentational
+		var normalStyle,
 			hoverStyle,
 			pressedStyle,
-			disabledStyle,
-			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
+			disabledStyle;
 
 		// Normal state - prepare the attributes
 		normalState = merge({
+			fill: '#f7f7f7',
 			'stroke-width': 1,
-			stroke: '#CCCCCC',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FEFEFE'],
-					[1, '#F6F6F6']
-				]
-			},
-			r: 2,
-			padding: 5,
 			style: {
-				color: 'black'
+				color: '#444444',
+				cursor: 'pointer',
+				fontWeight: 'normal'
 			}
 		}, normalState);
 		normalStyle = normalState.style;
@@ -1832,27 +1834,17 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FFF'],
-					[1, '#ACF']
-				]
-			}
+			fill: '#e7e7e7'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#9BD'],
-					[1, '#CDF']
-				]
+			fill: '#e7f0f9',
+			style: {
+				color: '#000000',
+				fontWeight: 'bold'
 			}
 		}, pressedState);
 		pressedStyle = pressedState.style;
@@ -1866,47 +1858,49 @@ SVGRenderer.prototype = {
 		}, disabledState);
 		disabledStyle = disabledState.style;
 		delete disabledState.style;
+		/*= } =*/
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
-				label.attr(hoverState)
-					.css(hoverStyle);
+				label.setState(1);
 			}
 		});
 		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
-				stateOptions = [normalState, hoverState, pressedState];
-				stateOptions = stateOptions[curState];
-				stateStyle = [normalStyle, hoverStyle, pressedStyle];
-				stateStyle = stateStyle[curState];
-				label.attr(stateOptions)
-					.css(stateStyle);
+				label.setState(curState);
 			}
 		});
 
 		label.setState = function (state) {
-			label.state = curState = state;
-			if (!state) {
-				label.attr(normalState)
-					.css(normalStyle);
-			} else if (state === 2) {
-				label.attr(pressedState)
-					.css(pressedStyle);
-			} else if (state === 3) {
-				label.attr(disabledState)
-					.css(disabledStyle);
+			// Hover state is temporary, don't record it
+			if (state !== 1) {
+				label.state = curState = state;
 			}
+			// Update visuals
+			label.removeClass(/highcharts-button-(normal|hover|pressed|disabled)/)
+				.addClass('highcharts-button-' + ['normal', 'hover', 'pressed', 'disabled'][state || 0]);
+			
+			/*= if (build.classic) { =*/
+			label.attr([normalState, hoverState, pressedState, disabledState][state || 0])
+				.css([normalStyle, hoverStyle, pressedStyle, disabledStyle][state || 0]);
+			/*= } =*/
 		};
+
+
+		/*= if (build.classic) { =*/
+		// Presentational attributes
+		label
+			.attr(normalState)
+			.css(extend({ cursor: 'default' }, normalStyle));
+		/*= } =*/
 
 		return label
 			.on('click', function (e) {
 				if (curState !== 3) {
 					callback.call(label, e);
 				}
-			})
-			.attr(normalState)
-			.css(extend({ cursor: 'default' }, normalStyle));
+			});
 	},
 
 	/**
@@ -2029,8 +2023,8 @@ SVGRenderer.prototype = {
 			attribs.r = r;
 		}
 
-		wrapper.rSetter = function (value) {
-			attr(this.element, {
+		wrapper.rSetter = function (value, key, element) {
+			attr(element, {
 				rx: value,
 				ry: value
 			});
@@ -2253,14 +2247,14 @@ SVGRenderer.prototype = {
 
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
-						if (!ren.imgCount) {
-							charts[ren.chartIndex].onload(); // docs: Load and callback are now waiting for images
+						if (!ren.imgCount && charts[ren.chartIndex].onload) {
+							charts[ren.chartIndex].onload();
 						}
 					},
 					src: imageSrc
 				});
+				this.imgCount++;
 			}
-			this.imgCount++;
 		}
 
 		return obj;
@@ -2556,7 +2550,7 @@ SVGRenderer.prototype = {
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
 		var renderer = this,
-			wrapper = renderer.g(className),
+			wrapper = renderer.g(className || 'label'),
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1

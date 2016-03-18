@@ -205,6 +205,7 @@ extend(SVGRenderer.prototype, {
 		var wrapper = this.createElement('span'),
 			element = wrapper.element,
 			renderer = wrapper.renderer,
+			isSVG = renderer.isSVG,
 			addSetters = function (element, style) {
 				// These properties are set as attributes on the SVG group, and as
 				// identical CSS properties on the div. (#3542)
@@ -224,7 +225,11 @@ extend(SVGRenderer.prototype, {
 			element.innerHTML = this.textStr = value;
 			wrapper.htmlUpdateTransform();
 		};
-		addSetters(wrapper, wrapper.element.style);
+
+		// Add setters for the element itself (#4938)
+		if (isSVG) { // #4938, only for HTML within SVG
+			addSetters(wrapper, wrapper.element.style);
+		}
 
 		// Various setters which rely on update transform
 		wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
@@ -257,7 +262,7 @@ extend(SVGRenderer.prototype, {
 		wrapper.css = wrapper.htmlCss;
 
 		// This is specific for HTML within SVG
-		if (renderer.isSVG) {
+		if (isSVG) {
 			wrapper.add = function (svgGroupWrapper) {
 
 				var htmlGroup,
@@ -296,7 +301,8 @@ extend(SVGRenderer.prototype, {
 							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', cls, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
-								top: (parentGroup.translateY || 0) + 'px'
+								top: (parentGroup.translateY || 0) + 'px',
+								opacity: parentGroup.opacity // #5075
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut

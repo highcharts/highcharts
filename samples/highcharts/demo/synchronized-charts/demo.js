@@ -10,20 +10,21 @@ $(function () {
      * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
-    $('#container').bind('mousemove touchmove', function (e) {
+    $('#container').bind('mousemove touchmove touchstart', function (e) {
         var chart,
             point,
-            i;
+            i,
+            event;
 
         for (i = 0; i < Highcharts.charts.length; i = i + 1) {
             chart = Highcharts.charts[i];
-            e = chart.pointer.normalize(e); // Find coordinates within the chart
-            point = chart.series[0].searchPoint(e, true); // Get the hovered point
+            event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+            point = chart.series[0].searchPoint(event, true); // Get the hovered point
 
             if (point) {
                 point.onMouseOver(); // Show the hover marker
                 chart.tooltip.refresh(point); // Show the tooltip
-                chart.xAxis[0].drawCrosshair(e, point); // Show the crosshair
+                chart.xAxis[0].drawCrosshair(event, point); // Show the crosshair
             }
         }
     });
@@ -67,8 +68,7 @@ $(function () {
                     chart: {
                         marginLeft: 40, // Keep all charts left aligned
                         spacingTop: 20,
-                        spacingBottom: 20,
-                        zoomType: 'x'
+                        spacingBottom: 20
                     },
                     title: {
                         text: dataset.name,

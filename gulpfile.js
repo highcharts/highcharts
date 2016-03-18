@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-env node, es6 */
 /* eslint no-console:0, valid-jsdoc:0 */
 
 'use strict';
@@ -13,6 +13,7 @@ var colors = require('colors'),
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    spawn = require('child_process').spawn,
     xml2js = require('xml2js');
 
 var paths = {
@@ -216,11 +217,9 @@ gulp.task('build', function () {
 });
 */
 gulp.task('styles', function () {
-    var dir = './js/css/';
-
-    gulp.src(dir + '*.scss')
+    gulp.src('./css/*.scss')
         .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest(dir));
+        .pipe(gulp.dest('./code/css/'));
 });
 gulp.task('lint', ['scripts'], function () {
     return gulp.src(paths.assemblies.concat(paths.modules))
@@ -288,6 +287,16 @@ gulp.task('ftp', function () {
 
 gulp.task('ftp-watch', function () {
     gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
+});
+
+/**
+ * Run the test suite. The task spawns a child process running PhantomJS.
+ */
+gulp.task('test', function () {
+    spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
+        cwd: 'utils/samples',
+        stdio: 'inherit'
+    });
 });
 
 gulp.task('filesize', function () {
@@ -367,7 +376,8 @@ gulp.task('filesize', function () {
 gulp.task('scripts', function () {
     var codes = [],
         prods = [],
-        assemblies;
+        jsTemplates,
+        filePaths;
 
 
     /**
@@ -506,46 +516,51 @@ gulp.task('scripts', function () {
         prods.push(prod);
     });
 
+    // Build the JavaScript templates
+    jsTemplates = assemble(codes);
+    filePaths = paths.assemblies.slice();
 
-    assemblies = assemble(codes);
 
+    // Add modules
+    let modRoot = './js/modules/';
+    fs.readdirSync(modRoot).forEach(file => {
+        if (/\.src\.js$/.test(file)) {
+            jsTemplates.push(fs.readFileSync(modRoot + file, 'utf8'));
+            filePaths.push(modRoot + file);
+        }
+    });
 
-    // Loop over the source files
-    assemblies.forEach(function (tpl, i) {
+    // Process the JS templates and print to files
+    jsTemplates.forEach(function (tpl, i) {
         var prod = prods[i],
-            path = paths.assemblies[i],
-            file;
+            path = filePaths[i];
 
         // Unspecified date, use current
-        if (!products[prod].date) {
-            products[prod].date = (new Date()).toISOString().substr(0, 10);
+        if (prod) {
+            if (!products[prod].date) {
+                products[prod].date = (new Date()).toISOString().substr(0, 10);
+            }
+            tpl = addVersion(tpl, products[prod]);
         }
-        tpl = addVersion(tpl, products[prod]);
 
-        file = fs.readFileSync(path, 'utf8');
+        // Create the classic file
+        fs.writeFileSync(
+            path.replace('./js/', './code/'),
+            preprocess(tpl, {
+                assembly: true,
+                classic: true
+            }),
+            'utf8'
+        );
 
-        // To avoid noisy commits, change dates if there are actual changes in the contents of the file
-        if (file.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()') !== tpl.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()')) {
-
-            // Create the classic file
-            fs.writeFileSync(
-                path,
-                preprocess(tpl, {
-                    assembly: true,
-                    classic: true
-                }),
-                'utf8'
-            );
-
-            // Create the unstyled file
-            fs.writeFileSync(
-                path.replace('.src.js', '.unstyled.src.js'),
-                preprocess(tpl, {
-                    classic: false
-                }),
-                'utf8'
-            );
-        }
+        // Create the unstyled file
+        fs.writeFileSync(
+            path.replace('./js/', './code/js/'),
+            preprocess(tpl, {
+                classic: false
+            }),
+            'utf8'
+        );
     });
 
     // Special case

@@ -34,8 +34,10 @@ extend(ColorAxis.prototype, {
 			animation: {
 				duration: 50
 			},
-			color: 'gray',
-			width: 0.01
+			width: 0.01,
+			/*= if (build.classic) { =*/
+			color: 'gray'
+			/*= } =*/
 		},
 		labels: {
 			overflow: 'justify'
@@ -110,6 +112,7 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
+			colorCount = chart.colorCount,
 			options = this.options,
 			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];
@@ -122,10 +125,16 @@ extend(ColorAxis.prototype, {
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
+					/*= if (build.classic) { =*/
 					colors = chart.options.colors;
-					dataClass.color = colors[colorCounter++];
-					// loop back to zero
-					if (colorCounter === colors.length) {
+					colorCount = colors.length;
+					dataClass.color = colors[colorCounter];
+					/*= } =*/
+					dataClass.colorIndex = colorCounter;
+
+					// increase and loop back to zero
+					colorCounter++;
+					if (colorCounter === colorCount) {
 						colorCounter = 0;
 					}
 				} else {
@@ -204,6 +213,7 @@ extend(ColorAxis.prototype, {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
+						point.colorIndex = dataClass.colorIndex;
 					}
 					break;
 				}
@@ -350,10 +360,15 @@ extend(ColorAxis.prototype, {
 
 			if (this.cross) {
 				this.cross
-					.attr({
-						fill: this.crosshair.color
-					})
+					.addClass('highcharts-coloraxis-marker')
 					.add(this.legendGroup);
+
+				/*= if (build.classic) { =*/
+				this.cross.attr({
+					fill: this.crosshair.color
+				});
+				/*= } =*/
+					
 			}
 		}
 	},
@@ -510,6 +525,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	}
 
 	return allItems.concat(proceed.call(this));
+});
+
+wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
+	proceed.call(this, item, visible);
+	if (visible && item.legendColor) {
+		item.legendSymbol.attr({
+			fill: item.legendColor
+		});
+	}
 });
 
 	return H;

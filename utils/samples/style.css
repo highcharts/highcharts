@@ -23,6 +23,10 @@ body.page h1 {
 	background: #34343e;
 	box-shadow: 0px 0px 8px #888;
 }
+.top-bar h2 {
+	height: 0;
+	overflow: visible;
+}
 #source-box {
 	width: 0;
 	float: left;
@@ -34,7 +38,7 @@ body.page h1 {
 	transition: width 500ms;
 }
 
-.buttons a, a.button, button {
+.buttons a, a.button, button, input.button {
 	border: none;
 	border-radius: 0.3em;
 	background: #a4edba;
@@ -44,14 +48,15 @@ body.page h1 {
 	font-size: 1em;
 	white-space: nowrap;
 	cursor: pointer;
-	margin: 0 0.3em;
-	line-height: 2.5em;
+	margin: 0.3em;
+	line-height: 1.5em;
+	display: inline-block;
 }
-.buttons a:hover, a.button:hover, button:hover {
+.buttons a:hover, a.button:hover, button:hover, input.button:hover {
 	background: #40818b;
 	color: white;
 }
-.buttons a.active, a.button.active, button.active {
+.buttons a.active, a.button.active, button.active, input.button:active {
 	background: #40818b;
 	color: white;
 }
@@ -68,12 +73,8 @@ body.page h1 {
 #frame-row {
 	width: 1360px;
 }
-#comment-placeholder {
-	width: 300px;
-	display: inline-block;
-}
 #comment-iframe {
-	height: 400px;
+	height: 85px;
 	width: calc(100% - 2px);
 	border: 1px solid silver;
 }
@@ -120,7 +121,7 @@ body.unit iframe {
 	border: none;
 }
 body.manual iframe {
-	width: calc(100% - 320px);
+	width: 100%;
 	height: 600px;
 	border: none;
 }
@@ -130,6 +131,11 @@ body.single-col #report, body.single-col #svg, body.single-col #preview {
 }
 body.manual #comment-placeholder {
 	vertical-align: top;
+}
+
+.nightly {
+	font-size: 0.8em;
+	padding: 0.5em 0;
 }
 
 /* QUnit, follow the theme */

@@ -1,6 +1,6 @@
 (function (H) {
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
+	var correctFloat = H.correctFloat,
+		defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
@@ -96,9 +96,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// override point value for sums
 			// #3710 Update point does not propagate to sum
 			if (point.isSum) {
-				point.y = yValue;
+				point.y = correctFloat(yValue);
 			} else if (point.isIntermediateSum) {
-				point.y = yValue - previousIntermediate; // #3840
+				point.y = correctFloat(yValue - previousIntermediate); // #3840
 			}
 			// up points
 			y = Math.max(previousY, previousY + point.y) + range[0];
@@ -178,9 +178,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			point = points && points[i] ? points[i] : {};
 
 			if (y === 'sum' || point.isSum) {
-				yData[i] = sum;
+				yData[i] = correctFloat(sum);
 			} else if (y === 'intermediateSum' || point.isIntermediateSum) {
-				yData[i] = subSum;
+				yData[i] = correctFloat(subSum);
 			} else {
 				sum += y;
 				subSum += y;

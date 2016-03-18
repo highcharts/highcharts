@@ -1,5 +1,6 @@
 (function (H) {
-	var each = H.each,
+	var defined = H.defined,
+		each = H.each,
 		noop = H.noop,
 		seriesTypes = H.seriesTypes;
 
@@ -32,7 +33,9 @@ H.colorSeriesMixin = {
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 
+	/*= if (build.classic) { =*/
 	pointAttribs: seriesTypes.column.prototype.pointAttribs,
+	/*= } =*/
 	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -54,6 +57,17 @@ H.colorSeriesMixin = {
 				point.color = color;
 			}
 		});
+	},
+
+	/**
+	 * Get the color attibutes to apply on the graphic
+	 */
+	colorAttribs: function (point) {
+		var ret = {};
+		if (defined(point.color)) {
+			ret[this.colorProp || 'fill'] = point.color;
+		}
+		return ret;
 	}
 };
 	return H;

@@ -8,6 +8,7 @@ import './Pointer.js';
 (function () {
 	var addEvent = H.addEvent,
 		animate = H.animate,
+		animObject = H.animObject,
 		attr = H.attr,
 		doc = H.doc,
 		Axis = H.Axis, // @todo add as requirement
@@ -761,7 +762,7 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				if (axis.visible) {
+				if (axis.visible && axis.isDirty) { // #5124
 					axis.getOffset();
 				}
 			});
@@ -889,14 +890,13 @@ Chart.prototype = {
 		fireEvent(chart, 'resize');
 
 		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
-		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
 		syncTimeout(function () {
 			if (chart) {
 				fireEvent(chart, 'endResize', null, function () {
 					chart.isResizing -= 1;
 				});
 			}
-		}, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
+		}, animObject(globalAnimation).duration);
 	},
 
 	/**
@@ -1478,7 +1478,7 @@ Chart.prototype = {
 		chart.renderer.draw();
 		
 		// Fire the load event if there are no external images
-		if (!chart.renderer.imgCount) {
+		if (!chart.renderer.imgCount && chart.onload) {
 			chart.onload();
 		}
 
@@ -1494,16 +1494,16 @@ Chart.prototype = {
 		var chart = this;
 
 		// Run callbacks
-		each(this.callbacks.concat(this.callback), function (fn) {
+		each([this.callback].concat(this.callbacks), function (fn) {
 			if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
 		});
 
-		// Fire the load event if there are no external images
-		if (!chart.renderer.imgCount) {
-			fireEvent(chart, 'load');
-		}
+		fireEvent(chart, 'load');
+
+		// Don't run again
+		this.onload = null;
 	},
 
 	/**
