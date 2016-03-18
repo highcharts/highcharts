@@ -1,6 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
-import './SVGRenderer.js';
+import './SvgRenderer.js';
 (function () {
 	var attr = H.attr,
 		createElement = H.createElement,

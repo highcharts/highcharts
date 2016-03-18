@@ -3,7 +3,7 @@ import './Utilities.js';
 import './Options.js';
 import './Legend.js';
 import './Point.js';
-import './SVGRenderer.js';
+import './SvgRenderer.js';
 (function () {
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,

@@ -1,7 +1,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
-import './SVGRenderer.js';
+import './SvgRenderer.js';
 /*= if (build.classic) { =*/
 (function () {
 	var VMLRenderer,
