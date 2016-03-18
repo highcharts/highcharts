@@ -1,4 +1,9 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Series.js';
+import './Tooltip.js';
+(function () {
 
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
@@ -587,5 +592,4 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
  * End data grouping module												   *
  ******************************************************************************/
 
-	return H;
-}(Highcharts));
+}());
