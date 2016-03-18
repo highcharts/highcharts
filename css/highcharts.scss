@@ -463,3 +463,14 @@ input.highcharts-range-selector {
 .highcharts-null-point {
     fill: #f8f8f8;
 }
+
+/* Drilldown module */
+.highcharts-drilldown-point {
+    cursor: pointer;
+}
+.highcharts-drilldown-data-label text, .highcharts-drilldown-axis-label {
+    cursor: pointer;
+    fill: #0d233a;
+    font-weight: bold;
+    text-decoration: underline;
+}

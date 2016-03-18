@@ -139,7 +139,7 @@ TrackerMixin = H.TrackerMixin = {
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
-		} else { // create
+		} else if (series.graph) { // create
 
 			series.tracker = renderer.path(trackerPath)
 			.attr({

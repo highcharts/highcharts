@@ -369,7 +369,6 @@
                 chart.seriesGroup
             );
 
-            series.getAttribs();
             series.markerGroup = series.group;
             addEvent(series, 'destroy', function () {
                 series.markerGroup = null;

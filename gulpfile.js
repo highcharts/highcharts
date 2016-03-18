@@ -198,8 +198,8 @@ gulp.task('lint-samples', function () {
 
 // Watch changes to CSS files
 gulp.task('default', ['scripts', 'styles'], function () {
-    gulp.watch('./js/css/*.scss', ['styles']);
-    gulp.watch('./js/!(adapters|builds|modules)/*.js', ['scripts']);
+    gulp.watch('./css/*.scss', ['styles']);
+    gulp.watch('./js/!(adapters|builds)/*.js', ['scripts']);
 });
 
 

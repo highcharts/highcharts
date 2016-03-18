@@ -299,11 +299,14 @@ H.Series.prototype = {
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
 			counterName = prop + 'Counter',
-			len = defaults ? defaults.length : this.chart[prop + 'Count'];
+			len = defaults ? defaults.length : this.chart[prop + 'Count'],
+			setting;
 
 		if (!value) {
-			if (defined(userOptions['_' + indexName])) { // after Series.update()
-				i = userOptions['_' + indexName];
+			// Pick up either the colorIndex option, or the _colorIndex after Series.update()
+			setting = pick(userOptions[indexName], userOptions['_' + indexName]);
+			if (defined(setting)) { // after Series.update()
+				i = setting;
 			} else {
 				userOptions['_' + indexName] = i = this.chart[counterName] % len;
 				this.chart[counterName] += 1;
