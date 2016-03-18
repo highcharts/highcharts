@@ -1,4 +1,13 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Chart.js';
+import './Axis.js';
+import './Point.js';
+import './Pointer.js';
+import './Series.js';
+import './SvgRenderer.js';
+import './VmlRenderer.js';
+(function () {
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		Axis = H.Axis,
@@ -638,5 +647,4 @@ wrap(Series.prototype, 'render', function (proceed) {
 	proceed.call(this);
 });
 
-	return H;
-}(Highcharts));
+}());
