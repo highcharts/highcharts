@@ -93,7 +93,7 @@ function assemble(assemblies) {
                             tpl += file;
                         });
 
-                        //tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
+                        // tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
 
                         tpl = tpl.replace(
                             'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
@@ -108,6 +108,61 @@ function assemble(assemblies) {
     });
     return ret;
 }
+/**
+ * [outPutMessage description]
+ * @param  {[type]} title   [description]
+ * @param  {[type]} message [description]
+ * @return {[type]}         [description]
+ */
+function outPutMessage(title, message) {
+    var lineLength = 50,
+        line = new Array(lineLength + 1).join('-');
+    console.log(line);
+    console.log('----- ' + title);
+    console.log(line);
+    console.log(message);
+    console.log(line);
+}
+
+gulp.task('build', function () {
+    var webpack = require('webpack'),
+        path = require('path');
+    return webpack({
+        entry: './js/masters/highstock.js',
+        output: {
+            filename: './js/webpack.js'
+        },
+        module: {
+            loaders: [{
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['es2015']
+                }
+            }]
+        },
+        resolve: {
+            extensions: ['', '.js']
+        },
+        debug: true
+    }).run(function (err, stats) {
+        var jsonStats = stats.toJson();
+        if (err) {
+            outPutMessage('Webpack fatal errors', err);
+        } else if (jsonStats.errors.length > 0) {
+            jsonStats.errors.forEach(function (m) {
+                outPutMessage('Webpack error', m);
+            });
+        } else if (jsonStats.warnings.length > 0) {
+            jsonStats.warnings.forEach(function (m) {
+                outPutMessage('Webpack warnings', m);
+            });
+        } else {
+            outPutMessage('Webpack Complete', 'Congratulations! Webpack compiled without any warnings or errors.');
+        }
+    });
+});
 
     /*
     optimizeHighcharts = function (fs, path) {
