@@ -1,4 +1,4 @@
-import Highcharts './highcharts.js';
+import Highcharts from './highcharts.js';
 import '../parts/OrdinalAxis.js';
 import '../modules/broken-axis.src.js';
 import '../parts/DataGrouping.js';
