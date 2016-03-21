@@ -3,9 +3,12 @@ $(function () {
     $('#container').highcharts({
         accessibility: {
             enabled: true,
-            description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey.',
+            description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015.',
             keyboardNavigation: {
                 skipNullPoints: true
+            },
+            pointInfoFormatter: function (point) {
+                return point.category + ', low ' + point.low + ', median ' + point.median + ', high ' + point.high;
             }
         },
 
@@ -32,7 +35,7 @@ $(function () {
             }
         },
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Avg: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>Low: <b>{point.low}</b><br/>Median: <b>{point.median}</b><br/>High: <b>{point.high}</b><br/>'
         },
         series: [{
             name: 'Plums',
