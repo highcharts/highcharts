@@ -430,8 +430,7 @@ seriesTypes.pie = extendClass(Series, {
 				} else {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
-						.addClass('highcharts-color-' + point.colorIndex)
+						.addClass(point.getClassName())
 						.setRadialReference(series.center)
 						.attr(groupTranslation)
 						.add(series.group);

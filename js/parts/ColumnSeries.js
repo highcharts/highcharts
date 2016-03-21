@@ -375,11 +375,6 @@ seriesTypes.column = extendClass(Series, {
 						.addClass(point.getClassName())
 						.add(point.group || series.group);
 
-					// Color by point
-					if (options.colorByPoint) {
-						graphic.addClass('highcharts-color-' + point.colorIndex);
-					}
-
 					/*= if (build.classic) { =*/
 					// Presentational
 					graphic
