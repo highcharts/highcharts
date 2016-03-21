@@ -65,6 +65,7 @@
         extend = H.extend,
         addEvent = H.addEvent,
         fireEvent = H.fireEvent,
+        grep = H.grep,
         merge = H.merge,
         pick = H.pick,
         wrap = H.wrap,
@@ -582,6 +583,26 @@
 
         return point;
     };
+
+    /**
+     * Extend series.destroy to also remove the fake k-d-tree points (#5137). Normally
+     * this is handled by Series.destroy that calls Point.destroy, but the fake
+     * search points are not registered like that.
+     */
+    wrap(Series.prototype, 'destroy', function (proceed) {
+        var series = this,
+            chart = series.chart;
+        if (chart.hoverPoints) {
+            chart.hoverPoints = grep(chart.hoverPoints, function (point) {
+                return point.series === series;
+            });
+        }
+
+        if (chart.hoverPoint && chart.hoverPoint.series === series) {
+            chart.hoverPoint = null;
+        }
+        proceed.call(this);
+    });
 
     /**
      * Return a point instance from the k-d-tree
