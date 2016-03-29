@@ -1574,7 +1574,7 @@ Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					zIndex: zIndex || 0.1 // IE8 needs this
+					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
 

@@ -9724,9 +9724,17 @@
                     if (p) {
                         // Store both closest points, using point.dist and point.distX comparisons (#4645):
                         each(['dist', 'distX'], function (dist, k) {
-                            if (typeof p[dist] === 'number' && p[dist] < distance[k]) {
-                                distance[k] = p[dist];
-                                kdpoint[k] = p;
+                            if (typeof p[dist] === 'number') {
+                                var
+                                    // It is closer than the reference point
+                                    isCloser = p[dist] < distance[k],
+                                    // It is equally close, but above the reference point (#4679)
+                                    isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
+
+                                if (isCloser || isAbove) {
+                                    distance[k] = p[dist];
+                                    kdpoint[k] = p;
+                                }
                             }
                         });
                     }
@@ -14667,7 +14675,7 @@
             if (isNew) {
                 this[prop] = group = this.chart.renderer.g(name)
                     .attr({
-                        zIndex: zIndex || 0.1 // IE8 needs this
+                        zIndex: zIndex || 0.1 // IE8 and pointer logic use this
                     })
                     .add(parent);
 
