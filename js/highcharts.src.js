@@ -15824,8 +15824,8 @@
 
             if (y !== null) {
                 stack.points[pointKey].push(stack.cum);
+                stackedYData[i] = stack.cum;
             }
-            stackedYData[i] = stack.cum;
 
         }
 
