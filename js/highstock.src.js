@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-21)
+ * @license Highstock JS v4.2.3-modified (2016-03-29)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -17019,7 +17019,7 @@
             h = bottom - y;
 
             // Top edges are exceptions
-            if (fromTop) {
+            if (fromTop && h) { // #5146
                 y -= 1;
                 h += 1;
             }
@@ -20166,7 +20166,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-21)
+     * Highstock JS v4.2.3-modified (2016-03-29)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

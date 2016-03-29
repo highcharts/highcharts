@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-21)
+ * @license Highmaps JS v4.2.3-modified (2016-03-29)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -15659,7 +15659,7 @@
             h = bottom - y;
 
             // Top edges are exceptions
-            if (fromTop) {
+            if (fromTop && h) { // #5146
                 y -= 1;
                 h += 1;
             }
