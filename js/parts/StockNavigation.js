@@ -4,11 +4,17 @@
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
 		scroller = chart.scroller,
+		scrollbar = chart.scrollbar,
 		rangeSelector = chart.rangeSelector;
 
 	function renderScroller() {
 		extremes = chart.xAxis[0].getExtremes();
 		scroller.render(extremes.min, extremes.max);
+	}
+
+	function renderScrollbar() {
+		extremes = chart.xAxis[0].getExtremes();
+		scrollbar.render(extremes.min, extremes.max);
 	}
 
 	function renderRangeSelector() {
@@ -24,6 +30,12 @@ Chart.prototype.callbacks.push(function (chart) {
 		}
 	}
 
+	function afterSetExtremesHandlerScrollbar(e) {
+		if (e.triggerOp !== 'navigator-drag') {
+			scrollbar.render(e.min, e.max);
+		}
+	}
+
 	function afterSetExtremesHandlerRangeSelector(e) {
 		rangeSelector.render(e.min, e.max);
 	}
@@ -31,6 +43,9 @@ Chart.prototype.callbacks.push(function (chart) {
 	function destroyEvents() {
 		if (scroller) {
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
+		}
+		if (scrollbar) {
+			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScrollbar);
 		}
 		if (rangeSelector) {
 			removeEvent(chart, 'resize', renderRangeSelector);
@@ -49,12 +64,28 @@ Chart.prototype.callbacks.push(function (chart) {
 			proceed.call(this);
 			if (isDirtyBox) {
 				renderScroller();
-			}
+ 			}
 		});
 
 		// do it now
 		renderScroller();
 	}
+
+	if (scrollbar) {
+		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScrollbar);
+
+		// redraw the scroller on chart resize or box resize
+		wrap(chart, 'drawChartBox', function (proceed) {
+			var isDirtyBox = this.isDirtyBox;
+			proceed.call(this);
+			if (isDirtyBox) {
+				renderScrollbar();
+ 			}
+		});
+
+		renderScrollbar();
+	}
+
 	if (rangeSelector) {
 		// redraw the scroller on setExtremes
 		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);

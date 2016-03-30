@@ -1,5 +1,5 @@
 /* ****************************************************************************
- * Start Scroller code														*
+ * Start Navigator code														*
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
@@ -117,10 +117,10 @@ extend(defaultOptions, {
 });
 
 /**
- * The Scroller class
+ * The Navigator class
  * @param {Object} chart
  */
-function Scroller(chart) {
+function Navigator(chart) {
 	var chartOptions = chart.options,
 		navigatorOptions = chartOptions.navigator,
 		navigatorEnabled = navigatorOptions.enabled,
@@ -129,10 +129,9 @@ function Scroller(chart) {
 		height = navigatorEnabled ? navigatorOptions.height : 0,
 		scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
 
-
 	this.handles = [];
 	this.scrollbarButtons = [];
-	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
+	this.elementsToDestroy = []; // Array containing the elements to destroy when Navigator is destroyed
 
 	this.chart = chart;
 	this.setBaseSeries();
@@ -143,13 +142,13 @@ function Scroller(chart) {
 	this.navigatorEnabled = navigatorEnabled;
 	this.navigatorOptions = navigatorOptions;
 	this.scrollbarOptions = scrollbarOptions;
-	this.outlineHeight = height + scrollbarHeight;
+	this.outlineHeight = height + scrollbarHeight - 1;
 
 	// Run scroller
 	this.init();
 }
 
-Scroller.prototype = {
+Navigator.prototype = {
 	/**
 	 * Draw one of the handles on the side of the zoomed range in the navigator
 	 * @param {Number} x The x center for the handle
@@ -207,59 +206,7 @@ Scroller.prototype = {
 	},
 
 	/**
-	 * Draw the scrollbar buttons with arrows
-	 * @param {Number} index 0 is left, 1 is right
-	 */
-	drawScrollbarButton: function (index) {
-		var scroller = this,
-			chart = scroller.chart,
-			renderer = chart.renderer,
-			elementsToDestroy = scroller.elementsToDestroy,
-			scrollbarButtons = scroller.scrollbarButtons,
-			scrollbarHeight = scroller.scrollbarHeight,
-			scrollbarOptions = scroller.scrollbarOptions,
-			tempElem;
-
-		if (!scroller.rendered) {
-			scrollbarButtons[index] = renderer.g().add(scroller.scrollbarGroup);
-
-			tempElem = renderer.rect(
-					-0.5,
-					-0.5,
-					scrollbarHeight + 1, // +1 to compensate for crispifying in rect method
-					scrollbarHeight + 1,
-					scrollbarOptions.buttonBorderRadius,
-					scrollbarOptions.buttonBorderWidth
-				).attr({
-					stroke: scrollbarOptions.buttonBorderColor,
-					'stroke-width': scrollbarOptions.buttonBorderWidth,
-					fill: scrollbarOptions.buttonBackgroundColor
-				}).add(scrollbarButtons[index]);
-			elementsToDestroy.push(tempElem);
-
-			tempElem = renderer
-				.path([
-					'M',
-					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
-					'L',
-					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 + 3,
-					scrollbarHeight / 2 + (index ? 2 : -2), scrollbarHeight / 2
-				]).attr({
-					fill: scrollbarOptions.buttonArrowColor
-				}).add(scrollbarButtons[index]);
-			elementsToDestroy.push(tempElem);
-		}
-
-		// adjust the right side button to the varying length of the scroll track
-		if (index) {
-			scrollbarButtons[index].attr({
-				translateX: scroller.scrollerWidth - scrollbarHeight
-			});
-		}
-	},
-
-	/**
-	 * Render the navigator and scroll bar
+	 * Render the navigator
 	 * @param {Number} min X axis value minimum
 	 * @param {Number} max X axis value maximum
 	 * @param {Number} pxMin Pixel value minimum
@@ -273,16 +220,10 @@ Scroller.prototype = {
 			navigatorWidth,
 			scrollerLeft,
 			scrollerWidth,
-			scrollbarGroup = scroller.scrollbarGroup,
 			navigatorGroup = scroller.navigatorGroup,
-			scrollbar = scroller.scrollbar,
-			xAxis = scroller.xAxis,
-			scrollbarTrack = scroller.scrollbarTrack,
 			scrollbarHeight = scroller.scrollbarHeight,
-			scrollbarEnabled = scroller.scrollbarEnabled,
+			xAxis = scroller.xAxis,
 			navigatorOptions = scroller.navigatorOptions,
-			scrollbarOptions = scroller.scrollbarOptions,
-			scrollbarMinWidth = scrollbarOptions.minWidth,
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
@@ -290,15 +231,7 @@ Scroller.prototype = {
 			halfOutline = outlineWidth / 2,
 			zoomedMin,
 			zoomedMax,
-			range,
-			scrX,
-			scrWidth,
-			scrollbarPad = 0,
 			outlineHeight = scroller.outlineHeight,
-			barBorderRadius = scrollbarOptions.barBorderRadius,
-			strokeWidth,
-			scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
-			centerBarX,
 			outlineTop = top + halfOutline,
 			verb,
 			unionExtremes;
@@ -347,8 +280,6 @@ Scroller.prototype = {
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
-		range = zoomedMax - zoomedMin;
-
 
 
 		// on first render, create all elements
@@ -384,43 +315,6 @@ Scroller.prototype = {
 						stroke: navigatorOptions.outlineColor
 					})
 					.add(navigatorGroup);
-			}
-
-			if (scrollbarEnabled) {
-
-				// draw the scrollbar group
-				scroller.scrollbarGroup = scrollbarGroup = renderer.g('scrollbar').add();
-
-				// the scrollbar track
-				strokeWidth = scrollbarOptions.trackBorderWidth;
-				scroller.scrollbarTrack = scrollbarTrack = renderer.rect().attr({
-					x: 0,
-					y: -strokeWidth % 2 / 2,
-					fill: scrollbarOptions.trackBackgroundColor,
-					stroke: scrollbarOptions.trackBorderColor,
-					'stroke-width': strokeWidth,
-					r: scrollbarOptions.trackBorderRadius || 0,
-					height: scrollbarHeight
-				}).add(scrollbarGroup);
-
-				// the scrollbar itself
-				scroller.scrollbar = scrollbar = renderer.rect()
-					.attr({
-						y: -scrollbarStrokeWidth % 2 / 2,
-						height: scrollbarHeight,
-						fill: scrollbarOptions.barBackgroundColor,
-						stroke: scrollbarOptions.barBorderColor,
-						'stroke-width': scrollbarStrokeWidth,
-						r: barBorderRadius
-					})
-					.add(scrollbarGroup);
-
-				scroller.scrollbarRifles = renderer.path()
-					.attr({
-						stroke: scrollbarOptions.rifleColor,
-						'stroke-width': 1
-					})
-					.add(scrollbarGroup);
 			}
 		}
 
@@ -469,66 +363,11 @@ Scroller.prototype = {
 			scroller.drawHandle(zoomedMin + halfOutline, 0);
 			scroller.drawHandle(zoomedMax + halfOutline, 1);
 		}
-
-		// draw the scrollbar
-		if (scrollbarEnabled && scrollbarGroup) {
-
-			// draw the buttons
-			scroller.drawScrollbarButton(0);
-			scroller.drawScrollbarButton(1);
-
-			scrollbarGroup[verb]({
-				translateX: scrollerLeft,
-				translateY: mathRound(outlineTop + height)
-			});
-
-			scrollbarTrack[verb]({
-				width: scrollerWidth
-			});
-
-			// prevent the scrollbar from drawing to small (#1246)
-			scrX = scrollbarHeight + zoomedMin;
-			scrWidth = range - scrollbarStrokeWidth;
-			if (scrWidth < scrollbarMinWidth) {
-				scrollbarPad = (scrollbarMinWidth - scrWidth) / 2;
-				scrWidth = scrollbarMinWidth;
-				scrX -= scrollbarPad;
-			}
-			scroller.scrollbarPad = scrollbarPad;
-			scrollbar[verb]({
-				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
-				width: scrWidth
-			});
-
-			centerBarX = scrollbarHeight + zoomedMin + range / 2 - 0.5;
-
-			scroller.scrollbarRifles
-				.attr({
-					visibility: range > 12 ? VISIBLE : HIDDEN
-				})[verb]({
-					d: [
-						M,
-						centerBarX - 3, scrollbarHeight / 4,
-						L,
-						centerBarX - 3, 2 * scrollbarHeight / 3,
-						M,
-						centerBarX, scrollbarHeight / 4,
-						L,
-						centerBarX, 2 * scrollbarHeight / 3,
-						M,
-						centerBarX + 3, scrollbarHeight / 4,
-						L,
-						centerBarX + 3, 2 * scrollbarHeight / 3
-					]
-				});
-		}
-
-		scroller.scrollbarPad = scrollbarPad;
 		scroller.rendered = true;
 	},
 
 	/**
-	 * Set up the mouse and touch events for the navigator and scrollbar
+	 * Set up the mouse and touch events for the navigator
 	 */
 	addEvents: function () {
 		var container = this.chart.container,
@@ -575,7 +414,7 @@ Scroller.prototype = {
 	},
 
 	/**
-	 * Initiate the Scroller object
+	 * Initiate the Navigator object
 	 */
 	init: function () {
 		var scroller = this,
@@ -598,12 +437,11 @@ Scroller.prototype = {
 			var zoomedMin = scroller.zoomedMin,
 				zoomedMax = scroller.zoomedMax,
 				top = scroller.top,
-				scrollbarHeight = scroller.scrollbarHeight,
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
 				navigatorLeft = scroller.navigatorLeft,
 				navigatorWidth = scroller.navigatorWidth,
-				scrollbarPad = scroller.scrollbarPad,
+				scrollbarPad = scroller.scrollbarPad || 0,
 				range = scroller.range,
 				chartX = e.chartX,
 				chartY = e.chartY,
@@ -611,21 +449,19 @@ Scroller.prototype = {
 				fixedMax,
 				ext,
 				handleSensitivity = isTouchDevice ? 10 : 7,
-				left,
-				isOnNavigator;
+				left;
 
-			if (chartY > top && chartY < top + height + scrollbarHeight) { // we're vertically inside the navigator
-				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
+			if (chartY > top && chartY < top + height) { // we're vertically inside the navigator
 
 				// grab the left handle
-				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
+				if (math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
 					scroller.fixedExtreme = baseXAxis.max;
 					chart.fixedRange = null;
 
 				// grab the right handle
-				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
+				} else if (math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
 					scroller.fixedExtreme = baseXAxis.min;
@@ -638,32 +474,9 @@ Scroller.prototype = {
 
 					dragOffset = chartX - zoomedMin;
 
-
-				// shift the range by clicking on shaded areas, scrollbar track or scrollbar buttons
-				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
-
-					// Center around the clicked point
-					if (isOnNavigator) {
-						left = chartX - navigatorLeft - range / 2;
-
-					// Click on scrollbar
-					} else {
-
-						// Click left scrollbar button
-						if (chartX < navigatorLeft) {
-							left = zoomedMin - range * 0.2;
-
-						// Click right scrollbar button
-						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-							left = zoomedMin + range * 0.2;
-
-						// Click on scrollbar track, shift the scrollbar by one range
-						} else {
-							left = chartX < navigatorLeft + zoomedMin ? // on the left
-								zoomedMin - range :
-								zoomedMax;
-						}
-					}
+				// shift the range by clicking on shaded areas
+				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {					
+					left = chartX - navigatorLeft - range / 2;
 					if (left < 0) {
 						left = 0;
 					} else if (left + range >= navigatorWidth) {
@@ -718,11 +531,13 @@ Scroller.prototype = {
 				if (scroller.grabbedLeft) {
 					hasDragged = true;
 					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
+					chart.scrollbar.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
 
 				// drag right handle
 				} else if (scroller.grabbedRight) {
 					hasDragged = true;
 					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
+					chart.scrollbar.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
 
 				// drag scrollbar or open area in navigator
 				} else if (scroller.grabbedCenter) {
@@ -735,6 +550,7 @@ Scroller.prototype = {
 					}
 
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+					chart.scrollbar.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 
 				}
 				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
@@ -1064,6 +880,11 @@ Scroller.prototype = {
 				mathMax(baseMin, baseDataMin),
 				mathMin(baseMax, baseDataMax)
 			);
+
+			this.chart.scrollbar.render(
+				mathMax(baseMin, baseDataMin),
+				mathMin(baseMax, baseDataMax)
+			);
 		}
 	},
 
@@ -1077,21 +898,22 @@ Scroller.prototype = {
 		scroller.removeEvents();
 
 		// Destroy properties
-		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
+		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline], function (prop) {
 			if (prop && prop.destroy) {
 				prop.destroy();
 			}
 		});
-		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = scroller.scrollbarTrack = scroller.scrollbarRifles = scroller.scrollbarGroup = scroller.scrollbar = null;
+		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = null;
 
 		// Destroy elements in collection
-		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
+		each([scroller.handles, scroller.elementsToDestroy], function (coll) {
 			destroyObjectProperties(coll);
 		});
 	}
 };
 
-Highcharts.Scroller = Scroller;
+Highcharts.Navigator = Navigator;
+Highcharts.Scrollbar = Scrollbar;
 
 
 /**
@@ -1141,8 +963,11 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
-		if (options.navigator.enabled || options.scrollbar.enabled) {
-			this.scroller = new Scroller(this);
+		if (options.navigator.enabled) {
+			this.scroller = new Navigator(this);
+		}
+		if (options.scrollbar.enabled) {
+			this.scrollbar = new Scrollbar(this, this.scroller);
 		}
 	});
 
@@ -1160,5 +985,5 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 });
 
 /* ****************************************************************************
- * End Scroller code														  *
+ * End Navigator code														  *
  *****************************************************************************/
