@@ -350,6 +350,9 @@
 			}
 		}
 
+		// Fire a once-off event after all series have been drilled up (#5158)
+		fireEvent(chart, 'drillupall');
+
 		this.redraw();
 
 		if (this.drilldownLevels.length === 0) {
