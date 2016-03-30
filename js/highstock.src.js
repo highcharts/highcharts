@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-03-29)
+ * @license Highstock JS v4.2.3-modified (2016-03-30)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -14228,6 +14228,7 @@
                 } else {
                     // splat the y data in case of ohlc data array
                     points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+                    points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
                 }
                 points[i].index = cursor; // For faster access in Point.update
             }
@@ -20174,7 +20175,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-03-29)
+     * Highstock JS v4.2.3-modified (2016-03-30)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20668,6 +20669,7 @@
             dataOptions = series.options.data,
             groupedXData = [],
             groupedYData = [],
+            groupMap = [],
             dataLength = xData.length,
             pointX,
             pointY,
@@ -20677,7 +20679,8 @@
             approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
             pointArrayMap = series.pointArrayMap,
             pointArrayMapLength = pointArrayMap && pointArrayMap.length,
-            i;
+            i,
+            start = 0;
 
         // Start with the first point within the X axis range (#2696)
         for (i = 0; i <= dataLength; i++) {
@@ -20700,9 +20703,11 @@
                 if (groupedY !== UNDEFINED) {
                     groupedXData.push(pointX);
                     groupedYData.push(groupedY);
+                    groupMap.push({ start: start, length: values[0].length });
                 }
 
                 // reset the aggregate arrays
+                start = i;
                 values[0] = [];
                 values[1] = [];
                 values[2] = [];
@@ -20747,7 +20752,7 @@
             }
         }
 
-        return [groupedXData, groupedYData];
+        return [groupedXData, groupedYData, groupMap];
     };
 
     /**
@@ -20800,9 +20805,9 @@
                         processedXData,
                         series.closestPointRange
                     ),
-                    groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-                    groupedXData = groupedXandY[0],
-                    groupedYData = groupedXandY[1];
+                    groupedData = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+                    groupedXData = groupedData[0],
+                    groupedYData = groupedData[1];
 
                 // prevent the smoothed data to spill out left and right, and make
                 // sure data is not shifted to the left
@@ -20818,6 +20823,7 @@
                 // record what data grouping values were used
                 series.currentDataGrouping = groupPositions.info;
                 series.closestPointRange = groupPositions.info.totalRange;
+                series.groupMap = groupedData[2];
 
                 // Make sure the X axis extends to show the first group (#2533)
                 if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
@@ -20831,7 +20837,7 @@
                 series.processedXData = groupedXData;
                 series.processedYData = groupedYData;
             } else {
-                series.currentDataGrouping = null;
+                series.currentDataGrouping = series.groupMap = null;
             }
             series.hasGroupedData = hasGroupedData;
         }

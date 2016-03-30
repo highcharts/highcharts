@@ -609,6 +609,7 @@ Series.prototype = {
 			} else {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
