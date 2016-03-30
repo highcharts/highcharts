@@ -11,7 +11,8 @@
  * - Column range.
  * - Heatmap.
  * - Treemap.
- * - Check how it works with Highstock and data grouping.
+ * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
+ *   is false. It is also recommended to set scrollbar.liveRedraw to false.
  * - Check inverted charts.
  * - Check reversed axes.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
@@ -162,7 +163,7 @@
 
     H.extend(Series.prototype, {
         pointRange: 0,
-
+        allowDG: false, // No data grouping, let boost handle large data 
         hasExtremes: function (checkX) {
             var options = this.options,
                 data = options.data,
