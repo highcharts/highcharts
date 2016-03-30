@@ -18,7 +18,7 @@
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
 		 */
-		translate: function () {console.log('@colrange.translate')
+		translate: function () {
 			var series = this,
 				yAxis = series.yAxis,
 				xAxis = series.xAxis,
