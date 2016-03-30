@@ -350,6 +350,8 @@
 			}
 		}
 
+		fireEvent(chart, 'drillUpOnceEvent', {});
+
 		this.redraw();
 
 		if (this.drilldownLevels.length === 0) {
