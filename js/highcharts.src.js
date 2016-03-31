@@ -13826,11 +13826,16 @@
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
             // Added code for pointInterval strings
-            if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
+            if (pointIntervalUnit) {
                 date = new Date(xIncrement);
-                date = (pointIntervalUnit === 'month') ?
-                    +date[setMonth](date[getMonth]() + pointInterval) :
-                    +date[setFullYear](date[getFullYear]() + pointInterval);
+
+                if (pointIntervalUnit === 'day') { // docs
+                    date = +date[setDate](date[getDate]() + pointInterval);
+                } else if (pointIntervalUnit === 'month') {
+                    date = +date[setMonth](date[getMonth]() + pointInterval);
+                } else if (pointIntervalUnit === 'year') {
+                    date = +date[setFullYear](date[getFullYear]() + pointInterval);
+                }
                 pointInterval = date - xIncrement;
             }
 
