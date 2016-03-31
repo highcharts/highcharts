@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-30)
+ * @license Highmaps JS v4.2.3-modified (2016-03-31)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -19007,7 +19007,7 @@
 
             if (range > 0) {
                 while (i--) {
-                    if (typeof data[i] === 'number') {
+                    if (typeof data[i] === 'number' && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
                         radius = series.radii[i];
                         pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
                         pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
