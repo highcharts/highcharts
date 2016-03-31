@@ -23494,7 +23494,8 @@
                 renderer = chart.renderer,
                 container = chart.container,
                 chartOptions = chart.options,
-                navButtonOptions = chartOptions.exporting && chartOptions.navigation && chartOptions.navigation.buttonOptions,
+                navButtonOptions = chartOptions.exporting && chartOptions.exporting.enabled &&
+                    chartOptions.navigation && chartOptions.navigation.buttonOptions,
                 options = chartOptions.rangeSelector,
                 buttons = rangeSelector.buttons,
                 lang = defaultOptions.lang,
