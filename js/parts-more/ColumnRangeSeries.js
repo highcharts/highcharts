@@ -23,8 +23,8 @@
 				yAxis = series.yAxis,
 				xAxis = series.xAxis,
 				startAngleRad = xAxis.startAngleRad,
+				start,
 				chart = series.chart,
-				renderer = chart.renderer,
 				isRadial = series.xAxis.isRadial,
 				plotHigh;
 

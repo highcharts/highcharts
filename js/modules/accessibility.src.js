@@ -15,6 +15,10 @@
 		factory(Highcharts);
 	}
 }(function (H) {
+
+	var win = H.win,
+		doc = win.document;
+
 	H.Chart.prototype.callbacks.push(function (chart) {
 		var options = chart.options,
 			acsOptions = options.accessibility || {},
@@ -22,8 +26,8 @@
 			numSeries = series.length,
 			numXAxes = chart.xAxis.length,
 			numYAxes = chart.yAxis.length,
-			titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title'),
-			exportGroupElement = document.createElementNS('http://www.w3.org/2000/svg', 'g'),
+			titleElement = doc.createElementNS('http://www.w3.org/2000/svg', 'title'),
+			exportGroupElement = doc.createElementNS('http://www.w3.org/2000/svg', 'g'),
 			descElement = chart.container.getElementsByTagName('desc')[0],
 			textElements = chart.container.getElementsByTagName('text'),
 			titleId = 'highcharts-title-' + chart.index,
@@ -31,10 +35,10 @@
 			oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
 			topLevelColumns = [],
 			chartTitle = options.title.text || 'Chart',
-			hiddenSection = document.createElement('div'),
+			hiddenSection = doc.createElement('div'),
 			hiddenSectionContent = '',
-			tableShortcut = document.createElement('h3'),
-			tableShortcutAnchor = document.createElement('a'),
+			tableShortcut = doc.createElement('h3'),
+			tableShortcutAnchor = doc.createElement('a'),
 			xAxisDesc,
 			yAxisDesc,
 			chartTypes = [],
@@ -201,13 +205,13 @@
 		tableShortcutAnchor.setAttribute('tabindex', '-1'); // Don't make this reachable by user tabbing
 		tableShortcutAnchor.onclick = function () {
 			chart.viewData();
-			document.getElementById(tableId).focus();
+			doc.getElementById(tableId).focus();
 		};
 		tableShortcut.appendChild(tableShortcutAnchor);
 
 		hiddenSection.innerHTML = hiddenSectionContent;
 		hiddenSection.appendChild(tableShortcut);
-		var chartHeading = document.createElement('h3');
+		var chartHeading = doc.createElement('h3');
 		chartHeading.innerHTML = 'Chart graphic.';
 		chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
 		chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
@@ -344,7 +348,7 @@
 		H.wrap(H.Chart.prototype, 'viewData', function (proceed) {
 			if (!this.insertedTable) {
 				proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-				var table = document.getElementById(tableId),
+				var table = doc.getElementById(tableId),
 					body = table.getElementsByTagName('tbody')[0],
 					firstRow = body.firstChild.children,
 					columnHeaderRow = '<tr><td></td>',
@@ -358,7 +362,7 @@
 				// Create row headers
 				for (i = 0; i < body.children.length; ++i) {
 					cell = body.children[i].firstChild;
-					newCell = document.createElement('th');
+					newCell = doc.createElement('th');
 					newCell.setAttribute('scope', 'row');
 					newCell.innerHTML = cell.innerHTML;
 					cell.parentNode.replaceChild(newCell, cell);
@@ -474,7 +478,7 @@
 		};
 
 		H.addEvent(chart.renderTo, 'keydown', function (ev) {
-			var e = ev || window.event,
+			var e = ev || win.event,
 				keyCode = e.which || e.keyCode,
 				highlightedExportItem = chart.highlightedExportItem,
 				newSeries,
@@ -613,7 +617,7 @@
 				case 13: // Enter
 				case 32: // Spacebar
 					if (highlightedExportItem !== undefined) {
-						fakeEvent = document.createEvent('Events');
+						fakeEvent = doc.createEvent('Events');
 						fakeEvent.initEvent('click', true, false);
 						exportList[highlightedExportItem].onclick(fakeEvent);
 					}

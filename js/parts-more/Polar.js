@@ -340,7 +340,6 @@
 
 			var xAxis = this.xAxis,
 				startAngleRad = xAxis.startAngleRad,
-				renderer = this.chart.renderer,
 				start,
 				points,
 				point,

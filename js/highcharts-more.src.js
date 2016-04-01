@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-03-31)
+ * @license Highcharts JS v4.2.3-modified (2016-04-01)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -973,8 +973,8 @@ var arrayMin = Highcharts.arrayMin,
                     yAxis = series.yAxis,
                     xAxis = series.xAxis,
                     startAngleRad = xAxis.startAngleRad,
+                    start,
                     chart = series.chart,
-                    renderer = chart.renderer,
                     isRadial = series.xAxis.isRadial,
                     plotHigh;
 
@@ -2579,7 +2579,6 @@ var arrayMin = Highcharts.arrayMin,
 
                 var xAxis = this.xAxis,
                     startAngleRad = xAxis.startAngleRad,
-                    renderer = this.chart.renderer,
                     start,
                     points,
                     point,
