@@ -8234,7 +8234,7 @@
             var chart = this.chart,
                 horiz = this.horiz,
                 labelOptions = this.options.labels,
-                slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+                slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
                 marginLeft = chart.margin[3];
 
             return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
