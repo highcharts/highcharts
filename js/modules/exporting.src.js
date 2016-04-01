@@ -49,6 +49,23 @@ var symbols = H.Renderer.prototype.symbols,
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
 defaultOptions.navigation = {
+	buttonOptions: {
+		theme: {},
+		symbolSize: 14,
+		symbolX: 12.5,
+		symbolY: 10.5,
+		align: 'right',
+		buttonSpacing: 3,
+		height: 22,
+		// text: null,
+		verticalAlign: 'top',
+		width: 24
+	}
+};
+
+/*= if (build.classic) { =*/
+// Presentational attributes
+merge(true, defaultOptions.navigation, {
 	menuStyle: {
 		border: '1px solid #A0A0A0',
 		background: '#FFFFFF',
@@ -64,27 +81,17 @@ defaultOptions.navigation = {
 		background: '#4572A5',
 		color: '#FFFFFF'
 	},
-
 	buttonOptions: {
 		symbolFill: '#E0E0E0',
-		symbolSize: 14,
 		symbolStroke: '#666',
 		symbolStrokeWidth: 3,
-		symbolX: 12.5,
-		symbolY: 10.5,
-		align: 'right',
-		buttonSpacing: 3,
-		height: 22,
-		// text: null,
 		theme: {
 			fill: 'white', // capture hover
 			stroke: 'none'
-		},
-		verticalAlign: 'top',
-		width: 24
+		}
 	}
-};
-
+});
+/*= } =*/
 
 
 // Add the export related options
@@ -97,6 +104,7 @@ defaultOptions.exporting = {
 	//scale: 2
 	buttons: {
 		contextButton: {
+			className: 'highcharts-contextbutton',
 			menuClassName: 'highcharts-contextmenu',
 			//x: -10,
 			symbol: 'menu',
@@ -474,13 +482,11 @@ extend(Chart.prototype, {
 	contextMenu: function (className, items, x, y, width, height, button) {
 		var chart = this,
 			navOptions = chart.options.navigation,
-			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			cacheName = 'cache-' + className,
 			menu = chart[cacheName],
 			menuPadding = Math.max(width, height), // for mouse leave detection
-			boxShadow = '3px 3px 10px #888',
 			innerMenu,
 			hide,
 			hideTimer,
@@ -503,12 +509,16 @@ extend(Chart.prototype, {
 				padding: menuPadding + 'px'
 			}, chart.container);
 
-			innerMenu = createElement('div', null,
-				extend({
-					MozBoxShadow: boxShadow,
-					WebkitBoxShadow: boxShadow,
-					boxShadow: boxShadow
-				}, navOptions.menuStyle), menu);
+			innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+
+			/*= if (build.classic) { =*/
+			// Presentational CSS
+			css(innerMenu, extend({
+					MozBoxShadow: '3px 3px 10px #888',
+					WebkitBoxShadow: '3px 3px 10px #888',
+					boxShadow: '3px 3px 10px #888'
+				}, navOptions.menuStyle));
+			/*= } =*/
 
 			// hide on mouse out
 			hide = function () {
@@ -538,15 +548,14 @@ extend(Chart.prototype, {
 			// create the items
 			each(items, function (item) {
 				if (item) {
-					var element = item.separator ?
-						createElement('hr', null, null, innerMenu) :
-						createElement('div', {
-							onmouseover: function () {
-								css(this, navOptions.menuItemHoverStyle);
-							},
-							onmouseout: function () {
-								css(this, menuItemStyle);
-							},
+					var element;
+
+					if (item.separator) {
+						element = createElement('hr', null, null, innerMenu);
+
+					} else {
+						element = createElement('div', {
+							className: 'highcharts-menu-item',
 							onclick: function (e) {
 								if (e) { // IE7
 									e.stopPropagation();
@@ -557,10 +566,20 @@ extend(Chart.prototype, {
 								}
 							},
 							innerHTML: item.text || chart.options.lang[item.textKey]
-						}, extend({
-							cursor: 'pointer'
-						}, menuItemStyle), innerMenu);
+						}, null, innerMenu);
 
+						/*= if (build.classic) { =*/
+						element.onmouseover = function () {
+							css(this, navOptions.menuItemHoverStyle);
+						};
+						element.onmouseout = function () {
+							css(this, navOptions.menuItemStyle);
+						};
+						css(element, extend({
+							cursor: 'pointer'
+						}, navOptions.menuItemStyle));
+						/*= } =*/
+					}
 
 					// Keep references to menu divs to be able to destroy them
 					chart.exportDivElements.push(element);
@@ -604,10 +623,6 @@ extend(Chart.prototype, {
 			menuItems = btnOptions.menuItems,
 			symbol,
 			button,
-			symbolAttr = {
-				stroke: btnOptions.symbolStroke,
-				fill: btnOptions.symbolFill
-			},
 			symbolSize = btnOptions.symbolSize || 12;
 		if (!chart.btnCount) {
 			chart.btnCount = 0;
@@ -666,6 +681,7 @@ extend(Chart.prototype, {
 		}
 
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
+			.addClass(options.className)
 			.attr({
 				title: chart.options.lang[btnOptions._titleKey],
 				'stroke-linecap': 'round',
@@ -681,10 +697,18 @@ extend(Chart.prototype, {
 					symbolSize,
 					symbolSize
 				)
-				.attr(extend(symbolAttr, {
-					'stroke-width': btnOptions.symbolStrokeWidth || 1,
+				.addClass('highcharts-button-symbol')
+				.attr({
 					zIndex: 1
-				})).add(button);
+				}).add(button);
+
+			/*= if (build.classic) { =*/
+			symbol.attr({
+				stroke: btnOptions.symbolStroke,
+				fill: btnOptions.symbolFill,
+				'stroke-width': btnOptions.symbolStrokeWidth || 1
+			});
+			/*= } =*/
 		}
 
 		button.add()

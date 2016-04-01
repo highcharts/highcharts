@@ -9,8 +9,6 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-.highcharts-root {
     font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
     font-size: 12px;
 }
@@ -462,6 +460,37 @@ input.highcharts-range-selector {
 }
 .highcharts-null-point {
     fill: #f8f8f8;
+}
+
+/* Exporting module */
+.highcharts-contextbutton {
+    fill: white; /* needed to capture hover */
+    stroke: none;
+}
+.highcharts-contextbutton:hover {
+    fill: #acf;
+    stroke: #acf;
+}
+.highcharts-button-symbol {
+    stroke: #666;
+    stroke-width: 3px;
+    fill: #E0E0E0;
+}
+.highcharts-menu {
+    border: 1px solid #A0A0A0;
+    background: #FFFFFF;
+    padding: 5px 0;
+    box-shadow: 3px 3px 10px #888;
+}
+.highcharts-menu-item {
+    padding: 0 1em;
+    background: none;
+    color: #303030;
+    cursor: pointer;
+}
+.highcharts-menu-item:hover {
+    background: #4572A5;
+    color: #FFFFFF;
 }
 
 /* Drilldown module */
