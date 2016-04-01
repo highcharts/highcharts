@@ -47,6 +47,7 @@
 			return previous;
 		},
 		// @todo find correct name for this function. 
+		// @todo Similar to reduce, this function is likely redundant
 		recursive = function (item, func, context) {
 			var next;
 			context = context || this;
@@ -158,6 +159,7 @@
 
 			series.nodeMap = [];
 			tree = series.buildNode('', -1, 0, parentList, null);
+			// Parents of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode], function (node) {
 				var next = false,
 					p = node.parent;
@@ -167,6 +169,7 @@
 				}
 				return next;
 			});
+			// Children of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode].children, function (children) {
 				var next = false;
 				each(children, function (child) {
@@ -316,7 +319,7 @@
 					y1,
 					y2;
 				// Points which is ignored, have no values.
-				if (values) {
+				if (values && node.visible) {
 					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
 					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
 					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
