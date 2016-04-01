@@ -52,7 +52,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(lin2log(value)) : value
+			value: axis.isLog ? correctFloat(axis.lin2log(value)) : value
 		});
 
 		// prepare CSS

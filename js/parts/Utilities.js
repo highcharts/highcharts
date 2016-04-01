@@ -358,13 +358,6 @@ function isNumber(n) {
 	return typeof n === 'number';
 }
 
-function log2lin(num) {
-	return math.log(num) / math.LN10;
-}
-function lin2log(num) {
-	return math.pow(10, num);
-}
-
 /**
  * Remove last occurence of an item from an array
  * @param {Array} arr

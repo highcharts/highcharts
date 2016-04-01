@@ -353,8 +353,8 @@ Axis.prototype = {
 
 		// extend logarithmic axis
 		if (axis.isLog) {
-			axis.val2lin = log2lin;
-			axis.lin2val = lin2log;
+			axis.val2lin = axis.log2lin;
+			axis.lin2val = axis.lin2log;
 		}
 	},
 
@@ -903,6 +903,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isLog = axis.isLog,
+			log2lin = axis.log2lin,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
@@ -1478,7 +1479,8 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = axis.lin2log;
 
 		return {
 			min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -1497,6 +1499,7 @@ Axis.prototype = {
 	getThreshold: function (threshold) {
 		var axis = this,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
@@ -1983,6 +1986,7 @@ Axis.prototype = {
 			renderer = chart.renderer,
 			options = axis.options,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
 			axisTitle = axis.axisTitle,

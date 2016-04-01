@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-03-31)
+ * @license Highcharts JS v4.2.3-modified (2016-04-01)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -484,13 +484,6 @@
      */
     function isNumber(n) {
         return typeof n === 'number';
-    }
-
-    function log2lin(num) {
-        return math.log(num) / math.LN10;
-    }
-    function lin2log(num) {
-        return math.pow(10, num);
     }
 
     /**
@@ -6300,7 +6293,7 @@
                 isFirst: isFirst,
                 isLast: isLast,
                 dateTimeLabelFormat: dateTimeLabelFormat,
-                value: axis.isLog ? correctFloat(lin2log(value)) : value
+                value: axis.isLog ? correctFloat(axis.lin2log(value)) : value
             });
 
             // prepare CSS
@@ -6654,7 +6647,8 @@
                 zIndex = pick(options.zIndex, 0),
                 events = options.events,
                 attribs = {},
-                renderer = axis.chart.renderer;
+                renderer = axis.chart.renderer,
+                log2lin = axis.log2lin;
 
             // logarithmic conversion
             if (axis.isLog) {
@@ -7240,8 +7234,8 @@
 
             // extend logarithmic axis
             if (axis.isLog) {
-                axis.val2lin = log2lin;
-                axis.lin2val = lin2log;
+                axis.val2lin = axis.log2lin;
+                axis.lin2val = axis.lin2log;
             }
         },
 
@@ -7790,6 +7784,7 @@
                 chart = axis.chart,
                 options = axis.options,
                 isLog = axis.isLog,
+                log2lin = axis.log2lin,
                 isDatetimeAxis = axis.isDatetimeAxis,
                 isXAxis = axis.isXAxis,
                 isLinked = axis.isLinked,
@@ -8365,7 +8360,8 @@
          */
         getExtremes: function () {
             var axis = this,
-                isLog = axis.isLog;
+                isLog = axis.isLog,
+                lin2log = axis.lin2log;
 
             return {
                 min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -8384,6 +8380,7 @@
         getThreshold: function (threshold) {
             var axis = this,
                 isLog = axis.isLog,
+                lin2log = axis.lin2log,
                 realMin = isLog ? lin2log(axis.min) : axis.min,
                 realMax = isLog ? lin2log(axis.max) : axis.max;
 
@@ -8870,6 +8867,7 @@
                 renderer = chart.renderer,
                 options = axis.options,
                 isLog = axis.isLog,
+                lin2log = axis.lin2log,
                 isLinked = axis.isLinked,
                 tickPositions = axis.tickPositions,
                 axisTitle = axis.axisTitle,
@@ -9419,6 +9417,8 @@
         var axis = this,
             options = axis.options,
             axisLength = axis.len,
+            lin2log = axis.lin2log,
+            log2lin = axis.log2lin,
             // Since we use this method for both major and minor ticks,
             // use a local variable and return the result
             positions = [];
@@ -9507,7 +9507,16 @@
             axis.tickInterval = interval;
         }
         return positions;
-    };/**
+    };
+
+    Axis.prototype.log2lin = function (num) {
+        return math.log(num) / math.LN10;
+    };
+
+    Axis.prototype.lin2log = function (num) {
+        return math.pow(10, num);
+    };
+    /**
      * The tooltip object
      * @param {Object} chart The chart instance
      * @param {Object} options Tooltip options
