@@ -1,4 +1,9 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+import '../parts/Point.js';
+(function () {
 	var correctFloat = H.correctFloat,
 		defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
@@ -301,5 +306,4 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
  * End Waterfall series code                                                  *
  *****************************************************************************/
 
-	return H;
-}(Highcharts));
+}());
