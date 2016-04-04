@@ -1,4 +1,9 @@
-(function (H) {
+import H from '../Globals.js';
+import '../Utilities.js';
+import '../Pointer.js';
+import '../Series.js';
+import '../Pointer.js';
+(function () {
 
 	/**
 	 * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
@@ -447,5 +452,4 @@
 		return ret;
 	});
 
-	return H;
-}(Highcharts));
+}());
