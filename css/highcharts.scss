@@ -230,7 +230,27 @@ g.highcharts-series, .highcharts-point {
 .highcharts-treemap-series .highcharts-point {
     stroke-width: 1px;
     stroke: #e0e0e0;
+    transition: stroke 250ms, fill 250ms, fill-opacity 250ms;
 }
+.highcharts-treemap-series .highcharts-point-hover {
+    stroke: #000000;
+    transition: stroke 25ms, fill 25ms, fill-opacity 25ms;
+}
+
+.highcharts-treemap-series .highcharts-above-level {
+    display: none;
+}
+.highcharts-treemap-series .highcharts-internal-node {
+    fill: none;
+}
+.highcharts-treemap-series .highcharts-internal-node-interactive {
+    fill-opacity: 0.15;
+    cursor: pointer;
+}
+.highcharts-treemap-series .highcharts-internal-node-interactive:hover {
+    fill-opacity: 0.75;
+}
+
 
 
 /* Legend */

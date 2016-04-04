@@ -372,7 +372,9 @@ seriesTypes.column = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass(point.getClassName())
+						.attr({
+							'class': point.getClassName()
+						})
 						.add(point.group || series.group);
 
 					/*= if (build.classic) { =*/

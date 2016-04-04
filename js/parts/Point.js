@@ -143,7 +143,7 @@ Point.prototype = {
 		return 'highcharts-point' + 
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
-			(this.series.options.colorByPoint ? ' highcharts-color-' + this.colorIndex : '') +
+			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
 			(this.options.className ? ' ' + this.options.className : ''); // docs
 	},
 
