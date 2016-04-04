@@ -224,7 +224,9 @@ g.highcharts-series, .highcharts-point {
     fill: inherit;
     stroke: inherit;
 }
-
+.highcharts-solidgauge-series .highcharts-point {
+    stroke-width: 0;
+}
 
 
 /* Legend */
