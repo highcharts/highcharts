@@ -227,6 +227,10 @@ g.highcharts-series, .highcharts-point {
 .highcharts-solidgauge-series .highcharts-point {
     stroke-width: 0;
 }
+.highcharts-treemap-series .highcharts-point {
+    stroke-width: 1px;
+    stroke: #e0e0e0;
+}
 
 
 /* Legend */

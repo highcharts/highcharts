@@ -59,8 +59,6 @@
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
 		marker: false,
-		borderColor: '#E0E0E0',
-		borderWidth: 1,
 		dataLabels: {
 			enabled: true,
 			defer: false,
@@ -78,13 +76,6 @@
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
 		levelIsConstant: true,
-		states: {
-			hover: {
-				borderColor: '#A0A0A0',
-				brightness: seriesTypes.heatmap ? 0 : 0.1,
-				shadow: false
-			}
-		},
 		drillUpButton: {
 			position: { 
 				align: 'right',
@@ -93,6 +84,22 @@
 			}
 		}
 	});
+
+	/*= if (build.classic) { =*/
+	// Presentational options
+	merge(true, plotOptions.treemap, {
+		borderColor: '#E0E0E0',
+		borderWidth: 1,
+		states: {
+			hover: {
+				borderColor: '#A0A0A0',
+				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				shadow: false
+			}
+		}
+	});
+
+	/*= } =*/
 	
 	// Stolen from heatmap	
 	var colorSeriesMixin = {
