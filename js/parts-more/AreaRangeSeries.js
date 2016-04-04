@@ -1,4 +1,8 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -283,5 +287,4 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	drawPoints: noop
 });
 
-	return H;
-}(Highcharts));
+}());
