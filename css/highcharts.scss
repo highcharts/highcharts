@@ -466,6 +466,7 @@ input.highcharts-range-selector {
 .highcharts-contextbutton {
     fill: white; /* needed to capture hover */
     stroke: none;
+    stroke-linecap: round;
 }
 .highcharts-contextbutton:hover {
     fill: #acf;

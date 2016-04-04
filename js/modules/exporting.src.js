@@ -198,7 +198,7 @@ extend(Chart.prototype, {
 	 * browser bugs, VML problems and other. Returns a cleaned SVG.
 	 */
 	sanitizeSVG: function (svg) {
-		return svg
+		svg = svg
 			.replace(/zIndex="[^"]+"/g, '')
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
@@ -218,9 +218,11 @@ extend(Chart.prototype, {
 
 			// Replace HTML entities, issue #347
 			.replace(/&nbsp;/g, '\u00A0') // no-break space
-			.replace(/&shy;/g,  '\u00AD') // soft hyphen
+			.replace(/&shy;/g,  '\u00AD'); // soft hyphen
 
+			/*= if (build.classic) { =*/
 			// IE specific
+		svg = svg
 			.replace(/<IMG /g, '<image ')
 			.replace(/<(\/?)TITLE>/g, '<$1title>')
 			.replace(/height=([^" ]+)/g, 'height="$1"')
@@ -233,6 +235,9 @@ extend(Chart.prototype, {
 			.replace(/style="([^"]+)"/g, function (s) {
 				return s.toLowerCase();
 			});
+			/*= } =*/
+		
+		return svg;
 	},
 
 	/**
@@ -683,8 +688,10 @@ extend(Chart.prototype, {
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.addClass(options.className)
 			.attr({
-				title: chart.options.lang[btnOptions._titleKey],
+				/*= if (build.classic) { =*/
 				'stroke-linecap': 'round',
+				/*= } =*/
+				title: chart.options.lang[btnOptions._titleKey],
 				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
