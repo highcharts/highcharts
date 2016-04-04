@@ -1,3 +1,5 @@
+@import 'http://code.highcharts.local/css/highcharts.css';
+
 .highcharts-background {
 	fill: #efefef;
 	stroke: #a4edba;

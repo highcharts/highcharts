@@ -245,18 +245,26 @@
 						shapeArgs.d = d; // animate alters it
 					}
 				} else {
-					attribs = {
-						stroke: options.borderColor || 'none',
-						'stroke-width': options.borderWidth || 0,
-						fill: toColor,
-						'sweep-flag': 0
-					};
-					if (options.linecap !== 'square') {
-						attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
-					}
 					point.graphic = renderer.arc(shapeArgs)
-						.attr(attribs)
+						.addClass('highcharts-point')
+						.attr({
+							fill: toColor,
+							'sweep-flag': 0
+						})
 						.add(series.group);
+
+					/*= if (build.classic) { =*/
+					if (options.linecap !== 'square') {
+						point.graphic.attr({
+							'stroke-linecap': 'round',
+							'stroke-linejoin': 'round'
+						});
+					}
+					point.graphic.attr({
+						stroke: options.borderColor || 'none',
+						'stroke-width': options.borderWidth || 0
+					});
+					/*= } =*/
 				}
 			});
 		},

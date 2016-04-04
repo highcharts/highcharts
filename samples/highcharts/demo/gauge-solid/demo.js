@@ -110,7 +110,7 @@ $(function () {
     }));
 
     // Bring life to the dials
-    setTimeout(function () {
+    setInterval(function () {
         // Speed
         var chart = $('#container-speed').highcharts(),
             point,

@@ -378,13 +378,10 @@ seriesTypes.column = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass(point.getClassName())
+						.attr({
+							'class': point.getClassName()
+						})
 						.add(point.group || series.group);
-
-					// Color by point
-					if (options.colorByPoint) {
-						graphic.addClass('highcharts-color-' + point.colorIndex);
-					}
 
 					/*= if (build.classic) { =*/
 					// Presentational

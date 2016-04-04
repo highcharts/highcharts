@@ -59,8 +59,6 @@
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
 		marker: false,
-		borderColor: '#E0E0E0',
-		borderWidth: 1,
 		dataLabels: {
 			enabled: true,
 			defer: false,
@@ -78,13 +76,6 @@
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
 		levelIsConstant: true,
-		states: {
-			hover: {
-				borderColor: '#A0A0A0',
-				brightness: seriesTypes.heatmap ? 0 : 0.1,
-				shadow: false
-			}
-		},
 		drillUpButton: {
 			position: { 
 				align: 'right',
@@ -93,6 +84,22 @@
 			}
 		}
 	});
+
+	/*= if (build.classic) { =*/
+	// Presentational options
+	merge(true, plotOptions.treemap, {
+		borderColor: '#E0E0E0',
+		borderWidth: 1,
+		states: {
+			hover: {
+				borderColor: '#A0A0A0',
+				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				shadow: false
+			}
+		}
+	});
+
+	/*= } =*/
 	
 	// Stolen from heatmap	
 	var colorSeriesMixin = {
@@ -110,6 +117,29 @@
 		type: 'treemap',
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		pointClass: extendClass(H.Point, {
+			getClassName: function () {
+				var className = H.Point.prototype.getClassName.call(this),
+					series = this.series,
+					options = series.options;
+
+				// Above the current level
+				if (this.node.level <= series.nodeMap[series.rootNode].level) {
+					className += ' highcharts-above-level';
+				
+				} else if (!this.node.isLeaf && !pick(options.interactByLeaf, !options.allowDrillToNode)) {
+					className += ' highcharts-internal-node-interactive';
+
+				} else if (!this.node.isLeaf) {
+					className += ' highcharts-internal-node';
+				}
+				return className;
+			},
+			setState: function (state) {
+				H.Point.prototype.setState.call(this, state);
+				this.graphic.attr({
+					zIndex: state === 'hover' ? 1 : 0
+				});
+			},
 			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
 		/**
@@ -333,7 +363,7 @@
 				}
 			});
 		},
-		setColorRecursive: function (node, color) {
+		setColorRecursive: function (node, color, colorIndex) {
 			var series = this,
 				point,
 				level;
@@ -342,13 +372,16 @@
 				level = series.levelMap[node.levelDynamic];
 				// Select either point color, level color or inherited color.
 				color = pick(point && point.options.color, level && level.color, color);
+				colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
 				if (point) {
 					point.color = color;
+					point.colorIndex = colorIndex;
 				}
+				
 				// Do it all again with the children	
 				if (node.children.length) {
 					each(node.children, function (child) {
-						series.setColorRecursive(child, color);
+						series.setColorRecursive(child, color, colorIndex);
 					});
 				}
 			}
@@ -580,7 +613,7 @@
 			if (this.colorAxis) {
 				this.translateColors();
 			} else if (!this.options.colorByPoint) {
-				this.setColorRecursive(this.tree, undefined);
+				this.setColorRecursive(this.tree);
 			}
 
 			// Update axis extremes according to the root node.
@@ -643,6 +676,7 @@
 			}
 		},
 
+		/*= if (build.classic) { =*/
 		/**
 		 * Get presentational attributes
 		 */
@@ -650,7 +684,8 @@
 			var level = this.levelMap[point.node.levelDynamic] || {},
 				options = this.options,
 				attr,
-				stateOptions = (state && options.states[state]) || {};
+				stateOptions = (state && options.states[state]) || {},
+				className = point.getClassName();
 
 			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
 			// because it can be 0.
@@ -658,18 +693,22 @@
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
 				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-				'fill': point.color || this.color,
-				'zIndex': state === 'hover' ? 1 : 0
+				'fill': point.color || this.color
 			};
 
-			if (point.node.level <= this.nodeMap[this.rootNode].level) {
-				// Hide levels above the current view
+			// Hide levels above the current view
+			if (className.indexOf('highcharts-above-level') !== -1) {
 				attr.fill = 'none';
 				attr['stroke-width'] = 0;
-			} else if (!point.node.isLeaf) {
-				// If not a leaf, then remove fill
-				// @todo let users set the opacity
-				attr.fill = pick(options.interactByLeaf, !options.allowDrillToNode) ? 'none' : Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+
+			// Nodes with children that accept interaction
+			} else if (className.indexOf('highcharts-internal-node-interactive') !== -1) {
+				attr.fill = Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+				attr.cursor = 'pointer';
+			// Hide nodes that have children
+			} else if (className.indexOf('highcharts-internal-node') !== -1) {
+				attr.fill = 'none';
+
 			} else if (state) {
 				// Brighten and hoist the hover nodes
 				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
@@ -677,6 +716,7 @@
 
 			return attr;
 		},
+		/*= } =*/
 
 		/**
 		* Extending ColumnSeries drawPoints
@@ -709,8 +749,6 @@
 						drillId;
 					if (point.graphic) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
-						cursor = drillId ? 'pointer' : 'default';
-						point.graphic.css({ cursor: cursor });
 					}
 				});
 			}

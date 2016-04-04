@@ -34,16 +34,18 @@
 			y: 0,			
 			align: 'center',
 			verticalAlign: 'middle'
-		},
-		attr: {						
-		},
-		style: {	
-			fontWeight: 'bold',		
-			fontSize: '12px',
-			color: '#60606a'		
 		}
 		// useHTML: false
 	};
+
+	/*= if (build.classic) { =*/
+	// Presentational
+	defaultOptions.noData.style = {
+		fontWeight: 'bold',
+		fontSize: '12px',
+		color: '#60606a'
+	};
+	/*= } =*/
 
 	/**
 	 * Define hasData functions for series. These return true if there are data points on this series within the plot area
@@ -86,9 +88,14 @@
 					null, 
 					'no-data'
 				)
-				.attr(noDataOptions.attr)
-				.css(noDataOptions.style)
 				.add();
+
+			/*= if (build.classic) { =*/
+			chart.noDataLabel
+				.attr(noDataOptions.attr)
+				.css(noDataOptions.style);
+			/*= } =*/
+
 			chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
 		}
 	};

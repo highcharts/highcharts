@@ -75,6 +75,7 @@
 		drillUpText: '◁ Back to {series.name}'
 	});
 	defaultOptions.drilldown = {
+		/*= if (build.classic) { =*/
 		activeAxisLabelStyle: {
 			cursor: 'pointer',
 			color: '#0d233a',
@@ -87,6 +88,7 @@
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},
+		/*= } =*/
 		animation: {
 			duration: 500
 		},
@@ -126,13 +128,20 @@
 			xAxis = oldSeries.xAxis,
 			yAxis = oldSeries.yAxis,
 			newSeries,
-			color = point.color || oldSeries.color,
 			pointIndex,
 			levelSeries = [],
 			levelSeriesOptions = [],
 			level,
 			levelNumber,
-			last;
+			last,
+			colorProp;
+
+
+		/*= if (build.classic) { =*/
+		colorProp = { color: point.color || oldSeries.color };
+		/*= } else { =*/
+		colorProp = { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) };
+		/*= } =*/
 
 		if (!this.drilldownLevels) {
 			this.drilldownLevels = [];
@@ -147,10 +156,9 @@
 		}
 		
 			
-		ddOptions = extend({
-			color: color,
+		ddOptions = extend(extend({
 			_ddSeriesId: ddSeriesId++
-		}, ddOptions);
+		}, colorProp), ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
 
 		// Record options for all current series
@@ -171,14 +179,13 @@
 		});
 
 		// Add a record of properties for each drilldown level
-		level = {
+		level = extend({
 			levelNumber: levelNumber,
 			seriesOptions: oldSeries.options,
 			levelSeriesOptions: levelSeriesOptions,
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
-			color: color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,
@@ -188,7 +195,7 @@
 				yMin: yAxis && yAxis.userMin,
 				yMax: yAxis && yAxis.userMax
 			}
-		};
+		}, colorProp);
 
 		// Push it to the lookup array
 		this.drilldownLevels.push(level);
@@ -263,6 +270,7 @@
 				states && states.hover,
 				states && states.select
 			)
+			.addClass('highcharts-drillup-button')
 			.attr({
 				align: buttonOptions.position.align,
 				zIndex: 9
@@ -426,18 +434,28 @@
 			each(drilldownLevels, function (level) {
 				if (series.options._ddSeriesId === level.lowerSeriesOptions._ddSeriesId) {
 					animateFrom = level.shapeArgs;
+					/*= if (build.classic) { =*/
+					// Add the point colors to animate from
 					animateFrom.fill = level.color;
+					/*= } =*/
 				}
 			});
 
 			animateFrom.x += (pick(xAxis.oldPos, xAxis.pos) - xAxis.pos);
 
 			each(this.points, function (point) {
+				var animateTo = point.shapeArgs;
+
+				/*= if (build.classic) { =*/
+				// Add the point colors to animate to
+				animateTo.fill = point.color;
+				/*= } =*/
+
 				if (point.graphic) {
 					point.graphic
 						.attr(animateFrom)
 						.animate(
-							extend(point.shapeArgs, { fill: point.color }), 
+							animateTo, 
 							animationOptions
 						);
 				}
@@ -470,6 +488,7 @@
 		delete this.group;
 		each(this.points, function (point) {
 			var graphic = point.graphic,
+				animateTo = level.shapeArgs,
 				complete = function () {
 					graphic.destroy();
 					if (group) {
@@ -481,13 +500,17 @@
 			
 				delete point.graphic;
 
+				/*= if (build.classic) { =*/
+				animateTo.fill = level.color;
+				/*= } =*/
+
 				if (animationOptions) {
 					graphic.animate(
-						extend(level.shapeArgs, { fill: level.color }),
+						animateTo,
 						H.merge(animationOptions, { complete: complete })
 					);
 				} else {
-					graphic.attr(level.shapeArgs);
+					graphic.attr(animateTo);
 					complete();
 				}
 			}
@@ -510,13 +533,19 @@
 
 				if (!init) {
 					each(this.points, function (point, i) {
+						var animateTo = point.shapeArgs;
+
+						/*= if (build.classic) { =*/
+						animateFrom.fill = level.color;
+						animateTo.fill = point.color;
+						/*= } =*/
+
 						point.graphic
 							.attr(H.merge(animateFrom, {
 								start: start + i * startAngle,
-								end: start + (i + 1) * startAngle,
-								fill: level.color
+								end: start + (i + 1) * startAngle
 							}))[animationOptions ? 'animate' : 'attr'](
-								extend(point.shapeArgs, { fill: point.color }), 
+								animateTo, 
 								animationOptions
 							);
 					});
@@ -606,20 +635,32 @@
 			ddPointsX = axis.ddPoints && axis.ddPoints[pos];
 
 		if (label && ddPointsX && ddPointsX.length) {
+			label.drillable = true;
+
+			/*= if (build.classic) { =*/
 			if (!label.basicStyles) {
 				label.basicStyles = H.merge(label.styles);
 			}
+			/*= } =*/
+
 			label
 				.addClass('highcharts-drilldown-axis-label')
+				/*= if (build.classic) { =*/
 				.css(axis.chart.options.drilldown.activeAxisLabelStyle)
+				/*= } =*/
 				.on('click', function () {
 					axis.drilldownCategory(pos);
 				});
 
-		} else if (label && label.basicStyles) {
+		} else if (label && label.drillable) {
+
+			/*= if (build.classic) { =*/
 			label.styles = {}; // reset for full overwrite of styles
 			label.css(label.basicStyles);
-			label.on('click', null); // #3806			
+			/*= } =*/
+
+			label.on('click', null); // #3806
+			label.removeClass('highcharts-drilldown-axis-label');
 		}
 	};
 
@@ -679,17 +720,16 @@
 	});
 
 	wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
-		var css = this.chart.options.drilldown.activeDataLabelStyle;
-
 		proceed.call(this);
 
 		each(this.points, function (point) {
 			if (point.drilldown && point.dataLabel) {
 				point.dataLabel
-					.attr({
-						'class': 'highcharts-drilldown-data-label'
-					})
-					.css(css);
+					.addClass('highcharts-drilldown-data-label');
+
+				/*= if (build.classic) { =*/
+				point.dataLabel.css(point.series.chart.options.drilldown.activeDataLabelStyle);
+				/*= } =*/
 			}
 		});
 	});
@@ -700,11 +740,11 @@
 			proceed.call(this);
 			each(this.points, function (point) {
 				if (point.drilldown && point.graphic) {
-					point.graphic
-						.attr({
-							'class': 'highcharts-drilldown-point'
-						})
-						.css({ cursor: 'pointer' });
+					point.graphic.addClass('highcharts-drilldown-point');
+
+					/*= if (build.classic) { =*/
+					point.graphic.css({ cursor: 'pointer' });
+					/*= } =*/
 				}
 			});
 		};
