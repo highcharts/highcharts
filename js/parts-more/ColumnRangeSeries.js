@@ -1,4 +1,6 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+(function () {
 	
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
@@ -87,6 +89,5 @@
 		pointAttribs: colProto.pointAttribs
 	});
 
-	return H;
-}(Highcharts));
+}());
 
