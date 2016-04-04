@@ -1,4 +1,10 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+import '../parts/Legend.js';
+import '../parts/ScatterSeries.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
@@ -30,5 +36,4 @@ seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-	return H;
-}(Highcharts));
+}());
