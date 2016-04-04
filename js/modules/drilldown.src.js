@@ -270,6 +270,7 @@
 				states && states.hover,
 				states && states.select
 			)
+			.addClass('highcharts-drillup-button')
 			.attr({
 				align: buttonOptions.position.align,
 				zIndex: 9
