@@ -35,12 +35,17 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	height: '100%',
 	neckHeight: '25%',
 	reversed: false,
+	size: true // to avoid adapting to data label size in Pie.drawDataLabels
+});
+
+/*= if (build.classic) { =*/
+// Presentational
+merge(true, defaultPlotOptions.funnel, {
 	dataLabels: {
 		//position: 'right',
 		connectorWidth: 1,
 		connectorColor: '#606060'
 	},
-	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 	states: {
 		select: {
 			color: '#C0C0C0',
@@ -49,7 +54,7 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 		}
 	}	
 });
-
+/*= } =*/
 
 seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
@@ -227,37 +232,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	 * @param {Object} color The color of the point
 	 * @param {Number} brightness The brightness relative to the color
 	 */
-	drawPoints: function () {
-		var series = this,
-			options = series.options,
-			chart = series.chart,
-			renderer = chart.renderer,
-			pointOptions,
-			pointAttr,
-			shapeArgs,
-			graphic;
-
-		each(series.data, function (point) {
-			pointOptions = point.options;
-			graphic = point.graphic;
-			shapeArgs = point.shapeArgs;
-
-			pointAttr = {
-				fill: point.color,
-				stroke: pick(pointOptions.borderColor, options.borderColor),
-				'stroke-width': pick(pointOptions.borderWidth, options.borderWidth)
-			};
-
-			if (!graphic) { // Create the shapes				
-				point.graphic = renderer.path(shapeArgs)
-					.attr(pointAttr)
-					.add(series.group);
-					
-			} else { // Update the shapes
-				graphic.attr(pointAttr).animate(shapeArgs);
-			}
-		});
-	},
+	drawPoints: seriesTypes.column.prototype.drawPoints,
 
 	/**
 	 * Funnel items don't have angles (#2289)
