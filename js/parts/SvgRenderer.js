@@ -2547,7 +2547,7 @@ SVGRenderer.prototype = {
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
 		var renderer = this,
-			wrapper = renderer.g(className || 'label'),
+			wrapper = renderer.g('label'),
 			text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
@@ -2570,6 +2570,10 @@ SVGRenderer.prototype = {
 			updateBoxSize,
 			updateTextPadding,
 			boxAttr;
+
+		if (className) {
+			wrapper.addClass('highcharts-' + className);
+		}
 
 		/*= if (!build.classic) { =*/
 		needsBox = true; // for styling
@@ -2610,9 +2614,8 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape) :
 						renderer.rect();
-					if (className) {
-						box.addClass('highcharts-' + className + '-box');
-					}
+					
+					box.addClass('highcharts-label-box' + (className ? ' highcharts-' + className + '-box' : ''));
 
 					box.add(wrapper);
 

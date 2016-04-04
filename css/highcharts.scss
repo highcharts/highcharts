@@ -21,6 +21,9 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-plot-border, .highcharts-plot-background {
     fill: none;
 }
+.highcharts-label-box {
+    fill: none;
+}
 
 /* Titles */
 .highcharts-title {
@@ -527,4 +530,11 @@ input.highcharts-range-selector {
     fill: #0d233a;
     font-weight: bold;
     text-decoration: underline;
+}
+
+/* No-data module */
+.highcharts-no-data text {
+    font-weight: bold;
+    font-size: 12px;
+    fill: #60606a;
 }
