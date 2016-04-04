@@ -635,6 +635,9 @@
 				// Set dataLabel width to the width of the point shape.
 				if (point.shapeArgs) {
 					options.style.width = point.shapeArgs.width;
+					if (point.dataLabel) {
+						point.dataLabel.css({ width: point.shapeArgs.width + 'px' });
+					}
 				}
 
 				// Merge custom options with point options
