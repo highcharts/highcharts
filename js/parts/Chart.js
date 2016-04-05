@@ -624,7 +624,8 @@ Chart.prototype = {
 			oldChartIndex,
 			Ren,
 			containerId = 'highcharts-' + H.idCounter++,
-			containerStyle;
+			containerStyle,
+			key;
 
 		if (!renderTo) {
 			chart.renderTo = renderTo = optionsChart.renderTo;
@@ -703,6 +704,13 @@ Chart.prototype = {
 			optionsChart.forExport,
 			options.exporting && options.exporting.allowHTML
 		);
+
+		/*= if (!build.classic) { =*/
+		// Initialize definitions
+		for (key in options.defs) {
+			this.renderer.addDefinition(options.defs[key]);
+		}
+		/*= } =*/		
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer

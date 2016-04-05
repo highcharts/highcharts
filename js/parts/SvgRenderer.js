@@ -1396,7 +1396,7 @@ SVGRenderer.prototype = {
 
 		renderer.setSize(width, height, false);
 
-
+		
 
 		// Issue 110 workaround:
 		// In Firefox, if a div is positioned by percentage, its pixel position may land
@@ -1422,18 +1422,6 @@ SVGRenderer.prototype = {
 			addEvent(win, 'resize', subPixelFix);
 		}
 	},
-	/*= if (build.classic) { =*/
-	getStyle: function (style) {
-		this.style = extend({
-			
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
-			fontSize: '12px'
-
-		}, style);
-		return this.style;
-	},
-	/*= } =*/
-
 	/*= if (!build.classic) { =*/
 	/**
 	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs
@@ -1463,6 +1451,18 @@ SVGRenderer.prototype = {
 			});
 		}
 		recurse(def);
+	},
+	/*= } =*/
+
+	/*= if (build.classic) { =*/
+	getStyle: function (style) {
+		this.style = extend({
+			
+			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
+			fontSize: '12px'
+
+		}, style);
+		return this.style;
 	},
 	/*= } =*/
 
