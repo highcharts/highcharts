@@ -130,6 +130,7 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 	}
 });
 
+/*= if (build.classic) { =*/
 function pointAttribs(proceed) {
 	var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -146,6 +147,7 @@ wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
 }
+/*= } =*/
 
 function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D

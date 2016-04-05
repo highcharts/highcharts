@@ -103,20 +103,37 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	var result = this.g(),
 		paths = this.cuboidPath(shapeArgs);
 
+	/*= if (build.classic) { =*/
+	result.attr({
+		'stroke-linejoin': 'round'
+	});
+	/*= } =*/
+
 	// create the 3 sides
-	result.front = this.path(paths[0]).attr({ zIndex: paths[3], 'stroke-linejoin': 'round' }).add(result);
-	result.top = this.path(paths[1]).attr({ zIndex: paths[4], 'stroke-linejoin': 'round' }).add(result);
-	result.side = this.path(paths[2]).attr({ zIndex: paths[5], 'stroke-linejoin': 'round' }).add(result);
+	result.front = this.path(paths[0]).attr({
+		'class': 'highcharts-3d-front',
+		zIndex: paths[3]
+	}).add(result);
+	result.top = this.path(paths[1]).attr({
+		'class': 'highcharts-3d-top',
+		zIndex: paths[4]
+	}).add(result);
+	result.side = this.path(paths[2]).attr({
+		'class': 'highcharts-3d-side',
+		zIndex: paths[5]
+	}).add(result);
 
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
 	result.fillSetter = function (color) {
-		var c0 = color,
-			c1 = Color(color).brighten(0.1).get(),
-			c2 = Color(color).brighten(-0.1).get();
-
-		this.front.attr({ fill: c0 });
-		this.top.attr({ fill: c1 });
-		this.side.attr({ fill: c2 });
+		this.front.attr({
+			fill: color
+		});
+		this.top.attr({
+			fill: Color(color).brighten(0.1).get()
+		});
+		this.side.attr({
+			fill: Color(color).brighten(-0.1).get()
+		});
 
 		this.color = color;
 		return this;
@@ -278,12 +295,17 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 	 * Add all faces
 	 */
 	wrapper.onAdd = function () {
-		var parent = wrapper.parentGroup;
+		var parent = wrapper.parentGroup, 
+			className = wrapper.attr('class');
 		wrapper.top.add(wrapper);
-		wrapper.out.add(parent);
-		wrapper.inn.add(parent);
-		wrapper.side1.add(parent);
-		wrapper.side2.add(parent);
+
+		// These faces are added outside the wrapper group because the z index
+		// relates to neighbour elements as well
+		each(['out', 'inn', 'side1', 'side2'], function (face) {
+			wrapper[face]
+				.addClass(className + ' highcharts-3d-' + face)
+				.add(parent);
+		});
 	};
 
 	/**

@@ -517,6 +517,14 @@ input.highcharts-range-selector {
     fill: #f8f8f8;
 }
 
+/* 3d charts */
+.highcharts-3d-frame {
+    fill: transparent;
+}
+.highcharts-column-series .highcharts-point  {
+    stroke: inherit; /* use point color */
+}
+
 /* Exporting module */
 .highcharts-contextbutton {
     fill: white; /* needed to capture hover */

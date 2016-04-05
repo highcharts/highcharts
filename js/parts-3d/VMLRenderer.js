@@ -1,3 +1,4 @@
+/*= if (build.classic) { =*/
 (function (H) {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
@@ -45,3 +46,4 @@ if (VMLRenderer) {
 }
 	return H;
 }(Highcharts));
+/*= } =*/

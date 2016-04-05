@@ -1,6 +1,7 @@
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
+		merge = H.merge,
 		pick = H.pick,
 		wrap = H.wrap;
 
@@ -25,11 +26,33 @@ defaultChartOptions.chart.options3d = {
 	fitToPlot: true,
 	viewDistance: 25,
 	frame: {
-		bottom: { size: 1, color: 'rgba(255,255,255,0)' },
-		side: { size: 1, color: 'rgba(255,255,255,0)' },
-		back: { size: 1, color: 'rgba(255,255,255,0)' }
+		bottom: {
+			size: 1
+		},
+		side: {
+			size: 1
+		},
+		back: {
+			size: 1
+		}
 	}
 };
+
+/*= if (build.classic) { =*/
+merge(true, defaultChartOptions.chart.options3d, {
+	frame: {
+		bottom: {
+			color: 'rgba(255, 255, 255, 0)'
+		},
+		side: {
+			color: 'rgba(255, 255, 255, 0)'
+		},
+		back: {
+			color: 'rgba(255, 255, 255, 0)'
+		}
+	}
+});
+/*= } =*/
 
 wrap(Chart.prototype, 'init', function (proceed) {
 	var args = [].slice.call(arguments, 1),
@@ -47,6 +70,11 @@ wrap(Chart.prototype, 'init', function (proceed) {
 		pieOptions.borderColor = pick(pieOptions.borderColor, undefined); 
 	}
 	proceed.apply(this, args);
+});
+
+wrap(Chart.prototype, 'firstRender', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	this.renderer.boxWrapper.addClass('highcharts-3d-chart');
 });
 
 wrap(Chart.prototype, 'setChartSize', function (proceed) {

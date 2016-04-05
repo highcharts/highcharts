@@ -61,6 +61,7 @@ wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proce
 	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
+/*= if (build.classic) { =*/
 wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state) {
 	var attr = proceed.call(this, point, state),
 		options = this.options;
@@ -72,6 +73,7 @@ wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state)
 
 	return attr;
 });
+/*= } =*/
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));

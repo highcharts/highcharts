@@ -60,12 +60,16 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.bottomFrame) {
 			this.bottomFrame = renderer.cuboid(bottomShape).attr({
-				fill: fbottom.color,
-				zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
-			})
-			.css({
-				stroke: fbottom.color
+				'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
+				'zIndex': (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.bottomFrame.attr({
+				fill: fbottom.color,
+				stroke: fbottom.color
+			});
+			/*= } =*/
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -82,11 +86,16 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({
-				fill: fback.color,
+				'class': 'highcharts-3d-frame highcharts-3d-frame-back',
 				zIndex: -3
-			}).css({
-				stroke: fback.color
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.backFrame.attr({
+				fill: fback.color,
+				stroke: fback.color
+			});
+			/*= } =*/
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -101,11 +110,17 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({
-				fill: fside.color,
+				'class': 'highcharts-3d-frame highcharts-3d-frame-side',
 				zIndex: -2
-			}).css({
-				stroke: fside.color
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.sideFrame.attr({
+				fill: fside.color,
+				stroke: fside.color
+			});
+			/*= } =*/
+
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
