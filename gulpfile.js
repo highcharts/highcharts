@@ -123,6 +123,7 @@ function outPutMessage(title, message) {
     console.log(line);
     console.log(message);
     console.log(line);
+    console.log('');
 }
 
 /**
@@ -136,7 +137,7 @@ function compile(filename)  {
     return webpack({
         entry: './js/masters/' + filename,
         output: {
-            filename: './js/' + filename
+            filename: 'code/' + filename
         },
         module: {
             loaders: [{
@@ -170,6 +171,24 @@ function compile(filename)  {
     });
 }
 
+function getFilesInFolder(rootFolder, includeSubfolders, path) {
+    var fs = require('fs'),
+        filenames = [],
+        filepath,
+        isDirectory;
+        path = (typeof path === 'undefined') ? '' : path;
+        fs.readdirSync(rootFolder + path).forEach(function (filename) {
+            filepath = rootFolder + path + filename;
+            isDirectory = fs.lstatSync(filepath).isDirectory();
+            if (isDirectory && includeSubfolders) {
+                filenames = filenames.concat(getFilesInFolder(rootFolder, includeSubfolders, path + filename + '/'));
+            } else if (!isDirectory) {
+                filenames.push(path + filename);
+            }
+        });
+    return filenames;
+}
+
 /**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
@@ -177,12 +196,11 @@ function compile(filename)  {
  */
 gulp.task('build', function () {
     var argv = require('yargs').argv,
-        fs = require('fs'),
         filenames;
     if (argv.file) {
         compile(argv.file);
     } else {
-        filenames = fs.readdirSync('js/masters');
+        filenames = getFilesInFolder('js/masters/', true);
         filenames.forEach(compile);
     }
     return;
