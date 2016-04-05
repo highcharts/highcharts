@@ -138,6 +138,26 @@ Axis.prototype = {
 				return Highcharts.numberFormat(this.total, -1);
 			},
 			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+		},
+		scrollbar: {
+			//enabled: true
+			height: isTouchDevice ? 20 : 14,
+			barBackgroundColor: '#bfc8d1',
+			barBorderRadius: 0,
+			barBorderWidth: 1,
+			barBorderColor: '#bfc8d1',
+			buttonArrowColor: '#666',
+			buttonBackgroundColor: '#ebe7e8',
+			buttonBorderColor: '#bbb',
+			buttonBorderRadius: 0,
+			buttonBorderWidth: 1,
+			minWidth: 6,
+			rifleColor: '#666',
+			trackBackgroundColor: '#eeeeee',
+			trackBorderColor: '#eeeeee',
+			trackBorderWidth: 1,
+			// trackBorderRadius: 0
+			liveRedraw: hasSVG && !isTouchDevice
 		}
 	},
 
@@ -355,6 +375,20 @@ Axis.prototype = {
 		if (axis.isLog) {
 			axis.val2lin = log2lin;
 			axis.lin2val = lin2log;
+		}
+
+		if (!axis.horiz && axis.options.scrollbar && axis.options.scrollbar.enabled && Highcharts.Scrollbar) {
+			axis.options.scrollbar.vertical = !axis.horiz;
+			axis.scrollbar = new Highcharts.Scrollbar(chart.renderer, axis.options.scrollbar, chart);
+			addEvent(axis.scrollbar, 'changed', function (e) {
+				var unitedMin = Math.min(axis.min, axis.dataMin),
+					unitedMax = Math.max(axis.max, axis.dataMax),
+					range = unitedMax - unitedMin,
+					to = unitedMin + range * (1 - this.from),
+					from = unitedMin + range * (1 - this.to);
+
+					axis.setExtremes(from, to, true, false, e);
+			});
 		}
 	},
 
@@ -1894,6 +1928,10 @@ Axis.prototype = {
 			hasData && tickPositions.length && tickSize ? tickSize[0] : 0 // #4866
 		);
 
+		if (axis.scrollbar) {
+			axisOffset[1] += axis.scrollbar.options.height;
+		}
+
 		// Decide the clipping needed to keep the graph inside the plot area and axis lines
 		clip = options.offset ? 0 : mathFloor(options.lineWidth / 2) * 2; // #4308, #4371
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], clip);
@@ -1998,6 +2036,8 @@ Axis.prototype = {
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
+			scrollMin = Math.min(axis.min, axis.dataMin),
+			scrollMax = Math.max(axis.max, axis.dataMax),
 			from,
 			to;
 
@@ -2165,6 +2205,19 @@ Axis.prototype = {
 			axis.renderStackTotals();
 		}
 		// End stacked totals
+
+
+		if (axis.scrollbar) {
+			axis.scrollbar.position(axis.left + axis.width + 2, axis.top, axis.width, axis.height);
+			if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
+				axis.scrollbar.setRange(0, 0); // TO DO
+			} else {
+				axis.scrollbar.setRange(
+					1 - (axis.max - scrollMin) / (scrollMax - scrollMin),
+					1 - (axis.min - scrollMin) / (scrollMax - scrollMin)
+				);
+			}
+		}
 
 		axis.isDirty = false;
 	},

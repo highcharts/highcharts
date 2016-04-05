@@ -130,7 +130,6 @@ function Navigator(chart) {
 		scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
 
 	this.handles = [];
-	this.scrollbarButtons = [];
 	this.elementsToDestroy = []; // Array containing the elements to destroy when Navigator is destroyed
 
 	this.chart = chart;
@@ -141,7 +140,6 @@ function Navigator(chart) {
 	this.scrollbarEnabled = scrollbarEnabled;
 	this.navigatorEnabled = navigatorEnabled;
 	this.navigatorOptions = navigatorOptions;
-	this.scrollbarOptions = scrollbarOptions;
 	this.outlineHeight = height + scrollbarHeight - 1;
 
 	// Run scroller
@@ -363,6 +361,12 @@ Navigator.prototype = {
 			scroller.drawHandle(zoomedMin + halfOutline, 0);
 			scroller.drawHandle(zoomedMax + halfOutline, 1);
 		}
+
+		if (scroller.scrollbar) {
+			// Keep scale 0-1
+			scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height, scroller.scrollerWidth, scroller.scrollbarHeight);
+			scroller.scrollbar.setRange(zoomedMin / navigatorWidth, zoomedMax / navigatorWidth);
+		}
 		scroller.rendered = true;
 	},
 
@@ -531,13 +535,11 @@ Navigator.prototype = {
 				if (scroller.grabbedLeft) {
 					hasDragged = true;
 					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
-					chart.scrollbar.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
 
 				// drag right handle
 				} else if (scroller.grabbedRight) {
 					hasDragged = true;
 					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
-					chart.scrollbar.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
 
 				// drag scrollbar or open area in navigator
 				} else if (scroller.grabbedCenter) {
@@ -550,10 +552,8 @@ Navigator.prototype = {
 					}
 
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
-					chart.scrollbar.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
-
 				}
-				if (hasDragged && scroller.scrollbarOptions.liveRedraw) {
+				if (hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
 					setTimeout(function () {
 						scroller.mouseUpHandler(e);
 					}, 0);
@@ -713,6 +713,22 @@ Navigator.prototype = {
 
 
 		scroller.addEvents();
+		if (chart.options.scrollbar.enabled) {
+
+			scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
+			addEvent(scroller.scrollbar, 'changed', function (e) {
+				var axis = scroller.xAxis && defined(scroller.xAxis.min) ? scroller.xAxis : scroller.chart.xAxis[0],
+					unitedMin = Math.min(axis.min, axis.dataMin),
+					unitedMax = Math.max(axis.max, axis.dataMax),
+					range = unitedMax - unitedMin,
+					to = unitedMin + range * this.to,
+					from = unitedMin + range * this.from;
+
+					scroller.render(from, to);
+					scroller.hasDragged = true;
+					scroller.mouseUpHandler(e);
+			});
+		}
 	},
 
 	/**
@@ -880,11 +896,6 @@ Navigator.prototype = {
 				mathMax(baseMin, baseDataMin),
 				mathMin(baseMax, baseDataMax)
 			);
-
-			this.chart.scrollbar.render(
-				mathMax(baseMin, baseDataMin),
-				mathMin(baseMax, baseDataMax)
-			);
 		}
 	},
 
@@ -913,8 +924,6 @@ Navigator.prototype = {
 };
 
 Highcharts.Navigator = Navigator;
-Highcharts.Scrollbar = Scrollbar;
-
 
 /**
  * For Stock charts, override selection zooming with some special features because
@@ -963,11 +972,8 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
-		if (options.navigator.enabled) {
+		if (options.navigator.enabled || options.scrollbar.enabled) {
 			this.scroller = new Navigator(this);
-		}
-		if (options.scrollbar.enabled) {
-			this.scrollbar = new Scrollbar(this, this.scroller);
 		}
 	});
 
