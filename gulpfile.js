@@ -109,85 +109,8 @@ function assemble(assemblies) {
     });
     return ret;
 }
-/**
- * [outPutMessage description]
- * @param  {[type]} title   [description]
- * @param  {[type]} message [description]
- * @return {[type]}         [description]
- */
-function outPutMessage(title, message) {
-    var lineLength = 50,
-        line = new Array(lineLength + 1).join('-');
-    console.log(line);
-    console.log('----- ' + title);
-    console.log(line);
-    console.log(message);
-    console.log(line);
-    console.log('');
-}
 
-/**
- * Handles the building process of a single file
- * @param  {string} filename The name of the source file to build
- * @return {?} Some sort of webpack response
- */
-function compile(filename)  {
-    var webpack = require('webpack'),
-        path = require('path');
-    return webpack({
-        entry: './js/masters/' + filename,
-        output: {
-            filename: 'code/' + filename
-        },
-        module: {
-            loaders: [{
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
-            }]
-        },
-        resolve: {
-            extensions: ['', '.js']
-        },
-        debug: true
-    }).run(function (err, stats) {
-        var jsonStats = stats.toJson();
-        if (err) {
-            outPutMessage(filename + ' fatal errors', err);
-        } else if (jsonStats.errors.length > 0) {
-            jsonStats.errors.forEach(function (m) {
-                outPutMessage(filename + ' error', m);
-            });
-        } else if (jsonStats.warnings.length > 0) {
-            jsonStats.warnings.forEach(function (m) {
-                outPutMessage(filename + ' warnings', m);
-            });
-        } else {
-            outPutMessage(filename + ' complete', 'Congratulations! ' + filename + ' compiled without any warnings or errors.');
-        }
-    });
-}
 
-function getFilesInFolder(rootFolder, includeSubfolders, path) {
-    var fs = require('fs'),
-        filenames = [],
-        filepath,
-        isDirectory;
-        path = (typeof path === 'undefined') ? '' : path;
-        fs.readdirSync(rootFolder + path).forEach(function (filename) {
-            filepath = rootFolder + path + filename;
-            isDirectory = fs.lstatSync(filepath).isDirectory();
-            if (isDirectory && includeSubfolders) {
-                filenames = filenames.concat(getFilesInFolder(rootFolder, includeSubfolders, path + filename + '/'));
-            } else if (!isDirectory) {
-                filenames.push(path + filename);
-            }
-        });
-    return filenames;
-}
 
 /**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
@@ -195,14 +118,10 @@ function getFilesInFolder(rootFolder, includeSubfolders, path) {
  * @return undefined
  */
 gulp.task('build', function () {
-    var argv = require('yargs').argv,
-        filenames;
-    if (argv.file) {
-        compile(argv.file);
-    } else {
-        filenames = getFilesInFolder('js/masters/', true);
-        filenames.forEach(compile);
-    }
+    var argv = require('yargs').argv;
+        require('./build.js')({
+            file: argv.file
+        });
     return;
 });
 
