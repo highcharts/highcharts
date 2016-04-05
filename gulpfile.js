@@ -125,13 +125,18 @@ function outPutMessage(title, message) {
     console.log(line);
 }
 
-gulp.task('build', function () {
+/**
+ * Handles the building process of a single file
+ * @param  {string} filename The name of the source file to build
+ * @return {?} Some sort of webpack response
+ */
+function compile(filename)  {
     var webpack = require('webpack'),
         path = require('path');
     return webpack({
-        entry: './js/masters/highstock.js',
+        entry: './js/masters/' + filename,
         output: {
-            filename: './js/webpack.js'
+            filename: './js/' + filename
         },
         module: {
             loaders: [{
@@ -150,19 +155,37 @@ gulp.task('build', function () {
     }).run(function (err, stats) {
         var jsonStats = stats.toJson();
         if (err) {
-            outPutMessage('Webpack fatal errors', err);
+            outPutMessage(filename + ' fatal errors', err);
         } else if (jsonStats.errors.length > 0) {
             jsonStats.errors.forEach(function (m) {
-                outPutMessage('Webpack error', m);
+                outPutMessage(filename + ' error', m);
             });
         } else if (jsonStats.warnings.length > 0) {
             jsonStats.warnings.forEach(function (m) {
-                outPutMessage('Webpack warnings', m);
+                outPutMessage(filename + ' warnings', m);
             });
         } else {
-            outPutMessage('Webpack Complete', 'Congratulations! Webpack compiled without any warnings or errors.');
+            outPutMessage(filename + ' complete', 'Congratulations! ' + filename + ' compiled without any warnings or errors.');
         }
     });
+}
+
+/**
+ * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
+ * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
+ * @return undefined
+ */
+gulp.task('build', function () {
+    var argv = require('yargs').argv,
+        fs = require('fs'),
+        filenames;
+    if (argv.file) {
+        compile(argv.file);
+    } else {
+        filenames = fs.readdirSync('js/masters');
+        filenames.forEach(compile);
+    }
+    return;
 });
 
     /*
