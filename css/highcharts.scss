@@ -51,6 +51,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     font-size: 0.9em;
 }
 .highcharts-grid-line {
+    fill: none;
     stroke: #D8D8D8;
 }
 .highcharts-xaxis-grid .highcharts-grid-line {
@@ -311,6 +312,7 @@ g.highcharts-series, .highcharts-point {
     fill-opacity: 0.05; 
 }
 .highcharts-plot-line {
+    fill: none;
     stroke: gray;
     stroke-width: 1px;
 }

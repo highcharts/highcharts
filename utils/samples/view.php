@@ -326,6 +326,35 @@ function getResources() {
 		});
 		<?php endif ?>
 
+		<?php if ($styled) { ?>
+		$(function () {
+			var warnedAboutColors = false;
+			function warnAboutColors () {
+				if (!warnedAboutColors) {
+					console.info('This sample uses getOtions.colors, which is ignored in Styled mode.');
+					warnedAboutColors = true;
+				}
+
+				return undefined;
+			}
+			Highcharts.wrap(Highcharts, 'getOptions', function (proceed) {
+				var options = proceed.call(Highcharts);
+				if (!options.colors) {
+					options.colors = [];
+					for (var i = 0; i < 10; i++) {
+						options.colors = {
+							get 0 () { warnAboutColors(); },
+							get 1 () { warnAboutColors(); },
+							get 2 () { warnAboutColors(); },
+							get 3 () { warnAboutColors(); }
+						};
+					}
+				}
+				return options;
+			});
+		});
+		<?php } ?>
+		
 
 		<?php @include("$fullpath/demo.js"); ?>
 		</script>
