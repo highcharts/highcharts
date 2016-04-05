@@ -1,7 +1,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-import '../parts/BoxPlotSeries.js';
+import './BoxPlotSeries.js';
 (function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,

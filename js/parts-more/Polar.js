@@ -1,8 +1,8 @@
-import H from '../Globals.js';
-import '../Utilities.js';
-import '../Pointer.js';
-import '../Series.js';
-import '../Pointer.js';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Pointer.js';
+import '../parts/Series.js';
+import '../parts/Pointer.js';
 (function () {
 
 	/**
