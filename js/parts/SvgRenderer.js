@@ -27,6 +27,7 @@
 		pick = H.pick,
 		pInt = H.pInt,
 		removeEvent = H.removeEvent,
+		splat = H.splat,
 		stop = H.stop,
 		svg = H.svg,
 		SVG_NS = H.SVG_NS,
@@ -1430,6 +1431,38 @@ SVGRenderer.prototype = {
 
 		}, style);
 		return this.style;
+	},
+	/*= } =*/
+
+	/*= if (!build.classic) { =*/
+	/**
+	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs
+	 */
+	addDefinition: function (def) {
+		var ren = this;
+
+		function recurse(config, parent) {
+			each(splat(config), function (item) {
+				var node = ren.createElement(item.tag),
+					key,
+					attr = {};
+
+				// Set attributes
+				for (key in item) {
+					if (key !== 'tag' && key !== 'children') {
+						attr[key] = item[key];
+					}
+				}
+				node.attr(attr);
+
+				// Add to the tree
+				node.add(parent || ren.defs);
+
+				// Recurse
+				recurse(item.children || [], node);
+			});
+		}
+		recurse(def);
 	},
 	/*= } =*/
 

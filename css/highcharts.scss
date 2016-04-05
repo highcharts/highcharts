@@ -524,6 +524,12 @@ input.highcharts-range-selector {
 .highcharts-column-series .highcharts-point  {
     stroke: inherit; /* use point color */
 }
+.highcharts-3d-top {
+    filter: url(#highcharts-brighter);
+}
+.highcharts-3d-side {
+    filter: url(#highcharts-darker);
+}
 
 /* Exporting module */
 .highcharts-contextbutton {

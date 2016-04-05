@@ -76,6 +76,45 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	];
 }
 
+/*= if (!build.classic) { =*/
+/**
+ * Override the SVGRenderer initiator to add definitions used by brighter and
+ * darker faces of the cuboids.
+ */
+wrap(SVGRenderer.prototype, 'init', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	each([{
+		name: 'darker',
+		slope: 0.6
+	}, {
+		name: 'brighter',
+		slope: 1.4
+	}], function (cfg) {
+		this.addDefinition({
+			tag: 'filter',
+			id: 'highcharts-' + cfg.name,
+			children: [{
+				tag: 'feComponentTransfer',
+				children: [{
+					tag: 'feFuncR',
+					type: 'linear',
+					slope: cfg.slope
+				}, {
+					tag: 'feFuncG',
+					type: 'linear',
+					slope: cfg.slope
+				}, {
+					tag: 'feFuncB',
+					type: 'linear',
+					slope: cfg.slope
+				}]
+			}]
+		});
+	}, this);
+});
+/*= } =*/
+
 SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
@@ -303,7 +342,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		// relates to neighbour elements as well
 		each(['out', 'inn', 'side1', 'side2'], function (face) {
 			wrapper[face]
-				.addClass(className + ' highcharts-3d-' + face)
+				.addClass(className + ' highcharts-3d-side')
 				.add(parent);
 		});
 	};
