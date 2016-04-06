@@ -4,6 +4,7 @@
  * @license ?
  */
 var defaultOptions = {
+    base: undefined, // Path to where the build files are located
     files: undefined // Array of files to compile
 };
 
@@ -77,14 +78,15 @@ function outPutMessage(title, message) {
 
 /**
  * Handles the building process of a single file
+ * @param  {string} base Path to where the build files are located
  * @param  {string} filename The name of the source file to build
  * @return {?} Some sort of webpack response
  */
-function compile(filename)  {
+function compile(base, filename)  {
     var webpack = require('webpack'),
         path = require('path');
     return webpack({
-        entry: './js/masters/' + filename,
+        entry: base + filename,
         output: {
             filename: 'code/' + filename
         },
@@ -122,22 +124,22 @@ function compile(filename)  {
 
 /**
  * [getFilesInFolder description]
- * @param  {[type]} rootFolder        [description]
+ * @param  {[type]} base              [description]
  * @param  {[type]} includeSubfolders [description]
  * @param  {[type]} path              [description]
  * @return {[type]}                   [description]
  */
-function getFilesInFolder(rootFolder, includeSubfolders, path) {
+function getFilesInFolder(base, includeSubfolders, path) {
     var fs = require('fs'),
         filenames = [],
         filepath,
         isDirectory;
         path = (typeof path === 'undefined') ? '' : path;
-        fs.readdirSync(rootFolder + path).forEach(function (filename) {
-            filepath = rootFolder + path + filename;
+        fs.readdirSync(base + path).forEach(function (filename) {
+            filepath = base + path + filename;
             isDirectory = fs.lstatSync(filepath).isDirectory();
             if (isDirectory && includeSubfolders) {
-                filenames = filenames.concat(getFilesInFolder(rootFolder, includeSubfolders, path + filename + '/'));
+                filenames = filenames.concat(getFilesInFolder(base, includeSubfolders, path + filename + '/'));
             } else if (!isDirectory) {
                 filenames.push(path + filename);
             }
@@ -152,14 +154,25 @@ function getFilesInFolder(rootFolder, includeSubfolders, path) {
  */
 function build(userOptions) {
     var keys,
-        options;
+        options,
+        doCompile;
     // userOptions is an empty object by default
     userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
-    // Get all unique keys
-    options = merge(userOptions, defaultOptions, {
-        files: getFilesInFolder('js/masters/', true)
-    });
-    options.files.forEach(compile);
+    // Merge the userOptions with defaultOptions
+    options = merge(userOptions, defaultOptions);
+
+    // Check if required options are set
+    if (options.base) {
+        if (!options.files) {
+            options.files = getFilesInFolder(options.base, true);
+        }
+        doCompile = function (filename) {
+            compile(options.base, filename);
+        };
+        options.files.forEach(doCompile);
+    } else {
+        outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
+    }
 }
 
 module.exports = build;

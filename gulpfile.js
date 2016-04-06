@@ -121,6 +121,7 @@ gulp.task('build', function () {
     var argv = require('yargs').argv,
         files = (argv.file) ? [argv.file] : undefined;
         require('./build.js')({
+            base: './js/masters/',
             files: files
         });
     return;
