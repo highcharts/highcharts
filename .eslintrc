@@ -5,6 +5,7 @@ rules:
     camelcase: [2, {"properties": "always"}]
     comma-dangle: [2, "never"]
     dot-location: [2, "property"]
+    newline-after-var: 0
     no-alert: 2
     no-console: 2
     no-debugger: 2
