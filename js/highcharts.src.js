@@ -7247,20 +7247,6 @@
                 axis.val2lin = log2lin;
                 axis.lin2val = lin2log;
             }
-
-            if (!axis.horiz && axis.options.scrollbar && axis.options.scrollbar.enabled && Highcharts.Scrollbar) {
-                axis.options.scrollbar.vertical = !axis.horiz;
-                axis.scrollbar = new Highcharts.Scrollbar(chart.renderer, axis.options.scrollbar, chart);
-                addEvent(axis.scrollbar, 'changed', function (e) {
-                    var unitedMin = Math.min(axis.min, axis.dataMin),
-                        unitedMax = Math.max(axis.max, axis.dataMax),
-                        range = unitedMax - unitedMin,
-                        to = unitedMin + range * (1 - this.from),
-                        from = unitedMin + range * (1 - this.to);
-
-                        axis.setExtremes(from, to, true, false, e);
-                });
-            }
         },
 
         /**
@@ -8799,10 +8785,6 @@
                 hasData && tickPositions.length && tickSize ? tickSize[0] : 0 // #4866
             );
 
-            if (axis.scrollbar) {
-                axisOffset[1] += axis.scrollbar.options.height;
-            }
-
             // Decide the clipping needed to keep the graph inside the plot area and axis lines
             clip = options.offset ? 0 : mathFloor(options.lineWidth / 2) * 2; // #4308, #4371
             clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], clip);
@@ -8907,8 +8889,6 @@
                 slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
                 showAxis = axis.showAxis,
                 animation = animObject(renderer.globalAnimation),
-                scrollMin = Math.min(axis.min, axis.dataMin),
-                scrollMax = Math.max(axis.max, axis.dataMax),
                 from,
                 to;
 
@@ -9076,19 +9056,6 @@
                 axis.renderStackTotals();
             }
             // End stacked totals
-
-
-            if (axis.scrollbar) {
-                axis.scrollbar.position(axis.left + axis.width + 2, axis.top, axis.width, axis.height);
-                if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
-                    axis.scrollbar.setRange(0, 0); // TO DO
-                } else {
-                    axis.scrollbar.setRange(
-                        1 - (axis.max - scrollMin) / (scrollMax - scrollMin),
-                        1 - (axis.min - scrollMin) / (scrollMax - scrollMin)
-                    );
-                }
-            }
 
             axis.isDirty = false;
         },

@@ -1,7 +1,6 @@
 
 var defaultScrollbarOptions =  {
 	//enabled: true
-	step: 0.2, // docs
 	height: isTouchDevice ? 20 : 14,
 	barBackgroundColor: '#bfc8d1',
 	barBorderRadius: 0,
@@ -14,6 +13,8 @@ var defaultScrollbarOptions =  {
 	buttonBorderWidth: 1,
 	minWidth: 6,
 	rifleColor: '#666',
+	step: 0.2, 		// docs
+	//size: null, 	// docs
 	trackBackgroundColor: '#eeeeee',
 	trackBorderColor: '#eeeeee',
 	trackBorderWidth: 1,
@@ -42,6 +43,8 @@ function Scrollbar(renderer, options, chart) {
 	this.options = options;
 	this.chart = chart;
 
+	this.size = pick(options.size, options.height); // backward compatibility
+
 	// Init
 	this.render();
 	this.initEvents();
@@ -55,7 +58,7 @@ Scrollbar.prototype = {
 			options = scroller.options,
 			strokeWidth = options.trackBorderWidth,
 			scrollbarStrokeWidth = options.barBorderWidth,
-			size = pick(options.height, 14), // when initializing scrollbar, size may not be defined yet
+			size = scroller.size,
 			group;
 
 		scroller.size = size;
@@ -135,7 +138,7 @@ Scrollbar.prototype = {
 
 		// If Scrollbar is vertical type, swap options:
 		if (vertical) {
-			scroller.width = scroller.yOffset = width = yOffset = options.height;
+			scroller.width = scroller.yOffset = width = yOffset = scroller.size;
 			scroller.xOffset = xOffset = 0;
 			scroller.barWidth = height - width * 2;
 		}
@@ -170,7 +173,7 @@ Scrollbar.prototype = {
 			renderer = scroller.renderer,
 			scrollbarButtons = scroller.scrollbarButtons,
 			options = scroller.options,
-			height = options.height,
+			height = scroller.size,
 			group;
 
 		group = renderer.g().add(scroller.group);
@@ -419,7 +422,6 @@ Scrollbar.prototype = {
 
  		this.from = from;
  		this.to = to;
- 		this.setRange(from, to);
  	},
 
 	/**
@@ -493,5 +495,64 @@ Scrollbar.prototype = {
 		});
 	}
 };
+
+/**
+* Wrap axis initialization and create scrollbar if enabled:
+*/
+wrap(Axis.prototype, 'init', function (proceed) {
+	var axis = this;
+	proceed.apply(axis, [].slice.call(arguments, 1));
+
+	if (!axis.horiz && axis.options.scrollbar && axis.options.scrollbar.enabled) {
+		axis.options.scrollbar.vertical = !axis.horiz;
+		axis.options.startOnTick = axis.options.endOnTick = false;
+		axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
+		addEvent(axis.scrollbar, 'changed', function (e) {
+			var unitedMin = Math.min(axis.min, axis.dataMin),
+				unitedMax = Math.max(axis.max, axis.dataMax),
+				range = unitedMax - unitedMin,
+				to = unitedMin + range * (1 - this.from),
+				from = unitedMin + range * (1 - this.to);
+
+				axis.setExtremes(from, to, true, false, e);
+		});
+	}
+});
+
+/**
+* Wrap rendering axis, and update scrollbar if one is created:
+*/
+wrap(Axis.prototype, 'render', function (proceed) {
+	var axis = this,		
+		scrollMin = Math.min(axis.min, axis.dataMin),
+		scrollMax = Math.max(axis.max, axis.dataMax);
+
+	proceed.apply(axis, [].slice.call(arguments, 1));
+
+	if (axis.scrollbar) {
+		axis.scrollbar.position(axis.left + axis.width + 2, axis.top, axis.width, axis.height);
+		if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
+			axis.scrollbar.setRange(0, 0);
+		} else {
+			axis.scrollbar.setRange(
+				1 - (axis.max - scrollMin) / (scrollMax - scrollMin),
+				1 - (axis.min - scrollMin) / (scrollMax - scrollMin)
+			);
+		}
+	}
+});
+
+/**
+* Make space for a scrollbar
+*/
+wrap(Axis.prototype, 'getOffset', function (proceed) {
+	var axis = this;
+
+	proceed.apply(axis, [].slice.call(arguments, 1));
+
+	if (axis.scrollbar) {
+		axis.chart.axisOffset[1] += axis.scrollbar.size;
+	}
+});
 
 Highcharts.Scrollbar = Scrollbar;
