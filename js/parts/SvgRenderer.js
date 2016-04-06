@@ -1258,7 +1258,7 @@ SVGElement.prototype = {
 			i;
 
 		if (defined(value)) {
-			element.setAttribute(key, value); // So we can read it for other elements in the group
+			element.zIndex = value; // So we can read it for other elements in the group
 			value = +value;
 			if (this[key] === value) { // Only update when needed (#3865)
 				run = false;
@@ -1279,7 +1279,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
+				otherZIndex = otherElement.zIndex;
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
 						pInt(otherZIndex) > value ||
