@@ -1774,7 +1774,9 @@ Series.prototype = {
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
-			var axis, median, length = points && points.length;
+			var axis,
+				median,
+				length = points && points.length;
 
 			if (length) {
 

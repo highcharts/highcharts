@@ -980,7 +980,9 @@ grep = function (elements, callback) {
  * Map an array
  */
 map = function (arr, fn) {
-	var results = [], i = 0, len = arr.length;
+	var results = [],
+		i = 0,
+		len = arr.length;
 
 	for (; i < len; i++) {
 		results[i] = fn.call(arr[i], arr[i], i, arr);

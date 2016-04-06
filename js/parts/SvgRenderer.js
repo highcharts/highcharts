@@ -1467,7 +1467,8 @@ SVGRenderer.prototype = {
 
 			// build the lines
 			each(lines, function buildTextLines(line, lineNo) {
-				var spans, spanNo = 0;
+				var spans,
+					spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');

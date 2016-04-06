@@ -206,8 +206,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 				y: alignTo.y + options.y + alignTo.height / 2
 			};
-			dataLabel
-				[isNew ? 'attr' : 'animate'](alignAttr)
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
 					align: options.align
 				});

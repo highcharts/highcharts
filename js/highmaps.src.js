@@ -1106,7 +1106,9 @@
      * Map an array
      */
     map = function (arr, fn) {
-        var results = [], i = 0, len = arr.length;
+        var results = [],
+            i = 0,
+            len = arr.length;
 
         for (; i < len; i++) {
             results[i] = fn.call(arr[i], arr[i], i, arr);
@@ -3532,7 +3534,8 @@
 
                 // build the lines
                 each(lines, function buildTextLines(line, lineNo) {
-                    var spans, spanNo = 0;
+                    var spans,
+                        spanNo = 0;
 
                     line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
                     spans = line.split('|||');
@@ -10535,7 +10538,8 @@
         var touches = {},
             hasPointerEvent = !!win.PointerEvent,
             getWebkitTouches = function () {
-                var key, fake = [];
+                var key,
+                    fake = [];
                 fake.item = function (i) {
                     return this[i];
                 };
@@ -14900,7 +14904,9 @@
 
             // Internal function
             function _kdtree(points, depth, dimensions) {
-                var axis, median, length = points && points.length;
+                var axis,
+                    median,
+                    length = points && points.length;
 
                 if (length) {
 
@@ -16145,8 +16151,7 @@
                     x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
                     y: alignTo.y + options.y + alignTo.height / 2
                 };
-                dataLabel
-                    [isNew ? 'attr' : 'animate'](alignAttr)
+                dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
                     .attr({ // #3003
                         align: options.align
                     });
@@ -19101,7 +19106,11 @@
      * Test for point in polygon. Polygon defined as array of [x,y] points.
      */
     function pointInPolygon(point, polygon) {
-        var i, j, rel1, rel2, c = false,
+        var i,
+            j,
+            rel1,
+            rel2,
+            c = false,
             x = point.x,
             y = point.y;
 
