@@ -4,7 +4,7 @@
  * @license ?
  */
 var defaultOptions = {
-    file: undefined
+    files: undefined // Array of files to compile
 };
 
 /**
@@ -156,14 +156,10 @@ function build(userOptions) {
     // userOptions is an empty object by default
     userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
     // Get all unique keys
-    options = merge(userOptions, defaultOptions);
-    console.log(options);
-    if (options.file) {
-        compile(options.file);
-    } else {
-        filenames = getFilesInFolder('js/masters/', true);
-        filenames.forEach(compile);
-    }
+    options = merge(userOptions, defaultOptions, {
+        files: getFilesInFolder('js/masters/', true)
+    });
+    options.files.forEach(compile);
 }
 
 module.exports = build;

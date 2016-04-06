@@ -118,9 +118,10 @@ function assemble(assemblies) {
  * @return undefined
  */
 gulp.task('build', function () {
-    var argv = require('yargs').argv;
+    var argv = require('yargs').argv,
+        files = (argv.file) ? [argv.file] : undefined;
         require('./build.js')({
-            file: argv.file
+            files: files
         });
     return;
 });
