@@ -14449,14 +14449,13 @@
         /**
          * Return the series points with null points filtered out
          */
-        getValidPoints: function (points, cropByX) {
-            var axisLen = this.xAxis && this.xAxis.len;
-            return grep(points || this.points || [], function (point) { // #5029
-                var keep = !point.isNull;
-                if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
-                    keep = false;
+        getValidPoints: function (points, insideOnly) {
+            var chart = this.chart;
+            return grep(points || this.points || [], function isValidPoint(point) { // #3916, #5029
+                if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) { // #5085
+                    return false;
                 }
-                return keep;
+                return !point.isNull;
             });
         },
 
