@@ -93,26 +93,6 @@ extend(defaultOptions, {
 			},
 			tickWidth: 0
 		}
-	},
-	scrollbar: {
-		//enabled: true
-		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: '#bfc8d1',
-		barBorderRadius: 0,
-		barBorderWidth: 1,
-		barBorderColor: '#bfc8d1',
-		buttonArrowColor: '#666',
-		buttonBackgroundColor: '#ebe7e8',
-		buttonBorderColor: '#bbb',
-		buttonBorderRadius: 0,
-		buttonBorderWidth: 1,
-		minWidth: 6,
-		rifleColor: '#666',
-		trackBackgroundColor: '#eeeeee',
-		trackBorderColor: '#eeeeee',
-		trackBorderWidth: 1,
-		// trackBorderRadius: 0
-		liveRedraw: hasSVG && !isTouchDevice
 	}
 });
 

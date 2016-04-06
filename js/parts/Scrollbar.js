@@ -1,4 +1,33 @@
 
+var defaultScrollbarOptions =  {
+	//enabled: true
+	step: 0.2, // docs
+	height: isTouchDevice ? 20 : 14,
+	barBackgroundColor: '#bfc8d1',
+	barBorderRadius: 0,
+	barBorderWidth: 1,
+	barBorderColor: '#bfc8d1',
+	buttonArrowColor: '#666',
+	buttonBackgroundColor: '#ebe7e8',
+	buttonBorderColor: '#bbb',
+	buttonBorderRadius: 0,
+	buttonBorderWidth: 1,
+	minWidth: 6,
+	rifleColor: '#666',
+	trackBackgroundColor: '#eeeeee',
+	trackBorderColor: '#eeeeee',
+	trackBorderWidth: 1,
+	// trackBorderRadius: 0
+	liveRedraw: hasSVG && !isTouchDevice
+};
+
+defaultOptions = merge(defaultOptions, {
+	scrollbar: defaultScrollbarOptions,
+	yAxis: {
+		scrollbar: defaultScrollbarOptions
+	}
+});
+
 /**
  * The Scrollbar class 
  * @param {Object} renderer
@@ -12,8 +41,6 @@ function Scrollbar(renderer, options, chart) {
 
 	this.options = options;
 	this.chart = chart;
-
-	this.step = pick(options.step, 0.2); // docs
 
 	// Init
 	this.render();
@@ -331,7 +358,7 @@ Scrollbar.prototype = {
 		};
 
 	 	scroller.buttonToMinClick = function (e) {
-	 		var range = (scroller.to - scroller.from) * scroller.step;
+	 		var range = (scroller.to - scroller.from) * scroller.options.step;
 	 		scroller.updatePosition(scroller.from - range, scroller.to - range);
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,
@@ -342,7 +369,7 @@ Scrollbar.prototype = {
 	 	};
 
 	 	scroller.buttonToMaxClick = function (e) {
-	 		var range = (scroller.to - scroller.from) * scroller.step;
+	 		var range = (scroller.to - scroller.from) * scroller.options.step;
 	 		scroller.updatePosition(scroller.from + range, scroller.to + range);
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,

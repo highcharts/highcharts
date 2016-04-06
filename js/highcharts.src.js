@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-04-05)
+ * @license Highcharts JS v4.2.3-modified (2016-04-06)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7029,26 +7029,6 @@
                     return Highcharts.numberFormat(this.total, -1);
                 },
                 style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
-            },
-            scrollbar: {
-                //enabled: true
-                height: isTouchDevice ? 20 : 14,
-                barBackgroundColor: '#bfc8d1',
-                barBorderRadius: 0,
-                barBorderWidth: 1,
-                barBorderColor: '#bfc8d1',
-                buttonArrowColor: '#666',
-                buttonBackgroundColor: '#ebe7e8',
-                buttonBorderColor: '#bbb',
-                buttonBorderRadius: 0,
-                buttonBorderWidth: 1,
-                minWidth: 6,
-                rifleColor: '#666',
-                trackBackgroundColor: '#eeeeee',
-                trackBorderColor: '#eeeeee',
-                trackBorderWidth: 1,
-                // trackBorderRadius: 0
-                liveRedraw: hasSVG && !isTouchDevice
             }
         },
 

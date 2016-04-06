@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-05)
+ * @license Highstock JS v4.2.3-modified (2016-04-06)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7029,26 +7029,6 @@
                     return Highcharts.numberFormat(this.total, -1);
                 },
                 style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
-            },
-            scrollbar: {
-                //enabled: true
-                height: isTouchDevice ? 20 : 14,
-                barBackgroundColor: '#bfc8d1',
-                barBorderRadius: 0,
-                barBorderWidth: 1,
-                barBorderColor: '#bfc8d1',
-                buttonArrowColor: '#666',
-                buttonBackgroundColor: '#ebe7e8',
-                buttonBorderColor: '#bbb',
-                buttonBorderRadius: 0,
-                buttonBorderWidth: 1,
-                minWidth: 6,
-                rifleColor: '#666',
-                trackBackgroundColor: '#eeeeee',
-                trackBorderColor: '#eeeeee',
-                trackBorderWidth: 1,
-                // trackBorderRadius: 0
-                liveRedraw: hasSVG && !isTouchDevice
             }
         },
 
@@ -20217,7 +20197,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-05)
+     * Highstock JS v4.2.3-modified (2016-04-06)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21778,6 +21758,35 @@
      * End Flags series code                                                      *
      *****************************************************************************/
 
+    var defaultScrollbarOptions =  {
+        //enabled: true
+        step: 0.2, // docs
+        height: isTouchDevice ? 20 : 14,
+        barBackgroundColor: '#bfc8d1',
+        barBorderRadius: 0,
+        barBorderWidth: 1,
+        barBorderColor: '#bfc8d1',
+        buttonArrowColor: '#666',
+        buttonBackgroundColor: '#ebe7e8',
+        buttonBorderColor: '#bbb',
+        buttonBorderRadius: 0,
+        buttonBorderWidth: 1,
+        minWidth: 6,
+        rifleColor: '#666',
+        trackBackgroundColor: '#eeeeee',
+        trackBorderColor: '#eeeeee',
+        trackBorderWidth: 1,
+        // trackBorderRadius: 0
+        liveRedraw: hasSVG && !isTouchDevice
+    };
+
+    defaultOptions = merge(defaultOptions, {
+        scrollbar: defaultScrollbarOptions,
+        yAxis: {
+            scrollbar: defaultScrollbarOptions
+        }
+    });
+
     /**
      * The Scrollbar class 
      * @param {Object} renderer
@@ -21791,8 +21800,6 @@
 
         this.options = options;
         this.chart = chart;
-
-        this.step = pick(options.step, 0.2); // docs
 
         // Init
         this.render();
@@ -22110,7 +22117,7 @@
             };
 
              scroller.buttonToMinClick = function (e) {
-                 var range = (scroller.to - scroller.from) * scroller.step;
+                 var range = (scroller.to - scroller.from) * scroller.options.step;
                  scroller.updatePosition(scroller.from - range, scroller.to - range);
                 fireEvent(scroller, 'changed', {
                     from: scroller.from,
@@ -22121,7 +22128,7 @@
              };
 
              scroller.buttonToMaxClick = function (e) {
-                 var range = (scroller.to - scroller.from) * scroller.step;
+                 var range = (scroller.to - scroller.from) * scroller.options.step;
                  scroller.updatePosition(scroller.from + range, scroller.to + range);
                 fireEvent(scroller, 'changed', {
                     from: scroller.from,
@@ -22341,26 +22348,6 @@
                 },
                 tickWidth: 0
             }
-        },
-        scrollbar: {
-            //enabled: true
-            height: isTouchDevice ? 20 : 14,
-            barBackgroundColor: '#bfc8d1',
-            barBorderRadius: 0,
-            barBorderWidth: 1,
-            barBorderColor: '#bfc8d1',
-            buttonArrowColor: '#666',
-            buttonBackgroundColor: '#ebe7e8',
-            buttonBorderColor: '#bbb',
-            buttonBorderRadius: 0,
-            buttonBorderWidth: 1,
-            minWidth: 6,
-            rifleColor: '#666',
-            trackBackgroundColor: '#eeeeee',
-            trackBorderColor: '#eeeeee',
-            trackBorderWidth: 1,
-            // trackBorderRadius: 0
-            liveRedraw: hasSVG && !isTouchDevice
         }
     });
 
