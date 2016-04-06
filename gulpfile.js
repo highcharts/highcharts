@@ -122,7 +122,8 @@ gulp.task('build', function () {
         files = (argv.file) ? [argv.file] : undefined;
         require('./build.js')({
             base: './js/masters/',
-            files: files
+            files: files,
+            output: './code/'
         });
     return;
 });

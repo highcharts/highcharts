@@ -5,7 +5,8 @@
  */
 var defaultOptions = {
     base: undefined, // Path to where the build files are located
-    files: undefined // Array of files to compile
+    files: undefined, // Array of files to compile
+    output: './' // Folder to output compiled files
 };
 
 /**
@@ -82,13 +83,13 @@ function outPutMessage(title, message) {
  * @param  {string} filename The name of the source file to build
  * @return {?} Some sort of webpack response
  */
-function compile(base, filename)  {
+function compile(base, output, filename)  {
     var webpack = require('webpack'),
         path = require('path');
     return webpack({
         entry: base + filename,
         output: {
-            filename: 'code/' + filename
+            filename: output + filename
         },
         module: {
             loaders: [{
@@ -160,14 +161,13 @@ function build(userOptions) {
     userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
     // Merge the userOptions with defaultOptions
     options = merge(userOptions, defaultOptions);
-
     // Check if required options are set
     if (options.base) {
         if (!options.files) {
             options.files = getFilesInFolder(options.base, true);
         }
         doCompile = function (filename) {
-            compile(options.base, filename);
+            compile(options.base, options.output, filename);
         };
         options.files.forEach(doCompile);
     } else {
