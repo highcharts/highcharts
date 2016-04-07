@@ -52,6 +52,9 @@ function Scrollbar(renderer, options, chart) {
 }
 
 Scrollbar.prototype = {
+	/**
+	* Render scrollbar with all required items.
+	*/
 	render: function () {
 		var scroller = this,
 			renderer = scroller.renderer,
@@ -61,11 +64,10 @@ Scrollbar.prototype = {
 			size = scroller.size,
 			group;
 
-		scroller.size = size;
-
 		// Draw the scrollbar group:
 		scroller.group = group = renderer.g(PREFIX + 'scrollbar').attr({
-			zIndex: 3
+			zIndex: 3,
+			translateY: -99999
 		}).add();
 
 		// Draw the scrollbar track:
@@ -97,17 +99,17 @@ Scrollbar.prototype = {
 		// Draw the scrollbat rifles:
 		scroller.scrollbarRifles = renderer.path(scroller.swapXY([
 			M,
-			-2.5, size / 4,
+			-3, size / 4,
 			L,
-			-2.5, 2 * size / 3,
+			-3, 2 * size / 3,
 			M,
-			0.5, size / 4,
+			0, size / 4,
 			L,
-			0.5, 2 * size / 3,
+			0, 2 * size / 3,
 			M,
-			3.5, size / 4,
+			3, size / 4,
 			L,
-			3.5, 2 * size / 3
+			3, 2 * size / 3
 		], options.vertical)).attr({
 			stroke: options.rifleColor,
 			'stroke-width': 1
@@ -119,7 +121,11 @@ Scrollbar.prototype = {
 	},
 
 	/**
-	 * Position the scrollbar:
+	 * Position the scrollbar, method called from a parent with defined dimensions
+	 * @param {Number} x - x-position on the chart
+	 * @param {Number} y - y-position on the chart
+	 * @param {Number} width - width of the scrollbar
+	 * @param {Number} height - height of the scorllbar
 	 */
 	position: function (x, y, width, height) {
 		var scroller = this,
@@ -129,7 +135,7 @@ Scrollbar.prototype = {
 			yOffset = 0;
 
 		scroller.x = x;
-		scroller.y = y;
+		scroller.y = y + options.trackBorderWidth;
 		scroller.width = width; // width w/ buttons
 		scroller.barWidth = width - height * 2; // width w/o buttons
 		scroller.height = height;
@@ -146,15 +152,15 @@ Scrollbar.prototype = {
 		// Set general position for a group:
 		scroller.group.attr({
 			translateX: x,
-			translateY: y
+			translateY: scroller.y
 		});
 
 		// Resize background/track:
 		scroller.track.attr({
-			width: width - 2 * xOffset,
-			height: height - 2 * yOffset,
-			x: xOffset - options.trackBorderWidth % 2 / 2,
-			y: yOffset - options.trackBorderWidth % 2 / 2
+			width: width,
+			height: height,
+			x: -options.trackBorderWidth % 2 / 2,
+			y: -options.trackBorderWidth % 2 / 2
 		});
 
 		// Move right/bottom button ot it's place:
@@ -173,7 +179,7 @@ Scrollbar.prototype = {
 			renderer = scroller.renderer,
 			scrollbarButtons = scroller.scrollbarButtons,
 			options = scroller.options,
-			height = scroller.size,
+			size = scroller.size,
 			group;
 
 		group = renderer.g().add(scroller.group);
@@ -183,8 +189,8 @@ Scrollbar.prototype = {
 		renderer.rect(
 			-0.5, 
 			-0.5, 
-			height + 1,  // +1 to compensate for crispifying in rect method
-			height + 1,
+			size + 1,  // +1 to compensate for crispifying in rect method
+			size + 1,
 			options.buttonBorderRadius,
 			options.buttonBorderWidth
 		).attr({
@@ -196,14 +202,14 @@ Scrollbar.prototype = {
 		// Button arrow:
 		renderer.path(scroller.swapXY([
             'M',
-            height / 2 + (index ? -1 : 1), 
-            height / 2 - 3,
+            size / 2 + (index ? -1 : 1), 
+            size / 2 - 3,
             'L',
-            height / 2 + (index ? -1 : 1), 
-            height / 2 + 3,
+            size / 2 + (index ? -1 : 1), 
+            size / 2 + 3,
             'L',
-            height / 2 + (index ? 2 : -2), 
-            height / 2
+            size / 2 + (index ? 2 : -2), 
+            size / 2
         ], options.vertical)).attr({
 			fill: options.buttonArrowColor
 		}).add(group);
@@ -211,6 +217,8 @@ Scrollbar.prototype = {
 
 	/**
 	* When we have vertical scrollbar, rifles are rotated, the same for arrow in buttons:
+	* @param {Array} path - path to be rotated
+	* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
 	*/
 	swapXY: function (path, vertical) {
 		var i = 0,
@@ -229,7 +237,9 @@ Scrollbar.prototype = {
  	},
 
  	/**
- 	* Set scrollbar size, with a given scale. From and to should be in 0-1 scale.
+ 	* Set scrollbar size, with a given scale.
+	* @param {Number} from - scale (0-1) where bar should start
+	* @param {Number} to - scale (0-1) where bar should end
  	*/
  	setRange: function (from, to) {
  		var scroller = this,
@@ -247,9 +257,9 @@ Scrollbar.prototype = {
 
 		fromPX = scroller.barWidth * Math.max(from, 0);
 		toPX = scroller.barWidth * Math.min(to, 1);
-		newSize = Math.max(correctFloat(toPX - fromPX), 1);
+		newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
 		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
-		newRiflesPos = Math.floor(newSize / 2);
+		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
  		// Store current position:
  		scroller.from = from;
@@ -281,7 +291,7 @@ Scrollbar.prototype = {
 	 		scroller.scrollbarLeft = 0;
  		}
 
- 		if (newSize <= 20) {
+ 		if (newSize <= 12) {
  			scroller.scrollbarRifles.hide();
  		} else {
  			scroller.scrollbarRifles.show();
@@ -347,7 +357,6 @@ Scrollbar.prototype = {
 			if (e.type !== 'mousemove') {
 				scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
 			}
-
 		};
 
 		scroller.mouseDownHandler = function (e) {
@@ -361,8 +370,8 @@ Scrollbar.prototype = {
 		};
 
 	 	scroller.buttonToMinClick = function (e) {
-	 		var range = (scroller.to - scroller.from) * scroller.options.step;
-	 		scroller.updatePosition(scroller.from - range, scroller.to - range);
+	 		var range = correctFloat(scroller.to - scroller.from) * scroller.options.step;
+	 		scroller.updatePosition(correctFloat(scroller.from - range), correctFloat(scroller.to - range));
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,
 				to: scroller.to,
@@ -490,9 +499,7 @@ Scrollbar.prototype = {
 		});
 
 		// Destroy elements in collection
-		each([scroller.scrollbarButtons], function (coll) {
-			destroyObjectProperties(coll);
-		});
+		destroyObjectProperties(scroller.scrollbarButtons);
 	}
 };
 
@@ -504,17 +511,20 @@ wrap(Axis.prototype, 'init', function (proceed) {
 	proceed.apply(axis, [].slice.call(arguments, 1));
 
 	if (!axis.horiz && axis.options.scrollbar && axis.options.scrollbar.enabled) {
+		// Predefined options:
 		axis.options.scrollbar.vertical = !axis.horiz;
-		axis.options.startOnTick = axis.options.endOnTick = false;
+		axis.options.startOnTick = axis.options.endOnTick = false; // docs
+
 		axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
+
 		addEvent(axis.scrollbar, 'changed', function (e) {
 			var unitedMin = Math.min(axis.min, axis.dataMin),
 				unitedMax = Math.max(axis.max, axis.dataMax),
 				range = unitedMax - unitedMin,
-				to = unitedMin + range * (1 - this.from),
+				to = unitedMin + range * (1 - this.from), // y-values in browser are reversed
 				from = unitedMin + range * (1 - this.to);
 
-				axis.setExtremes(from, to, true, false, e);
+			axis.setExtremes(from, to, true, false, e);
 		});
 	}
 });
@@ -530,9 +540,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(axis, [].slice.call(arguments, 1));
 
 	if (axis.scrollbar) {
-		axis.scrollbar.position(axis.left + axis.width + 2, axis.top, axis.width, axis.height);
+		axis.scrollbar.position(axis.left + axis.width + 2 + axis.offset, axis.top, axis.width, axis.height);
+
 		if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
-			axis.scrollbar.setRange(0, 0);
+			axis.scrollbar.setRange(0, 0); // default action: when there is not extremes on the axis, but scrollbar exists, make it full size
 		} else {
 			axis.scrollbar.setRange(
 				1 - (axis.max - scrollMin) / (scrollMax - scrollMin),
@@ -553,6 +564,17 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 	if (axis.scrollbar) {
 		axis.chart.axisOffset[1] += axis.scrollbar.size;
 	}
+});
+
+/**
+* Destroy scrollbar when connected to the specific axis
+*/
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	if (this.scrollbar) {
+		this.scrollbar = this.scrollbar.destroy();
+	}
+
+	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Highcharts.Scrollbar = Scrollbar;

@@ -120,7 +120,7 @@ function Navigator(chart) {
 	this.scrollbarEnabled = scrollbarEnabled;
 	this.navigatorEnabled = navigatorEnabled;
 	this.navigatorOptions = navigatorOptions;
-	this.outlineHeight = height + scrollbarHeight - 1;
+	this.outlineHeight = height + scrollbarHeight;
 
 	// Run scroller
 	this.init();
@@ -697,14 +697,11 @@ Navigator.prototype = {
 
 			scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
 			addEvent(scroller.scrollbar, 'changed', function (e) {
-				var axis = scroller.xAxis && defined(scroller.xAxis.min) ? scroller.xAxis : scroller.chart.xAxis[0],
-					unitedMin = Math.min(axis.min, axis.dataMin),
-					unitedMax = Math.max(axis.max, axis.dataMax),
-					range = unitedMax - unitedMin,
-					to = unitedMin + range * this.to,
-					from = unitedMin + range * this.from;
+				var range = scroller.navigatorWidth,
+					to = range * this.to,
+					from = range * this.from;
 
-					scroller.render(from, to);
+					scroller.render(0, 0, from, to);
 					scroller.hasDragged = true;
 					scroller.mouseUpHandler(e);
 			});
@@ -889,7 +886,7 @@ Navigator.prototype = {
 		scroller.removeEvents();
 
 		// Destroy properties
-		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline], function (prop) {
+		each([scroller.scrollbar, scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline], function (prop) {
 			if (prop && prop.destroy) {
 				prop.destroy();
 			}
