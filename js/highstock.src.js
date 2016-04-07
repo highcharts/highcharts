@@ -21884,9 +21884,7 @@
             // Resize background/track:
             scroller.track.attr({
                 width: width,
-                height: height,
-                x: -options.trackBorderWidth % 2 / 2,
-                y: -options.trackBorderWidth % 2 / 2
+                height: height
             });
 
             // Move right/bottom button ot it's place:
