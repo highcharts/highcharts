@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-06)
+ * @license Highstock JS v4.2.3-modified (2016-04-07)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20044,7 +20044,7 @@
 
                 // Sort them and find the median
                 distances.sort(function (a, b) {
-                        return a - b;
+                    return a - b;
                 });
                 median = distances[mathFloor(len / 2)];
 
@@ -20183,7 +20183,6 @@
      */
     Series.prototype.gappedPath = function () {
         var gapSize = this.options.gapSize,
-            xAxis = this.xAxis,
             points = this.points.slice(),
             i = points.length - 1;
 
@@ -20191,7 +20190,7 @@
 
             // extension for ordinal breaks
             while (i--) {
-                if (points[i + 1].x - points[i].x > xAxis.closestPointRange * gapSize) {
+                if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
                     points.splice( // insert after this one
                         i + 1,
                         0,
@@ -20210,7 +20209,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-06)
+     * Highstock JS v4.2.3-modified (2016-04-07)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
