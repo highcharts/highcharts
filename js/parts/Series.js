@@ -1835,6 +1835,10 @@ Series.prototype = {
 				nPoint1,
 				nPoint2;
 
+			if (point[axis] === null) {
+				// Check that the point is not already destroyed.
+				return;
+			}
 			setDistance(search, point);
 
 			// Pick side based on distance to splitting point
