@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-07)
+ * @license Highstock JS v4.2.3-modified (2016-04-08)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20164,7 +20164,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-07)
+     * Highstock JS v4.2.3-modified (2016-04-08)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22161,7 +22161,7 @@
          * Set up the mouse and touch events for the Scrollbar
          */
         addEvents: function () {
-            var buttonsOrder = this.options.iverted ? [1, 0] : [0, 1],
+            var buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
                 buttons = this.scrollbarButtons,
                 bar = this.scrollbarGroup.element,
                 track = this.track.element,

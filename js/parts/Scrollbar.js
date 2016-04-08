@@ -435,7 +435,7 @@ Scrollbar.prototype = {
 	 * Set up the mouse and touch events for the Scrollbar
 	 */
 	addEvents: function () {
-		var buttonsOrder = this.options.iverted ? [1, 0] : [0, 1],
+		var buttonsOrder = this.options.inverted ? [1, 0] : [0, 1],
 			buttons = this.scrollbarButtons,
 			bar = this.scrollbarGroup.element,
 			track = this.track.element,
