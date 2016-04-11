@@ -22628,9 +22628,9 @@
                     scrollerLeft, outlineTop, // left
                     L,
                     navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
-                    navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight - halfOutline, // lower left of z.r.
+                    navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
                     L,
-                    navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - halfOutline, // lower right of z.r.
+                    navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
                     L,
                     navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
                     scrollerLeft + scrollerWidth, outlineTop // right
@@ -22647,7 +22647,7 @@
 
             if (scroller.scrollbar) {
                 // Keep scale 0-1
-                scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height - halfOutline, scroller.scrollerWidth, scroller.scrollbarHeight);
+                scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height, scroller.scrollerWidth, scroller.scrollbarHeight);
                 scroller.scrollbar.setRange(zoomedMin / navigatorWidth, zoomedMax / navigatorWidth);
             }
             scroller.rendered = true;
