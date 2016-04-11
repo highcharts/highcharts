@@ -13914,7 +13914,7 @@
                 }
 
                 // Set the the plotY value, reset it for redraws
-                point.plotY = plotY = !point.isNull ?
+                point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
                     mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
                     UNDEFINED;
                 point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
