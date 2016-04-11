@@ -21801,6 +21801,7 @@
         buttonBorderWidth: 1,
         minWidth: 6,
         rifleColor: '#666',
+        zIndex: 3,        // docs
         step: 0.2,         // docs
         //size: null,     // docs
         trackBackgroundColor: '#eeeeee',
@@ -21851,7 +21852,7 @@
 
             // Draw the scrollbar group:
             scroller.group = group = renderer.g(PREFIX + 'scrollbar').attr({
-                zIndex: 3,
+                zIndex: options.zIndex,
                 translateY: -99999
             }).add();
 
@@ -21921,17 +21922,19 @@
 
             scroller.x = x;
             scroller.y = y + options.trackBorderWidth;
-            scroller.width = width; // width w/ buttons
-            scroller.barWidth = width - height * 2; // width w/o buttons
+            scroller.width = width; // width with buttons
             scroller.height = height;
             scroller.xOffset = xOffset;
             scroller.yOffset = yOffset;
 
-            // If Scrollbar is vertical type, swap options:
+            // If Scrollbar is a vertical type, swap options:
             if (vertical) {
                 scroller.width = scroller.yOffset = width = yOffset = scroller.size;
                 scroller.xOffset = xOffset = 0;
-                scroller.barWidth = height - width * 2;
+                scroller.barWidth = height - width * 2; // width without buttons
+            } else {
+                scroller.height = scroller.xOffset = height = xOffset = scroller.size;
+                scroller.barWidth = width - height * 2; // width without buttons
             }
 
             // Set general position for a group:
@@ -22293,7 +22296,7 @@
         var axis = this;
         proceed.apply(axis, [].slice.call(arguments, 1));
 
-        if (!axis.horiz && axis.options.scrollbar && axis.options.scrollbar.enabled) {
+        if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
             axis.options.startOnTick = axis.options.endOnTick = false; // docs
@@ -22304,8 +22307,8 @@
                 var unitedMin = Math.min(axis.min, axis.dataMin),
                     unitedMax = Math.max(axis.max, axis.dataMax),
                     range = unitedMax - unitedMin,
-                    to = unitedMin + range * (1 - this.from), // y-values in browser are reversed
-                    from = unitedMin + range * (1 - this.to);
+                    to = axis.horiz ? unitedMin + range * this.to : unitedMin + range * (1 - this.from), // y-values in browser are reversed
+                    from = axis.horiz ? unitedMin + range * this.from : unitedMin + range * (1 - this.to);
 
                 axis.setExtremes(from, to, true, false, e);
             });
@@ -22318,20 +22321,39 @@
     wrap(Axis.prototype, 'render', function (proceed) {
         var axis = this,    
             scrollMin = Math.min(axis.min, axis.dataMin),
-            scrollMax = Math.max(axis.max, axis.dataMax);
+            scrollMax = Math.max(axis.max, axis.dataMax),
+            from, to;
 
         proceed.apply(axis, [].slice.call(arguments, 1));
 
         if (axis.scrollbar) {
-            axis.scrollbar.position(axis.left + axis.width + 2 + axis.offset, axis.top, axis.width, axis.height);
+            if (axis.horiz) {
+                axis.scrollbar.position(
+                    axis.left, 
+                    axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin),
+                    axis.width,
+                    axis.height
+                );
+            } else {
+                axis.scrollbar.position(
+                    axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0), 
+                    axis.top, 
+                    axis.width, 
+                    axis.height
+                );
+            }
 
             if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
                 axis.scrollbar.setRange(0, 0); // default action: when there is not extremes on the axis, but scrollbar exists, make it full size
             } else {
-                axis.scrollbar.setRange(
-                    1 - (axis.max - scrollMin) / (scrollMax - scrollMin),
-                    1 - (axis.min - scrollMin) / (scrollMax - scrollMin)
-                );
+                from = (axis.min - scrollMin) / (scrollMax - scrollMin);
+                to = (axis.max - scrollMin) / (scrollMax - scrollMin);
+
+                if (axis.horiz) {
+                    axis.scrollbar.setRange(from, to);
+                } else {
+                    axis.scrollbar.setRange(1 - to, 1 - from); // inverse vertical axis
+                }
             }
         }
     });
@@ -22340,12 +22362,13 @@
     * Make space for a scrollbar
     */
     wrap(Axis.prototype, 'getOffset', function (proceed) {
-        var axis = this;
+        var axis = this,
+            index = axis.horiz ? 2 : 1;
 
         proceed.apply(axis, [].slice.call(arguments, 1));
 
         if (axis.scrollbar) {
-            axis.chart.axisOffset[1] += axis.scrollbar.size;
+            axis.chart.axisOffset[index] += axis.scrollbar.size;
         }
     });
 
