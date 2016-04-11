@@ -45,13 +45,12 @@
  */
 
 /* eslint indent: [2, 4] */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Color.js';
+import '../parts/Series.js';
+import '../parts/Options.js';
+(function () {
 
     'use strict';
 
@@ -590,4 +589,4 @@
             proceed.apply(this, [].slice.call(arguments, 1))
         );
     });
-}));
+});
