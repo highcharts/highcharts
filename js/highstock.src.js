@@ -21810,12 +21810,7 @@
         liveRedraw: hasSVG && !isTouchDevice
     };
 
-    defaultOptions = merge(defaultOptions, {
-        scrollbar: defaultScrollbarOptions,
-        yAxis: {
-            scrollbar: defaultScrollbarOptions
-        }
-    });
+    defaultOptions.scrollbar = merge(defaultScrollbarOptions, defaultOptions.scrollbar);
 
     /**
      * The Scrollbar class 
@@ -21828,10 +21823,12 @@
 
         this.renderer = renderer;
 
-        this.options = options;
+        this.userOptions = options;
+        this.options = merge(defaultScrollbarOptions, options);
+
         this.chart = chart;
 
-        this.size = pick(options.size, options.height); // backward compatibility
+        this.size = pick(this.options.size, this.options.height); // backward compatibility
 
         // Init
         this.render();
@@ -22007,12 +22004,12 @@
         * @param {Boolean} vertical - if vertical scrollbar, swap x-y values
         */
         swapXY: function (path, vertical) {
-            var i = 0,
+            var i,
                 len = path.length,
                 temp;
 
             if (vertical) {
-                for ( ; i < len; i += 3) {
+                for (i = 0; i < len; i += 3) {
                     temp = path[i + 1];
                     path[i + 1] = path[i + 2];
                     path[i + 2] = temp;
