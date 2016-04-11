@@ -172,7 +172,7 @@ var ColumnSeries = extendClass(Series, {
 		h = bottom - y;
 
 		// Top edges are exceptions
-		if (fromTop) {
+		if (fromTop && h) { // #5146
 			y -= 1;
 			h += 1;
 		}

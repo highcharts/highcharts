@@ -358,13 +358,6 @@ function isNumber(n) {
 	return typeof n === 'number';
 }
 
-function log2lin(num) {
-	return math.log(num) / math.LN10;
-}
-function lin2log(num) {
-	return math.pow(10, num);
-}
-
 /**
  * Remove last occurence of an item from an array
  * @param {Array} arr
@@ -570,12 +563,13 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
+		shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
 
 		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({
 
 			// Day
-			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
+			'a': shortWeekdays ? shortWeekdays[day] : langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
@@ -987,7 +981,9 @@ grep = function (elements, callback) {
  * Map an array
  */
 map = function (arr, fn) {
-	var results = [], i = 0, len = arr.length;
+	var results = [],
+		i = 0,
+		len = arr.length;
 
 	for (; i < len; i++) {
 		results[i] = fn.call(arr[i], arr[i], i, arr);
@@ -1149,7 +1145,6 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events,
 		len,
 		i,
-		preventDefault,
 		fn;
 
 	eventArguments = eventArguments || {};
@@ -1172,36 +1167,33 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events = hcEvents[type] || [];
 		len = events.length;
 
-		// Attach a simple preventDefault function to skip default handler if called
-		preventDefault = function () {
-			eventArguments.defaultPrevented = true;
-		};
+		// Attach a simple preventDefault function to skip default handler if called. 
+		// The built-in defaultPrevented property is not overwritable (#5112)
+		if (!eventArguments.preventDefault) {
+			eventArguments.preventDefault = function () {
+				eventArguments.defaultPrevented = true;
+			};
+		}
+
+		eventArguments.target = el;
+
+		// If the type is not set, we're running a custom event (#2297). If it is set,
+		// we're running a browser event, and setting it will cause en error in
+		// IE8 (#2465).
+		if (!eventArguments.type) {
+			eventArguments.type = type;
+		}
 		
 		for (i = 0; i < len; i++) {
 			fn = events[i];
 
-			// eventArguments is never null here
-			if (eventArguments.stopped) {
-				return;
-			}
-
-			eventArguments.preventDefault = preventDefault;
-			eventArguments.target = el;
-
-			// If the type is not set, we're running a custom event (#2297). If it is set,
-			// we're running a browser event, and setting it will cause en error in
-			// IE8 (#2465).
-			if (!eventArguments.type) {
-				eventArguments.type = type;
-			}
-			
 			// If the event handler return false, prevent the default handler from executing
 			if (fn.call(el, eventArguments) === false) {
 				eventArguments.preventDefault();
 			}
 		}
 	}
-
+			
 	// Run the default if not prevented
 	if (defaultFunction && !eventArguments.defaultPrevented) {
 		defaultFunction(eventArguments);

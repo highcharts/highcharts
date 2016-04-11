@@ -170,6 +170,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		dataOptions = series.options.data,
 		groupedXData = [],
 		groupedYData = [],
+		groupMap = [],
 		dataLength = xData.length,
 		pointX,
 		pointY,
@@ -179,7 +180,8 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
-		i;
+		i,
+		start = 0;
 
 	// Start with the first point within the X axis range (#2696)
 	for (i = 0; i <= dataLength; i++) {
@@ -202,9 +204,11 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			if (groupedY !== UNDEFINED) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
+				groupMap.push({ start: start, length: values[0].length });
 			}
 
 			// reset the aggregate arrays
+			start = i;
 			values[0] = [];
 			values[1] = [];
 			values[2] = [];
@@ -249,7 +253,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		}
 	}
 
-	return [groupedXData, groupedYData];
+	return [groupedXData, groupedYData, groupMap];
 };
 
 /**
@@ -302,9 +306,9 @@ seriesProto.processData = function () {
 					processedXData,
 					series.closestPointRange
 				),
-				groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-				groupedXData = groupedXandY[0],
-				groupedYData = groupedXandY[1];
+				groupedData = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+				groupedXData = groupedData[0],
+				groupedYData = groupedData[1];
 
 			// prevent the smoothed data to spill out left and right, and make
 			// sure data is not shifted to the left
@@ -320,6 +324,7 @@ seriesProto.processData = function () {
 			// record what data grouping values were used
 			series.currentDataGrouping = groupPositions.info;
 			series.closestPointRange = groupPositions.info.totalRange;
+			series.groupMap = groupedData[2];
 
 			// Make sure the X axis extends to show the first group (#2533)
 			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
@@ -333,7 +338,7 @@ seriesProto.processData = function () {
 			series.processedXData = groupedXData;
 			series.processedYData = groupedYData;
 		} else {
-			series.currentDataGrouping = null;
+			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
 	}

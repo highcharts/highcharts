@@ -6,10 +6,26 @@ $(function () {
     (function (H) {
         var defaultPlotOptions = H.getOptions().plotOptions,
             columnType = H.seriesTypes.column,
-            each = H.each;
+            each = H.each,
+            extendClass = H.extendClass,
+            Point = H.Point;
 
-        defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {});
+        defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
+            tooltip: {
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+            }
+        });
         H.seriesTypes.xrange = H.extendClass(columnType, {
+            pointClass: extendClass(Point, {
+                // Add x2 and yCategory to the available properties for tooltip formats
+                getLabelConfig: function () {
+                    var cfg = Point.prototype.getLabelConfig.call(this);
+
+                    cfg.x2 = this.x2;
+                    cfg.yCategory = this.yCategory = this.series.yAxis.categories && this.series.yAxis.categories[this.y];
+                    return cfg;
+                }
+            }),
             type: 'xrange',
             parallelArrays: ['x', 'x2', 'y'],
             requireSorting: false,

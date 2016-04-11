@@ -22,7 +22,10 @@
 			var series = this,
 				yAxis = series.yAxis,
 				xAxis = series.xAxis,
+				startAngleRad = xAxis.startAngleRad,
+				start,
 				chart = series.chart,
+				isRadial = series.xAxis.isRadial,
 				plotHigh;
 
 			colProto.translate.apply(series);
@@ -40,7 +43,7 @@
 
 				// adjust shape
 				y = plotHigh;
-				height = point.plotY - plotHigh;
+				height = pick(point.rectPlotY, point.plotY) - plotHigh;
 
 				// Adjust for minPointLength
 				if (Math.abs(height) < minPointLength) {
@@ -54,19 +57,28 @@
 					y -= height;
 				}
 
-				shapeArgs.height = height;
-				shapeArgs.y = y;
+				if (isRadial) {
 
-				point.tooltipPos = chart.inverted ? 
-					[ 
-						yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
-						xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
-						height
-					] : [
-						xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
-						yAxis.pos - chart.plotTop + y + height / 2, 
-						height
-					]; // don't inherit from column tooltip position - #3372
+					start = point.barX + startAngleRad;
+					point.shapeType = 'path';
+					point.shapeArgs = {
+						d: series.polarArc(y + height, y, start, start + point.pointWidth)
+					};
+				} else {
+					shapeArgs.height = height;
+					shapeArgs.y = y;
+
+					point.tooltipPos = chart.inverted ? 
+						[ 
+							yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+							xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+							height
+						] : [
+							xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+							yAxis.pos - chart.plotTop + y + height / 2, 
+							height
+						]; // don't inherit from column tooltip position - #3372
+				}
 			});
 		},
 		directTouch: true,
@@ -76,8 +88,13 @@
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
-		animate: colProto.animate,
-		getColumnMetrics: colProto.getColumnMetrics
+		getColumnMetrics: colProto.getColumnMetrics,
+		animate: function () {
+			return colProto.animate.apply(this, arguments);
+		},
+		polarArc: function () {
+			return colProto.polarArc.apply(this, arguments);
+		}
 	});
 }());
 

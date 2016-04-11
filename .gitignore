@@ -6,6 +6,7 @@
 /js/adapters/prototype-adapter.js
 /js/modules/exporting.js
 /build
+/code
 /.project
 /git-ignore-me.properties
 /.pydevproject

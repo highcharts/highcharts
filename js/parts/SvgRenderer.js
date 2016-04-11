@@ -1155,7 +1155,7 @@ SVGElement.prototype = {
 			i;
 
 		if (defined(value)) {
-			element.setAttribute(key, value); // So we can read it for other elements in the group
+			element.zIndex = value; // So we can read it for other elements in the group
 			value = +value;
 			if (this[key] === value) { // Only update when needed (#3865)
 				run = false;
@@ -1176,7 +1176,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
+				otherZIndex = otherElement.zIndex;
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
 						pInt(otherZIndex) > value ||
@@ -1467,7 +1467,8 @@ SVGRenderer.prototype = {
 
 			// build the lines
 			each(lines, function buildTextLines(line, lineNo) {
-				var spans, spanNo = 0;
+				var spans,
+					spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
@@ -2562,7 +2563,7 @@ SVGRenderer.prototype = {
 			if (value !== alignFactor) {
 				alignFactor = value;
 				if (bBox) { // Bounding box exists, means we're dynamically changing
-					wrapper.attr({ x: x });
+					wrapper.attr({ x: wrapperX }); // #5134
 				}
 			}
 		};

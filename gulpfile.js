@@ -234,6 +234,16 @@ gulp.task('test', function () {
     });
 });
 
+/**
+ * Run the nightly. The task spawns a child process running node.
+ */
+gulp.task('nightly', function () {
+    spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
+        cwd: 'utils/samples',
+        stdio: 'inherit'
+    });
+});
+
 gulp.task('filesize', function () {
     var oldSize,
         newSize;
