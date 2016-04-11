@@ -563,12 +563,13 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
+		shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
 
 		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({
 
 			// Day
-			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
+			'a': shortWeekdays ? shortWeekdays[day] : langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
