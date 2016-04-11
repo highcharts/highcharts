@@ -129,7 +129,8 @@ gulp.task('build', function () {
             base: './js/masters/',
             excludes: {
                 'modules/annotations.js': new RegExp(folders['parts']),
-                'modules/boost.js': new RegExp(folders['parts'])
+                'modules/boost.js': new RegExp(folders['parts']),
+                'modules/broken-axis.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'

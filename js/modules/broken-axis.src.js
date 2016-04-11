@@ -313,4 +313,4 @@ import '../parts/Series.js';
 	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
 
-}());
+});
