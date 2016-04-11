@@ -119,9 +119,13 @@ function assemble(assemblies) {
  */
 gulp.task('build', function () {
     var argv = require('yargs').argv,
-        files = (argv.file) ? [argv.file] : undefined;
+        files = (argv.file) ? [argv.file] : undefined,
+        DS = '\\\\[^\\\\]'; // Regex: Single directory seperator
         require('./build.js')({
             base: './js/masters/',
+            excludes: {
+                'modules/boost.js': new RegExp('parts' + DS + '+\.js$')
+            },
             files: files,
             output: './code/'
         });

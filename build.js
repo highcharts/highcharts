@@ -5,6 +5,7 @@
  */
 var defaultOptions = {
     base: undefined, // Path to where the build files are located
+    excludes: {},
     files: undefined, // Array of files to compile
     output: './' // Folder to output compiled files
 };
@@ -83,9 +84,8 @@ function outPutMessage(title, message) {
  * @param  {string} filename The name of the source file to build
  * @return {?} Some sort of webpack response
  */
-function compile(base, output, filename)  {
-    var webpack = require('webpack'),
-        path = require('path');
+function compile(base, output, filename, exclude)  {
+    var webpack = require('webpack');
     return webpack({
         entry: base + filename,
         output: {
@@ -93,6 +93,11 @@ function compile(base, output, filename)  {
         },
         module: {
             loaders: [{
+                test: function (module) {
+                    return exclude ? exclude.test(module) : false;
+                },
+                loader: 'null-loader'
+            }, {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
@@ -163,13 +168,10 @@ function build(userOptions) {
     options = merge(userOptions, defaultOptions);
     // Check if required options are set
     if (options.base) {
-        if (!options.files) {
-            options.files = getFilesInFolder(options.base, true);
-        }
-        doCompile = function (filename) {
-            compile(options.base, options.output, filename);
-        };
-        options.files.forEach(doCompile);
+        options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
+        options.files.forEach(function (filename) {
+            compile(options.base, options.output, filename, options.excludes[filename]);
+        });
     } else {
         outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
     }
