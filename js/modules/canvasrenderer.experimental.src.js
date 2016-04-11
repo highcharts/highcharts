@@ -1,11 +1,7 @@
 /* eslint indent: [2, 4] */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (Highcharts) {
+import Highcharts from '../parts/Globals.js';
+import '../parts/SVGRenderer.js';
+(function () {
     Highcharts.extend(Highcharts.SVGElement.prototype, {
         init: function (renderer, nodeName) {
             this.element = {
@@ -158,4 +154,4 @@
             wrapper.element.innerHTML = wrapper.textStr;
         }
     });
-}));
+});
