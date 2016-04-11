@@ -7003,8 +7003,7 @@
             tickPixelInterval: 72,
             showLastLabel: true,
             labels: {
-                x: -8,
-                y: 3
+                x: -8
             },
             lineWidth: 0,
             maxPadding: 0.05,
