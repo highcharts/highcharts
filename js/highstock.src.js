@@ -21810,7 +21810,7 @@
         liveRedraw: hasSVG && !isTouchDevice
     };
 
-    defaultOptions.scrollbar = merge(defaultScrollbarOptions, defaultOptions.scrollbar);
+    defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
 
     /**
      * The Scrollbar class 
