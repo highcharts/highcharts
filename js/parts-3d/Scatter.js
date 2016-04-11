@@ -58,6 +58,10 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
 		this.pointArrayMap = ['x', 'y', 'z'];
 		this.parallelArrays = ['x', 'y', 'z'];
+
+		// Require direct touch rather than using the k-d-tree, because the k-d-tree currently doesn't
+		// take the xyz coordinate system into account (#4552)
+		this.directTouch = true;
 	}
 
 	var result = proceed.apply(this, [chart, options]);

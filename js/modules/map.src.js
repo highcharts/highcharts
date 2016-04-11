@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-03-07)
+ * @license Highmaps JS v4.2.3-modified (2016-04-11)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -942,8 +942,7 @@
             delta = e.detail || -(e.wheelDelta / 120);
             if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
                 chart.mapZoom(
-                    //delta > 0 ? 2 : 0.5,
-                    Math.pow(2, delta),
+                    Math.pow(chart.options.mapNavigation.mouseWheelSensitivity, delta),
                     chart.xAxis[0].toValue(e.chartX),
                     chart.yAxis[0].toValue(e.chartY),
                     e.chartX,
@@ -1904,7 +1903,11 @@
      * Test for point in polygon. Polygon defined as array of [x,y] points.
      */
     function pointInPolygon(point, polygon) {
-        var i, j, rel1, rel2, c = false,
+        var i,
+            j,
+            rel1,
+            rel2,
+            c = false,
             x = point.x,
             y = point.y;
 
@@ -2156,7 +2159,8 @@
                 text: '-',
                 y: 28
             }
-        }
+        },
+        mouseWheelSensitivity: 1.1
         // enabled: false,
         // enableButtons: null, // inherit from enabled
         // enableTouchZoom: null, // inherit from enabled

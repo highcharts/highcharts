@@ -9,6 +9,8 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		options = axis.options,
 		axisLength = axis.len,
+		lin2log = axis.lin2log,
+		log2lin = axis.log2lin,
 		// Since we use this method for both major and minor ticks,
 		// use a local variable and return the result
 		positions = [];
@@ -97,4 +99,12 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 		axis.tickInterval = interval;
 	}
 	return positions;
+};
+
+Axis.prototype.log2lin = function (num) {
+	return math.log(num) / math.LN10;
+};
+
+Axis.prototype.lin2log = function (num) {
+	return math.pow(10, num);
 };

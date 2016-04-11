@@ -13,6 +13,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
+		defer = pick(options.defer, true),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
@@ -26,11 +27,11 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? HIDDEN : VISIBLE,
+			defer && !hasRendered ? 'hidden' : 'visible', // #5133
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (defer) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
 				addEvent(series, 'afterAnimate', function () {
@@ -205,8 +206,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 				y: alignTo.y + options.y + alignTo.height / 2
 			};
-			dataLabel
-				[isNew ? 'attr' : 'animate'](alignAttr)
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
 					align: options.align
 				});

@@ -214,8 +214,9 @@ Navigator.prototype = {
 			verb,
 			unionExtremes;
 
-		// Don't render the navigator until we have data (#486, #4202). Don't redraw while moving the handles (#4703).
-		if (!defined(min) || isNaN(min) || (scroller.hasDragged && !defined(pxMin))) {
+		// Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
+		if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
+				(scroller.hasDragged && !defined(pxMin))) {
 			return;
 		}
 

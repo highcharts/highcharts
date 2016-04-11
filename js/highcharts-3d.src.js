@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-02-26)
+ * @license Highcharts JS v4.2.3-modified (2016-03-30)
  *
  * 3D features for Highcharts JS
  *
@@ -1754,6 +1754,10 @@
             this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
             this.pointArrayMap = ['x', 'y', 'z'];
             this.parallelArrays = ['x', 'y', 'z'];
+
+            // Require direct touch rather than using the k-d-tree, because the k-d-tree currently doesn't
+            // take the xyz coordinate system into account (#4552)
+            this.directTouch = true;
         }
 
         var result = proceed.apply(this, [chart, options]);

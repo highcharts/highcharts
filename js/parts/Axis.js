@@ -42,8 +42,8 @@ Axis.prototype = {
 				cursor: 'default',
 				fontSize: '11px'
 			},
-			x: 0,
-			y: 15
+			x: 0
+			//y: undefined
 			/*formatter: function () {
 				return this.value;
 			},*/
@@ -146,8 +146,7 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			x: -15,
-			y: null
+			x: -15
 		},
 		title: {
 			rotation: 270
@@ -159,8 +158,7 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			x: 15,
-			y: null
+			x: 15
 		},
 		title: {
 			rotation: 90
@@ -173,8 +171,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			autoRotation: [-45],
-			x: 0,
-			y: null // based on font size
+			x: 0
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -188,8 +185,7 @@ Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			autoRotation: [-45],
-			x: 0,
-			y: -15
+			x: 0
 			// overflow: undefined
 			// staggerLines: null
 		},
@@ -353,8 +349,8 @@ Axis.prototype = {
 
 		// extend logarithmic axis
 		if (axis.isLog) {
-			axis.val2lin = log2lin;
-			axis.lin2val = lin2log;
+			axis.val2lin = axis.log2lin;
+			axis.lin2val = axis.lin2log;
 		}
 	},
 
@@ -903,6 +899,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isLog = axis.isLog,
+			log2lin = axis.log2lin,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
@@ -1478,7 +1475,8 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = axis.lin2log;
 
 		return {
 			min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -1497,6 +1495,7 @@ Axis.prototype = {
 	getThreshold: function (threshold) {
 		var axis = this,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
@@ -1624,7 +1623,7 @@ Axis.prototype = {
 		var chart = this.chart,
 			horiz = this.horiz,
 			labelOptions = this.options.labels,
-			slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
 			marginLeft = chart.margin[3];
 
 		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
@@ -1646,7 +1645,7 @@ Axis.prototype = {
 			slotWidth = this.getSlotWidth(),
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
-			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			textOverflowOption = labelOptions.style.textOverflow,
 			css,
 			labelLength = 0,
@@ -1882,9 +1881,20 @@ Axis.prototype = {
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
-		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-		labelOffsetPadded = Math.abs(labelOffset) + titleMargin +
-			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
+		if (side === 0) {
+			lineHeightCorrection = -axis.labelMetrics.h;
+		} else if (side === 2) {
+			lineHeightCorrection = axis.tickRotCorr.y;
+		} else {
+			lineHeightCorrection = 0;
+		}
+
+		// Find the padded label offset
+		labelOffsetPadded = Math.abs(labelOffset) + titleMargin;
+		if (labelOffset) {
+			labelOffsetPadded -= lineHeightCorrection;
+			labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x);
+		}
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(
@@ -1983,6 +1993,7 @@ Axis.prototype = {
 			renderer = chart.renderer,
 			options = axis.options,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
 			axisTitle = axis.axisTitle,
