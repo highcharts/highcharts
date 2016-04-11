@@ -120,11 +120,16 @@ function assemble(assemblies) {
 gulp.task('build', function () {
     var argv = require('yargs').argv,
         files = (argv.file) ? [argv.file] : undefined,
-        DS = '\\\\[^\\\\]'; // Regex: Single directory seperator
+        DS = '\\\\[^\\\\]', // Regex: Single directory seperator
+        folders = {
+            'parts': 'parts' + DS + '+\.js$',
+            'parts-more': 'parts-more' + DS + '+\.js$'
+        };
         require('./build.js')({
             base: './js/masters/',
             excludes: {
-                'modules/boost.js': new RegExp('parts' + DS + '+\.js$')
+                'modules/annotations.js': new RegExp(folders['parts']),
+                'modules/boost.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'

@@ -1,12 +1,7 @@
-
-
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+(function () {
 
 	var defined = H.defined,
 		isNumber = H.isNumber,
@@ -391,4 +386,4 @@
 			chart.annotations.redraw();
 		});
 	});
-}));
+});
