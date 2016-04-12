@@ -22392,6 +22392,26 @@
         proceed.apply(this, [].slice.call(arguments, 1));
     });
 
+    /**
+    * Backward compatibility:
+    * When options.scrollbar is enabled but navigator disabled,
+    * then enable navigator for the first xAxis:
+    */
+    wrap(Chart.prototype, 'init', function (proceed, userOptions) {
+        var scrollbarEnabled = pick(userOptions.scrollbar && userOptions.scrollbar.enabled, false),
+            navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, false);
+
+        // If scrollbar is enabled, but without navigator, then connect scrollbar to the first xAxis:
+        if (scrollbarEnabled && !navigatorEnabled && userOptions.xAxis) {
+            if (userOptions.xAxis[0]) {
+                userOptions.xAxis[0].scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis[0].scrollbar);
+            } else {
+                userOptions.xAxis.scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis.scrollbar);
+            }
+        }
+        proceed.apply(this, [].slice.call(arguments, 1));
+    });
+
     Highcharts.Scrollbar = Scrollbar;/* ****************************************************************************
      * Start Navigator code                                                        *
      *****************************************************************************/
@@ -23038,6 +23058,18 @@
                     });
                 }
 
+                if (chart.options.scrollbar.enabled) {
+                    scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
+                    addEvent(scroller.scrollbar, 'changed', function (e) {
+                        var range = scroller.navigatorWidth,
+                            to = range * this.to,
+                            from = range * this.from;
+
+                            scroller.render(0, 0, from, to);
+                            scroller.hasDragged = true;
+                            scroller.mouseUpHandler(e);
+                    });
+                }
 
             // in case of scrollbar only, fake an x axis to get translation
             } else {
@@ -23086,21 +23118,7 @@
                 }
             });
 
-
             scroller.addEvents();
-            if (chart.options.scrollbar.enabled) {
-
-                scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
-                addEvent(scroller.scrollbar, 'changed', function (e) {
-                    var range = scroller.navigatorWidth,
-                        to = range * this.to,
-                        from = range * this.from;
-
-                        scroller.render(0, 0, from, to);
-                        scroller.hasDragged = true;
-                        scroller.mouseUpHandler(e);
-                });
-            }
         },
 
         /**

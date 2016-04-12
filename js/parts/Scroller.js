@@ -644,6 +644,18 @@ Navigator.prototype = {
 				});
 			}
 
+			if (chart.options.scrollbar.enabled) {
+				scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
+				addEvent(scroller.scrollbar, 'changed', function (e) {
+					var range = scroller.navigatorWidth,
+						to = range * this.to,
+						from = range * this.from;
+
+						scroller.render(0, 0, from, to);
+						scroller.hasDragged = true;
+						scroller.mouseUpHandler(e);
+				});
+			}
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
@@ -692,21 +704,7 @@ Navigator.prototype = {
 			}
 		});
 
-
 		scroller.addEvents();
-		if (chart.options.scrollbar.enabled) {
-
-			scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
-			addEvent(scroller.scrollbar, 'changed', function (e) {
-				var range = scroller.navigatorWidth,
-					to = range * this.to,
-					from = range * this.from;
-
-					scroller.render(0, 0, from, to);
-					scroller.hasDragged = true;
-					scroller.mouseUpHandler(e);
-			});
-		}
 	},
 
 	/**
