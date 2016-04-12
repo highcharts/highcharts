@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-11)
+ * @license Highstock JS v4.2.3-modified (2016-04-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20221,7 +20221,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-11)
+     * Highstock JS v4.2.3-modified (2016-04-12)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22307,8 +22307,17 @@
                 var unitedMin = Math.min(axis.min, axis.dataMin),
                     unitedMax = Math.max(axis.max, axis.dataMax),
                     range = unitedMax - unitedMin,
-                    to = axis.horiz ? unitedMin + range * this.to : unitedMin + range * (1 - this.from), // y-values in browser are reversed
-                    from = axis.horiz ? unitedMin + range * this.from : unitedMin + range * (1 - this.to);
+                    to,
+                    from;
+
+                if ((axis.horiz && !axis.reversed) || (!axis.horiz && axis.reversed)) {
+                    to = unitedMin + range * this.to;
+                    from = unitedMin + range * this.from;
+                } else {
+                    // y-values in browser are reversed, but this also applies for reversed horizontal axis:
+                    to = unitedMin + range * (1 - this.from);
+                    from = unitedMin + range * (1 - this.to);
+                }
 
                 axis.setExtremes(from, to, true, false, e);
             });
@@ -22349,7 +22358,7 @@
                 from = (axis.min - scrollMin) / (scrollMax - scrollMin);
                 to = (axis.max - scrollMin) / (scrollMax - scrollMin);
 
-                if (axis.horiz) {
+                if ((axis.horiz && !axis.reversed) || (!axis.horiz && axis.reversed)) {
                     axis.scrollbar.setRange(from, to);
                 } else {
                     axis.scrollbar.setRange(1 - to, 1 - from); // inverse vertical axis
