@@ -7,7 +7,11 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) { // encapsulate
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/CanVGRenderer.js';
+import '../parts/SvgRenderer.js';
+(function () { // encapsulate
 	var css = H.css,
 		CanVGRenderer = H.CanVGRenderer,
 		SVGRenderer = H.SVGRenderer,
@@ -196,4 +200,4 @@
 			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
-}(Highcharts));
+});
