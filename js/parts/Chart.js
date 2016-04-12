@@ -232,6 +232,9 @@ Chart.prototype = {
 					redrawLegend = true;
 				}
 			}
+			if (serie.isDirtyData) {
+				fireEvent(serie, 'updatedData');
+			}
 		});
 
 		// handle added or removed series

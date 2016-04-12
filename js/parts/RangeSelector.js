@@ -449,7 +449,7 @@ RangeSelector.prototype = {
 			dateBox,
 			inputGroup = this.inputGroup;
 
-		function updateExtremes () {
+		function updateExtremes() {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
 				xAxis = chart.xAxis[0],

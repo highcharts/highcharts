@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-11)
+ * @license Highstock JS v4.2.3-modified (2016-04-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7862,6 +7862,9 @@
                 axis.range = null;  // don't use it when running setExtremes
             }
 
+            // Hook for Highstock Scroller. Consider combining with beforePadding.
+            fireEvent(axis, 'foundExtremes');
+
             // Hook for adjusting this.min and this.max. Used by bubble series.
             if (axis.beforePadding) {
                 axis.beforePadding();
@@ -12161,6 +12164,9 @@
                         redrawLegend = true;
                     }
                 }
+                if (serie.isDirtyData) {
+                    fireEvent(serie, 'updatedData');
+                }
             });
 
             // handle added or removed series
@@ -15378,8 +15384,7 @@
         redraw: function () {
             var series = this,
                 chart = series.chart,
-                wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-                wasDirty = series.isDirty,
+                wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
                 group = series.group,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis;
@@ -15401,11 +15406,8 @@
 
             series.translate();
             series.render();
-            if (wasDirtyData) {
-                fireEvent(series, 'updatedData');
-            }
-            if (wasDirty || wasDirtyData) {            // #3945 recalculate the kdtree when dirty
-                delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+            if (wasDirty) { // #3868, #3945
+                delete this.kdTree;
             }
         },
 
@@ -20220,7 +20222,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-11)
+     * Highstock JS v4.2.3-modified (2016-04-12)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21987,7 +21989,7 @@
             }
 
             // Place it
-            handles[index][chart.isResizing ? 'animate' : 'attr']({
+            handles[index][scroller.rendered ? 'animate' : 'attr']({
                 translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
                 translateY: scroller.top + scroller.height / 2 - 8
             });
@@ -22087,8 +22089,8 @@
                 scrollbarStrokeWidth = scrollbarOptions.barBorderWidth,
                 centerBarX,
                 outlineTop = top + halfOutline,
-                verb,
-                unionExtremes;
+                rendered = scroller.rendered,
+                verb;
 
             // Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
             if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
@@ -22103,17 +22105,6 @@
             scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
             scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
             scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
-
-            // Set the scroller x axis extremes to reflect the total. The navigator extremes
-            // should always be the extremes of the union of all series in the chart as
-            // well as the navigator series.
-            if (xAxis.getExtremes) {
-                unionExtremes = scroller.getUnionExtremes(true);
-
-                if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
-                    xAxis.setExtremes(unionExtremes.dataMin, unionExtremes.dataMax, true, false);
-                }
-            }
 
             // Get the pixel position of the handles
             pxMin = pick(pxMin, xAxis.translate(min));
@@ -22137,10 +22128,12 @@
             zoomedMin = mathRound(scroller.zoomedMin);
             range = zoomedMax - zoomedMin;
 
-
+            // Stick to the area when updating
+            scroller.stickToMin = zoomedMin === 0;
+            scroller.stickToMax = zoomedMax === navigatorWidth;
 
             // on first render, create all elements
-            if (!scroller.rendered) {
+            if (!rendered) {
 
                 if (navigatorEnabled) {
 
@@ -22213,8 +22206,7 @@
             }
 
             // place elements
-            verb = chart.isResizing ? 'animate' : 'attr';
-
+            verb = rendered ? 'animate' : 'attr';
             if (navigatorEnabled) {
                 scroller.leftShade[verb](navigatorOptions.maskInside ? {
                     x: navigatorLeft + zoomedMin,
@@ -22319,7 +22311,8 @@
          * Set up the mouse and touch events for the navigator and scrollbar
          */
         addEvents: function () {
-            var container = this.chart.container,
+            var chart = this.chart,
+                container = chart.container,
                 mouseDownHandler = this.mouseDownHandler,
                 mouseMoveHandler = this.mouseMoveHandler,
                 mouseUpHandler = this.mouseUpHandler,
@@ -22346,6 +22339,20 @@
                 addEvent.apply(null, args);
             });
             this._events = _events;
+
+            // Data events
+            addEvent(this.baseSeries.xAxis, 'setExtremes', function () {
+                var scroller = this.chart.scroller;
+                if (scroller) {
+                    scroller.stickToMin = scroller.stickToMax = null;
+                }
+            });
+            addEvent(this.baseSeries.xAxis, 'foundExtremes', function () {
+                chart.scroller.modifyBaseAxisExtremes();
+            });
+            addEvent(this.series.xAxis, 'foundExtremes', function () {
+                chart.scroller.modifyNavigatorAxisExtremes();
+            });
         },
 
         /**
@@ -22790,7 +22797,29 @@
             }
         },
 
-        updatedDataHandler: function () {
+        /**
+         * Set the scroller x axis extremes to reflect the total. The navigator extremes
+         * should always be the extremes of the union of all series in the chart as
+         * well as the navigator series.
+         */
+        modifyNavigatorAxisExtremes: function () {
+            var xAxis = this.xAxis,
+                unionExtremes;
+
+            if (xAxis.getExtremes) {
+                unionExtremes = this.getUnionExtremes(true);
+
+                if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
+                    xAxis.min = unionExtremes.dataMin;
+                    xAxis.max = unionExtremes.dataMax;
+                }
+            }
+        },
+
+        /**
+         * Hook to modify the base axis extremes with information from the Navigation
+         */
+        modifyBaseAxisExtremes: function () {
             var scroller = this.chart.scroller,
                 baseSeries = scroller.baseSeries,
                 baseXAxis = baseSeries.xAxis,
@@ -22800,34 +22829,21 @@
                 baseDataMin = baseExtremes.dataMin,
                 baseDataMax = baseExtremes.dataMax,
                 range = baseMax - baseMin,
-                stickToMin,
-                stickToMax,
+                stickToMin = scroller.stickToMin,
+                stickToMax = scroller.stickToMax,
                 newMax,
                 newMin,
-                doRedraw,
                 navigatorSeries = scroller.series,
-                navXData = navigatorSeries.xData,
                 hasSetExtremes = !!baseXAxis.setExtremes;
 
-            // detect whether to move the range
-            stickToMax = baseMax >= navXData[navXData.length - 1] - (this.closestPointRange || 0); // #570
-            stickToMin = baseMin <= baseDataMin;
-
-            // set the navigator series data to the new data of the base series
-            if (!scroller.hasNavigatorData) {
-                navigatorSeries.options.pointStart = baseSeries.xData[0];
-                navigatorSeries.setData(baseSeries.options.data, false);
-                doRedraw = true;
-            }
-
-            // if the zoomed range is already at the min, move it to the right as new data
+            // If the zoomed range is already at the min, move it to the right as new data
             // comes in
             if (stickToMin) {
                 newMin = baseDataMin;
                 newMax = newMin + range;
             }
 
-            // if the zoomed range is already at the max, move it to the right as new data
+            // If the zoomed range is already at the max, move it to the right as new data
             // comes in
             if (stickToMax) {
                 newMax = baseDataMax;
@@ -22835,24 +22851,37 @@
                     newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
                 }
             }
-
-            // update the extremes
+            // Update the extremes
             if (hasSetExtremes && (stickToMin || stickToMax)) {
                 if (!isNaN(newMin)) {
-                    baseXAxis.setExtremes(newMin, newMax, true, false, { trigger: 'updatedData' });
+                    baseXAxis.min = newMin;
+                    baseXAxis.max = newMax;
                 }
-
-            // if it is not at any edge, just move the scroller window to reflect the new series data
-            } else {
-                if (doRedraw) {
-                    this.chart.redraw(false);
-                }
-
-                scroller.render(
-                    mathMax(baseMin, baseDataMin),
-                    mathMin(baseMax, baseDataMax)
-                );
             }
+        },
+
+        /**
+         * Handler for updated data on the base series. When data is modified, the navigator series
+         * must reflect it. This is called from the Chart.redraw function before axis and series 
+         * extremes are computed.
+         */
+        updatedDataHandler: function () {
+            var scroller = this.chart.scroller,
+                baseSeries = scroller.baseSeries,
+                baseExtremes = baseSeries.xAxis.getExtremes(),
+                navigatorSeries = scroller.series;
+
+            // Set the navigator series data to the new data of the base series
+            if (!scroller.hasNavigatorData) {
+                navigatorSeries.options.pointStart = baseSeries.xData[0];
+                navigatorSeries.setData(baseSeries.options.data, false);
+            }
+
+            // Move the actual scroller
+            scroller.render(
+                mathMax(baseExtremes.min, baseExtremes.dataMin),
+                mathMin(baseExtremes.max, baseExtremes.dataMax)
+            );
         },
 
         /**
@@ -23401,7 +23430,7 @@
                 dateBox,
                 inputGroup = this.inputGroup;
 
-            function updateExtremes () {
+            function updateExtremes() {
                 var inputValue = input.value,
                     value = (options.inputDateParser || Date.parse)(inputValue),
                     xAxis = chart.xAxis[0],

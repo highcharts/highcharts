@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-04-11)
+ * @license Highcharts JS v4.2.3-modified (2016-04-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7862,6 +7862,9 @@
                 axis.range = null;  // don't use it when running setExtremes
             }
 
+            // Hook for Highstock Scroller. Consider combining with beforePadding.
+            fireEvent(axis, 'foundExtremes');
+
             // Hook for adjusting this.min and this.max. Used by bubble series.
             if (axis.beforePadding) {
                 axis.beforePadding();
@@ -12161,6 +12164,9 @@
                         redrawLegend = true;
                     }
                 }
+                if (serie.isDirtyData) {
+                    fireEvent(serie, 'updatedData');
+                }
             });
 
             // handle added or removed series
@@ -15378,8 +15384,7 @@
         redraw: function () {
             var series = this,
                 chart = series.chart,
-                wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-                wasDirty = series.isDirty,
+                wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
                 group = series.group,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis;
@@ -15401,11 +15406,8 @@
 
             series.translate();
             series.render();
-            if (wasDirtyData) {
-                fireEvent(series, 'updatedData');
-            }
-            if (wasDirty || wasDirtyData) {            // #3945 recalculate the kdtree when dirty
-                delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+            if (wasDirty) { // #3868, #3945
+                delete this.kdTree;
             }
         },
 

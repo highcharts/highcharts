@@ -1718,8 +1718,7 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			wasDirty = series.isDirty,
+			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1741,11 +1740,8 @@ Series.prototype = {
 
 		series.translate();
 		series.render();
-		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
-		}
-		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+		if (wasDirty) { // #3868, #3945
+			delete this.kdTree;
 		}
 	},
 

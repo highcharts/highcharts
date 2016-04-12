@@ -973,6 +973,9 @@ Axis.prototype = {
 			axis.range = null;  // don't use it when running setExtremes
 		}
 
+		// Hook for Highstock Scroller. Consider combining with beforePadding.
+		fireEvent(axis, 'foundExtremes');
+
 		// Hook for adjusting this.min and this.max. Used by bubble series.
 		if (axis.beforePadding) {
 			axis.beforePadding();
