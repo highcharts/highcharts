@@ -18564,6 +18564,17 @@
             });
         };
     }(Highcharts));
+    function stopEvent (e) {
+        if (e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.cancelBubble = true;
+        }
+    }
 
     // Add events to the Chart object itself
     extend(Chart.prototype, {
@@ -18575,18 +18586,7 @@
                 button,
                 buttonOptions,
                 attr,
-                states,
-                stopEvent = function (e) {
-                    if (e) {
-                        if (e.preventDefault) {
-                            e.preventDefault();
-                        }
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                        e.cancelBubble = true;
-                    }
-                },
+                states,        
                 outerHandler = function (e) {
                     this.handler.call(chart, e);
                     stopEvent(e); // Stop default click event (#4444)
@@ -18754,6 +18754,7 @@
         if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
             addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
                 chart.pointer.onContainerMouseWheel(e);
+                stopEvent(e); // Issue #5011, returning false from non-jQuery event does not prevent default
                 return false;
             });
         }
