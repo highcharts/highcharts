@@ -1900,7 +1900,7 @@ Axis.prototype = {
 		labelOffsetPadded = Math.abs(labelOffset) + titleMargin;
 		if (labelOffset) {
 			labelOffsetPadded -= lineHeightCorrection;
-			labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x);
+			labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + directionFactor * 8) : labelOptions.x);
 		}
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
