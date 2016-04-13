@@ -6433,7 +6433,7 @@
 
             if (!defined(yOffset)) {
                 if (axis.side === 0) {
-                    yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics().h / 2;
+                    yOffset = label.rotation ? -8 : -label.getBBox().height;
                 } else if (axis.side === 2) {
                     yOffset = rotCorr.y + 8;
                 } else {
@@ -8504,7 +8504,7 @@
 
             axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
             if (side === 0) {
-                lineHeightCorrection = -axis.labelMetrics.h;
+                lineHeightCorrection = -axis.labelMetrics().h;
             } else if (side === 2) {
                 lineHeightCorrection = axis.tickRotCorr.y;
             } else {

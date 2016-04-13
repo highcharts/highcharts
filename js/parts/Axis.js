@@ -1889,7 +1889,7 @@ Axis.prototype = {
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		if (side === 0) {
-			lineHeightCorrection = -axis.labelMetrics.h;
+			lineHeightCorrection = -axis.labelMetrics().h;
 		} else if (side === 2) {
 			lineHeightCorrection = axis.tickRotCorr.y;
 		} else {

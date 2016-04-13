@@ -190,7 +190,7 @@ Tick.prototype = {
 
 		if (!defined(yOffset)) {
 			if (axis.side === 0) {
-				yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics().h / 2;
+				yOffset = label.rotation ? -8 : -label.getBBox().height;
 			} else if (axis.side === 2) {
 				yOffset = rotCorr.y + 8;
 			} else {
