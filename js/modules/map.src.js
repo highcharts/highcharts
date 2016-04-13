@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-04-11)
+ * @license Highmaps JS v4.2.3-modified (2016-04-13)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1356,7 +1356,7 @@
                 this.mapMap = mapMap;
 
                 // Registered the point codes that actually hold data
-                if (joinBy[1]) {
+                if (data && joinBy[1]) {
                     each(data, function (point) {
                         if (mapMap[point[joinBy[1]]]) {
                             dataUsed.push(mapMap[point[joinBy[1]]]);
