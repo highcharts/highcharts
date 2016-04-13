@@ -33,7 +33,8 @@ $(function () {
         },
         zAxis: {
             min: 0,
-            max: 10
+            max: 10,
+            showFirstLabel: false
         },
         series: [{
             data: [
