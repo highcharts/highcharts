@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-04-11)
+ * @license Highmaps JS v4.2.3-modified (2016-04-13)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -6433,7 +6433,7 @@
 
             if (!defined(yOffset)) {
                 if (axis.side === 0) {
-                    yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics.h / 2;
+                    yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics().h / 2;
                 } else if (axis.side === 2) {
                     yOffset = rotCorr.y + 8;
                 } else {
@@ -8165,21 +8165,29 @@
         },
 
         /**
+         * Return the size of the labels
+         */
+        labelMetrics: function () {
+            return this.chart.renderer.fontMetrics(
+                this.options.labels.style.fontSize, 
+                this.ticks[0] && this.ticks[0].label
+            );
+        },
+
+        /**
          * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
          * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
          * On a vertical axis remove ticks and add ellipsis.
          */
         unsquish: function () {
-            var chart = this.chart,
-                ticks = this.ticks,
-                labelOptions = this.options.labels,
+            var labelOptions = this.options.labels,
                 horiz = this.horiz,
                 tickInterval = this.tickInterval,
                 newTickInterval = tickInterval,
                 slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
                 rotation,
                 rotationOption = labelOptions.rotation,
-                labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 step,
                 bestScore = Number.MAX_VALUE,
                 autoRotation,
@@ -8259,7 +8267,7 @@
                 slotWidth = this.getSlotWidth(),
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
                 attr = {},
-                labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 textOverflowOption = labelOptions.style.textOverflow,
                 css,
                 labelLength = 0,
