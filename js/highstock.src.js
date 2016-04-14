@@ -15470,7 +15470,14 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+                series.kdTree = _kdtree(
+                    series.getValidPoints(
+                        null,
+                        !series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+                    ),
+                    dimensions,
+                    dimensions
+                );
             }
             delete series.kdTree;
 
