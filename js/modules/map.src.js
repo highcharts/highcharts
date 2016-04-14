@@ -738,6 +738,7 @@
                 };
 
             if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+                chart.mapNavButtons = [];
                 for (n in buttons) {
                     if (buttons.hasOwnProperty(n)) {
                         buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -765,6 +766,7 @@
                         button.handler = buttonOptions.onclick;
                         button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
                         addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+                        chart.mapNavButtons.push(button);
                     }
                 }
             }
@@ -879,19 +881,12 @@
      */
     wrap(Chart.prototype, 'render', function (proceed) {
         var chart = this,
-            mapNavigation = chart.options.mapNavigation,
-            alignedObjects = chart.renderer.alignedObjects;
+            mapNavigation = chart.options.mapNavigation;
 
         // Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
         chart.renderMapNavigation();
 
         proceed.call(chart);
-
-        // #4740, realign the zoom buttons after chart is rendered 
-        each(alignedObjects, function (button) {
-            button.placed = false;
-            button.align(button.alignOptions, false, button.alignTo);
-        });
     
         // Add the double click event
         if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
