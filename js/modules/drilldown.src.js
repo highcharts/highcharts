@@ -556,9 +556,9 @@
 			originalEvent: originalEvent, // docs
 			points: category !== undefined && this.series.xAxis.ddPoints[category].slice(0)
 		}, function (e) {
-			var chart = e.point.series.chart,
+			var chart = e.point.series && e.point.series.chart,
 				seriesOptions = e.seriesOptions;
-			if (seriesOptions) {
+			if (chart && seriesOptions) {
 				if (_holdRedraw) {
 					chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
 				} else {
