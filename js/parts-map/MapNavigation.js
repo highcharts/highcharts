@@ -177,7 +177,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 	proceed.call(chart);
 
 	// #4740, realign the zoom buttons after chart is rendered 
-	each([alignedObjects[0], alignedObjects[1]], function (button) {
+	each(alignedObjects, function (button) {
 		button.placed = false;
 		button.align(button.alignOptions, false, button.alignTo);
 	});

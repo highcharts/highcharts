@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-04-13)
+ * @license Highmaps JS v4.2.3-modified (2016-04-14)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -18597,7 +18597,7 @@
         proceed.call(chart);
 
         // #4740, realign the zoom buttons after chart is rendered 
-        each([alignedObjects[0], alignedObjects[1]], function (button) {
+        each(alignedObjects, function (button) {
             button.placed = false;
             button.align(button.alignOptions, false, button.alignTo);
         });
