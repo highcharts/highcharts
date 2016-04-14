@@ -563,7 +563,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
+		shortWeekdays = lang.shortWeekdays,
 
 		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({

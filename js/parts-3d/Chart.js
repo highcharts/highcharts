@@ -32,7 +32,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'getMargins', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.is3d()) {
-		if (options3d.fitToPlot === true) { // docs
+		if (options3d.fitToPlot === true) {
 			// Clear previous scale in case of updates:
 			chart.scale3d = 1;
 

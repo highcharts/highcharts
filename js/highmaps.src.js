@@ -689,7 +689,7 @@
             fullYear = date[getFullYear](),
             lang = defaultOptions.lang,
             langWeekdays = lang.weekdays,
-            shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
+            shortWeekdays = lang.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the outside.
             replacements = extend({
@@ -11221,7 +11221,7 @@
 
             // Reset the legend height and adjust the clipping rectangle
             pages.length = 0;
-            if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled. Added to API, marked "next"
+            if (legendHeight > spaceHeight && navOptions.enabled !== false) {
 
                 this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
                 this.currentPage = pick(this.currentPage, 1);
@@ -13342,7 +13342,7 @@
             if (pointIntervalUnit) {
                 date = new Date(xIncrement);
 
-                if (pointIntervalUnit === 'day') { // docs
+                if (pointIntervalUnit === 'day') {
                     date = +date[setDate](date[getDate]() + pointInterval);
                 } else if (pointIntervalUnit === 'month') {
                     date = +date[setMonth](date[getMonth]() + pointInterval);
@@ -13763,7 +13763,7 @@
                 } else {
                     // splat the y data in case of ohlc data array
                     points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-                    points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
+                    points[i].dataGroup = series.groupMap[i];
                 }
                 points[i].index = cursor; // For faster access in Point.update
             }
