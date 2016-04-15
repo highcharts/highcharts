@@ -117,8 +117,8 @@
         log = washLog(name, log);
 
         // Start the string
-        s = '<p>' + name + ' ' + version + ' (' + date + ')</p>\n' +
-            '<ul>\n';
+        s = `<p>${name} ${version} (${date})</p>
+<ul>`;
 
         if (name === 'Highstock' || name === 'Highmaps') {
             s += '    <li>Most changes listed under Highcharts ' + products.Highcharts.nr +
@@ -144,7 +144,6 @@
 
             // Start fixes
             if (i === log.startFixes) {
-                s += '\n';
                 s += `
 </ul>
 <div id="accordion" class="panel-group">
@@ -161,9 +160,15 @@
                 <ul>`;
             }
 
-
-            s += `
+            // All items
+            if (i >= log.startFixes) {
+                s += `
                     <li>${li}</li>`;
+            } else {
+                s += `
+    <li>${li}</li>`;
+            }
+
 
             // Last item
             if (i === log.length - 1) {

@@ -103,7 +103,7 @@
 			function modifyHtml(html) {
 				return html.replace('<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" rel="stylesheet" type="text/css">','')
 				.replace('runDB = true','runDB = false')
-				.replace('<h1>Options Reference</h1>','<h1>Options Reference v.'+ version + '</h1>');
+				.replace('<h1>Options Reference</h1>','<h1>Options Reference v'+ version + '</h1>');
 			}
 
 			function download(origin, destination) {
