@@ -8,6 +8,7 @@ $(function () {
             columnType = H.seriesTypes.column,
             each = H.each,
             extendClass = H.extendClass,
+            pick = H.pick,
             Point = H.Point;
 
         defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
@@ -81,18 +82,21 @@ $(function () {
          */
         H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
             var axis = this,
-                dataMax = Number.MIN_VALUE;
+                dataMax,
+                modMax;
 
             proceed.call(this);
             if (this.isXAxis) {
+                dataMax = pick(axis.dataMax, Number.MIN_VALUE);
                 each(this.series, function (series) {
                     each(series.x2Data || [], function (val) {
                         if (val > dataMax) {
                             dataMax = val;
+                            modMax = true;
                         }
                     });
                 });
-                if (dataMax > Number.MIN_VALUE) {
+                if (modMax) {
                     axis.dataMax = dataMax;
                 }
             }
