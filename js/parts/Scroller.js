@@ -561,9 +561,11 @@ Scroller.prototype = {
 		addEvent(this.baseSeries.xAxis, 'foundExtremes', function () {
 			chart.scroller.modifyBaseAxisExtremes();
 		});
-		addEvent(this.series.xAxis, 'foundExtremes', function () {
-			chart.scroller.modifyNavigatorAxisExtremes();
-		});
+		if (this.series) {
+			addEvent(this.series.xAxis, 'foundExtremes', function () {
+				chart.scroller.modifyNavigatorAxisExtremes();
+			});
+		}
 	},
 
 	/**
@@ -1059,7 +1061,7 @@ Scroller.prototype = {
 		if (stickToMax) {
 			newMax = baseDataMax;
 			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+				newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
 			}
 		}
 		// Update the extremes

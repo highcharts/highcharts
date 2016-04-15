@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-12)
+ * @license Highstock JS v4.2.3-modified (2016-04-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20222,7 +20222,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-12)
+     * Highstock JS v4.2.3-modified (2016-04-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22350,9 +22350,11 @@
             addEvent(this.baseSeries.xAxis, 'foundExtremes', function () {
                 chart.scroller.modifyBaseAxisExtremes();
             });
-            addEvent(this.series.xAxis, 'foundExtremes', function () {
-                chart.scroller.modifyNavigatorAxisExtremes();
-            });
+            if (this.series) {
+                addEvent(this.series.xAxis, 'foundExtremes', function () {
+                    chart.scroller.modifyNavigatorAxisExtremes();
+                });
+            }
         },
 
         /**
@@ -22848,7 +22850,7 @@
             if (stickToMax) {
                 newMax = baseDataMax;
                 if (!stickToMin) { // if stickToMin is true, the new min value is set above
-                    newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+                    newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
                 }
             }
             // Update the extremes
