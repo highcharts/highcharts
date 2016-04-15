@@ -28,6 +28,7 @@ $(function () {
                 }
             }),
             type: 'xrange',
+            forceDL: true,
             parallelArrays: ['x', 'x2', 'y'],
             requireSorting: false,
             animate: H.seriesTypes.line.prototype.animate,
@@ -64,9 +65,12 @@ $(function () {
                     metrics = series.columnMetrics;
 
                 H.each(series.points, function (point) {
-                    var barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
+                    var barWidth = Math.min(
+                        xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
+                        xAxis.len
+                    );
                     point.shapeArgs = {
-                        x: point.plotX,
+                        x: Math.max(0, point.plotX),
                         y: point.plotY + metrics.offset,
                         width: barWidth,
                         height: metrics.width
