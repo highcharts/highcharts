@@ -1102,6 +1102,7 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
+		titleNode.textContent = ''; // Empty content
 		titleNode.appendChild(
 			doc.createTextNode(
 				(String(pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
@@ -1397,6 +1398,7 @@ SVGRenderer.prototype = {
 			childNodes = textNode.childNodes,
 			styleRegex,
 			hrefRegex,
+			wasTooLong,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -1527,7 +1529,6 @@ SVGRenderer.prototype = {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
-									wasTooLong,
 									actualWidth,
 									rest = [],
 									dy = getLineHeight(tspan),
@@ -1559,9 +1560,6 @@ SVGRenderer.prototype = {
 										if (wordStr === '' || (!tooLong && cursor < 0.5)) {
 											words = []; // All ok, break out
 										} else {
-											if (tooLong) {
-												wasTooLong = true;
-											}
 											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
 											words = [wordStr + (width > 3 ? '\u2026' : '')];
 											tspan.removeChild(tspan.firstChild);
@@ -1597,9 +1595,6 @@ SVGRenderer.prototype = {
 										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
-								if (wasTooLong) {
-									wrapper.attr('title', wrapper.textStr);
-								}
 								wrapper.rotation = rotation;
 							}
 
@@ -1608,6 +1603,10 @@ SVGRenderer.prototype = {
 					}
 				});
 			});
+
+			if (wasTooLong) {
+				wrapper.attr('title', wrapper.textStr);
+			}
 			if (tempParent) {
 				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
 			}
