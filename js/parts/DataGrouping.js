@@ -439,7 +439,7 @@ seriesProto.destroy = function () {
 		i = groupedData.length;
 
 	while (i--) {
-		if (groupedData[i] && groupedData[i].destroy) {
+		if (groupedData[i]) {
 			groupedData[i].destroy();
 		}
 	}
