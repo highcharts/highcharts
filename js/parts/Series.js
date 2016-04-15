@@ -193,7 +193,7 @@ Series.prototype = {
 		if (pointIntervalUnit) {
 			date = new Date(xIncrement);
 
-			if (pointIntervalUnit === 'day') { // docs
+			if (pointIntervalUnit === 'day') {
 				date = +date[setDate](date[getDate]() + pointInterval);
 			} else if (pointIntervalUnit === 'month') {
 				date = +date[setMonth](date[getMonth]() + pointInterval);
@@ -614,7 +614,7 @@ Series.prototype = {
 			} else {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-				points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
+				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -773,7 +773,7 @@ Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = !point.isNull ?
+			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -1062,6 +1062,7 @@ Series.prototype = {
 			turboThreshold = seriesOptions.turboThreshold,
 			zones = series.zones,
 			zoneAxis = series.zoneAxis || 'y',
+			zoneColor, 
 			attr,
 			key;
 
@@ -1110,6 +1111,7 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
+				zoneColor = null;
 				if (zones.length) {
 					j = 0;
 					threshold = zones[j];
@@ -1117,7 +1119,7 @@ Series.prototype = {
 						threshold = zones[++j];
 					}
 
-					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
+					point.color = point.fillColor = zoneColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
 
 				}
 
@@ -1161,6 +1163,12 @@ Series.prototype = {
 					if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
 						delete normalOptions.color;
 					}
+
+					// When zone is set, but series.states.hover.color is not set, apply zone color on hover, #4670: 
+					if (zoneColor && !stateOptionsHover.fillColor) {
+						pointStateOptionsHover.fillColor = zoneColor;
+					}
+
 					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
@@ -1802,7 +1810,14 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+			series.kdTree = _kdtree(
+				series.getValidPoints(
+					null,
+					!series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+				),
+				dimensions,
+				dimensions
+			);
 		}
 		delete series.kdTree;
 

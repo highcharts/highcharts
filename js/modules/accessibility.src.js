@@ -269,8 +269,8 @@
 				(chartTypes.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
 				(dataSeries.points.length + ' ' + (dataSeries.points.length === 1 ? typeInfo[1] : typeInfo[2]) + '.') +
 				(dataSeries.description || '') +
-				(numYAxes > 1 && dataSeries.yAxis ? 'Y axis = ' + getAxisLabel(dataSeries.yAxis) : '') +
-				(numXAxes > 1 && dataSeries.xAxis ? 'X axis = ' + getAxisLabel(dataSeries.xAxis) : '');
+				(numYAxes > 1 && dataSeries.yAxis ? 'Y axis, ' + getAxisLabel(dataSeries.yAxis) : '') +
+				(numXAxes > 1 && dataSeries.xAxis ? 'X axis, ' + getAxisLabel(dataSeries.xAxis) : '');
 		}
 
 		function reverseChildNodes(node) {

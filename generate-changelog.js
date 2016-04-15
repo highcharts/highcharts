@@ -1,5 +1,5 @@
-/*jslint nomen: true*/
-/*global require, console, __dirname*/
+/* eslint-env node, es6 */
+/* eslint valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
  * This node script copies commit messages since the last release and
@@ -14,33 +14,35 @@
     'use strict';
 
     var fs = require('fs'),
-        cmd = require('child_process'),
-        params;
+        cmd = require('child_process');
+
+    var params;
 
     /**
      * Get parameters listed by -- notation
      */
     function getParams() {
-        var params = {};
-        process.argv.forEach(function(arg, j) {
+        var p = {};
+        process.argv.forEach(function (arg, j) {
             if (arg.substr(0, 2) === '--') {
-                params[arg.substr(2)] = process.argv[j + 1];
+                p[arg.substr(2)] = process.argv[j + 1];
             }
         });
-        return params;
+        return p;
     }
 
     /**
      * Get the log from Git
      */
     function getLog(callback) {
-        var command,
-            puts = function (err, stdout) {
-                if (err) {
-                    throw err;
-                }
-                callback(stdout);
-            };
+        var command;
+
+        function puts(err, stdout) {
+            if (err) {
+                throw err;
+            }
+            callback(stdout);
+        }
 
         command = 'git log --after={' + params.after + '} --format="%s<br>" ';
         if (params.before) {
@@ -88,6 +90,20 @@
         // Sort alphabetically
         washed.sort();
 
+        // Pull out Fixes and append at the end
+        var fixes = washed.filter(message => {
+            return message.indexOf('Fixed') === 0;
+        });
+
+        if (fixes.length > 0) {
+            washed = washed.filter(message => {
+                return message.indexOf('Fixed') !== 0;
+            });
+
+            washed = washed.concat(fixes);
+            washed.startFixes = washed.length - fixes.length;
+        }
+
         return washed;
     }
 
@@ -96,27 +112,78 @@
      */
     function buildHTML(name, version, date, log, products) {
         var s,
-            seeAlso = '',
             filename = 'changelog-' + name.toLowerCase() + '.htm';
 
         log = washLog(name, log);
-        log = '    <li>' + log.join('</li>\n    <li>') + '</li>\n';
-        // Hyperlinked issue numbers
-        log = log.replace(
-            /#([0-9]+)/g,
-            '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
-        );
+
+        // Start the string
+        s = `<p>${name} ${version} (${date})</p>
+<ul>`;
 
         if (name === 'Highstock' || name === 'Highmaps') {
-            seeAlso = '    <li>Most changes listed under Highcharts ' + products.Highcharts.nr +
+            s += '    <li>Most changes listed under Highcharts ' + products.Highcharts.nr +
                 ' above also apply to ' + name + ' ' + version + '.</li>\n';
         }
 
-        s = '<p>' + name + ' ' + version + ' (' + date + ')</p>\n' +
-            '<ul>\n' +
-            seeAlso +
-            log +
-            '</ul>\n';
+        var productPrefix = '',
+            versionDashed = version.replace(/\./g, '-');
+
+        if (name === 'Highstock') {
+            productPrefix = 'hs-';
+        } else if (name === 'Highmaps') {
+            productPrefix = 'hm-';
+        }
+
+        log.forEach((li, i) => {
+
+            // Hyperlinked issue numbers
+            li = li.replace(
+                /#([0-9]+)/g,
+                '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
+            );
+
+            // Start fixes
+            if (i === log.startFixes) {
+                s += `
+</ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="${productPrefix}heading-${versionDashed}-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#${productPrefix}${versionDashed}-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="${productPrefix}${versionDashed}-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>`;
+            }
+
+            // All items
+            if (i >= log.startFixes) {
+                s += `
+                    <li>${li}</li>`;
+            } else {
+                s += `
+    <li>${li}</li>`;
+            }
+
+
+            // Last item
+            if (i === log.length - 1) {
+                s += `
+                </ul>`;
+
+                if (typeof log.startFixes === 'number') {
+                    s += `
+            </div>
+        </div>
+    </div>
+</div>`;
+                }
+            }
+        });
 
         fs.writeFile(filename, s, function () {
             console.log('Wrote draft to ' + filename);
@@ -126,7 +193,7 @@
     params = getParams();
 
 
-    // Get the Git log 
+    // Get the Git log
     getLog(function (log) {
 
         // Split the log into an array

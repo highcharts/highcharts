@@ -370,7 +370,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			this.mapMap = mapMap;
 
 			// Registered the point codes that actually hold data
-			if (joinBy[1]) {
+			if (data && joinBy[1]) {
 				each(data, function (point) {
 					if (mapMap[point[joinBy[1]]]) {
 						dataUsed.push(mapMap[point[joinBy[1]]]);

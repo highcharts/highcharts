@@ -8,6 +8,7 @@ $(function () {
             columnType = H.seriesTypes.column,
             each = H.each,
             extendClass = H.extendClass,
+            pick = H.pick,
             Point = H.Point;
 
         defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
@@ -27,6 +28,7 @@ $(function () {
                 }
             }),
             type: 'xrange',
+            forceDL: true,
             parallelArrays: ['x', 'x2', 'y'],
             requireSorting: false,
             animate: H.seriesTypes.line.prototype.animate,
@@ -63,9 +65,12 @@ $(function () {
                     metrics = series.columnMetrics;
 
                 H.each(series.points, function (point) {
-                    var barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
+                    var barWidth = Math.min(
+                        xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
+                        xAxis.len
+                    );
                     point.shapeArgs = {
-                        x: point.plotX,
+                        x: Math.max(0, point.plotX),
                         y: point.plotY + metrics.offset,
                         width: barWidth,
                         height: metrics.width
@@ -81,18 +86,21 @@ $(function () {
          */
         H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
             var axis = this,
-                dataMax = Number.MIN_VALUE;
+                dataMax,
+                modMax;
 
             proceed.call(this);
             if (this.isXAxis) {
+                dataMax = pick(axis.dataMax, Number.MIN_VALUE);
                 each(this.series, function (series) {
                     each(series.x2Data || [], function (val) {
                         if (val > dataMax) {
                             dataMax = val;
+                            modMax = true;
                         }
                     });
                 });
-                if (dataMax > Number.MIN_VALUE) {
+                if (modMax) {
                     axis.dataMax = dataMax;
                 }
             }

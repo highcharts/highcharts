@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.3-modified (2016-04-12)
+ * @license Highstock JS v4.2.4-modified (2016-04-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '4.2.3-modified',
+        VERSION = '4.2.4-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -691,7 +691,7 @@
             fullYear = date[getFullYear](),
             lang = defaultOptions.lang,
             langWeekdays = lang.weekdays,
-            shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
+            shortWeekdays = lang.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the outside.
             replacements = extend({
@@ -1350,7 +1350,7 @@
         if (!isNumber(opt.duration)) {
             opt.duration = 400;
         }
-        opt.easing = Math[opt.easing] || Math.easeInOutSine;
+        opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
         opt.curAnim = merge(params);
 
         for (prop in params) {
@@ -1534,7 +1534,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.3-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.4-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -6435,7 +6435,7 @@
 
             if (!defined(yOffset)) {
                 if (axis.side === 0) {
-                    yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics.h / 2;
+                    yOffset = label.rotation ? -8 : -label.getBBox().height;
                 } else if (axis.side === 2) {
                     yOffset = rotCorr.y + 8;
                 } else {
@@ -7003,8 +7003,7 @@
             tickPixelInterval: 72,
             showLastLabel: true,
             labels: {
-                x: -8,
-                y: 3
+                x: -8
             },
             lineWidth: 0,
             maxPadding: 0.05,
@@ -8440,21 +8439,29 @@
         },
 
         /**
+         * Return the size of the labels
+         */
+        labelMetrics: function () {
+            return this.chart.renderer.fontMetrics(
+                this.options.labels.style.fontSize, 
+                this.ticks[0] && this.ticks[0].label
+            );
+        },
+
+        /**
          * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
          * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
          * On a vertical axis remove ticks and add ellipsis.
          */
         unsquish: function () {
-            var chart = this.chart,
-                ticks = this.ticks,
-                labelOptions = this.options.labels,
+            var labelOptions = this.options.labels,
                 horiz = this.horiz,
                 tickInterval = this.tickInterval,
                 newTickInterval = tickInterval,
                 slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
                 rotation,
                 rotationOption = labelOptions.rotation,
-                labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 step,
                 bestScore = Number.MAX_VALUE,
                 autoRotation,
@@ -8534,7 +8541,7 @@
                 slotWidth = this.getSlotWidth(),
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
                 attr = {},
-                labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 textOverflowOption = labelOptions.style.textOverflow,
                 css,
                 labelLength = 0,
@@ -8771,7 +8778,7 @@
 
             axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
             if (side === 0) {
-                lineHeightCorrection = -axis.labelMetrics.h;
+                lineHeightCorrection = -axis.labelMetrics().h;
             } else if (side === 2) {
                 lineHeightCorrection = axis.tickRotCorr.y;
             } else {
@@ -8782,7 +8789,7 @@
             labelOffsetPadded = Math.abs(labelOffset) + titleMargin;
             if (labelOffset) {
                 labelOffsetPadded -= lineHeightCorrection;
-                labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x);
+                labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + directionFactor * 8) : labelOptions.x);
             }
             axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -11693,7 +11700,7 @@
 
             // Reset the legend height and adjust the clipping rectangle
             pages.length = 0;
-            if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled. Added to API, marked "next"
+            if (legendHeight > spaceHeight && navOptions.enabled !== false) {
 
                 this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
                 this.currentPage = pick(this.currentPage, 1);
@@ -13854,7 +13861,7 @@
             if (pointIntervalUnit) {
                 date = new Date(xIncrement);
 
-                if (pointIntervalUnit === 'day') { // docs
+                if (pointIntervalUnit === 'day') {
                     date = +date[setDate](date[getDate]() + pointInterval);
                 } else if (pointIntervalUnit === 'month') {
                     date = +date[setMonth](date[getMonth]() + pointInterval);
@@ -14275,7 +14282,7 @@
                 } else {
                     // splat the y data in case of ohlc data array
                     points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-                    points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
+                    points[i].dataGroup = series.groupMap[i];
                 }
                 points[i].index = cursor; // For faster access in Point.update
             }
@@ -14434,7 +14441,7 @@
                 }
 
                 // Set the the plotY value, reset it for redraws
-                point.plotY = plotY = !point.isNull ?
+                point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
                     mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
                     UNDEFINED;
                 point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -14723,6 +14730,7 @@
                 turboThreshold = seriesOptions.turboThreshold,
                 zones = series.zones,
                 zoneAxis = series.zoneAxis || 'y',
+                zoneColor, 
                 attr,
                 key;
 
@@ -14771,6 +14779,7 @@
                         normalOptions.radius = 0;
                     }
 
+                    zoneColor = null;
                     if (zones.length) {
                         j = 0;
                         threshold = zones[j];
@@ -14778,7 +14787,7 @@
                             threshold = zones[++j];
                         }
 
-                        point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
+                        point.color = point.fillColor = zoneColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
 
                     }
 
@@ -14822,6 +14831,12 @@
                         if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
                             delete normalOptions.color;
                         }
+
+                        // When zone is set, but series.states.hover.color is not set, apply zone color on hover, #4670: 
+                        if (zoneColor && !stateOptionsHover.fillColor) {
+                            pointStateOptionsHover.fillColor = zoneColor;
+                        }
+
                         pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
                         // inherit from point normal and series hover
@@ -15463,7 +15478,14 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+                series.kdTree = _kdtree(
+                    series.getValidPoints(
+                        null,
+                        !series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+                    ),
+                    dimensions,
+                    dimensions
+                );
             }
             delete series.kdTree;
 
@@ -16650,12 +16672,12 @@
                     if (top !== undefined) {
                         graphPoints.push({
                             plotX: plotX,
-                            plotY: top === null ? translatedThreshold : yAxis.toPixels(top, true),
+                            plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
                             isNull: isNull
                         });
                         bottomPoints.push({
                             plotX: plotX,
-                            plotY: bottom === null ? translatedThreshold : yAxis.toPixels(bottom, true)
+                            plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom)
                         });
                     }
                 };
@@ -20221,7 +20243,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.3-modified (2016-04-12)
+     * Highstock JS v4.2.4-modified (2016-04-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23834,6 +23856,58 @@
                 dateBox,
                 inputGroup = this.inputGroup;
 
+            function updateExtremes() {
+                var inputValue = input.value,
+                    value = (options.inputDateParser || Date.parse)(inputValue),
+                    xAxis = chart.xAxis[0],
+                    dataMin = xAxis.dataMin,
+                    dataMax = xAxis.dataMax;
+                if (value !== input.previousValue) {
+                    input.previousValue = value;
+                    // If the value isn't parsed directly to a value by the browser's Date.parse method,
+                    // like YYYY-MM-DD in IE, try parsing it a different way
+                    if (isNaN(value)) {
+                        value = inputValue.split('-');
+                        value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+                    }
+
+                    if (!isNaN(value)) {
+
+                        // Correct for timezone offset (#433)
+                        if (!defaultOptions.global.useUTC) {
+                            value = value + new Date().getTimezoneOffset() * 60 * 1000;
+                        }
+
+                        // Validate the extremes. If it goes beyound the data min or max, use the
+                        // actual data extreme (#2438).
+                        if (isMin) {
+                            if (value > rangeSelector.maxInput.HCTime) {
+                                value = UNDEFINED;
+                            } else if (value < dataMin) {
+                                value = dataMin;
+                            }
+                        } else {
+                            if (value < rangeSelector.minInput.HCTime) {
+                                value = UNDEFINED;
+                            } else if (value > dataMax) {
+                                value = dataMax;
+                            }
+                        }
+
+                        // Set the extremes
+                        if (value !== UNDEFINED) {
+                            chart.xAxis[0].setExtremes(
+                                isMin ? value : xAxis.min,
+                                isMin ? xAxis.max : value,
+                                UNDEFINED,
+                                UNDEFINED,
+                                { trigger: 'rangeSelectorInput' }
+                            );
+                        }
+                    }
+                }
+            }
+
             // Create the text label
             this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
                 .attr({
@@ -23894,53 +23968,12 @@
             };
 
             // handle changes in the input boxes
-            input.onchange = function () {
-                var inputValue = input.value,
-                    value = (options.inputDateParser || Date.parse)(inputValue),
-                    xAxis = chart.xAxis[0],
-                    dataMin = xAxis.dataMin,
-                    dataMax = xAxis.dataMax;
+            input.onchange = updateExtremes;
 
-                // If the value isn't parsed directly to a value by the browser's Date.parse method,
-                // like YYYY-MM-DD in IE, try parsing it a different way
-                if (isNaN(value)) {
-                    value = inputValue.split('-');
-                    value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
-                }
-
-                if (!isNaN(value)) {
-
-                    // Correct for timezone offset (#433)
-                    if (!defaultOptions.global.useUTC) {
-                        value = value + new Date().getTimezoneOffset() * 60 * 1000;
-                    }
-
-                    // Validate the extremes. If it goes beyound the data min or max, use the
-                    // actual data extreme (#2438).
-                    if (isMin) {
-                        if (value > rangeSelector.maxInput.HCTime) {
-                            value = UNDEFINED;
-                        } else if (value < dataMin) {
-                            value = dataMin;
-                        }
-                    } else {
-                        if (value < rangeSelector.minInput.HCTime) {
-                            value = UNDEFINED;
-                        } else if (value > dataMax) {
-                            value = dataMax;
-                        }
-                    }
-
-                    // Set the extremes
-                    if (value !== UNDEFINED) {
-                        chart.xAxis[0].setExtremes(
-                            isMin ? value : xAxis.min,
-                            isMin ? xAxis.max : value,
-                            UNDEFINED,
-                            UNDEFINED,
-                            { trigger: 'rangeSelectorInput' }
-                        );
-                    }
+            input.onkeypress = function (event) {
+                // IE does not fire onchange on enter
+                if (event.keyCode === 13) {
+                    updateExtremes();
                 }
             };
         },
@@ -23973,7 +24006,7 @@
                 renderer = chart.renderer,
                 container = chart.container,
                 chartOptions = chart.options,
-                navButtonOptions = chartOptions.exporting && chartOptions.exporting.enabled &&
+                navButtonOptions = chartOptions.exporting && chartOptions.exporting.enabled !== false &&
                     chartOptions.navigation && chartOptions.navigation.buttonOptions,
                 options = chartOptions.rangeSelector,
                 buttons = rangeSelector.buttons,
