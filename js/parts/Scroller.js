@@ -875,7 +875,7 @@ Scroller.prototype = {
 
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.
-		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
+		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
 			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 
 			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
