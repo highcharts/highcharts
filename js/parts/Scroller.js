@@ -1101,6 +1101,11 @@ Scroller.prototype = {
 		if (!scroller.hasNavigatorData) {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
 			navigatorSeries.setData(baseSeries.options.data, false);
+
+			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
+			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
+			// on the base series reflects directly on the navigator series.
+			navigatorSeries.graph.shift = baseSeries.graph.shift;
 		}
 	},
 
