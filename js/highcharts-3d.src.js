@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-03-30)
+ * @license Highcharts JS v4.2.4 (2016-04-14)
  *
  * 3D features for Highcharts JS
  *
@@ -751,7 +751,7 @@
         proceed.apply(this, [].slice.call(arguments, 1));
 
         if (this.is3d()) {
-            if (options3d.fitToPlot === true) { // docs
+            if (options3d.fitToPlot === true) {
                 // Clear previous scale in case of updates:
                 chart.scale3d = 1;
 

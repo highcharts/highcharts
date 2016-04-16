@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (2016-04-16)
+ * @license Highcharts JS v4.2.4 (2016-04-14)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
-        VERSION = '4.2.3-modified',
+        VERSION = '4.2.4',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -691,7 +691,7 @@
             fullYear = date[getFullYear](),
             lang = defaultOptions.lang,
             langWeekdays = lang.weekdays,
-            shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
+            shortWeekdays = lang.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the outside.
             replacements = extend({
@@ -1350,7 +1350,7 @@
         if (!isNumber(opt.duration)) {
             opt.duration = 400;
         }
-        opt.easing = Math[opt.easing] || Math.easeInOutSine;
+        opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
         opt.curAnim = merge(params);
 
         for (prop in params) {
@@ -1534,7 +1534,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.3-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.4/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -6435,7 +6435,7 @@
 
             if (!defined(yOffset)) {
                 if (axis.side === 0) {
-                    yOffset = label.rotation ? -8 : -label.getBBox().height + axis.labelMetrics.h / 2;
+                    yOffset = label.rotation ? -8 : -label.getBBox().height;
                 } else if (axis.side === 2) {
                     yOffset = rotCorr.y + 8;
                 } else {
@@ -8442,21 +8442,29 @@
         },
 
         /**
+         * Return the size of the labels
+         */
+        labelMetrics: function () {
+            return this.chart.renderer.fontMetrics(
+                this.options.labels.style.fontSize, 
+                this.ticks[0] && this.ticks[0].label
+            );
+        },
+
+        /**
          * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
          * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
          * On a vertical axis remove ticks and add ellipsis.
          */
         unsquish: function () {
-            var chart = this.chart,
-                ticks = this.ticks,
-                labelOptions = this.options.labels,
+            var labelOptions = this.options.labels,
                 horiz = this.horiz,
                 tickInterval = this.tickInterval,
                 newTickInterval = tickInterval,
                 slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
                 rotation,
                 rotationOption = labelOptions.rotation,
-                labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 step,
                 bestScore = Number.MAX_VALUE,
                 autoRotation,
@@ -8536,7 +8544,7 @@
                 slotWidth = this.getSlotWidth(),
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
                 attr = {},
-                labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+                labelMetrics = this.labelMetrics(),
                 textOverflowOption = labelOptions.style.textOverflow,
                 css,
                 labelLength = 0,
@@ -8773,7 +8781,7 @@
 
             axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
             if (side === 0) {
-                lineHeightCorrection = -axis.labelMetrics.h;
+                lineHeightCorrection = -axis.labelMetrics().h;
             } else if (side === 2) {
                 lineHeightCorrection = axis.tickRotCorr.y;
             } else {
@@ -8784,7 +8792,7 @@
             labelOffsetPadded = Math.abs(labelOffset) + titleMargin;
             if (labelOffset) {
                 labelOffsetPadded -= lineHeightCorrection;
-                labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x);
+                labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + directionFactor * 8) : labelOptions.x);
             }
             axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -11695,7 +11703,7 @@
 
             // Reset the legend height and adjust the clipping rectangle
             pages.length = 0;
-            if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled. Added to API, marked "next"
+            if (legendHeight > spaceHeight && navOptions.enabled !== false) {
 
                 this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
                 this.currentPage = pick(this.currentPage, 1);
@@ -13859,7 +13867,7 @@
             if (pointIntervalUnit) {
                 date = new Date(xIncrement);
 
-                if (pointIntervalUnit === 'day') { // docs
+                if (pointIntervalUnit === 'day') {
                     date = +date[setDate](date[getDate]() + pointInterval);
                 } else if (pointIntervalUnit === 'month') {
                     date = +date[setMonth](date[getMonth]() + pointInterval);
@@ -14280,7 +14288,7 @@
                 } else {
                     // splat the y data in case of ohlc data array
                     points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-                    points[i].dataGroup = series.groupMap[i]; // docs: data grouping and Point docs
+                    points[i].dataGroup = series.groupMap[i];
                 }
                 points[i].index = cursor; // For faster access in Point.update
             }
@@ -15464,7 +15472,14 @@
 
             // Start the recursive build process with a clone of the points array and null points filtered out (#3873)
             function startRecursive() {
-                series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+                series.kdTree = _kdtree(
+                    series.getValidPoints(
+                        null,
+                        !series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+                    ),
+                    dimensions,
+                    dimensions
+                );
             }
             delete series.kdTree;
 
@@ -16651,12 +16666,12 @@
                     if (top !== undefined) {
                         graphPoints.push({
                             plotX: plotX,
-                            plotY: top === null ? translatedThreshold : yAxis.toPixels(top, true),
+                            plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
                             isNull: isNull
                         });
                         bottomPoints.push({
                             plotX: plotX,
-                            plotY: bottom === null ? translatedThreshold : yAxis.toPixels(bottom, true)
+                            plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom)
                         });
                     }
                 };

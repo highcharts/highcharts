@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (2016-04-11)
+ * @license Highmaps JS v4.2.4 (2016-04-14)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -738,6 +738,7 @@
                 };
 
             if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+                chart.mapNavButtons = [];
                 for (n in buttons) {
                     if (buttons.hasOwnProperty(n)) {
                         buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -765,6 +766,7 @@
                         button.handler = buttonOptions.onclick;
                         button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
                         addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+                        chart.mapNavButtons.push(button);
                     }
                 }
             }
@@ -885,7 +887,7 @@
         chart.renderMapNavigation();
 
         proceed.call(chart);
-
+    
         // Add the double click event
         if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
             addEvent(chart.container, 'dblclick', function (e) {
@@ -1356,7 +1358,7 @@
                 this.mapMap = mapMap;
 
                 // Registered the point codes that actually hold data
-                if (joinBy[1]) {
+                if (data && joinBy[1]) {
                     each(data, function (point) {
                         if (mapMap[point[joinBy[1]]]) {
                             dataUsed.push(mapMap[point[joinBy[1]]]);

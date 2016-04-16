@@ -563,7 +563,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[getFullYear](),
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		shortWeekdays = lang.shortWeekdays, // docs, added to API under "next"
+		shortWeekdays = lang.shortWeekdays,
 
 		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({
@@ -1222,7 +1222,7 @@ animate = function (el, params, opt) {
 	if (!isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
-	opt.easing = Math[opt.easing] || Math.easeInOutSine;
+	opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
 	opt.curAnim = merge(params);
 
 	for (prop in params) {

@@ -553,14 +553,16 @@
 			point: this,
 			seriesOptions: seriesOptions,
 			category: category,
-			originalEvent: originalEvent, // docs
+			originalEvent: originalEvent,
 			points: category !== undefined && this.series.xAxis.ddPoints[category].slice(0)
-		}, function () {
-			if (seriesOptions) {
+		}, function (e) {
+			var chart = e.point.series && e.point.series.chart,
+				seriesOptions = e.seriesOptions;
+			if (chart && seriesOptions) {
 				if (_holdRedraw) {
-					chart.addSingleSeriesAsDrilldown(this, seriesOptions);
+					chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
 				} else {
-					chart.addSeriesAsDrilldown(this, seriesOptions);
+					chart.addSeriesAsDrilldown(e.point, seriesOptions);
 				}
 			}
 		});

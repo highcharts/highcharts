@@ -27,6 +27,7 @@ extend(Chart.prototype, {
 			};
 
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+			chart.mapNavButtons = [];
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -54,6 +55,7 @@ extend(Chart.prototype, {
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+					chart.mapNavButtons.push(button);
 				}
 			}
 		}
@@ -174,7 +176,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 	chart.renderMapNavigation();
 
 	proceed.call(chart);
-
+	
 	// Add the double click event
 	if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
 		addEvent(chart.container, 'dblclick', function (e) {
