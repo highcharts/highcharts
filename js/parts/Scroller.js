@@ -873,6 +873,22 @@ Scroller.prototype = {
 			};
 		}
 
+		// Respond to updated data in the base series.
+		// Abort if lazy-loading data from the server.
+		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
+			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+
+			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
+				if (baseSeries.xAxis) {
+					this.chart.scroller.modifyBaseAxisExtremes();
+				}
+			});
+		
+			// Survive Series.update()
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+
+		}
+
 
 		/**
 		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
@@ -994,24 +1010,9 @@ Scroller.prototype = {
 		// Set the data. Do a slice to avoid mutating the navigator options from base series (#4923).
 		mergedNavSeriesOptions.data = navigatorData || baseData.slice(0);
 
-		// add the series
+		// Add the series
 		this.series = this.chart.initSeries(mergedNavSeriesOptions);
 
-		// Respond to updated data in the base series.
-		// Abort if lazy-loading data from the server.
-		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
-
-			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
-				if (baseSeries.xAxis) {
-					this.chart.scroller.modifyBaseAxisExtremes();
-				}
-			});
-		
-			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
-
-		}
 	},
 
 	/**
@@ -1098,7 +1099,7 @@ Scroller.prototype = {
 		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
 
 		// Set the navigator series data to the new data of the base series
-		if (!scroller.hasNavigatorData) {
+		if (navigatorSeries && !scroller.hasNavigatorData) {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
 			navigatorSeries.setData(baseSeries.options.data, false);
 

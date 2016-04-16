@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-04-15)
+ * @license Highstock JS v4.2.4-modified (2016-04-16)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20245,7 +20245,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-04-15)
+     * Highstock JS v4.2.4-modified (2016-04-16)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22685,6 +22685,22 @@
                 };
             }
 
+            // Respond to updated data in the base series.
+            // Abort if lazy-loading data from the server.
+            if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
+                addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+
+                addEvent(baseSeries.xAxis, 'foundExtremes', function () {
+                    if (baseSeries.xAxis) {
+                        this.chart.scroller.modifyBaseAxisExtremes();
+                    }
+                });
+        
+                // Survive Series.update()
+                baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+
+            }
+
 
             /**
              * For stock charts, extend the Chart.getMargins method so that we can set the final top position
@@ -22806,24 +22822,9 @@
             // Set the data. Do a slice to avoid mutating the navigator options from base series (#4923).
             mergedNavSeriesOptions.data = navigatorData || baseData.slice(0);
 
-            // add the series
+            // Add the series
             this.series = this.chart.initSeries(mergedNavSeriesOptions);
 
-            // Respond to updated data in the base series.
-            // Abort if lazy-loading data from the server.
-            if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-                addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
-
-                addEvent(baseSeries.xAxis, 'foundExtremes', function () {
-                    if (baseSeries.xAxis) {
-                        this.chart.scroller.modifyBaseAxisExtremes();
-                    }
-                });
-        
-                // Survive Series.update()
-                baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
-
-            }
         },
 
         /**
@@ -22910,7 +22911,7 @@
             scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
 
             // Set the navigator series data to the new data of the base series
-            if (!scroller.hasNavigatorData) {
+            if (navigatorSeries && !scroller.hasNavigatorData) {
                 navigatorSeries.options.pointStart = baseSeries.xData[0];
                 navigatorSeries.setData(baseSeries.options.data, false);
 
