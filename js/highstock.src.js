@@ -22351,9 +22351,6 @@
             this._events = _events;
 
             // Data events
-            addEvent(this.baseSeries.xAxis, 'foundExtremes', function () {
-                chart.scroller.modifyBaseAxisExtremes();
-            });
             if (this.series) {
                 addEvent(this.series.xAxis, 'foundExtremes', function () {
                     chart.scroller.modifyNavigatorAxisExtremes();
@@ -22361,12 +22358,13 @@
             }
             addEvent(chart, 'redraw', function () {
                 // Move the scrollbar after redraw, like after data updata even if axes don't redraw
-                var scroller = this.scroller;
+                var scroller = this.scroller,
+                    xAxis;
                 if (scroller) {
-                    scroller.render(
-                        scroller.baseSeries.xAxis.min,
-                        scroller.baseSeries.xAxis.max
-                    );
+                    xAxis = scroller.baseSeries.xAxis;
+                    if (xAxis) {
+                        scroller.render(xAxis.min, xAxis.max);
+                    }
                 }
             });
         },
@@ -22807,6 +22805,13 @@
             // Abort if lazy-loading data from the server.
             if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
                 addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+
+                addEvent(baseSeries.xAxis, 'foundExtremes', function () {
+                    if (baseSeries.xAxis) {
+                        this.chart.scroller.modifyBaseAxisExtremes();
+                    }
+                });
+        
                 // Survive Series.update()
                 baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
@@ -22836,8 +22841,7 @@
          * Hook to modify the base axis extremes with information from the Navigator
          */
         modifyBaseAxisExtremes: function () {
-            var scroller = this.chart.scroller,
-                baseSeries = scroller.baseSeries,
+            var baseSeries = this.baseSeries,
                 baseXAxis = baseSeries.xAxis,
                 baseExtremes = baseXAxis.getExtremes(),
                 baseMin = baseExtremes.min,
@@ -22845,11 +22849,11 @@
                 baseDataMin = baseExtremes.dataMin,
                 baseDataMax = baseExtremes.dataMax,
                 range = baseMax - baseMin,
-                stickToMin = scroller.stickToMin,
-                stickToMax = scroller.stickToMax,
+                stickToMin = this.stickToMin,
+                stickToMax = this.stickToMax,
                 newMax,
                 newMin,
-                navigatorSeries = scroller.series,
+                navigatorSeries = this.series,
                 hasSetExtremes = !!baseXAxis.setExtremes;
 
             // If the zoomed range is already at the min, move it to the right as new data
@@ -22867,7 +22871,7 @@
                     newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
                 }
             }
-        
+
             // Update the extremes
             if (hasSetExtremes && (stickToMin || stickToMax)) {
                 if (!isNaN(newMin)) {
@@ -22877,7 +22881,7 @@
             }
 
             // Reset
-            scroller.stickToMin = scroller.stickToMax = null;
+            this.stickToMin = this.stickToMax = null;
         },
 
         /**
