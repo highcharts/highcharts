@@ -339,11 +339,6 @@ Scroller.prototype = {
 		zoomedMin = mathRound(scroller.zoomedMin);
 		range = zoomedMax - zoomedMin;
 
-		// Stick to the area when updating
-		scroller.stickToMin = zoomedMin === 0;
-		scroller.stickToMax = zoomedMax === navigatorWidth;
-
-		// on first render, create all elements
 		if (!rendered) {
 
 			if (navigatorEnabled) {
@@ -552,12 +547,6 @@ Scroller.prototype = {
 		this._events = _events;
 
 		// Data events
-		addEvent(this.baseSeries.xAxis, 'setExtremes', function () {
-			var scroller = this.chart.scroller;
-			if (scroller) {
-				scroller.stickToMin = scroller.stickToMax = null;
-			}
-		});
 		addEvent(this.baseSeries.xAxis, 'foundExtremes', function () {
 			chart.scroller.modifyBaseAxisExtremes();
 		});
@@ -566,6 +555,16 @@ Scroller.prototype = {
 				chart.scroller.modifyNavigatorAxisExtremes();
 			});
 		}
+		addEvent(chart, 'redraw', function () {
+			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
+			var scroller = this.scroller;
+			if (scroller) {
+				scroller.render(
+					scroller.baseSeries.xAxis.min,
+					scroller.baseSeries.xAxis.max
+				);
+			}
+		});
 	},
 
 	/**
@@ -1026,11 +1025,11 @@ Scroller.prototype = {
 				xAxis.min = unionExtremes.dataMin;
 				xAxis.max = unionExtremes.dataMax;
 			}
-		}
+		}				
 	},
 
 	/**
-	 * Hook to modify the base axis extremes with information from the Navigation
+	 * Hook to modify the base axis extremes with information from the Navigator
 	 */
 	modifyBaseAxisExtremes: function () {
 		var scroller = this.chart.scroller,
@@ -1064,13 +1063,17 @@ Scroller.prototype = {
 				newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
 			}
 		}
+		
 		// Update the extremes
 		if (hasSetExtremes && (stickToMin || stickToMax)) {
 			if (!isNaN(newMin)) {
-				baseXAxis.min = newMin;
-				baseXAxis.max = newMax;
+				baseXAxis.min = baseXAxis.userMin = newMin;
+				baseXAxis.max = baseXAxis.userMax = newMax;
 			}
 		}
+
+		// Reset
+		scroller.stickToMin = scroller.stickToMax = null;
 	},
 
 	/**
@@ -1081,20 +1084,20 @@ Scroller.prototype = {
 	updatedDataHandler: function () {
 		var scroller = this.chart.scroller,
 			baseSeries = scroller.baseSeries,
-			baseExtremes = baseSeries.xAxis.getExtremes(),
 			navigatorSeries = scroller.series;
+
+		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
+		// axis minimum falls outside the new updated dataset, we must adjust.
+		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
+		// If the scrollbar is scrolled all the way to the right, keep right as new data 
+		// comes in.
+		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
 
 		// Set the navigator series data to the new data of the base series
 		if (!scroller.hasNavigatorData) {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
 			navigatorSeries.setData(baseSeries.options.data, false);
 		}
-
-		// Move the actual scroller
-		scroller.render(
-			mathMax(baseExtremes.min, baseExtremes.dataMin),
-			mathMin(baseExtremes.max, baseExtremes.dataMax)
-		);
 	},
 
 	/**
