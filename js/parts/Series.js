@@ -190,11 +190,16 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
+		if (pointIntervalUnit) {
 			date = new Date(xIncrement);
-			date = (pointIntervalUnit === 'month') ?
-				+date[setMonth](date[getMonth]() + pointInterval) :
-				+date[setFullYear](date[getFullYear]() + pointInterval);
+
+			if (pointIntervalUnit === 'day') {
+				date = +date[setDate](date[getDate]() + pointInterval);
+			} else if (pointIntervalUnit === 'month') {
+				date = +date[setMonth](date[getMonth]() + pointInterval);
+			} else if (pointIntervalUnit === 'year') {
+				date = +date[setFullYear](date[getFullYear]() + pointInterval);
+			}
 			pointInterval = date - xIncrement;
 		}
 
@@ -609,6 +614,7 @@ Series.prototype = {
 			} else {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -783,11 +789,13 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
-			// Determine auto enabling of markers (#3635)
-			if (i) {
-				closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+			// Determine auto enabling of markers (#3635, #5099)
+			if (!point.isNull) {
+				if (lastPlotX !== undefined) {
+					closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+				}
+				lastPlotX = plotX;
 			}
-			lastPlotX = plotX;
 
 		}
 		series.closestPointRangePx = closestPointRangePx;
@@ -796,8 +804,12 @@ Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function (points) {
-		return grep(points || this.points || [], function (point) { // #5029
+	getValidPoints: function (points, insideOnly) {
+		var chart = this.chart;
+		return grep(points || this.points || [], function isValidPoint(point) { // #3916, #5029
+			if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) { // #5085
+				return false;
+			}
 			return !point.isNull;
 		});
 	},
@@ -1575,7 +1587,7 @@ Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					zIndex: zIndex || 0.1 // IE8 needs this
+					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
 
@@ -1714,8 +1726,7 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			wasDirty = series.isDirty,
+			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1737,11 +1748,8 @@ Series.prototype = {
 
 		series.translate();
 		series.render();
-		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
-		}
-		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+		if (wasDirty) { // #3868, #3945
+			delete this.kdTree;
 		}
 	},
 
@@ -1770,7 +1778,9 @@ Series.prototype = {
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
-			var axis, median, length = points && points.length;
+			var axis,
+				median,
+				length = points && points.length;
 
 			if (length) {
 
@@ -1796,7 +1806,14 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.getValidPoints(), dimensions, dimensions);
+			series.kdTree = _kdtree(
+				series.getValidPoints(
+					null,
+					!series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+				),
+				dimensions,
+				dimensions
+			);
 		}
 		delete series.kdTree;
 

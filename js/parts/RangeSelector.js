@@ -463,42 +463,60 @@ RangeSelector.prototype = {
 						value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
 					}
 
-					if (!isNaN(value)) {
+			inputGroup = this.inputGroup;
 
-						// Correct for timezone offset (#433)
-						if (!defaultOptions.global.useUTC) {
-							value = value + new Date().getTimezoneOffset() * 60 * 1000;
+		function updateExtremes() {
+			var inputValue = input.value,
+				value = (options.inputDateParser || Date.parse)(inputValue),
+				xAxis = chart.xAxis[0],
+				dataMin = xAxis.dataMin,
+				dataMax = xAxis.dataMax;
+			if (value !== input.previousValue) {
+				input.previousValue = value;
+				// If the value isn't parsed directly to a value by the browser's Date.parse method,
+				// like YYYY-MM-DD in IE, try parsing it a different way
+				if (isNaN(value)) {
+					value = inputValue.split('-');
+					value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+				}
+
+				if (!isNaN(value)) {
+
+					// Correct for timezone offset (#433)
+					if (!defaultOptions.global.useUTC) {
+						value = value + new Date().getTimezoneOffset() * 60 * 1000;
+					}
+
+					// Validate the extremes. If it goes beyound the data min or max, use the
+					// actual data extreme (#2438).
+					if (isMin) {
+						if (value > rangeSelector.maxInput.HCTime) {
+							value = UNDEFINED;
+						} else if (value < dataMin) {
+							value = dataMin;
 						}
-
-						// Validate the extremes. If it goes beyound the data min or max, use the
-						// actual data extreme (#2438).
-						if (isMin) {
-							if (value > rangeSelector.maxInput.HCTime) {
-								value = UNDEFINED;
-							} else if (value < dataMin) {
-								value = dataMin;
-							}
-						} else {
-							if (value < rangeSelector.minInput.HCTime) {
-								value = UNDEFINED;
-							} else if (value > dataMax) {
-								value = dataMax;
-							}
-						}
-
-						// Set the extremes
-						if (value !== UNDEFINED) {
-							chart.xAxis[0].setExtremes(
-								isMin ? value : xAxis.min,
-								isMin ? xAxis.max : value,
-								UNDEFINED,
-								UNDEFINED,
-								{ trigger: 'rangeSelectorInput' }
-							);
+					} else {
+						if (value < rangeSelector.minInput.HCTime) {
+							value = UNDEFINED;
+						} else if (value > dataMax) {
+							value = dataMax;
 						}
 					}
+
+					// Set the extremes
+					if (value !== UNDEFINED) {
+						chart.xAxis[0].setExtremes(
+							isMin ? value : xAxis.min,
+							isMin ? xAxis.max : value,
+							UNDEFINED,
+							UNDEFINED,
+							{ trigger: 'rangeSelectorInput' }
+						);
+					}
 				}
-			};
+			}
+		}
+
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
 			.attr({
@@ -559,9 +577,7 @@ RangeSelector.prototype = {
 		};
 
 		// handle changes in the input boxes
-		input.onchange = function () {
-			updateExtremes();
-		};
+		input.onchange = updateExtremes;
 
 		input.onkeypress = function (event) {
 			// IE does not fire onchange on enter
@@ -599,7 +615,8 @@ RangeSelector.prototype = {
 			renderer = chart.renderer,
 			container = chart.container,
 			chartOptions = chart.options,
-			navButtonOptions = chartOptions.exporting && chartOptions.navigation && chartOptions.navigation.buttonOptions,
+			navButtonOptions = chartOptions.exporting && chartOptions.exporting.enabled !== false &&
+				chartOptions.navigation && chartOptions.navigation.buttonOptions,
 			options = chartOptions.rangeSelector,
 			buttons = rangeSelector.buttons,
 			lang = defaultOptions.lang,

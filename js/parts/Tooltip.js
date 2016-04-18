@@ -195,7 +195,7 @@ Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop, chart.plotTop, chart.plotTop + chart.plotHeight],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft, chart.plotLeft, chart.plotLeft + chart.plotWidth],
 			// The far side is right or bottom
-			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
+			preferFarSide = !this.followPointer && pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.

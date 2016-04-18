@@ -52,7 +52,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(lin2log(value)) : value
+			value: axis.isLog ? correctFloat(axis.lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -107,7 +107,8 @@ Tick.prototype = {
 			rotation = this.rotation,
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
 			labelWidth = label.getBBox().width,
-			slotWidth = axis.slotWidth,
+			slotWidth = axis.getSlotWidth(),
+			modifiedSlotWidth = slotWidth,
 			xCorrection = factor,
 			goRight = 1,
 			leftPos,
@@ -122,21 +123,21 @@ Tick.prototype = {
 			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
+				modifiedSlotWidth = xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
 			} else if (rightPos > rightBound) {
-				slotWidth = rightBound - xy.x + slotWidth * factor;
+				modifiedSlotWidth = rightBound - xy.x + modifiedSlotWidth * factor;
 				goRight = -1;
 			}
 
-			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
-			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));
+			modifiedSlotWidth = mathMin(slotWidth, modifiedSlotWidth); // #4177
+			if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
+				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - mathMin(labelWidth, modifiedSlotWidth)));
 			}
 			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
-			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
-				textWidth = slotWidth;
+			if (labelWidth > modifiedSlotWidth || (axis.autoRotation && label.styles.width)) {
+				textWidth = modifiedSlotWidth;
 			}
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
@@ -188,10 +189,14 @@ Tick.prototype = {
 			line;
 
 		if (!defined(yOffset)) {
-			yOffset = axis.side === 2 ? 
-				rotCorr.y + 8 :
+			if (axis.side === 0) {
+				yOffset = label.rotation ? -8 : -label.getBBox().height;
+			} else if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+			} else {
 				// #3140, #3140
 				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+			}
 		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -251,10 +256,8 @@ Tick.prototype = {
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
-			tickLength = options[tickPrefix + 'Length'],
-			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
+			tickSize = axis.tickSize(tickPrefix),
 			tickColor = options[tickPrefix + 'Color'],
-			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
@@ -306,17 +309,11 @@ Tick.prototype = {
 		}
 
 		// create the tick mark
-		if (tickWidth && tickLength) {
-
-			// negate the length
-			if (tickPosition === 'inside') {
-				tickLength = -tickLength;
-			}
+		if (tickSize) {
 			if (axis.opposite) {
-				tickLength = -tickLength;
+				tickSize[0] = -tickSize[0];
 			}
-
-			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+			markPath = tick.getMarkPath(x, y, tickSize[0], tickSize[1] * reverseCrisp, horiz, renderer);
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -327,7 +324,7 @@ Tick.prototype = {
 					markPath
 				).attr({
 					stroke: tickColor,
-					'stroke-width': tickWidth,
+					'stroke-width': tickSize[1],
 					opacity: opacity
 				}).add(axis.axisGroup);
 			}

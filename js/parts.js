@@ -465,7 +465,7 @@ var HighchartsConfig = {
 		},
 		"baseUrl": "modules"
 	}, {
-		"name": "Intro",
+		"name": "HeatmapIntro",
 		"component": "Heatmap",
 		"group": "Modules",
 		"depends": {

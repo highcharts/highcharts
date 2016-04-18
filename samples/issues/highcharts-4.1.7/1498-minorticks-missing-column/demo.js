@@ -11,8 +11,8 @@ $(function () {
                 }]
             }).highcharts(),
             minorTicks = chart.xAxis[0].minorTicks,
-            firstTick = minorTicks['-10'],
-            lastTick = minorTicks['120'],
+            firstTick = minorTicks['-6'],
+            lastTick = minorTicks['116'],
             UNDEFINED;
 
         assert.strictEqual(

@@ -29,7 +29,7 @@ $(function () {
         }
         return arr;
     }
-    var n = 50000,
+    var n = 500000,
         data = getData(n);
 
 

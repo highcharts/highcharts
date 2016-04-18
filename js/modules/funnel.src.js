@@ -23,8 +23,7 @@ var defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
 	noop = function () {},
-	each = Highcharts.each,
-	pick = Highcharts.pick;
+	each = Highcharts.each;
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
@@ -229,24 +228,17 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	 */
 	drawPoints: function () {
 		var series = this,
-			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pointOptions,
 			pointAttr,
 			shapeArgs,
 			graphic;
 
 		each(series.data, function (point) {
-			pointOptions = point.options;
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 
-			pointAttr = {
-				fill: point.color,
-				stroke: pick(pointOptions.borderColor, options.borderColor),
-				'stroke-width': pick(pointOptions.borderWidth, options.borderWidth)
-			};
+			pointAttr = point.pointAttr[point.selected ? 'select' : ''];
 
 			if (!graphic) { // Create the shapes				
 				point.graphic = renderer.path(shapeArgs)

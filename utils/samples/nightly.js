@@ -9,8 +9,9 @@
         fs = require('fs');
 
     var spawn = childProcess.spawn,
-        latest = 'v4.2.2',
-        nightlyFile = 'nightly/nightly.json',
+        latest = 'v4.2.3',
+        nightlyDir = 'nightly',
+        nightlyFile = nightlyDir + '/nightly.json',
         commits = [];
 
     /**
@@ -37,7 +38,7 @@
             nightly,
             commit = commits[i];
 
-        if (i > 0 && commits[i]) {
+        if (commit) {
 
             // Load or set up the nightly report JSON file
             nightly = loadJSON(nightlyFile);
@@ -57,6 +58,7 @@
             key,
             beforeVal,
             afterVal;
+        console.log('Comparing logs', i, commit.parents[0], commit.hash);
         for (sample in after) {
             if (after.hasOwnProperty(sample)) {
                 for (key in after[sample]) {
@@ -64,23 +66,21 @@
                         break;
                     }
                 }
-                if (before[sample]) {
-                    beforeVal = before[sample][key];
-                    afterVal = after[sample][key];
+                beforeVal = (before && before[sample] && before[sample][key]) || '0';
+                afterVal = after[sample][key];
 
-                    // If something is changed, record the change in nightly.json
-                    if (afterVal !== '0' && afterVal !== beforeVal) {
-                        console.log(colors.yellow('Detected change in ' + sample + ': ' + beforeVal + ' => ' + afterVal));
-                        if (!nightly.results[sample]) {
-                            nightly.results[sample] = {
-                                changes: []
-                            };
-                        }
-                        nightly.results[sample].changes.push({
-                            hash: commit.hash,
-                            diff: afterVal
-                        });
+                // If something is changed, record the change in nightly.json
+                if (afterVal !== '0' && afterVal !== beforeVal) {
+                    console.log(colors.yellow('Detected change in ' + sample + ': ' + beforeVal + ' => ' + afterVal));
+                    if (!nightly.results[sample]) {
+                        nightly.results[sample] = {
+                            changes: []
+                        };
                     }
+                    nightly.results[sample].changes.push({
+                        hash: commit.hash,
+                        diff: afterVal
+                    });
                 }
             }
         }
@@ -88,6 +88,12 @@
         // Write it back
         if (nightly) {
             nightly.meta.latest = commit.hash;
+
+            try {
+                fs.mkdirSync(nightlyDir);
+            } catch (e) {
+                console.log('Nightly dir exists, all fine...');
+            }
             fs.writeFileSync(nightlyFile, JSON.stringify(nightly, null, '\t'));
         }
 

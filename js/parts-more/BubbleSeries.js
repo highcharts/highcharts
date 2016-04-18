@@ -316,7 +316,7 @@ Axis.prototype.beforePadding = function () {
 
 		if (range > 0) {
 			while (i--) {
-				if (typeof data[i] === 'number' && series.xData[i] >= series.xAxis.min && series.xData[i] <= series.xAxis.max) { // #4592
+				if (typeof data[i] === 'number' && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
 					radius = series.radii[i];
 					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
 					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);

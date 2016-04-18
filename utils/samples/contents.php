@@ -327,7 +327,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
-									if ($diff > 0 || $diff == 'Error') {
+									if (!preg_match('/^[0-9\\.]+$/', $diff) || $diff > 0) {
 										if (strstr($diff, '.')) {
 											$diff = round($diff, 2);
 										}

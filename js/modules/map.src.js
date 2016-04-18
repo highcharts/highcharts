@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.3-modified (bugfix)
+ * @license Highmaps JS v4.2.4-modified (bugfix)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -738,6 +738,7 @@
                 };
 
             if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+                chart.mapNavButtons = [];
                 for (n in buttons) {
                     if (buttons.hasOwnProperty(n)) {
                         buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -765,6 +766,7 @@
                         button.handler = buttonOptions.onclick;
                         button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
                         addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+                        chart.mapNavButtons.push(button);
                     }
                 }
             }
@@ -879,19 +881,13 @@
      */
     wrap(Chart.prototype, 'render', function (proceed) {
         var chart = this,
-            mapNavigation = chart.options.mapNavigation,
+            mapNavigation = chart.options.mapNavigation;
             alignedObjects = chart.renderer.alignedObjects;
 
         // Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
         chart.renderMapNavigation();
 
         proceed.call(chart);
-
-        // #4740, realign the zoom buttons after chart is rendered 
-        each([alignedObjects[0], alignedObjects[1]], function (button) {
-            button.placed = false;
-            button.align(button.alignOptions, false, button.alignTo);
-        });
     
         // Add the double click event
         if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
@@ -950,8 +946,7 @@
             delta = e.detail || -(e.wheelDelta / 120);
             if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
                 chart.mapZoom(
-                    //delta > 0 ? 2 : 0.5,
-                    Math.pow(2, delta),
+                    Math.pow(chart.options.mapNavigation.mouseWheelSensitivity, delta),
                     chart.xAxis[0].toValue(e.chartX),
                     chart.yAxis[0].toValue(e.chartY),
                     e.chartX,
@@ -1365,7 +1360,7 @@
                 this.mapMap = mapMap;
 
                 // Registered the point codes that actually hold data
-                if (joinBy[1]) {
+                if (data && joinBy[1]) {
                     each(data, function (point) {
                         if (mapMap[point[joinBy[1]]]) {
                             dataUsed.push(mapMap[point[joinBy[1]]]);
@@ -1912,7 +1907,11 @@
      * Test for point in polygon. Polygon defined as array of [x,y] points.
      */
     function pointInPolygon(point, polygon) {
-        var i, j, rel1, rel2, c = false,
+        var i,
+            j,
+            rel1,
+            rel2,
+            c = false,
             x = point.x,
             y = point.y;
 
@@ -2164,7 +2163,8 @@
                 text: '-',
                 y: 28
             }
-        }
+        },
+        mouseWheelSensitivity: 1.1
         // enabled: false,
         // enableButtons: null, // inherit from enabled
         // enableTouchZoom: null, // inherit from enabled

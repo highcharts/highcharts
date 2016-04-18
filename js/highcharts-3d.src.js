@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.3-modified (bugfix)
+ * @license Highcharts JS v4.2.4-modified (bugfix)
  *
  * 3D features for Highcharts JS
  *
@@ -751,7 +751,7 @@
         proceed.apply(this, [].slice.call(arguments, 1));
 
         if (this.is3d()) {
-            if (options3d.fitToPlot === true) { // docs
+            if (options3d.fitToPlot === true) {
                 // Clear previous scale in case of updates:
                 chart.scale3d = 1;
 
@@ -1838,6 +1838,10 @@
             this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
             this.pointArrayMap = ['x', 'y', 'z'];
             this.parallelArrays = ['x', 'y', 'z'];
+
+            // Require direct touch rather than using the k-d-tree, because the k-d-tree currently doesn't
+            // take the xyz coordinate system into account (#4552)
+            this.directTouch = true;
         }
 
         var result = proceed.apply(this, [chart, options]);

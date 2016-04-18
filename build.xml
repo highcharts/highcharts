@@ -1663,7 +1663,7 @@
         <property file="git-ignore-me.properties"/>
         
         <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/media/com_download/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>

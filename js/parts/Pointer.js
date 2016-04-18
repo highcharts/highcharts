@@ -171,9 +171,17 @@ Pointer.prototype = {
 				if (p) {
 					// Store both closest points, using point.dist and point.distX comparisons (#4645):
 					each(['dist', 'distX'], function (dist, k) {
-						if (typeof p[dist] === 'number' && p[dist] < distance[k]) {
-							distance[k] = p[dist];
-							kdpoint[k] = p;
+						if (typeof p[dist] === 'number') {
+							var
+								// It is closer than the reference point
+								isCloser = p[dist] < distance[k],
+								// It is equally close, but above the reference point (#4679)
+								isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
+
+							if (isCloser || isAbove) {
+								distance[k] = p[dist];
+								kdpoint[k] = p;
+							}
 						}
 					});
 				}
@@ -232,21 +240,17 @@ Pointer.prototype = {
 			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
 
-		// Crosshair
+		// Crosshair. For each hover point, loop over axes and draw cross if that point
+		// belongs to the axis (#4927).
 		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
-			var series = point && point.series;
-			if (series) {
-				each(['xAxis', 'yAxis', 'colorAxis'], function (coll) {
-					if (series[coll]) {
-						series[coll].drawCrosshair(e, point);
-					}	
-				});
-			}
+			each(chart.axes, function (axis) {
+				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
+				if (!point || point.series[axis.coll] === axis) {
+					axis.drawCrosshair(e, point);
+				}
+			});
 		});
-
 	},
-
-
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
@@ -262,13 +266,10 @@ Pointer.prototype = {
 			tooltip = chart.tooltip,
 			tooltipPoints = tooltip && tooltip.shared ? hoverPoints : hoverPoint;
 
-		// Narrow in allowMove
-		allowMove = allowMove && tooltip && tooltipPoints;
-
-		// Check if the points have moved outside the plot area (#1003, #4736)
-		if (allowMove) {
+		// Check if the points have moved outside the plot area (#1003, #4736, #5101)
+		if (allowMove && tooltipPoints) {
 			each(splat(tooltipPoints), function (point) {
-				if (point.plotX === undefined) {
+				if (point.series.isCartesian && point.plotX === undefined) {
 					allowMove = false;
 				}
 			});
@@ -276,17 +277,19 @@ Pointer.prototype = {
 		
 		// Just move the tooltip, #349
 		if (allowMove) {
-			tooltip.refresh(tooltipPoints);
-			if (hoverPoint) { // #2500
-				hoverPoint.setState(hoverPoint.state, true);
-				each(chart.axes, function (axis) {
-					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
-						axis.drawCrosshair(null, hoverPoint);
-					}  else {
-						axis.hideCrosshair();
-					}
-				});
+			if (tooltip && tooltipPoints) {
+				tooltip.refresh(tooltipPoints);
+				if (hoverPoint) { // #2500
+					hoverPoint.setState(hoverPoint.state, true);
+					each(chart.axes, function (axis) {
+						if (pick(axis.crosshair && axis.crosshair.snap, true)) {
+							axis.drawCrosshair(null, hoverPoint);
+						}  else {
+							axis.hideCrosshair();
+						}
+					});
 
+				}
 			}
 
 		// Full reset

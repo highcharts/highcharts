@@ -64,6 +64,7 @@ var GaugeSeries = {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true,
+	directTouch: true, // #5063
 	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,

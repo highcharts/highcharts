@@ -333,7 +333,7 @@ SVGElement.prototype = {
 
 		while (i--) {
 			setter.call(
-				null, 
+				shadows[i], 
 				key === 'height' ?
 					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value, 
@@ -1066,7 +1066,14 @@ SVGElement.prototype = {
 		this[key] = value;
 	},
 	dashstyleSetter: function (value) {
-		var i;
+		var i,
+			strokeWidth = this['stroke-width'];
+		
+		// If "inherit", like maps in IE, assume 1 (#4981). With HC5 and the new strokeWidth 
+		// function, we should be able to use that instead.
+		if (strokeWidth === 'inherit') {
+			strokeWidth = 1;
+		}
 		value = value && value.toLowerCase();
 		if (value) {
 			value = value
@@ -1082,10 +1089,10 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
+				value[i] = pInt(value[i]) * strokeWidth;
 			}
 			value = value.join(',')
-				.replace('NaN', 'none'); // #3226
+				.replace(/NaN/g, 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
@@ -1148,7 +1155,7 @@ SVGElement.prototype = {
 			i;
 
 		if (defined(value)) {
-			element.setAttribute(key, value); // So we can read it for other elements in the group
+			element.zIndex = value; // So we can read it for other elements in the group
 			value = +value;
 			if (this[key] === value) { // Only update when needed (#3865)
 				run = false;
@@ -1169,7 +1176,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
+				otherZIndex = otherElement.zIndex;
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
 						pInt(otherZIndex) > value ||
@@ -1460,7 +1467,8 @@ SVGRenderer.prototype = {
 
 			// build the lines
 			each(lines, function buildTextLines(line, lineNo) {
-				var spans, spanNo = 0;
+				var spans,
+					spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
@@ -2087,14 +2095,14 @@ SVGRenderer.prototype = {
 
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
-						if (!ren.imgCount) {
+						if (!ren.imgCount && charts[ren.chartIndex].onload) {
 							charts[ren.chartIndex].onload();
 						}
 					},
 					src: imageSrc
 				});
+				this.imgCount++;
 			}
-			this.imgCount++;
 		}
 
 		return obj;
@@ -2555,7 +2563,7 @@ SVGRenderer.prototype = {
 			if (value !== alignFactor) {
 				alignFactor = value;
 				if (bBox) { // Bounding box exists, means we're dynamically changing
-					wrapper.attr({ x: x });
+					wrapper.attr({ x: wrapperX }); // #5134
 				}
 			}
 		};

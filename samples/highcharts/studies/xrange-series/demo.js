@@ -6,11 +6,29 @@ $(function () {
     (function (H) {
         var defaultPlotOptions = H.getOptions().plotOptions,
             columnType = H.seriesTypes.column,
-            each = H.each;
+            each = H.each,
+            extendClass = H.extendClass,
+            pick = H.pick,
+            Point = H.Point;
 
-        defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {});
+        defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
+            tooltip: {
+                pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+            }
+        });
         H.seriesTypes.xrange = H.extendClass(columnType, {
+            pointClass: extendClass(Point, {
+                // Add x2 and yCategory to the available properties for tooltip formats
+                getLabelConfig: function () {
+                    var cfg = Point.prototype.getLabelConfig.call(this);
+
+                    cfg.x2 = this.x2;
+                    cfg.yCategory = this.yCategory = this.series.yAxis.categories && this.series.yAxis.categories[this.y];
+                    return cfg;
+                }
+            }),
             type: 'xrange',
+            forceDL: true,
             parallelArrays: ['x', 'x2', 'y'],
             requireSorting: false,
             animate: H.seriesTypes.line.prototype.animate,
@@ -44,14 +62,20 @@ $(function () {
                 columnType.prototype.translate.apply(this, arguments);
                 var series = this,
                     xAxis = series.xAxis,
-                    metrics = series.columnMetrics;
+                    metrics = series.columnMetrics,
+                    minPointLength = series.options.minPointLength || 0;
 
                 H.each(series.points, function (point) {
-                    var barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
+                    var barWidth = Math.min(
+                            xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
+                            xAxis.len
+                        ),
+                        barWidthDifference = barWidth < minPointLength ? minPointLength - barWidth : 0;
+
                     point.shapeArgs = {
-                        x: point.plotX,
+                        x: Math.max(0, point.plotX) - barWidthDifference / 2,
                         y: point.plotY + metrics.offset,
-                        width: barWidth,
+                        width: barWidth + barWidthDifference,
                         height: metrics.width
                     };
                     point.tooltipPos[0] += barWidth / 2;
@@ -65,18 +89,21 @@ $(function () {
          */
         H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
             var axis = this,
-                dataMax = Number.MIN_VALUE;
+                dataMax,
+                modMax;
 
             proceed.call(this);
             if (this.isXAxis) {
+                dataMax = pick(axis.dataMax, Number.MIN_VALUE);
                 each(this.series, function (series) {
                     each(series.x2Data || [], function (val) {
                         if (val > dataMax) {
                             dataMax = val;
+                            modMax = true;
                         }
                     });
                 });
-                if (dataMax > Number.MIN_VALUE) {
+                if (modMax) {
                     axis.dataMax = dataMax;
                 }
             }
