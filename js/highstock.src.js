@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-04-16)
+ * @license Highstock JS v4.2.4-modified (2016-04-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20245,7 +20245,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-04-16)
+     * Highstock JS v4.2.4-modified (2016-04-18)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22918,7 +22918,9 @@
                 // When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
                 // cases of updating data (addPoint, update, removePoint) directly so that this operation 
                 // on the base series reflects directly on the navigator series.
-                navigatorSeries.graph.shift = baseSeries.graph.shift;
+                if (navigatorSeries.graph && baseSeries.graph) {
+                    navigatorSeries.graph.shift = baseSeries.graph.shift;
+                }
             }
         },
 
