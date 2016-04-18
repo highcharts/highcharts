@@ -23514,22 +23514,6 @@
                 input,
                 label,
                 dateBox,
-                inputGroup = this.inputGroup,
-                updateExtremes = function () {
-                    var inputValue = input.value,
-                        value = (options.inputDateParser || Date.parse)(inputValue),
-                        xAxis = chart.xAxis[0],
-                        dataMin = xAxis.dataMin,
-                        dataMax = xAxis.dataMax;
-                    if (value !== input.previousValue) {
-                        input.previousValue = value;
-                        // If the value isn't parsed directly to a value by the browser's Date.parse method,
-                        // like YYYY-MM-DD in IE, try parsing it a different way
-                        if (isNaN(value)) {
-                            value = inputValue.split('-');
-                            value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
-                        }
-
                 inputGroup = this.inputGroup;
 
             function updateExtremes() {
