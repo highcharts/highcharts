@@ -358,7 +358,9 @@
 					point = points[i];
 					start = point.barX + startAngleRad;
 					point.shapeType = 'path';
-					point.shapeArgs = this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth);
+					point.shapeArgs = {
+						d: this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
+					};
 					// Provide correct plotX, plotY for tooltip
 					this.toXY(point);
 					point.tooltipPos = [point.plotX, point.plotY];
