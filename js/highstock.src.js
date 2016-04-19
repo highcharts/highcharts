@@ -3179,7 +3179,12 @@
                 titleNode = doc.createElementNS(SVG_NS, 'title');
                 this.element.appendChild(titleNode);
             }
-            titleNode.textContent = ''; // Empty content
+
+            // Remove text content if it exists
+            if (titleNode.firstChild) {
+                titleNode.removeChild(titleNode.firstChild);
+            }
+
             titleNode.appendChild(
                 doc.createTextNode(
                     (String(pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
