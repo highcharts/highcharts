@@ -4,9 +4,16 @@ $(function () {
             chart: {
                 zoomType: 'xy'
             },
+            title: {
+                text: 'Scrollbar on Y axis'
+            },
+            subtitle: {
+                text: 'Zoom in to see the scrollbar'
+            },
             yAxis: {
                 scrollbar: {
-                    enabled: true
+                    enabled: true,
+                    showFull: false
                 }
             },
             series: [{

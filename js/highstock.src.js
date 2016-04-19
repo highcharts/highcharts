@@ -21821,6 +21821,7 @@
         buttonBorderColor: '#bbb',
         buttonBorderRadius: 0,
         buttonBorderWidth: 1,
+        //showFull: true, // docs
         margin: 10, // docs
         minWidth: 6,
         rifleColor: '#666',
@@ -22103,7 +22104,16 @@
             if (newSize <= 12) {
                 scroller.scrollbarRifles.hide();
             } else {
-                scroller.scrollbarRifles.show();
+                scroller.scrollbarRifles.show(true);
+            }
+
+            // Show or hide the scrollbar based on the showFull setting
+            if (options.showFull === false) {
+                if (from <= 0 && to >= 1) {
+                    scroller.group.hide();
+                } else {
+                    scroller.group.show();
+                }
             }
         },
 
