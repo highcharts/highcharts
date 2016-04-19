@@ -1,4 +1,4 @@
-QUnit.test('textSetter', function (assert) {
+QUnit.test('titleSetter', function (assert) {
     var chart = Highcharts.chart('container', {
         }),
         str = 'The quick brown fox<br> jumps over the lazy dog',
