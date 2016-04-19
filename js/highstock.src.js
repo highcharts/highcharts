@@ -21821,6 +21821,7 @@
         buttonBorderColor: '#bbb',
         buttonBorderRadius: 0,
         buttonBorderWidth: 1,
+        margin: 10, // docs
         minWidth: 6,
         rifleColor: '#666',
         zIndex: 3,        // docs
@@ -22353,21 +22354,25 @@
         var axis = this,    
             scrollMin = Math.min(axis.min, axis.dataMin),
             scrollMax = Math.max(axis.max, axis.dataMax),
-            from, to;
+            from,
+            to,
+            scrollbar = axis.scrollbar,
+            margin;
 
         proceed.apply(axis, [].slice.call(arguments, 1));
 
-        if (axis.scrollbar) {
+        if (scrollbar) {
+            margin = scrollbar.options.margin;
             if (axis.horiz) {
-                axis.scrollbar.position(
+                scrollbar.position(
                     axis.left, 
-                    axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin),
+                    axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin) + margin,
                     axis.width,
                     axis.height
                 );
             } else {
-                axis.scrollbar.position(
-                    axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0), 
+                scrollbar.position(
+                    axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0) + margin, 
                     axis.top, 
                     axis.width, 
                     axis.height
@@ -22375,15 +22380,15 @@
             }
 
             if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
-                axis.scrollbar.setRange(0, 0); // default action: when there is not extremes on the axis, but scrollbar exists, make it full size
+                scrollbar.setRange(0, 0); // default action: when there is not extremes on the axis, but scrollbar exists, make it full size
             } else {
                 from = (axis.min - scrollMin) / (scrollMax - scrollMin);
                 to = (axis.max - scrollMin) / (scrollMax - scrollMin);
 
                 if ((axis.horiz && !axis.reversed) || (!axis.horiz && axis.reversed)) {
-                    axis.scrollbar.setRange(from, to);
+                    scrollbar.setRange(from, to);
                 } else {
-                    axis.scrollbar.setRange(1 - to, 1 - from); // inverse vertical axis
+                    scrollbar.setRange(1 - to, 1 - from); // inverse vertical axis
                 }
             }
         }
@@ -22394,12 +22399,13 @@
     */
     wrap(Axis.prototype, 'getOffset', function (proceed) {
         var axis = this,
-            index = axis.horiz ? 2 : 1;
+            index = axis.horiz ? 2 : 1,
+            scrollbar = axis.scrollbar;
 
         proceed.apply(axis, [].slice.call(arguments, 1));
 
-        if (axis.scrollbar) {
-            axis.chart.axisOffset[index] += axis.scrollbar.size;
+        if (scrollbar) {
+            axis.chart.axisOffset[index] += scrollbar.size + scrollbar.options.margin;
         }
     });
 
