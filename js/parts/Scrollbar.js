@@ -14,8 +14,8 @@ var defaultScrollbarOptions =  {
 	minWidth: 6,
 	rifleColor: '#666',
 	zIndex: 3,		// docs
-	step: 0.2, 		// docs
-	//size: null, 	// docs
+	step: 0.2,		// docs
+	//size: null,	// docs
 	trackBackgroundColor: '#eeeeee',
 	trackBorderColor: '#eeeeee',
 	trackBorderWidth: 1,
@@ -31,7 +31,7 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Object} options
  * @param {Object} chart
  */
-function Scrollbar(renderer, options, chart) {
+function Scrollbar(renderer, options, chart) { // docs
 	this.scrollbarButtons = [];
 
 	this.renderer = renderer;
@@ -199,16 +199,16 @@ Scrollbar.prototype = {
 
 		// Button arrow:
 		renderer.path(scroller.swapXY([
-            'M',
-            size / 2 + (index ? -1 : 1), 
-            size / 2 - 3,
-            'L',
-            size / 2 + (index ? -1 : 1), 
-            size / 2 + 3,
-            'L',
-            size / 2 + (index ? 2 : -2), 
-            size / 2
-        ], options.vertical)).attr({
+			'M',
+			size / 2 + (index ? -1 : 1), 
+			size / 2 - 3,
+			'L',
+			size / 2 + (index ? -1 : 1), 
+			size / 2 + 3,
+			'L',
+			size / 2 + (index ? 2 : -2), 
+			size / 2
+		], options.vertical)).attr({
 			fill: options.buttonArrowColor
 		}).add(group);
 	},
@@ -232,26 +232,26 @@ Scrollbar.prototype = {
 		}
 
 		return path;
- 	},
+	},
 
- 	/**
- 	* Set scrollbar size, with a given scale.
+	/**
+	* Set scrollbar size, with a given scale.
 	* @param {Number} from - scale (0-1) where bar should start
 	* @param {Number} to - scale (0-1) where bar should end
- 	*/
- 	setRange: function (from, to) {
- 		var scroller = this,
- 			options = scroller.options,
- 			vertical = options.vertical,
+	*/
+	setRange: function (from, to) {
+		var scroller = this,
+			options = scroller.options,
+			vertical = options.vertical,
 			fromPX,
 			toPX,
 			newPos,
 			newSize,
 			newRiflesPos;
 
- 		if (!defined(scroller.barWidth)) {
- 			return;
- 		}
+		if (!defined(scroller.barWidth)) {
+			return;
+		}
 
 		fromPX = scroller.barWidth * Math.max(from, 0);
 		toPX = scroller.barWidth * Math.min(to, 1);
@@ -259,48 +259,48 @@ Scrollbar.prototype = {
 		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
 		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
- 		// Store current position:
- 		scroller.from = from;
- 		scroller.to = to;
+		// Store current position:
+		scroller.from = from;
+		scroller.to = to;
 
- 		if (!vertical) {
- 			scroller.scrollbarGroup.attr({
-	 			translateX: newPos
- 			});
-	 		scroller.scrollbar.attr({
-	 			width: newSize
-	 		});
-	 		scroller.scrollbarRifles.attr({
-	 			translateX: newRiflesPos
-	 		});
-	 		scroller.scrollbarLeft = newPos;
-	 		scroller.scrollbarTop = 0;
- 		} else {
- 			scroller.scrollbarGroup.attr({
-	 			translateY: newPos
- 			});
-	 		scroller.scrollbar.attr({
-	 			height: newSize
-	 		});
-	 		scroller.scrollbarRifles.attr({
-	 			translateY: newRiflesPos
-	 		});
-	 		scroller.scrollbarTop = newPos;
-	 		scroller.scrollbarLeft = 0;
- 		}
+		if (!vertical) {
+			scroller.scrollbarGroup.attr({
+				translateX: newPos
+			});
+			scroller.scrollbar.attr({
+				width: newSize
+			});
+			scroller.scrollbarRifles.attr({
+				translateX: newRiflesPos
+			});
+			scroller.scrollbarLeft = newPos;
+			scroller.scrollbarTop = 0;
+		} else {
+			scroller.scrollbarGroup.attr({
+				translateY: newPos
+			});
+			scroller.scrollbar.attr({
+				height: newSize
+			});
+			scroller.scrollbarRifles.attr({
+				translateY: newRiflesPos
+			});
+			scroller.scrollbarTop = newPos;
+			scroller.scrollbarLeft = 0;
+		}
 
- 		if (newSize <= 12) {
- 			scroller.scrollbarRifles.hide();
- 		} else {
- 			scroller.scrollbarRifles.show();
- 		}
- 	},
+		if (newSize <= 12) {
+			scroller.scrollbarRifles.hide();
+		} else {
+			scroller.scrollbarRifles.show();
+		}
+	},
 
- 	/**
- 	* Init events methods, so we have an access to the Scrollbar itself
- 	*/
- 	initEvents: function () {
- 		var scroller = this;
+	/**
+	* Init events methods, so we have an access to the Scrollbar itself
+	*/
+	initEvents: function () {
+		var scroller = this;
 		/**
 		 * Event handler for the mouse move event.
 		 */
@@ -367,42 +367,42 @@ Scrollbar.prototype = {
 			scroller.grabbedCenter = true;
 		};
 
-	 	scroller.buttonToMinClick = function (e) {
-	 		var range = correctFloat(scroller.to - scroller.from) * scroller.options.step;
-	 		scroller.updatePosition(correctFloat(scroller.from - range), correctFloat(scroller.to - range));
+		scroller.buttonToMinClick = function (e) {
+			var range = correctFloat(scroller.to - scroller.from) * scroller.options.step;
+			scroller.updatePosition(correctFloat(scroller.from - range), correctFloat(scroller.to - range));
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,
 				to: scroller.to,
 				trigger: 'scrollbar',
 				DOMEvent: e
 			});
-	 	};
+		};
 
-	 	scroller.buttonToMaxClick = function (e) {
-	 		var range = (scroller.to - scroller.from) * scroller.options.step;
-	 		scroller.updatePosition(scroller.from + range, scroller.to + range);
+		scroller.buttonToMaxClick = function (e) {
+			var range = (scroller.to - scroller.from) * scroller.options.step;
+			scroller.updatePosition(scroller.from + range, scroller.to + range);
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,
 				to: scroller.to,
 				trigger: 'scrollbar',
 				DOMEvent: e
 			});
-	 	};
+		};
 
-	 	scroller.trackClick = function (e) {
-	 		var normalizedEvent = scroller.chart.pointer.normalize(e),
-	 			range = scroller.to - scroller.from,
-	 			top = scroller.y + scroller.scrollbarTop,
-	 			left = scroller.x + scroller.scrollbarLeft;
+		scroller.trackClick = function (e) {
+			var normalizedEvent = scroller.chart.pointer.normalize(e),
+				range = scroller.to - scroller.from,
+				top = scroller.y + scroller.scrollbarTop,
+				left = scroller.x + scroller.scrollbarLeft;
 
-	 		if ((scroller.options.vertical && normalizedEvent.chartY > top) || 
-	 			(!scroller.options.vertical && normalizedEvent.chartX > left)) {
-	 			// On the top or on the left side of the track:
- 				scroller.updatePosition(scroller.from + range, scroller.to + range);
- 			} else {
- 				// On the bottom or the right side of the track:
- 				scroller.updatePosition(scroller.from - range, scroller.to - range);
- 			}
+			if ((scroller.options.vertical && normalizedEvent.chartY > top) || 
+				(!scroller.options.vertical && normalizedEvent.chartX > left)) {
+				// On the top or on the left side of the track:
+				scroller.updatePosition(scroller.from + range, scroller.to + range);
+			} else {
+				// On the bottom or the right side of the track:
+				scroller.updatePosition(scroller.from - range, scroller.to - range);
+			}
 
 			fireEvent(scroller, 'changed', {
 				from: scroller.from,
@@ -410,26 +410,26 @@ Scrollbar.prototype = {
 				trigger: 'scrollbar',
 				DOMEvent: e
 			});
-	 	};
- 	},
+		};
+	},
 
- 	/**
- 	* Update position option in the Scrollbar, with normalized 0-1 scale
- 	*/
- 	updatePosition: function (from, to) {
- 		if (to > 1) {
- 			from = correctFloat(1 - (to - from));
- 			to = 1;
- 		}
+	/**
+	* Update position option in the Scrollbar, with normalized 0-1 scale
+	*/
+	updatePosition: function (from, to) {
+		if (to > 1) {
+			from = correctFloat(1 - (to - from));
+			to = 1;
+		}
 
- 		if (from < 0) {
- 			to = correctFloat(to - from);
- 			from = 0;
- 		}
+		if (from < 0) {
+			to = correctFloat(to - from);
+			from = 0;
+		}
 
- 		this.from = from;
- 		this.to = to;
- 	},
+		this.from = from;
+		this.to = to;
+	},
 
 	/**
 	 * Set up the mouse and touch events for the Scrollbar
