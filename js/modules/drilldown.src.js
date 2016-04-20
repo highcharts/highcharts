@@ -6,13 +6,14 @@
  *
  */
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
+import '../parts/Series.js';
+import '../parts/ColumnSeries.js';
+import '../parts/Tick.js';
+(function () {
 
 	'use strict';
 
@@ -754,4 +755,4 @@
 		}
 	}
 		
-}));
+});
