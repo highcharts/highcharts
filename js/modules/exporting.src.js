@@ -8,13 +8,11 @@
  */
 
 /* eslint indent:0 */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
+(function () {
 
 // create shortcuts
 var defaultOptions = H.defaultOptions,
@@ -799,4 +797,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}));
+});
