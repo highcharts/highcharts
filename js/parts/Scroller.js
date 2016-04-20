@@ -939,7 +939,8 @@ Scroller.prototype = {
 						'min',
 						baseAxisOptions.min,
 						baseAxis.dataMin,
-						navAxis.dataMin
+						navAxis.dataMin,
+						navAxis.min
 					)
 				),
 				dataMax: pick(
@@ -948,7 +949,8 @@ Scroller.prototype = {
 						'max',
 						baseAxisOptions.max,
 						baseAxis.dataMax,
-						navAxis.dataMax
+						navAxis.dataMax,
+						navAxis.max
 					)
 				)
 			};
