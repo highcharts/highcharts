@@ -7,14 +7,10 @@
  * License: www.highcharts.com/license
  */
 
-/*global jQuery */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
+import Highcharts from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+(function () {
 	
 	// Utilities
 	var win = Highcharts.win,
@@ -956,4 +952,4 @@
 
 
 
-}));
+});
