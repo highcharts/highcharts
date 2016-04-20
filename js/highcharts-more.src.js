@@ -2463,8 +2463,8 @@ var arrayMin = Highcharts.arrayMin,
             // Connect the path
             if (this.chart.polar) {
                 points = points || this.points;
-    
-                if (this.options.connectEnds !== false && points[0].y !== null) {
+
+                if (this.options.connectEnds !== false && points[0] && points[0].y !== null) {
                     this.connectEnds = true; // re-used in splines
                     points.splice(points.length, 0, points[0]);
                 }
