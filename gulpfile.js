@@ -136,7 +136,8 @@ gulp.task('build', function () {
                 'modules/data.js': new RegExp(folders['parts']),
                 'modules/drilldown.js': new RegExp(folders['parts']),
                 'modules/exporting-old-look.js': new RegExp(folders['parts']),
-                'modules/exporting.js': new RegExp(folders['parts'])
+                'modules/exporting.js': new RegExp(folders['parts']),
+                'modules/funnel.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'
