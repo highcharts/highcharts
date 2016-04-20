@@ -4,13 +4,10 @@
  */
 
 /*global document, Highcharts, jQuery, $ */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import './data.src.js';
+(function () {
 
 	'use strict';
 
@@ -426,4 +423,4 @@
 			}
 		}
 	});
-}));
+});
