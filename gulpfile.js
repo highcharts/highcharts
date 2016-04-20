@@ -134,7 +134,8 @@ gulp.task('build', function () {
                 'modules/canvasrenderer.experimental.js': new RegExp(folders['parts']),
                 'modules/canvgrenderer-extended.js': new RegExp(folders['parts']),
                 'modules/data.js': new RegExp(folders['parts']),
-                'modules/drilldown.js': new RegExp(folders['parts'])
+                'modules/drilldown.js': new RegExp(folders['parts']),
+                'modules/exporting-old-look.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'

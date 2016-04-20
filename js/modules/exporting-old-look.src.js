@@ -5,13 +5,11 @@
  * Author: Torstein Honsi
  */
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
+import Highcharts from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/SvgRenderer.js';
+(function () {
 
 	var defaultOptions = Highcharts.getOptions(),
 		symbols = Highcharts.Renderer.prototype.symbols,
@@ -133,4 +131,4 @@
 		]);
 	};
 
-}));
+});
