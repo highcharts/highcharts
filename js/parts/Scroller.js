@@ -651,9 +651,9 @@ Navigator.prototype = {
 						to = range * this.to,
 						from = range * this.from;
 
-						scroller.render(0, 0, from, to);
-						scroller.hasDragged = true;
-						scroller.mouseUpHandler(e);
+					scroller.render(0, 0, from, to);
+					scroller.hasDragged = true;
+					scroller.mouseUpHandler(e);
 				});
 			}
 
