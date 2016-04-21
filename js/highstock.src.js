@@ -13642,7 +13642,7 @@
                 valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
             // Loop over the point array map and replace unformatted values with sprintf formatting markup
-            each(series.pointArrayMap || ['y', 'x'], function (key) {
+            each(series.pointArrayMap || ['y'], function (key) {
                 key = '{point.' + key; // without the closing bracket
                 if (valuePrefix || valueSuffix) {
                     pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
