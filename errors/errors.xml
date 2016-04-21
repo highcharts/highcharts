@@ -12,6 +12,16 @@
 		</description>
 	</error>
 
+	<error id="11">
+		<title>Can't link axes of different type</title>
+		<description>
+			This error occurs if you are using the <code>linkedTo</code> option to link two axes of different types,
+			for example a logarithmic axis to a linear axis. Highcharts can't link those because the calculation of
+			ticks, extremes, padding etc. is different.
+		</description>
+	</error>
+	
+
 	<error id="12">
 		<title>Highcharts expects point configuration to be numbers or arrays in turbo mode</title>
 		<description>
