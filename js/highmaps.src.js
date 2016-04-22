@@ -7081,6 +7081,12 @@
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
+                            // If xData contains values which is not numbers, then filter them out
+                            if (!(typeof arrayMin(xData) === 'number' && !isNaN(arrayMin(xData)))) {
+                                xData = grep(xData, function (x) {
+                                    return typeof x === 'number' && !isNaN(x);
+                                });
+                            }
                             axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
                             axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
                         }
@@ -12981,7 +12987,7 @@
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
-            point.isNull = point.y === null;
+            point.isNull = point.x === null || point.y === null;
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
