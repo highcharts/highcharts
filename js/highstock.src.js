@@ -8685,6 +8685,7 @@
                 clip,
                 directionFactor = [-1, 1, 1, -1][side],
                 n,
+                textAlign,
                 axisParent = axis.axisParent, // Used in color axis
                 lineHeightCorrection,
                 tickSize = this.tickSize('tick');
@@ -8752,6 +8753,18 @@
 
             if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
                 if (!axis.axisTitle) {
+                    textAlign = axisTitleOptions.textAlign;
+                    if (!textAlign) {
+                        textAlign = (horiz ? { 
+                            low: 'left',
+                            middle: 'center',
+                            high: 'right'
+                        } : { 
+                            low: opposite ? 'right' : 'left',
+                            middle: 'center',
+                            high: opposite ? 'left' : 'right'
+                        })[axisTitleOptions.align];
+                    }
                     axis.axisTitle = renderer.text(
                         axisTitleOptions.text,
                         0,
@@ -8761,12 +8774,7 @@
                     .attr({
                         zIndex: 7,
                         rotation: axisTitleOptions.rotation || 0,
-                        align: 
-                            axisTitleOptions.textAlign || { 
-                                low: opposite ? 'right' : 'left',
-                                middle: 'center',
-                                high: opposite ? 'left' : 'right'
-                            }[axisTitleOptions.align]
+                        align: textAlign
                     })
                     .addClass(PREFIX + this.coll.toLowerCase() + '-title')
                     .css(axisTitleOptions.style)
