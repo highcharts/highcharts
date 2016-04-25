@@ -15,13 +15,11 @@
  * http://jsfiddle.net/highcharts/y5A37/
  */
 /* eslint indent: [2, 4] */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+import '../parts/Series.js';
+(function () {
 
     var labelDistance = 3,
         wrap = H.wrap,
@@ -417,4 +415,4 @@
     wrap(Chart.prototype, 'render', drawLabels);
     wrap(Chart.prototype, 'redraw', drawLabels);
 
-}));
+});
