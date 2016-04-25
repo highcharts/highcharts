@@ -6,14 +6,12 @@
  *
  * License: www.highcharts.com/license
  */
-
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+import '../parts/Color.js';
+(function () {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
@@ -904,4 +902,4 @@
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
-}));
+});

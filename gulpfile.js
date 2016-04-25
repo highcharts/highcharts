@@ -143,7 +143,8 @@ gulp.task('build', function () {
                 'modules/offline-exporting.js': new RegExp(folders['parts']),
                 'modules/overlapping-datalabels.js': new RegExp(folders['parts']),
                 'modules/series-label.js': new RegExp(folders['parts']),
-                'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|'))
+                'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
+                'modules/treemap.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'
