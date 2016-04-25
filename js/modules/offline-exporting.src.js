@@ -7,14 +7,11 @@
  * License: www.highcharts.com/license
  */
 
+import Highcharts from '../parts/Globals.js';
+import '../parts/Chart.js';
+import '../parts/Options.js';
 /*global MSBlobBuilder */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
+(function () {
 
 	var win = Highcharts.win,
 		nav = win.navigator,
@@ -318,4 +315,4 @@
 		}
 	}];
 
-}));
+});
