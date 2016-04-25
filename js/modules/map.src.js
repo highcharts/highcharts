@@ -38,6 +38,7 @@
         extend = Highcharts.extend,
         extendClass = Highcharts.extendClass,
         format = Highcharts.format,
+        isNumber = Highcharts.isNumber,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         defaultOptions = Highcharts.getOptions(),
@@ -498,7 +499,7 @@
             }
         },
         getPlotLinePath: function (a, b, c, d, pos) {
-            return typeof pos === 'number' ? // crosshairs only // #3969 pos can be 0 !!
+            return isNumber(pos) ? // crosshairs only // #3969 pos can be 0 !!
                 (this.horiz ?
                     ['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] :
                     ['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
@@ -1183,7 +1184,7 @@
                     // The first time a map point is used, analyze its box
                     if (!point._foundBox) {
                         while (i--) {
-                            if (typeof path[i] === 'number' && !isNaN(path[i])) {
+                            if (isNumber(path[i])) {
                                 if (even) { // even = x
                                     pointMaxX = Math.max(pointMaxX, path[i]);
                                     pointMinX = Math.min(pointMinX, path[i]);
@@ -1274,7 +1275,7 @@
             if (path) {
                 i = path.length;
                 while (i--) {
-                    if (typeof path[i] === 'number') {
+                    if (isNumber(path[i])) {
                         ret[i] = even ?
                             (path[i] - xMin) * xTransA + xMinPixelPadding :
                             (path[i] - yMin) * yTransA + yMinPixelPadding;
@@ -1317,7 +1318,7 @@
             // Pick up numeric values, add index
             if (data) {
                 each(data, function (val, i) {
-                    if (typeof val === 'number') {
+                    if (isNumber(val)) {
                         data[i] = {
                             value: val
                         };

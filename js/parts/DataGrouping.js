@@ -118,7 +118,7 @@ var DATA_GROUPING = 'dataGrouping',
 
 			// If we have a number, return it divided by the length. If not, return
 			// null or undefined based on what the sum method finds.
-			if (typeof ret === 'number' && len) {
+			if (isNumber(ret) && len) {
 				ret = ret / len;
 			}
 
@@ -143,7 +143,7 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			close = approximations.close(close);
 
-			if (typeof open === 'number' || typeof high === 'number' || typeof low === 'number' || typeof close === 'number') {
+			if (isNumber(open) || isNumber(high) || isNumber(low) || isNumber(close)) {
 				return [open, high, low, close];
 			}
 			// else, return is undefined
@@ -152,7 +152,7 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			high = approximations.high(high);
 
-			if (typeof low === 'number' || typeof high === 'number') {
+			if (isNumber(low) || isNumber(high)) {
 				return [low, high];
 			}
 			// else, return is undefined
@@ -235,7 +235,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			for (j = 0; j < pointArrayMapLength; j++) {
 				val = point[pointArrayMap[j]];
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					values[j].push(val);
 				} else if (val === null) {
 					values[j].hasNulls = true;
@@ -245,7 +245,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		} else {
 			pointY = handleYData ? yData[i] : null;
 
-			if (typeof pointY === 'number') {
+			if (isNumber(pointY)) {
 				values[0].push(pointY);
 			} else if (pointY === null) {
 				values[0].hasNulls = true;

@@ -159,7 +159,7 @@ Series.prototype = {
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
 			args = arguments,
-			fn = typeof i === 'number' ?
+			fn = isNumber(i) ?
 				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
@@ -964,7 +964,7 @@ Series.prototype = {
 				isInside = point.isInside;
 
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+				if (enabled && isNumber(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;

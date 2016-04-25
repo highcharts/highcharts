@@ -331,7 +331,7 @@ Tick.prototype = {
 		}
 
 		// the label is created on init - now move it into place
-		if (label && !isNaN(x)) {
+		if (label && isNumber(x)) {
 			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
 			// Apply show first and show last. If the tick is both first and last, it is
@@ -352,7 +352,7 @@ Tick.prototype = {
 			}
 
 			// Set the new position, and show or hide
-			if (show && !isNaN(xy.y)) {
+			if (show && isNumber(xy.y)) {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;

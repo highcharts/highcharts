@@ -20,6 +20,7 @@ var arrayMin = Highcharts.arrayMin,
         arrayMax = Highcharts.arrayMax,
         each = Highcharts.each,
         extend = Highcharts.extend,
+        isNumber = Highcharts.isNumber,
         merge = Highcharts.merge,
         map = Highcharts.map,
         pick = Highcharts.pick,
@@ -1144,7 +1145,7 @@ var arrayMin = Highcharts.arrayMin,
                     rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
                 // Handle the wrap and overshoot options
-                if (overshoot && typeof overshoot === 'number') {
+                if (isNumber(overshoot)) {
                     overshoot = overshoot / 180 * Math.PI;
                     rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
 
@@ -2087,7 +2088,7 @@ var arrayMin = Highcharts.arrayMin,
                 point = data[i];
                 radius = radii ? radii[i] : 0; // #1737
 
-                if (typeof radius === 'number' && radius >= this.minPxSize / 2) {
+                if (isNumber(radius) && radius >= this.minPxSize / 2) {
                     // Shape arguments
                     point.shapeType = 'circle';
                     point.shapeArgs = {
@@ -2215,7 +2216,7 @@ var arrayMin = Highcharts.arrayMin,
 
             if (range > 0) {
                 while (i--) {
-                    if (typeof data[i] === 'number' && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
+                    if (isNumber(data[i]) && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
                         radius = series.radii[i];
                         pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
                         pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);

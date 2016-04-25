@@ -188,7 +188,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			point = data[i];
 			radius = radii ? radii[i] : 0; // #1737
 
-			if (typeof radius === 'number' && radius >= this.minPxSize / 2) {
+			if (isNumber(radius) && radius >= this.minPxSize / 2) {
 				// Shape arguments
 				point.shapeType = 'circle';
 				point.shapeArgs = {
@@ -316,7 +316,7 @@ Axis.prototype.beforePadding = function () {
 
 		if (range > 0) {
 			while (i--) {
-				if (typeof data[i] === 'number' && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
+				if (isNumber(data[i]) && axis.dataMin <= data[i] && data[i] <= axis.dataMax) {
 					radius = series.radii[i];
 					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
 					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);

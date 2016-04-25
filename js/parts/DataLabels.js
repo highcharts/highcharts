@@ -435,7 +435,7 @@ if (seriesTypes.pie) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
 
-					if (!isNaN(slotX)) {
+					if (isNumber(slotX)) {
 						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,

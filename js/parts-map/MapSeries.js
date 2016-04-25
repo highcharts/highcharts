@@ -193,7 +193,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
 					while (i--) {
-						if (typeof path[i] === 'number' && !isNaN(path[i])) {
+						if (isNumber(path[i])) {
 							if (even) { // even = x
 								pointMaxX = Math.max(pointMaxX, path[i]);
 								pointMinX = Math.min(pointMinX, path[i]);
@@ -284,7 +284,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (path) {
 			i = path.length;
 			while (i--) {
-				if (typeof path[i] === 'number') {
+				if (isNumber(path[i])) {
 					ret[i] = even ?
 						(path[i] - xMin) * xTransA + xMinPixelPadding :
 						(path[i] - yMin) * yTransA + yMinPixelPadding;
@@ -327,7 +327,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Pick up numeric values, add index
 		if (data) {
 			each(data, function (val, i) {
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					data[i] = {
 						value: val
 					};

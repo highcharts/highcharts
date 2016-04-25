@@ -20,6 +20,7 @@
 		pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
+		isNumber = H.isNumber,
 		colorAxisMethods,
 		UNDEFINED;
 
@@ -191,7 +192,7 @@
 				options = series.options,
 				renderer = series.chart.renderer,
 				overshoot = options.overshoot,
-				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
+				overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
 
 			H.each(series.points, function (point) {
 				var graphic = point.graphic,
