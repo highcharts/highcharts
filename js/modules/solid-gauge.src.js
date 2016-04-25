@@ -7,13 +7,11 @@
  * License: www.highcharts.com/license
  */
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts-more/GaugeSeries.js';
+(function () {
 	'use strict';
 
 	var defaultPlotOptions = H.defaultPlotOptions,
@@ -281,4 +279,4 @@
 		}
 	});
 
-}));
+});
