@@ -7,14 +7,11 @@
  *
  * License: www.highcharts.com/license
  */
-
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Series.js';
+import '../parts/Options.js';
+(function () {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -147,4 +144,4 @@
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
 
-}));
+});
