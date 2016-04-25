@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-04-21)
+ * @license Highstock JS v4.2.4-modified (2016-04-25)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20246,7 +20246,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-04-21)
+     * Highstock JS v4.2.4-modified (2016-04-25)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21424,8 +21424,12 @@
                     topBox = mathRound(topBox) + crispCorr;
                     bottomBox = mathRound(bottomBox) + crispCorr;
 
-                    // create the path
-                    path = [
+                    // Create the path. Due to a bug in Chrome 49, the path is first instanciated
+                    // with no values, then the values pushed. For unknown reasons, instanciated
+                    // the path array with all the values would lead to a crash when updating
+                    // frequently (#5193).
+                    path = [];
+                    path.push(
                         'M',
                         crispX - halfWidth, bottomBox,
                         'L',
@@ -21443,7 +21447,7 @@
                         crispX, bottomBox,
                         'L',
                         crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
-                    ];
+                    );
 
                     if (graphic) {
                         graphic
