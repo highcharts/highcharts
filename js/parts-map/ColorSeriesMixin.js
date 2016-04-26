@@ -1,4 +1,6 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+(function () {
 	var defined = H.defined,
 		each = H.each,
 		noop = H.noop,
@@ -70,5 +72,4 @@ H.colorSeriesMixin = {
 		return ret;
 	}
 };
-	return H;
-}(Highcharts));
+}());
