@@ -6,6 +6,7 @@
 		format = H.format,
 		isNumber = H.isNumber,
 		map = H.map,
+		merge = H.merge,
 		pick = H.pick,
 		splat = H.splat,
 		stop = H.stop,
@@ -70,6 +71,11 @@ H.Tooltip.prototype = {
 
 		// Public property for getting the shared state.
 		this.shared = options.shared;
+	},
+
+	update: function (options) {
+		this.destroy();
+		this.init(this.chart, merge(true, this.options, options));
 	},
 
 	/**

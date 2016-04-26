@@ -69,7 +69,7 @@ Legend.prototype = {
 	update: function (options, redraw) { // docs. Sample created.
 		var chart = this.chart;
 
-		this.setOptions(merge(this.options, options));
+		this.setOptions(merge(true, this.options, options));
 		this.destroy();
 		chart.isDirtyLegend = chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
