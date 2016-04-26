@@ -473,7 +473,7 @@ Chart.prototype = {
 		each([
 			['title', titleOptions, chartTitleOptions],
 			['subtitle', subtitleOptions, chartSubtitleOptions]
-		], function (arr) {
+		], function (arr, i) {
 			var name = arr[0],
 				title = chart[name],
 				titleOptions = arr[1],
@@ -497,6 +497,11 @@ Chart.prototype = {
 				})
 				.css(chartTitleOptions.style)
 				.add();
+
+				// Update methods, shortcut to Chart.setTitle // docs. Sample created
+				chart[name].update = function (o) {
+					chart.setTitle(!i && o, i && o);
+				};
 			}
 		});
 		chart.layOutTitles(redraw);
