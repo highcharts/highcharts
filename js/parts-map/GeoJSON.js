@@ -205,12 +205,14 @@ H.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 
+	credits = Highcharts.merge(true, this.options.credits, credits)
+
 	// Disable credits link if map credits enabled. This to allow for in-text anchors.
 	if (this.mapCredits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, Highcharts.merge(credits, {
+	proceed.call(this, Highcharts.merge(true, credits, {
 		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
 	}));
 

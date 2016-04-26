@@ -1307,7 +1307,7 @@ Chart.prototype = {
 		chart.renderLabels();
 
 		// Credits
-		chart.addCredits(options.credits);
+		chart.addCredits();
 
 		// Set flag
 		chart.hasRendered = true;
@@ -1317,7 +1317,10 @@ Chart.prototype = {
 	/**
 	 * Show chart credits based on config options
 	 */
-	addCredits: function (credits) { // docs
+	addCredits: function (credits) { // docs. credits/credits-update example
+		var chart = this;
+
+		credits = merge(true, this.options.credits, credits);
 		if (credits.enabled && !this.credits) {
 			this.credits = this.renderer.text(
 				credits.text,
@@ -1339,6 +1342,12 @@ Chart.prototype = {
 			/*= } =*/
 			.add()
 			.align(credits.position);
+
+			// Dynamically update
+			this.credits.update = function (options) { // docs. credits/credits-update example
+				chart.credits = chart.credits.destroy();
+				chart.addCredits(options);
+			};
 		}
 	},
 
