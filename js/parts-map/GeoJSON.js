@@ -191,7 +191,7 @@ H.geojson = function (geojson, hType, series) {
 
 	});
 
-	// Create a credits text that includes map source, to be picked up in Chart.showCredits
+	// Create a credits text that includes map source, to be picked up in Chart.addCredits
 	if (series && geojson.copyrightShort) {
 		series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
 		series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
@@ -201,9 +201,9 @@ H.geojson = function (geojson, hType, series) {
 };
 
 /**
- * Override showCredits to include map source by default
+ * Override addCredits to include map source by default
  */
-wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 
 	// Disable credits link if map credits enabled. This to allow for in-text anchors.
 	if (this.mapCredits) {

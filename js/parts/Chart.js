@@ -1307,7 +1307,7 @@ Chart.prototype = {
 		chart.renderLabels();
 
 		// Credits
-		chart.showCredits(options.credits);
+		chart.addCredits(options.credits);
 
 		// Set flag
 		chart.hasRendered = true;
@@ -1317,7 +1317,7 @@ Chart.prototype = {
 	/**
 	 * Show chart credits based on config options
 	 */
-	showCredits: function (credits) {
+	addCredits: function (credits) { // docs
 		if (credits.enabled && !this.credits) {
 			this.credits = this.renderer.text(
 				credits.text,
