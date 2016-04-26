@@ -29,41 +29,52 @@ Legend.prototype = {
 	 */
 	init: function (chart, options) {
 
-		var legend = this,
-			/*= if (build.classic) { =*/
-			itemStyle = legend.itemStyle = options.itemStyle,
-			/*= } =*/
-			padding,
-			itemMarginTop = options.itemMarginTop || 0;
+		this.chart = chart;
+		
+		this.setOptions(options);
+		
+		if (options.enabled) {
+		
+			// Render it
+			this.render();
+
+			// move checkboxes
+			addEvent(this.chart, 'endResize', function () {
+				this.legend.positionCheckboxes();
+			});
+		}
+	},
+
+	setOptions: function (options) {
+
+		var padding = pick(options.padding, 8);
 
 		this.options = options;
-
-		if (!options.enabled) {
-			return;
-		}
 	
 		/*= if (build.classic) { =*/
-		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		this.itemStyle = options.itemStyle;
+		this.itemHiddenStyle = merge(this.itemStyle, options.itemHiddenStyle);
 		/*= } =*/
-		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding = pick(options.padding, 8);
-		legend.initialItemX = padding;
-		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
-		legend.maxItemWidth = 0;
-		legend.chart = chart;
-		legend.itemHeight = 0;
-		legend.symbolWidth = pick(options.symbolWidth, 16);
-		legend.pages = [];
+		this.itemMarginTop = options.itemMarginTop || 0;
+		this.padding = padding;
+		this.initialItemX = padding;
+		this.initialItemY = padding - 5; // 5 is the number of pixels above the text
+		this.maxItemWidth = 0;
+		this.itemHeight = 0;
+		this.symbolWidth = pick(options.symbolWidth, 16);
+		this.pages = [];
 
+	},
 
-		// Render it
-		legend.render();
+	update: function (options, redraw) { // docs. Sample created.
+		var chart = this.chart;
 
-		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () {
-			legend.positionCheckboxes();
-		});
-
+		this.setOptions(merge(this.options, options));
+		this.destroy();
+		chart.isDirtyLegend = chart.isDirtyBox = true;
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
 	},
 
 	/**
@@ -170,6 +181,15 @@ Legend.prototype = {
 		if (box) {
 			legend.box = box.destroy();
 		}
+
+		// Destroy items
+		each(this.getAllItems(), function (item) {
+			each(['legendItem', 'legendGroup'], function (key) {
+				if (item[key]) {
+					item[key] = item[key].destroy();
+				}
+			});
+		});
 
 		if (legendGroup) {
 			legend.group = legendGroup.destroy();
