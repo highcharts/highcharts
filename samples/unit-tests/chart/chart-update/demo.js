@@ -136,9 +136,16 @@ $(function () {
 
     });
 
-    /*
     QUnit.test('Colors update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart(
+            $('<div>').appendTo('#container')[0],
+            Highcharts.merge(config, {
+                title: {
+                    text: 'Colors update'
+                }
+            })
+        );
+
         chart.update({
             colors: ['#68266f', '#96a537', '#953255', '#679933']
         });
@@ -149,7 +156,6 @@ $(function () {
             'Color updated'
         );
     });
-    */
 
     QUnit.test('Loading update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
@@ -260,6 +266,36 @@ $(function () {
             typeof chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol'),
             'object',
             'Button is revived'
+        );
+    });
+
+    QUnit.test('Plot options update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        chart.update({
+            plotOptions: {
+                column: {
+                    colorByPoint: true
+                }
+            }
+        });
+        assert.notEqual(
+            chart.series[0].points[0].graphic.attr('fill'),
+            chart.series[0].points[1].graphic.attr('fill'),
+            'Color by point took effect'
+        );
+
+        chart.update({
+            plotOptions: {
+                column: {
+                    colorByPoint: false
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.attr('fill'),
+            chart.series[0].points[1].graphic.attr('fill'),
+            'Color by point was reset'
         );
     });
 });

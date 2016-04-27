@@ -168,7 +168,7 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * The generic chart.update function that takes the whole options stucture.
+	 * Chart.update function that takes the whole options stucture.
 	 */
 	update: function (options, redraw) {
 		var key,
@@ -176,11 +176,12 @@ extend(Chart.prototype, {
 				credits: 'addCredits',
 				title: 'setTitle',
 				subtitle: 'setSubtitle'
-			};
+			},
+			updateAllSeries;
 
 		// Some option stuctures correspond one-to-one to chart objects that have
 		// update methods, for example
-		// options.credits => chart.credtis
+		// options.credits => chart.credits
 		// options.legend => chart.legend
 		// options.title => chart.title
 		// options.tooltip => chart.tooltip
@@ -195,14 +196,25 @@ extend(Chart.prototype, {
 			}
 		}
 
-		/*
 		if (options.colors) {
 			this.options.colors = options.colors;
+			updateAllSeries = true;
+		}
+
+		if (options.plotOptions) {
+			merge(true, this.options.plotOptions, options.plotOptions);
+			updateAllSeries = true;
+		}
+
+		// Certain options require the whole series structure to be thrown away
+		// and rebuilt
+		if (updateAllSeries) {
 			each(this.series, function (series) {
-				series.isDirty = true;
+				series.update({}, false);
 			});
 		}
-		*/
+
+		// For loading, just update the options, do not redraw
 		if (options.loading) {
 			merge(true, this.options.loading, options.loading);
 		}
@@ -225,13 +237,12 @@ extend(Chart.prototype, {
 // extend the Point prototype for dynamic methods
 extend(Point.prototype, {
 	/**
-	 * Update the point with new options (typically x/y data) and optionally redraw the series.
+	 * Point.update with new options (typically x/y data) and optionally redraw the series.
 	 *
 	 * @param {Object} options Point options as defined in the series.data array
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
-	 *
 	 */
 	update: function (options, redraw, animation, runEvent) {
 		var point = this,
@@ -486,7 +497,7 @@ extend(Series.prototype, {
 	},
 
 	/**
-	 * Update the series with a new set of options
+	 * Series.update with a new set of options
 	 */
 	update: function (newOptions, redraw) {
 		var series = this,
@@ -542,7 +553,7 @@ extend(Series.prototype, {
 extend(Axis.prototype, {
 
 	/**
-	 * Update the axis with a new options structure
+	 * Axis.update with a new options structure
 	 */
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
