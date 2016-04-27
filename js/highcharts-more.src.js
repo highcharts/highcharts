@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (2016-04-15)
+ * @license Highcharts JS v4.2.4-modified (2016-04-27)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -525,6 +525,12 @@ var arrayMin = Highcharts.arrayMin,
 
         }
 
+        // Disable certain features on angular and polar axes
+        if (angular || polar) {
+            chart.inverted = false;
+            chartOptions.chart.zoomType = null;
+        }
+
         // Run prototype.init
         proceed.call(this, chart, userOptions);
 
@@ -541,11 +547,6 @@ var arrayMin = Highcharts.arrayMin,
                 axis
             );
             paneOptions = pane.options;
-
-
-            // Disable certain features on angular and polar axes
-            chart.inverted = false;
-            chartOptions.chart.zoomType = null;
 
             // Start and end angle options are
             // given in degrees relative to top, while internal computations are
