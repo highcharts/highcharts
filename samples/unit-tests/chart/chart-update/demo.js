@@ -175,7 +175,63 @@ $(function () {
         );
 
         chart.hideLoading();
-        
+
+    }
+
+    function testExporting(assert, chart) {
+        chart.update({
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        width: 36,
+                        height: 36,
+                        symbolStroke: 'blue',
+                        symbolSize: 26,
+                        symbolX: 18,
+                        symbolY: 18
+                    }
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol').getAttribute('stroke'),
+            'blue',
+            'Stroke is updated'
+        );
+
+        chart.update({
+            exporting: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol'),
+            null,
+            'Button is removed'
+        );
+
+        chart.update({
+            exporting: {
+                enabled: true,
+                buttons: {
+                    contextButton: {
+                        width: 24,
+                        height: 24,
+                        symbolStroke: 'blue',
+                        symbolSize: 14,
+                        symbolX: 12,
+                        symbolY: 12
+                    }
+                }
+            }
+        });
+
+        assert.strictEqual(
+            typeof chart.container.querySelector('.highcharts-contextbutton .highcharts-button-symbol'),
+            'object',
+            'Button is revived'
+        );
     }
 
     QUnit.test('Chart update', function (assert) {
@@ -212,6 +268,7 @@ $(function () {
         // Other option structures
         //testColors(assert, chart);
         testLoading(assert, chart);
+        testExporting(assert, chart);
     });
 
 });

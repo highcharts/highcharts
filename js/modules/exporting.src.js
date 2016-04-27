@@ -27,14 +27,14 @@ var defaultOptions = H.defaultOptions,
 	discardElement = H.discardElement,
 	css = H.css,
 	merge = H.merge,
+	pick = H.pick,
 	each = H.each,
 	extend = H.extend,
 	splat = H.splat,
 	isTouchDevice = H.isTouchDevice,
 	win = H.win;
 
-var symbols = H.Renderer.prototype.symbols,
-	buttonOffset;
+var symbols = H.Renderer.prototype.symbols;
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -675,7 +675,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = H.pick(attr.paddingLeft, 25);
+			attr.paddingLeft = pick(attr.paddingLeft, 25);
 
 		} else if (!btnOptions.text) {
 			extend(attr, {
@@ -721,10 +721,10 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: H.pick(btnOptions.x, buttonOffset) // #1654
+				x: pick(btnOptions.x, chart.buttonOffset) // #1654
 			}), true, 'spacingBox');
 
-		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+		chart.buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
 
 		chart.exportSVGElements.push(button, symbol);
 
@@ -734,7 +734,7 @@ extend(Chart.prototype, {
 	 * Destroy the buttons.
 	 */
 	destroyExport: function (e) {
-		var chart = e.target,
+		var chart = e ? e.target : this,
 			i,
 			elem;
 
@@ -762,6 +762,8 @@ extend(Chart.prototype, {
 			// Destroy the div by moving to garbage bin
 			discardElement(elem);
 		}
+		chart.exportSVGElements.length = 0;
+		chart.exportDivElements.length = 0;
 	}
 });
 
@@ -779,24 +781,45 @@ symbols.menu = function (x, y, width, height) {
 };
 
 // Add the buttons on chart load
-Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.renderExporting = function () {
 	var n,
-		exportingOptions = chart.options.exporting,
-		buttons = exportingOptions.buttons;
-
-	buttonOffset = 0;
-
-	if (exportingOptions.enabled !== false) {
+		exportingOptions = this.options.exporting,
+		buttons = exportingOptions.buttons,
+		isDirty = this.isDirtyExporting || !this.exportSVGElements;
+	
+	this.buttonOffset = 0;
+	if (this.exportSVGElements) {
+		this.destroyExport();
+	}
+	
+	if (isDirty && exportingOptions.enabled !== false) {
 
 		for (n in buttons) {
-			chart.addButton(buttons[n]);
+			this.addButton(buttons[n]);
 		}
 
-		// Destroy the export elements at chart destroy
-		addEvent(chart, 'destroy', chart.destroyExport);
+		this.isDirtyExporting = false;
 	}
 
-});
+	// Destroy the export elements at chart destroy
+	addEvent(this, 'destroy', this.destroyExport);		
+};
 
+Chart.prototype.callbacks.push(function (chart) {
+	chart.renderExporting();
+
+	addEvent(chart, 'redraw', chart.renderExporting);
+
+	chart.exporting = {
+		update: function (options, redraw) {
+			chart.isDirtyExporting = true;
+			merge(true, chart.options.exporting, options);
+			if (pick(redraw, true)) {
+				chart.redraw();
+			}
+		}
+	};
+
+});
 
 }));
