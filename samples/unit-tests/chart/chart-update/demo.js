@@ -1,7 +1,25 @@
 /* eslint func-style:0 */
 $(function () {
 
-    function testCredits(assert, chart) {
+    var config = {
+        chart: {
+            type: 'column',
+            animation: false,
+            height: 300
+        },
+
+        series: [{
+            data: [1, 3, 2, 4],
+            name: 'First'
+        }, {
+            data: [5, 3, 4, 1],
+            name: 'Last'
+        }]
+
+    };
+
+    QUnit.test('Credits update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
         chart.update({
             credits: {
@@ -36,9 +54,11 @@ $(function () {
             'Updated chart',
             'Stepwise update'
         );
-    }
+    });
 
-    function testLegend(assert, chart) {
+    QUnit.test('Legend update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
         assert.ok(
             chart.legend.group.translateX < chart.chartWidth / 2,
             'Legend is centered'
@@ -68,9 +88,10 @@ $(function () {
             'gray',
             'Text color is updated'
         );
-    }
+    });
 
-    function testTitle(assert, chart) {
+    QUnit.test('Title update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
         chart.update({
             title: {
@@ -96,9 +117,10 @@ $(function () {
             'Updated title'
         );
 
-    }
+    });
 
-    function testSubtitle(assert, chart) {
+    QUnit.test('Subtitle update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
         chart.update({
             subtitle: {
@@ -112,9 +134,11 @@ $(function () {
             'Updated subtitle'
         );
 
-    }
+    });
 
-    function testColors(assert, chart) {
+    /*
+    QUnit.test('Colors update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
         chart.update({
             colors: ['#68266f', '#96a537', '#953255', '#679933']
         });
@@ -124,9 +148,12 @@ $(function () {
             '#68266f',
             'Color updated'
         );
-    }
+    });
+    */
 
-    function testLoading(assert, chart) {
+    QUnit.test('Loading update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
         chart.update({
             loading: {
                 showDuration: 0,
@@ -176,9 +203,11 @@ $(function () {
 
         chart.hideLoading();
 
-    }
+    });
 
-    function testExporting(assert, chart) {
+    QUnit.test('Exporting update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
         chart.update({
             exporting: {
                 buttons: {
@@ -232,43 +261,5 @@ $(function () {
             'object',
             'Button is revived'
         );
-    }
-
-    QUnit.test('Chart update', function (assert) {
-        var chart = Highcharts.chart('container', {
-
-            chart: {
-                type: 'column',
-                animation: false,
-                height: 300
-            },
-
-            series: [{
-                data: [1, 3, 2, 4],
-                name: 'First'
-            }, {
-                data: [5, 3, 4, 1],
-                name: 'Last'
-            }]
-
-        });
-
-        assert.strictEqual(
-            chart.hasRendered,
-            true,
-            'Chart OK'
-        );
-
-        // One-to-one options/objects
-        testCredits(assert, chart);
-        testLegend(assert, chart);
-        testTitle(assert, chart);
-        testSubtitle(assert, chart);
-
-        // Other option structures
-        //testColors(assert, chart);
-        testLoading(assert, chart);
-        testExporting(assert, chart);
     });
-
 });
