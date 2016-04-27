@@ -169,7 +169,49 @@ extend(Chart.prototype, {
 			/*= } =*/
 		}
 		this.loadingShown = false;
+	},
+
+	/**
+	 * The generic chart.update function that takes the whole options stucture.
+	 */
+	update: function (options, redraw) {
+		var key,
+			adders = {
+				credits: 'addCredits',
+				title: 'setTitle',
+				subtitle: 'setSubtitle'
+			};
+
+		// Some option stuctures correspond one-to-one to chart objects that have
+		// update methods, for example
+		// options.credits => chart.credtis
+		// options.legend => chart.legend
+		// options.title => chart.title
+		// options.tooltip => chart.tooltip
+		// options.subtitle => chart.subtitle
+		for (key in options) {
+			if (this[key] && typeof this[key].update === 'function') {
+				this[key].update(options[key], false);
+
+			// If a one-to-one object does not exist, look for an adder function
+			} else if (typeof this[adders[key]] === 'function') {
+				this[adders[key]](options[key]);
+			}
+		}
+
+		if (pick(redraw, true)) {
+			this.redraw();
+		}
+	},
+
+	/**
+	 * Setter function to allow use from chart.update
+	 */
+	setSubtitle: function (options) {
+		this.setTitle(undefined, options);
 	}
+
+	
 });
 
 // extend the Point prototype for dynamic methods
