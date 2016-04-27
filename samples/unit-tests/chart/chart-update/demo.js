@@ -113,7 +113,7 @@ $(function () {
         );
 
     }
-    
+
     function testColors(assert, chart) {
         chart.update({
             colors: ['#68266f', '#96a537', '#953255', '#679933']
@@ -124,6 +124,58 @@ $(function () {
             '#68266f',
             'Color updated'
         );
+    }
+
+    function testLoading(assert, chart) {
+        chart.update({
+            loading: {
+                showDuration: 0,
+                style: {
+                    background: 'black'
+                },
+                labelStyle: {
+                    color: 'white'
+                }
+            }
+        });
+        chart.showLoading();
+        assert.strictEqual(
+            chart.loadingDiv.style.background,
+            'black',
+            'Background OK'
+        );
+        assert.strictEqual(
+            chart.loadingSpan.style.color,
+            'white',
+            'Font color ok'
+        );
+
+        chart.update({
+            loading: {
+                showDuration: 0,
+                style: {
+                    background: 'white'
+                },
+                labelStyle: {
+                    color: 'black'
+                }
+            }
+        });
+        chart.showLoading();
+
+        assert.strictEqual(
+            chart.loadingDiv.style.background,
+            'white',
+            'Background OK'
+        );
+        assert.strictEqual(
+            chart.loadingSpan.style.color,
+            'black',
+            'Font color ok'
+        );
+
+        chart.hideLoading();
+        
     }
 
     QUnit.test('Chart update', function (assert) {
@@ -159,6 +211,7 @@ $(function () {
 
         // Other option structures
         //testColors(assert, chart);
+        testLoading(assert, chart);
     });
 
 });

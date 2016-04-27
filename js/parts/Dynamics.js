@@ -96,28 +96,18 @@ extend(Chart.prototype, {
 						height: chart.plotHeight + 'px'
 					});
 				}
-			},
-			style,
-			labelStyle;
-
-		/*= if (build.classic) { =*/
-		style = extend(loadingOptions.style, {
-			zIndex: 10,
-			display: 'none'
-		});
-		labelStyle = loadingOptions.labelStyle;
-		/*= } =*/
+			};
 
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: 'highcharts-loading highcharts-loading-hidden'
-			}, style, chart.container);
+			}, null, chart.container);
 
 			chart.loadingSpan = createElement(
 				'span',
 				{ className: 'highcharts-loading-inner' },
-				labelStyle,
+				null,
 				loadingDiv
 			);
 			addEvent(chart, 'redraw', setLoadingSize); // #1080
@@ -126,18 +116,24 @@ extend(Chart.prototype, {
 			loadingDiv.className = 'highcharts-loading';
 		});
 
-		// update text
+		// Update text
 		chart.loadingSpan.innerHTML = str || options.lang.loading;
 
 		/*= if (build.classic) { =*/
-		// show it
+		// Update visuals
+		css(loadingDiv, extend(loadingOptions.style, {
+			zIndex: 10
+		}));
+		css(chart.loadingSpan, loadingOptions.labelStyle);
+
+		// Show it
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
 				display: ''
 			});
 			animate(loadingDiv, {
-				opacity: style.opacity || 0.5
+				opacity: loadingOptions.style.opacity || 0.5
 			}, {
 				duration: loadingOptions.showDuration || 0
 			});
@@ -207,6 +203,9 @@ extend(Chart.prototype, {
 			});
 		}
 		*/
+		if (options.loading) {
+			merge(true, this.options.loading, options.loading);
+		}
 
 		if (pick(redraw, true)) {
 			this.redraw();
