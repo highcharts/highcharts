@@ -1294,7 +1294,7 @@
          * from the mapData are used, and those that don't correspond to a data value
          * are given null values.
          */
-        setData: function (data, redraw) {
+        setData: function (data, redraw, animation, updatePoints) {
             var options = this.options,
                 mapData = options.mapData,
                 joinBy = options.joinBy,
@@ -1381,13 +1381,14 @@
                     each(mapData, function (mapPoint) {
                         if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
                             data.push(merge(mapPoint, { value: null }));
+                            updatePoints = false; // #5050 - adding all areas causes the update optimization of setData to kick in, even though the point order has changed
                         }
                     });
                 } else {
                     this.getBox(dataUsed); // Issue #4784
                 }
             }
-            Series.prototype.setData.call(this, data, redraw);
+            Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
         },
 
 
