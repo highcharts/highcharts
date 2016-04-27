@@ -199,6 +199,15 @@ extend(Chart.prototype, {
 			}
 		}
 
+		/*
+		if (options.colors) {
+			this.options.colors = options.colors;
+			each(this.series, function (series) {
+				series.isDirty = true;
+			});
+		}
+		*/
+
 		if (pick(redraw, true)) {
 			this.redraw();
 		}

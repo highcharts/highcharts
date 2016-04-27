@@ -113,6 +113,18 @@ $(function () {
         );
 
     }
+    
+    function testColors(assert, chart) {
+        chart.update({
+            colors: ['#68266f', '#96a537', '#953255', '#679933']
+        });
+
+        assert.strictEqual(
+            chart.series[0].color,
+            '#68266f',
+            'Color updated'
+        );
+    }
 
     QUnit.test('Chart update', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -139,11 +151,14 @@ $(function () {
             'Chart OK'
         );
 
+        // One-to-one options/objects
         testCredits(assert, chart);
         testLegend(assert, chart);
         testTitle(assert, chart);
         testSubtitle(assert, chart);
 
+        // Other option structures
+        //testColors(assert, chart);
     });
 
 });
