@@ -788,7 +788,7 @@ Chart.prototype.renderExporting = function () {
 		isDirty = this.isDirtyExporting || !this.exportSVGElements;
 	
 	this.buttonOffset = 0;
-	if (this.exportSVGElements) {
+	if (this.isDirtyExporting) {
 		this.destroyExport();
 	}
 	
@@ -806,20 +806,29 @@ Chart.prototype.renderExporting = function () {
 };
 
 Chart.prototype.callbacks.push(function (chart) {
+
+	function update(prop, options, redraw) {
+		chart.isDirtyExporting = true;
+		merge(true, chart.options[prop], options);
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+
+	}
+
 	chart.renderExporting();
 
 	addEvent(chart, 'redraw', chart.renderExporting);
 
-	chart.exporting = {
-		update: function (options, redraw) {
-			chart.isDirtyExporting = true;
-			merge(true, chart.options.exporting, options);
-			if (pick(redraw, true)) {
-				chart.redraw();
+	// Add update methods to handle chart.update and chart.exporting.update
+	// and chart.navigation.update.
+	each(['exporting', 'navigation'], function (prop) {
+		chart[prop] = {
+			update: function (options, redraw) {
+				update(prop, options, redraw);
 			}
-		}
-	};
-
+		};
+	});
 });
 
 }));
