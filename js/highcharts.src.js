@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (2016-04-27)
+ * @license Highcharts JS v4.2.4-modified (2016-04-28)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -9201,6 +9201,7 @@
                         });
                 } else {
                     attribs = {
+                        'pointer-events': 'none', // #5259
                         'stroke-width': strokeWidth,
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
                         zIndex: pick(options.zIndex, 2)
