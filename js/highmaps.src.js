@@ -19650,7 +19650,7 @@
         animate: noop,
         getBox: noop,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
+        alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
         getExtremes: function () {
             // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.valueData);
