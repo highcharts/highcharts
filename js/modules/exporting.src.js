@@ -105,6 +105,7 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	//width: undefined,
+	printMaxWidth: 780, // docs
 	//scale: 2
 	buttons: {
 		contextButton: {
@@ -425,7 +426,11 @@ extend(Chart.prototype, {
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
-			childNodes = body.childNodes;
+			childNodes = body.childNodes,
+			printMaxWidth = chart.options.exporting.printMaxWidth,
+			hasUserSize,
+			resetParams,
+			handleMaxWidth;
 
 		if (chart.isPrinting) { // block the button while in printing mode
 			return;
@@ -435,6 +440,14 @@ extend(Chart.prototype, {
 		chart.pointer.reset(null, 0);
 
 		fireEvent(chart, 'beforePrint');
+
+		// Handle printMaxWidth
+		handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+		if (handleMaxWidth) {
+			hasUserSize = chart.hasUserSize;
+			resetParams = [chart.chartWidth, chart.chartHeight, false];
+			chart.setSize(printMaxWidth, chart.chartHeight, false);
+		}
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -465,6 +478,12 @@ extend(Chart.prototype, {
 			});
 
 			chart.isPrinting = false;
+
+			// Reset printMaxWidth
+			if (handleMaxWidth) {
+				chart.setSize.apply(chart, resetParams);
+				chart.hasUserSize = hasUserSize;
+			}
 
 			fireEvent(chart, 'afterPrint');
 
