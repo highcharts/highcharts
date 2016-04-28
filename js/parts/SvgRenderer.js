@@ -1470,7 +1470,7 @@ SVGRenderer.prototype = {
 				var spans,
 					spanNo = 0;
 
-				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||').replace(/^\s+|\s+$/g, '');
 				spans = line.split('|||');
 
 				each(spans, function buildTextSpans(span) {
@@ -1532,7 +1532,7 @@ SVGRenderer.prototype = {
 
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
-								var words = span.replace(/([^\^])-/g, '$1- ').replace(/^\s+|\s+$/g, '').split(' '), // #1273
+								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									wasTooLong,
