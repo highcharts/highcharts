@@ -3529,10 +3529,10 @@
                 }
 
 
-                // remove empty line at end
-                if (lines[lines.length - 1] === '') {
-                    lines.pop();
-                }
+                // Trim empty lines (#5261)
+                lines = grep(lines, function (line) {
+                    return line !== '';
+                });
 
 
                 // build the lines
