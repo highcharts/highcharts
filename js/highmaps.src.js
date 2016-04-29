@@ -13826,7 +13826,7 @@
                 i,
                 j;
 
-            yData = yData || this.stackedYData || this.processedYData;
+            yData = yData || this.stackedYData || this.processedYData || [];
             yDataLength = yData.length;
 
             for (i = 0; i < yDataLength; i++) {
