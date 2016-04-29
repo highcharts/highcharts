@@ -101,6 +101,7 @@ extend(defaultOptions, {
 		barBorderRadius: 0,
 		barBorderWidth: 1,
 		barBorderColor: '#bfc8d1',
+		showButtons: true,
 		buttonArrowColor: '#666',
 		buttonBackgroundColor: '#ebe7e8',
 		buttonBorderColor: '#bbb',
@@ -315,7 +316,11 @@ Scroller.prototype = {
 		);
 		scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
 		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
-		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		if (scrollbarOptions.showButtons) {
+			scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		} else {
+			scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth;
+		}
 
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
@@ -460,8 +465,10 @@ Scroller.prototype = {
 		if (scrollbarEnabled && scrollbarGroup) {
 
 			// draw the buttons
-			scroller.drawScrollbarButton(0);
-			scroller.drawScrollbarButton(1);
+			if (scrollbarOptions.showButtons) {
+				scroller.drawScrollbarButton(0);
+				scroller.drawScrollbarButton(1);
+			}
 
 			scrollbarGroup[verb]({
 				translateX: scrollerLeft,
@@ -472,8 +479,12 @@ Scroller.prototype = {
 				width: scrollerWidth
 			});
 
-			// prevent the scrollbar from drawing to small (#1246)
-			scrX = scrollbarHeight + zoomedMin;
+			// prevent the scrollbar from drawing too small (#1246)
+			if (scrollbarOptions.showButtons) {
+				scrX = scrollbarHeight + zoomedMin;
+			} else {
+				scrX = zoomedMin;
+			}
 			scrWidth = range - scrollbarStrokeWidth;
 			if (scrWidth < scrollbarMinWidth) {
 				scrollbarPad = (scrollbarMinWidth - scrWidth) / 2;
