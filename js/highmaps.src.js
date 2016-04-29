@@ -10522,10 +10522,10 @@
                     // moved, and cancelling on small distances. #3450.
                     if (e.type === 'touchmove') {
                         pinchDown = this.pinchDown;
-                        hasMoved = Math.sqrt(
+                        hasMoved = pinchDown[0] ? Math.sqrt( // #5266
                             Math.pow(pinchDown[0].chartX - e.chartX, 2) +
                             Math.pow(pinchDown[0].chartY - e.chartY, 2)
-                        ) >= 4;
+                        ) >= 4 : false;
                     }
 
                     if (pick(hasMoved, true)) {
