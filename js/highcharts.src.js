@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (2016-04-28)
+ * @license Highcharts JS v4.2.4-modified (2016-04-29)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3539,8 +3539,10 @@
                 each(lines, function buildTextLines(line, lineNo) {
                     var spans,
                         spanNo = 0;
-
-                    line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+                    line = line
+                        .replace(/^\s+|\s+$/g, '') // Trim to prevent useless/costly process on the spaces (#5258)
+                        .replace(/<span/g, '|||<span')
+                        .replace(/<\/span>/g, '</span>|||');
                     spans = line.split('|||');
 
                     each(spans, function buildTextSpans(span) {

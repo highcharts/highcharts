@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-04-28)
+ * @license Highstock JS v4.2.4-modified (2016-04-29)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3539,8 +3539,10 @@
                 each(lines, function buildTextLines(line, lineNo) {
                     var spans,
                         spanNo = 0;
-
-                    line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+                    line = line
+                        .replace(/^\s+|\s+$/g, '') // Trim to prevent useless/costly process on the spaces (#5258)
+                        .replace(/<span/g, '|||<span')
+                        .replace(/<\/span>/g, '</span>|||');
                     spans = line.split('|||');
 
                     each(spans, function buildTextSpans(span) {
@@ -20258,7 +20260,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-04-28)
+     * Highstock JS v4.2.4-modified (2016-04-29)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
