@@ -11,6 +11,7 @@ var addEvent = H.addEvent,
 	destroyObjectProperties = H.destroyObjectProperties,
 	doc = H.doc,
 	each = H.each,
+	erase = H.erase,
 	error = H.error,
 	extend = H.extend,
 	grep = H.grep,
@@ -162,32 +163,7 @@ extend(defaultOptions, {
  * @param {Object} chart
  */
 function Scroller(chart) {
-	var chartOptions = chart.options,
-		navigatorOptions = chartOptions.navigator,
-		navigatorEnabled = navigatorOptions.enabled,
-		scrollbarOptions = chartOptions.scrollbar,
-		scrollbarEnabled = scrollbarOptions.enabled,
-		height = navigatorEnabled ? navigatorOptions.height : 0,
-		scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
-
-
-	this.handles = [];
-	this.scrollbarButtons = [];
-	this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
-
-	this.chart = chart;
-	this.setBaseSeries();
-
-	this.height = height;
-	this.scrollbarHeight = scrollbarHeight;
-	this.scrollbarEnabled = scrollbarEnabled;
-	this.navigatorEnabled = navigatorEnabled;
-	this.navigatorOptions = navigatorOptions;
-	this.scrollbarOptions = scrollbarOptions;
-	this.outlineHeight = height + scrollbarHeight;
-
-	// Run scroller
-	this.init();
+	this.init(chart);
 }
 
 Scroller.prototype = {
@@ -667,7 +643,32 @@ Scroller.prototype = {
 	/**
 	 * Initiate the Scroller object
 	 */
-	init: function () {
+	init: function (chart) {
+
+
+		var chartOptions = chart.options,
+			navigatorOptions = chartOptions.navigator,
+			navigatorEnabled = navigatorOptions.enabled,
+			scrollbarOptions = chartOptions.scrollbar,
+			scrollbarEnabled = scrollbarOptions.enabled,
+			height = navigatorEnabled ? navigatorOptions.height : 0,
+			scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
+
+		this.handles = [];
+		this.scrollbarButtons = [];
+		this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
+
+		this.chart = chart;
+		this.setBaseSeries();
+
+		this.height = height;
+		this.scrollbarHeight = scrollbarHeight;
+		this.scrollbarEnabled = scrollbarEnabled;
+		this.navigatorEnabled = navigatorEnabled;
+		this.navigatorOptions = navigatorOptions;
+		this.scrollbarOptions = scrollbarOptions;
+		this.outlineHeight = height + scrollbarHeight;
+
 		var scroller = this,
 			chart = scroller.chart,
 			xAxis,
@@ -678,7 +679,6 @@ Scroller.prototype = {
 			top = scroller.top,
 			dragOffset,
 			baseSeries = scroller.baseSeries;
-
 		/**
 		 * Event handler for the mouse down event.
 		 */
@@ -1158,6 +1158,15 @@ Scroller.prototype = {
 	},
 
 	/**
+	 * Dynamic update
+	 */
+	update: function (options) {
+		merge(true, this.chart.options.navigator, options);
+		this.destroy();
+		this.init(this.chart);
+	},
+
+	/**
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
@@ -1166,13 +1175,21 @@ Scroller.prototype = {
 		// Disconnect events added in addEvents
 		scroller.removeEvents();
 
+		if (this.xAxis) {
+			erase(this.chart.axes, this.xAxis);
+		}
+		if (this.yAxis) {
+			erase(this.chart.axes, this.yAxis);
+		}
+
 		// Destroy properties
-		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
-			if (prop && prop.destroy) {
-				prop.destroy();
+		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
+			if (scroller[prop] && scroller[prop].destroy) {
+				scroller[prop] = scroller[prop].destroy();
 			}
 		});
-		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = scroller.scrollbarTrack = scroller.scrollbarRifles = scroller.scrollbarGroup = scroller.scrollbar = null;
+		scroller.rendered = null;
 
 		// Destroy elements in collection
 		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
@@ -1232,7 +1249,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
 		if (options.navigator.enabled || options.scrollbar.enabled) {
-			this.scroller = new Scroller(this);
+			this.scroller = this.navigator = new Scroller(this);
 		}
 	});
 

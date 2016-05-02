@@ -196,10 +196,12 @@ extend(Chart.prototype, {
 			}
 		}
 
+		/*= if (build.classic) { =*/
 		if (options.colors) {
 			this.options.colors = options.colors;
 			updateAllSeries = true;
 		}
+		/*= } =*/
 
 		if (options.plotOptions) {
 			merge(true, this.options.plotOptions, options.plotOptions);

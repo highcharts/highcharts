@@ -298,4 +298,41 @@ $(function () {
             'Color by point was reset'
         );
     });
+
+    QUnit.test('Navigator update', function (assert) {
+        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], config);
+
+        assert.strictEqual(
+            typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
+            'number',
+            'Height is valid'
+        );
+        assert.ok(
+            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height < 60,
+            'Height is 40'
+        );
+
+        chart.update({
+            navigator: {
+                height: 100
+            }
+        });
+
+        assert.ok(
+            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height > 60,
+            'Height is updated'
+        );
+
+        chart.update({
+            navigator: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-navigator'),
+            null,
+            'Navigator element is missing'
+        );
+    });
 });
