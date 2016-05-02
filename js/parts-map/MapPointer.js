@@ -12,7 +12,7 @@ extend(Pointer.prototype, {
 		e = this.normalize(e);
 
 		if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
-			if (chart.pointer.inClass(e.target, 'highcharts-tracker')) {
+			if (chart.pointer.inClass(e.target, 'highcharts-tracker') && chart.hoverPoint) {
 				chart.hoverPoint.zoomTo();
 			}
 		} else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
