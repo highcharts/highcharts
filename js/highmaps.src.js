@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.4-modified (2016-04-29)
+ * @license Highmaps JS v4.2.4-modified (2016-05-02)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -9831,7 +9831,7 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-            each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
                 each(chart.axes, function (axis) {
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
                     if (!point || point.series[axis.coll] === axis) {
