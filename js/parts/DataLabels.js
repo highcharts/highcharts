@@ -506,6 +506,28 @@ if (seriesTypes.pie) {
 						}
 					}
 
+					// move labels to other slot if it overflows for fixed size pie chart
+					if (options.overflow === 'crawlUp' &&
+						options.size !== null) {
+						var getSlotWidth = function (index, left) {
+							var xPos = series.getX(slots[index], left);
+							return left ? xPos :
+							chart.chartWidth - (xPos + 2 + distanceOption + point.dataLabel.padding + (options.connectorPadding || 5));
+						}
+						var slotWidth = getSlotWidth(slotIndex, i);
+						var labelWidth = point.dataLabel.width - 10;
+
+						if (slotWidth < labelWidth) {
+							var direction = (centerY >= slots[slotIndex]) ? -1 : 1;
+							while (slots[slotIndex + direction] !== null &&
+							slotWidth < labelWidth) {
+								slotIndex += direction;
+								slotWidth = getSlotWidth(slotIndex, i);
+							}
+							point.dataLabel.crawled = true;
+						}
+					}
+
 					usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
 					slots[slotIndex] = null; // mark as taken
 				}
@@ -531,8 +553,9 @@ if (seriesTypes.pie) {
 					// if the slot next to currrent slot is free, the y value is allowed
 					// to fall back to the natural position
 					y = slot.y;
-					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
-							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
+					if (!dataLabel.crawled &&
+							((naturalY > y && slots[slotIndex + 1] !== null) ||
+							(naturalY < y &&  slots[slotIndex - 1] !== null))) {
 						y = mathMin(mathMax(0, naturalY), chart.plotHeight);
 					}
 
