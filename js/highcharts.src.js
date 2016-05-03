@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (2016-05-02)
+ * @license Highcharts JS v4.2.4-modified (2016-05-03)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -18040,11 +18040,11 @@
                 rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
                 alignAttr = {
                     x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-                    y: alignTo.y + options.y + alignTo.height / 2
+                    y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
                 };
                 dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
                     .attr({ // #3003
-                        align: options.align
+                        align: align
                     });
 
                 // Compensate for the rotated label sticking out on the sides
