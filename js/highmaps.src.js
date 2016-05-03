@@ -17976,7 +17976,7 @@
                     data = data || [];            
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + dataUsed.map(function (point) { 
+                    dataUsed = '|' + map(dataUsed, function (point) { 
                         return point[joinBy[0]]; 
                     }).join('|') + '|'; // String search is faster than array.indexOf
                 

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.4-modified (2016-05-02)
+ * @license Highmaps JS v4.2.4-modified (2016-05-03)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -38,6 +38,7 @@
         extend = Highcharts.extend,
         extendClass = Highcharts.extendClass,
         format = Highcharts.format,
+        map = Highcharts.map,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         defaultOptions = Highcharts.getOptions(),
@@ -1371,7 +1372,7 @@
                     data = data || [];            
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + dataUsed.map(function (point) { 
+                    dataUsed = '|' + map(dataUsed, function (point) { 
                         return point[joinBy[0]]; 
                     }).join('|') + '|'; // String search is faster than array.indexOf
                 
