@@ -462,8 +462,8 @@ Chart.prototype = {
 				.css(chartTitleOptions.style)
 				.add();
 
-				chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 44); // docs
-				chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 44); // docs // 44 makes room for default context button
+				chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
+				chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
 			
 			}
 		});

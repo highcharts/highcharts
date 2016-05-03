@@ -121,18 +121,21 @@ $(function () {
             chart.series[0].points[0].dataLabel.element.getAttribute('y') > 0,
             'Labels are visible'
         );
-        assert.strictEqual(
-            Math.round(chart.series[0].points[0].dataLabel.element.getBoundingClientRect().top),
-            Math.round(chart.series[0].points[0].graphic.element.getBoundingClientRect().top),
+        assert.ok(
+            Math.abs(
+                Math.round(chart.series[0].points[0].dataLabel.element.getBoundingClientRect().top) -
+                Math.round(chart.series[0].points[0].graphic.element.getBoundingClientRect().top)
+            ) < 5,
             'Label is top aligned to element'
         );
-        assert.strictEqual(
-            Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top),
-            Math.round(chart.series[0].points[1].graphic.element.getBoundingClientRect().top),
+        assert.ok(
+            Math.abs(
+                Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top) - 
+                Math.round(chart.series[0].points[1].graphic.element.getBoundingClientRect().top)
+            ) < 5,
             'Label is top aligned to element'
         );
 
     });
 
-    
 });
