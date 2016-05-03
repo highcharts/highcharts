@@ -36,7 +36,7 @@ Chart.prototype.callbacks.push(function (chart) {
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 		}
 		if (rangeSelector) {
-			removeEvent(chart, 'resize', renderRangeSelector);
+			removeEvent(chart, 'redraw', renderRangeSelector);
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
 		}
 	}
@@ -63,7 +63,7 @@ Chart.prototype.callbacks.push(function (chart) {
 		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
 
 		// redraw the scroller chart resize
-		addEvent(chart, 'resize', renderRangeSelector);
+		addEvent(chart, 'redraw', renderRangeSelector);
 
 		// do it now
 		renderRangeSelector();

@@ -251,7 +251,6 @@ RangeSelector.prototype = {
 	 * Initialize the range selector
 	 */
 	init: function (chart) {
-
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
@@ -617,6 +616,9 @@ RangeSelector.prototype = {
 			buttonBBox,
 			rendered = rangeSelector.rendered;
 
+		if (options.enabled === false) {
+			return;
+		}
 
 		// create the elements
 		if (!rendered) {
@@ -711,6 +713,16 @@ RangeSelector.prototype = {
 	},
 
 	/**
+	 * Update the range selector with new options
+	 */
+	update: function (options) {
+		var chart = this.chart;
+		merge(true, chart.options.rangeSelector, options);
+		this.destroy();
+		this.init(chart);
+	},
+
+	/**
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
@@ -743,7 +755,9 @@ RangeSelector.prototype = {
 					discardElement(this[key]);
 				}
 			}
-			this[key] = null;
+			if (this[key] !== RangeSelector.prototype[key]) {
+				this[key] = null;
+			}
 		}
 	}
 };
