@@ -258,7 +258,7 @@
 					(point.value !== undefined ? point.value : point.y);
 			}
 
-			return (point.index + 1) + '. ' + infoString + (point.description ? '. ' + point.description : '') + '.';
+			return (point.index + 1) + '. ' + (point.description ? point.description + '. ' : '') + infoString + '.';
 		}
 
 		// Return string with information about series

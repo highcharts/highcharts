@@ -47,7 +47,8 @@ $(function () {
                 name: 'JAWS',
                 y: 30.2,
                 website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
-                color: 'url(#highcharts-default-pattern-0)'
+                color: 'url(#highcharts-default-pattern-0)',
+                description: 'Test description'
             }, {
                 name: 'ZoomText',
                 y: 22.2,
