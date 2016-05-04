@@ -25,7 +25,7 @@ jQuery(function () {
         });
 
         assert.ok(
-            document.querySelector('#container .highcharts-data-labels g text').getAttribute('style').indexOf('fill:blue') > -1,
+            document.querySelector('#container .highcharts-data-labels g text').getAttribute('style').indexOf('blue') > -1,
             'Blue text initially'
         );
 
@@ -44,7 +44,7 @@ jQuery(function () {
             }
         });
         assert.ok(
-            document.querySelector('#output .highcharts-data-labels g text').getAttribute('style').indexOf('fill:red') > -1,
+            document.querySelector('#output .highcharts-data-labels g text').getAttribute('style').indexOf('red') > -1,
             'Red text in export'
         );
 
