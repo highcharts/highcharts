@@ -574,7 +574,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
 		// set.
 		if (!supportsVectorEffect) {
-			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
+			series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
