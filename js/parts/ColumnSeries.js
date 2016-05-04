@@ -289,7 +289,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic,
 				borderAttr;
 
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				borderAttr = defined(series.borderWidth) ? {

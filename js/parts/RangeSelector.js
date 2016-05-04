@@ -121,7 +121,7 @@ RangeSelector.prototype = {
 					dataMax: dataMax
 				};
 				newMin = baseAxis.minFromRange.call(ctx);
-				if (typeof ctx.newMax === 'number') {
+				if (isNumber(ctx.newMax)) {
 					newMax = ctx.newMax;
 				}
 			}
@@ -459,12 +459,12 @@ RangeSelector.prototype = {
 				input.previousValue = value;
 				// If the value isn't parsed directly to a value by the browser's Date.parse method,
 				// like YYYY-MM-DD in IE, try parsing it a different way
-				if (isNaN(value)) {
+				if (!isNumber(value)) {
 					value = inputValue.split('-');
 					value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
 				}
 
-				if (!isNaN(value)) {
+				if (isNumber(value)) {
 
 					// Correct for timezone offset (#433)
 					if (!defaultOptions.global.useUTC) {
@@ -767,7 +767,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 			newMax = newMin + fixedRange;
 		}
 	}
-	if (isNaN(newMin)) { // #1195
+	if (!isNumber(newMin)) { // #1195
 		newMin = newMax = undefined;
 	}
 
@@ -792,7 +792,7 @@ Axis.prototype.minFromRange = function () {
 			return date.getTime() - base;
 		};
 
-	if (typeof rangeOptions === 'number') {
+	if (isNumber(rangeOptions)) {
 		min = this.max - rangeOptions;
 		range = rangeOptions;
 	} else {
@@ -800,7 +800,7 @@ Axis.prototype.minFromRange = function () {
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
-	if (isNaN(min)) {
+	if (!isNumber(min)) {
 		min = dataMin;
 	}
 	if (min <= dataMin) {
@@ -810,7 +810,7 @@ Axis.prototype.minFromRange = function () {
 		}
 		this.newMax = mathMin(min + range, this.dataMax);
 	}
-	if (isNaN(max)) {
+	if (!isNumber(max)) {
 		min = undefined;
 	}
 	return min;

@@ -459,9 +459,9 @@ Axis.prototype = {
 					xData = series.xData;
 					if (xData.length) {
 						// If xData contains values which is not numbers, then filter them out
-						if (!(typeof arrayMin(xData) === 'number' && !isNaN(arrayMin(xData)))) {
+						if (!isNumber(xData)) {
 							xData = grep(xData, function (x) {
-								return typeof x === 'number' && !isNaN(x);
+								return isNumber(x);
 							});
 						}
 						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
@@ -611,8 +611,7 @@ Axis.prototype = {
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
 		y1 = y2 = mathRound(cHeight - translatedValue - transB);
-
-		if (isNaN(translatedValue)) { // no min or max
+		if (!isNumber(translatedValue)) { // no min or max
 			skip = true;
 
 		} else if (axis.horiz) {
@@ -2030,7 +2029,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && isNumber(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
 			from,

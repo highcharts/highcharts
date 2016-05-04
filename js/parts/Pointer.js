@@ -171,7 +171,7 @@ Pointer.prototype = {
 				if (p) {
 					// Store both closest points, using point.dist and point.distX comparisons (#4645):
 					each(['dist', 'distX'], function (dist, k) {
-						if (typeof p[dist] === 'number') {
+						if (isNumber(p[dist])) {
 							var
 								// It is closer than the reference point
 								isCloser = p[dist] < distance[k],

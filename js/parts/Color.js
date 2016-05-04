@@ -84,7 +84,7 @@ Color.prototype = {
 			});
 
 		// it's NaN if gradient colors on a column chart
-		} else if (rgba && !isNaN(rgba[0])) {
+		} else if (rgba && isNumber(rgba[0])) {
 			if (format === 'rgb' || (!format && rgba[3] === 1)) {
 				ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
 			} else if (format === 'a') {

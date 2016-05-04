@@ -75,7 +75,7 @@ Point.prototype = {
 			i = 0,
 			j = 0;
 
-		if (typeof options === 'number' || options === null) {
+		if (isNumber(options) || options === null) {
 			ret[pointArrayMap[0]] = options;
 
 		} else if (isArray(options)) {

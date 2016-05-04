@@ -9,7 +9,7 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 	// a global utility method.
 	numExt = function (extreme) {
 		var numbers = grep(arguments, function (n) {
-			return typeof n === 'number';
+			return isNumber(n);
 		});
 		if (numbers.length) {
 			return Math[extreme].apply(0, numbers);
@@ -304,8 +304,7 @@ Scroller.prototype = {
 			verb;
 
 		// Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
-		if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
-				(scroller.hasDragged && !defined(pxMin))) {
+		if (!isNumber(min) || !isNumber(max) ||	(scroller.hasDragged && !defined(pxMin))) {
 			return;
 		}
 
@@ -320,7 +319,7 @@ Scroller.prototype = {
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-		if (isNaN(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
+		if (!isNumber(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		}
@@ -1073,7 +1072,7 @@ Scroller.prototype = {
 
 		// Update the extremes
 		if (hasSetExtremes && (stickToMin || stickToMax)) {
-			if (!isNaN(newMin)) {
+			if (isNumber(newMin)) {
 				baseXAxis.min = baseXAxis.userMin = newMin;
 				baseXAxis.max = baseXAxis.userMax = newMax;
 			}

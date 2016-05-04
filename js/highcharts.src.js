@@ -175,7 +175,7 @@
                 while (i--) {
                     startVal = parseFloat(start[i]);
                     ret[i] =
-                        isNaN(startVal) ? // a letter instruction like M or L
+                        !isNumber(startVal) ? // a letter instruction like M or L
                                 start[i] :
                                 now * (parseFloat(end[i] - startVal)) + startVal;
 
@@ -482,8 +482,8 @@
      * Check for number
      * @param {Object} n
      */
-    function isNumber(n) {
-        return typeof n === 'number';
+    var isNumber = Highcharts.isNumber = function isNumber(n) {
+        return typeof n === 'number' && !isNaN(n);
     }
 
     /**
@@ -676,7 +676,7 @@
      * @param {Boolean} capitalize
      */
     dateFormat = function (format, timestamp, capitalize) {
-        if (!defined(timestamp) || isNaN(timestamp)) {
+        if (!isNumber(timestamp)) {
             return defaultOptions.lang.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
@@ -1019,6 +1019,7 @@
     Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
         number = +number || 0;
+        decimals = +decimals;
 
         var lang = defaultOptions.lang,
             origDec = (number.toString().split('.')[1] || '').length,
@@ -1030,7 +1031,7 @@
 
         if (decimals === -1) {
             decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
-        } else if (isNaN(decimals)) {
+        } else if (!isNumber(decimals)) {
             decimals = 2;
         }
 
@@ -1055,7 +1056,7 @@
         ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
         // Add the decimal point and the decimal component
-        if (+decimals) {
+        if (decimals) {
             // Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
             decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
             ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
@@ -2018,7 +2019,7 @@
                 });
 
             // it's NaN if gradient colors on a column chart
-            } else if (rgba && !isNaN(rgba[0])) {
+            } else if (rgba && isNumber(rgba[0])) {
                 if (format === 'rgb' || (!format && rgba[3] === 1)) {
                     ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
                 } else if (format === 'a') {
@@ -6584,7 +6585,7 @@
             }
 
             // the label is created on init - now move it into place
-            if (label && !isNaN(x)) {
+            if (label && isNumber(x)) {
                 label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
                 // Apply show first and show last. If the tick is both first and last, it is
@@ -6605,7 +6606,7 @@
                 }
 
                 // Set the new position, and show or hide
-                if (show && !isNaN(xy.y)) {
+                if (show && isNumber(xy.y)) {
                     xy.opacity = opacity;
                     label[tick.isNew ? 'attr' : 'animate'](xy);
                     tick.isNew = false;
@@ -7356,9 +7357,9 @@
                         xData = series.xData;
                         if (xData.length) {
                             // If xData contains values which is not numbers, then filter them out
-                            if (!(typeof arrayMin(xData) === 'number' && !isNaN(arrayMin(xData)))) {
+                            if (!isNumber(xData)) {
                                 xData = grep(xData, function (x) {
-                                    return typeof x === 'number' && !isNaN(x);
+                                    return isNumber(x);
                                 });
                             }
                             axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
@@ -7508,8 +7509,7 @@
             translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
             x1 = x2 = mathRound(translatedValue + transB);
             y1 = y2 = mathRound(cHeight - translatedValue - transB);
-
-            if (isNaN(translatedValue)) { // no min or max
+            if (!isNumber(translatedValue)) { // no min or max
                 skip = true;
 
             } else if (axis.horiz) {
@@ -8927,7 +8927,7 @@
                 lineWidth = options.lineWidth,
                 linePath,
                 hasRendered = chart.hasRendered,
-                slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+                slideInTicks = hasRendered && isNumber(axis.oldMin),
                 showAxis = axis.showAxis,
                 animation = animObject(renderer.globalAnimation),
                 from,
@@ -10259,7 +10259,7 @@
                     if (p) {
                         // Store both closest points, using point.dist and point.distX comparisons (#4645):
                         each(['dist', 'distX'], function (dist, k) {
-                            if (typeof p[dist] === 'number') {
+                            if (isNumber(p[dist])) {
                                 var
                                     // It is closer than the reference point
                                     isCloser = p[dist] < distance[k],
@@ -12578,7 +12578,7 @@
             // attribute and the SVG contents, but not an interactive chart. So in this case,
             // charts[oldChartIndex] will point to the wrong chart if any (#2609).
             oldChartIndex = pInt(attr(renderTo, indexAttrName));
-            if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
+            if (isNumber(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
                 charts[oldChartIndex].destroy();
             }
 
@@ -13530,7 +13530,7 @@
                 i = 0,
                 j = 0;
 
-            if (typeof options === 'number' || options === null) {
+            if (isNumber(options) || options === null) {
                 ret[pointArrayMap[0]] = options;
 
             } else if (isArray(options)) {
@@ -13860,7 +13860,7 @@
         updateParallelArrays: function (point, i) {
             var series = point.series,
                 args = arguments,
-                fn = typeof i === 'number' ?
+                fn = isNumber(i) ?
                     // Insert the value in the given position
                     function (key) {
                         var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
@@ -14666,7 +14666,7 @@
                     isInside = point.isInside;
 
                     // only draw the point if y is defined
-                    if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+                    if (enabled && isNumber(plotY) && point.y !== null) {
 
                         // shortcuts
                         pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
@@ -17245,7 +17245,7 @@
                     graphic = point.graphic,
                     borderAttr;
 
-                if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+                if (isNumber(plotY) && point.y !== null) {
                     shapeArgs = point.shapeArgs;
 
                     borderAttr = defined(series.borderWidth) ? {
@@ -18284,7 +18284,7 @@
                         var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
                             slotY = pos + chart.plotTop;
 
-                        if (!isNaN(slotX)) {
+                        if (isNumber(slotX)) {
                             series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
                                 .attr({
                                     'stroke-width': 1,

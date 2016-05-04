@@ -8,7 +8,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	function renderRangeSelector() {
 		extremes = chart.xAxis[0].getExtremes();
-		if (!isNaN(extremes.min)) {
+		if (isNumber(extremes.min)) {
 			rangeSelector.render(extremes.min, extremes.max);
 		}
 	}
