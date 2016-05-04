@@ -462,7 +462,7 @@ Axis.prototype = {
 						// To prevent performance hit, we only do this after we have already
 						// found seriesDataMin because in most cases all data is valid. #5234.
 						seriesDataMin = arrayMin(xData);
-						if (!isNumber(seriesDataMin)) {
+						if (!isNumber(seriesDataMin) && !(seriesDataMin instanceof Date)) { // Date for #5010
 							xData = grep(xData, function (x) {
 								return isNumber(x);
 							});
