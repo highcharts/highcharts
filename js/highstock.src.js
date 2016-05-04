@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-05-02)
+ * @license Highstock JS v4.2.4-modified (2016-05-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20243,7 +20243,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-05-02)
+     * Highstock JS v4.2.4-modified (2016-05-04)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21956,9 +21956,11 @@
                 scroller.width = scroller.yOffset = width = yOffset = scroller.size;
                 scroller.xOffset = xOffset = 0;
                 scroller.barWidth = height - width * 2; // width without buttons
+                scroller.x = x = x + scroller.options.margin;
             } else {
                 scroller.height = scroller.xOffset = height = xOffset = scroller.size;
                 scroller.barWidth = width - height * 2; // width without buttons
+                scroller.y = scroller.y + scroller.options.margin;
             }
 
             // Set general position for a group:
@@ -22337,8 +22339,8 @@
             axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
 
             addEvent(axis.scrollbar, 'changed', function (e) {
-                var unitedMin = Math.min(axis.min, axis.dataMin),
-                    unitedMax = Math.max(axis.max, axis.dataMax),
+                var unitedMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
+                    unitedMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
                     range = unitedMax - unitedMin,
                     to,
                     from;
@@ -22362,27 +22364,25 @@
     */
     wrap(Axis.prototype, 'render', function (proceed) {
         var axis = this,    
-            scrollMin = Math.min(axis.min, axis.dataMin),
-            scrollMax = Math.max(axis.max, axis.dataMax),
-            from,
-            to,
+            scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
+            scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
             scrollbar = axis.scrollbar,
-            margin;
+            from,
+            to;
 
         proceed.apply(axis, [].slice.call(arguments, 1));
 
         if (scrollbar) {
-            margin = scrollbar.options.margin;
             if (axis.horiz) {
                 scrollbar.position(
                     axis.left, 
-                    axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin) + margin,
+                    axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin),
                     axis.width,
                     axis.height
                 );
             } else {
                 scrollbar.position(
-                    axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0) + margin, 
+                    axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0), 
                     axis.top, 
                     axis.width, 
                     axis.height
@@ -22446,6 +22446,9 @@
             } else {
                 userOptions.xAxis.scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis.scrollbar);
             }
+        } else if (scrollbarEnabled && navigatorEnabled) {
+            // Disable margin for scrollbar, to prevent detached navigator and scrollbar:
+            userOptions.scrollbar.margin = 0;
         }
         proceed.apply(this, [].slice.call(arguments, 1));
     });
@@ -23045,10 +23048,10 @@
             var xAxisIndex = chart.xAxis.length,
                 yAxisIndex = chart.yAxis.length;
 
-            // make room below the chart
-            chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
 
             if (scroller.navigatorEnabled) {
+                // make room below the chart
+                chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
                 // an x axis is required for scrollbar also
                 scroller.xAxis = xAxis = new Axis(chart, merge({
                     // inherit base xAxis' break and ordinal options
