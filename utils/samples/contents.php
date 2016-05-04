@@ -324,7 +324,8 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 								// Display diff from previous comparison
 								$compareIcon = $isUnitTest ? 'icon-puzzle-piece' : 'icon-columns';
 								$dissIndex = "
-									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='$compareIcon'></i></a>
+									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+										<i class='$compareIcon'></i></a>
 								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
@@ -333,8 +334,10 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';
+										$dummy = mktime();
 										$dissIndex = "
-											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i&amp;dummy=$dummy'
+												target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
 										$compareClass = 'identical';
