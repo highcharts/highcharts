@@ -1089,7 +1089,7 @@
                 duration = animObject(animation).duration,
                 fill;
 
-            if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
+            if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select' && point.series.options.states.hover.enabled !== false) {
                 fill = point.pointAttr[''].fill;
                 delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
 
