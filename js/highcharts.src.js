@@ -1593,7 +1593,8 @@
             style: {
                 color: '#333333',
                 fontSize: '18px'
-            }
+            },
+            widthAdjust: -44 // docs
 
         },
         subtitle: {
@@ -1605,7 +1606,8 @@
             // y: null,
             style: {
                 color: '#555555'
-            }
+            },
+            widthAdjust: -44 // docs
         },
 
         plotOptions: {
@@ -12423,34 +12425,27 @@
                 options = this.options,
                 titleOptions = options.title,
                 subtitleOptions = options.subtitle,
-                box,
                 requiresDirtyBox,
-                renderer = this.renderer;
-
+                renderer = this.renderer,
+                spacingBox = this.spacingBox;
 
             if (title) {
-                box = merge(this.spacingBox);
-                box.x += title.paddingLeft;
-                box.width -= title.paddingLeft + title.paddingRight;
                 title
-                    .css({ width: (titleOptions.width || box.width) + PX })
+                    .css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + PX })
                     .align(extend({
                         y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
-                    }, titleOptions), false, box);
+                    }, titleOptions), false, spacingBox);
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
                     titleOffset = title.getBBox().height;
                 }
             }
             if (subtitle) {
-                box = merge(this.spacingBox);
-                box.x += subtitle.paddingLeft;
-                box.width -= subtitle.paddingLeft + subtitle.paddingRight;
                 subtitle
-                    .css({ width: (subtitleOptions.width || box.width) + PX })
+                    .css({ width: (subtitleOptions.width || spacingBox.width + subtitleOptions.widthAdjust) + PX })
                     .align(extend({
                         y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b
-                    }, subtitleOptions), false, box);
+                    }, subtitleOptions), false, spacingBox);
 
                 if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
                     titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);

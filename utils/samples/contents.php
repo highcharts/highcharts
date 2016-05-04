@@ -123,6 +123,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 			body {
 				background: #F6F6F6;
+				padding-right: 1em;
 			}
 
 			li, a, p, div, span {
@@ -203,7 +204,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 			}
 			.comment {
 				position: absolute;
-				right: 3em;
+				right: 4em;
 			}
 			.comment-title {
 				display: none;
