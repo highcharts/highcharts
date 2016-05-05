@@ -38,6 +38,7 @@
         extend = Highcharts.extend,
         extendClass = Highcharts.extendClass,
         format = Highcharts.format,
+        map = Highcharts.map,
         isNumber = Highcharts.isNumber,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
@@ -1374,7 +1375,7 @@
                     data = data || [];            
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + dataUsed.map(function (point) { 
+                    dataUsed = '|' + map(dataUsed, function (point) { 
                         return point[joinBy[0]]; 
                     }).join('|') + '|'; // String search is faster than array.indexOf
                 
@@ -1860,10 +1861,10 @@
             each(series.points, function (point) {
                 var xPad = (options.colsize || 1) / 2,
                     yPad = (options.rowsize || 1) / 2,
-                    x1 = between(Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)), 0, xAxis.len),
-                    x2 = between(Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)), 0, xAxis.len),
-                    y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), 0, yAxis.len),
-                    y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), 0, yAxis.len);
+                    x1 = between(Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                    x2 = between(Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                    y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len),
+                    y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len);
 
                 // Set plotX and plotY for use in K-D-Tree and more
                 point.plotX = point.clientX = (x1 + x2) / 2;
@@ -1891,7 +1892,7 @@
         animate: noop,
         getBox: noop,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
+        alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
         getExtremes: function () {
             // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.valueData);

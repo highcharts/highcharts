@@ -1466,18 +1466,20 @@ SVGRenderer.prototype = {
 			}
 
 
-			// remove empty line at end
-			if (lines[lines.length - 1] === '') {
-				lines.pop();
-			}
+			// Trim empty lines (#5261)
+			lines = grep(lines, function (line) {
+				return line !== '';
+			});
 
 
 			// build the lines
 			each(lines, function buildTextLines(line, lineNo) {
 				var spans,
 					spanNo = 0;
-
-				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+				line = line
+					.replace(/^\s+|\s+$/g, '') // Trim to prevent useless/costly process on the spaces (#5258)
+					.replace(/<span/g, '|||<span')
+					.replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
 				each(spans, function buildTextSpans(span) {

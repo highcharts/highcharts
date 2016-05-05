@@ -1592,7 +1592,8 @@
             style: {
                 color: '#333333',
                 fontSize: '18px'
-            }
+            },
+            widthAdjust: -44 // docs
 
         },
         subtitle: {
@@ -1604,7 +1605,8 @@
             // y: null,
             style: {
                 color: '#555555'
-            }
+            },
+            widthAdjust: -44 // docs
         },
 
         plotOptions: {
@@ -3535,18 +3537,20 @@
                 }
 
 
-                // remove empty line at end
-                if (lines[lines.length - 1] === '') {
-                    lines.pop();
-                }
+                // Trim empty lines (#5261)
+                lines = grep(lines, function (line) {
+                    return line !== '';
+                });
 
 
                 // build the lines
                 each(lines, function buildTextLines(line, lineNo) {
                     var spans,
                         spanNo = 0;
-
-                    line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+                    line = line
+                        .replace(/^\s+|\s+$/g, '') // Trim to prevent useless/costly process on the spaces (#5258)
+                        .replace(/<span/g, '|||<span')
+                        .replace(/<\/span>/g, '</span>|||');
                     spans = line.split('|||');
 
                     each(spans, function buildTextSpans(span) {
@@ -7078,14 +7082,20 @@
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
-                            // If xData contains values which is not numbers, then filter them out
-                            if (!isNumber(xData)) {
+                            // If xData contains values which is not numbers, then filter them out.
+                            // To prevent performance hit, we only do this after we have already
+                            // found seriesDataMin because in most cases all data is valid. #5234.
+                            seriesDataMin = arrayMin(xData);
+                            if (!isNumber(seriesDataMin)) {
                                 xData = grep(xData, function (x) {
                                     return isNumber(x);
                                 });
+                                seriesDataMin = arrayMin(xData); // Do it again with valid data
                             }
-                            axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
+
+                            axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), seriesDataMin);
                             axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
+                        
                         }
 
                     // Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -8945,6 +8955,7 @@
                         });
                 } else {
                     attribs = {
+                        'pointer-events': 'none', // #5259
                         'stroke-width': strokeWidth,
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
                         zIndex: pick(options.zIndex, 2)
@@ -9846,7 +9857,7 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-            each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
                 each(chart.axes, function (axis) {
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
                     if (!point || point.series[axis.coll] === axis) {
@@ -10539,10 +10550,10 @@
                     // moved, and cancelling on small distances. #3450.
                     if (e.type === 'touchmove') {
                         pinchDown = this.pinchDown;
-                        hasMoved = Math.sqrt(
+                        hasMoved = pinchDown[0] ? Math.sqrt( // #5266
                             Math.pow(pinchDown[0].chartX - e.chartX, 2) +
                             Math.pow(pinchDown[0].chartY - e.chartY, 2)
-                        ) >= 4;
+                        ) >= 4 : false;
                     }
 
                     if (pick(hasMoved, true)) {
@@ -11944,6 +11955,10 @@
                     })
                     .css(chartTitleOptions.style)
                     .add();
+
+                    chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
+                    chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
+            
                 }
             });
             chart.layOutTitles(redraw);
@@ -11961,14 +11976,14 @@
                 subtitleOptions = options.subtitle,
                 requiresDirtyBox,
                 renderer = this.renderer,
-                autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
+                spacingBox = this.spacingBox;
 
             if (title) {
                 title
-                    .css({ width: (titleOptions.width || autoWidth) + PX })
+                    .css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + PX })
                     .align(extend({
                         y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
-                    }, titleOptions), false, 'spacingBox');
+                    }, titleOptions), false, spacingBox);
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
                     titleOffset = title.getBBox().height;
@@ -11976,10 +11991,10 @@
             }
             if (subtitle) {
                 subtitle
-                    .css({ width: (subtitleOptions.width || autoWidth) + PX })
+                    .css({ width: (subtitleOptions.width || spacingBox.width + subtitleOptions.widthAdjust) + PX })
                     .align(extend({
                         y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b
-                    }, subtitleOptions), false, 'spacingBox');
+                    }, subtitleOptions), false, spacingBox);
 
                 if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
                     titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);
@@ -13837,7 +13852,7 @@
                 i,
                 j;
 
-            yData = yData || this.stackedYData || this.processedYData;
+            yData = yData || this.stackedYData || this.processedYData || [];
             yDataLength = yData.length;
 
             for (i = 0; i < yDataLength; i++) {
@@ -13915,8 +13930,9 @@
                 }
 
                 // Get the plotX translation
-                point.plotX = plotX = mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
-
+                point.plotX = plotX = correctFloat( // #5236
+                    mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+                );
 
                 // Calculate the bottom y value for stacked series
                 if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
@@ -16221,11 +16237,11 @@
                 rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
                 alignAttr = {
                     x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-                    y: alignTo.y + options.y + alignTo.height / 2
+                    y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
                 };
                 dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
                     .attr({ // #3003
-                        align: options.align
+                        align: align
                     });
 
                 // Compensate for the rotated label sticking out on the sides
@@ -17997,7 +18013,7 @@
                     data = data || [];            
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + dataUsed.map(function (point) { 
+                    dataUsed = '|' + map(dataUsed, function (point) { 
                         return point[joinBy[0]]; 
                     }).join('|') + '|'; // String search is faster than array.indexOf
                 
@@ -19647,10 +19663,10 @@
             each(series.points, function (point) {
                 var xPad = (options.colsize || 1) / 2,
                     yPad = (options.rowsize || 1) / 2,
-                    x1 = between(Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)), 0, xAxis.len),
-                    x2 = between(Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)), 0, xAxis.len),
-                    y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), 0, yAxis.len),
-                    y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), 0, yAxis.len);
+                    x1 = between(Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                    x2 = between(Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)), -xAxis.len, 2 * xAxis.len),
+                    y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len),
+                    y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len);
 
                 // Set plotX and plotY for use in K-D-Tree and more
                 point.plotX = point.clientX = (x1 + x2) / 2;
@@ -19678,7 +19694,7 @@
         animate: noop,
         getBox: noop,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
+        alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
         getExtremes: function () {
             // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.valueData);

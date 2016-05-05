@@ -458,14 +458,20 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						// If xData contains values which is not numbers, then filter them out
-						if (!isNumber(xData)) {
+						// If xData contains values which is not numbers, then filter them out.
+						// To prevent performance hit, we only do this after we have already
+						// found seriesDataMin because in most cases all data is valid. #5234.
+						seriesDataMin = arrayMin(xData);
+						if (!isNumber(seriesDataMin)) {
 							xData = grep(xData, function (x) {
 								return isNumber(x);
 							});
+							seriesDataMin = arrayMin(xData); // Do it again with valid data
 						}
-						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
+
+						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -2325,6 +2331,7 @@ Axis.prototype = {
 					});
 			} else {
 				attribs = {
+					'pointer-events': 'none', // #5259
 					'stroke-width': strokeWidth,
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: pick(options.zIndex, 2)

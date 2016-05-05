@@ -461,6 +461,10 @@ Chart.prototype = {
 				})
 				.css(chartTitleOptions.style)
 				.add();
+
+				chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
+				chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
+			
 			}
 		});
 		chart.layOutTitles(redraw);
@@ -478,14 +482,14 @@ Chart.prototype = {
 			subtitleOptions = options.subtitle,
 			requiresDirtyBox,
 			renderer = this.renderer,
-			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
+			spacingBox = this.spacingBox;
 
 		if (title) {
 			title
-				.css({ width: (titleOptions.width || autoWidth) + PX })
+				.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + PX })
 				.align(extend({
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
-				}, titleOptions), false, 'spacingBox');
+				}, titleOptions), false, spacingBox);
 
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
@@ -493,10 +497,10 @@ Chart.prototype = {
 		}
 		if (subtitle) {
 			subtitle
-				.css({ width: (subtitleOptions.width || autoWidth) + PX })
+				.css({ width: (subtitleOptions.width || spacingBox.width + subtitleOptions.widthAdjust) + PX })
 				.align(extend({
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b
-				}, subtitleOptions), false, 'spacingBox');
+				}, subtitleOptions), false, spacingBox);
 
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
 				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);

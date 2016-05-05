@@ -402,6 +402,12 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 
 	}
 
+	// Disable certain features on angular and polar axes
+	if (angular || polar) {
+		chart.inverted = false;
+		chartOptions.chart.zoomType = null;
+	}
+
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 
@@ -418,11 +424,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			axis
 		);
 		paneOptions = pane.options;
-
-
-		// Disable certain features on angular and polar axes
-		chart.inverted = false;
-		chartOptions.chart.zoomType = null;
 
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
