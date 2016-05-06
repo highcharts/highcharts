@@ -173,7 +173,7 @@
                 while (i--) {
                     startVal = parseFloat(start[i]);
                     ret[i] =
-                        !isNumber(startVal) ? // a letter instruction like M or L
+                        isNaN(startVal) ? // a letter instruction like M or L
                                 start[i] :
                                 now * (parseFloat(end[i] - startVal)) + startVal;
 
@@ -482,7 +482,7 @@
      */
     var isNumber = Highcharts.isNumber = function isNumber(n) {
         return typeof n === 'number' && !isNaN(n);
-    }
+    };
 
     /**
      * Remove last occurence of an item from an array
