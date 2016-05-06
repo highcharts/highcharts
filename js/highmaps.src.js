@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.4-modified (2016-05-04)
+ * @license Highmaps JS v4.2.4-modified (2016-05-06)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -15947,7 +15947,7 @@
                         // Do the scale synchronously to ensure smooth updating (#5030)
                         step: function (val, fx) {
                             series.group.attr({
-                                scaleY: fx.pos
+                                scaleY: mathMax(0.001, fx.pos) // #5250
                             });
                         }
                     }));
