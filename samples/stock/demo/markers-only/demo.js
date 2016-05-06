@@ -23,6 +23,11 @@ $(function () {
                 },
                 tooltip: {
                     valueDecimals: 2
+                },
+                states: {
+                    hover: {
+                        lineWidthPlus: 0
+                    }
                 }
             }]
         });
