@@ -82,7 +82,7 @@ defaultOptions = {
 			color: '#333333',
 			fontSize: '18px'
 		},
-		widthAdjust: -44 // docs
+		widthAdjust: -44
 
 	},
 	subtitle: {
@@ -95,7 +95,7 @@ defaultOptions = {
 		style: {
 			color: '#555555'
 		},
-		widthAdjust: -44 // docs
+		widthAdjust: -44
 	},
 
 	plotOptions: {

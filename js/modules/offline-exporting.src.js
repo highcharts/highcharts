@@ -312,7 +312,7 @@
 			this.exportChartLocal();
 		}
 	}, {
-		textKey: 'downloadJPEG', // docs
+		textKey: 'downloadJPEG',
 		onclick: function () {
 			this.exportChartLocal({
 				type: 'image/jpeg'

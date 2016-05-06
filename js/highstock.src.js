@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.4-modified (2016-05-06)
+ * @license Highstock JS v4.2.5 (2016-05-06)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '4.2.4-modified',
+        VERSION = '4.2.5',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1535,7 +1535,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.4-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.5/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -1595,7 +1595,7 @@
                 color: '#333333',
                 fontSize: '18px'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
 
         },
         subtitle: {
@@ -1608,7 +1608,7 @@
             style: {
                 color: '#555555'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
         },
 
         plotOptions: {
@@ -12430,9 +12430,6 @@
                     })
                     .css(chartTitleOptions.style)
                     .add();
-
-                    chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
-                    chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
             
                 }
             });
@@ -20279,7 +20276,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.4-modified (2016-05-06)
+     * Highstock JS v4.2.5 (2016-05-06)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

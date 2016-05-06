@@ -104,7 +104,7 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	//width: undefined,
-	printMaxWidth: 780, // docs
+	printMaxWidth: 780,
 	//scale: 2
 	buttons: {
 		contextButton: {
