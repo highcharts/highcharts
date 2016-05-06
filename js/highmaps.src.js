@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.4-modified (2016-05-06)
+ * @license Highmaps JS v4.2.5 (2016-05-06)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -57,7 +57,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highmaps',
-        VERSION = '4.2.4-modified',
+        VERSION = '4.2.5',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1533,7 +1533,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.4-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.5/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -1593,7 +1593,7 @@
                 color: '#333333',
                 fontSize: '18px'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
 
         },
         subtitle: {
@@ -1606,7 +1606,7 @@
             style: {
                 color: '#555555'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
         },
 
         plotOptions: {
@@ -11951,9 +11951,6 @@
                     })
                     .css(chartTitleOptions.style)
                     .add();
-
-                    chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
-                    chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
             
                 }
             });
