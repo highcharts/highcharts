@@ -455,7 +455,8 @@ Pointer.prototype = {
 			}
 
 			// panning
-			if (clickedInside && !selectionMarker && chartOptions.panning) {
+			// Disable panning of polar charts, issue #5240
+			if (clickedInside && !selectionMarker && chartOptions.panning && !chartOptions.polar) {
 				chart.pan(e, chartOptions.panning);
 			}
 		}
