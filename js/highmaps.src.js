@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-05-06)
+ * @license Highmaps JS v4.2.5-modified (2016-05-09)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -13932,7 +13932,7 @@
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (yBottom === stackThreshold) {
+                    if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
                         yBottom = pick(threshold, yAxis.min);
                     }
                     if (yAxis.isLog && yBottom <= 0) { // #1200, #1232

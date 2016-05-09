@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-06)
+ * @license Highstock JS v4.2.5-modified (2016-05-09)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -14451,7 +14451,7 @@
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (yBottom === stackThreshold) {
+                    if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
                         yBottom = pick(threshold, yAxis.min);
                     }
                     if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -15897,6 +15897,11 @@
             stack = stacks[key][x];
             if (y !== null) {
                 stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
+
+                // Record the base of the stack
+                if (!defined(stack.cum)) {
+                    stack.base = pointKey;
+                }
                 stack.touched = yAxis.stacksTouched;
         
 
@@ -20276,7 +20281,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-06)
+     * Highstock JS v4.2.5-modified (2016-05-09)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
