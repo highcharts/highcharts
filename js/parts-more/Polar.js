@@ -220,8 +220,8 @@
 		// Connect the path
 		if (this.chart.polar) {
 			points = points || this.points;
-	
-			if (this.options.connectEnds !== false && points[0].y !== null) {
+
+			if (this.options.connectEnds !== false && points[0] && points[0].y !== null) {
 				this.connectEnds = true; // re-used in splines
 				points.splice(points.length, 0, points[0]);
 			}
@@ -358,7 +358,9 @@
 					point = points[i];
 					start = point.barX + startAngleRad;
 					point.shapeType = 'path';
-					point.shapeArgs = this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth);
+					point.shapeArgs = {
+						d: this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
+					};
 					// Provide correct plotX, plotY for tooltip
 					this.toXY(point);
 					point.tooltipPos = [point.plotX, point.plotY];

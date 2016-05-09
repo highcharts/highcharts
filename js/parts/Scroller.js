@@ -8,9 +8,7 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
 	numExt = function (extreme) {
-		var numbers = grep(arguments, function (n) {
-			return typeof n === 'number';
-		});
+		var numbers = grep(arguments, isNumber);
 		if (numbers.length) {
 			return Math[extreme].apply(0, numbers);
 		}
@@ -177,7 +175,7 @@ Navigator.prototype = {
 		}
 
 		// Place it
-		handles[index][chart.isResizing ? 'animate' : 'attr']({
+		handles[index][scroller.rendered ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -211,12 +209,11 @@ Navigator.prototype = {
 			zoomedMax,
 			outlineHeight = scroller.outlineHeight,
 			outlineTop = top + halfOutline,
-			verb,
-			unionExtremes;
+			rendered = scroller.rendered,
+			verb;
 
 		// Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
-		if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
-				(scroller.hasDragged && !defined(pxMin))) {
+		if (!isNumber(min) || !isNumber(max) ||	(scroller.hasDragged && !defined(pxMin))) {
 			return;
 		}
 
@@ -228,21 +225,10 @@ Navigator.prototype = {
 		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
 		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
-		// Set the scroller x axis extremes to reflect the total. The navigator extremes
-		// should always be the extremes of the union of all series in the chart as
-		// well as the navigator series.
-		if (xAxis.getExtremes) {
-			unionExtremes = scroller.getUnionExtremes(true);
-
-			if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
-				xAxis.setExtremes(unionExtremes.dataMin, unionExtremes.dataMax, true, false);
-			}
-		}
-
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-		if (isNaN(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
+		if (!isNumber(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		}
@@ -259,10 +245,9 @@ Navigator.prototype = {
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
+		range = zoomedMax - zoomedMin;
 
-
-		// on first render, create all elements
-		if (!scroller.rendered) {
+		if (!rendered) {
 
 			if (navigatorEnabled) {
 
@@ -298,8 +283,7 @@ Navigator.prototype = {
 		}
 
 		// place elements
-		verb = chart.isResizing ? 'animate' : 'attr';
-
+		verb = rendered ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {
 				x: navigatorLeft + zoomedMin,
@@ -355,7 +339,8 @@ Navigator.prototype = {
 	 * Set up the mouse and touch events for the navigator
 	 */
 	addEvents: function () {
-		var container = this.chart.container,
+		var chart = this.chart,
+			container = chart.container,
 			mouseDownHandler = this.mouseDownHandler,
 			mouseMoveHandler = this.mouseMoveHandler,
 			mouseUpHandler = this.mouseUpHandler,
@@ -382,6 +367,24 @@ Navigator.prototype = {
 			addEvent.apply(null, args);
 		});
 		this._events = _events;
+
+		// Data events
+		if (this.series) {
+			addEvent(this.series.xAxis, 'foundExtremes', function () {
+				chart.scroller.modifyNavigatorAxisExtremes();
+			});
+		}
+		addEvent(chart, 'redraw', function () {
+			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
+			var scroller = this.scroller,
+				xAxis;
+			if (scroller) {
+				xAxis = scroller.baseSeries.xAxis;
+				if (xAxis) {
+					scroller.render(xAxis.min, xAxis.max);
+				}
+			}
+		});
 	},
 
 	/**
@@ -677,6 +680,22 @@ Navigator.prototype = {
 			};
 		}
 
+		// Respond to updated data in the base series.
+		// Abort if lazy-loading data from the server.
+		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
+			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+
+			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
+				if (baseSeries.xAxis) {
+					this.chart.scroller.modifyBaseAxisExtremes();
+				}
+			});
+		
+			// Survive Series.update()
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+
+		}
+
 
 		/**
 		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
@@ -726,7 +745,8 @@ Navigator.prototype = {
 						'min',
 						baseAxisOptions.min,
 						baseAxis.dataMin,
-						navAxis.dataMin
+						navAxis.dataMin,
+						navAxis.min
 					)
 				),
 				dataMax: pick(
@@ -735,7 +755,8 @@ Navigator.prototype = {
 						'max',
 						baseAxisOptions.max,
 						baseAxis.dataMax,
-						navAxis.dataMax
+						navAxis.dataMax,
+						navAxis.max
 					)
 				)
 			};
@@ -797,22 +818,35 @@ Navigator.prototype = {
 		// Set the data. Do a slice to avoid mutating the navigator options from base series (#4923).
 		mergedNavSeriesOptions.data = navigatorData || baseData.slice(0);
 
-		// add the series
+		// Add the series
 		this.series = this.chart.initSeries(mergedNavSeriesOptions);
 
-		// Respond to updated data in the base series.
-		// Abort if lazy-loading data from the server.
-		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
-			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
-
-		}
 	},
 
-	updatedDataHandler: function () {
-		var scroller = this.chart.scroller,
-			baseSeries = scroller.baseSeries,
+	/**
+	 * Set the scroller x axis extremes to reflect the total. The navigator extremes
+	 * should always be the extremes of the union of all series in the chart as
+	 * well as the navigator series.
+	 */
+	modifyNavigatorAxisExtremes: function () {
+		var xAxis = this.xAxis,
+			unionExtremes;
+
+		if (xAxis.getExtremes) {
+			unionExtremes = this.getUnionExtremes(true);
+
+			if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
+				xAxis.min = unionExtremes.dataMin;
+				xAxis.max = unionExtremes.dataMax;
+			}
+		}				
+	},
+
+	/**
+	 * Hook to modify the base axis extremes with information from the Navigator
+	 */
+	modifyBaseAxisExtremes: function () {
+		var baseSeries = this.baseSeries,
 			baseXAxis = baseSeries.xAxis,
 			baseExtremes = baseXAxis.getExtremes(),
 			baseMin = baseExtremes.min,
@@ -820,58 +854,69 @@ Navigator.prototype = {
 			baseDataMin = baseExtremes.dataMin,
 			baseDataMax = baseExtremes.dataMax,
 			range = baseMax - baseMin,
-			stickToMin,
-			stickToMax,
+			stickToMin = this.stickToMin,
+			stickToMax = this.stickToMax,
 			newMax,
 			newMin,
-			doRedraw,
-			navigatorSeries = scroller.series,
-			navXData = navigatorSeries.xData,
+			navigatorSeries = this.series,
 			hasSetExtremes = !!baseXAxis.setExtremes;
 
-		// detect whether to move the range
-		stickToMax = baseMax >= navXData[navXData.length - 1] - (this.closestPointRange || 0); // #570
-		stickToMin = baseMin <= baseDataMin;
-
-		// set the navigator series data to the new data of the base series
-		if (!scroller.hasNavigatorData) {
-			navigatorSeries.options.pointStart = baseSeries.xData[0];
-			navigatorSeries.setData(baseSeries.options.data, false);
-			doRedraw = true;
-		}
-
-		// if the zoomed range is already at the min, move it to the right as new data
+		// If the zoomed range is already at the min, move it to the right as new data
 		// comes in
 		if (stickToMin) {
 			newMin = baseDataMin;
 			newMax = newMin + range;
 		}
 
-		// if the zoomed range is already at the max, move it to the right as new data
+		// If the zoomed range is already at the max, move it to the right as new data
 		// comes in
 		if (stickToMax) {
 			newMax = baseDataMax;
 			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+				newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
 			}
 		}
 
-		// update the extremes
+		// Update the extremes
 		if (hasSetExtremes && (stickToMin || stickToMax)) {
-			if (!isNaN(newMin)) {
-				baseXAxis.setExtremes(newMin, newMax, true, false, { trigger: 'updatedData' });
+			if (isNumber(newMin)) {
+				baseXAxis.min = baseXAxis.userMin = newMin;
+				baseXAxis.max = baseXAxis.userMax = newMax;
 			}
+		}
 
-		// if it is not at any edge, just move the scroller window to reflect the new series data
-		} else {
-			if (doRedraw) {
-				this.chart.redraw(false);
+		// Reset
+		this.stickToMin = this.stickToMax = null;
+	},
+
+	/**
+	 * Handler for updated data on the base series. When data is modified, the navigator series
+	 * must reflect it. This is called from the Chart.redraw function before axis and series 
+	 * extremes are computed.
+	 */
+	updatedDataHandler: function () {
+		var scroller = this.chart.scroller,
+			baseSeries = scroller.baseSeries,
+			navigatorSeries = scroller.series;
+
+		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
+		// axis minimum falls outside the new updated dataset, we must adjust.
+		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
+		// If the scrollbar is scrolled all the way to the right, keep right as new data 
+		// comes in.
+		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
+
+		// Set the navigator series data to the new data of the base series
+		if (navigatorSeries && !scroller.hasNavigatorData) {
+			navigatorSeries.options.pointStart = baseSeries.xData[0];
+			navigatorSeries.setData(baseSeries.options.data, false);
+
+			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
+			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
+			// on the base series reflects directly on the navigator series.
+			if (navigatorSeries.graph && baseSeries.graph) {
+				navigatorSeries.graph.shift = baseSeries.graph.shift;
 			}
-
-			scroller.render(
-				mathMax(baseMin, baseDataMin),
-				mathMin(baseMax, baseDataMax)
-			);
 		}
 	},
 

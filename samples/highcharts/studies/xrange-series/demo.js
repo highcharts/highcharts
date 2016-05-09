@@ -62,17 +62,20 @@ $(function () {
                 columnType.prototype.translate.apply(this, arguments);
                 var series = this,
                     xAxis = series.xAxis,
-                    metrics = series.columnMetrics;
+                    metrics = series.columnMetrics,
+                    minPointLength = series.options.minPointLength || 0;
 
                 H.each(series.points, function (point) {
                     var barWidth = Math.min(
-                        xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
-                        xAxis.len
-                    );
+                            xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
+                            xAxis.len
+                        ),
+                        barWidthDifference = barWidth < minPointLength ? minPointLength - barWidth : 0;
+
                     point.shapeArgs = {
-                        x: Math.max(0, point.plotX),
+                        x: Math.max(0, point.plotX) - barWidthDifference / 2,
                         y: point.plotY + metrics.offset,
-                        width: barWidth,
+                        width: barWidth + barWidthDifference,
                         height: metrics.width
                     };
                     point.tooltipPos[0] += barWidth / 2;

@@ -458,8 +458,20 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						// If xData contains values which is not numbers, then filter them out.
+						// To prevent performance hit, we only do this after we have already
+						// found seriesDataMin because in most cases all data is valid. #5234.
+						seriesDataMin = arrayMin(xData);
+						if (!isNumber(seriesDataMin) && !(seriesDataMin instanceof Date)) { // Date for #5010
+							xData = grep(xData, function (x) {
+								return isNumber(x);
+							});
+							seriesDataMin = arrayMin(xData); // Do it again with valid data
+						}
+
+						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), seriesDataMin);
 						axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -605,8 +617,7 @@ Axis.prototype = {
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
 		y1 = y2 = mathRound(cHeight - translatedValue - transB);
-
-		if (isNaN(translatedValue)) { // no min or max
+		if (!isNumber(translatedValue)) { // no min or max
 			skip = true;
 
 		} else if (axis.horiz) {
@@ -972,6 +983,9 @@ Axis.prototype = {
 
 			axis.range = null;  // don't use it when running setExtremes
 		}
+
+		// Hook for Highstock Scroller. Consider combining with beforePadding.
+		fireEvent(axis, 'foundExtremes');
 
 		// Hook for adjusting this.min and this.max. Used by bubble series.
 		if (axis.beforePadding) {
@@ -1785,6 +1799,7 @@ Axis.prototype = {
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
+			textAlign,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
 			tickSize = this.tickSize('tick');
@@ -1852,6 +1867,18 @@ Axis.prototype = {
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
 			if (!axis.axisTitle) {
+				textAlign = axisTitleOptions.textAlign;
+				if (!textAlign) {
+					textAlign = (horiz ? { 
+						low: 'left',
+						middle: 'center',
+						high: 'right'
+					} : { 
+						low: opposite ? 'right' : 'left',
+						middle: 'center',
+						high: opposite ? 'left' : 'right'
+					})[axisTitleOptions.align];
+				}
 				axis.axisTitle = renderer.text(
 					axisTitleOptions.text,
 					0,
@@ -1861,12 +1888,7 @@ Axis.prototype = {
 				.attr({
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
-					align: 
-						axisTitleOptions.textAlign || { 
-							low: opposite ? 'right' : 'left',
-							middle: 'center',
-							high: opposite ? 'left' : 'right'
-						}[axisTitleOptions.align]
+					align: textAlign
 				})
 				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
@@ -2013,7 +2035,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && isNumber(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
 			from,
@@ -2309,6 +2331,7 @@ Axis.prototype = {
 					});
 			} else {
 				attribs = {
+					'pointer-events': 'none', // #5259
 					'stroke-width': strokeWidth,
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: pick(options.zIndex, 2)

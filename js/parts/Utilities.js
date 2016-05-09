@@ -354,9 +354,9 @@ function isArray(obj) {
  * Check for number
  * @param {Object} n
  */
-function isNumber(n) {
-	return typeof n === 'number';
-}
+var isNumber = Highcharts.isNumber = function isNumber(n) {
+	return typeof n === 'number' && !isNaN(n);
+};
 
 /**
  * Remove last occurence of an item from an array
@@ -548,7 +548,7 @@ function getTZOffset(timestamp) {
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	if (!defined(timestamp) || isNaN(timestamp)) {
+	if (!isNumber(timestamp)) {
 		return defaultOptions.lang.invalidDate || '';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
@@ -891,6 +891,7 @@ timeUnits = {
 Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 	number = +number || 0;
+	decimals = +decimals;
 
 	var lang = defaultOptions.lang,
 		origDec = (number.toString().split('.')[1] || '').length,
@@ -902,7 +903,7 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 
 	if (decimals === -1) {
 		decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
-	} else if (isNaN(decimals)) {
+	} else if (!isNumber(decimals)) {
 		decimals = 2;
 	}
 
@@ -927,7 +928,7 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 	ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
 	// Add the decimal point and the decimal component
-	if (+decimals) {
+	if (decimals) {
 		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
 		decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);

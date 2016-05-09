@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.2.4-modified (2016-05-02)
+ * @license Highcharts JS v4.2.5-modified (2016-05-09)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -28,6 +28,7 @@
         each = Highcharts.each,
         extend = Highcharts.extend,
         extendClass = Highcharts.extendClass,
+        isNumber = Highcharts.isNumber,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         seriesTypes = Highcharts.seriesTypes,
@@ -383,7 +384,7 @@
             }
         },
         getPlotLinePath: function (a, b, c, d, pos) {
-            return typeof pos === 'number' ? // crosshairs only // #3969 pos can be 0 !!
+            return isNumber(pos) ? // crosshairs only // #3969 pos can be 0 !!
                 (this.horiz ?
                     ['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] :
                     ['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
@@ -694,7 +695,7 @@
         animate: noop,
         getBox: noop,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-
+        alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
         getExtremes: function () {
             // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.valueData);

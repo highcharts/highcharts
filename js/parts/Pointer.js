@@ -161,7 +161,7 @@ Pointer.prototype = {
 				directTouch = !shared && s.directTouch;
 				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
-					if (kdpointT) {
+					if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
 						kdpoints.push(kdpointT);
 					}
 				}
@@ -171,7 +171,7 @@ Pointer.prototype = {
 				if (p) {
 					// Store both closest points, using point.dist and point.distX comparisons (#4645):
 					each(['dist', 'distX'], function (dist, k) {
-						if (typeof p[dist] === 'number') {
+						if (isNumber(p[dist])) {
 							var
 								// It is closer than the reference point
 								isCloser = p[dist] < distance[k],
@@ -242,7 +242,7 @@ Pointer.prototype = {
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+		each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
 			each(chart.axes, function (axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series[axis.coll] === axis) {

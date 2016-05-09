@@ -193,7 +193,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
 					while (i--) {
-						if (typeof path[i] === 'number' && !isNaN(path[i])) {
+						if (isNumber(path[i])) {
 							if (even) { // even = x
 								pointMaxX = Math.max(pointMaxX, path[i]);
 								pointMinX = Math.min(pointMinX, path[i]);
@@ -284,7 +284,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (path) {
 			i = path.length;
 			while (i--) {
-				if (typeof path[i] === 'number') {
+				if (isNumber(path[i])) {
 					ret[i] = even ?
 						(path[i] - xMin) * xTransA + xMinPixelPadding :
 						(path[i] - yMin) * yTransA + yMinPixelPadding;
@@ -303,7 +303,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * from the mapData are used, and those that don't correspond to a data value
 	 * are given null values.
 	 */
-	setData: function (data, redraw) {
+	setData: function (data, redraw, animation, updatePoints) {
 		var options = this.options,
 			mapData = options.mapData,
 			joinBy = options.joinBy,
@@ -327,7 +327,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Pick up numeric values, add index
 		if (data) {
 			each(data, function (val, i) {
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					data[i] = {
 						value: val
 					};
@@ -383,20 +383,21 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				data = data || [];				
 
 				// Add those map points that don't correspond to data, which will be drawn as null points
-				dataUsed = '|' + dataUsed.map(function (point) { 
+				dataUsed = '|' + map(dataUsed, function (point) { 
 					return point[joinBy[0]]; 
 				}).join('|') + '|'; // String search is faster than array.indexOf
 				
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 						data.push(merge(mapPoint, { value: null }));
+						updatePoints = false; // #5050 - adding all areas causes the update optimization of setData to kick in, even though the point order has changed
 					}
 				});
 			} else {
 				this.getBox(dataUsed); // Issue #4784
 			}
 		}
-		Series.prototype.setData.call(this, data, redraw);
+		Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
 	},
 
 

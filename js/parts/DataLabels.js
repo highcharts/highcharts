@@ -204,11 +204,11 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 			rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
 			alignAttr = {
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-				y: alignTo.y + options.y + alignTo.height / 2
+				y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
 			};
 			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
-					align: options.align
+					align: align
 				});
 
 			// Compensate for the rotated label sticking out on the sides
@@ -435,7 +435,7 @@ if (seriesTypes.pie) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
 
-					if (!isNaN(slotX)) {
+					if (isNumber(slotX)) {
 						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,

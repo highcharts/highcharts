@@ -289,7 +289,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic,
 				borderAttr;
 
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				borderAttr = defined(series.borderWidth) ? {
@@ -346,7 +346,7 @@ var ColumnSeries = extendClass(Series, {
 					// Do the scale synchronously to ensure smooth updating (#5030)
 					step: function (val, fx) {
 						series.group.attr({
-							scaleY: fx.pos
+							scaleY: mathMax(0.001, fx.pos) // #5250
 						});
 					}
 				}));

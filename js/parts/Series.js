@@ -159,7 +159,7 @@ Series.prototype = {
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
 			args = arguments,
-			fn = typeof i === 'number' ?
+			fn = isNumber(i) ?
 				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
@@ -657,7 +657,7 @@ Series.prototype = {
 			i,
 			j;
 
-		yData = yData || this.stackedYData || this.processedYData;
+		yData = yData || this.stackedYData || this.processedYData || [];
 		yDataLength = yData.length;
 
 		for (i = 0; i < yDataLength; i++) {
@@ -735,8 +735,9 @@ Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = plotX = mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
-
+			point.plotX = plotX = correctFloat( // #5236
+				mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+			);
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
@@ -746,7 +747,7 @@ Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === stackThreshold) {
+				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -964,7 +965,7 @@ Series.prototype = {
 				isInside = point.isInside;
 
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+				if (enabled && isNumber(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
@@ -1726,8 +1727,7 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			wasDirty = series.isDirty,
+			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1749,11 +1749,8 @@ Series.prototype = {
 
 		series.translate();
 		series.render();
-		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
-		}
-		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+		if (wasDirty) { // #3868, #3945
+			delete this.kdTree;
 		}
 	},
 
