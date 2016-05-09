@@ -34,5 +34,6 @@
         "build.md",
         "build.properties",
         "build.xml"
-    ]
+    ],
+    "license": "SEE LICENSE IN <license.txt>"
 }
