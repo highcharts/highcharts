@@ -234,6 +234,7 @@
             <file name="parts/OHLCSeries.js"/>
             <file name="parts/CandlestickSeries.js"/>
             <file name="parts/FlagsSeries.js"/>
+            <file name="parts/Scrollbar.js"/>
             <file name="parts/Scroller.js"/>
             <file name="parts/RangeSelector.js"/>
             <file name="parts/StockNavigation.js"/>
