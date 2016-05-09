@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     $('#container').highcharts({
         data: {
             csv: document.getElementById('csv').innerHTML

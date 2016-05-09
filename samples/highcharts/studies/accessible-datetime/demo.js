@@ -1,20 +1,5 @@
 $(function () {
-    var data = [],
-        time = (new Date()).getTime();
-
-    for (var i = -19; i <= 0; ++i) {
-        data.push({
-            x: time + i * 1000,
-            y: Math.random()
-        });
-    }
-
-    Highcharts.setOptions({
-        global: {
-            useUTC: false
-        }
-    });
-
+    
     $('#container').highcharts({
         accessibility: {
             enabled: true,
@@ -32,7 +17,9 @@ $(function () {
             }
         },
         series: [{
-            data: data
+            pointStart: Date.UTC(2016, 0, 1, 13, 40, 23),
+            pointInterval: 1000,
+            data: [1, 3, 4, 6, 7, 5, 3, 4, 8, 9, 7, 6, 4, 3]
         }]
 
     });
