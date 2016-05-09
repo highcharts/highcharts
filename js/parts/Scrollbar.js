@@ -132,7 +132,8 @@ Scrollbar.prototype = {
 			options = scroller.options,
 			vertical = options.vertical,
 			xOffset = height,
-			yOffset = 0;
+			yOffset = 0,
+			method = scroller.rendered ? 'animate' : 'attr';
 
 		scroller.x = x;
 		scroller.y = y + options.trackBorderWidth;
@@ -154,13 +155,13 @@ Scrollbar.prototype = {
 		}
 
 		// Set general position for a group:
-		scroller.group.attr({
+		scroller.group[method]({
 			translateX: x,
 			translateY: scroller.y
 		});
 
 		// Resize background/track:
-		scroller.track.attr({
+		scroller.track[method]({
 			width: width,
 			height: height
 		});
@@ -170,6 +171,8 @@ Scrollbar.prototype = {
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
+
+		scroller.rendered = true;
 	},
 
 	/**
