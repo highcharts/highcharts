@@ -431,7 +431,7 @@ Scrollbar.prototype = {
 	*/
 	updatePosition: function (from, to) {
 		if (to > 1) {
-			from = correctFloat(1 - (to - from));
+			from = correctFloat(1 - correctFloat(to - from));
 			to = 1;
 		}
 
