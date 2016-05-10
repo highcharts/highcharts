@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-05-09)
+ * @license Highmaps JS v4.2.5-modified (2016-05-10)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -674,7 +674,7 @@
      * @param {Boolean} capitalize
      */
     dateFormat = function (format, timestamp, capitalize) {
-        if (!isNumber(timestamp)) {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return defaultOptions.lang.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');

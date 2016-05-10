@@ -548,7 +548,7 @@ function getTZOffset(timestamp) {
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	if (!isNumber(timestamp)) {
+	if (!defined(timestamp) || isNaN(timestamp)) {
 		return defaultOptions.lang.invalidDate || '';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');

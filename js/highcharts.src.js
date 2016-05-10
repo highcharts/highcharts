@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-09)
+ * @license Highcharts JS v4.2.5-modified (2016-05-10)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -676,7 +676,7 @@
      * @param {Boolean} capitalize
      */
     dateFormat = function (format, timestamp, capitalize) {
-        if (!isNumber(timestamp)) {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return defaultOptions.lang.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
