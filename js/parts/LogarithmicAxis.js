@@ -107,5 +107,13 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	return positions;
 };
 
+Axis.prototype.log2lin = function (num) {
+	return Math.log(num) / Math.LN10;
+};
+
+Axis.prototype.lin2log = function (num) {
+	return Math.pow(10, num);
+};
+
 	return H;
 }(Highcharts));

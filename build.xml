@@ -150,6 +150,7 @@
         <!-- This is the list of files for highcharts -->
         <filelist id="highcharts.files" dir="${basedir}/js">
             <file name="parts/Intro.js"/>
+
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
             <file name="parts/Options.js"/>
@@ -234,6 +235,7 @@
             <file name="parts/OHLCSeries.js"/>
             <file name="parts/CandlestickSeries.js"/>
             <file name="parts/FlagsSeries.js"/>
+            <file name="parts/Scrollbar.js"/>
             <file name="parts/Scroller.js"/>
             <file name="parts/RangeSelector.js"/>
             <file name="parts/StockNavigation.js"/>
@@ -293,7 +295,7 @@
         <!-- This is the list of files for the heatmap module -->
         <filelist id="heatmap.files" dir="${basedir}/js">
             <file name="parts-map/HeatmapIntro.js"/>
-            <file name="parts-map/HeatmapGlobals.js"/>
+            <!-- file name="parts-map/HeatmapGlobals.js"/ -->
             <!-- file name="parts-map/MapAxis.js"/ -->
             <file name="parts-map/ColorAxis.js"/>
             <!-- file name="parts-map/MapNavigation.js"/ -->

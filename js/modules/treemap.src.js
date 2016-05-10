@@ -46,6 +46,7 @@
 			return previous;
 		},
 		// @todo find correct name for this function. 
+		// @todo Similar to reduce, this function is likely redundant
 		recursive = function (item, func, context) {
 			var next;
 			context = context || this;
@@ -90,10 +91,12 @@
 	merge(true, plotOptions.treemap, {
 		borderColor: '#E0E0E0',
 		borderWidth: 1,
+		opacity: 0.15,
 		states: {
 			hover: {
 				borderColor: '#A0A0A0',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				opacity: 0.75,
 				shadow: false
 			}
 		}
@@ -183,6 +186,7 @@
 
 			series.nodeMap = [];
 			tree = series.buildNode('', -1, 0, parentList, null);
+			// Parents of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode], function (node) {
 				var next = false,
 					p = node.parent;
@@ -192,6 +196,7 @@
 				}
 				return next;
 			});
+			// Children of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode].children, function (children) {
 				var next = false;
 				each(children, function (child) {
@@ -341,7 +346,7 @@
 					y1,
 					y2;
 				// Points which is ignored, have no values.
-				if (values) {
+				if (values && node.visible) {
 					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
 					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
 					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
@@ -617,11 +622,13 @@
 			}
 
 			// Update axis extremes according to the root node.
-			val = this.nodeMap[this.rootNode].pointValues;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
-			this.xAxis.setScale();
-			this.yAxis.setScale();
+			if (this.options.allowDrillToNode) {
+				val = this.nodeMap[this.rootNode].pointValues;
+				this.xAxis.setExtremes(val.x, val.x + val.width, false);
+				this.yAxis.setExtremes(val.y, val.y + val.height, false);
+				this.xAxis.setScale();
+				this.yAxis.setScale();
+			}
 
 			// Assign values to points.
 			this.setPointValues();
@@ -658,6 +665,9 @@
 				// Set dataLabel width to the width of the point shape.
 				if (point.shapeArgs) {
 					options.style.width = point.shapeArgs.width;
+					if (point.dataLabel) {
+						point.dataLabel.css({ width: point.shapeArgs.width + 'px' });
+					}
 				}
 
 				// Merge custom options with point options
@@ -685,7 +695,8 @@
 				options = this.options,
 				attr,
 				stateOptions = (state && options.states[state]) || {},
-				className = point.getClassName();
+				className = point.getClassName(),
+				opacity;
 
 			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
 			// because it can be 0.
@@ -703,7 +714,8 @@
 
 			// Nodes with children that accept interaction
 			} else if (className.indexOf('highcharts-internal-node-interactive') !== -1) {
-				attr.fill = Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+				opacity = pick(stateOptions.opacity, options.opacity);
+				attr.fill = Color(attr.fill).setOpacity(opacity).get();
 				attr.cursor = 'pointer';
 			// Hide nodes that have children
 			} else if (className.indexOf('highcharts-internal-node') !== -1) {
@@ -713,7 +725,6 @@
 				// Brighten and hoist the hover nodes
 				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
 			}
-
 			return attr;
 		},
 		/*= } =*/
@@ -745,10 +756,8 @@
 			// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
 			if (series.options.allowDrillToNode) {
 				each(points, function (point) {
-					var cursor,
-						drillId;
 					if (point.graphic) {
-						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
+						point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
 					}
 				});
 			}

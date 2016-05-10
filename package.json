@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "4.2.3",
+  "version": "4.2.5",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -29,8 +29,8 @@
     "closurecompiler": "^1.5.2",
     "colors": "~1.1.2",
     "grunt": "^0.4.5",
-    "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
+    "grunt-jslint": "^1.1.12",
+    "gulp-eslint": "^2.0.0",
     "gulp-if": "^2.0.0",
     "gzip-size": "^3.0.0",
     "request": "^2.65.0",

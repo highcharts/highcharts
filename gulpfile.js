@@ -244,6 +244,16 @@ gulp.task('test', function () {
     });
 });
 
+/**
+ * Run the nightly. The task spawns a child process running node.
+ */
+gulp.task('nightly', function () {
+    spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
+        cwd: 'utils/samples',
+        stdio: 'inherit'
+    });
+});
+
 gulp.task('filesize', function () {
     var oldSize,
         newSize;
@@ -368,7 +378,17 @@ gulp.task('scripts', function () {
             func = new Function('build', tpl); // eslint-disable-line no-new-func
             tpl = func(build);
         } catch (e) {
-            console.log('Function preprocess failed:\n    ' + e.message.red);
+            fs.writeFile(
+                'temp.js',
+                tpl,
+                'utf8'
+            );
+            console.log(
+                'Function preprocess failed:\n' +
+                '   ' + e.message.red +
+                '   View generated supercode in temp.js'.cyan
+            );
+            throw 'Exiting';
         }
 
 
@@ -489,6 +509,7 @@ gulp.task('scripts', function () {
         }
 
         // Create the classic file
+        // console.log('Creating ' + path.green);
         fs.writeFileSync(
             path.replace('./js/', './code/'),
             preprocess(tpl, {

@@ -23,8 +23,7 @@ var defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
 	noop = Highcharts.noop,
-	each = Highcharts.each,
-	pick = Highcharts.pick;
+	each = Highcharts.each;
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {

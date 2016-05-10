@@ -23,7 +23,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Lower quartile: {point.q1}<br/>' +
 			'Minimum: {point.low}<br/>',
 		/*= } else { =*/
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line no-dupe-keys
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +

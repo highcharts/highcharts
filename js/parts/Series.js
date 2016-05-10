@@ -3,6 +3,7 @@
 		animObject = H.animObject,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
+		correctFloat = H.correctFloat,
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
 		defaultPlotOptions = H.defaultPlotOptions,
@@ -183,7 +184,7 @@ H.Series.prototype = {
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
 			args = arguments,
-			fn = typeof i === 'number' ?
+			fn = isNumber(i) ?
 				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
@@ -214,11 +215,16 @@ H.Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
+		if (pointIntervalUnit) {
 			date = new Date(xIncrement);
-			date = (pointIntervalUnit === 'month') ?
-				+date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval) :
-				+date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
+
+			if (pointIntervalUnit === 'day') {
+				date = +date[Date.hcSetDate](date[Date.hcGetDate]() + pointInterval);
+			} else if (pointIntervalUnit === 'month') {
+				date = +date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval);
+			} else if (pointIntervalUnit === 'year') {
+				date = +date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
+			}
 			pointInterval = date - xIncrement;
 
 		}
@@ -656,6 +662,7 @@ H.Series.prototype = {
 			} else {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -698,7 +705,7 @@ H.Series.prototype = {
 			i,
 			j;
 
-		yData = yData || this.stackedYData || this.processedYData;
+		yData = yData || this.stackedYData || this.processedYData || [];
 		yDataLength = yData.length;
 
 		for (i = 0; i < yDataLength; i++) {
@@ -776,8 +783,9 @@ H.Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = plotX = Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
-
+			point.plotX = plotX = correctFloat( // #5236
+				Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+			);
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
@@ -787,7 +795,7 @@ H.Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === stackThreshold) {
+				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -814,7 +822,7 @@ H.Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = !point.isNull ?
+			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				undefined;
 			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -845,14 +853,13 @@ H.Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function (points, cropByX) {
-		var axisLen = this.xAxis && this.xAxis.len;
-		return grep(points || this.points || [], function (point) { // #5029
-			var keep = !point.isNull;
-			if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
-				keep = false;
+	getValidPoints: function (points, insideOnly) {
+		var chart = this.chart;
+		return grep(points || this.points || [], function isValidPoint(point) { // #3916, #5029
+			if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) { // #5085
+				return false;
 			}
-			return keep;
+			return !point.isNull;
 		});
 	},
 
@@ -1003,8 +1010,8 @@ H.Series.prototype = {
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
-				// Only draw the point if y is defined
-				if (enabled && plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+				// only draw the point if y is defined
+				if (enabled && isNumber(plotY) && point.y !== null) {
 
 					// Shortcuts
 					radius = seriesMarkerOptions.radius;
@@ -1504,7 +1511,7 @@ H.Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					zIndex: zIndex || 0.1 // IE8 needs this
+					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
 
@@ -1641,8 +1648,7 @@ H.Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			wasDirty = series.isDirty,
+			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1664,11 +1670,8 @@ H.Series.prototype = {
 
 		series.translate();
 		series.render();
-		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
-		}
-		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+		if (wasDirty) { // #3868, #3945
+			delete this.kdTree;
 		}
 	},
 
@@ -1697,7 +1700,9 @@ H.Series.prototype = {
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
-			var axis, median, length = points && points.length;
+			var axis,
+				median,
+				length = points && points.length;
 
 			if (length) {
 
@@ -1723,7 +1728,14 @@ H.Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+			series.kdTree = _kdtree(
+				series.getValidPoints(
+					null,
+					!series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+				),
+				dimensions,
+				dimensions
+			);
 		}
 		delete series.kdTree;
 

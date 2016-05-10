@@ -25,13 +25,13 @@ $(function () {
         });
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 1200,
             true,
             'Element width is acceptable'
         );
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 1200,
             true,
             'Element height is acceptable'
         );
@@ -65,13 +65,13 @@ $(function () {
         });
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 1200,
             true,
             'Element width is acceptable'
         );
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 1200,
             true,
             'Element height is acceptable'
         );
@@ -111,13 +111,13 @@ $(function () {
         });
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('width'), 10) < 1200,
             true,
             'With minRange: Element width is acceptable'
         );
 
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 400,
+            parseInt(chart.series[0].points[0].graphic.attr('height'), 10) < 1200,
             true,
             'With minRange: Element height is acceptable'
         );

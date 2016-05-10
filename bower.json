@@ -1,6 +1,6 @@
 {
     "name": "highcharts",
-    "version": "4.2.3",
+    "version": "4.2.5",
     "description": "JavaScript charting framework",
     "main": "lib/highcharts.js",
     "authors": [
@@ -34,5 +34,6 @@
         "build.md",
         "build.properties",
         "build.xml"
-    ]
+    ],
+    "license": "SEE LICENSE IN <license.txt>"
 }

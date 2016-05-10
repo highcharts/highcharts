@@ -125,8 +125,9 @@ H.defaultOptions = {
 		style: {
 			color: '#333333',
 			fontSize: '18px'
-		}
+		},
 		/*= } =*/
+		widthAdjust: -44
 
 	},
 	subtitle: {
@@ -139,8 +140,9 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			color: '#555555'
-		}
+		},
 		/*= } =*/
+		widthAdjust: -44
 	},
 
 	plotOptions: {

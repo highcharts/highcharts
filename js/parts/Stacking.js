@@ -318,6 +318,11 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
+
+			// Record the base of the stack
+			if (!defined(stack.cum)) {
+				stack.base = pointKey;
+			}
 			stack.touched = yAxis.stacksTouched;
 		
 
@@ -349,8 +354,8 @@ Series.prototype.setStackedPoints = function () {
 
 		if (y !== null) {
 			stack.points[pointKey].push(stack.cum);
+			stackedYData[i] = stack.cum;
 		}
-		stackedYData[i] = stack.cum;
 
 	}
 

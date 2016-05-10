@@ -8,7 +8,6 @@
 		isFirefox = H.isFirefox,
 		isMS = H.isMS,
 		isWebKit = H.isWebKit,
-		pick = H.pick,
 		pInt = H.pInt,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer,

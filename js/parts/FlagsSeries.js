@@ -5,7 +5,6 @@
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
-		pick = H.pick,
 		Renderer = H.Renderer,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,

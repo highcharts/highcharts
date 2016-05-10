@@ -26,6 +26,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
+		defer = pick(options.defer, true),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
@@ -39,11 +40,11 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? 'hidden' : 'visible',
+			defer && !hasRendered ? 'hidden' : 'visible', // #5133
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (defer) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
 				addEvent(series, 'afterAnimate', function () {
@@ -202,6 +203,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		rotation = options.rotation,
 		normRotation,
 		negRotation,
+		align = options.align,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
@@ -237,12 +239,11 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 			rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
 			alignAttr = {
 				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-				y: alignTo.y + options.y + alignTo.height / 2
+				y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
 			};
-			dataLabel
-				[isNew ? 'attr' : 'animate'](alignAttr)
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
-					align: options.align
+					align: align
 				});
 
 			// Compensate for the rotated label sticking out on the sides
@@ -469,7 +470,7 @@ if (seriesTypes.pie) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
 
-					if (!isNaN(slotX)) {
+					if (isNumber(slotX)) {
 						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,
@@ -667,7 +668,7 @@ if (seriesTypes.pie) {
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '#606060',
+								'stroke': options.connectorColor || point.color || '#606060'
 							});
 							/*= } =*/
 						}

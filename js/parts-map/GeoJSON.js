@@ -1,17 +1,21 @@
 (function (H) {
-	var defaultOptions = H.defaultOptions,
-		Chart = H.Chart,
+	var Chart = H.Chart,
 		each = H.each,
 		extend = H.extend,
 		error = H.error,
 		format = H.format,
+		merge = H.merge,
 		win = H.win,
 		wrap = H.wrap;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
 function pointInPolygon(point, polygon) {
-	var i, j, rel1, rel2, c = false,
+	var i,
+		j,
+		rel1,
+		rel2,
+		c = false,
 		x = point.x,
 		y = point.y;
 
@@ -205,14 +209,14 @@ H.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 
-	credits = Highcharts.merge(true, this.options.credits, credits)
+	credits = merge(true, this.options.credits, credits);
 
 	// Disable credits link if map credits enabled. This to allow for in-text anchors.
 	if (this.mapCredits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, Highcharts.merge(true, credits, {
+	proceed.call(this, merge(true, credits, {
 		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
 	}));
 

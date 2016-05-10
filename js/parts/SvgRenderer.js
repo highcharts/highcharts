@@ -5,6 +5,7 @@
 		addEvent = H.addEvent,
 		animate = H.animate,
 		attr = H.attr,
+		charts = H.charts,
 		Color = H.Color,
 		css = H.css,
 		createElement = H.createElement,
@@ -15,6 +16,7 @@
 		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
+		grep = H.grep,
 		hasTouch = H.hasTouch,
 		isArray = H.isArray,
 		isFirefox = H.isFirefox,
@@ -801,7 +803,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload, rot) {
 		var wrapper = this,
-			bBox,// = wrapper.bBox,
+			bBox, // = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -1212,6 +1214,12 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
+
+		// Remove text content if it exists
+		if (titleNode.firstChild) {
+			titleNode.removeChild(titleNode.firstChild);
+		}
+
 		titleNode.appendChild(
 			doc.createTextNode(
 				(String(pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
@@ -1547,6 +1555,7 @@ SVGRenderer.prototype = {
 			clsRegex,
 			styleRegex,
 			hrefRegex,
+			wasTooLong,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -1608,17 +1617,20 @@ SVGRenderer.prototype = {
 			}
 
 
-			// remove empty line at end
-			if (lines[lines.length - 1] === '') {
-				lines.pop();
-			}
+			// Trim empty lines (#5261)
+			lines = grep(lines, function (line) {
+				return line !== '';
+			});
 
 
 			// build the lines
 			each(lines, function buildTextLines(line, lineNo) {
-				var spans, spanNo = 0;
-
-				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+				var spans,
+					spanNo = 0;
+				line = line
+					.replace(/^\s+|\s+$/g, '') // Trim to prevent useless/costly process on the spaces (#5258)
+					.replace(/<span/g, '|||<span')
+					.replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
 				each(spans, function buildTextSpans(span) {
@@ -1688,7 +1700,6 @@ SVGRenderer.prototype = {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
-									wasTooLong,
 									actualWidth,
 									rest = [],
 									dy = getLineHeight(tspan),
@@ -1719,10 +1730,6 @@ SVGRenderer.prototype = {
 										if (wordStr === '' || (!tooLong && cursor < 0.5)) {
 											words = []; // All ok, break out
 										} else {
-											if (tooLong) {
-												wasTooLong = true;
-											}
-
 											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * Math.ceil(cursor));
 											words = [wordStr + (width > 3 ? '\u2026' : '')];
 											tspan.removeChild(tspan.firstChild);
@@ -1757,9 +1764,6 @@ SVGRenderer.prototype = {
 										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
-								if (wasTooLong) {
-									wrapper.attr('title', wrapper.textStr);
-								}
 								wrapper.rotation = rotation;
 							}
 
@@ -1768,6 +1772,10 @@ SVGRenderer.prototype = {
 					}
 				});
 			});
+
+			if (wasTooLong) {
+				wrapper.attr('title', wrapper.textStr);
+			}
 			if (tempParent) {
 				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
 			}
@@ -2761,7 +2769,7 @@ SVGRenderer.prototype = {
 			if (value !== alignFactor) {
 				alignFactor = value;
 				if (bBox) { // Bounding box exists, means we're dynamically changing
-					wrapper.attr({ x: x });
+					wrapper.attr({ x: wrapperX }); // #5134
 				}
 			}
 		};

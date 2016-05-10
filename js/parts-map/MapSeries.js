@@ -8,7 +8,9 @@
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
+		map = H.map,
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
@@ -214,7 +216,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
 					while (i--) {
-						if (typeof path[i] === 'number' && !isNaN(path[i])) {
+						if (isNumber(path[i])) {
 							if (even) { // even = x
 								pointMaxX = Math.max(pointMaxX, path[i]);
 								pointMinX = Math.min(pointMinX, path[i]);
@@ -305,7 +307,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (path) {
 			i = path.length;
 			while (i--) {
-				if (typeof path[i] === 'number') {
+				if (isNumber(path[i])) {
 					ret[i] = even ?
 						(path[i] - xMin) * xTransA + xMinPixelPadding :
 						(path[i] - yMin) * yTransA + yMinPixelPadding;
@@ -324,7 +326,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * from the mapData are used, and those that don't correspond to a data value
 	 * are given null values.
 	 */
-	setData: function (data, redraw) {
+	setData: function (data, redraw, animation, updatePoints) {
 		var options = this.options,
 			globalMapData = this.chart.options.chart && this.chart.options.chart.map,
 			mapData = options.mapData,
@@ -332,6 +334,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			pointArrayMap = options.keys || this.pointArrayMap,
 			dataUsed = [],
+			mapMap = {},
 			mapPoint,
 			transform,
 			mapTransforms,
@@ -355,7 +358,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Convert Array point definitions to objects using pointArrayMap
 		if (data) {
 			each(data, function (val, i) {
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					data[i] = {
 						value: val
 					};
@@ -402,7 +405,17 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-				this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			}
+			this.mapMap = mapMap;
+
+			// Registered the point codes that actually hold data
+			if (data && joinBy[1]) {
+				each(data, function (point) {
+					if (mapMap[point[joinBy[1]]]) {
+						dataUsed.push(mapMap[point[joinBy[1]]]);
+					}
+				});
 			}
 
 			if (options.allAreas) {
@@ -417,16 +430,21 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				}
 
 				// Add those map points that don't correspond to data, which will be drawn as null points
-				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf
-
+				dataUsed = '|' + map(dataUsed, function (point) { 
+					return point[joinBy[0]]; 
+				}).join('|') + '|'; // String search is faster than array.indexOf
+				
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 						data.push(merge(mapPoint, { value: null }));
+						updatePoints = false; // #5050 - adding all areas causes the update optimization of setData to kick in, even though the point order has changed
 					}
 				});
+			} else {
+				this.getBox(dataUsed); // Issue #4784
 			}
 		}
-		Series.prototype.setData.call(this, data, redraw);
+		Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
 	},
 
 

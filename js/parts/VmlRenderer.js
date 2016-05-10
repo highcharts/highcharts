@@ -1019,8 +1019,8 @@ VMLRendererExtension = { // inherit SVGRenderer
 				ret.push(
 					'e',
 					'M',
-					x,// - innerRadius,
-					y// - innerRadius
+					x, // - innerRadius,
+					y // - innerRadius
 				);
 			}
 

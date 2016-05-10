@@ -350,4 +350,69 @@ $(function () {
     });
 
 
+    QUnit.test('isNumber', function (assert) {
+        var isNumber = Highcharts.isNumber;
+        assert.strictEqual(
+            isNumber(NaN),
+            false,
+            'NaN returns false'
+        );
+        assert.strictEqual(
+            isNumber(undefined),
+            false,
+            'undefined returns false'
+        );
+        assert.strictEqual(
+            isNumber(null),
+            false,
+            'null returns false'
+        );
+        assert.strictEqual(
+            isNumber({}),
+            false,
+            'object returns false'
+        );
+        assert.strictEqual(
+            isNumber('0'),
+            false,
+            'single quoted number (\'0\') returns false'
+        );
+        assert.strictEqual(
+            isNumber("0"),
+            false,
+            'double quoted number ("0") returns false'
+        );
+        assert.strictEqual(
+            isNumber([1]),
+            false,
+            'array with number [1] returns false'
+        );
+        assert.strictEqual(
+            isNumber(0),
+            true,
+            '0 returns true'
+        );
+        assert.strictEqual(
+            isNumber(0.12),
+            true,
+            'number with decimals (0.12) returns true'
+        );
+        assert.strictEqual(
+            isNumber(.12),
+            true,
+            'number with only decimals (.12) returns true'
+        );
+        assert.strictEqual(
+            isNumber(-1),
+            true,
+            'negative number (-1) returns true'
+        );
+        assert.strictEqual(
+            isNumber(-1.123),
+            true,
+            'negative number with decimals (-1.123) returns true'
+        );
+    });
+
+
 });

@@ -9,6 +9,9 @@ $updateContents = false;
 
 
 if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
+	if (!$compare->$path) {
+		$compare->$path = new StdClass;
+	}
 	$compare->$path->comment = (object) $_POST;
 	file_put_contents('temp/compare.json', json_encode($compare, JSON_PRETTY_PRINT));
 	$updateContents = true;

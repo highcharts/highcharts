@@ -53,7 +53,8 @@ defaultOptions.mapNavigation = {
 			text: '-',
 			y: 28
 		}
-	}
+	},
+	mouseWheelSensitivity: 1.1
 	// enabled: false,
 	// enableButtons: null, // inherit from enabled
 	// enableTouchZoom: null, // inherit from enabled

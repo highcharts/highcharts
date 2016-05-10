@@ -5,7 +5,6 @@
 		destroyObjectProperties = H.destroyObjectProperties,
 		each = H.each,
 		erase = H.erase,
-		log2lin = H.log2lin,
 		merge = H.merge,
 		pick = H.pick;
 /*
@@ -53,7 +52,8 @@ H.PlotLineOrBand.prototype = {
 			groupAttribs = {},
 			renderer = axis.chart.renderer,
 			groupName = isBand ? 'bands' : 'lines',
-			group;
+			group,
+			log2lin = axis.log2lin;
 
 		// logarithmic conversion
 		if (axis.isLog) {

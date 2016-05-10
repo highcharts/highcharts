@@ -16,7 +16,7 @@ extend(Pointer.prototype, {
 		e = this.normalize(e);
 
 		if (chart.options.mapNavigation.enableDoubleClickZoomTo) {
-			if (chart.pointer.inClass(e.target, 'highcharts-tracker')) {
+			if (chart.pointer.inClass(e.target, 'highcharts-tracker') && chart.hoverPoint) {
 				chart.hoverPoint.zoomTo();
 			}
 		} else if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
@@ -43,8 +43,7 @@ extend(Pointer.prototype, {
 		delta = e.detail || -(e.wheelDelta / 120);
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			chart.mapZoom(
-				//delta > 0 ? 2 : 0.5,
-				Math.pow(2, delta),
+				Math.pow(chart.options.mapNavigation.mouseWheelSensitivity, delta),
 				chart.xAxis[0].toValue(e.chartX),
 				chart.yAxis[0].toValue(e.chartY),
 				e.chartX,

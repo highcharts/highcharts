@@ -16,11 +16,10 @@
 		fireEvent = H.fireEvent,
 		format = H.format,
 		getMagnitude = H.getMagnitude,
+		grep = H.grep,
 		inArray = H.inArray,
 		isNumber = H.isNumber,
 		isString = H.isString,
-		lin2log = H.lin2log,
-		log2lin = H.log2lin,
 		merge = H.merge,
 		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick,
@@ -72,8 +71,8 @@ H.Axis.prototype = {
 				fontSize: '11px'
 			},
 			/*= } =*/
-			x: 0,
-			y: 15
+			x: 0
+			//y: undefined
 			/*formatter: function () {
 				return this.value;
 			},*/
@@ -150,8 +149,7 @@ H.Axis.prototype = {
 		tickPixelInterval: 72,
 		showLastLabel: true,
 		labels: {
-			x: -8,
-			y: 3
+			x: -8
 		},
 		maxPadding: 0.05,
 		minPadding: 0.05,
@@ -185,8 +183,7 @@ H.Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			x: -15,
-			y: null
+			x: -15
 		},
 		title: {
 			rotation: 270
@@ -198,8 +195,7 @@ H.Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			x: 15,
-			y: null
+			x: 15
 		},
 		title: {
 			rotation: 90
@@ -212,8 +208,7 @@ H.Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			autoRotation: [-45],
-			x: 0,
-			y: null // based on font size
+			x: 0
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -227,8 +222,7 @@ H.Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			autoRotation: [-45],
-			x: 0,
-			y: -15
+			x: 0
 			// overflow: undefined
 			// staggerLines: null
 		},
@@ -392,8 +386,8 @@ H.Axis.prototype = {
 
 		// extend logarithmic axis
 		if (axis.isLog) {
-			axis.val2lin = log2lin;
-			axis.lin2val = lin2log;
+			axis.val2lin = axis.log2lin;
+			axis.lin2val = axis.lin2log;
 		}
 	},
 
@@ -500,8 +494,20 @@ H.Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						// If xData contains values which is not numbers, then filter them out.
+						// To prevent performance hit, we only do this after we have already
+						// found seriesDataMin because in most cases all data is valid. #5234.
+						seriesDataMin = arrayMin(xData);
+						if (!isNumber(seriesDataMin) && !(seriesDataMin instanceof Date)) { // Date for #5010
+							xData = grep(xData, function (x) {
+								return isNumber(x);
+							});
+							seriesDataMin = arrayMin(xData); // Do it again with valid data
+						}
+
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), seriesDataMin);
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -647,8 +653,7 @@ H.Axis.prototype = {
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
-
-		if (isNaN(translatedValue)) { // no min or max
+		if (!isNumber(translatedValue)) { // no min or max
 			skip = true;
 
 		} else if (axis.horiz) {
@@ -940,6 +945,7 @@ H.Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isLog = axis.isLog,
+			log2lin = axis.log2lin,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
@@ -1013,6 +1019,9 @@ H.Axis.prototype = {
 
 			axis.range = null;  // don't use it when running setExtremes
 		}
+
+		// Hook for Highstock Scroller. Consider combining with beforePadding.
+		fireEvent(axis, 'foundExtremes');
 
 		// Hook for adjusting this.min and this.max. Used by bubble series.
 		if (axis.beforePadding) {
@@ -1515,7 +1524,8 @@ H.Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = axis.lin2log;
 
 		return {
 			min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -1534,6 +1544,7 @@ H.Axis.prototype = {
 	getThreshold: function (threshold) {
 		var axis = this,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
@@ -1589,21 +1600,29 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Return the size of the labels
+	 */
+	labelMetrics: function () {
+		return this.chart.renderer.fontMetrics(
+			this.options.labels.style.fontSize, 
+			this.ticks[0] && this.ticks[0].label
+		);
+	},
+
+	/**
 	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
 	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
 	 * On a vertical axis remove ticks and add ellipsis.
 	 */
 	unsquish: function () {
-		var chart = this.chart,
-			ticks = this.ticks,
-			labelOptions = this.options.labels,
+		var labelOptions = this.options.labels,
 			horiz = this.horiz,
 			tickInterval = this.tickInterval,
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
 			rotationOption = labelOptions.rotation,
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style && labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = this.labelMetrics(),
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
@@ -1661,7 +1680,7 @@ H.Axis.prototype = {
 		var chart = this.chart,
 			horiz = this.horiz,
 			labelOptions = this.options.labels,
-			slotCount = this.tickPositions.length - (this.categories ? 0 : 1),
+			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
 			marginLeft = chart.margin[3];
 
 		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
@@ -1683,8 +1702,8 @@ H.Axis.prototype = {
 			slotWidth = this.getSlotWidth(),
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
-			labelMetrics = renderer.fontMetrics(labelOptions.style && labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-			textOverflowOption = labelOptions.style && labelOptions.style.textOverflow,
+			labelMetrics = this.labelMetrics(),
+			textOverflowOption = labelOptions.style.textOverflow,
 			css,
 			labelLength = 0,
 			label,
@@ -1817,6 +1836,7 @@ H.Axis.prototype = {
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
 			className = options.className, // docs
+			textAlign,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
 			tickSize = this.tickSize('tick');
@@ -1886,6 +1906,18 @@ H.Axis.prototype = {
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
 			if (!axis.axisTitle) {
+				textAlign = axisTitleOptions.textAlign;
+				if (!textAlign) {
+					textAlign = (horiz ? { 
+						low: 'left',
+						middle: 'center',
+						high: 'right'
+					} : { 
+						low: opposite ? 'right' : 'left',
+						middle: 'center',
+						high: opposite ? 'left' : 'right'
+					})[axisTitleOptions.align];
+				}
 				axis.axisTitle = renderer.text(
 					axisTitleOptions.text,
 					0,
@@ -1895,12 +1927,7 @@ H.Axis.prototype = {
 				.attr({
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
-					align: 
-						axisTitleOptions.textAlign || { 
-							low: opposite ? 'right' : 'left',
-							middle: 'center',
-							high: opposite ? 'left' : 'right'
-						}[axisTitleOptions.align]
+					align: textAlign
 				})
 				.addClass('highcharts-axis-title')
 				/*= if (build.classic) { =*/
@@ -1927,9 +1954,20 @@ H.Axis.prototype = {
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
-		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-		labelOffsetPadded = Math.abs(labelOffset) + titleMargin +
-			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
+		if (side === 0) {
+			lineHeightCorrection = -axis.labelMetrics().h;
+		} else if (side === 2) {
+			lineHeightCorrection = axis.tickRotCorr.y;
+		} else {
+			lineHeightCorrection = 0;
+		}
+
+		// Find the padded label offset
+		labelOffsetPadded = Math.abs(labelOffset) + titleMargin;
+		if (labelOffset) {
+			labelOffsetPadded -= lineHeightCorrection;
+			labelOffsetPadded += directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + directionFactor * 8) : labelOptions.x);
+		}
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = Math.max(
@@ -2048,6 +2086,7 @@ H.Axis.prototype = {
 			renderer = chart.renderer,
 			options = axis.options,
 			isLog = axis.isLog,
+			lin2log = axis.lin2log,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
 			axisTitle = axis.axisTitle,
@@ -2059,7 +2098,7 @@ H.Axis.prototype = {
 			tickmarkOffset = axis.tickmarkOffset,
 			axisLine = axis.axisLine,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && isNumber(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
 			from,
@@ -2300,9 +2339,7 @@ H.Axis.prototype = {
 		var path,
 			options = this.crosshair,
 			pos,
-			attribs,
 			categorized,
-			strokeWidth,
 			graphic = this.cross;
 
 		if (

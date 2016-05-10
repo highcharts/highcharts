@@ -2,7 +2,6 @@
 	var dateFormat = H.dateFormat,
 		each = H.each,
 		extend = H.extend,
-		fireEvent = H.fireEvent,
 		format = H.format,
 		isNumber = H.isNumber,
 		map = H.map,

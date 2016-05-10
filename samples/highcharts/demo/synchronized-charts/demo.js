@@ -22,9 +22,7 @@ $(function () {
             point = chart.series[0].searchPoint(event, true); // Get the hovered point
 
             if (point) {
-                point.onMouseOver(); // Show the hover marker
-                chart.tooltip.refresh(point); // Show the tooltip
-                chart.xAxis[0].drawCrosshair(event, point); // Show the crosshair
+                point.highlight(e);
             }
         }
     });
@@ -33,6 +31,15 @@ $(function () {
      */
     Highcharts.Pointer.prototype.reset = function () {
         return undefined;
+    };
+
+    /**
+     * Highlight a point by showing tooltip, setting hover state and draw crosshair
+     */
+    Highcharts.Point.prototype.highlight = function (event) {
+        this.onMouseOver(); // Show the hover marker
+        this.series.chart.tooltip.refresh(this); // Show the tooltip
+        this.series.chart.xAxis[0].drawCrosshair(event, this); // Show the crosshair
     };
 
     /**

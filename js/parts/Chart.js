@@ -18,6 +18,7 @@
 		fireEvent = H.fireEvent,
 		getStyle = H.getStyle,
 		grep = H.grep,
+		isNumber = H.isNumber,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		marginNames = H.marginNames,
@@ -271,6 +272,9 @@ Chart.prototype = {
 					redrawLegend = true;
 				}
 			}
+			if (serie.isDirtyData) {
+				fireEvent(serie, 'updatedData');
+			}
 		});
 
 		// handle added or removed series
@@ -514,7 +518,7 @@ Chart.prototype = {
 		var titleOffset = 0,
 			requiresDirtyBox,
 			renderer = this.renderer,
-			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
+			spacingBox = this.spacingBox;
 
 		// Lay out the title and the subtitle respectively
 		each(['title', 'subtitle'], function (key) {
@@ -529,7 +533,7 @@ Chart.prototype = {
 				titleSize = renderer.fontMetrics(titleSize, title).b;
 				
 				title
-					.css({ width: (titleOptions.width || autoWidth) + 'px' })
+					.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + 'px' })
 					.align(extend({ 
 						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
 					}, titleOptions), false, 'spacingBox');
@@ -650,7 +654,7 @@ Chart.prototype = {
 		// attribute and the SVG contents, but not an interactive chart. So in this case,
 		// charts[oldChartIndex] will point to the wrong chart if any (#2609).
 		oldChartIndex = pInt(attr(renderTo, indexAttrName));
-		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
+		if (isNumber(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
 		}
 

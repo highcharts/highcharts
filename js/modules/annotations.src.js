@@ -74,7 +74,7 @@
 			i = 0;
 
 		while (i < len) {
-			if (typeof d[i] === 'number' && typeof d[i + 1] === 'number') {
+			if (isNumber(d[i]) && isNumber(d[i + 1])) {
 				d[i] = xAxis.toPixels(d[i]) - xOffset;
 				d[i + 1] = yAxis.toPixels(d[i + 1]) - yOffset;
 				i += 2;
@@ -189,7 +189,7 @@
 			x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) - xAxis.minPixelPadding : options.x);
 			y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
 
-			if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
+			if (!isNumber(x) || !isNumber(y)) {
 				return;
 			}
 
