@@ -20,7 +20,8 @@ $(function () {
     var stockConfig = {
         chart: {
             animation: false,
-            height: 300
+            height: 300,
+            plotBackgroundColor: '#eff'
         },
 
         series: [{
@@ -315,7 +316,8 @@ $(function () {
     });
 
     QUnit.test('Navigator update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], stockConfig),
+            originalPlotHeight = document.querySelector('.highcharts-plot-background').getBBox().height;
 
         assert.strictEqual(
             typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
@@ -348,6 +350,11 @@ $(function () {
             chart.container.querySelector('.highcharts-navigator'),
             null,
             'Navigator element is missing'
+        );
+
+        assert.ok(
+            document.querySelector('.highcharts-plot-background').getBBox().height > originalPlotHeight,
+            'Plot area is now higher than it was'
         );
     });
 

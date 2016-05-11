@@ -642,10 +642,12 @@ Navigator.prototype = {
 		var xAxisIndex = chart.xAxis.length,
 			yAxisIndex = chart.yAxis.length;
 
+		// make room below the chart
+		chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
+		chart.isDirtyBox = true;
 
 		if (scroller.navigatorEnabled) {
-			// make room below the chart
-			chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
+
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
