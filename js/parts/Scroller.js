@@ -980,10 +980,8 @@ Navigator.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var scroller = this;
-
 		// Disconnect events added in addEvents
-		scroller.removeEvents();
+		this.removeEvents();
 
 		if (this.xAxis) {
 			erase(this.chart.axes, this.xAxis);
@@ -993,17 +991,19 @@ Navigator.prototype = {
 		}
 
 		// Destroy properties
-		each([scroller.scrollbar, scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline], function (prop) {
-			if (prop && prop.destroy) {
-				prop.destroy();
+		// Destroy properties
+		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
+			if (this[prop] && this[prop].destroy) {
+				this[prop] = this[prop].destroy();
 			}
-		});
-		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = null;
+		}, this);
+		this.rendered = null;
 
 		// Destroy elements in collection
-		each([scroller.handles, scroller.elementsToDestroy], function (coll) {
+		each([this.handles, this.elementsToDestroy], function (coll) {
 			destroyObjectProperties(coll);
-		});
+		}, this);
 	}
 };
 
@@ -1057,7 +1057,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
 		if (options.navigator.enabled || options.scrollbar.enabled) {
-			this.scroller = new Navigator(this);
+			this.scroller = this.navigator = new Navigator(this);
 		}
 	});
 
