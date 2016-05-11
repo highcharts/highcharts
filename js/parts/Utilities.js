@@ -1187,6 +1187,10 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 		
 		for (i = 0; i < len; i++) {
 			fn = events[i];
+			// Avoid calling a null event handler
+			if (!fn) {
+			    continue;
+			}
 
 			// If the event handler return false, prevent the default handler from executing
 			if (fn.call(el, eventArguments) === false) {
