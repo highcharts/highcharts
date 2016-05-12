@@ -327,6 +327,16 @@
 								columns[gc - startColumn][gr - startRow] = cell.content.$t;
 							}
 						}
+
+						// Insert null for empty spreadsheet cells (#5298)
+						each(columns, function (column) {
+							for (i = 0; i < column.length; i++) {
+								if (column[i] === undefined) {
+									column[i] = null;
+								}
+							}
+						});
+
 						self.dataFound();
 					}
 				});

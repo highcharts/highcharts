@@ -541,7 +541,7 @@ H.getTZOffset = function (timestamp) {
  * @param {Boolean} capitalize
  */
 H.dateFormat = function (format, timestamp, capitalize) {
-	if (!H.isNumber(timestamp)) {
+	if (!H.defined(timestamp) || isNaN(timestamp)) {
 		return H.defaultOptions.lang.invalidDate || '';
 	}
 	format = H.pick(format, '%Y-%m-%d %H:%M:%S');

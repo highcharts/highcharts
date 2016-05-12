@@ -152,7 +152,8 @@ Scrollbar.prototype = {
 			options = scroller.options,
 			vertical = options.vertical,
 			xOffset = height,
-			yOffset = 0;
+			yOffset = 0,
+			method = scroller.rendered ? 'animate' : 'attr';
 
 		scroller.x = x;
 		scroller.y = y + options.trackBorderWidth;
@@ -174,13 +175,13 @@ Scrollbar.prototype = {
 		}
 
 		// Set general position for a group:
-		scroller.group.attr({
+		scroller.group[method]({
 			translateX: x,
 			translateY: scroller.y
 		});
 
 		// Resize background/track:
-		scroller.track.attr({
+		scroller.track[method]({
 			width: width,
 			height: height
 		});
@@ -190,6 +191,8 @@ Scrollbar.prototype = {
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
+
+		scroller.rendered = true;
 	},
 
 	/**
@@ -451,7 +454,7 @@ Scrollbar.prototype = {
 	*/
 	updatePosition: function (from, to) {
 		if (to > 1) {
-			from = correctFloat(1 - (to - from));
+			from = correctFloat(1 - correctFloat(to - from));
 			to = 1;
 		}
 
@@ -637,26 +640,6 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 		this.scrollbar = this.scrollbar.destroy();
 	}
 
-	proceed.apply(this, [].slice.call(arguments, 1));
-});
-
-/**
-* When options.scrollbar is enabled but navigator disabled,
-* then enable navigator for the first xAxis.
-*/
-wrap(Chart.prototype, 'init', function (proceed, userOptions) {
-	var scrollbarEnabled = pick(userOptions.scrollbar && userOptions.scrollbar.enabled, false),	
-		navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, false),
-		xAxis;
-
-	// If scrollbar is enabled, but without navigator, then connect scrollbar to the first xAxis:
-	if (scrollbarEnabled && !navigatorEnabled && userOptions.xAxis) {
-		xAxis = userOptions.xAxis[0] || userOptions.xAxis;
-		xAxis.scrollbar = merge(true, userOptions.scrollbar, xAxis.scrollbar);
-	} else if (scrollbarEnabled && navigatorEnabled) {
-		// Disable margin for scrollbar, to prevent detached navigator and scrollbar:
-		userOptions.scrollbar.margin = 0;
-	}
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 

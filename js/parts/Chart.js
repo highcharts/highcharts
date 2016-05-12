@@ -749,7 +749,9 @@ Chart.prototype = {
 		}
 
 		// Adjust for legend
-		chart.legend.adjustMargins(margin, spacing);
+		if (chart.legend.display) {
+			chart.legend.adjustMargins(margin, spacing);
+		}
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {

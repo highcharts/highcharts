@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-09)
+ * @license Highstock JS v4.2.5-modified (2016-05-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -676,7 +676,7 @@
      * @param {Boolean} capitalize
      */
     dateFormat = function (format, timestamp, capitalize) {
-        if (!isNumber(timestamp)) {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return defaultOptions.lang.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
@@ -11535,7 +11535,7 @@
                 // Use the first letter of each alignment option in order to detect the side
                 alignment = options.align.charAt(0) + options.verticalAlign.charAt(0) + options.layout.charAt(0); // #4189 - use charAt(x) notation instead of [x] for IE7
 
-            if (this.display && !options.floating) {
+            if (!options.floating) {
 
                 each([
                     /(lth|ct|rth)/,
@@ -12666,7 +12666,9 @@
             }
 
             // Adjust for legend
-            chart.legend.adjustMargins(margin, spacing);
+            if (chart.legend.display) {
+                chart.legend.adjustMargins(margin, spacing);
+            }
 
             // adjust for scroller
             if (chart.extraBottomMargin) {
@@ -20281,7 +20283,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-09)
+     * Highstock JS v4.2.5-modified (2016-05-12)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21984,7 +21986,8 @@
                 options = scroller.options,
                 vertical = options.vertical,
                 xOffset = height,
-                yOffset = 0;
+                yOffset = 0,
+                method = scroller.rendered ? 'animate' : 'attr';
 
             scroller.x = x;
             scroller.y = y + options.trackBorderWidth;
@@ -22006,13 +22009,13 @@
             }
 
             // Set general position for a group:
-            scroller.group.attr({
+            scroller.group[method]({
                 translateX: x,
                 translateY: scroller.y
             });
 
             // Resize background/track:
-            scroller.track.attr({
+            scroller.track[method]({
                 width: width,
                 height: height
             });
@@ -22022,6 +22025,8 @@
                 translateX: vertical ? 0 : width - xOffset,
                 translateY: vertical ? height - yOffset : 0
             });
+
+            scroller.rendered = true;
         },
 
         /**
@@ -22283,7 +22288,7 @@
         */
         updatePosition: function (from, to) {
             if (to > 1) {
-                from = correctFloat(1 - (to - from));
+                from = correctFloat(1 - correctFloat(to - from));
                 to = 1;
             }
 
@@ -22469,29 +22474,6 @@
             this.scrollbar = this.scrollbar.destroy();
         }
 
-        proceed.apply(this, [].slice.call(arguments, 1));
-    });
-
-    /**
-    * Backward compatibility:
-    * When options.scrollbar is enabled but navigator disabled,
-    * then enable navigator for the first xAxis:
-    */
-    wrap(Chart.prototype, 'init', function (proceed, userOptions) {
-        var scrollbarEnabled = pick(userOptions.scrollbar && userOptions.scrollbar.enabled, false),
-            navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, false);
-
-        // If scrollbar is enabled, but without navigator, then connect scrollbar to the first xAxis:
-        if (scrollbarEnabled && !navigatorEnabled && userOptions.xAxis) {
-            if (userOptions.xAxis[0]) {
-                userOptions.xAxis[0].scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis[0].scrollbar);
-            } else {
-                userOptions.xAxis.scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis.scrollbar);
-            }
-        } else if (scrollbarEnabled && navigatorEnabled) {
-            // Disable margin for scrollbar, to prevent detached navigator and scrollbar:
-            userOptions.scrollbar.margin = 0;
-        }
         proceed.apply(this, [].slice.call(arguments, 1));
     });
 
@@ -22827,8 +22809,16 @@
 
             if (scroller.scrollbar) {
                 // Keep scale 0-1
-                scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height, scroller.scrollerWidth, scroller.scrollbarHeight);
-                scroller.scrollbar.setRange(zoomedMin / navigatorWidth, zoomedMax / navigatorWidth);
+                scroller.scrollbar.position(
+                    scroller.scrollerLeft,
+                    scroller.top + (navigatorEnabled ? scroller.height : -scroller.scrollbarHeight),
+                    scroller.scrollerWidth,
+                    scroller.scrollbarHeight
+                );
+                scroller.scrollbar.setRange(
+                    zoomedMin / navigatorWidth,
+                    zoomedMax / navigatorWidth
+                );
             }
             scroller.rendered = true;
         },
@@ -23093,10 +23083,11 @@
             var xAxisIndex = chart.xAxis.length,
                 yAxisIndex = chart.yAxis.length;
 
+            // make room below the chart
+            chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
+            
 
             if (scroller.navigatorEnabled) {
-                // make room below the chart
-                chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
                 // an x axis is required for scrollbar also
                 scroller.xAxis = xAxis = new Axis(chart, merge({
                     // inherit base xAxis' break and ordinal options
@@ -23145,19 +23136,6 @@
                     });
                 }
 
-                if (chart.options.scrollbar.enabled) {
-                    scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
-                    addEvent(scroller.scrollbar, 'changed', function (e) {
-                        var range = scroller.navigatorWidth,
-                            to = range * this.to,
-                            from = range * this.from;
-
-                        scroller.render(0, 0, from, to);
-                        scroller.hasDragged = true;
-                        scroller.mouseUpHandler(e);
-                    });
-                }
-
             // in case of scrollbar only, fake an x axis to get translation
             } else {
                 scroller.xAxis = xAxis = {
@@ -23176,6 +23154,25 @@
                     },
                     toFixedRange: Axis.prototype.toFixedRange
                 };
+            }
+
+
+            // Initialize the scrollbar
+            if (chart.options.scrollbar.enabled) {
+                scroller.scrollbar = new Scrollbar(
+                    chart.renderer,
+                    merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
+                    chart
+                );
+                addEvent(scroller.scrollbar, 'changed', function (e) {
+                    var range = scroller.navigatorWidth,
+                        to = range * this.to,
+                        from = range * this.from;
+
+                    scroller.render(0, 0, from, to);
+                    scroller.hasDragged = true;
+                    scroller.mouseUpHandler(e);
+                });
             }
 
             // Respond to updated data in the base series.
