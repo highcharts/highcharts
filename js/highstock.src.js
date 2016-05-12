@@ -1317,7 +1317,7 @@
                 fn = events[i];
 
                 // If the event handler return false, prevent the default handler from executing
-                if (fn.call(el, eventArguments) === false) {
+                if (fn && fn.call(el, eventArguments) === false) {
                     eventArguments.preventDefault();
                 }
             }

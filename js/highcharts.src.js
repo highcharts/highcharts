@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-11)
+ * @license Highcharts JS v4.2.5-modified (2016-05-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1317,7 +1317,7 @@
                 fn = events[i];
 
                 // If the event handler return false, prevent the default handler from executing
-                if (fn.call(el, eventArguments) === false) {
+                if (fn && fn.call(el, eventArguments) === false) {
                     eventArguments.preventDefault();
                 }
             }
