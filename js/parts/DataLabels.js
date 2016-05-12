@@ -519,7 +519,7 @@ if (seriesTypes.pie) {
 
 						if (slotWidth < labelWidth) {
 							var direction = (centerY >= slots[slotIndex]) ? -1 : 1;
-							while (slots[slotIndex + direction] !== null &&
+							while (slots[slotIndex + direction] != null &&
 							slotWidth < labelWidth) {
 								slotIndex += direction;
 								slotWidth = getSlotWidth(slotIndex, i);
