@@ -329,8 +329,16 @@ Navigator.prototype = {
 
 		if (scroller.scrollbar) {
 			// Keep scale 0-1
-			scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height, scroller.scrollerWidth, scroller.scrollbarHeight);
-			scroller.scrollbar.setRange(zoomedMin / navigatorWidth, zoomedMax / navigatorWidth);
+			scroller.scrollbar.position(
+				scroller.scrollerLeft,
+				scroller.top + (navigatorEnabled ? scroller.height : -scroller.scrollbarHeight),
+				scroller.scrollerWidth,
+				scroller.scrollbarHeight
+			);
+			scroller.scrollbar.setRange(
+				zoomedMin / navigatorWidth,
+				zoomedMax / navigatorWidth
+			);
 		}
 		scroller.rendered = true;
 	},
@@ -595,10 +603,11 @@ Navigator.prototype = {
 		var xAxisIndex = chart.xAxis.length,
 			yAxisIndex = chart.yAxis.length;
 
+		// make room below the chart
+		chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
+			
 
 		if (scroller.navigatorEnabled) {
-			// make room below the chart
-			chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
@@ -647,19 +656,6 @@ Navigator.prototype = {
 				});
 			}
 
-			if (chart.options.scrollbar.enabled) {
-				scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
-				addEvent(scroller.scrollbar, 'changed', function (e) {
-					var range = scroller.navigatorWidth,
-						to = range * this.to,
-						from = range * this.from;
-
-					scroller.render(0, 0, from, to);
-					scroller.hasDragged = true;
-					scroller.mouseUpHandler(e);
-				});
-			}
-
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
 			scroller.xAxis = xAxis = {
@@ -678,6 +674,25 @@ Navigator.prototype = {
 				},
 				toFixedRange: Axis.prototype.toFixedRange
 			};
+		}
+
+
+		// Initialize the scrollbar
+		if (chart.options.scrollbar.enabled) {
+			scroller.scrollbar = new Scrollbar(
+				chart.renderer,
+				merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
+				chart
+			);
+			addEvent(scroller.scrollbar, 'changed', function (e) {
+				var range = scroller.navigatorWidth,
+					to = range * this.to,
+					from = range * this.from;
+
+				scroller.render(0, 0, from, to);
+				scroller.hasDragged = true;
+				scroller.mouseUpHandler(e);
+			});
 		}
 
 		// Respond to updated data in the base series.

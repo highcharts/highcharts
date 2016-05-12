@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-11)
+ * @license Highstock JS v4.2.5-modified (2016-05-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20283,7 +20283,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-11)
+     * Highstock JS v4.2.5-modified (2016-05-12)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -22477,29 +22477,6 @@
         proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    /**
-    * Backward compatibility:
-    * When options.scrollbar is enabled but navigator disabled,
-    * then enable navigator for the first xAxis:
-    */
-    wrap(Chart.prototype, 'init', function (proceed, userOptions) {
-        var scrollbarEnabled = pick(userOptions.scrollbar && userOptions.scrollbar.enabled, false),
-            navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, false);
-
-        // If scrollbar is enabled, but without navigator, then connect scrollbar to the first xAxis:
-        if (scrollbarEnabled && !navigatorEnabled && userOptions.xAxis) {
-            if (userOptions.xAxis[0]) {
-                userOptions.xAxis[0].scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis[0].scrollbar);
-            } else {
-                userOptions.xAxis.scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis.scrollbar);
-            }
-        } else if (scrollbarEnabled && navigatorEnabled) {
-            // Disable margin for scrollbar, to prevent detached navigator and scrollbar:
-            userOptions.scrollbar.margin = 0;
-        }
-        proceed.apply(this, [].slice.call(arguments, 1));
-    });
-
     Highcharts.Scrollbar = Scrollbar;
     /* ****************************************************************************
      * Start Navigator code                                                        *
@@ -22832,8 +22809,16 @@
 
             if (scroller.scrollbar) {
                 // Keep scale 0-1
-                scroller.scrollbar.position(scroller.scrollerLeft, scroller.top + scroller.height, scroller.scrollerWidth, scroller.scrollbarHeight);
-                scroller.scrollbar.setRange(zoomedMin / navigatorWidth, zoomedMax / navigatorWidth);
+                scroller.scrollbar.position(
+                    scroller.scrollerLeft,
+                    scroller.top + (navigatorEnabled ? scroller.height : -scroller.scrollbarHeight),
+                    scroller.scrollerWidth,
+                    scroller.scrollbarHeight
+                );
+                scroller.scrollbar.setRange(
+                    zoomedMin / navigatorWidth,
+                    zoomedMax / navigatorWidth
+                );
             }
             scroller.rendered = true;
         },
@@ -23098,10 +23083,11 @@
             var xAxisIndex = chart.xAxis.length,
                 yAxisIndex = chart.yAxis.length;
 
+            // make room below the chart
+            chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
+            
 
             if (scroller.navigatorEnabled) {
-                // make room below the chart
-                chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
                 // an x axis is required for scrollbar also
                 scroller.xAxis = xAxis = new Axis(chart, merge({
                     // inherit base xAxis' break and ordinal options
@@ -23150,19 +23136,6 @@
                     });
                 }
 
-                if (chart.options.scrollbar.enabled) {
-                    scroller.scrollbar = new Scrollbar(chart.renderer, chart.options.scrollbar, chart);
-                    addEvent(scroller.scrollbar, 'changed', function (e) {
-                        var range = scroller.navigatorWidth,
-                            to = range * this.to,
-                            from = range * this.from;
-
-                        scroller.render(0, 0, from, to);
-                        scroller.hasDragged = true;
-                        scroller.mouseUpHandler(e);
-                    });
-                }
-
             // in case of scrollbar only, fake an x axis to get translation
             } else {
                 scroller.xAxis = xAxis = {
@@ -23181,6 +23154,25 @@
                     },
                     toFixedRange: Axis.prototype.toFixedRange
                 };
+            }
+
+
+            // Initialize the scrollbar
+            if (chart.options.scrollbar.enabled) {
+                scroller.scrollbar = new Scrollbar(
+                    chart.renderer,
+                    merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
+                    chart
+                );
+                addEvent(scroller.scrollbar, 'changed', function (e) {
+                    var range = scroller.navigatorWidth,
+                        to = range * this.to,
+                        from = range * this.from;
+
+                    scroller.render(0, 0, from, to);
+                    scroller.hasDragged = true;
+                    scroller.mouseUpHandler(e);
+                });
             }
 
             // Respond to updated data in the base series.

@@ -623,27 +623,4 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-/**
-* Backward compatibility:
-* When options.scrollbar is enabled but navigator disabled,
-* then enable navigator for the first xAxis:
-*/
-wrap(Chart.prototype, 'init', function (proceed, userOptions) {
-	var scrollbarEnabled = pick(userOptions.scrollbar && userOptions.scrollbar.enabled, false),	
-		navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, false);
-
-	// If scrollbar is enabled, but without navigator, then connect scrollbar to the first xAxis:
-	if (scrollbarEnabled && !navigatorEnabled && userOptions.xAxis) {
-		if (userOptions.xAxis[0]) {
-			userOptions.xAxis[0].scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis[0].scrollbar);
-		} else {
-			userOptions.xAxis.scrollbar = merge(true, userOptions.scrollbar, userOptions.xAxis.scrollbar);
-		}
-	} else if (scrollbarEnabled && navigatorEnabled) {
-		// Disable margin for scrollbar, to prevent detached navigator and scrollbar:
-		userOptions.scrollbar.margin = 0;
-	}
-	proceed.apply(this, [].slice.call(arguments, 1));
-});
-
 Highcharts.Scrollbar = Scrollbar;
