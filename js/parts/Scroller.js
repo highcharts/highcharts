@@ -414,7 +414,7 @@ Navigator.prototype = {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
 				xAxis;
-			if (scroller) {
+			if (scroller && scroller.baseSeries) {
 				xAxis = scroller.baseSeries.xAxis;
 				if (xAxis) {
 					scroller.render(xAxis.min, xAxis.max);
