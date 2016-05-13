@@ -35,6 +35,33 @@ $(function () {
         }]
     };
 
+    QUnit.test('Chart.chart update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        chart.update({
+            chart: {
+                plotBackgroundColor: '#effecc',
+                plotBorderColor: '#abbaca',
+                plotBorderWidth: 10
+            }
+        });
+        assert.strictEqual(
+            chart.plotBackground.element.getAttribute('fill'),
+            '#effecc',
+            'Plot background is updated'
+        );
+        assert.strictEqual(
+            chart.plotBorder.element.getAttribute('stroke'),
+            '#abbaca',
+            'Plot border is updated'
+        );
+        assert.strictEqual(
+            chart.plotBorder.element.getAttribute('stroke-width'),
+            '10',
+            'Plot border width is updated'
+        );
+    });
+
     QUnit.test('Credits update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 

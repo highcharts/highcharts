@@ -179,6 +179,21 @@ extend(Chart.prototype, {
 			},
 			updateAllSeries;
 
+		// If the top-level chart option is present, some special updates are required
+		// TODO: Systematically go over all chart options. Consider separate method 
+		// for these. Consider refactoring for more consistency.
+		if (options.chart) {
+			merge(true, this.options.chart, options.chart);
+			if (options.chart.plotBackgroundColor) {
+				this.plotBackground = this.plotBackground.destroy();
+				this.isDirtyBox = true;
+			}
+			if (options.chart.plotBorderColor || options.chart.plotBorderWidth) {
+				this.plotBorder = this.plotBorder.destroy();
+				this.isDirtyBox = true;
+			}
+		}
+		
 		// Some option stuctures correspond one-to-one to chart objects that have
 		// update methods, for example
 		// options.credits => chart.credits
