@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-06)
+ * @license Highcharts JS v4.2.5-modified (2016-05-13)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1895,7 +1895,8 @@ var arrayMin = Highcharts.arrayMin,
             return Series.prototype.getSegmentPath.call(this, segment).concat('z');
         },
         drawGraph: Series.prototype.drawGraph,
-        drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+        drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+        setStackedPoints: noop // No stacking points on polygons (#5310)
     });
     /* ****************************************************************************
      * Start Bubble series code                                                      *

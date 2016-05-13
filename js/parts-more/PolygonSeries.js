@@ -18,5 +18,6 @@ seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 		return Series.prototype.getSegmentPath.call(this, segment).concat('z');
 	},
 	drawGraph: Series.prototype.drawGraph,
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+	setStackedPoints: noop // No stacking points on polygons (#5310)
 });
