@@ -186,6 +186,8 @@ extend(Chart.prototype, {
 		// options.title => chart.title
 		// options.tooltip => chart.tooltip
 		// options.subtitle => chart.subtitle
+		// options.navigator => chart.navigator
+		// options.scrollbar => chart.scrollbar
 		for (key in options) {
 			if (this[key] && typeof this[key].update === 'function') {
 				this[key].update(options[key], false);

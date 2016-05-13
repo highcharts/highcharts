@@ -25,6 +25,7 @@ $(function () {
         },
 
         series: [{
+            animation: false,
             pointStart: Date.UTC(2016, 0, 1),
             pointInterval: 24 * 36e5,
             data: [1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
@@ -316,7 +317,7 @@ $(function () {
     });
 
     QUnit.test('Navigator update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], stockConfig),
+        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], Highcharts.merge(stockConfig)),
             originalPlotHeight = document.querySelector('.highcharts-plot-background').getBBox().height;
 
         assert.strictEqual(
@@ -355,6 +356,28 @@ $(function () {
         assert.ok(
             document.querySelector('.highcharts-plot-background').getBBox().height > originalPlotHeight,
             'Plot area is now higher than it was'
+        );
+    });
+
+    QUnit.test('Scrollbar update', function (assert) {
+        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], Highcharts.merge(stockConfig));
+
+        assert.strictEqual(
+            typeof chart.container.querySelector('.highcharts-scrollbar').getBBox().height,
+            'number',
+            'Height is valid'
+        );
+
+        chart.update({
+            scrollbar: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-scrollbar'),
+            null,
+            'Scrollbar is gone'
         );
     });
 

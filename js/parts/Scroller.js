@@ -725,22 +725,20 @@ Navigator.prototype = {
 
 
 		// Initialize the scrollbar
-		if (chart.options.scrollbar.enabled) {
-			scroller.scrollbar = new Scrollbar(
-				chart.renderer,
-				merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
-				chart
-			);
-			addEvent(scroller.scrollbar, 'changed', function (e) {
-				var range = scroller.navigatorWidth,
-					to = range * this.to,
-					from = range * this.from;
+		scroller.scrollbar = chart.scrollbar = new Scrollbar(
+			chart.renderer,
+			merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
+			chart
+		);
+		addEvent(scroller.scrollbar, 'changed', function (e) {
+			var range = scroller.navigatorWidth,
+				to = range * this.to,
+				from = range * this.from;
 
-				scroller.render(0, 0, from, to);
-				scroller.hasDragged = true;
-				scroller.mouseUpHandler(e);
-			});
-		}
+			scroller.render(0, 0, from, to);
+			scroller.hasDragged = true;
+			scroller.mouseUpHandler(e);
+		});
 
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.

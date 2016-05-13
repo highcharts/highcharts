@@ -54,24 +54,32 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Object} chart
  */
 function Scrollbar(renderer, options, chart) { // docs
-	this.scrollbarButtons = [];
-
-	this.renderer = renderer;
-
-	this.userOptions = options;
-	this.options = merge(defaultScrollbarOptions, options);
-
-	this.chart = chart;
-
-	this.size = pick(this.options.size, this.options.height); // backward compatibility
-
-	// Init
-	this.render();
-	this.initEvents();
-	this.addEvents();
+	this.init(renderer, options, chart);
 }
 
 Scrollbar.prototype = {
+
+	init: function (renderer, options, chart) {
+
+		this.scrollbarButtons = [];
+
+		this.renderer = renderer;
+
+		this.userOptions = options;
+		this.options = merge(defaultScrollbarOptions, options);
+
+		this.chart = chart;
+
+		this.size = pick(this.options.size, this.options.height); // backward compatibility
+
+		// Init
+		if (options.enabled) {
+			this.render();
+			this.initEvents();
+			this.addEvents();
+		}
+	},
+
 	/**
 	* Render scrollbar with all required items.
 	*/
@@ -85,7 +93,7 @@ Scrollbar.prototype = {
 			group;
 
 		// Draw the scrollbar group:
-		scroller.group = group = renderer.g('highcharts-scrollbar').attr({
+		scroller.group = group = renderer.g('scrollbar').attr({
 			zIndex: options.zIndex,
 			translateY: -99999
 		}).add();
@@ -155,44 +163,47 @@ Scrollbar.prototype = {
 			yOffset = 0,
 			method = scroller.rendered ? 'animate' : 'attr';
 
-		scroller.x = x;
-		scroller.y = y + options.trackBorderWidth;
-		scroller.width = width; // width with buttons
-		scroller.height = height;
-		scroller.xOffset = xOffset;
-		scroller.yOffset = yOffset;
+		if (this.group) { // May be destroyed or disabled
 
-		// If Scrollbar is a vertical type, swap options:
-		if (vertical) {
-			scroller.width = scroller.yOffset = width = yOffset = scroller.size;
-			scroller.xOffset = xOffset = 0;
-			scroller.barWidth = height - width * 2; // width without buttons
-			scroller.x = x = x + scroller.options.margin;
-		} else {
-			scroller.height = scroller.xOffset = height = xOffset = scroller.size;
-			scroller.barWidth = width - height * 2; // width without buttons
-			scroller.y = scroller.y + scroller.options.margin;
+			scroller.x = x;
+			scroller.y = y + options.trackBorderWidth;
+			scroller.width = width; // width with buttons
+			scroller.height = height;
+			scroller.xOffset = xOffset;
+			scroller.yOffset = yOffset;
+
+			// If Scrollbar is a vertical type, swap options:
+			if (vertical) {
+				scroller.width = scroller.yOffset = width = yOffset = scroller.size;
+				scroller.xOffset = xOffset = 0;
+				scroller.barWidth = height - width * 2; // width without buttons
+				scroller.x = x = x + scroller.options.margin;
+			} else {
+				scroller.height = scroller.xOffset = height = xOffset = scroller.size;
+				scroller.barWidth = width - height * 2; // width without buttons
+				scroller.y = scroller.y + scroller.options.margin;
+			}
+
+			// Set general position for a group:
+			scroller.group[method]({
+				translateX: x,
+				translateY: scroller.y
+			});
+
+			// Resize background/track:
+			scroller.track[method]({
+				width: width,
+				height: height
+			});
+
+			// Move right/bottom button ot it's place:
+			scroller.scrollbarButtons[1].attr({
+				translateX: vertical ? 0 : width - xOffset,
+				translateY: vertical ? height - yOffset : 0
+			});
+
+			scroller.rendered = true;
 		}
-
-		// Set general position for a group:
-		scroller.group[method]({
-			translateX: x,
-			translateY: scroller.y
-		});
-
-		// Resize background/track:
-		scroller.track[method]({
-			width: width,
-			height: height
-		});
-
-		// Move right/bottom button ot it's place:
-		scroller.scrollbarButtons[1].attr({
-			translateX: vertical ? 0 : width - xOffset,
-			translateY: vertical ? height - yOffset : 0
-		});
-
-		scroller.rendered = true;
 	},
 
 	/**
@@ -276,58 +287,57 @@ Scrollbar.prototype = {
 			newSize,
 			newRiflesPos;
 
-		if (!defined(scroller.barWidth)) {
-			return;
-		}
+		if (defined(scroller.barWidth) && scroller.group) {
 
-		fromPX = scroller.barWidth * Math.max(from, 0);
-		toPX = scroller.barWidth * Math.min(to, 1);
-		newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
-		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
-		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
+			fromPX = scroller.barWidth * Math.max(from, 0);
+			toPX = scroller.barWidth * Math.min(to, 1);
+			newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
+			newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
+			newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
-		// Store current position:
-		scroller.from = from;
-		scroller.to = to;
+			// Store current position:
+			scroller.from = from;
+			scroller.to = to;
 
-		if (!vertical) {
-			scroller.scrollbarGroup.attr({
-				translateX: newPos
-			});
-			scroller.scrollbar.attr({
-				width: newSize
-			});
-			scroller.scrollbarRifles.attr({
-				translateX: newRiflesPos
-			});
-			scroller.scrollbarLeft = newPos;
-			scroller.scrollbarTop = 0;
-		} else {
-			scroller.scrollbarGroup.attr({
-				translateY: newPos
-			});
-			scroller.scrollbar.attr({
-				height: newSize
-			});
-			scroller.scrollbarRifles.attr({
-				translateY: newRiflesPos
-			});
-			scroller.scrollbarTop = newPos;
-			scroller.scrollbarLeft = 0;
-		}
-
-		if (newSize <= 12) {
-			scroller.scrollbarRifles.hide();
-		} else {
-			scroller.scrollbarRifles.show(true);
-		}
-
-		// Show or hide the scrollbar based on the showFull setting
-		if (options.showFull === false) {
-			if (from <= 0 && to >= 1) {
-				scroller.group.hide();
+			if (!vertical) {
+				scroller.scrollbarGroup.attr({
+					translateX: newPos
+				});
+				scroller.scrollbar.attr({
+					width: newSize
+				});
+				scroller.scrollbarRifles.attr({
+					translateX: newRiflesPos
+				});
+				scroller.scrollbarLeft = newPos;
+				scroller.scrollbarTop = 0;
 			} else {
-				scroller.group.show();
+				scroller.scrollbarGroup.attr({
+					translateY: newPos
+				});
+				scroller.scrollbar.attr({
+					height: newSize
+				});
+				scroller.scrollbarRifles.attr({
+					translateY: newRiflesPos
+				});
+				scroller.scrollbarTop = newPos;
+				scroller.scrollbarLeft = 0;
+			}
+
+			if (newSize <= 12) {
+				scroller.scrollbarRifles.hide();
+			} else {
+				scroller.scrollbarRifles.show(true);
+			}
+
+			// Show or hide the scrollbar based on the showFull setting
+			if (options.showFull === false) {
+				if (from <= 0 && to >= 1) {
+					scroller.group.hide();
+				} else {
+					scroller.group.show();
+				}
 			}
 		}
 	},
@@ -467,6 +477,11 @@ Scrollbar.prototype = {
 		this.to = to;
 	},
 
+	update: function (options) {
+		this.destroy();
+		this.init(this.chart.renderer, merge(true, this.options, options), this.chart);
+	},
+
 	/**
 	 * Set up the mouse and touch events for the Scrollbar
 	 */
@@ -526,9 +541,9 @@ Scrollbar.prototype = {
 		scroller.removeEvents();
 
 		// Destroy properties
-		each([scroller.track, scroller.scrollbarRifles, scroller.scrollbar, scroller.scrollbarGroup, scroller.group], function (prop) {
-			if (prop && prop.destroy) {
-				prop = prop.destroy();
+		each(['track', 'scrollbarRifles', 'scrollbar', 'scrollbarGroup', 'group'], function (prop) {
+			if (scroller[prop] && scroller[prop].destroy) {
+				scroller[prop] = scroller[prop].destroy();
 			}
 		});
 
