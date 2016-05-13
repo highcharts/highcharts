@@ -22108,7 +22108,8 @@
                 toPX,
                 newPos,
                 newSize,
-                newRiflesPos;
+                newRiflesPos,
+                method = this.rendered ? 'animate' : 'attr';
 
             if (!defined(scroller.barWidth)) {
                 return;
@@ -22125,25 +22126,25 @@
             scroller.to = to;
 
             if (!vertical) {
-                scroller.scrollbarGroup.attr({
+                scroller.scrollbarGroup[method]({
                     translateX: newPos
                 });
-                scroller.scrollbar.attr({
+                scroller.scrollbar[method]({
                     width: newSize
                 });
-                scroller.scrollbarRifles.attr({
+                scroller.scrollbarRifles[method]({
                     translateX: newRiflesPos
                 });
                 scroller.scrollbarLeft = newPos;
                 scroller.scrollbarTop = 0;
             } else {
-                scroller.scrollbarGroup.attr({
+                scroller.scrollbarGroup[method]({
                     translateY: newPos
                 });
-                scroller.scrollbar.attr({
+                scroller.scrollbar[method]({
                     height: newSize
                 });
-                scroller.scrollbarRifles.attr({
+                scroller.scrollbarRifles[method]({
                     translateY: newRiflesPos
                 });
                 scroller.scrollbarTop = newPos;
