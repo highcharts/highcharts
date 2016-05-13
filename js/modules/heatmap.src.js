@@ -346,12 +346,14 @@
         visible: true,
         setVisible: noop,
         getSeriesExtremes: function () {
-            var series;
-            if (this.series.length) {
-                series = this.series[0];
-                this.dataMin = series.valueMin;
-                this.dataMax = series.valueMax;
-            }
+            var dataMin = pick(this.dataMin, Number.MAX_VALUE),
+                dataMax = pick(this.dataMax, -Number.MAX_VALUE);
+            each(this.series, function (series) {
+                dataMin = Math.min(dataMin, pick(series.valueMin, dataMin));
+                dataMax = Math.max(dataMax, pick(series.valueMax, dataMax));
+            });
+            this.dataMin = dataMin;
+            this.dataMax = dataMax;
         },
         drawCrosshair: function (e, point) {
             var plotX = point && point.plotX,
