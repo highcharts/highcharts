@@ -2262,17 +2262,15 @@ Axis.prototype = {
 			plotLinesAndBands[i].destroy();
 		}
 
-		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+		// Destroy properties
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
 
-		// Destroy crosshair
-		if (this.cross) {
-			this.cross.destroy();
-		}
+
+		this._addedPlotLB = this.chart._labelPanes = this.ordinalSlope = undefined; // #1611, #2887, #4314, #5316
 	},
 
 	/**

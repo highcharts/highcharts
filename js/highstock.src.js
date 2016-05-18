@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-13)
+ * @license Highstock JS v4.2.5-modified (2016-05-18)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -9160,17 +9160,15 @@
                 plotLinesAndBands[i].destroy();
             }
 
-            // Destroy local variables
-            each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+            // Destroy properties
+            each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
                 if (axis[prop]) {
                     axis[prop] = axis[prop].destroy();
                 }
             });
 
-            // Destroy crosshair
-            if (this.cross) {
-                this.cross.destroy();
-            }
+
+            this._addedPlotLB = this.chart._labelPanes = this.ordinalSlope = undefined; // #1611, #2887, #4314, #5316
         },
 
         /**
@@ -16462,7 +16460,6 @@
             newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
             this.destroy(true);
-            this._addedPlotLB = this.chart._labelPanes = UNDEFINED; // #1611, #2887, #4314
 
             this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
@@ -20283,7 +20280,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-13)
+     * Highstock JS v4.2.5-modified (2016-05-18)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
