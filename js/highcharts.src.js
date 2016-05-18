@@ -4527,7 +4527,7 @@
                         boxX = crispAdjust;
                         boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
-                        wrapper.box = box = shape ?
+                        wrapper.box = box = (shape && shape !== 'rect') ?
                                 renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
                                 renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
