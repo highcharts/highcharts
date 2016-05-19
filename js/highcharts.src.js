@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-18)
+ * @license Highcharts JS v4.2.5-modified (2016-05-19)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -4526,8 +4526,7 @@
                         // create the border box if it is not already present
                         boxX = crispAdjust;
                         boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-
-                        wrapper.box = box = shape ?
+                        wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
                                 renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
                                 renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 

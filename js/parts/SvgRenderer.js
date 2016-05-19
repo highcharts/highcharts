@@ -2453,8 +2453,7 @@ SVGRenderer.prototype = {
 					// create the border box if it is not already present
 					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-
-					wrapper.box = box = shape ?
+					wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
 							renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 							renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
