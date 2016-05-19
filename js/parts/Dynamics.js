@@ -178,13 +178,13 @@ extend(Chart.prototype, {
 				subtitle: 'setSubtitle'
 			},
 			optionsChart = options.chart,
+			updateAllAxes,
 			updateAllSeries;
 
 		// If the top-level chart option is present, some special updates are required
 		// TODO: Systematically go over all chart options. Consider separate method 
 		// for these. Consider refactoring for more consistency.
 		// 
-		// defaultSeriesType
 		// height
 		// ignoreHiddenSeries
 		// inverted
@@ -198,7 +198,7 @@ extend(Chart.prototype, {
 		// panning
 		// pinchType
 		// plotShadow
-		// polar
+		// polar // similar to inverted?
 		// reflow
 		// resetZoomButton
 		// selectionMarkerFill
@@ -215,6 +215,7 @@ extend(Chart.prototype, {
 		// zoomType
 		// 
 		// N/A:
+		// defaultSeriesType (deprecated)		
 		// renderTo
 		// 
 		// IMPLEMENTED:
@@ -234,8 +235,13 @@ extend(Chart.prototype, {
 			merge(true, this.options.chart, optionsChart);
 
 			// Setter function
-			if (optionsChart.className) {
+			if ('className' in optionsChart) {
 				this.setClassName(options.chart.className);
+			}
+
+			if ('inverted' in optionsChart) {
+				this.propFromSeries(); // Parses options.chart.inverted together with the available series
+				updateAllAxes = true;
 			}
 
 			// Only dirty box
@@ -283,6 +289,12 @@ extend(Chart.prototype, {
 		if (options.plotOptions) {
 			merge(true, this.options.plotOptions, options.plotOptions);
 			updateAllSeries = true;
+		}
+
+		if (updateAllAxes) {
+			each(this.axes, function (axis) {
+				axis.update({}, false);
+			});
 		}
 
 		// Certain options require the whole series structure to be thrown away

@@ -191,6 +191,43 @@ $(function () {
 
     });
 
+    QUnit.test('Option chart.inverted update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        assert.ok(
+            !chart.inverted,
+            'Initially not inverted'
+        );
+
+        assert.strictEqual(
+            chart.xAxis[0].side,
+            2,
+            'Initially X axis on bottom'
+        );
+
+        chart.update({
+            chart: {
+                inverted: true
+            }
+        });
+
+        assert.ok(
+            chart.inverted,
+            'Chart is inverted'
+        );
+
+        assert.strictEqual(
+            chart.xAxis[0].side,
+            3,
+            'X axis on left'
+        );
+
+        assert.ok(
+            false,
+            'TODO: Test for rotating back. Try animating plot area rotation and re-using axis visual element (with animation)'
+        );
+    });
+
     QUnit.test('Option chart plot border and background update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
