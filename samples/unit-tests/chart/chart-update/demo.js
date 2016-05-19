@@ -142,6 +142,32 @@ $(function () {
             '10',
             'Chart border radius is updated'
         );
+
+        // Back to default
+        chart.update({
+            chart: {
+                backgroundColor: '#FFFFFF',
+                borderColor: '#4572A7',
+                borderRadius: 0,
+                borderWidth: 0
+            }
+        });
+
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('fill'),
+            '#FFFFFF',
+            'Chart background is updated'
+        );
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('stroke'),
+            null,
+            'Chart border is removed'
+        );
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('rx'),
+            '0',
+            'Chart border radius is updated'
+        );
     });
 
     QUnit.test('Option chart className update', function (assert) {

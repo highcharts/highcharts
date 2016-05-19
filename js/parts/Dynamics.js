@@ -177,6 +177,7 @@ extend(Chart.prototype, {
 				title: 'setTitle',
 				subtitle: 'setSubtitle'
 			},
+			optionsChart = options.chart,
 			updateAllSeries;
 
 		// If the top-level chart option is present, some special updates are required
@@ -229,26 +230,26 @@ extend(Chart.prototype, {
 		// plotBorderColor
 		// plotBorderWidth
 		
-		if (options.chart) {
-			merge(true, this.options.chart, options.chart);
+		if (optionsChart) {
+			merge(true, this.options.chart, optionsChart);
 
 			// Setter function
-			if (options.chart.className) {
+			if (optionsChart.className) {
 				this.setClassName(options.chart.className);
 			}
 
 			// Only dirty box
-			if (options.chart.backgroundColor || options.chart.borderColor || options.chart.borderRadius || options.chart.borderWidth) {
+			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderRadius' in optionsChart || 'borderWidth' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 
-			if (options.chart.plotBackgroundColor) {
+			if ('plotBackgroundColor' in optionsChart) {
 				this.isDirtyBox = true;
 			}
-			if (options.chart.plotBackgroundImage) {
+			if ('plotBackgroundImage' in optionsChart) {
 				this.isDirtyBox = true;
 			}
-			if (options.chart.plotBorderColor || options.chart.plotBorderWidth) {
+			if ('plotBorderColor' in optionsChart || 'plotBorderWidth' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 		}

@@ -1039,7 +1039,7 @@ Chart.prototype = {
 			fill: chartBackgroundColor || 'none'
 		};
 
-		if (chartBorderWidth) { // #980
+		if (chartBorderWidth || chartBackground['stroke-width']) { // #980
 			bgAttr.stroke = optionsChart.borderColor;
 			bgAttr['stroke-width'] = chartBorderWidth;
 		}
