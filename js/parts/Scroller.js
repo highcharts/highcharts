@@ -385,12 +385,10 @@ Navigator.prototype = {
 		addEvent(chart, 'redraw', function () {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
-				xAxis;
-			if (scroller) {
-				xAxis = scroller.baseSeries.xAxis;
-				if (xAxis) {
-					scroller.render(xAxis.min, xAxis.max);
-				}
+				xAxis = scroller && scroller.baseSeries && scroller.baseSeries.xAxis;
+			
+			if (xAxis) {
+				scroller.render(xAxis.min, xAxis.max);
 			}
 		});
 	},
