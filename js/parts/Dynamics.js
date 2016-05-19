@@ -183,7 +183,6 @@ extend(Chart.prototype, {
 		// TODO: Systematically go over all chart options. Consider separate method 
 		// for these. Consider refactoring for more consistency.
 		// 
-		// className
 		// defaultSeriesType
 		// height
 		// ignoreHiddenSeries
@@ -224,6 +223,7 @@ extend(Chart.prototype, {
 		// borderColor
 		// borderRadius
 		// borderWidth
+		// className
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor
@@ -232,6 +232,12 @@ extend(Chart.prototype, {
 		if (options.chart) {
 			merge(true, this.options.chart, options.chart);
 
+			// Setter function
+			if (options.chart.className) {
+				this.setClassName(options.chart.className);
+			}
+
+			// Only dirty box
 			if (options.chart.backgroundColor || options.chart.borderColor || options.chart.borderRadius || options.chart.borderWidth) {
 				this.isDirtyBox = true;
 			}

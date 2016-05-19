@@ -111,6 +111,27 @@ $(function () {
         );
     });
 
+    QUnit.test('Option chart className update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        assert.ok(
+            chart.container.className.indexOf('my-class') === -1,
+            'Default class name'
+        );
+
+        chart.update({
+            chart: {
+                className: 'my-class'
+            }
+        });
+
+        assert.ok(
+            chart.container.className.indexOf('my-class') > -1,
+            'Custom class name'
+        );
+
+    });
+
     QUnit.test('Option chart plot border and background update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 

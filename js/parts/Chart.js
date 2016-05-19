@@ -618,6 +618,13 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Setter for the chart class name
+	 */
+	setClassName: function (className) {
+		this.container.className = 'highcharts-container ' + (className || '');
+	},
+
+	/**
 	 * Get the containing element, determine the size and create the inner container
 	 * div to hold the chart
 	 */
@@ -693,12 +700,12 @@ Chart.prototype = {
 		}, optionsChart.style);
 		/*= } =*/
 		chart.container = container = createElement('div', {
-				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
 			},
 			containerStyle,
 			chart.renderToClone || renderTo
 		);
+		chart.setClassName(optionsChart.className);
 
 		// cache the cursor (#1650)
 		chart._cursor = container.style.cursor;
