@@ -4,10 +4,8 @@
 #### Actual behaviour
 
 
-#### Live demo of the issue
+#### Live demo with steps to reproduce
 <!-- template: jsfiddle.net/highcharts/llexl/ -->
-
-#### Steps to reproduce the behaviour
 
 
 #### Affected browser(s)
