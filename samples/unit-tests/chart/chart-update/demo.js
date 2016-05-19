@@ -74,7 +74,40 @@ $(function () {
             chart.yAxis[1].tickPositions.length,
             'Aligned ticks'
         );
+    });
 
+    QUnit.test('Option chart.animation update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        assert.strictEqual(
+            chart.renderer.globalAnimation,
+            undefined,
+            'Undefined animation'
+        );
+
+        chart.update({
+            chart: {
+                animation: false
+            }
+        });
+
+        assert.strictEqual(
+            chart.renderer.globalAnimation,
+            false,
+            'Disabled animation'
+        );
+
+        chart.update({
+            chart: {
+                animation: true
+            }
+        });
+
+        assert.strictEqual(
+            chart.renderer.globalAnimation,
+            true,
+            'Enabled animation'
+        );
 
     });
 

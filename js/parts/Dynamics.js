@@ -199,7 +199,6 @@ extend(Chart.prototype, {
 		// plotShadow
 		// polar
 		// reflow
-		// renderTo
 		// resetZoomButton
 		// selectionMarkerFill
 		// shadow
@@ -214,11 +213,12 @@ extend(Chart.prototype, {
 		// width
 		// zoomType
 		// 
-		// DISPUTED:
-		// animation
+		// N/A:
+		// renderTo
 		// 
 		// IMPLEMENTED:
 		// alignTicks
+		// animation
 		// backgroundColor
 		// borderColor
 		// borderRadius

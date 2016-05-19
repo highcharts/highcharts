@@ -263,7 +263,7 @@
 			x = x - width * anchorX;
 			y = y - height * anchorY;
 
-			if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			if (defined(group.translateX) && defined(group.translateY)) {
 				group.animate({
 					translateX: x,
 					translateY: y

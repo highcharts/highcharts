@@ -869,7 +869,7 @@ H.correctFloat = function (num, prec) {
  * @param {Object} chart
  */
 H.setAnimation = function (animation, chart) {
-	chart.renderer.globalAnimation = H.pick(animation, chart.animation);
+	chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
 };
 
 /**
