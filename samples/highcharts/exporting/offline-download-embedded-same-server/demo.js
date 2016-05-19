@@ -17,7 +17,7 @@ $(function () {
         },
 
         title: {
-            text: 'Offline export'
+            text: 'Offline export w/embedded images'
         },
 
         subtitle: {
@@ -34,7 +34,17 @@ $(function () {
         },
 
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 126.0, 148.5, 216.4, 194.1, 95.6, 54.4]
+            data: [29.9, 71.5, {
+                y: 106.4,
+                marker: {
+                    symbol: 'url(testimage.png)'
+                }
+            }, 129.2, 144.0, 176.0, 135.6, {
+                y: 126,
+                marker: {
+                    symbol: 'url(testimage.png)'
+                }
+            }, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
 
     });
