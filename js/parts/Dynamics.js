@@ -182,14 +182,67 @@ extend(Chart.prototype, {
 		// If the top-level chart option is present, some special updates are required
 		// TODO: Systematically go over all chart options. Consider separate method 
 		// for these. Consider refactoring for more consistency.
+		// 
+		// className
+		// defaultSeriesType
+		// height
+		// ignoreHiddenSeries
+		// inverted
+		// margin
+		// marginBottom
+		// marginLeft
+		// marginRight
+		// marginTop
+		// options3d
+		// panKey
+		// panning
+		// pinchType
+		// plotShadow
+		// polar
+		// reflow
+		// renderTo
+		// resetZoomButton
+		// selectionMarkerFill
+		// shadow
+		// showAxes
+		// spacing
+		// spacingBottom
+		// spacingLeft
+		// spacingRight
+		// spacingTop
+		// style
+		// type
+		// width
+		// zoomType
+		// 
+		// DISPUTED:
+		// animation
+		// 
+		// IMPLEMENTED:
+		// alignTicks
+		// backgroundColor
+		// borderColor
+		// borderRadius
+		// borderWidth
+		// plotBackgroundColor
+		// plotBackgroundImage
+		// plotBorderColor
+		// plotBorderWidth
+		
 		if (options.chart) {
 			merge(true, this.options.chart, options.chart);
+
+			if (options.chart.backgroundColor || options.chart.borderColor || options.chart.borderRadius || options.chart.borderWidth) {
+				this.isDirtyBox = true;
+			}
+
 			if (options.chart.plotBackgroundColor) {
-				this.plotBackground = this.plotBackground.destroy();
+				this.isDirtyBox = true;
+			}
+			if (options.chart.plotBackgroundImage) {
 				this.isDirtyBox = true;
 			}
 			if (options.chart.plotBorderColor || options.chart.plotBorderWidth) {
-				this.plotBorder = this.plotBorder.destroy();
 				this.isDirtyBox = true;
 			}
 		}

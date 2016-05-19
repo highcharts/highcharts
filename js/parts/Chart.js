@@ -990,7 +990,7 @@ Chart.prototype = {
 	/**
 	 * Draw the borders and backgrounds for chart and plot area
 	 */
-	drawChartBox: function () {console.log('@drawChartBox')
+	drawChartBox: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderer = chart.renderer,
@@ -1055,7 +1055,6 @@ Chart.prototype = {
 		// Plot background
 		verb = 'animate';
 		if (!plotBackground) {
-			console.log('plotBackground', plotBackgroundColor)
 			verb = 'attr';
 			chart.plotBackground = plotBackground = renderer.rect()
 				.addClass('highcharts-plot-background')

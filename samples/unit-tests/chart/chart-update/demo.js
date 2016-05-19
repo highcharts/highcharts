@@ -35,12 +35,89 @@ $(function () {
         }]
     };
 
-    QUnit.test('Chart.chart update', function (assert) {
+    QUnit.test('Option chart.alignTicks update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], {
+
+            chart: {
+                alignTicks: false
+            },
+
+            yAxis: [{
+
+            }, {
+                opposite: true
+            }],
+
+            series: [{
+                data: [1, 2, 3, 4]
+            }, {
+                data: [2, 4, 6],
+                yAxis: 1
+            }]
+
+        });
+
+        assert.notEqual(
+            chart.yAxis[0].tickPositions.length,
+            chart.yAxis[1].tickPositions.length,
+            'Not aligned ticks'
+        );
+
+        chart.update({
+            chart: {
+                alignTicks: true
+            }
+        });
+
+        assert.strictEqual(
+            chart.yAxis[0].tickPositions.length,
+            chart.yAxis[1].tickPositions.length,
+            'Aligned ticks'
+        );
+
+
+    });
+
+    QUnit.test('Option chart border and background update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+
+        chart.update({
+            chart: {
+                backgroundColor: '#effecc',
+                borderColor: '#abbaca',
+                borderRadius: 10,
+                borderWidth: 10
+            }
+        });
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('fill'),
+            '#effecc',
+            'Chart background is updated'
+        );
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('stroke'),
+            '#abbaca',
+            'Chart border is updated'
+        );
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('stroke-width'),
+            '10',
+            'Chart border width is updated'
+        );
+        assert.strictEqual(
+            chart.chartBackground.element.getAttribute('rx'),
+            '10',
+            'Chart border radius is updated'
+        );
+    });
+
+    QUnit.test('Option chart plot border and background update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
         chart.update({
             chart: {
                 plotBackgroundColor: '#effecc',
+                plotBackgroundImage: '404.png',
                 plotBorderColor: '#abbaca',
                 plotBorderWidth: 10
             }
@@ -59,6 +136,11 @@ $(function () {
             chart.plotBorder.element.getAttribute('stroke-width'),
             '10',
             'Plot border width is updated'
+        );
+        assert.strictEqual(
+            chart.plotBGImage.element.getAttribute('href'),
+            '404.png',
+            'Image attempted loaded'
         );
     });
 
