@@ -225,6 +225,10 @@ var PieSeries = {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
+			// Disallow negative values (#1530, #3623, #5322)
+			if (point.y < 0) {
+				point.y = null;
+			}
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
