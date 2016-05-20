@@ -328,7 +328,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
 		var options = this.options,
-			globalMapData = this.chart.options.chart && this.chart.options.chart.map,
+			chartOptions = this.chart.options.chart,
+			globalMapData = chartOptions && chartOptions.map,
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
@@ -337,7 +338,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			mapMap = {},
 			mapPoint,
 			transform,
-			mapTransforms,
+			mapTransforms = this.chart.mapTransforms,
 			props,
 			i;
 
@@ -377,18 +378,22 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 
 		this.getBox(data);
+
+		// Pick up transform definitions for chart
+		this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms; // docs
+
+		// Cache cos/sin of transform rotation angle
+		if (mapTransforms) {
+			for (transform in mapTransforms) {
+				if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
+					transform.cosAngle = Math.cos(transform.rotation);
+					transform.sinAngle = Math.sin(transform.rotation);
+				}
+			}
+		}
+
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
-				if (mapData['hc-transform']) {
-					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
-					// Cache cos/sin of transform rotation angle
-					for (transform in mapTransforms) {
-						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
-							transform.cosAngle = Math.cos(transform.rotation);
-							transform.sinAngle = Math.sin(transform.rotation);
-						}
-					}
-				}
 				mapData = H.geojson(mapData, this.type, this);
 			}
 
