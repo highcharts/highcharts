@@ -1464,7 +1464,7 @@ H.Series.prototype = {
 	/**
 	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
-	invertGroups: function () {
+	invertGroups: function (inverted) {
 		var series = this,
 			chart = series.chart;
 
@@ -1474,7 +1474,7 @@ H.Series.prototype = {
 		}
 
 		// A fixed size is needed for inversion to work
-		function setInvert() {
+		function setInvert(inverted) {
 			var size = {
 				width: series.yAxis.len,
 				height: series.xAxis.len
@@ -1482,7 +1482,7 @@ H.Series.prototype = {
 
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
-					series[groupName].attr(size).invert();
+					series[groupName].attr(size).invert(inverted);
 				}
 			});
 		}
@@ -1493,7 +1493,7 @@ H.Series.prototype = {
 		});
 
 		// Do it now
-		setInvert(); // do it now
+		setInvert(inverted); // do it now
 
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
@@ -1559,7 +1559,8 @@ H.Series.prototype = {
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
-			chartSeriesGroup = chart.seriesGroup;
+			chartSeriesGroup = chart.seriesGroup,
+			inverted = chart.inverted;
 
 		// the group
 		group = series.plotGroup(
@@ -1584,7 +1585,7 @@ H.Series.prototype = {
 		}
 
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
-		group.inverted = series.isCartesian ? chart.inverted : false;
+		group.inverted = series.isCartesian ? inverted : false;
 
 		// draw the graph if any
 		if (series.drawGraph) {
@@ -1615,9 +1616,7 @@ H.Series.prototype = {
 		}
 
 		// Handle inverted series and tracker groups
-		if (chart.inverted) {
-			series.invertGroups();
-		}
+		series.invertGroups(inverted);
 
 		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {

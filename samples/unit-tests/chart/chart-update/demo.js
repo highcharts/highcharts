@@ -222,9 +222,21 @@ $(function () {
             'X axis on left'
         );
 
+        chart.update({
+            chart: {
+                inverted: false
+            }
+        });
+
         assert.ok(
-            false,
-            'TODO: Test for rotating back. Try animating plot area rotation and re-using axis visual element (with animation)'
+            !chart.inverted,
+            'Chart is not inverted'
+        );
+
+        assert.strictEqual(
+            chart.xAxis[0].side,
+            2,
+            'X axis at the bottom'
         );
     });
 

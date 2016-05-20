@@ -656,9 +656,9 @@ SVGElement.prototype = {
 	/**
 	 * Invert a group, rotate and flip
 	 */
-	invert: function () {
+	invert: function (inverted) {
 		var wrapper = this;
-		wrapper.inverted = true;
+		wrapper.inverted = inverted;
 		wrapper.updateTransform();
 		return wrapper;
 	},

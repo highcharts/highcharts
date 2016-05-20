@@ -187,7 +187,6 @@ extend(Chart.prototype, {
 		// 
 		// height
 		// ignoreHiddenSeries
-		// inverted
 		// margin
 		// marginBottom
 		// marginLeft
@@ -226,6 +225,7 @@ extend(Chart.prototype, {
 		// borderRadius
 		// borderWidth
 		// className
+		// inverted
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor

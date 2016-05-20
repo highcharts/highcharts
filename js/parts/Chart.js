@@ -1148,11 +1148,9 @@ Chart.prototype = {
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
 
 			// Get the value from available chart-wide properties
-			value = (
-				chart[key] || // 1. it is set before
-				optionsChart[key] || // 2. it is set in the options
-				(klass && klass.prototype[key]) // 3. it's default series class requires it
-			);
+			value = 
+				optionsChart[key] || // It is set in the options
+				(klass && klass.prototype[key]); // The default series class requires it
 
 			// 4. Check if any the chart's series require it
 			i = seriesOptions && seriesOptions.length;
