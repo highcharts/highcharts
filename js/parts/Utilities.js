@@ -6,6 +6,20 @@ var charts = H.charts,
 	win = H.win;
 
 /**
+ * Provide error messages for debugging, with links to online explanation
+ */
+H.error = function (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw new Error(msg);
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg); // eslint-disable-line no-console
+	}
+};
+
+/**
  * An animator object. One instance applies to one property (attribute or style prop) 
  * on one element.
  * 
