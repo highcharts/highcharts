@@ -187,11 +187,6 @@ extend(Chart.prototype, {
 		// 
 		// height
 		// ignoreHiddenSeries
-		// margin
-		// marginBottom
-		// marginLeft
-		// marginRight
-		// marginTop
 		// options3d
 		// panKey
 		// panning
@@ -226,6 +221,11 @@ extend(Chart.prototype, {
 		// borderWidth
 		// className
 		// inverted
+		// margin
+		// marginBottom
+		// marginLeft
+		// marginRight
+		// marginTop
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor
@@ -246,6 +246,11 @@ extend(Chart.prototype, {
 
 			// Only dirty box
 			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderRadius' in optionsChart || 'borderWidth' in optionsChart) {
+				this.isDirtyBox = true;
+			}
+
+			if ('margin' in optionsChart || 'marginTop' in optionsChart || 'marginRight' in optionsChart ||
+					'marginBottom' in optionsChart || 'marginLeft' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 

@@ -19,6 +19,7 @@
 		getStyle = H.getStyle,
 		grep = H.grep,
 		isNumber = H.isNumber,
+		isObject = H.isObject,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		marginNames = H.marginNames,
@@ -90,11 +91,10 @@ Chart.prototype = {
 
 		var optionsChart = options.chart;
 
-		// Create margin & spacing array
-		this.margin = this.splashArray('margin', optionsChart);
-		this.spacing = this.splashArray('spacing', optionsChart);
-
 		var chartEvents = optionsChart.events;
+
+		this.margin = [];
+		this.spacing = [];
 
 		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
@@ -983,8 +983,20 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this;
+		var chart = this,
+			chartOptions = chart.options.chart;
 
+		// Create margin and spacing array
+		each(['margin', 'spacing'], function splashArrays(target) {
+			var value = chartOptions[target],
+				values = isObject(value) ? value : [value, value, value, value];
+
+			each(['Top', 'Right', 'Bottom', 'Left'], function (sideName, side) {
+				chart[target][side] = pick(chartOptions[target + sideName], values[side]);	
+			});
+		});
+
+		// Set margin names like chart.plotTop, chart.plotLeft, chart.marginRight, chart.marginBottom.
 		each(marginNames, function (m, side) {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);
 		});
@@ -1528,20 +1540,8 @@ Chart.prototype = {
 
 		// Don't run again
 		this.onload = null;
-	},
-
-	/**
-	* Creates arrays for spacing and margin from given options.
-	*/
-	splashArray: function (target, options) {
-		var oVar = options[target],
-			tArray = H.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
-
-		return [pick(options[target + 'Top'], tArray[0]),
-				pick(options[target + 'Right'], tArray[1]),
-				pick(options[target + 'Bottom'], tArray[2]),
-				pick(options[target + 'Left'], tArray[3])];
 	}
+
 }; // end Chart
 
 	return H;
