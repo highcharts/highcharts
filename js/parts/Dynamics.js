@@ -198,11 +198,6 @@ extend(Chart.prototype, {
 		// selectionMarkerFill
 		// shadow
 		// showAxes
-		// spacing
-		// spacingBottom
-		// spacingLeft
-		// spacingRight
-		// spacingTop
 		// style
 		// type
 		// width
@@ -230,6 +225,11 @@ extend(Chart.prototype, {
 		// plotBackgroundImage
 		// plotBorderColor
 		// plotBorderWidth
+		// spacing
+		// spacingBottom
+		// spacingLeft
+		// spacingRight
+		// spacingTop
 		
 		if (optionsChart) {
 			merge(true, this.options.chart, optionsChart);
@@ -251,6 +251,11 @@ extend(Chart.prototype, {
 
 			if ('margin' in optionsChart || 'marginTop' in optionsChart || 'marginRight' in optionsChart ||
 					'marginBottom' in optionsChart || 'marginLeft' in optionsChart) {
+				this.isDirtyBox = true;
+			}
+
+			if ('spacing' in optionsChart || 'spacingTop' in optionsChart || 'spacingRight' in optionsChart ||
+					'spacingBottom' in optionsChart || 'spacingLeft' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 

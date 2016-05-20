@@ -357,6 +357,93 @@ $(function () {
         );
     });
 
+
+
+    QUnit.test('Option chart.spacing update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge({
+            chart: {
+                plotBackgroundColor: 'silver'
+            }
+        }, config));
+
+        // Test for integer
+        chart.update({
+            chart: {
+                spacing: 50
+            }
+        });
+
+        assert.ok(
+            chart.plotBackground.getBBox().width <= chart.chartWidth - 100,
+            'Plot area width ok'
+        );
+
+        assert.ok(
+            chart.plotBackground.getBBox().height <= chart.chartHeight - 100,
+            'Plot area height ok'
+        );
+
+        // Test for array
+        chart.update({
+            chart: {
+                spacing: [75, 75, 75, 75]
+            }
+        });
+
+        assert.ok(
+            chart.plotBackground.getBBox().width <= chart.chartWidth - 150,
+            'Plot area width ok'
+        );
+
+        assert.ok(
+            chart.plotBackground.getBBox().height <= chart.chartHeight - 150,
+            'Plot area height ok'
+        );
+
+
+        // Test for unique names
+        chart.update({
+            chart: {
+                spacing: null,
+                spacingTop: 100,
+                spacingRight: 100,
+                spacingBottom: 100,
+                spacingLeft: 100
+            }
+        });
+
+        assert.ok(
+            chart.plotBackground.getBBox().width <= chart.chartWidth - 200,
+            'Plot area width ok'
+        );
+
+        assert.ok(
+            chart.plotBackground.getBBox().height <= chart.chartHeight - 200,
+            'Plot area height ok'
+        );
+
+        // Reset
+        chart.update({
+            chart: {
+                spacing: [10, 10, 15, 10],
+                spacingTop: undefined,
+                spacingRight: undefined,
+                spacingBottom: undefined,
+                spacingLeft: undefined
+            }
+        });
+
+        assert.ok(
+            chart.plotBackground.getBBox().width > chart.chartWidth - 200,
+            'Plot area width ok'
+        );
+
+        assert.ok(
+            chart.plotBackground.getBBox().height > chart.chartHeight - 200,
+            'Plot area height ok'
+        );
+    });
+
     QUnit.test('Credits update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
 
