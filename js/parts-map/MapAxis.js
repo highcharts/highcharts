@@ -1,4 +1,7 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+(function () {
 	var Axis = H.Axis,
 		each = H.each,
 		pick = H.pick,
@@ -109,5 +112,4 @@ wrap(Axis.prototype, 'render', function (proceed) {
 	this.fixTo = null;
 });
 
-	return H;
-}(Highcharts));
+}());

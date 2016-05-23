@@ -139,6 +139,7 @@ gulp.task('build', function () {
                 'modules/exporting.js': new RegExp(folders['parts']),
                 'modules/funnel.js': new RegExp(folders['parts']),
                 'modules/heatmap.js': new RegExp(folders['parts']),
+                'modules/map.js': new RegExp(folders['parts']),
                 'modules/map-parser.js': new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
                 'modules/no-data-to-display.js': new RegExp(folders['parts']),
                 'modules/offline-exporting.js': new RegExp(folders['parts']),

@@ -1,4 +1,7 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
@@ -32,5 +35,4 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 	/*= } =*/
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
-	return H;
-}(Highcharts));
+}());

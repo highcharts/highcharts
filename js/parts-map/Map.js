@@ -1,4 +1,9 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
+import '../parts/SvgRenderer.js';
+(function () {
 	var Chart = H.Chart,
 		defaultOptions = H.defaultOptions,
 		each = H.each,
@@ -188,5 +193,4 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
 		new Chart(options, b);
 };
 
-	return H;
-}(Highcharts));
+}());

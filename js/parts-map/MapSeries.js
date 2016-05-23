@@ -1,4 +1,13 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Color.js';
+import '../parts/Options.js';
+import '../parts/Legend.js';
+import '../parts/Point.js';
+import '../parts/Series.js';
+import '../parts/ScatterSeries.js';
+import './ColorAxis.js';
+(function () {
 	var Color = H.Color,
 		ColorAxis = H.ColorAxis,
 		colorPointMixin = H.colorPointMixin,
@@ -753,5 +762,4 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	}
 }));
 
-	return H;
-}(Highcharts));
+}());
