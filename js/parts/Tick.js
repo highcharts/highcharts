@@ -313,10 +313,12 @@ H.Tick.prototype = {
 		// by another call, therefore do not do any animations this time
 		if (!old && gridLine) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
-			gridLine[tick.isNew ? 'attr' : 'animate']({
-				d: gridLinePath,
-				opacity: opacity
-			});
+			if (gridLinePath) {
+				gridLine[tick.isNew ? 'attr' : 'animate']({
+					d: gridLinePath,
+					opacity: opacity
+				});
+			}
 		}
 
 		// create the tick mark

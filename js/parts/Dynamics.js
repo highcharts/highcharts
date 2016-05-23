@@ -244,6 +244,12 @@ extend(Chart.prototype, {
 				updateAllAxes = true;
 			}
 
+			if ('polar' in optionsChart) {
+				this.propFromSeries(); // Parses options.chart.polar together with the available series
+				updateAllAxes = true;
+				updateAllSeries = true; // Because column rects must be destroyed and rebuilt as paths
+			}
+
 			// Only dirty box
 			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderRadius' in optionsChart || 'borderWidth' in optionsChart) {
 				this.isDirtyBox = true;

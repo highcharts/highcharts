@@ -39,8 +39,7 @@ hiddenAxisMixin = {
  * Augmented methods for the value axis
  */
 radialAxisMixin = {
-	isRadial: true,
-
+	
 	/**
 	 * The default options extend defaultYAxisOptions
 	 */
@@ -421,8 +420,11 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 
 	// Disable certain features on angular and polar axes
 	if (angular || polar) {
+		this.isRadial = true;
 		chart.inverted = false;
 		chartOptions.chart.zoomType = null;
+	} else {
+		this.isRadial = false;
 	}
 
 	// Run prototype.init
