@@ -22,11 +22,12 @@ if (isset($_GET['rightcommit'])) {
 	$rightPath = vsprintf(isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath, $topDomain);
 }
 
-// A commit is given, insert the full path
-if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
+// A commit or tag is given, insert the full path
+$commitOrTag = '/^[a-z0-9]+$/';
+if (preg_match($commitOrTag, $leftPath)) {
 	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
 }
-if (preg_match('/^[a-z0-9]+$/', $rightPath)) {
+if (preg_match($commitOrTag, $rightPath)) {
 	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
 }
 
