@@ -748,9 +748,9 @@
 			<div id="comment-placeholder"></div>
 			<div id="frame-row">
 				<?php if (!$isUnitTest && !$isManual) : ?>
-				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
+				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>&amp;dummy=<?php echo time(); ?>"></iframe>
 				<?php endif; ?>
-				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
+				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>&amp;dummy=<?php echo time(); ?>"></iframe>
 				
 			</div>
 			<pre id="svg"></pre>
