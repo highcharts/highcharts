@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-20)
+ * @license Highstock JS v4.2.5-modified (2016-05-23)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20279,7 +20279,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-20)
+     * Highstock JS v4.2.5-modified (2016-05-23)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23690,7 +23690,7 @@
             if (!baseAxis) {
                 // Axis not yet instanciated. Temporarily set min and range
                 // options and remove them on chart load (#4317).
-                baseXAxisOptions = chart.options.xAxis[0];
+                baseXAxisOptions = splat(chart.options.xAxis)[0];
                 rangeSetting = baseXAxisOptions.range;
                 baseXAxisOptions.range = range;
                 minSetting = baseXAxisOptions.min;

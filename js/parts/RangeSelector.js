@@ -184,7 +184,7 @@ RangeSelector.prototype = {
 		if (!baseAxis) {
 			// Axis not yet instanciated. Temporarily set min and range
 			// options and remove them on chart load (#4317).
-			baseXAxisOptions = chart.options.xAxis[0];
+			baseXAxisOptions = splat(chart.options.xAxis)[0];
 			rangeSetting = baseXAxisOptions.range;
 			baseXAxisOptions.range = range;
 			minSetting = baseXAxisOptions.min;
