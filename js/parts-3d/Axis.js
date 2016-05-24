@@ -1,4 +1,9 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Chart.js';
+import '../parts/Tick.js';
+(function () {
 	var ZAxis,
 
 		Axis = H.Axis,
@@ -365,5 +370,4 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 	});
 });
 
-	return H;
-}(Highcharts));
+}());

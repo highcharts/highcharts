@@ -1,4 +1,9 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/SvgRenderer.js';
+import '../parts/VmlRenderer.js';
+(function () {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer;
@@ -43,5 +48,4 @@ if (VMLRenderer) {
 	});
 
 }
-	return H;
-}(Highcharts));
+}());

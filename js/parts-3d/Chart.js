@@ -1,4 +1,7 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+(function () {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
@@ -112,5 +115,4 @@ Chart.prototype.retrieveStacks = function (stacking) {
 	return stacks;
 };
 
-	return H;
-}(Highcharts));
+}());

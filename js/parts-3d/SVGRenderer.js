@@ -1,4 +1,8 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Color.js';
+import '../parts/SvgRenderer.js';
+(function () {
 	var cos = Math.cos,
 		PI = Math.PI,
 		sin = Math.sin;
@@ -600,5 +604,4 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	};
 };
 
-	return H;
-}(Highcharts));
+}());

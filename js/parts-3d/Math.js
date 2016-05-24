@@ -1,4 +1,6 @@
-(function (H) {
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+(function () {
 /**
  *	Mathematical Functionility
  */
@@ -103,5 +105,4 @@ H.perspective = function (points, chart, insidePlotArea) {
 	return result;
 };
 
-	return H;
-}(Highcharts));
+}());

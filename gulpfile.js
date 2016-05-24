@@ -147,7 +147,8 @@ gulp.task('build', function () {
                 'modules/series-label.js': new RegExp(folders['parts']),
                 'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
                 'modules/treemap.js': new RegExp(folders['parts']),
-                'highcharts-more.js': new RegExp(folders['parts'])
+                'highcharts-more.js': new RegExp(folders['parts']),
+                'highcharts-3d.js': new RegExp(folders['parts'])
             },
             files: files,
             output: './code/'
