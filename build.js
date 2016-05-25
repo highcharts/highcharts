@@ -1,3 +1,4 @@
+'use strict'
 /**
  * @author  Jon Arild Nygård
  * @description Build script for Highcharts distribution files
@@ -51,7 +52,7 @@ function merge() {
         }, []),
         uniqueKeys = unique(keys);
     uniqueKeys.forEach(function (key, i) {
-        values = args.map(function (arg) {
+        var values = args.map(function (arg) {
             return arg[key];
         });
         merged[key] = values.find(function (value) {
@@ -102,7 +103,7 @@ function compile(base, output, filename, exclude)  {
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 query: {
-                    presets: ['es2015']
+                    plugins: ['transform-es2015-modules-commonjs']
                 }
             }]
         },
@@ -111,7 +112,10 @@ function compile(base, output, filename, exclude)  {
         },
         debug: true
     }).run(function (err, stats) {
-        var jsonStats = stats.toJson();
+        var fs = require('fs'),
+            jsonStats = stats.toJson(),
+            path = stats.compilation.options.output.filename,
+            source;
         if (err) {
             outPutMessage(filename + ' fatal errors', err);
         } else if (jsonStats.errors.length > 0) {
@@ -123,9 +127,42 @@ function compile(base, output, filename, exclude)  {
                 outPutMessage(filename + ' warnings', m);
             });
         } else {
+            source = fs.readFileSync(path, 'utf-8');
+            source = postProcess(source);
+            fs.writeFileSync(path, source);
             outPutMessage(filename + ' complete', 'Congratulations! ' + filename + ' compiled without any warnings or errors.');
         }
     });
+}
+
+/**
+ * [preProcess description]
+ * @param  {[type]} code [description]
+ * @return {[type]}      [description]
+ */
+const postProcess = code => {
+    const beautify = require('js-beautify');
+    let modules;
+    code = code.split('/************************************************************************/\n')[1];
+    code = code.split(/\/\*\s[0-9]+\s\*\/\n/);
+    modules = code.map((m, i) => {
+        var processed = m;
+            console.log(i)
+        if (m.indexOf('empty (null-loader)') > -1) {
+            processed = '';
+        } else if ([0, 1].indexOf(i) > -1) {
+            // First module is not interesting in our situation
+            processed = '';
+        } else {
+            processed = processed.replace(/[\S\s]+function _interop.+\n/, '\n');
+            processed = processed.slice(0, -9);
+            processed = processed.replace(/_Globals2\.default/g, 'Highcharts');
+            processed = processed.replace(/_Globals2/g, 'Highcharts');
+            processed = beautify(processed);
+        }
+        return processed;
+    });
+    return modules.join('');
 }
 
 /**
