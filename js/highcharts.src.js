@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-24)
+ * @license Highcharts JS v4.2.5-modified (2016-05-26)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -15090,7 +15090,6 @@
                 lineWidth = options.lineWidth,
                 roundCap = options.linecap !== 'square',
                 graphPath = (this.gappedPath || this.getGraphPath).call(this),
-                fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
                 zones = this.zones;
 
             each(zones, function (threshold, i) {
@@ -15106,11 +15105,11 @@
                 if (graph) {
                     graph.animate({ d: graphPath });
 
-                } else if ((lineWidth || fillColor) && graphPath.length) { // #1487
+                } else if (lineWidth && graphPath.length) { // #1487
                     attribs = {
                         stroke: prop[1],
                         'stroke-width': lineWidth,
-                        fill: fillColor,
+                        fill: 'none',
                         zIndex: 1 // #1069
                     };
                     if (prop[2]) {
