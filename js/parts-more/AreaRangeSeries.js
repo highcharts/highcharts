@@ -154,6 +154,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		if (!this.chart.polar && higherAreaPath[0] === 'M') {
 			higherAreaPath[0] = 'L'; // this probably doesn't work for spline			
 		}
+
+		this.graphPath = linePath;
 		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
 		return linePath;
 	},
