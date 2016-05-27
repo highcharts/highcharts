@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-05-26)
+ * @license Highstock JS v4.2.5-modified (2016-05-27)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -3513,7 +3513,7 @@
 
             // Skip tspans, add text directly to text node. The forceTSpan is a hook
             // used in text outline hack.
-            if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
+            if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
                 textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
             // Complex strings, add more logic
@@ -20278,7 +20278,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-05-26)
+     * Highstock JS v4.2.5-modified (2016-05-27)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

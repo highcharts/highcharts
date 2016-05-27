@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-05-26)
+ * @license Highmaps JS v4.2.5-modified (2016-05-27)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -3511,7 +3511,7 @@
 
             // Skip tspans, add text directly to text node. The forceTSpan is a hook
             // used in text outline hack.
-            if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
+            if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
                 textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
             // Complex strings, add more logic
