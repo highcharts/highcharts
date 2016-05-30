@@ -109,7 +109,6 @@ Chart.prototype = {
 		this.series = [];
 		this.hasCartesianSeries = optionsChart.showAxes;
 		//this.axisOffset = undefined;
-		//this.maxTicks = undefined; // handle the greatest amount of ticks on grouped axes
 		//this.inverted = undefined;
 		//this.loadingShown = undefined;
 		//this.container = undefined;
@@ -284,9 +283,6 @@ Chart.prototype = {
 
 		if (hasCartesianSeries) {
 			if (!chart.isResizing) {
-
-				// reset maxTicks
-				chart.maxTicks = null;
 
 				// set axes scales
 				each(axes, function (axis) {
@@ -847,8 +843,8 @@ Chart.prototype = {
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
-			chartWidth,
-			chartHeight,
+			chartWidth = chart.chartWidth,
+			chartHeight = chart.chartHeight,
 			renderer = chart.renderer,
 			globalAnimation;
 
@@ -858,8 +854,8 @@ Chart.prototype = {
 		// set the animation for the current process
 		H.setAnimation(animation, chart);
 
-		chart.oldChartHeight = chart.chartHeight;
-		chart.oldChartWidth = chart.chartWidth;
+		chart.oldChartHeight = chartHeight;
+		chart.oldChartWidth = chartWidth;
 		if (defined(width)) {
 			chart.chartWidth = chartWidth = Math.max(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
@@ -881,7 +877,6 @@ Chart.prototype = {
 		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
-		chart.maxTicks = null;
 		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
@@ -1292,7 +1287,6 @@ Chart.prototype = {
 
 		if (redoHorizontal || redoVertical) {
 
-			chart.maxTicks = null; // reset for second pass
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickInterval(true); // update to reflect the new margins

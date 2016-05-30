@@ -658,7 +658,7 @@ $(function () {
             chart;
 
         cfg.series[1].type = 'pie';
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+        chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
 
         assert.strictEqual(
             chart.series[0].type,
@@ -737,6 +737,45 @@ $(function () {
             chart.series[1].points[0].graphic.element.nodeName,
             'path',
             'Still pie'
+        );
+    });
+
+    QUnit.test('Chart.update with with or height', function (assert) {
+        var cfg = Highcharts.merge(config),
+            chart;
+        
+        cfg.chart.width = 400;
+        cfg.chart.height = 400;
+        chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+
+        assert.strictEqual(
+            chart.chartWidth,
+            400,
+            'Initial width'
+        );
+        assert.strictEqual(
+            chart.chartHeight,
+            400,
+            'Initial height'
+        );
+
+
+        chart.update({
+            chart: {
+                width: 300,
+                height: 300
+            }
+        });
+
+        assert.strictEqual(
+            chart.chartWidth,
+            300,
+            'New width'
+        );
+        assert.strictEqual(
+            chart.chartHeight,
+            300,
+            'New height'
         );
     });
 });

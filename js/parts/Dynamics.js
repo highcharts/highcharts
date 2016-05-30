@@ -351,7 +351,10 @@ extend(Chart.prototype, {
 			merge(true, this.options.loading, options.loading);
 		}
 
-		if (pick(redraw, true)) {
+		// Update size. Redraw is forced.
+		if ('width' in optionsChart || 'height' in optionsChart) {
+			this.setSize(optionsChart.width, optionsChart.height)
+		} else if (pick(redraw, true)) {
 			this.redraw();
 		}
 	},
