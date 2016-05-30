@@ -552,10 +552,12 @@ gulp.task('scripts', function () {
         }
     }
 
-    addFile(0, function () {
-        js = addVersion(js, products.highcharts);
-        fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
-    });
+    try {
+        addFile(0, function () {
+            js = addVersion(js, products.highcharts);
+            fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
+        });
+    } catch (e) {}
 });
 
 gulp.task('browserify', function () {
