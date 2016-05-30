@@ -186,7 +186,6 @@ extend(Chart.prototype, {
 		// for these. Consider refactoring for more consistency.
 		// 
 		// height
-		// options3d
 		// panKey
 		// panning
 		// pinchType
@@ -220,6 +219,7 @@ extend(Chart.prototype, {
 		// marginLeft
 		// marginRight
 		// marginTop
+		// options3d
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor
@@ -253,6 +253,13 @@ extend(Chart.prototype, {
 			if ('ignoreHiddenSeries' in optionsChart) {
 				updateAllSeries = true;
 			}
+
+			// TODO: modularize so we can put this in 3D module
+			if ('options3d' in optionsChart) {
+				this.isDirtyBox = true;
+				updateAllSeries = true;
+			}
+			
 
 			// Only dirty box
 			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderRadius' in optionsChart || 'borderWidth' in optionsChart) {

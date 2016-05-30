@@ -252,7 +252,9 @@ $(function () {
         chart.update({
             chart: {
                 options3d: {
-                    enabled: true
+                    enabled: true,
+                    alpha: 15,
+                    beta: 15
                 }
             }
         });
@@ -263,7 +265,23 @@ $(function () {
             '3D column'
         );
 
-        
+
+        chart.update({
+            chart: {
+                options3d: {
+                    enabled: false,
+                    alpha: 15,
+                    beta: 15
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.element.nodeName,
+            'rect',
+            'Back to 2D column'
+        );
+
     });
 
     QUnit.test('Option chart.margin update', function (assert) {
