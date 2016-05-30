@@ -185,10 +185,8 @@ extend(Chart.prototype, {
 		// TODO: Systematically go over all chart options. Consider separate method 
 		// for these. Consider refactoring for more consistency.
 		// 
-		// height
 		// pinchType
 		// style
-		// width
 		// zoomType
 		// 
 		// N/A:
@@ -203,6 +201,7 @@ extend(Chart.prototype, {
 		// borderRadius
 		// borderWidth
 		// className
+		// height
 		// ignoreHiddenSeries
 		// inverted
 		// margin
@@ -229,6 +228,7 @@ extend(Chart.prototype, {
 		// spacingRight
 		// spacingTop
 		// type
+		// width
 		
 		if (optionsChart) {
 			merge(true, this.options.chart, optionsChart);
