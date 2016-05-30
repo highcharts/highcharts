@@ -186,13 +186,11 @@ extend(Chart.prototype, {
 		// for these. Consider refactoring for more consistency.
 		// 
 		// height
-		// ignoreHiddenSeries
 		// options3d
 		// panKey
 		// panning
 		// pinchType
 		// plotShadow
-		// polar // similar to inverted?
 		// reflow
 		// resetZoomButton
 		// selectionMarkerFill
@@ -215,6 +213,7 @@ extend(Chart.prototype, {
 		// borderRadius
 		// borderWidth
 		// className
+		// ignoreHiddenSeries
 		// inverted
 		// margin
 		// marginBottom
@@ -225,6 +224,7 @@ extend(Chart.prototype, {
 		// plotBackgroundImage
 		// plotBorderColor
 		// plotBorderWidth
+		// polar
 		// spacing
 		// spacingBottom
 		// spacingLeft
@@ -248,6 +248,10 @@ extend(Chart.prototype, {
 				this.propFromSeries(); // Parses options.chart.polar together with the available series
 				updateAllAxes = true;
 				updateAllSeries = true; // Because column rects must be destroyed and rebuilt as paths
+			}
+
+			if ('ignoreHiddenSeries' in optionsChart) {
+				updateAllSeries = true;
 			}
 
 			// Only dirty box
