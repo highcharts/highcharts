@@ -11,7 +11,7 @@ require_once('functions.php');
 if (isset($_GET['styled'])) {
 	$_SESSION['styled'] = $_GET['styled'] == 'true' ? true : false;
 }
-$styled = $_SESSION['styled'];
+$styled = @$_SESSION['styled'];
 
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	header('Location: start.php');
