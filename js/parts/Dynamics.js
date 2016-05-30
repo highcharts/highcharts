@@ -187,11 +187,7 @@ extend(Chart.prototype, {
 		// 
 		// height
 		// pinchType
-		// resetZoomButton
-		// selectionMarkerFill
-		// showAxes
 		// style
-		// type
 		// width
 		// zoomType
 		// 
@@ -224,12 +220,15 @@ extend(Chart.prototype, {
 		// plotShadow
 		// polar
 		// reflow
+		// resetZoomButton
+		// selectionMarkerFill
 		// shadow
 		// spacing
 		// spacingBottom
 		// spacingLeft
 		// spacingRight
 		// spacingTop
+		// type
 		
 		if (optionsChart) {
 			merge(true, this.options.chart, optionsChart);
@@ -257,6 +256,10 @@ extend(Chart.prototype, {
 			// TODO: modularize so we can put this in 3D module
 			if ('options3d' in optionsChart) {
 				this.isDirtyBox = true;
+				updateAllSeries = true;
+			}
+
+			if ('type' in optionsChart) {
 				updateAllSeries = true;
 			}
 			
@@ -628,12 +631,13 @@ extend(Series.prototype, {
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
+			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
 		// If we're changing type or zIndex, create new groups (#3380, #3404)
-		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
 			preserve.length = 0;
 		}
 
@@ -656,7 +660,7 @@ extend(Series.prototype, {
 		for (n in proto) {
 			this[n] = undefined;
 		}
-		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		extend(this, seriesTypes[newType || oldType].prototype);
 
 		// Re-register groups (#3094)
 		each(preserve, function (prop) {

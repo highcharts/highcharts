@@ -8,6 +8,12 @@ $(function () {
             height: 300
         },
 
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
         series: [{
             data: [1, 3, 2, 4],
             name: 'First'
@@ -644,6 +650,93 @@ $(function () {
         assert.ok(
             chart.plotBackground.getBBox().height > chart.chartHeight - 200,
             'Plot area height ok'
+        );
+    });
+
+    QUnit.test('Option chart.type update', function (assert) {
+        var cfg = Highcharts.merge(config),
+            chart;
+
+        cfg.series[1].type = 'pie';
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
+
+        assert.strictEqual(
+            chart.series[0].type,
+            'column',
+            'Initially column'
+        );
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.element.nodeName,
+            'rect',
+            'Initially column'
+        );
+
+        // Second series is set to pie in series options
+        assert.strictEqual(
+            chart.series[1].type,
+            'pie',
+            'Initially pie'
+        );
+        assert.strictEqual(
+            chart.series[1].points[0].graphic.element.nodeName,
+            'path',
+            'Initially pie'
+        );
+
+        // Update to pie
+        chart.update({
+            chart: {
+                type: 'pie'
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].type,
+            'pie',
+            'Changed to pie'
+        );
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.element.nodeName,
+            'path',
+            'Changed to pie'
+        );
+        assert.strictEqual(
+            chart.series[1].type,
+            'pie',
+            'Still pie'
+        );
+        assert.strictEqual(
+            chart.series[1].points[0].graphic.element.nodeName,
+            'path',
+            'Still pie'
+        );
+
+        // Update to line
+        chart.update({
+            chart: {
+                type: 'line'
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].type,
+            'line',
+            'Changed to line'
+        );
+        assert.strictEqual(
+            chart.series[0].graph.element.nodeName,
+            'path',
+            'Changed to line'
+        );
+        assert.strictEqual(
+            chart.series[1].type,
+            'pie',
+            'Still pie'
+        );
+        assert.strictEqual(
+            chart.series[1].points[0].graphic.element.nodeName,
+            'path',
+            'Still pie'
         );
     });
 });
