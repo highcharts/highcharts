@@ -187,7 +187,6 @@ extend(Chart.prototype, {
 		// 
 		// height
 		// pinchType
-		// reflow
 		// resetZoomButton
 		// selectionMarkerFill
 		// showAxes
@@ -224,6 +223,7 @@ extend(Chart.prototype, {
 		// plotBorderWidth
 		// plotShadow
 		// polar
+		// reflow
 		// shadow
 		// spacing
 		// spacingBottom

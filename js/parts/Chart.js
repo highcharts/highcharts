@@ -145,13 +145,6 @@ Chart.prototype = {
 		charts.push(chart);
 		H.chartCount++;
 
-		// Set up auto resize
-		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', function () {
-				chart.initReflow();
-			});
-		}
-
 		// Chart event handlers
 		if (chartEvents) {
 			for (eventType in chartEvents) {
@@ -807,21 +800,26 @@ Chart.prototype = {
 			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
-		// Width and height checks for display:none. Target is doc in IE8 and Opera,
-		// win in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
-			if (width !== chart.containerWidth || height !== chart.containerHeight) {
-				clearTimeout(chart.reflowTimeout);
-				// When called from window.resize, e is set, else it's called directly (#2224)
-				chart.reflowTimeout = syncTimeout(function () {
-					if (chart.container) { // It may have been destroyed in the meantime (#1257)
-						chart.setSize(width, height, false);
-						chart.hasUserSize = null;
-					}
-				}, e ? 100 : 0);
+		// Allow calling directly without parameters or as an event handler
+		// if the reflow setting is true.
+		if (!e || e && pick(optionsChart.reflow, true)) {
+
+			// Width and height checks for display:none. Target is doc in IE8 and Opera,
+			// win in Firefox, Chrome and IE9.
+			if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+				if (width !== chart.containerWidth || height !== chart.containerHeight) {
+					clearTimeout(chart.reflowTimeout);
+					// When called from window.resize, e is set, else it's called directly (#2224)
+					chart.reflowTimeout = syncTimeout(function () {
+						if (chart.container) { // It may have been destroyed in the meantime (#1257)
+							chart.setSize(width, height, false);
+							chart.hasUserSize = null;
+						}
+					}, e ? 100 : 0);
+				}
+				chart.containerWidth = width;
+				chart.containerHeight = height;
 			}
-			chart.containerWidth = width;
-			chart.containerHeight = height;
 		}
 	},
 
@@ -1527,16 +1525,18 @@ Chart.prototype = {
 	 * On chart load
 	 */
 	onload: function () {
-		var chart = this;
 
 		// Run callbacks
 		each([this.callback].concat(this.callbacks), function (fn) {
-			if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
-				fn.apply(chart, [chart]);
+			if (fn && this.index !== undefined) { // Chart destroyed in its own callback (#3600)
+				fn.apply(this, [this]);
 			}
-		});
+		}, this);
 
-		fireEvent(chart, 'load');
+		fireEvent(this, 'load');
+
+		// Set up auto resize
+		this.initReflow();
 
 		// Don't run again
 		this.onload = null;
