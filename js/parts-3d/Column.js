@@ -213,7 +213,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
 		depth = cylOptions.depth || 0,
-		alpha = options3d.alpha;
+		alpha = chart.alpha3d;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;

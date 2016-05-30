@@ -24,8 +24,8 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
-		alpha = options3d.alpha,
-		beta = options3d.beta,
+		alpha = chart.alpha3d,
+		beta = chart.beta3d,
 		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 
 	z += depth / 2;
@@ -99,8 +99,8 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 		each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
-				a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
-				b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
+				a1 = (shapeArgs.alpha || chart.alpha3d) * deg2rad, //#3240 issue with datalabels for 0 and null values
+				b1 = (shapeArgs.beta || chart.beta3d) * deg2rad,
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
 				labelPos = point.labelPos,
 				labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]

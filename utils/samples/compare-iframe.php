@@ -157,7 +157,7 @@ function getHTML($which) {
 				function ($matches) {
 					global $rightPath;
 					$src = $rightPath . $matches[1];
-					$src = str_replace('.js', '.js?' . mktime(), $src);
+					$src = str_replace('.js', '.js?' . time(), $src);
 					return $src;
 				},
 				$s

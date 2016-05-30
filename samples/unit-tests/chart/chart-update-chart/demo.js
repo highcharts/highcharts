@@ -240,6 +240,32 @@ $(function () {
         );
     });
 
+    QUnit.test('Option chart.options3d update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
+
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.element.nodeName,
+            'rect',
+            '2D column'
+        );
+
+        chart.update({
+            chart: {
+                options3d: {
+                    enabled: true
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.element.nodeName,
+            'g',
+            '3D column'
+        );
+
+        
+    });
+
     QUnit.test('Option chart.margin update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge({
             chart: {

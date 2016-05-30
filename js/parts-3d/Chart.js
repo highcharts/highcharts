@@ -154,27 +154,12 @@ merge(true, defaultChartOptions.chart.options3d, {
 });
 /*= } =*/
 
-wrap(Chart.prototype, 'init', function (proceed) {
-	var args = [].slice.call(arguments, 1),
-		plotOptions,
-		pieOptions;
-
-	if (args[0].chart && args[0].chart.options3d && args[0].chart.options3d.enabled) {
-		// Normalize alpha and beta to (-360, 360) range
-		args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
-		args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
-
-		plotOptions = args[0].plotOptions || {};
-		pieOptions = plotOptions.pie || {};
-
-		pieOptions.borderColor = pick(pieOptions.borderColor, undefined); 
-	}
-	proceed.apply(this, args);
-});
-
-wrap(Chart.prototype, 'firstRender', function (proceed) {
+wrap(Chart.prototype, 'setClassName', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
-	this.renderer.boxWrapper.addClass('highcharts-3d-chart');
+
+	if (this.is3d()) {
+		this.container.className += ' highcharts-3d-chart';
+	}
 });
 
 wrap(Chart.prototype, 'setChartSize', function (proceed) {
@@ -193,6 +178,10 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		clipBox[y] = -(margin[0] || 0);
 		clipBox[w] = this.chartWidth + (margin[3] || 0) + (margin[1] || 0);
 		clipBox[h] = this.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+
+		// Normalize alpha and beta to (-360, 360) range
+		this.alpha3d = (this.options.chart.options3d.alpha || 0) % 360;
+		this.beta3d = (this.options.chart.options3d.beta || 0) % 360;
 	}
 });
 

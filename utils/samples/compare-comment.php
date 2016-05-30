@@ -1,6 +1,6 @@
 <?php 
 
-$compare = json_decode(file_get_contents('temp/compare.json'));
+$compare = json_decode(@file_get_contents('temp/compare.json'));
 $path = $_GET['path'];
 $diff = $_GET['diff'];
 $focus = @$_GET['focus'] === 'false' ? false : true;

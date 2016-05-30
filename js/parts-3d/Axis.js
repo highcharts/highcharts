@@ -61,7 +61,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		if (!this.bottomFrame) {
 			this.bottomFrame = renderer.cuboid(bottomShape).attr({
 				'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
-				'zIndex': (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
+				'zIndex': (chart.yAxis[0].reversed && chart.alpha3d > 0 ? 4 : -1)
 			}).add();
 
 			/*= if (build.classic) { =*/
