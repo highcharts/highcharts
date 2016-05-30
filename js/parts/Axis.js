@@ -2316,15 +2316,17 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
 
-		// Destroy crosshair
-		if (this.cross) {
-			this.cross.destroy();
+		// Delete all properties and fall back to the prototype
+		for (n in axis) {
+			if (axis.hasOwnProperty(n)) {
+				delete axis[n];
+			}
 		}
 	},
 

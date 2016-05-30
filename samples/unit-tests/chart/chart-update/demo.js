@@ -427,7 +427,6 @@ $(function () {
             chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].gridLine.element.getAttribute('d').indexOf('A') === -1,
             'Grid lines not arced'
         );
-        TODO: http://jsfiddle.net/highcharts/uepy0gfv/
 
     });
 

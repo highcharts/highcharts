@@ -411,11 +411,10 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		}
 
 	} else if (polar) {
-		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
 		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
-
+	
 	}
 
 	// Disable certain features on angular and polar axes
