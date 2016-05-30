@@ -265,7 +265,7 @@ extend(Chart.prototype, {
 			
 
 			// Only dirty box
-			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderRadius' in optionsChart || 'borderWidth' in optionsChart) {
+			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderWidth' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 
@@ -276,6 +276,12 @@ extend(Chart.prototype, {
 
 			if ('spacing' in optionsChart || 'spacingTop' in optionsChart || 'spacingRight' in optionsChart ||
 					'spacingBottom' in optionsChart || 'spacingLeft' in optionsChart) {
+				this.isDirtyBox = true;
+			}
+
+
+			/*= if (build.classic) { =*/
+			if ('borderRadius' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 
@@ -292,6 +298,7 @@ extend(Chart.prototype, {
 			if ('plotShadow' in optionsChart || 'shadow' in optionsChart) {
 				this.isDirtyBox = true;
 			}
+			/*= } =*/
 		}
 		
 		// Some option stuctures correspond one-to-one to chart objects that have
