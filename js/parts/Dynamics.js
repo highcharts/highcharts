@@ -186,14 +186,10 @@ extend(Chart.prototype, {
 		// for these. Consider refactoring for more consistency.
 		// 
 		// height
-		// panKey
-		// panning
 		// pinchType
-		// plotShadow
 		// reflow
 		// resetZoomButton
 		// selectionMarkerFill
-		// shadow
 		// showAxes
 		// style
 		// type
@@ -220,11 +216,15 @@ extend(Chart.prototype, {
 		// marginRight
 		// marginTop
 		// options3d
+		// panning
+		// panKey
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor
 		// plotBorderWidth
+		// plotShadow
 		// polar
+		// shadow
 		// spacing
 		// spacingBottom
 		// spacingLeft
@@ -283,6 +283,10 @@ extend(Chart.prototype, {
 				this.isDirtyBox = true;
 			}
 			if ('plotBorderColor' in optionsChart || 'plotBorderWidth' in optionsChart) {
+				this.isDirtyBox = true;
+			}
+
+			if ('plotShadow' in optionsChart || 'shadow' in optionsChart) {
 				this.isDirtyBox = true;
 			}
 		}

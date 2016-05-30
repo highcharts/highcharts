@@ -1046,13 +1046,7 @@ SVGElement.prototype = {
 		wrapper.safeRemoveChild(element);
 
 		/*= if (build.classic) { =*/
-		// Destroy shadows
-		var shadows = wrapper.shadows;
-		if (shadows) {
-			each(shadows, function (shadow) {
-				wrapper.safeRemoveChild(shadow);
-			});
-		}
+		wrapper.destroyShadows();
 		/*= } =*/
 
 		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393, #2697).
@@ -1092,8 +1086,10 @@ SVGElement.prototype = {
 			// compensate for inverted plot area
 			transform;
 
-
-		if (shadowOptions) {
+		if (!shadowOptions) {
+			this.destroyShadows();
+		
+		} else if (!this.shadows) {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			transform = this.parentInverted ?
@@ -1129,6 +1125,14 @@ SVGElement.prototype = {
 		return this;
 
 	},
+
+	destroyShadows: function () {
+		each(this.shadows || [], function (shadow) {
+			this.safeRemoveChild(shadow);
+		}, this);
+		this.shadows = undefined;
+	},
+
 	/*= } =*/
 
 	xGetter: function (key) {

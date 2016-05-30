@@ -1058,9 +1058,9 @@ Chart.prototype = {
 		chartBackground
 			.attr(bgAttr)
 			.shadow(optionsChart.shadow);
-		/*= } =*/
-
+		/*= } else { =*/
 		chartBorderWidth = mgn = chartBackground.strokeWidth();
+		/*= } =*/
 		chartBackground[verb]({
 			x: mgn / 2,
 			y: mgn / 2,

@@ -284,6 +284,58 @@ $(function () {
 
     });
 
+    QUnit.test('Option chart shadows update', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
+
+        assert.ok(
+            !chart.chartBackground.shadows,
+            'Chart shadow does not exist'
+        );
+
+        assert.ok(
+            !chart.plotBackground.shadows,
+            'Plot shadow does not exist'
+        );
+
+        chart.update({
+            chart: {
+                plotShadow: true,
+                shadow: true
+            }
+        });
+
+        assert.ok(
+            chart.chartBackground.shadows,
+            'Chart shadow exists'
+        );
+
+        assert.ok(
+            chart.plotBackground.shadows,
+            'Plot shadow exists'
+        );
+
+        
+
+        chart.update({
+            chart: {
+                plotShadow: false,
+                shadow: false
+            }
+        });
+
+        assert.ok(
+            !chart.chartBackground.shadows,
+            'Chart shadow does not exist'
+        );
+
+        assert.ok(
+            !chart.plotBackground.shadows,
+            'Plot shadow does not exist'
+        );
+
+        
+    });
+
     QUnit.test('Option chart.margin update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge({
             chart: {
