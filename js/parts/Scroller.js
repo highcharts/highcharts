@@ -764,7 +764,9 @@ Navigator.prototype = {
 		wrap(chart, 'getMargins', function (proceed) {
 
 			var legend = this.legend,
-				legendOptions = legend.options;
+				legendOptions = legend.options,
+				xAxis = scroller.xAxis,
+				yAxis = scroller.yAxis;
 
 			proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -997,13 +999,14 @@ Navigator.prototype = {
 		this.removeEvents();
 
 		if (this.xAxis) {
+			erase(this.chart.xAxis, this.xAxis);
 			erase(this.chart.axes, this.xAxis);
 		}
 		if (this.yAxis) {
+			erase(this.chart.yAxis, this.yAxis);
 			erase(this.chart.axes, this.yAxis);
 		}
 
-		// Destroy properties
 		// Destroy properties
 		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
 				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
