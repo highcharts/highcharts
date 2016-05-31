@@ -13,6 +13,9 @@ Chart.prototype.is3d = function () {
 	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
+Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
+Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
+
 /**
  * Extend the getMargins method to calculate scale of the 3D view. That is required to
  * fit chart's 3D projection into the actual plotting area. Reported as #4933.

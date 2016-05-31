@@ -167,6 +167,19 @@ extend(Chart.prototype, {
 		this.loadingShown = false;
 	},
 
+	/** 
+	 * These properties cause isDirtyBox to be set to true when updating. Can be extended from plugins.
+	 */
+	propsRequireDirtyBox: ['backgroundColor', 'borderColor', 'borderWidth', 'margin', 'marginTop', 'marginRight',
+		'marginBottom', 'marginLeft', 'spacing', 'spacingTop', 'spacingRight', 'spacingBottom', 'spacingLeft',
+		'borderRadius', 'plotBackgroundColor', 'plotBackgroundImage', 'plotBorderColor', 'plotBorderWidth', 
+		'plotShadow', 'shadow'],
+
+	/** 
+	 * These properties cause all series to be updated when updating. Can be extended from plugins.
+	 */
+	propsRequireUpdateSeries: ['chart.polar', 'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+
 	/**
 	 * Chart.update function that takes the whole options stucture.
 	 */
@@ -190,67 +203,25 @@ extend(Chart.prototype, {
 				this.setClassName(optionsChart.className);
 			}
 
-			if ('inverted' in optionsChart) {
-				this.propFromSeries(); // Parses options.chart.inverted together with the available series
+			if ('inverted' in optionsChart || 'polar' in optionsChart) {
+				this.propFromSeries(); // Parses options.chart.inverted and options.chart.polar together with the available series
 				updateAllAxes = true;
 			}
 
-			if ('polar' in optionsChart) {
-				this.propFromSeries(); // Parses options.chart.polar together with the available series
-				updateAllAxes = true;
-				updateAllSeries = true; // Because column rects must be destroyed and rebuilt as paths
+			for (key in optionsChart) {
+				if (optionsChart.hasOwnProperty(key)) {
+					if (inArray('chart.' + key, this.propsRequireUpdateSeries) !== -1) {
+						updateAllSeries = true;
+					}
+					// Only dirty box
+					if (inArray(key, this.propsRequireDirtyBox) !== -1) {
+						this.isDirtyBox = true;
+					}
+					
+				}
 			}
-
-			if ('ignoreHiddenSeries' in optionsChart) {
-				updateAllSeries = true;
-			}
-
-			// TODO: modularize so we can put this in 3D module
-			if ('options3d' in optionsChart) {
-				this.isDirtyBox = true;
-				updateAllSeries = true;
-			}
-
-			if ('type' in optionsChart) {
-				updateAllSeries = true;
-			}
-			
-
-			// Only dirty box
-			if ('backgroundColor' in optionsChart || 'borderColor' in optionsChart || 'borderWidth' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
-			if ('margin' in optionsChart || 'marginTop' in optionsChart || 'marginRight' in optionsChart ||
-					'marginBottom' in optionsChart || 'marginLeft' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
-			if ('spacing' in optionsChart || 'spacingTop' in optionsChart || 'spacingRight' in optionsChart ||
-					'spacingBottom' in optionsChart || 'spacingLeft' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
 
 			/*= if (build.classic) { =*/
-			if ('borderRadius' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
-			if ('plotBackgroundColor' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-			if ('plotBackgroundImage' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-			if ('plotBorderColor' in optionsChart || 'plotBorderWidth' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
-			if ('plotShadow' in optionsChart || 'shadow' in optionsChart) {
-				this.isDirtyBox = true;
-			}
-
 			if ('style' in optionsChart) {
 				this.renderer.setStyle(optionsChart.style);
 			}
@@ -274,18 +245,20 @@ extend(Chart.prototype, {
 			} else if (typeof this[adders[key]] === 'function') {
 				this[adders[key]](options[key]);
 			}
+
+			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries !== -1)) {
+				updateAllSeries = true;
+			}
 		}
 
 		/*= if (build.classic) { =*/
 		if (options.colors) {
 			this.options.colors = options.colors;
-			updateAllSeries = true;
 		}
 		/*= } =*/
 
 		if (options.plotOptions) {
 			merge(true, this.options.plotOptions, options.plotOptions);
-			updateAllSeries = true;
 		}
 
 		if (updateAllAxes) {
