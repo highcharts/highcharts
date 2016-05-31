@@ -1120,6 +1120,7 @@ var arrayMin = Highcharts.arrayMin,
         drawGraph: noop,
         fixedBox: true,
         forceDL: true,
+        noSharedTooltip: true,
         trackerGroups: ['group', 'dataLabelsGroup'],
 
         /**
