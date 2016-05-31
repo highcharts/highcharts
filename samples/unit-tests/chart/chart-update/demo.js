@@ -1,42 +1,26 @@
 /* eslint func-style:0 */
 $(function () {
 
-    var config = {
-        chart: {
-            type: 'column',
-            animation: false,
-            height: 300
-        },
+    function getConfig() {
+        return {
+            chart: {
+                type: 'column',
+                animation: false,
+                height: 300
+            },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last'
-        }]
-    };
-
-    var stockConfig = {
-        chart: {
-            animation: false,
-            height: 300,
-            plotBackgroundColor: '#eff'
-        },
-
-        series: [{
-            animation: false,
-            pointStart: Date.UTC(2016, 0, 1),
-            pointInterval: 24 * 36e5,
-            data: [1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2]
-        }]
-    };
+            series: [{
+                data: [1, 3, 2, 4],
+                name: 'First'
+            }, {
+                data: [5, 3, 4, 1],
+                name: 'Last'
+            }]
+        };
+    }
 
     QUnit.test('Credits update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             credits: {
@@ -74,7 +58,7 @@ $(function () {
     });
 
     QUnit.test('Legend update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         assert.ok(
             chart.legend.group.translateX < chart.chartWidth / 2,
@@ -108,7 +92,7 @@ $(function () {
     });
 
     QUnit.test('Title update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             title: {
@@ -137,7 +121,7 @@ $(function () {
     });
 
     QUnit.test('Subtitle update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             subtitle: {
@@ -156,7 +140,7 @@ $(function () {
     QUnit.test('Colors update', function (assert) {
         var chart = Highcharts.chart(
             $('<div>').appendTo('#container')[0],
-            Highcharts.merge(config, {
+            Highcharts.merge(getConfig(), {
                 title: {
                     text: 'Colors update'
                 }
@@ -175,7 +159,7 @@ $(function () {
     });
 
     QUnit.test('Loading update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             loading: {
@@ -229,7 +213,7 @@ $(function () {
     });
 
     QUnit.test('Exporting update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             exporting: {
@@ -287,7 +271,7 @@ $(function () {
     });
 
     QUnit.test('Plot options update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
 
         chart.update({
             plotOptions: {
@@ -314,137 +298,5 @@ $(function () {
             chart.series[0].points[1].graphic.attr('fill'),
             'Color by point was reset'
         );
-    });
-
-    QUnit.test('Navigator update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], Highcharts.merge(stockConfig)),
-            originalPlotHeight = document.querySelector('.highcharts-plot-background').getBBox().height;
-
-        assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
-            'number',
-            'Height is valid'
-        );
-        assert.ok(
-            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height < 60,
-            'Height is 40'
-        );
-
-        chart.update({
-            navigator: {
-                height: 100
-            }
-        });
-
-        assert.ok(
-            chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height > 60,
-            'Height is updated'
-        );
-
-        chart.update({
-            navigator: {
-                enabled: false
-            }
-        });
-
-        assert.strictEqual(
-            chart.container.querySelector('.highcharts-navigator'),
-            null,
-            'Navigator element is missing'
-        );
-
-        assert.ok(
-            document.querySelector('.highcharts-plot-background').getBBox().height > originalPlotHeight,
-            'Plot area is now higher than it was'
-        );
-    });
-
-    QUnit.test('Scrollbar update', function (assert) {
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], Highcharts.merge(stockConfig));
-
-        assert.strictEqual(
-            typeof chart.container.querySelector('.highcharts-scrollbar').getBBox().height,
-            'number',
-            'Height is valid'
-        );
-
-        chart.update({
-            scrollbar: {
-                enabled: false
-            }
-        });
-
-        assert.strictEqual(
-            chart.container.querySelector('.highcharts-scrollbar'),
-            null,
-            'Scrollbar is gone'
-        );
-    });
-
-    QUnit.test('Range selector update', function (assert) {
-
-        var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], Highcharts.merge(stockConfig));
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-range-selector-buttons .highcharts-button').length,
-            6,
-            '6 range selector buttons'
-        );
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-input-group .highcharts-label').length,
-            4,
-            '2 inputs and 2 labels'
-        );
-
-        chart.update({
-            rangeSelector: {
-                inputEnabled: false
-            }
-        });
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-input-group .highcharts-label').length,
-            0,
-            'No inputs'
-        );
-
-        chart.update({
-            rangeSelector: {
-                enabled: false
-            }
-        });
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-range-selector-buttons .highcharts-button').length,
-            0,
-            'No buttons'
-        );
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-input-group .highcharts-label').length,
-            0,
-            'No inputs'
-        );
-
-        chart.update({
-            rangeSelector: {
-                enabled: true,
-                inputEnabled: true
-            }
-        });
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-range-selector-buttons .highcharts-button').length,
-            6,
-            '6 range selector buttons'
-        );
-
-        assert.strictEqual(
-            chart.container.querySelectorAll('g.highcharts-input-group .highcharts-label').length,
-            4,
-            '2 inputs and 2 labels'
-        );
-
     });
 });
