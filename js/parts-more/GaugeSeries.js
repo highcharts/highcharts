@@ -68,6 +68,7 @@ var GaugeSeries = {
 	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
+	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 
 	/**
