@@ -237,6 +237,7 @@ extend(Pointer.prototype, {
 	},
 
 	onContainerTouchStart: function (e) {
+		this.zoomOption();
 		this.touch(e, true);
 	},
 

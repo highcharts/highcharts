@@ -36,26 +36,12 @@ H.Pointer.prototype = {
 	 */
 	init: function (chart, options) {
 
-		var chartOptions = options.chart,
-			chartEvents = chartOptions.events,
-			zoomType = useCanVG ? '' : chartOptions.zoomType,
-			inverted = chart.inverted,
-			zoomX,
-			zoomY;
-
 		// Store references
 		this.options = options;
 		this.chart = chart;
 
-		// Zoom status
-		this.zoomX = zoomX = /x/.test(zoomType);
-		this.zoomY = zoomY = /y/.test(zoomType);
-		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
-		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
-		this.hasZoom = zoomX || zoomY;
-
 		// Do we need to handle click on a touch device?
-		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.runChartClick = options.chart.events && !!options.chart.events.click;
 
 		this.pinchDown = [];
 		this.lastValidTouch = {};
@@ -66,6 +52,23 @@ H.Pointer.prototype = {
 		}
 
 		this.setDOMEvents();
+	},
+
+	/**
+	 * Resolve the zoomType option
+	 */
+	zoomOption: function () {
+		var chart = this.chart,
+			zoomType = useCanVG ? '' : chart.options.chart.zoomType,
+			zoomX = /x/.test(zoomType),
+			zoomY = /y/.test(zoomType),
+			inverted = chart.inverted;
+
+		this.zoomX = zoomX;
+		this.zoomY = zoomY;
+		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
+		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+		this.hasZoom = zoomX || zoomY;
 	},
 
 	/**
@@ -436,7 +439,7 @@ H.Pointer.prototype = {
 			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 			// make a selection
-			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
+			if (chart.hasCartesianSeries && this.hasZoom && clickedInside && !panKey) {
 				if (!selectionMarker) {
 					this.selectionMarker = selectionMarker = chart.renderer.rect(
 						plotLeft,
@@ -547,6 +550,8 @@ H.Pointer.prototype = {
 	onContainerMouseDown: function (e) {
 
 		e = this.normalize(e);
+
+		this.zoomOption();
 
 		// issue #295, dragging not always working in Firefox
 		if (e.preventDefault) {

@@ -185,9 +185,7 @@ extend(Chart.prototype, {
 		// TODO: Systematically go over all chart options. Consider separate method 
 		// for these. Consider refactoring for more consistency.
 		// 
-		// pinchType
 		// style
-		// zoomType
 		// 
 		// N/A:
 		// defaultSeriesType (deprecated)		
@@ -212,6 +210,7 @@ extend(Chart.prototype, {
 		// options3d
 		// panning
 		// panKey
+		// pinchType
 		// plotBackgroundColor
 		// plotBackgroundImage
 		// plotBorderColor
@@ -229,6 +228,7 @@ extend(Chart.prototype, {
 		// spacingTop
 		// type
 		// width
+		// zoomType
 		
 		if (optionsChart) {
 			merge(true, this.options.chart, optionsChart);
