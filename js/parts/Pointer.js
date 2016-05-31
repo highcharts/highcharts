@@ -168,23 +168,21 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p) {
-					// Store both closest points, using point.dist and point.distX comparisons (#4645):
-					each(['dist', 'distX'], function (dist, k) {
-						if (isNumber(p[dist])) {
-							var
-								// It is closer than the reference point
-								isCloser = p[dist] < distance[k],
-								// It is equally close, but above the reference point (#4679)
-								isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
+				// Store both closest points, using point.dist and point.distX comparisons (#4645):
+				each(['dist', 'distX'], function (dist, k) {
+					if (isNumber(p[dist])) {
+						var
+							// It is closer than the reference point
+							isCloser = p[dist] < distance[k],
+							// It is equally close, but above the reference point (#4679)
+							isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
 
-							if (isCloser || isAbove) {
-								distance[k] = p[dist];
-								kdpoint[k] = p;
-							}
+						if (isCloser || isAbove) {
+							distance[k] = p[dist];
+							kdpoint[k] = p;
 						}
-					});
-				}
+					}
+				});
 			});
 		}
 
