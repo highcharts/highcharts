@@ -33,9 +33,20 @@ co(function* () {
             return error ? reject(error) : resolve(obj);
         });
     });
+    // Loop over two endpoints in parallel
+    yield[fn(props, 'popular'), fn(props, 'complex')];
+
+    console.log("Done.")
+
+
+}).catch(function (err) {
+    console.log(err);
+});
+
+let fn = co.wrap(function* (props, endpoint) {
 
     let result = yield request({
-        uri: props['cloud.uri'] + '/api/charts/popular/',
+        uri: props['cloud.uri'] + '/api/charts/' + endpoint + '/',
         method: 'POST',
         json: {
             authentication: props['cloud.authentication'],
@@ -47,12 +58,12 @@ co(function* () {
 
     let jsFile = 'demo.js';
     let htmlFile = 'demo.html';
-    let targetDir = './samples/cloud/charts/';
+    let targetDir = './samples/cloud/' + endpoint + '/';
 
     yield fs.ensureDir(targetDir);
 
     for (let i = 0; i < hashes.length; i++) {
-        console.log('Downloading script: ' + hashes[i] + ' (' + (i + 1) + '/' + hashes.length + ')');
+        console.log('Downloading from /' + endpoint + ': ' + hashes[i] + ' (' + (i + 1) + '/' + hashes.length + ')');
         let scriptResult = yield request.get(props['cloud.uri'] + '/inject/' + hashes[i]);
         let script = scriptResult.body;
 
@@ -65,6 +76,5 @@ co(function* () {
         yield fs.writeFile(path + htmlFile, html(hashes[i]));
     }
 
-}).catch(function (err) {
-    console.log(err);
+    return yield Promise.resolve();
 });

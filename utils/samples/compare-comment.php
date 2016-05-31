@@ -83,7 +83,7 @@ $symbols = array('check', 'exclamation-sign');
 		$(function () {
 			$('#title')[0].focus();
 		});
-		<? endif; ?>
+		<?php endif; ?>
 		
 		<?php if ($updateContents) : ?>
 			if (window.parent.frames[0]) {

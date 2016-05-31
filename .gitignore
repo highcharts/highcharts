@@ -51,4 +51,5 @@ nbproject/
 *.log
 samples/highcharts/common-js/browserify/demo.js
 samples/highcharts/common-js/webpack/demo.js
-/samples/cloud/charts
+/samples/cloud/popular
+/samples/cloud/complex
