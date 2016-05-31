@@ -347,6 +347,14 @@ $(function () {
             'Jan,  1',
             dateFormat('%b, %e', Date.UTC(2015, 0, 1))
         );
+
+        // Issue #5302
+        assertEquals(
+            assert,
+            'Issue #5302, Date argument',
+            '2016-05-07',
+            dateFormat('%Y-%m-%d', new Date('Sat May 07 2016 20:45:00 GMT+0200 (W. Europe Daylight Time)'))
+        );
     });
 
 

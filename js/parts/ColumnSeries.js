@@ -346,8 +346,7 @@ var ColumnSeries = extendClass(Series, {
 				series.group.animate(attr, extend(animObject(series.options.animation), {
 					// Do the scale synchronously to ensure smooth updating (#5030)
 					step: function (val, fx) {
-						series.group.attr({
-							scaleY: mathMax(0.001, fx.pos) //#5250
+							scaleY: mathMax(0.001, fx.pos) // #5250
 						});
 					}
 				}));

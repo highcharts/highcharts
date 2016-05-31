@@ -344,7 +344,8 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 	wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
 		var ca,
 			from = this.attribs,
-			to;
+			to,
+			anim;
 
 		// Attribute-line properties connected to 3D. These shouldn't have been in the 
 		// attribs collection in the first place.
@@ -354,15 +355,15 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		delete params.alpha;
 		delete params.beta;
 
-		animation = animObject(pick(animation, this.renderer.globalAnimation));
+		anim = animObject(pick(animation, this.renderer.globalAnimation));
 		
-		if (animation.duration) {
+		if (anim.duration) {
 			params = merge(params); // Don't mutate the original object
 			ca = suckOutCustom(params);
 			
 			if (ca) {
 				to = ca;
-				animation.step = function (a, fx) {
+				anim.step = function (a, fx) {
 					function interpolate(key) {
 						return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
 					}

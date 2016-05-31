@@ -1440,7 +1440,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
-		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
 		// Complex strings, add more logic
@@ -2453,8 +2453,7 @@ SVGRenderer.prototype = {
 					// create the border box if it is not already present
 					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-
-					wrapper.box = box = shape ?
+					wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
 							renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 							renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 

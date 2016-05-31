@@ -105,8 +105,8 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	//width: undefined,
-	printMaxWidth: 780, // docs
-	//scale: 2
+	printMaxWidth: 780,
+	scale: 2,
 	buttons: {
 		contextButton: {
 			menuClassName: PREFIX + 'contextmenu',
@@ -410,7 +410,7 @@ extend(Chart.prototype, {
 			filename: options.filename || 'chart',
 			type: options.type,
 			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
-			scale: options.scale || 2,
+			scale: options.scale,
 			svg: svg
 		}, options.formAttributes);
 

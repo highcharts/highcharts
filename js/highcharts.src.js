@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (bugfix)
+ * @license Highcharts JS v4.2.5-modified (bugfix)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
-        VERSION = '4.2.4-modified',
+        VERSION = '4.2.5-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -175,7 +175,7 @@
                 while (i--) {
                     startVal = parseFloat(start[i]);
                     ret[i] =
-                        !isNumber(startVal) ? // a letter instruction like M or L
+                        isNaN(startVal) ? // a letter instruction like M or L
                                 start[i] :
                                 now * (parseFloat(end[i] - startVal)) + startVal;
 
@@ -484,7 +484,7 @@
      */
     var isNumber = Highcharts.isNumber = function isNumber(n) {
         return typeof n === 'number' && !isNaN(n);
-    }
+    };
 
     /**
      * Remove last occurence of an item from an array
@@ -676,7 +676,7 @@
      * @param {Boolean} capitalize
      */
     dateFormat = function (format, timestamp, capitalize) {
-        if (!isNumber(timestamp)) {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return defaultOptions.lang.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
@@ -1317,7 +1317,7 @@
                 fn = events[i];
 
                 // If the event handler return false, prevent the default handler from executing
-                if (fn.call(el, eventArguments) === false) {
+                if (fn && fn.call(el, eventArguments) === false) {
                     eventArguments.preventDefault();
                 }
             }
@@ -1535,7 +1535,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.4-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.5-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -1595,7 +1595,7 @@
                 color: '#333333',
                 fontSize: '18px'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
 
         },
         subtitle: {
@@ -1608,7 +1608,7 @@
             style: {
                 color: '#555555'
             },
-            widthAdjust: -44 // docs
+            widthAdjust: -44
         },
 
         plotOptions: {
@@ -3513,7 +3513,7 @@
 
             // Skip tspans, add text directly to text node. The forceTSpan is a hook
             // used in text outline hack.
-            if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
+            if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
                 textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
             // Complex strings, add more logic
@@ -4526,8 +4526,7 @@
                         // create the border box if it is not already present
                         boxX = crispAdjust;
                         boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-
-                        wrapper.box = box = shape ?
+                        wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
                                 renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
                                 renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
@@ -7364,7 +7363,7 @@
                             // To prevent performance hit, we only do this after we have already
                             // found seriesDataMin because in most cases all data is valid. #5234.
                             seriesDataMin = arrayMin(xData);
-                            if (!isNumber(seriesDataMin)) {
+                            if (!isNumber(seriesDataMin) && !(seriesDataMin instanceof Date)) { // Date for #5010
                                 xData = grep(xData, function (x) {
                                     return isNumber(x);
                                 });
@@ -9164,17 +9163,15 @@
                 plotLinesAndBands[i].destroy();
             }
 
-            // Destroy local variables
-            each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+            // Destroy properties
+            each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
                 if (axis[prop]) {
                     axis[prop] = axis[prop].destroy();
                 }
             });
 
-            // Destroy crosshair
-            if (this.cross) {
-                this.cross.destroy();
-            }
+
+            this._addedPlotLB = this.chart._labelPanes = this.ordinalSlope = undefined; // #1611, #2887, #4314, #5316
         },
 
         /**
@@ -10259,7 +10256,7 @@
                     directTouch = !shared && s.directTouch;
                     if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
                         kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
-                        if (kdpointT) {
+                        if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
                             kdpoints.push(kdpointT);
                         }
                     }
@@ -11542,7 +11539,7 @@
                 // Use the first letter of each alignment option in order to detect the side
                 alignment = options.align.charAt(0) + options.verticalAlign.charAt(0) + options.layout.charAt(0); // #4189 - use charAt(x) notation instead of [x] for IE7
 
-            if (this.display && !options.floating) {
+            if (!options.floating) {
 
                 each([
                     /(lth|ct|rth)/,
@@ -12437,9 +12434,6 @@
                     })
                     .css(chartTitleOptions.style)
                     .add();
-
-                    chart[name].paddingLeft = pick(chartTitleOptions.paddingLeft, 22); // docs
-                    chart[name].paddingRight = pick(chartTitleOptions.paddingRight, 22); // docs // 22 makes room for default context button
             
                 }
             });
@@ -12678,7 +12672,9 @@
             }
 
             // Adjust for legend
-            chart.legend.adjustMargins(margin, spacing);
+            if (chart.legend.display) {
+                chart.legend.adjustMargins(margin, spacing);
+            }
 
             // adjust for scroller
             if (chart.extraBottomMargin) {
@@ -14464,7 +14460,7 @@
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
-                    if (yBottom === stackThreshold) {
+                    if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
                         yBottom = pick(threshold, yAxis.min);
                     }
                     if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -15104,7 +15100,6 @@
                 lineWidth = options.lineWidth,
                 roundCap = options.linecap !== 'square',
                 graphPath = (this.gappedPath || this.getGraphPath).call(this),
-                fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
                 zones = this.zones;
 
             each(zones, function (threshold, i) {
@@ -15120,11 +15115,11 @@
                 if (graph) {
                     graph.animate({ d: graphPath });
 
-                } else if ((lineWidth || fillColor) && graphPath.length) { // #1487
+                } else if (lineWidth && graphPath.length) { // #1487
                     attribs = {
                         stroke: prop[1],
                         'stroke-width': lineWidth,
-                        fill: fillColor,
+                        fill: 'none',
                         zIndex: 1 // #1069
                     };
                     if (prop[2]) {
@@ -15913,6 +15908,11 @@
             stack = stacks[key][x];
             if (y !== null) {
                 stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
+
+                // Record the base of the stack
+                if (!defined(stack.cum)) {
+                    stack.base = pointKey;
+                }
                 stack.touched = yAxis.stacksTouched;
         
 
@@ -16481,7 +16481,6 @@
             newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
             this.destroy(true);
-            this._addedPlotLB = this.chart._labelPanes = UNDEFINED; // #1611, #2887, #4314
 
             this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
@@ -17330,8 +17329,7 @@
                     series.group.animate(attr, extend(animObject(series.options.animation), {
                         // Do the scale synchronously to ensure smooth updating (#5030)
                         step: function (val, fx) {
-                            series.group.attr({
-                                scaleY: mathMax(0.001, fx.pos) //#5250
+                                scaleY: mathMax(0.001, fx.pos) // #5250
                             });
                         }
                     }));

@@ -47,7 +47,7 @@ Fx.prototype = {
 			while (i--) {
 				startVal = parseFloat(start[i]);
 				ret[i] =
-					!isNumber(startVal) ? // a letter instruction like M or L
+					isNaN(startVal) ? // a letter instruction like M or L
 							start[i] :
 							now * (parseFloat(end[i] - startVal)) + startVal;
 
@@ -356,7 +356,7 @@ function isArray(obj) {
  */
 var isNumber = Highcharts.isNumber = function isNumber(n) {
 	return typeof n === 'number' && !isNaN(n);
-}
+};
 
 /**
  * Remove last occurence of an item from an array
@@ -548,7 +548,7 @@ function getTZOffset(timestamp) {
  * @param {Boolean} capitalize
  */
 dateFormat = function (format, timestamp, capitalize) {
-	if (!isNumber(timestamp)) {
+	if (!defined(timestamp) || isNaN(timestamp)) {
 		return defaultOptions.lang.invalidDate || '';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
@@ -1189,7 +1189,7 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 			fn = events[i];
 
 			// If the event handler return false, prevent the default handler from executing
-			if (fn.call(el, eventArguments) === false) {
+			if (fn && fn.call(el, eventArguments) === false) {
 				eventArguments.preventDefault();
 			}
 		}

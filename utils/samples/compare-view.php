@@ -1,4 +1,4 @@
-<?php 
+<?php
 	ini_set('display_errors', 'true');
 
 	require_once('functions.php');
@@ -15,7 +15,9 @@
 	}
 
 	$nightly = json_decode(@file_get_contents('nightly/nightly.json'));
-	$nightly = $nightly->results->$path;
+	if ($nightly) {
+		$nightly = $nightly->results->$path;
+	}
 
 	$details = @file_get_contents("../../samples/$path/demo.details");
 	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
@@ -41,7 +43,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
-		
+
 		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
@@ -49,7 +51,7 @@
 		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
-		
+
 		<script type="text/javascript">
 			var diff,
 				path = '<?php echo $path ?>',
@@ -129,7 +131,7 @@
 						cursor: 'default'
 					});
 				});
-				
+
 				hilightCurrent();
 
 
@@ -146,10 +148,10 @@
 				}
 			});
 
-				
+
 			function markList(className, difference) {
 
-				// Process the difference and set global 
+				// Process the difference and set global
 				if (typeof difference === 'number') {
 					diff = difference.toFixed(2);
 				} else {
@@ -160,17 +162,17 @@
 					var contentDoc = window.parent.frames[0].document,
 						li = contentDoc.getElementById('li<?php echo $i ?>'),
 						background = 'none';
-					
+
 					if (li) {
 						$(li).removeClass("identical");
 						$(li).removeClass("different");
 						$(li).removeClass("approved");
 						$(li).addClass(className);
-						
-						
-						// remove dissimilarity index and add new 
+
+
+						// remove dissimilarity index and add new
 						$('.dissimilarity-index', li).remove();
-						
+
 						if (difference !== undefined) {
 
 							<?php if (isset($comment) && $comment->symbol == 'check') : ?>
@@ -178,7 +180,7 @@
 								$(li).addClass('approved');
 							}
 							<?php endif; ?>
-							
+
 							// Compare to reference
 							/*
 							if (difference.reference) {
@@ -196,7 +198,7 @@
 									<?php if ($isUnitTest) : ?>
 									title: 'How many unit tests passed out of the total' ,
 									<?php else : ?>
-									title: 'Difference between exported images. The number in parantheses is the reference diff, ' + 
+									title: 'Difference between exported images. The number in parantheses is the reference diff, ' +
 										'generated on the first run after clearing temp dir cache.' ,
 									<?php endif; ?>
 									'data-diff': diff
@@ -221,30 +223,30 @@
 								.appendTo(li);
 
 						}
-						
+
 						if (_continue) {
 							$(contentDoc.body).animate({
 								scrollTop: $(li).offset().top - 300
 							}, 0);
 						}
 					}
-					
-				}				
+
+				}
 			}
-			
+
 			function hilightCurrent() {
-				
+
 				var contentDoc = window.parent.frames[0].document,
 					li = contentDoc.getElementById('li<?php echo $i ?>');
-				
+
 				// previous
 				if (contentDoc.currentLi) {
 					$(contentDoc.currentLi).removeClass('hilighted');
 				}
 				$(li).addClass('hilighted');
-				
+
 				contentDoc.currentLi = li;
-					
+
 			}
 
 			/**
@@ -264,20 +266,20 @@
 				return left ? padding + s : s + padding;
 			}
 
-			
+
 			function proceed() {
-				var i = '<?php echo $i ?>';						
+				var i = '<?php echo $i ?>';
 				if (window.parent.frames[0] && i !== '' && _continue === 'true' ) {
 					var contentDoc = window.parent.frames[0].document,
 						href,
 						next;
 
 					i = parseInt(i);
-						
+
 					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
 						return;
 					}
-					
+
 					while (i++) {
 						next = contentDoc.getElementById('i' + i);
 						if (next) {
@@ -286,15 +288,15 @@
 							window.location.href = 'view.php';
 							return;
 						}
-						
+
 						if (!contentDoc.getElementById('i' + i) || /batch/.test(contentDoc.getElementById('i' + i).className)) {
 							break;
 						}
 					}
-					
+
 					href = href.replace("view.php", "compare-view.php") + '&continue=true';
-					
-					window.location.href = href; 
+
+					window.location.href = href;
 
 				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
 				} else {
@@ -306,9 +308,9 @@
 						pad(path, 60, false),
 						diff ? pad(String(diff), 5, true) : '    .' // Only a dot when success
 					].join(' '));
-				}		
+				}
 			}
-				
+
 			function onIdentical() {
 				$.get('compare-update-report.php', {
 					path: path,
@@ -319,7 +321,7 @@
 				markList("identical");
 				proceed();
 			}
-			
+
 			function onDifferent(diff) {
 				// Save it for refreshes
 				$.get('compare-update-report.php', {
@@ -331,7 +333,7 @@
 				markList("different", diff);
 				proceed();
 			}
-			
+
 			function onLoadTest(which, svg) {
 
 				chartWidth = parseInt(svg.match(/width=\"([0-9]+)\"/)[1]);
@@ -373,7 +375,7 @@
 						// Initiate
 						if (showingRight === undefined) {
 
-							$('#preview').css({ 
+							$('#preview').css({
 								height: $('#preview').height()
 							});
 
@@ -386,7 +388,7 @@
 									left: 0
 								});
 							$leftImage.css('position', 'absolute');
-							
+
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
 
@@ -411,7 +413,7 @@
 				$leftImage.click(toggle);
 				$rightImage.click(toggle);
 			}
-			
+
 			var report = "",
 				startLocalServer = '<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
 					'$ mvn jetty:run</pre>';
@@ -427,13 +429,13 @@
 					onDifferent('Error');
 					return;
 				}
-				
+
 				// remove identifier for each iframe
 				if (leftSVG && rightSVG) {
 					leftSVG = leftSVG
 						.replace(/which=left/g, "")
 						.replace(/Created with [a-zA-Z0-9\.@\- ]+/, "Created with ___");
-						
+
 					rightSVG = rightSVG
 						.replace(/which=right/g, "")
 						.replace(/Created with [a-zA-Z0-9\.@\- ]+/, "Created with ___");
@@ -458,17 +460,17 @@
 
 					} else {
 						report += "<div>The generated SVG is different, checking exported images...</div>";
-						
+
 						$('#report').html(report)
 							.css('background', 'gray');
-						
+
 						/***
-							CANVAS BASED COMPARISON						
-						***/						
+							CANVAS BASED COMPARISON
+						***/
 						function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
 							var converted = [],
 								diff = 0,
-								canvasWidth = chartWidth || 400, 
+								canvasWidth = chartWidth || 400,
 								canvasHeight = chartHeight || 300;
 
 							// converts the svg into canvas
@@ -502,7 +504,7 @@
 									}
 									callback(data);
 								}
-								image.src = useBlob ? 
+								image.src = useBlob ?
 									svgurl :
 									'data:image/svg+xml,' + source;
 							};
@@ -529,30 +531,30 @@
 							// called after converting svgs to canvases
 							function startCompare(data) {
 								converted.push(data);
-								// only compare if both have been converted								
-								if (converted.length == 2) {									
+								// only compare if both have been converted
+								if (converted.length == 2) {
 									var diff = compare(converted[0], converted[1]);
 
 									if (diff === 0) {
 										identical = true;
-										report += '<div>The exported images are identical</div>'; 									
+										report += '<div>The exported images are identical</div>';
 										onIdentical();
 									} else if (diff === undefined) {
 										report += '<div>Canvas Comparison Failed</div>';
 										onDifferent('Error');
 									} else {
-										report += '<div>The exported images are different (dissimilarity index: '+ diff.toFixed(2) +')</div>';									
+										report += '<div>The exported images are different (dissimilarity index: '+ diff.toFixed(2) +')</div>';
 										onDifferent(diff);
 									}
 
 									// lower section to overlay images to visually compare the differences
 									activateOverlayCompare(true);
-									
+
 									$('#report').html(report).css('background', identical ? "#a4edba" : '#f15c80');
 								}
 							}
-						
-							
+
+
 							$('#preview canvas')
 								.attr({
 									width: chartWidth,
@@ -563,7 +565,7 @@
 									height: chartHeight + 'px',
 									display: ''
 								});
-							
+
 							// start converting
 							if (navigator.userAgent.indexOf('Trident') !== -1) {
 								try {
@@ -587,21 +589,21 @@
 								convert(source1, canvas1, startCompare);
 								convert(source2, canvas2, startCompare);
 							}
-						}					
-						
+						}
+
 						/***
 							AJAX & PHP BASED COMPARISON
 						***/
 						/*
 						function ajaxCompare() {
 							$.ajax({
-								type: 'POST', 
-								url: 'compare-images.php', 
+								type: 'POST',
+								url: 'compare-images.php',
 								data: {
 									leftSVG: leftSVG,
 									rightSVG: rightSVG,
-									path: "<?php echo $path ?>".replace(/\//g, '--')	
-								}, 
+									path: "<?php echo $path ?>".replace(/\//g, '--')
+								},
 								error: function (xhr) {
 									report += '<div>' +	xhr.responseText + '</div>'
 									onDifferent('Error');
@@ -616,27 +618,27 @@
 
 									if (data.dissimilarityIndex === 0) {
 										identical = true;
-										
-										report += '<div>The exported images are identical</div>'; 
-										
+
+										report += '<div>The exported images are identical</div>';
+
 										onIdentical();
-										
+
 									} else if (data.dissimilarityIndex === undefined) {
 										report += '<div><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
 											startLocalServer + '</div>'
 										onDifferent('Error');
-										
+
 									} else {
 										report += '<div>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')</div>';
-										
+
 										onDifferent(data);
 									}
-									
+
 									$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
 										'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
 
 									activateOverlayCompare();
-									
+
 									$('#report').html(report)
 										.css('background', identical ? "#a4edba" : '#f15c80');
 								},
@@ -652,34 +654,34 @@
 						} else {
 							canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
 						}*/
-						
+
 					}
 				} else {
 					if (leftVersion === rightVersion) {
 						console.log("Warning: Left and right versions are equal.");
 					}
-					
-					report += '<div>Left version: '+ leftVersion +'; right version: '+ 
-						(rightcommit ? '<a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' + 
+
+					report += '<div>Left version: '+ leftVersion +'; right version: '+
+						(rightcommit ? '<a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' +
 							rightcommit + '</a>' : rightVersion) +
 						'</div>';
-					
+
 					report += identical ?
 						'<div>The innerHTML is identical</div>' :
 						'<div>The innerHTML is different, testing generated SVG...</div>';
-						
+
 					$('#report').html(report)
 						.css('background', identical ? "#a4edba" : '#f15c80');
-						
+
 					if (!identical) {
 						// switch to image mode
 						leftSVG = rightSVG = undefined;
 						mode = 'images';
-						$("#iframe-left")[0].contentWindow.compareSVG();				
+						$("#iframe-left")[0].contentWindow.compareSVG();
 						$("#iframe-right")[0].contentWindow.compareSVG();
 					}
 				}
-						
+
 				// Show the diff
 				if (!identical) {
 					//out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
@@ -696,18 +698,18 @@
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
 					'; Left version: '+ leftVersion +'; right version: '+ rightVersion;*/
-				
+
 			}
 		</script>
-		
+
 	</head>
 	<body class="<?php echo $bodyClass ?>">
-		
+
 		<div><?php echo @$warning ?></div>
 		<div class="top-bar">
-			
-			<h2 style="margin: 0"><?php echo $path ?></h2> 
-			
+
+			<h2 style="margin: 0"><?php echo $path ?></h2>
+
 			<div style="text-align: right">
 				<a class="button" id="commits" style="margin-left: 1em" >Test by commit</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
@@ -722,7 +724,7 @@
 			<div class="test-report" style="background: #a4edba; color: black">
 				<p>This sample has been marked <code>skipTest: true</code> in the demo.details file.</p>
 				<p>It means that the sample exists only for demonstration in the docs or the API,
-					and that the feature we are testing is either covered by a unit test or 
+					and that the feature we are testing is either covered by a unit test or
 					another visual sample.</p>
 			</div>
 
@@ -744,25 +746,25 @@
 				";
 			}
 			?>
-			
+
 			<div id="comment-placeholder"></div>
 			<div id="frame-row">
 				<?php if (!$isUnitTest && !$isManual) : ?>
-				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
+				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>&amp;dummy=<?php echo time(); ?>"></iframe>
 				<?php endif; ?>
-				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
-				
+				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>&amp;dummy=<?php echo time(); ?>"></iframe>
+
 			</div>
 			<pre id="svg"></pre>
-			
+
 			<div id="preview">
 				<canvas id="cnvLeft" style="display:none"></canvas>
 				<canvas id="cnvRight" style="display:none"></canvas>
 			</div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
-		
+
 			<?php } ?>
 		</div>
-		
+
 	</body>
 </html>

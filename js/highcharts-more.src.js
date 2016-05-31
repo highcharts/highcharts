@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.4-modified (bugfix)
+ * @license Highcharts JS v4.2.5-modified (bugfix)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -822,6 +822,8 @@ var arrayMin = Highcharts.arrayMin,
             if (!this.chart.polar && higherAreaPath[0] === 'M') {
                 higherAreaPath[0] = 'L'; // this probably doesn't work for spline        
             }
+
+            this.graphPath = linePath;
             this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
             return linePath;
         },
@@ -1883,8 +1885,19 @@ var arrayMin = Highcharts.arrayMin,
      */
     defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
         marker: {
-            enabled: false
-        }
+            enabled: false,
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+        },
+        stickyTracking: false,
+        tooltip: {
+            followPointer: true,
+            pointFormat: ''
+        },
+        trackByArea: true
     });
 
     /**
@@ -1892,13 +1905,24 @@ var arrayMin = Highcharts.arrayMin,
      */
     seriesTypes.polygon = extendClass(seriesTypes.scatter, {
         type: 'polygon',
-        fillGraph: true,
-        // Close all segments
-        getSegmentPath: function (segment) {
-            return Series.prototype.getSegmentPath.call(this, segment).concat('z');
+        getGraphPath: function () {
+
+            var graphPath = Series.prototype.getGraphPath.call(this),
+                i = graphPath.length + 1;
+
+            // Close all segments
+            while (i--) {
+                if (i === graphPath.length || (graphPath[i] === 'M' && i > 0)) {
+                    graphPath.splice(i, 0, 'z');
+                }
+            }
+
+            this.areaPath = graphPath;
+            return graphPath;
         },
-        drawGraph: Series.prototype.drawGraph,
-        drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+        drawGraph: seriesTypes.area.prototype.drawGraph,
+        drawTracker: Series.prototype.drawTracker,
+        setStackedPoints: noop // No stacking points on polygons (#5310)
     });
     /* ****************************************************************************
      * Start Bubble series code                                                      *

@@ -747,7 +747,7 @@ Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === stackThreshold) {
+				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -1387,7 +1387,6 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
@@ -1403,11 +1402,11 @@ Series.prototype = {
 			if (graph) {
 				graph.animate({ d: graphPath });
 
-			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
+			} else if (lineWidth && graphPath.length) { // #1487
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
-					fill: fillColor,
+					fill: 'none',
 					zIndex: 1 // #1069
 				};
 				if (prop[2]) {

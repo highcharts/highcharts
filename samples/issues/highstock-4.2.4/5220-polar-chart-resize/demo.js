@@ -64,24 +64,24 @@ $(function () {
         chart = $('#container').highcharts();
 
         assert.strictEqual(
-            chart.container.firstChild.clientWidth,
-            400,
+            chart.container.querySelector('svg').getAttribute('width'),
+            '400',
             'Chart has correct width'
         );
 
         chart.setSize(70, 70, false);
 
         assert.strictEqual(
-            chart.container.firstChild.clientWidth,
-            70,
+            chart.container.querySelector('svg').getAttribute('width'),
+            '70',
             'Chart has correct width after setSize to smaller'
         );
 
         chart.setSize(500, 500, false);
 
         assert.strictEqual(
-            chart.container.childNodes[0].clientWidth,
-            500,
+            chart.container.querySelector('svg').getAttribute('width'),
+            '500',
             'Chart has correct width after setSize to larger'
         );
 
