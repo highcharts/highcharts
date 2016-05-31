@@ -308,7 +308,7 @@ extend(Chart.prototype, {
 		}
 
 		// Update size. Redraw is forced.
-		if ('width' in optionsChart || 'height' in optionsChart) {
+		if (optionsChart && ('width' in optionsChart || 'height' in optionsChart)) {
 			this.setSize(optionsChart.width, optionsChart.height)
 		} else if (pick(redraw, true)) {
 			this.redraw();

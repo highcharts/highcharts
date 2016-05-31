@@ -23,24 +23,6 @@ $(function () {
         }]
     };
 
-    var stockConfig = {
-        chart: {
-            animation: false,
-            height: 300,
-            plotBackgroundColor: '#eff'
-        },
-
-        series: [{
-            animation: false,
-            pointStart: Date.UTC(2016, 0, 1),
-            pointInterval: 24 * 36e5,
-            data: [1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2,
-                1, 3, 5, 6, 7, 3, 5, 4, 6, 5, 4, 3, 5, 4, 5, 6, 7, 6, 5, 4, 5, 6, 7, 6, 4, 3, 2]
-        }]
-    };
-
     QUnit.test('Option chart.alignTicks update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], {
 
@@ -83,7 +65,7 @@ $(function () {
     });
 
     QUnit.test('Option chart.animation update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
         assert.strictEqual(
             chart.renderer.globalAnimation,
@@ -118,7 +100,7 @@ $(function () {
     });
 
     QUnit.test('Option chart border and background update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
         chart.update({
             chart: {
@@ -177,7 +159,7 @@ $(function () {
     });
 
     QUnit.test('Option chart className update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
         assert.ok(
             chart.container.className.indexOf('my-class') === -1,
@@ -198,7 +180,7 @@ $(function () {
     });
 
     QUnit.test('Option chart.inverted update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
         assert.ok(
             !chart.inverted,
@@ -427,7 +409,7 @@ $(function () {
     });
 
     QUnit.test('Option chart plot border and background update', function (assert) {
-        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], config);
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
         chart.update({
             chart: {
