@@ -1,4 +1,4 @@
-function stopEvent (e) {
+function stopEvent(e) {
 	if (e) {
 		if (e.preventDefault) {
 			e.preventDefault();
@@ -171,7 +171,6 @@ extend(Chart.prototype, {
 wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		mapNavigation = chart.options.mapNavigation;
-		alignedObjects = chart.renderer.alignedObjects;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
 	chart.renderMapNavigation();
