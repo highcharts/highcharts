@@ -740,6 +740,36 @@ $(function () {
         );
     });
 
+    QUnit.test('Chart.update with style', function (assert) {
+        var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config, {
+            chart: {
+                style: {
+                    fontFamily: 'verdana'
+                }
+            }
+        }));
+
+        assert.strictEqual(
+            window.getComputedStyle(chart.title.element, '').getPropertyValue('font-family'),
+            'verdana',
+            'Initial font family'
+        );
+
+        chart.update({
+            chart: {
+                style: {
+                    fontFamily: 'monospace'
+                }
+            }
+        });
+
+        assert.strictEqual(
+            window.getComputedStyle(chart.title.element, '').getPropertyValue('font-family'),
+            'monospace',
+            'Updated font family'
+        );
+    });
+
     QUnit.test('Chart.update with with or height', function (assert) {
         var cfg = Highcharts.merge(config),
             chart;

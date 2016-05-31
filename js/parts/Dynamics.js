@@ -181,61 +181,13 @@ extend(Chart.prototype, {
 			updateAllAxes,
 			updateAllSeries;
 
-		// If the top-level chart option is present, some special updates are required
-		// TODO: Systematically go over all chart options. Consider separate method 
-		// for these. Consider refactoring for more consistency.
-		// 
-		// style
-		// 
-		// N/A:
-		// defaultSeriesType (deprecated)		
-		// renderTo
-		// 
-		// IMPLEMENTED:
-		// alignTicks
-		// animation
-		// backgroundColor
-		// borderColor
-		// borderRadius
-		// borderWidth
-		// className
-		// height
-		// ignoreHiddenSeries
-		// inverted
-		// margin
-		// marginBottom
-		// marginLeft
-		// marginRight
-		// marginTop
-		// options3d
-		// panning
-		// panKey
-		// pinchType
-		// plotBackgroundColor
-		// plotBackgroundImage
-		// plotBorderColor
-		// plotBorderWidth
-		// plotShadow
-		// polar
-		// reflow
-		// resetZoomButton
-		// selectionMarkerFill
-		// shadow
-		// spacing
-		// spacingBottom
-		// spacingLeft
-		// spacingRight
-		// spacingTop
-		// type
-		// width
-		// zoomType
-		
+		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
 			merge(true, this.options.chart, optionsChart);
 
 			// Setter function
 			if ('className' in optionsChart) {
-				this.setClassName(options.chart.className);
+				this.setClassName(optionsChart.className);
 			}
 
 			if ('inverted' in optionsChart) {
@@ -297,6 +249,10 @@ extend(Chart.prototype, {
 
 			if ('plotShadow' in optionsChart || 'shadow' in optionsChart) {
 				this.isDirtyBox = true;
+			}
+
+			if ('style' in optionsChart) {
+				this.renderer.setStyle(optionsChart.style);
 			}
 			/*= } =*/
 		}

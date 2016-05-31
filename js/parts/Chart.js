@@ -684,7 +684,7 @@ Chart.prototype = {
 			lineHeight: 'normal', // #427
 			zIndex: 0, // #1072
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-		}, optionsChart.style);
+		});
 		/*= } =*/
 		chart.container = container = createElement('div', {
 				id: containerId
@@ -692,7 +692,6 @@ Chart.prototype = {
 			containerStyle,
 			chart.renderToClone || renderTo
 		);
-		chart.setClassName(optionsChart.className);
 
 		// cache the cursor (#1650)
 		chart._cursor = container.style.cursor;
@@ -703,12 +702,16 @@ Chart.prototype = {
 			container,
 			chartWidth,
 			chartHeight,
-			optionsChart.style,
+			null,
 			optionsChart.forExport,
 			options.exporting && options.exporting.allowHTML
 		);
 
-		/*= if (!build.classic) { =*/
+
+		chart.setClassName(optionsChart.className);
+		/*= if (build.classic) { =*/
+		chart.renderer.setStyle(optionsChart.style);
+		/*= } else { =*/
 		// Initialize definitions
 		for (key in options.defs) {
 			this.renderer.addDefinition(options.defs[key]);

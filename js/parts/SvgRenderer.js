@@ -1476,6 +1476,9 @@ SVGRenderer.prototype = {
 		}, style);
 		return this.style;
 	},
+	setStyle: function (style) {
+		this.boxWrapper.css(this.getStyle(style));
+	},
 	/*= } =*/
 
 	/**
