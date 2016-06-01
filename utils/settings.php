@@ -3,7 +3,7 @@
 class Settings {
 	// Path to the Git Executable
 	//static $git = "C:\Git\bin\git"; // Typical Windows path
-	static $git = '/usr/local/git/bin/git';
+	static $git = '/usr/bin/git'; // Typical Mac path
 
 	// The correct or expected (old) version. Set it to commit id to test against a certain commit. To test against
 	// a certain version, use the version's commit id.
