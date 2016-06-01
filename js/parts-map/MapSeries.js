@@ -205,8 +205,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, properties['hc-middle-x'], 0.5);
-					point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, properties['hc-middle-y'], 0.5);
+					point._midX = pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, properties && properties['hc-middle-x'], 0.5);
+					point._midY = pointMinY + (pointMaxY - pointMinY) * pick(point.middleY, properties && properties['hc-middle-y'], 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
