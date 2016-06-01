@@ -357,6 +357,7 @@ Tick.prototype = {
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;
 			} else {
+				stop(label); // #5332
 				label.attr('y', -9999); // #1338
 			}
 		}

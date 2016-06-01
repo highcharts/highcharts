@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-05-27)
+ * @license Highcharts JS v4.2.5-modified (2016-06-01)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -6610,6 +6610,7 @@
                     label[tick.isNew ? 'attr' : 'animate'](xy);
                     tick.isNew = false;
                 } else {
+                    stop(label); // #5332
                     label.attr('y', -9999); // #1338
                 }
             }
