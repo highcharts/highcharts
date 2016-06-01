@@ -245,7 +245,6 @@ Navigator.prototype = {
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = mathRound(scroller.zoomedMax);
 		zoomedMin = mathRound(scroller.zoomedMin);
-		range = zoomedMax - zoomedMin;
 
 		if (!rendered) {
 
