@@ -5,6 +5,7 @@
 		Chart = H.Chart,
 		createElement = H.createElement,
 		css = H.css,
+		defined = H.defined,
 		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
@@ -192,7 +193,8 @@ extend(Chart.prototype, {
 			},
 			optionsChart = options.chart,
 			updateAllAxes,
-			updateAllSeries;
+			updateAllSeries,
+			collections;
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
@@ -261,6 +263,20 @@ extend(Chart.prototype, {
 			merge(true, this.options.plotOptions, options.plotOptions);
 		}
 
+		// Setters for collections. For axes and series, each item is referred by an id. If the 
+		// id is not found, it defaults to the first item in the collection, so setting series
+		// without an id, will update the first series in the chart. // docs
+		each(['xAxis', 'yAxis', 'series'], function (coll) {
+			if (options[coll]) {
+				each(splat(options[coll]), function (newOptions) {
+					var item = (defined(newOptions.id) && this.get(newOptions.id)) || this[coll][0];
+					if (item && item.coll === coll) {
+						item.update(newOptions);
+					}
+				}, this);
+			}
+		}, this);
+
 		if (updateAllAxes) {
 			each(this.axes, function (axis) {
 				axis.update({}, false);
@@ -282,7 +298,7 @@ extend(Chart.prototype, {
 
 		// Update size. Redraw is forced.
 		if (optionsChart && ('width' in optionsChart || 'height' in optionsChart)) {
-			this.setSize(optionsChart.width, optionsChart.height)
+			this.setSize(optionsChart.width, optionsChart.height);
 		} else if (pick(redraw, true)) {
 			this.redraw();
 		}

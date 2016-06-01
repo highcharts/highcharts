@@ -62,6 +62,7 @@ H.Series.prototype = {
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
+	coll: 'series',
 	init: function (chart, options) {
 		var series = this,
 			eventType,
