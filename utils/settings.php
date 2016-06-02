@@ -3,7 +3,7 @@
 class Settings {
 	// Path to the Git Executable
 	//static $git = "C:\Git\bin\git"; // Typical Windows path
-	static $git = '/usr/local/git/bin/git';
+	static $git = '/usr/bin/git';
 
 	static $leftPath = "http://code.highcharts.com";
 	static $rightPath = "http://code.highcharts.%s"; // inserts top domain from utils.highcharts.{whatever}/samples

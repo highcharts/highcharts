@@ -1127,7 +1127,7 @@ H.Series.prototype = {
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
-			if (axis) {
+			if (axis && axis.series) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
 			}

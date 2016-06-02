@@ -754,35 +754,37 @@ extend(Chart.prototype, {
 	 */
 	destroyExport: function (e) {
 		var chart = e ? e.target : this,
-			i,
-			elem;
+			exportSVGElements = chart.exportSVGElements,
+			exportDivElements= chart.exportDivElements;
 
 		// Destroy the extra buttons added
-		for (i = 0; i < chart.exportSVGElements.length; i++) {
-			elem = chart.exportSVGElements[i];
+		if (exportSVGElements) {
+			each(exportSVGElements, function (elem, i) {
 
-			// Destroy and null the svg/vml elements
-			if (elem) { // #1822
-				elem.onclick = elem.ontouchstart = null;
-				chart.exportSVGElements[i] = elem.destroy();
-			}
+				// Destroy and null the svg/vml elements
+				if (elem) { // #1822
+					elem.onclick = elem.ontouchstart = null;
+					chart.exportSVGElements[i] = elem.destroy();
+				}
+			});
+			exportSVGElements.length = 0;
 		}
 
 		// Destroy the divs for the menu
-		for (i = 0; i < chart.exportDivElements.length; i++) {
-			elem = chart.exportDivElements[i];
+		if (exportDivElements) {
+			each(exportDivElements, function (elem, i) {
 
-			// Remove the event handler
-			removeEvent(elem, 'mouseleave');
+				// Remove the event handler
+				removeEvent(elem, 'mouseleave');
 
-			// Remove inline events
-			chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
+				// Remove inline events
+				chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
 
-			// Destroy the div by moving to garbage bin
-			discardElement(elem);
+				// Destroy the div by moving to garbage bin
+				discardElement(elem);
+			});
+			exportDivElements.length = 0;
 		}
-		chart.exportSVGElements.length = 0;
-		chart.exportDivElements.length = 0;
 	}
 });
 
