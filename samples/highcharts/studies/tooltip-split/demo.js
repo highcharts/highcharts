@@ -3,7 +3,8 @@ $(function () {
      * Highcharts plugin to display tooltip labels next to each point in a shared tooltip.
      */
     (function (H) {
-        var each = H.each,
+        var addEvent = H.addEvent,
+            each = H.each,
             map = H.map,
             pick = H.pick,
             splat = H.splat,
@@ -179,6 +180,11 @@ $(function () {
                                     'stroke': point.color || series.color || 'silver'
                                 })
                                 .add(tooltip.label);
+
+                            addEvent(point.series, 'hide', function () {
+                                this.tt.connector = this.tt.connector.destroy();
+                                this.tt = this.tt.destroy();
+                            });
                         }
                     }
                     tt.attr({
