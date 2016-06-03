@@ -435,8 +435,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				}
 
 				// Add those map points that don't correspond to data, which will be drawn as null points
-				dataUsed = '|' + map(dataUsed, function (point) { 
-					return point[joinBy[0]]; 
+				dataUsed = '|' + map(dataUsed, function (point) {
+					return point && point[joinBy[0]]; 
 				}).join('|') + '|'; // String search is faster than array.indexOf
 				
 				each(mapData, function (mapPoint) {

@@ -30,6 +30,11 @@ if (preg_match('/^[a-z0-9]+$/', $rightPath)) {
 	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
 }
 
+// Forced options
+$overrides = Settings::$overrides;
+if ($overrides && $_GET['which'] == 'left') {
+	$overrides .= "\nconsole.warn('Running tests with overrides. To disable these, modify settings.php.');";
+}
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
@@ -346,6 +351,8 @@ function getExportInnerHTML() {
 							animation: animation
 						}
 					});
+
+					<?php echo $overrides; ?>
 
 					// Wrap constructors in order to catch JS errors
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);

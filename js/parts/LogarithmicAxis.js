@@ -1,8 +1,6 @@
 (function (H) {
 	var Axis = H.Axis,
 		getMagnitude = H.getMagnitude,
-		lin2log = H.lin2log,
-		log2lin = H.log2lin,
 		map = H.map,
 		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick;
@@ -17,6 +15,8 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		options = axis.options,
 		axisLength = axis.len,
+		lin2log = axis.lin2log,
+		log2lin = axis.log2lin,
 		// Since we use this method for both major and minor ticks,
 		// use a local variable and return the result
 		positions = [];
