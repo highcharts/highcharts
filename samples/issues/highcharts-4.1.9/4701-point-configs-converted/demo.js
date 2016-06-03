@@ -110,4 +110,32 @@ $(function () {
             'Points are mixed'
         );
     });
+
+    QUnit.test('Let through if source data object is changed.', function (assert) {
+        var data = [{
+                y: 29.9
+            }, {
+                y: 27.9
+            }, {
+                y: 39.9
+            }, {
+                y: 26.9
+            }, {
+                y: 22.9
+            }],
+            chart = $('#container').highcharts({
+                series: [{
+                    data: data
+                }]
+            }).highcharts();
+
+        $.each(data, function (point) {
+            this.y = 5;
+        });
+
+        chart.series[0].setData(data);
+
+        assert.strictEqual(chart.series[0].points[0].y, 5);
+    });
+
 });

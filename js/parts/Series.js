@@ -345,7 +345,7 @@ Series.prototype = {
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
 			each(data, function (point, i) {
 				// .update doesn't exist on a linked, hidden series (#3709)
-				if (oldData[i].update && point !== options.data[i]) {
+				if (oldData[i].update && (point !== options.data[i] || isObject(point) && !isArray(point))) {
 					oldData[i].update(point, false, null, false);
 				}
 			});
