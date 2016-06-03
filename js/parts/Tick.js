@@ -346,10 +346,10 @@ H.Tick.prototype = {
 				/*= } =*/
 			}
 			mark[isNewMark ? 'attr' : 'animate']({
-				d: tick.getMarkPath(x, y, tickSize[1], mark.strokeWidth() * reverseCrisp, horiz, renderer),
+				d: tick.getMarkPath(x, y, tickSize[0], mark.strokeWidth() * reverseCrisp, horiz, renderer),
 				opacity: opacity
 			});
-			
+
 		}
 
 		// the label is created on init - now move it into place
