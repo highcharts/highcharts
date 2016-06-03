@@ -409,20 +409,19 @@ Legend.prototype = {
 	getAllItems: function () {
 		var allItems = [];
 		each(this.chart.series, function (series) {
-			var seriesOptions = series.options;
+			var seriesOptions = series && series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
-				return;
+			if (series && !pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+				
+				// Use points or series for the legend item depending on legendType
+				allItems = allItems.concat(
+						series.legendItems ||
+						(seriesOptions.legendType === 'point' ?
+								series.data :
+								series)
+				);
 			}
-
-			// use points or series for the legend item depending on legendType
-			allItems = allItems.concat(
-					series.legendItems ||
-					(seriesOptions.legendType === 'point' ?
-							series.data :
-							series)
-			);
 		});
 		return allItems;
 	},
