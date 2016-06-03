@@ -335,20 +335,22 @@ function isString(s) {
 }
 
 /**
- * Check for object
- * @param {Object} obj
- */
-function isObject(obj) {
-	return obj && typeof obj === 'object';
-}
-
-/**
  * Check for array
  * @param {Object} obj
  */
 function isArray(obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
 }
+
+/**
+ * Check for object
+ * @param {Object} obj
+ * @param {Boolean} strict Also checks that the object is not an array
+ */
+var isObject = Highcharts.isObject = function (obj, strict) {
+	//debugger;
+	return obj && typeof obj === 'object' && (!strict || !isArray(obj));
+};
 
 /**
  * Check for number
