@@ -131,6 +131,9 @@ $(function () {
                 rightAligned = true;
 
             if (options.shared && options.split && !chart.inverted) {
+
+                clearTimeout(this.hideTimer);
+
                 points = splat(point);
 
                 // hide previous hoverPoints and set new
