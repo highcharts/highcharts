@@ -1475,7 +1475,7 @@ H.Series.prototype = {
 		}
 
 		// A fixed size is needed for inversion to work
-		function setInvert(inverted) {
+		function setInvert() {
 			var size = {
 				width: series.yAxis.len,
 				height: series.xAxis.len
