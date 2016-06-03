@@ -24,6 +24,7 @@
 		$_SESSION['branch'] = 'master';
 	}
 
+	// List a branch
 	if (@$_POST['branch']) {
 		try {
 			$_SESSION['branch'] = @$_POST['branch'];
@@ -32,12 +33,20 @@
 			$activeBranch = $repo->active_branch();
 			$repo->checkout($_SESSION['branch']);
 			$repo->run('log > ' . $tempDir . '/log.txt --format="%h|%ci|%s|%p" ' .
-				//'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
 				'--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
 			$repo->checkout($activeBranch);
 
 
 			$commitsKey = join(array($_SESSION['branch'],$_SESSION['after'],$_SESSION['before']), ',');
+		} catch (Exception $e) {
+			$error = $e->getMessage();
+		}
+
+	// When testing a single commit, check it out and run gulp scripts
+	} else if ($commit) {
+		try {
+			$repo->checkout($commit);
+			$repo->run('gulp scripts');
 		} catch (Exception $e) {
 			$error = $e->getMessage();
 		}
