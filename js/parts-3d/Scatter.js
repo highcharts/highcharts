@@ -77,3 +77,12 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 	}
 	return result;
 });
+
+Highcharts.wrap(Highcharts.Point.prototype, 'applyOptions', function (proceed) {
+	var point = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.series.chart.is3d() && point.z === UNDEFINED) {
+		point.z = 0;
+	}
+	return point;
+});

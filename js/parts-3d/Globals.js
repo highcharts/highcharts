@@ -7,4 +7,5 @@ var animObject = Highcharts.animObject,
 	inArray = Highcharts.inArray,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	wrap = Highcharts.wrap;
+	wrap = Highcharts.wrap,
+	UNDEFINED;
