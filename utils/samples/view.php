@@ -47,6 +47,11 @@ if ($styled) {
 	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
 }
 
+// Get CSS and use dev server
+ob_start();
+@include("$fullpath/demo.css");
+$css = ob_get_clean();
+$css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
 
 
 // Handle themes
@@ -98,10 +103,6 @@ function getResources() {
 				$run = true;
 			}
 		}
-	}
-
-	if ($styled) {
-		$html .= "<link type='text/css' rel='stylesheet' href='http://code.highcharts.$topDomain/css/highcharts.css' />\n";
 	}
 
 
@@ -360,7 +361,7 @@ function getResources() {
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>
@@ -438,7 +439,7 @@ ob_start();
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>

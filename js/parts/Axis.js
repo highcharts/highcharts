@@ -1604,7 +1604,7 @@ H.Axis.prototype = {
 	 */
 	labelMetrics: function () {
 		return this.chart.renderer.fontMetrics(
-			this.options.labels.style.fontSize, 
+			this.options.labels.style && this.options.labels.style.fontSize, 
 			this.ticks[0] && this.ticks[0].label
 		);
 	},
@@ -1703,7 +1703,7 @@ H.Axis.prototype = {
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = this.labelMetrics(),
-			textOverflowOption = labelOptions.style.textOverflow,
+			textOverflowOption = labelOptions.style && labelOptions.style.textOverflow,
 			css,
 			labelLength = 0,
 			label,
