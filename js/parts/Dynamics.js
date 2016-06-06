@@ -164,7 +164,7 @@ extend(Point.prototype, {
 			if (point.y === null && graphic) { // #4146
 				point.graphic = graphic.destroy();
 			}
-			if (isObject(options) && !isArray(options)) {
+			if (isObject(options, true)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic && graphic.element) {
@@ -188,7 +188,7 @@ extend(Point.prototype, {
 
 			// Record the options to options.data. If there is an object from before,
 			// use point options, otherwise use raw options. (#4701)
-			seriesOptions.data[i] =  (isObject(seriesOptions.data[i]) && !isArray(seriesOptions.data[i])) ? point.options : options;
+			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;

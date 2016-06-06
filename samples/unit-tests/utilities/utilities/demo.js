@@ -90,13 +90,15 @@ $(function () {
         assertEquals(assert, "IsString string", true, isString("this is a string"));
     });
 */
-/*
+
     QUnit.test('IsObject', function (assert) {
+        var isObject = Highcharts.isObject;
+
         // test with undefined
-        assertEquals(assert, "IsObject undefined", false, isObject(undefined));
+        assert.notOk(isObject(undefined), "IsObject undefined");
 
         // test with null, surprise!!
-        assertEquals(assert, "IsObject null", true, isObject(null));
+        assert.notOk(isObject(null), "IsObject null");
 
         // test with number
         assertEquals(assert, "IsObject number", false, isObject(15));
@@ -107,10 +109,16 @@ $(function () {
         // test with object
         assertEquals(assert, "IsObject object", true, isObject({}));
 
+        // test with object and strict
+        assertEquals(assert, "IsObject strict object", true, isObject({}, true));
+
         // test with array
         assertEquals(assert, "IsObject array", true, isObject([]));
+
+        // test with array and strict
+        assertEquals(assert, "IsObject strict array", false, isObject([], true));
     });
-*/
+
 /*
     QUnit.test('IsArray', function (assert) {
         // test with undefined

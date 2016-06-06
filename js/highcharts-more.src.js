@@ -1921,6 +1921,7 @@ var arrayMin = Highcharts.arrayMin,
             return graphPath;
         },
         drawGraph: seriesTypes.area.prototype.drawGraph,
+        drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
         drawTracker: Series.prototype.drawTracker,
         setStackedPoints: noop // No stacking points on polygons (#5310)
     });
