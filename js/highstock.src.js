@@ -463,20 +463,22 @@
     }
 
     /**
-     * Check for object
-     * @param {Object} obj
-     */
-    function isObject(obj) {
-        return obj && typeof obj === 'object';
-    }
-
-    /**
      * Check for array
      * @param {Object} obj
      */
     function isArray(obj) {
         return Object.prototype.toString.call(obj) === '[object Array]';
     }
+
+    /**
+     * Check for object
+     * @param {Object} obj
+     * @param {Boolean} strict Also checks that the object is not an array
+     */
+    var isObject = Highcharts.isObject = function (obj, strict) {
+        //debugger;
+        return obj && typeof obj === 'object' && (!strict || !isArray(obj));
+    };
 
     /**
      * Check for number
@@ -16193,7 +16195,7 @@
                 if (point.y === null && graphic) { // #4146
                     point.graphic = graphic.destroy();
                 }
-                if (isObject(options) && !isArray(options)) {
+                if (isObject(options, true)) {
                     // Defer the actual redraw until getAttribs has been called (#3260)
                     point.redraw = function () {
                         if (graphic && graphic.element) {
@@ -16217,7 +16219,7 @@
 
                 // Record the options to options.data. If there is an object from before,
                 // use point options, otherwise use raw options. (#4701)
-                seriesOptions.data[i] =  (isObject(seriesOptions.data[i]) && !isArray(seriesOptions.data[i])) ? point.options : options;
+                seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;
@@ -23524,7 +23526,7 @@
     // Pick up badly formatted point options to addPoint
     wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
         var turboThreshold = this.options.turboThreshold;
-        if (turboThreshold && this.xData.length > turboThreshold && isObject(options) && !isArray(options) && this.chart.scroller) {
+        if (turboThreshold && this.xData.length > turboThreshold && isObject(options, true) && this.chart.scroller) {
             error(20, true);
         }
         proceed.call(this, options, redraw, shift, animation);
