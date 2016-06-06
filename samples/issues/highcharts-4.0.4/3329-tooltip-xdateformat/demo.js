@@ -17,10 +17,7 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     formatter: function () {
-                        this.point.key = this.point.x;
-                        return this.series.chart.tooltip.tooltipFooterHeaderFormatter(
-                            this.point
-                        );
+                        return this.series.chart.tooltip.tooltipFooterHeaderFormatter(this.point.getLabelConfig());
                     }
                 }
             }

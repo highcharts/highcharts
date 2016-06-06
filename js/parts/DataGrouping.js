@@ -375,7 +375,7 @@ seriesProto.generatePoints = function () {
 /**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point, isFooter) {
+wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
 		series = point.series,
 		options = series.options,
@@ -419,10 +419,8 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point
 		}
 
 		// return the replaced format
-		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
-			point: extend(point, { key: formattedKey }),
-			series: series
-		});
+		labelConfig.point.key = labelConfig.key;
+		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], labelConfig);
 	
 	}
 

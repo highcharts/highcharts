@@ -9595,10 +9595,8 @@
                 formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
             }
 
-            return format(formatString, {
-                point: labelConfig,
-                series: series
-            });
+            labelConfig.point.key = labelConfig.key;
+            return format(formatString, labelConfig);
         },
 
         /**

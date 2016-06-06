@@ -27,17 +27,18 @@ $(function () {
                 headerFormat: '{series.name} {point.total}<br>',
                 footerFormat: '{series.name} {point.total}<br>'
             }
-        }).highcharts();
+        }).highcharts(),
+        labelConfig = chart.series[0].points[0].getLabelConfig();
 
         chart.tooltip.refresh([chart.series[0].points[0]]);
 
         assert.strictEqual(
-            chart.tooltip.tooltipFooterHeaderFormatter(chart.series[0].points[0], false),
+            chart.tooltip.tooltipFooterHeaderFormatter(labelConfig, false),
             'Series 1 5<br>',
             'Keys in header are replaced'
         );
         assert.strictEqual(
-            chart.tooltip.tooltipFooterHeaderFormatter(chart.series[0].points[0], true),
+            chart.tooltip.tooltipFooterHeaderFormatter(labelConfig, true),
             'Series 1 5<br>',
             'Keys in footer are replaced'
         );
