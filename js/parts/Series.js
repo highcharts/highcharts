@@ -177,17 +177,37 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function () {
+	autoIncrement: function (point) {
 
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
 			pointInterval,
-			pointIntervalUnit = options.pointIntervalUnit;
+			pointIntervalUnit = options.pointIntervalUnit,
+			xAxis = this.xAxis,
+			explicitCategories,
+			names,
+			nameX;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+
+		// When a point name is given and no x, search for the name in the existing categories,
+		// or if categories aren't provided, search names or create a new category (#2522). // docs
+		if (xAxis && xAxis.categories && point.name) {
+			this.requireSorting = false;
+			explicitCategories = isArray(xAxis.categories);
+			names = explicitCategories ? xAxis.categories : xAxis.names;
+			nameX = inArray(point.name, names); // #2522
+			if (nameX === -1) { // The name is not found in currenct categories
+				if (!explicitCategories) {
+					xIncrement = names.length;
+				}
+			} else {
+				xIncrement = nameX;
+			}
+		}
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
@@ -327,7 +347,6 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			hasCategories = xAxis && !!xAxis.categories,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -409,9 +428,6 @@ Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && defined(pt.name)) { // #4401
-							xAxis.names[pt.x] = pt.name; // #2046
-						}
 					}
 				}
 			}

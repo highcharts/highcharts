@@ -267,7 +267,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		</a>
 
 		<div class="text">
-			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.0.0">PhantomJS</a>
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.1.1">PhantomJS</a>
 		</div>
 
 		<div style="margin-top: 1em">

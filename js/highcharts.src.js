@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-03)
+ * @license Highcharts JS v4.2.5-modified (2016-06-06)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7702,14 +7702,19 @@
          */
         getClosest: function () {
             var ret;
-            each(this.series, function (series) {
-                var seriesClosest = series.closestPointRange;
-                if (!series.noSharedTooltip && defined(seriesClosest)) {
-                    ret = defined(ret) ?
-                        mathMin(ret, seriesClosest) :
-                        seriesClosest;
-                }
-            });
+
+            if (this.categories) {
+                ret = 1;
+            } else {
+                each(this.series, function (series) {
+                    var seriesClosest = series.closestPointRange;
+                    if (!series.noSharedTooltip && defined(seriesClosest)) {
+                        ret = defined(ret) ?
+                            mathMin(ret, seriesClosest) :
+                            seriesClosest;
+                    }
+                });
+            }
             return ret;
         },
 
@@ -13514,7 +13519,16 @@
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
             if (point.x === undefined && series) {
-                point.x = x === undefined ? series.autoIncrement() : x;
+                if (x === undefined) {
+                    point.x = series.autoIncrement(point);
+                } else {
+                    point.x = x;
+                }
+            }
+
+            // Write the last point's name to the names array
+            if (series.xAxis && series.xAxis.names) {
+                series.xAxis.names[point.x] = point.name;
             }
 
             return point;
@@ -13881,17 +13895,37 @@
          * Return an auto incremented x value based on the pointStart and pointInterval options.
          * This is only used if an x value is not given for the point that calls autoIncrement.
          */
-        autoIncrement: function () {
+        autoIncrement: function (point) {
 
             var options = this.options,
                 xIncrement = this.xIncrement,
                 date,
                 pointInterval,
-                pointIntervalUnit = options.pointIntervalUnit;
+                pointIntervalUnit = options.pointIntervalUnit,
+                xAxis = this.xAxis,
+                explicitCategories,
+                names,
+                nameX;
 
             xIncrement = pick(xIncrement, options.pointStart, 0);
 
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+
+            // When a point name is given and no x, search for the name in the existing categories,
+            // or if categories aren't provided, search names or create a new category (#2522). // docs
+            if (xAxis && xAxis.categories && point.name) {
+                this.requireSorting = false;
+                explicitCategories = isArray(xAxis.categories);
+                names = explicitCategories ? xAxis.categories : xAxis.names;
+                nameX = inArray(point.name, names); // #2522
+                if (nameX === -1) { // The name is not found in currenct categories
+                    if (!explicitCategories) {
+                        xIncrement = names.length;
+                    }
+                } else {
+                    xIncrement = nameX;
+                }
+            }
 
             // Added code for pointInterval strings
             if (pointIntervalUnit) {
@@ -14031,7 +14065,6 @@
                 chart = series.chart,
                 firstPoint = null,
                 xAxis = series.xAxis,
-                hasCategories = xAxis && !!xAxis.categories,
                 i,
                 turboThreshold = options.turboThreshold,
                 pt,
@@ -14113,9 +14146,6 @@
                             pt = { series: series };
                             series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
                             series.updateParallelArrays(pt, i);
-                            if (hasCategories && defined(pt.name)) { // #4401
-                                xAxis.names[pt.x] = pt.name; // #2046
-                            }
                         }
                     }
                 }

@@ -804,14 +804,19 @@ Axis.prototype = {
 	 */
 	getClosest: function () {
 		var ret;
-		each(this.series, function (series) {
-			var seriesClosest = series.closestPointRange;
-			if (!series.noSharedTooltip && defined(seriesClosest)) {
-				ret = defined(ret) ?
-					mathMin(ret, seriesClosest) :
-					seriesClosest;
-			}
-		});
+
+		if (this.categories) {
+			ret = 1;
+		} else {
+			each(this.series, function (series) {
+				var seriesClosest = series.closestPointRange;
+				if (!series.noSharedTooltip && defined(seriesClosest)) {
+					ret = defined(ret) ?
+						mathMin(ret, seriesClosest) :
+						seriesClosest;
+				}
+			});
+		}
 		return ret;
 	},
 
