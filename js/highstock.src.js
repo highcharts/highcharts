@@ -8891,7 +8891,8 @@
                 offset = this.offset,
                 xOption = axisTitleOptions.x || 0,
                 yOption = axisTitleOptions.y || 0,
-                fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+                renderer = this.chart.renderer,
+                fontSize = renderer.fontMetrics(axisTitleOptions.style.fontSize).f;
 
                 // the position in the length direction of the axis
                 alongAxis = {
@@ -21027,9 +21028,9 @@
     /**
      * Extend the original method, make the tooltip's header reflect the grouped range
      */
-    wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point, isFooter) {
+    wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
         var tooltip = this,
-            series = point.series,
+            series = labelConfig.series,
             options = series.options,
             tooltipOptions = series.tooltipOptions,
             dataGroupingOptions = options.dataGrouping,
@@ -21042,7 +21043,7 @@
             formattedKey;
 
         // apply only to grouped series
-        if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
+        if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(labelConfig.key)) {
 
             // set variables
             currentDataGrouping = series.currentDataGrouping;
@@ -21061,25 +21062,23 @@
             // so if the least distance between points is one minute, show it, but if the
             // least distance is one day, skip hours and minutes etc.
             } else if (!xDateFormat && dateTimeLabelFormats) {
-                xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
+                xDateFormat = tooltip.getXDateFormat(labelConfig, tooltipOptions, xAxis);
             }
 
             // now format the key
-            formattedKey = dateFormat(xDateFormat, point.key);
+            formattedKey = dateFormat(xDateFormat, labelConfig.key);
             if (xDateFormatEnd) {
-                formattedKey += dateFormat(xDateFormatEnd, point.key + currentDataGrouping.totalRange - 1);
+                formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
             }
 
             // return the replaced format
-            return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
-                point: extend(point, { key: formattedKey }),
-                series: series
-            });
+            labelConfig.point.key = labelConfig.key;
+            return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], labelConfig);
     
         }
 
         // else, fall back to the regular formatter
-        return proceed.call(tooltip, point, isFooter);
+        return proceed.call(tooltip, labelConfig, isFooter);
     });
 
     /**

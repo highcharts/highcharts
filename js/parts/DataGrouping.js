@@ -377,7 +377,7 @@ seriesProto.generatePoints = function () {
  */
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
-		series = point.series,
+		series = labelConfig.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
 		dataGroupingOptions = options.dataGrouping,
@@ -390,7 +390,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		formattedKey;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(labelConfig.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;
@@ -409,13 +409,13 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
+			xDateFormat = tooltip.getXDateFormat(labelConfig, tooltipOptions, xAxis);
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, point.key);
+		formattedKey = dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, point.key + currentDataGrouping.totalRange - 1);
+			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
 		}
 
 		// return the replaced format
@@ -425,7 +425,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 	}
 
 	// else, fall back to the regular formatter
-	return proceed.call(tooltip, point, isFooter);
+	return proceed.call(tooltip, labelConfig, isFooter);
 });
 
 /**
