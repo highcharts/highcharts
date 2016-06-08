@@ -147,22 +147,24 @@ const postProcess = code => {
     code = code.split(/\/\*\s[0-9]+\s\*\/\n/);
     modules = code.map((m, i) => {
         var processed = m;
-            console.log(i)
         if (m.indexOf('empty (null-loader)') > -1) {
             processed = '';
         } else if ([0, 1].indexOf(i) > -1) {
             // First module is not interesting in our situation
             processed = '';
         } else {
-            processed = processed.replace(/[\S\s]+function _interop.+\n/, '\n');
-            processed = processed.slice(0, -9);
+            processed = processed.replace(/[\S\s]+function _interopRequireDefault.+\n/, '');
+            processed = processed.replace(/[\S\s]+defineProperty[\S\s]+}\);\n/, '');
+            processed = processed.slice(0, -10);
             processed = processed.replace(/_Globals2\.default/g, 'Highcharts');
             processed = processed.replace(/_Globals2/g, 'Highcharts');
-            processed = beautify(processed);
+            processed = processed.replace('/***/ }\n/*', '');
         }
         return processed;
     });
-    return modules.join('');
+    modules = '(function () {\n' + modules.join('') + '}());';
+    modules = beautify(modules);
+    return modules;
 }
 
 /**
