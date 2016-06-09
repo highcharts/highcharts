@@ -62,20 +62,26 @@ const getDependencies = (file, parent, dependencies) => {
 
 const getContents = path => fs.readFileSync(path, 'utf8');
 
-const transform = content => {
-	let exportExp = /\n\s*export default ([^;\n]+)[\n;]+/,
+const transform = (content, i, arr) => {
+	let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/,
 		r = getMatch(content, exportExp);
 	// Remove import statements
 	// @todo Add imported variables to the function arguments. Reuse getImports for this
 	content = content.replace(/import\s[^\n]+\n/g, '')
 		.replace(exportExp, ''); // Remove exports statements
-	content = (r ? 'var ' + r + ' = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
+	
+	if (i === arr.length - 1) {
+		// @notice Do not remove line below. It is for when we have more advanced master files.
+		// content = (r ? 'return = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
+		content = (r ? 'return ' + r : '');
+	} else {
+		content = (r ? 'var ' + r + ' = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
+	}
 	return content;
 };
 
 let modules = getDependencies(entry, '', [])
 	.reverse()
-	.slice(0, -1) // Remove the last module. We're not interested in the master file.
 	.map(getContents)
 	.map(transform)
 	.join(LE);
@@ -85,6 +91,3 @@ if (pretty) {
 	result = beautify(result);
 }
 fs.writeFileSync(output, result, 'utf8');
-console.log('----------')
-console.log('----------')
-
