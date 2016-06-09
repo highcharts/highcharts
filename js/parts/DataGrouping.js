@@ -181,6 +181,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		i,
+		pos = 0,
 		start = 0;
 
 	// Start with the first point within the X axis range (#2696)
@@ -193,11 +194,11 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 	for (i; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
-		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+		while ((groupPositions[pos + 1] !== undefined && xData[i] >= groupPositions[pos + 1]) ||
 				i === dataLength) { // get the last group
 
 			// get group x and y
-			pointX = groupPositions.shift();
+			pointX = groupPositions[pos];
 			groupedY = approximationFn.apply(0, values);
 
 			// push the grouped data
@@ -213,6 +214,9 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			values[1] = [];
 			values[2] = [];
 			values[3] = [];
+
+			// Advance on the group positions
+			pos += 1;
 
 			// don't loop beyond the last group
 			if (i === dataLength) {
