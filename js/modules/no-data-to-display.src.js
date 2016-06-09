@@ -117,6 +117,7 @@
 			}	
 		}
 
+		return chart.loadingShown; // #4588. None of the series have data, but don't show message if we are loading.
 	};
 
 	/**
