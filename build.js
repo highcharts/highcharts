@@ -4,12 +4,6 @@
  * @description Build script for Highcharts distribution files
  * @license ?
  */
-var defaultOptions = {
-    base: undefined, // Path to where the build files are located
-    excludes: {},
-    files: undefined, // Array of files to compile
-    output: './' // Folder to output compiled files
-};
 
 /**
  * [unique description]
@@ -85,7 +79,7 @@ function outPutMessage(title, message) {
  * @param  {string} filename The name of the source file to build
  * @return {?} Some sort of webpack response
  */
-function compile(base, output, filename, exclude)  {
+function compile(base, output, filename, exclude, wrapper)  {
     var webpack = require('webpack');
     return webpack({
         entry: base + filename,
@@ -128,7 +122,7 @@ function compile(base, output, filename, exclude)  {
             });
         } else {
             source = fs.readFileSync(path, 'utf-8');
-            source = postProcess(source);
+            source = postProcess(source, wrapper);
             fs.writeFileSync(path, source);
             outPutMessage(filename + ' complete', 'Congratulations! ' + filename + ' compiled without any warnings or errors.');
         }
@@ -140,13 +134,14 @@ function compile(base, output, filename, exclude)  {
  * @param  {[type]} code [description]
  * @return {[type]}      [description]
  */
-const postProcess = code => {
+const postProcess = (code, wrapper) => {
     const beautify = require('js-beautify');
     let modules;
     code = code.split('/************************************************************************/\n')[1];
     code = code.split(/\/\*\s[0-9]+\s\*\/\n/);
     modules = code.map((m, i) => {
-        var processed = m;
+        var processed = m,
+            ret;
         if (m.indexOf('empty (null-loader)') > -1) {
             processed = '';
         } else if ([0, 1].indexOf(i) > -1) {
@@ -159,6 +154,10 @@ const postProcess = code => {
             processed = processed.replace(/_Globals2\.default/g, 'Highcharts');
             processed = processed.replace(/_Globals2/g, 'Highcharts');
             processed = processed.replace('/***/ }\n/*', '');
+            ret = processed.match(/\s+exports.+=\s+([^;\s]+)[^\n]+/);
+            processed = processed.replace(/\s+exports.+=\s+([^;\s]+)[^\n]+/, '');
+            ret = ret && ret[1];
+            processed = wrapper(processed, ret);
         }
         return processed;
     });
@@ -166,6 +165,17 @@ const postProcess = code => {
     modules = beautify(modules);
     return modules;
 }
+
+/**
+ * 
+ */
+const wrapper = (content, ret) => {
+    let txt = content;
+    console.log(ret);
+    txt = (ret ? 'var ' + ret + ' = ' : '') + '(function () {' + txt + (ret ? '\nreturn ' + ret + ';\n' : '') + '}());';
+    // console.log(txt)
+    return txt;
+};
 
 /**
  * [getFilesInFolder description]
@@ -209,11 +219,19 @@ function build(userOptions) {
     if (options.base) {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         options.files.forEach(function (filename) {
-            compile(options.base, options.output, filename, options.excludes[filename]);
+            compile(options.base, options.output, filename, options.excludes[filename], options.wrapper);
         });
     } else {
         outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
     }
 }
+
+let defaultOptions = {
+    base: undefined, // Path to where the build files are located
+    excludes: {},
+    files: undefined, // Array of files to compile
+    output: './', // Folder to output compiled files
+    wrapper: wrapper
+};
 
 module.exports = build;
