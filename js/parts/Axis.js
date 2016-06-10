@@ -2310,9 +2310,11 @@ H.Axis.prototype = {
 		each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
 			destroyObjectProperties(coll);
 		});
-		i = plotLinesAndBands.length;
-		while (i--) { // #1975
-			plotLinesAndBands[i].destroy();
+		if (plotLinesAndBands) {
+			i = plotLinesAndBands.length;
+			while (i--) { // #1975
+				plotLinesAndBands[i].destroy();
+			}
 		}
 
 		// Destroy local variables
@@ -2323,7 +2325,7 @@ H.Axis.prototype = {
 		});
 
 		// Delete all properties and fall back to the prototype
-		for (n in axis) {
+		for (var n in axis) {
 			if (axis.hasOwnProperty(n)) {
 				delete axis[n];
 			}
