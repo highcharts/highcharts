@@ -62,7 +62,9 @@ Chart.prototype.currentOptions = function (options) {
 		for (key in options) {
 			if (isObject(options[key])) {
 				ret[key] = {};
-				getCurrent(options[key], curr[key], ret[key]);
+				if (curr[key]) {
+					getCurrent(options[key], curr[key], ret[key]);
+				}
 			} else {
 				ret[key] = curr[key];
 			}
