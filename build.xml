@@ -186,6 +186,7 @@
             <file name="parts/DataLabels.js"/>
             <file name="modules/overlapping-datalabels.src.js"/>
             <file name="parts/Interaction.js"/>
+            <file name="parts/Responsive.js"/>
             <file name="parts/Facade.js"/>
             <file name="parts/Outro.js"/>
         </filelist>
@@ -228,6 +229,7 @@
             <file name="parts/DataLabels.js"/>
             <file name="modules/overlapping-datalabels.src.js"/>
             <file name="parts/Interaction.js"/>
+            <file name="parts/Responsive.js"/>
             <!-- Stock -->
             <file name="parts/OrdinalAxis.js"/>
             <file name="modules/broken-axis.src.js"/>
@@ -363,6 +365,7 @@
             <file name="parts-map/Map.js"/>
             <file name="parts-map/HeatmapSeries.js"/>
             <file name="parts/Interaction.js"/>
+            <file name="parts/Responsive.js"/>
             <!-- Outro -->
             <file name="parts/Facade.js"/>
             <file name="parts/Outro.js"/>

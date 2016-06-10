@@ -193,8 +193,7 @@ extend(Chart.prototype, {
 			},
 			optionsChart = options.chart,
 			updateAllAxes,
-			updateAllSeries,
-			collections;
+			updateAllSeries;
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {

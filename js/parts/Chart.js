@@ -88,6 +88,7 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
+		this.respRules = [];
 
 		var optionsChart = options.chart;
 
@@ -896,6 +897,9 @@ Chart.prototype = {
 		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
+		if (chart.setResponsive) {
+			chart.setResponsive();
+		}
 		chart.redraw(animation);
 
 
@@ -1324,6 +1328,11 @@ Chart.prototype = {
 
 		// Credits
 		chart.addCredits();
+
+		// Handle responsiveness
+		if (chart.setResponsive) {
+			chart.setResponsive();
+		}
 
 		// Set flag
 		chart.hasRendered = true;
