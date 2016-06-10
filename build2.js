@@ -58,6 +58,24 @@ const getDependencies = (file, parent, dependencies) => {
 
 const getContents = path => fs.readFileSync(path, 'utf8');
 
+const applyUMD = content => {
+	let name = 'Highcharts';
+	return ['(function (root, factory) {',
+		'if (typeof module === \'object\' && module.exports) {',
+		'module.exports = root.document ?',
+		'factory(root) : ',
+		'factory;',
+		'} else {',
+		'root.' + name + ' = factory(root);',
+		'}',
+		'}(typeof window !== \'undefined\' ? window : this, function (win) {',
+		content,
+		'}));'
+	].join(LE);
+};
+
+const applyModule = content => '(function () {' + LE + content + LE + '}());';
+
 const transform = (content, i, arr) => {
 	let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/,
 		r = getMatch(content, exportExp);
@@ -82,12 +100,7 @@ const compileFile = (o) => {
 		.map(getContents)
 		.map(transform)
 		.join(LE);
-	let result = '';
-	if (o.umd) {
-		result = '(function () {' + LE + modules + LE + '}());';
-	} else {
-		result = '(function () {' + LE + modules + LE + '}());';
-	}
+	let result = o.umd ? applyUMD(modules) : applyModule(modules);
 	if (o.pretty) {
 		const beautify = require('js-beautify').js_beautify;
 		result = beautify(result);
@@ -98,6 +111,6 @@ const compileFile = (o) => {
 let result = compileFile({
 	entry: 'js/masters/highcharts.js',
 	pretty: true,
-	umd: false
+	umd: true
 });
-fs.writeFileSync('code/highcharts.js', result, 'utf8');
+fs.writeFileSync('code/highcharts.src.js', result, 'utf8');
