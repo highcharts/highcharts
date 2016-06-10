@@ -1,13 +1,9 @@
 'use strict';
-let fs = require('fs'),
+const fs = require('fs'),
 	argv = require('yargs').argv,
-	entry = 'js/masters/highcharts.js',
-	output = 'code/highcharts.js',
-	pretty = true;
-const LE = '\n';
+	LE = '\n';
 
 // @todo Have a register for module return names to apply as arguments
-// @todo Do not ignore the master file, but return its result directly to the UMD function
 
 const getMatch = (str, regex) => {
 	let m = str.match(regex);
@@ -80,14 +76,28 @@ const transform = (content, i, arr) => {
 	return content;
 };
 
-let modules = getDependencies(entry, '', [])
-	.reverse()
-	.map(getContents)
-	.map(transform)
-	.join(LE);
-let result = '(function () {' + LE + modules + LE + '}());';
-if (pretty) {
-	const beautify = require('js-beautify').js_beautify;
-	result = beautify(result);
-}
-fs.writeFileSync(output, result, 'utf8');
+const compileFile = (o) => {
+	let modules = getDependencies(o.entry, '', [])
+		.reverse()
+		.map(getContents)
+		.map(transform)
+		.join(LE);
+	let result = '';
+	if (o.umd) {
+		result = '(function () {' + LE + modules + LE + '}());';
+	} else {
+		result = '(function () {' + LE + modules + LE + '}());';
+	}
+	if (o.pretty) {
+		const beautify = require('js-beautify').js_beautify;
+		result = beautify(result);
+	}
+	return result;
+};
+
+let result = compileFile({
+	entry: 'js/masters/highcharts.js',
+	pretty: true,
+	umd: false
+});
+fs.writeFileSync('code/highcharts.js', result, 'utf8');
