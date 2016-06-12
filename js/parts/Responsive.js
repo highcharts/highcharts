@@ -7,18 +7,18 @@
 /**
  * Update the chart based on the current chart/document size and options for responsiveness
  */
-Chart.prototype.setResponsive = function () {
+Chart.prototype.setResponsive = function (redraw) {
 	var options = this.options.responsive;
 
 	each(options.rules, function (rule) {
-		this.matchResponsiveRule(rule);
+		this.matchResponsiveRule(rule, redraw);
 	}, this);
 };
 
 /**
  * Handle a single responsiveness rule
  */
-Chart.prototype.matchResponsiveRule = function (rule) {
+Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 	var respRules = this.respRules,
 		condition = rule.condition,
 		matches,
@@ -35,12 +35,12 @@ Chart.prototype.matchResponsiveRule = function (rule) {
 
 		// Store the current state of the options
 		respRules[rule._id] = this.currentOptions(rule.chartOptions);
-		this.update(rule.chartOptions);
+		this.update(rule.chartOptions, redraw);
 
 	// Unapply a rule based on the previous options before the rule
 	// was applied
 	} else if (respRules[rule._id] && !matches) {
-		this.update(respRules[rule._id]);
+		this.update(respRules[rule._id], redraw);
 		delete respRules[rule._id];
 	}
 };
@@ -48,6 +48,7 @@ Chart.prototype.matchResponsiveRule = function (rule) {
 /**
  * Get the current values for a given set of options. Used before we update
  * the chart with a new responsiveness rule.
+ * TODO: Restore axis options (by id?)
  */
 Chart.prototype.currentOptions = function (options) {
 
@@ -70,6 +71,7 @@ Chart.prototype.currentOptions = function (options) {
 			}
 		}
 	}
+
 	getCurrent(options, this.options, ret);
 	return ret;
 };

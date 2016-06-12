@@ -283,13 +283,10 @@ Chart.prototype = {
 
 
 		if (hasCartesianSeries) {
-			if (!chart.isResizing) {
-
-				// set axes scales
-				each(axes, function (axis) {
-					axis.setScale();
-				});
-			}
+			// set axes scales
+			each(axes, function (axis) {
+				axis.setScale();
+			});
 		}
 
 		chart.getMargins(); // #3098
@@ -898,7 +895,7 @@ Chart.prototype = {
 		chart.getMargins();
 
 		if (chart.setResponsive) {
-			chart.setResponsive();
+			chart.setResponsive(false);
 		}
 		chart.redraw(animation);
 

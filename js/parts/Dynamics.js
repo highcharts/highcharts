@@ -270,7 +270,7 @@ extend(Chart.prototype, {
 				each(splat(options[coll]), function (newOptions) {
 					var item = (defined(newOptions.id) && this.get(newOptions.id)) || this[coll][0];
 					if (item && item.coll === coll) {
-						item.update(newOptions);
+						item.update(newOptions, false);
 					}
 				}, this);
 			}
