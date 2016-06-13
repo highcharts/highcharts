@@ -2,15 +2,14 @@
 const fs = require('fs'),
 	argv = require('yargs').argv,
 	LE = '\n';
-
-// @todo Have a register for module return names to apply as arguments
+let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/;
 
 const getMatch = (str, regex) => {
 	let m = str.match(regex);
 	return m && m[1];
 };
 
-const getImports = content => {
+const getFileImports = content => {
 	return (content.match(/import\s[^\n]+\n/g) || []).map((line, i) => {
 		let path = getMatch(line, /\'([^']+)\'/),
 			variable = getMatch(line, /import (.+) from/);
@@ -37,10 +36,10 @@ const folder = path => {
 	return folderPath + '/';
 };
 
-const getDependencies = (file, parent, dependencies) => {
+const getOrderedDependencies = (file, parent, dependencies) => {
 	let	filePath = cleanPath(folder(parent) + file),
 		content = fs.readFileSync(filePath, 'utf8'),
-		imports = getImports(content);
+		imports = getFileImports(content);
 	if (parent === '') {
 		dependencies.unshift(filePath);
 	} else {
@@ -50,12 +49,13 @@ const getDependencies = (file, parent, dependencies) => {
 		let module = d[0],
 			modulePath = cleanPath(folder(filePath) + module);
 		if (dependencies.indexOf(modulePath) === -1) {
-			dependencies = getDependencies(module, filePath, dependencies);
+			dependencies = getOrderedDependencies(module, filePath, dependencies);
 		}
 	});
 	return dependencies;
 };
 
+// @todo add "caching" of file content
 const getContents = path => fs.readFileSync(path, 'utf8');
 
 const applyUMD = content => {
@@ -76,29 +76,85 @@ const applyUMD = content => {
 
 const applyModule = content => '(function () {' + LE + content + LE + '}());';
 
-const transform = (content, i, arr) => {
-	let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/,
-		r = getMatch(content, exportExp);
+/**
+ * List of names for the exported variable per module.
+ * @param  {[string]} dependencies Dependencies array. List of paths, ordered.
+ * @return {[string, string|null]}  Path of module and name of its exported variable.
+ */
+const getExports = dependencies => {
+	return dependencies.map(d => {
+		let content = getContents(d),
+			exported = getMatch(content, exportExp);
+		return [d, exported];
+	});
+};
+
+/**
+ * Get tuples of all the imported variables for each module.
+ * @param  {[string]} dependencies Dependecies array. List of paths to modules, ordered.
+ * @param  {[string]} exported     List of names for variables exported by a module.
+ * @return {[string, [string, string]]} List of all the module parameters and its inserted parameters
+ */
+const getImports = (dependencies, exported) => {
+	return dependencies.map(d => {
+		let content = getContents(d),
+			imports = getFileImports(content);
+		return imports.reduce((arr, t) => {
+			let path,
+				mParam,
+				param = t[1];
+			if (param) {
+				// @todo check if import is of object structure and not just default
+				path = cleanPath(folder(d) + t[0]);
+				mParam = exported.find(e => e[0] === path)[1];
+				arr[1].push([param, mParam]);
+			}
+			return arr;
+		}, [d, []]);
+	});
+}
+
+/**
+ * Transform a module into desired structure
+ * @param  {string} path     Path to the module file
+ * @param  {string} content  Content of the module
+ * @param  {[string, string]} imported Parameters which the module imports
+ * @param  {string} r  	 The name of the default variable exported by the module
+ * @param  {number} i        Index in dependencies array.
+ * @param  {[string]} arr      Dependencies array
+ * @return {string}       	The module content after transformation
+ */
+const transform = (path, content, imported, r, i, arr) => {
+	let params = imported.map(m => m[0]).join(', ');
+	let mParams = imported.map(m => m[1]).join(', ');
 	// Remove import statements
 	// @todo Add imported variables to the function arguments. Reuse getImports for this
 	content = content.replace(/import\s[^\n]+\n/g, '')
 		.replace(exportExp, ''); // Remove exports statements
-	
 	if (i === arr.length - 1) {
 		// @notice Do not remove line below. It is for when we have more advanced master files.
 		// content = (r ? 'return = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
 		content = (r ? 'return ' + r : '');
 	} else {
-		content = (r ? 'var ' + r + ' = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
+		// @notice The result variable gets the same name as the one returned by the module, but when we have more advanced modules it could probably benefit from using the filename instead.
+		content = (r ? 'var ' + r + ' = ' : '') + '(function (' + params + ') {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}(' + mParams + '));';
 	}
 	return content;
 };
 
 const compileFile = (o) => {
-	let modules = getDependencies(o.entry, '', [])
+	let dependencies = getOrderedDependencies(o.entry, '', []);
+	let exported = getExports(dependencies);
+	let imported = getImports(dependencies, exported);
+	let mapTransform = (path, i, arr) => {
+		let content = getContents(path);
+		let ex = exported.find(val => val[0] === path)[1];
+		let im = imported.find(val => val[0] === path)[1];
+		return transform(path, content, im, ex, i, arr);
+	}
+	let modules = getOrderedDependencies(o.entry, '', [])
 		.reverse()
-		.map(getContents)
-		.map(transform)
+		.map(mapTransform)
 		.join(LE);
 	let result = o.umd ? applyUMD(modules) : applyModule(modules);
 	if (o.pretty) {
