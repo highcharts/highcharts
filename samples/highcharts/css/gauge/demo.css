@@ -27,3 +27,12 @@
 .highcharts-gauge-series .highcharts-dial {
 	fill: gray;
 }
+.highcharts-yaxis .highcharts-tick {
+	stroke-width: 2px;
+	stroke: #666666;
+}
+
+.highcharts-yaxis .highcharts-minor-tick {
+	stroke-width: 1px;
+	stroke: #999999;
+}

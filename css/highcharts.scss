@@ -309,8 +309,7 @@ g.highcharts-series, .highcharts-point {
 
 /* Plot bands and polar pane backgrounds */
 .highcharts-plot-band {
-    fill: black;
-    fill-opacity: 0.05; 
+    fill: rgba(0, 0, 0, 0.05);
 }
 .highcharts-plot-line {
     fill: none;
