@@ -2,7 +2,9 @@
 
 	var Chart = H.Chart,
 		each = H.each,
-		isObject = H.isObject;
+		inArray = H.inArray,
+		isObject = H.isObject,
+		splat = H.splat;
 
 /**
  * Update the chart based on the current chart/document size and options for responsiveness
@@ -59,15 +61,21 @@ Chart.prototype.currentOptions = function (options) {
 	 * and store the current values in the ret object.
 	 */
 	function getCurrent(options, curr, ret) {
-		var key;
+		var key, i;
 		for (key in options) {
-			if (isObject(options[key])) {
-				ret[key] = {};
-				if (curr[key]) {
-					getCurrent(options[key], curr[key], ret[key]);
+			if (inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+				options[key] = splat(options[key]);
+			
+				ret[key] = [];
+				for (i = 0; i < options[key].length; i++) {
+					ret[key][i] = {};
+					getCurrent(options[key][i], curr[key][i], ret[key][i]);
 				}
+			} else if (isObject(options[key])) {
+				ret[key] = {};
+				getCurrent(options[key], curr[key] || {}, ret[key]);
 			} else {
-				ret[key] = curr[key];
+				ret[key] = curr[key] || null;
 			}
 		}
 	}

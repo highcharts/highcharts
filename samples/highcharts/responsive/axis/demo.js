@@ -19,6 +19,9 @@ $(function () {
         },
 
         yAxis: {
+            labels: {
+                x: -15
+            },
             title: {
                 text: 'Items'
             }
@@ -65,7 +68,7 @@ $(function () {
     });
 
     $('#large').click(function () {
-        chart.setSize(600, 300);
+        chart.setSize(800, 300);
     });
 
 });
