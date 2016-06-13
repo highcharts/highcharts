@@ -1,9 +1,13 @@
 @import 'https://code.highcharts.com/css/highcharts.css';
 
+.highcharts-point {
+	stroke: white;
+}
+
 .main-color .highcharts-graph {
 	stroke: red;
 }
-.main-color {
+.main-color, .main-color .highcharts-point {
 	fill: red;
 }
 .highcharts-graph.highcharts-negative {
