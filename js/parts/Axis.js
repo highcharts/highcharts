@@ -2292,7 +2292,8 @@ H.Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
-			i;
+			i,
+			n;
 
 		// Remove the events
 		if (!keepEvents) {

@@ -12,9 +12,11 @@
 Chart.prototype.setResponsive = function (redraw) {
 	var options = this.options.responsive;
 
-	each(options.rules, function (rule) {
-		this.matchResponsiveRule(rule, redraw);
-	}, this);
+	if (options && options.rules) {
+		each(options.rules, function (rule) {
+			this.matchResponsiveRule(rule, redraw);
+		}, this);
+	}
 };
 
 /**

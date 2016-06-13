@@ -461,6 +461,9 @@ input.highcharts-range-selector {
     fill: white;
     font-size: 1.1em;
 }
+.highcharts-crosshair-label .highcharts-label-box {
+    fill: inherit;
+}
 
 
 .highcharts-candlestick-series .highcharts-point {
