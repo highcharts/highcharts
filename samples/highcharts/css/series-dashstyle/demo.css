@@ -13,8 +13,8 @@
     stroke: black;
 }
 
-.highcharts-series-0,
-.highcharts-series-1 {
+.highcharts-series-0 .highcharts-point,
+.highcharts-series-1 .highcharts-point {
     fill: black;
 }
 
