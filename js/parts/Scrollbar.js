@@ -24,7 +24,12 @@ var defaultScrollbarOptions =  {
 	barBorderRadius: 0,
 	buttonBorderRadius: 0,
 	liveRedraw: svg && !isTouchDevice,
+	margin: 10, // docs
 	minWidth: 6,
+	//showFull: true, // docs
+	//size: null,	// docs
+	step: 0.2,		// docs
+	zIndex: 3,		// docs
 	/*= if (build.classic) { =*/
 	barBackgroundColor: '#bfc8d1',
 	barBorderWidth: 1,
@@ -33,12 +38,7 @@ var defaultScrollbarOptions =  {
 	buttonBackgroundColor: '#ebe7e8',
 	buttonBorderColor: '#bbb',
 	buttonBorderWidth: 1,
-	//showFull: true, // docs
-	margin: 10, // docs
 	rifleColor: '#666',
-	zIndex: 3,		// docs
-	step: 0.2,		// docs
-	//size: null,	// docs
 	trackBackgroundColor: '#eeeeee',
 	trackBorderColor: '#eeeeee',
 	trackBorderWidth: 1
@@ -87,61 +87,82 @@ Scrollbar.prototype = {
 		var scroller = this,
 			renderer = scroller.renderer,
 			options = scroller.options,
-			strokeWidth = options.trackBorderWidth,
-			scrollbarStrokeWidth = options.barBorderWidth,
 			size = scroller.size,
 			group;
 
-		// Draw the scrollbar group:
+		// Draw the scrollbar group
 		scroller.group = group = renderer.g('scrollbar').attr({
 			zIndex: options.zIndex,
 			translateY: -99999
 		}).add();
 
 		// Draw the scrollbar track:
-		scroller.track = renderer.rect().attr({
-			height: size,
-			width: size,
-			y: -strokeWidth % 2 / 2,
-			x: -strokeWidth % 2 / 2,
-			'stroke-width': strokeWidth,
+		scroller.track = renderer.rect()
+			.addClass('highcharts-scrollbar-track')
+			.attr({
+				x: 0,
+				r: options.trackBorderRadius || 0,
+				height: size,
+				width: size
+			}).add(group);
+
+		/*= if (build.classic) { =*/
+		scroller.track.attr({
 			fill: options.trackBackgroundColor,
 			stroke: options.trackBorderColor,
-			r: options.trackBorderRadius || 0
-		}).add(group);
+			'stroke-width': options.trackBorderWidth
+		});
+		/*= } =*/
+		this.trackBorderWidth = scroller.track.strokeWidth();
+		scroller.track.attr({
+			y: -this.trackBorderWidth % 2 / 2
+		});
 
-		// Draw the scrollbar itself:
+
+		// Draw the scrollbar itself
 		scroller.scrollbarGroup = renderer.g().add(group);
 
-		scroller.scrollbar = renderer.rect().attr({
-			height: size,
-			width: size,
-			y: -scrollbarStrokeWidth % 2 / 2,
-			x: -scrollbarStrokeWidth % 2 / 2,
-			'stroke-width': scrollbarStrokeWidth,
+		scroller.scrollbar = renderer.rect()
+			.addClass('highcharts-scrollbar-thumb')
+			.attr({
+				height: size,
+				width: size,
+				r: options.barBorderRadius || 0
+			}).add(scroller.scrollbarGroup);
+
+		scroller.scrollbarRifles = renderer.path(scroller.swapXY([
+				'M',
+				-3, size / 4,
+				'L',
+				-3, 2 * size / 3,
+				'M',
+				0, size / 4,
+				'L',
+				0, 2 * size / 3,
+				'M',
+				3, size / 4,
+				'L',
+				3, 2 * size / 3
+			], options.vertical))
+			.addClass('highcharts-scrollbar-rifles')
+			.add(scroller.scrollbarGroup);
+
+		/*= if (build.classic) { =*/
+		scroller.scrollbar.attr({
 			fill: options.barBackgroundColor,
 			stroke: options.barBorderColor,
-			r: options.barBorderRadius || 0
-		}).add(scroller.scrollbarGroup);
-
-		// Draw the scrollbat rifles:
-		scroller.scrollbarRifles = renderer.path(scroller.swapXY([
-			'M',
-			-3, size / 4,
-			'L',
-			-3, 2 * size / 3,
-			'M',
-			0, size / 4,
-			'L',
-			0, 2 * size / 3,
-			'M',
-			3, size / 4,
-			'L',
-			3, 2 * size / 3
-		], options.vertical)).attr({
+			'stroke-width': options.barBorderWidth
+		});
+		scroller.scrollbarRifles.attr({
 			stroke: options.rifleColor,
 			'stroke-width': 1
-		}).add(scroller.scrollbarGroup);
+		});
+		/*= } =*/
+		scroller.scrollbarStrokeWidth = scroller.scrollbar.strokeWidth();
+		scroller.scrollbarGroup.translate(
+			-scroller.scrollbarStrokeWidth % 2 / 2,
+			-scroller.scrollbarStrokeWidth % 2 / 2
+		);
 
 		// Draw the buttons:
 		scroller.drawScrollbarButton(0);
@@ -166,7 +187,7 @@ Scrollbar.prototype = {
 		if (this.group) { // May be destroyed or disabled
 
 			scroller.x = x;
-			scroller.y = y + options.trackBorderWidth;
+			scroller.y = y + this.trackBorderWidth;
 			scroller.width = width; // width with buttons
 			scroller.height = height;
 			scroller.xOffset = xOffset;
@@ -216,39 +237,56 @@ Scrollbar.prototype = {
 			scrollbarButtons = scroller.scrollbarButtons,
 			options = scroller.options,
 			size = scroller.size,
-			group;
+			group,
+			tempElem;
 
 		group = renderer.g().add(scroller.group);
 		scrollbarButtons.push(group);
 
-		// Button rect:
-		renderer.rect(
-			-0.5, 
-			-0.5, 
-			size + 1,  // +1 to compensate for crispifying in rect method
-			size + 1,
-			options.buttonBorderRadius,
-			options.buttonBorderWidth
-		).attr({
+		// Create a rectangle for the scrollbar button
+		tempElem = renderer.rect()
+			.addClass('highcharts-scrollbar-button')
+			.add(group);
+
+		/*= if (build.classic) { =*/
+		// Presentational attributes
+		tempElem.attr({
 			stroke: options.buttonBorderColor,
 			'stroke-width': options.buttonBorderWidth,
 			fill: options.buttonBackgroundColor
-		}).add(group);
+		});
+		/*= } =*/
 
-		// Button arrow:
-		renderer.path(scroller.swapXY([
-			'M',
-			size / 2 + (index ? -1 : 1), 
-			size / 2 - 3,
-			'L',
-			size / 2 + (index ? -1 : 1), 
-			size / 2 + 3,
-			'L',
-			size / 2 + (index ? 2 : -2), 
-			size / 2
-		], options.vertical)).attr({
+		// Place the rectangle based on the rendered stroke width
+		tempElem.attr(tempElem.crisp({
+			x: -0.5,
+			y: -0.5,
+			width: size + 1, // +1 to compensate for crispifying in rect method
+			height: size + 1,
+			r: options.buttonBorderRadius
+		}, tempElem.strokeWidth()));
+
+		// Button arrow
+		tempElem = renderer
+			.path(scroller.swapXY([
+				'M',
+				size / 2 + (index ? -1 : 1), 
+				size / 2 - 3,
+				'L',
+				size / 2 + (index ? -1 : 1), 
+				size / 2 + 3,
+				'L',
+				size / 2 + (index ? 2 : -2), 
+				size / 2
+			], options.vertical))
+			.addClass('highcharts-scrollbar-arrow')
+			.add(scrollbarButtons[index]);
+
+		/*= if (build.classic) { =*/
+		tempElem.attr({
 			fill: options.buttonArrowColor
-		}).add(group);
+		});
+		/*= } =*/
 	},
 
 	/**
@@ -292,7 +330,7 @@ Scrollbar.prototype = {
 			fromPX = scroller.barWidth * Math.max(from, 0);
 			toPX = scroller.barWidth * Math.min(to, 1);
 			newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
-			newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
+			newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset) - scroller.scrollbarStrokeWidth % 2 / 2;
 			newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
 			// Store current position:
