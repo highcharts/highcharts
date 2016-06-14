@@ -38,8 +38,10 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 	if (!respRules[rule._id] && matches) {
 
 		// Store the current state of the options
-		respRules[rule._id] = this.currentOptions(rule.chartOptions);
-		this.update(rule.chartOptions, redraw);
+		if (rule.chartOptions) {
+			respRules[rule._id] = this.currentOptions(rule.chartOptions);
+			this.update(rule.chartOptions, redraw);
+		}
 
 	// Unapply a rule based on the previous options before the rule
 	// was applied

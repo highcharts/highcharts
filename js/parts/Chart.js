@@ -57,7 +57,7 @@ Chart.prototype = {
 	callbacks: [],
 
 	/*= if (!build.classic) { =*/
-	colorCount: 10,
+	colorCount: 10, // docs - make this an option?
 	/*= } =*/
 
 	/**
