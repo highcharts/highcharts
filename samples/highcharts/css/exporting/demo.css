@@ -1,0 +1,16 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+#container {
+	height: 300px; 
+	margin-top: 1em;
+	max-width: 800px;
+	margin: 0 auto
+}
+.highcharts-column-series rect {
+	stroke-dasharray: 2;
+	stroke: black;
+}
+
+.CodeMirror {
+	height: auto !important;
+}

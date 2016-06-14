@@ -1,0 +1,9 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+.highcharts-plot-background {
+	fill: #efffff;
+}
+.highcharts-plot-border {
+	stroke-width: 2px;
+	stroke: #7cb5ec;
+}

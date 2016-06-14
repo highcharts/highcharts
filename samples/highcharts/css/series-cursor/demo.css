@@ -1,0 +1,15 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+#container {
+	height: 400px;
+	min-width: 300px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.highcharts-series-0 {
+	cursor: pointer;
+}
+.highcharts-series-1 {
+	cursor: pointer;
+}
