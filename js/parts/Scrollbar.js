@@ -171,8 +171,6 @@ Scrollbar.prototype = {
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
-
-		scroller.rendered = true;
 	},
 
 	/**
@@ -311,6 +309,8 @@ Scrollbar.prototype = {
 				scroller.group.show();
 			}
 		}
+
+		scroller.rendered = true;
 	},
 
 	/**
@@ -548,7 +548,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 				from = unitedMin + range * (1 - this.to);
 			}
 
-			axis.setExtremes(from, to, true, false, e);
+			axis.setExtremes(from, to, true, null, e);
 		});
 	}
 });

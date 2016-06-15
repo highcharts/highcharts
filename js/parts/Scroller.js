@@ -484,7 +484,7 @@ Navigator.prototype = {
 							ext.min,
 							ext.max,
 							true,
-							false,
+							null, // auto animation
 							{ trigger: 'navigator' }
 						);
 					}
@@ -559,7 +559,7 @@ Navigator.prototype = {
 				fixedMin,
 				fixedMax;
 
-			if (scroller.hasDragged) {
+			if (scroller.hasDragged || e.trigger === 'scrollbar') {
 				// When dragging one handle, make sure the other one doesn't change
 				if (scroller.zoomedMin === scroller.otherHandlePos) {
 					fixedMin = scroller.fixedExtreme;
@@ -578,7 +578,7 @@ Navigator.prototype = {
 						ext.min,
 						ext.max,
 						true,
-						false,
+						scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
 						{
 							trigger: 'navigator',
 							triggerOp: 'navigator-drag',
@@ -686,8 +686,8 @@ Navigator.prototype = {
 					to = range * this.to,
 					from = range * this.from;
 
+				scroller.hasDragged = scroller.scrollbar.hasDragged;
 				scroller.render(0, 0, from, to);
-				scroller.hasDragged = true;
 				scroller.mouseUpHandler(e);
 			});
 		}

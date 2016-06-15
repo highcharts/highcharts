@@ -22062,8 +22062,6 @@
                 translateX: vertical ? 0 : width - xOffset,
                 translateY: vertical ? height - yOffset : 0
             });
-
-            scroller.rendered = true;
         },
 
         /**
@@ -22202,6 +22200,8 @@
                     scroller.group.show();
                 }
             }
+
+            scroller.rendered = true;
         },
 
         /**
@@ -22439,7 +22439,7 @@
                     from = unitedMin + range * (1 - this.to);
                 }
 
-                axis.setExtremes(from, to, true, false, e);
+                axis.setExtremes(from, to, true, null, e);
             });
         }
     });
@@ -23002,7 +23002,7 @@
                                 ext.min,
                                 ext.max,
                                 true,
-                                false,
+                                null, // auto animation
                                 { trigger: 'navigator' }
                             );
                         }
@@ -23077,7 +23077,7 @@
                     fixedMin,
                     fixedMax;
 
-                if (scroller.hasDragged) {
+                if (scroller.hasDragged || e.trigger === 'scrollbar') {
                     // When dragging one handle, make sure the other one doesn't change
                     if (scroller.zoomedMin === scroller.otherHandlePos) {
                         fixedMin = scroller.fixedExtreme;
@@ -23096,7 +23096,7 @@
                             ext.min,
                             ext.max,
                             true,
-                            false,
+                            scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
                             {
                                 trigger: 'navigator',
                                 triggerOp: 'navigator-drag',
@@ -23204,8 +23204,8 @@
                         to = range * this.to,
                         from = range * this.from;
 
+                    scroller.hasDragged = scroller.scrollbar.hasDragged;
                     scroller.render(0, 0, from, to);
-                    scroller.hasDragged = true;
                     scroller.mouseUpHandler(e);
                 });
             }
@@ -23746,7 +23746,7 @@
                     newMin,
                     newMax,
                     pick(redraw, 1),
-                    0,
+                    null, // auto animation
                     {
                         trigger: 'rangeSelectorButton',
                         rangeSelectorButton: rangeOptions
