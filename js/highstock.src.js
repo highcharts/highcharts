@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-06-09)
+ * @license Highstock JS v4.2.5-modified (2016-06-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20311,7 +20311,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-06-09)
+     * Highstock JS v4.2.5-modified (2016-06-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21714,7 +21714,8 @@
                 anchorX,
                 anchorY,
                 outsideRight,
-                yAxis = series.yAxis;
+                yAxis = series.yAxis,
+                text;
 
             i = points.length;
             while (i--) {
@@ -21735,12 +21736,16 @@
 
                 graphic = point.graphic;
 
+                    
                 // only draw the point if y is defined and the flag is within the visible area
                 if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
                     // shortcuts
                     pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+                    text = pick(point.options.title, options.title, 'A');
                     if (graphic) { // update
                         graphic.attr({
+                            text: text // first apply text, so text will be centered later
+                        }).attr({
                             x: plotX,
                             y: plotY,
                             r: pointAttr.r,
@@ -21749,7 +21754,7 @@
                         });
                     } else {
                         graphic = point.graphic = renderer.label(
-                            point.options.title || options.title || 'A',
+                            text, 
                             plotX,
                             plotY,
                             shape,
