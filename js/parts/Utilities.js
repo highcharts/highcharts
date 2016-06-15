@@ -176,7 +176,10 @@ Fx.prototype = {
 	 */
 	initPath: function (elem, fromD, toD) {
 		fromD = fromD || '';
-		var shift = elem.shift,
+		var shift,
+			shiftUnit = elem.shiftUnit || 1,
+			startX = elem.startX,
+			endX = elem.endX,
 			bezier = fromD.indexOf('C') > -1,
 			numParams = bezier ? 7 : 3,
 			endLength,
@@ -200,9 +203,22 @@ Fx.prototype = {
 			sixify(end);
 		}
 
+		// Find out how much we need to shift to get the start path Xs to match the end path Xs.
+		if (startX && endX) {
+			for (i = 0; i < startX.length; i++) {
+				if (startX[i] === endX[0]) {
+					shift = i * shiftUnit;
+					break;
+				}
+			}
+			if (shift === undefined) {
+				start = [];
+			}
+		}
+
 		// If shifting points, prepend a dummy point to the end path. For areas,
 		// prepend both at the beginning and end of the path.
-		if (shift <= end.length / numParams && start.length === end.length) {
+		if (shift <= end.length / numParams && start.length) {
 			while (shift--) {
 				end = end.slice(0, numParams).concat(end);
 				if (isArea) {
@@ -210,7 +226,6 @@ Fx.prototype = {
 				}
 			}
 		}
-		elem.shift = 0; // reset for following animations
 
 		
 		// Copy and append last point until the length matches the end length

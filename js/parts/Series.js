@@ -1403,7 +1403,8 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			zones = this.zones;
+			zones = this.zones,
+			xDataForAnimation = series.animXData || series.processedXData.slice(0);
 
 		each(zones, function (threshold, i) {
 			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
@@ -1416,6 +1417,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
+				graph.endX = xDataForAnimation;
 				graph.animate({ d: graphPath });
 
 			} else if (lineWidth && graphPath.length) { // #1487
@@ -1431,11 +1433,13 @@ Series.prototype = {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
-				series[graphKey] = series.chart.renderer.path(graphPath)
+				graph = series[graphKey] = series.chart.renderer.path(graphPath)
 					.attr(attribs)
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
 			}
+			graph.startX = xDataForAnimation;
+			graph.shiftUnit = options.step ? 2 : 1;
 		});
 	},
 

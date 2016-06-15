@@ -317,6 +317,7 @@ seriesProto.processData = function () {
 			// prevent the smoothed data to spill out left and right, and make
 			// sure data is not shifted to the left
 			if (dataGroupingOptions.smoothed) {
+				series.animXData = groupedXData.slice(0);
 				i = groupedXData.length - 1;
 				groupedXData[i] = Math.min(groupedXData[i], xMax);
 				while (i-- && i > 0) {

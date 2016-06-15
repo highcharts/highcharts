@@ -260,7 +260,8 @@ var AreaSeries = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
-			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
+			props = [['area', this.color, options.fillColor]], // area name, main color, fill color
+			xDataForAnimation = series.animXData || series.processedXData.slice(0);
 
 		each(zones, function (threshold, i) {
 			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
@@ -272,6 +273,7 @@ var AreaSeries = extendClass(Series, {
 
 			// Create or update the area
 			if (area) { // update
+				area.endX = xDataForAnimation;
 				area.animate({ d: areaPath });
 
 			} else { // create
@@ -282,10 +284,13 @@ var AreaSeries = extendClass(Series, {
 				if (!prop[2]) {
 					attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
 				}
-				series[areaKey] = series.chart.renderer.path(areaPath)
+				area = series[areaKey] = series.chart.renderer.path(areaPath)
 					.attr(attr)
 					.add(series.group);
+				area.isArea = true;
 			}
+			area.startX = xDataForAnimation;
+			area.shiftUnit = options.step ? 2 : 1;
 		});
 	},
 

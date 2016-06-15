@@ -304,7 +304,10 @@
          */
         initPath: function (elem, fromD, toD) {
             fromD = fromD || '';
-            var shift = elem.shift,
+            var shift,
+                shiftUnit = elem.shiftUnit || 1,
+                startX = elem.startX,
+                endX = elem.endX,
                 bezier = fromD.indexOf('C') > -1,
                 numParams = bezier ? 7 : 3,
                 endLength,
@@ -328,9 +331,22 @@
                 sixify(end);
             }
 
+            // Find out how much we need to shift to get the start path Xs to match the end path Xs.
+            if (startX && endX) {
+                for (i = 0; i < startX.length; i++) {
+                    if (startX[i] === endX[0]) {
+                        shift = i * shiftUnit;
+                        break;
+                    }
+                }
+                if (shift === undefined) {
+                    start = [];
+                }
+            }
+
             // If shifting points, prepend a dummy point to the end path. For areas,
             // prepend both at the beginning and end of the path.
-            if (shift <= end.length / numParams && start.length === end.length) {
+            if (shift <= end.length / numParams && start.length) {
                 while (shift--) {
                     end = end.slice(0, numParams).concat(end);
                     if (isArea) {
@@ -338,7 +354,6 @@
                     }
                 }
             }
-            elem.shift = 0; // reset for following animations
 
         
             // Copy and append last point until the length matches the end length
@@ -15123,7 +15138,8 @@
                 lineWidth = options.lineWidth,
                 roundCap = options.linecap !== 'square',
                 graphPath = (this.gappedPath || this.getGraphPath).call(this),
-                zones = this.zones;
+                zones = this.zones,
+                xDataForAnimation = series.animXData || series.processedXData.slice(0);
 
             each(zones, function (threshold, i) {
                 props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
@@ -15136,6 +15152,7 @@
                     attribs;
 
                 if (graph) {
+                    graph.endX = xDataForAnimation;
                     graph.animate({ d: graphPath });
 
                 } else if (lineWidth && graphPath.length) { // #1487
@@ -15151,11 +15168,13 @@
                         attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
                     }
 
-                    series[graphKey] = series.chart.renderer.path(graphPath)
+                    graph = series[graphKey] = series.chart.renderer.path(graphPath)
                         .attr(attribs)
                         .add(series.group)
                         .shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
                 }
+                graph.startX = xDataForAnimation;
+                graph.shiftUnit = options.step ? 2 : 1;
             });
         },
 
@@ -16269,12 +16288,8 @@
             var series = this,
                 seriesOptions = series.options,
                 data = series.data,
-                graph = series.graph,
-                area = series.area,
                 chart = series.chart,
                 names = series.xAxis && series.xAxis.names,
-                currentShift = (graph && graph.shift) || 0,
-                shiftShapes = ['graph', 'area'],
                 dataOptions = seriesOptions.data,
                 point,
                 isInTheMiddle,
@@ -16283,22 +16298,6 @@
                 x;
 
             setAnimation(animation, chart);
-
-            // Make graph animate sideways
-            if (shift) {
-                i = series.zones.length;
-                while (i--) {
-                    shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
-                }
-                each(shiftShapes, function (shape) {
-                    if (series[shape]) {
-                        series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
-                    }
-                });
-            }
-            if (area) {
-                area.isArea = true; // needed in animation, both with and without shift
-            }
 
             // Optional redraw, defaults to true
             redraw = pick(redraw, true);
@@ -16818,7 +16817,8 @@
                 areaPath = this.areaPath,
                 options = this.options,
                 zones = this.zones,
-                props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
+                props = [['area', this.color, options.fillColor]], // area name, main color, fill color
+                xDataForAnimation = series.animXData || series.processedXData.slice(0);
 
             each(zones, function (threshold, i) {
                 props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
@@ -16830,6 +16830,7 @@
 
                 // Create or update the area
                 if (area) { // update
+                    area.endX = xDataForAnimation;
                     area.animate({ d: areaPath });
 
                 } else { // create
@@ -16840,10 +16841,13 @@
                     if (!prop[2]) {
                         attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
                     }
-                    series[areaKey] = series.chart.renderer.path(areaPath)
+                    area = series[areaKey] = series.chart.renderer.path(areaPath)
                         .attr(attr)
                         .add(series.group);
+                    area.isArea = true;
                 }
+                area.startX = xDataForAnimation;
+                area.shiftUnit = options.step ? 2 : 1;
             });
         },
 
