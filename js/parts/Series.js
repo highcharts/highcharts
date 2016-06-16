@@ -1438,8 +1438,13 @@ Series.prototype = {
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
 			}
-			graph.startX = xDataForAnimation;
-			graph.shiftUnit = options.step ? 2 : 1;
+
+			// Helpers for animation
+			if (graph) {
+				graph.startX = xDataForAnimation;
+				graph.shiftUnit = options.step ? 2 : 1;
+				graph.isArea = graphPath.isArea; // For arearange animation
+			}
 		});
 	},
 

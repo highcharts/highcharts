@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-03)
+ * @license Highcharts JS v4.2.5-modified (2016-06-16)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -823,6 +823,7 @@ var arrayMin = Highcharts.arrayMin,
                 higherAreaPath[0] = 'L'; // this probably doesn't work for spline        
             }
 
+            linePath.isArea = true; // For animation
             this.graphPath = linePath;
             this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
             return linePath;

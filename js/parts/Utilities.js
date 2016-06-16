@@ -182,64 +182,65 @@ Fx.prototype = {
 			endX = elem.endX,
 			bezier = fromD.indexOf('C') > -1,
 			numParams = bezier ? 7 : 3,
-			endLength,
+			fullLength,
 			slice,
 			i,
 			start = fromD.split(' '),
-			end = [].concat(toD), // copy
+			end = toD.slice(), // copy
 			isArea = elem.isArea,
 			positionFactor = isArea ? 2 : 1,
-			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
-				i = arr.length;
-				while (i--) {
-					if (arr[i] === M || arr[i] === L) {
-						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
-					}
-				}
-			};
-
-		if (bezier) {
-			sixify(start);
-			sixify(end);
-		}
-
-		// Find out how much we need to shift to get the start path Xs to match the end path Xs.
-		if (startX && endX) {
-			for (i = 0; i < startX.length; i++) {
-				if (startX[i] === endX[0]) {
-					shift = i * shiftUnit;
-					break;
-				}
-			}
-			if (shift === undefined) {
-				start = [];
-			}
-		}
-
-		// If shifting points, prepend a dummy point to the end path. For areas,
-		// prepend both at the beginning and end of the path.
-		if (shift <= end.length / numParams && start.length) {
-			while (shift--) {
-				end = end.slice(0, numParams).concat(end);
-				if (isArea) {
-					end = end.concat(end.slice(end.length - numParams));
-				}
-			}
-		}
-
+			reverse;
 		
-		// Copy and append last point until the length matches the end length
-		if (start.length) {
-			endLength = end.length;
-			while (start.length < endLength) {
+		function sixify(arr) { // in splines make move points have six parameters like bezier curves
+			i = arr.length;
+			while (i--) {
+				if (arr[i] === M || arr[i] === L) {
+					arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
+				}
+			}
+		}
+
+		/**
+		 * Insert an array at the given position of another array
+		 */
+		function insertSlice(arr, subArr, index) {
+			[].splice.apply(
+				arr,
+				[index, 0].concat(subArr)
+			);
+		}
+
+		/**
+		 * If shifting points, prepend a dummy point to the end path. 
+		 */
+		function prepend(arr) {
+			arr[0] = bezier ? 'C' : 'L';
+			while (arr.length < fullLength) {
+
+				insertSlice(arr, arr.slice(0, numParams), 0);
+			
+				// For areas, the bottom path goes back again to the left, so we need
+				// to append the last point.
+				if (isArea) {
+					insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
+				}
+			}
+			arr[0] = 'M';
+		}
+
+		/**
+		 * Copy and append last point until the length matches the end length
+		 */
+		function append(arr) {
+			while (arr.length < fullLength) {
 
 				// Pull out the slice that is going to be appended or inserted. In a line graph,
 				// the positionFactor is 1, and the last point is sliced out. In an area graph,
 				// the positionFactor is 2, causing the middle two points to be sliced out, since
 				// an area path starts at left, follows the upper path then turns and follows the
 				// bottom back. 
-				slice = start.slice().splice(
-					(start.length / positionFactor) - numParams, 
+				slice = arr.slice().splice(
+					(arr.length / positionFactor) - numParams, 
 					numParams * positionFactor
 				);
 				
@@ -250,11 +251,45 @@ Fx.prototype = {
 				}
 				
 				// Now insert the slice, either in the middle (for areas) or at the end (for lines)
-				[].splice.apply(
-					start, 
-					[(start.length / positionFactor), 0].concat(slice)
-				);
+				insertSlice(arr, slice, arr.length / positionFactor);
 
+			}
+		}
+
+		if (bezier) {
+			sixify(start);
+			sixify(end);
+		}
+
+		// Find out how much we need to shift to get the start path Xs to match the end path Xs.
+		if (startX && endX) {
+			for (i = 0; i < startX.length; i++) {
+				if (startX[i] === endX[0]) { // Moving left, new points coming in on right
+					shift = i * shiftUnit;
+					break;
+				} else if (startX[0] === endX[endX.length - startX.length + i]) { // Moving right
+					shift = i * shiftUnit;
+					reverse = true;
+					break;
+				}
+			}
+			if (shift === undefined) {
+				start = [];
+			}
+		}
+
+		if (start.length && shift) {
+
+			// The common target length for the start and end array, where both 
+			// arrays are padded in opposite ends
+			fullLength = end.length + shift * (isArea ? 2 : 1) * numParams;
+			
+			if (!reverse) {
+				prepend(end);
+				append(start);
+			} else {
+				prepend(start);
+				append(end);
 			}
 		}
 
