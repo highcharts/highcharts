@@ -195,7 +195,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
+			hoverColor = Highcharts.Color(upColor).brighten(options.states.hover.brightness).get(),
 			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
