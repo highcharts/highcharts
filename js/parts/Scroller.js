@@ -521,7 +521,7 @@ Navigator.prototype = {
 					dragOffset = chartX - zoomedMin;
 
 				// shift the range by clicking on shaded areas
-				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {					
+				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
 					left = chartX - navigatorLeft - range / 2;
 					if (left < 0) {
 						left = 0;
@@ -753,11 +753,11 @@ Navigator.prototype = {
 					this.chart.scroller.modifyBaseAxisExtremes();
 				}
 			});
-		
-			// Survive Series.update()
-			baseSeries[0].userOptions.events = extend(baseSeries[0].userOptions.event, { updatedData: this.updatedDataHandler });
-			baseSeries[1].userOptions.events = extend(baseSeries[1].userOptions.event, { updatedData: this.updatedDataHandler });
 
+			// Survive Series.update()
+			each(baseSeries, function (series) {
+				series.userOptions.events = extend(series.userOptions.event, { updatedData: this.updatedDataHandler });
+			});
 		}
 
 
@@ -887,7 +887,7 @@ Navigator.prototype = {
 			each(baseSeries, function (base, i) {
 				navSeriesMixin.name = 'Navigator ' + (i + 1);
 
-				baseOptions = base.options || {}; 
+				baseOptions = base.options || {};
 				baseNavigatorOptions = baseOptions.navigatorOptions || {};
 				mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, chartNavigatorOptions, baseNavigatorOptions);
 
@@ -924,7 +924,7 @@ Navigator.prototype = {
 				xAxis.min = unionExtremes.dataMin;
 				xAxis.max = unionExtremes.dataMax;
 			}
-		}				
+		}
 	},
 
 	/**
@@ -976,7 +976,7 @@ Navigator.prototype = {
 
 	/**
 	 * Handler for updated data on the base series. When data is modified, the navigator series
-	 * must reflect it. This is called from the Chart.redraw function before axis and series 
+	 * must reflect it. This is called from the Chart.redraw function before axis and series
 	 * extremes are computed.
 	 */
 	updatedDataHandler: function () {
@@ -987,7 +987,7 @@ Navigator.prototype = {
 		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
 		// axis minimum falls outside the new updated dataset, we must adjust.
 		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
-		// If the scrollbar is scrolled all the way to the right, keep right as new data 
+		// If the scrollbar is scrolled all the way to the right, keep right as new data
 		// comes in.
 		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
 
@@ -997,7 +997,7 @@ Navigator.prototype = {
 			navigatorSeries.setData(baseSeries.options.data, false);
 
 			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
-			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
+			// cases of updating data (addPoint, update, removePoint) directly so that this operation
 			// on the base series reflects directly on the navigator series.
 			if (navigatorSeries.graph && baseSeries.graph) {
 				navigatorSeries.graph.shift = baseSeries.graph.shift;
