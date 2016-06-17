@@ -11,7 +11,7 @@ const getMatch = (str, regex) => {
 
 const getFileImports = content => {
 	return (content.match(/import\s[^\n]+\n/g) || []).map((line, i) => {
-		let path = getMatch(line, /\'([^']+)\'/),
+		let path = getMatch(line, /['"]([^']+)['"]/),
 			variable = getMatch(line, /import (.+) from/);
 		return [path, variable]
 	});
@@ -142,8 +142,8 @@ const transform = (path, content, imported, r, i, arr) => {
 	return content;
 };
 
-const compileFile = (o) => {
-	let dependencies = getOrderedDependencies(o.entry, '', []);
+const compileFile = (entry, umd, pretty) => {
+	let dependencies = getOrderedDependencies(entry, '', []);
 	let exported = getExports(dependencies);
 	let imported = getImports(dependencies, exported);
 	let mapTransform = (path, i, arr) => {
@@ -152,21 +152,115 @@ const compileFile = (o) => {
 		let im = imported.find(val => val[0] === path)[1];
 		return transform(path, content, im, ex, i, arr);
 	}
-	let modules = getOrderedDependencies(o.entry, '', [])
+	let modules = dependencies
 		.reverse()
 		.map(mapTransform)
 		.join(LE);
-	let result = o.umd ? applyUMD(modules) : applyModule(modules);
-	if (o.pretty) {
+	let result = umd ? applyUMD(modules) : applyModule(modules);
+	if (pretty) {
 		const beautify = require('js-beautify').js_beautify;
 		result = beautify(result);
 	}
 	return result;
 };
+/**
+ * END OF CONCATENATE SCRIPT
+ */
+/**
+ * BEGINNING OF BUILD SCRIPT
+ */
 
-let result = compileFile({
-	entry: 'js/masters/highcharts.js',
-	pretty: true,
-	umd: true
+/**
+ * [getFilesInFolder description]
+ * @param  {[type]} base              [description]
+ * @param  {[type]} includeSubfolders [description]
+ * @param  {[type]} path              [description]
+ * @return {[type]}                   [description]
+ */
+const getFilesInFolder = (base, includeSubfolders, path) => {
+    const fs = require('fs');
+    let filenames = [],
+        filepath,
+        isDirectory;
+        path = (typeof path === 'undefined') ? '' : path;
+        fs.readdirSync(base + path).forEach(function (filename) {
+            filepath = base + path + filename;
+            isDirectory = fs.lstatSync(filepath).isDirectory();
+            if (isDirectory && includeSubfolders) {
+                filenames = filenames.concat(getFilesInFolder(base, includeSubfolders, path + filename + '/'));
+            } else if (!isDirectory) {
+                filenames.push(path + filename);
+            }
+        });
+    return filenames;
+}
+
+let defaultOptions = {
+    base: undefined, // Path to where the build files are located
+    excludes: {},
+    files: undefined, // Array of files to compile
+    output: './' // Folder to output compiled files
+};
+
+/**
+ * [build description]
+ * @param  {[type]} config [description]
+ * @return {[type]}        [description]
+ */
+const build = userOptions=> {
+    // userOptions is an empty object by default
+    userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
+    // Merge the userOptions with defaultOptions
+    let options = Object.assign(defaultOptions, userOptions);
+    // Check if required options are set
+    if (options.base) {
+        options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
+        options.files.forEach(function (filename) {
+        	let compiled = compileFile(options.base + filename, options.umd, options.pretty);
+			fs.writeFileSync(options.output + filename, compiled, 'utf8');
+
+        //     // compileFile(options.base, options.output, filename, options.excludes[filename], options.wrapper);
+        //     compileFile(options.base , options.output, filename, options.excludes[filename], options.wrapper);
+        });
+    } else {
+        outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
+    }
+}
+
+let files = (argv.file) ? [argv.file] : undefined,
+    DS = '\\\\[^\\\\]', // Regex: Single directory seperator
+    folders = {
+        'parts': 'parts' + DS + '+\.js$',
+        'parts-more': 'parts-more' + DS + '+\.js$'
+    };
+build({
+    base: './js/masters/',
+    excludes: {
+        'modules/annotations.js': new RegExp(folders['parts']),
+        'modules/boost.js': new RegExp(folders['parts']),
+        'modules/broken-axis.js': new RegExp(folders['parts']),
+        'modules/canvasrenderer.experimental.js': new RegExp(folders['parts']),
+        'modules/canvgrenderer-extended.js': new RegExp(folders['parts']),
+        'modules/data.js': new RegExp(folders['parts']),
+        'modules/drilldown.js': new RegExp(folders['parts']),
+        'modules/exporting-old-look.js': new RegExp(folders['parts']),
+        'modules/exporting.js': new RegExp(folders['parts']),
+        'modules/funnel.js': new RegExp(folders['parts']),
+        'modules/heatmap.js': new RegExp(folders['parts']),
+        'modules/map.js': new RegExp(folders['parts']),
+        'modules/map-parser.js': new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
+        'modules/no-data-to-display.js': new RegExp(folders['parts']),
+        'modules/offline-exporting.js': new RegExp(folders['parts']),
+        'modules/overlapping-datalabels.js': new RegExp(folders['parts']),
+        'modules/series-label.js': new RegExp(folders['parts']),
+        'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
+        'modules/treemap.js': new RegExp(folders['parts']),
+        'highcharts-more.js': new RegExp(folders['parts']),
+        'highcharts-3d.js': new RegExp(folders['parts'])
+    },
+    files: files,
+    output: './code/'
 });
-fs.writeFileSync('code/highcharts.src.js', result, 'utf8');
+/**
+ * END OF BUILD SCRIPT
+ */
