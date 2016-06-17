@@ -5,7 +5,6 @@
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
-	$continue = @$_GET['continue'];
 	$rightcommit = @$_GET['rightcommit'];
 	$commit = @$_GET['commit']; // Used from Phantom test
 
@@ -66,7 +65,6 @@
 				error,
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>',
-				_continue = '<?php echo $continue ?>',
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
@@ -193,7 +191,7 @@
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
+									href: location.href.replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									<?php if ($isUnitTest) : ?>
 									title: 'How many unit tests passed out of the total' ,
@@ -215,7 +213,7 @@
 							$span = $('<a>')
 								.attr({
 									'class': 'dissimilarity-index',
-									href: location.href.replace(/continue=true/, '').replace(/rightcommit/, 'bogus'),
+									href: location.href.replace(/rightcommit/, 'bogus'),
 									target: 'main',
 									title: 'Compare'
 								})
@@ -224,7 +222,7 @@
 
 						}
 
-						if (_continue) {
+						if (window.parent.frames[0] && window.parent.frames[0].continueBatch) {
 							$(contentDoc.body).animate({
 								scrollTop: $(li).offset().top - 300
 							}, 0);
@@ -269,7 +267,7 @@
 
 			function proceed() {
 				var i = '<?php echo $i ?>';
-				if (window.parent.frames[0] && i !== '' && _continue === 'true' ) {
+				if (window.parent.frames[0] && i !== '' && window.parent.frames[0].continueBatch) {
 					var contentDoc = window.parent.frames[0].document,
 						href,
 						next;
@@ -294,7 +292,7 @@
 						}
 					}
 
-					href = href.replace("view.php", "compare-view.php") + '&continue=true';
+					href = href.replace("view.php", "compare-view.php");
 
 					window.location.href = href;
 
