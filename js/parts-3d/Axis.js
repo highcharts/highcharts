@@ -199,21 +199,10 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.is3d()) {
-		return pos;
-	}
-
-	var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
-	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-	newPos.old = pos;
-	return newPos;
-});
-
-Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, xy) {
 	if (this.axis.chart.is3d()) {
-		xy = xy.old;
+		pos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
 	}
-	return proceed.call(this, xy);
+	return pos;
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
