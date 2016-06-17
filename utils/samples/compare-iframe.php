@@ -125,6 +125,10 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 
+	// Highchart 5 preview
+	$s = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $s);
+
+
 	// for issue-by-commit
 	$issueHTML = $s;
 	$issueHTML = str_replace('https://code.highcharts.com/stock/', 'http://github.highcharts.com/%s/', $issueHTML);
@@ -218,7 +222,14 @@ function getExportInnerHTML() {
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php 
-			$_SESSION['css'] = @file_get_contents("$path/demo.css");
+			$css = @file_get_contents("$path/demo.css");
+
+			// Highchart 5 preview
+			$css = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $css);
+
+			$css = str_replace("https://code.highcharts.com/", "http://code.highcharts.$topDomain/", $css);
+
+			$_SESSION['css'] = $css;
 			echo $_SESSION['css'];
 			?>
 		</style>

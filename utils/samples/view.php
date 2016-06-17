@@ -42,6 +42,11 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 } else {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
+
+// Highchart 5 preview
+$html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $html);
+
+
 if ($styled) {
 	$html = str_replace("code.highcharts.$topDomain/js/", "code.highcharts.$topDomain/", $html); // some to classic
 	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
@@ -52,6 +57,9 @@ ob_start();
 @include("$fullpath/demo.css");
 $css = ob_get_clean();
 $css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
+
+// Highchart 5 preview
+$css = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $css);
 
 
 // Handle themes
