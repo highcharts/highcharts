@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-06-16)
+ * @license Highstock JS v4.2.5-modified (2016-06-17)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20355,7 +20355,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-06-16)
+     * Highstock JS v4.2.5-modified (2016-06-17)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23479,7 +23479,7 @@
             scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
             // If the scrollbar is scrolled all the way to the right, keep right as new data 
             // comes in.
-            scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
+            scroller.stickToMax = Math.round(scroller.zoomedMax) >= Math.round(scroller.navigatorWidth);
 
             // Set the navigator series data to the new data of the base series
             if (navigatorSeries && !scroller.hasNavigatorData) {

@@ -916,7 +916,7 @@ Navigator.prototype = {
 		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
 		// If the scrollbar is scrolled all the way to the right, keep right as new data 
 		// comes in.
-		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
+		scroller.stickToMax = Math.round(scroller.zoomedMax) >= Math.round(scroller.navigatorWidth);
 
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !scroller.hasNavigatorData) {
