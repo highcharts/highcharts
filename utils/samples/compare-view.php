@@ -657,18 +657,19 @@
 
 					}
 				} else {
-					if (leftVersion === rightVersion) {
-						console.log("Warning: Left and right versions are equal.");
-					}
-
 					report += '<div>Left version: '+ leftVersion +'; right version: '+
 						(rightcommit ? '<a href="http://github.com/highcharts/highcharts/commit/' + rightcommit + '" target="_blank">' +
 							rightcommit + '</a>' : rightVersion) +
 						'</div>';
 
-					report += identical ?
-						'<div>The innerHTML is identical</div>' :
-						'<div>The innerHTML is different, testing generated SVG...</div>';
+					if (identical) {
+						report += '<div>The innerHTML is identical</div>';
+						if (leftVersion === rightVersion) {
+							report += "<div style='color: red; font-weight: bold'>Warning: Left and right versions are identical.</div>";
+						}
+					} else {
+						report += '<div>The innerHTML is different, testing generated SVG...</div>';
+					}
 
 					$('#report').html(report)
 						.css('background', identical ? "#a4edba" : '#f15c80');
