@@ -193,8 +193,7 @@ extend(Chart.prototype, {
 			},
 			optionsChart = options.chart,
 			updateAllAxes,
-			updateAllSeries,
-			collections;
+			updateAllSeries;
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
@@ -271,7 +270,7 @@ extend(Chart.prototype, {
 				each(splat(options[coll]), function (newOptions) {
 					var item = (defined(newOptions.id) && this.get(newOptions.id)) || this[coll][0];
 					if (item && item.coll === coll) {
-						item.update(newOptions);
+						item.update(newOptions, false);
 					}
 				}, this);
 			}

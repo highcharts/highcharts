@@ -1,4 +1,4 @@
-@import 'http://code.highcharts.local/css/highcharts.css';
+@import 'https://code.highcharts.com/5/css/highcharts.css';
 
 #container {
 	height: 400px;
@@ -13,8 +13,8 @@
     stroke: black;
 }
 
-.highcharts-series-0,
-.highcharts-series-1 {
+.highcharts-series-0 .highcharts-point,
+.highcharts-series-1 .highcharts-point {
     fill: black;
 }
 

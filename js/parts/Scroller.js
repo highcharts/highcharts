@@ -194,7 +194,7 @@ Navigator.prototype = {
 
 		// Place it
 		handles[index][scroller.rendered ? 'animate' : 'attr']({
-			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
+			translateX: scroller.scrollerLeft + scroller.scrollbar.size + parseInt(x, 10),
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
 	},
@@ -222,8 +222,8 @@ Navigator.prototype = {
 			height = scroller.height,
 			top = scroller.top,
 			navigatorEnabled = scroller.navigatorEnabled,
-			outlineWidth = navigatorOptions.outlineWidth,
-			halfOutline = outlineWidth / 2,
+			outlineWidth,
+			halfOutline,
 			zoomedMin,
 			zoomedMax,
 			outlineHeight = scroller.outlineHeight,
@@ -312,6 +312,9 @@ Navigator.prototype = {
 
 		// place elements
 		verb = rendered ? 'animate' : 'attr';
+		outlineWidth = scroller.outline.strokeWidth();
+		halfOutline = outlineWidth / 2;
+		outlineTop = top + halfOutline;
 		if (navigatorEnabled) {
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {
 				x: navigatorLeft + zoomedMin,

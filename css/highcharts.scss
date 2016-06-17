@@ -309,8 +309,7 @@ g.highcharts-series, .highcharts-point {
 
 /* Plot bands and polar pane backgrounds */
 .highcharts-plot-band {
-    fill: black;
-    fill-opacity: 0.05; 
+    fill: rgba(0, 0, 0, 0.05);
 }
 .highcharts-plot-line {
     fill: none;
@@ -390,7 +389,7 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-scrollbar-thumb {
     fill: #bfc8d1;
-    stroke: #bfc8d1;
+    stroke: #bbb;
     stroke-width: 1px;
 }
 .highcharts-scrollbar-button {
@@ -460,6 +459,9 @@ input.highcharts-range-selector {
 .highcharts-crosshair-label text {
     fill: white;
     font-size: 1.1em;
+}
+.highcharts-crosshair-label .highcharts-label-box {
+    fill: inherit;
 }
 
 

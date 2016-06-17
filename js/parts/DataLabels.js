@@ -167,7 +167,6 @@ Series.prototype.drawDataLabels = function () {
 						'data-label'
 					)
 					.attr(attr)
-					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup);
 
 					if (options.className) { // docs
@@ -175,7 +174,8 @@ Series.prototype.drawDataLabels = function () {
 					}
 
 					/*= if (build.classic) { =*/
-					dataLabel.shadow(options.shadow);
+					dataLabel.css(extend(style, moreStyle))
+						.shadow(options.shadow);
 					/*= } =*/
 
 				}
