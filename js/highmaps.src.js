@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-06-17)
+ * @license Highmaps JS v4.2.5-modified (2016-06-18)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -340,13 +340,16 @@
              * If shifting points, prepend a dummy point to the end path. 
              */
             function prepend(arr) {
-                arr[0] = bezier ? 'C' : 'L';
                 while (arr.length < fullLength) {
 
+                    // Prepend a copy of the first point
                     insertSlice(arr, arr.slice(0, numParams), 0);
+
+                    arr[0] = bezier ? 'C' : 'L';
+            
             
                     // For areas, the bottom path goes back again to the left, so we need
-                    // to append the last point.
+                    // to append a copy of the last point.
                     if (isArea) {
                         insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
                     }
@@ -387,7 +390,8 @@
                 sixify(end);
             }
 
-            // Find out how much we need to shift to get the start path Xs to match the end path Xs.
+            // For sideways animation, find out how much we need to shift to get the start path Xs
+            // to match the end path Xs.
             if (startX && endX) {
                 for (i = 0; i < startX.length; i++) {
                     if (startX[i] === endX[0]) { // Moving left, new points coming in on right
