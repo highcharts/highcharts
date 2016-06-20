@@ -484,13 +484,18 @@ Chart.prototype = {
 					'class': 'highcharts-' + name,
 					zIndex: chartTitleOptions.zIndex || 4
 				})
-				.css(chartTitleOptions.style)
 				.add();
 
 				// Update methods, shortcut to Chart.setTitle // docs. Sample created
 				chart[name].update = function (o) {
 					chart.setTitle(!i && o, i && o);
 				};
+
+				/*= if (build.classic) { =*/
+				// Presentational
+				chart[name].css(chartTitleOptions.style);
+				/*= } =*/
+				
 			}
 		});
 		chart.layOutTitles(redraw);
