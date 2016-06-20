@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-06-18)
+ * @license Highstock JS v4.2.5-modified (2016-06-20)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20359,7 +20359,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-06-18)
+     * Highstock JS v4.2.5-modified (2016-06-20)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23418,7 +23418,7 @@
                     xAxis.min = unionExtremes.dataMin;
                     xAxis.max = unionExtremes.dataMax;
                 }
-            }            
+            }
         },
 
         /**
@@ -23488,7 +23488,7 @@
             // Set the navigator series data to the new data of the base series
             if (navigatorSeries && !scroller.hasNavigatorData) {
                 navigatorSeries.options.pointStart = baseSeries.xData[0];
-                navigatorSeries.setData(baseSeries.options.data, false);
+                navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
 
                 // When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
                 // cases of updating data (addPoint, update, removePoint) directly so that this operation 

@@ -851,7 +851,7 @@ Navigator.prototype = {
 				xAxis.min = unionExtremes.dataMin;
 				xAxis.max = unionExtremes.dataMax;
 			}
-		}				
+		}
 	},
 
 	/**
@@ -921,7 +921,7 @@ Navigator.prototype = {
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !scroller.hasNavigatorData) {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
-			navigatorSeries.setData(baseSeries.options.data, false);
+			navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
 
 			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
 			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
