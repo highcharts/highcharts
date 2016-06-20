@@ -61,15 +61,16 @@ TrackerMixin = H.TrackerMixin = {
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) {
 							pointer.onTrackerMouseOut(e);
-						})
-						.css(css);
+						});
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
 
 					/*= if (build.classic) { =*/
 					if (series.options.cursor) {
-						series[key].css({ cursor: series.options.cursor });
+						series[key]
+							.css(css)
+							.css({ cursor: series.options.cursor });
 					}
 					/*= } =*/
 				}
