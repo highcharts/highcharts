@@ -118,42 +118,43 @@ function assemble(assemblies) {
  * @return undefined
  */
 gulp.task('build', function () {
-    var argv = require('yargs').argv,
+    let build = require('./build').build,
+        argv = require('yargs').argv,
         files = (argv.file) ? [argv.file] : undefined,
         DS = '\\\\[^\\\\]', // Regex: Single directory seperator
         folders = {
             'parts': 'parts' + DS + '+\.js$',
             'parts-more': 'parts-more' + DS + '+\.js$'
         };
-        require('./build.js')({
-            base: './js/masters/',
-            excludes: {
-                'modules/annotations.js': new RegExp(folders['parts']),
-                'modules/boost.js': new RegExp(folders['parts']),
-                'modules/broken-axis.js': new RegExp(folders['parts']),
-                'modules/canvasrenderer.experimental.js': new RegExp(folders['parts']),
-                'modules/canvgrenderer-extended.js': new RegExp(folders['parts']),
-                'modules/data.js': new RegExp(folders['parts']),
-                'modules/drilldown.js': new RegExp(folders['parts']),
-                'modules/exporting-old-look.js': new RegExp(folders['parts']),
-                'modules/exporting.js': new RegExp(folders['parts']),
-                'modules/funnel.js': new RegExp(folders['parts']),
-                'modules/heatmap.js': new RegExp(folders['parts']),
-                'modules/map.js': new RegExp(folders['parts']),
-                'modules/map-parser.js': new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
-                'modules/no-data-to-display.js': new RegExp(folders['parts']),
-                'modules/offline-exporting.js': new RegExp(folders['parts']),
-                'modules/overlapping-datalabels.js': new RegExp(folders['parts']),
-                'modules/series-label.js': new RegExp(folders['parts']),
-                'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
-                'modules/treemap.js': new RegExp(folders['parts']),
-                'highcharts-more.js': new RegExp(folders['parts']),
-                'highcharts-3d.js': new RegExp(folders['parts'])
-            },
-            files: files,
-            output: './code/'
-        });
-    return;
+
+    build({
+        base: './js/masters/',
+        excludes: {
+            'modules/annotations.js': new RegExp(folders['parts']),
+            'modules/boost.js': new RegExp(folders['parts']),
+            'modules/broken-axis.js': new RegExp(folders['parts']),
+            'modules/canvasrenderer.experimental.js': new RegExp(folders['parts']),
+            'modules/canvgrenderer-extended.js': new RegExp(folders['parts']),
+            'modules/data.js': new RegExp(folders['parts']),
+            'modules/drilldown.js': new RegExp(folders['parts']),
+            'modules/exporting-old-look.js': new RegExp(folders['parts']),
+            'modules/exporting.js': new RegExp(folders['parts']),
+            'modules/funnel.js': new RegExp(folders['parts']),
+            'modules/heatmap.js': new RegExp(folders['parts']),
+            'modules/map.js': new RegExp(folders['parts']),
+            'modules/map-parser.js': new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
+            'modules/no-data-to-display.js': new RegExp(folders['parts']),
+            'modules/offline-exporting.js': new RegExp(folders['parts']),
+            'modules/overlapping-datalabels.js': new RegExp(folders['parts']),
+            'modules/series-label.js': new RegExp(folders['parts']),
+            'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
+            'modules/treemap.js': new RegExp(folders['parts']),
+            'highcharts-more.js': new RegExp(folders['parts']),
+            'highcharts-3d.js': new RegExp(folders['parts'])
+        },
+        files: files,
+        output: './code/'
+    });
 });
 
     /*
