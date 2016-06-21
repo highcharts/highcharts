@@ -121,7 +121,7 @@ gulp.task('build', function () {
     let build = require('./build').build,
         argv = require('yargs').argv,
         files = (argv.file) ? [argv.file] : undefined,
-        DS = '\\\\[^\\\\]', // Regex: Single directory seperator
+        DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
         folders = {
             'parts': 'parts' + DS + '+\.js$',
             'parts-more': 'parts-more' + DS + '+\.js$'

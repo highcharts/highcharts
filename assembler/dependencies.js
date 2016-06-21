@@ -135,14 +135,22 @@ const getImports = (dependencies, exported) => {
  * @param  {[string]} arr      Dependencies array
  * @return {string}       	The module content after transformation
  */
-const moduleTransform = (path, content, imported, r, i, arr) => {
+const moduleTransform = (content, options) => {
+	let path = options.path;
+	let imported = options.imported;
+	let r = options.exported;
+	let i = options.i;
+	let arr = options.arr;
+	let exclude = options.exclude;
 	let params = imported.map(m => m[0]).join(', ');
 	let mParams = imported.map(m => m[1]).join(', ');
 	// Remove import statements
 	// @todo Add imported variables to the function arguments. Reuse getImports for this
 	content = content.replace(/import\s[^\n]+\n/g, '')
 		.replace(exportExp, ''); // Remove exports statements
-	if (i === arr.length - 1) {
+	if (getMatch(path, exclude) !== null) {
+		content = '';
+	} else if (i === arr.length - 1) {
 		// @notice Do not remove line below. It is for when we have more advanced master files.
 		// content = (r ? 'return = ' : '') + '(function () {' + LE + content + (r ? LE + 'return ' + r + ';': '') + LE + '}());';
 		content = (r ? 'return ' + r : '');
@@ -178,13 +186,19 @@ const compileFile = options => {
 	let imported = getImports(dependencies, exported);
 	let mapTransform = (path, i, arr) => {
 		let content = getContents(path);
-		let ex = exported.find(val => val[0] === path)[1];
-		let im = imported.find(val => val[0] === path)[1];
-		return moduleTransform(path, content, im, ex, i, arr);
+		let moduleOptions = Object.assign(options, {
+			path: path,
+			imported: imported.find(val => val[0] === path)[1],
+			exported: exported.find(val => val[0] === path)[1],
+			i: i,
+			arr: arr
+		});
+		return moduleTransform(content, moduleOptions);
 	}
 	let modules = dependencies
 		.reverse()
 		.map(mapTransform)
+		.filter(m => m !== '')
 		.join(LE);
 	return fileTransform(modules, options)
 };
