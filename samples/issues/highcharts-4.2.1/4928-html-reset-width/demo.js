@@ -50,4 +50,40 @@ $(function () {
         );
 
     });
+
+
+    QUnit.test('Auto rotated labels with useHTML', function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                width: 310
+            },
+
+            xAxis: {
+                categories: ['Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo Foo ', 'Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar Bar ', 'a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a '],
+
+                labels: {
+                    useHTML: true
+                }
+            },
+
+            series: [{
+                data: [29.9, 71.5, 106.4]
+            }]
+        });
+
+        var labelLength = chart.xAxis[0].ticks[0].label.element.offsetWidth;
+        assert.ok(
+            labelLength > 20,
+            'Label has length'
+        );
+
+        chart.setSize(300, 400, false);
+
+        assert.ok(
+            chart.plotHeight > 100,
+            'Plot height is ok'
+        );
+
+    });
 });
