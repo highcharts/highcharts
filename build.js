@@ -50,7 +50,7 @@ const build = userOptions=> {
     if (options.base) {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         options.files.forEach(function (filename) {
-            let fileOptions = Object.assign(options, options.fileOptions[filename]);
+            let fileOptions = Object.assign(options, options.fileOptions && options.fileOptions[filename]);
             fileOptions.entry = fileOptions.base + filename;
             delete fileOptions.fileOptions;
         	let compiled = d.compileFile(fileOptions);

@@ -131,67 +131,88 @@ gulp.task('build', function () {
         base: './js/masters/',
         fileOptions: {
             'modules/annotations.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/boost.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/broken-axis.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/canvasrenderer.experimental.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/canvgrenderer-extended.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/data.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/drilldown.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/exporting-old-look.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/exporting.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/funnel.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/heatmap.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/map.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/map-parser.js': {
-                exclude: new RegExp([folders['parts'], 'data\.src\.js$'].join('|'))
+                exclude: new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
+                umd: false
             },
             'modules/no-data-to-display.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/offline-exporting.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/overlapping-datalabels.js': {
                 exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/series-label.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'modules/solid-gauge.js': {
-                exclude: new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|'))
+                exclude: new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
+                umd: false
             },
             'modules/treemap.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'highcharts-more.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             },
             'highcharts-3d.js': {
-                exclude: new RegExp(folders['parts'])
+                exclude: new RegExp(folders['parts']),
+                umd: false
             }
         },
         files: files,

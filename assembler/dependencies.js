@@ -74,7 +74,18 @@ const applyUMD = content => {
 	].join(LE);
 };
 
-const applyModule = content => '(function () {' + LE + content + LE + '}());';
+const applyModule = content => {
+	return ['(function (factory) {',
+		'if (typeof module === \'object\' && module.exports) {',
+		'module.exports = factory;',
+		'} else {',
+		'factory(Highcharts);',
+		'}',
+		'}(function (Highcharts) {',
+		content,
+		'}));'
+	].join(LE);
+};
 
 /**
  * List of names for the exported variable per module.
