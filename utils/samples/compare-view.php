@@ -520,8 +520,8 @@
 								}
 								diff /= dividend;
 
-								if (diff < 0.005) {
-									diff = 0;
+								if (diff > 0 && diff < 0.005) {
+									diff = 0.01;
 								}
 								return diff;
 							}
