@@ -30,7 +30,9 @@ let defaultOptions = {
     base: undefined, // Path to where the build files are located
     excludes: {},
     files: undefined, // Array of files to compile
-    output: './' // Folder to output compiled files
+    output: './', // Folder to output compiled files
+    pretty: true,
+    umd: true
 };
 
 /**
