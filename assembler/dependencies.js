@@ -124,7 +124,7 @@ const getImports = (dependencies, exported) => {
  * @param  {[string]} arr      Dependencies array
  * @return {string}       	The module content after transformation
  */
-const transform = (path, content, imported, r, i, arr) => {
+const moduleTransform = (path, content, imported, r, i, arr) => {
 	let params = imported.map(m => m[0]).join(', ');
 	let mParams = imported.map(m => m[1]).join(', ');
 	// Remove import statements
@@ -142,10 +142,26 @@ const transform = (path, content, imported, r, i, arr) => {
 	return content;
 };
 
+/**
+ * Apply transformation to the compiled file content.
+ * @param  {string} content Content of file
+ * @param  {object} options fileOptions
+ * @return {string}         Content of file after transformation
+ */
+const fileTransform = (content, options) => {
+	let pretty = options.pretty;
+	let umd = options.umd;
+	let result = umd ? applyUMD(content) : applyModule(content);
+	if (pretty) {
+		const beautify = require('js-beautify').js_beautify;
+		result = beautify(result);
+	}
+	return result;
+};
+
 const compileFile = options => {
 	let entry = options.entry;
 	let umd = options.umd;
-	let pretty = options.pretty;
 	let dependencies = getOrderedDependencies(entry, '', []);
 	let exported = getExports(dependencies);
 	let imported = getImports(dependencies, exported);
@@ -153,18 +169,13 @@ const compileFile = options => {
 		let content = getContents(path);
 		let ex = exported.find(val => val[0] === path)[1];
 		let im = imported.find(val => val[0] === path)[1];
-		return transform(path, content, im, ex, i, arr);
+		return moduleTransform(path, content, im, ex, i, arr);
 	}
 	let modules = dependencies
 		.reverse()
 		.map(mapTransform)
 		.join(LE);
-	let result = umd ? applyUMD(modules) : applyModule(modules);
-	if (pretty) {
-		const beautify = require('js-beautify').js_beautify;
-		result = beautify(result);
-	}
-	return result;
+	return fileTransform(modules, options)
 };
 
 module.exports = {
