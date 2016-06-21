@@ -28,7 +28,8 @@ const getFilesInFolder = (base, includeSubfolders, path) => {
 
 let defaultOptions = {
     base: undefined, // Path to where the build files are located
-    excludes: {},
+    exclude: {},
+    fileOptions: {},
     files: undefined, // Array of files to compile
     output: './', // Folder to output compiled files
     pretty: true,
@@ -49,7 +50,10 @@ const build = userOptions=> {
     if (options.base) {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         options.files.forEach(function (filename) {
-        	let compiled = d.compileFile(options.base + filename, options.umd, options.pretty);
+            let fileOptions = Object.assign(options, options.fileOptions[filename]);
+            fileOptions.entry = fileOptions.base + filename;
+            delete fileOptions.fileOptions;
+        	let compiled = d.compileFile(fileOptions);
 			fs.writeFileSync(options.output + filename, compiled, 'utf8');
 
         //     // compileFile(options.base, options.output, filename, options.excludes[filename], options.wrapper);

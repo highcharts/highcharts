@@ -142,7 +142,10 @@ const transform = (path, content, imported, r, i, arr) => {
 	return content;
 };
 
-const compileFile = (entry, umd, pretty) => {
+const compileFile = options => {
+	let entry = options.entry;
+	let umd = options.umd;
+	let pretty = options.pretty;
 	let dependencies = getOrderedDependencies(entry, '', []);
 	let exported = getExports(dependencies);
 	let imported = getImports(dependencies, exported);

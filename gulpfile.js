@@ -129,28 +129,70 @@ gulp.task('build', function () {
 
     build({
         base: './js/masters/',
-        excludes: {
-            'modules/annotations.js': new RegExp(folders['parts']),
-            'modules/boost.js': new RegExp(folders['parts']),
-            'modules/broken-axis.js': new RegExp(folders['parts']),
-            'modules/canvasrenderer.experimental.js': new RegExp(folders['parts']),
-            'modules/canvgrenderer-extended.js': new RegExp(folders['parts']),
-            'modules/data.js': new RegExp(folders['parts']),
-            'modules/drilldown.js': new RegExp(folders['parts']),
-            'modules/exporting-old-look.js': new RegExp(folders['parts']),
-            'modules/exporting.js': new RegExp(folders['parts']),
-            'modules/funnel.js': new RegExp(folders['parts']),
-            'modules/heatmap.js': new RegExp(folders['parts']),
-            'modules/map.js': new RegExp(folders['parts']),
-            'modules/map-parser.js': new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
-            'modules/no-data-to-display.js': new RegExp(folders['parts']),
-            'modules/offline-exporting.js': new RegExp(folders['parts']),
-            'modules/overlapping-datalabels.js': new RegExp(folders['parts']),
-            'modules/series-label.js': new RegExp(folders['parts']),
-            'modules/solid-gauge.js': new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
-            'modules/treemap.js': new RegExp(folders['parts']),
-            'highcharts-more.js': new RegExp(folders['parts']),
-            'highcharts-3d.js': new RegExp(folders['parts'])
+        fileOptions: {
+            'modules/annotations.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/boost.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/broken-axis.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/canvasrenderer.experimental.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/canvgrenderer-extended.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/data.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/drilldown.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/exporting-old-look.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/exporting.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/funnel.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/heatmap.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/map.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/map-parser.js': {
+                exclude: new RegExp([folders['parts'], 'data\.src\.js$'].join('|'))
+            },
+            'modules/no-data-to-display.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/offline-exporting.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/overlapping-datalabels.js': {
+                exclude: new RegExp(folders['parts']),
+            },
+            'modules/series-label.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'modules/solid-gauge.js': {
+                exclude: new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|'))
+            },
+            'modules/treemap.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'highcharts-more.js': {
+                exclude: new RegExp(folders['parts'])
+            },
+            'highcharts-3d.js': {
+                exclude: new RegExp(folders['parts'])
+            }
         },
         files: files,
         output: './code/'
