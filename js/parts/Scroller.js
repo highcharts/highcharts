@@ -409,7 +409,7 @@ Navigator.prototype = {
 
 		// Data events
 		if (this.series) {
-			addEvent(this.series.xAxis, 'foundExtremes', function () {
+			addEvent(this.series[0].xAxis, 'foundExtremes', function () {
 				chart.scroller.modifyNavigatorAxisExtremes();
 			});
 		}
@@ -418,7 +418,7 @@ Navigator.prototype = {
 			var scroller = this.scroller,
 				xAxis;
 			if (scroller && scroller.baseSeries) {
-				xAxis = scroller.baseSeries.xAxis;
+				xAxis = scroller.baseSeries[0].xAxis;
 				if (xAxis) {
 					scroller.render(xAxis.min, xAxis.max);
 				}
@@ -521,7 +521,7 @@ Navigator.prototype = {
 					dragOffset = chartX - zoomedMin;
 
 				// shift the range by clicking on shaded areas
-				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {					
+				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
 					left = chartX - navigatorLeft - range / 2;
 					if (left < 0) {
 						left = 0;
@@ -661,8 +661,8 @@ Navigator.prototype = {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
-				breaks: baseSeries && baseSeries.xAxis.options.breaks,
-				ordinal: baseSeries && baseSeries.xAxis.options.ordinal
+				breaks: baseSeries && baseSeries[0].xAxis.options.breaks,
+				ordinal: baseSeries && baseSeries[0].xAxis.options.ordinal
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,
@@ -745,18 +745,19 @@ Navigator.prototype = {
 
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.
-		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
+		if (baseSeries && baseSeries[0].xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
 			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 
-			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
-				if (baseSeries.xAxis) {
+			addEvent(baseSeries[0].xAxis, 'foundExtremes', function () {
+				if (baseSeries[0].xAxis) {
 					this.chart.scroller.modifyBaseAxisExtremes();
 				}
 			});
-		
-			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
+			// Survive Series.update()
+			each(baseSeries, function (series) {
+				series.userOptions.events = extend(series.userOptions.event, { updatedData: this.updatedDataHandler });
+			});
 		}
 
 
@@ -834,19 +835,25 @@ Navigator.prototype = {
 	 * this an API method to be called from the outside
 	 */
 	setBaseSeries: function (baseSeriesOption) {
-		var chart = this.chart;
+		var chart = this.chart,
+			baseSeries = this.baseSeries = [];
 
-		baseSeriesOption = baseSeriesOption || chart.options.navigator.baseSeries;
+		baseSeriesOption = baseSeriesOption || chart.options.navigator.baseSeries || 0;
 
 		// If we're resetting, remove the existing series
 		if (this.series) {
-			this.series.remove();
+			each(this.series, function (series) {
+				series.remove();
+			});
 		}
 
-		// Set the new base series
-		this.baseSeries = chart.series[baseSeriesOption] ||
-			(typeof baseSeriesOption === 'string' && chart.get(baseSeriesOption)) ||
-			chart.series[0];
+		// Iterate through series and add the ones that should be shown in navigator
+		each(chart.series, function (series, i) {
+			if (series.options.showInNavigator || (i === baseSeriesOption || series.options.id === baseSeriesOption) &&
+					series.options.showInNavigator !== false) {
+				baseSeries.push(series);
+			}
+		});
 
 		// When run after render, this.xAxis already exists
 		if (this.xAxis) {
@@ -855,37 +862,50 @@ Navigator.prototype = {
 	},
 
 	addBaseSeries: function () {
-		var baseSeries = this.baseSeries,
-			baseOptions = baseSeries ? baseSeries.options : {},
-			baseData = baseOptions.data,
+		var navigator = this,
+			chart = navigator.chart,
+			navigatorSeries = navigator.series = [],
+			baseSeries = navigator.baseSeries,
+			baseOptions,
 			mergedNavSeriesOptions,
-			navigatorSeriesOptions = this.navigatorOptions.series,
-			navigatorData;
+			chartNavigatorOptions = navigator.navigatorOptions.series,
+			baseNavigatorOptions,
+			navSeriesMixin = {
+				enableMouseTracking: false,
+				group: 'nav', // for columns
+				padXAxis: false,
+				xAxis: 'navigator-x-axis',
+				yAxis: 'navigator-y-axis',
+				showInLegend: false,
+				stacking: false, // #4823
+				isInternal: true,
+				visible: true
+			};
 
-		// remove it to prevent merging one by one
-		navigatorData = navigatorSeriesOptions.data;
-		this.hasNavigatorData = !!navigatorData;
+		// Go through each base series and merge the options to create new series
+		if (baseSeries) {
+			each(baseSeries, function (base, i) {
+				navSeriesMixin.name = 'Navigator ' + (i + 1);
 
-		// Merge the series options
-		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-			enableMouseTracking: false,
-			group: 'nav', // for columns
-			padXAxis: false,
-			xAxis: 'navigator-x-axis',
-			yAxis: 'navigator-y-axis',
-			name: 'Navigator',
-			showInLegend: false,
-			stacking: false, // We only allow one series anyway (#4823)
-			isInternal: true,
-			visible: true
-		});
+				baseOptions = base.options || {};
+				baseNavigatorOptions = baseOptions.navigatorOptions || {};
+				mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, chartNavigatorOptions, baseNavigatorOptions);
 
-		// Set the data. Do a slice to avoid mutating the navigator options from base series (#4923).
-		mergedNavSeriesOptions.data = navigatorData || baseData.slice(0);
+				// Merge data separately. Do a slice to avoid mutating the navigator options from base series (#4923).
+				var navigatorSeriesData = baseNavigatorOptions.data || chartNavigatorOptions.data;
+				navigator.hasNavigatorData = navigator.hasNavigatorData || !!navigatorSeriesData;
+				mergedNavSeriesOptions.data = navigatorSeriesData || baseOptions.data && baseOptions.data.slice(0);
 
-		// Add the series
-		this.series = this.chart.initSeries(mergedNavSeriesOptions);
-
+				// Add the series
+				navigatorSeries.push(chart.initSeries(mergedNavSeriesOptions));
+			});
+		} else {
+			// No base series, build from mixin and chart wide options
+			mergedNavSeriesOptions = merge(chartNavigatorOptions, navSeriesMixin);
+			mergedNavSeriesOptions.data = chartNavigatorOptions.data;
+			navigator.hasNavigatorData = !!mergedNavSeriesOptions.data;
+			navigatorSeries.push(chart.initSeries(mergedNavSeriesOptions));
+		}
 	},
 
 	/**
@@ -904,7 +924,7 @@ Navigator.prototype = {
 				xAxis.min = unionExtremes.dataMin;
 				xAxis.max = unionExtremes.dataMax;
 			}
-		}				
+		}
 	},
 
 	/**
@@ -912,7 +932,7 @@ Navigator.prototype = {
 	 */
 	modifyBaseAxisExtremes: function () {
 		var baseSeries = this.baseSeries,
-			baseXAxis = baseSeries.xAxis,
+			baseXAxis = baseSeries[0].xAxis,
 			baseExtremes = baseXAxis.getExtremes(),
 			baseMin = baseExtremes.min,
 			baseMax = baseExtremes.max,
@@ -956,18 +976,18 @@ Navigator.prototype = {
 
 	/**
 	 * Handler for updated data on the base series. When data is modified, the navigator series
-	 * must reflect it. This is called from the Chart.redraw function before axis and series 
+	 * must reflect it. This is called from the Chart.redraw function before axis and series
 	 * extremes are computed.
 	 */
 	updatedDataHandler: function () {
 		var scroller = this.chart.scroller,
-			baseSeries = scroller.baseSeries,
+			baseSeries = scroller.baseSeries[0],
 			navigatorSeries = scroller.series;
 
 		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
 		// axis minimum falls outside the new updated dataset, we must adjust.
 		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
-		// If the scrollbar is scrolled all the way to the right, keep right as new data 
+		// If the scrollbar is scrolled all the way to the right, keep right as new data
 		// comes in.
 		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
 
@@ -977,7 +997,7 @@ Navigator.prototype = {
 			navigatorSeries.setData(baseSeries.options.data, false);
 
 			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
-			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
+			// cases of updating data (addPoint, update, removePoint) directly so that this operation
 			// on the base series reflects directly on the navigator series.
 			if (navigatorSeries.graph && baseSeries.graph) {
 				navigatorSeries.graph.shift = baseSeries.graph.shift;
