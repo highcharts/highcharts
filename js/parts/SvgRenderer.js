@@ -538,7 +538,6 @@ SVGElement.prototype = {
 					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 				}
 				attr(elem, 'style', serializedCss); // #1881
-				if (serializedCss === '') debugger;
 			}
 
 
