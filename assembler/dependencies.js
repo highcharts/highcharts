@@ -38,7 +38,7 @@ const folder = path => {
 
 const getOrderedDependencies = (file, parent, dependencies) => {
 	let	filePath = cleanPath(folder(parent) + file),
-		content = fs.readFileSync(filePath, 'utf8'),
+		content = getContents(filePath),
 		imports = getFileImports(content);
 	if (parent === '') {
 		dependencies.unshift(filePath);
