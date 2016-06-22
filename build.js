@@ -1,6 +1,6 @@
 'use strict';
-let d = require('./assembler/dependencies'),
-	fs = require('fs');
+const d = require('./assembler/dependencies');
+const fs = require('fs');
 /**
  * [getFilesInFolder description]
  * @param  {[type]} base              [description]
@@ -9,7 +9,6 @@ let d = require('./assembler/dependencies'),
  * @return {[type]}                   [description]
  */
 const getFilesInFolder = (base, includeSubfolders, path) => {
-    const fs = require('fs');
     let filenames = [],
         filepath,
         isDirectory;
