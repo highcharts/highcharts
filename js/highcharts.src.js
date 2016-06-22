@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-21)
+ * @license Highcharts JS v4.2.5-modified (2016-06-22)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -305,7 +305,6 @@
         initPath: function (elem, fromD, toD) {
             fromD = fromD || '';
             var shift,
-                shiftUnit = elem.shiftUnit || 1,
                 startX = elem.startX,
                 endX = elem.endX,
                 bezier = fromD.indexOf('C') > -1,
@@ -342,13 +341,12 @@
              * If shifting points, prepend a dummy point to the end path. 
              */
             function prepend(arr) {
+
+                arr[0] = bezier ? 'C' : 'L';
                 while (arr.length < fullLength) {
 
                     // Prepend a copy of the first point
                     insertSlice(arr, arr.slice(0, numParams), 0);
-
-                    arr[0] = bezier ? 'C' : 'L';
-            
             
                     // For areas, the bottom path goes back again to the left, so we need
                     // to append a copy of the last point.
@@ -397,10 +395,10 @@
             if (startX && endX) {
                 for (i = 0; i < startX.length; i++) {
                     if (startX[i] === endX[0]) { // Moving left, new points coming in on right
-                        shift = i * shiftUnit;
+                        shift = i;
                         break;
                     } else if (startX[0] === endX[endX.length - startX.length + i]) { // Moving right
-                        shift = i * shiftUnit;
+                        shift = i;
                         reverse = true;
                         break;
                     }
@@ -410,7 +408,7 @@
                 }
             }
 
-            if (start.length && shift) {
+            if (start.length && isNumber(shift)) {
 
                 // The common target length for the start and end array, where both 
                 // arrays are padded in opposite ends
@@ -15068,6 +15066,7 @@
                 step = options.step,
                 reversed,
                 graphPath = [],
+                xMap = [],
                 gap;
 
             points = points || series.points;
@@ -15093,7 +15092,7 @@
 
                 var plotX = point.plotX,
                     plotY = point.plotY,
-                    lastPoint = points[i - 1],                
+                    lastPoint = points[i - 1],
                     pathToPoint; // the path to this point from the previous
 
                 if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
@@ -15154,12 +15153,18 @@
                         ];
                     }
 
+                    // Prepare for animation. When step is enabled, there are two path nodes for each x value.
+                    xMap.push(point.x);
+                    if (step) {
+                        xMap.push(point.x);
+                    }
 
                     graphPath.push.apply(graphPath, pathToPoint);
                     gap = false;
                 }
             });
 
+            graphPath.xMap = xMap;
             series.graphPath = graphPath;
 
             return graphPath;
@@ -15176,8 +15181,7 @@
                 lineWidth = options.lineWidth,
                 roundCap = options.linecap !== 'square',
                 graphPath = (this.gappedPath || this.getGraphPath).call(this),
-                zones = this.zones,
-                xDataForAnimation = series.animXData || series.processedXData.slice(0);
+                zones = this.zones;
 
             each(zones, function (threshold, i) {
                 props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
@@ -15190,7 +15194,7 @@
                     attribs;
 
                 if (graph) {
-                    graph.endX = xDataForAnimation;
+                    graph.endX = graphPath.xMap;
                     graph.animate({ d: graphPath });
 
                 } else if (lineWidth && graphPath.length) { // #1487
@@ -15214,8 +15218,8 @@
 
                 // Helpers for animation
                 if (graph) {
-                    graph.startX = xDataForAnimation;
-                    graph.shiftUnit = options.step ? 2 : 1;
+                    graph.startX = graphPath.xMap;
+                    //graph.shiftUnit = options.step ? 2 : 1;
                     graph.isArea = graphPath.isArea; // For arearange animation
                 }
             });
@@ -16838,6 +16842,7 @@
             areaPath = topPath.concat(bottomPath);
             graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
 
+            areaPath.xMap = topPath.xMap;
             this.areaPath = areaPath;
             return graphPath;
         },
@@ -16860,8 +16865,7 @@
                 areaPath = this.areaPath,
                 options = this.options,
                 zones = this.zones,
-                props = [['area', this.color, options.fillColor]], // area name, main color, fill color
-                xDataForAnimation = series.animXData || series.processedXData.slice(0);
+                props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 
             each(zones, function (threshold, i) {
                 props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
@@ -16873,7 +16877,7 @@
 
                 // Create or update the area
                 if (area) { // update
-                    area.endX = xDataForAnimation;
+                    area.endX = areaPath.xMap;
                     area.animate({ d: areaPath });
 
                 } else { // create
@@ -16889,7 +16893,7 @@
                         .add(series.group);
                     area.isArea = true;
                 }
-                area.startX = xDataForAnimation;
+                area.startX = areaPath.xMap;
                 area.shiftUnit = options.step ? 2 : 1;
             });
         },

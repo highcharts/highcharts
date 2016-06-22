@@ -177,7 +177,6 @@ Fx.prototype = {
 	initPath: function (elem, fromD, toD) {
 		fromD = fromD || '';
 		var shift,
-			shiftUnit = elem.shiftUnit || 1,
 			startX = elem.startX,
 			endX = elem.endX,
 			bezier = fromD.indexOf('C') > -1,
@@ -214,13 +213,12 @@ Fx.prototype = {
 		 * If shifting points, prepend a dummy point to the end path. 
 		 */
 		function prepend(arr) {
+
+			arr[0] = bezier ? 'C' : 'L';
 			while (arr.length < fullLength) {
 
 				// Prepend a copy of the first point
-				insertSlice(arr, arr.slice(0, numParams), 0);
-
-				arr[0] = bezier ? 'C' : 'L';
-			
+				insertSlice(arr, arr.slice(0, numParams), 0);	
 			
 				// For areas, the bottom path goes back again to the left, so we need
 				// to append a copy of the last point.
@@ -269,10 +267,10 @@ Fx.prototype = {
 		if (startX && endX) {
 			for (i = 0; i < startX.length; i++) {
 				if (startX[i] === endX[0]) { // Moving left, new points coming in on right
-					shift = i * shiftUnit;
+					shift = i;
 					break;
 				} else if (startX[0] === endX[endX.length - startX.length + i]) { // Moving right
-					shift = i * shiftUnit;
+					shift = i;
 					reverse = true;
 					break;
 				}
@@ -282,7 +280,7 @@ Fx.prototype = {
 			}
 		}
 
-		if (start.length && shift) {
+		if (start.length && isNumber(shift)) {
 
 			// The common target length for the start and end array, where both 
 			// arrays are padded in opposite ends

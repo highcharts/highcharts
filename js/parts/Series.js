@@ -1295,6 +1295,7 @@ Series.prototype = {
 			step = options.step,
 			reversed,
 			graphPath = [],
+			xMap = [],
 			gap;
 
 		points = points || series.points;
@@ -1320,7 +1321,7 @@ Series.prototype = {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint = points[i - 1],					
+				lastPoint = points[i - 1],
 				pathToPoint; // the path to this point from the previous
 
 			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
@@ -1381,12 +1382,18 @@ Series.prototype = {
 					];
 				}
 
+				// Prepare for animation. When step is enabled, there are two path nodes for each x value.
+				xMap.push(point.x);
+				if (step) {
+					xMap.push(point.x);
+				}
 
 				graphPath.push.apply(graphPath, pathToPoint);
 				gap = false;
 			}
 		});
 
+		graphPath.xMap = xMap;
 		series.graphPath = graphPath;
 
 		return graphPath;
@@ -1403,8 +1410,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			zones = this.zones,
-			xDataForAnimation = series.animXData || series.processedXData.slice(0);
+			zones = this.zones;
 
 		each(zones, function (threshold, i) {
 			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
@@ -1417,7 +1423,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				graph.endX = xDataForAnimation;
+				graph.endX = graphPath.xMap;
 				graph.animate({ d: graphPath });
 
 			} else if (lineWidth && graphPath.length) { // #1487
@@ -1441,8 +1447,8 @@ Series.prototype = {
 
 			// Helpers for animation
 			if (graph) {
-				graph.startX = xDataForAnimation;
-				graph.shiftUnit = options.step ? 2 : 1;
+				graph.startX = graphPath.xMap;
+				//graph.shiftUnit = options.step ? 2 : 1;
 				graph.isArea = graphPath.isArea; // For arearange animation
 			}
 		});

@@ -155,9 +155,14 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			higherAreaPath[0] = 'L'; // this probably doesn't work for spline			
 		}
 
-		linePath.isArea = true; // For animation
 		this.graphPath = linePath;
 		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+
+		// Prepare for sideways animation
+		linePath.isArea = true;
+		linePath.xMap = lowerPath.xMap;
+		this.areaPath.xMap = lowerPath.xMap;
+
 		return linePath;
 	},
 
