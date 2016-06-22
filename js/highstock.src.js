@@ -318,7 +318,10 @@
                 positionFactor = isArea ? 2 : 1,
                 reverse;
         
-            function sixify(arr) { // in splines make move points have six parameters like bezier curves
+            /**
+             * In splines make move points have six parameters like bezier curves
+             */
+            function sixify(arr) {
                 i = arr.length;
                 while (i--) {
                     if (arr[i] === M || arr[i] === L) {
@@ -340,18 +343,20 @@
             /**
              * If shifting points, prepend a dummy point to the end path. 
              */
-            function prepend(arr) {
-
-                arr[0] = bezier ? 'C' : 'L';
+            function prepend(arr, other) {
                 while (arr.length < fullLength) {
+                
+                    // Move to, line to or curve to?
+                    arr[0] = other[fullLength - arr.length];
 
                     // Prepend a copy of the first point
                     insertSlice(arr, arr.slice(0, numParams), 0);
-            
+
                     // For areas, the bottom path goes back again to the left, so we need
                     // to append a copy of the last point.
                     if (isArea) {
                         insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
+                        i--;
                     }
                 }
                 arr[0] = 'M';
@@ -360,8 +365,9 @@
             /**
              * Copy and append last point until the length matches the end length
              */
-            function append(arr) {
-                while (arr.length < fullLength) {
+            function append(arr, other) {
+                var i = (fullLength - arr.length) / numParams;
+                while (i > 0 && i--) {
 
                     // Pull out the slice that is going to be appended or inserted. In a line graph,
                     // the positionFactor is 1, and the last point is sliced out. In an area graph,
@@ -372,6 +378,9 @@
                         (arr.length / positionFactor) - numParams, 
                         numParams * positionFactor
                     );
+
+                    // Move to, line to or curve to?
+                    slice[0] = other[fullLength - numParams - (i * numParams)];
                 
                     // Disable first control point
                     if (bezier) {
@@ -382,6 +391,9 @@
                     // Now insert the slice, either in the middle (for areas) or at the end (for lines)
                     insertSlice(arr, slice, arr.length / positionFactor);
 
+                    if (isArea) {
+                        i--;
+                    }
                 }
             }
 
@@ -408,18 +420,18 @@
                 }
             }
 
-            if (start.length && isNumber(shift)) {
+            if (start.length && Highcharts.isNumber(shift)) {
 
                 // The common target length for the start and end array, where both 
                 // arrays are padded in opposite ends
-                fullLength = end.length + shift * (isArea ? 2 : 1) * numParams;
+                fullLength = end.length + shift * positionFactor * numParams;
             
                 if (!reverse) {
-                    prepend(end);
-                    append(start);
+                    prepend(end, start);
+                    append(start, end);
                 } else {
-                    prepend(start);
-                    append(end);
+                    prepend(start, end);
+                    append(end, start);
                 }
             }
 
