@@ -3,16 +3,27 @@ const fs = require('fs'),
 	LE = '\n';
 let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/;
 
-const getMatch = (str, regex) => {
-	let m = str.match(regex);
-	return m && m[1];
-};
+/**
+ * Test if theres is a match between 
+ * @param  {RegExp} regex The regex to test for
+ * @param  {string} str   The string to test against
+ * @return {bool}       Returns true if a match is found, false if no match or bad arguments provided.
+ */
+const regexTest = (regex, str) => (regex instanceof RegExp) && regex.test(str);
+
+/**
+ * Get the result from the first capture group of a regex execution.
+ * @param  {RegExp} regex The regex to execute
+ * @param  {string} str   The string to match against
+ * @return {string|undefined}       The result from the capture group or undefined
+ */
+const regexGetCapture = (regex, str) => regexTest(regex, str) ? regex.exec(str)[1] : undefined;
 
 const getFileImports = content => {
 	const importExp = /import\s[^;\n]+[\n;]+/g;
 	return (content.match(importExp) || []).map((line, i) => {
-		let path = getMatch(line, /['"]([^']+)['"]/),
-			variable = getMatch(line, /import (.+) from/);
+		let path = regexGetCapture(/['"]([^']+)['"]/, line),
+			variable = regexGetCapture(/import (.+) from/, line);
 		return [path, variable]
 	});
 };
@@ -95,7 +106,7 @@ const applyModule = content => {
 const getExports = dependencies => {
 	return dependencies.map(d => {
 		let content = getContents(d),
-			exported = getMatch(content, exportExp);
+			exported = regexGetCapture(exportExp, content);
 		return [d, exported];
 	});
 };
@@ -148,7 +159,7 @@ const moduleTransform = (content, options) => {
 	// @todo Add imported variables to the function arguments. Reuse getImports for this
 	content = content.replace(/import\s[^\n]+\n/g, '')
 		.replace(exportExp, ''); // Remove exports statements
-	if (getMatch(path, exclude) !== null) {
+	if (regexTest(exclude, path)) {
 		content = '';
 	} else if (i === arr.length - 1) {
 		// @notice Do not remove line below. It is for when we have more advanced master files.
@@ -204,6 +215,6 @@ const compileFile = options => {
 };
 
 module.exports = {
-	getMatch: getMatch,
+	regexGetCapture: regexGetCapture,
 	compileFile: compileFile
 };

@@ -27,7 +27,7 @@ const getFilesInFolder = (base, includeSubfolders, path) => {
 
 let defaultOptions = {
     base: undefined, // Path to where the build files are located
-    exclude: {},
+    exclude: undefined,
     fileOptions: {},
     files: undefined, // Array of files to compile
     output: './', // Folder to output compiled files
