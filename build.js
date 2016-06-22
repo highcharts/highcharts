@@ -14,7 +14,7 @@ const getFilesInFolder = (base, includeSubfolders, path) => {
         filepath,
         isDirectory;
         path = (typeof path === 'undefined') ? '' : path;
-        fs.readdirSync(base + path).forEach(function (filename) {
+        fs.readdirSync(base + path).forEach((filename) => {
             filepath = base + path + filename;
             isDirectory = fs.lstatSync(filepath).isDirectory();
             if (isDirectory && includeSubfolders) {
@@ -49,12 +49,13 @@ const build = userOptions=> {
     // Check if required options are set
     if (options.base) {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
-        options.files.forEach(function (filename) {
+        options.files.forEach((filename, i, arr) => {
             let fileOptions = Object.assign(options, options.fileOptions && options.fileOptions[filename]);
             fileOptions.entry = fileOptions.base + filename;
             delete fileOptions.fileOptions;
         	let compiled = d.compileFile(fileOptions);
 			fs.writeFileSync(options.output + filename, compiled, 'utf8');
+            console.log((i + 1) + ' of ' + arr.length + '. Finished building: ' + filename)
 
         //     // compileFile(options.base, options.output, filename, options.excludes[filename], options.wrapper);
         //     compileFile(options.base , options.output, filename, options.excludes[filename], options.wrapper);
