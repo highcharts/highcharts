@@ -231,8 +231,8 @@ import '../parts/Pointer.js';
 		// Connect the path
 		if (this.chart.polar) {
 			points = points || this.points;
-	
-			if (this.options.connectEnds !== false && points[0].y !== null) {
+
+			if (this.options.connectEnds !== false && points[0] && points[0].y !== null) {
 				this.connectEnds = true; // re-used in splines
 				points.splice(points.length, 0, points[0]);
 			}
@@ -320,6 +320,24 @@ import '../parts/Pointer.js';
 	if (seriesTypes.column) {
 
 		colProto = seriesTypes.column.prototype;
+
+		colProto.polarArc = function (low, high, start, end) {
+			var center = this.xAxis.center,
+				len = this.yAxis.len;
+				
+			return this.chart.renderer.symbols.arc(
+				center[0],
+				center[1],
+				len - high,
+				null,
+				{
+					start: start,
+					end: end,
+					innerR: len - pick(low, len)
+				}
+			);
+		};
+
 		/**
 		* Define the animate method for columnseries
 		*/
@@ -332,10 +350,7 @@ import '../parts/Pointer.js';
 		wrap(colProto, 'translate', function (proceed) {
 
 			var xAxis = this.xAxis,
-				len = this.yAxis.len,
-				center = xAxis.center,
 				startAngleRad = xAxis.startAngleRad,
-				renderer = this.chart.renderer,
 				start,
 				points,
 				point,
@@ -355,22 +370,12 @@ import '../parts/Pointer.js';
 					start = point.barX + startAngleRad;
 					point.shapeType = 'path';
 					point.shapeArgs = {
-						d: renderer.symbols.arc(
-							center[0],
-							center[1],
-							len - point.plotY,
-							null,
-							{
-								start: start,
-								end: start + point.pointWidth,
-								innerR: len - pick(point.yBottom, len)
-							}
-						)
+						d: this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
 					};
 					// Provide correct plotX, plotY for tooltip
 					this.toXY(point);
 					point.tooltipPos = [point.plotX, point.plotY];
-					point.ttBelow = point.plotY > center[1];
+					point.ttBelow = point.plotY > xAxis.center[1];
 				}
 			}
 		});

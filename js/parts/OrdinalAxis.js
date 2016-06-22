@@ -512,7 +512,7 @@ extend(Axis.prototype, {
 
 			// Sort them and find the median
 			distances.sort(function (a, b) {
-					return a - b;
+				return a - b;
 			});
 			median = distances[Math.floor(len / 2)];
 
@@ -651,7 +651,6 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
  */
 Series.prototype.gappedPath = function () {
 	var gapSize = this.options.gapSize,
-		xAxis = this.xAxis,
 		points = this.points.slice(),
 		i = points.length - 1;
 
@@ -659,7 +658,7 @@ Series.prototype.gappedPath = function () {
 
 		// extension for ordinal breaks
 		while (i--) {
-			if (points[i + 1].x - points[i].x > xAxis.closestPointRange * gapSize) {
+			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
 				points.splice( // insert after this one
 					i + 1,
 					0,

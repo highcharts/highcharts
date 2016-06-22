@@ -560,7 +560,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(extend(this.getStyle(style), { position: 'relative' }));
+			.css({ position: 'relative' });
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -1023,8 +1023,8 @@ VMLRendererExtension = { // inherit SVGRenderer
 				ret.push(
 					'e',
 					'M',
-					x,// - innerRadius,
-					y// - innerRadius
+					x, // - innerRadius,
+					y // - innerRadius
 				);
 			}
 

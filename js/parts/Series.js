@@ -9,6 +9,7 @@ import './SvgRenderer.js';
 		animObject = H.animObject,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
+		correctFloat = H.correctFloat,
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
 		defaultPlotOptions = H.defaultPlotOptions,
@@ -67,6 +68,7 @@ H.Series.prototype = {
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
+	coll: 'series',
 	init: function (chart, options) {
 		var series = this,
 			eventType,
@@ -189,7 +191,7 @@ H.Series.prototype = {
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
 			args = arguments,
-			fn = typeof i === 'number' ?
+			fn = isNumber(i) ?
 				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
@@ -220,11 +222,16 @@ H.Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
+		if (pointIntervalUnit) {
 			date = new Date(xIncrement);
-			date = (pointIntervalUnit === 'month') ?
-				+date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval) :
-				+date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
+
+			if (pointIntervalUnit === 'day') {
+				date = +date[Date.hcSetDate](date[Date.hcGetDate]() + pointInterval);
+			} else if (pointIntervalUnit === 'month') {
+				date = +date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval);
+			} else if (pointIntervalUnit === 'year') {
+				date = +date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
+			}
 			pointInterval = date - xIncrement;
 
 		}
@@ -662,6 +669,7 @@ H.Series.prototype = {
 			} else {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -704,7 +712,7 @@ H.Series.prototype = {
 			i,
 			j;
 
-		yData = yData || this.stackedYData || this.processedYData;
+		yData = yData || this.stackedYData || this.processedYData || [];
 		yDataLength = yData.length;
 
 		for (i = 0; i < yDataLength; i++) {
@@ -782,8 +790,9 @@ H.Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = plotX = Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
-
+			point.plotX = plotX = correctFloat( // #5236
+				Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+			);
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
@@ -793,7 +802,7 @@ H.Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === stackThreshold) {
+				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -820,7 +829,7 @@ H.Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = !point.isNull ?
+			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				undefined;
 			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
@@ -851,14 +860,13 @@ H.Series.prototype = {
 	/**
 	 * Return the series points with null points filtered out
 	 */
-	getValidPoints: function (points, cropByX) {
-		var axisLen = this.xAxis && this.xAxis.len;
-		return grep(points || this.points || [], function (point) { // #5029
-			var keep = !point.isNull;
-			if (cropByX && (point.plotX < 0 || point.plotX > axisLen)) { // #5085
-				keep = false;
+	getValidPoints: function (points, insideOnly) {
+		var chart = this.chart;
+		return grep(points || this.points || [], function isValidPoint(point) { // #3916, #5029
+			if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) { // #5085
+				return false;
 			}
-			return keep;
+			return !point.isNull;
 		});
 	},
 
@@ -1009,8 +1017,8 @@ H.Series.prototype = {
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
-				// Only draw the point if y is defined
-				if (enabled && plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+				// only draw the point if y is defined
+				if (enabled && isNumber(plotY) && point.y !== null) {
 
 					// Shortcuts
 					radius = seriesMarkerOptions.radius;
@@ -1019,7 +1027,7 @@ H.Series.prototype = {
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
-							.attr(pointAttr) // #4759
+							//.attr(pointAttr) // #4759
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -1125,7 +1133,7 @@ H.Series.prototype = {
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
-			if (axis) {
+			if (axis && axis.series) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
 			}
@@ -1463,7 +1471,7 @@ H.Series.prototype = {
 	/**
 	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
-	invertGroups: function () {
+	invertGroups: function (inverted) {
 		var series = this,
 			chart = series.chart;
 
@@ -1481,7 +1489,7 @@ H.Series.prototype = {
 
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
-					series[groupName].attr(size).invert();
+					series[groupName].attr(size).invert(inverted);
 				}
 			});
 		}
@@ -1492,7 +1500,7 @@ H.Series.prototype = {
 		});
 
 		// Do it now
-		setInvert(); // do it now
+		setInvert(inverted); // do it now
 
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
@@ -1510,7 +1518,7 @@ H.Series.prototype = {
 		if (isNew) {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
-					zIndex: zIndex || 0.1 // IE8 needs this
+					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
 
@@ -1558,7 +1566,8 @@ H.Series.prototype = {
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
-			chartSeriesGroup = chart.seriesGroup;
+			chartSeriesGroup = chart.seriesGroup,
+			inverted = chart.inverted;
 
 		// the group
 		group = series.plotGroup(
@@ -1583,7 +1592,7 @@ H.Series.prototype = {
 		}
 
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
-		group.inverted = series.isCartesian ? chart.inverted : false;
+		group.inverted = series.isCartesian ? inverted : false;
 
 		// draw the graph if any
 		if (series.drawGraph) {
@@ -1614,9 +1623,7 @@ H.Series.prototype = {
 		}
 
 		// Handle inverted series and tracker groups
-		if (chart.inverted) {
-			series.invertGroups();
-		}
+		series.invertGroups(inverted);
 
 		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
@@ -1647,8 +1654,7 @@ H.Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
-			wasDirty = series.isDirty,
+			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1670,11 +1676,8 @@ H.Series.prototype = {
 
 		series.translate();
 		series.render();
-		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
-		}
-		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
+		if (wasDirty) { // #3868, #3945
+			delete this.kdTree;
 		}
 	},
 
@@ -1703,7 +1706,9 @@ H.Series.prototype = {
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
-			var axis, median, length = points && points.length;
+			var axis,
+				median,
+				length = points && points.length;
 
 			if (length) {
 
@@ -1729,7 +1734,14 @@ H.Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.getValidPoints(null, true), dimensions, dimensions);
+			series.kdTree = _kdtree(
+				series.getValidPoints(
+					null,
+					!series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+				),
+				dimensions,
+				dimensions
+			);
 		}
 		delete series.kdTree;
 

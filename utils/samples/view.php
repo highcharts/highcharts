@@ -11,7 +11,7 @@ require_once('functions.php');
 if (isset($_GET['styled'])) {
 	$_SESSION['styled'] = $_GET['styled'] == 'true' ? true : false;
 }
-$styled = $_SESSION['styled'];
+$styled = @$_SESSION['styled'];
 
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	header('Location: start.php');
@@ -42,11 +42,24 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 } else {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
+
+// Highchart 5 preview
+$html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $html);
+
+
+// Get CSS and use dev server
+ob_start();
+@include("$fullpath/demo.css");
+$css = ob_get_clean();
+$css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
+
+// Highchart 5 preview
+$css = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $css);
 if ($styled) {
 	$html = str_replace("code.highcharts.$topDomain/js/", "code.highcharts.$topDomain/", $html); // some to classic
 	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
+	$css = "@import 'http://code.highcharts.$topDomain/css/highcharts.css';";
 }
-
 
 
 // Handle themes
@@ -98,10 +111,6 @@ function getResources() {
 				$run = true;
 			}
 		}
-	}
-
-	if ($styled) {
-		$html .= "<link type='text/css' rel='stylesheet' href='http://code.highcharts.$topDomain/css/highcharts.css' />\n";
 	}
 
 
@@ -326,12 +335,41 @@ function getResources() {
 		});
 		<?php endif ?>
 
+		<?php if ($styled) { ?>
+		$(function () {
+			var warnedAboutColors = false;
+			function warnAboutColors () {
+				if (!warnedAboutColors) {
+					console.info('This sample uses getOtions.colors, which is ignored in Styled mode.');
+					warnedAboutColors = true;
+				}
+
+				return undefined;
+			}
+			Highcharts.wrap(Highcharts, 'getOptions', function (proceed) {
+				var options = proceed.call(Highcharts);
+				if (!options.colors) {
+					options.colors = [];
+					for (var i = 0; i < 10; i++) {
+						options.colors = {
+							get 0 () { warnAboutColors(); },
+							get 1 () { warnAboutColors(); },
+							get 2 () { warnAboutColors(); },
+							get 3 () { warnAboutColors(); }
+						};
+					}
+				}
+				return options;
+			});
+		});
+		<?php } ?>
+		
 
 		<?php @include("$fullpath/demo.js"); ?>
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>
@@ -409,7 +447,7 @@ ob_start();
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>

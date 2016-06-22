@@ -82,6 +82,39 @@ H.defaultOptions = {
 			// relativeTo: 'plot'
 		}
 	},
+	/*= if (!build.classic) { =*/
+	defs: { // docs
+		dropShadow: { // used by tooltip
+			tag: 'filter',
+			id: 'drop-shadow',
+			opacity: 0.5,
+			children: [{
+				tag: 'feGaussianBlur',
+				in: 'SourceAlpha',
+				stdDeviation: 1
+			}, {
+				tag: 'feOffset',
+				dx: 1,
+				dy: 1
+			}, {
+				tag: 'feComponentTransfer',
+				children: [{
+					tag: 'feFuncA',
+					type: 'linear',
+					slope: 0.3
+				}]
+			}, {
+				tag: 'feMerge',
+				children: [{
+					tag: 'feMergeNode'
+				}, {
+					tag: 'feMergeNode',
+					in: 'SourceGraphic'
+				}]
+			}]
+		}
+	},
+	/*= } =*/
 	title: {
 		text: 'Chart title',
 		align: 'center',
@@ -94,8 +127,9 @@ H.defaultOptions = {
 		style: {
 			color: '#333333',
 			fontSize: '18px'
-		}
+		},
 		/*= } =*/
+		widthAdjust: -44
 
 	},
 	subtitle: {
@@ -108,8 +142,9 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			color: '#555555'
-		}
+		},
 		/*= } =*/
+		widthAdjust: -44
 	},
 
 	plotOptions: {

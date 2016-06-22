@@ -194,7 +194,9 @@ extend(Pointer.prototype, {
 	 * General touch handler shared by touchstart and touchmove.
 	 */
 	touch: function (e, start) {
-		var chart = this.chart;
+		var chart = this.chart,
+			hasMoved,
+			pinchDown;
 
 		H.hoverChartIndex = chart.index;
 
@@ -209,7 +211,22 @@ extend(Pointer.prototype, {
 					this.runPointActions(e);
 				}
 
-				this.pinch(e);
+				// Android fires touchmove events after the touchstart even if the
+				// finger hasn't moved, or moved only a pixel or two. In iOS however,
+				// the touchmove doesn't fire unless the finger moves more than ~4px.
+				// So we emulate this behaviour in Android by checking how much it
+				// moved, and cancelling on small distances. #3450.
+				if (e.type === 'touchmove') {
+					pinchDown = this.pinchDown;
+					hasMoved = pinchDown[0] ? Math.sqrt( // #5266
+						Math.pow(pinchDown[0].chartX - e.chartX, 2) +
+						Math.pow(pinchDown[0].chartY - e.chartY, 2)
+					) >= 4 : false;
+				}
+
+				if (pick(hasMoved, true)) {
+					this.pinch(e);
+				}
 
 			} else if (start) {
 				// Hide the tooltip on touching outside the plot area (#1203)
@@ -222,6 +239,7 @@ extend(Pointer.prototype, {
 	},
 
 	onContainerTouchStart: function (e) {
+		this.zoomOption();
 		this.touch(e, true);
 	},
 

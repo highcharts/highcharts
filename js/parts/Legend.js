@@ -31,41 +31,52 @@ Legend.prototype = {
 	 */
 	init: function (chart, options) {
 
-		var legend = this,
-			/*= if (build.classic) { =*/
-			itemStyle = legend.itemStyle = options.itemStyle,
-			/*= } =*/
-			padding,
-			itemMarginTop = options.itemMarginTop || 0;
+		this.chart = chart;
+		
+		this.setOptions(options);
+		
+		if (options.enabled) {
+		
+			// Render it
+			this.render();
+
+			// move checkboxes
+			addEvent(this.chart, 'endResize', function () {
+				this.legend.positionCheckboxes();
+			});
+		}
+	},
+
+	setOptions: function (options) {
+
+		var padding = pick(options.padding, 8);
 
 		this.options = options;
-
-		if (!options.enabled) {
-			return;
-		}
 	
 		/*= if (build.classic) { =*/
-		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		this.itemStyle = options.itemStyle;
+		this.itemHiddenStyle = merge(this.itemStyle, options.itemHiddenStyle);
 		/*= } =*/
-		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding = pick(options.padding, 8);
-		legend.initialItemX = padding;
-		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
-		legend.maxItemWidth = 0;
-		legend.chart = chart;
-		legend.itemHeight = 0;
-		legend.symbolWidth = pick(options.symbolWidth, 16);
-		legend.pages = [];
+		this.itemMarginTop = options.itemMarginTop || 0;
+		this.padding = padding;
+		this.initialItemX = padding;
+		this.initialItemY = padding - 5; // 5 is the number of pixels above the text
+		this.maxItemWidth = 0;
+		this.itemHeight = 0;
+		this.symbolWidth = pick(options.symbolWidth, 16);
+		this.pages = [];
 
+	},
 
-		// Render it
-		legend.render();
+	update: function (options, redraw) { // docs. Sample created.
+		var chart = this.chart;
 
-		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () {
-			legend.positionCheckboxes();
-		});
-
+		this.setOptions(merge(true, this.options, options));
+		this.destroy();
+		chart.isDirtyLegend = chart.isDirtyBox = true;
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
 	},
 
 	/**
@@ -172,6 +183,15 @@ Legend.prototype = {
 		if (box) {
 			legend.box = box.destroy();
 		}
+
+		// Destroy items
+		each(this.getAllItems(), function (item) {
+			each(['legendItem', 'legendGroup'], function (key) {
+				if (item[key]) {
+					item[key] = item[key].destroy();
+				}
+			});
+		});
 
 		if (legendGroup) {
 			legend.group = legendGroup.destroy();
@@ -391,20 +411,19 @@ Legend.prototype = {
 	getAllItems: function () {
 		var allItems = [];
 		each(this.chart.series, function (series) {
-			var seriesOptions = series.options;
+			var seriesOptions = series && series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
-				return;
+			if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+				
+				// Use points or series for the legend item depending on legendType
+				allItems = allItems.concat(
+						series.legendItems ||
+						(seriesOptions.legendType === 'point' ?
+								series.data :
+								series)
+				);
 			}
-
-			// use points or series for the legend item depending on legendType
-			allItems = allItems.concat(
-					series.legendItems ||
-					(seriesOptions.legendType === 'point' ?
-							series.data :
-							series)
-			);
 		});
 		return allItems;
 	},
@@ -420,7 +439,7 @@ Legend.prototype = {
 			// Use the first letter of each alignment option in order to detect the side
 			alignment = options.align.charAt(0) + options.verticalAlign.charAt(0) + options.layout.charAt(0); // #4189 - use charAt(x) notation instead of [x] for IE7
 
-		if (this.display && !options.floating) {
+		if (!options.floating) {
 
 			each([
 				/(lth|ct|rth)/,
@@ -458,8 +477,7 @@ Legend.prototype = {
 			legendHeight,
 			box = legend.box,
 			options = legend.options,
-			padding = legend.padding,
-			borderWidth;
+			padding = legend.padding;
 
 		legend.itemX = legend.initialItemX;
 		legend.itemY = legend.initialItemY;
@@ -623,7 +641,7 @@ Legend.prototype = {
 
 		// Reset the legend height and adjust the clipping rectangle
 		pages.length = 0;
-		if (legendHeight > spaceHeight && navOptions.enabled !== false) { // docs: enabled. Added to API, marked "next"
+		if (legendHeight > spaceHeight && navOptions.enabled !== false) {
 
 			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
 			this.currentPage = pick(this.currentPage, 1);

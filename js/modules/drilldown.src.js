@@ -359,6 +359,9 @@ import '../parts/Tick.js';
 			}
 		}
 
+		// Fire a once-off event after all series have been drilled up (#5158)
+		fireEvent(chart, 'drillupall');
+
 		this.redraw();
 
 		if (this.drilldownLevels.length === 0) {
@@ -556,7 +559,7 @@ import '../parts/Tick.js';
 		});
 	}
 	
-	H.Point.prototype.doDrilldown = function (_holdRedraw, category) {
+	H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
 		var series = this.series,
 			chart = series.chart,
 			drilldown = chart.options.drilldown,
@@ -580,29 +583,34 @@ import '../parts/Tick.js';
 			point: this,
 			seriesOptions: seriesOptions,
 			category: category,
+			originalEvent: originalEvent,
 			points: category !== undefined && this.series.xAxis.ddPoints[category].slice(0)
+		}, function (e) {
+			var chart = e.point.series && e.point.series.chart,
+				seriesOptions = e.seriesOptions;
+			if (chart && seriesOptions) {
+				if (_holdRedraw) {
+					chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
+				} else {
+					chart.addSeriesAsDrilldown(e.point, seriesOptions);
+				}
+			}
 		});
 		
-		if (seriesOptions) {
-			if (_holdRedraw) {
-				chart.addSingleSeriesAsDrilldown(this, seriesOptions);
-			} else {
-				chart.addSeriesAsDrilldown(this, seriesOptions);
-			}
-		}
+
 	};
 
 	/**
 	 * Drill down to a given category. This is the same as clicking on an axis label.
 	 */
-	H.Axis.prototype.drilldownCategory = function (x) {
+	H.Axis.prototype.drilldownCategory = function (x, e) {
 		var key,
 			point,
 			ddPointsX = this.ddPoints[x];
 		for (key in ddPointsX) {
 			point = ddPointsX[key];
 			if (point && point.series && point.series.visible && point.doDrilldown) { // #3197
-				point.doDrilldown(true, x);
+				point.doDrilldown(true, x, e);
 			}
 		}
 		this.chart.applyDrilldown();
@@ -642,15 +650,15 @@ import '../parts/Tick.js';
 			if (!label.basicStyles) {
 				label.basicStyles = H.merge(label.styles);
 			}
-			/*= } =*/
+			/*= } =*/
 
 			label
 				.addClass('highcharts-drilldown-axis-label')
 				/*= if (build.classic) { =*/
 				.css(axis.chart.options.drilldown.activeAxisLabelStyle)
 				/*= } =*/
-				.on('click', function () {
-					axis.drilldownCategory(pos);
+				.on('click', function (e) {
+					axis.drilldownCategory(pos, e);
 				});
 
 		} else if (label && label.drillable) {
@@ -687,11 +695,11 @@ import '../parts/Tick.js';
 		if (point.drilldown) {
 			
 			// Add the click event to the point 
-			H.addEvent(point, 'click', function () {
+			H.addEvent(point, 'click', function (e) {
 				if (series.xAxis && series.chart.options.drilldown.allowPointDrilldown === false) {
-					series.xAxis.drilldownCategory(x);
+					series.xAxis.drilldownCategory(x, e);
 				} else {
-					point.doDrilldown();
+					point.doDrilldown(undefined, undefined, e);
 				}
 			});
 			/*wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work

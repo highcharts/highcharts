@@ -18,6 +18,7 @@ import '../parts-more/GaugeSeries.js';
 		pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
+		isNumber = H.isNumber,
 		colorAxisMethods;
 
 	// The default options
@@ -187,7 +188,7 @@ import '../parts-more/GaugeSeries.js';
 				options = series.options,
 				renderer = series.chart.renderer,
 				overshoot = options.overshoot,
-				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
+				overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
 
 			each(series.points, function (point) {
 				var graphic = point.graphic,
@@ -200,8 +201,7 @@ import '../parts-more/GaugeSeries.js';
 					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
 					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
 					minAngle,
-					maxAngle,
-					attribs;
+					maxAngle;
 
 				if (toColor === 'none') { // #3708
 					toColor = point.color || series.color || 'none';
@@ -262,7 +262,7 @@ import '../parts-more/GaugeSeries.js';
 						stroke: options.borderColor || 'none',
 						'stroke-width': options.borderWidth || 0
 					});
-					/*= } =*/
+					/*= } =*/
 				}
 			});
 		},

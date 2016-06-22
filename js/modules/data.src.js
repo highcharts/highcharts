@@ -18,6 +18,7 @@ import '../parts/Chart.js';
 		each = Highcharts.each,
 		pick = Highcharts.pick,
 		inArray = Highcharts.inArray,
+		isNumber = Highcharts.isNumber,
 		splat = Highcharts.splat,
 		SeriesBuilder;
 	
@@ -322,6 +323,16 @@ import '../parts/Chart.js';
 								columns[gc - startColumn][gr - startRow] = cell.content.$t;
 							}
 						}
+
+						// Insert null for empty spreadsheet cells (#5298)
+						each(columns, function (column) {
+							for (i = 0; i < column.length; i++) {
+								if (column[i] === undefined) {
+									column[i] = null;
+								}
+							}
+						});
+
 						self.dataFound();
 					}
 				});
@@ -420,7 +431,7 @@ import '../parts/Chart.js';
 				} else {
 					dateVal = this.parseDate(val);
 					// Only allow parsing of dates if this column is an x-column
-					if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal) && columnType !== 'float') { // is date
+					if (isXColumn && isNumber(dateVal) && columnType !== 'float') { // is date
 						backup[row] = val; 
 						column[row] = dateVal;
 						column.isDatetime = true;
@@ -553,7 +564,7 @@ import '../parts/Chart.js';
 						ret = match.getTime() - match.getTimezoneOffset() * 60000;
 					
 					// Timestamp
-					} else if (typeof match === 'number' && !isNaN(match)) {
+					} else if (isNumber(match)) {
 						ret = match - (new Date(match)).getTimezoneOffset() * 60000;
 					}
 				}

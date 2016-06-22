@@ -3,6 +3,7 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 import '../parts/VmlRenderer.js';
+/*= if (build.classic) { =*/
 (function () {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
@@ -49,3 +50,4 @@ if (VMLRenderer) {
 
 }
 }());
+/*= } =*/

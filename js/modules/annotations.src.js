@@ -69,7 +69,7 @@ import '../parts/Chart.js';
 			i = 0;
 
 		while (i < len) {
-			if (typeof d[i] === 'number' && typeof d[i + 1] === 'number') {
+			if (isNumber(d[i]) && isNumber(d[i + 1])) {
 				d[i] = xAxis.toPixels(d[i]) - xOffset;
 				d[i + 1] = yAxis.toPixels(d[i + 1]) - yOffset;
 				i += 2;
@@ -184,7 +184,7 @@ import '../parts/Chart.js';
 			x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) - xAxis.minPixelPadding : options.x);
 			y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
 
-			if (isNaN(x) || isNaN(y) || !isNumber(x) || !isNumber(y)) {
+			if (!isNumber(x) || !isNumber(y)) {
 				return;
 			}
 
@@ -258,7 +258,7 @@ import '../parts/Chart.js';
 			x = x - width * anchorX;
 			y = y - height * anchorY;
 
-			if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			if (defined(group.translateX) && defined(group.translateY)) {
 				group.animate({
 					translateX: x,
 					translateY: y

@@ -12,6 +12,7 @@ import './Options.js';
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
@@ -199,7 +200,7 @@ seriesTypes.column = extendClass(Series, {
 		h = bottom - y;
 
 		// Top edges are exceptions
-		if (fromTop) {
+		if (fromTop && h) { // #5146
 			y -= 1;
 			h += 1;
 		}
@@ -367,7 +368,7 @@ seriesTypes.column = extendClass(Series, {
 			var plotY = point.plotY,
 				graphic = point.graphic;
 
-			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				if (graphic) { // update
@@ -427,7 +428,7 @@ seriesTypes.column = extendClass(Series, {
 					// Do the scale synchronously to ensure smooth updating (#5030)
 					step: function (val, fx) {
 						series.group.attr({
-							scaleY: fx.pos
+							scaleY: Math.max(0.001, fx.pos) // #5250
 						});
 					}
 				}));

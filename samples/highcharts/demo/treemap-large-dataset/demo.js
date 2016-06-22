@@ -934,6 +934,7 @@ $(function () {
             type: 'treemap',
             layoutAlgorithm: 'squarified',
             allowDrillToNode: true,
+            animationLimit: 1000,
             dataLabels: {
                 enabled: false
             },

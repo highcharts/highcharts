@@ -19,7 +19,8 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
 		getWebkitTouches = function () {
-			var key, fake = [];
+			var key,
+				fake = [];
 			fake.item = function (i) {
 				return this[i];
 			};

@@ -133,6 +133,7 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 	}
 });
 
+/*= if (build.classic) { =*/
 function pointAttribs(proceed) {
 	var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -149,6 +150,7 @@ wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
 }
+/*= } =*/
 
 function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
@@ -214,7 +216,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
 		depth = cylOptions.depth || 0,
-		alpha = options3d.alpha;
+		alpha = chart.alpha3d;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;

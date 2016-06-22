@@ -9,6 +9,7 @@ import './Utilities.js';
 		fireEvent = H.fireEvent,
 		format = H.format,
 		isArray = H.isArray,
+		isNumber = H.isNumber,
 		pick = H.pick,
 		removeEvent = H.removeEvent;
 
@@ -75,7 +76,7 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
-		point.isNull = point.y === null;
+		point.isNull = point.x === null || point.y === null;
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -99,7 +100,7 @@ Point.prototype = {
 			i = 0,
 			j = 0;
 
-		if (typeof options === 'number' || options === null) {
+		if (isNumber(options) || options === null) {
 			ret[pointArrayMap[0]] = options;
 
 		} else if (isArray(options)) {

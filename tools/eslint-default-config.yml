@@ -1,5 +1,5 @@
 # Copied from https://github.com/eslint/eslint/blob/master/packages/eslint-config-eslint/default.yml
-# Updated 2016-04-04
+# Updated 2015-04-06
 
 extends:
     "eslint:recommended"

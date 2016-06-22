@@ -15,10 +15,10 @@ $(function () {
             endAngle: 150,
             background: [{
                 className: 'outer-pane',
-                outerRadius: '109%'
+                outerRadius: '115%'
             }, {
                 className: 'middle-pane',
-                outerRadius: '107%'
+                outerRadius: '112%'
             }, {
                 // default background
             }, {
@@ -34,16 +34,12 @@ $(function () {
             max: 200,
 
             minorTickInterval: 'auto',
-            minorTickWidth: 1,
             minorTickLength: 10,
             minorTickPosition: 'inside',
-            minorTickColor: '#666',
 
             tickPixelInterval: 30,
-            tickWidth: 2,
             tickPosition: 'inside',
             tickLength: 10,
-            tickColor: '#666',
             labels: {
                 step: 2,
                 rotation: 'auto'

@@ -2,70 +2,22 @@ $(function () {
 
     // Prepare random data
     var data = [
-        {
-            "code": "DE.SH",
-            "value": 728
-        },
-        {
-            "code": "DE.BE",
-            "value": 710
-        },
-        {
-            "code": "DE.MV",
-            "value": 963
-        },
-        {
-            "code": "DE.HB",
-            "value": 541
-        },
-        {
-            "code": "DE.HH",
-            "value": 622
-        },
-        {
-            "code": "DE.RP",
-            "value": 866
-        },
-        {
-            "code": "DE.SL",
-            "value": 398
-        },
-        {
-            "code": "DE.BY",
-            "value": 785
-        },
-        {
-            "code": "DE.SN",
-            "value": 223
-        },
-        {
-            "code": "DE.ST",
-            "value": 605
-        },
-        {
-            "code": "DE.",
-            "value": 361
-        },
-        {
-            "code": "DE.NW",
-            "value": 237
-        },
-        {
-            "code": "DE.BW",
-            "value": 157
-        },
-        {
-            "code": "DE.HE",
-            "value": 134
-        },
-        {
-            "code": "DE.NI",
-            "value": 136
-        },
-        {
-            "code": "DE.TH",
-            "value": 704
-        }
+        ['DE.SH', 728],
+        ['DE.BE', 710],
+        ['DE.MV', 963],
+        ['DE.HB', 541],
+        ['DE.HH', 622],
+        ['DE.RP', 866],
+        ['DE.SL', 398],
+        ['DE.BY', 785],
+        ['DE.SN', 223],
+        ['DE.ST', 605],
+        ['DE.NW', 237],
+        ['DE.BW', 157],
+        ['DE.HE', 134],
+        ['DE.NI', 136],
+        ['DE.TH', 704],
+        ['DE.', 361]
     ];
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', function (geojson) {
@@ -90,7 +42,8 @@ $(function () {
             series : [{
                 data : data,
                 mapData: geojson,
-                joinBy: ['code_hasc', 'code'],
+                joinBy: ['code_hasc', 0],
+                keys: ['code_hasc', 'value'],
                 name: 'Random data',
                 states: {
                     hover: {

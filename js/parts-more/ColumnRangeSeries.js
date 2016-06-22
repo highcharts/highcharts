@@ -7,9 +7,10 @@ import '../parts/Utilities.js';
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
-		seriesTypes = H.seriesTypes,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes;
 
-		colProto = seriesTypes.column.prototype;
+	var colProto = seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
@@ -31,7 +32,10 @@ import '../parts/Utilities.js';
 			var series = this,
 				yAxis = series.yAxis,
 				xAxis = series.xAxis,
+				startAngleRad = xAxis.startAngleRad,
+				start,
 				chart = series.chart,
+				isRadial = series.xAxis.isRadial,
 				plotHigh;
 
 			colProto.translate.apply(series);
@@ -49,7 +53,7 @@ import '../parts/Utilities.js';
 
 				// adjust shape
 				y = plotHigh;
-				height = point.plotY - plotHigh;
+				height = pick(point.rectPlotY, point.plotY) - plotHigh;
 
 				// Adjust for minPointLength
 				if (Math.abs(height) < minPointLength) {
@@ -63,19 +67,28 @@ import '../parts/Utilities.js';
 					y -= height;
 				}
 
-				shapeArgs.height = height;
-				shapeArgs.y = y;
+				if (isRadial) {
 
-				point.tooltipPos = chart.inverted ? 
-					[ 
-						yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
-						xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
-						height
-					] : [
-						xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
-						yAxis.pos - chart.plotTop + y + height / 2, 
-						height
-					]; // don't inherit from column tooltip position - #3372
+					start = point.barX + startAngleRad;
+					point.shapeType = 'path';
+					point.shapeArgs = {
+						d: series.polarArc(y + height, y, start, start + point.pointWidth)
+					};
+				} else {
+					shapeArgs.height = height;
+					shapeArgs.y = y;
+
+					point.tooltipPos = chart.inverted ? 
+						[ 
+							yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+							xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+							height
+						] : [
+							xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+							yAxis.pos - chart.plotTop + y + height / 2, 
+							height
+						]; // don't inherit from column tooltip position - #3372
+				}
 			});
 		},
 		directTouch: true,
@@ -84,8 +97,13 @@ import '../parts/Utilities.js';
 		crispCol: colProto.crispCol,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
-		animate: colProto.animate,
 		getColumnMetrics: colProto.getColumnMetrics,
+		animate: function () {
+			return colProto.animate.apply(this, arguments);
+		},
+		polarArc: function () {
+			return colProto.polarArc.apply(this, arguments);
+		},
 		pointAttribs: colProto.pointAttribs
 	});
 

@@ -28,7 +28,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
 		/*= } else { =*/
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
 		/*= } =*/
 	},
 	trackByArea: true,

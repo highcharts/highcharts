@@ -25,14 +25,14 @@ var defaultOptions = H.defaultOptions,
 	discardElement = H.discardElement,
 	css = H.css,
 	merge = H.merge,
+	pick = H.pick,
 	each = H.each,
 	extend = H.extend,
 	splat = H.splat,
 	isTouchDevice = H.isTouchDevice,
 	win = H.win;
 
-var symbols = H.Renderer.prototype.symbols,
-	buttonOffset;
+var symbols = H.Renderer.prototype.symbols;
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -99,6 +99,7 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	//width: undefined,
+	printMaxWidth: 780,
 	//scale: 2
 	buttons: {
 		contextButton: {
@@ -425,7 +426,11 @@ extend(Chart.prototype, {
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
-			childNodes = body.childNodes;
+			childNodes = body.childNodes,
+			printMaxWidth = chart.options.exporting.printMaxWidth,
+			hasUserSize,
+			resetParams,
+			handleMaxWidth;
 
 		if (chart.isPrinting) { // block the button while in printing mode
 			return;
@@ -435,6 +440,14 @@ extend(Chart.prototype, {
 		chart.pointer.reset(null, 0);
 
 		fireEvent(chart, 'beforePrint');
+
+		// Handle printMaxWidth
+		handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+		if (handleMaxWidth) {
+			hasUserSize = chart.hasUserSize;
+			resetParams = [chart.chartWidth, chart.chartHeight, false];
+			chart.setSize(printMaxWidth, chart.chartHeight, false);
+		}
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -465,6 +478,12 @@ extend(Chart.prototype, {
 			});
 
 			chart.isPrinting = false;
+
+			// Reset printMaxWidth
+			if (handleMaxWidth) {
+				chart.setSize.apply(chart, resetParams);
+				chart.hasUserSize = hasUserSize;
+			}
 
 			fireEvent(chart, 'afterPrint');
 
@@ -673,7 +692,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = H.pick(attr.paddingLeft, 25);
+			attr.paddingLeft = pick(attr.paddingLeft, 25);
 
 		} else if (!btnOptions.text) {
 			extend(attr, {
@@ -719,10 +738,10 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: H.pick(btnOptions.x, buttonOffset) // #1654
+				x: pick(btnOptions.x, chart.buttonOffset) // #1654
 			}), true, 'spacingBox');
 
-		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+		chart.buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
 
 		chart.exportSVGElements.push(button, symbol);
 
@@ -732,33 +751,37 @@ extend(Chart.prototype, {
 	 * Destroy the buttons.
 	 */
 	destroyExport: function (e) {
-		var chart = e.target,
-			i,
-			elem;
+		var chart = e ? e.target : this,
+			exportSVGElements = chart.exportSVGElements,
+			exportDivElements= chart.exportDivElements;
 
 		// Destroy the extra buttons added
-		for (i = 0; i < chart.exportSVGElements.length; i++) {
-			elem = chart.exportSVGElements[i];
+		if (exportSVGElements) {
+			each(exportSVGElements, function (elem, i) {
 
-			// Destroy and null the svg/vml elements
-			if (elem) { // #1822
-				elem.onclick = elem.ontouchstart = null;
-				chart.exportSVGElements[i] = elem.destroy();
-			}
+				// Destroy and null the svg/vml elements
+				if (elem) { // #1822
+					elem.onclick = elem.ontouchstart = null;
+					chart.exportSVGElements[i] = elem.destroy();
+				}
+			});
+			exportSVGElements.length = 0;
 		}
 
 		// Destroy the divs for the menu
-		for (i = 0; i < chart.exportDivElements.length; i++) {
-			elem = chart.exportDivElements[i];
+		if (exportDivElements) {
+			each(exportDivElements, function (elem, i) {
 
-			// Remove the event handler
-			removeEvent(elem, 'mouseleave');
+				// Remove the event handler
+				removeEvent(elem, 'mouseleave');
 
-			// Remove inline events
-			chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
+				// Remove inline events
+				chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
 
-			// Destroy the div by moving to garbage bin
-			discardElement(elem);
+				// Destroy the div by moving to garbage bin
+				discardElement(elem);
+			});
+			exportDivElements.length = 0;
 		}
 	}
 });
@@ -777,24 +800,54 @@ symbols.menu = function (x, y, width, height) {
 };
 
 // Add the buttons on chart load
-Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.renderExporting = function () {
 	var n,
-		exportingOptions = chart.options.exporting,
-		buttons = exportingOptions.buttons;
-
-	buttonOffset = 0;
-
-	if (exportingOptions.enabled !== false) {
+		exportingOptions = this.options.exporting,
+		buttons = exportingOptions.buttons,
+		isDirty = this.isDirtyExporting || !this.exportSVGElements;
+	
+	this.buttonOffset = 0;
+	if (this.isDirtyExporting) {
+		this.destroyExport();
+	}
+	
+	if (isDirty && exportingOptions.enabled !== false) {
 
 		for (n in buttons) {
-			chart.addButton(buttons[n]);
+			this.addButton(buttons[n]);
 		}
 
-		// Destroy the export elements at chart destroy
-		addEvent(chart, 'destroy', chart.destroyExport);
+		this.isDirtyExporting = false;
 	}
 
-});
+	// Destroy the export elements at chart destroy
+	addEvent(this, 'destroy', this.destroyExport);		
+};
 
+Chart.prototype.callbacks.push(function (chart) {
+
+	function update(prop, options, redraw) {
+		chart.isDirtyExporting = true;
+		merge(true, chart.options[prop], options);
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+
+	}
+
+	chart.renderExporting();
+
+	addEvent(chart, 'redraw', chart.renderExporting);
+
+	// Add update methods to handle chart.update and chart.exporting.update
+	// and chart.navigation.update.
+	each(['exporting', 'navigation'], function (prop) {
+		chart[prop] = {
+			update: function (options, redraw) {
+				update(prop, options, redraw);
+			}
+		};
+	});
+});
 
 });

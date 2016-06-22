@@ -8,8 +8,9 @@ import '../parts/Interaction.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
+		isNumber = H.isNumber,
 		merge = H.merge,
-		noop = H.noop,
+		noop = H.noop,		
 		pick = H.pick,
 		pInt = H.pInt,
 		Point = H.Point,
@@ -126,7 +127,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
 			// Handle the wrap and overshoot options
-			if (overshoot && typeof overshoot === 'number') {
+			if (isNumber(overshoot)) {
 				overshoot = overshoot / 180 * Math.PI;
 				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
 
@@ -196,7 +197,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 				point.graphic.attr({
 					stroke: dialOptions.borderColor || 'none',
 					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || 'black',
+					fill: dialOptions.backgroundColor || 'black'
 				});
 				/*= } =*/
 			}

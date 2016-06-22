@@ -4,7 +4,7 @@ import './Utilities.js';
 	var correctFloat = H.correctFloat,
 		defined = H.defined,
 		destroyObjectProperties = H.destroyObjectProperties,
-		lin2log = H.lin2log,
+		isNumber = H.isNumber,
 		merge = H.merge,
 		pick = H.pick,
 		deg2rad = H.deg2rad;
@@ -63,7 +63,7 @@ H.Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(lin2log(value)) : value
+			value: axis.isLog ? correctFloat(axis.lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -201,10 +201,14 @@ H.Tick.prototype = {
 			line;
 
 		if (!defined(yOffset)) {
-			yOffset = axis.side === 2 ? 
-				rotCorr.y + 8 :
+			if (axis.side === 0) {
+				yOffset = label.rotation ? -8 : -label.getBBox().height;
+			} else if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+			} else {
 				// #3140, #3140
 				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+			}
 		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -287,7 +291,7 @@ H.Tick.prototype = {
 		this.isActive = true;
 
 		// Create the grid line
-		if (gridLine === undefined) {
+		if (gridLine === undefined && !axis.isRadial) {
 			/*= if (build.classic) { =*/
 			attribs.stroke = gridLineColor;
 			attribs['stroke-width'] = gridLineWidth;
@@ -311,10 +315,12 @@ H.Tick.prototype = {
 		// by another call, therefore do not do any animations this time
 		if (!old && gridLine) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
-			gridLine[tick.isNew ? 'attr' : 'animate']({
-				d: gridLinePath,
-				opacity: opacity
-			});
+			if (gridLinePath) {
+				gridLine[tick.isNew ? 'attr' : 'animate']({
+					d: gridLinePath,
+					opacity: opacity
+				});
+			}
 		}
 
 		// create the tick mark
@@ -342,14 +348,14 @@ H.Tick.prototype = {
 				/*= } =*/
 			}
 			mark[isNewMark ? 'attr' : 'animate']({
-				d: tick.getMarkPath(x, y, tickSize[1], mark.strokeWidth() * reverseCrisp, horiz, renderer),
+				d: tick.getMarkPath(x, y, tickSize[0], mark.strokeWidth() * reverseCrisp, horiz, renderer),
 				opacity: opacity
 			});
-			
+
 		}
 
 		// the label is created on init - now move it into place
-		if (label && !isNaN(x)) {
+		if (label && isNumber(x)) {
 			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
 			// Apply show first and show last. If the tick is both first and last, it is
@@ -370,7 +376,7 @@ H.Tick.prototype = {
 			}
 
 			// Set the new position, and show or hide
-			if (show && !isNaN(xy.y)) {
+			if (show && isNumber(xy.y)) {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 				tick.isNew = false;

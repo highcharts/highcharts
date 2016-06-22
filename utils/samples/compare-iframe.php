@@ -30,6 +30,11 @@ if (preg_match('/^[a-z0-9]+$/', $rightPath)) {
 	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
 }
 
+// Forced options
+$overrides = Settings::$overrides;
+if ($overrides && $_GET['which'] == 'left') {
+	$overrides .= "\nconsole.warn('Running tests with overrides. To disable these, modify settings.php.');";
+}
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
@@ -120,6 +125,10 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 
+	// Highchart 5 preview
+	$s = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $s);
+
+
 	// for issue-by-commit
 	$issueHTML = $s;
 	$issueHTML = str_replace('https://code.highcharts.com/stock/', 'http://github.highcharts.com/%s/', $issueHTML);
@@ -157,7 +166,7 @@ function getHTML($which) {
 				function ($matches) {
 					global $rightPath;
 					$src = $rightPath . $matches[1];
-					$src = str_replace('.js', '.js?' . mktime(), $src);
+					$src = str_replace('.js', '.js?' . time(), $src);
 					return $src;
 				},
 				$s
@@ -213,7 +222,14 @@ function getExportInnerHTML() {
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php 
-			$_SESSION['css'] = @file_get_contents("$path/demo.css");
+			$css = @file_get_contents("$path/demo.css");
+
+			// Highchart 5 preview
+			$css = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $css);
+
+			$css = str_replace("https://code.highcharts.com/", "http://code.highcharts.$topDomain/", $css);
+
+			$_SESSION['css'] = $css;
 			echo $_SESSION['css'];
 			?>
 		</style>
@@ -242,10 +258,7 @@ function getExportInnerHTML() {
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
 					QUnit.done(function (e) {
-						if (e.total === 0) {
-							window.parent.onDifferent('Error');
-							console.warn('No unit tests ran');
-						} else if (e.passed === e.total) {
+						if (e.passed === e.total) {
 							window.parent.onIdentical();
 						} else {
 							window.parent.onDifferent(e.passed + '/' + e.total);
@@ -349,6 +362,8 @@ function getExportInnerHTML() {
 							animation: animation
 						}
 					});
+
+					<?php echo $overrides; ?>
 
 					// Wrap constructors in order to catch JS errors
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);

@@ -11,6 +11,7 @@ import '../parts/Legend.js';
 		ColorAxis,
 		each = H.each,
 		extend = H.extend,
+		isNumber = H.isNumber,
 		Legend = H.Legend,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		noop = H.noop,
@@ -379,7 +380,7 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		return typeof pos === 'number' ? // crosshairs only // #3969 pos can be 0 !!
+		return isNumber(pos) ? // crosshairs only // #3969 pos can be 0 !!
 			(this.horiz ?
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] :
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
@@ -513,7 +514,7 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
-	if (colorAxis) {
+	if (colorAxis && colorAxis.options) {
 
 		// Data classes
 		if (colorAxis.options.dataClasses) {

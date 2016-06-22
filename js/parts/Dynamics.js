@@ -11,6 +11,7 @@ import './Series.js';
 		Chart = H.Chart,
 		createElement = H.createElement,
 		css = H.css,
+		defined = H.defined,
 		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
@@ -102,28 +103,18 @@ extend(Chart.prototype, {
 						height: chart.plotHeight + 'px'
 					});
 				}
-			},
-			style,
-			labelStyle;
-
-		/*= if (build.classic) { =*/
-		style = extend(loadingOptions.style, {
-			zIndex: 10,
-			display: 'none'
-		});
-		labelStyle = loadingOptions.labelStyle;
-		/*= } =*/
+			};
 
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: 'highcharts-loading highcharts-loading-hidden'
-			}, style, chart.container);
+			}, null, chart.container);
 
 			chart.loadingSpan = createElement(
 				'span',
 				{ className: 'highcharts-loading-inner' },
-				labelStyle,
+				null,
 				loadingDiv
 			);
 			addEvent(chart, 'redraw', setLoadingSize); // #1080
@@ -132,18 +123,24 @@ extend(Chart.prototype, {
 			loadingDiv.className = 'highcharts-loading';
 		});
 
-		// update text
+		// Update text
 		chart.loadingSpan.innerHTML = str || options.lang.loading;
 
 		/*= if (build.classic) { =*/
-		// show it
+		// Update visuals
+		css(loadingDiv, extend(loadingOptions.style, {
+			zIndex: 10
+		}));
+		css(chart.loadingSpan, loadingOptions.labelStyle);
+
+		// Show it
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
 				display: ''
 			});
 			animate(loadingDiv, {
-				opacity: style.opacity || 0.5
+				opacity: loadingOptions.style.opacity || 0.5
 			}, {
 				duration: loadingOptions.showDuration || 0
 			});
@@ -175,19 +172,162 @@ extend(Chart.prototype, {
 			/*= } =*/
 		}
 		this.loadingShown = false;
+	},
+
+	/** 
+	 * These properties cause isDirtyBox to be set to true when updating. Can be extended from plugins.
+	 */
+	propsRequireDirtyBox: ['backgroundColor', 'borderColor', 'borderWidth', 'margin', 'marginTop', 'marginRight',
+		'marginBottom', 'marginLeft', 'spacing', 'spacingTop', 'spacingRight', 'spacingBottom', 'spacingLeft',
+		'borderRadius', 'plotBackgroundColor', 'plotBackgroundImage', 'plotBorderColor', 'plotBorderWidth', 
+		'plotShadow', 'shadow'],
+
+	/** 
+	 * These properties cause all series to be updated when updating. Can be extended from plugins.
+	 */
+	propsRequireUpdateSeries: ['chart.polar', 'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+
+	/**
+	 * Chart.update function that takes the whole options stucture.
+	 */
+	update: function (options, redraw) {
+		var key,
+			adders = {
+				credits: 'addCredits',
+				title: 'setTitle',
+				subtitle: 'setSubtitle'
+			},
+			optionsChart = options.chart,
+			updateAllAxes,
+			updateAllSeries;
+
+		// If the top-level chart option is present, some special updates are required		
+		if (optionsChart) {
+			merge(true, this.options.chart, optionsChart);
+
+			// Setter function
+			if ('className' in optionsChart) {
+				this.setClassName(optionsChart.className);
+			}
+
+			if ('inverted' in optionsChart || 'polar' in optionsChart) {
+				this.propFromSeries(); // Parses options.chart.inverted and options.chart.polar together with the available series
+				updateAllAxes = true;
+			}
+
+			for (key in optionsChart) {
+				if (optionsChart.hasOwnProperty(key)) {
+					if (inArray('chart.' + key, this.propsRequireUpdateSeries) !== -1) {
+						updateAllSeries = true;
+					}
+					// Only dirty box
+					if (inArray(key, this.propsRequireDirtyBox) !== -1) {
+						this.isDirtyBox = true;
+					}
+					
+				}
+			}
+
+			/*= if (build.classic) { =*/
+			if ('style' in optionsChart) {
+				this.renderer.setStyle(optionsChart.style);
+			}
+			/*= } =*/
+		}
+		
+		// Some option stuctures correspond one-to-one to chart objects that have
+		// update methods, for example
+		// options.credits => chart.credits
+		// options.legend => chart.legend
+		// options.title => chart.title
+		// options.tooltip => chart.tooltip
+		// options.subtitle => chart.subtitle
+		// options.navigator => chart.navigator
+		// options.scrollbar => chart.scrollbar
+		for (key in options) {
+			if (this[key] && typeof this[key].update === 'function') {
+				this[key].update(options[key], false);
+
+			// If a one-to-one object does not exist, look for an adder function
+			} else if (typeof this[adders[key]] === 'function') {
+				this[adders[key]](options[key]);
+			}
+
+			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries !== -1)) {
+				updateAllSeries = true;
+			}
+		}
+
+		/*= if (build.classic) { =*/
+		if (options.colors) {
+			this.options.colors = options.colors;
+		}
+		/*= } =*/
+
+		if (options.plotOptions) {
+			merge(true, this.options.plotOptions, options.plotOptions);
+		}
+
+		// Setters for collections. For axes and series, each item is referred by an id. If the 
+		// id is not found, it defaults to the first item in the collection, so setting series
+		// without an id, will update the first series in the chart. // docs
+		each(['xAxis', 'yAxis', 'series'], function (coll) {
+			if (options[coll]) {
+				each(splat(options[coll]), function (newOptions) {
+					var item = (defined(newOptions.id) && this.get(newOptions.id)) || this[coll][0];
+					if (item && item.coll === coll) {
+						item.update(newOptions, false);
+					}
+				}, this);
+			}
+		}, this);
+
+		if (updateAllAxes) {
+			each(this.axes, function (axis) {
+				axis.update({}, false);
+			});
+		}
+
+		// Certain options require the whole series structure to be thrown away
+		// and rebuilt
+		if (updateAllSeries) {
+			each(this.series, function (series) {
+				series.update({}, false);
+			});
+		}
+
+		// For loading, just update the options, do not redraw
+		if (options.loading) {
+			merge(true, this.options.loading, options.loading);
+		}
+
+		// Update size. Redraw is forced.
+		if (optionsChart && ('width' in optionsChart || 'height' in optionsChart)) {
+			this.setSize(optionsChart.width, optionsChart.height);
+		} else if (pick(redraw, true)) {
+			this.redraw();
+		}
+	},
+
+	/**
+	 * Setter function to allow use from chart.update
+	 */
+	setSubtitle: function (options) {
+		this.setTitle(undefined, options);
 	}
+
+	
 });
 
 // extend the Point prototype for dynamic methods
 extend(Point.prototype, {
 	/**
-	 * Update the point with new options (typically x/y data) and optionally redraw the series.
+	 * Point.update with new options (typically x/y data) and optionally redraw the series.
 	 *
 	 * @param {Object} options Point options as defined in the series.data array
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
-	 *
 	 */
 	update: function (options, redraw, animation, runEvent) {
 		var point = this,
@@ -442,7 +582,7 @@ extend(Series.prototype, {
 	},
 
 	/**
-	 * Update the series with a new set of options
+	 * Series.update with a new set of options
 	 */
 	update: function (newOptions, redraw) {
 		var series = this,
@@ -451,12 +591,13 @@ extend(Series.prototype, {
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
+			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
 		// If we're changing type or zIndex, create new groups (#3380, #3404)
-		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
 			preserve.length = 0;
 		}
 
@@ -479,7 +620,7 @@ extend(Series.prototype, {
 		for (n in proto) {
 			this[n] = undefined;
 		}
-		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		extend(this, seriesTypes[newType || oldType].prototype);
 
 		// Re-register groups (#3094)
 		each(preserve, function (prop) {
@@ -498,7 +639,7 @@ extend(Series.prototype, {
 extend(Axis.prototype, {
 
 	/**
-	 * Update the axis with a new options structure
+	 * Axis.update with a new options structure
 	 */
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
@@ -506,7 +647,6 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = this.chart._labelPanes = undefined; // #1611, #2887, #4314
 
 		this.init(chart, extend(newOptions, { events: undefined }));
 

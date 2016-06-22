@@ -140,7 +140,7 @@ var seriesProto = Series.prototype,
 
 			// If we have a number, return it divided by the length. If not, return
 			// null or undefined based on what the sum method finds.
-			if (typeof ret === 'number' && len) {
+			if (isNumber(ret) && len) {
 				ret = ret / len;
 			}
 
@@ -165,7 +165,7 @@ var seriesProto = Series.prototype,
 			low = approximations.low(low);
 			close = approximations.close(close);
 
-			if (typeof open === 'number' || typeof high === 'number' || typeof low === 'number' || typeof close === 'number') {
+			if (isNumber(open) || isNumber(high) || isNumber(low) || isNumber(close)) {
 				return [open, high, low, close];
 			}
 			// else, return is undefined
@@ -174,7 +174,7 @@ var seriesProto = Series.prototype,
 			low = approximations.low(low);
 			high = approximations.high(high);
 
-			if (typeof low === 'number' || typeof high === 'number') {
+			if (isNumber(low) || isNumber(high)) {
 				return [low, high];
 			}
 			// else, return is undefined
@@ -192,6 +192,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		dataOptions = series.options.data,
 		groupedXData = [],
 		groupedYData = [],
+		groupMap = [],
 		dataLength = xData.length,
 		pointX,
 		pointY,
@@ -201,7 +202,8 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
-		i;
+		i,
+		start = 0;
 
 	// Start with the first point within the X axis range (#2696)
 	for (i = 0; i <= dataLength; i++) {
@@ -224,9 +226,11 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			if (groupedY !== undefined) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
+				groupMap.push({ start: start, length: values[0].length });
 			}
 
 			// reset the aggregate arrays
+			start = i;
 			values[0] = [];
 			values[1] = [];
 			values[2] = [];
@@ -253,7 +257,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			for (j = 0; j < pointArrayMapLength; j++) {
 				val = point[pointArrayMap[j]];
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					values[j].push(val);
 				} else if (val === null) {
 					values[j].hasNulls = true;
@@ -263,7 +267,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		} else {
 			pointY = handleYData ? yData[i] : null;
 
-			if (typeof pointY === 'number') {
+			if (isNumber(pointY)) {
 				values[0].push(pointY);
 			} else if (pointY === null) {
 				values[0].hasNulls = true;
@@ -271,7 +275,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		}
 	}
 
-	return [groupedXData, groupedYData];
+	return [groupedXData, groupedYData, groupMap];
 };
 
 /**
@@ -324,9 +328,9 @@ seriesProto.processData = function () {
 					processedXData,
 					series.closestPointRange
 				),
-				groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-				groupedXData = groupedXandY[0],
-				groupedYData = groupedXandY[1];
+				groupedData = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+				groupedXData = groupedData[0],
+				groupedYData = groupedData[1];
 
 			// prevent the smoothed data to spill out left and right, and make
 			// sure data is not shifted to the left
@@ -342,6 +346,7 @@ seriesProto.processData = function () {
 			// record what data grouping values were used
 			series.currentDataGrouping = groupPositions.info;
 			series.closestPointRange = groupPositions.info.totalRange;
+			series.groupMap = groupedData[2];
 
 			// Make sure the X axis extends to show the first group (#2533)
 			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
@@ -355,7 +360,7 @@ seriesProto.processData = function () {
 			series.processedXData = groupedXData;
 			series.processedYData = groupedYData;
 		} else {
-			series.currentDataGrouping = null;
+			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
 	}

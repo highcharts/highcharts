@@ -1,9 +1,43 @@
-<p>Highcharts 4.2.3 (2016-02-08)</p>
+<p>Highcharts 4.2.5 (2016-05-06)</p>
 <ul>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4989">#4989</a>, Chart.getSVG function produced invalid SVG.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4999">#4999</a>, a regression causing JS error on hovering columns having a shadow.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5001">#5001</a>, a regression causing empty arearange series to fail with JS error.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5004">#5004</a>, a regression causing stacked step areas to render incorrectly.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5015">#5015</a>, a regression causing splines with null points and connectNulls: true not to render.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5016">#5016</a>, a regression where a spline with equal X values failed to show.</li>
+    <li>Added new option, <a href="http://api.highcharts.com/highcharts#exporting.printMaxWidth">exporting.printMaxWidth</a>, to prevent printed charts cut off on the right side. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/2088">#2088</a>.</li>
+    <li>Added new option, <a href="http://api.highcharts.com/highcharts#title.widthAdjust">title.widthAdjust</a> and <a href="http://api.highcharts.com/highcharts#title.widthAdjust">subtitle.widthAdjust</a>, to prevent titles from flowing over elements.</li>
+    <li>Added support for JPEG in offline download module, ref <a href="https://github.com/highslide-software/highcharts.com/issues/5157">#5157</a></li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="heading-4-2-5-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#4-2-5-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="4-2-5-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3070">#3070</a>, <code>verticalAlign</code> didn't work with rotated data labels on column series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4087">#4087</a>, error 11 was not described on the website.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4670">#4670</a>, zones colors were not applied for markers on hover.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5211">#5211</a>, <code>titleSetter</code> in combination with <code>buildText</code> added duplicate content to the title.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5220">#5220</a>, a regression causing JS error when resizing polar charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5221">#5221</a>, support for <code>minPointLength</code> in xrange study.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5226">#5226</a>, polar chart with no data failed with error.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5228">#5228</a>, <code>scroller.getUnionExtremes</code> did not consider navigation axis min and max.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5230">#5230</a>, a horizontal and opposite axis used to have wrong alignment for its title.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5234">#5234</a>, x value of null cancelled rendering of all points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5236">#5236</a>, last point was not always visible due to rounding errors.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5237">#5237</a>, inverted should not have an effect on polar charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5250">#5250</a>, columns were not visible in IE10.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5254">#5254</a>, data labels were not aligned to the point box in heatmaps.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5259">#5259</a>, crosshair prevented point hover when drawn above points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5261">#5261</a>, break at the end of a label caused wrong bounding box.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5266">#5266</a>, <code>pinchDown</code> was sometimes empty on Android.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5269">#5269</a>, crosshairs on wrong point with multiple series and non-shared tooltip.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5274">#5274</a>, <code>dataLabels.overflow</code> not always respected on heatmaps.</li>
+                    <li>Fixed issue in the xrange study with axis extremes when there were other, more extended series in the same chart.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

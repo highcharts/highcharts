@@ -17,6 +17,7 @@ import './VmlRenderer.js';
 		extend = H.extend,
 		format = H.format,
 		inArray = H.inArray,
+		isNumber = H.isNumber,
 		isString = H.isString,
 		map = H.map,
 		merge = H.merge,
@@ -267,8 +268,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	});
 
 	transVal = pick(translatedValue, axis.translate(value, null, null, old));
-
-	if (!isNaN(transVal)) {
+	if (isNumber(transVal)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
 				var skip;
@@ -570,7 +570,7 @@ seriesProto.processData = function () {
 			compareValue = keyIndex > -1 ? 
 				processedYData[i][keyIndex] :
 				processedYData[i];
-			if (typeof compareValue === 'number' && processedXData[i] >= series.xAxis.min && compareValue !== 0) {
+			if (isNumber(compareValue) && processedXData[i] >= series.xAxis.min && compareValue !== 0) {
 				series.compareValue = compareValue;
 				break;
 			}

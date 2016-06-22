@@ -16,6 +16,7 @@ import './Chart.js';
 		extend = H.extend,
 		fireEvent = H.fireEvent,
 		HCDate = H.Date,
+		isNumber = H.isNumber,
 		merge = H.merge,
 		pick = H.pick,
 		pInt = H.pInt,
@@ -126,7 +127,7 @@ RangeSelector.prototype = {
 					dataMax: dataMax
 				};
 				newMin = baseAxis.minFromRange.call(ctx);
-				if (typeof ctx.newMax === 'number') {
+				if (isNumber(ctx.newMax)) {
 					newMax = ctx.newMax;
 				}
 			}
@@ -254,7 +255,6 @@ RangeSelector.prototype = {
 	 * Initialize the range selector
 	 */
 	init: function (chart) {
-
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
@@ -454,6 +454,58 @@ RangeSelector.prototype = {
 			dateBox,
 			inputGroup = this.inputGroup;
 
+		function updateExtremes() {
+			var inputValue = input.value,
+				value = (options.inputDateParser || Date.parse)(inputValue),
+				xAxis = chart.xAxis[0],
+				dataMin = xAxis.dataMin,
+				dataMax = xAxis.dataMax;
+			if (value !== input.previousValue) {
+				input.previousValue = value;
+				// If the value isn't parsed directly to a value by the browser's Date.parse method,
+				// like YYYY-MM-DD in IE, try parsing it a different way
+				if (!isNumber(value)) {
+					value = inputValue.split('-');
+					value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
+				}
+
+				if (isNumber(value)) {
+
+					// Correct for timezone offset (#433)
+					if (!defaultOptions.global.useUTC) {
+						value = value + new Date().getTimezoneOffset() * 60 * 1000;
+					}
+
+					// Validate the extremes. If it goes beyound the data min or max, use the
+					// actual data extreme (#2438).
+					if (isMin) {
+						if (value > rangeSelector.maxInput.HCTime) {
+							value = undefined;
+						} else if (value < dataMin) {
+							value = dataMin;
+						}
+					} else {
+						if (value < rangeSelector.minInput.HCTime) {
+							value = undefined;
+						} else if (value > dataMax) {
+							value = dataMax;
+						}
+					}
+
+					// Set the extremes
+					if (value !== undefined) {
+						chart.xAxis[0].setExtremes(
+							isMin ? value : xAxis.min,
+							isMin ? xAxis.max : value,
+							undefined,
+							undefined,
+							{ trigger: 'rangeSelectorInput' }
+						);
+					}
+				}
+			}
+		}
+
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
 			.addClass('highcharts-range-label')
@@ -524,53 +576,12 @@ RangeSelector.prototype = {
 		};
 
 		// handle changes in the input boxes
-		input.onchange = function () {
-			var inputValue = input.value,
-				value = (options.inputDateParser || Date.parse)(inputValue),
-				xAxis = chart.xAxis[0],
-				dataMin = xAxis.dataMin,
-				dataMax = xAxis.dataMax;
+		input.onchange = updateExtremes;
 
-			// If the value isn't parsed directly to a value by the browser's Date.parse method,
-			// like YYYY-MM-DD in IE, try parsing it a different way
-			if (isNaN(value)) {
-				value = inputValue.split('-');
-				value = Date.UTC(pInt(value[0]), pInt(value[1]) - 1, pInt(value[2]));
-			}
-
-			if (!isNaN(value)) {
-
-				// Correct for timezone offset (#433)
-				if (!defaultOptions.global.useUTC) {
-					value = value + new Date().getTimezoneOffset() * 60 * 1000;
-				}
-
-				// Validate the extremes. If it goes beyound the data min or max, use the
-				// actual data extreme (#2438).
-				if (isMin) {
-					if (value > rangeSelector.maxInput.HCTime) {
-						value = undefined;
-					} else if (value < dataMin) {
-						value = dataMin;
-					}
-				} else {
-					if (value < rangeSelector.minInput.HCTime) {
-						value = undefined;
-					} else if (value > dataMax) {
-						value = dataMax;
-					}
-				}
-
-				// Set the extremes
-				if (value !== undefined) {
-					chart.xAxis[0].setExtremes(
-						isMin ? value : xAxis.min,
-						isMin ? xAxis.max : value,
-						undefined,
-						undefined,
-						{ trigger: 'rangeSelectorInput' }
-					);
-				}
+		input.onkeypress = function (event) {
+			// IE does not fire onchange on enter
+			if (event.keyCode === 13) {
+				updateExtremes();
 			}
 		};
 	},
@@ -603,7 +614,8 @@ RangeSelector.prototype = {
 			renderer = chart.renderer,
 			container = chart.container,
 			chartOptions = chart.options,
-			navButtonOptions = chartOptions.exporting && chartOptions.navigation && chartOptions.navigation.buttonOptions,
+			navButtonOptions = chartOptions.exporting && chartOptions.exporting.enabled !== false &&
+				chartOptions.navigation && chartOptions.navigation.buttonOptions,
 			options = chartOptions.rangeSelector,
 			buttons = rangeSelector.buttons,
 			lang = defaultOptions.lang,
@@ -620,6 +632,9 @@ RangeSelector.prototype = {
 			buttonBBox,
 			rendered = rangeSelector.rendered;
 
+		if (options.enabled === false) {
+			return;
+		}
 
 		// create the elements
 		if (!rendered) {
@@ -714,6 +729,16 @@ RangeSelector.prototype = {
 	},
 
 	/**
+	 * Update the range selector with new options
+	 */
+	update: function (options) {
+		var chart = this.chart;
+		merge(true, chart.options.rangeSelector, options);
+		this.destroy();
+		this.init(chart);
+	},
+
+	/**
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
@@ -746,7 +771,9 @@ RangeSelector.prototype = {
 					discardElement(this[key]);
 				}
 			}
-			this[key] = null;
+			if (this[key] !== RangeSelector.prototype[key]) {
+				this[key] = null;
+			}
 		}
 	}
 };
@@ -770,7 +797,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 			newMax = newMin + fixedRange;
 		}
 	}
-	if (isNaN(newMin)) { // #1195
+	if (!isNumber(newMin)) { // #1195
 		newMin = newMax = undefined;
 	}
 
@@ -795,7 +822,7 @@ Axis.prototype.minFromRange = function () {
 			return date.getTime() - base;
 		};
 
-	if (typeof rangeOptions === 'number') {
+	if (isNumber(rangeOptions)) {
 		min = this.max - rangeOptions;
 		range = rangeOptions;
 	} else {
@@ -803,7 +830,7 @@ Axis.prototype.minFromRange = function () {
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
-	if (isNaN(min)) {
+	if (!isNumber(min)) {
 		min = dataMin;
 	}
 	if (min <= dataMin) {
@@ -813,7 +840,7 @@ Axis.prototype.minFromRange = function () {
 		}
 		this.newMax = Math.min(min + range, this.dataMax);
 	}
-	if (isNaN(max)) {
+	if (!isNumber(max)) {
 		min = undefined;
 	}
 	return min;

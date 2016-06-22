@@ -2,10 +2,23 @@ import H from './Globals.js';
 (function () {
 var timers = [];
 
-var attr = H.attr,
-	charts = H.charts,
+var charts = H.charts,
 	doc = H.doc,
 	win = H.win;
+
+/**
+ * Provide error messages for debugging, with links to online explanation
+ */
+H.error = function (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw new Error(msg);
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg); // eslint-disable-line no-console
+	}
+};
 
 /**
  * An animator object. One instance applies to one property (attribute or style prop) 
@@ -349,14 +362,7 @@ H.isArray = function (obj) {
  * @param {Object} n
  */
 H.isNumber = function (n) {
-	return typeof n === 'number';
-};
-
-H.log2lin = function (num) {
-	return Math.log(num) / Math.LN10;
-};
-H.lin2log = function (num) {
-	return Math.pow(10, num);
+	return typeof n === 'number' && !isNaN(n);
 };
 
 /**
@@ -566,13 +572,14 @@ H.dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[d.hcGetFullYear](),
 		lang = H.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
+		shortWeekdays = lang.shortWeekdays,
 		pad = H.pad,
 
 		// List all format keys. Custom formats can be added from the outside. 
 		replacements = H.extend({
 
 			// Day
-			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
+			'a': shortWeekdays ? shortWeekdays[day] : langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
@@ -863,7 +870,7 @@ H.correctFloat = function (num, prec) {
  * @param {Object} chart
  */
 H.setAnimation = function (animation, chart) {
-	chart.renderer.globalAnimation = H.pick(animation, chart.animation);
+	chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
 };
 
 /**
@@ -898,6 +905,7 @@ H.timeUnits = {
 H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 	number = +number || 0;
+	decimals = +decimals;
 
 	var lang = H.defaultOptions.lang,
 		origDec = (number.toString().split('.')[1] || '').length,
@@ -909,7 +917,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 	if (decimals === -1) {
 		decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
-	} else if (isNaN(decimals)) {
+	} else if (!H.isNumber(decimals)) {
 		decimals = 2;
 	}
 
@@ -934,7 +942,7 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
 	// Add the decimal point and the decimal component
-	if (+decimals) {
+	if (decimals) {
 		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
 		decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
@@ -988,7 +996,9 @@ H.grep = function (elements, callback) {
  * Map an array
  */
 H.map = function (arr, fn) {
-	var results = [], i = 0, len = arr.length;
+	var results = [],
+		i = 0,
+		len = arr.length;
 
 	for (; i < len; i++) {
 		results[i] = fn.call(arr[i], arr[i], i, arr);
@@ -1172,11 +1182,13 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events = hcEvents[type] || [];
 		len = events.length;
 
-		// Attach a simple preventDefault function to skip default handler if called. Set
-		// a custom prop because the built-in defaultPrevented property is not overwritable (#5112)
-		eventArguments.preventDefault = function () {
-			eventArguments.dftPrev = true;
-		};
+		// Attach a simple preventDefault function to skip default handler if called. 
+		// The built-in defaultPrevented property is not overwritable (#5112)
+		if (!eventArguments.preventDefault) {
+			eventArguments.preventDefault = function () {
+				eventArguments.defaultPrevented = true;
+			};
+		}
 
 		eventArguments.target = el;
 
@@ -1198,7 +1210,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	}
 			
 	// Run the default if not prevented
-	if (defaultFunction && !eventArguments.defaultPrevented && !eventArguments.dftPrev) {
+	if (defaultFunction && !eventArguments.defaultPrevented) {
 		defaultFunction(eventArguments);
 	}
 };
@@ -1225,7 +1237,7 @@ H.animate = function (el, params, opt) {
 	if (!H.isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
-	opt.easing = Math[opt.easing] || Math.easeInOutSine;
+	opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
 	opt.curAnim = H.merge(params);
 
 	for (prop in params) {
@@ -1303,7 +1315,7 @@ if (doc && !doc.defaultView) {
 		// Getting the rendered width and height
 		if (alias) {
 			el.style.zoom = 1;
-			return Math.max(el[alias] - 2 * getStyle(el, 'padding'), 0);
+			return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
 		}
 		
 		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {

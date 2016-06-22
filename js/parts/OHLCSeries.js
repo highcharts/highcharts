@@ -111,8 +111,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 
 
 		each(points, function (point) {
-			var pointAttr,
-				plotOpen,
+			var plotOpen,
 				plotClose,
 				crispCorr,
 				halfWidth,
@@ -130,8 +129,8 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 				}
 
 				/*= if (build.classic) { =*/
-				graphic.attr(series.pointAttribs(point, point.selected && 'select')) // #3897
-				/*= } =*/
+				graphic.attr(series.pointAttribs(point, point.selected && 'select')); // #3897
+				/*= } =*/
 
 				// crisp vector coordinates
 				crispCorr = (graphic.strokeWidth() % 2) / 2;

@@ -51,7 +51,7 @@ import '../parts/Options.js';
 		return !!this.points.length; /* != 0 */
 	}
 
-	each(['pie', 'gauge', 'waterfall', 'bubble'], function (type) {
+	each(['pie', 'gauge', 'waterfall', 'bubble', 'treemap'], function (type) {
 		if (seriesTypes[type]) {
 			seriesTypes[type].prototype.hasData = hasDataPie;
 		}

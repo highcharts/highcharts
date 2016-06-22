@@ -11,6 +11,7 @@ var addEvent = H.addEvent,
 	each = H.each,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
+	isNumber = H.isNumber,
 	offset = H.offset,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
@@ -38,26 +39,12 @@ H.Pointer.prototype = {
 	 */
 	init: function (chart, options) {
 
-		var chartOptions = options.chart,
-			chartEvents = chartOptions.events,
-			zoomType = useCanVG ? '' : chartOptions.zoomType,
-			inverted = chart.inverted,
-			zoomX,
-			zoomY;
-
 		// Store references
 		this.options = options;
 		this.chart = chart;
 
-		// Zoom status
-		this.zoomX = zoomX = /x/.test(zoomType);
-		this.zoomY = zoomY = /y/.test(zoomType);
-		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
-		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
-		this.hasZoom = zoomX || zoomY;
-
 		// Do we need to handle click on a touch device?
-		this.runChartClick = chartEvents && !!chartEvents.click;
+		this.runChartClick = options.chart.events && !!options.chart.events.click;
 
 		this.pinchDown = [];
 		this.lastValidTouch = {};
@@ -68,6 +55,23 @@ H.Pointer.prototype = {
 		}
 
 		this.setDOMEvents();
+	},
+
+	/**
+	 * Resolve the zoomType option
+	 */
+	zoomOption: function () {
+		var chart = this.chart,
+			zoomType = useCanVG ? '' : chart.options.chart.zoomType,
+			zoomX = /x/.test(zoomType),
+			zoomY = /y/.test(zoomType),
+			inverted = chart.inverted;
+
+		this.zoomX = zoomX;
+		this.zoomY = zoomY;
+		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
+		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+		this.hasZoom = zoomX || zoomY;
 	},
 
 	/**
@@ -179,7 +183,7 @@ H.Pointer.prototype = {
 				directTouch = !shared && s.directTouch;
 				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
-					if (kdpointT) {
+					if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
 						kdpoints.push(kdpointT);
 					}
 				}
@@ -189,9 +193,17 @@ H.Pointer.prototype = {
 				if (p) {
 					// Store both closest points, using point.dist and point.distX comparisons (#4645):
 					each(['dist', 'distX'], function (dist, k) {
-						if (typeof p[dist] === 'number' && p[dist] < distance[k]) {
-							distance[k] = p[dist];
-							kdpoint[k] = p;
+						if (isNumber(p[dist])) {
+							var
+								// It is closer than the reference point
+								isCloser = p[dist] < distance[k],
+								// It is equally close, but above the reference point (#4679)
+								isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
+
+							if (isCloser || isAbove) {
+								distance[k] = p[dist];
+								kdpoint[k] = p;
+							}
 						}
 					});
 				}
@@ -252,7 +264,7 @@ H.Pointer.prototype = {
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? kdpoints : [pick(kdpoint[1], hoverPoint)], function (point) {
+		each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
 			each(chart.axes, function (axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series[axis.coll] === axis) {
@@ -430,7 +442,7 @@ H.Pointer.prototype = {
 			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 			// make a selection
-			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
+			if (chart.hasCartesianSeries && this.hasZoom && clickedInside && !panKey) {
 				if (!selectionMarker) {
 					this.selectionMarker = selectionMarker = chart.renderer.rect(
 						plotLeft,
@@ -541,6 +553,8 @@ H.Pointer.prototype = {
 	onContainerMouseDown: function (e) {
 
 		e = this.normalize(e);
+
+		this.zoomOption();
 
 		// issue #295, dragging not always working in Firefox
 		if (e.preventDefault) {

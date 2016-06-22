@@ -5,6 +5,7 @@
 var colors = require('colors'),
     eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
+    glob = require('glob'),
     gulp = require('gulp'),
     gulpif = require('gulp-if'),
     gzipSize = require('gzip-size'),
@@ -354,6 +355,16 @@ gulp.task('test', function () {
     });
 });
 
+/**
+ * Run the nightly. The task spawns a child process running node.
+ */
+gulp.task('nightly', function () {
+    spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
+        cwd: 'utils/samples',
+        stdio: 'inherit'
+    });
+});
+
 gulp.task('filesize', function () {
     var oldSize,
         newSize;
@@ -426,6 +437,38 @@ gulp.task('filesize', function () {
 });
 
 /**
+ * Compile the JS files in the /code folder
+ */
+gulp.task('compile', function () {
+
+    glob('*.src.js', { cwd: './code/', matchBase: true }, function (globErr, files) {
+
+        files.forEach(function (src) {
+            src = './code/' + src;
+            var dest = src.replace('.src.js', '.js');
+            closureCompiler.compile(
+                [src],
+                null,
+                function (error, result) {
+                    if (result) {
+                        fs.writeFile(dest, result, 'utf8', function (writeErr) {
+                            if (!writeErr) {
+                                console.log(colors.green('Compiled ' + src + ' => ' + dest));
+                            } else {
+                                console.log(colors.red('Failed compiling ' + src + ' => ' + dest));
+                            }
+                        });
+
+                    } else {
+                        console.log('Compilation error: ' + error);
+                    }
+                }
+            );
+        });
+    });
+});
+
+/**
  * Proof of concept to parse super code. Move this logic into the standard build when ready.
  */
 gulp.task('scripts', function () {
@@ -478,7 +521,17 @@ gulp.task('scripts', function () {
             func = new Function('build', tpl); // eslint-disable-line no-new-func
             tpl = func(build);
         } catch (e) {
-            console.log('Function preprocess failed:\n    ' + e.message.red);
+            fs.writeFile(
+                'temp.js',
+                tpl,
+                'utf8'
+            );
+            console.log(
+                'Function preprocess failed:\n' +
+                '   ' + e.message.red +
+                '   View generated supercode in temp.js'.cyan
+            );
+            throw 'Exiting';
         }
 
 
@@ -599,6 +652,7 @@ gulp.task('scripts', function () {
         }
 
         // Create the classic file
+        // console.log('Creating ' + path.green);
         fs.writeFileSync(
             path.replace('./js/', './code/'),
             preprocess(tpl, {
@@ -641,10 +695,12 @@ gulp.task('scripts', function () {
         }
     }
 
-    addFile(0, function () {
-        js = addVersion(js, products.highcharts);
-        fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
-    });
+    try {
+        addFile(0, function () {
+            js = addVersion(js, products.highcharts);
+            fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
+        });
+    } catch (e) {} // eslint-disable-line no-empty
 });
 
 gulp.task('browserify', function () {

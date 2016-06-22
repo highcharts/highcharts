@@ -25,6 +25,8 @@ import './Pointer.js';
 		fireEvent = H.fireEvent,
 		getStyle = H.getStyle,
 		grep = H.grep,
+		isNumber = H.isNumber,
+		isObject = H.isObject,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		marginNames = H.marginNames,
@@ -62,7 +64,7 @@ Chart.prototype = {
 	callbacks: [],
 
 	/*= if (!build.classic) { =*/
-	colorCount: 10,
+	colorCount: 10, // docs - make this an option?
 	/*= } =*/
 
 	/**
@@ -93,14 +95,14 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
+		this.respRules = [];
 
 		var optionsChart = options.chart;
 
-		// Create margin & spacing array
-		this.margin = this.splashArray('margin', optionsChart);
-		this.spacing = this.splashArray('spacing', optionsChart);
-
 		var chartEvents = optionsChart.events;
+
+		this.margin = [];
+		this.spacing = [];
 
 		//this.runChartClick = chartEvents && !!chartEvents.click;
 		this.bounds = { h: {}, v: {} }; // Pixel data bounds for touch zoom
@@ -115,7 +117,6 @@ Chart.prototype = {
 		this.series = [];
 		this.hasCartesianSeries = optionsChart.showAxes;
 		//this.axisOffset = undefined;
-		//this.maxTicks = undefined; // handle the greatest amount of ticks on grouped axes
 		//this.inverted = undefined;
 		//this.loadingShown = undefined;
 		//this.container = undefined;
@@ -151,13 +152,6 @@ Chart.prototype = {
 		charts.push(chart);
 		H.chartCount++;
 
-		// Set up auto resize
-		if (optionsChart.reflow !== false) {
-			addEvent(chart, 'load', function () {
-				chart.initReflow();
-			});
-		}
-
 		// Chart event handlers
 		if (chartEvents) {
 			for (eventType in chartEvents) {
@@ -168,8 +162,6 @@ Chart.prototype = {
 		chart.xAxis = [];
 		chart.yAxis = [];
 
-		// Expose methods and variables
-		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -278,6 +270,9 @@ Chart.prototype = {
 					redrawLegend = true;
 				}
 			}
+			if (serie.isDirtyData) {
+				fireEvent(serie, 'updatedData');
+			}
 		});
 
 		// handle added or removed series
@@ -295,16 +290,10 @@ Chart.prototype = {
 
 
 		if (hasCartesianSeries) {
-			if (!chart.isResizing) {
-
-				// reset maxTicks
-				chart.maxTicks = null;
-
-				// set axes scales
-				each(axes, function (axis) {
-					axis.setScale();
-				});
-			}
+			// set axes scales
+			each(axes, function (axis) {
+				axis.setScale();
+			});
 		}
 
 		chart.getMargins(); // #3098
@@ -480,7 +469,7 @@ Chart.prototype = {
 		each([
 			['title', titleOptions, chartTitleOptions],
 			['subtitle', subtitleOptions, chartSubtitleOptions]
-		], function (arr) {
+		], function (arr, i) {
 			var name = arr[0],
 				title = chart[name],
 				titleOptions = arr[1],
@@ -502,8 +491,18 @@ Chart.prototype = {
 					'class': 'highcharts-' + name,
 					zIndex: chartTitleOptions.zIndex || 4
 				})
-				.css(chartTitleOptions.style)
 				.add();
+
+				// Update methods, shortcut to Chart.setTitle // docs. Sample created
+				chart[name].update = function (o) {
+					chart.setTitle(!i && o, i && o);
+				};
+
+				/*= if (build.classic) { =*/
+				// Presentational
+				chart[name].css(chartTitleOptions.style);
+				/*= } =*/
+				
 			}
 		});
 		chart.layOutTitles(redraw);
@@ -516,7 +515,7 @@ Chart.prototype = {
 		var titleOffset = 0,
 			requiresDirtyBox,
 			renderer = this.renderer,
-			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
+			spacingBox = this.spacingBox;
 
 		// Lay out the title and the subtitle respectively
 		each(['title', 'subtitle'], function (key) {
@@ -531,7 +530,7 @@ Chart.prototype = {
 				titleSize = renderer.fontMetrics(titleSize, title).b;
 				
 				title
-					.css({ width: (titleOptions.width || autoWidth) + 'px' })
+					.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + 'px' })
 					.align(extend({ 
 						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
 					}, titleOptions), false, 'spacingBox');
@@ -616,6 +615,13 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Setter for the chart class name
+	 */
+	setClassName: function (className) {
+		this.container.className = 'highcharts-container ' + (className || '');
+	},
+
+	/**
 	 * Get the containing element, determine the size and create the inner container
 	 * div to hold the chart
 	 */
@@ -631,7 +637,8 @@ Chart.prototype = {
 			oldChartIndex,
 			Ren,
 			containerId = 'highcharts-' + H.idCounter++,
-			containerStyle;
+			containerStyle,
+			key;
 
 		if (!renderTo) {
 			chart.renderTo = renderTo = optionsChart.renderTo;
@@ -651,7 +658,7 @@ Chart.prototype = {
 		// attribute and the SVG contents, but not an interactive chart. So in this case,
 		// charts[oldChartIndex] will point to the wrong chart if any (#2609).
 		oldChartIndex = pInt(attr(renderTo, indexAttrName));
-		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
+		if (isNumber(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
 		}
 
@@ -687,10 +694,9 @@ Chart.prototype = {
 			lineHeight: 'normal', // #427
 			zIndex: 0, // #1072
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-		}, optionsChart.style);
+		});
 		/*= } =*/
 		chart.container = container = createElement('div', {
-				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
 			},
 			containerStyle,
@@ -706,10 +712,21 @@ Chart.prototype = {
 			container,
 			chartWidth,
 			chartHeight,
-			optionsChart.style,
+			null,
 			optionsChart.forExport,
 			options.exporting && options.exporting.allowHTML
 		);
+
+
+		chart.setClassName(optionsChart.className);
+		/*= if (build.classic) { =*/
+		chart.renderer.setStyle(optionsChart.style);
+		/*= } else { =*/
+		// Initialize definitions
+		for (key in options.defs) {
+			this.renderer.addDefinition(options.defs[key]);
+		}
+		/*= } =*/		
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -739,7 +756,9 @@ Chart.prototype = {
 		}
 
 		// Adjust for legend
-		chart.legend.adjustMargins(margin, spacing);
+		if (chart.legend.display) {
+			chart.legend.adjustMargins(margin, spacing);
+		}
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {
@@ -762,7 +781,7 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				if (axis.visible && axis.isDirty) { // #5124
+				if (axis.visible) {
 					axis.getOffset();
 				}
 			});
@@ -790,21 +809,26 @@ Chart.prototype = {
 			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
-		// Width and height checks for display:none. Target is doc in IE8 and Opera,
-		// win in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
-			if (width !== chart.containerWidth || height !== chart.containerHeight) {
-				clearTimeout(chart.reflowTimeout);
-				// When called from window.resize, e is set, else it's called directly (#2224)
-				chart.reflowTimeout = syncTimeout(function () {
-					if (chart.container) { // It may have been destroyed in the meantime (#1257)
-						chart.setSize(width, height, false);
-						chart.hasUserSize = null;
-					}
-				}, e ? 100 : 0);
+		// Allow calling directly without parameters or as an event handler
+		// if the reflow setting is true.
+		if (!e || e && pick(optionsChart.reflow, true)) {
+
+			// Width and height checks for display:none. Target is doc in IE8 and Opera,
+			// win in Firefox, Chrome and IE9.
+			if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+				if (width !== chart.containerWidth || height !== chart.containerHeight) {
+					clearTimeout(chart.reflowTimeout);
+					// When called from window.resize, e is set, else it's called directly (#2224)
+					chart.reflowTimeout = syncTimeout(function () {
+						if (chart.container) { // It may have been destroyed in the meantime (#1257)
+							chart.setSize(width, height, false);
+							chart.hasUserSize = null;
+						}
+					}, e ? 100 : 0);
+				}
+				chart.containerWidth = width;
+				chart.containerHeight = height;
 			}
-			chart.containerWidth = width;
-			chart.containerHeight = height;
 		}
 	},
 
@@ -832,8 +856,8 @@ Chart.prototype = {
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
-			chartWidth,
-			chartHeight,
+			chartWidth = chart.chartWidth,
+			chartHeight = chart.chartHeight,
 			renderer = chart.renderer,
 			globalAnimation;
 
@@ -843,8 +867,8 @@ Chart.prototype = {
 		// set the animation for the current process
 		H.setAnimation(animation, chart);
 
-		chart.oldChartHeight = chart.chartHeight;
-		chart.oldChartWidth = chart.chartWidth;
+		chart.oldChartHeight = chartHeight;
+		chart.oldChartWidth = chartWidth;
 		if (defined(width)) {
 			chart.chartWidth = chartWidth = Math.max(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
@@ -866,7 +890,6 @@ Chart.prototype = {
 		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
-		chart.maxTicks = null;
 		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
@@ -883,6 +906,9 @@ Chart.prototype = {
 		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
+		if (chart.setResponsive) {
+			chart.setResponsive(false);
+		}
 		chart.redraw(animation);
 
 
@@ -966,8 +992,20 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this;
+		var chart = this,
+			chartOptions = chart.options.chart;
 
+		// Create margin and spacing array
+		each(['margin', 'spacing'], function splashArrays(target) {
+			var value = chartOptions[target],
+				values = isObject(value) ? value : [value, value, value, value];
+
+			each(['Top', 'Right', 'Bottom', 'Left'], function (sideName, side) {
+				chart[target][side] = pick(chartOptions[target + sideName], values[side]);	
+			});
+		});
+
+		// Set margin names like chart.plotTop, chart.plotLeft, chart.marginRight, chart.marginBottom.
 		each(marginNames, function (m, side) {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);
 		});
@@ -1022,16 +1060,16 @@ Chart.prototype = {
 			fill: chartBackgroundColor || 'none'
 		};
 
-		if (chartBorderWidth) { // #980
+		if (chartBorderWidth || chartBackground['stroke-width']) { // #980
 			bgAttr.stroke = optionsChart.borderColor;
 			bgAttr['stroke-width'] = chartBorderWidth;
 		}
 		chartBackground
 			.attr(bgAttr)
 			.shadow(optionsChart.shadow);
-		/*= } =*/
-
+		/*= } else { =*/
 		chartBorderWidth = mgn = chartBackground.strokeWidth();
+		/*= } =*/
 		chartBackground[verb]({
 			x: mgn / 2,
 			y: mgn / 2,
@@ -1113,7 +1151,7 @@ Chart.prototype = {
 
 	/**
 	 * Detect whether a certain chart property is needed based on inspecting its options
-	 * and series. This mainly applies to the chart.invert property, and in extensions to
+	 * and series. This mainly applies to the chart.inverted property, and in extensions to
 	 * the chart.angular and chart.polar properties.
 	 */
 	propFromSeries: function () {
@@ -1131,11 +1169,9 @@ Chart.prototype = {
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
 
 			// Get the value from available chart-wide properties
-			value = (
-				chart[key] || // 1. it is set before
-				optionsChart[key] || // 2. it is set in the options
-				(klass && klass.prototype[key]) // 3. it's default series class requires it
-			);
+			value = 
+				optionsChart[key] || // It is set in the options
+				(klass && klass.prototype[key]); // The default series class requires it
 
 			// 4. Check if any the chart's series require it
 			i = seriesOptions && seriesOptions.length;
@@ -1267,7 +1303,6 @@ Chart.prototype = {
 
 		if (redoHorizontal || redoVertical) {
 
-			chart.maxTicks = null; // reset for second pass
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickInterval(true); // update to reflect the new margins
@@ -1301,7 +1336,12 @@ Chart.prototype = {
 		chart.renderLabels();
 
 		// Credits
-		chart.showCredits(options.credits);
+		chart.addCredits();
+
+		// Handle responsiveness
+		if (chart.setResponsive) {
+			chart.setResponsive();
+		}
 
 		// Set flag
 		chart.hasRendered = true;
@@ -1311,7 +1351,10 @@ Chart.prototype = {
 	/**
 	 * Show chart credits based on config options
 	 */
-	showCredits: function (credits) {
+	addCredits: function (credits) { // docs. credits/credits-update example
+		var chart = this;
+
+		credits = merge(true, this.options.credits, credits);
 		if (credits.enabled && !this.credits) {
 			this.credits = this.renderer.text(
 				credits.text,
@@ -1333,6 +1376,12 @@ Chart.prototype = {
 			/*= } =*/
 			.add()
 			.align(credits.position);
+
+			// Dynamically update
+			this.credits.update = function (options) { // docs. credits/credits-update example
+				chart.credits = chart.credits.destroy();
+				chart.addCredits(options);
+			};
 		}
 	},
 
@@ -1491,33 +1540,23 @@ Chart.prototype = {
 	 * On chart load
 	 */
 	onload: function () {
-		var chart = this;
 
 		// Run callbacks
 		each([this.callback].concat(this.callbacks), function (fn) {
-			if (fn && chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
-				fn.apply(chart, [chart]);
+			if (fn && this.index !== undefined) { // Chart destroyed in its own callback (#3600)
+				fn.apply(this, [this]);
 			}
-		});
+		}, this);
 
-		fireEvent(chart, 'load');
+		fireEvent(this, 'load');
+
+		// Set up auto resize
+		this.initReflow();
 
 		// Don't run again
 		this.onload = null;
-	},
-
-	/**
-	* Creates arrays for spacing and margin from given options.
-	*/
-	splashArray: function (target, options) {
-		var oVar = options[target],
-			tArray = H.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
-
-		return [pick(options[target + 'Top'], tArray[0]),
-				pick(options[target + 'Right'], tArray[1]),
-				pick(options[target + 'Bottom'], tArray[2]),
-				pick(options[target + 'Left'], tArray[3])];
 	}
+
 }; // end Chart
 
 }());

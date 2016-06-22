@@ -24,6 +24,7 @@ import '../parts/Series.js';
     var labelDistance = 3,
         wrap = H.wrap,
         each = H.each,
+        isNumber = H.isNumber,
         Series = H.Series,
         Chart = H.Chart;
 
@@ -120,7 +121,7 @@ import '../parts/Series.js';
                 }
 
                 // Add the real point if not too close to the previous
-                if (typeof points[i].plotY === 'number') {
+                if (isNumber(points[i].plotY)) {
                     last = interpolated[interpolated.length - 1];
                     if (last) {
                         delta = Math.max(

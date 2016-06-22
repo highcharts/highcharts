@@ -109,8 +109,12 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 				topBox = Math.round(topBox) + crispCorr;
 				bottomBox = Math.round(bottomBox) + crispCorr;
 
-				// create the path
-				path = [
+				// Create the path. Due to a bug in Chrome 49, the path is first instanciated
+				// with no values, then the values pushed. For unknown reasons, instanciated
+				// the path array with all the values would lead to a crash when updating
+				// frequently (#5193).
+				path = [];
+				path.push(
 					'M',
 					crispX - halfWidth, bottomBox,
 					'L',
@@ -128,7 +132,7 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 					crispX, bottomBox,
 					'L',
 					crispX, hasBottomWhisker ? Math.round(point.yBottom) : bottomBox // #460, #2094
-				];
+				);
 
 				graphic[isNew ? 'attr' : 'animate']({ d: path })
 					.addClass(point.getClassName(), true);

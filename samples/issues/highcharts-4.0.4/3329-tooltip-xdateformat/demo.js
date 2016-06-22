@@ -30,37 +30,44 @@ $(function () {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }],
 
         yAxis: [{

@@ -14,6 +14,7 @@ import '../parts/SvgRenderer.js';
 	var defaultOptions = Highcharts.getOptions(),
 		symbols = Highcharts.Renderer.prototype.symbols,
 		extend = Highcharts.extend,
+		isNumber = Highcharts.isNumber,
 		merge = Highcharts.merge;
 
 	// Add language keys
@@ -75,7 +76,7 @@ import '../parts/SvgRenderer.js';
 	function crisp(arr) {
 		var i = arr.length;
 		while (i--) {
-			if (typeof arr[i] === 'number') {
+			if (isNumber(arr[i])) {
 				arr[i] = Math.round(arr[i]) - 0.5;		
 			}
 		}

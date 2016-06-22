@@ -45,8 +45,7 @@ hiddenAxisMixin = {
  * Augmented methods for the value axis
  */
 radialAxisMixin = {
-	isRadial: true,
-
+	
 	/**
 	 * The default options extend defaultYAxisOptions
 	 */
@@ -418,11 +417,19 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		}
 
 	} else if (polar) {
-		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
 		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+	
+	}
 
+	// Disable certain features on angular and polar axes
+	if (angular || polar) {
+		this.isRadial = true;
+		chart.inverted = false;
+		chartOptions.chart.zoomType = null;
+	} else {
+		this.isRadial = false;
 	}
 
 	// Run prototype.init
@@ -441,11 +448,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			axis
 		);
 		paneOptions = pane.options;
-
-
-		// Disable certain features on angular and polar axes
-		chart.inverted = false;
-		chartOptions.chart.zoomType = null;
 
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
