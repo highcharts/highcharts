@@ -1,5 +1,6 @@
 'use strict';
 const d = require('./assembler/dependencies');
+const p = require('./assembler/process.js');
 const fs = require('fs');
 /**
  * [getFilesInFolder description]
@@ -25,6 +26,40 @@ const getFilesInFolder = (base, includeSubfolders, path) => {
     return filenames;
 }
 
+/**
+ * Get options foreach individual 
+ * @param  {object} options General options for all files
+ * @return {[object]}       Array of indiviual file options
+ */
+const getIndividualOptions = (options) => {
+    return options.files.reduce((arr, filename) => {
+        let o = Object.assign({}, options, options.fileOptions && options.fileOptions[filename]);
+        o.entry = o.base + filename;
+        delete o.fileOptions;
+        let types = o.type === 'both' ? ['classic', 'css'] : [o.type];
+        let typeOptions = types.map(t => {
+            let folder = t === 'classic' ? '' : 'js/';
+            let build = {
+                classic: {
+                    assembly: true,
+                    classic: true
+                },
+                css: {
+                    classic: false
+                }
+            };
+            return Object.assign({
+                build: build[t]
+            }, o, {
+                type: t,
+                outputPath: options.output + folder + filename,
+                filename: filename
+            });
+        });
+        return arr.concat(typeOptions);
+    }, []);
+};
+
 let defaultOptions = {
     base: undefined, // Path to where the build files are located
     exclude: undefined,
@@ -32,7 +67,8 @@ let defaultOptions = {
     files: undefined, // Array of files to compile
     output: './', // Folder to output compiled files
     pretty: true,
-    umd: true
+    umd: true, // Wether to use UMD pattern or a module pattern
+    type: 'classic' // Type of Highcharts version. Classic or css.
 };
 
 /**
@@ -44,21 +80,22 @@ const build = userOptions=> {
     // userOptions is an empty object by default
     userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
     // Merge the userOptions with defaultOptions
-    let options = Object.assign(defaultOptions, userOptions);
+    let options = Object.assign({}, defaultOptions, userOptions);
     // Check if required options are set
     if (options.base) {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
-        options.files.forEach((filename, i, arr) => {
-            let fileOptions = Object.assign(options, options.fileOptions && options.fileOptions[filename]);
-            fileOptions.entry = fileOptions.base + filename;
-            delete fileOptions.fileOptions;
-        	let compiled = d.compileFile(fileOptions);
-			fs.writeFileSync(options.output + filename, compiled, 'utf8');
-            console.log((i + 1) + ' of ' + arr.length + '. Finished building: ' + filename)
-
-        //     // compileFile(options.base, options.output, filename, options.excludes[filename], options.wrapper);
-        //     compileFile(options.base , options.output, filename, options.excludes[filename], options.wrapper);
-        });
+        getIndividualOptions(options)
+            .forEach((o, i, arr) => {
+                let compiled = d.compileFile(o);
+                let processed = p.preProcess(compiled, o.build);
+                fs.writeFileSync(o.outputPath, processed, 'utf8');
+                console.log([
+                    'Completed ' + (i + 1) + ' of ' + arr.length,
+                    '- type: ' + o.type,
+                    '- entry: ' + o.entry,
+                    '- output: ' + o.outputPath
+                ].join('\n'));
+            });
     } else {
         outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
     }

@@ -197,7 +197,7 @@ const compileFile = options => {
 	let imported = getImports(dependencies, exported);
 	let mapTransform = (path, i, arr) => {
 		let content = getContents(path);
-		let moduleOptions = Object.assign(options, {
+		let moduleOptions = Object.assign({}, options, {
 			path: path,
 			imported: imported.find(val => val[0] === path)[1],
 			exported: exported.find(val => val[0] === path)[1],
