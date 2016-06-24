@@ -179,13 +179,8 @@ const moduleTransform = (content, options) => {
  * @return {string}         Content of file after transformation
  */
 const fileTransform = (content, options) => {
-	let pretty = options.pretty;
 	let umd = options.umd;
 	let result = umd ? applyUMD(content) : applyModule(content);
-	if (pretty) {
-		const beautify = require('js-beautify').js_beautify;
-		result = beautify(result);
-	}
 	return result;
 };
 

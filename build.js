@@ -2,6 +2,8 @@
 const d = require('./assembler/dependencies');
 const p = require('./assembler/process.js');
 const fs = require('fs');
+const beautify = require('js-beautify').js_beautify;
+
 /**
  * [getFilesInFolder description]
  * @param  {[type]} base              [description]
@@ -86,9 +88,12 @@ const build = userOptions=> {
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         getIndividualOptions(options)
             .forEach((o, i, arr) => {
-                let compiled = d.compileFile(o);
-                let processed = p.preProcess(compiled, o.build);
-                fs.writeFileSync(o.outputPath, processed, 'utf8');
+                let file = d.compileFile(o);
+                file = p.preProcess(file, o.build);
+                if (o.pretty) {
+                    file = beautify(file);
+                }
+                fs.writeFileSync(o.outputPath, file, 'utf8');
                 console.log([
                     'Completed ' + (i + 1) + ' of ' + arr.length,
                     '- type: ' + o.type,
