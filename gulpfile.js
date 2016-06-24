@@ -132,87 +132,87 @@ gulp.task('build', function () {
     build({
         base: './js/masters/',
         fileOptions: {
-            'modules/annotations.js': {
+            'modules/annotations.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/boost.js': {
+            'modules/boost.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/broken-axis.js': {
+            'modules/broken-axis.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/canvasrenderer.experimental.js': {
+            'modules/canvasrenderer.experimental.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/canvgrenderer-extended.js': {
+            'modules/canvgrenderer-extended.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/data.js': {
+            'modules/data.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/drilldown.js': {
+            'modules/drilldown.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/exporting-old-look.js': {
+            'modules/exporting-old-look.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/exporting.js': {
+            'modules/exporting.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/funnel.js': {
+            'modules/funnel.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/heatmap.js': {
+            'modules/heatmap.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/map.js': {
+            'modules/map.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/map-parser.js': {
+            'modules/map-parser.src.js': {
                 exclude: new RegExp([folders['parts'], 'data\.src\.js$'].join('|')),
                 umd: false
             },
-            'modules/no-data-to-display.js': {
+            'modules/no-data-to-display.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/offline-exporting.js': {
+            'modules/offline-exporting.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/overlapping-datalabels.js': {
+            'modules/overlapping-datalabels.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/series-label.js': {
+            'modules/series-label.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'modules/solid-gauge.js': {
+            'modules/solid-gauge.src.js': {
                 exclude: new RegExp([folders['parts'], 'GaugeSeries\.js$'].join('|')),
                 umd: false
             },
-            'modules/treemap.js': {
+            'modules/treemap.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'highcharts-more.js': {
+            'highcharts-more.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             },
-            'highcharts-3d.js': {
+            'highcharts-3d.src.js': {
                 exclude: new RegExp(folders['parts']),
                 umd: false
             }
