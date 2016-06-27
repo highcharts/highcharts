@@ -1,0 +1,23 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+#container {
+	height: 400px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+.highcharts-data-labels text {
+	fill: white;
+	text-shadow: 1px 1px black, 1px -1px black, -1px -1px black, -1px 1px black;
+}
+.highcharts-waterfall-series .highcharts-point {
+	fill: #90ed7d;
+}
+.highcharts-waterfall-series .highcharts-negative {
+	fill: #f7a35c;
+}
+.highcharts-waterfall-series .highcharts-sum {
+	fill: #434348;
+}
+.highcharts-waterfall-series .highcharts-intermediate-sum {
+	fill: #434348;
+}

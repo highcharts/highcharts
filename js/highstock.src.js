@@ -304,57 +304,83 @@
          */
         initPath: function (elem, fromD, toD) {
             fromD = fromD || '';
-            var shift = elem.shift,
+            var shift,
+                startX = elem.startX,
+                endX = elem.endX,
                 bezier = fromD.indexOf('C') > -1,
                 numParams = bezier ? 7 : 3,
-                endLength,
+                fullLength,
                 slice,
                 i,
                 start = fromD.split(' '),
-                end = [].concat(toD), // copy
+                end = toD.slice(), // copy
                 isArea = elem.isArea,
                 positionFactor = isArea ? 2 : 1,
-                sixify = function (arr) { // in splines make move points have six parameters like bezier curves
-                    i = arr.length;
-                    while (i--) {
-                        if (arr[i] === M || arr[i] === L) {
-                            arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
-                        }
-                    }
-                };
-
-            if (bezier) {
-                sixify(start);
-                sixify(end);
-            }
-
-            // If shifting points, prepend a dummy point to the end path. For areas,
-            // prepend both at the beginning and end of the path.
-            if (shift <= end.length / numParams && start.length === end.length) {
-                while (shift--) {
-                    end = end.slice(0, numParams).concat(end);
-                    if (isArea) {
-                        end = end.concat(end.slice(end.length - numParams));
+                reverse;
+        
+            /**
+             * In splines make move points have six parameters like bezier curves
+             */
+            function sixify(arr) {
+                i = arr.length;
+                while (i--) {
+                    if (arr[i] === M || arr[i] === L) {
+                        arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
                     }
                 }
             }
-            elem.shift = 0; // reset for following animations
 
-        
-            // Copy and append last point until the length matches the end length
-            if (start.length) {
-                endLength = end.length;
-                while (start.length < endLength) {
+            /**
+             * Insert an array at the given position of another array
+             */
+            function insertSlice(arr, subArr, index) {
+                [].splice.apply(
+                    arr,
+                    [index, 0].concat(subArr)
+                );
+            }
+
+            /**
+             * If shifting points, prepend a dummy point to the end path. 
+             */
+            function prepend(arr, other) {
+                while (arr.length < fullLength) {
+                
+                    // Move to, line to or curve to?
+                    arr[0] = other[fullLength - arr.length];
+
+                    // Prepend a copy of the first point
+                    insertSlice(arr, arr.slice(0, numParams), 0);
+
+                    // For areas, the bottom path goes back again to the left, so we need
+                    // to append a copy of the last point.
+                    if (isArea) {
+                        insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
+                        i--;
+                    }
+                }
+                arr[0] = 'M';
+            }
+
+            /**
+             * Copy and append last point until the length matches the end length
+             */
+            function append(arr, other) {
+                var i = (fullLength - arr.length) / numParams;
+                while (i > 0 && i--) {
 
                     // Pull out the slice that is going to be appended or inserted. In a line graph,
                     // the positionFactor is 1, and the last point is sliced out. In an area graph,
                     // the positionFactor is 2, causing the middle two points to be sliced out, since
                     // an area path starts at left, follows the upper path then turns and follows the
                     // bottom back. 
-                    slice = start.slice().splice(
-                        (start.length / positionFactor) - numParams, 
+                    slice = arr.slice().splice(
+                        (arr.length / positionFactor) - numParams, 
                         numParams * positionFactor
                     );
+
+                    // Move to, line to or curve to?
+                    slice[0] = other[fullLength - numParams - (i * numParams)];
                 
                     // Disable first control point
                     if (bezier) {
@@ -363,11 +389,49 @@
                     }
                 
                     // Now insert the slice, either in the middle (for areas) or at the end (for lines)
-                    [].splice.apply(
-                        start, 
-                        [(start.length / positionFactor), 0].concat(slice)
-                    );
+                    insertSlice(arr, slice, arr.length / positionFactor);
 
+                    if (isArea) {
+                        i--;
+                    }
+                }
+            }
+
+            if (bezier) {
+                sixify(start);
+                sixify(end);
+            }
+
+            // For sideways animation, find out how much we need to shift to get the start path Xs
+            // to match the end path Xs.
+            if (startX && endX) {
+                for (i = 0; i < startX.length; i++) {
+                    if (startX[i] === endX[0]) { // Moving left, new points coming in on right
+                        shift = i;
+                        break;
+                    } else if (startX[0] === endX[endX.length - startX.length + i]) { // Moving right
+                        shift = i;
+                        reverse = true;
+                        break;
+                    }
+                }
+                if (shift === undefined) {
+                    start = [];
+                }
+            }
+
+            if (start.length && Highcharts.isNumber(shift)) {
+
+                // The common target length for the start and end array, where both 
+                // arrays are padded in opposite ends
+                fullLength = end.length + shift * positionFactor * numParams;
+            
+                if (!reverse) {
+                    prepend(end, start);
+                    append(start, end);
+                } else {
+                    prepend(start, end);
+                    append(end, start);
                 }
             }
 
@@ -4876,6 +4940,12 @@
                         wrapper.setSpanRotation(rotation, alignCorrection, baseline);
                     }
 
+                    // Reset multiline/ellipsis in order to read width (#4928, #5417)
+                    css(elem, {
+                        width: '',
+                        whiteSpace: whiteSpace || 'nowrap'
+                    });
+
                     // Update textWidth
                     if (elem.offsetWidth > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
                         css(elem, {
@@ -4883,17 +4953,10 @@
                             display: 'block',
                             whiteSpace: whiteSpace || 'normal' // #3331
                         });
-                        wrapper.hasTextWidth = true;
-                    } else if (wrapper.hasTextWidth) { // #4928
-                        css(elem, {
-                            width: '',
-                            display: '',
-                            whiteSpace: whiteSpace || 'nowrap'
-                        });
-                        wrapper.hasTextWidth = false;
                     }
 
-                    wrapper.getSpanCorrection(wrapper.hasTextWidth ? textWidth : elem.offsetWidth, baseline, alignCorrection, rotation, align);
+
+                    wrapper.getSpanCorrection(elem.offsetWidth, baseline, alignCorrection, rotation, align);
                 }
 
                 // apply position with correction
@@ -7708,14 +7771,19 @@
          */
         getClosest: function () {
             var ret;
-            each(this.series, function (series) {
-                var seriesClosest = series.closestPointRange;
-                if (!series.noSharedTooltip && defined(seriesClosest)) {
-                    ret = defined(ret) ?
-                        mathMin(ret, seriesClosest) :
-                        seriesClosest;
-                }
-            });
+
+            if (this.categories) {
+                ret = 1;
+            } else {
+                each(this.series, function (series) {
+                    var seriesClosest = series.closestPointRange;
+                    if (!series.noSharedTooltip && defined(seriesClosest)) {
+                        ret = defined(ret) ?
+                            mathMin(ret, seriesClosest) :
+                            seriesClosest;
+                    }
+                });
+            }
             return ret;
         },
 
@@ -13525,7 +13593,16 @@
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
             if (point.x === undefined && series) {
-                point.x = x === undefined ? series.autoIncrement() : x;
+                if (x === undefined) {
+                    point.x = series.autoIncrement(point);
+                } else {
+                    point.x = x;
+                }
+            }
+
+            // Write the last point's name to the names array
+            if (series.xAxis && series.xAxis.names) {
+                series.xAxis.names[point.x] = point.name;
             }
 
             return point;
@@ -13892,17 +13969,37 @@
          * Return an auto incremented x value based on the pointStart and pointInterval options.
          * This is only used if an x value is not given for the point that calls autoIncrement.
          */
-        autoIncrement: function () {
+        autoIncrement: function (point) {
 
             var options = this.options,
                 xIncrement = this.xIncrement,
                 date,
                 pointInterval,
-                pointIntervalUnit = options.pointIntervalUnit;
+                pointIntervalUnit = options.pointIntervalUnit,
+                xAxis = this.xAxis,
+                explicitCategories,
+                names,
+                nameX;
 
             xIncrement = pick(xIncrement, options.pointStart, 0);
 
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+
+            // When a point name is given and no x, search for the name in the existing categories,
+            // or if categories aren't provided, search names or create a new category (#2522). // docs
+            if (xAxis && xAxis.categories && point.name) {
+                this.requireSorting = false;
+                explicitCategories = isArray(xAxis.categories);
+                names = explicitCategories ? xAxis.categories : xAxis.names;
+                nameX = inArray(point.name, names); // #2522
+                if (nameX === -1) { // The name is not found in currenct categories
+                    if (!explicitCategories) {
+                        xIncrement = names.length;
+                    }
+                } else {
+                    xIncrement = nameX;
+                }
+            }
 
             // Added code for pointInterval strings
             if (pointIntervalUnit) {
@@ -14042,7 +14139,6 @@
                 chart = series.chart,
                 firstPoint = null,
                 xAxis = series.xAxis,
-                hasCategories = xAxis && !!xAxis.categories,
                 i,
                 turboThreshold = options.turboThreshold,
                 pt,
@@ -14124,9 +14220,6 @@
                             pt = { series: series };
                             series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
                             series.updateParallelArrays(pt, i);
-                            if (hasCategories && defined(pt.name)) { // #4401
-                                xAxis.names[pt.x] = pt.name; // #2046
-                            }
                         }
                     }
                 }
@@ -14994,6 +15087,7 @@
                 step = options.step,
                 reversed,
                 graphPath = [],
+                xMap = [],
                 gap;
 
             points = points || series.points;
@@ -15019,7 +15113,7 @@
 
                 var plotX = point.plotX,
                     plotY = point.plotY,
-                    lastPoint = points[i - 1],                
+                    lastPoint = points[i - 1],
                     pathToPoint; // the path to this point from the previous
 
                 if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
@@ -15080,12 +15174,18 @@
                         ];
                     }
 
+                    // Prepare for animation. When step is enabled, there are two path nodes for each x value.
+                    xMap.push(point.x);
+                    if (step) {
+                        xMap.push(point.x);
+                    }
 
                     graphPath.push.apply(graphPath, pathToPoint);
                     gap = false;
                 }
             });
 
+            graphPath.xMap = xMap;
             series.graphPath = graphPath;
 
             return graphPath;
@@ -15115,6 +15215,7 @@
                     attribs;
 
                 if (graph) {
+                    graph.endX = graphPath.xMap;
                     graph.animate({ d: graphPath });
 
                 } else if (lineWidth && graphPath.length) { // #1487
@@ -15130,10 +15231,17 @@
                         attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
                     }
 
-                    series[graphKey] = series.chart.renderer.path(graphPath)
+                    graph = series[graphKey] = series.chart.renderer.path(graphPath)
                         .attr(attribs)
                         .add(series.group)
                         .shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
+                }
+
+                // Helpers for animation
+                if (graph) {
+                    graph.startX = graphPath.xMap;
+                    //graph.shiftUnit = options.step ? 2 : 1;
+                    graph.isArea = graphPath.isArea; // For arearange animation
                 }
             });
         },
@@ -16251,12 +16359,8 @@
             var series = this,
                 seriesOptions = series.options,
                 data = series.data,
-                graph = series.graph,
-                area = series.area,
                 chart = series.chart,
                 names = series.xAxis && series.xAxis.names,
-                currentShift = (graph && graph.shift) || 0,
-                shiftShapes = ['graph', 'area'],
                 dataOptions = seriesOptions.data,
                 point,
                 isInTheMiddle,
@@ -16265,22 +16369,6 @@
                 x;
 
             setAnimation(animation, chart);
-
-            // Make graph animate sideways
-            if (shift) {
-                i = series.zones.length;
-                while (i--) {
-                    shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
-                }
-                each(shiftShapes, function (shape) {
-                    if (series[shape]) {
-                        series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
-                    }
-                });
-            }
-            if (area) {
-                area.isArea = true; // needed in animation, both with and without shift
-            }
 
             // Optional redraw, defaults to true
             redraw = pick(redraw, true);
@@ -16787,6 +16875,7 @@
             areaPath = topPath.concat(bottomPath);
             graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
 
+            areaPath.xMap = topPath.xMap;
             this.areaPath = areaPath;
             return graphPath;
         },
@@ -16821,6 +16910,7 @@
 
                 // Create or update the area
                 if (area) { // update
+                    area.endX = areaPath.xMap;
                     area.animate({ d: areaPath });
 
                 } else { // create
@@ -16831,10 +16921,13 @@
                     if (!prop[2]) {
                         attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
                     }
-                    series[areaKey] = series.chart.renderer.path(areaPath)
+                    area = series[areaKey] = series.chart.renderer.path(areaPath)
                         .attr(attr)
                         .add(series.group);
+                    area.isArea = true;
                 }
+                area.startX = areaPath.xMap;
+                area.shiftUnit = options.step ? 2 : 1;
             });
         },
 
@@ -20834,6 +20927,7 @@
             pointArrayMap = series.pointArrayMap,
             pointArrayMapLength = pointArrayMap && pointArrayMap.length,
             i,
+            pos = 0,
             start = 0;
 
         // Start with the first point within the X axis range (#2696)
@@ -20846,11 +20940,11 @@
         for (i; i <= dataLength; i++) {
 
             // when a new group is entered, summarize and initiate the previous group
-            while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+            while ((groupPositions[pos + 1] !== undefined && xData[i] >= groupPositions[pos + 1]) ||
                     i === dataLength) { // get the last group
 
                 // get group x and y
-                pointX = groupPositions.shift();
+                pointX = groupPositions[pos];
                 groupedY = approximationFn.apply(0, values);
 
                 // push the grouped data
@@ -20866,6 +20960,9 @@
                 values[1] = [];
                 values[2] = [];
                 values[3] = [];
+
+                // Advance on the group positions
+                pos += 1;
 
                 // don't loop beyond the last group
                 if (i === dataLength) {
@@ -21727,7 +21824,8 @@
                 anchorX,
                 anchorY,
                 outsideRight,
-                yAxis = series.yAxis;
+                yAxis = series.yAxis,
+                text;
 
             i = points.length;
             while (i--) {
@@ -21748,13 +21846,15 @@
 
                 graphic = point.graphic;
 
+                    
                 // only draw the point if y is defined and the flag is within the visible area
                 if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
                     // shortcuts
                     pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+                    text = pick(point.options.title, options.title, 'A');
                     if (graphic) { // update
                         graphic.attr({
-                            text: pick(point.options.title, options.title, 'A') // first apply text, so text will be centered later
+                            text: text // first apply text, so text will be centered later
                         }).attr({
                             x: plotX,
                             y: plotY,
@@ -21764,7 +21864,7 @@
                         });
                     } else {
                         graphic = point.graphic = renderer.label(
-                            pick(point.options.title, options.title, 'A'), 
+                            text, 
                             plotX,
                             plotY,
                             shape,
@@ -22072,8 +22172,6 @@
                 translateX: vertical ? 0 : width - xOffset,
                 translateY: vertical ? height - yOffset : 0
             });
-
-            scroller.rendered = true;
         },
 
         /**
@@ -22212,6 +22310,8 @@
                     scroller.group.show();
                 }
             }
+
+            scroller.rendered = true;
         },
 
         /**
@@ -22449,7 +22549,7 @@
                     from = unitedMin + range * (1 - this.to);
                 }
 
-                axis.setExtremes(from, to, true, false, e);
+                axis.setExtremes(from, to, true, null, e);
             });
         }
     });
@@ -23012,7 +23112,7 @@
                                 ext.min,
                                 ext.max,
                                 true,
-                                false,
+                                null, // auto animation
                                 { trigger: 'navigator' }
                             );
                         }
@@ -23087,7 +23187,7 @@
                     fixedMin,
                     fixedMax;
 
-                if (scroller.hasDragged) {
+                if (scroller.hasDragged || e.trigger === 'scrollbar') {
                     // When dragging one handle, make sure the other one doesn't change
                     if (scroller.zoomedMin === scroller.otherHandlePos) {
                         fixedMin = scroller.fixedExtreme;
@@ -23106,7 +23206,7 @@
                             ext.min,
                             ext.max,
                             true,
-                            false,
+                            scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
                             {
                                 trigger: 'navigator',
                                 triggerOp: 'navigator-drag',
@@ -23214,8 +23314,8 @@
                         to = range * this.to,
                         from = range * this.from;
 
+                    scroller.hasDragged = scroller.scrollbar.hasDragged;
                     scroller.render(0, 0, from, to);
-                    scroller.hasDragged = true;
                     scroller.mouseUpHandler(e);
                 });
             }
@@ -23379,7 +23479,7 @@
                     xAxis.min = unionExtremes.dataMin;
                     xAxis.max = unionExtremes.dataMax;
                 }
-            }            
+            }
         },
 
         /**
@@ -23444,19 +23544,12 @@
             scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
             // If the scrollbar is scrolled all the way to the right, keep right as new data 
             // comes in.
-            scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
+            scroller.stickToMax = Math.round(scroller.zoomedMax) >= Math.round(scroller.navigatorWidth);
 
             // Set the navigator series data to the new data of the base series
             if (navigatorSeries && !scroller.hasNavigatorData) {
                 navigatorSeries.options.pointStart = baseSeries.xData[0];
-                navigatorSeries.setData(baseSeries.options.data, false);
-
-                // When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
-                // cases of updating data (addPoint, update, removePoint) directly so that this operation 
-                // on the base series reflects directly on the navigator series.
-                if (navigatorSeries.graph && baseSeries.graph) {
-                    navigatorSeries.graph.shift = baseSeries.graph.shift;
-                }
+                navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
             }
         },
 
@@ -23756,7 +23849,7 @@
                     newMin,
                     newMax,
                     pick(redraw, 1),
-                    0,
+                    null, // auto animation
                     {
                         trigger: 'rangeSelectorButton',
                         rangeSelectorButton: rangeOptions

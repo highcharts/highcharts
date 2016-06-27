@@ -1,0 +1,21 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+.highcharts-point {
+	stroke: white;
+}
+
+.main-color .highcharts-graph {
+	stroke: red;
+}
+.main-color, .main-color .highcharts-point {
+	fill: red;
+}
+.highcharts-graph.highcharts-negative {
+	stroke: blue;
+}
+.highcharts-area.highcharts-negative {
+	fill: blue;
+}
+.highcharts-point.highcharts-negative {
+	fill: blue;
+}

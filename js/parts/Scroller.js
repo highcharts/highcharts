@@ -484,7 +484,7 @@ Navigator.prototype = {
 							ext.min,
 							ext.max,
 							true,
-							false,
+							null, // auto animation
 							{ trigger: 'navigator' }
 						);
 					}
@@ -559,7 +559,7 @@ Navigator.prototype = {
 				fixedMin,
 				fixedMax;
 
-			if (scroller.hasDragged) {
+			if (scroller.hasDragged || e.trigger === 'scrollbar') {
 				// When dragging one handle, make sure the other one doesn't change
 				if (scroller.zoomedMin === scroller.otherHandlePos) {
 					fixedMin = scroller.fixedExtreme;
@@ -578,7 +578,7 @@ Navigator.prototype = {
 						ext.min,
 						ext.max,
 						true,
-						false,
+						scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
 						{
 							trigger: 'navigator',
 							triggerOp: 'navigator-drag',
@@ -686,8 +686,8 @@ Navigator.prototype = {
 					to = range * this.to,
 					from = range * this.from;
 
+				scroller.hasDragged = scroller.scrollbar.hasDragged;
 				scroller.render(0, 0, from, to);
-				scroller.hasDragged = true;
 				scroller.mouseUpHandler(e);
 			});
 		}
@@ -851,7 +851,7 @@ Navigator.prototype = {
 				xAxis.min = unionExtremes.dataMin;
 				xAxis.max = unionExtremes.dataMax;
 			}
-		}				
+		}
 	},
 
 	/**
@@ -916,19 +916,12 @@ Navigator.prototype = {
 		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
 		// If the scrollbar is scrolled all the way to the right, keep right as new data 
 		// comes in.
-		scroller.stickToMax = scroller.zoomedMax >= scroller.navigatorWidth;
+		scroller.stickToMax = Math.round(scroller.zoomedMax) >= Math.round(scroller.navigatorWidth);
 
 		// Set the navigator series data to the new data of the base series
 		if (navigatorSeries && !scroller.hasNavigatorData) {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
-			navigatorSeries.setData(baseSeries.options.data, false);
-
-			// When adding points, shift it. A more fail-safe and lean procedure may be to extend the three
-			// cases of updating data (addPoint, update, removePoint) directly so that this operation 
-			// on the base series reflects directly on the navigator series.
-			if (navigatorSeries.graph && baseSeries.graph) {
-				navigatorSeries.graph.shift = baseSeries.graph.shift;
-			}
+			navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
 		}
 	},
 

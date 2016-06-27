@@ -125,8 +125,7 @@ $(function () {
         yAxis: {
             title: '',
             categories: ['Prototyping', 'Development', 'Testing'],
-            min: 0,
-            max: 2
+            reversed: true
         },
         series: [{
             name: 'Project 1',

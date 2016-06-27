@@ -171,7 +171,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorX,
 			anchorY,
 			outsideRight,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			text;
 
 		i = points.length;
 		while (i--) {
@@ -192,13 +193,15 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			graphic = point.graphic;
 
+					
 			// only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
 				// shortcuts
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+				text = pick(point.options.title, options.title, 'A');
 				if (graphic) { // update
 					graphic.attr({
-						text: pick(point.options.title, options.title, 'A') // first apply text, so text will be centered later
+						text: text // first apply text, so text will be centered later
 					}).attr({
 						x: plotX,
 						y: plotY,
@@ -208,7 +211,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					});
 				} else {
 					graphic = point.graphic = renderer.label(
-						pick(point.options.title, options.title, 'A'), 
+						text, 
 						plotX,
 						plotY,
 						shape,

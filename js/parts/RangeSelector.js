@@ -200,7 +200,7 @@ RangeSelector.prototype = {
 				newMin,
 				newMax,
 				pick(redraw, 1),
-				0,
+				null, // auto animation
 				{
 					trigger: 'rangeSelectorButton',
 					rangeSelectorButton: rangeOptions

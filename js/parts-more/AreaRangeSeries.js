@@ -157,6 +157,12 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 
 		this.graphPath = linePath;
 		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+
+		// Prepare for sideways animation
+		linePath.isArea = true;
+		linePath.xMap = lowerPath.xMap;
+		this.areaPath.xMap = lowerPath.xMap;
+
 		return linePath;
 	},
 

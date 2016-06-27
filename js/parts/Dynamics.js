@@ -238,12 +238,8 @@ extend(Series.prototype, {
 		var series = this,
 			seriesOptions = series.options,
 			data = series.data,
-			graph = series.graph,
-			area = series.area,
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
-			currentShift = (graph && graph.shift) || 0,
-			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
@@ -252,22 +248,6 @@ extend(Series.prototype, {
 			x;
 
 		setAnimation(animation, chart);
-
-		// Make graph animate sideways
-		if (shift) {
-			i = series.zones.length;
-			while (i--) {
-				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
-			}
-			each(shiftShapes, function (shape) {
-				if (series[shape]) {
-					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
-				}
-			});
-		}
-		if (area) {
-			area.isArea = true; // needed in animation, both with and without shift
-		}
 
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);

@@ -23,16 +23,24 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		
 		<script>
 			var diffThreshold = 0;
+			window.continueBatch = false;
 			function runBatch() {
 				var currentLi = document.currentLi || $('#li1')[0];
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
+					window.continueBatch = true;
 				
-					href = href.replace("view.php", "compare-view.php") + '&continue=true';
+					href = href.replace("view.php", "compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
 				$(this).toggle();
 				$('#batch-stop').toggle();
+			}
+
+			function stopBatch() {
+				window.continueBatch = false;
+				$('#batch-stop').toggle();
+				$('#batch-compare').toggle();
 			}
 
 			function countFails() {
@@ -44,20 +52,15 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 				$(window).bind('keydown', parent.keyDown);
 
+				$(window).bind('click', function (e) {
+					if (e.target !== $('#batch-compare')[0]) {
+						stopBatch();
+					}
+				});
+
 				
 				$("#batch-compare").click(runBatch);
-
-				$("#batch-stop").click(function() {
-					var currentLi = document.currentLi || $('#li1')[0];
-					if (currentLi) {
-						var href = currentLi.getElementsByTagName("a")[0].href;
-					
-						href = href.replace("view.php", "compare-view.php");
-						window.parent.frames[1].location.href = href;
-					}
-					$(this).toggle();
-					$('#batch-compare').toggle();
-				});
+				$("#batch-stop").click(stopBatch);
 
 				$('#reset').click(function () {
 					if (confirm("Do you want to reset the compare history? Results from all browsers will be lost.")) {
@@ -267,7 +270,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		</a>
 
 		<div class="text">
-			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.0.0">PhantomJS</a>
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.1.1">PhantomJS</a>
 		</div>
 
 		<div style="margin-top: 1em">

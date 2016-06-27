@@ -177,17 +177,37 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function () {
+	autoIncrement: function (point) {
 
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
 			pointInterval,
-			pointIntervalUnit = options.pointIntervalUnit;
+			pointIntervalUnit = options.pointIntervalUnit,
+			xAxis = this.xAxis,
+			explicitCategories,
+			names,
+			nameX;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+
+		// When a point name is given and no x, search for the name in the existing categories,
+		// or if categories aren't provided, search names or create a new category (#2522). // docs
+		if (xAxis && xAxis.categories && point.name) {
+			this.requireSorting = false;
+			explicitCategories = isArray(xAxis.categories);
+			names = explicitCategories ? xAxis.categories : xAxis.names;
+			nameX = inArray(point.name, names); // #2522
+			if (nameX === -1) { // The name is not found in currenct categories
+				if (!explicitCategories) {
+					xIncrement = names.length;
+				}
+			} else {
+				xIncrement = nameX;
+			}
+		}
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
@@ -327,7 +347,6 @@ Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			hasCategories = xAxis && !!xAxis.categories,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -409,9 +428,6 @@ Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && defined(pt.name)) { // #4401
-							xAxis.names[pt.x] = pt.name; // #2046
-						}
 					}
 				}
 			}
@@ -1279,6 +1295,7 @@ Series.prototype = {
 			step = options.step,
 			reversed,
 			graphPath = [],
+			xMap = [],
 			gap;
 
 		points = points || series.points;
@@ -1304,7 +1321,7 @@ Series.prototype = {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint = points[i - 1],					
+				lastPoint = points[i - 1],
 				pathToPoint; // the path to this point from the previous
 
 			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
@@ -1365,12 +1382,18 @@ Series.prototype = {
 					];
 				}
 
+				// Prepare for animation. When step is enabled, there are two path nodes for each x value.
+				xMap.push(point.x);
+				if (step) {
+					xMap.push(point.x);
+				}
 
 				graphPath.push.apply(graphPath, pathToPoint);
 				gap = false;
 			}
 		});
 
+		graphPath.xMap = xMap;
 		series.graphPath = graphPath;
 
 		return graphPath;
@@ -1400,6 +1423,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
+				graph.endX = graphPath.xMap;
 				graph.animate({ d: graphPath });
 
 			} else if (lineWidth && graphPath.length) { // #1487
@@ -1415,10 +1439,17 @@ Series.prototype = {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
-				series[graphKey] = series.chart.renderer.path(graphPath)
+				graph = series[graphKey] = series.chart.renderer.path(graphPath)
 					.attr(attribs)
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
+			}
+
+			// Helpers for animation
+			if (graph) {
+				graph.startX = graphPath.xMap;
+				//graph.shiftUnit = options.step ? 2 : 1;
+				graph.isArea = graphPath.isArea; // For arearange animation
 			}
 		});
 	},

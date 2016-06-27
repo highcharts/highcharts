@@ -699,7 +699,9 @@
 				});
 
 			each(points, function (point) {
-				var groupKey = 'levelGroup-' + point.node.levelDynamic;
+				var groupKey = 'levelGroup-' + point.node.levelDynamic,
+					pointAttribs,
+					crispCorr;
 				if (!series[groupKey]) {
 					series[groupKey] = series.chart.renderer.g(groupKey)
 						.attr({
@@ -709,11 +711,17 @@
 				}
 				point.group = series[groupKey];
 				// Preliminary code in prepraration for HC5 that uses pointAttribs for all series
+				pointAttribs = series.pointAttribs(point);
 				point.pointAttr = {
-					'': series.pointAttribs(point),
+					'': pointAttribs,
 					'hover': series.pointAttribs(point, 'hover'),
 					'select': {}
 				};
+
+				// Crisp correction
+				crispCorr = pointAttribs['stroke-width'] % 2 / 2;
+				point.shapeArgs.x -= crispCorr;
+				point.shapeArgs.y -= crispCorr;
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);

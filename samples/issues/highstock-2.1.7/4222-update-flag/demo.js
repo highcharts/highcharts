@@ -1,6 +1,6 @@
  $(function () {
     QUnit.test('Update flag', function (assert) {
-           var chart = $('#container').highcharts('StockChart', {
+        var chart = $('#container').highcharts('StockChart', {
             series : [{
                 data : [
                      [Date.UTC(2014, 6, 1), 10],
@@ -27,7 +27,7 @@
                 shape : 'circlepin'
             }]
         }).highcharts();
-        
+
         var flag = {
                 x: Date.UTC(2015, 5, 1),
                 title: 'Name2',
@@ -35,21 +35,20 @@
             },
             point = chart.series[1].points[0];
 
-            point.update(flag, true, false);
+        point.update(flag, true, false);
 
-            assert.strictEqual(
-                point.graphic.element.children[1].innerHTML,
-                flag.title,
-                'Updated title'
-            );
+        assert.strictEqual(
+            point.graphic.element.children[1].innerHTML,
+            flag.title,
+            'Updated title'
+        );
 
-            chart.tooltip.refresh([point]);
+        chart.tooltip.refresh([point]);
 
-            assert.strictEqual(
-                chart.tooltip.label.element.lastChild.lastChild.innerHTML,
-                flag.text,
-                'Updated title'
-            );
-        
+        assert.strictEqual(
+            chart.tooltip.label.element.lastChild.lastChild.innerHTML,
+            flag.text,
+            'Updated title'
+        );
     });
-}); 
+});

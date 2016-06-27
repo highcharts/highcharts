@@ -1,0 +1,13 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+.highcharts-plot-border {
+	stroke-width: 1px;
+	stroke: silver;
+}
+.highcharts-plot-line {
+	stroke-width: 2px;
+	stroke-dasharray: 2, 2;
+}
+.highcharts-plot-line-label {
+	font-style: italic;
+}

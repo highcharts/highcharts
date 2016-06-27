@@ -825,6 +825,12 @@ var arrayMin = Highcharts.arrayMin,
 
             this.graphPath = linePath;
             this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
+
+            // Prepare for sideways animation
+            linePath.isArea = true;
+            linePath.xMap = lowerPath.xMap;
+            this.areaPath.xMap = lowerPath.xMap;
+
             return linePath;
         },
 
@@ -2486,15 +2492,24 @@ var arrayMin = Highcharts.arrayMin,
          * line-like series.
          */
         wrap(seriesProto, 'getGraphPath', function (proceed, points) {
-            var series = this;
+            var series = this,
+                i,
+                firstValid;
         
             // Connect the path
             if (this.chart.polar) {
                 points = points || this.points;
 
-                if (this.options.connectEnds !== false && points[0] && points[0].y !== null) {
+                // Append first valid point in order to connect the ends
+                for (i = 0; i < points.length; i++) {
+                    if (!points[i].isNull) {
+                        firstValid = i;
+                        break;
+                    }
+                }
+                if (this.options.connectEnds !== false && firstValid !== undefined) {
                     this.connectEnds = true; // re-used in splines
-                    points.splice(points.length, 0, points[0]);
+                    points.splice(points.length, 0, points[firstValid]);
                 }
 
                 // For area charts, pseudo points are added to the graph, now we need to translate these
