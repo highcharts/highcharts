@@ -10008,8 +10008,7 @@
                     axis.hideCrosshair();
                 });
 
-                pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
-
+                pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
             }
         },
 
