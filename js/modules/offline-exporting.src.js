@@ -307,6 +307,7 @@
 	Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 		var chart = this,
 			options = Highcharts.merge(chart.options.exporting, exportingOptions),
+			imageType = options && options.type || 'image/png',
 			fallbackToExportServer = function () {
 				if (options.fallbackToExportServer === false) {
 					if (options.error) {
@@ -319,13 +320,13 @@
 				}
 			},
 			svgSuccess = function (svg) {
-				var	imageType = options && options.type || 'image/png',
-					filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
+				var filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
 				Highcharts.downloadSVGLocal(svg, filename, imageType, options.scale, fallbackToExportServer);
 			};
 
 		// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-		if (isMSBrowser && chart.container.getElementsByTagName('image').length) {
+		// docs
+		if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
 			fallbackToExportServer();
 			return;
 		}
