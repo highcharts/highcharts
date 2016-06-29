@@ -376,11 +376,8 @@ Navigator.prototype = {
 		this._events = _events;
 
 		// Data events
-		if (this.series) {
-			addEvent(this.series.xAxis, 'foundExtremes', function () {
-				chart.scroller.modifyNavigatorAxisExtremes();
-			});
-		}
+		this.addBaseSeriesEvents();
+
 		addEvent(chart, 'redraw', function () {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
@@ -401,8 +398,13 @@ Navigator.prototype = {
 			removeEvent.apply(null, args);
 		});
 		this._events = UNDEFINED;
-		if (this.navigatorEnabled && this.baseSeries) {
+		this.removeBaseSeriesEvents();
+	},
+
+	removeBaseSeriesEvents: function () {
+		if (this.navigatorEnabled && this.baseSeries && this.baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
 			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
+			removeEvent(this.baseSeries.xAxis, 'foundExtremes', this.chart.scroller.modifyBaseAxisExtremes);
 		}
 	},
 
@@ -692,21 +694,8 @@ Navigator.prototype = {
 			});
 		}
 
-		// Respond to updated data in the base series.
-		// Abort if lazy-loading data from the server.
-		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
-			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
-
-			addEvent(baseSeries.xAxis, 'foundExtremes', function () {
-				if (baseSeries.xAxis) {
-					this.chart.scroller.modifyBaseAxisExtremes();
-				}
-			});
-		
-			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
-
-		}
+		// Add data events
+		scroller.addBaseSeriesEvents();
 
 
 		/**
@@ -787,6 +776,7 @@ Navigator.prototype = {
 
 		// If we're resetting, remove the existing series
 		if (this.series) {
+			this.removeBaseSeriesEvents();
 			this.series.remove();
 		}
 
@@ -833,8 +823,22 @@ Navigator.prototype = {
 		// Add the series
 		this.series = this.chart.initSeries(mergedNavSeriesOptions);
 
-	},
+		this.addBaseSeriesEvents();
 
+	},
+	addBaseSeriesEvents: function () {
+		var baseSeries = this.baseSeries;
+
+		// Respond to updated data in the base series.
+		// Abort if lazy-loading data from the server.
+		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
+			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			addEvent(baseSeries.xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
+		
+			// Survive Series.update()
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+		}
+	},
 	/**
 	 * Set the scroller x axis extremes to reflect the total. The navigator extremes
 	 * should always be the extremes of the union of all series in the chart as
@@ -858,6 +862,10 @@ Navigator.prototype = {
 	 * Hook to modify the base axis extremes with information from the Navigator
 	 */
 	modifyBaseAxisExtremes: function () {
+		if (!this.baseSeries || !this.baseSeries.xAxis) {
+			return;
+		}
+
 		var baseSeries = this.baseSeries,
 			baseXAxis = baseSeries.xAxis,
 			baseExtremes = baseXAxis.getExtremes(),
