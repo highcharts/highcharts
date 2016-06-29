@@ -23003,7 +23003,11 @@
             this._events = _events;
 
             // Data events
-            this.addBaseSeriesEvents();
+            if (this.series) {
+                addEvent(this.series.xAxis, 'foundExtremes', function () {
+                    chart.scroller.modifyNavigatorAxisExtremes();
+                });
+            }
 
             addEvent(chart, 'redraw', function () {
                 // Move the scrollbar after redraw, like after data updata even if axes don't redraw
@@ -23031,7 +23035,7 @@
         removeBaseSeriesEvents: function () {
             if (this.navigatorEnabled && this.baseSeries && this.baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
                 removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
-                removeEvent(this.baseSeries.xAxis, 'foundExtremes', this.chart.scroller.modifyBaseAxisExtremes);
+                removeEvent(this.baseSeries.xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
             }
         },
 
@@ -23477,7 +23481,6 @@
 
             if (xAxis.getExtremes) {
                 unionExtremes = this.getUnionExtremes(true);
-
                 if (unionExtremes && (unionExtremes.dataMin !== xAxis.min || unionExtremes.dataMax !== xAxis.max)) {
                     xAxis.min = unionExtremes.dataMin;
                     xAxis.max = unionExtremes.dataMax;
@@ -23489,23 +23492,23 @@
          * Hook to modify the base axis extremes with information from the Navigator
          */
         modifyBaseAxisExtremes: function () {
-            if (!this.baseSeries || !this.baseSeries.xAxis) {
+            if (!this.chart.scroller.baseSeries) {
                 return;
             }
 
-            var baseSeries = this.baseSeries,
-                baseXAxis = baseSeries.xAxis,
+            var baseXAxis = this,
+                scroller = baseXAxis.chart.scroller,
                 baseExtremes = baseXAxis.getExtremes(),
                 baseMin = baseExtremes.min,
                 baseMax = baseExtremes.max,
                 baseDataMin = baseExtremes.dataMin,
                 baseDataMax = baseExtremes.dataMax,
                 range = baseMax - baseMin,
-                stickToMin = this.stickToMin,
-                stickToMax = this.stickToMax,
+                stickToMin = scroller.stickToMin,
+                stickToMax = scroller.stickToMax,
                 newMax,
                 newMin,
-                navigatorSeries = this.series,
+                navigatorSeries = scroller.series,
                 hasSetExtremes = !!baseXAxis.setExtremes;
 
             // If the zoomed range is already at the min, move it to the right as new data
@@ -23533,7 +23536,7 @@
             }
 
             // Reset
-            this.stickToMin = this.stickToMax = null;
+            scroller.stickToMin = scroller.stickToMax = null;
         },
 
         /**
