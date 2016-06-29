@@ -210,7 +210,9 @@ Navigator.prototype = {
 			outlineHeight = scroller.outlineHeight,
 			outlineTop = top + halfOutline,
 			rendered = scroller.rendered,
-			verb;
+			verb,
+			insidePosition,
+			invisibleColor = 'rgba(192,192,192,0.002)'; // Invisible, but clickable
 
 		// Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
 		if (!isNumber(min) || !isNumber(max) ||	(scroller.hasDragged && !defined(pxMin))) {
@@ -265,6 +267,14 @@ Navigator.prototype = {
 				if (navigatorOptions.maskInside) {
 					scroller.leftShade.css({ cursor: 'ew-resize' });
 				} else {
+					scroller.centerShade = renderer.rect()
+							.attr({
+								stroke: invisibleColor,
+								fill: invisibleColor
+							}).css({
+								cursor: 'ew-resize'
+							}).add(navigatorGroup);
+
 					scroller.rightShade = renderer.rect()
 						.attr({
 							fill: navigatorOptions.maskFill
@@ -284,18 +294,20 @@ Navigator.prototype = {
 		// place elements
 		verb = rendered ? 'animate' : 'attr';
 		if (navigatorEnabled) {
-			scroller.leftShade[verb](navigatorOptions.maskInside ? {
+			insidePosition = {
 				x: navigatorLeft + zoomedMin,
 				y: top,
 				width: zoomedMax - zoomedMin,
 				height: height
-			} : {
+			};
+			scroller.leftShade[verb](navigatorOptions.maskInside ? insidePosition : {
 				x: navigatorLeft,
 				y: top,
 				width: zoomedMin,
 				height: height
 			});
-			if (scroller.rightShade) {
+			if (!navigatorOptions.maskInside) {
+				scroller.centerShade[verb](insidePosition);
 				scroller.rightShade[verb]({
 					x: navigatorLeft + zoomedMax,
 					y: top,
