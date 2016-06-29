@@ -20,7 +20,8 @@
 		nav = win.navigator,
 		doc = win.document,
 		domurl = win.URL || win.webkitURL || win,
-		loadEventDeferDelay = /Edge\/|Trident\/|MSIE /.test(nav.userAgent) ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
+		isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
+		loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
 	Highcharts.CanVGRenderer = {};
@@ -306,6 +307,7 @@
 	Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 		var chart = this,
 			options = Highcharts.merge(chart.options.exporting, exportingOptions),
+			imageType = options && options.type || 'image/png',
 			fallbackToExportServer = function () {
 				if (options.fallbackToExportServer === false) {
 					if (options.error) {
@@ -318,10 +320,16 @@
 				}
 			},
 			svgSuccess = function (svg) {
-				var	imageType = options && options.type || 'image/png',
-					filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
+				var filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
 				Highcharts.downloadSVGLocal(svg, filename, imageType, options.scale, fallbackToExportServer);
 			};
+
+		// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
+		// docs
+		if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
+			fallbackToExportServer();
+			return;
+		}
 
 		chart.getSVGForLocalExport(options, chartOptions, fallbackToExportServer, svgSuccess);
 	};
