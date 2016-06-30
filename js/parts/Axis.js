@@ -101,7 +101,7 @@ Axis.prototype = {
 			//x: 0,
 			//y: 0
 		},
-		type: 'linear' // linear, logarithmic or datetime
+		type: 'linear' // linear, logarithmic, symmetricalLog or datetime
 		//visible: true
 	},
 
@@ -247,7 +247,8 @@ Axis.prototype = {
 		//axis.axisLine = UNDEFINED;
 
 		// Shorthand types
-		axis.isLog = type === 'logarithmic';
+		axis.isLog = (type === 'logarithmic' || type === 'symmetricalLog');
+		axis.isSymLog = type === 'symmetricalLog';
 		axis.isDatetimeAxis = isDatetimeAxis;
 
 		// Flag, if axis is linked to another axis
@@ -384,7 +385,7 @@ Axis.prototype = {
 			formatOption = axis.options.labels.format,
 
 			// make sure the same symbol is added for all labels on a linear axis
-			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
+			numericSymbolDetector = axis.isLog ? mathAbs(value) : axis.tickInterval;
 
 		if (formatOption) {
 			ret = format(formatOption, this);
@@ -449,8 +450,8 @@ Axis.prototype = {
 
 				axis.hasVisibleSeries = true;
 
-				// Validate threshold in logarithmic axes
-				if (axis.isLog && threshold <= 0) {
+				// Validate threshold in axes of type logarithmic
+				if (axis.isLog && !axis.isSymLog && threshold <= 0) {
 					threshold = null;
 				}
 
@@ -495,7 +496,7 @@ Axis.prototype = {
 						axis.threshold = threshold;
 					}
 					// If any series has a hard threshold, it takes precedence
-					if (!seriesOptions.softThreshold || axis.isLog) {
+					if (!seriesOptions.softThreshold || (axis.isLog && !axis.isSymLog)) {
 						axis.softThreshold = false;
 					}
 				}
@@ -914,6 +915,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isLog = axis.isLog,
+			isSymLog = axis.isSymLog,
 			log2lin = axis.log2lin,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -971,8 +973,8 @@ Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
+			if (!isSymLog && !secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+				error(10, 1); // Can't plot negative values on axis of type 'logarithmic'
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,

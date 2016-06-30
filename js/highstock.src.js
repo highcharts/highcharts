@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-06-22)
+ * @license Highstock JS v4.2.5-modified (2016-08-07)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -107,6 +107,21 @@
         // lookup over the types and the associated classes
         seriesTypes = {},
         Highcharts;
+
+    /**
+     * Symmetric log function. Provides a log function that can handle zeros and negative numbers
+     */
+    function mathSymLog(num) {
+        var retVal;
+        if (num === 0) {
+            retVal = 0;
+        } else if (num < 0) {
+            retVal = Math.log(mathAbs(num)) * -1;
+        } else {
+            retVal = Math.log(num);
+        }
+        return retVal;
+    }
 
     /**
      * Provide error messages for debugging, with links to online explanation
@@ -7064,7 +7079,7 @@
                 //x: 0,
                 //y: 0
             },
-            type: 'linear' // linear, logarithmic or datetime
+            type: 'linear' // linear, logarithmic, symmetricalLog or datetime
             //visible: true
         },
 
@@ -7210,7 +7225,8 @@
             //axis.axisLine = UNDEFINED;
 
             // Shorthand types
-            axis.isLog = type === 'logarithmic';
+            axis.isLog = (type === 'logarithmic' || type === 'symmetricalLog');
+            axis.isSymLog = type === 'symmetricalLog';
             axis.isDatetimeAxis = isDatetimeAxis;
 
             // Flag, if axis is linked to another axis
@@ -7347,7 +7363,7 @@
                 formatOption = axis.options.labels.format,
 
                 // make sure the same symbol is added for all labels on a linear axis
-                numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
+                numericSymbolDetector = axis.isLog ? mathAbs(value) : axis.tickInterval;
 
             if (formatOption) {
                 ret = format(formatOption, this);
@@ -7412,8 +7428,8 @@
 
                     axis.hasVisibleSeries = true;
 
-                    // Validate threshold in logarithmic axes
-                    if (axis.isLog && threshold <= 0) {
+                    // Validate threshold in axes of type logarithmic
+                    if (axis.isLog && !axis.isSymLog && threshold <= 0) {
                         threshold = null;
                     }
 
@@ -7458,7 +7474,7 @@
                             axis.threshold = threshold;
                         }
                         // If any series has a hard threshold, it takes precedence
-                        if (!seriesOptions.softThreshold || axis.isLog) {
+                        if (!seriesOptions.softThreshold || (axis.isLog && !axis.isSymLog)) {
                             axis.softThreshold = false;
                         }
                     }
@@ -7877,6 +7893,7 @@
                 chart = axis.chart,
                 options = axis.options,
                 isLog = axis.isLog,
+                isSymLog = axis.isSymLog,
                 log2lin = axis.log2lin,
                 isDatetimeAxis = axis.isDatetimeAxis,
                 isXAxis = axis.isXAxis,
@@ -7934,8 +7951,8 @@
             }
 
             if (isLog) {
-                if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-                    error(10, 1); // Can't plot negative values on log axis
+                if (!isSymLog && !secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+                    error(10, 1); // Can't plot negative values on axis of type 'logarithmic'
                 }
                 // The correctFloat cures #934, float errors on full tens. But it
                 // was too aggressive for #4360 because of conversion back to lin,
@@ -9632,11 +9649,19 @@
     };
 
     Axis.prototype.log2lin = function (num) {
-        return math.log(num) / math.LN10;
+        return mathSymLog(num) / math.LN10;
     };
 
     Axis.prototype.lin2log = function (num) {
-        return math.pow(10, num);
+        var retVal;
+        if (num === 0) {
+            retVal = 0;
+        } else if (num < 0) {
+            retVal = math.pow(10, mathAbs(num)) * -1;
+        } else {
+            retVal = math.pow(10, num);
+        }
+        return retVal;
     };
     /**
      * The tooltip object
@@ -14466,7 +14491,7 @@
 
                 // For points within the visible range, including the first point outside the
                 // visible range, consider y extremes
-                validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+                validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || yAxis.isSymLog || (y.length || y > 0));
                 withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
                     ((xData[i + 1] || x) >= xMin &&    (xData[i - 1] || x) <= xMax);
 
@@ -14527,8 +14552,8 @@
                     pointStack,
                     stackValues;
 
-                // Discard disallowed y values for log axes (#3434)
-                if (yAxis.isLog && yValue !== null && yValue <= 0) {
+                // Discard disallowed y values for axes of type 'logarithmic' (#3434)
+                if (yAxis.isLog && !yAxis.isSymLog && yValue !== null && yValue <= 0) {
                     point.y = yValue = null;
                     error(10);
                 }
@@ -14549,7 +14574,7 @@
                     if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
                         yBottom = pick(threshold, yAxis.min);
                     }
-                    if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
+                    if (yAxis.isLog && !yAxis.isSymLog && yBottom <= 0) { // #1200, #1232
                         yBottom = null;
                     }
 
@@ -20374,7 +20399,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-06-22)
+     * Highstock JS v4.2.5-modified (2016-08-07)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

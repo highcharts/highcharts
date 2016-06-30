@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-17)
+ * @license Highcharts JS v4.2.5-modified (2016-06-30)
  *
  * 3D features for Highcharts JS
  *
@@ -1231,8 +1231,8 @@
 
                     axis.hasVisibleSeries = true;
 
-                    // Validate threshold in logarithmic axes
-                    if (axis.isLog && threshold <= 0) {
+                    // Validate threshold in axes of type logarithmic
+                    if (axis.isLog && !axis.isSymLog && threshold <= 0) {
                         threshold = null;
                     }
 
