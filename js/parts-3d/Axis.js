@@ -303,8 +303,8 @@ Highcharts.extend(ZAxis.prototype, {
 
 				axis.hasVisibleSeries = true;
 
-				// Validate threshold in logarithmic axes
-				if (axis.isLog && threshold <= 0) {
+				// Validate threshold in axes of type logarithmic
+				if (axis.isLog && !axis.isSymLog && threshold <= 0) {
 					threshold = null;
 				}
 

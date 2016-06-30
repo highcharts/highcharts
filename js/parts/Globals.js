@@ -89,6 +89,21 @@ var UNDEFINED,
 	Highcharts;
 
 /**
+ * Symmetric log function. Provides a log function that can handle zeros and negative numbers
+ */
+function mathSymLog(num) {
+	var retVal;
+	if (num === 0) {
+		retVal = 0;
+	} else if (num < 0) {
+		retVal = Math.log(Math.abs(num)) * -1;
+	} else {
+		retVal = Math.log(num);
+	}
+	return retVal;
+}
+
+/**
  * Provide error messages for debugging, with links to online explanation
  */
 function error(code, stop) {

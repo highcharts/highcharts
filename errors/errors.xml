@@ -9,6 +9,7 @@
 				<li>If the minimum of a logarithimic axis is set to 0 or less</li>
 				<li>If the threshold is set to 0 or less</li>
 			</ul>
+			If you want to use a logarithmic axis with zero or negative data consider setting the axis type to: 'symmetricalLog'
 		</description>
 	</error>
 

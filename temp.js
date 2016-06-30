@@ -6773,8 +6773,8 @@ Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
+			if (!axis.isSymLog && !secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+				error(10, 1); // Can't plot negative values on axis of type 'logarithmic'
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,
@@ -12845,8 +12845,8 @@ Series.prototype = {
 				pointStack,
 				stackValues;
 
-			// Discard disallowed y values for log axes (#3434)
-			if (yAxis.isLog && yValue !== null && yValue <= 0) {
+			// Discard disallowed y values for axes of type 'logarithmic' (#3434)
+			if (yAxis.isLog && !yAxis.isSymLog && yValue !== null && yValue <= 0) {
 				point.y = yValue = null;
 				error(10);
 			}
