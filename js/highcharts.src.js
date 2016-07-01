@@ -14652,10 +14652,15 @@
                     );
                 }
                 chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+                // Create hashmap for series indexes
+                clipRect.count = { length: 0 };
 
             }
             if (animation) {
-                clipRect.count += 1;
+                if (!clipRect.count[this.index]) {
+                    clipRect.count[this.index] = true;
+                    clipRect.count.length += 1;
+                }
             }
 
             if (options.clip !== false) {
@@ -14666,8 +14671,12 @@
 
             // Remove the shared clipping rectangle when all series are shown
             if (!animation) {
-                clipRect.count -= 1;
-                if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
+                if (clipRect.count[this.index]) {
+                    delete clipRect.count[this.index];
+                    clipRect.count.length -= 1;
+                }
+
+                if (clipRect.count.length === 0 && sharedClipKey && chart[sharedClipKey]) {
                     if (!seriesClipBox) {
                         chart[sharedClipKey] = chart[sharedClipKey].destroy();
                     }
