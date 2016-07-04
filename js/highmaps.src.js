@@ -9805,6 +9805,7 @@
                 tooltip = chart.tooltip,
                 shared = tooltip ? tooltip.shared : false,
                 followPointer,
+                updatePosition = true,
                 hoverPoint = chart.hoverPoint,
                 hoverSeries = chart.hoverSeries,
                 i,
@@ -9882,15 +9883,18 @@
             if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
                 // Draw tooltip if necessary
                 if (shared && !kdpoint[0].series.noSharedTooltip) {
-                    if (kdpoints.length && tooltip) {
-                        tooltip.refresh(kdpoints, e);
-                    }
+                    if (kdpoint[1] !== this.prevKDPoint) {
+                        if (kdpoints.length && tooltip) {
+                            tooltip.refresh(kdpoints, e);
+                        }
 
-                    // Do mouseover on all points (#3919, #3985, #4410)
-                    each(kdpoints, function (point) {
-                        point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[0]));
-                    });
-                    this.prevKDPoint = kdpoint[1];
+                        // Do mouseover on all points (#3919, #3985, #4410)
+                        each(kdpoints, function (point) {
+                            point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[1]));
+                        });
+                        this.prevKDPoint = kdpoint[1];
+                        updatePosition = false;
+                    }
                 } else {
                     if (tooltip) {
                         tooltip.refresh(kdpoint[0], e);
@@ -9899,10 +9903,11 @@
                         kdpoint[0].onMouseOver(e);
                     }
                     this.prevKDPoint = kdpoint[0];
+                    updatePosition = false;
                 }
-
+            }
             // Update positions (regardless of kdpoint or hoverPoint)
-            } else {
+            if (updatePosition) {
                 followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
                 if (tooltip && followPointer && !tooltip.isHidden) {
                     anchor = tooltip.getAnchor([{}], e);
