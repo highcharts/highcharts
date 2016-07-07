@@ -1,0 +1,14 @@
+{
+    "name": "highcharts/highcharts",
+    "type": "component",
+    "require": {
+        "robloach/component-installer": "*"
+    },
+    "extra": {
+        "component": {
+            "files": [
+                "lib/*"
+            ]
+        }
+    }
+}
