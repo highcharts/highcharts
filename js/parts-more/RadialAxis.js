@@ -240,6 +240,7 @@ var radialAxisMixin = {
 				options.innerRadius,
 				pick(options.thickness, 10)
 			],
+			offset = Math.min(this.offset, 0),
 			percentRegex = /%$/,
 			start,
 			end,
@@ -282,6 +283,8 @@ var radialAxisMixin = {
 				end = startAngleRad + this.translate(to);
 			}
 
+			radii[0] -= offset; // #5283
+			radii[2] -= offset; // #5283
 
 			ret = this.chart.renderer.symbols.arc(
 				this.left + center[0],
