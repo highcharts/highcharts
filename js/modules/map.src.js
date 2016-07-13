@@ -1342,7 +1342,7 @@
                     if (mapData['hc-transform']) {
                         this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
                         // Cache cos/sin of transform rotation angle
-                        for (transformKey in mapTransforms) {
+                        for (var transformKey in mapTransforms) {
                             transform = mapTransforms[transformKey];
                             if (mapTransforms.hasOwnProperty(transformKey) && transform.rotation) {
                                 transform.cosAngle = Math.cos(transform.rotation);
