@@ -18113,13 +18113,13 @@
 
                 if (options.allAreas) {
                     this.getBox(mapData);
-                    data = data || [];            
+                    data = data || [];
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + map(dataUsed, function (point) { 
-                        return point[joinBy[0]]; 
+                    dataUsed = '|' + map(dataUsed, function (point) {
+                        return point[joinBy[0]];
                     }).join('|') + '|'; // String search is faster than array.indexOf
-                
+
                     each(mapData, function (mapPoint) {
                         if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
                             data.push(merge(mapPoint, { value: null }));
