@@ -342,8 +342,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (mapData['hc-transform']) {
 					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
 					// Cache cos/sin of transform rotation angle
-					for (transform in mapTransforms) {
-						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
+					for (transformKey in mapTransforms) {
+						transform = mapTransforms[transformKey];
+						if (mapTransforms.hasOwnProperty(transformKey) && transform.rotation) {
 							transform.cosAngle = Math.cos(transform.rotation);
 							transform.sinAngle = Math.sin(transform.rotation);
 						}
