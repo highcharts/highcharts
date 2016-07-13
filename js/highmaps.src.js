@@ -18077,8 +18077,9 @@
                     if (mapData['hc-transform']) {
                         this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
                         // Cache cos/sin of transform rotation angle
-                        for (transform in mapTransforms) {
-                            if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
+                        for (transformKey in mapTransforms) {
+                            transform = mapTransforms[transformKey];
+                            if (mapTransforms.hasOwnProperty(transformKey) && transform.rotation) {
                                 transform.cosAngle = Math.cos(transform.rotation);
                                 transform.sinAngle = Math.sin(transform.rotation);
                             }
@@ -18113,13 +18114,13 @@
 
                 if (options.allAreas) {
                     this.getBox(mapData);
-                    data = data || [];            
+                    data = data || [];
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + map(dataUsed, function (point) { 
-                        return point[joinBy[0]]; 
+                    dataUsed = '|' + map(dataUsed, function (point) {
+                        return point[joinBy[0]];
                     }).join('|') + '|'; // String search is faster than array.indexOf
-                
+
                     each(mapData, function (mapPoint) {
                         if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
                             data.push(merge(mapPoint, { value: null }));
