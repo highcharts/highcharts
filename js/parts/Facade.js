@@ -15,7 +15,6 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	correctFloat: correctFloat,
-	dateFormat: dateFormat,
 	error: error,
 	format: format,
 	pathAnim: pathAnim,

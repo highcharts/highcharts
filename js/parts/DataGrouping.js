@@ -429,9 +429,9 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, labelConfig.key);
+		formattedKey = Highcharts.dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
+			formattedKey += Highcharts.dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
 		}
 
 		// return the replaced format

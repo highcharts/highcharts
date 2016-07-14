@@ -32,7 +32,6 @@ var UNDEFINED,
 	idCounter = 0,
 	garbageBin,
 	defaultOptions,
-	dateFormat, // function
 	pathAnim,
 	timeUnits,
 	noop = function () {},
