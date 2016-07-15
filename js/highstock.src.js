@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-06-22)
+ * @license Highstock JS v4.2.5-modified (2016-07-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -10354,7 +10354,7 @@
             if (shared) {
                 i = kdpoints.length;
                 while (i--) {
-                    if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+                    if (kdpoints[i].plotX !== kdpoint[1].plotX || kdpoints[i].series.noSharedTooltip) {
                         kdpoints.splice(i, 1);
                     }
                 }
@@ -20374,7 +20374,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-06-22)
+     * Highstock JS v4.2.5-modified (2016-07-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
