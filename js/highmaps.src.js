@@ -9875,7 +9875,7 @@
             if (shared) {
                 i = kdpoints.length;
                 while (i--) {
-                    if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+                    if (kdpoints[i].plotX !== kdpoint[1].plotX || kdpoints[i].series.noSharedTooltip) {
                         kdpoints.splice(i, 1);
                     }
                 }
