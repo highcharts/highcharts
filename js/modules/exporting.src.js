@@ -102,7 +102,7 @@ defaultOptions.exporting = {
 	//enabled: true,
 	//filename: 'chart',
 	type: 'image/png',
-	url: 'http://export.highcharts.com/',
+	url: 'https://export.highcharts.com/',
 	//width: undefined,
 	printMaxWidth: 780,
 	scale: 2,
