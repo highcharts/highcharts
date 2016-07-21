@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-17)
+ * @license Highcharts JS v4.2.5-modified (2016-07-21)
  *
  * 3D features for Highcharts JS
  *
@@ -1728,6 +1728,7 @@
 
             rawPoint.plotXold = rawPoint.plotX;
             rawPoint.plotYold = rawPoint.plotY;
+            rawPoint.plotZold = rawPoint.plotZ;
 
             rawPoint.plotX = projectedPoint.x;
             rawPoint.plotY = projectedPoint.y;
