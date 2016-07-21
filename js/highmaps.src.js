@@ -14062,7 +14062,7 @@
 
 
                 // Set client related positions for mouse tracking
-                point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : plotX; // #1514
+                point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1)) : plotX; // #1514
 
                 point.negative = point.y < (threshold || 0);
 
