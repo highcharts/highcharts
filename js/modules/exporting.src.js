@@ -427,7 +427,6 @@ extend(Chart.prototype, {
 			body = doc.body,
 			childNodes = body.childNodes,
 			printMaxWidth = chart.options.exporting.printMaxWidth,
-			hasUserSize,
 			resetParams,
 			handleMaxWidth;
 
@@ -443,9 +442,8 @@ extend(Chart.prototype, {
 		// Handle printMaxWidth
 		handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
 		if (handleMaxWidth) {
-			hasUserSize = chart.hasUserSize;
-			resetParams = [chart.chartWidth, chart.chartHeight, false];
-			chart.setSize(printMaxWidth, chart.chartHeight, false);
+			resetParams = [chart.options.chart.width, undefined, false];
+			chart.setSize(printMaxWidth, undefined, false);
 		}
 
 		// hide all body content
@@ -481,7 +479,6 @@ extend(Chart.prototype, {
 			// Reset printMaxWidth
 			if (handleMaxWidth) {
 				chart.setSize.apply(chart, resetParams);
-				chart.hasUserSize = hasUserSize;
 			}
 
 			fireEvent(chart, 'afterPrint');

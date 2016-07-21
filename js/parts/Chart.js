@@ -746,20 +746,20 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
+			hasUserWidth = defined(optionsChart.width),
 			width = optionsChart.width || getStyle(renderTo, 'width'),
 			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+		if (!hasUserWidth && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				// When called from window.resize, e is set, else it's called directly (#2224)
 				chart.reflowTimeout = syncTimeout(function () {
 					if (chart.container) { // It may have been destroyed in the meantime (#1257)
-						chart.setSize(width, height, false);
-						chart.hasUserSize = null;
+						chart.setSize(undefined, undefined, false);
 					}
 				}, e ? 100 : 0);
 			}
@@ -786,14 +786,12 @@ Chart.prototype = {
 
 	/**
 	 * Resize the chart to a given width and height
-	 * @param {Number} width
-	 * @param {Number} height
+	 * @param {Number} width // docs: undefined preserves current value. null changes to auto.
+	 * @param {Number} height // docs: undefined preserves current value. null changes to auto.
 	 * @param {Object|Boolean} animation
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
-			chartWidth,
-			chartHeight,
 			renderer = chart.renderer,
 			globalAnimation;
 
@@ -805,23 +803,23 @@ Chart.prototype = {
 
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
-		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathMax(0, mathRound(width));
-			chart.hasUserSize = !!chartWidth;
+		if (width !== undefined) {
+			chart.options.chart.width = width;
 		}
-		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathMax(0, mathRound(height));
+		if (height !== undefined) {
+			chart.options.chart.height = height;
 		}
+		chart.getChartSize();
 
 		// Resize the container with the global animation applied if enabled (#2503)
 		globalAnimation = renderer.globalAnimation;
 		(globalAnimation ? animate : css)(chart.container, {
-			width: chartWidth + PX,
-			height: chartHeight + PX
+			width: chart.chartWidth + PX,
+			height: chart.chartHeight + PX
 		}, globalAnimation);
 
 		chart.setChartSize(true);
-		renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;
