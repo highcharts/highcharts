@@ -352,6 +352,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		snap = this.crosshair.snap !== false,
 		value;
 
+	// Use last available event (#5287)
+	if (!e) {
+		e = this.cross && this.cross.e;
+	}
+
 	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
 	// If the label does not exist yet, create it.

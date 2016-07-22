@@ -2291,6 +2291,12 @@ Axis.prototype = {
 			categorized,
 			strokeWidth;
 
+		// Use last available event when updating non-snapped crosshairs without
+		// mouse interaction (#5287)
+		if (!e) {
+			e = this.cross && this.cross.e;
+		}
+
 		if (
 			// Disabled in options
 			!this.crosshair ||
@@ -2342,7 +2348,7 @@ Axis.prototype = {
 				}
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
-
+			this.cross.e = e;
 		}
 
 	},

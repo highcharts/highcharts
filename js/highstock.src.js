@@ -9256,6 +9256,12 @@
                 categorized,
                 strokeWidth;
 
+            // Use last available event when updating non-snapped crosshairs without
+            // mouse interaction (#5287)
+            if (!e) {
+                e = this.cross && this.cross.e;
+            }
+
             if (
                 // Disabled in options
                 !this.crosshair ||
@@ -9307,7 +9313,7 @@
                     }
                     this.cross = this.chart.renderer.path(path).attr(attribs).add();
                 }
-
+                this.cross.e = e;
             }
 
         },
@@ -10444,13 +10450,10 @@
                     if (hoverPoint) { // #2500
                         hoverPoint.setState(hoverPoint.state, true);
                         each(chart.axes, function (axis) {
-                            if (pick(axis.crosshair && axis.crosshair.snap, true)) {
+                            if (axis.crosshair) {
                                 axis.drawCrosshair(null, hoverPoint);
-                            }  else {
-                                axis.hideCrosshair();
                             }
                         });
-
                     }
                 }
 
@@ -24841,6 +24844,11 @@
             tickInside = this.options.tickPosition === 'inside',
             snap = this.crosshair.snap !== false,
             value;
+
+        // Use last available event (#5287)
+        if (!e) {
+            e = this.cross && this.cross.e;
+        }
 
         align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
