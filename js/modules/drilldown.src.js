@@ -146,11 +146,11 @@
 			last = undefined;
 		}
 		
-			
-		ddOptions = extend({
-			color: color,
-			_ddSeriesId: ddSeriesId++
-		}, ddOptions);
+		if (!ddOptions.color) {
+			ddOptions.color = color;
+		}
+		ddOptions._ddSeriesId = ddSeriesId++;
+
 		pointIndex = inArray(point, oldSeries.points);
 
 		// Record options for all current series
@@ -440,7 +440,7 @@
 					point.graphic
 						.attr(animateFrom)
 						.animate(
-							extend(point.shapeArgs, { fill: point.color }), 
+							extend(point.shapeArgs, { fill: point.color || series.color }), 
 							animationOptions
 						);
 				}
