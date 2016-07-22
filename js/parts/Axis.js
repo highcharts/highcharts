@@ -1520,7 +1520,7 @@ Axis.prototype = {
 		// With a threshold of null, make the columns/areas rise from the top or bottom
 		// depending on the value, assuming an actual threshold of 0 (#4233).
 		if (threshold === null) {
-			threshold = realMax < 0 ? realMax : realMin;
+			threshold = realMin;
 		} else if (realMin > threshold) {
 			threshold = realMin;
 		} else if (realMax < threshold) {
