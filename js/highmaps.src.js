@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-07-21)
+ * @license Highmaps JS v4.2.5-modified (2016-07-22)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -6673,11 +6673,11 @@
                 if (show && isNumber(xy.y)) {
                     xy.opacity = opacity;
                     label[tick.isNew ? 'attr' : 'animate'](xy);
-                    tick.isNew = false;
                 } else {
                     stop(label); // #5332
                     label.attr('y', -9999); // #1338
                 }
+                tick.isNew = false;
             }
         },
 
