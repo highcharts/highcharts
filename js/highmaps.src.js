@@ -8995,7 +8995,6 @@
                 ((defined(point) || !pick(options.snap, true)) === false)
             ) {
                 this.hideCrosshair();
-
             } else {
 
                 // Get the path

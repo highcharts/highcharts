@@ -9269,7 +9269,6 @@
                 ((defined(point) || !pick(options.snap, true)) === false)
             ) {
                 this.hideCrosshair();
-
             } else {
 
                 // Get the path
@@ -24823,7 +24822,7 @@
         proceed.call(this, e, point);
 
         // Check if the label has to be drawn
-        if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
+        if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !this.cross) {
             return;
         }
 

@@ -330,7 +330,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !this.cross) {
 		return;
 	}
 
