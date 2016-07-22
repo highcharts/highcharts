@@ -24975,6 +24975,9 @@
             return value;
         } : null;
 
+        // Survive to export, #5485
+        this.userOptions.compare = compare;
+
         // Mark dirty
         if (this.chart.hasRendered) {
             this.isDirty = true;
