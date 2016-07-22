@@ -871,29 +871,36 @@ Navigator.prototype = {
 			newMax,
 			newMin,
 			navigatorSeries = this.series,
-			hasSetExtremes = !!baseXAxis.setExtremes;
+			hasSetExtremes = !!baseXAxis.setExtremes,
 
-		// If the zoomed range is already at the min, move it to the right as new data
-		// comes in
-		if (stickToMin) {
-			newMin = baseDataMin;
-			newMax = newMin + range;
-		}
+			// When the extremes have been set by range selector button, don't stick to min or max.
+			// The range selector buttons will handle the extremes. (#5489)
+			unmutable = baseXAxis.eventArgs && baseXAxis.eventArgs.trigger === 'rangeSelectorButton';
 
-		// If the zoomed range is already at the max, move it to the right as new data
-		// comes in
-		if (stickToMax) {
-			newMax = baseDataMax;
-			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
+		if (!unmutable) {
+		
+			// If the zoomed range is already at the min, move it to the right as new data
+			// comes in
+			if (stickToMin) {
+				newMin = baseDataMin;
+				newMax = newMin + range;
 			}
-		}
 
-		// Update the extremes
-		if (hasSetExtremes && (stickToMin || stickToMax)) {
-			if (isNumber(newMin)) {
-				baseXAxis.min = baseXAxis.userMin = newMin;
-				baseXAxis.max = baseXAxis.userMax = newMax;
+			// If the zoomed range is already at the max, move it to the right as new data
+			// comes in
+			if (stickToMax) {
+				newMax = baseDataMax;
+				if (!stickToMin) { // if stickToMin is true, the new min value is set above
+					newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
+				}
+			}
+
+			// Update the extremes
+			if (hasSetExtremes && (stickToMin || stickToMax)) {
+				if (isNumber(newMin)) {
+					baseXAxis.min = baseXAxis.userMin = newMin;
+					baseXAxis.max = baseXAxis.userMax = newMax;
+				}
 			}
 		}
 
