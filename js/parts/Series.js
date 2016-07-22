@@ -1096,7 +1096,7 @@ Series.prototype = {
 		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
 
 			// if no hover radius is given, default to normal radius + 2
-			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
+			stateOptionsHover.radius = +stateOptionsHover.radius || +normalOptions.radius + +stateOptionsHover.radiusPlus;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + stateOptionsHover.lineWidthPlus;
 
 		} else { // column, bar, pie
