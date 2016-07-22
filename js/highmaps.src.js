@@ -8208,8 +8208,6 @@
                 realMin = isLog ? lin2log(axis.min) : axis.min,
                 realMax = isLog ? lin2log(axis.max) : axis.max;
 
-            // With a threshold of null, make the columns/areas rise from the top or bottom
-            // depending on the value, assuming an actual threshold of 0 (#4233).
             if (threshold === null) {
                 threshold = realMin;
             } else if (realMin > threshold) {
