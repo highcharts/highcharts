@@ -10,8 +10,8 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.series[0].area.getBBox().y + chart.series[0].area.getBBox().height,
-            chart.plotHeight,
+            Math.round(chart.series[0].area.getBBox().y + chart.series[0].area.getBBox().height),
+            Math.round(chart.plotHeight),
             'Area goes all the way down'
         );
     });
