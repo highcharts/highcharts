@@ -719,7 +719,7 @@
 				};
 
 				// Crisp correction
-				crispCorr = pointAttribs['stroke-width'] % 2 / 2;
+				crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
 				point.shapeArgs.x -= crispCorr;
 				point.shapeArgs.y -= crispCorr;
 			});
