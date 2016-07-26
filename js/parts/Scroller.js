@@ -865,10 +865,10 @@ Navigator.prototype = {
 	 * Hook to modify the base axis extremes with information from the Navigator
 	 */
 	modifyBaseAxisExtremes: function () {
-		if (!this.chart.scroller.baseSeries) {
+		if (!this.chart.scroller.baseSeries || !this.chart.scroller.baseSeries.xAxis) {
 			return;
 		}
-
+		
 		var baseXAxis = this,
 			scroller = baseXAxis.chart.scroller,
 			baseExtremes = baseXAxis.getExtremes(),
@@ -881,7 +881,7 @@ Navigator.prototype = {
 			stickToMax = scroller.stickToMax,
 			newMax,
 			newMin,
-			navigatorSeries = this.series,
+			navigatorSeries = scroller.series,
 			hasSetExtremes = !!baseXAxis.setExtremes,
 
 			// When the extremes have been set by range selector button, don't stick to min or max.
@@ -931,7 +931,7 @@ Navigator.prototype = {
 
 		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
 		// axis minimum falls outside the new updated dataset, we must adjust.
-		scroller.stickToMin = baseSeries.xAxis.min <= baseSeries.xData[0];
+		scroller.stickToMin = isNumber(baseSeries.xAxis.min) && (baseSeries.xAxis.min <= baseSeries.xData[0]);
 		// If the scrollbar is scrolled all the way to the right, keep right as new data 
 		// comes in.
 		scroller.stickToMax = Math.round(scroller.zoomedMax) >= Math.round(scroller.navigatorWidth);
