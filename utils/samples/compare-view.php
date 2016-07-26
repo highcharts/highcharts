@@ -502,6 +502,12 @@
 									}
 									callback(data);
 								}
+								image.onerror = function (e) {
+									var side = source === source1 ? 'left' : 'right';
+									report += '<div>Failed painting SVG to canvas on ' + side + ' side.</div>';
+									$('#report').html(report).css('background', '#f15c80');
+									onDifferent('Error');
+								}
 								image.src = useBlob ?
 									svgurl :
 									'data:image/svg+xml,' + source;
