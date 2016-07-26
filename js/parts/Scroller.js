@@ -902,7 +902,7 @@ Navigator.prototype = {
 			if (stickToMax) {
 				newMax = baseDataMax;
 				if (!stickToMin) { // if stickToMin is true, the new min value is set above
-					newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
+					newMin = mathMax(newMax - range, navigatorSeries && navigatorSeries.xData ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
 				}
 			}
 

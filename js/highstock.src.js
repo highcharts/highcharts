@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.5-modified (2016-07-25)
+ * @license Highstock JS v4.2.5-modified (2016-07-26)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20382,7 +20382,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.5-modified (2016-07-25)
+     * Highstock JS v4.2.5-modified (2016-07-26)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -23491,7 +23491,7 @@
                 if (stickToMax) {
                     newMax = baseDataMax;
                     if (!stickToMin) { // if stickToMin is true, the new min value is set above
-                        newMin = mathMax(newMax - range, navigatorSeries ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
+                        newMin = mathMax(newMax - range, navigatorSeries && navigatorSeries.xData ? navigatorSeries.xData[0] : -Number.MAX_VALUE);
                     }
                 }
 
