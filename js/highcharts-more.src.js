@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-06-22)
+ * @license Highcharts JS v4.2.5-modified (2016-07-26)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1927,7 +1927,10 @@ var arrayMin = Highcharts.arrayMin,
             this.areaPath = graphPath;
             return graphPath;
         },
-        drawGraph: seriesTypes.area.prototype.drawGraph,
+        drawGraph: function () {
+            this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+            seriesTypes.area.prototype.drawGraph.call(this);
+        },
         drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
         drawTracker: Series.prototype.drawTracker,
         setStackedPoints: noop // No stacking points on polygons (#5310)

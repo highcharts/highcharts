@@ -38,7 +38,10 @@ seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 		this.areaPath = graphPath;
 		return graphPath;
 	},
-	drawGraph: seriesTypes.area.prototype.drawGraph,
+	drawGraph: function () {
+		this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+		seriesTypes.area.prototype.drawGraph.call(this);
+	},
 	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 	drawTracker: Series.prototype.drawTracker,
 	setStackedPoints: noop // No stacking points on polygons (#5310)
