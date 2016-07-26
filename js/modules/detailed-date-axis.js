@@ -6,7 +6,7 @@
 	/**
 	 * Add custom date formats
 	 */
-	Highcharts.dateFormats = {
+	H.dateFormats = {
 		// Week number
 		W: function (timestamp) {
 			var date = new Date(timestamp),
@@ -44,6 +44,7 @@
 		} else {
 			returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
+
 		return returnValue;
 	});
 
@@ -76,9 +77,23 @@
 				// Make tick marks taller, creating cell walls of a grid.
 				// Use cellHeight axis option if set
 				axis.options.tickLength = axis.options.cellHeight || 25;
+
+				/**
+				 * Axis lines start at first tick
+				 */
+				H.wrap(axis, 'getLinePath', function (proceed, lineWidth) {
+					var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+						xStart = returnValue.indexOf('M') + 1,
+						firstTickPos = this.getExtremes().min;
+
+					returnValue[xStart] = this.translate(firstTickPos) + this.left;
+
+					return returnValue;
+				});
 			}
 		});
 
+		// Only alter axis lines if there was an axis with grid: true
 		if (axis !== undefined) {
 
 			/**
@@ -93,6 +108,7 @@
 
 				// Call original Axis.render() to obtain this.axisLine and this.axisGroup
 				proceed.apply(this);
+
 				if (axis.axisLine) {
 					// -1 to avoid adding distance each time the chart updates
 					distance = axis.axisGroup.getBBox().height - 1;
@@ -100,7 +116,6 @@
 
 					if (lineWidth) {
 						linePath = axis.getLinePath(lineWidth);
-
 						yStart = linePath.indexOf('M') + 2;
 						yEnd = linePath.indexOf('L') + 2;
 
