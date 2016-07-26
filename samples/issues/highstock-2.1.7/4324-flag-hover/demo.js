@@ -23,7 +23,7 @@ $(function () {
 
         assert.strictEqual(
             image.box.element.getAttribute('fill'),
-            null,
+            'none',
             'No fill for image'
         );
 

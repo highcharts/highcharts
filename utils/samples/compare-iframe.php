@@ -133,10 +133,10 @@ function getHTML($which) {
 	$_SESSION['html'] = $issueHTML;
 
 	if (strstr($s, 'http://')) {
-		$s .= "<script>console.warn('Do not use http in demo.html. Use secure https. ($path)')</script>";
+		$s .= "<script>throw 'Do not use http in demo.html. Use secure https. ($path)';</script>";
 	}
 	if (strstr($s, '.src.js')) {
-		$s .= "<script>console.warn('Do not use src.js files in demos. Use .js compiled files. ($path)')</script>";
+		$s .= "<script>throw 'Do not use src.js files in demos. Use .js compiled files. ($path)';</script>";
 	}
 
 	$s = cachify($s);

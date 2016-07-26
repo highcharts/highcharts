@@ -43,7 +43,8 @@ $(function () {
         assert.strictEqual(
             points[0].graphic.attr("fill"),
             points[4].graphic.attr("fill"),
-            "The same hover color for positive ant negative bars")
+            "The same hover color for positive and negative bars"
+        );
+
     });
-    
 });
