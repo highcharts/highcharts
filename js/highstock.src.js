@@ -22215,7 +22215,7 @@
                 newPos,
                 newSize,
                 newRiflesPos,
-                method = this.rendered ? 'animate' : 'attr';
+                method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
             if (!defined(scroller.barWidth)) {
                 return;
@@ -22304,17 +22304,17 @@
 
                     change = chartPosition - scrollPosition;
 
+                    scroller.hasDragged = true;
                     scroller.updatePosition(initPositions[0] + change, initPositions[1] + change);
 
-                    if (scroller.options.liveRedraw) {
-                        setTimeout(function () {
-                            scroller.mouseUpHandler(e);
-                        }, 0);
-                    } else {
-                        scroller.setRange(scroller.from, scroller.to);
+                    if (scroller.hasDragged) {
+                        fireEvent(scroller, 'changed', {
+                            from: scroller.from,
+                            to: scroller.to,
+                            trigger: 'scrollbar',
+                            DOMEvent: e
+                        });
                     }
-
-                    scroller.hasDragged = true;
                 }
             };
 
@@ -22330,10 +22330,7 @@
                         DOMEvent: e
                     });
                 }
-
-                if (e.type !== 'mousemove') {
-                    scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
-                }
+                scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
             };
 
             scroller.mouseDownHandler = function (e) {
@@ -22764,7 +22761,7 @@
             }
 
             // Place it
-            handles[index][scroller.rendered ? 'animate' : 'attr']({
+            handles[index][scroller.rendered && !scroller.hasDragged ? 'animate' : 'attr']({
                 translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
                 translateY: scroller.top + scroller.height / 2 - 8
             });
@@ -22871,7 +22868,7 @@
             }
 
             // place elements
-            verb = rendered ? 'animate' : 'attr';
+            verb = rendered && !scroller.hasDragged ? 'animate' : 'attr';
             if (navigatorEnabled) {
                 scroller.leftShade[verb](navigatorOptions.maskInside ? {
                     x: navigatorLeft + zoomedMin,
@@ -22916,6 +22913,9 @@
             }
 
             if (scroller.scrollbar) {
+
+                scroller.scrollbar.hasDragged = scroller.hasDragged;
+                
                 // Keep scale 0-1
                 scroller.scrollbar.position(
                     scroller.scrollerLeft,
@@ -23098,8 +23098,7 @@
                     scrollerLeft = scroller.scrollerLeft,
                     scrollerWidth = scroller.scrollerWidth,
                     range = scroller.range,
-                    chartX,
-                    hasDragged;
+                    chartX;
 
                 // In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
                 // down in the center of the scrollbar. This should be ignored.
@@ -23117,18 +23116,18 @@
 
                     // drag left handle
                     if (scroller.grabbedLeft) {
-                        hasDragged = true;
+                        scroller.hasDragged = true;
                         scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
 
                     // drag right handle
                     } else if (scroller.grabbedRight) {
-                        hasDragged = true;
+                        scroller.hasDragged = true;
                         scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
 
                     // drag scrollbar or open area in navigator
                     } else if (scroller.grabbedCenter) {
 
-                        hasDragged = true;
+                        scroller.hasDragged = true;
                         if (chartX < dragOffset) { // outside left
                             chartX = dragOffset;
                         } else if (chartX > navigatorWidth + dragOffset - range) { // outside right
@@ -23137,12 +23136,11 @@
 
                         scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
                     }
-                    if (hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
+                    if (scroller.hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
                         setTimeout(function () {
                             scroller.mouseUpHandler(e);
                         }, 0);
                     }
-                    scroller.hasDragged = hasDragged;
                 }
             };
 
@@ -23152,7 +23150,8 @@
             scroller.mouseUpHandler = function (e) {
                 var ext,
                     fixedMin,
-                    fixedMax;
+                    fixedMax,
+                    DOMEvent = e.DOMEvent || e;
 
                 if (scroller.hasDragged || e.trigger === 'scrollbar') {
                     // When dragging one handle, make sure the other one doesn't change
@@ -23177,13 +23176,13 @@
                             {
                                 trigger: 'navigator',
                                 triggerOp: 'navigator-drag',
-                                DOMEvent: e // #1838
+                                DOMEvent: DOMEvent // #1838
                             }
                         );
                     }
                 }
 
-                if (e.type !== 'mousemove') {
+                if (DOMEvent.type !== 'mousemove') {
                     scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
                         scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
                 }
@@ -23283,7 +23282,12 @@
 
                     scroller.hasDragged = scroller.scrollbar.hasDragged;
                     scroller.render(0, 0, from, to);
-                    scroller.mouseUpHandler(e);
+
+                    if (chart.options.scrollbar.liveRedraw || e.DOMEvent.type !== 'mousemove') {
+                        setTimeout(function () {
+                            scroller.mouseUpHandler(e);
+                        });
+                    }
                 });
             }
 

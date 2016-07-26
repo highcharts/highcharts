@@ -175,7 +175,7 @@ Navigator.prototype = {
 		}
 
 		// Place it
-		handles[index][scroller.rendered ? 'animate' : 'attr']({
+		handles[index][scroller.rendered && !scroller.hasDragged ? 'animate' : 'attr']({
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
 			translateY: scroller.top + scroller.height / 2 - 8
 		});
@@ -282,7 +282,7 @@ Navigator.prototype = {
 		}
 
 		// place elements
-		verb = rendered ? 'animate' : 'attr';
+		verb = rendered && !scroller.hasDragged ? 'animate' : 'attr';
 		if (navigatorEnabled) {
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {
 				x: navigatorLeft + zoomedMin,
@@ -327,6 +327,9 @@ Navigator.prototype = {
 		}
 
 		if (scroller.scrollbar) {
+
+			scroller.scrollbar.hasDragged = scroller.hasDragged;
+				
 			// Keep scale 0-1
 			scroller.scrollbar.position(
 				scroller.scrollerLeft,
@@ -509,8 +512,7 @@ Navigator.prototype = {
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
 				range = scroller.range,
-				chartX,
-				hasDragged;
+				chartX;
 
 			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
 			// down in the center of the scrollbar. This should be ignored.
@@ -528,18 +530,18 @@ Navigator.prototype = {
 
 				// drag left handle
 				if (scroller.grabbedLeft) {
-					hasDragged = true;
+					scroller.hasDragged = true;
 					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
 
 				// drag right handle
 				} else if (scroller.grabbedRight) {
-					hasDragged = true;
+					scroller.hasDragged = true;
 					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
 
 				// drag scrollbar or open area in navigator
 				} else if (scroller.grabbedCenter) {
 
-					hasDragged = true;
+					scroller.hasDragged = true;
 					if (chartX < dragOffset) { // outside left
 						chartX = dragOffset;
 					} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
@@ -548,12 +550,11 @@ Navigator.prototype = {
 
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
-				if (hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
+				if (scroller.hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
 					setTimeout(function () {
 						scroller.mouseUpHandler(e);
 					}, 0);
 				}
-				scroller.hasDragged = hasDragged;
 			}
 		};
 
@@ -563,7 +564,8 @@ Navigator.prototype = {
 		scroller.mouseUpHandler = function (e) {
 			var ext,
 				fixedMin,
-				fixedMax;
+				fixedMax,
+				DOMEvent = e.DOMEvent || e;
 
 			if (scroller.hasDragged || e.trigger === 'scrollbar') {
 				// When dragging one handle, make sure the other one doesn't change
@@ -588,13 +590,13 @@ Navigator.prototype = {
 						{
 							trigger: 'navigator',
 							triggerOp: 'navigator-drag',
-							DOMEvent: e // #1838
+							DOMEvent: DOMEvent // #1838
 						}
 					);
 				}
 			}
 
-			if (e.type !== 'mousemove') {
+			if (DOMEvent.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
 					scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
 			}
@@ -694,7 +696,12 @@ Navigator.prototype = {
 
 				scroller.hasDragged = scroller.scrollbar.hasDragged;
 				scroller.render(0, 0, from, to);
-				scroller.mouseUpHandler(e);
+
+				if (chart.options.scrollbar.liveRedraw || e.DOMEvent.type !== 'mousemove') {
+					setTimeout(function () {
+						scroller.mouseUpHandler(e);
+					});
+				}
 			});
 		}
 

@@ -253,7 +253,7 @@ Scrollbar.prototype = {
 			newPos,
 			newSize,
 			newRiflesPos,
-			method = this.rendered ? 'animate' : 'attr';
+			method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
 		if (!defined(scroller.barWidth)) {
 			return;
@@ -342,17 +342,17 @@ Scrollbar.prototype = {
 
 				change = chartPosition - scrollPosition;
 
+				scroller.hasDragged = true;
 				scroller.updatePosition(initPositions[0] + change, initPositions[1] + change);
 
-				if (scroller.options.liveRedraw) {
-					setTimeout(function () {
-						scroller.mouseUpHandler(e);
-					}, 0);
-				} else {
-					scroller.setRange(scroller.from, scroller.to);
+				if (scroller.hasDragged) {
+					fireEvent(scroller, 'changed', {
+						from: scroller.from,
+						to: scroller.to,
+						trigger: 'scrollbar',
+						DOMEvent: e
+					});
 				}
-
-				scroller.hasDragged = true;
 			}
 		};
 
@@ -368,10 +368,7 @@ Scrollbar.prototype = {
 					DOMEvent: e
 				});
 			}
-
-			if (e.type !== 'mousemove') {
-				scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
-			}
+			scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
 		};
 
 		scroller.mouseDownHandler = function (e) {
