@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-07-22)
+ * @license Highmaps JS v4.2.5-modified (2016-07-26)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -18563,7 +18563,7 @@
             });
         };
     }(Highcharts));
-    function stopEvent (e) {
+    function stopEvent(e) {
         if (e) {
             if (e.preventDefault) {
                 e.preventDefault();
