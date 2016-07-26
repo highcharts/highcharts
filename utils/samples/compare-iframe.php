@@ -132,7 +132,7 @@ function getHTML($which) {
 	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;
 	$_SESSION['html'] = $issueHTML;
 
-	if (strstr($s, 'http://')) {
+	if (strstr($s, 'http://code.highcharts.com') || strstr($s, 'http://www.highcharts.com')) {
 		$s .= "<script>throw 'Do not use http in demo.html. Use secure https. ($path)';</script>";
 	}
 	if (strstr($s, '.src.js')) {
