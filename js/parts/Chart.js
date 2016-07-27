@@ -300,8 +300,7 @@ Chart.prototype = {
 
 		// redraw affected series
 		each(series, function (serie) {
-			if (serie.isDirty && serie.visible &&
-					(!serie.isCartesian || serie.xAxis)) { // issue #153
+			if ((isDirtyBox || serie.isDirty) && serie.visible) {
 				serie.redraw();
 			}
 		});
@@ -830,11 +829,6 @@ Chart.prototype = {
 		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
-		});
-
-		// make sure non-cartesian series are also handled
-		each(chart.series, function (serie) {
-			serie.isDirty = true;
 		});
 
 		chart.isDirtyLegend = true; // force legend redraw
