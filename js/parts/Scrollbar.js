@@ -545,7 +545,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 				from = unitedMin + range * (1 - this.to);
 			}
 
-			axis.setExtremes(from, to, true, null, e);
+			axis.setExtremes(from, to, true, false, e);
 		});
 	}
 });
