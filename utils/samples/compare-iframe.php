@@ -260,17 +260,17 @@ function getExportInnerHTML() {
 
 						// Compare chart objects
 						if (chart) {
-
+							clearInterval(interval);
+							
 							// Automatically click buttons with classname "autocompare"
 							tryToRun(function () {
 								$('.autocompare').click();
 							});
-
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
-							clearInterval(interval);
 
 						// Compare renderers
 						} else if (window.renderer) {
+							clearInterval(interval);
 
 							// Automatically click buttons with classname "autocompare"
 							tryToRun(function () {
@@ -284,7 +284,6 @@ function getExportInnerHTML() {
 								}
 							};
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', window.renderer.box.parentNode.innerHTML);
-							clearInterval(interval);
 
 						} else if (new Date() - start > 2000) {
 							clearInterval(interval);
