@@ -551,6 +551,7 @@ Navigator.prototype = {
 					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
 				}
 				if (scroller.hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
+					e.DOMType = e.type; // DOMType is for IE8 because it can't read type async
 					setTimeout(function () {
 						scroller.mouseUpHandler(e);
 					}, 0);
@@ -596,7 +597,7 @@ Navigator.prototype = {
 				}
 			}
 
-			if (DOMEvent.type !== 'mousemove') {
+			if (e.DOMType !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
 					scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
 			}
@@ -697,7 +698,7 @@ Navigator.prototype = {
 				scroller.hasDragged = scroller.scrollbar.hasDragged;
 				scroller.render(0, 0, from, to);
 
-				if (chart.options.scrollbar.liveRedraw || e.DOMEvent.type !== 'mousemove') {
+				if (chart.options.scrollbar.liveRedraw || e.DOMType !== 'mousemove') {
 					setTimeout(function () {
 						scroller.mouseUpHandler(e);
 					});

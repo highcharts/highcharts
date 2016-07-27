@@ -350,6 +350,7 @@ Scrollbar.prototype = {
 						from: scroller.from,
 						to: scroller.to,
 						trigger: 'scrollbar',
+						DOMType: e.type,
 						DOMEvent: e
 					});
 				}
@@ -365,6 +366,7 @@ Scrollbar.prototype = {
 					from: scroller.from,
 					to: scroller.to,
 					trigger: 'scrollbar',
+					DOMType: e.type,
 					DOMEvent: e
 				});
 			}
