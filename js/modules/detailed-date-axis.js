@@ -23,24 +23,28 @@
 	};
 
 	/**
-	 * Place dates between ticks
+	 * Center tick labels vertically and horizontally between ticks
 	 */
 	H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
-		var halfTickInterval,
-			returnValue,
+		var returnValue,
 			newPos,
-			magicNumber = 4;
+			axisHeight,
+			fontSize,
+			labelMetrics;
 
+		// Only center tick labels if axis has option grid: true
 		if (this.axis.options.grid) {
-			halfTickInterval = this.axis.options.tickInterval / 2;
-			newPos = this.pos + halfTickInterval;
+			// Calculate x position
+			newPos = this.pos + this.axis.options.tickInterval / 2;
 			x = this.axis.translate(newPos) + this.axis.left;
-			y = y - ((this.axis.axisGroup.getBBox().height + magicNumber) / 2) + (label.getBBox().height / 2);
 
-			returnValue = {
-				x: x,
-				y: y
-			};
+			// Calculaye y position
+			axisHeight = this.axis.axisGroup.getBBox().height;
+			fontSize = this.axis.options.labels.style.fontSize;
+			labelMetrics = this.axis.chart.renderer.fontMetrics(fontSize, label);
+			y = y - (axisHeight / 2) + (labelMetrics.h / 2) - (Math.abs(labelMetrics.h - labelMetrics.b));
+
+			returnValue = { x: x, y: y };
 		} else {
 			returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
@@ -58,8 +62,16 @@
 
 		// Get the topmost datetime xAxis
 		H.each(this.axes, function (chartAxis) {
+			// 25 is optimal height for default fontSize (11px)
+			// 25 / 11 ≈ 2.28
+			var fontSizeToCellHeightRatio = 25 / 11,
+				fontSize,
+				fontMetrics;
+
 			if (chartAxis.options.grid) {
 				axis = chartAxis;
+				fontSize = axis.options.labels.style.fontSize;
+				fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
 
 				// Prohibit timespans of multitudes of a time unit,
 				// e.g. two days, three weeks, etc.
@@ -76,7 +88,7 @@
 
 				// Make tick marks taller, creating cell walls of a grid.
 				// Use cellHeight axis option if set
-				axis.options.tickLength = axis.options.cellHeight || 25;
+				axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
 
 				/**
 				 * Axis lines start at first tick
@@ -84,7 +96,8 @@
 				H.wrap(axis, 'getLinePath', function (proceed, lineWidth) {
 					var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 						xStart = returnValue.indexOf('M') + 1,
-						firstTickPos = this.getExtremes().min;
+						firstTick = this.ticks[Object.keys(this.ticks)[0]],
+						firstTickPos = firstTick ? firstTick.pos : this.getExtremes().min;
 
 					returnValue[xStart] = this.translate(firstTickPos) + this.left;
 
