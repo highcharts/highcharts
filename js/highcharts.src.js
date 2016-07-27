@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-07-26)
+ * @license Highcharts JS v4.2.5-modified (2016-07-27)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -17993,8 +17993,8 @@
                 dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
                 if (!hasRendered) {
                     addEvent(series, 'afterAnimate', function () {
-                        if (series.visible) { // #3023, #3024
-                            dataLabelsGroup.show();
+                        if (series.visible) { // #2597, #3023, #3024
+                            dataLabelsGroup.show(true);
                         }
                         dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
                     });
