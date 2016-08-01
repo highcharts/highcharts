@@ -16680,13 +16680,15 @@
                 pointMap = {},
                 points = this.points,
                 seriesIndex = series.index,
-                yAxisSeries = yAxis.series,
-                seriesLength = yAxisSeries.length,
+                yAxisSeries = [].concat(yAxis.series),
                 visibleSeries,
-                upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
                 i,
                 x;
-
+        
+            // Can go either up or down, depending on reversedStacks
+            if (pick(yAxis.options.reversedStacks, false)) {
+                yAxisSeries.reverse();
+            }
             if (this.options.stacking) {
                 // Create a map where we can quickly look up the points by their X value.
                 for (i = 0; i < points.length; i++) {
@@ -16708,7 +16710,7 @@
                 });
 
                 each(keys, function (x, idx) {
-                    var y = 0,
+                    var y,
                         stackPoint,
                         stackedValues;
 
@@ -16721,31 +16723,27 @@
                                 cliffName = direction === 1 ? 'rightCliff' : 'leftCliff',
                                 cliff = 0,
                                 otherStack = stack[keys[idx + direction]];
-
                             // If there is a stack next to this one, to the left or to the right...
                             if (otherStack) {
-                                i = seriesIndex;
-                                while (i >= 0 && i < seriesLength) { // Can go either up or down, depending on reversedStacks
-                                    stackPoint = otherStack.points[i];
+                                each(yAxisSeries, function (s) {
+                                    stackPoint = otherStack.points[s.index];
                                     if (!stackPoint) {
                                         // If the next point in this series is missing, mark the point
                                         // with point.leftNull or point.rightNull = true.
-                                        if (i === seriesIndex) {
+                                        if (s.index === seriesIndex) {
                                             pointMap[x][nullName] = true;
 
                                         // If there are missing points in the next stack in any of the 
                                         // series below this one, we need to substract the missing values
                                         // and add a hiatus to the left or right.
-                                        } else if (visibleSeries[i]) {
-                                            stackedValues = stack[x].points[i];
+                                        } else if (visibleSeries[s.index]) {
+                                            stackedValues = stack[x].points[s.index];
                                             if (stackedValues) {
                                                 cliff -= stackedValues[1] - stackedValues[0];
                                             }
                                         }
                                     }
-                                    // When reversedStacks is true, loop up, else loop down
-                                    i += upOrDown; 
-                                }                
+                                });    
                             }
                             pointMap[x][cliffName] = cliff;
                         });
@@ -16755,20 +16753,17 @@
                     // insert a dummy point in order for the areas to be drawn
                     // correctly.
                     } else {
-
                         // Loop down the stack to find the series below this one that has
                         // a value (#1991)
-                        i = seriesIndex;
-                        while (i >= 0 && i < seriesLength) {
-                            stackPoint = stack[x].points[i];
-                            if (stackPoint) {
-                                y = stackPoint[1];
-                                break;
+                        each(yAxisSeries, function (s) {
+                            if (y === undefined) {
+                                stackPoint = stack[x].points[s.index];
+                                if (stackPoint) {
+                                    y = stackPoint[1];
+                                }
                             }
-                            // When reversedStacks is true, loop up, else loop down
-                            i += upOrDown;
-                        }
-
+                        });
+                        y = pick(y, 0);
                         y = yAxis.toPixels(y, true);
                         segment.push({ 
                             isNull: true,
@@ -16778,7 +16773,6 @@
                         });
                     }
                 });
-
             } 
 
             return segment;
