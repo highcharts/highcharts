@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-07-27)
+ * @license Highcharts JS v4.2.5-modified (2016-08-02)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -12825,8 +12825,8 @@
 
         /**
          * Resize the chart to a given width and height
-         * @param {Number} width // docs: undefined preserves current value. null changes to auto.
-         * @param {Number} height // docs: undefined preserves current value. null changes to auto.
+         * @param {Number} width
+         * @param {Number} height
          * @param {Object|Boolean} animation
          */
         setSize: function (width, height, animation) {
@@ -13977,7 +13977,7 @@
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
             // When a point name is given and no x, search for the name in the existing categories,
-            // or if categories aren't provided, search names or create a new category (#2522). // docs
+            // or if categories aren't provided, search names or create a new category (#2522).
             if (xAxis && xAxis.categories && point.name) {
                 this.requireSorting = false;
                 explicitCategories = isArray(xAxis.categories);

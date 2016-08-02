@@ -155,8 +155,8 @@ Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
 				type: 'map'
 			},
 			credits: {
-				mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'), // docs
-				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}') // docs
+				mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
+				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
 			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })

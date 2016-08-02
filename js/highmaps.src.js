@@ -12346,8 +12346,8 @@
 
         /**
          * Resize the chart to a given width and height
-         * @param {Number} width // docs: undefined preserves current value. null changes to auto.
-         * @param {Number} height // docs: undefined preserves current value. null changes to auto.
+         * @param {Number} width
+         * @param {Number} height
          * @param {Object|Boolean} animation
          */
         setSize: function (width, height, animation) {
@@ -13458,7 +13458,7 @@
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
             // When a point name is given and no x, search for the name in the existing categories,
-            // or if categories aren't provided, search names or create a new category (#2522). // docs
+            // or if categories aren't provided, search names or create a new category (#2522).
             if (xAxis && xAxis.categories && point.name) {
                 this.requireSorting = false;
                 explicitCategories = isArray(xAxis.categories);
@@ -19644,8 +19644,8 @@
                     type: 'map'
                 },
                 credits: {
-                    mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'), // docs
-                    mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}') // docs
+                    mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
+                    mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
                 },
                 xAxis: hiddenAxis,
                 yAxis: merge(hiddenAxis, { reversed: true })

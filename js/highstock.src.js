@@ -12825,8 +12825,8 @@
 
         /**
          * Resize the chart to a given width and height
-         * @param {Number} width // docs: undefined preserves current value. null changes to auto.
-         * @param {Number} height // docs: undefined preserves current value. null changes to auto.
+         * @param {Number} width
+         * @param {Number} height
          * @param {Object|Boolean} animation
          */
         setSize: function (width, height, animation) {
@@ -13977,7 +13977,7 @@
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
             // When a point name is given and no x, search for the name in the existing categories,
-            // or if categories aren't provided, search names or create a new category (#2522). // docs
+            // or if categories aren't provided, search names or create a new category (#2522).
             if (xAxis && xAxis.categories && point.name) {
                 this.requireSorting = false;
                 explicitCategories = isArray(xAxis.categories);
@@ -21978,13 +21978,13 @@
         buttonBorderColor: '#bbb',
         buttonBorderRadius: 0,
         buttonBorderWidth: 1,
-        //showFull: true, // docs
-        margin: 10, // docs
+        //showFull: true,
+        margin: 10,
         minWidth: 6,
         rifleColor: '#666',
-        zIndex: 3,        // docs
-        step: 0.2,        // docs
-        //size: null,    // docs
+        zIndex: 3,
+        step: 0.2,
+        //size: null,
         trackBackgroundColor: '#eeeeee',
         trackBorderColor: '#eeeeee',
         trackBorderWidth: 1,
@@ -22000,7 +22000,7 @@
      * @param {Object} options
      * @param {Object} chart
      */
-    function Scrollbar(renderer, options, chart) { // docs
+    function Scrollbar(renderer, options, chart) {
         this.scrollbarButtons = [];
 
         this.renderer = renderer;
@@ -22494,7 +22494,7 @@
         if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
             // Predefined options:
             axis.options.scrollbar.vertical = !axis.horiz;
-            axis.options.startOnTick = axis.options.endOnTick = false; // docs
+            axis.options.startOnTick = axis.options.endOnTick = false;
 
             axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
 

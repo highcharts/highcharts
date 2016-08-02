@@ -194,7 +194,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 
 		// When a point name is given and no x, search for the name in the existing categories,
-		// or if categories aren't provided, search names or create a new category (#2522). // docs
+		// or if categories aren't provided, search names or create a new category (#2522).
 		if (xAxis && xAxis.categories && point.name) {
 			this.requireSorting = false;
 			explicitCategories = isArray(xAxis.categories);

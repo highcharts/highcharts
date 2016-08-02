@@ -786,8 +786,8 @@ Chart.prototype = {
 
 	/**
 	 * Resize the chart to a given width and height
-	 * @param {Number} width // docs: undefined preserves current value. null changes to auto.
-	 * @param {Number} height // docs: undefined preserves current value. null changes to auto.
+	 * @param {Number} width
+	 * @param {Number} height
 	 * @param {Object|Boolean} animation
 	 */
 	setSize: function (width, height, animation) {
