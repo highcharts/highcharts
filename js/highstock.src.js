@@ -21134,8 +21134,10 @@
             }
 
             // return the replaced format
-            labelConfig.point.key = labelConfig.key;
-            return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], labelConfig);
+            return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+                point: extend(labelConfig.point, { key: formattedKey }),
+                series: series
+            });
     
         }
 
