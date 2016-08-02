@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (2016-07-27)
+ * @license Highmaps JS v4.2.5-modified (2016-08-02)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -19643,8 +19643,8 @@
                     type: 'map'
                 },
                 credits: {
-                    mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
-                    mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
+                    mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'), // docs
+                    mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}') // docs
                 },
                 xAxis: hiddenAxis,
                 yAxis: merge(hiddenAxis, { reversed: true })
