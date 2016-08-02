@@ -1545,7 +1545,7 @@
                         </antcall>
                         <!-- copy gfx folder to Root -->
                         <antcall target="put-files-to-S3">
-                            <param name="local" value="${basedir}/build/dist/hithmaps/gfx"/>
+                            <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}/maps"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
@@ -1642,19 +1642,19 @@
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
     <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
-        <copy todir="${highcharts.site.dir}/samples">
+        <copy todir="${highcharts.site.dir}/php-app/samples">
             <fileset dir="samples"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/studies">
+        <copy todir="${highcharts.site.dir}/php-app/studies">
             <fileset dir="studies"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/js/themes">
+        <copy todir="${highcharts.site.dir}/php-app/js/themes">
             <fileset dir="js/themes"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/errors">
+        <copy todir="${highcharts.site.dir}/php-app/errors">
             <fileset dir="errors"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/lib">
+        <copy todir="${highcharts.site.dir}/php-app/lib">
             <fileset dir="vendor"/>
         </copy>
     </target>
@@ -1663,22 +1663,22 @@
         <property file="git-ignore-me.properties"/>
         
         <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/media/com_download/js/parts.js" overwrite="true"/>
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/php-app/joomla/media/com_download/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/parts-more" overwrite="true">
             <filelist refid="highchartsmore.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highcharts-modules.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="heatmap.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>

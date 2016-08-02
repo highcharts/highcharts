@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-08-02)
+ * @license Highcharts JS v4.2.6 (2016-08-02)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
-        VERSION = '4.2.5-modified',
+        VERSION = '4.2.6',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1601,7 +1601,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.5-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/4.2.6/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -8955,8 +8955,7 @@
                 offset = this.offset,
                 xOption = axisTitleOptions.x || 0,
                 yOption = axisTitleOptions.y || 0,
-                renderer = this.chart.renderer,
-                fontSize = renderer.fontMetrics(axisTitleOptions.style.fontSize).f;
+                fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style.fontSize).f,
 
                 // the position in the length direction of the axis
                 alongAxis = {

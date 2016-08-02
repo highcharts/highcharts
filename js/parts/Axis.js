@@ -1990,8 +1990,7 @@ Axis.prototype = {
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			renderer = this.chart.renderer,
-			fontSize = renderer.fontMetrics(axisTitleOptions.style.fontSize).f;
+			fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style.fontSize).f,
 
 			// the position in the length direction of the axis
 			alongAxis = {
