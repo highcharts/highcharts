@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-02)
+ * @license Highcharts JS v4.2.6-modified (2016-08-03)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1919,11 +1919,10 @@ var arrayMin = Highcharts.arrayMin,
 
             // Close all segments
             while (i--) {
-                if (i === graphPath.length || (graphPath[i] === 'M' && i > 0)) {
+                if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
                     graphPath.splice(i, 0, 'z');
                 }
             }
-
             this.areaPath = graphPath;
             return graphPath;
         },
