@@ -719,9 +719,11 @@
 				};
 
 				// Crisp correction
-				crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
-				point.shapeArgs.x -= crispCorr;
-				point.shapeArgs.y -= crispCorr;
+				if (point.shapeArgs) {
+					crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
+					point.shapeArgs.x -= crispCorr;
+					point.shapeArgs.y -= crispCorr;
+				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
