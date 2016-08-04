@@ -115,7 +115,11 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			point = points[i];
 		
 			if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
-				highAreaPoints.push(point);
+				highAreaPoints.push({
+					plotX: point.plotX,
+					plotY: point.plotY,
+					isNull: true // #5186, gaps in areasplinerange fill
+				});
 			}
 			
 			pointShim = {
@@ -129,7 +133,11 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			highAreaPoints.push(pointShim);
 			highPoints.push(pointShim);
 			if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
-				highAreaPoints.push(point);
+				highAreaPoints.push({
+					plotX: point.plotX,
+					plotY: point.plotY,
+					isNull: true // #5186, gaps in areasplinerange fill
+				});
 			}
 		}
 
