@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-03)
+ * @license Highcharts JS v4.2.6-modified (2016-08-04)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -16818,7 +16818,6 @@
 
             // Find what points to use
             points = points || this.points;
-
         
             // Fill in missing points
             if (stacking) {

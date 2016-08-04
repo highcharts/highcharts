@@ -16818,7 +16818,6 @@
 
             // Find what points to use
             points = points || this.points;
-
         
             // Fill in missing points
             if (stacking) {

@@ -768,7 +768,7 @@ var arrayMin = Highcharts.arrayMin,
                 highPoints = [],
                 highAreaPoints = [],
                 i = points.length,
-                getGraphPath = Series.prototype.getGraphPath,
+                getGraphPath = seriesTypes.area.prototype.getGraphPath,
                 point,
                 pointShim,
                 linePath,
@@ -785,24 +785,22 @@ var arrayMin = Highcharts.arrayMin,
             while (i--) {
                 point = points[i];
         
-                if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
-                    highAreaPoints.push({
-                        plotX: point.plotX,
-                        plotY: point.plotLow
-                    });
+                if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
+                    highAreaPoints.push(point);
                 }
+            
                 pointShim = {
-                    plotX: point.plotX,
+                    polarPlotY: point.polarPlotY,
+                    rectPlotX: point.rectPlotX,
+                    yBottom: point.yBottom,
+                    plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
                     plotY: point.plotHigh,
                     isNull: point.isNull
                 };
                 highAreaPoints.push(pointShim);
                 highPoints.push(pointShim);
-                if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
-                    highAreaPoints.push({
-                        plotX: point.plotX,
-                        plotY: point.plotLow
-                    });
+                if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
+                    highAreaPoints.push(point);
                 }
             }
 
