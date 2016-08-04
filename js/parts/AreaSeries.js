@@ -188,7 +188,7 @@ var AreaSeries = extendClass(Series, {
 					bottomPoints.push({
 						plotX: plotX,
 						plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom),
-						isNull: true // #1041, gaps in areaspline areas
+						doCurve: false // #1041, gaps in areaspline areas
 					});
 				}
 			};

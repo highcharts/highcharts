@@ -16812,7 +16812,7 @@
                         bottomPoints.push({
                             plotX: plotX,
                             plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom),
-                            isNull: true // #1041, gaps in areaspline areas
+                            doCurve: false // #1041, gaps in areaspline areas
                         });
                     }
                 };
@@ -16949,8 +16949,12 @@
                 rightContY,
                 ret;
 
+            function doCurve(otherPoint) {
+                return otherPoint && !otherPoint.isNull && otherPoint.doCurve !== false;
+            }
+
             // Find control points
-            if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+            if (doCurve(lastPoint) && doCurve(nextPoint)) {
                 var lastX = lastPoint.plotX,
                     lastY = lastPoint.plotY,
                     nextX = nextPoint.plotX,

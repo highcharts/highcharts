@@ -789,7 +789,7 @@ var arrayMin = Highcharts.arrayMin,
                     highAreaPoints.push({
                         plotX: point.plotX,
                         plotY: point.plotY,
-                        isNull: true // #5186, gaps in areasplinerange fill
+                        doCurve: false // #5186, gaps in areasplinerange fill
                     });
                 }
             
@@ -807,7 +807,7 @@ var arrayMin = Highcharts.arrayMin,
                     highAreaPoints.push({
                         plotX: point.plotX,
                         plotY: point.plotY,
-                        isNull: true // #5186, gaps in areasplinerange fill
+                        doCurve: false // #5186, gaps in areasplinerange fill
                     });
                 }
             }

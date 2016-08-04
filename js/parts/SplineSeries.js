@@ -25,8 +25,12 @@ var SplineSeries = extendClass(Series, {
 			rightContY,
 			ret;
 
+		function doCurve(otherPoint) {
+			return otherPoint && !otherPoint.isNull && otherPoint.doCurve !== false;
+		}
+
 		// Find control points
-		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		if (doCurve(lastPoint) && doCurve(nextPoint)) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,

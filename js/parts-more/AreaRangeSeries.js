@@ -118,7 +118,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				highAreaPoints.push({
 					plotX: point.plotX,
 					plotY: point.plotY,
-					isNull: true // #5186, gaps in areasplinerange fill
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
 			
@@ -136,7 +136,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				highAreaPoints.push({
 					plotX: point.plotX,
 					plotY: point.plotY,
-					isNull: true // #5186, gaps in areasplinerange fill
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
 		}
