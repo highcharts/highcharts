@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-04)
+ * @license Highstock JS v4.2.6-modified (2016-08-05)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7786,6 +7786,67 @@
         },
 
         /**
+         * When a point name is given and no x, search for the name in the existing categories,
+         * or if categories aren't provided, search names or create a new category (#2522).
+         */
+        nameToX: function (point) {
+            var explicitCategories = isArray(this.categories),
+                names = explicitCategories ? this.categories : this.names,
+                nameX,
+                x;
+
+            point.series.requireSorting = false;
+            point.series.hasNames = true;
+            nameX = inArray(point.name, names); // #2522
+            if (nameX === -1) { // The name is not found in currenct categories
+                if (!explicitCategories) {
+                    x = names.length;
+                }
+            } else {
+                x = nameX;
+            }
+
+            // Write the last point's name to the names array
+            this.names[x] = point.name;
+
+            return x;
+        },
+
+        /**
+         * When changes have been done to series data, update the axis.names.
+         */
+        updateNames: function () {
+            var axis = this;
+
+            if (this.coll === 'xAxis') {
+                this.names.length = 0;
+                this.minRange = undefined;
+                each(this.series || [], function (series) {
+                    if (series.hasNames) {
+
+                        // When adding a series, points are not yet generated
+                        if (!series.processedXData) {
+                            series.processData();
+                            series.generatePoints();
+                        }
+
+                        each(series.points, function (point, i) {
+                            var x;
+                            if (point.options && point.options.x === undefined) {
+                                x = axis.nameToX(point);
+                                if (x !== point.x) {
+                                    point.x = x;
+                                    series.xData[i] = x;
+                                }
+                            }
+                        });
+                
+                    }
+                });
+            }
+        },
+
+        /**
          * Update translation information
          */
         setAxisTranslation: function (saveOld) {
@@ -12297,6 +12358,7 @@
 
                     // set axes scales
                     each(axes, function (axis) {
+                        axis.updateNames();
                         axis.setScale();
                     });
                 }
@@ -13583,16 +13645,13 @@
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
             if (point.x === undefined && series) {
-                if (x === undefined) {
+                if (point.name && x === undefined && series.xAxis && series.xAxis.categories) {
+                    point.x = series.xAxis.nameToX(point);
+                } else if (x === undefined) {
                     point.x = series.autoIncrement(point);
                 } else {
                     point.x = x;
                 }
-            }
-
-            // Write the last point's name to the names array
-            if (series.xAxis && series.xAxis.names) {
-                series.xAxis.names[point.x] = point.name;
             }
 
             return point;
@@ -13959,37 +14018,17 @@
          * Return an auto incremented x value based on the pointStart and pointInterval options.
          * This is only used if an x value is not given for the point that calls autoIncrement.
          */
-        autoIncrement: function (point) {
+        autoIncrement: function () {
 
             var options = this.options,
                 xIncrement = this.xIncrement,
                 date,
                 pointInterval,
-                pointIntervalUnit = options.pointIntervalUnit,
-                xAxis = this.xAxis,
-                explicitCategories,
-                names,
-                nameX;
+                pointIntervalUnit = options.pointIntervalUnit;
 
             xIncrement = pick(xIncrement, options.pointStart, 0);
 
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-
-            // When a point name is given and no x, search for the name in the existing categories,
-            // or if categories aren't provided, search names or create a new category (#2522).
-            if (xAxis && xAxis.categories && point.name) {
-                this.requireSorting = false;
-                explicitCategories = isArray(xAxis.categories);
-                names = explicitCategories ? xAxis.categories : xAxis.names;
-                nameX = inArray(point.name, names); // #2522
-                if (nameX === -1) { // The name is not found in currenct categories
-                    if (!explicitCategories) {
-                        xIncrement = names.length;
-                    }
-                } else {
-                    xIncrement = nameX;
-                }
-            }
 
             // Added code for pointInterval strings
             if (pointIntervalUnit) {
@@ -20396,7 +20435,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-04)
+     * Highstock JS v4.2.6-modified (2016-08-05)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
