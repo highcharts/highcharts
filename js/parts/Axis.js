@@ -821,67 +821,6 @@ Axis.prototype = {
 	},
 
 	/**
-	 * When a point name is given and no x, search for the name in the existing categories,
-	 * or if categories aren't provided, search names or create a new category (#2522).
-	 */
-	nameToX: function (point) {
-		var explicitCategories = isArray(this.categories),
-			names = explicitCategories ? this.categories : this.names,
-			nameX,
-			x;
-
-		point.series.requireSorting = false;
-		point.series.hasNames = true;
-		nameX = inArray(point.name, names); // #2522
-		if (nameX === -1) { // The name is not found in currenct categories
-			if (!explicitCategories) {
-				x = names.length;
-			}
-		} else {
-			x = nameX;
-		}
-
-		// Write the last point's name to the names array
-		this.names[x] = point.name;
-
-		return x;
-	},
-
-	/**
-	 * When changes have been done to series data, update the axis.names.
-	 */
-	updateNames: function () {
-		var axis = this;
-
-		if (this.coll === 'xAxis') {
-			this.names.length = 0;
-			this.minRange = undefined;
-			each(this.series || [], function (series) {
-				if (series.hasNames) {
-
-					// When adding a series, points are not yet generated
-					if (!series.processedXData) {
-						series.processData();
-						series.generatePoints();
-					}
-
-					each(series.points, function (point, i) {
-						var x;
-						if (point.options && point.options.x === undefined) {
-							x = axis.nameToX(point);
-							if (x !== point.x) {
-								point.x = x;
-								series.xData[i] = x;
-							}
-						}
-					});
-				
-				}
-			});
-		}
-	},
-
-	/**
 	 * Update translation information
 	 */
 	setAxisTranslation: function (saveOld) {

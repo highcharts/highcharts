@@ -56,13 +56,16 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === undefined && series) {
-			if (point.name && x === undefined && series.xAxis && series.xAxis.categories) {
-				point.x = series.xAxis.nameToX(point);
-			} else if (x === undefined) {
+			if (x === undefined) {
 				point.x = series.autoIncrement(point);
 			} else {
 				point.x = x;
 			}
+		}
+
+		// Write the last point's name to the names array
+		if (series.xAxis && series.xAxis.names) {
+			series.xAxis.names[point.x] = point.name;
 		}
 
 		return point;
