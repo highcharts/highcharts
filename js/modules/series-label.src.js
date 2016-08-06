@@ -80,6 +80,7 @@
         var distance = 16,
             points = this.points,
             point,
+            last,
             interpolated = [],
             i,
             deltaX,
@@ -89,7 +90,10 @@
             n,
             j,
             d,
-            node = this.graph.element;
+            node = this.graph.element,
+            inverted = this.chart.inverted,
+            paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
+            paneTop = inverted ? this.xAxis.pos : this.yAxis.pos;
 
         // For splines, get the point at length (possible caveat: peaks are not correctly detected)
         if (this.getPointSpline && node.getPointAtLength) {
@@ -102,6 +106,8 @@
             for (i = 0; i < len; i += distance) {
                 point = node.getPointAtLength(i);
                 interpolated.push({
+                    chartX: paneLeft + point.x,
+                    chartY: paneTop + point.y,
                     plotX: point.x,
                     plotY: point.y
                 });
@@ -110,17 +116,27 @@
                 this.graph.attr({ d: d });
             }
             // Last point
-            interpolated.push(points[points.length - 1]);
+            point = points[points.length - 1];
+            point.chartX = paneLeft + point.plotX;
+            point.chartY = paneTop + point.plotY;
+            interpolated.push(point);
 
         // Interpolate
         } else {
             len = points.length;
             for (i = 0; i < len; i += 1) {
 
+                point = points[i];
+                last = points[i - 1];
+
+                // Absolute coordinates so we can compare different panes
+                point.chartX = paneLeft + point.plotX;
+                point.chartY = paneTop + point.plotY;
+
                 // Add interpolated points
                 if (i > 0) {
-                    deltaX = Math.abs(points[i].plotX - points[i - 1].plotX);
-                    deltaY = Math.abs(points[i].plotY - points[i - 1].plotY);
+                    deltaX = Math.abs(point.chartX - last.chartX);
+                    deltaY = Math.abs(point.chartY - last.chartY);
                     delta = Math.max(deltaX, deltaY);
                     if (delta > distance) {
 
@@ -128,16 +144,18 @@
 
                         for (j = 1; j < n; j += 1) {
                             interpolated.push({
-                                plotX: points[i - 1].plotX + (points[i].plotX - points[i - 1].plotX) * (j / n),
-                                plotY: points[i - 1].plotY + (points[i].plotY - points[i - 1].plotY) * (j / n)
+                                chartX: last.chartX + (point.chartX - last.chartX) * (j / n),
+                                chartY: last.chartY + (point.chartY - last.chartY) * (j / n),
+                                plotX: last.plotX + (point.plotX - last.plotX) * (j / n),
+                                plotY: last.plotY + (point.plotY - last.plotY) * (j / n)
                             });
                         }
                     }
                 }
 
                 // Add the real point in order to find positive and negative peaks
-                if (isNumber(points[i].plotY)) {
-                    interpolated.push(points[i]);
+                if (isNumber(point.plotY)) {
+                    interpolated.push(point);
                 }
             }
         }
@@ -202,10 +220,10 @@
                             y,
                             bBox.width,
                             bBox.height,
-                            points[j - 1].plotX,
-                            points[j - 1].plotY,
-                            points[j].plotX,
-                            points[j].plotY
+                            points[j - 1].chartX,
+                            points[j - 1].chartY,
+                            points[j].chartX,
+                            points[j].chartY
                         )) {
                         return false;
                     }
@@ -217,10 +235,10 @@
                             y - leastDistance,
                             bBox.width + 2 * leastDistance,
                             bBox.height + 2 * leastDistance,
-                            points[j - 1].plotX,
-                            points[j - 1].plotY,
-                            points[j].plotX,
-                            points[j].plotY
+                            points[j - 1].chartX,
+                            points[j - 1].chartY,
+                            points[j].chartX,
+                            points[j].chartY
                         );
                     }
 
@@ -228,11 +246,11 @@
                     if (this !== series) {
                         distToOthersSquared = Math.min(
                             distToOthersSquared,
-                            Math.pow(x + bBox.width / 2 - points[j].plotX, 2) + Math.pow(y + bBox.height / 2 - points[j].plotY, 2),
-                            Math.pow(x - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
-                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
-                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2),
-                            Math.pow(x - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2)
+                            Math.pow(x + bBox.width / 2 - points[j].chartX, 2) + Math.pow(y + bBox.height / 2 - points[j].chartY, 2),
+                            Math.pow(x - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
+                            Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
+                            Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2),
+                            Math.pow(x - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2)
                         );
                     }
                 }
@@ -241,11 +259,11 @@
                 if (connectorEnabled && this === series && checkDistance && !withinRange) {
                     for (j = 1; j < points.length; j += 1) {
                         dist = Math.min(
-                            Math.pow(x + bBox.width / 2 - points[j].plotX, 2) + Math.pow(y + bBox.height / 2 - points[j].plotY, 2),
-                            Math.pow(x - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
-                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
-                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2),
-                            Math.pow(x - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2)
+                            Math.pow(x + bBox.width / 2 - points[j].chartX, 2) + Math.pow(y + bBox.height / 2 - points[j].chartY, 2),
+                            Math.pow(x - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
+                            Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y - points[j].chartY, 2),
+                            Math.pow(x + bBox.width - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2),
+                            Math.pow(x - points[j].chartX, 2) + Math.pow(y + bBox.height - points[j].chartY, 2)
                         );
                         if (dist < distToPointSquared) {
                             distToPointSquared = dist;
@@ -267,6 +285,11 @@
     };
 
 
+    /**
+     * The main initiator method that runs on chart level after initiation and redraw. It runs in 
+     * a timeout to prevent locking, and loops over all series, taking all series and labels into
+     * account when placing the labels.
+     */
     function drawLabels(proceed) {
 
         var chart = this;
@@ -294,6 +317,9 @@
                     clearPoint,
                     i,
                     best,
+                    inverted = chart.inverted,
+                    paneLeft = inverted ? series.yAxis.pos : series.xAxis.pos,
+                    paneTop = inverted ? series.xAxis.pos : series.yAxis.pos,
                     paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
                     paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
                     points = series.interpolatedPoints;
@@ -321,13 +347,18 @@
                     bBox = series.labelBySeries.getBBox();
                     bBox.width = Math.round(bBox.width);
 
+                    function insidePane(x, y, bBox) {
+                        return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
+                            y >= paneTop && y <= paneTop + paneHeight - bBox.height;
+                    }
+
                     // Ideal positions are centered above or below a point on right side of chart
                     for (i = points.length - 1; i > 0; i -= 1) {
 
                         // Right - up
-                        x = points[i].plotX + labelDistance;
-                        y = points[i].plotY - bBox.height - labelDistance;
-                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
+                        x = points[i].chartX + labelDistance;
+                        y = points[i].chartY - bBox.height - labelDistance;
+                        if (insidePane(x, y, bBox)) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -336,13 +367,12 @@
                         }
                         if (best) {
                             results.push(best);
-                            //break;
                         }
 
                         // Right - down
-                        x = points[i].plotX + labelDistance;
-                        y = points[i].plotY + labelDistance;
-                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
+                        x = points[i].chartX + labelDistance;
+                        y = points[i].chartY + labelDistance;
+                        if (insidePane(x, y, bBox)) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -351,13 +381,12 @@
                         }
                         if (best) {
                             results.push(best);
-                            //break;
                         }
 
                         // Left - down
-                        x = points[i].plotX - bBox.width - labelDistance;
-                        y = points[i].plotY + labelDistance;
-                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
+                        x = points[i].chartX - bBox.width - labelDistance;
+                        y = points[i].chartY + labelDistance;
+                        if (insidePane(x, y, bBox)) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -366,13 +395,12 @@
                         }
                         if (best) {
                             results.push(best);
-                            //break;
                         }
 
                         // Left - up
-                        x = points[i].plotX - bBox.width - labelDistance;
-                        y = points[i].plotY - bBox.height - labelDistance;
-                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
+                        x = points[i].chartX - bBox.width - labelDistance;
+                        y = points[i].chartY - bBox.height - labelDistance;
+                        if (insidePane(x, y, bBox)) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -381,7 +409,6 @@
                         }
                         if (best) {
                             results.push(best);
-                            //break;
                         }
 
                     }
@@ -417,8 +444,8 @@
                         if (Math.round(best.x) !== Math.round(series.labelBySeries.x) || Math.round(best.y) !== Math.round(series.labelBySeries.y)) {
                             series.labelBySeries
                                 .attr({
-                                    x: best.x,
-                                    y: best.y,
+                                    x: best.x - paneLeft,
+                                    y: best.y - paneTop,
                                     opacity: 0
                                 })
                                 .animate({ opacity: 1 });

@@ -34,6 +34,14 @@ $(function () {
                 }
             },
 
+            navigator: {
+                series: {
+                    label: {
+                        enabled: false
+                    }
+                }
+            },
+
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
                 valueDecimals: 2
