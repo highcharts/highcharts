@@ -90,7 +90,8 @@
             n,
             j,
             d,
-            node = this.graph.element,
+            graph = this.graph || this.area,
+            node = graph.element,
             inverted = this.chart.inverted,
             paneLeft = inverted ? this.yAxis.pos : this.xAxis.pos,
             paneTop = inverted ? this.xAxis.pos : this.yAxis.pos;
@@ -98,9 +99,9 @@
         // For splines, get the point at length (possible caveat: peaks are not correctly detected)
         if (this.getPointSpline && node.getPointAtLength) {
             // If it is animating towards a path definition, use that briefly, and reset
-            if (this.graph.toD) {
-                d = this.graph.attr('d');
-                this.graph.attr({ d: this.graph.toD });
+            if (graph.toD) {
+                d = graph.attr('d');
+                graph.attr({ d: graph.toD });
             }
             len = node.getTotalLength();
             for (i = 0; i < len; i += distance) {
@@ -113,7 +114,7 @@
                 });
             }
             if (d) {
-                this.graph.attr({ d: d });
+                graph.attr({ d: d });
             }
             // Last point
             point = points[points.length - 1];
@@ -304,7 +305,7 @@
 
             // Build the interpolated points
             each(chart.series, function (series) {
-                if (series.options.label.enabled && series.visible && series.graph) {
+                if (series.options.label.enabled && series.visible && (series.graph || series.area)) {
                     series.interpolatedPoints = series.getPointsOnGraph();
                 }
             });
@@ -323,6 +324,11 @@
                     paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
                     paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
                     points = series.interpolatedPoints;
+
+                function insidePane(x, y, bBox) {
+                    return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
+                        y >= paneTop && y <= paneTop + paneHeight - bBox.height;
+                }
 
                 if (series.visible && points) {
 
@@ -346,11 +352,6 @@
 
                     bBox = series.labelBySeries.getBBox();
                     bBox.width = Math.round(bBox.width);
-
-                    function insidePane(x, y, bBox) {
-                        return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
-                            y >= paneTop && y <= paneTop + paneHeight - bBox.height;
-                    }
 
                     // Ideal positions are centered above or below a point on right side of chart
                     for (i = points.length - 1; i > 0; i -= 1) {
