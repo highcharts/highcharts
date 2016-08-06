@@ -5,7 +5,7 @@
  * - add column support (box collision detection, same as above)
  * - other series types, area etc.
  * - avoid data labels, when data labels above, show series label below.
- * - add options (enabled, style, connector, format, formatter)
+ * - add options (connector, format, formatter)
  * - connectors: Make a separate shape with anchors to use as label
  * - do labels in a timeout since they don't interfere with others
  * 
@@ -26,9 +26,23 @@
     var labelDistance = 3,
         wrap = H.wrap,
         each = H.each,
+        extend = H.extend,
         isNumber = H.isNumber,
         Series = H.Series,
         Chart = H.Chart;
+
+    Highcharts.setOptions({
+        plotOptions: {
+            series: {
+                label: {
+                    enabled: true,
+                    styles: {
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+        }
+    });
 
     /**
      * Counter-clockwise, part of the fast line intersection logic
@@ -71,7 +85,6 @@
             deltaX,
             deltaY,
             delta,
-            last,
             len,
             n,
             j,
@@ -122,18 +135,9 @@
                     }
                 }
 
-                // Add the real point if not too close to the previous
+                // Add the real point in order to find positive and negative peaks
                 if (isNumber(points[i].plotY)) {
-                    last = interpolated[interpolated.length - 1];
-                    if (last) {
-                        delta = Math.max(
-                            Math.abs(points[i].plotX - last.plotX),
-                            Math.abs(points[i].plotY - last.plotY)
-                        );
-                    }
-                    if (!last || delta > distance / 2) {
-                        interpolated.push(points[i]);
-                    }
+                    interpolated.push(points[i]);
                 }
             }
         }
@@ -189,8 +193,8 @@
         // graphs
         for (i = 0; i < chart.series.length; i += 1) {
             series = chart.series[i];
-            if (series.visible) {
-                points = series.interpolatedPoints;
+            points = series.interpolatedPoints;
+            if (series.visible && points) {
                 for (j = 1; j < points.length; j += 1) {
                     // If any of the box sides intersect with the line, return
                     if (boxIntersectLine(
@@ -277,7 +281,7 @@
 
             // Build the interpolated points
             each(chart.series, function (series) {
-                if (series.visible && series.graph) {
+                if (series.options.label.enabled && series.visible && series.graph) {
                     series.interpolatedPoints = series.getPointsOnGraph();
                 }
             });
@@ -290,16 +294,17 @@
                     clearPoint,
                     i,
                     best,
+                    paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
+                    paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
                     points = series.interpolatedPoints;
 
-                if (series.visible) {
+                if (series.visible && points) {
 
                     if (!series.labelBySeries) {
                         series.labelBySeries = chart.renderer.label(series.name, 0, -9999)
-                            .css({
-                                color: series.color,
-                                fontWeight: 'bold'
-                            })
+                            .css(extend({
+                                color: series.color
+                            }, series.options.label.styles))
                             .attr({
                                 padding: 0,
                                 opacity: 0
@@ -322,7 +327,7 @@
                         // Right - up
                         x = points[i].plotX + labelDistance;
                         y = points[i].plotY - bBox.height - labelDistance;
-                        if (x > 0 && x <= chart.plotWidth - bBox.width && y >= 0 && y <= chart.plotHeight - bBox.height) {
+                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -337,7 +342,7 @@
                         // Right - down
                         x = points[i].plotX + labelDistance;
                         y = points[i].plotY + labelDistance;
-                        if (x > 0 && x <= chart.plotWidth - bBox.width && y >= 0 && y <= chart.plotHeight - bBox.height) {
+                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -352,7 +357,7 @@
                         // Left - down
                         x = points[i].plotX - bBox.width - labelDistance;
                         y = points[i].plotY + labelDistance;
-                        if (x > 0 && x <= chart.plotWidth - bBox.width && y >= 0 && y <= chart.plotHeight - bBox.height) {
+                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -367,7 +372,7 @@
                         // Left - up
                         x = points[i].plotX - bBox.width - labelDistance;
                         y = points[i].plotY - bBox.height - labelDistance;
-                        if (x > 0 && x <= chart.plotWidth - bBox.width && y >= 0 && y <= chart.plotHeight - bBox.height) {
+                        if (x > 0 && x <= paneWidth - bBox.width && y >= 0 && y <= paneHeight - bBox.height) {
                             best = series.checkClearPoint(
                                 x,
                                 y,
@@ -383,8 +388,8 @@
 
                     // Brute force, try all positions on the chart in a 16x16 grid
                     if (!results.length) {
-                        for (x = chart.plotWidth - bBox.width; x >= 0; x -= 16) {
-                            for (y = 0; y < chart.plotHeight - bBox.height; y += 16) {
+                        for (x = paneWidth - bBox.width; x >= 0; x -= 16) {
+                            for (y = 0; y < paneHeight - bBox.height; y += 16) {
                                 clearPoint = series.checkClearPoint(x, y, bBox, true);
                                 if (clearPoint) {
                                     results.push(clearPoint);
