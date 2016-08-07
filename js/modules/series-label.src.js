@@ -37,6 +37,9 @@
             series: {
                 label: {
                     enabled: true,
+                    // Allow labels to be placed distant to the graph if necessary, and
+                    // draw a connector line to the graph
+                    connectorAllowed: true,
                     styles: {
                         fontWeight: 'bold'
                     }
@@ -208,7 +211,7 @@
             distToPointSquared = Number.MAX_VALUE,
             dist,
             connectorPoint,
-            connectorEnabled = true, // make part of the options set
+            connectorEnabled = this.options.label.connectorAllowed,
             chart = this.chart,
             series,
             points,
@@ -450,8 +453,8 @@
 
                     // Brute force, try all positions on the chart in a 16x16 grid
                     if (!results.length) {
-                        for (x = paneWidth - bBox.width; x >= 0; x -= 16) {
-                            for (y = 0; y < paneHeight - bBox.height; y += 16) {
+                        for (x = paneLeft + paneWidth - bBox.width; x >= paneLeft; x -= 16) {
+                            for (y = paneTop; y < paneTop + paneHeight - bBox.height; y += 16) {
                                 clearPoint = series.checkClearPoint(x, y, bBox, true);
                                 if (clearPoint) {
                                     results.push(clearPoint);
@@ -465,7 +468,7 @@
                         results.sort(function (a, b) {
                             return b.weight - a.weight;
                         });
-                        //results = results.reverse();
+                        
                         best = results[0];
 
                         chart.boxesToAvoid.push({
@@ -492,8 +495,8 @@
                         series.labelBySeries = series.labelBySeries.destroy();
                     }
                 }
-            }, 250);
-        });
+            });
+        }, 350);
 
     }
     wrap(Chart.prototype, 'render', drawLabels);
