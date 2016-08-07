@@ -29,6 +29,7 @@
         extend = H.extend,
         isNumber = H.isNumber,
         Series = H.Series,
+        SVGRenderer = H.SVGRenderer,
         Chart = H.Chart;
 
     Highcharts.setOptions({
@@ -71,6 +72,42 @@
             intersectLine(x, y, x, y + h,         x1, y1, x2, y2)    // left of label
         );
     }
+
+    /**
+     * General symbol definition for labels with connector
+     */
+    SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
+        var anchorX = options && options.anchorX,
+            anchorY = options && options.anchorY,
+            path,
+            lateral;
+
+        if (isNumber(anchorX) && isNumber(anchorY)) {
+
+            path = ['M', anchorX, anchorY];
+            
+            // Draw the connector a little bit to the side of center of the label
+            lateral = anchorX < x + (w / 2) ? 0.3 : 0.7;
+            
+            // Anchor below label
+            if (anchorY > y + h) {
+                path.push('L', x + w * lateral, y + h);
+
+            // Anchor above label
+            } else if (anchorY < y) {
+                path.push('L', x + w * lateral, y);
+
+            // Anchor left of label
+            } else if (anchorX < x) {
+                path.push('L', x, y + h / 2);
+            
+            // Anchor right of label
+            } else if (anchorX > x + w) {
+                path.push('L', x + w, y + h / 2);
+            }
+        }
+        return path || [];
+    };
 
     /**
      * Points to avoid. In addition to actual data points, the label should avoid
@@ -333,21 +370,18 @@
                 if (series.visible && points) {
 
                     if (!series.labelBySeries) {
-                        series.labelBySeries = chart.renderer.label(series.name, 0, -9999)
+                        series.labelBySeries = chart.renderer.label(series.name, 0, -9999, 'connector')
                             .css(extend({
                                 color: series.color
                             }, series.options.label.styles))
                             .attr({
                                 padding: 0,
-                                opacity: 0
+                                opacity: 0,
+                                stroke: series.color,
+                                'stroke-width': 1
                             })
                             .add(series.group)
                             .animate({ opacity: 1 }, { duration: 200 });
-                        /*series.labelConnector = chart.renderer.path([]).attr({
-                            stroke: series.color,
-                            'stroke-width': 1
-                        })
-                        .add(series.group);*/
                     }
 
                     bBox = series.labelBySeries.getBBox();
@@ -447,6 +481,8 @@
                                 .attr({
                                     x: best.x - paneLeft,
                                     y: best.y - paneTop,
+                                    anchorX: best.connectorPoint && best.connectorPoint.plotX,
+                                    anchorY: best.connectorPoint && best.connectorPoint.plotY,
                                     opacity: 0
                                 })
                                 .animate({ opacity: 1 });
