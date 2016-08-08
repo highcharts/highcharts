@@ -182,10 +182,7 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
-			if (names && point.name) {
-				names[point.x] = point.name;
-			}
-
+			
 			// Record the options to options.data. If there is an object from before,
 			// use point options, otherwise use raw options. (#4701)
 			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;

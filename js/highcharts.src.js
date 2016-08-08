@@ -7202,7 +7202,8 @@
             axis.zoomEnabled = options.zoomEnabled !== false;
 
             // Initial categories
-            axis.categories = options.categories || type === 'category';
+            axis.hasNames = type === 'category' || options.categories === true;
+            axis.categories = options.categories || axis.hasNames;
             axis.names = axis.names || []; // Preserve on update (#3830)
 
             // Elements
@@ -7783,6 +7784,63 @@
                 });
             }
             return ret;
+        },
+
+        /**
+         * When a point name is given and no x, search for the name in the existing categories,
+         * or if categories aren't provided, search names or create a new category (#2522).
+         */
+        nameToX: function (point) {
+            var explicitCategories = isArray(this.categories),
+                names = explicitCategories ? this.categories : this.names,
+                nameX,
+                x;
+
+            point.series.requireSorting = false;
+            nameX = pick(point.options.x, inArray(point.name, names)); // #2522
+            if (nameX === -1) { // The name is not found in currenct categories
+                if (!explicitCategories) {
+                    x = names.length;
+                }
+            } else {
+                x = nameX;
+            }
+
+            // Write the last point's name to the names array
+            this.names[x] = point.name;
+    console.log('@nameToX', this.names)
+            return x;
+        },
+
+        /**
+         * When changes have been done to series data, update the axis.names.
+         */
+        updateNames: function () {
+            var axis = this;
+    console.log('@updateNames', this.names)
+            if (this.names.length > 0) {
+                this.names.length = 0;
+                this.minRange = undefined;
+                each(this.series || [], function (series) {
+            
+                    // When adding a series, points are not yet generated
+                    if (!series.processedXData) {
+                        series.processData();
+                        series.generatePoints();
+                    }
+
+                    each(series.points, function (point, i) {
+                        var x;
+                        if (point.options && point.options.x === undefined) {
+                            x = axis.nameToX(point);
+                            if (x !== point.x) {
+                                point.x = x;
+                                series.xData[i] = x;
+                            }
+                        }
+                    });
+                });
+            }
         },
 
         /**
@@ -12297,6 +12355,7 @@
 
                     // set axes scales
                     each(axes, function (axis) {
+                        axis.updateNames();
                         axis.setScale();
                     });
                 }
@@ -13582,6 +13641,9 @@
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
+            if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
+                point.x = series.xAxis.nameToX(point);
+            }
             if (point.x === undefined && series) {
                 if (x === undefined) {
                     point.x = series.autoIncrement(point);
@@ -13589,12 +13651,7 @@
                     point.x = x;
                 }
             }
-
-            // Write the last point's name to the names array
-            if (series.xAxis && series.xAxis.names) {
-                series.xAxis.names[point.x] = point.name;
-            }
-
+        
             return point;
         },
 
@@ -13959,37 +14016,17 @@
          * Return an auto incremented x value based on the pointStart and pointInterval options.
          * This is only used if an x value is not given for the point that calls autoIncrement.
          */
-        autoIncrement: function (point) {
+        autoIncrement: function () {
 
             var options = this.options,
                 xIncrement = this.xIncrement,
                 date,
                 pointInterval,
-                pointIntervalUnit = options.pointIntervalUnit,
-                xAxis = this.xAxis,
-                explicitCategories,
-                names,
-                nameX;
+                pointIntervalUnit = options.pointIntervalUnit;
 
             xIncrement = pick(xIncrement, options.pointStart, 0);
 
             this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-
-            // When a point name is given and no x, search for the name in the existing categories,
-            // or if categories aren't provided, search names or create a new category (#2522).
-            if (xAxis && xAxis.categories && point.name) {
-                this.requireSorting = false;
-                explicitCategories = isArray(xAxis.categories);
-                names = explicitCategories ? xAxis.categories : xAxis.names;
-                nameX = inArray(point.name, names); // #2522
-                if (nameX === -1) { // The name is not found in currenct categories
-                    if (!explicitCategories) {
-                        xIncrement = names.length;
-                    }
-                } else {
-                    xIncrement = nameX;
-                }
-            }
 
             // Added code for pointInterval strings
             if (pointIntervalUnit) {
@@ -16294,10 +16331,7 @@
                 // record changes in the parallel arrays
                 i = point.index;
                 series.updateParallelArrays(point, i);
-                if (names && point.name) {
-                    names[point.x] = point.name;
-                }
-
+            
                 // Record the options to options.data. If there is an object from before,
                 // use point options, otherwise use raw options. (#4701)
                 seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;

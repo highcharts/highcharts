@@ -16,7 +16,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: true
+            type: 'category'
         },
 
         drilldown: {

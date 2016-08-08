@@ -259,6 +259,7 @@ Chart.prototype = {
 
 				// set axes scales
 				each(axes, function (axis) {
+					axis.updateNames();
 					axis.setScale();
 				});
 			}

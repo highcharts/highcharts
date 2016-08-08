@@ -177,37 +177,17 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function (point) {
+	autoIncrement: function () {
 
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
 			pointInterval,
-			pointIntervalUnit = options.pointIntervalUnit,
-			xAxis = this.xAxis,
-			explicitCategories,
-			names,
-			nameX;
+			pointIntervalUnit = options.pointIntervalUnit;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-
-		// When a point name is given and no x, search for the name in the existing categories,
-		// or if categories aren't provided, search names or create a new category (#2522).
-		if (xAxis && xAxis.categories && point.name) {
-			this.requireSorting = false;
-			explicitCategories = isArray(xAxis.categories);
-			names = explicitCategories ? xAxis.categories : xAxis.names;
-			nameX = inArray(point.name, names); // #2522
-			if (nameX === -1) { // The name is not found in currenct categories
-				if (!explicitCategories) {
-					xIncrement = names.length;
-				}
-			} else {
-				xIncrement = nameX;
-			}
-		}
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
