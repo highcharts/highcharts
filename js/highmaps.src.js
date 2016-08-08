@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-08-02)
+ * @license Highmaps JS v4.2.6-modified (2016-08-08)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -13659,15 +13659,10 @@
 
 
                     if (isNumber(firstPoint)) { // assume all points are numbers
-                        var x = pick(options.pointStart, 0),
-                            pointInterval = pick(options.pointInterval, 1);
-
                         for (i = 0; i < dataLength; i++) {
-                            xData[i] = x;
+                            xData[i] = this.autoIncrement();
                             yData[i] = data[i];
-                            x += pointInterval;
                         }
-                        series.xIncrement = x;
                     } else if (isArray(firstPoint)) { // assume all points are arrays
                         if (valueCount) { // [x, low, high] or [x, o, h, l, c]
                             for (i = 0; i < dataLength; i++) {
