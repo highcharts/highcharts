@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-05)
+ * @license Highstock JS v4.2.6-modified (2016-08-08)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20396,7 +20396,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-05)
+     * Highstock JS v4.2.6-modified (2016-08-08)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21095,6 +21095,17 @@
         this.destroyGroupedData(); // #622
         this.groupedData = this.hasGroupedData ? this.points : null;
     };
+
+    /**
+     * Override point prototype to throw a warning when trying to update grouped points
+     */
+    wrap(Point.prototype, 'update', function (proceed) {
+        if (this.dataGroup) {
+            error(24);
+        } else {
+            proceed.apply(this, [].slice.call(arguments, 1));
+        }
+    });
 
     /**
      * Extend the original method, make the tooltip's header reflect the grouped range

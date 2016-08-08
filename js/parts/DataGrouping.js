@@ -377,6 +377,17 @@ seriesProto.generatePoints = function () {
 };
 
 /**
+ * Override point prototype to throw a warning when trying to update grouped points
+ */
+wrap(Point.prototype, 'update', function (proceed) {
+	if (this.dataGroup) {
+		error(24);
+	} else {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
+/**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
