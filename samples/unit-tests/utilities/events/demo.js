@@ -494,4 +494,24 @@ $(function () {
     });
 
 
+    QUnit.test('Event assigned as null (#5311)', function (assert) {
+        assert.expect(0);
+        Highcharts.chart('container', {
+
+            chart: {
+                events: {
+                    redraw: null
+                }
+            },
+
+            series: [{
+                data: [1, 3, 2, 4]
+            }]
+
+        });
+
+        Highcharts.charts[0].setSize(400, 300, false);
+
+    });
+
 });

@@ -1,6 +1,9 @@
 <?php 
 	// Move the log file back from temp dir
-	@copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+	if (!is_dir('../samples/temp')) {
+		mkdir('../samples/temp');
+	}
+	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 ?>
 <html>
 	
@@ -247,8 +250,8 @@
 
 							var statusTexts = {
 								'status-none': 'Not inspected',
-								'status-works': 'Works',
-								'status-fails': 'Fails'
+								'status-good': 'Good',
+								'status-bad': 'Bad'
 							},
 							status = window.parent.commits[commit] || 'status-none';
 							$('<div class="status"></div>')
@@ -259,14 +262,14 @@
 										newClass;
 
 									if ($this.hasClass('status-none')) {
-										newClass = 'status-works';
+										newClass = 'status-good';
 										$this.removeClass('status-none');
-									} else if ($this.hasClass('status-works')) {
-										newClass = 'status-fails';
-										$this.removeClass('status-works');
-									} else if ($this.hasClass('status-fails')) {
+									} else if ($this.hasClass('status-good')) {
+										newClass = 'status-bad';
+										$this.removeClass('status-good');
+									} else if ($this.hasClass('status-bad')) {
 										newClass = 'status-none';
-										$this.removeClass('status-fails');
+										$this.removeClass('status-bad');
 									}
 
 									if (newClass) {
@@ -362,11 +365,11 @@
 				border-radius: 3px;
 				text-align: center;
 			}
-			.status.status-works {
+			.status.status-good {
 				background: green;
 				color: white;
 			}
-			.status.status-fails {
+			.status.status-bad {
 				background: red;
 				color: white;
 			}

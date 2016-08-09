@@ -547,7 +547,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	init: function (container, width, height, style) {
+	init: function (container, width, height) {
 		var renderer = this,
 			boxWrapper,
 			box,

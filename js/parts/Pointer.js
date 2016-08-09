@@ -301,13 +301,10 @@ H.Pointer.prototype = {
 				if (hoverPoint) { // #2500
 					hoverPoint.setState(hoverPoint.state, true);
 					each(chart.axes, function (axis) {
-						if (pick(axis.crosshair && axis.crosshair.snap, true)) {
+						if (axis.crosshair) {
 							axis.drawCrosshair(null, hoverPoint);
-						}  else {
-							axis.hideCrosshair();
 						}
 					});
-
 				}
 			}
 
@@ -342,8 +339,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
-
+			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 

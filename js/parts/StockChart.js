@@ -362,7 +362,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !this.cross) {
 		return;
 	}
 
@@ -383,6 +383,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
 		value;
+
+	// Use last available event (#5287)
+	if (!e) {
+		e = this.cross && this.cross.e;
+	}
 
 	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
@@ -520,6 +525,9 @@ seriesProto.setCompare = function (compare) {
 		return value;
 	} : null;
 
+	// Survive to export, #5485
+	this.userOptions.compare = compare;
+
 	// Mark dirty
 	if (this.chart.hasRendered) {
 		this.isDirty = true;
@@ -557,11 +565,11 @@ seriesProto.processData = function () {
 		}
 
 		// find the first value for comparison
-		for (i = 0; i < length; i++) {
+		for (i = 0; i < length - 1; i++) {
 			compareValue = keyIndex > -1 ? 
 				processedYData[i][keyIndex] :
 				processedYData[i];
-			if (isNumber(compareValue) && processedXData[i] >= series.xAxis.min && compareValue !== 0) {
+			if (isNumber(compareValue) && processedXData[i + 1] >= series.xAxis.min && compareValue !== 0) {
 				series.compareValue = compareValue;
 				break;
 			}

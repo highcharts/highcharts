@@ -34,8 +34,12 @@ seriesTypes.spline  = extendClass(Series, {
 			rightContY,
 			ret;
 
+		function doCurve(otherPoint) {
+			return otherPoint && !otherPoint.isNull && otherPoint.doCurve !== false;
+		}
+
 		// Find control points
-		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		if (doCurve(lastPoint) && doCurve(nextPoint)) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -86,29 +90,35 @@ seriesTypes.spline  = extendClass(Series, {
 			this.chart.renderer.circle(leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop, 2)
 				.attr({
 					stroke: 'red',
-					'stroke-width': 1,
-					fill: 'none'
+					'stroke-width': 2,
+					fill: 'none',
+					zIndex: 9
 				})
 				.add();
 			this.chart.renderer.path(['M', leftContX + this.chart.plotLeft, leftContY + this.chart.plotTop,
 				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
 				.attr({
 					stroke: 'red',
-					'stroke-width': 1
+					'stroke-width': 2,
+					zIndex: 9
 				})
 				.add();
+		}
+		if (rightContX) {
 			this.chart.renderer.circle(rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop, 2)
 				.attr({
 					stroke: 'green',
-					'stroke-width': 1,
-					fill: 'none'
+					'stroke-width': 2,
+					fill: 'none',
+					zIndex: 9
 				})
 				.add();
 			this.chart.renderer.path(['M', rightContX + this.chart.plotLeft, rightContY + this.chart.plotTop,
 				'L', plotX + this.chart.plotLeft, plotY + this.chart.plotTop])
 				.attr({
 					stroke: 'green',
-					'stroke-width': 1
+					'stroke-width': 2,
+					zIndex: 9
 				})
 				.add();
 		}

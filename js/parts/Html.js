@@ -130,6 +130,12 @@ extend(SVGElement.prototype, {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
+				// Reset multiline/ellipsis in order to read width (#4928, #5417)
+				css(elem, {
+					width: '',
+					whiteSpace: whiteSpace || 'nowrap'
+				});
+
 				// Update textWidth
 				if (elem.offsetWidth > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
@@ -137,17 +143,10 @@ extend(SVGElement.prototype, {
 						display: 'block',
 						whiteSpace: whiteSpace || 'normal' // #3331
 					});
-					wrapper.hasTextWidth = true;
-				} else if (wrapper.hasTextWidth) { // #4928
-					css(elem, {
-						width: '',
-						display: '',
-						whiteSpace: whiteSpace || 'nowrap'
-					});
-					wrapper.hasTextWidth = false;
 				}
 
-				wrapper.getSpanCorrection(wrapper.hasTextWidth ? textWidth : elem.offsetWidth, baseline, alignCorrection, rotation, align);
+
+				wrapper.getSpanCorrection(elem.offsetWidth, baseline, alignCorrection, rotation, align);
 			}
 
 			// apply position with correction

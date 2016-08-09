@@ -48,6 +48,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 
 		rawPoint.plotXold = rawPoint.plotX;
 		rawPoint.plotYold = rawPoint.plotY;
+		rawPoint.plotZold = rawPoint.plotZ;
 
 		rawPoint.plotX = projectedPoint.x;
 		rawPoint.plotY = projectedPoint.y;

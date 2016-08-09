@@ -78,7 +78,9 @@ H.defaultOptions = {
 				y: 10
 			}
 			// relativeTo: 'plot'
-		}
+		},
+		width: null,
+		height: null
 	},
 	/*= if (!build.classic) { =*/
 	defs: { // docs

@@ -12,6 +12,14 @@
         // Set this to true after changes have been reviewed
     var push = process.argv[2] === '-push';
 
+    function releaseRepo(product) {
+        return {
+            highcharts: 'highcharts-dist',
+            highmaps: 'highmaps-release',
+            highstock: 'highstock-release'
+        }[product];
+    }
+
     /**
      * Commit, tag and push
      */
@@ -26,7 +34,7 @@
             };
         */
         var commands = [
-            'cd ~/github/' + product + '-release',
+            'cd ~/github/' + releaseRepo(product),
             'git add --all',
             'git commit -m "v' + version + '"',
             'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
@@ -62,14 +70,14 @@
         console.log('Updating bower.json and package.json for ' + name + '...');
 
         ['bower', 'package'].forEach(function (file ) {
-            fs.readFile('../' + product + '-release/' + file + '.json', function (err, json) {
+            fs.readFile('../' + releaseRepo(product) + '/' + file + '.json', function (err, json) {
                 if (err) {
                     throw err;
                 }
                 json = JSON.parse(json);
                 json.version = 'v' + version;
                 json = JSON.stringify(json, null, '  ');
-                fs.writeFile('../' + product + '-release/' + file + '.json', json, proceed);
+                fs.writeFile('../' + releaseRepo(product) + '/' + file + '.json', json, proceed);
             });
         });
     }
@@ -92,7 +100,7 @@
                 if (src.indexOf('.') !== 0) {
                     fs.copy(
                         'build/dist/' + product + '/js/' + src,
-                        '../' + product + '-release/' + src,
+                        '../' + releaseRepo(product) + '/' + src,
                         function (copyerr) {
                             if (copyerr) {
                                 throw copyerr;
@@ -114,7 +122,7 @@
         extras.forEach(function (src) {
             fs.copy(
                 'build/dist/' + product + '/js/' + src,
-                '../highcharts-release/' + src,
+                '../highcharts-dist/' + src,
                 function (err) {
                     if (err) {
                         throw err;

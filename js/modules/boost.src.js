@@ -307,6 +307,10 @@
                 drawPoint = function (clientX, plotY, yBottom) {
                     if (c === 0) {
                         ctx.beginPath();
+
+                        if (cvsLineTo) {
+                            ctx.lineJoin = 'round';
+                        }
                     }
 
                     if (wasNull) {

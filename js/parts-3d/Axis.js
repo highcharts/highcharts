@@ -61,7 +61,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		if (!this.bottomFrame) {
 			this.bottomFrame = renderer.cuboid(bottomShape).attr({
 				'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
-				'zIndex': (chart.yAxis[0].reversed && chart.alpha3d > 0 ? 4 : -1)
+				'zIndex': (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
 			}).add();
 
 			/*= if (build.classic) { =*/
@@ -227,24 +227,13 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.is3d()) {
-		return pos;
-	}
-
-	var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
-	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-	newPos.old = pos;
-	return newPos;
-});
-
-wrap(Tick.prototype, 'handleOverflow', function (proceed, xy) {
 	if (this.axis.chart.is3d()) {
-		xy = xy.old;
+		pos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
 	}
-	return proceed.call(this, xy);
+	return pos;
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	var is3d = this.chart.is3d(),
 		pos,
 		axisTitleMargin;

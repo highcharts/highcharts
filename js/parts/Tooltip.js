@@ -50,7 +50,7 @@ H.Tooltip.prototype = {
 				zIndex: 8
 			})
 			.add()
-			.attr({ y: -9999 });
+			.attr({ y: -9e9 }); // #2301, #2657, #3532
 
 		/*= if (build.classic) { =*/
 		this.label
@@ -502,18 +502,18 @@ H.Tooltip.prototype = {
 	 * Format the footer/header of the tooltip
 	 * #3397: abstraction to enable formatting of footer and header
 	 */
-	tooltipFooterHeaderFormatter: function (point, isFooter) {
+	tooltipFooterHeaderFormatter: function (labelConfig, isFooter) {
 		var footOrHead = isFooter ? 'footer' : 'header',
-			series = point.series,
+			series = labelConfig.series,
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(labelConfig.key),
 			formatString = tooltipOptions[footOrHead + 'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
 		if (isDateTime && !xDateFormat) {
-			xDateFormat = this.getXDateFormat(point, tooltipOptions, xAxis);
+			xDateFormat = this.getXDateFormat(labelConfig, tooltipOptions, xAxis);
 		}
 
 		// Insert the footer date format if any
@@ -522,7 +522,7 @@ H.Tooltip.prototype = {
 		}
 
 		return format(formatString, {
-			point: point,
+			point: labelConfig,
 			series: series
 		});
 	},

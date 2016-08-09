@@ -133,21 +133,30 @@ radialAxisMixin = {
 	 * method.
 	 */
 	getLinePath: function (lineWidth, radius) {
-		var center = this.center;
-		radius = pick(radius, center[2] / 2 - this.offset);
+		var center = this.center,
+			end,
+			chart = this.chart,
+			r = pick(radius, center[2] / 2 - this.offset),
+			path;
 
-		return this.chart.renderer.symbols.arc(
-			this.left + center[0],
-			this.top + center[1],
-			radius,
-			radius,
-			{
-				start: this.startAngleRad,
-				end: this.endAngleRad,
-				open: true,
-				innerR: 0
-			}
-		);
+		if (this.isCircular || radius !== undefined) {
+			path = this.chart.renderer.symbols.arc(
+				this.left + center[0],
+				this.top + center[1],
+				r,
+				r,
+				{
+					start: this.startAngleRad,
+					end: this.endAngleRad,
+					open: true,
+					innerR: 0
+				}
+			);
+		} else {
+			end = this.postTranslate(this.angleRad, r);
+			path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
+		}
+		return path;
 	},
 
 	/**
@@ -222,7 +231,7 @@ radialAxisMixin = {
 	 */
 	getPosition: function (value, length) {
 		return this.postTranslate(
-			this.isCircular ? this.translate(value) : 0, // #2848
+			this.isCircular ? this.translate(value) : this.angleRad, // #2848
 			pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
 		);
 	},
@@ -256,6 +265,7 @@ radialAxisMixin = {
 				options.innerRadius,
 				pick(options.thickness, 10)
 			],
+			offset = Math.min(this.offset, 0),
 			percentRegex = /%$/,
 			start,
 			end,
@@ -298,6 +308,8 @@ radialAxisMixin = {
 				end = startAngleRad + this.translate(to);
 			}
 
+			radii[0] -= offset; // #5283
+			radii[2] -= offset; // #5283
 
 			ret = this.chart.renderer.symbols.arc(
 				this.left + center[0],
@@ -446,8 +458,9 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
-		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+		this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts // docs. Sample created. API marked "next".
+		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
+		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
 		this.offset = options.offset || 0;
 
 		this.isCircular = isCircular;
@@ -494,7 +507,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		align = labelOptions.align,
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
-	if (axis.isRadial) {
+	if (axis.isRadial) { // Both X and Y axes in a polar chart
 		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 
 		// Automatically rotated
@@ -510,7 +523,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 
 		// Automatic alignment
 		if (align === null) {
-			if (axis.isCircular) {
+			if (axis.isCircular) { // Y axis
 				if (this.label.getBBox().width > axis.len * axis.tickInterval / (axis.max - axis.min)) { // #3506
 					centerSlot = 0;
 				}
