@@ -84,7 +84,6 @@
 		},
 		activeDataLabelStyle: {
 			cursor: 'pointer',
-			color: '#0d233a',
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},
