@@ -31,7 +31,8 @@ extend(ColorAxis.prototype, {
 		},
 		minColor: '#EFEFFF',
 		maxColor: '#003875',
-		tickLength: 5
+		tickLength: 5,
+		showInLegend: true
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
@@ -492,14 +493,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		colorAxis = this.chart.colorAxis[0];
 
 	if (colorAxis) {
-
-		// Data classes
-		if (colorAxis.options.dataClasses) {
-			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
-		// Gradient legend
-		} else {
-			// Add this axis on top
-			allItems.push(colorAxis);
+		if (colorAxis.options.showInLegend) {
+			// Data classes
+			if (colorAxis.options.dataClasses) {
+				allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+			// Gradient legend
+			} else {
+				// Add this axis on top
+				allItems.push(colorAxis);
+			}
 		}
 
 		// Don't add the color axis' series
