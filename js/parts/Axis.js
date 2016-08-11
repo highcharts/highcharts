@@ -209,7 +209,7 @@ Axis.prototype = {
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
-		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
+		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
@@ -322,7 +322,7 @@ Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			if (isXAxis && !this.isColorAxis) { // #2713
+			if (isXAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
 				chart.axes.push(axis);
@@ -360,7 +360,7 @@ Axis.prototype = {
 	setOptions: function (userOptions) {
 		this.options = merge(
 			this.defaultOptions,
-			this.isXAxis ? {} : this.defaultYAxisOptions,
+			this.coll === 'yAxis' && this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(

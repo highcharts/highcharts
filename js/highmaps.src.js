@@ -6900,7 +6900,7 @@
 
             // Flag, isXAxis
             axis.isXAxis = isXAxis;
-            axis.coll = isXAxis ? 'xAxis' : 'yAxis';
+            axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
             axis.opposite = userOptions.opposite; // needed in setOptions
             axis.side = userOptions.side || (axis.horiz ?
@@ -7013,7 +7013,7 @@
 
             // Register
             if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-                if (isXAxis && !this.isColorAxis) { // #2713
+                if (isXAxis) { // #2713
                     chart.axes.splice(chart.xAxis.length, 0, axis);
                 } else {
                     chart.axes.push(axis);
@@ -7051,7 +7051,7 @@
         setOptions: function (userOptions) {
             this.options = merge(
                 this.defaultOptions,
-                this.isXAxis ? {} : this.defaultYAxisOptions,
+                this.coll === 'yAxis' && this.defaultYAxisOptions,
                 [this.defaultTopAxisOptions, this.defaultRightAxisOptions,
                     this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
                 merge(
@@ -17178,7 +17178,6 @@
      * The ColorAxis object for inclusion in gradient legends
      */
     var ColorAxis = Highcharts.ColorAxis = function () {
-        this.isColorAxis = true;
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
@@ -17211,6 +17210,8 @@
             var horiz = chart.options.legend.layout !== 'vertical',
                 options;
 
+            this.coll = 'colorAxis';
+
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
                 side: horiz ? 2 : 1,
@@ -17218,8 +17219,7 @@
             }, userOptions, {
                 opposite: !horiz,
                 showEmpty: false,
-                title: null,
-                isColor: true
+                title: null
             });
 
             Axis.prototype.init.call(this, chart, options);
@@ -17320,7 +17320,6 @@
             Axis.prototype.setOptions.call(this, userOptions);
 
             this.options.crosshair = this.options.marker;
-            this.coll = 'colorAxis';
         },
 
         setAxisSize: function () {

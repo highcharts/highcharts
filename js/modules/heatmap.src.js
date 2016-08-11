@@ -42,7 +42,6 @@
      * The ColorAxis object for inclusion in gradient legends
      */
     var ColorAxis = Highcharts.ColorAxis = function () {
-        this.isColorAxis = true;
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
@@ -75,6 +74,8 @@
             var horiz = chart.options.legend.layout !== 'vertical',
                 options;
 
+            this.coll = 'colorAxis';
+
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
                 side: horiz ? 2 : 1,
@@ -82,8 +83,7 @@
             }, userOptions, {
                 opposite: !horiz,
                 showEmpty: false,
-                title: null,
-                isColor: true
+                title: null
             });
 
             Axis.prototype.init.call(this, chart, options);
@@ -184,7 +184,6 @@
             Axis.prototype.setOptions.call(this, userOptions);
 
             this.options.crosshair = this.options.marker;
-            this.coll = 'colorAxis';
         },
 
         setAxisSize: function () {
