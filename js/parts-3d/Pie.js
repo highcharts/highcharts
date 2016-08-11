@@ -65,7 +65,7 @@ wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state)
 		options = this.options;
 
 	if (this.chart.is3d()) {
-		attr.stroke = options.edgeColor || options.borderColor || point.color || this.color;
+		attr.stroke = options.edgeColor || point.color || this.color;
 		attr['stroke-width'] = pick(options.edgeWidth, 1);
 	}
 
