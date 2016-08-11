@@ -40,6 +40,7 @@
                     // Allow labels to be placed distant to the graph if necessary, and
                     // draw a connector line to the graph
                     connectorAllowed: true,
+                    connectorNeighbourDistance: 24, // If the label is closer than this to a neighbour graph, draw a connector
                     styles: {
                         fontWeight: 'bold'
                     }
@@ -212,6 +213,7 @@
             dist,
             connectorPoint,
             connectorEnabled = this.options.label.connectorAllowed,
+
             chart = this.chart,
             series,
             points,
@@ -297,7 +299,8 @@
                 }
 
                 // Do we need a connector? 
-                if (connectorEnabled && this === series && checkDistance && !withinRange) {
+                if (connectorEnabled && this === series && ((checkDistance && !withinRange) || 
+                        distToOthersSquared < Math.pow(this.options.label.connectorNeighbourDistance, 2))) {
                     for (j = 1; j < points.length; j += 1) {
                         dist = Math.min(
                             Math.pow(x + bBox.width / 2 - points[j].chartX, 2) + Math.pow(y + bBox.height / 2 - points[j].chartY, 2),
