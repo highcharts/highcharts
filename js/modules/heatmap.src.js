@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-02)
+ * @license Highcharts JS v4.2.6-modified (2016-08-11)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -69,7 +69,7 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true
+            showInLegend: true // docs: API record is being added.
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
