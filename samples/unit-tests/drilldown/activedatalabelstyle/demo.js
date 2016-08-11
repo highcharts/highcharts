@@ -1,7 +1,7 @@
 QUnit.test('activeDataLabelStyle', function (assert) {
-    function getDataLabelFill(point) {
+    var getDataLabelFill = function (point) {
         return point.dataLabel.element.childNodes[0].style.fill;
-    }
+    };
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column'
@@ -28,11 +28,8 @@ QUnit.test('activeDataLabelStyle', function (assert) {
                 }]
             }
         }),
-
         series = chart.series[0],
         point = series.points[0];
-
-
     assert.ok(
         getDataLabelFill(point) === 'rgb(13, 35, 58)' || getDataLabelFill(point) === '#0d233a',
         'activeDataLabelStyle.color default to rgb(13, 35, 58)'
@@ -81,6 +78,7 @@ QUnit.test('activeDataLabelStyle', function (assert) {
         color: '#FFFFFF'
     });
     assert.ok(
+        getDataLabelFill(point),
         getDataLabelFill(point) === 'rgb(0, 0, 0)' || getDataLabelFill(point) === '#000000',
         'activeDataLabelStyle.color contrast to white'
     );
