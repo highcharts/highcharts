@@ -290,7 +290,7 @@ H.Tick.prototype = {
 		this.isActive = true;
 
 		// Create the grid line
-		if (gridLine === undefined && !axis.isRadial) {
+		if (!gridLine) {
 			/*= if (build.classic) { =*/
 			attribs.stroke = gridLineColor;
 			attribs['stroke-width'] = gridLineWidth;

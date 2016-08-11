@@ -15,7 +15,7 @@
 
 	$nightly = json_decode(@file_get_contents('nightly/nightly.json'));
 	if ($nightly) {
-		$nightly = $nightly->results->$path;
+		$nightly = @$nightly->results->$path;
 	}
 
 	$details = @file_get_contents("../../samples/$path/demo.details");
