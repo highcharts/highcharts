@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-08)
+ * @license Highstock JS v4.2.6-modified (2016-08-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7808,7 +7808,7 @@
 
             // Write the last point's name to the names array
             this.names[x] = point.name;
-    console.log('@nameToX', this.names)
+
             return x;
         },
 
@@ -7817,7 +7817,7 @@
          */
         updateNames: function () {
             var axis = this;
-    console.log('@updateNames', this.names)
+
             if (this.names.length > 0) {
                 this.names.length = 0;
                 this.minRange = undefined;
@@ -16300,8 +16300,7 @@
                 graphic = point.graphic,
                 i,
                 chart = series.chart,
-                seriesOptions = series.options,
-                names = series.xAxis && series.xAxis.names;
+                seriesOptions = series.options;
 
             redraw = pick(redraw, true);
 
@@ -20425,7 +20424,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-08)
+     * Highstock JS v4.2.6-modified (2016-08-11)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

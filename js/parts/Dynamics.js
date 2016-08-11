@@ -151,8 +151,7 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options,
-			names = series.xAxis && series.xAxis.names;
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 

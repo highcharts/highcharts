@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-05)
+ * @license Highcharts JS v4.2.6-modified (2016-08-11)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -244,10 +244,11 @@ var arrayMin = Highcharts.arrayMin,
             var center = this.center,
                 end,
                 chart = this.chart,
-                r = pick(radius, center[2] / 2 - this.offset);
+                r = pick(radius, center[2] / 2 - this.offset),
+                path;
 
             if (this.isCircular || radius !== undefined) {
-                return this.chart.renderer.symbols.arc(
+                path = this.chart.renderer.symbols.arc(
                     this.left + center[0],
                     this.top + center[1],
                     r,
@@ -261,8 +262,9 @@ var arrayMin = Highcharts.arrayMin,
                 );
             } else {
                 end = this.postTranslate(this.angleRad, r);
-                return ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
+                path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
             }
+            return path;
         },
 
         /**
@@ -677,7 +679,8 @@ var arrayMin = Highcharts.arrayMin,
             ret = proceed.call(this, x, y, tickLength, tickWidth, horiz, renderer);
         }
         return ret;
-    });/*
+    });
+    /*
      * The AreaRangeSeries class
      *
      */

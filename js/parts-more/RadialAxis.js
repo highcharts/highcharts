@@ -120,10 +120,11 @@ var radialAxisMixin = {
 		var center = this.center,
 			end,
 			chart = this.chart,
-			r = pick(radius, center[2] / 2 - this.offset);
+			r = pick(radius, center[2] / 2 - this.offset),
+			path;
 
 		if (this.isCircular || radius !== undefined) {
-			return this.chart.renderer.symbols.arc(
+			path = this.chart.renderer.symbols.arc(
 				this.left + center[0],
 				this.top + center[1],
 				r,
@@ -137,8 +138,9 @@ var radialAxisMixin = {
 			);
 		} else {
 			end = this.postTranslate(this.angleRad, r);
-			return ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
+			path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
 		}
+		return path;
 	},
 
 	/**

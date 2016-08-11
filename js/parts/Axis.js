@@ -843,7 +843,7 @@ Axis.prototype = {
 
 		// Write the last point's name to the names array
 		this.names[x] = point.name;
-console.log('@nameToX', this.names)
+
 		return x;
 	},
 
@@ -852,7 +852,7 @@ console.log('@nameToX', this.names)
 	 */
 	updateNames: function () {
 		var axis = this;
-console.log('@updateNames', this.names)
+
 		if (this.names.length > 0) {
 			this.names.length = 0;
 			this.minRange = undefined;
