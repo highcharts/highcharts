@@ -214,7 +214,7 @@ seriesTypes.column = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			dense = series.closestPointRange * series.xAxis.transA < 2,
+			dense = series.dense = series.closestPointRange * series.xAxis.transA < 2,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
 				dense ? 0 : 1  // #3635
@@ -290,7 +290,9 @@ seriesTypes.column = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: noop,
+	drawGraph: function () {
+		this.group[this.dense ? 'addClass' : 'removeClass']('highcharts-dense-data');
+	},
 
 	/*= if (build.classic) { =*/
 	/**

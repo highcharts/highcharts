@@ -159,6 +159,9 @@ g.highcharts-series, .highcharts-point {
 .highcharts-point {
     stroke-width: 1px;
 }
+.highcharts-dense-data .highcharts-point {
+    stroke-width: 0;
+}
 
 .highcharts-data-label {
     font-size: 0.9em;
