@@ -304,7 +304,8 @@ extend(Chart.prototype, {
 		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
-				title: lang.resetZoomTitle
+				title: lang.resetZoomTitle,
+				'class': 'highcharts-reset-zoom'
 			})
 			.add()
 			.align(btnOptions.position, false, alignTo);
