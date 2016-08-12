@@ -7,9 +7,10 @@
 	$i = $_GET['i'];
 	$rightcommit = @$_GET['rightcommit'];
 	$commit = @$_GET['commit']; // Used from Phantom test
+	$compareJSON = compareJSON();
 
-	if (file_exists('temp/compare.json')) {
-		$compare = json_decode(file_get_contents('temp/compare.json'));
+	if (file_exists($compareJSON)) {
+		$compare = json_decode(file_get_contents($compareJSON));
 		$comment = @$compare->$path->comment;
 	}
 

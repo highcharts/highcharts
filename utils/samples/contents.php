@@ -5,7 +5,7 @@ require_once('functions.php');
 $browser = getBrowser();
 $browserKey = isset($_GET['browserKey']) ? $_GET['browserKey'] : $browser['parent'];
 
-$compare = @json_decode(file_get_contents('temp/compare.json'));
+$compare = @json_decode(file_get_contents(compareJSON()));
 
 
 ?><!DOCTYPE HTML>

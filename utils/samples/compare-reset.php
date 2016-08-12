@@ -1,5 +1,6 @@
 <?php
-@unlink('temp/compare.json');
+require_once('functions.php');
+@unlink(compareJSON());
 
 $files = glob('cache/*');
 foreach ($files as $file) {
