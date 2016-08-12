@@ -776,13 +776,13 @@ Axis.prototype = {
 			// if min and max options have been set, don't go beyond it
 			minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 			if (spaceAvailable) { // if space is available, stay within the data range
-				minArgs[2] = axis.dataMin;
+				minArgs[2] = axis.isLog ? axis.log2lin(axis.dataMin) : axis.dataMin;
 			}
 			min = arrayMax(minArgs);
 
 			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
-				maxArgs[2] = axis.dataMax;
+				maxArgs[2] = axis.isLog ? axis.log2lin(axis.dataMax) : axis.dataMax;
 			}
 
 			max = arrayMin(maxArgs);
