@@ -1,3 +1,5 @@
+/* eslint-env node, es6 */
+/* eslint func-style: ["error", "expression"] */
 'use strict';
 const d = require('./assembler/dependencies');
 const p = require('./assembler/process.js');
@@ -9,29 +11,29 @@ const beautify = require('js-beautify').js_beautify;
  * @param  {[type]} base              [description]
  * @param  {[type]} includeSubfolders [description]
  * @param  {[type]} path              [description]
- * @return {[type]}                   [description]
+ * @returns {[type]}                   [description]
  */
 const getFilesInFolder = (base, includeSubfolders, path) => {
     let filenames = [],
         filepath,
         isDirectory;
-        path = (typeof path === 'undefined') ? '' : path;
-        fs.readdirSync(base + path).forEach((filename) => {
-            filepath = base + path + filename;
-            isDirectory = fs.lstatSync(filepath).isDirectory();
-            if (isDirectory && includeSubfolders) {
-                filenames = filenames.concat(getFilesInFolder(base, includeSubfolders, path + filename + '/'));
-            } else if (!isDirectory) {
-                filenames.push(path + filename);
-            }
-        });
+    path = (typeof path === 'undefined') ? '' : path;
+    fs.readdirSync(base + path).forEach((filename) => {
+        filepath = base + path + filename;
+        isDirectory = fs.lstatSync(filepath).isDirectory();
+        if (isDirectory && includeSubfolders) {
+            filenames = filenames.concat(getFilesInFolder(base, includeSubfolders, path + filename + '/'));
+        } else if (!isDirectory) {
+            filenames.push(path + filename);
+        }
+    });
     return filenames;
-}
+};
 
 /**
- * Get options foreach individual 
+ * Get options foreach individual
  * @param  {object} options General options for all files
- * @return {[object]}       Array of indiviual file options
+ * @returns {[object]}       Array of indiviual file options
  */
 const getIndividualOptions = (options) => {
     return options.files.reduce((arr, filename) => {
@@ -63,10 +65,10 @@ const getIndividualOptions = (options) => {
 };
 
 let defaultOptions = {
-    base: undefined, // Path to where the build files are located
-    exclude: undefined,
+    base: null, // Path to where the build files are located
+    exclude: null,
     fileOptions: {},
-    files: undefined, // Array of files to compile
+    files: null, // Array of files to compile
     output: './', // Folder to output compiled files
     pretty: true,
     umd: true, // Wether to use UMD pattern or a module pattern
@@ -74,9 +76,9 @@ let defaultOptions = {
 };
 
 /**
- * [build description]
- * @param  {[type]} config [description]
- * @return {[type]}        [description]
+ * Function which gathers all dependencies, merge options and build the final distribution file.
+ * @param  {object|undefined} userOptions Build options set by the user
+ * @returns {undefined} No return value
  */
 const build = userOptions=> {
     // userOptions is an empty object by default
@@ -94,18 +96,22 @@ const build = userOptions=> {
                     file = beautify(file);
                 }
                 fs.writeFileSync(o.outputPath, file, 'utf8');
+                /* eslint-disable no-console */
                 console.log([
                     'Completed ' + (i + 1) + ' of ' + arr.length,
                     '- type: ' + o.type,
                     '- entry: ' + o.entry,
                     '- output: ' + o.outputPath
                 ].join('\n'));
+                /* eslint-enable no-console */
             });
     } else {
-        outPutMessage('Missing required option!', 'The options \'base\' is required for the script to run');
+        /* eslint-disable no-console */
+        console.log('Missing required option! The options \'base\' is required for the script to run');
+        /* eslint-enable no-console */
     }
-}
+};
 
 module.exports = {
-	build: build
+    build: build
 };
