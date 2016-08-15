@@ -21,7 +21,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Click the button to download as PNG/SVG'
+            text: 'Click the button to download as PNG/JPEG/SVG'
         },
 
         chart: {

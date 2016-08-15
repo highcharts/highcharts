@@ -1,7 +1,6 @@
 (function (H) {
 	var addEvent = H.addEvent,
 		Axis = H.Axis,
-		Chart = H.Chart,
 		correctFloat = H.correctFloat,
 		defaultOptions = H.defaultOptions,
 		defined = H.defined,
@@ -184,47 +183,42 @@ Scrollbar.prototype = {
 			yOffset = 0,
 			method = scroller.rendered ? 'animate' : 'attr';
 
-		if (this.group) { // May be destroyed or disabled
+		scroller.x = x;
+		scroller.y = y + this.trackBorderWidth;
+		scroller.width = width; // width with buttons
+		scroller.height = height;
+		scroller.xOffset = xOffset;
+		scroller.yOffset = yOffset;
 
-			scroller.x = x;
-			scroller.y = y + this.trackBorderWidth;
-			scroller.width = width; // width with buttons
-			scroller.height = height;
-			scroller.xOffset = xOffset;
-			scroller.yOffset = yOffset;
-
-			// If Scrollbar is a vertical type, swap options:
-			if (vertical) {
-				scroller.width = scroller.yOffset = width = yOffset = scroller.size;
-				scroller.xOffset = xOffset = 0;
-				scroller.barWidth = height - width * 2; // width without buttons
-				scroller.x = x = x + scroller.options.margin;
-			} else {
-				scroller.height = scroller.xOffset = height = xOffset = scroller.size;
-				scroller.barWidth = width - height * 2; // width without buttons
-				scroller.y = scroller.y + scroller.options.margin;
-			}
-
-			// Set general position for a group:
-			scroller.group[method]({
-				translateX: x,
-				translateY: scroller.y
-			});
-
-			// Resize background/track:
-			scroller.track[method]({
-				width: width,
-				height: height
-			});
-
-			// Move right/bottom button ot it's place:
-			scroller.scrollbarButtons[1].attr({
-				translateX: vertical ? 0 : width - xOffset,
-				translateY: vertical ? height - yOffset : 0
-			});
-
-			scroller.rendered = true;
+		// If Scrollbar is a vertical type, swap options:
+		if (vertical) {
+			scroller.width = scroller.yOffset = width = yOffset = scroller.size;
+			scroller.xOffset = xOffset = 0;
+			scroller.barWidth = height - width * 2; // width without buttons
+			scroller.x = x = x + scroller.options.margin;
+		} else {
+			scroller.height = scroller.xOffset = height = xOffset = scroller.size;
+			scroller.barWidth = width - height * 2; // width without buttons
+			scroller.y = scroller.y + scroller.options.margin;
 		}
+
+		// Set general position for a group:
+		scroller.group[method]({
+			translateX: x,
+			translateY: scroller.y
+		});
+
+		// Resize background/track:
+		scroller.track[method]({
+			width: width,
+			height: height
+		});
+
+		// Move right/bottom button ot it's place:
+		scroller.scrollbarButtons[1].attr({
+			translateX: vertical ? 0 : width - xOffset,
+			translateY: vertical ? height - yOffset : 0
+		});
 	},
 
 	/**
@@ -323,7 +317,8 @@ Scrollbar.prototype = {
 			toPX,
 			newPos,
 			newSize,
-			newRiflesPos;
+			newRiflesPos,
+			method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
 		if (defined(scroller.barWidth) && scroller.group) {
 
@@ -338,25 +333,25 @@ Scrollbar.prototype = {
 			scroller.to = to;
 
 			if (!vertical) {
-				scroller.scrollbarGroup.attr({
+				scroller.scrollbarGroup[method]({
 					translateX: newPos
 				});
-				scroller.scrollbar.attr({
+				scroller.scrollbar[method]({
 					width: newSize
 				});
-				scroller.scrollbarRifles.attr({
+				scroller.scrollbarRifles[method]({
 					translateX: newRiflesPos
 				});
 				scroller.scrollbarLeft = newPos;
 				scroller.scrollbarTop = 0;
 			} else {
-				scroller.scrollbarGroup.attr({
+				scroller.scrollbarGroup[method]({
 					translateY: newPos
 				});
-				scroller.scrollbar.attr({
+				scroller.scrollbar[method]({
 					height: newSize
 				});
-				scroller.scrollbarRifles.attr({
+				scroller.scrollbarRifles[method]({
 					translateY: newRiflesPos
 				});
 				scroller.scrollbarTop = newPos;
@@ -378,6 +373,8 @@ Scrollbar.prototype = {
 				}
 			}
 		}
+
+		scroller.rendered = true;
 	},
 
 	/**
@@ -409,17 +406,18 @@ Scrollbar.prototype = {
 
 				change = chartPosition - scrollPosition;
 
+				scroller.hasDragged = true;
 				scroller.updatePosition(initPositions[0] + change, initPositions[1] + change);
 
-				if (scroller.options.liveRedraw) {
-					setTimeout(function () {
-						scroller.mouseUpHandler(e);
-					}, 0);
-				} else {
-					scroller.setRange(scroller.from, scroller.to);
+				if (scroller.hasDragged) {
+					fireEvent(scroller, 'changed', {
+						from: scroller.from,
+						to: scroller.to,
+						trigger: 'scrollbar',
+						DOMType: e.type,
+						DOMEvent: e
+					});
 				}
-
-				scroller.hasDragged = true;
 			}
 		};
 
@@ -432,13 +430,11 @@ Scrollbar.prototype = {
 					from: scroller.from,
 					to: scroller.to,
 					trigger: 'scrollbar',
+					DOMType: e.type,
 					DOMEvent: e
 				});
 			}
-
-			if (e.type !== 'mousemove') {
-				scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
-			}
+			scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
 		};
 
 		scroller.mouseDownHandler = function (e) {
@@ -600,7 +596,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 	if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
 		// Predefined options:
 		axis.options.scrollbar.vertical = !axis.horiz;
-		axis.options.startOnTick = axis.options.endOnTick = false; // docs
+		axis.options.startOnTick = axis.options.endOnTick = false;
 
 		axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
 

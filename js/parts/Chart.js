@@ -292,6 +292,7 @@ Chart.prototype = {
 		if (hasCartesianSeries) {
 			// set axes scales
 			each(axes, function (axis) {
+				axis.updateNames();
 				axis.setScale();
 			});
 		}
@@ -805,30 +806,25 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
+			hasUserWidth = defined(optionsChart.width),
 			width = optionsChart.width || getStyle(renderTo, 'width'),
 			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win;
 
-		// Allow calling directly without parameters or as an event handler
-		// if the reflow setting is true.
-		if (!e || e && pick(optionsChart.reflow, true)) {
-
-			// Width and height checks for display:none. Target is doc in IE8 and Opera,
-			// win in Firefox, Chrome and IE9.
-			if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
-				if (width !== chart.containerWidth || height !== chart.containerHeight) {
-					clearTimeout(chart.reflowTimeout);
-					// When called from window.resize, e is set, else it's called directly (#2224)
-					chart.reflowTimeout = syncTimeout(function () {
-						if (chart.container) { // It may have been destroyed in the meantime (#1257)
-							chart.setSize(width, height, false);
-							chart.hasUserSize = null;
-						}
-					}, e ? 100 : 0);
-				}
-				chart.containerWidth = width;
-				chart.containerHeight = height;
+		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// win in Firefox, Chrome and IE9.
+		if (!hasUserWidth && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+			if (width !== chart.containerWidth || height !== chart.containerHeight) {
+				clearTimeout(chart.reflowTimeout);
+				// When called from window.resize, e is set, else it's called directly (#2224)
+				chart.reflowTimeout = syncTimeout(function () {
+					if (chart.container) { // It may have been destroyed in the meantime (#1257)
+						chart.setSize(undefined, undefined, false);
+					}
+				}, e ? 100 : 0);
 			}
+			chart.containerWidth = width;
+			chart.containerHeight = height;
 		}
 	},
 
@@ -856,8 +852,6 @@ Chart.prototype = {
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
 			renderer = chart.renderer,
 			globalAnimation;
 
@@ -867,27 +861,27 @@ Chart.prototype = {
 		// set the animation for the current process
 		H.setAnimation(animation, chart);
 
-		chart.oldChartHeight = chartHeight;
-		chart.oldChartWidth = chartWidth;
-		if (defined(width)) {
-			chart.chartWidth = chartWidth = Math.max(0, Math.round(width));
-			chart.hasUserSize = !!chartWidth;
+		chart.oldChartHeight = chart.chartHeight;
+		chart.oldChartWidth = chart.chartWidth;
+		if (width !== undefined) {
+			chart.options.chart.width = width;
 		}
-		if (defined(height)) {
-			chart.chartHeight = chartHeight = Math.max(0, Math.round(height));
+		if (height !== undefined) {
+			chart.options.chart.height = height;
 		}
+		chart.getChartSize();
 
 		// Resize the container with the global animation applied if enabled (#2503)
 		/*= if (build.classic) { =*/
 		globalAnimation = renderer.globalAnimation;
 		(globalAnimation ? animate : css)(chart.container, {
-			width: chartWidth + 'px',
-			height: chartHeight + 'px'
+			width: chart.chartWidth + 'px',
+			height: chart.chartHeight + 'px'
 		}, globalAnimation);
 		/*= } =*/
 
 		chart.setChartSize(true);
-		renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
 
 		// handle axes
 		each(chart.axes, function (axis) {

@@ -156,7 +156,6 @@ import '../parts/Tick.js';
 			last = undefined;
 		}
 		
-			
 		ddOptions = extend(extend({
 			_ddSeriesId: ddSeriesId++
 		}, colorProp), ddOptions);
@@ -459,7 +458,7 @@ import '../parts/Tick.js';
 					point.graphic
 						.attr(animateFrom)
 						.animate(
-							animateTo, 
+							extend(point.shapeArgs, { fill: point.color || series.color }), 
 							animationOptions
 						);
 				}
@@ -584,7 +583,7 @@ import '../parts/Tick.js';
 			seriesOptions: seriesOptions,
 			category: category,
 			originalEvent: originalEvent,
-			points: category !== undefined && this.series.xAxis.ddPoints[category].slice(0)
+			points: category !== undefined && this.series.xAxis.getDDPoints(category).slice(0)
 		}, function (e) {
 			var chart = e.point.series && e.point.series.chart,
 				seriesOptions = e.seriesOptions;
@@ -606,7 +605,7 @@ import '../parts/Tick.js';
 	H.Axis.prototype.drilldownCategory = function (x, e) {
 		var key,
 			point,
-			ddPointsX = this.ddPoints[x];
+			ddPointsX = this.getDDPoints(x);
 		for (key in ddPointsX) {
 			point = ddPointsX[key];
 			if (point && point.series && point.series.visible && point.doDrilldown) { // #3197
@@ -617,20 +616,23 @@ import '../parts/Tick.js';
 	};
 
 	/**
-	 * Create and return a collection of points associated with the X position. Reset it for each level.
-	 */	
-	H.Axis.prototype.getDDPoints = function (x, levelNumber) {
-		var ddPoints = this.ddPoints;
-		if (!ddPoints) {
-			this.ddPoints = ddPoints = {};
-		}
-		if (!ddPoints[x]) {
-			ddPoints[x] = [];
-		}
-		if (ddPoints[x].levelNumber !== levelNumber) {
-			ddPoints[x].length = 0; // reset
-		}
-		return ddPoints[x];
+	 * Return drillable points for this specific X value
+	 */
+	H.Axis.prototype.getDDPoints = function (x) {
+		var ret = [];
+		each(this.series, function (series) {
+			var i,
+				xData = series.xData,
+				points = series.points;
+			
+			for (i = 0; i < xData.length; i++) {
+				if (xData[i] === x && series.options.data[i].drilldown) {
+					ret.push(points ? points[i] : true);
+					break;
+				}
+			}
+		});
+		return ret;
 	};
 
 
@@ -641,35 +643,37 @@ import '../parts/Tick.js';
 		var pos = this.pos,
 			label = this.label,
 			axis = this.axis,
-			ddPointsX = axis.ddPoints && axis.ddPoints[pos];
+			ddPointsX = axis.getDDPoints(pos);
 
-		if (label && ddPointsX && ddPointsX.length) {
-			label.drillable = true;
+		if (axis.coll === 'xAxis') {
+			if (label && ddPointsX.length) {
+				label.drillable = true;
 
-			/*= if (build.classic) { =*/
-			if (!label.basicStyles) {
-				label.basicStyles = H.merge(label.styles);
-			}
-			/*= } =*/
-
-			label
-				.addClass('highcharts-drilldown-axis-label')
 				/*= if (build.classic) { =*/
-				.css(axis.chart.options.drilldown.activeAxisLabelStyle)
+				if (!label.basicStyles) {
+					label.basicStyles = H.merge(label.styles);
+				}
 				/*= } =*/
-				.on('click', function (e) {
-					axis.drilldownCategory(pos, e);
-				});
 
-		} else if (label && label.drillable) {
+				label
+					.addClass('highcharts-drilldown-axis-label')
+					/*= if (build.classic) { =*/
+					.css(axis.chart.options.drilldown.activeAxisLabelStyle)
+					/*= } =*/
+					.on('click', function (e) {
+						axis.drilldownCategory(pos, e);
+					});
 
-			/*= if (build.classic) { =*/
-			label.styles = {}; // reset for full overwrite of styles
-			label.css(label.basicStyles);
-			/*= } =*/
+			} else if (label && label.drillable) {
 
-			label.on('click', null); // #3806
-			label.removeClass('highcharts-drilldown-axis-label');
+				/*= if (build.classic) { =*/
+				label.styles = {}; // reset for full overwrite of styles
+				label.css(label.basicStyles);
+				/*= } =*/
+
+				label.on('click', null); // #3806			
+				label.removeClass('highcharts-drilldown-axis-label');
+			}
 		}
 	};
 
@@ -689,8 +693,7 @@ import '../parts/Tick.js';
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 		var point = proceed.call(this, series, options, x),
 			xAxis = series.xAxis,
-			tick = xAxis && xAxis.ticks[x],
-			ddPointsX = xAxis && xAxis.getDDPoints(x, series.options._levelNumber);
+			tick = xAxis && xAxis.ticks[x];
 
 		if (point.drilldown) {
 			
@@ -710,13 +713,6 @@ import '../parts/Tick.js';
 					});
 				}
 			});*/
-
-
-			// Register drilldown points on this X value
-			if (ddPointsX) {
-				ddPointsX.push(point);
-				ddPointsX.levelNumber = series.options._levelNumber;
-			}
 
 		}
 

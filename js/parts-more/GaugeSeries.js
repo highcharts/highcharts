@@ -101,6 +101,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
+	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 
 	/**

@@ -9,6 +9,7 @@ import '../parts/ScatterSeries.js';
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
+		noop = H.noop,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
 /**
@@ -16,8 +17,19 @@ import '../parts/ScatterSeries.js';
  */
 defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 	marker: {
-		enabled: false
-	}
+		enabled: false,
+		states: {
+			hover: {
+				enabled: false
+			}
+		}
+	},
+	stickyTracking: false,
+	tooltip: {
+		followPointer: true,
+		pointFormat: ''
+	},
+	trackByArea: true
 });
 
 /**
@@ -25,15 +37,29 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
  */
 seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 	type: 'polygon',
-	/*= if (build.classic) { =*/
-	fillGraph: true,
-	/*= } =*/
-	// Close all segments
-	getGraphPath: function (segment) {
-		return Series.prototype.getGraphPath.call(this, segment).concat('z');
+	getGraphPath: function () {
+
+		var graphPath = Series.prototype.getGraphPath.call(this),
+			i = graphPath.length + 1;
+
+		// Close all segments
+		while (i--) {
+			if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
+				graphPath.splice(i, 0, 'z');
+			}
+		}
+		this.areaPath = graphPath;
+		return graphPath;
 	},
-	drawGraph: Series.prototype.drawGraph,
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle
+	drawGraph: function () {
+		/*= if (build.classic) { =*/
+		this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+		/*= } =*/
+		seriesTypes.area.prototype.drawGraph.call(this);
+	},
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawTracker: Series.prototype.drawTracker,
+	setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 
 }());

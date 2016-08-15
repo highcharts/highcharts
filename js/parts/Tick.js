@@ -7,6 +7,7 @@ import './Utilities.js';
 		isNumber = H.isNumber,
 		merge = H.merge,
 		pick = H.pick,
+		stop = H.stop,
 		deg2rad = H.deg2rad;
 
 /**
@@ -291,7 +292,7 @@ H.Tick.prototype = {
 		this.isActive = true;
 
 		// Create the grid line
-		if (gridLine === undefined && !axis.isRadial) {
+		if (!gridLine) {
 			/*= if (build.classic) { =*/
 			attribs.stroke = gridLineColor;
 			attribs['stroke-width'] = gridLineWidth;
@@ -379,10 +380,11 @@ H.Tick.prototype = {
 			if (show && isNumber(xy.y)) {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
-				tick.isNew = false;
 			} else {
+				stop(label); // #5332
 				label.attr('y', -9999); // #1338
 			}
+			tick.isNew = false;
 		}
 	},
 

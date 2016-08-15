@@ -21,6 +21,7 @@ import './Chart.js';
 		pick = H.pick,
 		pInt = H.pInt,
 		removeEvent = H.removeEvent,
+		splat = H.splat,
 		wrap = H.wrap;
 		
 /* ****************************************************************************
@@ -190,7 +191,7 @@ RangeSelector.prototype = {
 		if (!baseAxis) {
 			// Axis not yet instanciated. Temporarily set min and range
 			// options and remove them on chart load (#4317).
-			baseXAxisOptions = chart.options.xAxis[0];
+			baseXAxisOptions = splat(chart.options.xAxis)[0];
 			rangeSetting = baseXAxisOptions.range;
 			baseXAxisOptions.range = range;
 			minSetting = baseXAxisOptions.min;
@@ -206,7 +207,7 @@ RangeSelector.prototype = {
 				newMin,
 				newMax,
 				pick(redraw, 1),
-				0,
+				null, // auto animation
 				{
 					trigger: 'rangeSelectorButton',
 					rangeSelectorButton: rangeOptions

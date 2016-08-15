@@ -17,7 +17,6 @@ import './Series.js';
 		extend = H.extend,
 		fireEvent = H.fireEvent,
 		inArray = H.inArray,
-		isArray = H.isArray,
 		isObject = H.isObject,
 		merge = H.merge,
 		pick = H.pick,
@@ -335,8 +334,7 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options,
-			names = series.xAxis && series.xAxis.names;
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
@@ -348,7 +346,7 @@ extend(Point.prototype, {
 			if (point.y === null && graphic) { // #4146
 				point.graphic = graphic.destroy();
 			}
-			if (isObject(options) && !isArray(options)) {
+			if (isObject(options, true)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic && graphic.element) {
@@ -366,13 +364,10 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
-			if (names && point.name) {
-				names[point.x] = point.name;
-			}
-
+			
 			// Record the options to options.data. If there is an object from before,
 			// use point options, otherwise use raw options. (#4701)
-			seriesOptions.data[i] =  (isObject(seriesOptions.data[i]) && !isArray(seriesOptions.data[i])) ? point.options : options;
+			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
@@ -422,12 +417,8 @@ extend(Series.prototype, {
 		var series = this,
 			seriesOptions = series.options,
 			data = series.data,
-			graph = series.graph,
-			area = series.area,
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
-			currentShift = (graph && graph.shift) || 0,
-			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
@@ -436,22 +427,6 @@ extend(Series.prototype, {
 			x;
 
 		setAnimation(animation, chart);
-
-		// Make graph animate sideways
-		if (shift) {
-			i = series.zones.length;
-			while (i--) {
-				shiftShapes.push('zone-graph-' + i, 'zone-area-' + i);
-			}
-			each(shiftShapes, function (shape) {
-				if (series[shape]) {
-					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
-				}
-			});
-		}
-		if (area) {
-			area.isArea = true; // needed in animation, both with and without shift
-		}
 
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);

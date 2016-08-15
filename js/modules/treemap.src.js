@@ -69,7 +69,7 @@ import '../parts/Color.js';
 		},
 		tooltip: {
 			headerFormat: '',
-			pointFormat: '<b>{point.name}</b>: {point.node.val}</b><br/>'
+			pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
@@ -279,7 +279,10 @@ import '../parts/Color.js';
 				return a.sortIndex - b.sortIndex;
 			});
 			// Set the values
-			val = pick(point && point.value, childrenTotal);
+			val = pick(point && point.options.value, childrenTotal);
+			if (point) {
+				point.value = val;
+			}
 			extend(tree, {
 				children: children,
 				childrenTotal: childrenTotal,

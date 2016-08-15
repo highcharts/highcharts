@@ -382,7 +382,6 @@ H.Series.prototype = {
 			chart = series.chart,
 			firstPoint = null,
 			xAxis = series.xAxis,
-			hasCategories = xAxis && !!xAxis.categories,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -432,15 +431,10 @@ H.Series.prototype = {
 
 
 				if (isNumber(firstPoint)) { // assume all points are numbers
-					var x = pick(options.pointStart, 0),
-						pointInterval = pick(options.pointInterval, 1);
-
 					for (i = 0; i < dataLength; i++) {
-						xData[i] = x;
+						xData[i] = this.autoIncrement();
 						yData[i] = data[i];
-						x += pointInterval;
 					}
-					series.xIncrement = x;
 				} else if (isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
@@ -464,9 +458,6 @@ H.Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && defined(pt.name)) { // #4401
-							xAxis.names[pt.x] = pt.name; // #2046
-						}
 					}
 				}
 			}
@@ -837,7 +828,7 @@ H.Series.prototype = {
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : plotX; // #1514
+			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1)) : plotX; // #1514
 
 			point.negative = point.y < (threshold || 0);
 
@@ -900,10 +891,15 @@ H.Series.prototype = {
 				);
 			}
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+			// Create hashmap for series indexes
+			clipRect.count = { length: 0 };
 
 		}
 		if (animation) {
-			clipRect.count += 1;
+			if (!clipRect.count[this.index]) {
+				clipRect.count[this.index] = true;
+				clipRect.count.length += 1;
+			}
 		}
 
 		if (options.clip !== false) {
@@ -914,8 +910,12 @@ H.Series.prototype = {
 
 		// Remove the shared clipping rectangle when all series are shown
 		if (!animation) {
-			clipRect.count -= 1;
-			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
+			if (clipRect.count[this.index]) {
+				delete clipRect.count[this.index];
+				clipRect.count.length -= 1;
+			}
+
+			if (clipRect.count.length === 0 && sharedClipKey && chart[sharedClipKey]) {
 				if (!seriesClipBox) {
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
@@ -1191,6 +1191,7 @@ H.Series.prototype = {
 			step = options.step,
 			reversed,
 			graphPath = [],
+			xMap = [],
 			gap;
 
 		points = points || series.points;
@@ -1216,7 +1217,7 @@ H.Series.prototype = {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint = points[i - 1],					
+				lastPoint = points[i - 1],
 				pathToPoint; // the path to this point from the previous
 
 			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
@@ -1277,12 +1278,18 @@ H.Series.prototype = {
 					];
 				}
 
+				// Prepare for animation. When step is enabled, there are two path nodes for each x value.
+				xMap.push(point.x);
+				if (step) {
+					xMap.push(point.x);
+				}
 
 				graphPath.push.apply(graphPath, pathToPoint);
 				gap = false;
 			}
 		});
 
+		graphPath.xMap = xMap;
 		series.graphPath = graphPath;
 
 		return graphPath;
@@ -1324,6 +1331,7 @@ H.Series.prototype = {
 				attribs;
 
 			if (graph) {
+				graph.endX = graphPath.xMap;
 				graph.animate({ d: graphPath });
 
 			} else if (graphPath.length) { // #1487
@@ -1346,10 +1354,17 @@ H.Series.prototype = {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
-				series[graphKey]
+				graph = series[graphKey]
 					.attr(attribs)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
 				/*= } =*/
+			}
+
+			// Helpers for animation
+			if (graph) {
+				graph.startX = graphPath.xMap;
+				//graph.shiftUnit = options.step ? 2 : 1;
+				graph.isArea = graphPath.isArea; // For arearange animation
 			}
 		});
 	},

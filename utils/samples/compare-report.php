@@ -1,6 +1,8 @@
 <?php 
 
-$compare = json_decode(file_get_contents('temp/compare.json'));
+require_once('functions.php');
+
+$compare = json_decode(file_get_contents(compareJSON()));
 
 $browsers = array();
 $comments = array();
@@ -26,6 +28,107 @@ foreach ($compare as $path => $sample) {
 		<title>Comparison report :: Highcharts Utils</title>
 		<script src="http://code.jquery.com/jquery.js"></script>
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+		<script src="http://code.highcharts.com/highcharts.src.js"></script>
+
+		<script>
+		/**
+	     * Create a constructor for sparklines that takes some sensible defaults and merges in the individual
+	     * chart options. This function is also available from the jQuery plugin as $(element).highcharts('SparkLine').
+	     */
+	    Highcharts.SparkLine = function (a, b, c) {
+	        var hasRenderToArg = typeof a === 'string' || a.nodeName,
+	            options = arguments[hasRenderToArg ? 1 : 0],
+	            defaultOptions = {
+	                chart: {
+	                    renderTo: (options.chart && options.chart.renderTo) || this,
+	                    backgroundColor: null,
+	                    borderWidth: 0,
+	                    type: 'area',
+	                    margin: [2, 0, 2, 0],
+	                    width: 120,
+	                    height: 20,
+	                    style: {
+	                        overflow: 'visible'
+	                    },
+	                    skipClone: true
+	                },
+	                title: {
+	                    text: ''
+	                },
+	                credits: {
+	                    enabled: false
+	                },
+	                xAxis: {
+	                    labels: {
+	                        enabled: false
+	                    },
+	                    title: {
+	                        text: null
+	                    },
+	                    startOnTick: false,
+	                    endOnTick: false,
+	                    tickPositions: []
+	                },
+	                yAxis: {
+	                    endOnTick: false,
+	                    startOnTick: false,
+	                    labels: {
+	                        enabled: false
+	                    },
+	                    title: {
+	                        text: null
+	                    },
+	                    tickPositions: [0]
+	                },
+	                legend: {
+	                    enabled: false
+	                },
+	                tooltip: {
+	                    backgroundColor: null,
+	                    borderWidth: 0,
+	                    shadow: false,
+	                    useHTML: true,
+	                    hideDelay: 0,
+	                    shared: true,
+	                    padding: 0,
+	                    positioner: function (w, h, point) {
+	                        return { x: point.plotX - w / 2, y: point.plotY - h };
+	                    }
+	                },
+	                plotOptions: {
+	                    series: {
+	                        animation: false,
+	                        lineWidth: 1,
+	                        shadow: false,
+	                        states: {
+	                            hover: {
+	                                lineWidth: 1
+	                            }
+	                        },
+	                        marker: {
+	                            radius: 1,
+	                            states: {
+	                                hover: {
+	                                    radius: 2
+	                                }
+	                            }
+	                        },
+	                        fillOpacity: 0.25
+	                    },
+	                    column: {
+	                        negativeColor: '#910000',
+	                        borderColor: 'silver'
+	                    }
+	                }
+	            };
+
+	        options = Highcharts.merge(defaultOptions, options);
+
+	        return hasRenderToArg ?
+	            new Highcharts.Chart(a, options, c) :
+	            new Highcharts.Chart(options, b);
+	    };
+	    </script>
 		<script>
 			function updateDiff() {
 				var $inputs = $('#compare-browsers').find('input'),
@@ -175,12 +278,15 @@ foreach ($compare as $path => $sample) {
 								<tr>
 									<th class='path'></th>
 									<th>" . join($browsers, '</th><th>') . "</th>
+									<th class='sparkline'>Variance</th>
 									<th class='diff'>Diff</th>
 									<th class='comment'>Comment</th>
 								</tr>
 							";
 
 						}
+						$data = array();
+						$showChart = false;
 
 
 
@@ -188,10 +294,33 @@ foreach ($compare as $path => $sample) {
 						
 						foreach ($browsers as $browser) {
 							echo "<td class='value'>" . (isset($sample->$browser) ? round($sample->$browser, 2) : '-') . '</td>';
+
+							if (isset($sample->$browser)) {
+								$data[] = round($sample->$browser, 2);
+								if ($sample->$browser > 0) {
+									$showChart = true;
+								}
+							}
+						}
+
+						$range = isset($sample->range) ? $sample->range : '';
+						
+						echo "
+						<td id='sparkline-$i' class='sparkline'>$range</td>
+						";
+						if ($showChart) {
+							echo "
+							<script>
+							$('#sparkline-$i').highcharts('SparkLine', {
+								series: [{
+									data: [" . join($data, ', ') . "]
+								}]
+							});
+							</script>
+							";
 						}
 
 
-						$range = isset($sample->range) ? $sample->range : '';
 						echo "<td class='diff'>$range</td>"; 
 
 						echo "<td class='comment'>";

@@ -23,6 +23,7 @@ import './Tick.js';
 		getMagnitude = H.getMagnitude,
 		grep = H.grep,
 		inArray = H.inArray,
+		isArray = H.isArray,
 		isNumber = H.isNumber,
 		isString = H.isString,
 		merge = H.merge,
@@ -280,7 +281,8 @@ H.Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
-		axis.categories = options.categories || type === 'category';
+		axis.hasNames = type === 'category' || options.categories === true;
+		axis.categories = options.categories || axis.hasNames;
 		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
@@ -444,7 +446,7 @@ H.Axis.prototype = {
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === undefined) {
 				multi = Math.pow(1000, i + 1);
-				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null) {
+				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
 					ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
@@ -845,15 +847,77 @@ H.Axis.prototype = {
 	 */
 	getClosest: function () {
 		var ret;
-		each(this.series, function (series) {
-			var seriesClosest = series.closestPointRange;
-			if (!series.noSharedTooltip && defined(seriesClosest)) {
-				ret = defined(ret) ?
-					Math.min(ret, seriesClosest) :
-					seriesClosest;
-			}
-		});
+
+		if (this.categories) {
+			ret = 1;
+		} else {
+			each(this.series, function (series) {
+				var seriesClosest = series.closestPointRange;
+				if (!series.noSharedTooltip && defined(seriesClosest)) {
+					ret = defined(ret) ?
+						Math.min(ret, seriesClosest) :
+						seriesClosest;
+				}
+			});
+		}
 		return ret;
+	},
+
+	/**
+	 * When a point name is given and no x, search for the name in the existing categories,
+	 * or if categories aren't provided, search names or create a new category (#2522).
+	 */
+	nameToX: function (point) {
+		var explicitCategories = isArray(this.categories),
+			names = explicitCategories ? this.categories : this.names,
+			nameX,
+			x;
+
+		point.series.requireSorting = false;
+		nameX = pick(point.options.x, inArray(point.name, names)); // #2522
+		if (nameX === -1) { // The name is not found in currenct categories
+			if (!explicitCategories) {
+				x = names.length;
+			}
+		} else {
+			x = nameX;
+		}
+
+		// Write the last point's name to the names array
+		this.names[x] = point.name;
+
+		return x;
+	},
+
+	/**
+	 * When changes have been done to series data, update the axis.names.
+	 */
+	updateNames: function () {
+		var axis = this;
+
+		if (this.names.length > 0) {
+			this.names.length = 0;
+			this.minRange = undefined;
+			each(this.series || [], function (series) {
+			
+				// When adding a series, points are not yet generated
+				if (!series.processedXData) {
+					series.processData();
+					series.generatePoints();
+				}
+
+				each(series.points, function (point, i) {
+					var x;
+					if (point.options && point.options.x === undefined) {
+						x = axis.nameToX(point);
+						if (x !== point.x) {
+							point.x = x;
+							series.xData[i] = x;
+						}
+					}
+				});
+			});
+		}
 	},
 
 	/**
@@ -1553,10 +1617,8 @@ H.Axis.prototype = {
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
-		// With a threshold of null, make the columns/areas rise from the top or bottom
-		// depending on the value, assuming an actual threshold of 0 (#4233).
 		if (threshold === null) {
-			threshold = realMax < 0 ? realMax : realMin;
+			threshold = realMin;
 		} else if (realMin > threshold) {
 			threshold = realMin;
 		} else if (realMax < threshold) {
@@ -2297,8 +2359,7 @@ H.Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
-			i,
-			n;
+			i;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2324,18 +2385,14 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
 
-		// Delete all properties and fall back to the prototype
-		for (var n in axis) {
-			if (axis.hasOwnProperty(n)) {
-				delete axis[n];
-			}
-		}
+
+		this._addedPlotLB = this.chart._labelPanes = this.ordinalSlope = undefined; // #1611, #2887, #4314, #5316
 	},
 
 	/**
@@ -2352,6 +2409,12 @@ H.Axis.prototype = {
 			categorized,
 			graphic = this.cross;
 
+		// Use last available event when updating non-snapped crosshairs without
+		// mouse interaction (#5287)
+		if (!e) {
+			e = this.cross && this.cross.e;
+		}
+
 		if (
 			// Disabled in options
 			!this.crosshair ||
@@ -2359,7 +2422,6 @@ H.Axis.prototype = {
 			((defined(point) || !pick(options.snap, true)) === false)
 		) {
 			this.hideCrosshair();
-
 		} else {
 
 			// Get the path
@@ -2417,6 +2479,7 @@ H.Axis.prototype = {
 					'stroke-width': this.transA
 				});
 			}
+			this.cross.e = e;
 		}
 
 	},

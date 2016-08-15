@@ -11,7 +11,7 @@ $(function () {
 
         plotOptions: {
             series: {
-                gapSize: 2
+                gapSize: 1
             }
         },
 

@@ -814,6 +814,7 @@ SVGElement.prototype = {
 			rad,
 			element = wrapper.element,
 			styles = wrapper.styles,
+			fontSize,
 			textStr = wrapper.textStr,
 			textShadow,
 			elemStyle = element.style,
@@ -825,10 +826,16 @@ SVGElement.prototype = {
 		rotation = pick(rot, wrapper.rotation);
 		rad = rotation * deg2rad;
 
+		/*= if (build.classic) { =*/
+		fontSize = styles && styles.fontSize;
+		/*= } else { =*/
+		fontSize = element && SVGElement.prototype.getStyle.call(element, 'font-size');
+		/*= } =*/
+
 		if (textStr !== undefined) {
 
 			// Properties that affect bounding box
-			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+			cacheKey = ['', rotation || 0, fontSize, element.style.width].join(',');
 
 			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 			// we assume that a label of n characters has the same bounding box as others
@@ -1600,7 +1607,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
-		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
 		// Complex strings, add more logic
@@ -2096,12 +2103,11 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		/* = if (build.classic) { = */
 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
 		});
-		/* = } = */
+
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
