@@ -1,4 +1,8 @@
-(function (H) {
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Options.js';
+(function () {
 	var addEvent = H.addEvent,
 		Axis = H.Axis,
 		correctFloat = H.correctFloat,
@@ -693,7 +697,4 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 });
 
 Highcharts.Scrollbar = Scrollbar;
-
-
-	return H;
-}(Highcharts));
+}());

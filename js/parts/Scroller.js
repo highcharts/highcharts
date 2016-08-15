@@ -3,6 +3,8 @@ import './Utilities.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
+import './Options.js';
+import './Scrollbar.js';
 (function () {
 /* ****************************************************************************
  * Start Navigator code														*
