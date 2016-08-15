@@ -2,12 +2,10 @@
  * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
  *
  * TODO:
- * - add column support (box collision detection, same as above)
+ * - add column support (box collision detection, boxesToAvoid logic)
  * - other series types, area etc.
  * - avoid data labels, when data labels above, show series label below.
- * - add options (connector, format, formatter)
- * - connectors: Make a separate shape with anchors to use as label
- * - do labels in a timeout since they don't interfere with others
+ * - add more options (connector, format, formatter)
  * 
  * http://jsfiddle.net/highcharts/L2u9rpwr/
  * http://jsfiddle.net/highcharts/y5A37/
@@ -44,6 +42,7 @@
                     styles: {
                         fontWeight: 'bold'
                     }
+                    // boxesToAvoid: []
                 }
             }
         }
@@ -84,22 +83,29 @@
         var anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
             path,
-            lateral;
+            yOffset,
+            lateral = w / 2;
 
         if (isNumber(anchorX) && isNumber(anchorY)) {
 
             path = ['M', anchorX, anchorY];
             
-            // Draw the connector a little bit to the side of center of the label
-            lateral = anchorX < x + (w / 2) ? 0.3 : 0.7;
+            // Prefer 45 deg connectors
+            yOffset = y - anchorY;
+            if (yOffset < 0) {
+                yOffset = -h - yOffset;
+            }
+            if (yOffset < w) {
+                lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
+            }
             
             // Anchor below label
             if (anchorY > y + h) {
-                path.push('L', x + w * lateral, y + h);
+                path.push('L', x + lateral, y + h);
 
             // Anchor above label
             } else if (anchorY < y) {
-                path.push('L', x + w * lateral, y);
+                path.push('L', x + lateral, y);
 
             // Anchor left of label
             } else if (anchorX < x) {
@@ -348,8 +354,13 @@
 
             // Build the interpolated points
             each(chart.series, function (series) {
-                if (series.options.label.enabled && series.visible && (series.graph || series.area)) {
+                var options = series.options.label;
+                if (options.enabled && series.visible && (series.graph || series.area)) {
                     series.interpolatedPoints = series.getPointsOnGraph();
+
+                    each(options.boxesToAvoid || [], function (box) {
+                        chart.boxesToAvoid.push(box);
+                    });
                 }
             });
 
