@@ -199,13 +199,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			groupedY = approximationFn.apply(0, values);
+			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
 			if (groupedY !== UNDEFINED) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
-				groupMap.push({ start: start, length: values[0].length });
+				groupMap.push(series.dataGroupInfo);
 			}
 
 			// reset the aggregate arrays

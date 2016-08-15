@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-12)
+ * @license Highstock JS v4.2.6-modified (2016-08-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20424,7 +20424,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-12)
+     * Highstock JS v4.2.6-modified (2016-08-15)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20947,13 +20947,14 @@
 
                 // get group x and y
                 pointX = groupPositions[pos];
-                groupedY = approximationFn.apply(0, values);
+                series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+                groupedY = approximationFn.apply(series, values);
 
                 // push the grouped data
                 if (groupedY !== UNDEFINED) {
                     groupedXData.push(pointX);
                     groupedYData.push(groupedY);
-                    groupMap.push({ start: start, length: values[0].length });
+                    groupMap.push(series.dataGroupInfo);
                 }
 
                 // reset the aggregate arrays
