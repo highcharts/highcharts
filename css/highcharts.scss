@@ -1,6 +1,8 @@
 $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1;
 
 $background-color: #ffffff;
+$chart-border-color: #4572A7;
+$plot-border-color: #c0c0c0;
 $title-color: #333333;
 $subtitle-color: #555555;
 
@@ -11,6 +13,7 @@ $axis-title-color: #707070;
 $axis-label-color: #606060;
 $grid-line-color: #D8D8D8;
 $minor-grid-line-color: #e0e0e0;
+$minor-tick-color: #A0A0A0;
 
 $crosshair-thin-color: #c0c0c0;
 $crosshair-category-color: rgba(155,200,255,0.2);
@@ -34,9 +37,10 @@ $treemap-hover-stroke: #000000;
 
 $legend-text-color: #333333;
 $legend-text-hover-color: #000000;
-$legend-text-hidden-color: #cccccc;
+$legend-text-hidden-color: #c0c0c0;
 $legend-nav-active-color: #274b6d;
 $legend-nav-inactive-color: #c0c0c0;
+$legend-border-color: #909090;
 
 $plot-band-color: rgba(0, 0, 0, 0.05);
 $plot-line-color: gray;

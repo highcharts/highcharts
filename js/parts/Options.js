@@ -12,8 +12,7 @@
  *****************************************************************************/
 H.defaultOptions = {
 	/*= if (build.classic) { =*/
-	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		'#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
+	colors: '${palette.colors}'.split(' '),
 	/*= } =*/
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -46,7 +45,7 @@ H.defaultOptions = {
 		//marginRight: null,
 		//marginBottom: null,
 		//marginLeft: null,
-		borderColor: '#4572A7',
+		borderColor: '${palette.chartBorderColor}',
 		//borderWidth: 0,
 		borderRadius: 0,
 		defaultSeriesType: 'line',
@@ -61,9 +60,9 @@ H.defaultOptions = {
 		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
 		//	fontSize: '12px'
 		//},
-		backgroundColor: '#FFFFFF',
+		backgroundColor: '${palette.backgroundColor}',
 		//plotBackgroundColor: null,
-		plotBorderColor: '#C0C0C0',
+		plotBorderColor: '${palette.plotBorderColor}',
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		//zoomType: ''
@@ -125,7 +124,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '#333333',
+			color: '${palette.titleColor}',
 			fontSize: '18px'
 		},
 		/*= } =*/
@@ -141,7 +140,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '#555555'
+			color: '${palette.subtitleColor}'
 		},
 		/*= } =*/
 		widthAdjust: -44
@@ -170,7 +169,7 @@ H.defaultOptions = {
 			marker: {
 				/*= if (build.classic) { =*/
 				lineWidth: 0,
-				lineColor: '#FFFFFF',
+				lineColor: '${palette.pointStroke}',
 				//fillColor: null,
 				/*= } =*/				
 				//enabled: true,
@@ -186,8 +185,8 @@ H.defaultOptions = {
 					},
 					/*= if (build.classic) { =*/
 					select: {
-						fillColor: '#FFFFFF',
-						lineColor: '#000000',
+						fillColor: '${palette.pointSelectFill}',
+						lineColor: '${palette.pointSelectStroke}',
 						lineWidth: 2
 					}
 					/*= } =*/
@@ -280,12 +279,12 @@ H.defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '#909090',
+		borderColor: '${legend-border-color}',
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
-			activeColor: '#274b6d',
-			inactiveColor: '#CCC'
+			activeColor: '${palette.legendNavActiveColor}',
+			inactiveColor: '${palette.legendNavInactiveColor}'
 			/*= } =*/
 			// animation: true,
 			// arrowSize: 12
@@ -299,16 +298,16 @@ H.defaultOptions = {
 		},*/
 		/*= if (build.classic) { =*/
 		itemStyle: {			
-			color: '#333333',
+			color: '${palette.legendTextColor}',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '#000'
+			color: '${palette.legendTextHoverColor}'
 		},
 		itemHiddenStyle: {
-			color: '#CCC'
+			color: '${palette.legendTextHiddenColor}'
 		},
 		shadow: false,
 		/*= } =*/
@@ -346,7 +345,7 @@ H.defaultOptions = {
 		},
 		style: {
 			position: 'absolute',
-			backgroundColor: 'white',
+			backgroundColor: '${palette.backgroundColor}',
 			opacity: 0.5,
 			textAlign: 'center'
 		}
@@ -388,7 +387,7 @@ H.defaultOptions = {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		style: {
-			color: '#333333',
+			color: '${palette.tooltipTextColor}',
 			cursor: 'default',
 			fontSize: '12px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
@@ -413,7 +412,7 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
-			color: '#909090',
+			color: '${palette.creditsColor}',
 			fontSize: '9px'
 		},
 		/*= } =*/

@@ -67,7 +67,7 @@ H.Axis.prototype = {
 			// step: null,
 			/*= if (build.classic) { =*/
 			style: {
-				color: '#606060',
+				color: '${palette.axisLabelColor}',
 				cursor: 'default',
 				fontSize: '11px'
 			},
@@ -118,7 +118,7 @@ H.Axis.prototype = {
 			//side: 'outside',
 			/*= if (build.classic) { =*/
 			style: {
-				color: '#707070'
+				color: '${palette.axisTitleColor}'
 			}
 			/*= } =*/
 			//x: 0,
@@ -127,17 +127,17 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
-		minorGridLineColor: '#E0E0E0',
+		minorGridLineColor: '${palette.minorGridLineColor}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
-		minorTickColor: '#A0A0A0',
+		minorTickColor: '${palette.minorTickColor}',
 		//minorTickWidth: 0,
-		lineColor: '#C0D0E0',
+		lineColor: '${palette.axisLineColor}',
 		lineWidth: 1,
-		gridLineColor: '#D8D8D8',
+		gridLineColor: '${palette.gridLineColor}',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
-		tickColor: '#C0D0E0'
+		tickColor: '${palette.tickColor}'
 		// tickWidth: 1
 		/*= } =*/		
 	},
@@ -2453,7 +2453,7 @@ H.Axis.prototype = {
 				/*= if (build.classic) { =*/
 				// Presentational attributes
 				graphic.attr({
-					'stroke': options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
+					'stroke': options.color || (categorized ? '${palette.crosshairCategoryColor}' : '${palette.crosshairThinColor}'),
 					'stroke-width': pick(options.width, 1)
 				});
 				if (options.dashStyle) {
