@@ -500,4 +500,4 @@ import '../parts/Series.js';
     wrap(Chart.prototype, 'render', drawLabels);
     wrap(Chart.prototype, 'redraw', drawLabels);
 
-});
+}());

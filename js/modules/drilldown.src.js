@@ -759,4 +759,4 @@ import '../parts/Tick.js';
 		}
 	}
 		
-});
+}());

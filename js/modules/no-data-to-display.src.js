@@ -144,4 +144,4 @@ import '../parts/Options.js';
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
 
-});
+}());

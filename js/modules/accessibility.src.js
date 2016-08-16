@@ -8,13 +8,7 @@
  * License: www.highcharts.com/license
  */
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+(function () {
 
 	var win = H.win,
 		doc = win.document;
@@ -629,4 +623,4 @@
 			e.preventDefault();
 		});
 	});
-}));
+}());

@@ -963,4 +963,4 @@ import '../parts/Chart.js';
 
 
 
-});
+}());

@@ -297,4 +297,4 @@ Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.f
 	type: 'pyramid'
 });
 
-});
+}());

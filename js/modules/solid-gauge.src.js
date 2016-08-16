@@ -279,4 +279,4 @@ import '../parts-more/GaugeSeries.js';
 		}
 	});
 
-});
+}());

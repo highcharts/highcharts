@@ -616,4 +616,4 @@ import '../parts/Options.js';
             proceed.apply(this, [].slice.call(arguments, 1))
         );
     });
-});
+}());

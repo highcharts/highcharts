@@ -386,4 +386,4 @@ import '../parts/Chart.js';
 			chart.annotations.redraw();
 		});
 	});
-});
+}());

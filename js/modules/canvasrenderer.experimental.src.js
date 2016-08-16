@@ -154,4 +154,4 @@ import '../parts/SVGRenderer.js';
             wrapper.element.innerHTML = wrapper.textStr;
         }
     });
-});
+}());

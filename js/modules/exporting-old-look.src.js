@@ -132,4 +132,4 @@ import '../parts/SvgRenderer.js';
 		]);
 	};
 
-});
+}());

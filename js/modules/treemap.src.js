@@ -914,4 +914,4 @@ import '../parts/Color.js';
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
-});
+}());

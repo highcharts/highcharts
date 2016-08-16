@@ -200,4 +200,4 @@ import '../parts/SvgRenderer.js';
 			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
-});
+}());

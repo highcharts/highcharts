@@ -360,4 +360,4 @@ import '../parts/Options.js';
 		}
 	}];
 
-});
+}());
