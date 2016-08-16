@@ -545,6 +545,11 @@ gulp.task('scripts', function () {
         tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
         tpl = tpl.replace(/___rep4___/g, '/[ ,]+/');
 
+        // Replace palette colors
+        tpl = tpl.replace(/\$\{palette\.([a-zA-Z]+)\}/g, function (match, key) {
+            return palette[key];
+        });
+
         return tpl;
     }
 
@@ -590,6 +595,49 @@ gulp.task('scripts', function () {
         });
         return products;
     }
+
+    /**
+     * Parse the highcharts.scss file for palette colors
+     */
+    function getPalette() {
+        var lines = fs.readFileSync('./css/highcharts.scss', 'utf8'),
+            palette = {},
+            html = '<title>Current Highcharts palette</title><h1>Current Highcharts palette</h1>';
+
+        lines.split('\n').forEach(function (line) {
+            var cssKey, key, val;
+            if (line.indexOf('$') === 0) {
+                line = line.replace(/\r/, '');
+                line = line.split(':');
+                cssKey = line[0]
+                    .trim();
+
+                key = cssKey.replace(/^\$/, '')
+                    // Camelcase
+                    .replace(/-([a-z])/g, function (g) {
+                        return g[1].toUpperCase();
+                    });
+                val = line[1].split(';')[0]
+                    .trim();
+
+                palette[key] = val;
+
+                html += `
+                    <div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
+                        <h4 style="text-align: center">${cssKey}</h4>
+                        <p style="text-align: center">${val}</p>
+                        <div style="background-color: ${val}; width: 100%; height: 100px"></div>
+                    </div>
+                    `;
+                fs.writeFileSync('./palette.html', html);
+            }
+        });
+
+
+        return palette;
+    }
+
+    var palette = getPalette();
 
     var products = getProducts();
 
@@ -659,7 +707,8 @@ gulp.task('scripts', function () {
             path.replace('./js/', './code/'),
             preprocess(tpl, {
                 assembly: true,
-                classic: true
+                classic: true,
+                palette: palette
             }),
             'utf8'
         );
@@ -668,7 +717,8 @@ gulp.task('scripts', function () {
         fs.writeFileSync(
             path.replace('./js/', './code/js/'),
             preprocess(tpl, {
-                classic: false
+                classic: false,
+                palette: palette
             }),
             'utf8'
         );
