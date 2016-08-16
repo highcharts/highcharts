@@ -10320,6 +10320,11 @@
 
             // Handle shared tooltip or cases where a series is not yet hovered
             } else {
+                // When we have non-shared tooltip and sticky tracking is disabled,
+                // search for the closest point only on hovered series: #5533, #5476
+                if (!shared && hoverSeries && !hoverSeries.options.stickyTracking) {
+                    series = [hoverSeries];
+                }
                 // Find nearest points on all series
                 each(series, function (s) {
                     // Skip hidden series
