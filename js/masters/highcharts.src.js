@@ -17,6 +17,7 @@ import '../parts/Dynamics.js';
 import '../parts/LineSeries.js';
 import '../parts/AreaSeries.js';
 import '../parts/SplineSeries.js';
+import '../parts/AreaSplineSeries.js';
 import '../parts/ColumnSeries.js';
 import '../parts/BarSeries.js';
 import '../parts/ScatterSeries.js';
