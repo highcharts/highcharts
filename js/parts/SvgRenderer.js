@@ -1862,7 +1862,7 @@ SVGRenderer.prototype = {
 
 		// Default, non-stylable attributes
 		label.attr(merge({
-			'padding': 2,
+			'padding': 8,
 			'r': 2
 		}, normalState));
 
@@ -1875,10 +1875,10 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			fill: '#f7f7f7',
+			fill: '${palette.buttonFill}',
 			'stroke-width': 1,
 			style: {
-				color: '#444444',
+				color: '${palette.buttonTextColor}',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			}
@@ -1888,16 +1888,16 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			fill: '#e7e7e7'
+			fill: '${palette.buttonHoverFill}'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '#e7f0f9',
+			fill: '${palette.buttonPressedFill}',
 			style: {
-				color: '#000000',
+				color: '${palette.textHeavyColor}',
 				fontWeight: 'bold'
 			}
 		}, pressedState);
@@ -1907,7 +1907,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '#CCC'
+				color: '${palette.buttonDisabledColor}'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;

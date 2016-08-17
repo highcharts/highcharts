@@ -271,7 +271,7 @@ H.defaultOptions = {
 		style: {
 			//font: defaultFont,
 			position: 'absolute',
-			color: '#3E576F'
+			color: '${palette.textColor}'
 		}
 	},
 	legend: {

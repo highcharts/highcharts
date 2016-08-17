@@ -56,7 +56,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 /*= if (build.classic) { =*/
 // Presentational options
 merge(true, defaultPlotOptions.column, {
-	borderColor: '#FFFFFF',
+	borderColor: '${palette.pointStroke}',
 	// borderWidth: 1,
 	states: {
 		hover: {
@@ -64,8 +64,8 @@ merge(true, defaultPlotOptions.column, {
 			shadow: false
 		},
 		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
+			color: '${palette.pointSelectFill}',
+			borderColor: '${palette.pointSelectStroke}',
 			shadow: false
 		}
 	}

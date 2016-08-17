@@ -60,17 +60,17 @@ extend(defaultOptions, {
 		maskInside: true,
 		/*= if (build.classic) { =*/
 		handles: {
-			backgroundColor: '#ebe7e8',
-			borderColor: '#b2b1b6'
+			backgroundColor: '${palette.navigatorHandleFill}',
+			borderColor: '${palette.navigatorOutline}'
 		},
-		maskFill: 'rgba(128,179,236,0.3)',
-		outlineColor: '#b2b1b6',
+		maskFill: '${palette.navigatorMaskFill}',
+		outlineColor: '${palette.navigatorOutline}',
 		outlineWidth: 1,
 		/*= } =*/
 		series: {
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
-			color: '#4572A7',
+			color: '${palette.navigatorSeriesColor}',
 			fillOpacity: 0.05,
 			lineWidth: 1,
 			/*= } =*/

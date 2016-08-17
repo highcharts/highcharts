@@ -21,7 +21,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			color: '#000000'
+			color: '${palette.textHeavyColor}'
 		}
 	}
 });

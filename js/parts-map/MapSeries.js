@@ -39,8 +39,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
-	nullColor: '#F8F8F8',
-	borderColor: 'silver',
+	nullColor: '${palette.nullPointColor}',
+	borderColor: '${palette.mapStroke}',
 	borderWidth: 1,
 	marker: null,
 	stickyTracking: false,
@@ -69,7 +69,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 			halo: null
 		},
 		select: {
-			color: '#C0C0C0'
+			color: '${palette.pointSelectFill}'
 		}
 	}
 });

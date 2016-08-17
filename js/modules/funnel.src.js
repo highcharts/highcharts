@@ -39,13 +39,13 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 merge(true, defaultPlotOptions.funnel, {
 	dataLabels: {
 		//position: 'right',
-		connectorWidth: 1,
-		connectorColor: '#606060'
+		connectorWidth: 1
+		//connectorColor: null
 	},
 	states: {
 		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
+			color: '${palette.pointSelectFill}',
+			borderColor: '${palette.pointSelectStroke}',
 			shadow: false
 		}
 	}	

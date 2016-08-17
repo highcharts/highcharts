@@ -141,7 +141,7 @@ Series.prototype.drawDataLabels = function () {
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
 							renderer.getContrast(point.color || series.color) :
-							'#000000';
+							'${palette.textHeavyColor}';
 					}
 
 					if (seriesOptions.cursor) {
@@ -670,7 +670,7 @@ if (seriesTypes.pie) {
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '#606060'
+								'stroke': options.connectorColor || point.color || '${palette.weakColor}'
 							});
 							/*= } =*/
 						}

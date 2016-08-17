@@ -35,7 +35,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	},
 	whiskerLength: '50%',
 	/*= if (build.classic) { =*/
-	fillColor: '#FFFFFF',
+	fillColor: '${palette.boxPlotFill}',
 	lineWidth: 1,
 	//medianColor: null,
 	medianWidth: 2,

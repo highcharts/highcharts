@@ -86,12 +86,12 @@ import '../parts/Color.js';
 	/*= if (build.classic) { =*/
 	// Presentational options
 	merge(true, plotOptions.treemap, {
-		borderColor: '#E0E0E0',
+		borderColor: '${palette.treemapStroke}',
 		borderWidth: 1,
 		opacity: 0.15,
 		states: {
 			hover: {
-				borderColor: '#A0A0A0',
+				borderColor: '${palette.treemapHoverStroke}',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				opacity: 0.75,
 				shadow: false

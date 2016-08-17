@@ -33,13 +33,13 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	threshold: null,
 	y: -30,
 	/*= if (build.classic) { =*/
-	fillColor: 'white',
+	fillColor: '${palette.flagFill}',
 	// lineColor: color,
 	lineWidth: 1,
 	states: {
 		hover: {
-			lineColor: 'black',
-			fillColor: '#FCFFC5'
+			lineColor: '${palette.flagHoverStroke}',
+			fillColor: '${palette.flagHoverFill}'
 		}
 	},
 	style: {

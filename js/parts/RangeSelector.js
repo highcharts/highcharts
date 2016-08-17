@@ -35,6 +35,7 @@ extend(defaultOptions, {
 		buttonTheme: {
 			width: 28,
 			height: 18,
+			padding: 2,
 			zIndex: 7 // #484, #852
 		},
 		height: 35, // reserved space for buttons and input

@@ -1,5 +1,10 @@
 $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1;
 
+
+$text-heavy-color: #000000;
+$text-color: #303030;
+$weak-color: #606060; /* connector fallback */
+
 $background-color: #ffffff;
 $chart-border-color: #4572A7;
 $plot-border-color: #c0c0c0;
@@ -29,11 +34,11 @@ $point-stroke: #ffffff;
 
 $data-label-color: #333;
 
-$point-select-fill: #ffffff;
+$point-select-fill: #C0C0C0;
 $point-select-stroke: #000000;
 
 $treemap-stroke: #e0e0e0;
-$treemap-hover-stroke: #000000;
+$treemap-hover-stroke: #a0a0a0;
 
 $legend-text-color: #333333;
 $legend-text-hover-color: #000000;
@@ -78,14 +83,15 @@ $scrollbar-stroke: #bbb;
 $scrollbar-arrow: #666;
 $scrollbar-track: #eeeeee;
 
-$button-fill: #f6f6f6;
+$button-fill: #f7f7f7;
 $button-stroke: #ccc;
-$button-text-color: #000000;
-$button-hover-fill: #acf;
+$button-text-color: #444444;
+$button-hover-fill: #e7e7e7;
 $button-hover-stroke: #68a;
-$button-pressed-fill: #cdf;
+$button-pressed-fill: #e7f0f9;
 $button-disabled-text-color: #ccc;
 $button-symbol-stroke: #666; /* exporting button */
+$button-disabled-color: #ccc;
 
 $rangeselector-text-color: #666;
 $rangeselector-input-color: #444;
@@ -93,6 +99,8 @@ $rangeselector-input-color: #444;
 $crosshair-label-text-color: #ffffff;
 
 $coloraxis-marker: gray;
+$coloraxis-min-color: #efefff;
+$coloraxis-max-color: #003875;
 $null-point-color: #f8f8f8;
 
 $menu-border: #A0A0A0;

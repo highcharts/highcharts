@@ -403,7 +403,7 @@ H.Tooltip.prototype = {
 
 			/*= if (build.classic) { =*/
 			label.attr({
-				stroke: options.borderColor || point.color || currentSeries.color || '#606060'
+				stroke: options.borderColor || point.color || currentSeries.color || '${palette.weakColor}'
 			});
 			/*= } =*/
 

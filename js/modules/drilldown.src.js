@@ -78,13 +78,13 @@ import '../parts/Tick.js';
 		/*= if (build.classic) { =*/
 		activeAxisLabelStyle: {
 			cursor: 'pointer',
-			color: '#0d233a',
+			color: '${palette.drilldownLabelColor}',
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},
 		activeDataLabelStyle: {
 			cursor: 'pointer',
-			color: '#0d233a',
+			color: '${palette.drilldownLabelColor}',
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},

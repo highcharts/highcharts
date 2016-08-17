@@ -58,7 +58,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
-	borderColor: '#FFFFFF',
+	borderColor: '${palette.pointStroke}',
 	borderWidth: 1,
 	states: {
 		hover: {

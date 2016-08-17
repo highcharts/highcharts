@@ -64,26 +64,26 @@ defaultOptions.navigation = {
 // Presentational attributes
 merge(true, defaultOptions.navigation, {
 	menuStyle: {
-		border: '1px solid #A0A0A0',
-		background: '#FFFFFF',
+		border: '1px solid ${palette.menuBorder}',
+		background: '${palette.backgroundColor}',
 		padding: '5px 0'
 	},
 	menuItemStyle: {
 		padding: '0 10px',
 		background: 'none',
-		color: '#303030',
+		color: '${palette.menuTextColor}',
 		fontSize: isTouchDevice ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
-		background: '#4572A5',
-		color: '#FFFFFF'
+		background: '${palette.menuHoverBackground}',
+		color: '${palette.backgroundColor}'
 	},
 	buttonOptions: {
-		symbolFill: '#E0E0E0',
-		symbolStroke: '#666',
+		symbolFill: '${palette.buttonSymbolStroke}',
+		symbolStroke: '${palette.buttonSymbolStroke}',
 		symbolStrokeWidth: 3,
 		theme: {
-			fill: 'white', // capture hover
+			fill: '${palette.backgroundColor}', // capture hover
 			stroke: 'none'
 		}
 	}
