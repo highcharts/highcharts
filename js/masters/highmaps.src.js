@@ -1,4 +1,4 @@
-import '../parts/Globals.js';
+import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Color.js';
@@ -37,3 +37,4 @@ import '../parts-map/GeoJSON.js';
 import '../parts-map/Map.js';
 import '../parts-map/HeatmapSeries.js';
 import '../parts/Interaction.js';
+export default Highcharts;
