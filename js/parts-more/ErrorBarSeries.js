@@ -2,7 +2,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
@@ -51,5 +50,3 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 /* ****************************************************************************
  * End error bar series code                                                  *
  *****************************************************************************/
-
-}());

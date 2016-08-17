@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-(function () {
 	var deg2rad = H.deg2rad,
 		each = H.each,
 		pick = H.pick,
@@ -183,4 +182,3 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 		}
 	}
 });
-}());

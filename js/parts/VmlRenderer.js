@@ -3,7 +3,6 @@ import './Utilities.js';
 import './Color.js';
 import './SvgRenderer.js';
 /*= if (build.classic) { =*/
-(function () {
 	var VMLRenderer,
 		VMLRendererExtension,
 		VMLElement,
@@ -1115,7 +1114,4 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
  * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
  *                                                                            *
  *****************************************************************************/
-	
-}());
-
 /*= } =*/

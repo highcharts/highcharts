@@ -4,7 +4,6 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-(function () {
 	var Axis = H.Axis,
 		Chart = H.Chart,
 		Color = H.Color,
@@ -542,5 +541,3 @@ wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
 		});
 	}
 });
-
-}());

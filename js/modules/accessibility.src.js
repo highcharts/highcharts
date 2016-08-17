@@ -8,7 +8,6 @@
  * License: www.highcharts.com/license
  */
 
-(function () {
 
 	var win = H.win,
 		doc = win.document;
@@ -623,4 +622,3 @@
 			e.preventDefault();
 		});
 	});
-}());

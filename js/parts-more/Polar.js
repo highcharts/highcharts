@@ -3,7 +3,6 @@ import '../parts/Utilities.js';
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
-(function () {
 
 	/**
 	 * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
@@ -465,5 +464,3 @@ import '../parts/Pointer.js';
 
 		return ret;
 	});
-
-}());

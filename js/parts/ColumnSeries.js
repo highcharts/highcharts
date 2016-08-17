@@ -4,7 +4,6 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-(function () {
 	var animObject = H.animObject,
 		Color = H.Color,
 		defaultPlotOptions = H.defaultPlotOptions,
@@ -461,5 +460,3 @@ seriesTypes.column = extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-
-}());

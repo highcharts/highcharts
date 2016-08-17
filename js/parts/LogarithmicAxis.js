@@ -1,6 +1,5 @@
 import H from './Globals.js';
 import './Utilities.js';
-(function () {
 	var Axis = H.Axis,
 		getMagnitude = H.getMagnitude,
 		map = H.map,
@@ -116,4 +115,3 @@ Axis.prototype.log2lin = function (num) {
 Axis.prototype.lin2log = function (num) {
 	return Math.pow(10, num);
 };
-}());

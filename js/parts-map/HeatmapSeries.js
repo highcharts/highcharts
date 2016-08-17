@@ -5,7 +5,6 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
-(function () {
 	var colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
 		defaultOptions = H.defaultOptions,
@@ -130,5 +129,3 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	}
 
 }));
-
-}());

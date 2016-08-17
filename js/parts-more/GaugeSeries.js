@@ -4,7 +4,6 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -288,5 +287,3 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 });
-
-}());

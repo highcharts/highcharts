@@ -5,7 +5,6 @@ import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
-(function () {
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		defaultPlotOptions = H.defaultPlotOptions,
@@ -343,5 +342,3 @@ Axis.prototype.beforePadding = function () {
 /* ****************************************************************************
  * End Bubble series code                                                     *
  *****************************************************************************/
-
-}());

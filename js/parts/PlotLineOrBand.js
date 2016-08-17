@@ -1,6 +1,5 @@
 import H from './Globals.js';
 import './Utilities.js';
-(function () {
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		defined = H.defined,
@@ -313,4 +312,3 @@ H.AxisPlotLineOrBandExtension = {
 		});
 	}
 };
-}());

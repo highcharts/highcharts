@@ -5,7 +5,6 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-(function () {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
 		createElement = H.createElement,
@@ -923,5 +922,3 @@ extend(Series.prototype, {
 
 	drawTracker: TrackerMixin.drawTrackerGraph
 });
-
-}());

@@ -12,7 +12,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
-(function () {
 
 // create shortcuts
 var defaultOptions = H.defaultOptions,
@@ -846,5 +845,3 @@ Chart.prototype.callbacks.push(function (chart) {
 		};
 	});
 });
-
-}());

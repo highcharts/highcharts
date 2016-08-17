@@ -2,7 +2,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
-(function () {
 	var defaultOptions = H.defaultOptions,
 		Chart = H.Chart,
 		each = H.each,
@@ -232,5 +231,3 @@ wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 		});
 	}
 });
-
-}());

@@ -1,7 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Chart.js';
-(function () {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
 		isNumber = H.isNumber,
@@ -49,5 +48,3 @@ Chart.prototype.callbacks.push(function (chart) {
 	// Remove resize/afterSetExtremes at chart destroy
 	addEvent(chart, 'destroy', destroyEvents);
 });
-
-}());

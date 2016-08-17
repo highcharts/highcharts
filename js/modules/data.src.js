@@ -10,7 +10,6 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-(function () {
 	
 	// Utilities
 	var win = Highcharts.win,
@@ -960,7 +959,3 @@ import '../parts/Chart.js';
 		}
 		// Else return undefined
 	};
-
-
-
-}());

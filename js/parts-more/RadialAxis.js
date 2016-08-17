@@ -4,7 +4,6 @@ import '../parts/Axis.js';
 import '../parts/CenteredSeriesMixin.js';
 import '../parts/Tick.js';
 import './Pane.js';
-(function () {
 var Axis = H.Axis,
 	CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,
@@ -580,5 +579,3 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
 	}
 	return ret;
 });
-
-}());

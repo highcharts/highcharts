@@ -19,7 +19,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
-(function () {
 
     var labelDistance = 3,
         wrap = H.wrap,
@@ -499,5 +498,3 @@ import '../parts/Series.js';
     }
     wrap(Chart.prototype, 'render', drawLabels);
     wrap(Chart.prototype, 'redraw', drawLabels);
-
-}());

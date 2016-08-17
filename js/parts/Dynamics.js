@@ -4,7 +4,6 @@ import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-(function () {
 	var addEvent = H.addEvent,
 		animate = H.animate,
 		Axis = H.Axis,
@@ -679,5 +678,3 @@ extend(Axis.prototype, {
 	}
 
 });
-
-}());

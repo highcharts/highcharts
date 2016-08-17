@@ -4,7 +4,6 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-(function () {
 	var addEvent = H.addEvent,
 		animObject = H.animObject,
 		arrayMax = H.arrayMax,
@@ -1824,5 +1823,3 @@ H.Series.prototype = {
 	}
 
 }; // end Series prototype
-
-}());

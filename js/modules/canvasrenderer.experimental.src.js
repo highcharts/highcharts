@@ -1,7 +1,6 @@
 /* eslint indent: [2, 4] */
 import Highcharts from '../parts/Globals.js';
 import '../parts/SVGRenderer.js';
-(function () {
     Highcharts.extend(Highcharts.SVGElement.prototype, {
         init: function (renderer, nodeName) {
             this.element = {
@@ -154,4 +153,3 @@ import '../parts/SVGRenderer.js';
             wrapper.element.innerHTML = wrapper.textStr;
         }
     });
-}());

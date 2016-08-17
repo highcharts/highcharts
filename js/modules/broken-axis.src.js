@@ -2,7 +2,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/Series.js';
-(function () {
 
 	'use strict';
 
@@ -312,5 +311,3 @@ import '../parts/Series.js';
 
 	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
-
-}());

@@ -1,6 +1,5 @@
 import H from './Globals.js';
 import './Utilities.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -148,5 +147,3 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 /* ****************************************************************************
  * End Candlestick series code												*
  *****************************************************************************/
-
-}());

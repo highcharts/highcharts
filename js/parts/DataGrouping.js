@@ -3,8 +3,6 @@ import './Utilities.js';
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-(function () {
-
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		Axis = H.Axis,
@@ -613,5 +611,3 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 /* ****************************************************************************
  * End data grouping module												   *
  ******************************************************************************/
-
-}());

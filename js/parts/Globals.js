@@ -1,7 +1,4 @@
 /* global window */
-var Highcharts;
-(function () {
-
 	var win = window,
 		doc = win.document;
 
@@ -14,7 +11,7 @@ var Highcharts;
 		isFirefox = /Firefox/.test(userAgent),
 		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
-	Highcharts = win.Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
+	var Highcharts = win.Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 		product: '@product.name@',
 		version: '@product.version@',
 		deg2rad: Math.PI * 2 / 360,
@@ -38,5 +35,4 @@ var Highcharts;
 			return undefined;
 		}
 	};
-}());
 export default Highcharts;

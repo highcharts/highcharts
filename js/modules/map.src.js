@@ -7,8 +7,6 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-(function () {
-
 
     var UNDEFINED,
         animObject = Highcharts.animObject,
@@ -2297,5 +2295,3 @@
             new Chart(a, options, c) :
             new Chart(options, b);
     };
-
-}());

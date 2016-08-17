@@ -1,7 +1,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-(function () {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
 		doc = H.doc,
@@ -217,4 +216,3 @@ wrap(Chart.prototype, 'render', function (proceed) {
 		});
 	}
 });
-}());

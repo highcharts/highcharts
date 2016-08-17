@@ -11,7 +11,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
-(function () {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
@@ -914,4 +913,3 @@ import '../parts/Color.js';
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
-}());

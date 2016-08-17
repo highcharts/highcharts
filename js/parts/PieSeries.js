@@ -6,7 +6,6 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-(function () {
 	var PiePoint,
 		
 		addEvent = H.addEvent,
@@ -491,4 +490,3 @@ seriesTypes.pie = extendClass(Series, {
 	getSymbol: noop
 
 });
-}());

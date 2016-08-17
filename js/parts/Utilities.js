@@ -1,5 +1,4 @@
 import H from './Globals.js';
-(function () {
 var timers = [];
 
 var charts = H.charts,
@@ -1447,4 +1446,3 @@ if (!Array.prototype.filter) {
 }
 
 //--- End compatibility section ---
-}());

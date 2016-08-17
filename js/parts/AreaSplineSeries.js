@@ -3,7 +3,6 @@ import './Utilities.js';
 import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
-(function () {
 	var areaProto = H.seriesTypes.area.prototype,
 		defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
@@ -26,5 +25,3 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
 		drawGraph: areaProto.drawGraph,
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
-
-}());

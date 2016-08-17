@@ -2,7 +2,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		extend = H.extend,
 		extendClass = H.extendClass,
@@ -45,5 +44,3 @@ if (seriesTypes.bubble) {
 		setData: seriesTypes.map.prototype.setData
 	});
 }
-
-}());

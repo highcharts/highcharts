@@ -51,7 +51,6 @@ import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
-(function () {
 
     'use strict';
 
@@ -616,4 +615,3 @@ import '../parts/Options.js';
             proceed.apply(this, [].slice.call(arguments, 1))
         );
     });
-}());

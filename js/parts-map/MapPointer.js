@@ -1,7 +1,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Pointer.js';
-(function () {
 	var extend = H.extend,
 		pick = H.pick,
 		Pointer = H.Pointer,
@@ -89,5 +88,3 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 		);
 	}
 });
-
-}());

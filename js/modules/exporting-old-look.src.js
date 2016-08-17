@@ -9,7 +9,6 @@ import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/SvgRenderer.js';
-(function () {
 
 	var defaultOptions = Highcharts.getOptions(),
 		symbols = Highcharts.Renderer.prototype.symbols,
@@ -131,5 +130,3 @@ import '../parts/SvgRenderer.js';
 			'Z'
 		]);
 	};
-
-}());

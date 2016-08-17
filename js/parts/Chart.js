@@ -5,7 +5,6 @@ import './CanVGRenderer.js'
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-(function () {
 	var addEvent = H.addEvent,
 		animate = H.animate,
 		animObject = H.animObject,
@@ -1552,5 +1551,3 @@ Chart.prototype = {
 	}
 
 }; // end Chart
-
-}());

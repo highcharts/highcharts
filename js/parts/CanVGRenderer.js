@@ -1,5 +1,4 @@
 import H from './Globals.js';
-(function () {
 	var CanVGRenderer,
 		doc = H.win.doc,
 		useCanVG = H.useCanVG;
@@ -84,4 +83,3 @@ if (useCanVG) {
  * END OF ANDROID < 3 SPECIFIC CODE                                           *
  *                                                                            *
  *****************************************************************************/
-}());

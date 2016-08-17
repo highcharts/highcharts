@@ -1,7 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Pointer.js';
-(function () {
 	var addEvent = H.addEvent,
 		charts = H.charts,
 		css = H.css,
@@ -106,6 +105,3 @@ if (win.PointerEvent || win.MSPointerEvent) {
 		proceed.call(this);
 	});
 }
-
-
-}());

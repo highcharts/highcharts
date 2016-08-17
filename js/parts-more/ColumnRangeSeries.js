@@ -1,7 +1,5 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-(function () {
-	
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -106,6 +104,3 @@ import '../parts/Utilities.js';
 		},
 		pointAttribs: colProto.pointAttribs
 	});
-
-}());
-

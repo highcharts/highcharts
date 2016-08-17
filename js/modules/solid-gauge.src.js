@@ -11,7 +11,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
-(function () {
 	'use strict';
 
 	var defaultPlotOptions = H.defaultPlotOptions,
@@ -278,5 +277,3 @@ import '../parts-more/GaugeSeries.js';
 			}
 		}
 	});
-
-}());

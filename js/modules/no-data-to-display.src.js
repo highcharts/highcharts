@@ -11,7 +11,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
-(function () {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -143,5 +142,3 @@ import '../parts/Options.js';
 		H.addEvent(chart, 'load', handleNoData);
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
-
-}());

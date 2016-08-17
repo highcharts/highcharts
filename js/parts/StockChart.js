@@ -7,7 +7,6 @@ import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-(function () {
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		Axis = H.Axis,
@@ -661,5 +660,3 @@ wrap(Series.prototype, 'render', function (proceed) {
 	}
 	proceed.call(this);
 });
-
-}());

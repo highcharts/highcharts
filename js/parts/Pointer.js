@@ -1,7 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Tooltip.js';
-(function () {
 var addEvent = H.addEvent,
 	attr = H.attr,
 	charts = H.charts,
@@ -745,4 +744,3 @@ H.Pointer.prototype = {
 		}
 	}
 };
-}());

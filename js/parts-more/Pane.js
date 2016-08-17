@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-(function () {
 	var each = H.each,
 		extend = H.extend,
 		merge = H.merge,
@@ -93,5 +92,3 @@ extend(Pane.prototype, {
 });
 
 H.Pane = Pane;
-
-}());

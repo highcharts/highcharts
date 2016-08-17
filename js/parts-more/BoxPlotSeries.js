@@ -1,7 +1,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -300,5 +299,3 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 /* ****************************************************************************
  * End Box plot series code												*
  *****************************************************************************/
-
-}());

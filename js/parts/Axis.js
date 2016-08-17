@@ -3,7 +3,6 @@ import './Utilities.js';
 import './Options.js';
 import './PlotLineOrBand.js';
 import './Tick.js';
-(function () {
 	var addEvent = H.addEvent,
 		animObject = H.animObject,
 		arrayMax = H.arrayMax,
@@ -2495,4 +2494,3 @@ H.Axis.prototype = {
 }; // end Axis
 
 extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
-}());

@@ -3,7 +3,6 @@ import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-(function () {
 	var addEvent = H.addEvent,
 		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
@@ -377,5 +376,3 @@ if (Renderer === VMLRenderer) {
 /* ****************************************************************************
  * End Flags series code													  *
  *****************************************************************************/
-
-}());

@@ -1,7 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
-(function () {
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
@@ -189,5 +188,3 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 /* ****************************************************************************
  * End OHLC series code													   *
  *****************************************************************************/
-
-}());

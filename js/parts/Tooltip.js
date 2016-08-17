@@ -1,6 +1,5 @@
 import H from './Globals.js';
 import './Utilities.js';
-(function () {
 	var dateFormat = H.dateFormat,
 		each = H.each,
 		extend = H.extend,
@@ -541,5 +540,3 @@ H.Tooltip.prototype = {
 	}
 
 };
-
-}());

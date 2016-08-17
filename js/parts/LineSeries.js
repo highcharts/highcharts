@@ -1,7 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
-(function () {
 	var extendClass = H.extendClass,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
@@ -9,4 +8,3 @@ import './Series.js';
  * LineSeries object
  */
 seriesTypes.line = extendClass(Series);
-}());

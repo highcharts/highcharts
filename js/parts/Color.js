@@ -1,7 +1,5 @@
 import H from './Globals.js';
 import './Utilities.js';
-(function () {
-
 	var each = H.each,
 		isNumber = H.isNumber,
 		map = H.map,
@@ -143,5 +141,3 @@ H.Color.prototype = {
 		return this;
 	}
 };
-
-}());

@@ -7,7 +7,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
-(function () {
 
 	'use strict';
 
@@ -423,4 +422,3 @@ import './data.src.js';
 			}
 		}
 	});
-}());

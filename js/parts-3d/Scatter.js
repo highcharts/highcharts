@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-(function () {
 	var perspective = H.perspective,
 		pick = H.pick,
 		seriesTypes = H.seriesTypes,
@@ -86,4 +85,3 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 	}
 	return result;
 });
-}());

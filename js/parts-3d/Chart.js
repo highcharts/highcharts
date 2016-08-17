@@ -1,7 +1,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-(function () {
 	var Chart = H.Chart,
 		each = H.each,
 		merge = H.merge,
@@ -238,5 +237,3 @@ Chart.prototype.retrieveStacks = function (stacking) {
 	stacks.totalStacks = i + 1;
 	return stacks;
 };
-
-}());

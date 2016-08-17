@@ -6,7 +6,6 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-function () {
 
 
     var UNDEFINED,
@@ -701,6 +700,3 @@ function () {
         }
 
     }));
-
-
-}());

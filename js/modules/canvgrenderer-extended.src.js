@@ -11,7 +11,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/CanVGRenderer.js';
 import '../parts/SvgRenderer.js';
-(function () { // encapsulate
 	var css = H.css,
 		CanVGRenderer = H.CanVGRenderer,
 		SVGRenderer = H.SVGRenderer,
@@ -200,4 +199,3 @@ import '../parts/SvgRenderer.js';
 			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
-}());

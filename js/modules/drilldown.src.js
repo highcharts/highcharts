@@ -13,7 +13,6 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-(function () {
 
 	'use strict';
 
@@ -758,5 +757,3 @@ import '../parts/Tick.js';
 			wrap(seriesTypes[type].prototype, 'drawTracker', drawTrackerWrapper);
 		}
 	}
-		
-}());

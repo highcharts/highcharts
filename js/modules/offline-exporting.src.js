@@ -11,7 +11,6 @@ import Highcharts from '../parts/Globals.js';
 import '../parts/Chart.js';
 import '../parts/Options.js';
 /*global MSBlobBuilder */
-(function () {
 
 	var win = Highcharts.win,
 		nav = win.navigator,
@@ -359,5 +358,3 @@ import '../parts/Options.js';
 			});
 		}
 	}];
-
-}());

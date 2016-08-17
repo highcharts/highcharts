@@ -4,7 +4,6 @@ import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 import '../parts/VmlRenderer.js';
 /*= if (build.classic) { =*/
-(function () {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer;
@@ -49,5 +48,4 @@ if (VMLRenderer) {
 	});
 
 }
-}());
 /*= } =*/

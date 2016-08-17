@@ -4,7 +4,6 @@ import '../parts/Chart.js';
 /**
  * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-(function () {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
@@ -142,4 +141,3 @@ import '../parts/Chart.js';
 			}
 		});
 	};
-}());

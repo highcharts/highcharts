@@ -1,7 +1,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-(function () {
 	var each = H.each,
 		perspective = H.perspective,
 		pick = H.pick,
@@ -239,5 +238,3 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 	});
 });
 */
-
-}());

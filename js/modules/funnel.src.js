@@ -11,7 +11,6 @@ import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-(function () {
 	
 'use strict';
 
@@ -296,5 +295,3 @@ defaultOptions.plotOptions.pyramid = Highcharts.merge(defaultOptions.plotOptions
 Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.funnel, {
 	type: 'pyramid'
 });
-
-}());
