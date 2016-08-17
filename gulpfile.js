@@ -14,9 +14,7 @@ var colors = require('colors'),
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    spawn = require('child_process').spawn,
-    xml2js = require('xml2js');
-
+    spawn = require('child_process').spawn;
 var paths = {
     buildsDir: './js/builds',
     distributions: [
@@ -44,81 +42,11 @@ var paths = {
 };
 
 /**
- * Look up in build.xml and concatenate the parts files
- *
- * @param {Array} assemblies An array of assembly file names
- * @returns {Array} A parallel array containing the concatenated files
- */
-function assemble(assemblies) {
-
-    var xml = fs.readFileSync('./build.xml', 'utf8'),
-        ret = [];
-
-    xml2js.parseString(xml, function (err, result) {
-        if (err) {
-            throw err;
-        }
-        xml = result;
-    });
-
-    assemblies.forEach(function (assembly) {
-        xml.project.target.forEach(function (target) {
-            if (target.$.name === 'set.properties') {
-                target.filelist.forEach(function (list) {
-                    var partsDir = '',
-                        tpl = '';
-                    if (list.$.id === assembly + '.files') {
-                        if (assembly === 'highchartsmore') {
-                            partsDir = 'parts-more/';
-
-                        } else if (assembly === 'highmaps') {
-                            partsDir = '';
-                        } else if (assembly === 'highstock') {
-                            partsDir = '';
-                        }
-
-                        if (assembly === 'highcharts3d') {
-                            partsDir = 'parts-3d/';
-                        }
-
-                        list.file.forEach(function (item) {
-                            var file = fs.readFileSync('./js/' + partsDir + item.$.name, 'utf8');
-
-                            file = file.replace(/\t/g, '    ');
-
-                            // Indent all files so we can use jsLints whitespace
-                            /*
-                            if (item.$.name.indexOf('Intro') === -1 && item.$.name.indexOf('Outro') === -1) {
-                                file = file.replace(/\n/g, '\n    ');
-                            }
-                            */
-                            tpl += file;
-                        });
-
-                        // tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
-
-                        tpl = tpl.replace(
-                            'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
-                            'http://code.highcharts.com/modules/canvas-tools.js'
-                        );
-
-                        ret.push(tpl);
-                    }
-                });
-            }
-        });
-    });
-    return ret;
-}
-
-
-
-/**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
  * @return undefined
  */
-gulp.task('build', function () {
+gulp.task('scripts', function () {
     let build = require('./build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
@@ -223,57 +151,6 @@ gulp.task('build', function () {
     });
 });
 
-    /*
-    optimizeHighcharts = function (fs, path) {
-        var wrapFile = './js/parts/Intro.js',
-            WS = '\\s*',
-            CM = ',',
-            captureQuoted = "'([^']+)'",
-            captureArray = "\\[(.*?)\\]",
-            captureFunc = "(function[\\s\\S]*?\\})\\);((?=\\s*define)|\\s*$)",
-            defineStatements = new RegExp('define\\(' + WS + captureQuoted + WS + CM + WS + captureArray + WS + CM + WS + captureFunc, 'g');
-        fs.readFile(path, 'utf8', function (err, data) {
-            var lines = data.split("\n"),
-                wrap = fs.readFileSync(wrapFile, 'utf8');
-            lines.forEach(function (line, i) {
-                if (line.indexOf("define") !== -1) {
-                    lines[i] = lines[i].replace(/\.\//g, ''); // Remove all beginnings of relative paths
-                    lines[i] = lines[i].replace(/\//g, '_'); // Replace all forward slashes with underscore
-                    lines[i] = lines[i].replace(/"/g, ''); // Remove all double quotes
-                }
-            });
-            data = lines.join('\n'); // Concatenate lines
-            data = data.replace(defineStatements, 'var $1 = ($3($2));'); // Replace define statement with a variable declaration
-            wrap = wrap.replace(/.*@code.* /, data); // Insert code into UMD wrap
-            fs.writeFile(path, wrap, 'utf8');
-        });
-
-    },
-    bundleHighcharts = function (file) {
-        var requirejs = require('requirejs'),
-            fileName = file.slice(0, -3), // Remove file extension (.js) from name
-            config = {
-                baseUrl: './js/',
-                name: 'builds/' + fileName,
-                optimize: 'none',
-                out: './js/' + file,
-                onModuleBundleComplete: function (info) {
-                    optimizeHighcharts(fs, info.path);
-                }
-            };
-
-        requirejs.optimize(config, function (buildResponse) {
-            console.log("Successfully build " + fileName);
-        }, function(err) {
-            console.log(err.originalError);
-        });
-    };
-
-gulp.task('build', function () {
-    var buildFiles = fs.readdirSync(paths.buildsDir);
-    buildFiles.forEach(bundleHighcharts);
-});
-*/
 gulp.task('styles', function () {
     gulp.src('./css/*.scss')
         .pipe(sass().on('error', sass.logError))
@@ -309,12 +186,20 @@ gulp.task('lint-samples', function () {
 
 });
 
-// Watch changes to CSS files
-gulp.task('default', ['scripts', 'styles'], function () {
-    gulp.watch('./css/*.scss', ['styles']);
-    gulp.watch('./js/!(adapters|builds)/*.js', ['scripts']);
+/**
+ * Watch changes to JS and SCSS files
+ */
+gulp.task('default', () => {
+    // If styling changes, then build new css and js files.
+    gulp.watch(['./css/*.scss'], ['styles', 'scripts']);
+    // If js parts files changes, then build new js files.
+    gulp.watch(['./js/!(adapters|builds)/*.js'], ['scripts']);
 });
 
+/**
+ * Create distribution files
+ */
+gulp.task('dist', ['styles', 'scripts']);
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
@@ -468,291 +353,6 @@ gulp.task('compile', function () {
             );
         });
     });
-});
-
-/**
- * Proof of concept to parse super code. Move this logic into the standard build when ready.
- */
-gulp.task('scripts', function () {
-    var codes = [],
-        prods = [],
-        jsTemplates,
-        filePaths;
-
-
-    /**
-     * Micro-optimize code based on the build object.
-     *
-     * @param {String} tpl The concatenated JavaScript template to process
-     * @param {Object} build The build configuration
-     *
-     * @returns {String} The processed JavaScript
-     */
-    function preprocess(tpl, build) {
-
-        var func;
-
-        // Windows newlines
-        tpl = tpl.replace(/\r\n/g, '\n');
-
-
-        // Escape double quotes and backslashes, to be reinserted after parsing
-        tpl = tpl.replace(/"/g, '___doublequote___');
-        tpl = tpl.replace('/[ ,]/', '___rep3___'); // Conflicts with trailing comma removal below
-        tpl = tpl.replace('/[ ,]+/', '___rep4___'); // Conflicts with trailing comma removal below
-        tpl = tpl.replace(/\\/g, '\\\\');
-
-
-        // Prepare newlines
-        tpl = tpl.replace(/\n/g, '\\n');
-
-        // Start supercode output, start first output string
-        tpl = tpl.replace(/^/, 'var s = "');
-        // Start supercode block, closes output string
-        tpl = tpl.replace(/\/\*=\s?/g, '";\n');
-        // End of supercode block, starts output string
-        tpl = tpl.replace(/=\*\//g, '\ns += "');
-        // End supercode output, end last output string
-        tpl = tpl.replace(/$/, '";\nreturn s;');
-
-        // Uncomment to preview generated supercode
-        // fs.writeFile('temp.js', tpl, 'utf8');
-
-        // The evaluation function for the ready built supercode
-        try {
-            func = new Function('build', tpl); // eslint-disable-line no-new-func
-            tpl = func(build);
-        } catch (e) {
-            fs.writeFile(
-                'temp.js',
-                tpl,
-                'utf8'
-            );
-            console.log(
-                'Function preprocess failed:\n' +
-                '   ' + e.message.red +
-                '   View generated supercode in temp.js'.cyan
-            );
-            throw 'Exiting';
-        }
-
-
-        // Collect trailing commas left when the template engine has removed
-        // object literal properties or array items
-        tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
-
-        tpl = tpl.replace(/___doublequote___/g, '"');
-        tpl = tpl.replace(/___rep3___/g, '/[ ,]/');
-        tpl = tpl.replace(/___rep4___/g, '/[ ,]+/');
-
-        // Replace palette colors
-        tpl = tpl.replace(/\$\{palette\.([a-zA-Z]+)\}/g, function (match, key) {
-            return palette[key];
-        });
-
-        return tpl;
-    }
-
-    /**
-     * Replace function variables with actual product info
-     *
-     * @param {String} tpl The JavaScript template
-     * @param {Object} product An object containing product info
-     *
-     * @returns {String} JavaScript with replaced content
-     */
-    function addVersion(tpl, product) {
-        return tpl
-            .replace(/@product\.name@/g, product.name)
-            .replace(/@product\.version@/g, product.version)
-            .replace(/@product\.date@/g, product.date)
-            .replace(/@product\.cdnpath@/g, product.cdnpath);
-    }
-
-
-    /**
-     * Parse the build properties files into a structure
-     *
-     * @returns {Object} An object containing product info
-     */
-    function getProducts() {
-        var lines = fs.readFileSync('./build.properties', 'utf8'),
-            products = {};
-
-        lines.split('\n').forEach(function (line) {
-            var prod, key;
-            line = line.replace(/\r/, '');
-            if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
-                line = line.split('=');
-                key = line[0].split('.');
-                prod = key[0];
-                key = key[2];
-                if (!products[prod]) {
-                    products[prod] = {};
-                }
-                products[prod][key] = line[1];
-            }
-        });
-        return products;
-    }
-
-    /**
-     * Parse the highcharts.scss file for palette colors
-     */
-    function getPalette() {
-        var lines = fs.readFileSync('./css/highcharts.scss', 'utf8'),
-            palette = {},
-            html = '<title>Current Highcharts palette</title><h1>Current Highcharts palette</h1>';
-
-        lines.split('\n').forEach(function (line) {
-            var cssKey, key, val;
-            if (line.indexOf('$') === 0) {
-                line = line.replace(/\r/, '');
-                line = line.split(':');
-                cssKey = line[0]
-                    .trim();
-
-                key = cssKey.replace(/^\$/, '')
-                    // Camelcase
-                    .replace(/-([a-z])/g, function (g) {
-                        return g[1].toUpperCase();
-                    });
-                val = line[1].split(';')[0]
-                    .trim();
-
-                palette[key] = val;
-
-                html += `
-                    <div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
-                        <h4 style="text-align: center">${cssKey}</h4>
-                        <p style="text-align: center">${val}</p>
-                        <div style="background-color: ${val}; width: 100%; height: 100px"></div>
-                    </div>
-                    `;
-                fs.writeFileSync('./palette.html', html);
-            }
-        });
-
-
-        return palette;
-    }
-
-    var palette = getPalette();
-
-    var products = getProducts();
-
-    // Avoid gulping files in old branch after checkout
-    /*
-    if (products.highcharts.version.indexOf('4') === 0) {
-        return;
-    }
-    */
-    paths.assemblies.forEach(function (path) {
-
-        var prod,
-            inpath = path
-            .replace('./js/', '')
-            .replace('.src.js', '')
-            .replace('-', '');
-
-        // highcharts, highmaps or highstock
-        if (inpath === 'highmaps' || inpath === 'highstock') {
-            prod = inpath;
-        } else {
-            prod = 'highcharts';
-        }
-
-        if (inpath === 'modules/heatmap') {
-            inpath = 'heatmap';
-        } else if (inpath === 'modules/map') {
-            inpath = 'maps';
-            prod = 'highmaps';
-        }
-
-        // Load through the local debug.php (todo on HC5: require)
-        codes.push(inpath);
-        prods.push(prod);
-    });
-
-    // Build the JavaScript templates
-    jsTemplates = assemble(codes);
-    filePaths = paths.assemblies.slice();
-
-
-    // Add modules
-    let modRoot = './js/modules/';
-    fs.readdirSync(modRoot).forEach(file => {
-        if (/\.src\.js$/.test(file)) {
-            jsTemplates.push(fs.readFileSync(modRoot + file, 'utf8'));
-            filePaths.push(modRoot + file);
-        }
-    });
-
-    // Process the JS templates and print to files
-    jsTemplates.forEach(function (tpl, i) {
-        var prod = prods[i],
-            path = filePaths[i];
-
-        // Unspecified date, use current
-        if (prod) {
-            if (!products[prod].date) {
-                products[prod].date = (new Date()).toISOString().substr(0, 10);
-            }
-            tpl = addVersion(tpl, products[prod]);
-        }
-
-        // Create the classic file
-        // console.log('Creating ' + path.green);
-        fs.writeFileSync(
-            path.replace('./js/', './code/'),
-            preprocess(tpl, {
-                assembly: true,
-                classic: true,
-                palette: palette
-            }),
-            'utf8'
-        );
-
-        // Create the unstyled file
-        fs.writeFileSync(
-            path.replace('./js/', './code/js/'),
-            preprocess(tpl, {
-                classic: false,
-                palette: palette
-            }),
-            'utf8'
-        );
-    });
-
-    // Special case
-    var files = ['./vendor/canvg-1.1/rgbcolor.js', './vendor/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
-        js = '';
-
-    /**
-     * Add a file to the assembly
-     *
-     * @param {Number} i The index
-     * @param {Function} finished Continue when ready
-     *
-     * @returns {undefined}
-     */
-    function addFile(i, finished) {
-        var file = fs.readFileSync(files[i], 'utf8');
-
-        js += file;
-        if (i + 1 < files.length) {
-            addFile(i + 1, finished);
-        } else if (finished) {
-            finished();
-        }
-    }
-
-    try {
-        addFile(0, function () {
-            js = addVersion(js, products.highcharts);
-            fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
-        });
-    } catch (e) {} // eslint-disable-line no-empty
 });
 
 gulp.task('browserify', function () {
