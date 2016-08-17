@@ -46,10 +46,12 @@ const getIndividualOptions = (options) => {
             let build = {
                 classic: {
                     assembly: true,
-                    classic: true
+                    classic: true,
+                    palette: o.palette
                 },
                 css: {
-                    classic: false
+                    classic: false,
+                    palette: o.palette
                 }
             };
             return Object.assign({
@@ -70,6 +72,7 @@ let defaultOptions = {
     fileOptions: {},
     files: null, // Array of files to compile
     output: './', // Folder to output compiled files
+    palette: null, // Highcharts palette
     pretty: true,
     umd: true, // Wether to use UMD pattern or a module pattern
     type: 'classic' // Type of Highcharts version. Classic or css.
@@ -87,6 +90,8 @@ const build = userOptions=> {
     let options = Object.assign({}, defaultOptions, userOptions);
     // Check if required options are set
     if (options.base) {
+        options.palette = (options.palette) ? options.palette : p.getPalette('./css/highcharts.scss');
+        p.printPalette(options.output + 'palette.html', options.palette);
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         getIndividualOptions(options)
             .forEach((o, i, arr) => {
