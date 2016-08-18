@@ -47,7 +47,7 @@ var paths = {
  * @return undefined
  */
 gulp.task('scripts', function () {
-    let build = require('./build').build;
+    let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
         type = (argv.type) ? argv.type : 'both',
