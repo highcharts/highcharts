@@ -46,8 +46,6 @@ H.defaultOptions = {
 		//marginRight: null,
 		//marginBottom: null,
 		//marginLeft: null,
-		borderColor: '${palette.chartBorderColor}',
-		//borderWidth: 0,
 		borderRadius: 0,
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
@@ -57,15 +55,6 @@ H.defaultOptions = {
 		//spacingRight: 10,
 		//spacingBottom: 15,
 		//spacingLeft: 10,
-		//style: {
-		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-		//	fontSize: '12px'
-		//},
-		backgroundColor: '${palette.backgroundColor}',
-		//plotBackgroundColor: null,
-		plotBorderColor: '${palette.plotBorderColor}',
-		//plotBorderWidth: 0,
-		//plotShadow: false,
 		//zoomType: ''
 		resetZoomButton: {
 			theme: {
@@ -80,7 +69,21 @@ H.defaultOptions = {
 			// relativeTo: 'plot'
 		},
 		width: null,
-		height: null
+		height: null,
+		
+		/*= if (build.classic) { =*/
+		borderColor: '${palette.chartBorderColor}',
+		//borderWidth: 0,
+		//style: {
+		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+		//	fontSize: '12px'
+		//},
+		backgroundColor: '${palette.backgroundColor}',
+		//plotBackgroundColor: null,
+		plotBorderColor: '${palette.plotBorderColor}',
+		//plotBorderWidth: 0,
+		//plotShadow: false,
+		/*= } =*/
 	},
 	/*= if (!build.classic) { =*/
 	defs: { // docs
