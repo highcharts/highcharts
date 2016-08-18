@@ -3,6 +3,7 @@
 'use strict';
 const d = require('./dependencies');
 const p = require('./process.js');
+const U = require('./utilities.js');
 const fs = require('fs');
 const beautify = require('js-beautify').js_beautify;
 
@@ -101,19 +102,15 @@ const build = userOptions=> {
                     file = beautify(file);
                 }
                 fs.writeFileSync(o.outputPath, file, 'utf8');
-                /* eslint-disable no-console */
-                console.log([
+                U.debug(o.debug, [
                     'Completed ' + (i + 1) + ' of ' + arr.length,
                     '- type: ' + o.type,
                     '- entry: ' + o.entry,
                     '- output: ' + o.outputPath
                 ].join('\n'));
-                /* eslint-enable no-console */
             });
     } else {
-        /* eslint-disable no-console */
-        console.log('Missing required option! The options \'base\' is required for the script to run');
-        /* eslint-enable no-console */
+        U.debug(true, 'Missing required option! The options \'base\' is required for the script to run');
     }
 };
 

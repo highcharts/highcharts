@@ -51,6 +51,7 @@ gulp.task('scripts', function () {
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
         type = (argv.type) ? argv.type : 'both',
+        debug = argv.d || false,
         DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
         folders = {
             'parts': 'parts' + DS + '+\.js$',
@@ -59,6 +60,7 @@ gulp.task('scripts', function () {
 
     build({
         base: './js/masters/',
+        debug: debug,
         fileOptions: {
             'modules/annotations.src.js': {
                 exclude: new RegExp(folders.parts),

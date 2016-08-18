@@ -2,6 +2,7 @@
 /* eslint func-style: ["error", "expression"] */
 'use strict';
 const fs = require('fs');
+const U = require('./utilities.js');
 
 const getFunction = (body, args) => {
     let a = [null].concat((args || []), [body]); // context + arguments + function body
@@ -10,11 +11,9 @@ const getFunction = (body, args) => {
         f = new (Function.prototype.bind.apply(Function, a)); // eslint-disable-line no-new-func
     } catch (e) {
         fs.writeFileSync('temp.js', body, 'utf8');
-        /* eslint-disable no-console */
-        console.log(['Construction of function failed. Caused by: ' + e.message,
+        U.debug(true, ['Construction of function failed. Caused by: ' + e.message,
             'View function body in temp.js'
         ].join('\n'));
-        /* eslint-enable no-console */
         throw 'Exit';
     }
     return f;
