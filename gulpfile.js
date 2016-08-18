@@ -189,7 +189,7 @@ gulp.task('lint-samples', function () {
 /**
  * Watch changes to JS and SCSS files
  */
-gulp.task('default', () => {
+gulp.task('default', ['styles', 'scripts'], () => {
     // If styling changes, then build new css and js files.
     gulp.watch(['./css/*.scss'], ['styles', 'scripts']);
     // If js parts files changes, then build new js files.
