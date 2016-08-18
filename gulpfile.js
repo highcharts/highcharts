@@ -88,10 +88,6 @@ gulp.task('scripts', function () {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
-            'modules/exporting-old-look.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
             'modules/exporting.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
