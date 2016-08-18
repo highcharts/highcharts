@@ -25,4 +25,5 @@ import '../parts/PieSeries.js';
 import '../parts/DataLabels.js';
 import '../modules/overlapping-datalabels.src.js';
 import '../parts/Interaction.js';
+import '../parts/Responsive.js';
 export default Highcharts;

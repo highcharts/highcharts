@@ -1,5 +1,5 @@
-(function (H) {
-
+import './Chart.js';
+import './Utilities.js';
 	var Chart = H.Chart,
 		each = H.each,
 		inArray = H.inArray,
@@ -87,5 +87,3 @@ Chart.prototype.currentOptions = function (options) {
 	getCurrent(options, this.options, ret);
 	return ret;
 };
-
-}(Highcharts));

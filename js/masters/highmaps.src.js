@@ -37,4 +37,5 @@ import '../parts-map/GeoJSON.js';
 import '../parts-map/Map.js';
 import '../parts-map/HeatmapSeries.js';
 import '../parts/Interaction.js';
+import '../parts/Responsive.js';
 export default Highcharts;
