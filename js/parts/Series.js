@@ -999,7 +999,7 @@ H.Series.prototype = {
 			xAxis = series.xAxis,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled,
-				xAxis.isRadial,
+				xAxis.isRadial ? true : null,
 				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
 
