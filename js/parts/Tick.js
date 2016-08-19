@@ -264,7 +264,6 @@ H.Tick.prototype = {
 			labelOptions = options.labels,
 			gridLine = tick.gridLine,
 			tickPrefix = type ? type + 'Tick' : 'tick',
-			tickPosition = options[tickPrefix + 'Position'],
 			tickSize = axis.tickSize(tickPrefix),
 			gridLinePath,
 			mark = tick.mark,
@@ -327,9 +326,6 @@ H.Tick.prototype = {
 		if (tickSize) {
 
 			// negate the length
-			if (tickPosition === 'inside') {
-				tickSize[0] = -tickSize[0];
-			}
 			if (axis.opposite) {
 				tickSize[0] = -tickSize[0];
 			}
