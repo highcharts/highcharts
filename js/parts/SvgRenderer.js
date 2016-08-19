@@ -543,9 +543,14 @@ SVGElement.prototype = {
 			}
 
 
-			// re-build text
-			if (textWidth && elemWrapper.added) {
-				elemWrapper.renderer.buildText(elemWrapper);
+			// Additional operations after added
+			if (elemWrapper.added) {
+				if (textWidth) {
+					elemWrapper.renderer.buildText(elemWrapper);
+				}
+				if (styles.textShadow) {
+					elemWrapper.applyTextShadow(styles.textShadow);
+				}
 			}
 		}
 
