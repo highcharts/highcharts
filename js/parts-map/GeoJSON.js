@@ -220,9 +220,7 @@ wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, merge(true, credits, {
-		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
-	}));
+	proceed.call(this, credits);
 
 	// Add full map credits to hover
 	if (this.credits && this.mapCreditsFull) {

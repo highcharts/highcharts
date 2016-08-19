@@ -1350,7 +1350,7 @@ Chart.prototype = {
 		credits = merge(true, this.options.credits, credits);
 		if (credits.enabled && !this.credits) {
 			this.credits = this.renderer.text(
-				credits.text,
+				credits.text + (this.mapCredits || ''), // Add mapCredits here to avoid appending them to options (creates export issues)
 				0,
 				0
 			)
