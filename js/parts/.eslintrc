@@ -1,3 +1,6 @@
-rules:
-    indent: 0 # [2, "tab"]
-    no-dupe-keys: 0 # template code sometimes has one key for classic, one for unstyled
+{
+	"rules": {
+		"indent": 0,			/*[2, "tab"]*/
+		"no-dupe-keys": 0		/*template code sometimes has one key for classic, one for unstyled*/
+	}
+}

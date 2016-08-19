@@ -1,2 +1,5 @@
-rules:
-    indent: 0 # [2, "tab"]
+{
+	"rules": {
+	    "indent": 0 /*[2, "tab"]*/
+	}
+}

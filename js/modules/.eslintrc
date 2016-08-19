@@ -1,2 +1,5 @@
-rules:
-    indent: [2, "tab"]
+{
+	"rules": {
+	    "indent": [2, "tab"]
+	}
+}
