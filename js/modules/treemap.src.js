@@ -344,13 +344,15 @@ import '../parts/Color.js';
 					x1,
 					x2,
 					y1,
-					y2;
+					y2,
+					crispCorr = 0.5; // Assume 1px borderWidth for simplicity
+
 				// Points which is ignored, have no values.
 				if (values && node.visible) {
-					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
-					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
-					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
-					y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
+					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1)) - crispCorr;
+					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1)) - crispCorr;
+					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1)) - crispCorr;
+					y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1)) - crispCorr;
 					// Set point values
 					point.shapeType = 'rect';
 					point.shapeArgs = {
