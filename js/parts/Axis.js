@@ -2391,7 +2391,12 @@ H.Axis.prototype = {
 		});
 
 
-		this._addedPlotLB = this.chart._labelPanes = this.ordinalSlope = undefined; // #1611, #2887, #4314, #5316
+		// Delete all properties and fall back to the prototype
+		for (n in axis) {
+			if (axis.hasOwnProperty(n)) {
+				delete axis[n];
+			}
+		}
 	},
 
 	/**
