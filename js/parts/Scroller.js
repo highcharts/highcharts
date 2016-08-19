@@ -163,14 +163,13 @@ Navigator.prototype = {
 		// create the elements
 		if (!scroller.rendered) {
 
-			// the rifles
 			handles[index] = renderer
 				.path([
 					'M',
 					-4.5, 0.5,
 					'L',
-					4.5, 0.5,
-					4.5, 15.5,
+					3.5, 0.5,
+					3.5, 15.5,
 					-4.5, 15.5,
 					-4.5, 0.5,
 					'M',
