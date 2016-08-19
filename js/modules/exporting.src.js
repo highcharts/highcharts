@@ -84,7 +84,8 @@ merge(true, defaultOptions.navigation, {
 		symbolStrokeWidth: 3,
 		theme: {
 			fill: '${palette.backgroundColor}', // capture hover
-			stroke: 'none'
+			stroke: 'none',
+			padding: 5
 		}
 	}
 });
