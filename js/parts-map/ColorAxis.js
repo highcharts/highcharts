@@ -6,7 +6,7 @@ import '../parts/Color.js';
 import '../parts/Legend.js';
 	var Axis = H.Axis,
 		Chart = H.Chart,
-		color = H.color,
+		Color = H.Color,
 		ColorAxis,
 		each = H.each,
 		extend = H.extend,
@@ -160,7 +160,7 @@ extend(ColorAxis.prototype, {
 			[1, this.options.maxColor]
 		];
 		each(this.stops, function (stop) {
-			stop.color = color(stop[1]);
+			stop.color = Color(stop[1]);
 		});
 	},
 
