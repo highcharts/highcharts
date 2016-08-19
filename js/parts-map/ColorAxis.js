@@ -6,7 +6,7 @@ import '../parts/Color.js';
 import '../parts/Legend.js';
 	var Axis = H.Axis,
 		Chart = H.Chart,
-		Color = H.Color,
+		color = H.color,
 		ColorAxis,
 		each = H.each,
 		extend = H.extend,
@@ -145,8 +145,8 @@ extend(ColorAxis.prototype, {
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Color(options.minColor),
-						Color(options.maxColor),
+						color(options.minColor),
+						color(options.maxColor),
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -160,7 +160,7 @@ extend(ColorAxis.prototype, {
 			[1, this.options.maxColor]
 		];
 		each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
+			stop.color = color(stop[1]);
 		});
 	},
 
@@ -484,7 +484,7 @@ extend(ColorAxis.prototype, {
  */
 each(['fill', 'stroke'], function (prop) {
 	Highcharts.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+		this.elem.attr(prop, ColorAxis.prototype.tweenColors(color(this.start), color(this.end), this.pos));
 	};
 });
 
