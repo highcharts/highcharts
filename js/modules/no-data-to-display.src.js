@@ -83,14 +83,15 @@ import '../parts/Options.js';
 					noDataOptions.useHTML, 
 					null, 
 					'no-data'
-				)
-				.add();
+				);
 
 			/*= if (build.classic) { =*/
 			chart.noDataLabel
 				.attr(noDataOptions.attr)
 				.css(noDataOptions.style);
 			/*= } =*/
+
+			chart.noDataLabel.add();
 
 			chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
 		}
