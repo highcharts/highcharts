@@ -33,6 +33,7 @@ extend(defaultOptions, {
 		// buttons: {Object}
 		// buttonSpacing: 0,
 		buttonTheme: {
+			'stroke-width': 0,
 			width: 28,
 			height: 18,
 			padding: 2,
