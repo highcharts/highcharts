@@ -543,14 +543,9 @@ SVGElement.prototype = {
 			}
 
 
-			// Additional operations after added
-			if (elemWrapper.added) {
-				if (textWidth) {
-					elemWrapper.renderer.buildText(elemWrapper);
-				}
-				if (styles.textShadow) {
-					elemWrapper.applyTextShadow(styles.textShadow);
-				}
+			// Rebuild text after added
+			if (elemWrapper.added && textWidth) {
+				elemWrapper.renderer.buildText(elemWrapper);
 			}
 		}
 
@@ -2609,7 +2604,7 @@ SVGRenderer.prototype = {
 
 		var renderer = this,
 			wrapper = renderer.g('label'),
-			text = renderer.text('', 0, 0, useHTML)
+			text = wrapper.text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
 				}),

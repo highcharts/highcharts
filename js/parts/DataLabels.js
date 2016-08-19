@@ -168,17 +168,23 @@ Series.prototype.drawDataLabels = function () {
 						null, 
 						'data-label'
 					)
-					.attr(attr)
-					.add(dataLabelsGroup);
+					.attr(attr);
 
 					if (options.className) { // docs
 						dataLabel.addClass(options.className);
 					}
 
 					/*= if (build.classic) { =*/
-					dataLabel.css(extend(style, moreStyle))
-						.shadow(options.shadow);
+					// Styles must be applied before add in order to read text bounding box
+					dataLabel.css(extend(style, moreStyle));
 					/*= } =*/
+
+					dataLabel.add(dataLabelsGroup);
+
+					/*= if (build.classic) { =*/
+					dataLabel.shadow(options.shadow);
+					/*= } =*/
+					
 
 				}
 
