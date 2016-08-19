@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-15)
+ * @license Highstock JS v4.2.6-modified (2016-08-19)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20429,7 +20429,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-15)
+     * Highstock JS v4.2.6-modified (2016-08-19)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -24026,8 +24026,6 @@
                     // Disable the All button if we're already showing all
                     isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin &&
                         buttons[i].state !== 2,
-                    // Disable the YTD button if the complete range is within the same year
-                    isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
                     // Set a button on export
                     isSelectedForExport = chart.renderer.forExport && i === selected,
 
@@ -24047,7 +24045,7 @@
                     rangeSelector.setSelected(i);
                     buttons[i].setState(2);
 
-                } else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable || hasNoData)) {
+                } else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || hasNoData)) {
                     buttons[i].setState(3);
 
                 } else if (buttons[i].state === 3) {
