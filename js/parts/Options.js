@@ -285,7 +285,7 @@ H.defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '${legend-border-color}',
+		borderColor: '${palette.legendBorderColor}',
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
