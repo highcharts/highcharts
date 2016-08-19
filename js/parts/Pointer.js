@@ -1,9 +1,11 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Tooltip.js';
+import './Color.js';
 var addEvent = H.addEvent,
 	attr = H.attr,
 	charts = H.charts,
+	color = H.color,
 	css = H.css,
 	defined = H.defined,
 	doc = H.doc,
@@ -448,7 +450,7 @@ H.Pointer.prototype = {
 					)
 					.attr({
 						/*= if (build.classic) { =*/
-						fill: chartOptions.selectionMarkerFill || 'rgba(69,114,167,0.25)',
+						fill: chartOptions.selectionMarkerFill || color('${palette.selectionMarkerColor}').setOpacity(0.25).get(),
 						/*= } =*/
 						'class': 'highcharts-selection-marker',						
 						'zIndex': 7

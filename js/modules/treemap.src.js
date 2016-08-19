@@ -24,7 +24,7 @@ import '../parts/Color.js';
 		pick = H.pick,
 		Series = H.Series,
 		stableSort = H.stableSort,
-		Color = H.Color,
+		color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
 			context = context || this;
@@ -715,7 +715,7 @@ import '../parts/Color.js';
 			// Nodes with children that accept interaction
 			} else if (className.indexOf('highcharts-internal-node-interactive') !== -1) {
 				opacity = pick(stateOptions.opacity, options.opacity);
-				attr.fill = Color(attr.fill).setOpacity(opacity).get();
+				attr.fill = color(attr.fill).setOpacity(opacity).get();
 				attr.cursor = 'pointer';
 			// Hide nodes that have children
 			} else if (className.indexOf('highcharts-internal-node') !== -1) {
@@ -723,7 +723,7 @@ import '../parts/Color.js';
 
 			} else if (state) {
 				// Brighten and hoist the hover nodes
-				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
+				attr.fill = color(attr.fill).brighten(stateOptions.brightness).get();
 			}
 			return attr;
 		},

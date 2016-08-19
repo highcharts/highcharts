@@ -102,7 +102,7 @@ extend(defaultOptions, {
 			tickLength: 0,
 			/*= if (build.classic) { =*/
 			lineWidth: 0,
-			gridLineColor: '#EEE',
+			gridLineColor: '${palette.navigatorAxisLabelsColor}',
 			gridLineWidth: 1,
 			/*= } =*/
 			tickPixelInterval: 200,
@@ -110,7 +110,7 @@ extend(defaultOptions, {
 				align: 'left',
 				/*= if (build.classic) { =*/
 				style: {
-					color: '#888'
+					color: '${palette.navigatorGridLineColor}'
 				},
 				/*= } =*/
 				x: 3,

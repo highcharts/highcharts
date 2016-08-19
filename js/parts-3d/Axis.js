@@ -69,10 +69,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			this.bottomFrame.attr({
-				fill: fbottom.color,
-				stroke: fbottom.color
-			});
+			if (fbottom.color) {
+				this.bottomFrame.attr({
+					fill: fbottom.color,
+					stroke: fbottom.color
+				});
+			}
 			/*= } =*/
 		} else {
 			this.bottomFrame.animate(bottomShape);
@@ -95,10 +97,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			this.backFrame.attr({
-				fill: fback.color,
-				stroke: fback.color
-			});
+			if (fback.color) {
+				this.backFrame.attr({
+					fill: fback.color,
+					stroke: fback.color
+				});
+			}
 			/*= } =*/
 		} else {
 			this.backFrame.animate(backShape);
@@ -119,10 +123,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			this.sideFrame.attr({
-				fill: fside.color,
-				stroke: fside.color
-			});
+			if (fside.color) {
+				this.sideFrame.attr({
+					fill: fside.color,
+					stroke: fside.color
+				});
+			}
 			/*= } =*/
 
 		} else {

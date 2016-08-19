@@ -93,7 +93,6 @@ $button-disabled-text-color: #ccc;
 $button-symbol-stroke: #666; /* exporting button */
 $button-disabled-color: #ccc;
 
-$rangeselector-text-color: #666;
 $rangeselector-input-color: #444;
 
 $crosshair-label-text-color: #ffffff;
@@ -109,6 +108,8 @@ $menu-hover-background: #4572A5;
 
 $drilldown-label-color: #0d233a;
 $nodata-text-color: #60606a;
+
+$pane-background-gradient: #DDD;
 
 .highcharts-container {
     position: relative;
@@ -552,7 +553,7 @@ g.highcharts-series, .highcharts-point {
     fill: none;
 }
 .highcharts-range-label text {
-    fill: $rangeselector-text-color;
+    fill: $weak-color;
 }
 .highcharts-range-input rect {
     fill: none;

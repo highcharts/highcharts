@@ -8,7 +8,7 @@ import './Color.js';
 		animate = H.animate,
 		attr = H.attr,
 		charts = H.charts,
-		Color = H.Color,
+		color = H.color,
 		css = H.css,
 		createElement = H.createElement,
 		defined = H.defined,
@@ -169,7 +169,7 @@ SVGElement.prototype = {
 				each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Color(stop[1]);
+						colorObject = Highcharts.color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {
@@ -1841,9 +1841,9 @@ SVGRenderer.prototype = {
 	/**
 	 * Returns white for dark colors and black for bright colors
 	 */
-	getContrast: function (color) {
-		color = Color(color).rgba;
-		return color[0] + color[1] + color[2] > 384 ? '#000000' : '#FFFFFF';
+	getContrast: function (rgba) {
+		rgba = color(rgba).rgba;
+		return rgba[0] + rgba[1] + rgba[2] > 384 ? '#000000' : '#FFFFFF';
 	},
 
 	/**

@@ -141,3 +141,6 @@ H.Color.prototype = {
 		return this;
 	}
 };
+H.color = function (input) {
+	return new H.Color(input);
+}

@@ -94,7 +94,7 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? (item.color || '#CCC') : hiddenColor,
+			symbolColor = visible ? (item.color || hiddenColor) : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = { fill: symbolColor },
 			key;

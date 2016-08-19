@@ -9,7 +9,7 @@ import '../parts/ScatterSeries.js';
 		arrayMin = H.arrayMin,
 		defaultPlotOptions = H.defaultPlotOptions,
 		Axis = H.Axis,
-		Color = H.Color,
+		color = H.color,
 		each = H.each,
 		extendClass = H.extendClass,
 		isNumber = H.isNumber,
@@ -86,7 +86,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			attr = Series.prototype.pointAttribs.call(this, point, state);
 
 		if (fillOpacity !== 1) {
-			attr.fill = Color(attr.fill).setOpacity(fillOpacity).get('rgba');
+			attr.fill = color(attr.fill).setOpacity(fillOpacity).get('rgba');
 		}
 
 		return attr;

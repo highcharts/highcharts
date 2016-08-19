@@ -9,7 +9,7 @@ import '../parts/SvgRenderer.js';
 
 	var animObject = H.animObject,
 		charts = H.charts,
-		Color = H.Color,
+		color = H.color,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		each = H.each,
@@ -166,18 +166,18 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	}).add(result);
 
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
-	result.fillSetter = function (color) {
+	result.fillSetter = function (fill) {
 		this.front.attr({
-			fill: color
+			fill: fill
 		});
 		this.top.attr({
-			fill: Color(color).brighten(0.1).get()
+			fill: color(fill).brighten(0.1).get()
 		});
 		this.side.attr({
-			fill: Color(color).brighten(-0.1).get()
+			fill: color(fill).brighten(-0.1).get()
 		});
 
-		this.color = color;
+		this.color = fill;
 		return this;
 	};
 
@@ -381,7 +381,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 
 	// Apply the fill to the top and a darker shade to the sides
 	wrapper.fillSetter = function (value) {
-		var darker = Highcharts.Color(value).brighten(-0.1).get();
+		var darker = color(value).brighten(-0.1).get();
 		
 		this.fill = value;
 

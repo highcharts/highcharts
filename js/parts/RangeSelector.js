@@ -49,7 +49,7 @@ extend(defaultOptions, {
 		/*= if (build.classic) { =*/
 		// inputStyle: {},
 		labelStyle: {
-			color: '#666'
+			color: '${palette.weakColor}'
 		}
 		/*= } =*/
 	}
@@ -551,7 +551,7 @@ RangeSelector.prototype = {
 		label.css(merge(chartStyle, options.labelStyle));
 
 		dateBox.css(merge({
-			color: '#444'
+			color: '${palette.rangeselectorInputColor}'
 		}, chartStyle, options.inputStyle));
 
 		css(input, extend({

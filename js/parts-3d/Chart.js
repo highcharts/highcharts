@@ -146,13 +146,13 @@ defaultChartOptions.chart.options3d = {
 merge(true, defaultChartOptions.chart.options3d, {
 	frame: {
 		bottom: {
-			color: 'rgba(255, 255, 255, 0)'
+			// color: null
 		},
 		side: {
-			color: 'rgba(255, 255, 255, 0)'
+			// color: null
 		},
 		back: {
-			color: 'rgba(255, 255, 255, 0)'
+			// color: null
 		}
 	}
 });

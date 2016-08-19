@@ -7,7 +7,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './ColorAxis.js';
-	var Color = H.Color,
+	var color = H.color,
 		ColorAxis = H.ColorAxis,
 		colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
@@ -127,8 +127,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 	onMouseOut: function () {
 		var point = this,
 			start = +new Date(),
-			normalColor = Color(this.series.pointAttribs(point).fill),
-			hoverColor = Color(this.series.pointAttribs(point, 'hover').fill),
+			normalColor = color(this.series.pointAttribs(point).fill),
+			hoverColor = color(this.series.pointAttribs(point, 'hover').fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500);
 

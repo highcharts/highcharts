@@ -1,6 +1,8 @@
 import H from './Globals.js';
+import './Color.js';
 import './Utilities.js';
-	var each = H.each,
+	var color = H.color,
+		each = H.each,
 		getTZOffset = H.getTZOffset,
 		isTouchDevice = H.isTouchDevice,
 		merge = H.merge,
@@ -385,7 +387,7 @@ H.defaultOptions = {
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		/*= } else { =*/
-		backgroundColor: 'rgba(249, 249, 249, .85)',
+		backgroundColor: color('${palette.tooltipBackgroundColor}').setOpacity(0.85).get(),
 		borderWidth: 1,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
