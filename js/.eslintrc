@@ -42,5 +42,8 @@
         "strict": 0,
         "valid-jsdoc": 0,
         "one-var": 0                                /*@todo: Before launch HC5, set to [2, "always"]*/
+    },
+    "parserOptions": {
+        "sourceType": "module"
     }
 }
