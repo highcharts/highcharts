@@ -315,12 +315,12 @@ Navigator.prototype = {
 		}
 
 		// place elements
-		verb = rendered && !scroller.hasDragged ? 'animate' : 'attr';
-		outlineWidth = scroller.outline.strokeWidth();
-		halfOutline = outlineWidth / 2;
-		outlineTop = top + halfOutline;
-		
 		if (navigatorEnabled) {
+			verb = rendered && !scroller.hasDragged ? 'animate' : 'attr';
+			outlineWidth = scroller.outline.strokeWidth();
+			halfOutline = outlineWidth / 2;
+			outlineTop = top + halfOutline;
+			
 			scroller.leftShade[verb](navigatorOptions.maskInside ? {
 				x: navigatorLeft + zoomedMin,
 				y: top,
