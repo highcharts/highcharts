@@ -2358,7 +2358,8 @@ H.Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
-			i;
+			i,
+			n;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2391,9 +2392,10 @@ H.Axis.prototype = {
 		});
 
 
-		// Delete all properties and fall back to the prototype
+		// Delete all properties and fall back to the prototype.
+		// Preserve the series, needed for Axis.update.
 		for (n in axis) {
-			if (axis.hasOwnProperty(n)) {
+			if (axis.hasOwnProperty(n) && n !== 'series') {
 				delete axis[n];
 			}
 		}
