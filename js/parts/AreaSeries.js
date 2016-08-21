@@ -7,7 +7,7 @@ import './Options.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		extendClass = H.extendClass,
-		Color = H.Color,
+		color = H.color,
 		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		map = H.map,
@@ -314,7 +314,7 @@ seriesTypes.area = extendClass(Series, {
 						/*= if (build.classic) { =*/
 						fill: pick(
 							prop[3],
-							Color(prop[2]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+							color(prop[2]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
 						/*= } =*/
 						zIndex: 0 // #1069

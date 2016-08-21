@@ -19,7 +19,6 @@
         "indent": 0,                                /*@todo: Before release HC5, do a pure whitespace commit*/
         "lines-around-comment": 0,
         "newline-after-var": 0,
-        "new-cap": 0,                               /*The ill-named Color object. Rewrite for HC5?*/
         "no-alert": 2,
         "no-console": 2,
         "no-debugger": 2,

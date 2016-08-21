@@ -174,14 +174,14 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			series,
-			constr = seriesTypes[type];
+			Constr = seriesTypes[type];
 
 		// No such series type
-		if (!constr) {
+		if (!Constr) {
 			error(17, true);
 		}
 
-		series = new constr();
+		series = new Constr();
 		series.init(this, options);
 		return series;
 	},

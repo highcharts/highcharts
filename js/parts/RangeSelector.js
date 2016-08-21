@@ -161,7 +161,7 @@ RangeSelector.prototype = {
 				}
 				now = new HCDate(dataMax);
 				year = now[HCDate.hcGetFullYear]();
-				newMin = rangeMin = Math.max(dataMin || 0, HCDate.UTC(year, 0, 1));
+				newMin = rangeMin = Math.max(dataMin || 0, HCDate.UTC(year, 0, 1)); // eslint-disable-line new-cap
 				now = now.getTime();
 				newMax = Math.min(dataMax || now, now);
 

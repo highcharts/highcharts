@@ -632,7 +632,7 @@ H.Series.prototype = {
 			dataLength,
 			processedXData = series.processedXData,
 			processedYData = series.processedYData,
-			pointClass = series.pointClass,
+			PointClass = series.pointClass,
 			processedDataLength = processedXData.length,
 			cropStart = series.cropStart || 0,
 			cursor,
@@ -653,12 +653,12 @@ H.Series.prototype = {
 				if (data[cursor]) {
 					point = data[cursor];
 				} else if (dataOptions[cursor] !== undefined) { // #970
-					data[cursor] = point = (new pointClass()).init(series, dataOptions[cursor], processedXData[i]);
+					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i] = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update

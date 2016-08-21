@@ -625,15 +625,15 @@ H.dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var d = H.Date,
-		date = new d(timestamp - H.getTZOffset(timestamp)),
+	var D = H.Date,
+		date = new D(timestamp - H.getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
-		hours = date[d.hcGetHours](),
-		day = date[d.hcGetDay](),
-		dayOfMonth = date[d.hcGetDate](),
-		month = date[d.hcGetMonth](),
-		fullYear = date[d.hcGetFullYear](),
+		hours = date[D.hcGetHours](),
+		day = date[D.hcGetDay](),
+		dayOfMonth = date[D.hcGetDate](),
+		month = date[D.hcGetMonth](),
+		fullYear = date[D.hcGetFullYear](),
 		lang = H.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 		shortWeekdays = lang.shortWeekdays,
@@ -666,7 +666,7 @@ H.dateFormat = function (format, timestamp, capitalize) {
 			'k': hours, // Hours in 24h format, 0 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[d.hcGetMinutes]()), // Two digits minutes, 00 through 59
+			'M': pad(date[D.hcGetMinutes]()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59

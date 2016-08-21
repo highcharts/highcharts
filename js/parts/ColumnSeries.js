@@ -5,7 +5,7 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 	var animObject = H.animObject,
-		Color = H.Color,
+		color = H.color,
 		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		each = H.each,
@@ -328,7 +328,7 @@ seriesTypes.column = extendClass(Series, {
 			stateOptions = options.states[state];
 			brightness = stateOptions.brightness;
 			fill = stateOptions.color || 
-				(brightness !== undefined && Color(fill).brighten(stateOptions.brightness).get()) ||
+				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||
 				fill;
 			stroke = stateOptions[strokeOption] || stroke;
 			dashstyle = stateOptions.dashStyle || dashstyle;
