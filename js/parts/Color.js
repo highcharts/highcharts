@@ -143,4 +143,4 @@ H.Color.prototype = {
 };
 H.color = function (input) {
 	return new H.Color(input);
-}
+};

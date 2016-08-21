@@ -1,7 +1,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
-import './CanVGRenderer.js'
+import './CanVGRenderer.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';

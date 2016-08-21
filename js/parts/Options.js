@@ -82,7 +82,7 @@ H.defaultOptions = {
 		//},
 		backgroundColor: '${palette.backgroundColor}',
 		//plotBackgroundColor: null,
-		plotBorderColor: '${palette.plotBorderColor}',
+		plotBorderColor: '${palette.plotBorderColor}'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		/*= } =*/

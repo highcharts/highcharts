@@ -1,13 +1,11 @@
 import H from './Globals.js';
 import './Utilities.js';
-import './Color.js';
 import './SvgRenderer.js';
 /*= if (build.classic) { =*/
 	var VMLRenderer,
 		VMLRendererExtension,
 		VMLElement,
 
-		Color = H.Color,
 		createElement = H.createElement,
 		css = H.css,
 		defaultOptions = H.defaultOptions,

@@ -2,8 +2,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
-	var defaultOptions = H.defaultOptions,
-		Chart = H.Chart,
+	var Chart = H.Chart,
 		each = H.each,
 		extend = H.extend,
 		error = H.error,
