@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-08-19)
+ * @license Highmaps JS v4.2.6-modified (2016-08-22)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -5105,7 +5105,8 @@
                                     position: ABSOLUTE,
                                     left: (parentGroup.translateX || 0) + PX,
                                     top: (parentGroup.translateY || 0) + PX,
-                                    opacity: parentGroup.opacity // #5075
+                                    opacity: parentGroup.opacity, // #5075
+                                    pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
                                 }, htmlGroup || container); // the top group is appended to container
 
                                 // Shortcut

@@ -277,7 +277,8 @@ extend(SVGRenderer.prototype, {
 								position: ABSOLUTE,
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX,
-								opacity: parentGroup.opacity // #5075
+								opacity: parentGroup.opacity, // #5075
+								pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut
