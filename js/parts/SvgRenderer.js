@@ -2227,9 +2227,8 @@ SVGRenderer.prototype = {
 
 			// The image width is not always the same as the symbol width. The image may be centered within the symbol,
 			// as is the case when image shapes are used as label backgrounds, for example in flags.
-			obj.imgWidth = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].width, options && options.width);
-			obj.imgHeight = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].height, options && options.height);
-
+			obj.imgwidth = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].width, options && options.width);
+			obj.imgheight = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].height, options && options.height);
 			/**
 			 * Set the size and position
 			 */
@@ -2292,7 +2291,13 @@ SVGRenderer.prototype = {
 						}
 
 						// Center the image
-						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
+						symbolSizes[imageSrc] = { // Cache for next	
+							width: this.width,
+							height: this.height
+						};
+						obj.imgwidth = this.width;
+						obj.imgheight = this.height;
+						centerImage();
 
 						// Clean up after #2854 workaround.
 						if (this.parentNode) {
