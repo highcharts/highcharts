@@ -34,11 +34,11 @@ defaultOptions.mapNavigation = {
 		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '15px',
-			fontWeight: 'bold',
-			textAlign: 'center'
+			fontWeight: 'bold'
 		},
 		theme: {
-			'stroke-width': 1
+			'stroke-width': 1,
+			'text-align': 'center'
 		}
 		/*= } =*/
 	},
