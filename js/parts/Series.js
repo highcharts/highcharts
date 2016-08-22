@@ -1301,7 +1301,7 @@ H.Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			graphPath = this.getGraphPath(),
+			graphPath = (this.gappedPath || this.getGraphPath).call(this),
 			props = [[
 				'graph', 
 				'highcharts-graph', 
