@@ -3,11 +3,9 @@
 
 'use strict';
 var colors = require('colors'),
-    eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
     glob = require('glob'),
     gulp = require('gulp'),
-    gulpif = require('gulp-if'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
     argv = require('yargs').argv,
@@ -154,34 +152,19 @@ gulp.task('styles', function () {
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
 });
-gulp.task('lint', ['scripts'], function () {
-    return gulp.src(paths.assemblies.concat(paths.modules))
 
-        // ESLint config is found in .eslintrc file(s)
-        .pipe(eslint())
-        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
-        .pipe(eslint.formatEach());
-
-});
-
-gulp.task('lint-parts', function () {
-    return gulp.src(paths.parts.concat(paths.partsMore, paths.partsMap, paths.parts3D))
-
-        // ESLint config is found in .eslintrc file(s)
-        .pipe(eslint())
-        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint-parts --failonerror
-        .pipe(eslint.formatEach());
-
-});
-
-gulp.task('lint-samples', function () {
-    return gulp.src(['./samples/*/*/*/demo.js'])
-
-        // ESLint config is found in .eslintrc file(s)
-        .pipe(eslint())
-        .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint-samples --failonerror
-        .pipe(eslint.formatEach());
-
+/**
+ * Gulp task to execute ESLint. Pattern defaults to './js/**".'
+ * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
+ * @return undefined Returns nothing
+ */
+gulp.task('lint', () => {
+    const CLIEngine = require('eslint').CLIEngine;
+    const cli = new CLIEngine();
+    const formatter = cli.getFormatter();
+    let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**'];
+    let report = cli.executeOnFiles(pattern);
+    console.log(formatter(report.results));
 });
 
 /**
