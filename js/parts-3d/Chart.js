@@ -142,22 +142,6 @@ defaultChartOptions.chart.options3d = {
 	}
 };
 
-/*= if (build.classic) { =*/
-merge(true, defaultChartOptions.chart.options3d, {
-	frame: {
-		bottom: {
-			// color: null
-		},
-		side: {
-			// color: null
-		},
-		back: {
-			// color: null
-		}
-	}
-});
-/*= } =*/
-
 wrap(Chart.prototype, 'setClassName', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 

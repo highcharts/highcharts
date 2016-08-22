@@ -1876,6 +1876,7 @@ SVGRenderer.prototype = {
 		// Normal state - prepare the attributes
 		normalState = merge({
 			fill: '${palette.buttonFill}',
+			stroke: '${palette.buttonStroke}',
 			'stroke-width': 1,
 			style: {
 				color: '${palette.buttonTextColor}',
@@ -2676,7 +2677,7 @@ SVGRenderer.prototype = {
 					box.add(wrapper);
 
 					crispAdjust = getCrispAdjust();
-					attribs.x = Math.round(-alignFactor * padding) + crispAdjust;
+					attribs.x = crispAdjust;
 					attribs.y = (baseline ? -baselineOffset : 0) + crispAdjust;
 				}
 
