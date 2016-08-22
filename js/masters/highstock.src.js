@@ -10,4 +10,4 @@ import '../parts/Scroller.js';
 import '../parts/RangeSelector.js';
 import '../parts/StockNavigation.js';
 import '../parts/StockChart.js';
-export default Highcharts; 
+export default Highcharts;
