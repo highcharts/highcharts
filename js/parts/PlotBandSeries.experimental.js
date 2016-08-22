@@ -7,9 +7,10 @@
  * and provide a more compact and consistent implementation.
  * Demo: http://jsfiddle.net/highcharts/5Rbf6/
  */
-
-(function (H) {
-
+import H from './Globals.js';
+import './Utilities.js';
+import './Series.js';
+import './Options.js';
 var seriesTypes = H.seriesTypes,
 	merge = H.merge,
 	defaultPlotOptions = H.getOptions().plotOptions,
@@ -80,9 +81,6 @@ seriesTypes.plotband = extendClass(seriesTypes.column, {
 
 
 });
-
-}(Highcharts));
-
 /* ****************************************************************************
  * End PlotBand series code												      *
  *****************************************************************************/
