@@ -4222,6 +4222,8 @@
                     createElement('img', {
                         onload: function () {
 
+                            var chart = charts[ren.chartIndex];
+
                             // Special case for SVGs on IE11, the width is not accessible until the image is
                             // part of the DOM (#2854).
                             if (this.width === 0) {
@@ -4242,8 +4244,8 @@
 
                             // Fire the load event when all external images are loaded
                             ren.imgCount--;
-                            if (!ren.imgCount && charts[ren.chartIndex].onload) {
-                                charts[ren.chartIndex].onload();
+                            if (!ren.imgCount && chart && chart.onload) {
+                                chart.onload();
                             }
                         },
                         src: imageSrc
