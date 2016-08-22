@@ -51,16 +51,32 @@ const getPalette = path => {
  */
 const printPalette = (path, palette) => {
     let html = '<title>Current Highcharts palette</title><h1>Current Highcharts palette</h1>';
-    let keys = Object.keys(palette);
     let val;
+
+    // Print series colors
+    html += palette.colors.split(' ').map(color => {
+        return `
+            <div style="float: left; background-color: ${color}; width: 10%; height: 100px"></div>
+        `;
+    }).join('');
+    delete palette.colors;
+
+    let keys = Object.keys(palette);
+
+    // Sort by color
+    keys.sort((a, b) => {
+        return palette[a] < palette[b];
+    });
+
     keys.forEach(key => {
         val = palette[key];
         html += `
-<div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
-    <h4 style="text-align: center">$${key}</h4>
-    <p style="text-align: center">${val}</p>
-    <div style="background-color: ${val}; width: 100%; height: 100px"></div>
-</div>`;
+            <div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
+                <h4 style="text-align: center">$${key}</h4>
+                <p style="text-align: center">${val}</p>
+                <div style="background-color: ${val}; width: 100%; height: 100px"></div>
+            </div>
+        `;
     });
     fs.writeFileSync(path, html);
 };
