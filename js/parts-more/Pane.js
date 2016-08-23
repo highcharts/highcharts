@@ -79,7 +79,7 @@ extend(Pane.prototype, {
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 			stops: [
 				[0, '${palette.backgroundColor}'],
-				[1, '${palette.paneBackgroundGradient}']
+				[1, '${palette.fainterColor}']
 			]
 		},
 		/*= } =*/

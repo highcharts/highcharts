@@ -40,7 +40,7 @@ import '../parts/Chart.js';
 			},
 			shape: {
 				params: {
-					stroke: '${palette.textHeavyColor}',
+					stroke: '${palette.strongColor}',
 					fill: 'transparent',
 					strokeWidth: 2
 				}

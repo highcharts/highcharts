@@ -419,7 +419,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 				'stroke-width': options.borderWidth || 0
 			})
 			.css(extend({
-				color: 'white',
+				color: '${palette.backgroundColor}',
 				fontWeight: 'normal',
 				fontSize: '11px',
 				textAlign: 'center'

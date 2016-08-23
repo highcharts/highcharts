@@ -552,7 +552,7 @@ RangeSelector.prototype = {
 		label.css(merge(chartStyle, options.labelStyle));
 
 		dateBox.css(merge({
-			color: '${palette.rangeselectorInputColor}'
+			color: '${palette.mainColor}'
 		}, chartStyle, options.inputStyle));
 
 		css(input, extend({

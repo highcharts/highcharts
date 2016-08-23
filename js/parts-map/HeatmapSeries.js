@@ -24,7 +24,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	/*= if (build.classic) { =*/
-	nullColor: '${palette.nullPointColor}',
+	nullColor: '${palette.fainteststColor}',
 	/*= } =*/
 	dataLabels: {
 		formatter: function () { // #2945

@@ -42,14 +42,14 @@ extend(ColorAxis.prototype, {
 			},
 			width: 0.01,
 			/*= if (build.classic) { =*/
-			color: '${palette.coloraxisMarker}'
+			color: '${palette.neutralColor}'
 			/*= } =*/
 		},
 		labels: {
 			overflow: 'justify'
 		},
-		minColor: '${palette.coloraxisMinColor}',
-		maxColor: '${palette.coloraxisMaxColor}',
+		minColor: '${palette.hilightFaintColor}',
+		maxColor: '${palette.activeColor}',
 		tickLength: 5
 	},
 	init: function (chart, userOptions) {

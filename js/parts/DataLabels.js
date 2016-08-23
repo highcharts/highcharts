@@ -141,7 +141,7 @@ Series.prototype.drawDataLabels = function () {
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
 							renderer.getContrast(point.color || series.color) :
-							'${palette.textHeavyColor}';
+							'${palette.strongColor}';
 					}
 
 					if (seriesOptions.cursor) {

@@ -24,9 +24,9 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	},
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
-	lineColor: '${palette.waterfallStroke}',
+	lineColor: '${palette.mainColor}',
 	dashStyle: 'dot',
-	borderColor: '${palette.waterfallStroke}',
+	borderColor: '${palette.mainColor}',
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126

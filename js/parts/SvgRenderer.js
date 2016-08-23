@@ -1875,11 +1875,11 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			fill: '${palette.buttonFill}',
-			stroke: '${palette.buttonStroke}',
+			fill: '${palette.faintestestColor}',
+			stroke: '${palette.faintColor}',
 			'stroke-width': 1,
 			style: {
-				color: '${palette.buttonTextColor}',
+				color: '${palette.mainColor}',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			}
@@ -1889,16 +1889,16 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			fill: '${palette.buttonHoverFill}'
+			fill: '${palette.fainterColor}'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '${palette.buttonPressedFill}',
+			fill: '${palette.hilightFaintColor}',
 			style: {
-				color: '${palette.textHeavyColor}',
+				color: '${palette.strongColor}',
 				fontWeight: 'bold'
 			}
 		}, pressedState);
@@ -1908,7 +1908,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '${palette.buttonDisabledColor}'
+				color: '${palette.faintColor}'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;

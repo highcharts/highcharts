@@ -74,7 +74,7 @@ H.defaultOptions = {
 		height: null,
 		
 		/*= if (build.classic) { =*/
-		borderColor: '${palette.chartBorderColor}',
+		borderColor: '${palette.hilightColor}',
 		//borderWidth: 0,
 		//style: {
 		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
@@ -82,7 +82,7 @@ H.defaultOptions = {
 		//},
 		backgroundColor: '${palette.backgroundColor}',
 		//plotBackgroundColor: null,
-		plotBorderColor: '${palette.plotBorderColor}'
+		plotBorderColor: '${palette.faintColor}'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		/*= } =*/
@@ -130,7 +130,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.titleColor}',
+			color: '${palette.mainColor}',
 			fontSize: '18px'
 		},
 		/*= } =*/
@@ -146,7 +146,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.subtitleColor}'
+			color: '${palette.weakColor}'
 		},
 		/*= } =*/
 		widthAdjust: -44
@@ -175,7 +175,7 @@ H.defaultOptions = {
 			marker: {
 				/*= if (build.classic) { =*/
 				lineWidth: 0,
-				lineColor: '${palette.pointStroke}',
+				lineColor: '${palette.backgroundColor}',
 				//fillColor: null,
 				/*= } =*/				
 				//enabled: true,
@@ -191,8 +191,8 @@ H.defaultOptions = {
 					},
 					/*= if (build.classic) { =*/
 					select: {
-						fillColor: '${palette.pointSelectFill}',
-						lineColor: '${palette.pointSelectStroke}',
+						fillColor: '${palette.faintColor}',
+						lineColor: '${palette.strongColor}',
 						lineWidth: 2
 					}
 					/*= } =*/
@@ -273,7 +273,7 @@ H.defaultOptions = {
 		style: {
 			//font: defaultFont,
 			position: 'absolute',
-			color: '${palette.textColor}'
+			color: '${palette.mainColor}'
 		}
 	},
 	legend: {
@@ -285,12 +285,12 @@ H.defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '${palette.legendBorderColor}',
+		borderColor: '${palette.neutralColor}',
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
-			activeColor: '${palette.legendNavActiveColor}',
-			inactiveColor: '${palette.legendNavInactiveColor}'
+			activeColor: '${palette.activeColor}',
+			inactiveColor: '${palette.faintColor}'
 			/*= } =*/
 			// animation: true,
 			// arrowSize: 12
@@ -304,16 +304,16 @@ H.defaultOptions = {
 		},*/
 		/*= if (build.classic) { =*/
 		itemStyle: {			
-			color: '${palette.legendTextColor}',
+			color: '${palette.mainColor}',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '${palette.legendTextHoverColor}'
+			color: '${palette.strongColor}'
 		},
 		itemHiddenStyle: {
-			color: '${palette.legendTextHiddenColor}'
+			color: '${palette.faintColor}'
 		},
 		shadow: false,
 		/*= } =*/
@@ -387,13 +387,13 @@ H.defaultOptions = {
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		/*= } else { =*/
-		backgroundColor: color('${palette.tooltipBackgroundColor}').setOpacity(0.85).get(),
+		backgroundColor: color('${palette.faintestestColor}').setOpacity(0.85).get(),
 		borderWidth: 1,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		style: {
-			color: '${palette.tooltipTextColor}',
+			color: '${palette.mainColor}',
 			cursor: 'default',
 			fontSize: '12px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
@@ -418,7 +418,7 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
-			color: '${palette.creditsColor}',
+			color: '${palette.neutralColor}',
 			fontSize: '9px'
 		},
 		/*= } =*/

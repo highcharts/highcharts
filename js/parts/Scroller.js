@@ -1,5 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
+import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
@@ -11,6 +12,7 @@ import './Scrollbar.js';
 var addEvent = H.addEvent,
 	Axis = H.Axis,
 	Chart = H.Chart,
+	color = H.color,
 	defaultDataGroupingUnits = H.defaultDataGroupingUnits,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
@@ -60,17 +62,17 @@ extend(defaultOptions, {
 		maskInside: true,
 		/*= if (build.classic) { =*/
 		handles: {
-			backgroundColor: '${palette.navigatorHandleFill}',
-			borderColor: '${palette.navigatorOutline}'
+			backgroundColor: '${palette.faintestColor}',
+			borderColor: '${palette.neutralColor}'
 		},
-		maskFill: '${palette.navigatorMaskFill}',
-		outlineColor: '${palette.navigatorOutline}',
+		maskFill: color('${palette.hilightColor}').setOpacity(0.25).get(),
+		outlineColor: '${palette.faintColor}',
 		outlineWidth: 1,
 		/*= } =*/
 		series: {
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
-			color: '${palette.navigatorSeriesColor}',
+			color: '${palette.hilightColor}',
 			fillOpacity: 0.05,
 			lineWidth: 1,
 			/*= } =*/
@@ -102,7 +104,7 @@ extend(defaultOptions, {
 			tickLength: 0,
 			/*= if (build.classic) { =*/
 			lineWidth: 0,
-			gridLineColor: '${palette.navigatorGridLineColor}',
+			gridLineColor: '${palette.fainterColor}',
 			gridLineWidth: 1,
 			/*= } =*/
 			tickPixelInterval: 200,
@@ -110,7 +112,7 @@ extend(defaultOptions, {
 				align: 'left',
 				/*= if (build.classic) { =*/
 				style: {
-					color: '${palette.navigatorAxisLabelsColor}'
+					color: '${palette.neutralColor}'
 				},
 				/*= } =*/
 				x: 3,

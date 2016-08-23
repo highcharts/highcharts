@@ -50,7 +50,12 @@ const getPalette = path => {
  * @returns {undefined} Returns nothing
  */
 const printPalette = (path, palette) => {
-    let html = '<title>Current Highcharts palette</title><h1>Current Highcharts palette</h1>';
+    let keys = Object.keys(palette);
+    let html = `
+        <title>Palette - Highcharts</title>
+        <h1>Palette - Highcharts</h1>
+        <p>${keys.length} colors</p>
+    `;
     let val;
 
     // Print series colors
@@ -60,11 +65,9 @@ const printPalette = (path, palette) => {
         `;
     }).join('');
 
-    let keys = Object.keys(palette);
-
     // Sort by color
     keys.sort((a, b) => {
-        return palette[a] < palette[b];
+        return palette[a] > palette[b];
     });
 
     keys.forEach(key => {

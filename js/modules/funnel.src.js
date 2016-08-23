@@ -44,8 +44,8 @@ merge(true, defaultPlotOptions.funnel, {
 	},
 	states: {
 		select: {
-			color: '${palette.pointSelectFill}',
-			borderColor: '${palette.pointSelectStroke}',
+			color: '${palette.faintColor}',
+			borderColor: '${palette.strongColor}',
 			shadow: false
 		}
 	}	

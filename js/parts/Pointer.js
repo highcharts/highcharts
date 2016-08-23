@@ -450,7 +450,7 @@ H.Pointer.prototype = {
 					)
 					.attr({
 						/*= if (build.classic) { =*/
-						fill: chartOptions.selectionMarkerFill || color('${palette.selectionMarkerColor}').setOpacity(0.25).get(),
+						fill: chartOptions.selectionMarkerFill || color('${palette.hilightColor}').setOpacity(0.25).get(),
 						/*= } =*/
 						'class': 'highcharts-selection-marker',						
 						'zIndex': 7

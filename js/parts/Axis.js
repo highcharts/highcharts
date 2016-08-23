@@ -1,5 +1,6 @@
 import H from './Globals.js';
 import './Utilities.js';
+import './Color.js';
 import './Options.js';
 import './PlotLineOrBand.js';
 import './Tick.js';
@@ -8,6 +9,7 @@ import './Tick.js';
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
+		color = H.color,
 		correctFloat = H.correctFloat,
 		defaultOptions = H.defaultOptions,
 		defaultPlotOptions = H.defaultPlotOptions,
@@ -71,7 +73,7 @@ H.Axis.prototype = {
 			// step: null,
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisLabelColor}',
+				color: '${palette.weakColor}',
 				cursor: 'default',
 				fontSize: '11px'
 			},
@@ -122,7 +124,7 @@ H.Axis.prototype = {
 			//side: 'outside',
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisTitleColor}'
+				color: '${palette.weakColor}'
 			}
 			/*= } =*/
 			//x: 0,
@@ -131,17 +133,17 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
-		minorGridLineColor: '${palette.minorGridLineColor}',
+		minorGridLineColor: '${palette.faintestColor}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
-		minorTickColor: '${palette.minorTickColor}',
+		minorTickColor: '${palette.neutralColor}',
 		//minorTickWidth: 0,
-		lineColor: '${palette.axisLineColor}',
+		lineColor: '${palette.hilightFaintColor}',
 		lineWidth: 1,
-		gridLineColor: '${palette.gridLineColor}',
+		gridLineColor: '${palette.fainterColor}',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
-		tickColor: '${palette.tickColor}'
+		tickColor: '${palette.hilightFaintColor}'
 		// tickWidth: 1
 		/*= } =*/		
 	},
@@ -174,7 +176,7 @@ H.Axis.prototype = {
 			formatter: function () {
 				return H.numberFormat(this.total, -1);
 			},
-			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '${palette.textHeavyColor}' })
+			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '${palette.strongColor}' })
 		},
 		/*= if (build.classic) { =*/
 		gridLineWidth: 1,		
@@ -2464,7 +2466,7 @@ H.Axis.prototype = {
 				/*= if (build.classic) { =*/
 				// Presentational attributes
 				graphic.attr({
-					'stroke': options.color || (categorized ? '${palette.crosshairCategoryColor}' : '${palette.crosshairThinColor}'),
+					'stroke': options.color || (categorized ? color('${palette.crosshairCategoryColor}').setOpacity(0.25).get() : '${palette.faintColor}'),
 					'stroke-width': pick(options.width, 1)
 				});
 				if (options.dashStyle) {

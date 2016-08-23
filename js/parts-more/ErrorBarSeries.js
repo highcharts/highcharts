@@ -16,7 +16,7 @@ import './BoxPlotSeries.js';
 // 1 - set default options
 defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	/*= if (build.classic) { =*/
-	color: '${palette.errorBarColor}',
+	color: '${palette.strongColor}',
 	/*= } =*/
 	grouping: false,
 	linkedTo: ':previous',

@@ -64,23 +64,23 @@ defaultOptions.navigation = {
 // Presentational attributes
 merge(true, defaultOptions.navigation, {
 	menuStyle: {
-		border: '1px solid ${palette.menuBorder}',
+		border: '1px solid ${palette.neutralColor}',
 		background: '${palette.backgroundColor}',
 		padding: '5px 0'
 	},
 	menuItemStyle: {
 		padding: '0 10px',
 		background: 'none',
-		color: '${palette.menuTextColor}',
+		color: '${palette.mainColor}',
 		fontSize: isTouchDevice ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
-		background: '${palette.menuHoverBackground}',
+		background: '${palette.hilightColor}',
 		color: '${palette.backgroundColor}'
 	},
 	buttonOptions: {
-		symbolFill: '${palette.buttonSymbolStroke}',
-		symbolStroke: '${palette.buttonSymbolStroke}',
+		symbolFill: '${palette.weakColor}',
+		symbolStroke: '${palette.weakColor}',
 		symbolStrokeWidth: 3,
 		theme: {
 			fill: '${palette.backgroundColor}', // capture hover

@@ -68,7 +68,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 merge(true, defaultPlotOptions.gauge, {
 	dataLabels: {
 		borderWidth: 1,
-		borderColor: 'silver'
+		borderColor: '${palette.faintColor}'
 	}
 });
 /*= } =*/
@@ -197,7 +197,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 				point.graphic.attr({
 					stroke: dialOptions.borderColor || 'none',
 					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || 'black'
+					fill: dialOptions.backgroundColor || '${palette.strongColor}'
 				});
 				/*= } =*/
 			}
@@ -223,7 +223,7 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 			series.pivot.attr({
 				'stroke-width': pivotOptions.borderWidth || 0,
 				stroke: pivotOptions.borderColor || 'silver',
-				fill: pivotOptions.backgroundColor || 'black'
+				fill: pivotOptions.backgroundColor || '${palette.strongColor}'
 			});
 			/*= } =*/
 		}
