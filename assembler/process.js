@@ -59,7 +59,6 @@ const printPalette = (path, palette) => {
             <div style="float: left; background-color: ${color}; width: 10%; height: 100px"></div>
         `;
     }).join('');
-    delete palette.colors;
 
     let keys = Object.keys(palette);
 
@@ -69,14 +68,16 @@ const printPalette = (path, palette) => {
     });
 
     keys.forEach(key => {
-        val = palette[key];
-        html += `
-            <div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
-                <h4 style="text-align: center">$${key}</h4>
-                <p style="text-align: center">${val}</p>
-                <div style="background-color: ${val}; width: 100%; height: 100px"></div>
-            </div>
-        `;
+        if (key !== 'colors') {
+            val = palette[key];
+            html += `
+                <div style="float: left; width: 200px; border: 1px solid silver; margin: 5px">
+                    <h4 style="text-align: center">$${key}</h4>
+                    <p style="text-align: center">${val}</p>
+                    <div style="background-color: ${val}; width: 100%; height: 100px"></div>
+                </div>
+            `;
+        }
     });
     fs.writeFileSync(path, html);
 };
