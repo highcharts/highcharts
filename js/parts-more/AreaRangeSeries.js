@@ -97,7 +97,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			highPoints = [],
 			highAreaPoints = [],
 			i = points.length,
-			getGraphPath = Series.prototype.getGraphPath,
+			getGraphPath = seriesTypes.area.prototype.getGraphPath,
 			point,
 			pointShim,
 			linePath,
@@ -114,23 +114,29 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		while (i--) {
 			point = points[i];
 		
-			if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
+			if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
 				highAreaPoints.push({
 					plotX: point.plotX,
-					plotY: point.plotLow
+					plotY: point.plotY,
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
+			
 			pointShim = {
-				plotX: point.plotX,
+				polarPlotY: point.polarPlotY,
+				rectPlotX: point.rectPlotX,
+				yBottom: point.yBottom,
+				plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
 				plotY: point.plotHigh,
 				isNull: point.isNull
 			};
 			highAreaPoints.push(pointShim);
 			highPoints.push(pointShim);
-			if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
+			if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
 				highAreaPoints.push({
 					plotX: point.plotX,
-					plotY: point.plotLow
+					plotY: point.plotY,
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
 		}

@@ -211,4 +211,19 @@ $(function () {
 
     });
 
+    QUnit.test('Issue #5606, error when chart was destroyed before images were loaded', function (assert) {
+        assert.expect(0);
+        var chart = Highcharts.chart('container', {
+
+            series: [{
+                name: 'Image symbol',
+                data: [1, 2, 3],
+                marker: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png?dummy=' + Date.now() + ')'
+                }
+            }]
+        });
+        chart.destroy();
+    });
+
 });

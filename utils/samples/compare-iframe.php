@@ -132,11 +132,11 @@ function getHTML($which) {
 	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;
 	$_SESSION['html'] = $issueHTML;
 
-	if (strstr($s, 'http://')) {
-		$s .= "<script>console.warn('Do not use http in demo.html. Use secure https. ($path)')</script>";
+	if (strstr($s, 'http://code.highcharts.com') || strstr($s, 'http://www.highcharts.com')) {
+		$s .= "<script>throw 'Do not use http in demo.html. Use secure https. ($path)';</script>";
 	}
 	if (strstr($s, '.src.js')) {
-		$s .= "<script>console.warn('Do not use src.js files in demos. Use .js compiled files. ($path)')</script>";
+		$s .= "<script>throw 'Do not use src.js files in demos. Use .js compiled files. ($path)';</script>";
 	}
 
 	$s = cachify($s);
@@ -260,17 +260,17 @@ function getExportInnerHTML() {
 
 						// Compare chart objects
 						if (chart) {
-
+							clearInterval(interval);
+							
 							// Automatically click buttons with classname "autocompare"
 							tryToRun(function () {
 								$('.autocompare').click();
 							});
-
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
-							clearInterval(interval);
 
 						// Compare renderers
 						} else if (window.renderer) {
+							clearInterval(interval);
 
 							// Automatically click buttons with classname "autocompare"
 							tryToRun(function () {
@@ -284,7 +284,6 @@ function getExportInnerHTML() {
 								}
 							};
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', window.renderer.box.parentNode.innerHTML);
-							clearInterval(interval);
 
 						} else if (new Date() - start > 2000) {
 							clearInterval(interval);

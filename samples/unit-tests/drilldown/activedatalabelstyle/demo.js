@@ -31,9 +31,8 @@ QUnit.test('activeDataLabelStyle', function (assert) {
         }),
         series = chart.series[0],
         point = series.points[0];
-    assert.strictEqual(
-        getDataLabelFill(point),
-        'rgb(255, 0, 0)',
+    assert.ok(
+        getDataLabelFill(point) === 'rgb(255, 0, 0)' || getDataLabelFill(point) === '#ff0000',
         'activeDataLabelStyle.color: undefined is default. Picks the color from dataLabels.'
     );
 
@@ -71,17 +70,17 @@ QUnit.test('activeDataLabelStyle', function (assert) {
     });
     series = chart.series[0];
     point = series.points[0];
-    assert.strictEqual(
-        getDataLabelFill(point),
-        'rgb(255, 255, 255)',
+
+    assert.ok(
+        getDataLabelFill(point) === 'rgb(255, 255, 255)' || getDataLabelFill(point) === '#ffffff',
         'activeDataLabelStyle.color contrast to black'
     );
     point.update({
         color: '#FFFFFF'
     });
-    assert.strictEqual(
+    assert.ok(
         getDataLabelFill(point),
-        'rgb(0, 0, 0)',
+        getDataLabelFill(point) === 'rgb(0, 0, 0)' || getDataLabelFill(point) === '#000000',
         'activeDataLabelStyle.color contrast to white'
     );
 
@@ -116,9 +115,8 @@ QUnit.test('activeDataLabelStyle', function (assert) {
     });
     series = chart.series[0];
     point = series.points[0];
-    assert.strictEqual(
-        getDataLabelFill(point),
-        'rgb(255, 255, 0)',
+    assert.ok(
+        getDataLabelFill(point) === 'rgb(255, 255, 0)' || getDataLabelFill(point) === '#ffff00',
         'activeDataLabelStyle.color: "#FFFF00"'
     );
 });

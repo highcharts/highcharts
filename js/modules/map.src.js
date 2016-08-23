@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.5-modified (bugfix)
+ * @license Highmaps JS v4.2.6-modified (bugfix)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -158,7 +158,6 @@
      * The ColorAxis object for inclusion in gradient legends
      */
     var ColorAxis = Highcharts.ColorAxis = function () {
-        this.isColorAxis = true;
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
@@ -185,11 +184,13 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true
+            showInLegend: true // docs: API record is being added.
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
                 options;
+
+            this.coll = 'colorAxis';
 
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
@@ -198,8 +199,7 @@
             }, userOptions, {
                 opposite: !horiz,
                 showEmpty: false,
-                title: null,
-                isColor: true
+                title: null
             });
 
             Axis.prototype.init.call(this, chart, options);
@@ -303,7 +303,6 @@
             Axis.prototype.setOptions.call(this, userOptions);
 
             this.options.crosshair = this.options.marker;
-            this.coll = 'colorAxis';
         },
 
         setAxisSize: function () {

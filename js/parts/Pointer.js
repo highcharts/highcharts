@@ -272,8 +272,7 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverPoints = chart.hoverPoints,
 			tooltip = chart.tooltip,
-			tooltipPoints = tooltip && tooltip.shared ? hoverPoints : hoverPoint,
-			crosshairPath;
+			tooltipPoints = tooltip && tooltip.shared ? hoverPoints : hoverPoint;
 
 		// Check if the points have moved outside the plot area (#1003, #4736, #5101)
 		if (allowMove && tooltipPoints) {
@@ -291,17 +290,10 @@ Pointer.prototype = {
 				if (hoverPoint) { // #2500
 					hoverPoint.setState(hoverPoint.state, true);
 					each(chart.axes, function (axis) {
-						if (pick(axis.crosshair && axis.crosshair.snap, true)) {
+						if (axis.crosshair) {
 							axis.drawCrosshair(null, hoverPoint);
-						} else {
-							crosshairPath = axis.cross ? axis.cross.attr('d').split(' ') : [null, -9e9, 9e9];
-							axis.drawCrosshair({
-								chartX: Math.floor(parseFloat(crosshairPath[1])),
-								chartY: Math.floor(parseFloat(crosshairPath[2]))
-							}, null);
 						}
 					});
-
 				}
 			}
 

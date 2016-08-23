@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (bugfix)
+ * @license Highcharts JS v4.2.6-modified (bugfix)
  *
  * 3D features for Highcharts JS
  *
@@ -60,11 +60,11 @@
             x: angles.cosB * x - angles.sinB * z,
             y: -angles.sinA * angles.sinB * x + angles.cosA * y - angles.cosB * angles.sinA * z,
             z: angles.cosA * angles.sinB * x + angles.sinA * y + angles.cosA * angles.cosB * z
-        }
+        };
     }
 
     function perspective3D(coordinate, origin, distance) {
-        var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance): 1;
+        var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance) : 1;
         return {
             x: coordinate.x * projection,
             y: coordinate.y * projection
@@ -82,7 +82,7 @@
      */
     var perspective = Highcharts.perspective = function (points, chart, insidePlotArea) {
         var options3d = chart.options.chart.options3d,
-            inverted = insidePlotArea ? chart.inverted: false,
+            inverted = insidePlotArea ? chart.inverted : false,
             origin = {
                 x: chart.plotWidth / 2,
                 y: chart.plotHeight / 2,
@@ -90,8 +90,8 @@
                 vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
             },
             scale = chart.scale3d || 1,
-            beta = deg2rad * options3d.beta * (inverted ? -1: 1),
-            alpha = deg2rad * options3d.alpha * (inverted ? -1: 1),
+            beta = deg2rad * options3d.beta * (inverted ? -1 : 1),
+            alpha = deg2rad * options3d.alpha * (inverted ? -1 : 1),
             angles = {
                 cosA: cos(alpha),
                 cosB: cos(-beta),
@@ -111,7 +111,7 @@
                     (inverted ? point.x : point.y) - origin.y,
                     (point.z || 0) - origin.z,
                     angles
-                );
+                ),
                 coordinate = perspective3D(rotated, origin, origin.vd); // Apply perspective
 
             // Apply translation
@@ -125,7 +125,7 @@
                 z: coordinate.z 
             };
         });
-    }/***
+    };/***
         EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
         ***/
     ////// HELPER METHODS //////
@@ -504,6 +504,7 @@
                         }));
                     };
                 }
+                animation = anim; // Only when duration (#5572)
             }
             return proceed.call(this, params, animation, complete);
         });
@@ -1811,6 +1812,7 @@
 
             rawPoint.plotXold = rawPoint.plotX;
             rawPoint.plotYold = rawPoint.plotY;
+            rawPoint.plotZold = rawPoint.plotZ;
 
             rawPoint.plotX = projectedPoint.x;
             rawPoint.plotY = projectedPoint.y;

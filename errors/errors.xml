@@ -131,5 +131,12 @@
 			like 3-digit colors (<code>#FFF</code>), named colors (<code>white</code>) or gradient structures are used in for example a heatmap, Highcharts will fail to interpolate and just jumps to the end color.
 			We have chosen to preserve this limitation in order to keep the weight of the implementation at a minimum.</p> 
 		</description>
+	</error>	
+
+	<error id="24">
+		<title>Cannot run Point.update on a grouped point</title>
+		<description>
+			<p>This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.</p> 
+		</description>
 	</error>
 </errors>

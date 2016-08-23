@@ -177,37 +177,17 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function (point) {
+	autoIncrement: function () {
 
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
 			pointInterval,
-			pointIntervalUnit = options.pointIntervalUnit,
-			xAxis = this.xAxis,
-			explicitCategories,
-			names,
-			nameX;
+			pointIntervalUnit = options.pointIntervalUnit;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-
-		// When a point name is given and no x, search for the name in the existing categories,
-		// or if categories aren't provided, search names or create a new category (#2522). // docs
-		if (xAxis && xAxis.categories && point.name) {
-			this.requireSorting = false;
-			explicitCategories = isArray(xAxis.categories);
-			names = explicitCategories ? xAxis.categories : xAxis.names;
-			nameX = inArray(point.name, names); // #2522
-			if (nameX === -1) { // The name is not found in currenct categories
-				if (!explicitCategories) {
-					xIncrement = names.length;
-				}
-			} else {
-				xIncrement = nameX;
-			}
-		}
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
@@ -396,15 +376,10 @@ Series.prototype = {
 
 
 				if (isNumber(firstPoint)) { // assume all points are numbers
-					var x = pick(options.pointStart, 0),
-						pointInterval = pick(options.pointInterval, 1);
-
 					for (i = 0; i < dataLength; i++) {
-						xData[i] = x;
+						xData[i] = this.autoIncrement();
 						yData[i] = data[i];
-						x += pointInterval;
 					}
-					series.xIncrement = x;
 				} else if (isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
@@ -798,7 +773,7 @@ Series.prototype = {
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : plotX; // #1514
+			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) : plotX; // #1514, #5383, #5518
 
 			point.negative = point.y < (threshold || 0);
 

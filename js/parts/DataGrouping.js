@@ -199,13 +199,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			groupedY = approximationFn.apply(0, values);
+			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
 			if (groupedY !== UNDEFINED) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
-				groupMap.push({ start: start, length: values[0].length });
+				groupMap.push(series.dataGroupInfo);
 			}
 
 			// reset the aggregate arrays
@@ -377,6 +378,17 @@ seriesProto.generatePoints = function () {
 };
 
 /**
+ * Override point prototype to throw a warning when trying to update grouped points
+ */
+wrap(Point.prototype, 'update', function (proceed) {
+	if (this.dataGroup) {
+		error(24);
+	} else {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
+/**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
@@ -423,8 +435,10 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		}
 
 		// return the replaced format
-		labelConfig.point.key = labelConfig.key;
-		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], labelConfig);
+		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+			point: extend(labelConfig.point, { key: formattedKey }),
+			series: series
+		});
 	
 	}
 

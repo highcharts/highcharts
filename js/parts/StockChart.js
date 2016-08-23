@@ -346,7 +346,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !this.cross) {
 		return;
 	}
 
@@ -367,6 +367,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
 		value;
+
+	// Use last available event (#5287)
+	if (!e) {
+		e = this.cross && this.cross.e;
+	}
 
 	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
@@ -500,6 +505,9 @@ seriesProto.setCompare = function (compare) {
 
 		return value;
 	} : null;
+
+	// Survive to export, #5485
+	this.userOptions.compare = compare;
 
 	// Mark dirty
 	if (this.chart.hasRendered) {

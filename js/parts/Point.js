@@ -51,10 +51,13 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
-		point.isNull = point.x === null || point.y === null;
+		point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
+		if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
+			point.x = series.xAxis.nameToX(point);
+		}
 		if (point.x === undefined && series) {
 			if (x === undefined) {
 				point.x = series.autoIncrement(point);
@@ -62,12 +65,7 @@ Point.prototype = {
 				point.x = x;
 			}
 		}
-
-		// Write the last point's name to the names array
-		if (series.xAxis && series.xAxis.names) {
-			series.xAxis.names[point.x] = point.name;
-		}
-
+		
 		return point;
 	},
 

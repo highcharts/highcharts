@@ -30,15 +30,17 @@ seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 
 		// Close all segments
 		while (i--) {
-			if (i === graphPath.length || (graphPath[i] === 'M' && i > 0)) {
+			if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
 				graphPath.splice(i, 0, 'z');
 			}
 		}
-
 		this.areaPath = graphPath;
 		return graphPath;
 	},
-	drawGraph: seriesTypes.area.prototype.drawGraph,
+	drawGraph: function () {
+		this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+		seriesTypes.area.prototype.drawGraph.call(this);
+	},
 	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 	drawTracker: Series.prototype.drawTracker,
 	setStackedPoints: noop // No stacking points on polygons (#5310)

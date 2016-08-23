@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (bugfix)
+ * @license Highcharts JS v4.2.6-modified (bugfix)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -241,21 +241,30 @@ var arrayMin = Highcharts.arrayMin,
          * method.
          */
         getLinePath: function (lineWidth, radius) {
-            var center = this.center;
-            radius = pick(radius, center[2] / 2 - this.offset);
+            var center = this.center,
+                end,
+                chart = this.chart,
+                r = pick(radius, center[2] / 2 - this.offset),
+                path;
 
-            return this.chart.renderer.symbols.arc(
-                this.left + center[0],
-                this.top + center[1],
-                radius,
-                radius,
-                {
-                    start: this.startAngleRad,
-                    end: this.endAngleRad,
-                    open: true,
-                    innerR: 0
-                }
-            );
+            if (this.isCircular || radius !== undefined) {
+                path = this.chart.renderer.symbols.arc(
+                    this.left + center[0],
+                    this.top + center[1],
+                    r,
+                    r,
+                    {
+                        start: this.startAngleRad,
+                        end: this.endAngleRad,
+                        open: true,
+                        innerR: 0
+                    }
+                );
+            } else {
+                end = this.postTranslate(this.angleRad, r);
+                path = ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop, 'L', end.x, end.y];
+            }
+            return path;
         },
 
         /**
@@ -330,7 +339,7 @@ var arrayMin = Highcharts.arrayMin,
          */
         getPosition: function (value, length) {
             return this.postTranslate(
-                this.isCircular ? this.translate(value) : 0, // #2848
+                this.isCircular ? this.translate(value) : this.angleRad, // #2848
                 pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
             );
         },
@@ -555,8 +564,9 @@ var arrayMin = Highcharts.arrayMin,
             // Start and end angle options are
             // given in degrees relative to top, while internal computations are
             // in radians relative to right (like SVG).
-            this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-            this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+            this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts // docs. Sample created. API marked "next".
+            this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
+            this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
             this.offset = options.offset || 0;
 
             this.isCircular = isCircular;
@@ -603,7 +613,7 @@ var arrayMin = Highcharts.arrayMin,
             align = labelOptions.align,
             angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
-        if (axis.isRadial) {
+        if (axis.isRadial) { // Both X and Y axes in a polar chart
             ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 
             // Automatically rotated
@@ -619,7 +629,7 @@ var arrayMin = Highcharts.arrayMin,
 
             // Automatic alignment
             if (align === null) {
-                if (axis.isCircular) {
+                if (axis.isCircular) { // Y axis
                     if (this.label.getBBox().width > axis.len * axis.tickInterval / (axis.max - axis.min)) { // #3506
                         centerSlot = 0;
                     }
@@ -669,7 +679,8 @@ var arrayMin = Highcharts.arrayMin,
             ret = proceed.call(this, x, y, tickLength, tickWidth, horiz, renderer);
         }
         return ret;
-    });/*
+    });
+    /*
      * The AreaRangeSeries class
      *
      */
@@ -768,7 +779,7 @@ var arrayMin = Highcharts.arrayMin,
                 highPoints = [],
                 highAreaPoints = [],
                 i = points.length,
-                getGraphPath = Series.prototype.getGraphPath,
+                getGraphPath = seriesTypes.area.prototype.getGraphPath,
                 point,
                 pointShim,
                 linePath,
@@ -785,23 +796,29 @@ var arrayMin = Highcharts.arrayMin,
             while (i--) {
                 point = points[i];
         
-                if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
+                if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
                     highAreaPoints.push({
                         plotX: point.plotX,
-                        plotY: point.plotLow
+                        plotY: point.plotY,
+                        doCurve: false // #5186, gaps in areasplinerange fill
                     });
                 }
+            
                 pointShim = {
-                    plotX: point.plotX,
+                    polarPlotY: point.polarPlotY,
+                    rectPlotX: point.rectPlotX,
+                    yBottom: point.yBottom,
+                    plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
                     plotY: point.plotHigh,
                     isNull: point.isNull
                 };
                 highAreaPoints.push(pointShim);
                 highPoints.push(pointShim);
-                if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
+                if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
                     highAreaPoints.push({
                         plotX: point.plotX,
-                        plotY: point.plotLow
+                        plotY: point.plotY,
+                        doCurve: false // #5186, gaps in areasplinerange fill
                     });
                 }
             }
@@ -1921,15 +1938,17 @@ var arrayMin = Highcharts.arrayMin,
 
             // Close all segments
             while (i--) {
-                if (i === graphPath.length || (graphPath[i] === 'M' && i > 0)) {
+                if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
                     graphPath.splice(i, 0, 'z');
                 }
             }
-
             this.areaPath = graphPath;
             return graphPath;
         },
-        drawGraph: seriesTypes.area.prototype.drawGraph,
+        drawGraph: function () {
+            this.options.fillColor = this.color; // Hack into the fill logic in area.drawGraph
+            seriesTypes.area.prototype.drawGraph.call(this);
+        },
         drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
         drawTracker: Series.prototype.drawTracker,
         setStackedPoints: noop // No stacking points on polygons (#5310)
