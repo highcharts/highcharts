@@ -21756,6 +21756,7 @@
                 i = onData && onData.length,
                 xAxis = series.xAxis,
                 xAxisExt = xAxis.getExtremes(),
+                xOffset = 0,
                 leftPoint,
                 lastX,
                 rightPoint,
@@ -21763,6 +21764,7 @@
 
             // relate to a master series
             if (onSeries && onSeries.visible && i) {
+                xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
                 currentDataGrouping = onSeries.currentDataGrouping;
                 lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
@@ -21814,6 +21816,7 @@
                         point.shapeArgs = {}; // 847
                     }
                 }
+                point.plotX += xOffset; // #2049
                 // if multiple flags appear at the same x, order them into a stack
                 lastPoint = points[i - 1];
                 if (lastPoint && lastPoint.plotX === point.plotX) {
