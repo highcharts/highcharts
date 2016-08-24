@@ -1,3 +1,11 @@
+/*
+@todo
+- hilight -> highlight
+- Tune active/highlight colors, preferably the same hue and saturation but different lightness
+- Better naming for neutral colors
+- Align highlight color names to neutral colors
+*/
+
 /* Colors for data series and points. */
 $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1;
 
@@ -17,8 +25,9 @@ $faintestest-color: #f8f8f8;
 /* Colored, shades of blue by default */
 $active-color: #003875; /* drilldown clickable labels, coloraxis max color */
 $hilight-color: #4572A7; /* selection marker, menu hover, button hover, chart border, navigator series */
-$hilight-faint-color: #c0d0e0; /* ticks and axis line, pressed buttons */
-
+$hilight-weak-color: #7cb5ec; /* navigator mask fill */
+$hilight-faint-color: #c0d0e0; /* ticks and axis line */
+$hilight-fainter-color: #e7f0f9; /* pressed buttons */
 
 .highcharts-container {
     position: relative;
@@ -374,11 +383,11 @@ g.highcharts-series, .highcharts-point {
 
 /* Highstock */
 .highcharts-navigator-mask {
-    fill: $hilight-color; /* navigator.maskFill option */
+    fill: $hilight-weak-color; /* navigator.maskFill option */
     fill-opacity: 0.25;
 }
 .highcharts-navigator-mask-inside {
-    fill: $hilight-color; /* navigator.maskFill option */
+    fill: $hilight-weak-color; /* navigator.maskFill option */
     fill-opacity: 0.25;
     cursor: ew-resize;
 }
@@ -452,7 +461,7 @@ g.highcharts-series, .highcharts-point {
     transition: fill 0ms;
 }
 .highcharts-button-pressed {
-    fill: $hilight-faint-color;
+    fill: $hilight-fainter-color;
     stroke: $hilight-color;
     font-weight: bold;
 }

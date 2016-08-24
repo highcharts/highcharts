@@ -1896,7 +1896,7 @@ SVGRenderer.prototype = {
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '${palette.hilightFaintColor}',
+			fill: '${palette.hilightFainterColor}',
 			style: {
 				color: '${palette.strongColor}',
 				fontWeight: 'bold'

@@ -65,7 +65,7 @@ extend(defaultOptions, {
 			backgroundColor: '${palette.faintestColor}',
 			borderColor: '${palette.neutralColor}'
 		},
-		maskFill: color('${palette.hilightColor}').setOpacity(0.25).get(),
+		maskFill: color('${palette.hilightWeakColor}').setOpacity(0.3).get(),
 		outlineColor: '${palette.faintColor}',
 		outlineWidth: 1,
 		/*= } =*/
