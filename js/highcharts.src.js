@@ -15304,15 +15304,17 @@
                 chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
                 axis = this[(this.zoneAxis || 'y') + 'Axis'],
                 extremes,
-                reversed = axis.reversed,
+                reversed,
                 inverted = chart.inverted,
-                horiz = axis.horiz,
+                horiz,
                 pxRange,
                 pxPosMin,
                 pxPosMax,
                 ignoreZones = false;
 
-            if (zones.length && (graph || area) && axis.min !== UNDEFINED) {
+            if (zones.length && (graph || area) && axis && axis.min !== UNDEFINED) {
+                reversed = axis.reversed;
+                horiz = axis.horiz;
                 // The use of the Color Threshold assumes there are no gaps
                 // so it is safe to hide the original graph and area
                 if (graph) {
@@ -15362,7 +15364,7 @@
                     }
 
                     /// VML SUPPPORT
-                    if (chart.inverted && renderer.isVML) {
+                    if (inverted && renderer.isVML) {
                         if (axis.isXAxis) {
                             clipAttr = {
                                 x: 0,
