@@ -12180,7 +12180,9 @@
             // Destroy the clone and bring the container back to the real renderTo div
             if (revert) {
                 if (clone) {
-                    this.renderTo.appendChild(container);
+                    while (clone.childNodes.length) { // #5231
+                        this.renderTo.appendChild(clone.firstChild);
+                    }
                     discardElement(clone);
                     delete this.renderToClone;
                 }
