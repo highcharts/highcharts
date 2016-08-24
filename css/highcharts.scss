@@ -18,16 +18,16 @@ $main-color: #303030; /* main text and some strokes */
 $weak-color: #606060; /* axis labels, axis title, connector fallback */
 $neutral-color: #909090; /* credits text, export menu stroke */
 $faint-color: #c0c0c0; /* disabled texts, button strokes, crosshair etc */
-$fainter-color: #e0e0e0;
-$faintest-color: #f0f0f0;
-$faintestest-color: #f8f8f8;
+$fainter-color: #e0e0e0; /* grid lines etc */
+$faintest-color: #f0f0f0; /* minor grid lines etc */
+$faintestest-color: #f8f8f8; /* tooltip backgroud, button fills, map null points */
 
 /* Colored, shades of blue by default */
-$active-color: #003875; /* drilldown clickable labels, coloraxis max color */
-$hilight-color: #4572A7; /* selection marker, menu hover, button hover, chart border, navigator series */
-$hilight-weak-color: #7cb5ec; /* navigator mask fill */
-$hilight-faint-color: #c0d0e0; /* ticks and axis line */
-$hilight-fainter-color: #e7f0f9; /* pressed buttons */
+$active-color: #003399; /* Strength 100. Drilldown clickable labels, color axis max color. */
+$hilight-color: #4066b3; /* Strength 75. Selection marker, menu hover, button hover, chart border, navigator series. */
+$hilight-weak-color: #8099cc; /* Strength 50. Navigator mask fill. */
+$hilight-faint-color: #ccd6eb; /* Strength 20. Ticks and axis line. */
+$hilight-fainter-color: #e6ebf5; /* Strength 10. Pressed button, color axis min color. */
 
 .highcharts-container {
     position: relative;

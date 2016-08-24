@@ -48,7 +48,7 @@ extend(ColorAxis.prototype, {
 		labels: {
 			overflow: 'justify'
 		},
-		minColor: '${palette.hilightFaintColor}',
+		minColor: '${palette.hilightFainterColor}',
 		maxColor: '${palette.activeColor}',
 		tickLength: 5
 	},
