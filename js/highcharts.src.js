@@ -10412,7 +10412,7 @@
                                     // It is closer than the reference point
                                     isCloser = p[dist] < distance[k],
                                     // It is equally close, but above the reference point (#4679)
-                                    isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
+                                    isAbove = p[dist] === distance[k] && p.series.group.zIndex >= (kdpoint[k] ? kdpoint[k].series.group.zIndex : 1);
 
                                 if (isCloser || isAbove) {
                                     distance[k] = p[dist];
