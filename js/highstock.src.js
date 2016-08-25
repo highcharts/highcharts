@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-08-22)
+ * @license Highstock JS v4.2.6-modified (2016-08-25)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -72,7 +72,7 @@
         NONE = 'none',
         M = 'M',
         L = 'L',
-        numRegex = /^[0-9]+$/,
+        numRegex = /[0-9]/g,
         NORMAL_STATE = '',
         HOVER_STATE = 'hover',
         SELECT_STATE = 'select',
@@ -2871,19 +2871,16 @@
 
             if (textStr !== UNDEFINED) {
 
-                // Properties that affect bounding box
-                cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+                cacheKey = 
 
-                // Since numbers are monospaced, and numerical labels appear a lot in a chart,
-                // we assume that a label of n characters has the same bounding box as others
-                // of the same length.
-                if (textStr === '' || numRegex.test(textStr)) {
-                    cacheKey = 'num:' + textStr.toString().length + cacheKey;
+                    // Since numbers are monospaced, and numerical labels appear a lot in a chart,
+                    // we assume that a label of n characters has the same bounding box as others
+                    // of the same length.
+                    textStr.toString().replace(numRegex, '0') + 
 
-                // Caching all strings reduces rendering time by 4-5%.
-                } else {
-                    cacheKey = textStr + cacheKey;
-                }
+                    // Properties that affect bounding box
+                    ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+
             }
 
             if (cacheKey && !reload) {
@@ -20437,7 +20434,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-08-22)
+     * Highstock JS v4.2.6-modified (2016-08-25)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
