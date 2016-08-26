@@ -21046,8 +21046,8 @@
         series.groupPixelWidth = null; // #2110
         series.hasProcessed = true; // #2692
 
-        // skip if processData returns false or if grouping is disabled (in that order)
-        skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
+        // skip if processData returns false or if grouping is disabled (in that order) or #5493
+        skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
         if (!skip) {
             series.destroyGroupedData();
 
