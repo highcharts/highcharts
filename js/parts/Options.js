@@ -323,6 +323,7 @@ H.defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		squareSymbol: true,
 		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
