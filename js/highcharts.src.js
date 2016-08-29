@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-25)
+ * @license Highcharts JS v4.2.6-modified (2016-08-29)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -16512,12 +16512,11 @@
          * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
          *    configuration
          */
-        remove: function (redraw, animation) {
+        remove: function (redraw, animation, withEvent) {
             var series = this,
                 chart = series.chart;
 
-            // Fire the event with a default handler of removing the point
-            fireEvent(series, 'remove', null, function () {
+            function remove() {
 
                 // Destroy elements
                 series.destroy();
@@ -16529,7 +16528,14 @@
                 if (pick(redraw, true)) {
                     chart.redraw(animation);
                 }
-            });
+            }
+
+            // Fire the event with a default handler of removing the point
+            if (withEvent !== false) {
+                fireEvent(series, 'remove', null, remove);
+            } else {
+                remove();
+            }
         },
 
         /**
@@ -16566,7 +16572,7 @@
 
             // Destroy the series and delete all properties. Reinsert all methods
             // and properties from the new type prototype (#2270, #3719)
-            this.remove(false);
+            this.remove(false, null, false);
             for (n in proto) {
                 this[n] = UNDEFINED;
             }
