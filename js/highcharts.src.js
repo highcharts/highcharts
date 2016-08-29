@@ -2960,8 +2960,9 @@
                     }
                 }
 
-                // Cache it
-                if (cacheKey) {
+                // Cache it. When loading a chart in a hidden iframe in Firefox and IE/Edge, the
+                // bounding box height is 0, so don't cache it (#5620).
+                if (cacheKey && bBox.height > 0) {
 
                     // Rotate (#4681)
                     while (cacheKeys.length > 250) {
