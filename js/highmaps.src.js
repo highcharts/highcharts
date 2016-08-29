@@ -13989,7 +13989,7 @@
 
                 // For points within the visible range, including the first point outside the
                 // visible range, consider y extremes
-                validValue = isNumber(y, true) && (!yAxis.isLog || (y.length || y > 0));
+                validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
                 withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
                     ((xData[i + 1] || x) >= xMin &&    (xData[i - 1] || x) <= xMax);
 
