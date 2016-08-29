@@ -6901,7 +6901,7 @@
 
             // Flag, isXAxis
             axis.isXAxis = isXAxis;
-            axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
+            axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
             axis.opposite = userOptions.opposite; // needed in setOptions
             axis.side = userOptions.side || (axis.horiz ?
