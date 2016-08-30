@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-29)
+ * @license Highcharts JS v4.2.6-modified (2016-08-30)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -13213,7 +13213,7 @@
                     } else {
                         linkedTo = chart.get(linkedTo);
                     }
-                    if (linkedTo) {
+                    if (linkedTo && linkedTo.linkedParent !== series) { // #3341 avoid mutual linking
                         linkedTo.linkedSeries.push(series);
                         series.linkedParent = linkedTo;
                         series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
