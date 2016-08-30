@@ -721,8 +721,7 @@ Series.prototype = {
 
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.y = yValue = null;
-				error(10);
+				point.isNull = true;
 			}
 
 			// Get the plotX translation
