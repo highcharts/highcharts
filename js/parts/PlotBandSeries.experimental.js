@@ -11,23 +11,15 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 import './Options.js';
-var seriesTypes = H.seriesTypes,
-	merge = H.merge,
-	defaultPlotOptions = H.getOptions().plotOptions,
-	extendClass = H.extendClass,
+var seriesType = H.seriesType,
 	each = H.each,
 	Series = H.Series;
 
-// 1 - set default options
-defaultPlotOptions.plotband = merge(defaultPlotOptions.column, {
+seriesType('plotband', 'column', {
 	lineWidth: 0,
 	//onXAxis: false,
 	threshold: null
-});
-
-// 2 - Create the CandlestickSeries object
-seriesTypes.plotband = extendClass(seriesTypes.column, {
-	type: 'plotband',
+}, {
 	/*= if (build.classic) { =*/
 	/**
 	 * One-to-one mapping from options to SVG attributes

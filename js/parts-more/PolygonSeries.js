@@ -4,17 +4,15 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		extendClass = H.extendClass,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		merge = H.merge,
+	var LegendSymbolMixin = H.LegendSymbolMixin,
 		noop = H.noop,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 /**
- * Set the default options for polygon
+ * The polygon series prototype
  */
-defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
+seriesType('polygon', 'scatter', {
 	marker: {
 		enabled: false,
 		states: {
@@ -29,12 +27,9 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 		pointFormat: ''
 	},
 	trackByArea: true
-});
 
-/**
- * The polygon series class
- */
-seriesTypes.polygon = extendClass(seriesTypes.scatter, {
+// Prototype members
+}, {
 	type: 'polygon',
 	getGraphPath: function () {
 

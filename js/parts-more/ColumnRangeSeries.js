@@ -6,6 +6,7 @@ import '../parts/Utilities.js';
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 	var colProto = seriesTypes.column.prototype;
@@ -13,16 +14,12 @@ import '../parts/Utilities.js';
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
-	});
 
-	/**
-	 * ColumnRangeSeries object
-	 */
-	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
-		type: 'columnrange',
+	// Prototype members
+	}), {
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
 		 */

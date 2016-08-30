@@ -1341,7 +1341,7 @@ H.animate = function (el, params, opt) {
  *
  * @param {string} type The series type name.
  * @param {string} parent The parent series type name.
- * @param {object} options The additional default options in addition to the parent's options.
+ * @param {object} options The additional default options that is merged with the parent's options.
  * @param {object} props The properties (functions and primitives) to set on the new prototype.
  * @param {object} pointProps Members for a series-specific Point prototype if needed.
  */

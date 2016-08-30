@@ -14,7 +14,6 @@ import '../parts/Legend.js';
 import '../parts/Chart.js';
 import '../parts/Stacking.js';
 import '../parts/Dynamics.js';
-import '../parts/LineSeries.js';
 import '../parts/AreaSeries.js';
 import '../parts/SplineSeries.js';
 import '../parts/AreaSplineSeries.js';

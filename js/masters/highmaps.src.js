@@ -18,7 +18,6 @@ import '../parts/Chart.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Dynamics.js';
-import '../parts/LineSeries.js';
 import '../parts/ColumnSeries.js';
 import '../parts/ScatterSeries.js';
 import '../parts/DataLabels.js';

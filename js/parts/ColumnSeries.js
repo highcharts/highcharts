@@ -6,23 +6,21 @@ import './Series.js';
 import './Options.js';
 	var animObject = H.animObject,
 		color = H.color,
-		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extend = H.extend,
-		extendClass = H.extendClass,
 		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes,
+		seriesType = H.seriesType,
 		stop = H.stop,
 		svg = H.svg;
 /**
- * Set the default options for column
+ * The column series type
  */
-defaultPlotOptions.column = merge(defaultPlotOptions.line, {
+seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -35,8 +33,19 @@ defaultPlotOptions.column = merge(defaultPlotOptions.line, {
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
-			halo: false
+			halo: false,
+			/*= if (build.classic) { =*/
+			brightness: 0.1,
+			shadow: false
+			/*= } =*/
+		},
+		/*= if (build.classic) =*/
+		select: {
+			color: '${palette.pointSelectFill}',
+			borderColor: '${palette.pointSelectStroke}',
+			shadow: false
 		}
+		/*= } =*/
 	},
 	dataLabels: {
 		align: null, // auto
@@ -49,33 +58,14 @@ defaultPlotOptions.column = merge(defaultPlotOptions.line, {
 	tooltip: {
 		distance: 6
 	},
-	threshold: 0
-});
+	threshold: 0,
+	/*= if (build.classic) { =*/
+	borderColor: '${palette.pointStroke}'
+	// borderWidth: 1
+	/*= } =*/
 
-/*= if (build.classic) { =*/
-// Presentational options
-merge(true, defaultPlotOptions.column, {
-	borderColor: '${palette.pointStroke}',
-	// borderWidth: 1,
-	states: {
-		hover: {
-			brightness: 0.1,
-			shadow: false
-		},
-		select: {
-			color: '${palette.pointSelectFill}',
-			borderColor: '${palette.pointSelectStroke}',
-			shadow: false
-		}
-	}
-});
-/*= } =*/
-
-/**
- * ColumnSeries object
- */
-seriesTypes.column = extendClass(Series, {
-	type: 'column',
+// Prototype members
+}, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],

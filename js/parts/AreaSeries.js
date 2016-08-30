@@ -4,34 +4,24 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultPlotOptions.line,
-		extendClass = H.extendClass,
-		color = H.color,
+	var color = H.color,
 		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		map = H.map,
-		merge = H.merge,
 		pick = H.pick,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+		seriesType = H.seriesType;
 /**
- * Set the default options for area
+ * Area series type
  */
-defaultPlotOptions.area = merge(defaultPlotOptions.line, {
+seriesType('area', 'line', {
 	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: 0.75,
 	// fillColor: null
-});
-
-/**
- * Area series object
- */
-seriesTypes.area = extendClass(Series, {
-	type: 'area',
+}, {
 	singleStacks: false,
 	/** 
 	 * Return an array of stacked points, where null and missing points are replaced by 

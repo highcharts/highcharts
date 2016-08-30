@@ -2,16 +2,14 @@ import H from './Globals.js';
 import './Utilities.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
-		extendClass = H.extendClass,
 		merge = H.merge,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Candlestick series code											  *
  *****************************************************************************/
-
-// 1 - set default options
-defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
+seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	states: {
 		hover: {
 			lineWidth: 2
@@ -25,12 +23,9 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	upColor: 'white'
 	// upLineColor: null
 	/*= } =*/
-});
 
-// 2 - Create the CandlestickSeries object
-seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
-	type: 'candlestick',
-
+// Prototype members
+}), {
 	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes

@@ -4,13 +4,12 @@ import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
 	var addEvent = H.addEvent,
-		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
-		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
 		Renderer = H.Renderer,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes,
 		SVGRenderer = H.SVGRenderer,
 		TrackerMixin = H.TrackerMixin,
@@ -19,9 +18,7 @@ import './VmlRenderer.js';
 /* ****************************************************************************
  * Start Flags series code													*
  *****************************************************************************/
-
-// 1 - set default options
-defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
+seriesType('flags', 'column', {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
@@ -47,11 +44,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 		fontWeight: 'bold'
 	}
 	/*= } =*/
-});
 
-// 2 - Create the CandlestickSeries object
-seriesTypes.flags = extendClass(seriesTypes.column, {
-	type: 'flags',
+// Prototype members
+}, {
 	sorted: false,
 	noSharedTooltip: true,
 	allowDG: false,
