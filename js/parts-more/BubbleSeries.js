@@ -26,13 +26,6 @@ import '../parts/ScatterSeries.js';
  * Start Bubble series code											          *
  *****************************************************************************/
 
-var BubblePoint = extendClass(Point, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	},
-	ttBelow: false
-});
-
 seriesType('bubble', 'scatter', {
 	dataLabels: {
 		formatter: function () { // #2945
@@ -70,7 +63,6 @@ seriesType('bubble', 'scatter', {
 
 // Prototype members
 }, {
-	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -236,6 +228,13 @@ seriesType('bubble', 'scatter', {
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
 	applyZones: noop
+
+// Point class
+}, {
+	haloPath: function () {
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	},
+	ttBelow: false
 });
 
 /**

@@ -36,106 +36,6 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
-	/**
-	 * Extend the Point object to split paths
-	 */
-	applyOptions: function (options, x) {
-
-		var point = Point.prototype.applyOptions.call(this, options, x),
-			series = this.series,
-			joinBy = series.joinBy,
-			mapPoint;
-
-		if (series.mapData) {
-			mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
-			if (mapPoint) {
-				// This applies only to bubbles
-				if (series.xyFromShape) {
-					point.x = mapPoint._midX;
-					point.y = mapPoint._midY;
-				}
-				extend(point, mapPoint); // copy over properties
-			} else {
-				point.value = point.value || null;
-			}
-		}
-
-		return point;
-	},
-
-	/**
-	 * Stop the fade-out
-	 */
-	onMouseOver: function (e) {
-		clearTimeout(this.colorInterval);
-		if (this.value !== null) {
-			Point.prototype.onMouseOver.call(this, e);
-		} else { //#3401 Tooltip doesn't hide when hovering over null points
-			this.series.onMouseOut(e);
-		}
-	},
-	/*= if (build.classic) { =*/
-	// Todo: check unstyled
-	/**
-	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
-	 * over islands and coast lines. We run a custom implementation of animation becuase we
-	 * need to be able to run this independently from other animations like zoom redraw. Also,
-	 * adding color animation to the adapters would introduce almost the same amount of code.
-	 */
-	onMouseOut: function () {
-		var point = this,
-			start = +new Date(),
-			normalColor = color(this.series.pointAttribs(point).fill),
-			hoverColor = color(this.series.pointAttribs(point, 'hover').fill),
-			animation = point.series.options.states.normal.animation,
-			duration = animation && (animation.duration || 500);
-
-		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
-			clearTimeout(point.colorInterval);
-			point.colorInterval = setInterval(function () {
-				var pos = (new Date() - start) / duration,
-					graphic = point.graphic;
-				if (pos > 1) {
-					pos = 1;
-				}
-				if (graphic) {
-					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
-				}
-				if (pos >= 1) {
-					clearTimeout(point.colorInterval);
-				}
-			}, 13);
-		}
-		point.isFading = true;
-		Point.prototype.onMouseOut.call(point);
-		point.isFading = null;
-	},
-	/*= } =*/
-
-	/**
-	 * Zoom the chart to view a specific area point
-	 */
-	zoomTo: function () {
-		var point = this,
-			series = point.series;
-
-		series.xAxis.setExtremes(
-			point._minX,
-			point._maxX,
-			false
-		);
-		series.yAxis.setExtremes(
-			point._minY,
-			point._maxY,
-			false
-		);
-		series.chart.redraw();
-	}
-}, colorPointMixin)
-);
-
-
 /**
  * Add the map series type
  */
@@ -180,7 +80,6 @@ seriesType('map', 'scatter', {
 // Prototype members
 }, merge(colorSeriesMixin, {
 	type: 'map',
-	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
@@ -780,4 +679,102 @@ seriesType('map', 'scatter', {
 	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
-}));
+
+// Point class
+}), extend({
+	/**
+	 * Extend the Point object to split paths
+	 */
+	applyOptions: function (options, x) {
+
+		var point = Point.prototype.applyOptions.call(this, options, x),
+			series = this.series,
+			joinBy = series.joinBy,
+			mapPoint;
+
+		if (series.mapData) {
+			mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
+			if (mapPoint) {
+				// This applies only to bubbles
+				if (series.xyFromShape) {
+					point.x = mapPoint._midX;
+					point.y = mapPoint._midY;
+				}
+				extend(point, mapPoint); // copy over properties
+			} else {
+				point.value = point.value || null;
+			}
+		}
+
+		return point;
+	},
+
+	/**
+	 * Stop the fade-out
+	 */
+	onMouseOver: function (e) {
+		clearTimeout(this.colorInterval);
+		if (this.value !== null) {
+			Point.prototype.onMouseOver.call(this, e);
+		} else { //#3401 Tooltip doesn't hide when hovering over null points
+			this.series.onMouseOut(e);
+		}
+	},
+	/*= if (build.classic) { =*/
+	// Todo: check unstyled
+	/**
+	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
+	 * over islands and coast lines. We run a custom implementation of animation becuase we
+	 * need to be able to run this independently from other animations like zoom redraw. Also,
+	 * adding color animation to the adapters would introduce almost the same amount of code.
+	 */
+	onMouseOut: function () {
+		var point = this,
+			start = +new Date(),
+			normalColor = color(this.series.pointAttribs(point).fill),
+			hoverColor = color(this.series.pointAttribs(point, 'hover').fill),
+			animation = point.series.options.states.normal.animation,
+			duration = animation && (animation.duration || 500);
+
+		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
+			clearTimeout(point.colorInterval);
+			point.colorInterval = setInterval(function () {
+				var pos = (new Date() - start) / duration,
+					graphic = point.graphic;
+				if (pos > 1) {
+					pos = 1;
+				}
+				if (graphic) {
+					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
+				}
+				if (pos >= 1) {
+					clearTimeout(point.colorInterval);
+				}
+			}, 13);
+		}
+		point.isFading = true;
+		Point.prototype.onMouseOut.call(point);
+		point.isFading = null;
+	},
+	/*= } =*/
+
+	/**
+	 * Zoom the chart to view a specific area point
+	 */
+	zoomTo: function () {
+		var point = this,
+			series = point.series;
+
+		series.xAxis.setExtremes(
+			point._minX,
+			point._maxX,
+			false
+		);
+		series.yAxis.setExtremes(
+			point._minY,
+			point._maxY,
+			false
+		);
+		series.chart.redraw();
+	}
+}, colorPointMixin));

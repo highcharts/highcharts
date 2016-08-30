@@ -1340,11 +1340,12 @@ H.animate = function (el, params, opt) {
  * The series type factory.
  *
  * @param {string} type The series type name.
- * @param {object} parent The parent series type object.
+ * @param {string} parent The parent series type name.
  * @param {object} options The additional default options in addition to the parent's options.
- * @param {object} props The properties (functions and primitives) to set on the new prototype. 
+ * @param {object} props The properties (functions and primitives) to set on the new prototype.
+ * @param {object} pointProps Members for a series-specific Point prototype if needed.
  */
-H.seriesType = function (type, parent, options, props) { // docs: add to API + extending Highcharts
+H.seriesType = function (type, parent, options, props, pointProps) { // docs: add to API + extending Highcharts
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
     
@@ -1357,6 +1358,11 @@ H.seriesType = function (type, parent, options, props) { // docs: add to API + e
     // Create the class
     seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
     seriesTypes[type].prototype.type = type;
+
+    // Create the point class if needed
+    if (pointProps) {
+		seriesTypes[type].prototype.pointClass = H.extendClass(H.Point, pointProps);
+    }
 
     return seriesTypes[type];
 };

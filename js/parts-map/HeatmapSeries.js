@@ -8,12 +8,10 @@ import './ColorSeriesMixin.js';
 	var colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
 		each = H.each,
-		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
-		Point = H.Point,
 		Series = H.Series,
 		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
@@ -52,7 +50,6 @@ seriesType('heatmap', 'scatter', {
 }, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
@@ -123,4 +120,4 @@ seriesType('heatmap', 'scatter', {
 		Series.prototype.getExtremes.call(this);
 	}
 
-}));
+}), colorPointMixin);

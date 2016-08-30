@@ -3,8 +3,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 	var extend = H.extend,
-		extendClass = H.extendClass,
-		MapAreaPoint = H.MapAreaPoint,
 		Point = H.Point,
 		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
@@ -17,20 +15,9 @@ if (seriesTypes.bubble) {
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
 		}
+
+	// Prototype members
 	}, {
-		pointClass: extendClass(Point, {
-			applyOptions: function (options, x) {
-				var point;
-				if (options && options.lat !== undefined && options.lon !== undefined) {
-					point = Point.prototype.applyOptions.call(this, options, x);
-					point = extend(point, this.series.chart.fromLatLonToPoint(point));
-				} else {
-					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
-				}
-				return point;
-			},
-			ttBelow: false
-		}),
 		xyFromShape: true,
 		type: 'mapbubble',
 		pointArrayMap: ['z'], // If one single value is passed, it is interpreted as z
@@ -40,5 +27,19 @@ if (seriesTypes.bubble) {
 		getMapData: seriesTypes.map.prototype.getMapData,
 		getBox: seriesTypes.map.prototype.getBox,
 		setData: seriesTypes.map.prototype.setData
+
+	// Point class
+	}, {
+		applyOptions: function (options, x) {
+			var point;
+			if (options && options.lat !== undefined && options.lon !== undefined) {
+				point = Point.prototype.applyOptions.call(this, options, x);
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			} else {
+				point = seriesTypes.map.prototype.pointClass.prototype.applyOptions.call(this, options, x);
+			}
+			return point;
+		},
+		ttBelow: false
 	});
 }

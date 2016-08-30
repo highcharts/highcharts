@@ -22,16 +22,19 @@ seriesType('mappoint', 'scatter', {
 			color: '${palette.textHeavyColor}'
 		}
 	}
+
+// Prototype members
 }, {
 	type: 'mappoint',
-	forceDL: true,
-	pointClass: extendClass(Point, {
-		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
-			if (options.lat !== undefined && options.lon !== undefined) {
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
-			}
-			return point;
+	forceDL: true
+
+// Point class
+}, {
+	applyOptions: function (options, x) {
+		var point = Point.prototype.applyOptions.call(this, options, x);
+		if (options.lat !== undefined && options.lon !== undefined) {
+			point = extend(point, this.series.chart.fromLatLonToPoint(point));
 		}
-	})
+		return point;
+	}
 });
