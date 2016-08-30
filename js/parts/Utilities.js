@@ -1344,8 +1344,7 @@ H.animate = function (el, params, opt) {
  * @param {object} options The additional default options in addition to the parent's options.
  * @param {object} props The properties (functions and primitives) to set on the new prototype. 
  */
-H.seriesType = function (type, parent, options, props) {
-
+H.seriesType = function (type, parent, options, props) { // docs: add to API + extending Highcharts
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
     

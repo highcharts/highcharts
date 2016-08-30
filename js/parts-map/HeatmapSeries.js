@@ -7,7 +7,6 @@ import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
 	var colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
-		defaultOptions = H.defaultOptions,
 		each = H.each,
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
@@ -16,11 +15,11 @@ import './ColorSeriesMixin.js';
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
-/**
- * Extend the default options with map options
- */
-defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+
+// The Heatmap series type
+seriesType('heatmap', 'scatter', {
 	animation: false,
 	borderWidth: 0,
 	/*= if (build.classic) { =*/
@@ -50,11 +49,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			brightness: 0.2
 		}
 	}
-});
-
-// The Heatmap series type
-seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
-	type: 'heatmap',
+}, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
 	pointClass: extendClass(Point, colorPointMixin),

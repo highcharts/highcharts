@@ -11,20 +11,11 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
-	'use strict';
-
-	var defaultPlotOptions = H.defaultPlotOptions,
-		pInt = H.pInt,
+	var pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
 		isNumber = H.isNumber,
 		colorAxisMethods;
-
-	// The default options
-	defaultPlotOptions.solidgauge = H.merge(defaultPlotOptions.gauge, {
-		colorByPoint: true
-	});
-
 
 	// These methods are defined in the ColorAxis object, and copied here.
 	// If we implement an AMD system we should make ColorAxis a dependency.
@@ -53,7 +44,7 @@ import '../parts-more/GaugeSeries.js';
 							colorCounter = 0;
 						}
 					} else {
-						dataClass.color = axis.tweenColors(H.Color(options.minColor), H.Color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+						dataClass.color = axis.tweenColors(H.color(options.minColor), H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
 					}
 				}
 			});
@@ -65,7 +56,7 @@ import '../parts-more/GaugeSeries.js';
 				[1, this.options.maxColor]
 			];
 			each(this.stops, function (stop) {
-				stop.color = H.Color(stop[1]);
+				stop.color = H.color(stop[1]);
 			});
 		},
 		/** 
@@ -156,13 +147,15 @@ import '../parts-more/GaugeSeries.js';
 	 */
 	each(['fill', 'stroke'], function (prop) {
 		H.Fx.prototype[prop + 'Setter'] = function () {
-			this.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+			this.elem.attr(prop, colorAxisMethods.tweenColors(H.color(this.start), H.color(this.end), this.pos));
 		};
 	});
 
-	// The series prototype
-	H.seriesTypes.solidgauge = H.extendClass(H.seriesTypes.gauge, {
-		type: 'solidgauge',
+	// The solidgauge series type
+	H.seriesType('solidgauge', 'gauge', {
+		colorByPoint: true
+	
+	}, {
 		bindAxes: function () {
 			var axis;
 			H.seriesTypes.gauge.prototype.bindAxes.call(this);

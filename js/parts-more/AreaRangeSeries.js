@@ -2,23 +2,16 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var each = H.each,
 		noop = H.noop,
 		pick = H.pick,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 /* 
- * The AreaRangeSeries class
- *
+ * The arearangeseries series type
  */
-
-/**
- * Extend the default options with map options
- */
-defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+seriesType('arearange', 'area', {
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	/*= } =*/
@@ -45,13 +38,9 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 			halo: false
 		}
 	}
-});
 
-/**
- * Add the series type
- */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
-	type: 'arearange',
+// Prototype members
+}, {
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {

@@ -2,24 +2,22 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		extend = H.extend,
+	var extend = H.extend,
 		extendClass = H.extendClass,
 		MapAreaPoint = H.MapAreaPoint,
-		merge = H.merge,
 		Point = H.Point,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
+	seriesType('mapbubble', 'bubble', {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
 		}
-	});
-	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+	}, {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;

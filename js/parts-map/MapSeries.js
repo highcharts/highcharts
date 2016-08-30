@@ -11,7 +11,6 @@ import './ColorAxis.js';
 		ColorAxis = H.ColorAxis,
 		colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
-		defaultPlotOptions = H.defaultPlotOptions,
 		doc = H.doc,
 		each = H.each,
 		extend = H.extend,
@@ -25,6 +24,7 @@ import './ColorAxis.js';
 		isArray = H.isArray,
 		Point = H.Point,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes,
 		splat = H.splat;
 
@@ -32,47 +32,6 @@ import './ColorAxis.js';
 // diffent logic (#3218)
 var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
-/**
- * Extend the default options with map options
- */
-defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
-	allAreas: true,
-
-	animation: false, // makes the complex shapes slow
-	nullColor: '${palette.nullPointColor}',
-	borderColor: '${palette.mapStroke}',
-	borderWidth: 1,
-	marker: null,
-	stickyTracking: false,
-	joinBy: 'hc-key',
-	dataLabels: {
-		formatter: function () { // #2945
-			return this.point.value;
-		},
-		inside: true, // for the color
-		verticalAlign: 'middle',
-		crop: false,
-		overflow: false,
-		padding: 0
-	},
-	turboThreshold: 0,
-	tooltip: {
-		followPointer: true,
-		pointFormat: '{point.name}: {point.value}<br/>'
-	},
-	states: {
-		normal: {
-			animation: true
-		},
-		hover: {
-			brightness: 0.2,
-			halo: null
-		},
-		select: {
-			color: '${palette.pointSelectFill}'
-		}
-	}
-});
 
 /**
  * The MapAreaPoint object
@@ -176,10 +135,50 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 }, colorPointMixin)
 );
 
+
 /**
- * Add the series type
+ * Add the map series type
  */
-seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+seriesType('map', 'scatter', {
+	allAreas: true,
+
+	animation: false, // makes the complex shapes slow
+	nullColor: '${palette.nullPointColor}',
+	borderColor: '${palette.mapStroke}',
+	borderWidth: 1,
+	marker: null,
+	stickyTracking: false,
+	joinBy: 'hc-key',
+	dataLabels: {
+		formatter: function () { // #2945
+			return this.point.value;
+		},
+		inside: true, // for the color
+		verticalAlign: 'middle',
+		crop: false,
+		overflow: false,
+		padding: 0
+	},
+	turboThreshold: 0,
+	tooltip: {
+		followPointer: true,
+		pointFormat: '{point.name}: {point.value}<br/>'
+	},
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			brightness: 0.2,
+			halo: null
+		},
+		select: {
+			color: '${palette.pointSelectFill}'
+		}
+	}
+
+// Prototype members
+}, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
