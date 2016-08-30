@@ -7,7 +7,6 @@ import './Options.js';
 	var animObject = H.animObject,
 		color = H.color,
 		defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
@@ -23,7 +22,7 @@ import './Options.js';
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
+defaultPlotOptions.column = merge(defaultPlotOptions.line, {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,

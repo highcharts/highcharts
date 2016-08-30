@@ -11,7 +11,7 @@ import './Series.js';
 		addEvent = H.addEvent,
 		CenteredSeriesMixin = H.CenteredSeriesMixin,
 		defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
+		defaultSeriesOptions = H.defaultPlotOptions.line,
 		defined = H.defined,
 		each = H.each,
 		extend = H.extend,
@@ -28,7 +28,7 @@ import './Series.js';
 /**
  * Set the default options for pie
  */
-defaultPlotOptions.pie = merge(defaultSeriesOptions, {
+defaultPlotOptions.pie = merge(defaultPlotOptions.line, {
 	center: [null, null],
 	clip: false,
 	colorByPoint: true, // always true for pies

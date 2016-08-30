@@ -1337,6 +1337,32 @@ H.animate = function (el, params, opt) {
 };
 
 /**
+ * The series type factory.
+ *
+ * @param {string} type The series type name.
+ * @param {object} parent The parent series type object.
+ * @param {object} options The additional default options in addition to the parent's options.
+ * @param {object} props The properties (functions and primitives) to set on the new prototype. 
+ */
+H.seriesType = function (type, parent, options, props) {
+
+	var defaultOptions = H.getOptions(),
+		seriesTypes = H.seriesTypes;
+    
+    // Merge the options
+    defaultOptions.plotOptions[type] = H.merge(
+        defaultOptions.plotOptions[parent], 
+        options
+    );
+    
+    // Create the class
+    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
+    seriesTypes[type].prototype.type = type;
+
+    return seriesTypes[type];
+};
+
+/**
  * Register Highcharts as a plugin in jQuery
  */
 if (win.jQuery) {

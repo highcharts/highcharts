@@ -5,7 +5,7 @@ import './Legend.js';
 import './Series.js';
 import './Options.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
+		defaultSeriesOptions = H.defaultPlotOptions.line,
 		extendClass = H.extendClass,
 		color = H.color,
 		each = H.each,
@@ -18,7 +18,7 @@ import './Options.js';
 /**
  * Set the default options for area
  */
-defaultPlotOptions.area = merge(defaultSeriesOptions, {
+defaultPlotOptions.area = merge(defaultPlotOptions.line, {
 	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,

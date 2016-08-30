@@ -152,122 +152,7 @@ H.defaultOptions = {
 		widthAdjust: -44
 	},
 
-	plotOptions: {
-		line: { // base series options
-			/*= if (build.classic) { =*/
-			//cursor: 'default',
-			//dashStyle: null,
-			//linecap: 'round',
-			lineWidth: 2,
-			//shadow: false,
-			/*= } =*/
-			allowPointSelect: false,
-			showCheckbox: false,
-			animation: {
-				duration: 1000
-			},
-			//clip: true,
-			//connectNulls: false,
-			//enableMouseTracking: true,
-			events: {},
-			//legendIndex: 0,
-			// stacking: null,
-			marker: {
-				/*= if (build.classic) { =*/
-				lineWidth: 0,
-				lineColor: '${palette.pointStroke}',
-				//fillColor: null,
-				/*= } =*/				
-				//enabled: true,
-				//symbol: null,
-				radius: 4,
-				states: { // states for a single point
-					hover: {
-						enabled: true,
-						radiusPlus: 2,
-						/*= if (build.classic) { =*/
-						lineWidthPlus: 1
-						/*= } =*/
-					},
-					/*= if (build.classic) { =*/
-					select: {
-						fillColor: '${palette.pointSelectFill}',
-						lineColor: '${palette.pointSelectStroke}',
-						lineWidth: 2
-					}
-					/*= } =*/
-				}
-			},
-			point: {
-				events: {}
-			},
-			dataLabels: {
-				align: 'center',
-				// defer: true,
-				// enabled: false,
-				formatter: function () {
-					return this.y === null ? '' : H.numberFormat(this.y, -1);
-				},
-				/*= if (!build.classic) { =*/
-				/*style: {
-					color: 'contrast',
-					textShadow: '0 0 6px contrast, 0 0 3px contrast'
-				},*/
-				/*= } else { =*/
-				style: {
-					fontSize: '11px',
-					fontWeight: 'bold',
-					color: 'contrast',
-					textShadow: '0 0 6px contrast, 0 0 3px contrast'
-				},
-				// backgroundColor: undefined,
-				// borderColor: undefined,
-				// borderWidth: undefined,
-				// shadow: false
-				/*= } =*/
-				verticalAlign: 'bottom', // above singular point
-				x: 0,
-				y: 0,
-				// borderRadius: undefined,
-				padding: 5
-			},
-			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
-			pointRange: 0,
-			//pointStart: 0,
-			//pointInterval: 1,
-			//showInLegend: null, // auto: true for standalone series, false for linked series
-			softThreshold: true,
-			states: { // states for the entire series
-				hover: {
-					//enabled: false,
-					lineWidthPlus: 1,
-					marker: {
-						// lineWidth: base + 1,
-						// radius: base + 1
-					},
-					halo: {
-						size: 10,
-						/*= if (build.classic) { =*/
-						opacity: 0.25
-						/*= } =*/
-					}
-				},
-				select: {
-					marker: {}
-				}
-			},
-			stickyTracking: true,
-			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
-				//valueDecimals: null,
-				//xDateFormat: '%A, %b %e, %Y',
-				//valuePrefix: '',
-				//ySuffix: ''
-			//}
-			turboThreshold: 1000
-			// zIndex: null
-		}
-	},
+	plotOptions: {},
 	labels: {
 		//items: [],
 		style: {
@@ -493,7 +378,6 @@ H.getOptions = function () {
 
 // Series defaults
 H.defaultPlotOptions = H.defaultOptions.plotOptions;
-H.defaultSeriesOptions = H.defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();

@@ -3,7 +3,7 @@ import './Utilities.js';
 import './Options.js';
 import './Series.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
+		defaultSeriesOptions = H.defaultPlotOptions.line,
 		extendClass = H.extendClass,
 		merge = H.merge,
 		Series = H.Series,
@@ -11,7 +11,7 @@ import './Series.js';
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
+defaultPlotOptions.scatter = merge(defaultPlotOptions.line, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)

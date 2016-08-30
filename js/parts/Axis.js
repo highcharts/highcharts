@@ -174,7 +174,14 @@ H.Axis.prototype = {
 			formatter: function () {
 				return H.numberFormat(this.total, -1);
 			},
-			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '${palette.textHeavyColor}' })
+			/*= if (build.classic) { =*/
+			style: {
+				fontSize: '11px',
+				fontWeight: 'bold',
+				color: '${palette.textHeavyColor}',
+				textShadow: '0 0 6px contrast, 0 0 3px contrast'
+			}
+			/*= } =*/
 		},
 		/*= if (build.classic) { =*/
 		gridLineWidth: 1,		
