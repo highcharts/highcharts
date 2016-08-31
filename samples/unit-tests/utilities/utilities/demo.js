@@ -8,7 +8,7 @@ $(function () {
         pInt = Highcharts.pInt,
         setOptions = Highcharts.setOptions,
         splat = Highcharts.splat,
-        stableSort = Highcharts.stabeSort;
+        stableSort = Highcharts.stableSort;
 
     /**
      * Wrapper because of fast migration from earlier system
