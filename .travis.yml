@@ -1,0 +1,10 @@
+sudo: false
+language: java
+jdk: oraclejdk8
+script:
+ - npm install
+ - npm install -g gulp-cli
+ - npm install gulp
+ - ant build dist
+ - ant server&
+ - ant test-all it

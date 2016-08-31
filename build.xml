@@ -429,8 +429,8 @@
 
     <!-- Runs jslint on generated source code. -->
     <target name="lint">
-        <exec osfamily="mac" dir="${basedir}" executable="gulp" outputproperty="output">
-            <arg line="lint" />
+        <exec osfamily="unix" dir="${basedir}" executable="gulp" outputproperty="output">
+            <arg value="lint" />
         </exec>
         <exec osfamily="windows" dir="${basedir}" executable="cmd" outputproperty="output">
             <arg value="/c gulp lint"/>
@@ -474,6 +474,16 @@
             </or>
         </condition>
         -->
+    </target>
+
+    <target name="gulp-common">
+        <exec osfamily="unix" dir="${basedir}" executable="gulp" outputproperty="output">
+            <arg value="common" />
+        </exec>
+        <exec osfamily="windows" dir="${basedir}" executable="cmd" outputproperty="output">
+            <arg value="/c gulp common"/>
+        </exec>
+        <echo message="${output}" />
     </target>
 
     <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
@@ -658,7 +668,7 @@
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
-    <target name="build" depends="clean, lint, minify" description="Builds the source and runs jsLint and minify."></target>
+    <target name="build" depends="clean, gulp-common, lint, minify" description="Builds the source and runs jsLint and minify."></target>
     <scriptdef name="listfiles" language="javascript">
         <![CDATA[
         var dir = project.getProperty("samples.dir");
