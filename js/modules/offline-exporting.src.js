@@ -21,10 +21,11 @@
 		doc = win.document,
 		domurl = win.URL || win.webkitURL || win,
 		isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-		loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
+		loadEventDeferDelay = isMSBrowser ? 150 : 0, // Milliseconds to defer image load event handlers to offset IE bug
+    CanVGRenderer = {};
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
-	Highcharts.CanVGRenderer = {};
+	Highcharts.CanVGRenderer = CanVGRenderer;
 
 
 	/**
@@ -219,7 +220,7 @@
 
 				canvas.width = imageWidth;
 				canvas.height = imageHeight;
-				if (win.canvg) {
+				if (typeof CanVGRenderer.prototype.draw === 'function') {
 					// Use preloaded canvg
 					downloadWithCanVG();
 				} else {
