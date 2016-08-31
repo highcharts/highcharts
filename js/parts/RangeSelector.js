@@ -339,8 +339,6 @@ RangeSelector.prototype = {
 				// Disable the All button if we're already showing all
 				isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin &&
 					buttons[i].state !== 2,
-				// Disable the YTD button if the complete range is within the same year
-				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
 				// Set a button on export
 				isSelectedForExport = chart.renderer.forExport && i === selected,
 
@@ -360,7 +358,7 @@ RangeSelector.prototype = {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 
-			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable || hasNoData)) {
+			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || hasNoData)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {

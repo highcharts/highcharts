@@ -221,13 +221,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			groupedY = approximationFn.apply(0, values);
+			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
 			if (groupedY !== undefined) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
-				groupMap.push({ start: start, length: values[0].length });
+				groupMap.push(series.dataGroupInfo);
 			}
 
 			// reset the aggregate arrays
@@ -300,8 +301,8 @@ seriesProto.processData = function () {
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order)
-	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
+	// skip if processData returns false or if grouping is disabled (in that order) or #5493
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
 	if (!skip) {
 		series.destroyGroupedData();
 

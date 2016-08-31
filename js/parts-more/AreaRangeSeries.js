@@ -98,12 +98,11 @@ seriesType('arearange', 'area', {
 	 * Extend the line series' getSegmentPath method by applying the segment
 	 * path to both lower and higher values of the range
 	 */
-	getGraphPath: function () {
+	getGraphPath: function (points) {
 		
-		var points = this.points,
-			highPoints = [],
+		var highPoints = [],
 			highAreaPoints = [],
-			i = points.length,
+			i,
 			getGraphPath = seriesTypes.area.prototype.getGraphPath,
 			point,
 			pointShim,
@@ -113,6 +112,9 @@ seriesType('arearange', 'area', {
 			step = options.step,
 			higherPath,
 			higherAreaPath;
+
+		points = points || this.points;
+		i = points.length;
 
 		// Create the top line and the top part of the area fill. The area fill compensates for 
 		// null points by drawing down to the lower graph, moving across the null gap and 

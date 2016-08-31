@@ -825,7 +825,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = y !== null && y !== undefined && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
@@ -888,8 +888,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.y = yValue = null;
-				error(10);
+				point.isNull = true;
 			}
 
 			// Get the plotX translation
@@ -940,7 +939,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1)) : plotX; // #1514
+			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) : plotX; // #1514, #5383, #5518
 
 			point.negative = point.y < (threshold || 0);
 
@@ -1498,15 +1497,17 @@ H.Series = H.seriesType('line', null, { // base series options
 			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
 			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
-			reversed = axis.reversed,
+			reversed,
 			inverted = chart.inverted,
-			horiz = axis.horiz,
+			horiz,
 			pxRange,
 			pxPosMin,
 			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area) && axis.min !== undefined) {
+		if (zones.length && (graph || area) && axis && axis.min !== undefined) {
+			reversed = axis.reversed;
+			horiz = axis.horiz;
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
@@ -1556,7 +1557,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 
 				/// VML SUPPPORT
-				if (chart.inverted && renderer.isVML) {
+				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
 						clipAttr = {
 							x: 0,

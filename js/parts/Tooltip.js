@@ -48,10 +48,10 @@ H.Tooltip.prototype = {
 			.attr({
 				padding: options.padding, // docs
 				r: options.borderRadius,
-				zIndex: 8
+				zIndex: 8,
+				display: 'none' // #2301, #2657, #3532, #5570
 			})
-			.add()
-			.attr({ y: -9e9 }); // #2301, #2657, #3532
+			.add();
 
 		/*= if (build.classic) { =*/
 		this.label
@@ -389,7 +389,10 @@ H.Tooltip.prototype = {
 			// show it
 			if (tooltip.isHidden) {
 				stop(label);
-				label.attr('opacity', 1).show();
+				label.attr({
+					opacity: 1,
+					display: 'block'
+				}).show();
 			}
 
 			// update text
