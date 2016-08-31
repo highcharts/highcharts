@@ -1,15 +1,15 @@
 $(function () {
-    $("#b").click(function() {
+    $("#b").click(function () {
         $('#container').highcharts().series[0].update({
             zIndex: 1
         });
     });
-    
+
     $('#container').highcharts({
         title: {
             text: 'Yellow line should be on top after click'
         },
-        
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

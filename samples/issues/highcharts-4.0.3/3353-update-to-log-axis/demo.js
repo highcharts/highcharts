@@ -8,7 +8,7 @@ $(function () {
             text: 'Y axis minimum got stuck'
         },
         xAxis: {
-            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
+            categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania']
         },
         yAxis: {
             type: 'linear'
@@ -21,7 +21,7 @@ $(function () {
             data: [10700, 31, 635, 203, 1]
         }]
     };
-    
+
     var chart = new Highcharts.Chart(chartOptions);
 
     chart.yAxis[0].update({ type: 'logarithmic' });

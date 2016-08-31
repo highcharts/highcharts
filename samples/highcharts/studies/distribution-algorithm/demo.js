@@ -1,3 +1,4 @@
+var renderer;
 $(function () {
 
     var each = Highcharts.each,
@@ -9,12 +10,20 @@ $(function () {
      * confined length in two dimensions.
      */
     function distribute(boxes, len) {
-        
-        var i, 
+
+        var i,
             overlapping = true,
             origBoxes,
             total = 0;
-        
+
+        /**
+         * Create a composite box, average of targets
+         */
+        function joinBoxes(box, i) {
+            var target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
+            box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
+        }
+
         // If the total size exceeds the len, remove those boxes with the lowest rank
         i = boxes.length;
         while (i--) {
@@ -34,7 +43,7 @@ $(function () {
             }
             boxes = boxes.slice(0, i - 1);
         }
-        
+
         // Order
         boxes.sort(function (a, b) {
             return a.target - b.target;
@@ -48,14 +57,10 @@ $(function () {
                 targets: [box.target]
             };
         });
-        
+
         while (overlapping) {
             // Initial positions: target centered in box
-            each(boxes, function (box, i) {
-                // Composite box, average of targets
-                var target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
-                box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
-            });
+            each(boxes, joinBoxes);
 
             // Detect overlap and join boxes
             i = boxes.length;
@@ -64,7 +69,7 @@ $(function () {
                 if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) { // Overlap
                     boxes[i - 1].size += boxes[i].size; // Add this size to the previous box
                     boxes[i - 1].targets = boxes[i - 1].targets.concat(boxes[i].targets);
-                    
+
                     // Overlapping right, push left
                     if (boxes[i - 1].pos + boxes[i - 1].size > len) {
                         boxes[i - 1].pos = len - boxes[i - 1].size;
@@ -123,38 +128,38 @@ $(function () {
 
 
     /// Visualize
-    var ren = new Highcharts.Renderer(
+    renderer = new Highcharts.Renderer(
         document.getElementById('container'),
         len,
         300
     );
 
-    ren.path(['M', 0, 55, 'L', len, 55])
+    renderer.path(['M', 0, 55, 'L', len, 55])
     .attr({
         stroke: 'silver',
         'stroke-width': 2
     })
     .add();
-        
+
     each(boxes, function (box, i) {
         if (box.pos !== undefined) {
-            ren.rect(box.pos + 0.5, 10.5, box.size - 1, 20)
+            renderer.rect(box.pos + 0.5, 10.5, box.size - 1, 20)
             .attr({
                 'fill': 'rgba(0, 0, 0, 0.1)',
                 'stroke-width': 1,
                 'stroke': Highcharts.getOptions().colors[i % 10]
             })
             .add();
-            
-            ren.path(['M', box.pos + box.size / 2, 30, 'L', box.target, 55, 'z'])
+
+            renderer.path(['M', box.pos + box.size / 2, 30, 'L', box.target, 55, 'z'])
             .attr({
                 'stroke-width': 1,
                 'stroke': Highcharts.getOptions().colors[i % 10]
             })
             .add();
         }
-            
-        ren.circle(box.target, 55, 2)
+
+        renderer.circle(box.target, 55, 2)
         .attr({
             fill: 'blue'
         })

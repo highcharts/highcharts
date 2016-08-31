@@ -3135,7 +3135,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-mv-all-all.js">Mecklenburg-Vorpommern</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-mv-all-all.js">Mecklenburg-Vorpommern</a>'
         },
 
         mapNavigation: {

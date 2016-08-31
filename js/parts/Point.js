@@ -51,13 +51,21 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
+		point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
-		if (point.x === UNDEFINED && series) {
-			point.x = x === UNDEFINED ? series.autoIncrement() : x;
+		if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
+			point.x = series.xAxis.nameToX(point);
 		}
-
+		if (point.x === undefined && series) {
+			if (x === undefined) {
+				point.x = series.autoIncrement(point);
+			} else {
+				point.x = x;
+			}
+		}
+		
 		return point;
 	},
 
@@ -74,7 +82,7 @@ Point.prototype = {
 			i = 0,
 			j = 0;
 
-		if (typeof options === 'number' || options === null) {
+		if (isNumber(options) || options === null) {
 			ret[pointArrayMap[0]] = options;
 
 		} else if (isArray(options)) {
@@ -183,7 +191,7 @@ Point.prototype = {
 			percentage: this.percentage,
 			total: this.total || this.stackTotal
 		};
-	},	
+	},
 
 	/**
 	 * Extendable method for formatting each point's tooltip line
@@ -215,8 +223,7 @@ Point.prototype = {
 	},
 
 	/**
-	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-	 * causes a name clash in MooTools
+	 * Fire an event on the Point object.
 	 * @param {String} eventType
 	 * @param {Object} eventArgs Additional event arguments
 	 * @param {Function} defaultFunction Default event handler

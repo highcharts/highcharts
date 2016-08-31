@@ -11,7 +11,8 @@
  * - Column range.
  * - Heatmap.
  * - Treemap.
- * - Check how it works with Highstock and data grouping.
+ * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
+ *   is false. It is also recommended to set scrollbar.liveRedraw to false.
  * - Check inverted charts.
  * - Check reversed axes.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
@@ -29,7 +30,8 @@
  *
  * Notes for boost mode
  * - Area lines are not drawn
- * - Point markers are not drawn
+ * - Point markers are not drawn on line-type series
+ * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
  *
@@ -42,35 +44,56 @@
  *   number of points drawn gets higher, and you may want to set the threshold lower in order to 
  *   use optimizations.
  */
-/*global document, Highcharts, HighchartsAdapter, setTimeout */
-(function (H, HA) {
+
+/* eslint indent: [2, 4] */
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
 
     'use strict';
 
-    var noop = function () { return undefined; },
+    var win = H.win,
+        doc = win.document,
+        noop = function () {},
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
-        addEvent = HA.addEvent,
-        fireEvent = HA.fireEvent,
+        addEvent = H.addEvent,
+        fireEvent = H.fireEvent,
+        grep = H.grep,
+        isNumber = H.isNumber,
         merge = H.merge,
         pick = H.pick,
         wrap = H.wrap,
         plotOptions = H.getOptions().plotOptions,
-        CHUNK_SIZE = 50000;
+        CHUNK_SIZE = 50000,
+        destroyLoadingDiv;
 
-    function eachAsync(arr, fn, callback, chunkSize, i) {
+    function eachAsync(arr, fn, finalFunc, chunkSize, i) {
         i = i || 0;
         chunkSize = chunkSize || CHUNK_SIZE;
-        each(arr.slice(i, i + chunkSize), fn);
-        if (i + chunkSize < arr.length) {
-            setTimeout(function () {
-                eachAsync(arr, fn, callback, chunkSize, i + chunkSize);
-            });
-        } else if (callback) {
-            callback();
+        
+        var threshold = i + chunkSize,
+            proceed = true;
+
+        while (proceed && i < threshold && i < arr.length) {
+            proceed = fn(arr[i], i);
+            i = i + 1;
+        }
+        if (proceed) {
+            if (i < arr.length) {
+                setTimeout(function () {
+                    eachAsync(arr, fn, finalFunc, chunkSize, i);
+                });
+            } else if (finalFunc) {
+                finalFunc();
+            }
         }
     }
 
@@ -141,14 +164,14 @@
 
     H.extend(Series.prototype, {
         pointRange: 0,
-
+        allowDG: false, // No data grouping, let boost handle large data 
         hasExtremes: function (checkX) {
             var options = this.options,
                 data = options.data,
                 xAxis = this.xAxis && this.xAxis.options,
                 yAxis = this.yAxis && this.yAxis.options;
-            return data.length > (options.boostThreshold || Number.MAX_VALUE) && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
-                (!checkX || (typeof xAxis.min === 'number' && typeof xAxis.max === 'number'));
+            return data.length > (options.boostThreshold || Number.MAX_VALUE) && isNumber(yAxis.min) && isNumber(yAxis.max) &&
+                (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
         },
 
         /**
@@ -161,14 +184,16 @@
                 point,
                 i;
 
-            for (i = 0; i < points.length; i = i + 1) {
-                point = points[i];
-                if (point && point.graphic) {
-                    point.graphic = point.graphic.destroy();
+            if (points) {
+                for (i = 0; i < points.length; i = i + 1) {
+                    point = points[i];
+                    if (point && point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
                 }
             }
 
-            each(['graph', 'area'], function (prop) {
+            each(['graph', 'area', 'tracker'], function (prop) {
                 if (series[prop]) {
                     series[prop] = series[prop].destroy();
                 }
@@ -180,25 +205,35 @@
          * to an SVG image element.
          */
         getContext: function () {
-            var width = this.chart.plotWidth,
-                height = this.chart.plotHeight;
+            var chart = this.chart,
+                width = chart.plotWidth,
+                height = chart.plotHeight,
+                ctx = this.ctx,
+                swapXY = function (proceed, x, y, a, b, c, d) {
+                    proceed.call(this, y, x, a, b, c, d);
+                };
 
             if (!this.canvas) {
-                this.canvas = document.createElement('canvas');
-                this.image = this.chart.renderer.image('', 0, 0, width, height).add(this.group);
-                this.ctx = this.canvas.getContext('2d');
+                this.canvas = doc.createElement('canvas');
+                this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
+                this.ctx = ctx = this.canvas.getContext('2d');
+                if (chart.inverted) {
+                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                        wrap(ctx, fn, swapXY);
+                    });
+                }
             } else {
-                this.ctx.clearRect(0, 0, width, height);
+                ctx.clearRect(0, 0, width, height);
             }
 
-            this.canvas.setAttribute('width', width);
-            this.canvas.setAttribute('height', height);
+            this.canvas.width = width;
+            this.canvas.height = height;
             this.image.attr({
                 width: width,
                 height: height
             });
 
-            return this.ctx;
+            return ctx;
         },
 
         /** 
@@ -219,7 +254,6 @@
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 ctx,
-                i,
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
@@ -242,7 +276,7 @@
                 lastPoint,
                 threshold = options.threshold,
                 yBottom = yAxis.getThreshold(threshold),
-                hasThreshold = typeof threshold === 'number',
+                hasThreshold = isNumber(threshold),
                 translatedThreshold = yBottom,
                 doFill = this.fill,
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
@@ -273,6 +307,10 @@
                 drawPoint = function (clientX, plotY, yBottom) {
                     if (c === 0) {
                         ctx.beginPath();
+
+                        if (cvsLineTo) {
+                            ctx.lineJoin = 'round';
+                        }
                     }
 
                     if (wasNull) {
@@ -308,18 +346,24 @@
                     // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
                     // tree increases exponentially.
                     if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
+                        pointTaken[clientX + ',' + plotY] = true;
+
+                        if (chart.inverted) {
+                            clientX = xAxis.len - clientX;
+                            plotY = yAxis.len - plotY;
+                        }
+
                         points.push({
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
                             i: cropStart + i
                         });
-                        pointTaken[clientX + ',' + plotY] = true;
                     }
                 };
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.points) {
+            if (this.points || this.graph) {
                 this.destroyGraphics();
             }
 
@@ -355,112 +399,106 @@
                         opacity: 1
                     }
                 });
+                clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
-                if (chart.loadingShown === true) {
-                    chart.loadingShown = 1;
-                } else {
-                    chart.loadingShown = chart.loadingShown + 1;
-                }
             }
 
             // Loop over the points
-            i = 0;
-            eachAsync(isStacked ? series.data : (xData || rawData), function (d) {
-
+            eachAsync(isStacked ? series.data : (xData || rawData), function (d, i) {
                 var x,
                     y,
                     clientX,
                     plotY,
                     isNull,
                     low,
+                    chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
 
-                if (useRaw) {
-                    x = d[0];
-                    y = d[1];
-                } else {
-                    x = d;
-                    y = yData[i];
-                }
-
-                // Resolve low and high for range series
-                if (isRange) {
+                if (!chartDestroyed) {
                     if (useRaw) {
-                        y = d.slice(1, 3);
-                    }
-                    low = y[0];
-                    y = y[1];
-                } else if (isStacked) {
-                    x = d.x;
-                    y = d.stackY;
-                    low = y - d.y;
-                }
-
-                isNull = y === null;
-
-                // Optimize for scatter zooming
-                if (!requireSorting) {
-                    isYInside = y >= yMin && y <= yMax;
-                }
-
-                if (!isNull && x >= xMin && x <= xMax && isYInside) {
-
-                    clientX = Math.round(xAxis.toPixels(x, true));
-
-                    if (sampling) {
-                        if (minI === undefined || clientX === lastClientX) {
-                            if (!isRange) {
-                                low = y;
-                            }
-                            if (maxI === undefined || y > maxVal) {
-                                maxVal = y;
-                                maxI = i;
-                            }
-                            if (minI === undefined || low < minVal) {
-                                minVal = low;
-                                minI = i;
-                            }
-
-                        }
-                        if (clientX !== lastClientX) { // Add points and reset
-                            if (minI !== undefined) { // then maxI is also a number
-                                plotY = yAxis.toPixels(maxVal, true);
-                                yBottom = yAxis.toPixels(minVal, true);
-                                drawPoint(
-                                    clientX,
-                                    hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
-                                    hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
-                                );
-                                addKDPoint(clientX, plotY, maxI);
-                                if (yBottom !== plotY) {
-                                    addKDPoint(clientX, yBottom, minI);
-                                }
-                            }
-
-
-                            minI = maxI = undefined;
-                            lastClientX = clientX;
-                        }
+                        x = d[0];
+                        y = d[1];
                     } else {
-                        plotY = Math.round(yAxis.toPixels(y, true));
-                        drawPoint(clientX, plotY, yBottom);
-                        addKDPoint(clientX, plotY, i);
+                        x = d;
+                        y = yData[i];
+                    }
+
+                    // Resolve low and high for range series
+                    if (isRange) {
+                        if (useRaw) {
+                            y = d.slice(1, 3);
+                        }
+                        low = y[0];
+                        y = y[1];
+                    } else if (isStacked) {
+                        x = d.x;
+                        y = d.stackY;
+                        low = y - d.y;
+                    }
+
+                    isNull = y === null;
+
+                    // Optimize for scatter zooming
+                    if (!requireSorting) {
+                        isYInside = y >= yMin && y <= yMax;
+                    }
+
+                    if (!isNull && x >= xMin && x <= xMax && isYInside) {
+
+                        clientX = Math.round(xAxis.toPixels(x, true));
+
+                        if (sampling) {
+                            if (minI === undefined || clientX === lastClientX) {
+                                if (!isRange) {
+                                    low = y;
+                                }
+                                if (maxI === undefined || y > maxVal) {
+                                    maxVal = y;
+                                    maxI = i;
+                                }
+                                if (minI === undefined || low < minVal) {
+                                    minVal = low;
+                                    minI = i;
+                                }
+
+                            }
+                            if (clientX !== lastClientX) { // Add points and reset
+                                if (minI !== undefined) { // then maxI is also a number
+                                    plotY = yAxis.toPixels(maxVal, true);
+                                    yBottom = yAxis.toPixels(minVal, true);
+                                    drawPoint(
+                                        clientX,
+                                        hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
+                                        hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
+                                    );
+                                    addKDPoint(clientX, plotY, maxI);
+                                    if (yBottom !== plotY) {
+                                        addKDPoint(clientX, yBottom, minI);
+                                    }
+                                }
+
+
+                                minI = maxI = undefined;
+                                lastClientX = clientX;
+                            }
+                        } else {
+                            plotY = Math.round(yAxis.toPixels(y, true));
+                            drawPoint(clientX, plotY, yBottom);
+                            addKDPoint(clientX, plotY, i);
+                        }
+                    }
+                    wasNull = isNull && !connectNulls;
+
+                    if (i % CHUNK_SIZE === 0) {
+                        series.canvasToSVG();
                     }
                 }
-                wasNull = isNull && !connectNulls;
 
-                i = i + 1;
-
-                if (i % CHUNK_SIZE === 0) {
-                    series.canvasToSVG();
-                }
-
+                return !chartDestroyed;
             }, function () {
-
                 var loadingDiv = chart.loadingDiv,
-                    loadingShown = +chart.loadingShown;
-
+                    loadingShown = chart.loadingShown;
                 stroke();
                 series.canvasToSVG();
 
@@ -469,26 +507,22 @@
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
                 // change hideLoading so we can skip this block.
-                if (loadingShown === 1) {
+                if (loadingShown) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
                         opacity: 0
                     });
-
                     chart.loadingShown = false;
-                    setTimeout(function () {
+                    destroyLoadingDiv = setTimeout(function () {
                         if (loadingDiv.parentNode) { // In exporting it is falsy
                             loadingDiv.parentNode.removeChild(loadingDiv);
                         }
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
                 }
-                if (loadingShown) {
-                    chart.loadingShown = loadingShown - 1;
-                }
 
                 // Pass tests in Pointer. 
-                // TODO: Replace this with a single property, and replace when zooming in
+                // Replace this with a single property, and replace when zooming in
                 // below boostThreshold.
                 series.directTouch = false;
                 series.options.stickyTracking = true;
@@ -508,7 +542,6 @@
 
     // Rect is twice as fast as arc, should be used for small markers
     seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
-        ctx.moveTo(clientX, plotY);
         ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
     };
     seriesTypes.scatter.prototype.fill = true;
@@ -536,19 +569,53 @@
     });
 
     /**
+     * Return a full Point object based on the index. The boost module uses stripped point objects
+     * for performance reasons.
+     * @param   {Number} boostPoint A stripped-down point object
+     * @returns {Object}   A Point object as per http://api.highcharts.com/highcharts#Point
+     */
+    Series.prototype.getPoint = function (boostPoint) {
+        var point = boostPoint;
+
+        if (boostPoint && !(boostPoint instanceof this.pointClass)) {
+            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+            point.category = point.x;
+
+            point.dist = boostPoint.dist;
+            point.distX = boostPoint.distX;
+            point.plotX = boostPoint.plotX;
+            point.plotY = boostPoint.plotY;
+        }
+
+        return point;
+    };
+
+    /**
+     * Extend series.destroy to also remove the fake k-d-tree points (#5137). Normally
+     * this is handled by Series.destroy that calls Point.destroy, but the fake
+     * search points are not registered like that.
+     */
+    wrap(Series.prototype, 'destroy', function (proceed) {
+        var series = this,
+            chart = series.chart;
+        if (chart.hoverPoints) {
+            chart.hoverPoints = grep(chart.hoverPoints, function (point) {
+                return point.series === series;
+            });
+        }
+
+        if (chart.hoverPoint && chart.hoverPoint.series === series) {
+            chart.hoverPoint = null;
+        }
+        proceed.call(this);
+    });
+
+    /**
      * Return a point instance from the k-d-tree
      */
     wrap(Series.prototype, 'searchPoint', function (proceed) {
-        var point = proceed.apply(this, [].slice.call(arguments, 1)),
-            ret = point;
-
-        if (point && !(point instanceof this.pointClass)) {
-            ret = (new this.pointClass()).init(this, this.options.data[point.i]);
-            ret.dist = point.dist;
-            ret.category = ret.x;
-            ret.plotX = point.plotX;
-            ret.plotY = point.plotY;
-        }
-        return ret;
+        return this.getPoint(
+            proceed.apply(this, [].slice.call(arguments, 1))
+        );
     });
-}(Highcharts, HighchartsAdapter));
+}));

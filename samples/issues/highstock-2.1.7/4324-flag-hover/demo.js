@@ -7,7 +7,7 @@ $(function () {
             500,
             300
         );
-            
+
         var image = ren.label(
             '',
             100,
@@ -19,11 +19,11 @@ $(function () {
                 stroke: 'blue'
             })
             .add();
-        
+
 
         assert.strictEqual(
             image.box.element.getAttribute('fill'),
-            null,
+            'none',
             'No fill for image'
         );
 
@@ -39,7 +39,7 @@ $(function () {
                 stroke: 'blue'
             })
             .add();
-        
+
 
         assert.strictEqual(
             circle.box.element.getAttribute('fill'),

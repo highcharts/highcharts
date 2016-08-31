@@ -275,7 +275,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
 
                 // Position the image inside it at the sprite position
                 chart.renderer.image(
-                    'http://www.highcharts.com/samples/graphics/meteogram-symbols-30px.png',
+                    'https://www.highcharts.com/samples/graphics/meteogram-symbols-30px.png',
                     -sprite.x,
                     -sprite.y,
                     90,
@@ -347,7 +347,7 @@ Meteogram.prototype.drawWindArrows = function (chart) {
     var meteogram = this;
 
     $.each(chart.series[0].data, function (i, point) {
-        var sprite, arrow, x, y;
+        var arrow, x, y;
 
         if (meteogram.resolution > 36e5 || i % 2 === 0) {
 
@@ -629,7 +629,7 @@ Meteogram.prototype.getChartOptions = function () {
             dashStyle: 'shortdot',
             yAxis: 2
         }]
-    }
+    };
 };
 
 /**
@@ -691,12 +691,12 @@ Meteogram.prototype.parseYrData = function () {
         }
 
         // Populate the parallel arrays
-        meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]);
+        meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]); // eslint-disable-line dot-notation
         meteogram.symbolNames.push(time.symbol['@attributes'].name);
 
         meteogram.temperatures.push({
             x: from,
-            y: parseInt(time.temperature['@attributes'].value),
+            y: parseInt(time.temperature['@attributes'].value, 10),
             // custom options used in the tooltip formatter
             to: to,
             index: i
@@ -716,7 +716,7 @@ Meteogram.prototype.parseYrData = function () {
             y: parseFloat(time.pressure['@attributes'].value)
         });
 
-        if (i == 0) {
+        if (i === 0) {
             pointStart = (from + to) / 2;
         }
     });
@@ -740,17 +740,17 @@ $(function () { // On DOM ready...
         //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
         //place = 'United_States/California/San_Francisco';
         //place = 'United_States/Minnesota/Minneapolis';
-        location.hash = 'http://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
+        location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 
     }
 
     // Then get the XML file through Highcharts' jsonp provider, see
-    // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/jsonp.php
+    // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
     // for source code.
     $.getJSON(
-        'http://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
+        'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
         function (xml) {
-            var meteogram = new Meteogram(xml, 'container');
+            window.meteogram = new Meteogram(xml, 'container');
         }
     );
 

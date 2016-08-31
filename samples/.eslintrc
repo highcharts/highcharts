@@ -1,0 +1,37 @@
+env:
+    browser: true
+
+globals:
+    $: true
+    ADBE: true
+    GOOGL: true
+    Highcharts: true
+    hs: true                    # Highslide
+    jQuery: true
+    moment: true                # moment.js, used in gettimezoneoffset demo
+    MSFT: true
+    ohlcdata: true
+    QUnit: true
+    temperatures: true          # pointinterval-pointstart demo
+    usdeur: true
+
+rules:
+    comma-spacing: 0            # 5333 errors. Wait for --fix, https://github.com/eslint/eslint/pull/4233
+    eol-last: 0
+    indent: [2, 4]
+    key-spacing: 0              # TODO: Fix manually. Wait for --fix.
+    max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
+    new-cap: 0                  # The ill-named Color object. Fix in HC5
+    no-alert: 0
+    no-console: 0               # TODO: Fix manually. Output to a visible div instead.
+    no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
+    no-undefined: 0
+    no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
+    no-shadow: 0                # 10 violations as of 2015-10-31
+    object-curly-spacing: [2, "always"]
+    quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
+    require-jsdoc: 0
+    spaced-comment: 0
+    space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
+    strict: 0
+    valid-jsdoc: 0

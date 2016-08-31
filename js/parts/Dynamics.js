@@ -40,18 +40,16 @@ extend(Chart.prototype, {
 	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options,
-			axis;
+			userOptions = merge(options, {
+				index: this[key].length,
+				isX: isX
+			});
 
-		/*jslint unused: false*/
-		axis = new Axis(this, merge(options, {
-			index: this[key].length,
-			isX: isX
-		}));
-		/*jslint unused: true*/
+		new Axis(this, userOptions); // eslint-disable-line no-new
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
-		chartOptions[key].push(options);
+		chartOptions[key].push(userOptions);
 
 		if (pick(redraw, true)) {
 			this.redraw(animation);
@@ -103,7 +101,7 @@ extend(Chart.prototype, {
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
-				display: ''				
+				display: ''
 			});
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
@@ -153,8 +151,7 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options,
-			names = series.xAxis && series.xAxis.names;
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
@@ -166,7 +163,7 @@ extend(Point.prototype, {
 			if (point.y === null && graphic) { // #4146
 				point.graphic = graphic.destroy();
 			}
-			if (isObject(options) && !isArray(options)) {
+			if (isObject(options, true)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic && graphic.element) {
@@ -184,11 +181,10 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
-			if (names && point.name) {
-				names[point.x] = point.name;
-			}
-
-			seriesOptions.data[i] = point.options;
+			
+			// Record the options to options.data. If there is an object from before,
+			// use point options, otherwise use raw options. (#4701)
+			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
@@ -238,12 +234,8 @@ extend(Series.prototype, {
 		var series = this,
 			seriesOptions = series.options,
 			data = series.data,
-			graph = series.graph,
-			area = series.area,
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
-			currentShift = (graph && graph.shift) || 0,
-			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
@@ -252,22 +244,6 @@ extend(Series.prototype, {
 			x;
 
 		setAnimation(animation, chart);
-
-		// Make graph animate sideways
-		if (shift) {
-			i = series.zones.length;
-			while (i--) {
-				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
-			}
-			each(shiftShapes, function (shape) {
-				if (series[shape]) {
-					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
-				}
-			});
-		}
-		if (area) {
-			area.isArea = true; // needed in animation, both with and without shift
-		}
 
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);
@@ -306,7 +282,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);
@@ -339,7 +314,7 @@ extend(Series.prototype, {
 			chart = series.chart,
 			remove = function () {
 
-				if (data.length === points.length) {
+				if (points && points.length === data.length) { // #4935
 					points.splice(i, 1);
 				}
 				data.splice(i, 1);
@@ -376,35 +351,30 @@ extend(Series.prototype, {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-
-	remove: function (redraw, animation) {
+	remove: function (redraw, animation, withEvent) {
 		var series = this,
 			chart = series.chart;
-		redraw = pick(redraw, true);
 
-		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
-				(calling the remove function from the remove event) */
-			series.isRemoving = true;
+		function remove() {
 
-			// fire the event with a default handler of removing the point
-			fireEvent(series, 'remove', null, function () {
+			// Destroy elements
+			series.destroy();
 
+			// Redraw
+			chart.isDirtyLegend = chart.isDirtyBox = true;
+			chart.linkSeries();
 
-				// destroy elements
-				series.destroy();
-
-
-				// redraw
-				chart.isDirtyLegend = chart.isDirtyBox = true;
-				chart.linkSeries();
-
-				if (redraw) {
-					chart.redraw(animation);
-				}
-			});
-
+			if (pick(redraw, true)) {
+				chart.redraw(animation);
+			}
 		}
-		series.isRemoving = false;
+
+		// Fire the event with a default handler of removing the point
+		if (withEvent !== false) {
+			fireEvent(series, 'remove', null, remove);
+		} else {
+			remove();
+		}
 	},
 
 	/**
@@ -439,9 +409,9 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and delete all properties. Reinsert all methods 
+		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
-		this.remove(false);
+		this.remove(false, null, false);
 		for (n in proto) {
 			this[n] = UNDEFINED;
 		}
@@ -472,7 +442,6 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = this.chart._labelPanes = UNDEFINED; // #1611, #2887, #4314
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 

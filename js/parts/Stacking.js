@@ -2,7 +2,7 @@
  * The class for stack items
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
-	
+
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
@@ -24,6 +24,8 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
+	this.leftCliff = 0;
+	this.rightCliff = 0;
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -50,12 +52,12 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) : 
+				format(formatOption, this) :
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
+			this.label.attr({ text: str, visibility: 'hidden' });
 		// Create new label
 		} else {
 			this.label =
@@ -65,7 +67,7 @@ StackItem.prototype = {
 						align: this.textAlign,				// fix the text-anchor
 						rotation: options.rotation,	// rotation
 						visibility: HIDDEN					// hidden until setOffset is called
-					})				
+					})
 					.add(group);							// add to the labels-group
 		}
 	},
@@ -93,10 +95,10 @@ StackItem.prototype = {
 			},
 			label = this.label,
 			alignAttr;
-		
+
 		if (label) {
 			label.align(this.alignOptions, null, stackBox);	// align the label to the box
-				
+
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
 			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
@@ -131,18 +133,29 @@ Chart.prototype.getStacks = function () {
  * Build the stacks from top down
  */
 Axis.prototype.buildStacks = function () {
-	var series = this.series,
+	var axisSeries = this.series,
+		series,
 		reversedStacks = pick(this.options.reversedStacks, true),
-		i = series.length;
+		len = axisSeries.length,
+		i;
 	if (!this.isXAxis) {
 		this.usePercentage = false;
+		i = len;
 		while (i--) {
-			series[reversedStacks ? i : series.length - i - 1].setStackedPoints();
+			axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+		}
+
+		i = len;
+		while (i--) {
+			series = axisSeries[reversedStacks ? i : len - i - 1];
+			if (series.setStackCliffs) {
+				series.setStackCliffs();
+			}
 		}
 		// Loop up again to compute percent stack
 		if (this.usePercentage) {
-			for (i = 0; i < series.length; i++) {
-				series[i].setPercentStacks();
+			for (i = 0; i < len; i++) {
+				axisSeries[i].setPercentStacks();
 			}
 		}
 	}
@@ -153,8 +166,8 @@ Axis.prototype.renderStackTotals = function () {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		stacks = axis.stacks,
-		stackKey, 
-		oneStack, 
+		stackKey,
+		oneStack,
 		stackCategory,
 		stackTotalGroup = axis.stackTotalGroup;
 
@@ -293,10 +306,22 @@ Series.prototype.setStackedPoints = function () {
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		//stack.points[pointKey] = [stack.cum || stackThreshold];
-		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
-		stack.touched = yAxis.stacksTouched;
+		if (y !== null) {
+			stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
+
+			// Record the base of the stack
+			if (!defined(stack.cum)) {
+				stack.base = pointKey;
+			}
+			stack.touched = yAxis.stacksTouched;
 		
+
+			// In area charts, if there are multiple points on the same X value, let the 
+			// area fill the full span of those points
+			if (stackIndicator.index > 0 && series.singleStacks === false) {
+				stack.points[pointKey][0] = stack.points[series.index + ',' + x + ',0'][0];
+			}
+		}
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -317,8 +342,10 @@ Series.prototype.setStackedPoints = function () {
 
 		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
 
-		stack.points[pointKey].push(stack.cum);
-		stackedYData[i] = stack.cum;
+		if (y !== null) {
+			stack.points[pointKey].push(stack.cum);
+			stackedYData[i] = stack.cum;
+		}
 
 	}
 
@@ -367,7 +394,7 @@ Series.prototype.setPercentStacks = function () {
 /**
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
-Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
+Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
 	if (!defined(stackIndicator) || stackIndicator.x !== x) {
 		stackIndicator = {
 			x: x,
@@ -376,7 +403,7 @@ Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
 	} else {
 		stackIndicator.index++;
 	}
-	
+
 	stackIndicator.key = [index, x, stackIndicator.index].join(',');
 
 	return stackIndicator;

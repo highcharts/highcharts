@@ -1,8 +1,7 @@
 $(function () {
 
     var chart,
-        dataSequence = [
-        {
+        dataSequence = [{
             name: '2009',
             data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
         }, {
@@ -40,7 +39,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
         },
 
         mapNavigation: {
@@ -71,9 +70,20 @@ $(function () {
             }
         }]
     });
-    
+
     chart = $('#container').highcharts();
-    
+
+    /**
+     * Pause the timeline, either when the range is ended, or when clicking the pause button.
+     * Pausing stops the timer and resets the button to play mode.
+     */
+    function pause(button) {
+        button.title = 'play';
+        button.className = 'fa fa-play';
+        clearTimeout(chart.sequenceTimer);
+        chart.sequenceTimer = undefined;
+    }
+
     /**
      * Update the chart. This happens either on updating (moving) the range input,
      * or from a timer when the timeline is playing.
@@ -83,7 +93,7 @@ $(function () {
             output = $('#play-output')[0];
 
         if (increment) {
-            input.value = parseInt(input.value) + increment;
+            input.value = parseInt(input.value, 10) + increment;
         }
         chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
         output.innerHTML = dataSequence[input.value].name; // Output value
@@ -98,23 +108,12 @@ $(function () {
     function play(button) {
         button.title = 'pause';
         button.className = 'fa fa-pause';
-        chart.sequenceTimer = setInterval ( function () {
+        chart.sequenceTimer = setInterval( function () {
             update(1);
         }, 500);
 
     }
-    
-    /** 
-     * Pause the timeline, either when the range is ended, or when clicking the pause button.
-     * Pausing stops the timer and resets the button to play mode.
-     */
-    function pause(button) {
-        button.title = 'play';
-        button.className = 'fa fa-play';
-        clearTimeout(chart.sequenceTimer);
-        chart.sequenceTimer = undefined;
-    }
-    
+
     /**
      * Toggle play and pause from the button
      */
@@ -125,7 +124,7 @@ $(function () {
             pause(this);
         }
     });
-    
+
     /**
      * Update the chart when the input is changed
      */

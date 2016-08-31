@@ -6,7 +6,7 @@ $(function () {
 
 
     // Add series with state capital bubbles
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?', function (json) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?', function (json) {
         var data = [];
         $.each(json, function () {
             this.z = this.population;
@@ -20,20 +20,28 @@ $(function () {
             },
 
             tooltip: {
-                formatter: function () {
-                    return this.point.capital + ', ' + this.point.parentState + '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon + '<br>Population: ' + this.point.population;
-                },
-                crosshairs: [{
+                pointFormat: '{point.capital}, {point.parentState}<br>' +
+                    'Lat: {point.lat}<br>' +
+                    'Lon: {point.lon}<br>' +
+                    'Population: {point.population}'
+            },
+
+            xAxis: {
+                crosshair: {
                     zIndex: 5,
                     dashStyle: 'dot',
                     snap: false,
                     color: 'gray'
-                }, {
+                }
+            },
+
+            yAxis: {
+                crosshair: {
                     zIndex: 5,
                     dashStyle: 'dot',
                     snap: false,
                     color: 'gray'
-                }]
+                }
             },
 
             series: [{

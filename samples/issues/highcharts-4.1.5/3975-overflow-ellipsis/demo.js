@@ -6,7 +6,7 @@ $(function () {
             marginLeft: margin,
             backgroundColor: '#e0e0e0'
         },
-        
+
         xAxis: [{
             labels: {
                 format: 'ThisIsALongText',
@@ -28,7 +28,7 @@ $(function () {
                 autoRotationLimit: 10
             }
         }],
-        
+
         yAxis: {
             title: null,
             labels: {

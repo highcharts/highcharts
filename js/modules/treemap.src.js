@@ -7,8 +7,13 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter */
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
@@ -16,11 +21,13 @@
 		extendClass = H.extendClass,
 		defaultOptions = H.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
-		noop = function () { return; },
+		noop = function () {
+		},
 		each = H.each,
-		grep = HighchartsAdapter.grep,
+		grep = H.grep,
 		pick = H.pick,
 		Series = H.Series,
+		stableSort = H.stableSort,
 		Color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
@@ -40,6 +47,7 @@
 			return previous;
 		},
 		// @todo find correct name for this function. 
+		// @todo Similar to reduce, this function is likely redundant
 		recursive = function (item, func, context) {
 			var next;
 			context = context || this;
@@ -66,24 +74,26 @@
 		},
 		tooltip: {
 			headerFormat: '',
-			pointFormat: '<b>{point.name}</b>: {point.node.val}</b><br/>'
+			pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
 		levelIsConstant: true,
+		opacity: 0.15,
 		states: {
 			hover: {
 				borderColor: '#A0A0A0',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				opacity: 0.75,
 				shadow: false
 			}
 		},
 		drillUpButton: {
 			position: { 
-				align: 'left',
-				x: 10,
-				y: -50
+				align: 'right',
+				x: -10,
+				y: 10
 			}
 		}
 	});
@@ -117,7 +127,7 @@
 		 */
 		getListOfParents: function (data, ids) {
 			var listOfParents = reduce(data, function (prev, curr, i) {
-				var parent = pick(curr.parent, "");
+				var parent = pick(curr.parent, '');
 				if (prev[parent] === undefined) {
 					prev[parent] = [];
 				}
@@ -127,9 +137,9 @@
 
 			// If parent does not exist, hoist parent to root of tree.
 			eachObject(listOfParents, function (children, parent, list) {
-				if ((parent !== "") && (HighchartsAdapter.inArray(parent, ids) === -1)) {
+				if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
 					each(children, function (child) {
-						list[""].push(child);
+						list[''].push(child);
 					});
 					delete list[parent];
 				}
@@ -148,16 +158,18 @@
 				parentList = series.getListOfParents(this.data, allIds);
 
 			series.nodeMap = [];
-			tree = series.buildNode("", -1, 0, parentList, null);
+			tree = series.buildNode('', -1, 0, parentList, null);
+			// Parents of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode], function (node) {
 				var next = false,
 					p = node.parent;
 				node.visible = true;
-				if (p || p === "") {
+				if (p || p === '') {
 					next = series.nodeMap[p];
 				}
 				return next;
 			});
+			// Children of the root node is by default visible
 			recursive(this.nodeMap[this.rootNode].children, function (children) {
 				var next = false;
 				each(children, function (child) {
@@ -208,16 +220,14 @@
 			var series = this,
 				options = series.options,
 				childrenTotal = 0,
-				sorted = [],
+				children = [],
 				val,
 				point = series.points[tree.i];
 
 			// First give the children some values
 			each(tree.children, function (child) {
 				child = series.setTreeValues(child);
-				series.insertElementSorted(sorted, child, function (el, el2) {
-					return el.val > el2.val; 
-				});
+				children.push(child);
 
 				if (!child.ignore) {
 					childrenTotal += child.val;
@@ -239,17 +249,24 @@
 					});
 				}
 			});
-
+			// Sort the children
+			stableSort(children, function (a, b) {
+				return a.sortIndex - b.sortIndex;
+			});
 			// Set the values
-			val = pick(point && point.value, childrenTotal);
+			val = pick(point && point.options.value, childrenTotal);
+			if (point) {
+				point.value = val;
+			}
 			extend(tree, {
-				children: sorted,
+				children: children,
 				childrenTotal: childrenTotal,
 				// Ignore this node if point is not visible
 				ignore: !(pick(point && point.visible, true) && (val > 0)),
 				isLeaf: tree.visible && !childrenTotal,
 				levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
-				name: pick(point && point.name, ""),
+				name: pick(point && point.name, ''),
+				sortIndex: pick(point && point.sortIndex, -val),
 				val: val
 			});
 			return tree;
@@ -305,7 +322,7 @@
 					y1,
 					y2;
 				// Points which is ignored, have no values.
-				if (values) {
+				if (values && node.visible) {
 					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
 					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
 					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
@@ -347,7 +364,7 @@
 				}
 			}
 		},
-		alg_func_group: function (h, w, d, p) {
+		algorithmGroup: function (h, w, d, p) {
 			this.height = h;
 			this.width = w;
 			this.plot = p;
@@ -402,7 +419,7 @@
 				this.total = 0;
 			};
 		},
-		alg_func_calcPoints: function (directionChange, last, group, childrenArea) {
+		algorithmCalcPoints: function (directionChange, last, group, childrenArea) {
 			var pX,
 				pY,
 				pW,
@@ -463,7 +480,7 @@
 				group.addElement(keep);
 			}
 		},
-		alg_func_lowAspectRatio: function (directionChange, parent, children) {
+		algorithmLowAspectRatio: function (directionChange, parent, children) {
 			var childrenArea = [],
 				series = this,
 				pTot,
@@ -475,23 +492,23 @@
 				direction = parent.direction,
 				i = 0,
 				end = children.length - 1,
-				group = new this.alg_func_group(parent.height, parent.width, direction, plot);
+				group = new this.algorithmGroup(parent.height, parent.width, direction, plot);
 			// Loop through and calculate all areas
 			each(children, function (child) {
 				pTot = (parent.width * parent.height) * (child.val / parent.val);
 				group.addElement(pTot);
 				if (group.lP.nR > group.lP.lR) {
-					series.alg_func_calcPoints(directionChange, false, group, childrenArea, plot);
+					series.algorithmCalcPoints(directionChange, false, group, childrenArea, plot);
 				}
 				// If last child, then calculate all remaining areas
 				if (i === end) {
-					series.alg_func_calcPoints(directionChange, true, group, childrenArea, plot);
+					series.algorithmCalcPoints(directionChange, true, group, childrenArea, plot);
 				}
 				i = i + 1;
 			});
 			return childrenArea;
 		},
-		alg_func_fill: function (directionChange, parent, children) {
+		algorithmFill: function (directionChange, parent, children) {
 			var childrenArea = [],
 				pTot,
 				direction = parent.direction,
@@ -531,16 +548,16 @@
 			return childrenArea;
 		},
 		strip: function (parent, children) {
-			return this.alg_func_lowAspectRatio(false, parent, children);
+			return this.algorithmLowAspectRatio(false, parent, children);
 		},
 		squarified: function (parent, children) {
-			return this.alg_func_lowAspectRatio(true, parent, children);
+			return this.algorithmLowAspectRatio(true, parent, children);
 		},
 		sliceAndDice: function (parent, children) {
-			return this.alg_func_fill(true, parent, children);
+			return this.algorithmFill(true, parent, children);
 		},
 		stripes: function (parent, children) {
-			return this.alg_func_fill(false, parent, children);
+			return this.algorithmFill(false, parent, children);
 		},
 		translate: function () {
 			var pointValues,
@@ -551,26 +568,24 @@
 			// Call prototype function
 			Series.prototype.translate.call(this);
 
-			if (this.points.length) {
-				// Assign variables
-				this.rootNode = pick(this.options.rootId, "");
-				// Create a object map from level to options
-				this.levelMap = reduce(this.options.levels, function (arr, item) {
-					arr[item.level] = item;
-					return arr;
-				}, {});
-				tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
+			// Assign variables
+			this.rootNode = pick(this.options.rootId, '');
+			// Create a object map from level to options
+			this.levelMap = reduce(this.options.levels, function (arr, item) {
+				arr[item.level] = item;
+				return arr;
+			}, {});
+			tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
 
-				// Calculate plotting values.
-				this.axisRatio = (this.xAxis.len / this.yAxis.len);
-				this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
-				this.nodeMap[""].values = seriesArea = merge(pointValues, {
-					width: (pointValues.width * this.axisRatio),
-					direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
-					val: tree.val
-				});
-				this.calculateChildrenAreas(tree, seriesArea);
-			}
+			// Calculate plotting values.
+			this.axisRatio = (this.xAxis.len / this.yAxis.len);
+			this.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
+			this.nodeMap[''].values = seriesArea = merge(pointValues, {
+				width: (pointValues.width * this.axisRatio),
+				direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+				val: tree.val
+			});
+			this.calculateChildrenAreas(tree, seriesArea);
 
 			// Logic for point colors
 			if (this.colorAxis) {
@@ -580,11 +595,13 @@
 			}
 
 			// Update axis extremes according to the root node.
-			val = this.nodeMap[this.rootNode].pointValues;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
-			this.xAxis.setScale();
-			this.yAxis.setScale();
+			if (this.options.allowDrillToNode) {
+				val = this.nodeMap[this.rootNode].pointValues;
+				this.xAxis.setExtremes(val.x, val.x + val.width, false);
+				this.yAxis.setExtremes(val.y, val.y + val.height, false);
+				this.xAxis.setScale();
+				this.yAxis.setScale();
+			}
 
 			// Assign values to points.
 			this.setPointValues();
@@ -605,7 +622,7 @@
 			each(points, function (point) {
 				level = series.levelMap[point.node.levelDynamic];
 				// Set options to new object to avoid problems with scope
-				options = {style: {}};
+				options = { style: {} };
 
 				// If not a leaf, then label should be disabled as default
 				if (!point.node.isLeaf) {
@@ -621,6 +638,9 @@
 				// Set dataLabel width to the width of the point shape.
 				if (point.shapeArgs) {
 					options.style.width = point.shapeArgs.width;
+					if (point.dataLabel) {
+						point.dataLabel.css({ width: point.shapeArgs.width + 'px' });
+					}
 				}
 
 				// Merge custom options with point options
@@ -637,7 +657,8 @@
 			var level = this.levelMap[point.node.levelDynamic] || {},
 				options = this.options,
 				attr,
-				stateOptions = (state && options.states[state]) || {};
+				stateOptions = (state && options.states[state]) || {},
+				opacity;
 
 			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
 			// because it can be 0.
@@ -645,26 +666,26 @@
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
 				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-				'fill': point.color || this.color
+				'fill': point.color || this.color,
+				'zIndex': state === 'hover' ? 1 : 0
 			};
-
-			if (state === 'hover') {
-				attr.zIndex = 1;
-			}
 
 			if (point.node.level <= this.nodeMap[this.rootNode].level) {
 				// Hide levels above the current view
 				attr.fill = 'none';
-				attr["stroke-width"] = 0;
+				attr['stroke-width'] = 0;
 			} else if (!point.node.isLeaf) {
-				// If not a leaf, then remove fill
-				// @todo let users set the opacity
-				attr.fill = pick(options.interactByLeaf, !options.allowDrillToNode) ? 'none' : Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+				// If not a leaf, either set opacity or remove fill
+				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
+					attr.fill = 'none';
+				} else {
+					opacity = pick(stateOptions.opacity, options.opacity);
+					attr.fill = Color(attr.fill).setOpacity(opacity).get();
+				}
 			} else if (state) {
 				// Brighten and hoist the hover nodes
 				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
 			}
-
 			return attr;
 		},
 
@@ -678,7 +699,9 @@
 				});
 
 			each(points, function (point) {
-				var groupKey = "levelGroup-" + point.node.levelDynamic;
+				var groupKey = 'levelGroup-' + point.node.levelDynamic,
+					pointAttribs,
+					crispCorr;
 				if (!series[groupKey]) {
 					series[groupKey] = series.chart.renderer.g(groupKey)
 						.attr({
@@ -688,11 +711,19 @@
 				}
 				point.group = series[groupKey];
 				// Preliminary code in prepraration for HC5 that uses pointAttribs for all series
+				pointAttribs = series.pointAttribs(point);
 				point.pointAttr = {
-					'': series.pointAttribs(point),
+					'': pointAttribs,
 					'hover': series.pointAttribs(point, 'hover'),
 					'select': {}
 				};
+
+				// Crisp correction
+				if (point.shapeArgs) {
+					crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
+					point.shapeArgs.x -= crispCorr;
+					point.shapeArgs.y -= crispCorr;
+				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
@@ -704,33 +735,10 @@
 						drillId;
 					if (point.graphic) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
-						cursor = drillId ? "pointer" : "default";
+						cursor = drillId ? 'pointer' : 'default';
 						point.graphic.css({ cursor: cursor });
 					}
 				});
-			}
-		},
-		/**
-		 * Inserts an element into an array, sorted by a condition.
-		 * Modifies the referenced array
-		 * @param {*[]} arr The array which the element is inserted into.
-		 * @param {*} el The element to insert.
-		 * @param {function} cond The condition to sort on. First parameter is el, second parameter is array element
-		 */
-		insertElementSorted: function (arr, el, cond) {
-			var i = 0,
-				inserted = false;
-			if (arr.length !== 0) {
-				each(arr, function (arrayElement) {
-					if (cond(el, arrayElement) && !inserted) {
-						arr.splice(i, 0, el);
-						inserted = true;
-					}
-					i = i + 1;					
-				});
-			} 
-			if (!inserted) {
-				arr.push(el);
 			}
 		},
 		/**
@@ -795,13 +803,13 @@
 				if (node.parent !== null) {
 					drillPoint = this.nodeMap[node.parent];
 				} else {
-					drillPoint = this.nodeMap[""];
+					drillPoint = this.nodeMap[''];
 				}
 			}
 
 			if (drillPoint !== null) {
 				this.drillToNode(drillPoint.id);
-				if (drillPoint.id === "") {
+				if (drillPoint.id === '') {
 					this.drillUpButton = this.drillUpButton.destroy();
 				} else {
 					parent = this.nodeMap[drillPoint.parent];
@@ -884,4 +892,4 @@
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
-}(Highcharts));
+}));

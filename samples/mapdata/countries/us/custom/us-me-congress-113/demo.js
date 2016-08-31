@@ -20,7 +20,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-me-congress-113.js">Maine congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-me-congress-113.js">Maine congressional districts</a>'
         },
 
         mapNavigation: {

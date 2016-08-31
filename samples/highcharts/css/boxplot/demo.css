@@ -1,0 +1,21 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+.highcharts-boxplot-series .highcharts-point {
+	stroke-width: 2px;
+}
+.highcharts-boxplot-box {
+	fill: #F0F0E0;
+}
+.highcharts-boxplot-median {
+	stroke: #0C5DA5;
+	stroke-width: 3px;
+}
+.highcharts-boxplot-stem {
+	stroke: #A63400;
+	stroke-dasharray: 1, 2;
+	stroke-width: 1px;
+}
+.highcharts-boxplot-whisker {
+	stroke: #3D9200;
+	stroke-width: 3px;
+}

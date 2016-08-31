@@ -8,7 +8,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	grouping: false,
 	linkedTo: ':previous',
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
 	whiskerWidth: null
 });
@@ -29,7 +29,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	 * or standalone
 	 */
 	getColumnMetrics: function () {
-		return (this.linkedParent && this.linkedParent.columnMetrics) || 
+		return (this.linkedParent && this.linkedParent.columnMetrics) ||
 			seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });

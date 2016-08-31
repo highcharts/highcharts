@@ -276,7 +276,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
         },
 
         mapNavigation: {

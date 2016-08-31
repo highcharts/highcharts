@@ -6,6 +6,7 @@
 /js/adapters/prototype-adapter.js
 /js/modules/exporting.js
 /build
+/code
 /.project
 /git-ignore-me.properties
 /.pydevproject
@@ -23,6 +24,7 @@
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
 /utils/samples/temp/
+/utils/samples/nightly/
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
@@ -47,3 +49,6 @@ nbproject/
 *.access_log
 
 *.log
+samples/highcharts/common-js/browserify/demo.js
+samples/highcharts/common-js/webpack/demo.js
+/samples/cloud/charts

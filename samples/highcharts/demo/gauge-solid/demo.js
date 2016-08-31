@@ -34,8 +34,7 @@ $(function () {
             ],
             lineWidth: 0,
             minorTickInterval: null,
-            tickPixelInterval: 400,
-            tickWidth: 0,
+            tickAmount: 2,
             title: {
                 y: -70
             },
@@ -110,7 +109,7 @@ $(function () {
     }));
 
     // Bring life to the dials
-    setInterval(function () {
+    setTimeout(function () {
         // Speed
         var chart = $('#container-speed').highcharts(),
             point,

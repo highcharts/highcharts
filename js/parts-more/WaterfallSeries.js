@@ -45,12 +45,14 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			previousY,
 			previousIntermediate,
 			range,
+			minPointLength = pick(options.minPointLength, 5),
 			threshold = options.threshold,
 			stacking = options.stacking,
 			tooltipY;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
+		series.minPointLengthOffset = 0;
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -63,16 +65,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
-			range = stack ? 
+			range = stack ?
 				stack[point.x].points[series.index + ',' + i] :
 				[0, yValue];
 
 			// override point value for sums
 			// #3710 Update point does not propagate to sum
 			if (point.isSum) {
-				point.y = yValue;
+				point.y = correctFloat(yValue);
 			} else if (point.isIntermediateSum) {
-				point.y = yValue - previousIntermediate; // #3840
+				point.y = correctFloat(yValue - previousIntermediate); // #3840
 			}
 			// up points
 			y = mathMax(previousY, previousY + point.y) + range[0];
@@ -82,21 +84,19 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
 				previousIntermediate = range[1];
 
-			// If it's not the sum point, update previous stack end position and get 
+			// If it's not the sum point, update previous stack end position and get
 			// shape height (#3886)
 			} else {
-				if (previousY !== 0) { // Not the first point
-					shapeArgs.height = yValue > 0 ? 
-						yAxis.translate(previousY, 0, 1) - shapeArgs.y :
-						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
-				}
+				shapeArgs.height = yValue > 0 ?
+					yAxis.translate(previousY, 0, 1) - shapeArgs.y :
+					yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
 				previousY += yValue;
 			}
 			// #3952 Negative sum or intermediate sum not rendered correctly
@@ -109,8 +109,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
+			if (shapeArgs.height <= minPointLength) {
+				shapeArgs.height = minPointLength;
+				series.minPointLengthOffset += minPointLength;
+			}
+
+			shapeArgs.y -= series.minPointLengthOffset;
+
 			// Correct tooltip placement (#3014)
-			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
 			if (series.chart.inverted) {
 				point.tooltipPos[0] = yAxis.len - tooltipY;
 			} else {
@@ -144,10 +151,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			y = yData[i];
 			point = points && points[i] ? points[i] : {};
 
-			if (y === "sum" || point.isSum) {
-				yData[i] = sum;
-			} else if (y === "intermediateSum" || point.isIntermediateSum) {
-				yData[i] = subSum;
+			if (y === 'sum' || point.isSum) {
+				yData[i] = correctFloat(sum);
+			} else if (y === 'intermediateSum' || point.isIntermediateSum) {
+				yData[i] = correctFloat(subSum);
 			} else {
 				sum += y;
 				subSum += y;
@@ -168,9 +175,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	toYData: function (pt) {
 		if (pt.isSum) {
-			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
-		} else if (pt.isIntermediateSum) {
-			return (pt.x === 0 ? null : "intermediateSum"); //#3245
+			return (pt.x === 0 ? null : 'sum'); //#3245 Error when first element is Sum or Intermediate Sum
+		}
+		if (pt.isIntermediateSum) {
+			return (pt.x === 0 ? null : 'intermediateSum'); //#3245
 		}
 		return pt.y;
 	},
@@ -185,7 +193,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
+			hoverColor = Highcharts.Color(upColor).brighten(options.states.hover.brightness).get(),
 			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 

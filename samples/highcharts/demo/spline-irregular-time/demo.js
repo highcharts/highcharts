@@ -39,7 +39,7 @@ $(function () {
         },
 
         series: [{
-            name: "Winter 2012-2013",
+            name: 'Winter 2012-2013',
             // Define the data points. All series have a dummy year
             // of 1970/71 in order to be compared on the same x axis. Note
             // that in JavaScript, months start at 0 for January, 1 for February etc.
@@ -64,7 +64,7 @@ $(function () {
                 [Date.UTC(1971, 5, 3), 0]
             ]
         }, {
-            name: "Winter 2013-2014",
+            name: 'Winter 2013-2014',
             data: [
                 [Date.UTC(1970, 9, 29), 0],
                 [Date.UTC(1970, 10, 9), 0.4],
@@ -80,7 +80,7 @@ $(function () {
                 [Date.UTC(1971, 5, 10), 0]
             ]
         }, {
-            name: "Winter 2014-2015",
+            name: 'Winter 2014-2015',
             data: [
                 [Date.UTC(1970, 10, 25), 0],
                 [Date.UTC(1970, 11, 6), 0.25],

@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-hh-all.js">Hamburg</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-hh-all.js">Hamburg</a>'
         },
 
         mapNavigation: {

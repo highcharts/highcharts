@@ -2,11 +2,11 @@ $(function () {
 
     // Configure the chart
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column'
         },
-        
+
         title: {
             text: 'Highcharts axis visibility'
         },
@@ -14,7 +14,7 @@ $(function () {
         xAxis: {
             categories: ['Apples', 'Pears', 'Oranges', 'Peaches']
         },
-        
+
         yAxis: {
             allowDecimals: false,
             title: {
@@ -22,7 +22,7 @@ $(function () {
             },
             visible: false
         },
-        
+
         plotOptions: {
             series: {
                 stacking: 'normal',

@@ -5,7 +5,7 @@ $(function () {
         },
         yAxis: {
             title: {
-                text: "Share prices"
+                text: 'Share prices'
             }
         },
         plotOptions: {
@@ -16,7 +16,7 @@ $(function () {
             }
         },
         title: {
-            text: "Royal Mail shares over time"
+            text: 'Royal Mail shares over time'
         },
         subtitle: {
             text: 'Auto-detection of <em>mm/dd/YYYY</em> dates in Highcharts Data module'

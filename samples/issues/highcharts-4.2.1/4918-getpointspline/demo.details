@@ -1,0 +1,7 @@
+---
+ authors:
+   - Jon Arild Nygård
+ resources:
+   - https://code.jquery.com/qunit/qunit-1.19.0.js
+   - https://code.jquery.com/qunit/qunit-1.19.0.css
+...

@@ -76,7 +76,7 @@ var PiePoint = extendClass(Point, {
 			series = point.series,
 			chart = series.chart,
 			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-		
+
 		redraw = pick(redraw, ignoreHiddenPoint);
 
 		if (vis !== point.visible) {
@@ -101,7 +101,7 @@ var PiePoint = extendClass(Point, {
 			if (!vis && point.state === 'hover') {
 				point.setState('');
 			}
-			
+
 			// Handle ignore hidden slices
 			if (ignoreHiddenPoint) {
 				series.isDirty = true;
@@ -139,7 +139,7 @@ var PiePoint = extendClass(Point, {
 		};
 
 		point.graphic.animate(translation);
-		
+
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
@@ -225,6 +225,10 @@ var PieSeries = {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
+			// Disallow negative values (#1530, #3623, #5322)
+			if (point.y < 0) {
+				point.y = null;
+			}
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
@@ -244,13 +248,13 @@ var PieSeries = {
 		Series.prototype.generatePoints.call(this);
 		this.updateTotals();
 	},
-	
+
 	/**
 	 * Do translation for pie slices
 	 */
 	translate: function (positions) {
 		this.generatePoints();
-		
+
 		var series = this,
 			cumulative = 0,
 			precision = 1000, // issue #172
@@ -292,9 +296,9 @@ var PieSeries = {
 
 		// Calculate the geometry for each point
 		for (i = 0; i < len; i++) {
-			
+
 			point = points[i];
-			
+
 			// set start and end angle
 			start = startAngleRad + (cumulative * circ);
 			if (!ignoreHiddenPoint || point.visible) {
@@ -334,7 +338,7 @@ var PieSeries = {
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
 			];
-			
+
 			point.half = angle < -mathPI / 2 || angle > mathPI / 2 ? 1 : 0;
 			point.angle = angle;
 
@@ -355,7 +359,7 @@ var PieSeries = {
 
 		}
 	},
-	
+
 	drawGraph: null,
 
 	/**
@@ -371,6 +375,7 @@ var PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
+			pointAttr,
 			shapeArgs,
 			attr;
 
@@ -385,6 +390,10 @@ var PieSeries = {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				shadowGroup = point.shadowGroup;
+				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
+				if (!pointAttr.stroke) {
+					pointAttr.stroke = pointAttr.fill;
+				}
 
 				// put the shadow behind all points
 				if (shadow && !shadowGroup) {
@@ -407,7 +416,8 @@ var PieSeries = {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
-						.animate(extend(shapeArgs, groupTranslation));				
+						.attr(pointAttr)
+						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
 					if (!point.visible) {
@@ -416,13 +426,11 @@ var PieSeries = {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.setRadialReference(series.center)
-						.attr(
-							point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
-						)
+						.attr(pointAttr)
 						.attr(attr)
 						.attr(groupTranslation)
 						.add(series.group)
-						.shadow(shadow, shadowGroup);	
+						.shadow(shadow, shadowGroup);
 				}
 			}
 		});
@@ -439,7 +447,7 @@ var PieSeries = {
 		points.sort(function (a, b) {
 			return a.angle !== undefined && (b.angle - a.angle) * sign;
 		});
-	},		
+	},
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin

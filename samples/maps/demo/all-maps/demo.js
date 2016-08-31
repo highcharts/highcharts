@@ -7,7 +7,7 @@ $(function () {
      */
 
     // Base path to maps
-    var baseMapPath = "http://code.highcharts.com/mapdata/",
+    var baseMapPath = "https://code.highcharts.com/mapdata/",
         showDataLabels = false, // Switch for data labels enabled/disabled
         mapCount = 0,
         searchText,
@@ -67,7 +67,7 @@ $(function () {
             // Update info box download links
             $("#download").html(
                 '<a class="button" target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.11.0/' +
-                    'highslide-software/highcharts.com/tree/master/samples/mapdata/' + mapKey + '">' +
+                    'highcharts/highcharts/tree/master/samples/mapdata/' + mapKey + '">' +
                     'View clean demo</a>' +
                     '<div class="or-view-as">... or view as ' +
                     '<a target="_blank" href="' + svgPath + '">SVG</a>, ' +

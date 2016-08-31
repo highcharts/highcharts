@@ -156,7 +156,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.js">India with Andaman and Nicobar</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.js">India with Andaman and Nicobar</a>'
         },
 
         mapNavigation: {

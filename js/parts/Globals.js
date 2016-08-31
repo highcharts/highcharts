@@ -1,7 +1,6 @@
 // encapsulated variables
 var UNDEFINED,
-	doc = document,
-	win = window,
+	doc = win.document,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,
@@ -16,17 +15,17 @@ var UNDEFINED,
 
 
 	// some variables
-	userAgent = navigator.userAgent,
+	userAgent = (win.navigator && win.navigator.userAgent) || '',
 	isOpera = win.opera,
 	isMS = /(msie|trident|edge)/i.test(userAgent) && !isOpera,
-	docMode8 = doc.documentMode === 8,
+	docMode8 = doc && doc.documentMode === 8,
 	isWebKit = !isMS && /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasSVG = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
+	useCanVG = doc && !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -36,7 +35,7 @@ var UNDEFINED,
 	dateFormat, // function
 	pathAnim,
 	timeUnits,
-	noop = function () { return UNDEFINED; },
+	noop = function () {},
 	charts = [],
 	chartCount = 0,
 	PRODUCT = '@product.name@',
@@ -53,12 +52,12 @@ var UNDEFINED,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
-	numRegex = /^[0-9]+$/,
+	numRegex = /[0-9]/g,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-	
+
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
 
@@ -89,7 +88,21 @@ var UNDEFINED,
 	seriesTypes = {},
 	Highcharts;
 
+/**
+ * Provide error messages for debugging, with links to online explanation
+ */
+function error(code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw new Error(msg);
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg); // eslint-disable-line no-console
+	}
+}
+
 // The Highcharts namespace
-Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+Highcharts = win.Highcharts ? error(16, true) : { win: win };
 
 Highcharts.seriesTypes = seriesTypes;

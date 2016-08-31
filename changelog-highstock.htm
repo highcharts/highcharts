@@ -1,9 +1,37 @@
-<p>Highstock 2.1.9 (2015-10-07)</p>
+<p>Highstock 4.2.6 (2016-08-02)</p>
 <ul>
-    <li>Most changes listed under Highcharts 4.1.9 above also apply to Highstock 2.1.9.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highstock#rangeSelector.height">rangeSelector.height</a>, to reserve space for buttons and input.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2920">#2920</a>, dataGrouping.smoothed made graph extend to series extremes.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4501">#4501</a>, X axis range larger than data broke the chart.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4520">#4520</a>, JS errors on setting extremes outside the navigator's range.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4602">#4602</a>, navigator line color was not affected by color setting.</li>
+    <li>Most changes listed under Highcharts 4.2.6 above also apply to Highstock 4.2.6.</li>
+    <li>Added new option set, <a href="http://api.highcharts.com/highstock#yAxis.scrollbar">yAxis.scrollbar</a>, to allow scrollbars on Y axis (or in fact any axis) in Highstock.</li>
+    <li>Refactored sideways graph animation to allow smooth navigation when clicking scrollbar buttons, adding multiple points etc.</li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="hs-heading-4-2-6-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#hs-4-2-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="hs-4-2-6-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/687">#687</a>, first value of compare chart should be the last of the previous range.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5316">#5316</a>, wrong columns and ticks after toggling ordinal setting with axis update.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5323">#5323</a>, regression causing JS error on redrawing empty stock chart.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5330">#5330</a>, JS error when enabling range selector in Chart constructor.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5395">#5395</a>, animation mixed up on navigator and range selector.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5414">#5414</a>, navigator series updated wrong on addPoint when data grouping was disabled.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5453">#5453</a>, unresponsive first drag on navigator.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5477">#5477</a>, error on first mouse hover with crosshairs.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5485">#5485</a>, setCompare did not affect exported chart.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5489">#5489</a>, a regression causing data grouping on range selector buttons to fail.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4222">#4222</a>, flag's title wasn't updated with <code>Point.update</code>.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5388">#5388</a>, performance hit when running a forced data grouping with a lot of empty groups.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5390">#5390</a>, navigator series wasn't updated when chart initialized without series.</li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

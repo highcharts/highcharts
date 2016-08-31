@@ -32,7 +32,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	softThreshold: false,
-	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
+	startFromThreshold: true, // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6
@@ -53,9 +53,9 @@ var ColumnSeries = extendClass(Series, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
-	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative
 		// point is substracted from previous (#1910)
-	
+
 	/**
 	 * Initialize the series
 	 */
@@ -78,7 +78,7 @@ var ColumnSeries = extendClass(Series, {
 
 	/**
 	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
-	 * pointWidth etc. 
+	 * pointWidth etc.
 	 */
 	getColumnMetrics: function () {
 
@@ -89,7 +89,6 @@ var ColumnSeries = extendClass(Series, {
 			reversedXAxis = xAxis.reversed,
 			stackKey,
 			stackGroups = {},
-			columnIndex,
 			columnCount = 0;
 
 		// Get the total number of column type series.
@@ -100,7 +99,8 @@ var ColumnSeries = extendClass(Series, {
 		} else {
 			each(series.chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
-					otherYAxis = otherSeries.yAxis;
+					otherYAxis = otherSeries.yAxis,
+					columnIndex;
 				if (otherSeries.type === series.type && otherSeries.visible &&
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
@@ -129,19 +129,18 @@ var ColumnSeries = extendClass(Series, {
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
-			colIndex = (reversedXAxis ? 
-				columnCount - (series.columnIndex || 0) : // #1251
-				series.columnIndex) || 0,
+			colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
-			width: pointWidth, 
-			offset: pointXOffset 
-		});
-			
+		series.columnMetrics = {
+			width: pointWidth,
+			offset: pointXOffset
+		};
+		return series.columnMetrics;
+
 	},
 
 	/**
@@ -159,7 +158,7 @@ var ColumnSeries = extendClass(Series, {
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
 		}
-		
+
 		// Horizontal. We need to first compute the exact right edge, then round it
 		// and compute the width from there.
 		right = Math.round(x + w) + xCrisp;
@@ -167,13 +166,13 @@ var ColumnSeries = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
-		fromTop = mathAbs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
+		fromTop = mathAbs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
 		// Top edges are exceptions
-		if (fromTop) {
+		if (fromTop && h) { // #5146
 			y -= 1;
 			h += 1;
 		}
@@ -194,7 +193,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = series.chart,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
-				options.borderWidth, 
+				options.borderWidth,
 				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
@@ -246,8 +245,8 @@ var ColumnSeries = extendClass(Series, {
 			point.pointWidth = pointWidth;
 
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+			point.tooltipPos = chart.inverted ?
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] :
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
@@ -258,13 +257,13 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	getSymbol: noop,
-	
+
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-	
-	
+
+
 	/**
 	 * Columns have no graph
 	 */
@@ -290,7 +289,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic,
 				borderAttr;
 
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				borderAttr = defined(series.borderWidth) ? {
@@ -298,10 +297,10 @@ var ColumnSeries = extendClass(Series, {
 				} : {};
 
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
-				
+
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -341,17 +340,23 @@ var ColumnSeries = extendClass(Series, {
 				series.group.attr(attr);
 
 			} else { // run the animation
-				
-				attr.scaleY = 1;
+
 				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
-				series.group.animate(attr, series.options.animation);
+				series.group.animate(attr, extend(animObject(series.options.animation), {
+					// Do the scale synchronously to ensure smooth updating (#5030)
+					step: function (val, fx) {
+						series.group.attr({
+							scaleY: mathMax(0.001, fx.pos) // #5250
+						});
+					}
+				}));
 
 				// delete this function to allow it only once
 				series.animate = null;
 			}
 		}
 	},
-	
+
 	/**
 	 * Remove this series from the chart
 	 */

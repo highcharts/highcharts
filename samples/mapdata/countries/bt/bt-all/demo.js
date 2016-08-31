@@ -92,7 +92,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bt/bt-all.js">Bhutan</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bt/bt-all.js">Bhutan</a>'
         },
 
         mapNavigation: {

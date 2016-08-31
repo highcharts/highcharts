@@ -16,7 +16,7 @@ $(function () {
             fill: 'yellow'
         })
         .add();
-        
+
     circ = renderer.circle(200, 200, 50)
         .attr({
             'stroke-width': 2,

@@ -3,7 +3,7 @@ $data = array();
 $separatorSeries = '';
 if ($mapkey = $_GET['mapkey']) {
 
-    if ($file = file_get_contents('http://code.highcharts.com/mapdata/'. $mapkey .'.geo.json')) {
+    if ($file = file_get_contents('https://code.highcharts.com/mapdata/'. $mapkey .'.geo.json')) {
         $shapes = json_decode($file);
 
         $i = 0;
@@ -31,7 +31,7 @@ if ($mapkey = $_GET['mapkey']) {
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Highmaps Example</title>
 
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <style type="text/css">
             #container {
                 height: 500px; 
@@ -60,7 +60,7 @@ if ($mapkey = $_GET['mapkey']) {
                     },
 
                     subtitle : {
-                        text : 'Source map: <a href="http://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"><?php echo $mapkey ?></a>'
+                        text : 'Source map: <a href="https://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"><?php echo $mapkey ?></a>'
                     },
 
                     mapNavigation: {
@@ -94,9 +94,9 @@ if ($mapkey = $_GET['mapkey']) {
         </script>
     </head>
     <body>
-        <script src="http://code.highcharts.com/maps/highmaps.js"></script>
-        <script src="http://code.highcharts.com/maps/modules/exporting.js"></script>
-        <script src="http://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"></script>
+        <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+        <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"></script>
 
 
         <div id="container"></div>

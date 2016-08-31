@@ -2,7 +2,7 @@ $(function () {
     /**
      * Faster scatter charts mod for Highcharts
      *
-     * Author: Torstein Honsi, Stephane Vanraes
+     * Author: Torstein Honsi
      * Last updated: 2014-03-05
      */
     (function (H) {
@@ -57,7 +57,6 @@ $(function () {
             // in the x dimension.
             var groups = [],
                 oddOrEven = 0,
-                group,
                 stripe,
                 remaining = data.length,
                 x,
@@ -97,11 +96,11 @@ $(function () {
             i = groups.length;
             var paths = [];
             while (i--) {
-                var group = groups[i],
-                    path = [],
+                var path = [],
                     size = radius * 2,
-                    j,
-                    x, y;
+                    y;
+
+                group = groups[i];
 
                 for (j = 0; j < group.length; j += 1) {
                     // Math.round reduces rendering times by 20% in a 50,000 points chart

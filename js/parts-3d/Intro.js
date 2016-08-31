@@ -4,13 +4,15 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * (c) 2009-2013 Torstein Hønsi
+ * 3D features for Highcharts JS
  *
- * License: www.highcharts.com/license
+ * @license: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
-
-(function (Highcharts) {
-	
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {

@@ -70,11 +70,13 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			lastPoint,
 			optionsOnSeries = options.onSeries,
 			onSeries = optionsOnSeries && chart.get(optionsOnSeries),
+			onKey = options.onKey || 'y',
 			step = onSeries && onSeries.options.step,
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
 			xAxis = series.xAxis,
 			xAxisExt = xAxis.getExtremes(),
+			xOffset = 0,
 			leftPoint,
 			lastX,
 			rightPoint,
@@ -82,6 +84,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		// relate to a master series
 		if (onSeries && onSeries.visible && i) {
+			xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
 			currentDataGrouping = onSeries.currentDataGrouping;
 			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
@@ -90,22 +93,22 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				return (a.x - b.x);
 			});
 
+			onKey = 'plot' + onKey[0].toUpperCase() + onKey.substr(1);
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
-				
-				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
+				if (leftPoint.x <= point.x && leftPoint[onKey] !== undefined) {
 					if (point.x <= lastX) { // #803
-					
-						point.plotY = leftPoint.plotY;
-					
+
+						point.plotY = leftPoint[onKey];
+
 						// interpolate between points, #666
-						if (leftPoint.x < point.x && !step) { 
+						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
-							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
-								point.plotY += 
-									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
-									(rightPoint.plotY - leftPoint.plotY); // the y distance
+							if (rightPoint && rightPoint[onKey] !== UNDEFINED) {
+								point.plotY +=
+									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
+									(rightPoint[onKey] - leftPoint[onKey]); // the y distance
 							}
 						}
 					}
@@ -122,9 +125,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		each(points, function (point, i) {
 
 			var stackIndex;
-			
+
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
-			// If the series is outside the range of the x axis it should fall through with 
+			// If the series is outside the range of the x axis it should fall through with
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === UNDEFINED) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
@@ -133,6 +136,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					point.shapeArgs = {}; // 847
 				}
 			}
+			point.plotX += xOffset; // #2049
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
 			if (lastPoint && lastPoint.plotX === point.plotX) {
@@ -141,7 +145,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 				stackIndex = lastPoint.stackIndex + 1;
 			}
-			point.stackIndex = stackIndex; // #3639		
+			point.stackIndex = stackIndex; // #3639
 		});
 
 
@@ -168,7 +172,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			stackIndex,
 			anchorX,
 			anchorY,
-			outsideRight;
+			outsideRight,
+			yAxis = series.yAxis,
+			text;
 
 		i = points.length;
 		while (i--) {
@@ -189,12 +195,16 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 			graphic = point.graphic;
 
+					
 			// only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
 				// shortcuts
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+				text = pick(point.options.title, options.title, 'A');
 				if (graphic) { // update
 					graphic.attr({
+						text: text // first apply text, so text will be centered later
+					}).attr({
 						x: plotX,
 						y: plotY,
 						r: pointAttr.r,
@@ -203,7 +213,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					});
 				} else {
 					graphic = point.graphic = renderer.label(
-						point.options.title || options.title || 'A',
+						text, 
 						plotX,
 						plotY,
 						shape,
@@ -224,7 +234,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 
 				// Set the tooltip anchor position
-				point.tooltipPos = [plotX, plotY];
+				point.tooltipPos = chart.inverted ? [yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - plotX] : [plotX, plotY];
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();
@@ -240,7 +250,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawTracker: function () {
 		var series = this,
 			points = series.points;
-		
+
 		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically

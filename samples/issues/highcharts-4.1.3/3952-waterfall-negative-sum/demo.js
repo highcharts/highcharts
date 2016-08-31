@@ -8,9 +8,9 @@ $(function () {
         },
         series: [{
             data: [
-                {y: -1 },
-                {y: -1 },
-                {isSum: true }]
+                { y: -1 },
+                { y: -1 },
+                { isSum: true }]
         }]
     });
 });

@@ -39,9 +39,9 @@ extend(Highcharts.Pointer.prototype, {
 			scaleKey,
 			setScale = function () {
 				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start); 
+					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);
 				}
-				
+
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
 				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
 			};
@@ -59,7 +59,7 @@ extend(Highcharts.Pointer.prototype, {
 			selectionXY = bounds.max - selectionWH;
 			outOfBounds = true;
 		}
-		
+
 		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
 		if (outOfBounds) {
 
@@ -78,7 +78,7 @@ extend(Highcharts.Pointer.prototype, {
 		}
 
 		// Set geometry for clipping, selection and transformation
-		if (!inverted) { // TODO: implement clipping for inverted charts
+		if (!inverted) {
 			clip[xy] = clipXY - plotLeftTop;
 			clip[wh] = selectionWH;
 		}
@@ -90,7 +90,7 @@ extend(Highcharts.Pointer.prototype, {
 		transform[scaleKey] = scale;
 		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
 	},
-	
+
 	/**
 	 * Handle touch events with two touches
 	 */
@@ -105,11 +105,11 @@ extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') &&
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
-		// Don't initiate panning until the user has pinched. This prevents us from 
+		// Don't initiate panning until the user has pinched. This prevents us from
 		// blocking page scrolling as users scroll down a long page (#4210).
 		if (touchesLength > 1) {
 			self.initiated = true;
@@ -119,12 +119,12 @@ extend(Highcharts.Pointer.prototype, {
 		if (hasZoom && self.initiated && !fireClickEvent) {
 			e.preventDefault();
 		}
-		
+
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
 		});
-		
+
 		// Register the touch start position
 		if (e.type === 'touchstart') {
 			each(touches, function (e, i) {
@@ -149,10 +149,10 @@ extend(Highcharts.Pointer.prototype, {
 				}
 			});
 			self.res = true; // reset on next move
-		
+
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
-			
+
 
 			// Set the marker
 			if (!selectionMarker) {
@@ -161,14 +161,14 @@ extend(Highcharts.Pointer.prototype, {
 					touch: true
 				}, chart.plotBox);
 			}
-			
+
 			self.pinchTranslate(pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 			self.hasPinched = hasZoom;
 
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
-			
+
 			// Optionally move the tooltip on touchmove
 			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
@@ -183,7 +183,9 @@ extend(Highcharts.Pointer.prototype, {
 	 * General touch handler shared by touchstart and touchmove.
 	 */
 	touch: function (e, start) {
-		var chart = this.chart;
+		var chart = this.chart,
+			hasMoved,
+			pinchDown;
 
 		hoverChartIndex = chart.index;
 
@@ -198,7 +200,22 @@ extend(Highcharts.Pointer.prototype, {
 					this.runPointActions(e);
 				}
 
-				this.pinch(e);
+				// Android fires touchmove events after the touchstart even if the
+				// finger hasn't moved, or moved only a pixel or two. In iOS however,
+				// the touchmove doesn't fire unless the finger moves more than ~4px.
+				// So we emulate this behaviour in Android by checking how much it
+				// moved, and cancelling on small distances. #3450.
+				if (e.type === 'touchmove') {
+					pinchDown = this.pinchDown;
+					hasMoved = pinchDown[0] ? Math.sqrt( // #5266
+						Math.pow(pinchDown[0].chartX - e.chartX, 2) +
+						Math.pow(pinchDown[0].chartY - e.chartY, 2)
+					) >= 4 : false;
+				}
+
+				if (pick(hasMoved, true)) {
+					this.pinch(e);
+				}
 
 			} else if (start) {
 				// Hide the tooltip on touching outside the plot area (#1203)

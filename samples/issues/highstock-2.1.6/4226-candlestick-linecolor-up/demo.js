@@ -11,15 +11,15 @@ $(function () {
                 high: 3,
                 low: 0.5,
                 close: 2,
-                lineColor: "#FF0000",
+                lineColor: "#FF0000"
             },
-        {
+            {
                 x : 6,
                 open: 2,
                 high: 2,
                 low: 0.5,
                 close: 1.5,
-                lineColor: "#FF0000",
+                lineColor: "#FF0000"
             }
         ];
         $('#container').highcharts('StockChart', {
@@ -37,7 +37,7 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             points = chart.series[0].points;
-        
+
 
         assert.equal(
             points[0].graphic.element.getAttribute('stroke'),

@@ -1,7 +1,7 @@
 
-// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need
 // diffent logic (#3218)
-var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
+var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -68,12 +68,12 @@ var MapAreaPoint = extendClass(Point, extend({
 				point.value = point.value || null;
 			}
 		}
-		
+
 		return point;
 	},
 
 	/**
-	 * Stop the fade-out 
+	 * Stop the fade-out
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
@@ -95,7 +95,7 @@ var MapAreaPoint = extendClass(Point, extend({
 			normalColor = Color(point.color),
 			hoverColor = Color(point.pointAttr.hover.fill),
 			animation = point.series.options.states.normal.animation,
-			duration = animation && (animation.duration || 500),
+			duration = animObject(animation).duration,
 			fill;
 
 		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
@@ -164,15 +164,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	getBox: function (paths) {
 		var MAX_VALUE = Number.MAX_VALUE,
-			maxX = -MAX_VALUE, 
-			minX =  MAX_VALUE, 
-			maxY = -MAX_VALUE, 
+			maxX = -MAX_VALUE,
+			minX =  MAX_VALUE,
+			maxY = -MAX_VALUE,
 			minY =  MAX_VALUE,
 			minRange = MAX_VALUE,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
 			hasBox;
-		
+
 		// Find the bounding box
 		each(paths || [], function (point) {
 
@@ -184,16 +184,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
-					pointMaxX = -MAX_VALUE, 
-					pointMinX =  MAX_VALUE, 
-					pointMaxY = -MAX_VALUE, 
+					pointMaxX = -MAX_VALUE,
+					pointMinX =  MAX_VALUE,
+					pointMaxY = -MAX_VALUE,
 					pointMinY =  MAX_VALUE,
 					properties = point.properties;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
 					while (i--) {
-						if (typeof path[i] === 'number' && !isNaN(path[i])) {
+						if (isNumber(path[i])) {
 							if (even) { // even = x
 								pointMaxX = Math.max(pointMaxX, path[i]);
 								pointMinX = Math.min(pointMinX, path[i]);
@@ -205,9 +205,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * 
+					point._midX = pointMinX + (pointMaxX - pointMinX) *
 						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) * 
+					point._midY = pointMinY + (pointMaxY - pointMinY) *
 						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
@@ -233,7 +233,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
 			this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
 
-			// If no minRange option is set, set the default minimum zooming range to 5 times the 
+			// If no minRange option is set, set the default minimum zooming range to 5 times the
 			// size of the smallest element
 			if (xAxis && xAxis.options.minRange === undefined) {
 				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
@@ -243,7 +243,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			}
 		}
 	},
-	
+
 	getExtremes: function () {
 		// Get the actual value extremes for colors
 		Series.prototype.getExtremes.call(this, this.valueData);
@@ -260,13 +260,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.dataMin = this.minY;
 		this.dataMax = this.maxY;
 	},
-	
+
 	/**
 	 * Translate the path so that it automatically fits into the plot area box
 	 * @param {Object} path
 	 */
 	translatePath: function (path) {
-		
+
 		var series = this,
 			even = false, // while loop reads from the end
 			xAxis = series.xAxis,
@@ -284,8 +284,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (path) {
 			i = path.length;
 			while (i--) {
-				if (typeof path[i] === 'number') {
-					ret[i] = even ? 
+				if (isNumber(path[i])) {
+					ret[i] = even ?
 						(path[i] - xMin) * xTransA + xMinPixelPadding :
 						(path[i] - yMin) * yTransA + yMinPixelPadding;
 					even = !even;
@@ -297,18 +297,19 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		return ret;
 	},
-	
+
 	/**
-	 * Extend setData to join in mapData. If the allAreas option is true, all areas 
+	 * Extend setData to join in mapData. If the allAreas option is true, all areas
 	 * from the mapData are used, and those that don't correspond to a data value
 	 * are given null values.
 	 */
-	setData: function (data, redraw) {
+	setData: function (data, redraw, animation, updatePoints) {
 		var options = this.options,
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
 			dataUsed = [],
+			mapMap = {},
 			mapPoint,
 			transform,
 			mapTransforms,
@@ -326,7 +327,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Pick up numeric values, add index
 		if (data) {
 			each(data, function (val, i) {
-				if (typeof val === 'number') {
+				if (isNumber(val)) {
 					data[i] = {
 						value: val
 					};
@@ -344,19 +345,17 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
 					// Cache cos/sin of transform rotation angle
 					for (transform in mapTransforms) {
-						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
 							transform.cosAngle = Math.cos(transform.rotation);
-							transform.sinAngle = Math.sin(transform.rotation);							
+							transform.sinAngle = Math.sin(transform.rotation);
 						}
 					}
 				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
-			this.getBox(mapData);
 			this.mapData = mapData;
-			this.mapMap = {};
-			
+
 			for (i = 0; i < mapData.length; i++) {
 				mapPoint = mapData[i];
 				props = mapPoint.properties;
@@ -366,41 +365,49 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-				this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
 			}
+			this.mapMap = mapMap;
 
-			if (options.allAreas) {
-
-				data = data || [];
-
-				// Registered the point codes that actually hold data
-				if (joinBy[1]) {
-					each(data, function (point) {
-						dataUsed.push(point[joinBy[1]]);
-					});
-				}
-
-				// Add those map points that don't correspond to data, which will be drawn as null points
-				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
-
-				each(mapData, function (mapPoint) {
-					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(merge(mapPoint, { value: null }));
+			// Registered the point codes that actually hold data
+			if (data && joinBy[1]) {
+				each(data, function (point) {
+					if (mapMap[point[joinBy[1]]]) {
+						dataUsed.push(mapMap[point[joinBy[1]]]);
 					}
 				});
 			}
+
+			if (options.allAreas) {
+				this.getBox(mapData);
+				data = data || [];				
+
+				// Add those map points that don't correspond to data, which will be drawn as null points
+				dataUsed = '|' + map(dataUsed, function (point) { 
+					return point[joinBy[0]]; 
+				}).join('|') + '|'; // String search is faster than array.indexOf
+				
+				each(mapData, function (mapPoint) {
+					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
+						data.push(merge(mapPoint, { value: null }));
+						updatePoints = false; // #5050 - adding all areas causes the update optimization of setData to kick in, even though the point order has changed
+					}
+				});
+			} else {
+				this.getBox(dataUsed); // Issue #4784
+			}
 		}
-		Series.prototype.setData.call(this, data, redraw);
+		Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
 	},
 
-	
+
 	/**
 	 * No graph for the map series
 	 */
 	drawGraph: noop,
-	
+
 	/**
-	 * We need the points' bounding boxes in order to draw the data labels, so 
+	 * We need the points' bounding boxes in order to draw the data labels, so
 	 * we skip it now and call it from drawPoints instead.
 	 */
 	drawDataLabels: noop,
@@ -412,7 +419,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	doFullTranslate: function () {
 		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
-	
+
 	/**
 	 * Add the path option for data points. Find the max value for color calculation.
 	 */
@@ -423,16 +430,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			doFullTranslate = series.doFullTranslate();
 
 		series.generatePoints();
-		
+
 		each(series.data, function (point) {
-		
+
 			// Record the middle point (loosely based on centroid), determined
 			// by the middleX and middleY options.
 			point.plotX = xAxis.toPixels(point._midX, true);
 			point.plotY = yAxis.toPixels(point._midY, true);
 
 			if (doFullTranslate) {
-		
+
 				point.shapeType = 'path';
 				point.shapeArgs = {
 					d: series.translatePath(point.path)
@@ -442,11 +449,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				}
 			}
 		});
-		
+
 		series.translateColors();
 	},
-	
-	/** 
+
+	/**
 	 * Use the drawPoints method of column, that is able to handle simple shapeArgs.
 	 * Extend it by assigning the tooltip position.
 	 */
@@ -474,11 +481,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				.add(group);
 			series.transformGroup.survive = true;
 		}
-		
+
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
+			// Individual point actions
 			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
 				each(series.points, function (point) {
 
@@ -490,7 +497,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			}
 
 			// If vector-effect is not supported, we set the stroke-width on the group element
-			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// and let all point graphics inherit. That way we don't have to iterate over all
 			// points to update the stroke-width on zooming.
 			if (!supportsVectorEffect) {
 				each(series.points, function (point) {
@@ -522,11 +529,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				}
 			});
 
-			// Set the base for later scale-zooming. The originX and originY properties are the 
+			// Set the base for later scale-zooming. The originX and originY properties are the
 			// axis values in the plot area's upper left corner.
 			this.baseTrans = {
 				originX: xAxis.min - xAxis.minPixelPadding / xAxis.transA,
-				originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA + (yAxis.reversed ? 0 : yAxis.len / yAxis.transA), 
+				originY: yAxis.min - yAxis.minPixelPadding / yAxis.transA + (yAxis.reversed ? 0 : yAxis.len / yAxis.transA),
 				transAX: xAxis.transA,
 				transAY: yAxis.transA
 			};
@@ -563,22 +570,22 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		}
 
-		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
-		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
 		// set.
 		if (!supportsVectorEffect) {
-			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
+			series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
-		
-		
+
+
 	},
 
 	/**
 	 * Draw the data labels. Special for maps is the time that the data labels are drawn (after points),
 	 * and the clipping of the dataLabelsGroup.
-	 */		
+	 */
 	drawMapDataLabels: function () {
 
 		Series.prototype.drawDataLabels.call(this);
@@ -605,7 +612,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	},
 
 	/**
-	 * The initial animation for the map series. By default, animation is disabled. 
+	 * The initial animation for the map series. By default, animation is disabled.
 	 * Animation of map shapes is not at all supported in VML browsers.
 	 */
 	animate: function (init) {
@@ -627,7 +634,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Initialize the animation
 			if (init) {
-			
+
 				// Scale down the group and place it in the center
 				group.attr({
 					translateX: left + xAxis.len / 2,
@@ -635,7 +642,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleX: 0.001, // #1499
 					scaleY: 0.001
 				});
-			
+
 			// Run the animation
 			} else {
 				group.animate({
@@ -644,7 +651,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleX: 1,
 					scaleY: 1
 				}, animation);
-			
+
 				// Delete this function to allow it only once
 				this.animate = null;
 			}
@@ -661,7 +668,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			fromBox = level.bBox,
 			animationOptions = this.chart.options.drilldown.animation,
 			scale;
-			
+
 		if (!init) {
 
 			scale = Math.min(fromBox.width / toBox.width, fromBox.height / toBox.height);
@@ -671,8 +678,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				translateX: fromBox.x,
 				translateY: fromBox.y
 			};
-			
-			// TODO: Animate this.group instead
+
 			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic
@@ -688,7 +694,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			this.animate = null;
 		}
-		
+
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,

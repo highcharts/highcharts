@@ -784,7 +784,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/si/si-all.js">Slovenia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/si/si-all.js">Slovenia</a>'
         },
 
         mapNavigation: {

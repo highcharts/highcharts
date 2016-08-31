@@ -1,9 +1,13 @@
 
-/** 
+/**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
 function pointInPolygon(point, polygon) {
-	var i, j, rel1, rel2, c = false,
+	var i,
+		j,
+		rel1,
+		rel2,
+		c = false,
 		x = point.x,
 		y = point.y;
 
@@ -22,7 +26,7 @@ function pointInPolygon(point, polygon) {
  * Get point from latLon using specified transform definition
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-	if (window.proj4 === undefined) {
+	if (win.proj4 === undefined) {
 		error(21);
 		return {
 			x: 0,
@@ -30,11 +34,11 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 		};
 	}
 
-	var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+	var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
-	
+
 	return {
 		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
 		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
@@ -45,7 +49,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  * Get latLon from point using specified transform definition
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
-	if (window.proj4 === undefined) {
+	if (win.proj4 === undefined) {
 		error(21);
 		return;
 	}
@@ -57,12 +61,12 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		// Note: Inverted sinAngle to reverse rotation direction
-		projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+		projected = win.proj4(transform.crs, 'WGS84', transform.rotation ? {
 			x: normalized.x * cosAngle + normalized.y * -sinAngle,
 			y: normalized.x * sinAngle + normalized.y * cosAngle
 		} : normalized);
 
-	return {lat: projected.y, lon: projected.x};
+	return { lat: projected.y, lon: projected.x };
 };
 
 Chart.prototype.fromPointToLatLon = function (point) {
@@ -75,12 +79,13 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	}
 
 	for (transform in transforms) {
-		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+				pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
 			return this.transformToLatLon(point, transforms[transform]);
 		}
 	}
 
-	return this.transformToLatLon(point, transforms['default']);
+	return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -99,13 +104,13 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 	for (transform in transforms) {
 		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
 			coords = this.transformFromLatLon(latLon, transforms[transform]);
-			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+			if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
 				return coords;
 			}
 		}
 	}
 
-	return this.transformFromLatLon(latLon, transforms['default']);
+	return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
 };
 
 /**
@@ -115,10 +120,10 @@ Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
-			var i = 0,
+			var i,
 				len = polygon.length;
 			path.push('M');
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}
@@ -127,7 +132,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 		};
 
 	hType = hType || 'map';
-	
+
 	each(geojson.features, function (feature) {
 
 		var geometry = feature.geometry,
@@ -135,7 +140,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			coordinates = geometry.coordinates,
 			properties = feature.properties,
 			point;
-		
+
 		path = [];
 
 		if (hType === 'map' || hType === 'mapbubble') {
@@ -153,7 +158,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mapline') {
 			if (type === 'LineString') {
 				polygonToPath(coordinates);
@@ -164,7 +169,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mappoint') {
 			if (type === 'Point') {
 				point = {
@@ -175,7 +180,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 		}
 		if (point) {
 			mapData.push(extend(point, {
-				name: properties.name || properties.NAME, 
+				name: properties.name || properties.NAME,
 				properties: properties
 			}));
 		}
@@ -184,9 +189,8 @@ Highcharts.geojson = function (geojson, hType, series) {
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits
 	if (series && geojson.copyrightShort) {
-		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
-			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
-		series.chart.mapCreditsFull = geojson.copyright;
+		series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
+		series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
 	}
 
 	return mapData;
@@ -197,15 +201,18 @@ Highcharts.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
-		credits.text = this.mapCredits;
+	// Disable credits link if map credits enabled. This to allow for in-text anchors.
+	if (this.mapCredits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, credits);
+	proceed.call(this, Highcharts.merge(credits, {
+		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
+	}));
 
-	if (this.credits) { 
-		this.credits.attr({ 
+	// Add full map credits to hover
+	if (this.credits && this.mapCreditsFull) {
+		this.credits.attr({
 			title: this.mapCreditsFull
 		});
 	}

@@ -40,7 +40,8 @@ defaultOptions.mapNavigation = {
 			text: '-',
 			y: 28
 		}
-	}
+	},
+	mouseWheelSensitivity: 1.1
 	// enabled: false,
 	// enableButtons: null, // inherit from enabled
 	// enableTouchZoom: null, // inherit from enabled
@@ -58,11 +59,11 @@ Highcharts.splitPath = function (path) {
 	// Move letters apart
 	path = path.replace(/([A-Za-z])/g, ' $1 ');
 	// Trim
-	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
-	
+	path = path.replace(/^\s*/, '').replace(/\s*$/, '');
+
 	// Split on spaces and commas
 	path = path.split(/[ ,]+/);
-	
+
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {
 		if (!/[a-zA-Z]/.test(path[i])) {
@@ -120,9 +121,11 @@ if (Renderer === VMLRenderer) {
 /**
  * A wrapper for Chart with all the default values for a Map
  */
-Highcharts.Map = function (options, callback) {
-	
-	var hiddenAxis = {
+Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
+
+	var hasRenderToArg = typeof a === 'string' || a.nodeName,
+		options = arguments[hasRenderToArg ? 1 : 0],
+		hiddenAxis = {
 			endOnTick: false,
 			gridLineWidth: 0,
 			lineWidth: 0,
@@ -132,37 +135,46 @@ Highcharts.Map = function (options, callback) {
 			title: null,
 			tickPositions: []
 		},
-		seriesOptions;
+		seriesOptions,
+		defaultCreditsOptions = Highcharts.getOptions().credits;
 
 	/* For visual testing
 	hiddenAxis.gridLineWidth = 1;
 	hiddenAxis.gridZIndex = 10;
 	hiddenAxis.tickPositions = undefined;
 	// */
-	
+
 	// Don't merge the data
 	seriesOptions = options.series;
 	options.series = null;
-	
-	options = merge({
-		chart: {
-			panning: 'xy',
-			type: 'map'
-		},
-		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
-	},
-	options, // user's options
 
-	{ // forced options
-		chart: {
-			inverted: false,
-			alignTicks: false
+	options = merge(
+		{
+			chart: {
+				panning: 'xy',
+				type: 'map'
+			},
+			credits: {
+				mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
+				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
+			},
+			xAxis: hiddenAxis,
+			yAxis: merge(hiddenAxis, { reversed: true })
+		},
+		options, // user's options
+
+		{ // forced options
+			chart: {
+				inverted: false,
+				alignTicks: false
+			}
 		}
-	});
+	);
 
 	options.series = seriesOptions;
 
 
-	return new Chart(options, callback);
+	return hasRenderToArg ? 
+		new Chart(a, options, c) :
+		new Chart(options, b);
 };

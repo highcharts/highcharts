@@ -1,5 +1,5 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
 
         // Create the chart
         $('#container').highcharts('StockChart', {
@@ -23,6 +23,11 @@ $(function () {
                 },
                 tooltip: {
                     valueDecimals: 2
+                },
+                states: {
+                    hover: {
+                        lineWidthPlus: 0
+                    }
                 }
             }]
         });

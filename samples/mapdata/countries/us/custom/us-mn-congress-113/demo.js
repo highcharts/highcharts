@@ -44,7 +44,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-mn-congress-113.js">Minnesota congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-mn-congress-113.js">Minnesota congressional districts</a>'
         },
 
         mapNavigation: {

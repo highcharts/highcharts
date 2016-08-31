@@ -5,7 +5,7 @@ $(function () {
             500,
             300
         );
-            
+
         var label = ren.label('Hello World', 100, 100, null, null, null, true)
             .attr({
                 'stroke-width': 1,
@@ -43,7 +43,7 @@ $(function () {
             'Visibility is visible'
         );
 
-        
+
 
     });
 });

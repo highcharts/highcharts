@@ -40,7 +40,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gd/gd-all.js">Grenada</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gd/gd-all.js">Grenada</a>'
         },
 
         mapNavigation: {

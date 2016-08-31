@@ -4,7 +4,7 @@ $(function () {
             chart: {
                 type: 'area'
             },
-            
+
             plotOptions: {
                 area: {
                     stacking: 'normal'
@@ -31,7 +31,7 @@ $(function () {
             -1,
             'Valid path'
         );
-        
+
     });
 
 });

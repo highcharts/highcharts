@@ -32,7 +32,7 @@ var colorSeriesMixin = {
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
-	
+
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
 	 */
@@ -46,7 +46,7 @@ var colorSeriesMixin = {
 			var value = point[colorKey],
 				color;
 
-			color = point.options.color || 
+			color = point.options.color ||
 				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {

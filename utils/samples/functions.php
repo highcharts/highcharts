@@ -153,7 +153,7 @@ function getFramework($framework) {
 			';
 		} else {
 			return '
-				<script src="http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
+				<script src="cache.php?file=http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
 			';
 		}
 	}

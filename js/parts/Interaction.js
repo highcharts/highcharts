@@ -12,7 +12,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
-				point;
+					point;
 
 				while (target && !point) {
 					point = target.point;
@@ -41,7 +41,9 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					series[key]
 						.addClass(PREFIX + 'tracker')
 						.on('mouseover', onMouseOver)
-						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.on('mouseout', function (e) {
+							pointer.onTrackerMouseOut(e);
+						})
 						.css(css);
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
@@ -71,8 +73,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			singlePoints = series.singlePoints,
-			singlePoint,
 			i,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
@@ -108,11 +108,11 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		}
 
 		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
+		/*for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 			L, singlePoint.plotX + snap, singlePoint.plotY);
-		}
+		}*/
 
 		// draw the tracker
 		if (tracker) {
@@ -125,7 +125,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				visibility: series.visible ? VISIBLE : HIDDEN,
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : NONE,
-				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+				'stroke-width': options.lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);
@@ -135,7 +135,9 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass(PREFIX + 'tracker')
 					.on('mouseover', onMouseOver)
-					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+					.on('mouseout', function (e) {
+						pointer.onTrackerMouseOut(e);
+					})
 					.css(css);
 
 				if (hasTouch) {
@@ -151,10 +153,10 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 /**
  * Add tracking event listener to the series group, so the point graphics
  * themselves act as trackers
- */ 
+ */
 
 if (seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
+	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.pie) {
@@ -165,15 +167,15 @@ if (seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-/* 
- * Extend Legend for item events 
- */ 
+/*
+ * Extend Legend for item events
+ */
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-	var legend = this;
-	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+		var legend = this;
+		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState(HOVER_STATE);
 			legendItem.css(legend.options.itemHoverStyle);
 		})
@@ -188,7 +190,7 @@ extend(Legend.prototype, {
 						item.setVisible();
 					}
 				};
-				
+
 			// Pass over the click/touch event. #4.
 			event = {
 				browserEvent: event
@@ -214,7 +216,10 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712
+			fireEvent(
+				item.series || item, 
+				'checkboxClick', 
+				{ // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -223,16 +228,16 @@ extend(Legend.prototype, {
 				}
 			);
 		});
-	}	
+	}
 });
 
-/* 
+/*
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
 defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 
-/* 
+/*
  * Extend the Chart object with interaction
  */
 
@@ -247,15 +252,19 @@ extend(Chart.prototype, {
 			theme = btnOptions.theme,
 			states = theme.states,
 			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
-			
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
+
+		function zoomOut() {
+			chart.zoomOut();
+		}
+
+		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
 			})
 			.add()
 			.align(btnOptions.position, false, alignTo);
-			
+
 	},
 
 	/**
@@ -263,7 +272,7 @@ extend(Chart.prototype, {
 	 */
 	zoomOut: function () {
 		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+		fireEvent(chart, 'selection', { resetSelection: true }, function () {
 			chart.zoom();
 		});
 	},
@@ -298,7 +307,7 @@ extend(Chart.prototype, {
 				}
 			});
 		}
-		
+
 		// Show or hide the Reset zoom button
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
@@ -306,7 +315,7 @@ extend(Chart.prototype, {
 		} else if (!displayButton && isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
-		
+
 
 		// Redraw
 		if (hasZoomed) {
@@ -335,23 +344,25 @@ extend(Chart.prototype, {
 		}
 
 		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-			var mousePos = e[isX ? 'chartX' : 'chartY'],
-				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
+			var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+				horiz = axis.horiz,
+				mousePos = e[horiz ? 'chartX' : 'chartY'],
+				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
+				startPos = chart[mouseDown],
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
 				goingLeft = startPos > mousePos; // #3613
-
-			if (axis.series.length && 
-					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
+			
+			if (axis.series.length &&
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
 
-			chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
+			chart[mouseDown] = mousePos; // set new reference for next run
 		});
 
 		if (doRedraw) {
@@ -378,7 +389,7 @@ extend(Point.prototype, {
 
 		selected = pick(selected, !point.selected);
 
-		// fire the event with the defalut handler
+		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
@@ -392,7 +403,7 @@ extend(Point.prototype, {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
 						loopPoint.setState(NORMAL_STATE);
-							loopPoint.firePointEvent('unselect');
+						loopPoint.firePointEvent('unselect');
 					}
 				});
 			}
@@ -403,7 +414,7 @@ extend(Point.prototype, {
 	 * Runs on mouse over the point
 	 *
 	 * @param {Object} e The event arguments
-	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to 
+	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to
 	 *        actually hovered points. True for other points in shared tooltip.
 	 */
 	onMouseOver: function (e, byProximity) {
@@ -415,7 +426,7 @@ extend(Point.prototype, {
 
 		if (chart.hoverSeries !== series) {
 			series.onMouseOver();
-		}		
+		}
 
 		// set normal state to previous series
 		if (hoverPoint && hoverPoint !== point) {
@@ -586,8 +597,11 @@ extend(Point.prototype, {
 					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
-			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+				'fill': point.color || series.color,
+				'fill-opacity': haloOptions.opacity,
+				'zIndex': -1 // #4929, IE8 added halo above everything
+			},
+			haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {
@@ -597,15 +611,21 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 
+	/**
+	 * Get the circular path definition for the halo
+	 * @param  {Number} size The radius of the circular halo
+	 * @returns {Array} The path definition
+	 */
 	haloPath: function (size) {
 		var series = this.series,
 			chart = series.chart,
 			plotBox = series.getPlotBox(),
-			inverted = chart.inverted;
+			inverted = chart.inverted,
+			plotX = Math.floor(this.plotX);
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size, 
+			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
+			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
 			size * 2, 
 			size * 2
 		);

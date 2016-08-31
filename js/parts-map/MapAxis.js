@@ -55,7 +55,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		fixDiff,
 		preserveAspectRatio;
 
-	
+
 	// Run the parent method
 	proceed.call(this);
 
@@ -67,15 +67,15 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 			}
 		});
 	}
-	
+
 	// On Y axis, handle both
 	if (preserveAspectRatio) {
-		
+
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
-		
+
 		mapRatio = plotRatio / ((xAxis.max - xAxis.min) / (this.max - this.min));
-		
+
 		// What axis to pad to put the map in the middle
 		padAxis = mapRatio < 1 ? this : xAxis;
 

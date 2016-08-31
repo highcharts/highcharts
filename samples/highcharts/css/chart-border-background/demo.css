@@ -1,0 +1,7 @@
+@import 'https://code.highcharts.com/5/css/highcharts.css';
+
+.highcharts-background {
+	fill: #efefef;
+	stroke: #a4edba;
+	stroke-width: 2px;
+}

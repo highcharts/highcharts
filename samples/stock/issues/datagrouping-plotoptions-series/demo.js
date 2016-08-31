@@ -21,7 +21,7 @@ $(function () {
                 dataGrouping: {
                     groupPixelWidth: 10
                 }
-           }
+            }
         },
 
         series: [{

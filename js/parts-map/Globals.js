@@ -1,5 +1,6 @@
 
 var UNDEFINED,
+	animObject = Highcharts.animObject,
 	Axis = Highcharts.Axis,
 	Chart = Highcharts.Chart,
 	Color = Highcharts.Color,
@@ -11,12 +12,17 @@ var UNDEFINED,
 	Series = Highcharts.Series,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
-	
+	win = Highcharts.win,
+
+	doc = win.document,
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
+	format = Highcharts.format,
+	map = Highcharts.map,
+	isNumber = Highcharts.isNumber,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
@@ -24,5 +30,3 @@ var UNDEFINED,
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap,
 	noop = function () {};
-
-	

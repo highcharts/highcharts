@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie radial gradient', function (assert) {
-    
+
 
         // Radialize the colors
         Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
@@ -12,7 +12,7 @@ $(function () {
                 },
                 stops: [
                     [0, '#FFFFFF'],
-                    [0.2, '#000000'] 
+                    [0.2, '#000000']
                 ]
             };
         });
@@ -31,7 +31,7 @@ $(function () {
                 }
             }]
         });
-        
+
         var chart = $('#container').highcharts(),
             series = chart.series[0],
             gradient;
@@ -59,7 +59,7 @@ $(function () {
         );
 
         chart.setSize(400, 400, false);
-            
+
         assert.strictEqual(
             parseFloat(gradient.getAttribute('cx')),
             series.center[0],

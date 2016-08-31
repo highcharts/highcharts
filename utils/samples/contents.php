@@ -14,25 +14,33 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts samples</title>
 
-		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
-  		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-  		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+		<script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>
+  		<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
   		<link rel="stylesheet" type="text/css" href="style.css"/>
 
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
 			var diffThreshold = 0;
+			window.continueBatch = false;
 			function runBatch() {
 				var currentLi = document.currentLi || $('#li1')[0];
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
+					window.continueBatch = true;
 				
-					href = href.replace("view.php", "compare-view.php") + '&continue=true';
+					href = href.replace("view.php", "compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
 				$(this).toggle();
 				$('#batch-stop').toggle();
+			}
+
+			function stopBatch() {
+				window.continueBatch = false;
+				$('#batch-stop').toggle();
+				$('#batch-compare').toggle();
 			}
 
 			function countFails() {
@@ -44,20 +52,15 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 				$(window).bind('keydown', parent.keyDown);
 
+				$(window).bind('click', function (e) {
+					if (e.target !== $('#batch-compare')[0]) {
+						stopBatch();
+					}
+				});
+
 				
 				$("#batch-compare").click(runBatch);
-
-				$("#batch-stop").click(function() {
-					var currentLi = document.currentLi || $('#li1')[0];
-					if (currentLi) {
-						var href = currentLi.getElementsByTagName("a")[0].href;
-					
-						href = href.replace("view.php", "compare-view.php");
-						window.parent.frames[1].location.href = href;
-					}
-					$(this).toggle();
-					$('#batch-compare').toggle();
-				});
+				$("#batch-stop").click(stopBatch);
 
 				$('#reset').click(function () {
 					if (confirm("Do you want to reset the compare history? Results from all browsers will be lost.")) {
@@ -69,9 +72,23 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 					window.location.reload();
 				});
 
+				var fails = 0;
 				$('#fails-only').click(function () {
-					$('#filtered').css('display', 'block');
-					$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
+
+					fails = (fails + 1) % 3;
+					if (fails === 1) { // Hide passed tests
+						$('#filtered').css('display', 'block');
+						$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
+					
+					} else if (fails === 2) { // Hide manual tests
+						$('#main-nav li.manual').css('display', 'none');
+					
+					} else if (fails === 0) { // Reset
+						$('#filtered').css('display', 'none');
+						$('#main-nav li').css('display', '');	
+					}
+
+					
 				});
 
 				$("#slider").slider({
@@ -109,6 +126,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 			body {
 				background: #F6F6F6;
+				padding-right: 1em;
 			}
 
 			li, a, p, div, span {
@@ -189,7 +207,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 			}
 			.comment {
 				position: absolute;
-				right: 3em;
+				right: 4em;
 			}
 			.comment-title {
 				display: none;
@@ -252,7 +270,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		</a>
 
 		<div class="text">
-			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.0.0">PhantomJS</a>
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.1.1">PhantomJS</a>
 		</div>
 
 		<div style="margin-top: 1em">
@@ -266,10 +284,10 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 	<div id="main-nav">
 
 	<div id="filtered">
-		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
+		Showing only failed samples. Click "Fails only" again to change.
 	</div>
 	<?php
-	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
+	$products = array('highcharts', 'maps', 'stock', 'unit-tests', 'issues', 'cloud');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	
 
@@ -309,17 +327,20 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 								// Display diff from previous comparison
 								$compareIcon = $isUnitTest ? 'icon-puzzle-piece' : 'icon-columns';
 								$dissIndex = "
-									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='$compareIcon'></i></a>
+									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+										<i class='$compareIcon'></i></a>
 								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
-									if ($diff > 0 || $diff == 'Error') {
+									if (!preg_match('/^[0-9\\.]+$/', $diff) || $diff > 0) {
 										if (strstr($diff, '.')) {
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';
+										$dummy = mktime();
 										$dissIndex = "
-											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i&amp;dummy=$dummy'
+												target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
 										$compareClass = 'identical';

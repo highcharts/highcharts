@@ -15,6 +15,9 @@ $(function () {
                 pointPlacement: 'between'
             }
         },
+        tooltip: {
+            shared: true
+        },
         series: [{
 
             name: 'Spot value at midnight',

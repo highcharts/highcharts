@@ -43,8 +43,8 @@ VMLElement = {
 		// create element with default attributes and style
 		if (nodeName) {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-				markup.join('')
-				: renderer.prepVML(markup);
+				markup.join('')	:
+				renderer.prepVML(markup);
 			wrapper.element = createElement(markup);
 		}
 
@@ -67,6 +67,9 @@ VMLElement = {
 				parent.element || parent :
 				box;
 
+		if (parent) {
+			this.parentGroup = parent;
+		}
 
 		// if the parent group is inverted, apply inversion on all children
 		if (inverted) { // only on groups
@@ -108,7 +111,7 @@ VMLElement = {
 		var rotation = this.rotation,
 			costheta = mathCos(rotation * deg2rad),
 			sintheta = mathSin(rotation * deg2rad);
-					
+
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
@@ -117,7 +120,7 @@ VMLElement = {
 	},
 
 	/**
-	 * Get the positioning correction for the span after rotating. 
+	 * Get the positioning correction for the span after rotating.
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
@@ -169,7 +172,7 @@ VMLElement = {
 				path[i] = value[i];
 
 				// When the start X and end X coordinates of an arc are too close,
-				// they are rounded to the same value above. In this case, substract or 
+				// they are rounded to the same value above. In this case, substract or
 				// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
 					// Start and end X
@@ -184,7 +187,7 @@ VMLElement = {
 			}
 		}
 
-		
+
 		// Loop up again to handle path shortcuts (#2132)
 		/*while (i++ < path.length) {
 			if (path[i] === 'H') { // horizontal line to
@@ -405,6 +408,14 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
+	'fill-opacitySetter': function (value, key, element) {
+		createElement(
+			this.renderer.prepVML(['<', key.split('-')[0], ' opacity="', value, '"/>']),
+			null,
+			null,
+			element
+		);
+	},
 	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style;
@@ -415,7 +426,7 @@ VMLElement = {
 		style.top = mathRound(mathCos(value * deg2rad)) + PX;
 	},
 	strokeSetter: function (value, key, element) {
-		this.setAttr('strokecolor', this.renderer.color(value, element, key));
+		this.setAttr('strokecolor', this.renderer.color(value, element, key, this));
 	},
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
@@ -434,7 +445,7 @@ VMLElement = {
 		if (value === 'inherit') {
 			value = VISIBLE;
 		}
-		
+
 		// Let the shadow follow the main element
 		if (this.shadows) {
 			each(this.shadows, function (shadow) {
@@ -481,12 +492,14 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
+VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
+
 Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
-	VMLElement.prototype.widthSetter = 
-	VMLElement.prototype.heightSetter = 
+	VMLElement.prototype.widthSetter =
+	VMLElement.prototype.heightSetter =
 	VMLElement.prototype.xSetter;
 
 
@@ -514,7 +527,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement(DIV)
-			.css(extend(this.getStyle(style), { position: RELATIVE}));
+			.css(extend(this.getStyle(style), { position: 'relative' }));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -523,7 +536,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
-		renderer.cache = {};
+		renderer.gradients = {};
+		renderer.cache = {}; // Cache for numerical bounding boxes
+		renderer.cacheKeys = [];
+		renderer.imgCount = 0;
 
 
 		renderer.setSize(width, height, false);
@@ -769,14 +785,13 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				ret = stopColor;
 			}
 
-		// if the color is an rgba color, split it and add a fill node
+		// If the color is an rgba color, split it and add a fill node
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
 			colorObject = Color(color);
 
-			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			createElement(this.prepVML(markup), null, null, elem);
+			wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
 
 			ret = colorObject.get('rgb');
 
@@ -912,7 +927,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);
 	},
 
 	/**
@@ -975,7 +990,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				ret.push(
 					'e',
 					M,
-					x,// - innerRadius,
+					x, // - innerRadius,
 					y// - innerRadius
 				);
 			}
@@ -1051,7 +1066,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = doc.createElement('span'),
 		offsetWidth,
-	textNode = doc.createTextNode(text);
+		textNode = doc.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);

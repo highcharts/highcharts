@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
 
         // Make it joinable
         $.each(data, function () {
@@ -45,7 +45,7 @@ $(function () {
                 joinBy: 'hasc',
                 dataLabels: {
                     enabled: true,
-                    color: 'white',
+                    color: '#FFFFFF',
                     formatter: function () {
                         if (this.point.graphic.getBBox().width > 30) {
                             return Highcharts.numberFormat(this.point.value, 1);

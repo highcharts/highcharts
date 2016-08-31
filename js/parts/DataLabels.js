@@ -111,6 +111,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
+		defer = pick(options.defer, true),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
@@ -124,16 +125,16 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? HIDDEN : VISIBLE,
+			defer && !hasRendered ? 'hidden' : 'visible', // #5133
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (defer) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
 				addEvent(series, 'afterAnimate', function () {
-					if (series.visible) { // #3023, #3024
-						dataLabelsGroup.show();
+					if (series.visible) { // #2597, #3023, #3024
+						dataLabelsGroup.show(true);
 					}
 					dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
 				});
@@ -157,7 +158,7 @@ Series.prototype.drawDataLabels = function () {
 
 			// Determine if each data label is enabled
 			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
-			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
+			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled) && point.y !== null; // #2282, #4641
 
 
 			// If the point is outside the plot area, destroy it. #678, #820
@@ -214,17 +215,17 @@ Series.prototype.drawDataLabels = function () {
 						padding: options.padding,
 						zIndex: 1
 					};
-					
+
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
-							renderer.getContrast(point.color || series.color) : 
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
+							renderer.getContrast(point.color || series.color) :
 							'#000000';
 					}
 					if (cursor) {
 						moreStyle.cursor = cursor;
 					}
-					
+
 
 					// Remove unused attributes (#947)
 					for (name in attr) {
@@ -236,7 +237,7 @@ Series.prototype.drawDataLabels = function () {
 					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
-						-999,
+						-9999,
 						options.shape,
 						null,
 						null,
@@ -264,15 +265,20 @@ Series.prototype.drawDataLabels = function () {
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.plotX, -9999),
+		plotY = pick(point.plotY, -9999),
 		bBox = dataLabel.getBBox(),
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotation = options.rotation,
+		normRotation,
+		negRotation,
+		align = options.align,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
-		alignAttr; // the final position;
+		alignAttr, // the final position;
+		justify = pick(options.overflow, 'justify') === 'justify';
 
 	if (visible) {
 
@@ -291,44 +297,60 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		});
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
-		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
-			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
-			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
-					y: alignTo.y + options.y + alignTo.height / 2
-				})
+		if (rotation) {
+			justify = false; // Not supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
+			alignAttr = {
+				x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
+				y: alignTo.y + options.y + { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] * alignTo.height
+			};
+			dataLabel[isNew ? 'attr' : 'animate'](alignAttr)
 				.attr({ // #3003
-					align: options.align
+					align: align
 				});
+
+			// Compensate for the rotated label sticking out on the sides
+			normRotation = (rotation + 720) % 360;
+			negRotation = normRotation > 180 && normRotation < 360;
+
+			if (align === 'left') {
+				alignAttr.y -= negRotation ? bBox.height : 0;
+			} else if (align === 'center') {
+				alignAttr.x -= bBox.width / 2;
+				alignAttr.y -= bBox.height / 2;
+			} else if (align === 'right') {
+				alignAttr.x -= bBox.width;
+				alignAttr.y -= negRotation ? 0 : bBox.height;
+			}
+			
+
 		} else {
 			dataLabel.align(options, null, alignTo);
 			alignAttr = dataLabel.alignAttr;
+		}
 
-			// Handle justify or crop
-			if (pick(options.overflow, 'justify') === 'justify') {
-				this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+		// Handle justify or crop
+		if (justify) {
+			this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+			
+		// Now check that the data label is within the plot area
+		} else if (pick(options.crop, true)) {
+			visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
+		}
 
-			} else if (pick(options.crop, true)) {
-				// Now check that the data label is within the plot area
-				visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
-
-			}
-
-			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
-			if (options.shape) {
-				dataLabel.attr({
-					anchorX: point.plotX,
-					anchorY: point.plotY
-				});
-			}
-
+		// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
+		if (options.shape && !rotation) {
+			dataLabel.attr({
+				anchorX: point.plotX,
+				anchorY: point.plotY
+			});
 		}
 	}
 
 	// Show or hide based on the final aligned position
 	if (!visible) {
 		stop(dataLabel);
-		dataLabel.attr({ y: -999 });
+		dataLabel.attr({ y: -9999 });
 		dataLabel.placed = false; // don't animate back in
 	}
 
@@ -441,10 +463,14 @@ if (seriesTypes.pie) {
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 
-		// arrange points for detection collision
 		each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
+
+				// Arrange points for detection collision
 				halves[point.half].push(point);
+
+				// Reset positions (#4905)
+				point.dataLabel._pos = null;
 			}
 		});
 
@@ -624,7 +650,7 @@ if (seriesTypes.pie) {
 					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
 					dataLabel.moved = true;
 				} else if (dataLabel) {
-					dataLabel.attr({ y: -999 });
+					dataLabel.attr({ y: -9999 });
 				}
 			}
 		});
@@ -678,12 +704,7 @@ if (seriesTypes.pie) {
 			center[2] = newSize;
 			center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
 			this.translate(center);
-			each(this.points, function (point) {
-				if (point.dataLabel) {
-					point.dataLabel._pos = null; // reset
-				}
-			});
-
+			
 			if (this.drawDataLabels) {
 				this.drawDataLabels();
 			}
@@ -705,11 +726,21 @@ if (seriesTypes.column) {
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
-			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
+			inside = pick(options.inside, !!this.options.stacking), // draw it inside the box?
+			overshoot;
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
 			alignTo = merge(dlBox);
+
+			if (alignTo.y < 0) {
+				alignTo.height += alignTo.y;
+				alignTo.y = 0;
+			}
+			overshoot = alignTo.y + alignTo.height - series.yAxis.len;
+			if (overshoot > 0) {
+				alignTo.height -= overshoot;
+			}
 
 			if (inverted) {
 				alignTo = {

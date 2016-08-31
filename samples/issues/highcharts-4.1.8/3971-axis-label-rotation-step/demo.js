@@ -21,7 +21,7 @@ $(function () {
             60,
             'No ticks are skipped'
         );
-        
+
     });
 
 
@@ -48,7 +48,7 @@ $(function () {
             'right',
             'Rigth aligned'
         );
-        
+
     });
 
 });

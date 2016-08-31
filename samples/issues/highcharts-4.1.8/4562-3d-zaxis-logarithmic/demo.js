@@ -36,7 +36,7 @@ $(function () {
             true,
             'Correct position'
         );
-        
+
     });
 
 });

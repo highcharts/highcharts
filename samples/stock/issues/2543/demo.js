@@ -1,5 +1,5 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
         // Create the chart
         $('#container').highcharts('StockChart', {
@@ -35,7 +35,7 @@ $(function () {
             {
                 type : 'flags',
                 data : [{
-                    x : Date.UTC(2011, 4, 10),
+                    x : data[data.length - 1][0],
                     title : 'B',
                     text : 'EURUSD: Bearish Trend Change on Tap?'
                 }],

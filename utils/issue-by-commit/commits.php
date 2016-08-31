@@ -1,6 +1,9 @@
 <?php 
 	// Move the log file back from temp dir
-	@copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+	if (!is_dir('../samples/temp')) {
+		mkdir('../samples/temp');
+	}
+	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 ?>
 <html>
 	
@@ -11,6 +14,10 @@
 		<script type="text/javascript">
 			var ren,
 				paths = [];
+
+			var mainFrame = window.parent.document.querySelector('frame#main'),
+				mainLocation = mainFrame && mainFrame.contentWindow.location.href,
+				isComparing = mainLocation && mainLocation.indexOf('compare-view') > -1;
 			
 			// Draw the lines connecting the dots
 			function drawGraph() {
@@ -136,6 +143,10 @@
 					commits,
 					parentHierarchy = {};
 
+				if (isComparing) {
+					document.body.className = 'compare';
+				}
+
 				var colors = [
 					   '#2f7ed8', 
 					   '#0d233a', 
@@ -221,11 +232,11 @@
 									';margin-left:' + marginLeft + 'px"></div>')
 								.appendTo($li);
 
-
-								
 							$('<a>')
 								.attr({
-									href: 'main.php?commit='+ commit,
+									href: isComparing ? 
+										mainLocation + '&rightcommit=' + commit :
+										'main.php?commit='+ commit,
 									target: 'main',
 									'class': 'message'
 								})
@@ -239,8 +250,8 @@
 
 							var statusTexts = {
 								'status-none': 'Not inspected',
-								'status-works': 'Works',
-								'status-fails': 'Fails'
+								'status-good': 'Good',
+								'status-bad': 'Bad'
 							},
 							status = window.parent.commits[commit] || 'status-none';
 							$('<div class="status"></div>')
@@ -251,14 +262,14 @@
 										newClass;
 
 									if ($this.hasClass('status-none')) {
-										newClass = 'status-works';
+										newClass = 'status-good';
 										$this.removeClass('status-none');
-									} else if ($this.hasClass('status-works')) {
-										newClass = 'status-fails';
-										$this.removeClass('status-works');
-									} else if ($this.hasClass('status-fails')) {
+									} else if ($this.hasClass('status-good')) {
+										newClass = 'status-bad';
+										$this.removeClass('status-good');
+									} else if ($this.hasClass('status-bad')) {
 										newClass = 'status-none';
-										$this.removeClass('status-fails');
+										$this.removeClass('status-bad');
 									}
 
 									if (newClass) {
@@ -354,11 +365,11 @@
 				border-radius: 3px;
 				text-align: center;
 			}
-			.status.status-works {
+			.status.status-good {
 				background: green;
 				color: white;
 			}
-			.status.status-fails {
+			.status.status-bad {
 				background: red;
 				color: white;
 			}
@@ -388,6 +399,20 @@
 				left: 20px;
 				top: 0;
 			}
+			#compare-header {
+				display: none;
+			}
+
+			.compare #topnav {
+				display: none;
+			}
+			.compare #compare-header {
+				display: block;
+				color: silver;
+				font-style: italic;
+				padding: 1em 1em 0 1em;
+			}
+
 			
 		</style>
 	</head>
@@ -396,6 +421,9 @@
 		<div id="topnav">
 			<span id="loaded"></span>
 			<a href="main.php" target="main">Set new test data</a>
+		</div>
+		<div id="compare-header">
+		Click commit messages to compare the left side (usually the latest stable version) on the left, with the actual commit on the right.
 		</div>
 		<div id="graph"></div>
 		<ul id="ul"></ul>

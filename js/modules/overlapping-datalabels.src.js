@@ -1,18 +1,11 @@
 /**
- * @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
@@ -60,6 +53,8 @@
 			isIntersecting,
 			pos1,
 			pos2,
+			parent1,
+			parent2,
 			padding,
 			intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 				return !(
@@ -95,14 +90,16 @@
 				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
 					pos1 = label1.alignAttr;
 					pos2 = label2.alignAttr;
+					parent1 = label1.parentGroup; // Different panes have different positions
+					parent2 = label2.parentGroup;
 					padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
 					isIntersecting = intersectRect(
-						pos1.x,
-						pos1.y,
+						pos1.x + parent1.translateX,
+						pos1.y + parent1.translateY,
 						label1.width - padding,
 						label1.height - padding,
-						pos2.x,
-						pos2.y,
+						pos2.x + parent2.translateX,
+						pos2.y + parent2.translateY,
 						label2.width - padding,
 						label2.height - padding
 					);
@@ -142,5 +139,4 @@
 			}
 		});
 	};
-
 }(Highcharts));

@@ -2,21 +2,27 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
- * (c) 2010-2014 Torstein Honsi
+ * (c) 2010-2016 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
-
-(function (Highcharts) { // encapsulate
+/* eslint indent:0 */
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 // create shortcuts
-var Chart = Highcharts.Chart,
+var win = Highcharts.win,
+	doc = win.document,
+	Chart = Highcharts.Chart,
 	addEvent = Highcharts.addEvent,
 	removeEvent = Highcharts.removeEvent,
-	fireEvent = HighchartsAdapter.fireEvent,
+	fireEvent = Highcharts.fireEvent,
 	createElement = Highcharts.createElement,
 	discardElement = Highcharts.discardElement,
 	css = Highcharts.css,
@@ -26,8 +32,6 @@ var Chart = Highcharts.Chart,
 	splat = Highcharts.splat,
 	math = Math,
 	mathMax = math.max,
-	doc = document,
-	win = window,
 	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
@@ -98,9 +102,10 @@ defaultOptions.exporting = {
 	//enabled: true,
 	//filename: 'chart',
 	type: 'image/png',
-	url: 'http://export.highcharts.com/',
+	url: 'https://export.highcharts.com/',
 	//width: undefined,
-	//scale: 2
+	printMaxWidth: 780,
+	scale: 2,
 	buttons: {
 		contextButton: {
 			menuClassName: PREFIX + 'contextmenu',
@@ -201,12 +206,13 @@ extend(Chart.prototype, {
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
+            .replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ (NS[0-9]+\:)?href=/g, ' xlink:href=') // #3567
 			.replace(/\n/, ' ')
 			// Any HTML added to the container after the SVG (#894)
-			.replace(/<\/svg>.*?$/, '</svg>') 
+			.replace(/<\/svg>.*?$/, '</svg>')
 			// Batik doesn't support rgba fills and strokes (#3095)
 			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
 			/* This fails in IE < 8
@@ -257,16 +263,14 @@ extend(Chart.prototype, {
 			cssHeight,
 			html,
 			options = merge(chart.options, additionalOptions), // copy the options and add extra options
-			allowHTML = options.exporting.allowHTML; // docs: experimental, see #2473
-			
+			allowHTML = options.exporting.allowHTML;
+
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
-			/*jslint unparam: true*//* allow unused parameter ns in function below */
 			doc.createElementNS = function (ns, tagName) {
 				return doc.createElement(tagName);
 			};
-			/*jslint unparam: false*/
 		}
 
 		// create a sandbox where a new chart will be generated
@@ -304,7 +308,7 @@ extend(Chart.prototype, {
 		// prepare for replicating the chart
 		options.series = [];
 		each(chart.series, function (serie) {
-			seriesOptions = merge(serie.options, {
+			seriesOptions = merge(serie.userOptions, { // #4912
 				animation: false, // turn off animation
 				enableMouseTracking: false,
 				showCheckbox: false,
@@ -357,7 +361,7 @@ extend(Chart.prototype, {
 				html = '<foreignObject x="0" y="0" width="200" height="200">' +
 					'<body xmlns="http://www.w3.org/1999/xhtml">' +
 					html[1] +
-					'</body>' + 
+					'</body>' +
 					'</foreignObject>';
 				svg = svg.replace('</svg>', html + '</svg>');
 			}
@@ -368,7 +372,7 @@ extend(Chart.prototype, {
 
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, "'");
+			.replace(/&quot;/g, '\'');
 
 		return svg;
 	},
@@ -395,7 +399,7 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		
+
 		var svg = this.getSVGForExport(options, chartOptions);
 
 		// merge the options
@@ -406,7 +410,7 @@ extend(Chart.prototype, {
 			filename: options.filename || 'chart',
 			type: options.type,
 			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
-			scale: options.scale || 2,
+			scale: options.scale,
 			svg: svg
 		}, options.formAttributes);
 
@@ -422,15 +426,26 @@ extend(Chart.prototype, {
 			origDisplay = [],
 			origParent = container.parentNode,
 			body = doc.body,
-			childNodes = body.childNodes;
+			childNodes = body.childNodes,
+			printMaxWidth = chart.options.exporting.printMaxWidth,
+			resetParams,
+			handleMaxWidth;
 
 		if (chart.isPrinting) { // block the button while in printing mode
 			return;
 		}
 
 		chart.isPrinting = true;
+		chart.pointer.reset(null, 0);
 
 		fireEvent(chart, 'beforePrint');
+
+		// Handle printMaxWidth
+		handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+		if (handleMaxWidth) {
+			resetParams = [chart.options.chart.width, undefined, false];
+			chart.setSize(printMaxWidth, undefined, false);
+		}
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -461,6 +476,11 @@ extend(Chart.prototype, {
 			});
 
 			chart.isPrinting = false;
+
+			// Reset printMaxWidth
+			if (handleMaxWidth) {
+				chart.setSize.apply(chart, resetParams);
+			}
 
 			fireEvent(chart, 'afterPrint');
 
@@ -536,9 +556,9 @@ extend(Chart.prototype, {
 
 
 			// Hide it on clicking or touching outside the menu (#2258, #2335, #2407)
-			addEvent(document, 'mouseup', docMouseUpHandler);
+			addEvent(doc, 'mouseup', docMouseUpHandler);
 			addEvent(chart, 'destroy', function () {
-				removeEvent(document, 'mouseup', docMouseUpHandler);
+				removeEvent(doc, 'mouseup', docMouseUpHandler);
 			});
 
 
@@ -555,7 +575,9 @@ extend(Chart.prototype, {
 								css(this, menuItemStyle);
 							},
 							onclick: function (e) {
-								e.stopPropagation();
+								if (e) { // IE7
+									e.stopPropagation();
+								}
 								hide();
 								if (item.onclick) {
 									item.onclick.apply(chart, arguments);
@@ -673,7 +695,8 @@ extend(Chart.prototype, {
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.attr({
 				title: chart.options.lang[btnOptions._titleKey],
-				'stroke-linecap': 'round'
+				'stroke-linecap': 'round',
+				zIndex: 3 // #4955
 			});
 		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
 
@@ -772,4 +795,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}(Highcharts));
+}));

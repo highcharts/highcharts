@@ -1,6 +1,6 @@
 $(function () {
 
-    /** 
+    /**
      * Proof of concept for a Highcharts item chart
      *
      * TODO:
@@ -8,11 +8,11 @@ $(function () {
      * - Check update, remove etc.
      * - Custom icons like persons, carts etc. Either as images, font icons or Highcharts symbols.
      */
-    (function (H, HA) {
+    (function (H) {
         var seriesTypes = H.seriesTypes,
             extendClass = H.extendClass,
             each = H.each,
-            stop = HA.stop;
+            stop = H.stop;
 
         seriesTypes.item = extendClass(seriesTypes.column, {
             drawPoints: function () {
@@ -29,7 +29,7 @@ $(function () {
                     point.graphics = graphics = point.graphics || {};
                     pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];
                     delete pointAttr.r;
-                    
+
                     if (point.y !== null) {
 
                         if (!point.graphic) {
@@ -45,7 +45,7 @@ $(function () {
                             if (graphics[i]) {
                                 stop(graphics[i]);
                                 graphics[i].attr(attr);
-                            } else {
+                            } else {
                                 graphics[i] = renderer.circle(attr)
                                     .attr(pointAttr)
                                     .add(point.graphic);
@@ -53,15 +53,15 @@ $(function () {
                         }
                     }
                 });
-                
+
             }
         });
-        
-    }(Highcharts, HighchartsAdapter));
+
+    }(Highcharts));
 
 
     $('#container').highcharts({
-        
+
         chart: {
             type: 'item'
         },
@@ -71,7 +71,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

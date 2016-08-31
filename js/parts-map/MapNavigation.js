@@ -1,3 +1,14 @@
+function stopEvent(e) {
+	if (e) {
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
+		if (e.stopPropagation) {
+			e.stopPropagation();
+		}
+		e.cancelBubble = true;
+	}
+}
 
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -9,24 +20,14 @@ extend(Chart.prototype, {
 			button,
 			buttonOptions,
 			attr,
-			states,
-			stopEvent = function (e) {
-				if (e) {
-					if (e.preventDefault) {
-						e.preventDefault();
-					}
-					if (e.stopPropagation) {
-						e.stopPropagation();
-					}
-					e.cancelBubble = true;
-				}
-			},
+			states,			
 			outerHandler = function (e) {
 				this.handler.call(chart, e);
 				stopEvent(e); // Stop default click event (#4444)
 			};
 
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+			chart.mapNavButtons = [];
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = merge(options.buttonOptions, buttons[n]);
@@ -34,14 +35,14 @@ extend(Chart.prototype, {
 					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
-							buttonOptions.text, 
-							0, 
-							0, 
-							outerHandler, 
-							attr, 
+							buttonOptions.text,
+							0,
+							0,
+							outerHandler,
+							attr,
 							states && states.hover,
-							states && states.select, 
-							0, 
+							states && states.select,
+							0,
 							n === 'zoomIn' ? 'topbutton' : 'bottombutton'
 						)
 						.attr({
@@ -49,11 +50,12 @@ extend(Chart.prototype, {
 							height: buttonOptions.height,
 							title: chart.options.lang[n],
 							zIndex: 5
-						})					
+						})
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+					chart.mapNavButtons.push(button);
 				}
 			}
 		}
@@ -84,7 +86,7 @@ extend(Chart.prototype, {
 				inner[pos] = outer[pos];
 			}
 		});
-		
+
 
 		return inner;
 	},
@@ -141,7 +143,7 @@ extend(Chart.prototype, {
 			xAxis.setExtremes(undefined, undefined, false);
 			yAxis.setExtremes(undefined, undefined, false);
 		}
-		
+
 		// Prevent zooming until this one is finished animating
 		/*chart.holdMapZoom = true;
 		setTimeout(function () {
@@ -174,7 +176,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 	chart.renderMapNavigation();
 
 	proceed.call(chart);
-
+	
 	// Add the double click event
 	if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
 		addEvent(chart.container, 'dblclick', function (e) {
@@ -184,8 +186,9 @@ wrap(Chart.prototype, 'render', function (proceed) {
 
 	// Add the mousewheel event
 	if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
-		addEvent(chart.container, document.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
+		addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 			chart.pointer.onContainerMouseWheel(e);
+			stopEvent(e); // Issue #5011, returning false from non-jQuery event does not prevent default
 			return false;
 		});
 	}

@@ -5,13 +5,13 @@ $(function () {
             layoutAlgorithm: 'squarified',
             levels: [{
                 level: 1,
-                borderWidth: '3px',
+                borderWidth: 3,
                 dataLabels: {
                     enabled: true,
                     align: 'left',
                     verticalAlign: 'top',
-                    color: 'white',
                     style: {
+                        color: '#FFFFFF',
                         fontWeight: 'bold'
                     }
                 }

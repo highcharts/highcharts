@@ -1,14 +1,113 @@
-$(function() {
+$(function () {
     /**
      * Highcharts plugin to display tooltip labels next to each point in a shared tooltip.
      */
     (function (H) {
-        var each = H.each,
+        var addEvent = H.addEvent,
+            each = H.each,
+            map = H.map,
             pick = H.pick,
             splat = H.splat,
+            stableSort = H.stableSort,
             Tooltip = H.Tooltip,
             wrap = H.wrap;
 
+        /**
+         * General distribution algorithm for distributing labels of differing size along a
+         * confined length in two dimensions. The algorithm takes an array of objects containing
+         * a size, a target and a rank. It will place the labels as close as possible to their
+         * targets, skipping the lowest ranked labels if necessary.
+         */
+        H.distribute = function (boxes, len) {
+
+            var i,
+                overlapping = true,
+                origBoxes = boxes, // Original array will be altered with added .pos
+                restBoxes = [], // The outranked overshoot
+                box,
+                target,
+                total = 0;
+
+            function sortByTarget(a, b) {
+                return a.target - b.target;
+            }
+
+            // If the total size exceeds the len, remove those boxes with the lowest rank
+            i = boxes.length;
+            while (i--) {
+                total += boxes[i].size;
+            }
+
+            // Sort by rank, then slice away overshoot
+            if (total > len) {
+                stableSort(boxes, function (a, b) {
+                    return (b.rank || 0) - (a.rank || 0);
+                });
+                i = 0;
+                total = 0;
+                while (total <= len) {
+                    total += boxes[i].size;
+                    i++;
+                }
+                restBoxes = boxes.splice(i - 1, boxes.length);
+            }
+
+            // Order by target
+            stableSort(boxes, sortByTarget);
+
+
+            // So far we have been mutating the original array. Now
+            // create a copy with target arrays
+            boxes = map(boxes, function (box) {
+                return {
+                    size: box.size,
+                    targets: [box.target]
+                };
+            });
+
+            while (overlapping) {
+                // Initial positions: target centered in box
+                i = boxes.length;
+                while (i--) {
+                    box = boxes[i];
+                    // Composite box, average of targets
+                    target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
+                    box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
+                }
+
+                // Detect overlap and join boxes
+                i = boxes.length;
+                overlapping = false;
+                while (i--) {
+                    if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) { // Overlap
+                        boxes[i - 1].size += boxes[i].size; // Add this size to the previous box
+                        boxes[i - 1].targets = boxes[i - 1].targets.concat(boxes[i].targets);
+
+                        // Overlapping right, push left
+                        if (boxes[i - 1].pos + boxes[i - 1].size > len) {
+                            boxes[i - 1].pos = len - boxes[i - 1].size;
+                        }
+                        boxes.splice(i, 1); // Remove this item
+                        overlapping = true;
+                    }
+                }
+            }
+
+            // Now the composite boxes are placed, we need to put the original boxes within them
+            i = 0;
+            each(boxes, function (box) {
+                var posInCompositeBox = 0;
+                each(box.targets, function () {
+                    origBoxes[i].pos = box.pos + posInCompositeBox;
+                    posInCompositeBox += origBoxes[i].size;
+                    i++;
+                });
+            });
+
+            // Add the rest (hidden) boxes and sort by target
+            origBoxes.push.apply(origBoxes, restBoxes);
+            stableSort(origBoxes, sortByTarget);
+        };
         wrap(Tooltip.prototype, 'init', function (proceed) {
             proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -30,10 +129,13 @@ $(function() {
                 options = chart.options.tooltip,
                 hoverPoints = chart.hoverPoints,
                 rightAligned = true;
-                
+
             if (options.shared && options.split && !chart.inverted) {
+
+                clearTimeout(this.hideTimer);
+
                 points = splat(point);
-                
+
                 // hide previous hoverPoints and set new
                 chart.hoverPoints = points;
                 if (hoverPoints) {
@@ -61,7 +163,7 @@ $(function() {
                         tt = owner.tt,
                         series = point.series || {},
                         x;
-                    
+
                     // Store the tooltip referance on the series
                     if (!tt) {
                         owner.tt = tt = ren.label()
@@ -72,7 +174,7 @@ $(function() {
                                 'stroke-width': options.borderWidth
                             })
                             .add(tooltip.label);
-                            
+
                         // Add a connector back to the point
                         if (point.series) {
                             tt.connector = ren.path()
@@ -81,6 +183,11 @@ $(function() {
                                     'stroke': point.color || series.color || 'silver'
                                 })
                                 .add(tooltip.label);
+
+                            addEvent(point.series, 'hide', function () {
+                                this.tt.connector = this.tt.connector.destroy();
+                                this.tt = this.tt.destroy();
+                            });
                         }
                     }
                     tt.attr({
@@ -88,14 +195,13 @@ $(function() {
                     });
 
                     // Get X position now, so we can move all to the other side in case of overflow
-                    x = point.plotX + chart.plotLeft - pick(options.distance, 16) - 
+                    x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
                         tt.getBBox().width;
 
                     // If overflow left, we don't use this x in the next loop
                     if (x < 0) {
                         rightAligned = false;
                     }
-                    
 
                     // Prepare for distribution
                     boxes.push({
@@ -108,9 +214,8 @@ $(function() {
                     });
 
 
-                    
                 });
-                
+
                 // Distribute and put in place
                 H.distribute(boxes, chart.plotHeight);
                 each(boxes, function (box, i) {
@@ -129,9 +234,9 @@ $(function() {
                             d: [
                                 'M',
                                 point.plotX + chart.plotLeft,
-                                point.plotY + chart.plotTop, 
+                                point.plotY + chart.plotTop,
                                 'L',
-                                rightAligned ? 
+                                rightAligned ?
                                     point.plotX + chart.plotLeft - pick(options.distance, 16) :
                                     point.plotX + chart.plotLeft + pick(options.distance, 16),
                                 box.pos + chart.plotTop + tt.getBBox().height / 2
@@ -168,7 +273,7 @@ $(function() {
             split: true,
             distance: 30
         },
-        
+
         xAxis: {
             crosshair: {
                 enabled: true

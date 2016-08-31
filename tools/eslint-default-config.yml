@@ -1,0 +1,106 @@
+# Copied from https://github.com/eslint/eslint/blob/master/packages/eslint-config-eslint/default.yml
+# Updated 2015-04-06
+
+extends:
+    "eslint:recommended"
+
+rules:
+    array-callback-return: "error"
+    indent: ["error", 4, {SwitchCase: 1}]
+    block-spacing: "error"
+    brace-style: ["error", "1tbs"]
+    camelcase: ["error", { properties: "never" }]
+    callback-return: ["error", ["cb", "callback", "next"]]
+    comma-spacing: "error"
+    comma-style: ["error", "last"]
+    consistent-return: "error"
+    curly: ["error", "all"]
+    default-case: "error"
+    dot-notation: ["error", { allowKeywords: true }]
+    eol-last: "error"
+    eqeqeq: "error"
+    func-style: ["error", "declaration"]
+    guard-for-in: "error"
+    key-spacing: ["error", { beforeColon: false, afterColon: true }]
+    keyword-spacing: "error"
+    lines-around-comment: ["error", {
+        beforeBlockComment: true,
+        afterBlockComment: false,
+        beforeLineComment: true,
+        afterLineComment: false
+    }]
+    new-cap: "error"
+    newline-after-var: "error"
+    new-parens: "error"
+    no-alert: "error"
+    no-array-constructor: "error"
+    no-caller: "error"
+    no-console: 0
+    no-delete-var: "error"
+    no-eval: "error"
+    no-extend-native: "error"
+    no-extra-bind: "error"
+    no-fallthrough: "error"
+    no-floating-decimal: "error"
+    no-implied-eval: "error"
+    no-invalid-this: "error"
+    no-iterator: "error"
+    no-label-var: "error"
+    no-labels: "error"
+    no-lone-blocks: "error"
+    no-loop-func: "error"
+    no-mixed-spaces-and-tabs: ["error", false]
+    no-multi-spaces: "error"
+    no-multi-str: "error"
+    no-native-reassign: "error"
+    no-nested-ternary: "error"
+    no-new: "error"
+    no-new-func: "error"
+    no-new-object: "error"
+    no-new-wrappers: "error"
+    no-octal: "error"
+    no-octal-escape: "error"
+    no-process-exit: "error"
+    no-proto: "error"
+    no-redeclare: "error"
+    no-return-assign: "error"
+    no-script-url: "error"
+    no-self-assign: "error"
+    no-sequences: "error"
+    no-shadow: "error"
+    no-shadow-restricted-names: "error"
+    no-spaced-func: "error"
+    no-trailing-spaces: "error"
+    no-undef: "error"
+    no-undef-init: "error"
+    no-undefined: "error"
+    no-underscore-dangle: ["error", {allowAfterThis: true}]
+    no-unmodified-loop-condition: "error"
+    no-unused-expressions: "error"
+    no-unused-vars: ["error", {vars: "all", args: "after-used"}]
+    no-use-before-define: "error"
+    no-useless-concat: "error"
+    no-with: "error"
+    one-var-declaration-per-line: "error"
+    quotes: ["error", "double"]
+    radix: "error"
+    require-jsdoc: "error"
+    semi: "error"
+    semi-spacing: ["error", {before: false, after: true}]
+    space-before-blocks: "error"
+    space-before-function-paren: ["error", "never"]
+    space-in-parens: "error"
+    space-infix-ops: "error"
+    space-unary-ops: ["error", {words: true, nonwords: false}]
+    spaced-comment: ["error", "always", { exceptions: ["-"]}]
+    strict: ["error", "global"]
+    valid-jsdoc: ["error", { prefer: { "return": "returns"}}]
+    wrap-iife: "error"
+    yoda: ["error", "never"]
+
+    # Previously on by default in node environment
+    no-catch-shadow: "off"
+    no-mixed-requires: "error"
+    no-new-require: "error"
+    no-path-concat: "error"
+    handle-callback-err: ["error", "err"]

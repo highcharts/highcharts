@@ -1,15 +1,11 @@
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
-/*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
-	tooltipProto = Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
-	NUMBER = 'number',
 
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum
@@ -61,7 +57,8 @@ var DATA_GROUPING = 'dataGrouping',
 	},
 
 	// units are defined in a separate array to allow complete overriding in case of a user option
-	defaultDataGroupingUnits = [[
+	defaultDataGroupingUnits = [
+		[
 			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 		], [
@@ -121,7 +118,7 @@ var DATA_GROUPING = 'dataGrouping',
 
 			// If we have a number, return it divided by the length. If not, return
 			// null or undefined based on what the sum method finds.
-			if (typeof ret === NUMBER && len) {
+			if (isNumber(ret) && len) {
 				ret = ret / len;
 			}
 
@@ -146,7 +143,7 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			close = approximations.close(close);
 
-			if (typeof open === NUMBER || typeof high === NUMBER || typeof low === NUMBER || typeof close === NUMBER) {
+			if (isNumber(open) || isNumber(high) || isNumber(low) || isNumber(close)) {
 				return [open, high, low, close];
 			}
 			// else, return is undefined
@@ -155,14 +152,13 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			high = approximations.high(high);
 
-			if (typeof low === NUMBER || typeof high === NUMBER) {
+			if (isNumber(low) || isNumber(high)) {
 				return [low, high];
 			}
 			// else, return is undefined
 		}
 	};
 
-/*jslint white:false */
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
@@ -174,6 +170,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		dataOptions = series.options.data,
 		groupedXData = [],
 		groupedYData = [],
+		groupMap = [],
 		dataLength = xData.length,
 		pointX,
 		pointY,
@@ -183,7 +180,9 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
-		i;
+		i,
+		pos = 0,
+		start = 0;
 
 	// Start with the first point within the X axis range (#2696)
 	for (i = 0; i <= dataLength; i++) {
@@ -192,27 +191,33 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		}
 	}
 
-	for (; i <= dataLength; i++) {
+	for (i; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
-		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+		while ((groupPositions[pos + 1] !== undefined && xData[i] >= groupPositions[pos + 1]) ||
 				i === dataLength) { // get the last group
 
 			// get group x and y
-			pointX = groupPositions.shift();
-			groupedY = approximationFn.apply(0, values);
+			pointX = groupPositions[pos];
+			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
 			if (groupedY !== UNDEFINED) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
+				groupMap.push(series.dataGroupInfo);
 			}
 
 			// reset the aggregate arrays
+			start = i;
 			values[0] = [];
 			values[1] = [];
 			values[2] = [];
 			values[3] = [];
+
+			// Advance on the group positions
+			pos += 1;
 
 			// don't loop beyond the last group
 			if (i === dataLength) {
@@ -235,7 +240,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			for (j = 0; j < pointArrayMapLength; j++) {
 				val = point[pointArrayMap[j]];
-				if (typeof val === NUMBER) {
+				if (isNumber(val)) {
 					values[j].push(val);
 				} else if (val === null) {
 					values[j].hasNulls = true;
@@ -245,15 +250,15 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		} else {
 			pointY = handleYData ? yData[i] : null;
 
-			if (typeof pointY === NUMBER) {
+			if (isNumber(pointY)) {
 				values[0].push(pointY);
 			} else if (pointY === null) {
 				values[0].hasNulls = true;
 			}
 		}
 	}
-		
-	return [groupedXData, groupedYData];
+
+	return [groupedXData, groupedYData, groupMap];
 };
 
 /**
@@ -266,87 +271,82 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
-		hasGroupedData;
+		hasGroupedData,
+		skip;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order)
-	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
-		return;
-
-	} else {
+	// skip if processData returns false or if grouping is disabled (in that order) or #5493
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
+	if (!skip) {
 		series.destroyGroupedData();
 
-	}
-	var i,
-		processedXData = series.processedXData,
-		processedYData = series.processedYData,
-		plotSizeX = chart.plotSizeX,
-		xAxis = series.xAxis,
-		ordinal = xAxis.options.ordinal,
-		groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
-		nonGroupedPointRange = series.pointRange;
+		var i,
+			processedXData = series.processedXData,
+			processedYData = series.processedYData,
+			plotSizeX = chart.plotSizeX,
+			xAxis = series.xAxis,
+			ordinal = xAxis.options.ordinal,
+			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
 
-	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
-	if (groupPixelWidth) {
-		hasGroupedData = true;
+		// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
+		if (groupPixelWidth) {
+			hasGroupedData = true;
 
-		series.points = null; // force recreation of point instances in series.translate
+			series.points = null; // force recreation of point instances in series.translate
 
-		var extremes = xAxis.getExtremes(),
-			xMin = extremes.min,
-			xMax = extremes.max,
-			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
-			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
-			groupPositions = xAxis.getTimeTicks(
-				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
-				xMin,
-				xMax,
-				xAxis.options.startOfWeek,
-				processedXData,
-				series.closestPointRange
-			),
-			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-			groupedXData = groupedXandY[0],
-			groupedYData = groupedXandY[1];
+			var extremes = xAxis.getExtremes(),
+				xMin = extremes.min,
+				xMax = extremes.max,
+				groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
+				interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
+				groupPositions = xAxis.getTimeTicks(
+					xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+					Math.min(xMin, processedXData[0]), // Processed data may extend beyond axis (#4907)
+					Math.max(xMax, processedXData[processedXData.length - 1]),
+					xAxis.options.startOfWeek,
+					processedXData,
+					series.closestPointRange
+				),
+				groupedData = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+				groupedXData = groupedData[0],
+				groupedYData = groupedData[1];
 
-		// prevent the smoothed data to spill out left and right, and make
-		// sure data is not shifted to the left
-		if (dataGroupingOptions.smoothed) {
-			i = groupedXData.length - 1;
-			groupedXData[i] = Math.min(groupedXData[i], xMax);
-			while (i-- && i > 0) {
-				groupedXData[i] += interval / 2;
+			// prevent the smoothed data to spill out left and right, and make
+			// sure data is not shifted to the left
+			if (dataGroupingOptions.smoothed) {
+				i = groupedXData.length - 1;
+				groupedXData[i] = Math.min(groupedXData[i], xMax);
+				while (i-- && i > 0) {
+					groupedXData[i] += interval / 2;
+				}
+				groupedXData[0] = Math.max(groupedXData[0], xMin);
 			}
-			groupedXData[0] = Math.max(groupedXData[0], xMin);
-		}
 
-		// record what data grouping values were used
-		series.currentDataGrouping = groupPositions.info;
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = groupPositions.info.totalRange;
-		}
-		series.closestPointRange = groupPositions.info.totalRange;
+			// record what data grouping values were used
+			series.currentDataGrouping = groupPositions.info;
+			series.closestPointRange = groupPositions.info.totalRange;
+			series.groupMap = groupedData[2];
 
-		// Make sure the X axis extends to show the first group (#2533)
-		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
-			if (xAxis.min === xAxis.dataMin) {
-				xAxis.min = groupedXData[0];
+			// Make sure the X axis extends to show the first group (#2533)
+			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+				if (xAxis.min === xAxis.dataMin) {
+					xAxis.min = groupedXData[0];
+				}
+				xAxis.dataMin = groupedXData[0];
 			}
-			xAxis.dataMin = groupedXData[0];
-		}
 
-		// set series props
-		series.processedXData = groupedXData;
-		series.processedYData = groupedYData;
-	} else {
-		series.currentDataGrouping = null;
-		series.pointRange = nonGroupedPointRange;
+			// set series props
+			series.processedXData = groupedXData;
+			series.processedYData = groupedYData;
+		} else {
+			series.currentDataGrouping = series.groupMap = null;
+		}
+		series.hasGroupedData = hasGroupedData;
 	}
-	series.hasGroupedData = hasGroupedData;
 };
 
 /**
@@ -378,11 +378,22 @@ seriesProto.generatePoints = function () {
 };
 
 /**
+ * Override point prototype to throw a warning when trying to update grouped points
+ */
+wrap(Point.prototype, 'update', function (proceed) {
+	if (this.dataGroup) {
+		error(24);
+	} else {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
+/**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
+wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
-		series = point.series,
+		series = labelConfig.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
 		dataGroupingOptions = options.dataGrouping,
@@ -392,11 +403,10 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
-		formattedKey,
-		ret;
+		formattedKey;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(labelConfig.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;
@@ -415,25 +425,26 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
+			xDateFormat = tooltip.getXDateFormat(labelConfig, tooltipOptions, xAxis);
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, point.key);
+		formattedKey = dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, point.key + currentDataGrouping.totalRange - 1);
+			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
 		}
 
 		// return the replaced format
-		ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
-
-	// else, fall back to the regular formatter
-	} else {
-		ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
+		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+			point: extend(labelConfig.point, { key: formattedKey }),
+			series: series
+		});
+	
 	}
 
-	return ret;
-};
+	// else, fall back to the regular formatter
+	return proceed.call(tooltip, labelConfig, isFooter);
+});
 
 /**
  * Extend the series destroyer
@@ -522,7 +533,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 	i = len;
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
-			
+
 		if (dgOptions && series[i].hasProcessed) { // #2692
 
 			dataLength = (series[i].processedXData || series[i].data).length;
@@ -545,7 +556,7 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 
 	redraw = pick(redraw, true);
 
-	if (!dataGrouping) {   
+	if (!dataGrouping) {
 		dataGrouping = {
 			forced: false,
 			units: null

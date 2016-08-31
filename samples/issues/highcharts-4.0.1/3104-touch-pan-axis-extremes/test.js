@@ -1,37 +1,39 @@
 function test(chart) {
 
-	Array.prototype.item = function (i) {
-		return this[i];
-	};
+    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+        return this[i];
+    };
 
-	
-	chart.pointer.onContainerTouchStart({
-		type: 'touchstart',
-		touches: [{
-			pageX: 100,
-			pageY: 100
-		}],
-		preventDefault: function () {}
-	});
+    chart.xAxis[0].setExtremes(2, 6, true, false);
 
-	chart.pointer.onContainerTouchMove({
-		type: 'touchmove',
-		touches: [{
-			pageX: 400,
-			pageY: 100
-		}],
-		preventDefault: function () {}
-	});
 
-	chart.pointer.onDocumentTouchEnd({
-		type: 'touchend',
-		touches: [{
-			pageX: 400,
-			pageY: 100
-		}]
-	});
+    chart.pointer.onContainerTouchStart({
+        type: 'touchstart',
+        touches: [{
+            pageX: 100,
+            pageY: 100
+        }],
+        preventDefault: function () {}
+    });
 
-	chart.getSVG = function () {
-		return this.container.innerHTML;
-	}
+    chart.pointer.onContainerTouchMove({
+        type: 'touchmove',
+        touches: [{
+            pageX: 400,
+            pageY: 100
+        }],
+        preventDefault: function () {}
+    });
+
+    chart.pointer.onDocumentTouchEnd({
+        type: 'touchend',
+        touches: [{
+            pageX: 400,
+            pageY: 100
+        }]
+    });
+
+    chart.getSVG = function () {
+        return this.container.innerHTML;
+    };
 }

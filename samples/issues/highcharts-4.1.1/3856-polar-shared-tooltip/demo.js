@@ -36,7 +36,7 @@ $(function () {
             }
         },
         tooltip: {
-            shared: true  
+            shared: true
         },
 
         series: [{

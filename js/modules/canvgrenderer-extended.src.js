@@ -2,16 +2,14 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * CanVGRenderer Extension module
  *
- * (c) 2011-2012 Torstein Honsi, Erik Olsson
+ * (c) 2011-2016 Torstein Honsi, Erik Olsson
  *
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts */
-
-(function (Highcharts) { // encapsulate
+(function (Highcharts) {
 	var UNDEFINED,
+		win = Highcharts.win,
 		DIV = 'div',
 		ABSOLUTE = 'absolute',
 		RELATIVE = 'relative',
@@ -46,7 +44,7 @@
 				canvas,
 				initialHiddenStyle = { visibility: HIDDEN, position: ABSOLUTE };
 
-			this.init.apply(this, [container, chartWidth, chartHeight]);
+			this.init(container, chartWidth, chartHeight);
 
 			// add the canvas above it
 			canvas = createElement('canvas', {
@@ -124,7 +122,11 @@
 				tooltipDiv.innerHTML = args.text;
 
 				// Compute the best position for the tooltip based on the divs size and container size.
-				position = chart.tooltip.getPosition(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, {plotX: args.x, plotY: args.y});
+				position = chart.tooltip.getPosition(
+					tooltipDiv.offsetWidth, 
+					tooltipDiv.offsetHeight, 
+					{ plotX: args.x, plotY: args.y }
+				);
 
 				css(tooltipDiv, {
 					visibility: VISIBLE,
@@ -198,7 +200,7 @@
 		 */
 		draw: function () {
 			var renderer = this;
-			window.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
+			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
 }(Highcharts));

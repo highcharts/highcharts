@@ -1,16 +1,16 @@
 $(function () {
-    
-   
+
+
     $('#container').highcharts({
 
         chart: {
             width: 800
         },
-        
+
         title: {
             text: 'Tooltip header formatting'
         },
-        
+
         plotOptions: {
             series: {
                 animation: false,
@@ -25,44 +25,51 @@ $(function () {
                 }
             }
         },
-        
+
         xAxis: [{
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }, {
             type: 'datetime',
             labels: {
                 enabled: false
-            }
+            },
+            tickLength: 0
         }],
-        
+
         yAxis: [{
             height: '10%',
             title: null,
@@ -112,8 +119,8 @@ $(function () {
                 enabled: false
             }
         }],
-            
-        
+
+
         series: [{
             data: [
                 [Date.UTC(2014, 0, 1), 1],
@@ -173,6 +180,6 @@ $(function () {
             xAxis: 6,
             yAxis: 6
         }]
-    });    
-    
+    });
+
 });

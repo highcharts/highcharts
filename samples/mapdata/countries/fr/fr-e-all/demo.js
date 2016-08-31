@@ -28,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-e-all.js">Bretagne</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-e-all.js">Bretagne</a>'
         },
 
         mapNavigation: {

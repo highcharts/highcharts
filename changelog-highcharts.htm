@@ -1,57 +1,62 @@
-<p>Highcharts 4.1.9 (2015-10-07)</p>
+<p>Highcharts 4.2.6 (2016-08-02)</p>
 <ul>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts#xAxis.visible">axis.visible</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts#plotOptions.bubble.sizeByAbsoluteValue">bubble.sizeByAbsoluteValue</a>, to allow negative bubbles sizes to be based on the absolute value rather than a scalar difference from smallest to greatest. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/4498">#4498</a>.</li>
-    <li>Added new series option, <a href="http://api.highcharts.com/highcharts#plotOptions.series.softThreshold">softThreshold</a>, to prevent showing subzero axis ticks for line series that consist of positive data only.</li>
-    <li>Added support for <code>legendType: 'point'</code> on more series types than just pie and its derivatives.</li>
-    
-    
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2473">#2473</a>, allowHTML should not affect the <code>forExport</code> flag.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2711">#2711</a>, set proper order of data labels inside columns.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2854">#2854</a>, SVG images in symbol URL's did not display in IE11.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3529">#3529</a>, selected point changed color after updating.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3542">#3542</a>, tooltip with useHTML did not fade out smoothly.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3632">#3632</a>, pie inner size shouldn't be allowed to be greater than outer size.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3636">#3636</a>, <code>negativeColor</code> wasn't set for marker on hover.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3801">#3801</a>, pie chart radial gradient position did not update on chart resize.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3971">#3971</a>, X axis label step was not honoured when rotation was set.</li>
-    
-
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4136">#4136</a>, treemap did not export correctly after drillToNode.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4298">#4298</a>, treemap did not update axis extremes after updated data.</li>
-    
-
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4431">#4431</a>, tooltip was broken when changing from column series to a different type.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4442">#4442</a>, <code>alignTicks</code> forced axes to align, even when only one of them contained data.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4465">#4465</a>, tooltip disappeared on point when <code>stickyTracking</code> was false.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4482">#4482</a>, line disappeared during animation when series.step was enabled.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4485">#4485</a>, ticks were added inside axis break on datetime axis.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4502">#4502</a>, wrong bounding box detection of rotated labels caused overlapping text in old IE.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4504">#4504</a>, bars were misplaced when using reversed yAxis.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4510">#4510</a>, point search along X axis failed in boost module.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4511">#4511</a>, tooltip was not displayed, when yAxis.max cut off top part of the column.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4519">#4519</a>, updatating pie data immediately failed with Standalone Framework.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4525">#4525</a>, errors in exported SVG when allowHTML was true.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4526">#4526</a>, series used the same clip-paths, which caused wrong clipping when using different axes.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4529">#4529</a>, boost module produced error with pie charts.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4530">#4530</a>, heatmap with single point and large colsize caused the point not to display.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4532">#4532</a>, stack ID's as strings caused JS error in Highcharts 3D.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4536">#4536</a>, unable to zoom in closely on first category when minRange was less than closest point range.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4543">#4543</a>, null value bubbles should not be drawn.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4546">#4546</a>, pie and flag series not showing tooltip correctly when displayed in a chart with shared tooltip.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4558">#4558</a>, when resizing chart during addPoint animation cause error in stacking.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4562">#4562</a>, logarithmic zAxis for 3D scatter did not render properly points.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4586">#4586</a>, some markers moved by 1px after hovering.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4594">#4594</a>, errors when stacking two series with different data lengths on a log axis.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4599">#4599</a>, cropThreshold should be ignored when getExtremesFromAll is enabled.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4615">#4615</a>, labels on color axis were wrongly positioned when useHTML.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4627">#4627</a>, data labels exported twice in IE and Edge. Text shadows not rendered in Edge.</li>
-    <li>Fixed issue with duplicated pane backgrounds after the <a href="https://github.com/highslide-software/highcharts.com/issues/3176">#3176</a> fix.</li>
-    <li>Fixed issue with offline export in Firefox. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/4550">#4550</a>.</li>
-    <li>Fixed regression with global animation and timing of calls.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2801">#2801</a>, whiskerLength for boxplot can be set in pixels.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3323">#3323</a>, 3d pie parts have better zIndexes, out part of slice crossing sides created, normalization of alpha and beta to (-360, 360) range.</li>
-    <li>Partly fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1686">#1686</a>, tooltip not hiding when mouse enters over it then out from series.</li>
-    <li>Refactored columns. Separated the crisping logic from the rest of the translation logic. Related to <a href="https://github.com/highslide-software/highcharts.com/issues/4179">#4179</a>.</li>
-    
+    <li>Added crisp correction for crisper treemap points.</li>
+    <li>Added support for animating graphs to the right when updating data or setting axis extremes. Related to <a href="https://github.com/highslide-software/highcharts.com/issues/5294">#5294</a>.</li>
+    <li>Refactored sideways animation logic for graphs to better reflect shifting data. Closed <a href="https://github.com/highslide-software/highcharts.com/issues/5294">#5294</a>.</li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="heading-4-2-6-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#4-2-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="4-2-6-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed tick animation when <code>showFirstLabel</code> or <code>showLastLabel</code> were set to false.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2522">#2522</a>, point names should fill up categories when X is not set.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2597">#2597</a>, data labels remained visible even though container was hidden.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3571">#3571</a>, treat NaN in data as null.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4204">#4204</a>, <code>hover.brightness</code> wasn't used for positive bars in waterfall.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4216">#4216</a>, <code>connectEnds</code> with <code>null</code> as first point failed.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5052">#5052</a>, wrong placement of ticks on opposite axis on 3D charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5197">#5197</a>, JS error on hovering chart after <code>setData</code> before <code>redraw</code>.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5215">#5215</a>, JS error when legend configuration object was set to false.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5280">#5280</a>, stacked area was wrong with non-zero Y axis threshold and data points at 0.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5287">#5287</a>, unsnapped crossshair was hidden after adding points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5298">#5298</a>, empty cells in Google Spreadsheet made the graph disappear.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5302">#5302</a>, <code>dateFormat</code> didn't handle Date objects like before.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5310">#5310</a>, global stacking affected polygon series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5311">#5311</a>, JS error when setting an event config to null.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5322">#5322</a>, negative values in pie series was rendered incorrectly.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5324">#5324</a>, calling <code>Renderer.label</code> with a shape of <code>rect</code> failed.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5332">#5332</a>, last axis label was stuck when doing repetetive redraws.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5337">#5337</a>, tooltip for polygon should not behave like scatter points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5339">#5339</a>, plot area disappeared when categories were too long.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5348">#5348</a>, error in arearange series when <code>trackByArea</code> was false.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5350">#5350</a>, 3D pies failed redraw when animation was off.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5352">#5352</a>, treemap tooltip did not format point value.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5354">#5354</a>, <code>noSharedTooltip</code> was undefined for gauge and solid gauge, which caused errors when shared tooltip was enabled.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5376">#5376</a>, axis title position was wrong with font-size text values.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5396">#5396</a>, drilldown <code>activeDataLabelStyle</code> color contrast did not work.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5417">#5417</a>, regression causing HTML axis labels to misbehave with useHTML and rotation.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5442">#5442</a>, incorrect clipRect counter causing points to disappear on series update.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5480">#5480</a>, axis showed 0k or 0M. Suffix not needed for zero.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5486">#5486</a>, threshold <code>null</code> caused wrong fill on all-negative axis.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5495">#5495</a>, shared tooltips not always working because of rounding error.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5500">#5500</a>, pyramid height caused wrong position.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5504">#5504</a>, exporting module default settings was not compatible with https.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5513">#5513</a>, <code>Chart.setSize</code> required both width and height to be set.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5519">#5519</a>, issues with setting null colors in drilldown.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5522">#5522</a>, 3D charts scale differently first time versus subsequent redraws.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5523">#5523</a>, marker radius was incorrect when values were of type string.</li>
+                    <li>Fixed issues with PNG/JEPG in IE and Edge in offline exporting, ref <a href="https://github.com/highslide-software/highcharts.com/issues/5410">#5410</a>.</li>
+                    <li>Fixed issue <a href="https://github.com/highslide-software/highcharts.com/issues/5410">#5410</a>, offline exporting in IE/Edge failed with embedded images for PNG/JPEG.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

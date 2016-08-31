@@ -1,15 +1,15 @@
 $(function () {
 
-    // Code snippet for adding a HTML table representation of the chart data 
+    // Code snippet for adding a HTML table representation of the chart data
     Highcharts.Chart.prototype.callbacks.push(function (chart) {
-        
+
         var div = document.createElement('div'),
             ariaTable;
-        
+
         chart.container.parentNode.appendChild(div);
         div.innerHTML = chart.getTable();
         ariaTable = div.getElementsByTagName('table')[0];
-        
+
         // Set ARIA attributes
         chart.renderTo.setAttribute('aria-label', 'A chart. ' + chart.options.title.text + '. ' + chart.options.subtitle.text);
         chart.container.setAttribute('aria-hidden', true);
@@ -23,17 +23,17 @@ $(function () {
 
 
     $('#container').highcharts({
-        
+
         title: {
             text: 'Accessible Highcharts'
         },
-        
+
         subtitle: {
             text: 'A hidden but machine readable HTML table contains this chart\'s data'
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

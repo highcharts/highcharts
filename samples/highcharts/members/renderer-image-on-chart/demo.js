@@ -11,7 +11,7 @@ $(function () {
 
     }, function (chart) { // on complete
 
-        chart.renderer.image('http://highcharts.com/demo/gfx/sun.png', 100, 100, 30, 30)
+        chart.renderer.image('https://www.highcharts.com/samples/graphics/sun.png', 100, 100, 30, 30)
             .add();
 
     });

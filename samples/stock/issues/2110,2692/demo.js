@@ -441,13 +441,19 @@ $.each(usdeur, function (i, point) {
 $(function () {
     $('#container').highcharts('StockChart', {
 
+        chart: {
+            animation: false
+        },
+
         title: {
             text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
         },
+
         rangeSelector: {
             selected: 5,
             inputEnabled: false
         },
+
         series: [{
             data: usdeur,
             dataGrouping: {

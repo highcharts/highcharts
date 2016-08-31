@@ -1,0 +1,19 @@
+#container-box-size, #container-box-size:before, #container-box-size:after {
+    box-sizing: border-box;
+}
+#container-box-size {
+    width: 400px;
+    height: 300px;
+    margin: 20px auto;
+    background: gray;
+    padding: 20px;
+}
+
+#container-overflow {
+    width: 200px;
+    height: 200px;
+    border: 5px solid green;
+    padding: 5px;
+    margin: 5px;
+    overflow:auto;
+}
