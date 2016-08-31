@@ -266,7 +266,7 @@ gulp.task('filesize', function () {
     }
 
     closureCompiler.compile(
-        ['js/highcharts.src.js'],
+        ['code/highcharts.src.js'],
         null,
         function (error, ccResult) {
             if (ccResult) {
@@ -279,7 +279,7 @@ gulp.task('filesize', function () {
                     }
 
                     closureCompiler.compile(
-                        ['js/highcharts.src.js'],
+                        ['code/highcharts.src.js'],
                         null,
                         function (ccError, ccResultOld) {
                             if (ccResultOld) {
