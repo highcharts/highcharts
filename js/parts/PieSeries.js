@@ -239,7 +239,7 @@ seriesType('pie', 'line', {
 			point.angle = angle;
 
 			// set the anchor point for data labels
-			connectorOffset = Math.min(connectorOffset, labelDistance / 2); // #1678
+			connectorOffset = Math.min(connectorOffset, labelDistance / 5); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + Math.cos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + Math.sin(angle) * labelDistance, // a/a
