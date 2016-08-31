@@ -301,14 +301,16 @@ seriesType('pie', 'line', {
 				if (shadowGroup) {
 					shadowGroup.attr(groupTranslation);
 				}
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 				/*= } =*/
 
 				// Draw the slice
-				pointAttr = series.pointAttribs(point, point.selected && 'select');
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
+						/*= if (build.classic) { =*/
 						.attr(pointAttr)
+						/*= } =*/
 						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 

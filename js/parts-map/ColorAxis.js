@@ -513,7 +513,7 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
-	if (colorAxis) {
+	if (colorAxis && colorAxis.options) {
 		if (colorAxis.options.showInLegend) {
 			// Data classes
 			if (colorAxis.options.dataClasses) {
