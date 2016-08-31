@@ -3,8 +3,6 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
-	'use strict';
-
 	var pick = H.pick,
 		wrap = H.wrap,
 		each = H.each,

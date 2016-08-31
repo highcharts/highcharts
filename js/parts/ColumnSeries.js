@@ -39,7 +39,7 @@ seriesType('column', 'line', {
 			shadow: false
 			/*= } =*/
 		},
-		/*= if (build.classic) =*/
+		/*= if (build.classic) { =*/
 		select: {
 			color: '${palette.pointSelectFill}',
 			borderColor: '${palette.pointSelectStroke}',
