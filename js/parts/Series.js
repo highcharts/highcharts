@@ -1727,11 +1727,11 @@ H.Series = H.seriesType('line', null, { // base series options
 			series.applyZones();
 		}
 
-		each(series.points, function (point) {
+/*		each(series.points, function (point) {
 			if (point.redraw) {
 				point.redraw();
 			}
-		});
+		});*/
 
 		// draw the data labels (inn pies they go before the points)
 		if (series.drawDataLabels) {

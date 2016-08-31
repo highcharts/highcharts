@@ -346,18 +346,15 @@ extend(Point.prototype, {
 				point.graphic = graphic.destroy();
 			}
 			if (isObject(options, true)) {
-				// Defer the actual redraw until getAttribs has been called (#3260)
-				point.redraw = function () {
-					if (graphic && graphic.element) {
-						if (options && options.marker && options.marker.symbol) {
-							point.graphic = graphic.destroy();
-						}
+				// Destroy so we can get new elements
+				if (graphic && graphic.element) {
+					if (options && options.marker && options.marker.symbol) {
+						point.graphic = graphic.destroy();
 					}
-					if (options && options.dataLabels && point.dataLabel) { // #2468
-						point.dataLabel = point.dataLabel.destroy();
-					}
-					point.redraw = null;
-				};
+				}
+				if (options && options.dataLabels && point.dataLabel) { // #2468
+					point.dataLabel = point.dataLabel.destroy();
+				}
 			}
 
 			// record changes in the parallel arrays

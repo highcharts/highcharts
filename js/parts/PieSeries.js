@@ -304,6 +304,7 @@ seriesType('pie', 'line', {
 				/*= } =*/
 
 				// Draw the slice
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
@@ -323,7 +324,7 @@ seriesType('pie', 'line', {
 
 					/*= if (build.classic) { =*/
 					graphic
-						.attr(series.pointAttribs(point, point.selected && 'select'))
+						.attr(pointAttr)
 						.attr({ 'stroke-linejoin': 'round' })
 						.shadow(shadow, shadowGroup);
 					/*= } =*/
