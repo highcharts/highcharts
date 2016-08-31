@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-08-30)
+ * @license Highcharts JS v4.2.6-modified (2016-08-31)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -777,7 +777,7 @@ var arrayMin = Highcharts.arrayMin,
         
             var highPoints = [],
                 highAreaPoints = [],
-                i = points.length,
+                i,
                 getGraphPath = seriesTypes.area.prototype.getGraphPath,
                 point,
                 pointShim,
@@ -789,6 +789,7 @@ var arrayMin = Highcharts.arrayMin,
                 higherAreaPath;
 
             points = points || this.points;
+            i = points.length;
 
             // Create the top line and the top part of the area fill. The area fill compensates for 
             // null points by drawing down to the lower graph, moving across the null gap and 
