@@ -39,5 +39,5 @@
     "xml2js": "^0.4.13",
     "yargs": "^3.31.0"
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "CC-BY-NC-3.0 OR SEE LICENSE IN <license.txt>"
 }
