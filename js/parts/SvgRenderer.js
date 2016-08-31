@@ -1237,7 +1237,7 @@ var SVGRenderer = function () {
 };
 SVGRenderer.prototype = {
 	Element: SVGElement,
-
+	urlSymbolRX: /^url\((.*?)\)$/,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -2016,7 +2016,6 @@ SVGRenderer.prototype = {
 				options
 			),
 
-			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
 			centerImage;
@@ -2038,7 +2037,7 @@ SVGRenderer.prototype = {
 
 
 		// image symbols
-		} else if (imageRegex.test(symbol)) {
+		} else if (this.urlSymbolRX.test(symbol)) {
 
 			// On image load, set the size and position
 			centerImage = function (img, size) {
@@ -2057,7 +2056,7 @@ SVGRenderer.prototype = {
 				}
 			};
 
-			imageSrc = symbol.match(imageRegex)[1];
+			imageSrc = symbol.match(this.urlSymbolRX)[1];
 			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
@@ -2423,7 +2422,8 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			needsBox,
+			hasBGImage = renderer.urlSymbolRX.test(shape),
+			needsBox = hasBGImage,
 			updateBoxSize,
 			updateTextPadding,
 			boxAttr;
@@ -2453,7 +2453,7 @@ SVGRenderer.prototype = {
 					// create the border box if it is not already present
 					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-					wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
+					wrapper.box = box = renderer.symbols[shape] || hasBGImage ? // Symbol definition exists (#5324)
 							renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 							renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
