@@ -45,8 +45,14 @@ H.Tooltip.prototype = {
 		this.isHidden = true;
 
 
+
+		// Public property for getting the shared state.
+		this.split = options.split && !chart.inverted;
+		this.shared = options.shared || this.split;
+
+
 		// Create the label
-		if (options.split) { // docs. Sample created.
+		if (this.split) { // docs. Sample created.
 			this.label = this.chart.renderer.g('tooltip');
 		} else {
 			this.label = chart.renderer.label(
@@ -81,12 +87,9 @@ H.Tooltip.prototype = {
 			/*= } =*/
 		}
 		this.label.attr({
-                zIndex: 8
-            })
-            .add();
-
-		// Public property for getting the shared state.
-		this.shared = options.shared || options.split;
+				zIndex: 8
+			})
+			.add();
 	},
 
 	update: function (options) {
@@ -414,10 +417,8 @@ H.Tooltip.prototype = {
 			}
 
 			// update text
-			if (options.split) {
-				if (hoverPoints) {
-					this.renderSplit(text, hoverPoints);
-				}
+			if (tooltip.split) {
+				this.renderSplit(text, chart.hoverPoints);
 			} else {
 				label.attr({
 					text: text.join ? text.join('') : text
@@ -457,97 +458,116 @@ H.Tooltip.prototype = {
 			chart = this.chart,
 			ren = chart.renderer,
 			rightAligned = true,
-			options = this.options;
+			options = this.options,
+			firstSeries = points[0].series;
 
 		// Create the individual labels
 		each(labels.slice(0, labels.length - 1), function (str, i) {
-            var point = points[i - 1] ||
-                     // Item 0 is the header. Instead of this, we could also use the crosshair label
-                    { isHeader: true, plotX: points[0].plotX },
-                owner = point.series || tooltip,
-                tt = owner.tt,
-                series = point.series || {},
-                x;
+			var point = points[i - 1] ||
+					// Item 0 is the header. Instead of this, we could also use the crosshair label
+					{ isHeader: true, plotX: points[0].plotX },
+				owner = point.series || tooltip,
+				tt = owner.tt,
+				series = point.series || {},
+				colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none'),
+				x;
 
-            // Store the tooltip referance on the series
-            if (!tt) {
-				owner.tt = tt = ren.label()
-                    .attr({
-                        'fill': options.backgroundColor,
-                        'r': options.borderRadius,
-                        'stroke': point.color || series.color || 'transparent',
-                        'stroke-width': options.borderWidth
-                    })
-                    .add(tooltip.label);
+			// Store the tooltip referance on the series
+			if (!tt) {
+				owner.tt = tt = ren.label(null, null, null, point.isHeader && 'callout')
+					.addClass('highcharts-tooltip-box ' + colorClass)
+					/*= if (build.classic) { =*/
+					.attr({
+						'fill': options.backgroundColor,
+						'r': options.borderRadius,
+						'stroke': point.color || series.color || '${palette.textColor}',
+						'stroke-width': options.borderWidth
+					})
+					/*= } =*/
+					.add(tooltip.label);
 
-                // Add a connector back to the point
-                if (point.series) {
-                    tt.connector = ren.path()
-                        .attr({
-                            'stroke-width': series.options.lineWidth || 2,
-                            'stroke': point.color || series.color || 'silver'
-                        })
-                        .add(tooltip.label);
+				// Add a connector back to the point
+				if (point.series) {
+					tt.connector = ren.path()
+						.addClass('highcharts-tooltip-connector ' + colorClass)
+						/*= if (build.classic) { =*/
+						.attr({
+							'stroke-width': series.options.lineWidth || 2,
+							'stroke': point.color || series.color || '${palette.weakColor}'
+						})
+						/*= } =*/
+						.add(tooltip.label);
 
-                    addEvent(point.series, 'hide', function () {
-                        this.tt.connector = this.tt.connector.destroy();
-                        this.tt = this.tt.destroy();
-                    });
-                }
-            }
-            tt.attr({
-                text: str
-            });
+					addEvent(point.series, 'hide', function () {
+						this.tt.connector = this.tt.connector.destroy();
+						this.tt = this.tt.destroy();
+					});
+				}
+			}
+			tt.attr({
+				text: str
+			});
 
-            // Get X position now, so we can move all to the other side in case of overflow
-            x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
-                tt.getBBox().width;
+			// Get X position now, so we can move all to the other side in case of overflow
+			if (point.isHeader) {
+				x = point.plotX + chart.plotLeft - tt.getBBox().width / 2;
+			} else {
+				x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
+					tt.getBBox().width;
+			}
 
-            // If overflow left, we don't use this x in the next loop
-            if (x < 0) {
-                rightAligned = false;
-            }
 
-            // Prepare for distribution
-            boxes.push({
-                target: point.plotY || 0,
-                rank: point.isHeader ? 1 : 0,
-                size: owner.tt.getBBox().height + 1,
-                point: point,
-                x: x,
-                tt: tt
-            });
-        });
+			// If overflow left, we don't use this x in the next loop
+			if (x < 0) {
+				rightAligned = false;
+			}
 
-        // Distribute and put in place
-        H.distribute(boxes, chart.plotHeight);
-        each(boxes, function (box) {
-            var point = box.point,
-                tt = box.tt;
+			// Prepare for distribution
+			boxes.push({
+				target: point.isHeader ? firstSeries.yAxis.len : point.plotY,
+				rank: point.isHeader ? 1 : 0,
+				size: owner.tt.getBBox().height + 1,
+				point: point,
+				x: x,
+				tt: tt
+			});
+		});
 
-            // Put the label in place
-            tt.attr({
-                x: rightAligned ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16),
-                y: box.pos + chart.plotTop
-            });
+		// Distribute and put in place
+		H.distribute(boxes, chart.plotHeight);
+		each(boxes, function (box) {
+			var point = box.point,
+				tt = box.tt,
+				attr;
 
-            // Draw the connector to the point
-            if (!point.isHeader) {
-                tt.connector.attr({
-                    d: [
-                        'M',
-                        point.plotX + chart.plotLeft,
-                        point.plotY + chart.plotTop,
-                        'L',
-                        rightAligned ?
-                            point.plotX + chart.plotLeft - pick(options.distance, 16) :
-                            point.plotX + chart.plotLeft + pick(options.distance, 16),
-                        box.pos + chart.plotTop + tt.getBBox().height / 2
-                    ]
-                });
-            }
-        });
-    },
+			// Put the label in place
+			attr = {
+				x: (rightAligned || point.isHeader ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16)),
+				y: box.pos + chart.plotTop
+			};
+			if (point.isHeader) {
+				attr.anchorX = point.plotX + chart.plotLeft;
+				attr.anchorY = attr.y - 100;
+			}
+			tt.attr(attr);
+
+			// Draw the connector to the point
+			if (!point.isHeader) {
+				tt.connector.attr({
+					d: [
+						'M',
+						point.plotX + chart.plotLeft,
+						point.plotY + chart.plotTop,
+						'L',
+						rightAligned ?
+							point.plotX + chart.plotLeft - pick(options.distance, 16) :
+							point.plotX + chart.plotLeft + pick(options.distance, 16),
+						box.pos + chart.plotTop + tt.getBBox().height / 2
+					]
+				});
+			}
+		});
+	},
 
 	/**
 	 * Find the new position and perform the move
@@ -659,8 +679,8 @@ H.Tooltip.prototype = {
 	},
 
 	/**
-     * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
-     * abstracting this functionality allows to easily overwrite and extend it.
+	 * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
+	 * abstracting this functionality allows to easily overwrite and extend it.
 	 */
 	bodyFormatter: function (items) {
 		return map(items, function (item) {
