@@ -8,3 +8,4 @@ script:
  - ant build dist
  - ant server&
  - ant test-all it
+ - gulp test
