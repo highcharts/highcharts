@@ -3,6 +3,7 @@
  * @author Torstein Honsi
  */
 
+'use strict';
 // Load the fonts
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',

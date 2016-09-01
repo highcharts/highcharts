@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Axis.js';
 import './Utilities.js';

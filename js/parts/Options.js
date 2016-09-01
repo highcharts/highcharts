@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';

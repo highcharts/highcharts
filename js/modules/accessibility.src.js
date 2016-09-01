@@ -7,6 +7,7 @@
  *
  * License: www.highcharts.com/license
  */
+'use strict';
 
 
 	var win = H.win,

@@ -1,4 +1,5 @@
 /* eslint indent: [2, 4] */
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/SVGRenderer.js';
     Highcharts.extend(Highcharts.SVGElement.prototype, {

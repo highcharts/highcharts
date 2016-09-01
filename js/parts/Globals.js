@@ -1,3 +1,4 @@
+'use strict';
 /* global window */
 	var win = window,
 		doc = win.document;

@@ -1,3 +1,4 @@
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/SvgRenderer.js';
 import '../parts/Html.js';

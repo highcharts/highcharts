@@ -1,3 +1,4 @@
+'use strict';
 import '../parts-3d/Math.js';
 import '../parts-3d/SVGRenderer.js';
 import '../parts-3d/Chart.js';

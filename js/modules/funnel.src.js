@@ -7,6 +7,7 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent:0 */
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';

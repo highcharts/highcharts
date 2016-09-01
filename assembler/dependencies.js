@@ -73,7 +73,8 @@ const getOrderedDependencies = (file, parent, dependencies) => {
 
 const applyUMD = content => {
     let name = 'Highcharts';
-    return ['(function (root, factory) {',
+    return ['\'use strict\';',
+        '(function (root, factory) {',
         'if (typeof module === \'object\' && module.exports) {',
         'module.exports = root.document ?',
         'factory(root) : ',
@@ -158,6 +159,8 @@ const moduleTransform = (content, options) => {
     let exclude = options.exclude;
     let params = imported.map(m => m[0]).join(', ');
     let mParams = imported.map(m => m[1]).join(', ');
+    // Remove use strict from modules
+    content = content.replace(/\'use strict\';\r\n/, '');
     // Remove import statements
     // @todo Add imported variables to the function arguments. Reuse getImports for this
     content = content.replace(/import\s[^\n]+\n/g, '')

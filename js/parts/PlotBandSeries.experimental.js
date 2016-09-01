@@ -7,6 +7,7 @@
  * and provide a more compact and consistent implementation.
  * Demo: http://jsfiddle.net/highcharts/5Rbf6/
  */
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
