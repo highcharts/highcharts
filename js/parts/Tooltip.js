@@ -459,7 +459,7 @@ H.Tooltip.prototype = {
 			ren = chart.renderer,
 			rightAligned = true,
 			options = this.options,
-			firstSeries = points[0].series;
+			headerHeight;
 
 		// Create the individual labels
 		each(labels.slice(0, labels.length - 1), function (str, i) {
@@ -470,20 +470,23 @@ H.Tooltip.prototype = {
 				tt = owner.tt,
 				series = point.series || {},
 				colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none'),
-				x;
+				target,
+				x,
+				bBox;
 
 			// Store the tooltip referance on the series
 			if (!tt) {
 				owner.tt = tt = ren.label(null, null, null, point.isHeader && 'callout')
 					.addClass('highcharts-tooltip-box ' + colorClass)
-					/*= if (build.classic) { =*/
 					.attr({
-						'fill': options.backgroundColor,
+						'padding': options.padding,
 						'r': options.borderRadius,
+						/*= if (build.classic) { =*/
+						'fill': options.backgroundColor,
 						'stroke': point.color || series.color || '${palette.textColor}',
 						'stroke-width': options.borderWidth
+						/*= } =*/
 					})
-					/*= } =*/
 					.add(tooltip.label);
 
 				// Add a connector back to the point
@@ -504,16 +507,19 @@ H.Tooltip.prototype = {
 					});
 				}
 			}
+			tt.isActive = true;
 			tt.attr({
 				text: str
 			});
 
 			// Get X position now, so we can move all to the other side in case of overflow
+			bBox = tt.getBBox();
 			if (point.isHeader) {
-				x = point.plotX + chart.plotLeft - tt.getBBox().width / 2;
+				headerHeight = bBox.height;
+				x = point.plotX + chart.plotLeft - bBox.width / 2;
 			} else {
 				x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
-					tt.getBBox().width;
+					bBox.width;
 			}
 
 
@@ -523,8 +529,10 @@ H.Tooltip.prototype = {
 			}
 
 			// Prepare for distribution
+			target = (point.series && point.series.yAxis && point.series.yAxis.pos) + (point.plotY || 0);
+			target -= chart.plotTop;
 			boxes.push({
-				target: point.isHeader ? firstSeries.yAxis.len : point.plotY,
+				target: point.isHeader ? chart.plotHeight + headerHeight : target,
 				rank: point.isHeader ? 1 : 0,
 				size: owner.tt.getBBox().height + 1,
 				point: point,
@@ -533,8 +541,21 @@ H.Tooltip.prototype = {
 			});
 		});
 
+		// Clean previous run (for missing points)
+		each(chart.series, function (series) {
+			var tt = series.tt;
+			if (tt) {
+				if (!tt.isActive) {
+					tt.connector = tt.connector.destroy();
+					series.tt = tt.destroy();
+				} else {
+					tt.isActive = false;
+				}
+			}
+		});
+
 		// Distribute and put in place
-		H.distribute(boxes, chart.plotHeight);
+		H.distribute(boxes, chart.plotHeight + headerHeight);
 		each(boxes, function (box) {
 			var point = box.point,
 				tt = box.tt,
@@ -557,7 +578,7 @@ H.Tooltip.prototype = {
 					d: [
 						'M',
 						point.plotX + chart.plotLeft,
-						point.plotY + chart.plotTop,
+						point.plotY + point.series.yAxis.pos,
 						'L',
 						rightAligned ?
 							point.plotX + chart.plotLeft - pick(options.distance, 16) :

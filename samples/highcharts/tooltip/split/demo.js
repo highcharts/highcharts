@@ -18,7 +18,8 @@ $(function () {
         tooltip: {
             valueSuffix: '°C',
             split: true,
-            distance: 30
+            distance: 30,
+            padding: 5
         },
 
         xAxis: {
