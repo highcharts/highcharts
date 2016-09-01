@@ -884,7 +884,7 @@ Chart.prototype.inlineStyles = function () {
 
 				if (!blacklisted) {
 					
-					 // If parent node has the same style, it gets inherited, no need to inline it
+					// If parent node has the same style, it gets inherited, no need to inline it
 					if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
 
 						// Attributes
