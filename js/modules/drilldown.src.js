@@ -513,15 +513,17 @@
 
 				if (!init) {
 					each(this.points, function (point, i) {
-						point.graphic
-							.attr(H.merge(animateFrom, {
-								start: start + i * startAngle,
-								end: start + (i + 1) * startAngle,
-								fill: level.color
-							}))[animationOptions ? 'animate' : 'attr'](
-								extend(point.shapeArgs, { fill: point.color }), 
-								animationOptions
-							);
+						if (point.graphic) {
+							point.graphic
+								.attr(H.merge(animateFrom, {
+									start: start + i * startAngle,
+									end: start + (i + 1) * startAngle,
+									fill: level.color
+								}))[animationOptions ? 'animate' : 'attr'](
+									extend(point.shapeArgs, { fill: point.color }), 
+									animationOptions
+								);
+						}
 					});
 					this.animate = null;
 				}
