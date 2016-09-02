@@ -804,8 +804,7 @@ SVGRenderer.prototype.inlineToAttributes = [
 // These CSS properties are not inlined. Remember camelCase.
 SVGRenderer.prototype.inlineBlacklist = [
 	/-/, // In Firefox, both hyphened and camelCased names are listed
-	/^cssText$/,
-	/^d$/,
+	/^(clipPath|cssText|d|height|width)$/, // Full words
 	/^font$/, // more specific props are set
 	/[lL]ogical(Width|Height)$/,
 	/perspective/,
