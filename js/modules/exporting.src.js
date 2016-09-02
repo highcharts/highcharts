@@ -797,15 +797,19 @@ SVGRenderer.prototype.inlineToAttributes = [
 	'strokeLinecap',
 	'strokeLinejoin',
 	'strokeWidth',
+	'textAnchor',
 	'x',
 	'y'
 ];
+// These CSS properties are not inlined. Remember camelCase.
 SVGRenderer.prototype.inlineBlacklist = [
 	/-/, // In Firefox, both hyphened and camelCased names are listed
 	/^cssText$/,
+	/^d$/,
 	/^font$/, // more specific props are set
-	/(logical)?(width|height)$/i,
+	/[lL]ogical(Width|Height)$/,
 	/perspective/,
+	/TapHighlightColor/,
 	/^transition/
 	// /^text (border|color|cursor|height|webkitBorder)/
 ];
@@ -856,7 +860,7 @@ Chart.prototype.inlineStyles = function () {
 		
 		if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
 			styles = win.getComputedStyle(node, null);
-			parentStyles = win.getComputedStyle(node.parentNode, null);
+			parentStyles = node.nodeName === 'svg' ? {} : win.getComputedStyle(node.parentNode, null);
 
 			// Get default styles from the browser so that we don't have to add these
 			if (!defaultStyles[node.nodeName]) {
@@ -879,7 +883,7 @@ Chart.prototype.inlineStyles = function () {
 				blacklisted = false;
 				i = blacklist.length;
 				while (i-- && !blacklisted) {
-					blacklisted = blacklist[i].test(prop);
+					blacklisted = blacklist[i].test(prop) || typeof styles[prop] === 'function';
 				}
 
 				if (!blacklisted) {

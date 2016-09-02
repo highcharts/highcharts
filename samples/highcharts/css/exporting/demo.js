@@ -32,14 +32,16 @@ $(function () {
         }, {
             data: [1, 2, 3]
         }, {
-            data: [1, 2, 3]
+            data: [3, 2, 1],
+            type: 'line'
         }]
 
     });
 
+    var svg = $('#container').highcharts().getSVGForExport();
     $('#pre').html((function () {
         var indent = '';
-        return $('#container').highcharts().getSVG()
+        return svg
             .replace(/(<\/?|\/?>)/g, function (a) {
                 var ret;
                 if (a === '<') {
