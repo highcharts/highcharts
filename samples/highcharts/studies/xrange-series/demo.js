@@ -14,7 +14,8 @@ $(function () {
         defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
-            }
+            },
+            cropThreshold: Number.MAX_VALUE // a workaround for #5647 - a real fix would be to check both x1 and x2 in a cropData override
         });
         H.seriesTypes.xrange = H.extendClass(columnType, {
             pointClass: extendClass(Point, {
