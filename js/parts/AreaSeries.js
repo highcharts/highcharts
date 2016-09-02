@@ -187,14 +187,14 @@ var AreaSeries = extendClass(Series, {
 					});
 					bottomPoints.push({
 						plotX: plotX,
-						plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom)
+						plotY: bottom === null ? translatedThreshold : yAxis.getThreshold(bottom),
+						doCurve: false // #1041, gaps in areaspline areas
 					});
 				}
 			};
 
 		// Find what points to use
 		points = points || this.points;
-
 		
 		// Fill in missing points
 		if (stacking) {

@@ -75,6 +75,7 @@
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
+        <property name="serieslabel.src.name" value="series-label.src.js"/>
         <property name="solidgauge.src.name" value="solid-gauge.src.js"/>
         <property name="nodata.src.name" value="no-data-to-display.src.js"/>
         <property name="map.src.name" value="map.src.js"/>
@@ -91,6 +92,7 @@
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
+        <property name="serieslabel.minified.name" value="series-label.js"/>
         <property name="solidgauge.minified.name" value="solid-gauge.js"/>
         <property name="nodata.minified.name" value="no-data-to-display.js"/>
         <property name="map.minified.name" value="map.js"/>
@@ -108,6 +110,7 @@
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
         <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
+        <property name="serieslabel.src.file" value="${basedir}/js/modules/${serieslabel.src.name}"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
@@ -608,6 +611,10 @@
             <param name="param.out" value="${dist.dir}/js/modules/${funnel.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${serieslabel.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${serieslabel.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${solidgauge.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${solidgauge.minified.name}"/>
         </antcall>
@@ -870,6 +877,11 @@
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${funnel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
+        <copy file="${serieslabel.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${serieslabel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${serieslabel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${serieslabel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${solidgauge.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${solidgauge.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
@@ -1545,7 +1557,7 @@
                         </antcall>
                         <!-- copy gfx folder to Root -->
                         <antcall target="put-files-to-S3">
-                            <param name="local" value="${basedir}/build/dist/hithmaps/gfx"/>
+                            <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
                             <param name="remote" value="${amazon.s3.bucketname}/maps"/>
                             <param name="s3cmdDir" value="${s3cmd.dir}"/>
                             <param name="http.expires" value="${http.expires.one.day}"/>
@@ -1642,19 +1654,19 @@
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
     <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
-        <copy todir="${highcharts.site.dir}/samples">
+        <copy todir="${highcharts.site.dir}/php-app/samples">
             <fileset dir="samples"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/studies">
+        <copy todir="${highcharts.site.dir}/php-app/studies">
             <fileset dir="studies"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/js/themes">
+        <copy todir="${highcharts.site.dir}/php-app/js/themes">
             <fileset dir="js/themes"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/errors">
+        <copy todir="${highcharts.site.dir}/php-app/errors">
             <fileset dir="errors"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/lib">
+        <copy todir="${highcharts.site.dir}/php-app/lib">
             <fileset dir="vendor"/>
         </copy>
     </target>
@@ -1663,22 +1675,22 @@
         <property file="git-ignore-me.properties"/>
         
         <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/media/com_download/js/parts.js" overwrite="true"/>
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/php-app/joomla/media/com_download/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/parts-more" overwrite="true">
             <filelist refid="highchartsmore.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highcharts-modules.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
             <filelist refid="heatmap.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>

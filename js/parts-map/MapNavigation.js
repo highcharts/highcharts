@@ -1,4 +1,4 @@
-function stopEvent (e) {
+function stopEvent(e) {
 	if (e) {
 		if (e.preventDefault) {
 			e.preventDefault();

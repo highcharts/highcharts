@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.5-modified (2016-07-22)
+ * @license Highcharts JS v4.2.6-modified (2016-08-11)
  *
  * 3D features for Highcharts JS
  *
@@ -59,11 +59,11 @@
             x: angles.cosB * x - angles.sinB * z,
             y: -angles.sinA * angles.sinB * x + angles.cosA * y - angles.cosB * angles.sinA * z,
             z: angles.cosA * angles.sinB * x + angles.sinA * y + angles.cosA * angles.cosB * z
-        }
+        };
     }
 
     function perspective3D(coordinate, origin, distance) {
-        var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance): 1;
+        var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ? distance / (coordinate.z + origin.z + distance) : 1;
         return {
             x: coordinate.x * projection,
             y: coordinate.y * projection
@@ -81,7 +81,7 @@
      */
     var perspective = Highcharts.perspective = function (points, chart, insidePlotArea) {
         var options3d = chart.options.chart.options3d,
-            inverted = insidePlotArea ? chart.inverted: false,
+            inverted = insidePlotArea ? chart.inverted : false,
             origin = {
                 x: chart.plotWidth / 2,
                 y: chart.plotHeight / 2,
@@ -89,8 +89,8 @@
                 vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
             },
             scale = chart.scale3d || 1,
-            beta = deg2rad * options3d.beta * (inverted ? -1: 1),
-            alpha = deg2rad * options3d.alpha * (inverted ? -1: 1),
+            beta = deg2rad * options3d.beta * (inverted ? -1 : 1),
+            alpha = deg2rad * options3d.alpha * (inverted ? -1 : 1),
             angles = {
                 cosA: cos(alpha),
                 cosB: cos(-beta),
@@ -110,7 +110,7 @@
                     (inverted ? point.x : point.y) - origin.y,
                     (point.z || 0) - origin.z,
                     angles
-                );
+                ),
                 coordinate = perspective3D(rotated, origin, origin.vd); // Apply perspective
 
             // Apply translation
@@ -124,7 +124,7 @@
                 z: coordinate.z 
             };
         });
-    }/***
+    };/***
         EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
         ***/
     ////// HELPER METHODS //////
@@ -503,6 +503,7 @@
                         }));
                     };
                 }
+                animation = anim; // Only when duration (#5572)
             }
             return proceed.call(this, params, animation, complete);
         });
@@ -717,104 +718,103 @@
     };
 
     /**
-     * Extend the getMargins method to calculate scale of the 3D view. That is required to
+     * Calculate scale of the 3D view. That is required to
      * fit chart's 3D projection into the actual plotting area. Reported as #4933.
+     * @notice This function should ideally take the plot values instead of a chart object, 
+     *         but since the chart object is needed for perspective it is not practical. 
+     *         Possible to make both getScale and perspective more logical and also immutable.
+     * @param  {Object} chart Chart object
+     * @param  {Number} chart.plotLeft
+     * @param  {Number} chart.plotWidth
+     * @param  {Number} chart.plotTop
+     * @param  {Number} chart.plotHeight
+     * @param  {Number} depth The depth of the chart
+     * @return {Number} The scale to fit the 3D chart into the plotting area.
      */
-    Highcharts.wrap(Highcharts.Chart.prototype, 'getMargins', function (proceed) {
-        var chart = this,
-            options3d = chart.options.chart.options3d,
+    function getScale(chart, depth) {
+        var plotLeft = chart.plotLeft,
+            plotRight = chart.plotWidth + plotLeft,
+            plotTop = chart.plotTop,
+            plotBottom = chart.plotHeight + plotTop,
+            originX = plotLeft + chart.plotWidth / 2,
+            originY = plotTop + chart.plotHeight / 2,
             bbox3d = {
                 minX: Number.MAX_VALUE,
                 maxX: -Number.MAX_VALUE,
                 minY: Number.MAX_VALUE,
                 maxY: -Number.MAX_VALUE
             },
-            plotLeft = chart.plotLeft,
-            plotRight = chart.plotWidth + plotLeft,
-            plotTop = chart.plotTop,
-            plotBottom = chart.plotHeight + plotTop,
-            originX = plotLeft + chart.plotWidth / 2,
-            originY = plotTop + chart.plotHeight / 2,
-            scale = 1,
-            corners = [],
-            i;
+            corners,
+            scale = 1;
 
-        proceed.apply(this, [].slice.call(arguments, 1));
+        // Top left corners:
+        corners = [{
+            x: plotLeft,
+            y: plotTop,
+            z: 0
+        }, {
+            x: plotLeft,
+            y: plotTop,
+            z: depth
+        }];
 
-        if (this.is3d()) {
-            if (options3d.fitToPlot === true) {
-                // Clear previous scale in case of updates:
-                chart.scale3d = 1;
+        // Top right corners:
+        each([0, 1], function (i) { 
+            corners.push({
+                x: plotRight,
+                y: corners[i].y,
+                z: corners[i].z
+            });
+        });
 
-                // Top left corners:
-                corners = [{
-                    x: plotLeft,
-                    y: plotTop,
-                    z: 0
-                }, {
-                    x: plotLeft,
-                    y: plotTop,
-                    z: options3d.depth
-                }];
+        // All bottom corners:
+        each([0, 1, 2, 3], function (i) {
+            corners.push({
+                x: corners[i].x,
+                y: plotBottom,
+                z: corners[i].z
+            });
+        });
 
-                // Top right corners:
-                for (i = 0; i < 2; i++) {
-                    corners.push({
-                        x: plotRight,
-                        y: corners[i].y,
-                        z: corners[i].z
-                    });
-                }
+        // Calculate 3D corners:
+        corners = perspective(corners, chart, false);
 
-                // All bottom corners:
-                for (i = 0; i < 4; i++) {
-                    corners.push({
-                        x: corners[i].x,
-                        y: plotBottom,
-                        z: corners[i].z
-                    });
-                }
+        // Get bounding box of 3D element:
+        each(corners, function (corner) {
+            bbox3d.minX = Math.min(bbox3d.minX, corner.x);
+            bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
+            bbox3d.minY = Math.min(bbox3d.minY, corner.y);
+            bbox3d.maxY = Math.max(bbox3d.maxY, corner.y);
+        });
 
-                // Calculate 3D corners:
-                corners = perspective(corners, chart, false);
+        // Left edge:
+        if (plotLeft > bbox3d.minX) {
+            scale = Math.min(scale, 1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1);
+        }
 
-                // Get bounding box of 3D element:
-                each(corners, function (corner) {
-                    bbox3d.minX = Math.min(bbox3d.minX, corner.x);
-                    bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
-                    bbox3d.minY = Math.min(bbox3d.minY, corner.y);
-                    bbox3d.maxY = Math.max(bbox3d.maxY, corner.y);
-                });
+        // Right edge:
+        if (plotRight < bbox3d.maxX) {
+            scale = Math.min(scale, (plotRight - originX) / (bbox3d.maxX - originX));
+        }
 
-                // Left edge:
-                if (plotLeft > bbox3d.minX) {
-                    scale = Math.min(scale, 1 - Math.abs((plotLeft + originX) / (bbox3d.minX + originX)) % 1);
-                }
-
-                // Right edge:
-                if (plotRight < bbox3d.maxX) {
-                    scale = Math.min(scale, (plotRight - originX) / (bbox3d.maxX - originX));
-                }
-
-                // Top edge:
-                if (plotTop > bbox3d.minY) {
-                    if (bbox3d.minY < 0) {
-                        scale = Math.min(scale, (plotTop + originY) / (-bbox3d.minY + plotTop + originY));
-                    } else {
-                        scale = Math.min(scale, 1 - (plotTop + originY) / (bbox3d.minY + originY) % 1);
-                    }
-                }
-
-                // Bottom edge:
-                if (plotBottom < bbox3d.maxY) {
-                    scale = Math.min(scale, Math.abs((plotBottom - originY) / (bbox3d.maxY - originY)));
-                }
-
-                // Set scale, used later in perspective method():
-                chart.scale3d = scale;
+        // Top edge:
+        if (plotTop > bbox3d.minY) {
+            if (bbox3d.minY < 0) {
+                scale = Math.min(scale, (plotTop + originY) / (-bbox3d.minY + plotTop + originY));
+            } else {
+                scale = Math.min(scale, 1 - (plotTop + originY) / (bbox3d.minY + originY) % 1);
             }
         }
-    });
+
+        // Bottom edge:
+        if (plotBottom < bbox3d.maxY) {
+            scale = Math.min(scale, Math.abs((plotBottom - originY) / (bbox3d.maxY - originY)));
+        }
+
+        return scale;
+    }
+
+
 
     Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
         return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
@@ -854,12 +854,15 @@
     });
 
     Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
-        proceed.apply(this, [].slice.call(arguments, 1));
+        var chart = this,
+            options3d = chart.options.chart.options3d;
 
-        if (this.is3d()) {
-            var inverted = this.inverted,
-                clipBox = this.clipBox,
-                margin = this.margin,
+        proceed.apply(chart, [].slice.call(arguments, 1));
+
+        if (chart.is3d()) {
+            var inverted = chart.inverted,
+                clipBox = chart.clipBox,
+                margin = chart.margin,
                 x = inverted ? 'y' : 'x',
                 y = inverted ? 'x' : 'y',
                 w = inverted ? 'height' : 'width',
@@ -867,8 +870,14 @@
 
             clipBox[x] = -(margin[3] || 0);
             clipBox[y] = -(margin[0] || 0);
-            clipBox[w] = this.chartWidth + (margin[3] || 0) + (margin[1] || 0);
-            clipBox[h] = this.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+            clipBox[w] = chart.chartWidth + (margin[3] || 0) + (margin[1] || 0);
+            clipBox[h] = chart.chartHeight + (margin[0] || 0) + (margin[2] || 0);
+
+            // Set scale, used later in perspective method():
+            chart.scale3d = 1; // @notice getScale uses perspective, so scale3d has to be reset.
+            if (options3d.fitToPlot === true) {
+                chart.scale3d = getScale(chart, options3d.depth);
+            }
         }
     });
 

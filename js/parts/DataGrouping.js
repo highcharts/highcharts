@@ -199,13 +199,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			groupedY = approximationFn.apply(0, values);
+			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
 			if (groupedY !== UNDEFINED) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
-				groupMap.push({ start: start, length: values[0].length });
+				groupMap.push(series.dataGroupInfo);
 			}
 
 			// reset the aggregate arrays
@@ -278,8 +279,8 @@ seriesProto.processData = function () {
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order)
-	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
+	// skip if processData returns false or if grouping is disabled (in that order) or #5493
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
 	if (!skip) {
 		series.destroyGroupedData();
 
@@ -377,11 +378,22 @@ seriesProto.generatePoints = function () {
 };
 
 /**
+ * Override point prototype to throw a warning when trying to update grouped points
+ */
+wrap(Point.prototype, 'update', function (proceed) {
+	if (this.dataGroup) {
+		error(24);
+	} else {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	}
+});
+
+/**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point, isFooter) {
+wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, labelConfig, isFooter) {
 	var tooltip = this,
-		series = point.series,
+		series = labelConfig.series,
 		options = series.options,
 		tooltipOptions = series.tooltipOptions,
 		dataGroupingOptions = options.dataGrouping,
@@ -394,7 +406,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point
 		formattedKey;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(labelConfig.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;
@@ -413,25 +425,25 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
+			xDateFormat = tooltip.getXDateFormat(labelConfig, tooltipOptions, xAxis);
 		}
 
 		// now format the key
-		formattedKey = dateFormat(xDateFormat, point.key);
+		formattedKey = dateFormat(xDateFormat, labelConfig.key);
 		if (xDateFormatEnd) {
-			formattedKey += dateFormat(xDateFormatEnd, point.key + currentDataGrouping.totalRange - 1);
+			formattedKey += dateFormat(xDateFormatEnd, labelConfig.key + currentDataGrouping.totalRange - 1);
 		}
 
 		// return the replaced format
 		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
-			point: extend(point, { key: formattedKey }),
+			point: extend(labelConfig.point, { key: formattedKey }),
 			series: series
 		});
 	
 	}
 
 	// else, fall back to the regular formatter
-	return proceed.call(tooltip, point, isFooter);
+	return proceed.call(tooltip, labelConfig, isFooter);
 });
 
 /**

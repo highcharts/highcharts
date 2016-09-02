@@ -730,19 +730,16 @@ SVGElement.prototype = {
 
 		if (textStr !== UNDEFINED) {
 
-			// Properties that affect bounding box
-			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+			cacheKey = 
 
-			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-			// we assume that a label of n characters has the same bounding box as others
-			// of the same length.
-			if (textStr === '' || numRegex.test(textStr)) {
-				cacheKey = 'num:' + textStr.toString().length + cacheKey;
+				// Since numbers are monospaced, and numerical labels appear a lot in a chart,
+				// we assume that a label of n characters has the same bounding box as others
+				// of the same length.
+				textStr.toString().replace(numRegex, '0') + 
 
-			// Caching all strings reduces rendering time by 4-5%.
-			} else {
-				cacheKey = textStr + cacheKey;
-			}
+				// Properties that affect bounding box
+				['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+
 		}
 
 		if (cacheKey && !reload) {
@@ -822,8 +819,9 @@ SVGElement.prototype = {
 				}
 			}
 
-			// Cache it
-			if (cacheKey) {
+			// Cache it. When loading a chart in a hidden iframe in Firefox and IE/Edge, the
+			// bounding box height is 0, so don't cache it (#5620).
+			if (cacheKey && bBox.height > 0) {
 
 				// Rotate (#4681)
 				while (cacheKeys.length > 250) {
@@ -1239,7 +1237,7 @@ var SVGRenderer = function () {
 };
 SVGRenderer.prototype = {
 	Element: SVGElement,
-
+	urlSymbolRX: /^url\((.*?)\)$/,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -2018,7 +2016,6 @@ SVGRenderer.prototype = {
 				options
 			),
 
-			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
 			centerImage;
@@ -2040,7 +2037,7 @@ SVGRenderer.prototype = {
 
 
 		// image symbols
-		} else if (imageRegex.test(symbol)) {
+		} else if (this.urlSymbolRX.test(symbol)) {
 
 			// On image load, set the size and position
 			centerImage = function (img, size) {
@@ -2059,7 +2056,7 @@ SVGRenderer.prototype = {
 				}
 			};
 
-			imageSrc = symbol.match(imageRegex)[1];
+			imageSrc = symbol.match(this.urlSymbolRX)[1];
 			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
@@ -2081,6 +2078,8 @@ SVGRenderer.prototype = {
 				createElement('img', {
 					onload: function () {
 
+						var chart = charts[ren.chartIndex];
+
 						// Special case for SVGs on IE11, the width is not accessible until the image is
 						// part of the DOM (#2854).
 						if (this.width === 0) {
@@ -2101,8 +2100,8 @@ SVGRenderer.prototype = {
 
 						// Fire the load event when all external images are loaded
 						ren.imgCount--;
-						if (!ren.imgCount && charts[ren.chartIndex].onload) {
-							charts[ren.chartIndex].onload();
+						if (!ren.imgCount && chart && chart.onload) {
+							chart.onload();
 						}
 					},
 					src: imageSrc
@@ -2423,7 +2422,8 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			needsBox,
+			hasBGImage = renderer.urlSymbolRX.test(shape),
+			needsBox = hasBGImage,
 			updateBoxSize,
 			updateTextPadding,
 			boxAttr;
@@ -2453,7 +2453,7 @@ SVGRenderer.prototype = {
 					// create the border box if it is not already present
 					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-					wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
+					wrapper.box = box = renderer.symbols[shape] || hasBGImage ? // Symbol definition exists (#5324)
 							renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 							renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 

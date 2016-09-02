@@ -377,6 +377,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 					}));
 				};
 			}
+			animation = anim; // Only when duration (#5572)
 		}
 		return proceed.call(this, params, animation, complete);
 	});

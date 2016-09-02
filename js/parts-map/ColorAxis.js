@@ -5,7 +5,6 @@
  * The ColorAxis object for inclusion in gradient legends
  */
 var ColorAxis = Highcharts.ColorAxis = function () {
-	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -31,11 +30,14 @@ extend(ColorAxis.prototype, {
 		},
 		minColor: '#EFEFFF',
 		maxColor: '#003875',
-		tickLength: 5
+		tickLength: 5,
+		showInLegend: true // docs: API record is being added.
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
 			options;
+
+		this.coll = 'colorAxis';
 
 		// Build the options
 		options = merge(this.defaultColorAxisOptions, {
@@ -44,8 +46,7 @@ extend(ColorAxis.prototype, {
 		}, userOptions, {
 			opposite: !horiz,
 			showEmpty: false,
-			title: null,
-			isColor: true
+			title: null
 		});
 
 		Axis.prototype.init.call(this, chart, options);
@@ -146,7 +147,6 @@ extend(ColorAxis.prototype, {
 		Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
-		this.coll = 'colorAxis';
 	},
 
 	setAxisSize: function () {
@@ -483,14 +483,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		colorAxis = this.chart.colorAxis[0];
 
 	if (colorAxis) {
-
-		// Data classes
-		if (colorAxis.options.dataClasses) {
-			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
-		// Gradient legend
-		} else {
-			// Add this axis on top
-			allItems.push(colorAxis);
+		if (colorAxis.options.showInLegend) {
+			// Data classes
+			if (colorAxis.options.dataClasses) {
+				allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+			// Gradient legend
+			} else {
+				// Add this axis on top
+				allItems.push(colorAxis);
+			}
 		}
 
 		// Don't add the color axis' series

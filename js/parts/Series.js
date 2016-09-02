@@ -177,37 +177,17 @@ Series.prototype = {
 	 * Return an auto incremented x value based on the pointStart and pointInterval options.
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
-	autoIncrement: function (point) {
+	autoIncrement: function () {
 
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
 			pointInterval,
-			pointIntervalUnit = options.pointIntervalUnit,
-			xAxis = this.xAxis,
-			explicitCategories,
-			names,
-			nameX;
+			pointIntervalUnit = options.pointIntervalUnit;
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-
-		// When a point name is given and no x, search for the name in the existing categories,
-		// or if categories aren't provided, search names or create a new category (#2522). // docs
-		if (xAxis && xAxis.categories && point.name) {
-			this.requireSorting = false;
-			explicitCategories = isArray(xAxis.categories);
-			names = explicitCategories ? xAxis.categories : xAxis.names;
-			nameX = inArray(point.name, names); // #2522
-			if (nameX === -1) { // The name is not found in currenct categories
-				if (!explicitCategories) {
-					xIncrement = names.length;
-				}
-			} else {
-				xIncrement = nameX;
-			}
-		}
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
@@ -396,15 +376,10 @@ Series.prototype = {
 
 
 				if (isNumber(firstPoint)) { // assume all points are numbers
-					var x = pick(options.pointStart, 0),
-						pointInterval = pick(options.pointInterval, 1);
-
 					for (i = 0; i < dataLength; i++) {
-						xData[i] = x;
+						xData[i] = this.autoIncrement();
 						yData[i] = data[i];
-						x += pointInterval;
 					}
-					series.xIncrement = x;
 				} else if (isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
@@ -683,7 +658,7 @@ Series.prototype = {
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
@@ -746,8 +721,7 @@ Series.prototype = {
 
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.y = yValue = null;
-				error(10);
+				point.isNull = true;
 			}
 
 			// Get the plotX translation
@@ -798,7 +772,7 @@ Series.prototype = {
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1)) : plotX; // #1514
+			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) : plotX; // #1514, #5383, #5518
 
 			point.negative = point.y < (threshold || 0);
 
@@ -1480,15 +1454,17 @@ Series.prototype = {
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
 			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
-			reversed = axis.reversed,
+			reversed,
 			inverted = chart.inverted,
-			horiz = axis.horiz,
+			horiz,
 			pxRange,
 			pxPosMin,
 			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area) && axis.min !== UNDEFINED) {
+		if (zones.length && (graph || area) && axis && axis.min !== UNDEFINED) {
+			reversed = axis.reversed;
+			horiz = axis.horiz;
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
@@ -1538,7 +1514,7 @@ Series.prototype = {
 				}
 
 				/// VML SUPPPORT
-				if (chart.inverted && renderer.isVML) {
+				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
 						clipAttr = {
 							x: 0,

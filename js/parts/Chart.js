@@ -259,6 +259,7 @@ Chart.prototype = {
 
 				// set axes scales
 				each(axes, function (axis) {
+					axis.updateNames();
 					axis.setScale();
 				});
 			}
@@ -551,7 +552,9 @@ Chart.prototype = {
 		// Destroy the clone and bring the container back to the real renderTo div
 		if (revert) {
 			if (clone) {
-				this.renderTo.appendChild(container);
+				while (clone.childNodes.length) { // #5231
+					this.renderTo.appendChild(clone.firstChild);
+				}
 				discardElement(clone);
 				delete this.renderToClone;
 			}
@@ -786,8 +789,8 @@ Chart.prototype = {
 
 	/**
 	 * Resize the chart to a given width and height
-	 * @param {Number} width // docs: undefined preserves current value. null changes to auto.
-	 * @param {Number} height // docs: undefined preserves current value. null changes to auto.
+	 * @param {Number} width
+	 * @param {Number} height
 	 * @param {Object|Boolean} animation
 	 */
 	setSize: function (width, height, animation) {
@@ -1105,7 +1108,7 @@ Chart.prototype = {
 				} else {
 					linkedTo = chart.get(linkedTo);
 				}
-				if (linkedTo) {
+				if (linkedTo && linkedTo.linkedParent !== series) { // #3341 avoid mutual linking
 					linkedTo.linkedSeries.push(series);
 					series.linkedParent = linkedTo;
 					series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879

@@ -209,7 +209,7 @@ Axis.prototype = {
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
-		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
+		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
@@ -237,7 +237,8 @@ Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
-		axis.categories = options.categories || type === 'category';
+		axis.hasNames = type === 'category' || options.categories === true;
+		axis.categories = options.categories || axis.hasNames;
 		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
@@ -321,7 +322,7 @@ Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			if (isXAxis && !this.isColorAxis) { // #2713
+			if (isXAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
 				chart.axes.push(axis);
@@ -359,7 +360,7 @@ Axis.prototype = {
 	setOptions: function (userOptions) {
 		this.options = merge(
 			this.defaultOptions,
-			this.isXAxis ? {} : this.defaultYAxisOptions,
+			this.coll === 'yAxis' && this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
@@ -775,13 +776,13 @@ Axis.prototype = {
 			// if min and max options have been set, don't go beyond it
 			minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 			if (spaceAvailable) { // if space is available, stay within the data range
-				minArgs[2] = axis.dataMin;
+				minArgs[2] = axis.isLog ? axis.log2lin(axis.dataMin) : axis.dataMin;
 			}
 			min = arrayMax(minArgs);
 
 			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
-				maxArgs[2] = axis.dataMax;
+				maxArgs[2] = axis.isLog ? axis.log2lin(axis.dataMax) : axis.dataMax;
 			}
 
 			max = arrayMin(maxArgs);
@@ -818,6 +819,63 @@ Axis.prototype = {
 			});
 		}
 		return ret;
+	},
+
+	/**
+	 * When a point name is given and no x, search for the name in the existing categories,
+	 * or if categories aren't provided, search names or create a new category (#2522).
+	 */
+	nameToX: function (point) {
+		var explicitCategories = isArray(this.categories),
+			names = explicitCategories ? this.categories : this.names,
+			nameX,
+			x;
+
+		point.series.requireSorting = false;
+		nameX = pick(point.options.x, inArray(point.name, names)); // #2522
+		if (nameX === -1) { // The name is not found in currenct categories
+			if (!explicitCategories) {
+				x = names.length;
+			}
+		} else {
+			x = nameX;
+		}
+
+		// Write the last point's name to the names array
+		this.names[x] = point.name;
+
+		return x;
+	},
+
+	/**
+	 * When changes have been done to series data, update the axis.names.
+	 */
+	updateNames: function () {
+		var axis = this;
+
+		if (this.names.length > 0) {
+			this.names.length = 0;
+			this.minRange = undefined;
+			each(this.series || [], function (series) {
+			
+				// When adding a series, points are not yet generated
+				if (!series.processedXData) {
+					series.processData();
+					series.generatePoints();
+				}
+
+				each(series.points, function (point, i) {
+					var x;
+					if (point.options && point.options.x === undefined) {
+						x = axis.nameToX(point);
+						if (x !== point.x) {
+							point.x = x;
+							series.xData[i] = x;
+						}
+					}
+				});
+			});
+		}
 	},
 
 	/**
@@ -1990,7 +2048,7 @@ Axis.prototype = {
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style.fontSize).f,
 
 			// the position in the length direction of the axis
 			alongAxis = {

@@ -11,13 +11,13 @@ var defaultScrollbarOptions =  {
 	buttonBorderColor: '#bbb',
 	buttonBorderRadius: 0,
 	buttonBorderWidth: 1,
-	//showFull: true, // docs
-	margin: 10, // docs
+	//showFull: true,
+	margin: 10,
 	minWidth: 6,
 	rifleColor: '#666',
-	zIndex: 3,		// docs
-	step: 0.2,		// docs
-	//size: null,	// docs
+	zIndex: 3,
+	step: 0.2,
+	//size: null,
 	trackBackgroundColor: '#eeeeee',
 	trackBorderColor: '#eeeeee',
 	trackBorderWidth: 1,
@@ -33,7 +33,7 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Object} options
  * @param {Object} chart
  */
-function Scrollbar(renderer, options, chart) { // docs
+function Scrollbar(renderer, options, chart) {
 	this.scrollbarButtons = [];
 
 	this.renderer = renderer;
@@ -350,6 +350,7 @@ Scrollbar.prototype = {
 						from: scroller.from,
 						to: scroller.to,
 						trigger: 'scrollbar',
+						DOMType: e.type,
 						DOMEvent: e
 					});
 				}
@@ -365,6 +366,7 @@ Scrollbar.prototype = {
 					from: scroller.from,
 					to: scroller.to,
 					trigger: 'scrollbar',
+					DOMType: e.type,
 					DOMEvent: e
 				});
 			}
@@ -525,7 +527,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 	if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
 		// Predefined options:
 		axis.options.scrollbar.vertical = !axis.horiz;
-		axis.options.startOnTick = axis.options.endOnTick = false; // docs
+		axis.options.startOnTick = axis.options.endOnTick = false;
 
 		axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
 
@@ -545,7 +547,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 				from = unitedMin + range * (1 - this.to);
 			}
 
-			axis.setExtremes(from, to, true, null, e);
+			axis.setExtremes(from, to, true, false, e);
 		});
 	}
 });

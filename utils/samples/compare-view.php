@@ -46,8 +46,8 @@
 		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
-		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/rgbcolor.js"></script>
-		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
+		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
+		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 
@@ -571,7 +571,7 @@
 								});
 
 							// start converting
-							if (navigator.userAgent.indexOf('Trident') !== -1) {
+							if (/Edge\/|Trident\/|MSIE /.test(navigator.userAgent)) {
 								try {
 									canvg(canvas1, source1, {
 										scaleWidth: canvasWidth,
