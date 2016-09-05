@@ -21,7 +21,7 @@ H.Color = function (input) {
 H.Color.prototype = {
 
 	// Collection of parsers. This can be extended from the outside by pushing parsers
-	// to Highcharts.Colors.prototype.parsers.
+	// to Highcharts.Color.prototype.parsers.
 	parsers: [{
 		// RGBA color
 		regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
@@ -42,6 +42,13 @@ H.Color.prototype = {
 		}
 	}],
 
+	// Collection of named colors. Can be extended from the outside by adding colors
+	// to Highcharts.Color.prototype.names.
+	names: { // docs: Describe how it can be extended
+		white: '#ffffff',
+		black: '#000000'
+	},
+
 	/**
 	 * Parse the input color to rgba array
 	 * @param {String} input
@@ -52,7 +59,7 @@ H.Color.prototype = {
 			i,
 			parser;
 
-		this.input = input;
+		this.input = input = this.names[input] || input;
 
 		// Gradients
 		if (input && input.stops) {
