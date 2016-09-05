@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-09-02)
+ * @license Highstock JS v4.2.6-modified (2016-09-05)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -19699,7 +19699,7 @@
                 oldVisibility = series.visible;
 
             // if called without an argument, toggle visibility
-            series.visible = series.options.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis; // #5618
+            series.visible = vis = series.options.visible = series.userOptions.visible = vis === undefined ? !oldVisibility : vis; // #5618
             showOrHide = vis ? 'show' : 'hide';
 
             // show or hide elements
@@ -20442,7 +20442,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-09-02)
+     * Highstock JS v4.2.6-modified (2016-09-05)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
