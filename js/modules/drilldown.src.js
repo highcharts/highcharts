@@ -6,6 +6,7 @@
  *
  */
 
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
@@ -14,9 +15,8 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-	'use strict';
-
 	var noop = H.noop,
+		color = H.color,
 		defaultOptions = H.defaultOptions,
 		each = H.each,
 		extend = H.extend,
@@ -66,7 +66,7 @@ import '../parts/Tick.js';
 	 */
 	each(['fill', 'stroke'], function (prop) {
 		H.Fx.prototype[prop + 'Setter'] = function () {
-			this.elem.attr(prop, tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+			this.elem.attr(prop, tweenColors(color(this.start), color(this.end), this.pos));
 		};
 	});
 

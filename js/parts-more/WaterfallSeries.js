@@ -1,24 +1,21 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 	var correctFloat = H.correctFloat,
-		defaultPlotOptions = H.defaultPlotOptions,
-		extendClass = H.extendClass,
-		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
-
-// 1 - set default options
-defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+seriesType('waterfall', 'column', {
 	dataLabels: {
 		inside: true
 	},
@@ -33,26 +30,9 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 		}
 	}
 	/*= } =*/
-});
 
-
-// 2 - Create the series object
-seriesTypes.waterfall = extendClass(seriesTypes.column, {
-	type: 'waterfall',
-
-	pointClass: extendClass(Point, {
-		getClassName: function () {
-			var className = Point.prototype.getClassName.call(this);
-
-			if (this.isSum) {
-				className += ' highcharts-sum';
-			} else if (this.isIntermediateSum) {
-				className += ' highcharts-intermediate-sum';
-			}
-			return className;
-		}
-	}),
-
+// Prototype members
+}, {
 	pointValKey: 'y',
 
 	/**
@@ -296,7 +276,18 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	getExtremes: noop
 
+// Point members
+}, {
+	getClassName: function () {
+		var className = Point.prototype.getClassName.call(this);
 
+		if (this.isSum) {
+			className += ' highcharts-sum';
+		} else if (this.isIntermediateSum) {
+			className += ' highcharts-intermediate-sum';
+		}
+		return className;
+	}
 });
 
 /* ****************************************************************************

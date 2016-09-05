@@ -1,20 +1,17 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var each = H.each,
 		noop = H.noop,
 		pick = H.pick,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
-
-// Set default options
-defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
+seriesType('boxplot', 'column', {
 	threshold: null,
 	tooltip: {
 		/*= if (!build.classic) { =*/
@@ -51,11 +48,9 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//whiskerColor: null,
 	whiskerWidth: 2
 	/*= } =*/
-});
 
-// Create the series object
-seriesTypes.boxplot = extendClass(seriesTypes.column, {
-	type: 'boxplot',
+// Prototype members
+}, {
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.q1, point.median, point.q3, point.high];

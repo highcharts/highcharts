@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './ColumnSeries.js';
@@ -6,29 +7,24 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-	var PiePoint,
-		
-		addEvent = H.addEvent,
+	var addEvent = H.addEvent,
 		CenteredSeriesMixin = H.CenteredSeriesMixin,
-		defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
 		each = H.each,
 		extend = H.extend,
-		extendClass = H.extendClass,
 		inArray = H.inArray,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes,
 		setAnimation = H.setAnimation;
 /**
- * Set the default options for pie
+ * Pie series type
  */
-defaultPlotOptions.pie = merge(defaultSeriesOptions, {
+seriesType('pie', 'line', {
 	center: [null, null],
 	clip: false,
 	colorByPoint: true, // always true for pies
@@ -67,134 +63,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		}
 	}
 	/*= } =*/
-});
 
-/**
- * Extended point object for pies
- */
-PiePoint = extendClass(Point, {
-	/**
-	 * Initiate the pie slice
-	 */
-	init: function () {
-
-		Point.prototype.init.apply(this, arguments);
-
-		var point = this,
-			toggleSlice;
-
-		point.name = pick(point.name, 'Slice');
-
-		// add event listener for select
-		toggleSlice = function (e) {
-			point.slice(e.type === 'select');
-		};
-		addEvent(point, 'select', toggleSlice);
-		addEvent(point, 'unselect', toggleSlice);
-
-		return point;
-	},
-
-	/**
-	 * Toggle the visibility of the pie slice
-	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
-	 *    visibility is toggled
-	 */
-	setVisible: function (vis, redraw) {
-		var point = this,
-			series = point.series,
-			chart = series.chart,
-			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-
-		redraw = pick(redraw, ignoreHiddenPoint);
-
-		if (vis !== point.visible) {
-
-			// If called without an argument, toggle visibility
-			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
-
-			// Show and hide associated elements. This is performed regardless of redraw or not,
-			// because chart.redraw only handles full series.
-			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-				if (point[key]) {
-					point[key][vis ? 'show' : 'hide'](true);
-				}
-			});
-
-			if (point.legendItem) {
-				chart.legend.colorizeItem(point, vis);
-			}
-
-			// #4170, hide halo after hiding point
-			if (!vis && point.state === 'hover') {
-				point.setState('');
-			}
-
-			// Handle ignore hidden slices
-			if (ignoreHiddenPoint) {
-				series.isDirty = true;
-			}
-
-			if (redraw) {
-				chart.redraw();
-			}
-		}
-	},
-
-	/**
-	 * Set or toggle whether the slice is cut out from the pie
-	 * @param {Boolean} sliced When undefined, the slice state is toggled
-	 * @param {Boolean} redraw Whether to redraw the chart. True by default.
-	 */
-	slice: function (sliced, redraw, animation) {
-		var point = this,
-			series = point.series,
-			chart = series.chart,
-			translation;
-
-		setAnimation(animation, chart);
-
-		// redraw is true by default
-		redraw = pick(redraw, true);
-
-		// if called without an argument, toggle
-		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
-
-		translation = sliced ? point.slicedTranslation : {
-			translateX: 0,
-			translateY: 0
-		};
-
-		point.graphic.animate(translation);
-		
-		/*= if (build.classic) { =*/
-		if (point.shadowGroup) {
-			point.shadowGroup.animate(translation);
-		}
-		/*= } =*/
-	},
-
-	haloPath: function (size) {
-		var shapeArgs = this.shapeArgs,
-			chart = this.series.chart;
-
-		return this.sliced || !this.visible ? [] : this.series.chart.renderer.symbols.arc(chart.plotLeft + shapeArgs.x, chart.plotTop + shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
-			innerR: this.shapeArgs.r,
-			start: shapeArgs.start,
-			end: shapeArgs.end
-		});
-	}
-});
-
-/**
- * The Pie series class
- */
-seriesTypes.pie = extendClass(Series, {
-	type: 'pie',
+// Prototype members
+}, {
 	isCartesian: false,
-	pointClass: PiePoint,
 	requireSorting: false,
 	directTouch: true,
 	noSharedTooltip: true,
@@ -368,7 +240,7 @@ seriesTypes.pie = extendClass(Series, {
 			point.angle = angle;
 
 			// set the anchor point for data labels
-			connectorOffset = Math.min(connectorOffset, labelDistance / 2); // #1678
+			connectorOffset = Math.min(connectorOffset, labelDistance / 5); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + Math.cos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + Math.sin(angle) * labelDistance, // a/a
@@ -430,13 +302,16 @@ seriesTypes.pie = extendClass(Series, {
 				if (shadowGroup) {
 					shadowGroup.attr(groupTranslation);
 				}
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 				/*= } =*/
 
 				// Draw the slice
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
+						/*= if (build.classic) { =*/
 						.attr(pointAttr)
+						/*= } =*/
 						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 
@@ -452,7 +327,7 @@ seriesTypes.pie = extendClass(Series, {
 
 					/*= if (build.classic) { =*/
 					graphic
-						.attr(series.pointAttribs(point, point.selected && 'select'))
+						.attr(pointAttr)
 						.attr({ 'stroke-linejoin': 'round' })
 						.shadow(shadow, shadowGroup);
 					/*= } =*/
@@ -489,4 +364,119 @@ seriesTypes.pie = extendClass(Series, {
 	 */
 	getSymbol: noop
 
+// Point class overrides
+}, {
+	/**
+	 * Initiate the pie slice
+	 */
+	init: function () {
+
+		Point.prototype.init.apply(this, arguments);
+
+		var point = this,
+			toggleSlice;
+
+		point.name = pick(point.name, 'Slice');
+
+		// add event listener for select
+		toggleSlice = function (e) {
+			point.slice(e.type === 'select');
+		};
+		addEvent(point, 'select', toggleSlice);
+		addEvent(point, 'unselect', toggleSlice);
+
+		return point;
+	},
+
+	/**
+	 * Toggle the visibility of the pie slice
+	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
+	 *    visibility is toggled
+	 */
+	setVisible: function (vis, redraw) {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+
+		redraw = pick(redraw, ignoreHiddenPoint);
+
+		if (vis !== point.visible) {
+
+			// If called without an argument, toggle visibility
+			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+
+			// Show and hide associated elements. This is performed regardless of redraw or not,
+			// because chart.redraw only handles full series.
+			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+				if (point[key]) {
+					point[key][vis ? 'show' : 'hide'](true);
+				}
+			});
+
+			if (point.legendItem) {
+				chart.legend.colorizeItem(point, vis);
+			}
+
+			// #4170, hide halo after hiding point
+			if (!vis && point.state === 'hover') {
+				point.setState('');
+			}
+
+			// Handle ignore hidden slices
+			if (ignoreHiddenPoint) {
+				series.isDirty = true;
+			}
+
+			if (redraw) {
+				chart.redraw();
+			}
+		}
+	},
+
+	/**
+	 * Set or toggle whether the slice is cut out from the pie
+	 * @param {Boolean} sliced When undefined, the slice state is toggled
+	 * @param {Boolean} redraw Whether to redraw the chart. True by default.
+	 */
+	slice: function (sliced, redraw, animation) {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			translation;
+
+		setAnimation(animation, chart);
+
+		// redraw is true by default
+		redraw = pick(redraw, true);
+
+		// if called without an argument, toggle
+		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+
+		translation = sliced ? point.slicedTranslation : {
+			translateX: 0,
+			translateY: 0
+		};
+
+		point.graphic.animate(translation);
+		
+		/*= if (build.classic) { =*/
+		if (point.shadowGroup) {
+			point.shadowGroup.animate(translation);
+		}
+		/*= } =*/
+	},
+
+	haloPath: function (size) {
+		var shapeArgs = this.shapeArgs,
+			chart = this.series.chart;
+
+		return this.sliced || !this.visible ? [] : this.series.chart.renderer.symbols.arc(chart.plotLeft + shapeArgs.x, chart.plotTop + shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
+			innerR: this.shapeArgs.r,
+			start: shapeArgs.start,
+			end: shapeArgs.end
+		});
+	}
 });

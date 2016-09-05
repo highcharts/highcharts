@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 var timers = [];
 
@@ -1334,6 +1335,37 @@ H.animate = function (el, params, opt) {
 		}
 		fx.run(start, end, unit);
 	}
+};
+
+/**
+ * The series type factory.
+ *
+ * @param {string} type The series type name.
+ * @param {string} parent The parent series type name.
+ * @param {object} options The additional default options that is merged with the parent's options.
+ * @param {object} props The properties (functions and primitives) to set on the new prototype.
+ * @param {object} pointProps Members for a series-specific Point prototype if needed.
+ */
+H.seriesType = function (type, parent, options, props, pointProps) { // docs: add to API + extending Highcharts
+	var defaultOptions = H.getOptions(),
+		seriesTypes = H.seriesTypes;
+    
+    // Merge the options
+    defaultOptions.plotOptions[type] = H.merge(
+        defaultOptions.plotOptions[parent], 
+        options
+    );
+    
+    // Create the class
+    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
+    seriesTypes[type].prototype.type = type;
+
+    // Create the point class if needed
+    if (pointProps) {
+		seriesTypes[type].prototype.pointClass = H.extendClass(H.Point, pointProps);
+    }
+
+    return seriesTypes[type];
 };
 
 /**

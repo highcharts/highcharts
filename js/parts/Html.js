@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './SvgRenderer.js';
@@ -299,7 +300,8 @@ extend(SVGRenderer.prototype, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
 								top: (parentGroup.translateY || 0) + 'px',
-								opacity: parentGroup.opacity // #5075
+								opacity: parentGroup.opacity, // #5075
+								pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut

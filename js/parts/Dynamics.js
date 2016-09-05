@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
@@ -346,18 +347,15 @@ extend(Point.prototype, {
 				point.graphic = graphic.destroy();
 			}
 			if (isObject(options, true)) {
-				// Defer the actual redraw until getAttribs has been called (#3260)
-				point.redraw = function () {
-					if (graphic && graphic.element) {
-						if (options && options.marker && options.marker.symbol) {
-							point.graphic = graphic.destroy();
-						}
+				// Destroy so we can get new elements
+				if (graphic && graphic.element) {
+					if (options && options.marker && options.marker.symbol) {
+						point.graphic = graphic.destroy();
 					}
-					if (options && options.dataLabels && point.dataLabel) { // #2468
-						point.dataLabel = point.dataLabel.destroy();
-					}
-					point.redraw = null;
-				};
+				}
+				if (options && options.dataLabels && point.dataLabel) { // #2468
+					point.dataLabel = point.dataLabel.destroy();
+				}
 			}
 
 			// record changes in the parallel arrays
@@ -535,12 +533,11 @@ extend(Series.prototype, {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-	remove: function (redraw, animation) {
+	remove: function (redraw, animation, withEvent) {
 		var series = this,
 			chart = series.chart;
 
-		// Fire the event with a default handler of removing the point
-		fireEvent(series, 'remove', null, function () {
+		function remove() {
 
 			// Destroy elements
 			series.destroy();
@@ -552,7 +549,14 @@ extend(Series.prototype, {
 			if (pick(redraw, true)) {
 				chart.redraw(animation);
 			}
-		});
+		}
+
+		// Fire the event with a default handler of removing the point
+		if (withEvent !== false) {
+			fireEvent(series, 'remove', null, remove);
+		} else {
+			remove();
+		}
 	},
 
 	/**
@@ -590,7 +594,7 @@ extend(Series.prototype, {
 
 		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
-		this.remove(false);
+		this.remove(false, null, false);
 		for (n in proto) {
 			this[n] = undefined;
 		}

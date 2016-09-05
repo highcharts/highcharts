@@ -1,17 +1,16 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		extend = H.extend,
+	var extend = H.extend,
 		extendClass = H.extendClass,
-		merge = H.merge,
 		Point = H.Point,
-		seriesTypes = H.seriesTypes;
+		seriesType = H.seriesType;
 
 // The mappoint series type
-defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
+seriesType('mappoint', 'scatter', {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -24,17 +23,19 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 			color: '${palette.strongColor}'
 		}
 	}
-});
-seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
+
+// Prototype members
+}, {
 	type: 'mappoint',
-	forceDL: true,
-	pointClass: extendClass(Point, {
-		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
-			if (options.lat !== undefined && options.lon !== undefined) {
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
-			}
-			return point;
+	forceDL: true
+
+// Point class
+}, {
+	applyOptions: function (options, x) {
+		var point = Point.prototype.applyOptions.call(this, options, x);
+		if (options.lat !== undefined && options.lon !== undefined) {
+			point = extend(point, this.series.chart.fromLatLonToPoint(point));
 		}
-	})
+		return point;
+	}
 });

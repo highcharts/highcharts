@@ -1,19 +1,17 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 // The mapline series type
-defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
+seriesType('mapline', 'map', {
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	fillColor: 'none'
 	/*= } =*/
-});
-seriesTypes.mapline = extendClass(seriesTypes.map, {
+}, {
 	type: 'mapline',
 	colorProp: 'stroke',
 	/*= if (build.classic) { =*/

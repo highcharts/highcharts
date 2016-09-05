@@ -1,3 +1,4 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
@@ -19,14 +20,14 @@ import '../parts/ScatterSeries.js';
 		pInt = H.pInt,
 		Point = H.Point,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
 
-// 1 - set default options
-defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
+seriesType('bubble', 'scatter', {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -60,19 +61,9 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	turboThreshold: 0,
 	zThreshold: 0,
 	zoneAxis: 'z'
-});
 
-var BubblePoint = extendClass(Point, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	},
-	ttBelow: false
-});
-
-// 2 - Create the series object
-seriesTypes.bubble = extendClass(seriesTypes.scatter, {
-	type: 'bubble',
-	pointClass: BubblePoint,
+// Prototype members
+}, {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -238,6 +229,13 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
 	applyZones: noop
+
+// Point class
+}, {
+	haloPath: function () {
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	},
+	ttBelow: false
 });
 
 /**

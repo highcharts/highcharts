@@ -8,6 +8,7 @@
  */
 
 /* eslint indent:0 */
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
@@ -29,7 +30,8 @@ var defaultOptions = H.defaultOptions,
 	extend = H.extend,
 	splat = H.splat,
 	isTouchDevice = H.isTouchDevice,
-	win = H.win;
+	win = H.win,
+	SVGRenderer = H.SVGRenderer;
 
 var symbols = H.Renderer.prototype.symbols;
 
@@ -152,7 +154,7 @@ defaultOptions.exporting = {
 						.replace(/</g, '\n&lt;')
 						.replace(/>/g, '&gt;');
 
-					document.body.innerHTML = '<pre>' + svg + '</pre>';
+					doc.body.innerHTML = '<pre>' + svg + '</pre>';
 				}
 			} // */
 			]
@@ -202,12 +204,13 @@ extend(Chart.prototype, {
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
+			.replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ (NS[0-9]+\:)?href=/g, ' xlink:href=') // #3567
 			.replace(/\n/, ' ')
 			// Any HTML added to the container after the SVG (#894)
-			.replace(/<\/svg>.*?$/, '</svg>') 
+			.replace(/<\/svg>.*?$/, '</svg>')
 			// Batik doesn't support rgba fills and strokes (#3095)
 			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
 			/* This fails in IE < 8
@@ -243,6 +246,9 @@ extend(Chart.prototype, {
 	 * Return innerHTML of chart. Used as hook for plugins.
 	 */
 	getChartHTML: function () {
+		/*= if (!build.classic) { =*/
+		this.inlineStyles();
+		/*= } =*/
 		return this.container.innerHTML;
 	},
 
@@ -264,7 +270,7 @@ extend(Chart.prototype, {
 			html,
 			options = merge(chart.options, additionalOptions), // copy the options and add extra options
 			allowHTML = options.exporting.allowHTML;
-			
+
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
@@ -361,7 +367,7 @@ extend(Chart.prototype, {
 				html = '<foreignObject x="0" y="0" width="200" height="200">' +
 					'<body xmlns="http://www.w3.org/1999/xhtml">' +
 					html[1] +
-					'</body>' + 
+					'</body>' +
 					'</foreignObject>';
 				svg = svg.replace('</svg>', html + '</svg>');
 			}
@@ -399,7 +405,7 @@ extend(Chart.prototype, {
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		
+
 		var svg = this.getSVGForExport(options, chartOptions);
 
 		// merge the options
@@ -782,6 +788,147 @@ extend(Chart.prototype, {
 		}
 	}
 });
+
+/*= if (!build.classic) { =*/
+// These ones are translated to attributes rather than styles
+SVGRenderer.prototype.inlineToAttributes = [
+	'fill',
+	'stroke',
+	'strokeLinecap',
+	'strokeLinejoin',
+	'strokeWidth',
+	'textAnchor',
+	'x',
+	'y'
+];
+// These CSS properties are not inlined. Remember camelCase.
+SVGRenderer.prototype.inlineBlacklist = [
+	/-/, // In Firefox, both hyphened and camelCased names are listed
+	/^(clipPath|cssText|d|height|width)$/, // Full words
+	/^font$/, // more specific props are set
+	/[lL]ogical(Width|Height)$/,
+	/perspective/,
+	/TapHighlightColor/,
+	/^transition/
+	// /^text (border|color|cursor|height|webkitBorder)/
+];
+SVGRenderer.prototype.unstyledElements = [
+	'clipPath',
+	'defs',
+	'desc'
+];
+
+/**
+ * Analyze inherited styles from stylesheets and add them inline
+ *
+ * @todo: What are the border styles for text about? In general, text has a lot of properties.
+ * @todo: Make it work with IE9 and IE10.
+ */
+Chart.prototype.inlineStyles = function () {
+	var renderer = this.renderer,
+		inlineToAttributes = renderer.inlineToAttributes,
+		blacklist = renderer.inlineBlacklist,
+		unstyledElements = renderer.unstyledElements,
+		defaultStyles = {},
+		dummySVG;
+	
+	/**
+	 * Make hyphenated property names out of camelCase
+	 */
+	function hyphenate(prop) {
+		return prop.replace(
+			/([A-Z])/g, 
+			function (a, b) { 
+				return '-' + b.toLowerCase();
+			}
+		);
+	}
+
+	/**
+	 * Call this on all elements and recurse to children
+	 */
+	function recurse(node) {
+		var prop,
+			styles,
+			parentStyles,
+			cssText = '',
+			dummy,
+			styleAttr,
+			blacklisted,
+			i;
+		
+		if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
+			styles = win.getComputedStyle(node, null);
+			parentStyles = node.nodeName === 'svg' ? {} : win.getComputedStyle(node.parentNode, null);
+
+			// Get default styles from the browser so that we don't have to add these
+			if (!defaultStyles[node.nodeName]) {
+				if (!dummySVG) {
+					dummySVG = doc.createElementNS(Highcharts.SVG_NS, 'svg');
+					dummySVG.setAttribute('version', '1.1');
+					doc.body.appendChild(dummySVG);
+				}
+				dummy = doc.createElementNS(node.namespaceURI, node.nodeName);
+				dummySVG.appendChild(dummy);
+				defaultStyles[node.nodeName] = merge(win.getComputedStyle(dummy, null)); // Copy, so we can remove the node
+				dummySVG.removeChild(dummy);
+			}
+
+			// Loop over all the computed styles and check whether they are in the 
+			// white list for styles or atttributes.
+			for (prop in styles) {
+
+				// Check against blacklist
+				blacklisted = false;
+				i = blacklist.length;
+				while (i-- && !blacklisted) {
+					blacklisted = blacklist[i].test(prop) || typeof styles[prop] === 'function';
+				}
+
+				if (!blacklisted) {
+					
+					// If parent node has the same style, it gets inherited, no need to inline it
+					if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
+
+						// Attributes
+						if (inlineToAttributes.indexOf(prop) !== -1) {
+							node.setAttribute(hyphenate(prop), styles[prop]);
+
+						// Styles
+						} else {
+							cssText += hyphenate(prop) + ':' + styles[prop] + ';';
+						}
+					}
+				}
+			}
+
+			// Apply styles
+			if (cssText) {
+				styleAttr = node.getAttribute('style');
+				node.setAttribute('style', (styleAttr ? styleAttr + ';' : '') + cssText);
+			}
+
+			if (node.nodeName === 'text') {
+				return;
+			}
+			
+			// Recurse
+			each(node.children || node.childNodes, recurse);
+		}
+	}
+
+	/**
+	 * Remove the dummy objects used to get defaults
+	 */
+	function tearDown() {
+		dummySVG.parentNode.removeChild(dummySVG);
+	}
+
+	recurse(this.container.querySelector('svg'));
+	tearDown();
+
+};
+/*= } =*/
 
 
 symbols.menu = function (x, y, width, height) {

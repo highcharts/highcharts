@@ -16,8 +16,8 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.series[0].area.element.getAttribute('fill-opacity'),
-            '0',
+            chart.series[0].area.element.getAttribute('fill'),
+            'rgba(124,181,236,0)',
             'Fill opacity is set'
         );
     });

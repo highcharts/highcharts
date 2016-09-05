@@ -1,16 +1,16 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
 	var addEvent = H.addEvent,
-		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
-		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
 		Renderer = H.Renderer,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes,
 		SVGRenderer = H.SVGRenderer,
 		TrackerMixin = H.TrackerMixin,
@@ -19,9 +19,7 @@ import './VmlRenderer.js';
 /* ****************************************************************************
  * Start Flags series code													*
  *****************************************************************************/
-
-// 1 - set default options
-defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
+seriesType('flags', 'column', {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
@@ -47,11 +45,9 @@ defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 		fontWeight: 'bold'
 	}
 	/*= } =*/
-});
 
-// 2 - Create the CandlestickSeries object
-seriesTypes.flags = extendClass(seriesTypes.column, {
-	type: 'flags',
+// Prototype members
+}, {
 	sorted: false,
 	noSharedTooltip: true,
 	allowDG: false,
@@ -106,6 +102,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			i = onData && onData.length,
 			xAxis = series.xAxis,
 			xAxisExt = xAxis.getExtremes(),
+			xOffset = 0,
 			leftPoint,
 			lastX,
 			rightPoint,
@@ -113,6 +110,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		// relate to a master series
 		if (onSeries && onSeries.visible && i) {
+			xOffset = (onSeries.pointXOffset || 0) + (onSeries.barW || 0) / 2;
 			currentDataGrouping = onSeries.currentDataGrouping;
 			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
@@ -164,6 +162,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					point.shapeArgs = {}; // 847
 				}
 			}
+			point.plotX += xOffset; // #2049
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
 			if (lastPoint && lastPoint.plotX === point.plotX) {

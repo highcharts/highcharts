@@ -1,33 +1,23 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extendClass = H.extendClass,
+	var each = H.each,
 		isNumber = H.isNumber,
 		merge = H.merge,
 		noop = H.noop,		
 		pick = H.pick,
 		pInt = H.pInt,
-		Point = H.Point,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		TrackerMixin = H.TrackerMixin,
-
-		GaugePoint;
+		seriesType = H.seriesType,
+		TrackerMixin = H.TrackerMixin;
 /* 
  * The GaugeSeries class
  */
-
-
-
-/**
- * Extend the default options
- */
-defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
+seriesType('gauge', 'line', {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -35,7 +25,12 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		borderRadius: 3,
 		crop: false,
 		verticalAlign: 'top',
-		zIndex: 2
+		zIndex: 2,
+		/*= if (build.classic) { =*/
+		// Presentational
+		borderWidth: 1,
+		borderColor: '${palette.faintColor}'
+		/*= } =*/
 	},
 	dial: {
 		// radius: '80%',
@@ -62,37 +57,9 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		headerFormat: ''
 	},
 	showInLegend: false
-});
 
-/*= if (build.classic) { =*/
-merge(true, defaultPlotOptions.gauge, {
-	dataLabels: {
-		borderWidth: 1,
-		borderColor: '${palette.faintColor}'
-	}
-});
-/*= } =*/
-
-/**
- * Extend the point object
- */
-GaugePoint = extendClass(Point, {
-	/**
-	 * Don't do any hover colors or anything
-	 */
-	setState: function (state) {
-		this.state = state;
-	}
-});
-
-
-/**
- * Add the series type
- */
-seriesTypes.gauge = extendClass(seriesTypes.line, {
-	type: 'gauge',
-	pointClass: GaugePoint,
-
+// Prototype members
+}, {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true,
@@ -286,4 +253,13 @@ seriesTypes.gauge = extendClass(seriesTypes.line, {
 	 * If the tracking module is loaded, add the point tracker
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+
+// Point members
+}, {
+	/**
+	 * Don't do any hover colors or anything
+	 */
+	setState: function (state) {
+		this.state = state;
+	}
 });

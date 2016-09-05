@@ -115,7 +115,7 @@ $(function () {
 
         function getVisibleLabelCount() {
             return chart.series[0].points.filter(function (point) {
-                return point.dataLabel.attr('translateY') > -99;
+                return point.dataLabel.attr('visibility') !== 'hidden';
             }).length;
         }
 

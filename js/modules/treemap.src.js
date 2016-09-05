@@ -6,18 +6,17 @@
  *
  * License: www.highcharts.com/license
  */
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
-	var seriesTypes = H.seriesTypes,
+	var seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
 		extend = H.extend,
-		extendClass = H.extendClass,
-		defaultOptions = H.defaultOptions,
-		plotOptions = defaultOptions.plotOptions,
 		noop = H.noop,
 		each = H.each,
 		grep = H.grep,
@@ -53,8 +52,8 @@ import '../parts/Color.js';
 			}
 		};
 
-	// Define default options
-	plotOptions.treemap = merge(plotOptions.scatter, {
+	// The Treemap series type
+	seriesType('treemap', 'scatter', {
 		showInLegend: false,
 		marker: false,
 		dataLabels: {
@@ -80,12 +79,9 @@ import '../parts/Color.js';
 				x: -10,
 				y: 10
 			}
-		}
-	});
-
-	/*= if (build.classic) { =*/
-	// Presentational options
-	merge(true, plotOptions.treemap, {
+		},
+		/*= if (build.classic) { =*/
+		// Presentational options
 		borderColor: '${palette.fainterColor}',
 		borderWidth: 1,
 		opacity: 0.15,
@@ -97,51 +93,18 @@ import '../parts/Color.js';
 				shadow: false
 			}
 		}
-	});
-
-	/*= } =*/
+		/*= } =*/
 	
-	// Stolen from heatmap	
-	var colorSeriesMixin = {
+	// Prototype members
+	}, {
 		pointArrayMap: ['value'],
 		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
 		optionalAxis: 'colorAxis',
 		getSymbol: noop,
 		parallelArrays: ['x', 'y', 'value', 'colorValue'],
 		colorKey: 'colorValue', // Point color option key
-		translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors
-	};
-
-	// The Treemap series type
-	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
-		type: 'treemap',
+		translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		pointClass: extendClass(H.Point, {
-			getClassName: function () {
-				var className = H.Point.prototype.getClassName.call(this),
-					series = this.series,
-					options = series.options;
-
-				// Above the current level
-				if (this.node.level <= series.nodeMap[series.rootNode].level) {
-					className += ' highcharts-above-level';
-				
-				} else if (!this.node.isLeaf && !pick(options.interactByLeaf, !options.allowDrillToNode)) {
-					className += ' highcharts-internal-node-interactive';
-
-				} else if (!this.node.isLeaf) {
-					className += ' highcharts-internal-node';
-				}
-				return className;
-			},
-			setState: function (state) {
-				H.Point.prototype.setState.call(this, state);
-				this.graphic.attr({
-					zIndex: state === 'hover' ? 1 : 0
-				});
-			},
-			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
-		}),
 		/**
 		 * Creates an object map from parent id to childrens index.
 		 * @param {Array} data List of points set in options.
@@ -521,7 +484,7 @@ import '../parts/Color.js';
 				direction = parent.direction,
 				i = 0,
 				end = children.length - 1,
-				group = new this.algorithmGroup(parent.height, parent.width, direction, plot);
+				group = new this.algorithmGroup(parent.height, parent.width, direction, plot); // eslint-disable-line new-cap
 			// Loop through and calculate all areas
 			each(children, function (child) {
 				pTot = (parent.width * parent.height) * (child.val / parent.val);
@@ -914,4 +877,31 @@ import '../parts/Color.js';
 			H.extend(this.yAxis.options, treeAxis);
 			H.extend(this.xAxis.options, treeAxis);
 		}
-	}));
+
+	// Point class
+	}, {
+		getClassName: function () {
+			var className = H.Point.prototype.getClassName.call(this),
+				series = this.series,
+				options = series.options;
+
+			// Above the current level
+			if (this.node.level <= series.nodeMap[series.rootNode].level) {
+				className += ' highcharts-above-level';
+			
+			} else if (!this.node.isLeaf && !pick(options.interactByLeaf, !options.allowDrillToNode)) {
+				className += ' highcharts-internal-node-interactive';
+
+			} else if (!this.node.isLeaf) {
+				className += ' highcharts-internal-node';
+			}
+			return className;
+		},
+		setState: function (state) {
+			H.Point.prototype.setState.call(this, state);
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		},
+		setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
+	});

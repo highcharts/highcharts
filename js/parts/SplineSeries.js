@@ -1,9 +1,10 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
+		defaultSeriesOptions = H.defaultPlotOptions.line,
 		extendClass = H.extendClass,
 		merge = H.merge,
 		pick = H.pick,

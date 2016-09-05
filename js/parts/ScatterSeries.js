@@ -1,17 +1,14 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultSeriesOptions,
-		extendClass = H.extendClass,
-		merge = H.merge,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+	var Series = H.Series,
+		seriesType = H.seriesType;
 /**
- * Set the default options for scatter
+ * The scatter series type
  */
-defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
+seriesType('scatter', 'line', {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -20,13 +17,9 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		headerFormat: '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.85em"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	}
-});
 
-/**
- * The scatter series class
- */
-seriesTypes.scatter = extendClass(Series, {
-	type: 'scatter',
+// Prototype members
+}, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,

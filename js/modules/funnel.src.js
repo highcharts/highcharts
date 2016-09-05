@@ -7,23 +7,20 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent:0 */
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-	
-'use strict';
 
 // create shortcuts
-var defaultOptions = Highcharts.getOptions(),
-	defaultPlotOptions = defaultOptions.plotOptions,
+var seriesType = Highcharts.seriesType,
 	seriesTypes = Highcharts.seriesTypes,
-	merge = Highcharts.merge,
 	noop = Highcharts.noop,
 	each = Highcharts.each;
 
-// set default options
-defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
+
+seriesType('funnel', 'pie', {
 	animation: false,
 	center: ['50%', '50%'],
 	width: '90%',
@@ -31,12 +28,10 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	height: '100%',
 	neckHeight: '25%',
 	reversed: false,
-	size: true // to avoid adapting to data label size in Pie.drawDataLabels
-});
+	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
-/*= if (build.classic) { =*/
-// Presentational
-merge(true, defaultPlotOptions.funnel, {
+	/*= if (build.classic) { =*/
+	// Presentational
 	dataLabels: {
 		//position: 'right',
 		connectorWidth: 1
@@ -48,13 +43,12 @@ merge(true, defaultPlotOptions.funnel, {
 			borderColor: '${palette.strongColor}',
 			shadow: false
 		}
-	}	
-});
-/*= } =*/
+	}
+	/*= } =*/
+},
 
-seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
-	
-	type: 'funnel',
+// Properties
+{
 	animate: noop,
 
 	/**
@@ -287,11 +281,8 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
  * Pyramid series type.
  * A pyramid series is a special type of funnel, without neck and reversed by default.
  */
-defaultOptions.plotOptions.pyramid = Highcharts.merge(defaultOptions.plotOptions.funnel, {        
+seriesType('pyramid', 'funnel', {
 	neckWidth: '0%',
 	neckHeight: '0%',
 	reversed: true
-});
-Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.funnel, {
-	type: 'pyramid'
 });

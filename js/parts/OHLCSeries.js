@@ -1,19 +1,16 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var each = H.each,
 		Point = H.Point,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start OHLC series code													 *
  *****************************************************************************/
-
-// 1 - Set default options
-defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
+seriesType('ohlc', 'column', {
 	lineWidth: 1,
 	tooltip: {
 		/*= if (!build.classic) { =*/
@@ -39,22 +36,9 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	}
 	//upColor: undefined
 	/*= } =*/
-});
 
-// 2 - Create the OHLCSeries object
-seriesTypes.ohlc = extendClass(seriesTypes.column, {
-	type: 'ohlc',
-
-	// Override the point class
-	pointClass: extendClass(Point, {
-		/**
-	 	 * Add up or down to the class name
-	 	 */
-		getClassName: function () {
-			return Point.prototype.getClassName.call(this) +
-				(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
-		}
-	}),
+// Prototype members
+}, {
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
@@ -184,6 +168,16 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 	 * Disable animation
 	 */
 	animate: null
+
+// Point class override
+}, {
+	/**
+ 	 * Add up or down to the class name
+ 	 */
+	getClassName: function () {
+		return Point.prototype.getClassName.call(this) +
+			(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
+	}
 });
 /* ****************************************************************************
  * End OHLC series code													   *

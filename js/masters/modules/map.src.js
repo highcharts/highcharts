@@ -1,3 +1,4 @@
+'use strict';
 import '../../parts-map/MapAxis.js';
 import '../../parts-map/ColorAxis.js';
 import '../../parts-map/ColorSeriesMixin.js';

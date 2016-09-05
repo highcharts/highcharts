@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
@@ -28,6 +29,7 @@ import './SvgRenderer.js';
 		pick = H.pick,
 		Point = H.Point, // @todo  add as a requirement
 		removeEvent = H.removeEvent,
+		seriesType = H.seriesType,
 		splat = H.splat,
 		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
@@ -54,12 +56,124 @@ import './SvgRenderer.js';
  * @param {Object} chart
  * @param {Object} options
  */
-H.Series = function () {}; // @todo return this object
+H.Series = H.seriesType('line', null, { // base series options
+	/*= if (build.classic) { =*/
+	//cursor: 'default',
+	//dashStyle: null,
+	//linecap: 'round',
+	lineWidth: 2,
+	//shadow: false,
+	/*= } =*/
+	allowPointSelect: false,
+	showCheckbox: false,
+	animation: {
+		duration: 1000
+	},
+	//clip: true,
+	//connectNulls: false,
+	//enableMouseTracking: true,
+	events: {},
+	//legendIndex: 0,
+	// stacking: null,
+	marker: {
+		/*= if (build.classic) { =*/
+		lineWidth: 0,
+		lineColor: '${palette.pointStroke}',
+		//fillColor: null,
+		/*= } =*/				
+		//enabled: true,
+		//symbol: null,
+		radius: 4,
+		states: { // states for a single point
+			hover: {
+				enabled: true,
+				radiusPlus: 2,
+				/*= if (build.classic) { =*/
+				lineWidthPlus: 1
+				/*= } =*/
+			},
+			/*= if (build.classic) { =*/
+			select: {
+				fillColor: '${palette.pointSelectFill}',
+				lineColor: '${palette.pointSelectStroke}',
+				lineWidth: 2
+			}
+			/*= } =*/
+		}
+	},
+	point: {
+		events: {}
+	},
+	dataLabels: {
+		align: 'center',
+		// defer: true,
+		// enabled: false,
+		formatter: function () {
+			return this.y === null ? '' : H.numberFormat(this.y, -1);
+		},
+		/*= if (!build.classic) { =*/
+		/*style: {
+			color: 'contrast',
+			textShadow: '0 0 6px contrast, 0 0 3px contrast'
+		},*/
+		/*= } else { =*/
+		style: {
+			fontSize: '11px',
+			fontWeight: 'bold',
+			color: 'contrast',
+			textShadow: '0 0 6px contrast, 0 0 3px contrast'
+		},
+		// backgroundColor: undefined,
+		// borderColor: undefined,
+		// borderWidth: undefined,
+		// shadow: false
+		/*= } =*/
+		verticalAlign: 'bottom', // above singular point
+		x: 0,
+		y: 0,
+		// borderRadius: undefined,
+		padding: 5
+	},
+	cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
+	pointRange: 0,
+	//pointStart: 0,
+	//pointInterval: 1,
+	//showInLegend: null, // auto: true for standalone series, false for linked series
+	softThreshold: true,
+	states: { // states for the entire series
+		hover: {
+			//enabled: false,
+			lineWidthPlus: 1,
+			marker: {
+				// lineWidth: base + 1,
+				// radius: base + 1
+			},
+			halo: {
+				size: 10,
+				/*= if (build.classic) { =*/
+				opacity: 0.25
+				/*= } =*/
+			}
+		},
+		select: {
+			marker: {}
+		}
+	},
+	stickyTracking: true,
+	//tooltip: {
+		//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+		//valueDecimals: null,
+		//xDateFormat: '%A, %b %e, %Y',
+		//valuePrefix: '',
+		//ySuffix: ''
+	//}
+	turboThreshold: 1000
+	// zIndex: null
+},
 
-H.Series.prototype = {
-
+// Prototype properties
+{
 	isCartesian: true,
-	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
@@ -712,7 +826,7 @@ H.Series.prototype = {
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = y !== null && y !== undefined && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
@@ -775,8 +889,7 @@ H.Series.prototype = {
 
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.y = yValue = null;
-				error(10);
+				point.isNull = true;
 			}
 
 			// Get the plotX translation
@@ -827,7 +940,7 @@ H.Series.prototype = {
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1)) : plotX; // #1514
+			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) : plotX; // #1514, #5383, #5518
 
 			point.negative = point.y < (threshold || 0);
 
@@ -1385,15 +1498,17 @@ H.Series.prototype = {
 			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
 			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
-			reversed = axis.reversed,
+			reversed,
 			inverted = chart.inverted,
-			horiz = axis.horiz,
+			horiz,
 			pxRange,
 			pxPosMin,
 			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area) && axis.min !== undefined) {
+		if (zones.length && (graph || area) && axis && axis.min !== undefined) {
+			reversed = axis.reversed;
+			horiz = axis.horiz;
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
@@ -1443,7 +1558,7 @@ H.Series.prototype = {
 				}
 
 				/// VML SUPPPORT
-				if (chart.inverted && renderer.isVML) {
+				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
 						clipAttr = {
 							x: 0,
@@ -1614,11 +1729,11 @@ H.Series.prototype = {
 			series.applyZones();
 		}
 
-		each(series.points, function (point) {
+/*		each(series.points, function (point) {
 			if (point.redraw) {
 				point.redraw();
 			}
-		});
+		});*/
 
 		// draw the data labels (inn pies they go before the points)
 		if (series.drawDataLabels) {
@@ -1822,4 +1937,4 @@ H.Series.prototype = {
 		}
 	}
 
-}; // end Series prototype
+}); // end Series prototype

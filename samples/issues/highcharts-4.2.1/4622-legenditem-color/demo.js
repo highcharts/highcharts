@@ -1,8 +1,8 @@
 $(function () {
-    QUnit.test('Waterfall update color point and update color legend item.', function (assert) {
+    QUnit.test('Pie update color point and update color legend item.', function (assert) {
         var chart = $('#container').highcharts({
                 chart: {
-                    type: 'pyramid',
+                    type: 'pie',
                     marginRight: 100
                 },
                 series: [{
@@ -27,12 +27,12 @@ $(function () {
         assert.strictEqual(
             point.graphic.attr("fill"),
             color,
-            'Proper color for legend'
+            'Proper color for point shape'
         );
         assert.strictEqual(
             point.legendSymbol.attr("fill"),
             color,
-            'Proper color for a point\'s shape'
+            'Proper color for legend item'
         );
     });
 });

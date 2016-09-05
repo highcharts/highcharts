@@ -1,24 +1,18 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var each = H.each,
 		noop = H.noop,
 		pick = H.pick,
 		Series = H.Series,
+		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 /* 
- * The AreaRangeSeries class
- *
+ * The arearangeseries series type
  */
-
-/**
- * Extend the default options with map options
- */
-defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+seriesType('arearange', 'area', {
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	/*= } =*/
@@ -45,13 +39,9 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 			halo: false
 		}
 	}
-});
 
-/**
- * Add the series type
- */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
-	type: 'arearange',
+// Prototype members
+}, {
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {
@@ -109,12 +99,11 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	 * Extend the line series' getSegmentPath method by applying the segment
 	 * path to both lower and higher values of the range
 	 */
-	getGraphPath: function () {
+	getGraphPath: function (points) {
 		
-		var points = this.points,
-			highPoints = [],
+		var highPoints = [],
 			highAreaPoints = [],
-			i = points.length,
+			i,
 			getGraphPath = seriesTypes.area.prototype.getGraphPath,
 			point,
 			pointShim,
@@ -124,6 +113,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			step = options.step,
 			higherPath,
 			higherAreaPath;
+
+		points = points || this.points;
+		i = points.length;
 
 		// Create the top line and the top part of the area fill. The area fill compensates for 
 		// null points by drawing down to the lower graph, moving across the null gap and 

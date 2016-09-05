@@ -7,6 +7,7 @@
  * License: www.highcharts.com/license
  */
 
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Chart.js';
 import '../parts/Options.js';

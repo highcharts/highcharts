@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
@@ -176,7 +177,14 @@ H.Axis.prototype = {
 			formatter: function () {
 				return H.numberFormat(this.total, -1);
 			},
-			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '${palette.strongColor}' })
+			/*= if (build.classic) { =*/
+			style: {
+				fontSize: '11px',
+				fontWeight: 'bold',
+				color: '${palette.textHeavyColor}',
+				textShadow: '0 0 6px contrast, 0 0 3px contrast'
+			}
+			/*= } =*/
 		},
 		/*= if (build.classic) { =*/
 		gridLineWidth: 1,		
@@ -254,7 +262,7 @@ H.Axis.prototype = {
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
-		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
+		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
@@ -367,7 +375,7 @@ H.Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			if (isXAxis && !this.isColorAxis) { // #2713
+			if (isXAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
 				chart.axes.push(axis);
@@ -405,7 +413,7 @@ H.Axis.prototype = {
 	setOptions: function (userOptions) {
 		this.options = merge(
 			this.defaultOptions,
-			this.isXAxis ? {} : this.defaultYAxisOptions,
+			this.coll === 'yAxis' && this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
@@ -819,13 +827,13 @@ H.Axis.prototype = {
 			// if min and max options have been set, don't go beyond it
 			minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 			if (spaceAvailable) { // if space is available, stay within the data range
-				minArgs[2] = axis.dataMin;
+				minArgs[2] = axis.isLog ? axis.log2lin(axis.dataMin) : axis.dataMin;
 			}
 			min = arrayMax(minArgs);
 
 			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
-				maxArgs[2] = axis.dataMax;
+				maxArgs[2] = axis.isLog ? axis.log2lin(axis.dataMax) : axis.dataMax;
 			}
 
 			max = arrayMin(maxArgs);

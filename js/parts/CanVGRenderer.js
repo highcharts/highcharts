@@ -1,3 +1,4 @@
+'use strict';
 import H from './Globals.js';
 	var CanVGRenderer,
 		doc = H.win.doc,

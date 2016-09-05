@@ -1,3 +1,4 @@
+'use strict';
 import Highcharts from './highcharts.src.js';
 import '../parts/OrdinalAxis.js';
 import '../modules/broken-axis.src.js';

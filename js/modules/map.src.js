@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-08-02)
+ * @license Highmaps JS v4.2.6-modified (2016-08-31)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -7,6 +7,14 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
+
 
     var UNDEFINED,
         animObject = Highcharts.animObject,
@@ -150,7 +158,6 @@
      * The ColorAxis object for inclusion in gradient legends
      */
     var ColorAxis = Highcharts.ColorAxis = function () {
-        this.isColorAxis = true;
         this.init.apply(this, arguments);
     };
     extend(ColorAxis.prototype, Axis.prototype);
@@ -176,11 +183,14 @@
             },
             minColor: '#EFEFFF',
             maxColor: '#003875',
-            tickLength: 5
+            tickLength: 5,
+            showInLegend: true // docs: API record is being added.
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
                 options;
+
+            this.coll = 'colorAxis';
 
             // Build the options
             options = merge(this.defaultColorAxisOptions, {
@@ -189,8 +199,7 @@
             }, userOptions, {
                 opposite: !horiz,
                 showEmpty: false,
-                title: null,
-                isColor: true
+                title: null
             });
 
             Axis.prototype.init.call(this, chart, options);
@@ -291,7 +300,6 @@
             Axis.prototype.setOptions.call(this, userOptions);
 
             this.options.crosshair = this.options.marker;
-            this.coll = 'colorAxis';
         },
 
         setAxisSize: function () {
@@ -628,14 +636,15 @@
             colorAxis = this.chart.colorAxis[0];
 
         if (colorAxis) {
-
-            // Data classes
-            if (colorAxis.options.dataClasses) {
-                allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
-            // Gradient legend
-            } else {
-                // Add this axis on top
-                allItems.push(colorAxis);
+            if (colorAxis.options.showInLegend) {
+                // Data classes
+                if (colorAxis.options.dataClasses) {
+                    allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+                // Gradient legend
+                } else {
+                    // Add this axis on top
+                    allItems.push(colorAxis);
+                }
             }
 
             // Don't add the color axis' series
@@ -1557,7 +1566,7 @@
             // setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
             // set.
             if (!supportsVectorEffect) {
-                series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
+                series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
             }
 
             this.drawMapDataLabels();
@@ -2295,3 +2304,5 @@
             new Chart(a, options, c) :
             new Chart(options, b);
     };
+
+}));

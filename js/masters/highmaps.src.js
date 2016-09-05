@@ -1,3 +1,4 @@
+'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
@@ -18,7 +19,6 @@ import '../parts/Chart.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Dynamics.js';
-import '../parts/LineSeries.js';
 import '../parts/ColumnSeries.js';
 import '../parts/ScatterSeries.js';
 import '../parts/DataLabels.js';

@@ -1,20 +1,12 @@
+'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		extendClass = H.extendClass,
-		merge = H.merge,
+	var seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 /**
- * The AreaSplineRangeSeries class
+ * The areasplinerange series type
  */
-
-defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
-
-/**
- * AreaSplineRangeSeries object
- */
-seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
-	type: 'areasplinerange',
+seriesType('areasplinerange', 'arearange', null, {
 	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });

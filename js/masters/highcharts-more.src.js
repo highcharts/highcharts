@@ -1,3 +1,4 @@
+'use strict';
 import '../parts-more/Pane.js';
 import '../parts-more/RadialAxis.js';
 import '../parts-more/AreaRangeSeries.js';
