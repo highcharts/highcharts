@@ -66,14 +66,14 @@ defaultOptions.navigation = {
 // Presentational attributes
 merge(true, defaultOptions.navigation, {
 	menuStyle: {
-		border: '1px solid ${palette.neutralColor}',
+		border: '1px solid ${palette.neutralColor40}',
 		background: '${palette.backgroundColor}',
 		padding: '5px 0'
 	},
 	menuItemStyle: {
 		padding: '0 10px',
 		background: 'none',
-		color: '${palette.mainColor}',
+		color: '${palette.neutralColor80}',
 		fontSize: isTouchDevice ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
@@ -81,8 +81,8 @@ merge(true, defaultOptions.navigation, {
 		color: '${palette.backgroundColor}'
 	},
 	buttonOptions: {
-		symbolFill: '${palette.weakColor}',
-		symbolStroke: '${palette.weakColor}',
+		symbolFill: '${palette.neutralColor60}',
+		symbolStroke: '${palette.neutralColor60}',
 		symbolStrokeWidth: 3,
 		theme: {
 			fill: '${palette.backgroundColor}', // capture hover

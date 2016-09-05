@@ -244,7 +244,7 @@ Series.prototype.drawDataLabels = function () {
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
 							renderer.getContrast(point.color || series.color) :
-							'${palette.strongColor}';
+							'${palette.neutralColor100}';
 					}
 
 					if (seriesOptions.cursor) {
@@ -673,7 +673,7 @@ if (seriesTypes.pie) {
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '${palette.weakColor}'
+								'stroke': options.connectorColor || point.color || '${palette.neutralColor60}'
 							});
 							/*= } =*/
 						}

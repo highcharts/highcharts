@@ -131,7 +131,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.mainColor}',
+			color: '${palette.neutralColor80}',
 			fontSize: '18px'
 		},
 		/*= } =*/
@@ -147,7 +147,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.weakColor}'
+			color: '${palette.neutralColor60}'
 		},
 		/*= } =*/
 		widthAdjust: -44
@@ -159,7 +159,7 @@ H.defaultOptions = {
 		style: {
 			//font: defaultFont,
 			position: 'absolute',
-			color: '${palette.mainColor}'
+			color: '${palette.neutralColor80}'
 		}
 	},
 	legend: {
@@ -171,7 +171,7 @@ H.defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '${palette.neutralColor}',
+		borderColor: '${palette.neutralColor40}',
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
@@ -190,13 +190,13 @@ H.defaultOptions = {
 		},*/
 		/*= if (build.classic) { =*/
 		itemStyle: {			
-			color: '${palette.mainColor}',
+			color: '${palette.neutralColor80}',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '${palette.strongColor}'
+			color: '${palette.neutralColor100}'
 		},
 		itemHiddenStyle: {
 			color: '${palette.faintColor}'
@@ -280,7 +280,7 @@ H.defaultOptions = {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		style: {
-			color: '${palette.mainColor}',
+			color: '${palette.neutralColor80}',
 			cursor: 'default',
 			fontSize: '12px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
@@ -305,7 +305,7 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
-			color: '${palette.neutralColor}',
+			color: '${palette.neutralColor40}',
 			fontSize: '9px'
 		},
 		/*= } =*/

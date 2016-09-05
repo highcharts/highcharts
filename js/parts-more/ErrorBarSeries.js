@@ -13,7 +13,7 @@ import './BoxPlotSeries.js';
  *****************************************************************************/
 seriesType('errorbar', 'boxplot', {
 	/*= if (build.classic) { =*/
-	color: '${palette.strongColor}',
+	color: '${palette.neutralColor100}',
 	/*= } =*/
 	grouping: false,
 	linkedTo: ':previous',

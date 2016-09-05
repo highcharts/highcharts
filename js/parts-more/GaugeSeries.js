@@ -164,7 +164,7 @@ seriesType('gauge', 'line', {
 				point.graphic.attr({
 					stroke: dialOptions.borderColor || 'none',
 					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || '${palette.strongColor}'
+					fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
 				});
 				/*= } =*/
 			}
@@ -190,7 +190,7 @@ seriesType('gauge', 'line', {
 			series.pivot.attr({
 				'stroke-width': pivotOptions.borderWidth || 0,
 				stroke: pivotOptions.borderColor || 'silver',
-				fill: pivotOptions.backgroundColor || '${palette.strongColor}'
+				fill: pivotOptions.backgroundColor || '${palette.neutralColor100}'
 			});
 			/*= } =*/
 		}

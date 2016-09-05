@@ -42,7 +42,7 @@ extend(ColorAxis.prototype, {
 			},
 			width: 0.01,
 			/*= if (build.classic) { =*/
-			color: '${palette.neutralColor}'
+			color: '${palette.neutralColor40}'
 			/*= } =*/
 		},
 		labels: {

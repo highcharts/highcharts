@@ -37,11 +37,11 @@ var defaultScrollbarOptions =  {
 	barBackgroundColor: '${palette.faintColor}',
 	barBorderWidth: 1,
 	barBorderColor: '${palette.faintColor}',
-	buttonArrowColor: '${palette.mainColor}',
+	buttonArrowColor: '${palette.neutralColor80}',
 	buttonBackgroundColor: '${palette.fainterColor}',
 	buttonBorderColor: '${palette.faintColor}',
 	buttonBorderWidth: 1,
-	rifleColor: '${palette.mainColor}',
+	rifleColor: '${palette.neutralColor80}',
 	trackBackgroundColor: '${palette.faintestColor}',
 	trackBorderColor: '${palette.faintestColor}',
 	trackBorderWidth: 1

@@ -40,7 +40,7 @@ import '../parts/Options.js';
 	defaultOptions.noData.style = {
 		fontWeight: 'bold',
 		fontSize: '12px',
-		color: '${palette.weakColor}'
+		color: '${palette.neutralColor60}'
 	};
 	/*= } =*/
 

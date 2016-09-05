@@ -21,9 +21,9 @@ seriesType('waterfall', 'column', {
 	},
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
-	lineColor: '${palette.mainColor}',
+	lineColor: '${palette.neutralColor80}',
 	dashStyle: 'dot',
-	borderColor: '${palette.mainColor}',
+	borderColor: '${palette.neutralColor80}',
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126

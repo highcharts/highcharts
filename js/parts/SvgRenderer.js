@@ -1879,7 +1879,7 @@ SVGRenderer.prototype = {
 			stroke: '${palette.faintColor}',
 			'stroke-width': 1,
 			style: {
-				color: '${palette.mainColor}',
+				color: '${palette.neutralColor80}',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			}
@@ -1898,7 +1898,7 @@ SVGRenderer.prototype = {
 		pressedState = merge(normalState, {
 			fill: '${palette.hilightFainterColor}',
 			style: {
-				color: '${palette.strongColor}',
+				color: '${palette.neutralColor100}',
 				fontWeight: 'bold'
 			}
 		}, pressedState);

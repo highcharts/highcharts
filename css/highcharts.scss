@@ -12,11 +12,12 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 /* Chart background, point stroke for markers and columns etc, */
 $background-color: #ffffff;
 
-/* Neutral colors, grayscale by default */
-$strong-color: #000000;
-$main-color: #303030; /* main text and some strokes */
-$weak-color: #606060; /* axis labels, axis title, connector fallback */
-$neutral-color: #909090; /* credits text, export menu stroke */
+/* Neutral colors, grayscale by default. The default colors are defined by mixing the background-color
+with neutral, with a weight corresponding to the number in the name. */
+$neutral-color-100: #000000;
+$neutral-color-80: #333333; /* main text and some strokes */
+$neutral-color-60: #666666  ; /* axis labels, axis title, connector fallback */
+$neutral-color-40: #999999; /* credits text, export menu stroke */
 $faint-color: #c0c0c0; /* disabled texts, button strokes, crosshair etc */
 $fainter-color: #e0e0e0; /* grid lines etc */
 $faintest-color: #f0f0f0; /* minor grid lines etc */
@@ -56,11 +57,11 @@ $hilight-fainter-color: #e6ebf5; /* Strength 10. Pressed button, color axis min 
 
 /* Titles */
 .highcharts-title {
-    fill: $main-color;
+    fill: $neutral-color-80;
     font-size: 1.5em;
 }
 .highcharts-subtitle {
-    fill: $weak-color;
+    fill: $neutral-color-60;
 }
 
 /* Axes */
@@ -72,10 +73,10 @@ $hilight-fainter-color: #e6ebf5; /* Strength 10. Pressed button, color axis min 
     stroke-width: 0;
 }
 .highcharts-axis-title {
-    fill: $weak-color;
+    fill: $neutral-color-60;
 }
 .highcharts-axis-labels {
-    fill: $weak-color;
+    fill: $neutral-color-60;
     cursor: default;
     font-size: 0.9em;
 }
@@ -108,7 +109,7 @@ $hilight-fainter-color: #e6ebf5; /* Strength 10. Pressed button, color axis min 
 /* Credits */
 .highcharts-credits {
     cursor: pointer;
-    fill: $neutral-color;
+    fill: $neutral-color-40;
     font-size: 0.7em;
     transition: fill 250ms, font-size 250ms;
 }
@@ -126,7 +127,7 @@ $hilight-fainter-color: #e6ebf5; /* Strength 10. Pressed button, color axis min 
     filter: url(#drop-shadow);
 }
 .highcharts-tooltip text {
-    fill: $main-color;
+    fill: $neutral-color-80;
 }
 .highcharts-tooltip .highcharts-header {
     font-size: 0.85em;
@@ -202,7 +203,7 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 0;
 }
 .highcharts-data-label text {
-    fill: $main-color;
+    fill: $neutral-color-80;
 }
 .highcharts-data-label-connector {
     fill: none;
@@ -213,7 +214,7 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-point-select {
     fill: $faint-color;
-    stroke: $strong-color;
+    stroke: $neutral-color-100;
 }
 .highcharts-column-series .highcharts-point {
     stroke: $background-color;
@@ -268,7 +269,7 @@ g.highcharts-series, .highcharts-point {
     transition: stroke 250ms, fill 250ms, fill-opacity 250ms;
 }
 .highcharts-treemap-series .highcharts-point-hover {
-    stroke: $neutral-color;
+    stroke: $neutral-color-40;
     transition: stroke 25ms, fill 25ms, fill-opacity 25ms;
 }
 
@@ -294,13 +295,13 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 0;
 }
 .highcharts-legend-item text {
-    fill: $main-color;
+    fill: $neutral-color-80;
     font-weight: bold;
     cursor: pointer;
     stroke-width: 0;
 }
 .highcharts-legend-item:hover text {
-    fill: $strong-color;
+    fill: $neutral-color-100;
 }
 .highcharts-legend-item-hidden * {
     fill: $faint-color !important;
@@ -342,12 +343,12 @@ g.highcharts-series, .highcharts-point {
 
 /* Plot bands and polar pane backgrounds */
 .highcharts-plot-band {
-    fill: $strong-color;
+    fill: $neutral-color-100;
     fill-opacity: 0.05;
 }
 .highcharts-plot-line {
     fill: none;
-    stroke: $neutral-color;
+    stroke: $neutral-color-40;
     stroke-width: 1px;
 }
 
@@ -362,14 +363,14 @@ g.highcharts-series, .highcharts-point {
     fill-opacity: 0.5;
 }
 .highcharts-errorbar-series .highcharts-point {
-    stroke: $strong-color;
+    stroke: $neutral-color-100;
 }
 .highcharts-gauge-series .highcharts-data-label-box {
     stroke: $faint-color;
     stroke-width: 1px;
 }
 .highcharts-gauge-series .highcharts-dial {
-    fill: $strong-color;
+    fill: $neutral-color-100;
     stroke-width: 0;
 }
 .highcharts-polygon-series .highcharts-graph {
@@ -377,7 +378,7 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 0;
 }
 .highcharts-waterfall-series .highcharts-graph {
-    stroke: $main-color;
+    stroke: $neutral-color-80;
     stroke-dasharray: 1, 3;
 }
 
@@ -418,7 +419,7 @@ g.highcharts-series, .highcharts-point {
     stroke: $fainter-color;
 }
 .highcharts-navigator-xaxis.highcharts-axis-labels {
-    fill: $neutral-color;
+    fill: $neutral-color-40;
 }
 .highcharts-navigator-yaxis .highcharts-grid-line {
     stroke-width: 0;
@@ -434,10 +435,10 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 1px;
 }
 .highcharts-scrollbar-arrow {
-    fill: $weak-color;
+    fill: $neutral-color-60;
 }
 .highcharts-scrollbar-rifles {
-    stroke: $weak-color;
+    stroke: $neutral-color-60;
     stroke-width: 1px;
 }
 .highcharts-scrollbar-track {
@@ -453,7 +454,7 @@ g.highcharts-series, .highcharts-point {
     transition: fill 250ms;
 }
 .highcharts-button text {
-    fill: $main-color;
+    fill: $neutral-color-80;
 }
 .highcharts-button-hover {
     fill: $fainter-color;
@@ -475,13 +476,13 @@ g.highcharts-series, .highcharts-point {
     fill: none;
 }
 .highcharts-range-label text {
-    fill: $weak-color;
+    fill: $neutral-color-60;
 }
 .highcharts-range-input rect {
     fill: none;
 }
 .highcharts-range-input text {
-    fill: $main-color;
+    fill: $neutral-color-80;
 }
 input.highcharts-range-selector {
     position: absolute;
@@ -502,7 +503,7 @@ input.highcharts-range-selector {
 
 
 .highcharts-candlestick-series .highcharts-point {
-    stroke: $strong-color;
+    stroke: $neutral-color-100;
     stroke-width: 1px;
 }
 .highcharts-candlestick-series .highcharts-point-up {
@@ -512,15 +513,15 @@ input.highcharts-range-selector {
     stroke-width: 3px;
 }
 .highcharts-flags-series .highcharts-point {
-    stroke: $neutral-color;
+    stroke: $neutral-color-40;
     fill: $background-color;
 }
 .highcharts-flags-series .highcharts-point-hover {
-    stroke: $strong-color;
+    stroke: $neutral-color-100;
     fill: $hilight-faint-color;
 }
 .highcharts-flags-series .highcharts-point text {
-    fill: $strong-color;
+    fill: $neutral-color-100;
     font-size: 0.9em;
     font-weight: bold;
 }
@@ -550,7 +551,7 @@ input.highcharts-range-selector {
     stroke-width: 0;
 }
 .highcharts-coloraxis-marker {
-    fill: $neutral-color;
+    fill: $neutral-color-40;
 }
 .highcharts-null-point {
     fill: $faintestest-color;
@@ -581,11 +582,11 @@ input.highcharts-range-selector {
     stroke: $fainter-color;
 }
 .highcharts-button-symbol {
-    stroke: $weak-color;
+    stroke: $neutral-color-60;
     stroke-width: 3px;
 }
 .highcharts-menu {
-    border: 1px solid $neutral-color;
+    border: 1px solid $neutral-color-40;
     background: $background-color;
     padding: 5px 0;
     box-shadow: 3px 3px 10px #888;
@@ -593,7 +594,7 @@ input.highcharts-range-selector {
 .highcharts-menu-item {
     padding: 0 1em;
     background: none;
-    color: $main-color;
+    color: $neutral-color-80;
     cursor: pointer;
 }
 .highcharts-menu-item:hover {
@@ -616,5 +617,5 @@ input.highcharts-range-selector {
 .highcharts-no-data text {
     font-weight: bold;
     font-size: 12px;
-    fill: $weak-color;
+    fill: $neutral-color-60;
 }

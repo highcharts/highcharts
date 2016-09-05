@@ -64,7 +64,7 @@ extend(defaultOptions, {
 		/*= if (build.classic) { =*/
 		handles: {
 			backgroundColor: '${palette.faintestColor}',
-			borderColor: '${palette.neutralColor}'
+			borderColor: '${palette.neutralColor40}'
 		},
 		maskFill: color('${palette.hilightWeakColor}').setOpacity(0.3).get(),
 		outlineColor: '${palette.faintColor}',
@@ -113,7 +113,7 @@ extend(defaultOptions, {
 				align: 'left',
 				/*= if (build.classic) { =*/
 				style: {
-					color: '${palette.neutralColor}'
+					color: '${palette.neutralColor40}'
 				},
 				/*= } =*/
 				x: 3,

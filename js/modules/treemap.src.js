@@ -87,7 +87,7 @@ import '../parts/Color.js';
 		opacity: 0.15,
 		states: {
 			hover: {
-				borderColor: '${palette.neutralColor}',
+				borderColor: '${palette.neutralColor40}',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				opacity: 0.75,
 				shadow: false

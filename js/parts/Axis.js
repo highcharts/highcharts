@@ -74,7 +74,7 @@ H.Axis.prototype = {
 			// step: null,
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.weakColor}',
+				color: '${palette.neutralColor60}',
 				cursor: 'default',
 				fontSize: '11px'
 			},
@@ -125,7 +125,7 @@ H.Axis.prototype = {
 			//side: 'outside',
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.weakColor}'
+				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
 			//x: 0,
@@ -137,7 +137,7 @@ H.Axis.prototype = {
 		minorGridLineColor: '${palette.faintestColor}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
-		minorTickColor: '${palette.neutralColor}',
+		minorTickColor: '${palette.neutralColor40}',
 		//minorTickWidth: 0,
 		lineColor: '${palette.hilightFaintColor}',
 		lineWidth: 1,

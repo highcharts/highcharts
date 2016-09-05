@@ -40,7 +40,7 @@ seriesType('funnel', 'pie', {
 	states: {
 		select: {
 			color: '${palette.faintColor}',
-			borderColor: '${palette.strongColor}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
 	}

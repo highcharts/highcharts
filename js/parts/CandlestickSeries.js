@@ -19,7 +19,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	/*= if (build.classic) { =*/
-	lineColor: '${palette.strongColor}',
+	lineColor: '${palette.neutralColor100}',
 	lineWidth: 1,
 	upColor: '${palette.backgroundColor}'
 	// upLineColor: null
