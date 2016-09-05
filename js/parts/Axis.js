@@ -182,7 +182,7 @@ H.Axis.prototype = {
 				fontSize: '11px',
 				fontWeight: 'bold',
 				color: '${palette.textHeavyColor}',
-				textShadow: '0 0 6px contrast, 0 0 3px contrast'
+				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast' // docs
 			}
 			/*= } =*/
 		},
