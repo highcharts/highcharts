@@ -232,3 +232,103 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
         'Point.remove'
     );
 });
+
+QUnit.test('nameToX default in the data module', function (assert) {
+    var chart = Highcharts.chart('container', {
+        data: {
+            "seriesMapping": [{
+                "x": 0
+            }, {
+                "x": 0
+            }, {
+                "x": 0
+            }, {
+                "x": 0
+            }, {
+                "x": 0
+            }, {
+                "x": 0
+            }, {
+                "x": 0
+            }],
+            "columnTypes": [
+                "string",
+                "float",
+                "float",
+                "float",
+                "float",
+                "float",
+                "float",
+                "float"
+            ],
+            "csv": ",Canada,France,Germany,Italy,Japan,United Kingdom,United States\n2008 Q1,100,100,100,100,100,100,100\nQ2,100.5,99.5,99.8,99.2,98.8,99.8,100.5\nQ3,101.2,99.3,99.4,97.9,97.8,98.1,100\nQ4,100.1,97.7,97.4,95.6,94.5,95.9,97.9\n2009 Q1,97.8,96.1,93.1,92.8,90.8,94.2,96.5\nQ2,96.9,96,93.2,92.4,92.4,94,96.4\nQ3,97.4,96.2,93.7,92.9,92.4,94.1,96.7\nQ4,98.7,96.8,94.5,92.9,94,94.5,97.7\n2010 Q1,100,97.2,95.2,93.4,95.4,95,98.1\nQ2,100.7,97.8,97.3,94.2,96.4,95.9,99\nQ3,101.1,98.4,98,94.6,97.8,96.5,99.7\nQ4,102.2,98.9,98.7,95,97.2,96.6,100.3\n2011 Q1,103,100,100.5,95.2,95.5,97.1,99.9\nQ2,103,99.9,100.7,95.4,94.9,97.3,100.7\nQ3,104.7,100.2,101.1,95.1,97.4,98,100.9\nQ4,105.3,100.4,101.1,94.3,97.5,98,102\n2012 Q1,105.5,100.6,101.4,93.5,98.6,98,102.6\nQ2,106,100.4,101.6,93.1,98.2,97.9,103\nQ3,106.1,100.6,101.6,92.7,97.7,98.7,103.6\nQ4,106.3,100.4,101.2,92,97.5,98.3,103.7\n2013 Q1,107.2,100.4,100.8,91.2,98.9,98.9,104.4\nQ2,107.7,101,101.6,91,99.6,99.6,104.8\nQ3,108.4,101,101.9,91,100,100.3,106\nQ4,109.2,101.2,102.4,90.9,99.7,100.7,106.9\n2014 Q1,109.5,101.2,103.2,90.9,101.1,101.3,106.3\nQ2,110.4,101.1,103.1,90.6,99.3,102.1,107.5\nQ3,111.2,101.3,103.1,90.5,98.9,102.9,108.8\nQ4,,,,,,103.4,"
+        }
+    });
+    assert.strictEqual(
+        chart.xAxis[0].names.length,
+        28,
+        'Each point its own category'
+    );
+});
+
+QUnit.test('nameToX: false', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        xAxis: {
+            type: 'category',
+            nameToX: false
+        },
+
+        series: [{
+            data: [{
+                name: 'First',
+                y: 1
+            }, {
+                name: 'Third',
+                y: 2
+            }, {
+                name: 'Third',
+                y: 3
+            }],
+            type: 'column',
+            stacking: 'normal'
+        }]
+
+    });
+    assert.strictEqual(
+        chart.xAxis[0].names.length,
+        3,
+        'Each point its own category'
+    );
+});
+
+QUnit.test('nameToX: true', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        xAxis: {
+            type: 'category',
+            nameToX: true
+        },
+
+        series: [{
+            data: [{
+                name: 'First',
+                y: 1
+            }, {
+                name: 'Third',
+                y: 2
+            }, {
+                name: 'Third',
+                y: 3
+            }],
+            type: 'column',
+            stacking: 'normal'
+        }]
+
+    });
+    assert.strictEqual(
+        chart.xAxis[0].names.length,
+        2,
+        'Equal categories creates stacks'
+    );
+});
