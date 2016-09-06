@@ -1551,6 +1551,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					}
 				}
 
+				/*= if (build.classic) { =*/
 				/// VML SUPPPORT
 				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
@@ -1570,6 +1571,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					}
 				}
 				/// END OF VML SUPPORT
+				/*= } =*/
 
 				if (clips[i]) {
 					clips[i].animate(clipAttr);

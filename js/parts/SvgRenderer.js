@@ -1444,7 +1444,7 @@ SVGRenderer.prototype = {
 	},
 	/*= if (!build.classic) { =*/
 	/**
-	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs
+	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs: todo: return node
 	 */
 	addDefinition: function (def) {
 		var ren = this;

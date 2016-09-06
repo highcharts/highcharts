@@ -35,7 +35,9 @@ H.defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
+		/*= if (build.classic) { =*/
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
+		/*= } =*/
 	},
 	chart: {
 		//animation: true,
