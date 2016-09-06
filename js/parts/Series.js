@@ -34,7 +34,6 @@ import './SvgRenderer.js';
 		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
 		syncTimeout = H.syncTimeout,
-		useCanVG = H.useCanVG,
 		win = H.win;
 
 /**
@@ -205,11 +204,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
-
-		// special
-		if (useCanVG) {
-			options.animation = false;
-		}
 
 		// register event listeners
 		events = options.events;

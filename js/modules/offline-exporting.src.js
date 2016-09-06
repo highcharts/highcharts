@@ -13,7 +13,8 @@ import '../parts/Chart.js';
 import '../parts/Options.js';
 /*global MSBlobBuilder */
 
-	var win = Highcharts.win,
+	var merge = Highcharts.merge,
+		win = Highcharts.win,
 		nav = win.navigator,
 		doc = win.document,
 		domurl = win.URL || win.webkitURL || win,
@@ -152,7 +153,7 @@ import '../parts/Options.js';
 			blob,
 			objectURLRevoke = true,
 			finallyHandler;
-
+console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
 			// SVG download. In this case, we want to use Microsoft specific Blob if available
@@ -222,7 +223,7 @@ import '../parts/Options.js';
 				} else {
 					// Must load canVG first
 					objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-					getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+					getScript(Highcharts.getOptions().exporting.canvasToolsURL, function () {
 						downloadWithCanVG();
 					});
 				}
@@ -332,30 +333,37 @@ import '../parts/Options.js';
 	};
 
 	// Extend the default options to use the local exporter logic
-	Highcharts.getOptions().exporting.buttons.contextButton.menuItems = [{
-		textKey: 'printChart',
-		onclick: function () {
-			this.print();
+	merge(true, Highcharts.getOptions().exporting, {
+		canvasToolsURL: 'http://code.highcharts.com/4/modules/canvas-tools.js', // docs
+		buttons: {
+			contextButton: {
+				menuItems: [{
+					textKey: 'printChart',
+					onclick: function () {
+						this.print();
+					}
+				}, {
+					separator: true
+				}, {
+					textKey: 'downloadPNG',
+					onclick: function () {
+						this.exportChartLocal();
+					}
+				}, {
+					textKey: 'downloadJPEG',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'image/jpeg'
+						});
+					}
+				}, {
+					textKey: 'downloadSVG',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'image/svg+xml'
+						});
+					}
+				}]
+			}
 		}
-	}, {
-		separator: true
-	}, {
-		textKey: 'downloadPNG',
-		onclick: function () {
-			this.exportChartLocal();
-		}
-	}, {
-		textKey: 'downloadJPEG',
-		onclick: function () {
-			this.exportChartLocal({
-				type: 'image/jpeg'
-			});
-		}
-	}, {
-		textKey: 'downloadSVG',
-		onclick: function () {
-			this.exportChartLocal({
-				type: 'image/svg+xml'
-			});
-		}
-	}];
+	});

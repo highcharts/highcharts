@@ -13,8 +13,7 @@ import './Utilities.js';
 		splat = H.splat,
 		stop = H.stop,
 		syncTimeout = H.syncTimeout,
-		timeUnits = H.timeUnits,
-		useCanVG = H.useCanVG;
+		timeUnits = H.timeUnits;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
@@ -80,10 +79,7 @@ H.Tooltip.prototype = {
 				})
 				// #2301, #2657
 				.css(options.style)
-				
-				// When using canVG the shadow shows up as a gray circle
-				// even if the tooltip is hidden.
-				.shadow(!useCanVG && options.shadow);
+				.shadow(options.shadow);
 			/*= } =*/
 		}
 		this.label.attr({

@@ -7,8 +7,7 @@
 		userAgent = (win.navigator && win.navigator.userAgent) || '',
 		svg = doc && doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 		isMS = /(edge|msie|trident)/i.test(userAgent) && !window.opera,
-		useCanVG = doc && !svg && !isMS && !!doc.createElement('canvas').getContext,
-		vml = !svg && !useCanVG,
+		vml = !svg,
 		isFirefox = /Firefox/.test(userAgent),
 		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
@@ -27,7 +26,6 @@
 		chartCount: 0,
 		seriesTypes: {},
 		svg: svg,
-		useCanVG: useCanVG,
 		vml: vml,
 		win: win,
 		charts: [],

@@ -36,7 +36,6 @@ import './Color.js';
 		stop = H.stop,
 		svg = H.svg,
 		SVG_NS = H.SVG_NS,
-		useCanVG = H.useCanVG,
 		win = H.win;
 
 /**
@@ -526,7 +525,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (!svg && elemWrapper.renderer.forExport)) {
 				delete styles.width;
 			}
 
@@ -877,7 +876,7 @@ SVGElement.prototype = {
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
 						extend({}, element.getBBox()) :
-						// Canvas renderer and legacy IE in export mode
+						// Legacy IE in export mode
 						{
 							width: element.offsetWidth,
 							height: element.offsetHeight
@@ -1540,7 +1539,7 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Dummy function for use in canvas renderer
+	 * Dummy function for plugins
 	 */
 	draw: noop,
 
@@ -2506,7 +2505,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!svg && renderer.forExport),
+			fakeSVG = !svg && renderer.forExport,
 			wrapper,
 			attribs = {};
 
