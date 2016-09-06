@@ -14739,13 +14739,8 @@
             var series = this,
                 chart = series.chart,
                 clipRect,
-                animation = series.options.animation,
+                animation = animObject(series.options.animation),
                 sharedClipKey;
-
-            // Animation option is set to true
-            if (animation && !isObject(animation)) {
-                animation = defaultPlotOptions[series.type].animation;
-            }
 
             // Initialize the animation. Set up the clipping rectangle.
             if (init) {
