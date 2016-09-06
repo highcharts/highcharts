@@ -9886,13 +9886,11 @@
                 hoverPoint = chart.hoverPoint,
                 hoverSeries = chart.hoverSeries,
                 i,
-                distance = [Number.MAX_VALUE, Number.MAX_VALUE], // #4511
                 anchor,
                 noSharedTooltip,
                 stickToHoverSeries,
                 directTouch,
                 kdpoints = [],
-                kdpoint = [],
                 kdpointT;
 
             // For hovering over the empty parts of the plot area (hoverSeries is undefined).
@@ -9910,7 +9908,7 @@
             // search the k-d tree.
             stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
             if (stickToHoverSeries && hoverPoint) {
-                kdpoint = [hoverPoint];
+                kdpoints = [hoverPoint];
 
             // Handle shared tooltip or cases where a series is not yet hovered
             } else {
@@ -9931,6 +9929,7 @@
                         }
                     }
                 });
+<<<<<<< HEAD
                 // Find absolute nearest point
                 each(kdpoints, function (p) {
                     if (p) {
@@ -9950,6 +9949,24 @@
                             }
                         });
                     }
+=======
+
+                // Sort kdpoints by distance to mouse pointer
+                kdpoints.sort(function (p1, p2) {
+                    var isCloserX = p1.distX - p2.distX,
+                        isCloser = p1.dist - p2.dist,
+                        isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
+                     // We have two points which are not in the same place on xAxis and shared tooltip:
+                    if (isCloserX !== 0) {
+                        return isCloserX;
+                    }
+                    // Points are not exactly in the same place on x/yAxis:
+                    if (isCloser !== 0) {
+                        return isCloser;
+                    }
+                    // The same xAxis and yAxis position, sort by z-index:
+                    return isAbove;
+>>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
                 });
             }
 
@@ -9957,18 +9974,35 @@
             if (shared) {
                 i = kdpoints.length;
                 while (i--) {
-                    if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+                    if (kdpoints[i].clientX !== kdpoints[0].clientX || kdpoints[i].series.noSharedTooltip) {
                         kdpoints.splice(i, 1);
                     }
                 }
             }
 
             // Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-            if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+            if (kdpoints[0] && (kdpoints[0] !== pointer.hoverPoint || (tooltip && tooltip.isHidden))) {
                 // Draw tooltip if necessary
+<<<<<<< HEAD
                 if (shared && !kdpoint[0].series.noSharedTooltip) {
                     if (kdpoints.length && tooltip) {
                         tooltip.refresh(kdpoints, e);
+=======
+                if (shared && !kdpoints[0].series.noSharedTooltip) {
+                    // Do mouseover on all points (#3919, #3985, #4410)
+                    for (i = 0; i >= 0; i--) {
+                        kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
+                    }
+                    // Make sure that the hoverPoint and hoverSeries are stored for events (e.g. click), #5622
+                    if (hoverSeries && hoverSeries.directTouch && hoverPoint && hoverPoint !== kdpoints[0]) {
+                        hoverPoint.onMouseOver(e, false);
+                    }
+                    if (kdpoints.length && tooltip) {
+                        // Keep the order of series in tooltip:
+                        tooltip.refresh(kdpoints.sort(function (p1, p2) {
+                            return p1.series.index - p2.series.index;
+                        }), e);
+>>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
                     }
 
                     // Do mouseover on all points (#3919, #3985, #4410)
@@ -9978,14 +10012,21 @@
                     this.prevKDPoint = kdpoint[1];
                 } else {
                     if (tooltip) {
-                        tooltip.refresh(kdpoint[0], e);
+                        tooltip.refresh(kdpoints[0], e);
                     }
                     if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-                        kdpoint[0].onMouseOver(e);
+                        kdpoints[0].onMouseOver(e);
                     }
+<<<<<<< HEAD
                     this.prevKDPoint = kdpoint[0];
                 }
 
+=======
+                }
+                pointer.prevKDPoint = kdpoints[0];
+                updatePosition = false;
+            }
+>>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
             // Update positions (regardless of kdpoint or hoverPoint)
             } else {
                 followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
@@ -10007,7 +10048,7 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-            each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function (point) { // #5269
                 each(chart.axes, function (axis) {
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
                     if (!point || point.series[axis.coll] === axis) {
