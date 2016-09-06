@@ -44,8 +44,8 @@ seriesType('map', 'scatter', {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
-	nullColor: '${palette.fainteststColor}',
-	borderColor: '${palette.faintColor}',
+	nullColor: '${palette.neutralColor3}',
+	borderColor: '${palette.neutralColor20}',
 	borderWidth: 1,
 	marker: null,
 	stickyTracking: false,
@@ -74,7 +74,7 @@ seriesType('map', 'scatter', {
 			halo: null
 		},
 		select: {
-			color: '${palette.faintColor}'
+			color: '${palette.neutralColor20}'
 		}
 	}
 

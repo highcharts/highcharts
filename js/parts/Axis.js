@@ -134,17 +134,17 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
-		minorGridLineColor: '${palette.faintestColor}',
+		minorGridLineColor: '${palette.neutralColor5}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
 		minorTickColor: '${palette.neutralColor40}',
 		//minorTickWidth: 0,
-		lineColor: '${palette.hilightFaintColor}',
+		lineColor: '${palette.highlightColor20}',
 		lineWidth: 1,
-		gridLineColor: '${palette.fainterColor}',
+		gridLineColor: '${palette.neutralColor10}',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
-		tickColor: '${palette.hilightFaintColor}'
+		tickColor: '${palette.highlightColor20}'
 		// tickWidth: 1
 		/*= } =*/		
 	},
@@ -181,7 +181,7 @@ H.Axis.prototype = {
 			style: {
 				fontSize: '11px',
 				fontWeight: 'bold',
-				color: '${palette.textHeavyColor}',
+				color: '${$neutral-color-100}',
 				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast' // docs
 			}
 			/*= } =*/
@@ -2474,7 +2474,7 @@ H.Axis.prototype = {
 				/*= if (build.classic) { =*/
 				// Presentational attributes
 				graphic.attr({
-					'stroke': options.color || (categorized ? color('${palette.crosshairCategoryColor}').setOpacity(0.25).get() : '${palette.faintColor}'),
+					'stroke': options.color || (categorized ? color('${palette.highlightColor20}').setOpacity(0.25).get() : '${palette.neutralColor20}'),
 					'stroke-width': pick(options.width, 1)
 				});
 				if (options.dashStyle) {

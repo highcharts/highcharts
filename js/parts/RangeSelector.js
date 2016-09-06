@@ -524,7 +524,7 @@ RangeSelector.prototype = {
 				padding: 2,
 				width: options.inputBoxWidth || 90,
 				height: options.inputBoxHeight || 17,
-				stroke: options.inputBoxBorderColor || 'silver',
+				stroke: options.inputBoxBorderColor || '${palette.neutralColor20}',
 				'stroke-width': 1,
 				'text-align': 'center'
 			})

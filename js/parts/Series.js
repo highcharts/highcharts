@@ -78,7 +78,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	marker: {
 		/*= if (build.classic) { =*/
 		lineWidth: 0,
-		lineColor: '${palette.pointStroke}',
+		lineColor: '${palette.backgroundColor}',
 		//fillColor: null,
 		/*= } =*/				
 		//enabled: true,
@@ -94,8 +94,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			},
 			/*= if (build.classic) { =*/
 			select: {
-				fillColor: '${palette.pointSelectFill}',
-				lineColor: '${palette.pointSelectStroke}',
+				fillColor: '${palette.neutralColor20}',
+				lineColor: '${palette.neutralColor100}',
 				lineWidth: 2
 			}
 			/*= } =*/

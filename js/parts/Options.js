@@ -75,7 +75,7 @@ H.defaultOptions = {
 		height: null,
 		
 		/*= if (build.classic) { =*/
-		borderColor: '${palette.hilightColor}',
+		borderColor: '${palette.highlightColor80}',
 		//borderWidth: 0,
 		//style: {
 		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
@@ -83,7 +83,7 @@ H.defaultOptions = {
 		//},
 		backgroundColor: '${palette.backgroundColor}',
 		//plotBackgroundColor: null,
-		plotBorderColor: '${palette.faintColor}'
+		plotBorderColor: '${palette.neutralColor20}'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		/*= } =*/
@@ -175,8 +175,8 @@ H.defaultOptions = {
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
-			activeColor: '${palette.activeColor}',
-			inactiveColor: '${palette.faintColor}'
+			activeColor: '${palette.highlightColor100}',
+			inactiveColor: '${palette.neutralColor20}'
 			/*= } =*/
 			// animation: true,
 			// arrowSize: 12
@@ -199,7 +199,7 @@ H.defaultOptions = {
 			color: '${palette.neutralColor100}'
 		},
 		itemHiddenStyle: {
-			color: '${palette.faintColor}'
+			color: '${palette.neutralColor20}'
 		},
 		shadow: false,
 		/*= } =*/
@@ -274,7 +274,7 @@ H.defaultOptions = {
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		/*= } else { =*/
-		backgroundColor: color('${palette.faintestestColor}').setOpacity(0.85).get(),
+		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
 		borderWidth: 1,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',

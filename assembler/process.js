@@ -34,7 +34,7 @@ const getPalette = path => {
             parts = line.replace(/\r/, '').split(':');
             key = parts[0].trim().replace(/^\$/, '')
                 // Camelcase
-                .replace(/-([a-z])/g, g => g[1].toUpperCase());
+                .replace(/-([a-z0-9])/g, g => g[1].toUpperCase());
             val = parts[1].split(';')[0].trim();
 
             obj[key] = val;
@@ -114,9 +114,12 @@ const preProcess = (content, build) => {
         .replace(/___rep3___/g, '/[ ,]/')
         .replace(/___rep4___/g, '/[ ,]+/')
         // Replace palette colors
-        .replace(/\$\{palette\.([a-zA-Z]+)\}/g, function (match, key) {
+        .replace(/\$\{palette\.([a-zA-Z0-9]+)\}/g, function (match, key) {
             // @notice Could this not be done in the supercode function?
-            return build.palette[key];
+            if (build.palette[key]) {
+                return build.palette[key];
+            }
+            throw '${palette.' + key + '} not found in SASS file';
         });
 
     return tpl;

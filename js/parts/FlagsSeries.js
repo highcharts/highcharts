@@ -37,7 +37,7 @@ seriesType('flags', 'column', {
 	states: {
 		hover: {
 			lineColor: '${palette.neutralColor100}',
-			fillColor: '${palette.hilightFaintColor}'
+			fillColor: '${palette.highlightColor20}'
 		}
 	},
 	style: {

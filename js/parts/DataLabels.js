@@ -204,7 +204,7 @@ Series.prototype.drawDataLabels = function () {
 
 				/*= if (build.classic) { =*/
 				// Determine the color
-				style.color = pick(options.color, style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
 				/*= } =*/
 
 				// update existing label

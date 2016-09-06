@@ -1108,7 +1108,7 @@ SVGElement.prototype = {
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': shadowOptions.color || 'black',
+					'stroke': shadowOptions.color || '${palette.neutralColor100}',
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
@@ -1875,8 +1875,8 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			fill: '${palette.faintestestColor}',
-			stroke: '${palette.faintColor}',
+			fill: '${palette.neutralColor3}',
+			stroke: '${palette.neutralColor20}',
 			'stroke-width': 1,
 			style: {
 				color: '${palette.neutralColor80}',
@@ -1889,14 +1889,14 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			fill: '${palette.fainterColor}'
+			fill: '${palette.neutralColor10}'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '${palette.hilightFainterColor}',
+			fill: '${palette.highlightColor10}',
 			style: {
 				color: '${palette.neutralColor100}',
 				fontWeight: 'bold'
@@ -1908,7 +1908,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '${palette.faintColor}'
+				color: '${palette.neutralColor20}'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;

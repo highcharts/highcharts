@@ -48,8 +48,8 @@ extend(ColorAxis.prototype, {
 		labels: {
 			overflow: 'justify'
 		},
-		minColor: '${palette.hilightFainterColor}',
-		maxColor: '${palette.activeColor}',
+		minColor: '${palette.highlightColor10}',
+		maxColor: '${palette.highlightColor100}',
 		tickLength: 5,
 		showInLegend: true // docs: API record is being added.
 	},

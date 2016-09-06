@@ -34,16 +34,16 @@ var defaultScrollbarOptions =  {
 	step: 0.2,		// docs
 	zIndex: 3,		// docs
 	/*= if (build.classic) { =*/
-	barBackgroundColor: '${palette.faintColor}',
+	barBackgroundColor: '${palette.neutralColor20}',
 	barBorderWidth: 1,
-	barBorderColor: '${palette.faintColor}',
+	barBorderColor: '${palette.neutralColor20}',
 	buttonArrowColor: '${palette.neutralColor80}',
-	buttonBackgroundColor: '${palette.fainterColor}',
-	buttonBorderColor: '${palette.faintColor}',
+	buttonBackgroundColor: '${palette.neutralColor10}',
+	buttonBorderColor: '${palette.neutralColor20}',
 	buttonBorderWidth: 1,
 	rifleColor: '${palette.neutralColor80}',
-	trackBackgroundColor: '${palette.faintestColor}',
-	trackBorderColor: '${palette.faintestColor}',
+	trackBackgroundColor: '${palette.neutralColor5}',
+	trackBorderColor: '${palette.neutralColor5}',
 	trackBorderWidth: 1
 	/*= } =*/
 };

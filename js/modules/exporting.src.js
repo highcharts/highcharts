@@ -77,7 +77,7 @@ merge(true, defaultOptions.navigation, {
 		fontSize: isTouchDevice ? '14px' : '11px'
 	},
 	menuItemHoverStyle: {
-		background: '${palette.hilightColor}',
+		background: '${palette.highlightColor80}',
 		color: '${palette.backgroundColor}'
 	},
 	buttonOptions: {

@@ -63,17 +63,17 @@ extend(defaultOptions, {
 		maskInside: true,
 		/*= if (build.classic) { =*/
 		handles: {
-			backgroundColor: '${palette.faintestColor}',
+			backgroundColor: '${palette.neutralColor5}',
 			borderColor: '${palette.neutralColor40}'
 		},
-		maskFill: color('${palette.hilightWeakColor}').setOpacity(0.3).get(),
-		outlineColor: '${palette.faintColor}',
+		maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
+		outlineColor: '${palette.neutralColor20}',
 		outlineWidth: 1,
 		/*= } =*/
 		series: {
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
-			color: '${palette.hilightColor}',
+			color: '${palette.highlightColor80}',
 			fillOpacity: 0.05,
 			lineWidth: 1,
 			/*= } =*/
@@ -105,7 +105,7 @@ extend(defaultOptions, {
 			tickLength: 0,
 			/*= if (build.classic) { =*/
 			lineWidth: 0,
-			gridLineColor: '${palette.fainterColor}',
+			gridLineColor: '${palette.neutralColor10}',
 			gridLineWidth: 1,
 			/*= } =*/
 			tickPixelInterval: 200,

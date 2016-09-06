@@ -483,7 +483,7 @@ H.Tooltip.prototype = {
 						'r': options.borderRadius,
 						/*= if (build.classic) { =*/
 						'fill': options.backgroundColor,
-						'stroke': point.color || series.color || '${palette.textColor}',
+						'stroke': point.color || series.color || '${palette.neutralColor80}',
 						'stroke-width': options.borderWidth
 						/*= } =*/
 					})

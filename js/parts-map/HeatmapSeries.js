@@ -22,7 +22,7 @@ seriesType('heatmap', 'scatter', {
 	animation: false,
 	borderWidth: 0,
 	/*= if (build.classic) { =*/
-	nullColor: '${palette.fainteststColor}',
+	nullColor: '${palette.neutralColor3}',
 	/*= } =*/
 	dataLabels: {
 		formatter: function () { // #2945
