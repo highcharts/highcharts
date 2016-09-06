@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-05)
+ * @license Highmaps JS v4.2.6-modified (2016-09-06)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -9883,6 +9883,7 @@
                 tooltip = chart.tooltip,
                 shared = tooltip ? tooltip.shared : false,
                 followPointer,
+                updatePosition = true,
                 hoverPoint = chart.hoverPoint,
                 hoverSeries = chart.hoverSeries,
                 i,
@@ -9929,34 +9930,13 @@
                         }
                     }
                 });
-<<<<<<< HEAD
-                // Find absolute nearest point
-                each(kdpoints, function (p) {
-                    if (p) {
-                        // Store both closest points, using point.dist and point.distX comparisons (#4645):
-                        each(['dist', 'distX'], function (dist, k) {
-                            if (isNumber(p[dist])) {
-                                var
-                                    // It is closer than the reference point
-                                    isCloser = p[dist] < distance[k],
-                                    // It is equally close, but above the reference point (#4679)
-                                    isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
-
-                                if (isCloser || isAbove) {
-                                    distance[k] = p[dist];
-                                    kdpoint[k] = p;
-                                }
-                            }
-                        });
-                    }
-=======
 
                 // Sort kdpoints by distance to mouse pointer
                 kdpoints.sort(function (p1, p2) {
                     var isCloserX = p1.distX - p2.distX,
                         isCloser = p1.dist - p2.dist,
                         isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
-                     // We have two points which are not in the same place on xAxis and shared tooltip:
+                    // We have two points which are not in the same place on xAxis and shared tooltip:
                     if (isCloserX !== 0) {
                         return isCloserX;
                     }
@@ -9966,7 +9946,6 @@
                     }
                     // The same xAxis and yAxis position, sort by z-index:
                     return isAbove;
->>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
                 });
             }
 
@@ -9983,11 +9962,6 @@
             // Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
             if (kdpoints[0] && (kdpoints[0] !== pointer.hoverPoint || (tooltip && tooltip.isHidden))) {
                 // Draw tooltip if necessary
-<<<<<<< HEAD
-                if (shared && !kdpoint[0].series.noSharedTooltip) {
-                    if (kdpoints.length && tooltip) {
-                        tooltip.refresh(kdpoints, e);
-=======
                 if (shared && !kdpoints[0].series.noSharedTooltip) {
                     // Do mouseover on all points (#3919, #3985, #4410)
                     for (i = 0; i >= 0; i--) {
@@ -10002,14 +9976,7 @@
                         tooltip.refresh(kdpoints.sort(function (p1, p2) {
                             return p1.series.index - p2.series.index;
                         }), e);
->>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
                     }
-
-                    // Do mouseover on all points (#3919, #3985, #4410)
-                    each(kdpoints, function (point) {
-                        point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[0]));
-                    });
-                    this.prevKDPoint = kdpoint[1];
                 } else {
                     if (tooltip) {
                         tooltip.refresh(kdpoints[0], e);
@@ -10017,18 +9984,12 @@
                     if (!hoverSeries || !hoverSeries.directTouch) { // #4448
                         kdpoints[0].onMouseOver(e);
                     }
-<<<<<<< HEAD
-                    this.prevKDPoint = kdpoint[0];
-                }
-
-=======
                 }
                 pointer.prevKDPoint = kdpoints[0];
                 updatePosition = false;
             }
->>>>>>> 27f81b8... Fixed #5622, click event for line series point was not called when column was rendered below.
             // Update positions (regardless of kdpoint or hoverPoint)
-            } else {
+            if (updatePosition) {
                 followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
                 if (tooltip && followPointer && !tooltip.isHidden) {
                     anchor = tooltip.getAnchor([{}], e);

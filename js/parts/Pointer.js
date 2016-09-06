@@ -176,7 +176,7 @@ Pointer.prototype = {
 				var isCloserX = p1.distX - p2.distX,
 					isCloser = p1.dist - p2.dist,
 					isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
- 				// We have two points which are not in the same place on xAxis and shared tooltip:
+				// We have two points which are not in the same place on xAxis and shared tooltip:
 				if (isCloserX !== 0) {
 					return isCloserX;
 				}
