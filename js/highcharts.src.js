@@ -8134,7 +8134,7 @@
             }
 
             // Prevent ticks from getting so close that we can't draw the labels
-            if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
+            if (!this.tickAmount) {
                 axis.tickInterval = axis.unsquish();
             }
 
