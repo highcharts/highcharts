@@ -46,6 +46,9 @@ $highlight-color-10: #e6ebf5; /* Pressed button, color axis min color. */
 .highcharts-label-box {
     fill: none;
 }
+.highcharts-button-box {
+    fill: inherit;
+}
 
 /* Titles */
 .highcharts-title {
