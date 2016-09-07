@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-09-06)
+ * @license Highstock JS v4.2.6-modified (2016-09-07)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -10488,10 +10488,10 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function (point) { // #5269
-                each(chart.axes, function (axis) {
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
+                each(chart.axes, function drawAxisCrosshair(axis) {
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
-                    if (!point || point.series[axis.coll] === axis) {
+                    if (!point || point.series && point.series[axis.coll] === axis) { // #5658
                         axis.drawCrosshair(e, point);
                     }
                 });
@@ -20454,7 +20454,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-09-06)
+     * Highstock JS v4.2.6-modified (2016-09-07)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
