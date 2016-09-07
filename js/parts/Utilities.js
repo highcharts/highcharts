@@ -1247,22 +1247,23 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events = hcEvents[type] || [];
 		len = events.length;
 
-		// Attach a simple preventDefault function to skip default handler if called. 
-		// The built-in defaultPrevented property is not overwritable (#5112)
-		if (!eventArguments.preventDefault) {
-			eventArguments.preventDefault = function () {
-				eventArguments.defaultPrevented = true;
-			};
+		if (!eventArguments.target) { // We're running a custom event
+
+			H.extend(eventArguments, {
+				// Attach a simple preventDefault function to skip default handler if called. 
+				// The built-in defaultPrevented property is not overwritable (#5112)
+				preventDefault: function () {
+					eventArguments.defaultPrevented = true;
+				},
+				// Setting target to native events fails with clicking the zoom-out button in Chrome.
+				target: el,
+				// If the type is not set, we're running a custom event (#2297). If it is set,
+				// we're running a browser event, and setting it will cause en error in
+				// IE8 (#2465).		
+				type: type
+			});
 		}
 
-		eventArguments.target = el;
-
-		// If the type is not set, we're running a custom event (#2297). If it is set,
-		// we're running a browser event, and setting it will cause en error in
-		// IE8 (#2465).
-		if (!eventArguments.type) {
-			eventArguments.type = type;
-		}
 		
 		for (i = 0; i < len; i++) {
 			fn = events[i];
