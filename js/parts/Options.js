@@ -119,6 +119,12 @@ H.defaultOptions = {
 					in: 'SourceGraphic'
 				}]
 			}]
+		},
+		style: {
+			tag: 'style',
+			textContent: '.highcharts-tooltip{' +
+				'filter:url(#drop-shadow)' +
+			'}'
 		}
 	},
 	/*= } =*/

@@ -204,7 +204,6 @@ $pane-background-gradient: #DDD;
     pointer-events: none;
     white-space: nowrap;
     transition: stroke 150ms;
-    filter: url(#drop-shadow);
 }
 .highcharts-tooltip text {
     fill: $tooltip-text-color;
@@ -640,12 +639,6 @@ input.highcharts-range-selector {
 }
 .highcharts-column-series .highcharts-point  {
     stroke: inherit; /* use point color */
-}
-.highcharts-3d-top {
-    filter: url(#highcharts-brighter);
-}
-.highcharts-3d-side {
-    filter: url(#highcharts-darker);
 }
 
 /* Exporting module */

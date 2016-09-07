@@ -1457,7 +1457,7 @@ SVGRenderer.prototype = {
 
 				// Set attributes
 				for (key in item) {
-					if (key !== 'tag' && key !== 'children') {
+					if (key !== 'tag' && key !== 'children' && key !== 'textContent') {
 						attr[key] = item[key];
 					}
 				}
@@ -1465,6 +1465,11 @@ SVGRenderer.prototype = {
 
 				// Add to the tree
 				node.add(parent || ren.defs);
+
+				// Add text content
+				if (item.textContent) {
+					node.element.appendChild(doc.createTextNode(item.textContent));
+				}
 
 				// Recurse
 				recurse(item.children || [], node);
