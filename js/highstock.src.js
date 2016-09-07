@@ -24204,7 +24204,7 @@
             function updateExtremes() {
                 var inputValue = input.value,
                     value = (options.inputDateParser || Date.parse)(inputValue),
-                    xAxis = chart.xAxis[0],
+                    xAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chart.xAxis[0],
                     dataMin = xAxis.dataMin,
                     dataMax = xAxis.dataMax;
                 if (value !== input.previousValue) {
