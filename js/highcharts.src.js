@@ -16411,8 +16411,6 @@
                 i,
                 x;
 
-            setAnimation(animation, chart);
-
             // Optional redraw, defaults to true
             redraw = pick(redraw, true);
 
@@ -16464,9 +16462,10 @@
             // redraw
             series.isDirty = true;
             series.isDirtyData = true;
+
             if (redraw) {
                 series.getAttribs(); // #1937
-                chart.redraw();
+                chart.redraw(animation); // Animation is set anyway on redraw, #5665
             }
         },
 
