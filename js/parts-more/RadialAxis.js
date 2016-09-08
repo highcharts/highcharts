@@ -179,6 +179,11 @@ var radialAxisMixin = {
 	 * tickPositions are computed, so that ticks will extend passed the real max.
 	 */
 	beforeSetTickPositions: function () {
+		// If autoConnect is true, polygonal grid lines are connected, and one closestPointRange
+		// is added to the X axis to prevent the last point from overlapping the first.
+		this.autoConnect = this.isCircular && pick(this.userMax, this.options.max) === undefined &&
+			this.endAngleRad - this.startAngleRad === 2 * Math.PI;
+		
 		if (this.autoConnect) {
 			this.max += (this.categories && 1) || this.pointRange || this.closestPointRange || 0; // #1197, #2260
 		}
@@ -447,10 +452,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 
 		this.isCircular = isCircular;
 
-		// Automatically connect grid lines?
-		if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
-			this.autoConnect = true;
-		}
 	}
 
 });
