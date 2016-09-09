@@ -20225,6 +20225,7 @@
                 // Create a fake axis object where the extended ordinal positions are emulated
                 fakeAxis = {
                     series: [],
+                    chart: chart,
                     getExtremes: function () {
                         return {
                             min: extremes.dataMin,
