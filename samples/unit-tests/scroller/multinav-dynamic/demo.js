@@ -48,7 +48,7 @@ $(function () {
         assert.strictEqual(chart.navigator.series.length, 4, 'Navigator has four series');
         chart.series[0].remove();
         assert.strictEqual(chart.navigator.series.length, 3, 'Navigator has three series');
-        chart.series[2].remove();
+        chart.series[1].remove();
         assert.strictEqual(chart.navigator.series.length, 2, 'Navigator has two series');
     });
 

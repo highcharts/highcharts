@@ -1401,6 +1401,11 @@ Chart.prototype = {
 		while (i--) {
 			axes[i] = axes[i].destroy();
 		}
+		
+		// Destroy scroller & scroller series before destroying base series
+		if (this.scroller && this.scroller.destroy) {
+			this.scroller.destroy();
+		}
 
 		// Destroy each series
 		i = series.length;
@@ -1410,7 +1415,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage',
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller',
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer',
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
