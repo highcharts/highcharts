@@ -24637,12 +24637,13 @@
      */
     Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
         var hasRenderToArg = isString(a) || a.nodeName,
-            options = arguments[hasRenderToArg ? 1 : 0],
-            seriesOptions = options.series, // to increase performance, don't merge the data
+            userOptions = arguments[hasRenderToArg ? 1 : 0],
+            seriesOptions = userOptions.series, // to increase performance, don't merge the data
             opposite,
+            options,
 
             // Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
-            navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
+            navigatorEnabled = pick(userOptions.navigator && userOptions.navigator.enabled, true),
             disableStartOnTick = navigatorEnabled ? {
                 startOnTick: false,
                 endOnTick: false
@@ -24659,10 +24660,12 @@
             columnOptions = {
                 shadow: false,
                 borderWidth: 0
-            };
+            },
+            xAxis,
+            yAxis;
 
         // apply X axis options to both single and multi y axes
-        options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
+        xAxis = map(splat(userOptions.xAxis || {}), function (xAxisOptions) {
             return merge(
                 { // defaults
                     minPadding: 0,
@@ -24685,7 +24688,7 @@
         });
 
         // apply Y axis options to both single and multi y axes
-        options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+        yAxis = map(splat(userOptions.yAxis || {}), function (yAxisOptions) {
             opposite = pick(yAxisOptions.opposite, true);
             return merge({ // defaults
                 labels: {
@@ -24700,7 +24703,7 @@
             );
         });
 
-        options.series = null;
+        userOptions.series = null;
 
         options = merge(
             {
@@ -24745,7 +24748,7 @@
                 }
 
             },
-            options, // user's options
+            userOptions, // user's options
 
             { // forced options
                 _stock: true, // internal flag
@@ -24755,7 +24758,9 @@
             }
         );
 
-        options.series = seriesOptions;
+        options.xAxis = xAxis;
+        options.yAxis = yAxis;
+        userOptions.series = options.series = seriesOptions;
 
         return hasRenderToArg ? 
             new Chart(a, options, c) :
