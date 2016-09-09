@@ -19996,6 +19996,7 @@
                 slope,
                 hasBreaks = axis.isXAxis && !!axis.options.breaks,
                 isOrdinal = axis.options.ordinal,
+                ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries,
                 i;
 
             // apply the ordinal logic
@@ -20003,7 +20004,7 @@
 
                 each(axis.series, function (series, i) {
 
-                    if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
+                    if ((!ignoreHiddenSeries || series.visible !== false) && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
                         // concatenate the processed X data into the existing positions, or the empty array
                         ordinalPositions = ordinalPositions.concat(series.processedXData);
