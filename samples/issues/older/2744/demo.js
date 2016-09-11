@@ -13,7 +13,7 @@ $(function () {
     });
 
 
-    $('#settitle').click(function (event) {
+    $('#settitle').click(function () {
         chart.setTitle({
             text: 'In Highcharts <= 3.0.9 the chart<br>didn\'t adapt to updated title size'
         }, {

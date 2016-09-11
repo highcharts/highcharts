@@ -125,7 +125,7 @@ window.addEventListener('DOMContentLoaded', function () {
                     });
                 }
                 var options = Highcharts.merge(dataOptions, chartOptions, template);
-                var chart = new Highcharts.Chart(options);
+                Highcharts.chart(options.chart.renderTo, options);
             }, chartOptions);
 
         }

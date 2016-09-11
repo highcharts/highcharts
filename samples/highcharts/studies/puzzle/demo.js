@@ -84,15 +84,11 @@ $(function () {
             function pointerMove(e) {
                 var point = chart.dragPoint,
                     dragStart = point && point.inPuzzle && point.dragStart,
-                    scale,
-                    transCorr,
                     startTranslateX,
                     startTranslateY,
                     translateX,
                     translateY,
-                    dist,
-                    startDist,
-                    pos;
+                    dist;
 
                 e = chart.pointer.normalize(e);
                 e.preventDefault();
@@ -130,7 +126,7 @@ $(function () {
                 }
             }
 
-            function pointerUp(e) {
+            function pointerUp() {
                 if (chart.dragPoint) {
                     stopDrag(chart.dragPoint);
                 }
@@ -147,8 +143,7 @@ $(function () {
         });
 
         seriesTypes.map.prototype.initPuzzle = function () {
-            var chart = this.chart,
-                total = 0;
+            var total = 0;
 
             if (this.options.puzzle) {
 

@@ -1,8 +1,7 @@
 $(function () {
     QUnit.test('Click event was called for a wrong series', function (assert) {
 
-        var status = false,
-            $container = $('#container'),
+        var $container = $('#container'),
             chart = $container.highcharts({
                 yAxis: [{
                     opposite: true

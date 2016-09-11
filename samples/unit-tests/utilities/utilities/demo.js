@@ -7,17 +7,13 @@ $(function () {
         numberFormat = Highcharts.numberFormat,
         pInt = Highcharts.pInt,
         setOptions = Highcharts.setOptions,
-        splat = Highcharts.splat,
-        stableSort = Highcharts.stabeSort;
+        splat = Highcharts.splat;
 
     /**
      * Wrapper because of fast migration from earlier system
      */
     function assertEquals(assert, message, actual, expected) {
         assert.equal(expected, actual, message);
-    }
-    function assertUndefined(assert, message, actual) {
-        assert.strictEqual(undefined, actual, message);
     }
 
     function countMembers(obj) {

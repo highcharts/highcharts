@@ -3,12 +3,10 @@ $(function () {
     // Code snippet for adding a HTML table representation of the chart data
     Highcharts.Chart.prototype.callbacks.push(function (chart) {
 
-        var div = document.createElement('div'),
-            ariaTable;
+        var div = document.createElement('div');
 
         chart.container.parentNode.appendChild(div);
         div.innerHTML = chart.getTable();
-        ariaTable = div.getElementsByTagName('table')[0];
 
         // Set ARIA attributes
         chart.renderTo.setAttribute('aria-label', 'A chart. ' + chart.options.title.text + '. ' + chart.options.subtitle.text);

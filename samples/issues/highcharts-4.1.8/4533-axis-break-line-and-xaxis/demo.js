@@ -47,8 +47,6 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts();
-
         assert.strictEqual(
             iteratorAB,
             9,

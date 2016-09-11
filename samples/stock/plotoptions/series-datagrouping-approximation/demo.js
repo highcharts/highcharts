@@ -29,7 +29,7 @@ $(function () {
             name: 'Data point count (confidence)',
             data: ADBE,
             dataGrouping: {
-                approximation: function (arr) {
+                approximation: function () {
                     console.log(
                         'dataGroupInfo:',
                         this.dataGroupInfo,

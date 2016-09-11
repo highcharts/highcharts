@@ -1,7 +1,6 @@
 jQuery(function () {
     QUnit.test('RangeSelector update extremes on enter', function (assert) {
         var $min,
-            $max,
             $enter = jQuery.Event('keypress', { keyCode: 13 }),
             chart = Highcharts.stockChart('container', {
                 series: [{
@@ -9,7 +8,6 @@ jQuery(function () {
                 }]
             });
         $min = jQuery('.highcharts-range-selector[name="min"]');
-        $max = jQuery('.highcharts-range-selector[name="max"]');
         assert.strictEqual(
             typeof chart.xAxis[0].userMin,
             'undefined',

@@ -1,8 +1,5 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['In Highcharts <= 3.0.8, line height was too small'],
             labels: {

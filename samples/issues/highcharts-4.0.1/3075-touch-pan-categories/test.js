@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
 
     Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
         return this[i];

@@ -218,7 +218,7 @@ $(function () {
 
                 // Distribute and put in place
                 H.distribute(boxes, chart.plotHeight);
-                each(boxes, function (box, i) {
+                each(boxes, function (box) {
                     var point = box.point,
                         tt = box.tt;
 

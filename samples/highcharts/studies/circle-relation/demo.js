@@ -4,7 +4,6 @@ $(function () {
         var defaultOptions = H.getOptions(),
             extendClass = H.extendClass,
             merge = H.merge,
-            pick = H.pick,
             seriesTypes = H.seriesTypes;
         /**
          * The series type factory. This will be included in HC5.

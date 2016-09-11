@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
     chart.renderer.label(
         'input[0] checked: <b>' + $('#container input')[0].checked + '</b><br>' +
         'input[1] checked: <b>' + $('#container input')[1].checked + '</b>', 100, 70)

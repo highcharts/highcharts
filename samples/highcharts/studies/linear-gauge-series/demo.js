@@ -5,9 +5,7 @@ $(function () {
      */
     (function (H) {
         var defaultPlotOptions = H.getOptions().plotOptions,
-            columnType = H.seriesTypes.column,
-            wrap = H.wrap,
-            each = H.each;
+            columnType = H.seriesTypes.column;
 
         defaultPlotOptions.lineargauge = H.merge(defaultPlotOptions.column, {});
         H.seriesTypes.lineargauge = H.extendClass(columnType, {
