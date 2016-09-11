@@ -68,7 +68,7 @@ $(function () {
         });
 
         console.log('--- exporting ---');
-        $('#container').append($('#container').highcharts().getSVG())
+        $('#container').append($('#container').highcharts().getSVG());
     });
 
 });

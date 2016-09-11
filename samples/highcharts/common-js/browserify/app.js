@@ -148,7 +148,7 @@ QUnit.test("Highstock", function (assert) {
         },
         series : [{
             name : 'AAPL',
-            data : Highcharts.map(new Array(365), function (undef, i) { 
+            data : Highcharts.map(new Array(365), function (undef, i) {
                 return i;
             }),
             pointStart: Date.UTC(2015, 0, 1),

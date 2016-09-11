@@ -11,7 +11,7 @@ $(function () {
                 }, {
                     opposite: true
                 }],
-                    tooltip: {
+                tooltip: {
                     shared: true
                 },
                 series: [{
@@ -41,7 +41,7 @@ $(function () {
             pageY: top + point.plotY,
             target: point.series.group.element
         });
-        
+
         assert.strictEqual(
             chart.hoverPoint && chart.hoverPoint.series.type,
             chart.series[2].type,

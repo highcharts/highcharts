@@ -11,7 +11,7 @@ $(function () {
             labels: {
                 autoRotation: 0,
                 style: {
-                    color: 'red',
+                    color: 'red'
                     //fontSize: '24px'
                 }
             }

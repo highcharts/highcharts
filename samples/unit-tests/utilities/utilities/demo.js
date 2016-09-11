@@ -414,7 +414,7 @@ $(function () {
             'number with decimals (0.12) returns true'
         );
         assert.strictEqual(
-            isNumber(.12),
+            isNumber(0.12),
             true,
             'number with only decimals (.12) returns true'
         );

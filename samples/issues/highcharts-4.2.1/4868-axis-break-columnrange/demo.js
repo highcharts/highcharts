@@ -7,12 +7,12 @@ $(function () {
                 },
                 yAxis: {
                     breaks: [{
-                        from: 10, 
+                        from: 10,
                         to: 20
                     }],
                     events: {
-                        pointBreak: function() {
-                            iter ++;
+                        pointBreak: function () {
+                            iter++;
                         }
                     }
                 },

@@ -2,7 +2,7 @@
 $(function () {
 
     function isArray(obj) {
-       return Object.prototype.toString.call(obj) === '[object Array]';
+        return Object.prototype.toString.call(obj) === '[object Array]';
     }
 
     QUnit.test('Preserve point config initial number type in options.data', function (assert) {

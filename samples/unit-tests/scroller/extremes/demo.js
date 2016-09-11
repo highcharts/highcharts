@@ -5,7 +5,7 @@ QUnit.test('getUnionExtremes', function (assert) {
                     enabled: true
                 },
                 data: [[1451952000000, 354652]]
-            }],
+            }]
         }),
         unionExtremes = chart.scroller.getUnionExtremes(),
         extremes = chart.xAxis[0].getExtremes();

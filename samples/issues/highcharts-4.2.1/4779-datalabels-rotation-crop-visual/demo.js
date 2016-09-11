@@ -1,7 +1,9 @@
 
 $(function () {
     function getData() {
-        var x, y, data = [];
+        var x,
+            y,
+            data = [];
 
         for (x = 0; x < 10; x++) {
             for (y = 0; y < 10; y++) {
@@ -75,7 +77,7 @@ $(function () {
         },
 
 
-        // -45 
+        // -45
         {
             data: getData(),
             dataLabels: {
