@@ -1,6 +1,5 @@
 function test(chart) {
-    var point = chart.series[0].points[2],
-        offset = $(chart.container).offset();
+    var point = chart.series[0].points[2];
 
     // Set hoverPoint
     chart.hoverSeries = point.series; // emulates element onmouseover
