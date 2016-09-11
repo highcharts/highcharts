@@ -6,8 +6,8 @@ $(function () {
                     type: 'waterfall',
                     animation: false
                 },
-                plotOptions:{
-                    series:{
+                plotOptions: {
+                    series: {
                         minPointLength: len
                     }
                 },

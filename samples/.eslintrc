@@ -21,7 +21,6 @@ rules:
     eol-last: 0
     func-style: 0
     indent: [2, 4]
-    key-spacing: 0              # TODO: Fix manually. Wait for --fix.
     max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0

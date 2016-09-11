@@ -25,15 +25,15 @@ $(function () {
 
             // Initiate the chart
             $('#container').highcharts('Map', {
-                chart : {
-                    borderWidth : 1
+                chart: {
+                    borderWidth: 1
                 },
 
                 colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
                     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
 
-                title : {
-                    text : 'Population density by country (/km²)'
+                title: {
+                    text: 'Population density by country (/km²)'
                 },
 
                 mapNavigation: {
@@ -80,8 +80,8 @@ $(function () {
                     }]
                 },
 
-                series : [{
-                    data : data,
+                series: [{
+                    data: data,
                     mapData: Highcharts.maps['custom/world'],
                     joinBy: ['iso-a2', 'code'],
                     animation: true,

@@ -12,16 +12,16 @@ $(function () {
         });
 
         $('#container').highcharts('Map', {
-            chart : {
-                borderWidth : 1
+            chart: {
+                borderWidth: 1
             },
 
             title: {
                 text: 'World population 2013 by country'
             },
 
-            subtitle : {
-                text : 'Demo of Highcharts map with bubbles'
+            subtitle: {
+                text: 'Demo of Highcharts map with bubbles'
             },
 
             legend: {
@@ -35,7 +35,7 @@ $(function () {
                 }
             },
 
-            series : [{
+            series: [{
                 name: 'Countries',
                 mapData: mapData,
                 color: '#E0E0E0',

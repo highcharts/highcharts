@@ -59,12 +59,12 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps basic demo'
+        title: {
+            text: 'Highmaps basic demo'
         },
 
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/south-america.js">South America</a>'
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/south-america.js">South America</a>'
         },
 
         mapNavigation: {
@@ -78,8 +78,8 @@ $(function () {
             min: 0
         },
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             mapData: Highcharts.maps['custom/south-america'],
             joinBy: 'hc-key',
             name: 'Random data',

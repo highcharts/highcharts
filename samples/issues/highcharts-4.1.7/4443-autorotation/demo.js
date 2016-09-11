@@ -9,8 +9,8 @@ $(function () {
             },
 
             xAxis: {
-                labels:{
-                    useHTML:true,
+                labels: {
+                    useHTML: true,
                     autoRotation: [-25]
                 },
                 categories: [

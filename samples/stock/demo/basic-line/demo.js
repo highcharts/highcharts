@@ -5,17 +5,17 @@ $(function () {
         $('#container').highcharts('StockChart', {
 
 
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'AAPL Stock Price'
+            title: {
+                text: 'AAPL Stock Price'
             },
 
-            series : [{
-                name : 'AAPL',
-                data : data,
+            series: [{
+                name: 'AAPL',
+                data: data,
                 tooltip: {
                     valueDecimals: 2
                 }

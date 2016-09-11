@@ -31,12 +31,12 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps basic demo'
+        title: {
+            text: 'Highmaps basic demo'
         },
 
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nordic-countries-core.js">Nordic Countries without Greenland, Svalbard, and Jan Mayen</a>'
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nordic-countries-core.js">Nordic Countries without Greenland, Svalbard, and Jan Mayen</a>'
         },
 
         mapNavigation: {
@@ -50,8 +50,8 @@ $(function () {
             min: 0
         },
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             mapData: Highcharts.maps['custom/nordic-countries-core'],
             joinBy: 'hc-key',
             name: 'Random data',

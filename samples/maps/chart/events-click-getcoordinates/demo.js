@@ -25,7 +25,7 @@ function showMap(mapKey) {
         },
 
         title: {
-            text : 'Draw your own points or lines'
+            text: 'Draw your own points or lines'
         },
 
         subtitle: supportsLatLon ? {} : {

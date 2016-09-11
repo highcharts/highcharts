@@ -6,7 +6,7 @@ $(function () {
                 type: 'bar'
             },
             xAxis: {
-                labels:{
+                labels: {
                     step: 1
                 },
                 categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania','Africa', 'America', 'Asia', 'Europe', 'Oceania','Africa', 'America', 'Asia', 'Europe', 'Oceania','Africa', 'America', 'Asia', 'Europe', 'Oceania','Africa', 'America', 'Asia', 'Europe', 'Oceania','Africa', 'America', 'Asia', 'Europe', 'Oceania']

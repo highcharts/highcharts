@@ -43,8 +43,8 @@ $(function () {
                 max: 1000,
                 type: 'logarithmic'
             },
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: mapData,
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

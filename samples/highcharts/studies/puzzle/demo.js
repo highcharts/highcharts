@@ -200,8 +200,8 @@ $(function () {
 
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps puzzle',
+        title: {
+            text: 'Highmaps puzzle',
             style: {
                 fontSize: '20pt'
             }
@@ -219,7 +219,7 @@ $(function () {
             }
         },
 
-        series : [{
+        series: [{
             borderColor: '#e8e8e8',
             mapData: mapData,
             nullColor: 'transparent'

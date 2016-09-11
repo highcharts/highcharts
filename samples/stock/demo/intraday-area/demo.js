@@ -17,40 +17,40 @@ $(function () {
                 gapGridLineWidth: 0
             },
 
-            rangeSelector : {
-                buttons : [{
-                    type : 'hour',
-                    count : 1,
-                    text : '1h'
+            rangeSelector: {
+                buttons: [{
+                    type: 'hour',
+                    count: 1,
+                    text: '1h'
                 }, {
-                    type : 'day',
-                    count : 1,
-                    text : '1D'
+                    type: 'day',
+                    count: 1,
+                    text: '1D'
                 }, {
-                    type : 'all',
-                    count : 1,
-                    text : 'All'
+                    type: 'all',
+                    count: 1,
+                    text: 'All'
                 }],
-                selected : 1,
-                inputEnabled : false
+                selected: 1,
+                inputEnabled: false
             },
 
-            series : [{
-                name : 'AAPL',
+            series: [{
+                name: 'AAPL',
                 type: 'area',
-                data : data,
+                data: data,
                 gapSize: 5,
                 tooltip: {
                     valueDecimals: 2
                 },
-                fillColor : {
-                    linearGradient : {
+                fillColor: {
+                    linearGradient: {
                         x1: 0,
                         y1: 0,
                         x2: 0,
                         y2: 1
                     },
-                    stops : [
+                    stops: [
                         [0, Highcharts.getOptions().colors[0]],
                         [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                     ]

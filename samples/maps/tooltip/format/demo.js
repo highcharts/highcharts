@@ -28,8 +28,8 @@ $(function () {
                 footerFormat: '<span style="font-size:10px">Source: Wikipedia</span><br/>'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

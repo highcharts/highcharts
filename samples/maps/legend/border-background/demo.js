@@ -9,8 +9,8 @@ $(function () {
                 marginLeft: 70
             },
 
-            title : {
-                text : 'Legend border and background options'
+            title: {
+                text: 'Legend border and background options'
             },
 
             legend: {
@@ -38,8 +38,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

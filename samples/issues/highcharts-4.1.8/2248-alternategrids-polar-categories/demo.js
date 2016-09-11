@@ -6,14 +6,14 @@ $(function () {
                 },
                 xAxis: {
                     // This alternateGridColor is wrong:
-                    alternateGridColor:'#FFC0C0',
+                    alternateGridColor: '#FFC0C0',
                     categories: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
                     // The X axis line is a circle instead of a polygon
-                    lineWidth:0
+                    lineWidth: 0
                 },
                 yAxis: {
                     //This is correct:
-                    alternateGridColor:'#C0FFC0',
+                    alternateGridColor: '#C0FFC0',
                     gridLineInterpolation: 'polygon',
                     title: {
                         text: 'Y-axis'

@@ -83,7 +83,7 @@ $(function () {
             text: 'Measured vs Expected Data'
         },
         subtitle: {
-            text:'y = sin(x)'
+            text: 'y = sin(x)'
         },
         series: [{
             type: 'scatter',

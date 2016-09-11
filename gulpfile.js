@@ -177,7 +177,7 @@ gulp.task('lint', ['scripts'], function () {
 
 });
 gulp.task('lint-samples', function () {
-    return gulp.src(['./samples/*/*/*/demo.js'])
+    return gulp.src(['./samples/*/*/*/demo.js', './samples/*/*/*/test.js', './samples/*/*/*/unit-test.js'])
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())

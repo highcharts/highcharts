@@ -1,16 +1,16 @@
 $(function () {
 
     Highcharts.setOptions({
-        global : {
-            useUTC : false
+        global: {
+            useUTC: false
         }
     });
 
     // Create the chart
     $('#container').highcharts('StockChart', {
-        chart : {
-            events : {
-                load : function () {
+        chart: {
+            events: {
+                load: function () {
 
                     // set up the updating of the chart each second
                     var series = this.series[0];
@@ -40,17 +40,17 @@ $(function () {
             selected: 0
         },
 
-        title : {
-            text : 'Live random data'
+        title: {
+            text: 'Live random data'
         },
 
         exporting: {
             enabled: false
         },
 
-        series : [{
-            name : 'Random data',
-            data : (function () {
+        series: [{
+            name: 'Random data',
+            data: (function () {
                 // generate an array of random data
                 var data = [],
                     time = (new Date()).getTime(),
