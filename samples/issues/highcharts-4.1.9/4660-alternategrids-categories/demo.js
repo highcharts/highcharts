@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Non-polar and categorized chart should render last alternate plotBand." , function (assert) {
+    QUnit.test("Non-polar and categorized chart should render last alternate plotBand.", function (assert) {
         var chart = $('#container').highcharts({
                 xAxis: {
                     alternateGridColor: '#FDFFD5',

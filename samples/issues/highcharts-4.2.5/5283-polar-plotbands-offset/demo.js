@@ -17,7 +17,7 @@ $(function () {
                     to: 120,
                     color: 'blue'
                 }]
-            },{
+            }, {
                 offset: 30,
                 min: 0,
                 max: 200,
@@ -29,7 +29,7 @@ $(function () {
             }],
             series: [{
                 data: [80]
-            },{
+            }, {
                 yAxis: 1,
                 data: [100]
             }]

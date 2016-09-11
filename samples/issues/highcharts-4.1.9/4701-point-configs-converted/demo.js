@@ -9,7 +9,7 @@ $(function () {
         var chart = $('#container').highcharts({
 
             series: [{
-                data: [1,2,3],
+                data: [1, 2, 3],
                 turboThreshold: 2
             }]
 

@@ -180,7 +180,7 @@ $(function () {
         assertEquals(assert, "splat object", 1, splat({}).length);
 
         // test with array
-        assertEquals(assert, "splat array", 3, splat([1,2,3]).length);
+        assertEquals(assert, "splat array", 3, splat([1, 2, 3]).length);
     });
 
 /*

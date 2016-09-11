@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Negative color shoud be respected for hover state" , function (assert) {
+    QUnit.test("Negative color shoud be respected for hover state", function (assert) {
 
         var chart = $('#container').highcharts({
                 series: [{

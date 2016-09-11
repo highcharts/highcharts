@@ -18,7 +18,7 @@ $(function () {
             text: 'Highcharts <= 3.0.9. Attributes were applied outside elements.'
         },
         series: [{
-            data: [1,2,1,2]
+            data: [1, 2, 1, 2]
         }]
     });
 });

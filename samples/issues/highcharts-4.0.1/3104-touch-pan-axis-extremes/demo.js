@@ -24,7 +24,7 @@ $(function () {
         series: [{
             name: 'blue',
             color: '#0000FF',
-            data: [1,4,3,4,5,5,4],
+            data: [1, 4, 3, 4, 5, 5, 4],
             pointStart: 3
         }]
     });

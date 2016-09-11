@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Apply minPointLength for a waterfall series" , function (assert) {
+    QUnit.test("Apply minPointLength for a waterfall series", function (assert) {
         var len = 10,
             chart = $('#container').highcharts({
                 chart: {

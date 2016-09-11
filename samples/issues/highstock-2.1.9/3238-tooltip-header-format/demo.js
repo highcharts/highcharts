@@ -18,9 +18,9 @@ $(function () {
 
             series: [{
                 data: [1, 1, 1]
-            },{
+            }, {
                 data: [2, 2, 2]
-            },{
+            }, {
                 data: [2, 2, 2]
             }],
             tooltip: {

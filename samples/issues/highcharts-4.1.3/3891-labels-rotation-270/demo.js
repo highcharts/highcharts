@@ -10,7 +10,7 @@ $(function () {
             },
 
             series: [{
-                data: [1,3,2]
+                data: [1, 3, 2]
             }]
         });
 
