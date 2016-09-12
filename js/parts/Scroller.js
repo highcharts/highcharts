@@ -949,14 +949,15 @@ Navigator.prototype = {
 						this.navigatorSeries.remove();
 						delete this.navigatorSeries;
 					}
-				});
-		
-				// Handle adding new series
-				addEvent(this.chart, 'addSeries', function (event) {
-					// TODO: Won't work since chart.series hasn't been updated yet.
-					scroller.setBaseSeries();
-				});
+				});		
 			}, this);
+
+			// Handle adding new series
+			wrap(Chart.prototype, 'addSeries', function (proceed) {
+				proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+				scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+				this.redraw();
+			});
 		}
 	},
 
