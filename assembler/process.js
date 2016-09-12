@@ -10,7 +10,7 @@ const getFunction = (body, args) => {
     try {
         f = new (Function.prototype.bind.apply(Function, a)); // eslint-disable-line no-new-func
     } catch (e) {
-        fs.writeFileSync('temp.js', body, 'utf8');
+        U.writeFile('temp.js', body);
         U.debug(true, ['Construction of function failed. Caused by: ' + e.message,
             'View function body in temp.js'
         ].join('\n'));
@@ -79,7 +79,7 @@ const printPalette = (path, palette) => {
             `;
         }
     });
-    fs.writeFileSync(path, html);
+    U.writeFile(path, html);
 };
 
 const preProcess = (content, build) => {

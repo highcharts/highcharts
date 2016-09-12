@@ -91,7 +91,7 @@ const build = userOptions=> {
     let options = Object.assign({}, defaultOptions, userOptions);
     // Check if required options are set
     if (options.base) {
-        options.palette = (options.palette) ? options.palette : p.getPalette('./css/highcharts.scss');
+        options.palette = (options.palette) ? options.palette : p.getPalette(options.base + '../../css/highcharts.scss');
         p.printPalette(options.output + 'palette.html', options.palette);
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         getIndividualOptions(options)
@@ -101,7 +101,7 @@ const build = userOptions=> {
                 if (o.pretty) {
                     file = beautify(file);
                 }
-                fs.writeFileSync(o.outputPath, file, 'utf8');
+                U.writeFile(o.outputPath, file);
                 U.debug(o.debug, [
                     'Completed ' + (i + 1) + ' of ' + arr.length,
                     '- type: ' + o.type,
