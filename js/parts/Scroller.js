@@ -205,6 +205,17 @@ Navigator.prototype = {
 	},
 
 	/**
+	 * Update navigator
+	 * @param {Object} options Options to merge in when updating navigator
+	 */
+	update: function (options) {
+		var chartOptions = this.chart.options;
+		this.destroy();
+		chartOptions.navigator = merge(true, chartOptions.navigator || {}, this.options, options);
+		this.init(this.chart);
+	},
+
+	/**
 	 * Render the navigator
 	 * @param {Number} min X axis value minimum
 	 * @param {Number} max X axis value maximum
@@ -438,16 +449,18 @@ Navigator.prototype = {
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		each(this._events, function (args) {
-			removeEvent.apply(null, args);
-		});
-		this._events = undefined;
+		if (this._events) {
+			each(this._events, function (args) {
+				removeEvent.apply(null, args);
+			});
+			this._events = undefined;
+		}
 		this.removeBaseSeriesEvents();
 	},
 
 	removeBaseSeriesEvents: function () {
 		var baseSeries = this.baseSeries || [];
-		if (this.navigatorEnabled && this.baseSeries[0] && this.navigatorOptions.adaptToUpdatedData !== false) {
+		if (this.navigatorEnabled && baseSeries[0] && this.navigatorOptions.adaptToUpdatedData !== false) {
 			each(baseSeries, function (series) {
 				removeEvent(series, 'updatedData', this.updatedDataHandler);	
 			}, this);
@@ -849,7 +862,7 @@ Navigator.prototype = {
 		var chart = this.chart,
 			baseSeries = this.baseSeries = [];
 
-		baseSeriesOptions = baseSeriesOptions || chart.options.navigator.baseSeries || 0;
+		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;
 
 		// If we're resetting, remove the existing series
 		if (this.series) {
@@ -860,7 +873,7 @@ Navigator.prototype = {
 		}
 
 		// Iterate through series and add the ones that should be shown in navigator
-		each(chart.series, function (series, i) {
+		each(chart.series || [], function (series, i) {
 			if (series.options.showInNavigator || (i === baseSeriesOptions || series.options.id === baseSeriesOptions) &&
 					series.options.showInNavigator !== false) {
 				baseSeries.push(series);
@@ -953,10 +966,21 @@ Navigator.prototype = {
 			}, this);
 
 			// Handle adding new series
-			wrap(Chart.prototype, 'addSeries', function (proceed) {
-				proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+			wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
+				proceed.call(this, options, false, animation);
 				scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
-				this.redraw();
+				if (pick(redraw, true)) {
+					this.redraw();
+				}
+			});
+
+			// Handle updating series
+			wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
+				proceed.call(this, newOptions, false);
+				scroller.update();
+				if (pick(redraw, true)) {
+					this.chart.redraw();
+				}
 			});
 		}
 	},
@@ -1074,11 +1098,12 @@ Navigator.prototype = {
 			erase(this.chart.axes, this.yAxis);
 		}
 		// Destroy series
-		each(this.series, function (s) {
+		each(this.series || [], function (s) {
 			if (s.destroy) {
 				s.destroy();
 			}
 		});
+		delete this.series;
 
 		// Destroy properties
 		each(['xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
