@@ -64,20 +64,22 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	 */
 	translate: function () {
 		var series = this,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			hasModifyValue = !!series.modifyValue,
+			translatedOLC = ['plotOpen', 'yBottom', 'plotClose'];
 
 		seriesTypes.column.prototype.translate.apply(series);
 
-		// do the translation
+		// Do the translation
 		each(series.points, function (point) {
-			// the graphics
-			if (point.open !== null) {
-				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
-			}
-			if (point.close !== null) {
-				point.plotClose = yAxis.translate(point.close, 0, 1, 0, 1);
-			}
-
+			each([point.open, point.low, point.close], function (value, i) {
+				if (value !== null) {
+					if (hasModifyValue) {
+						value = series.modifyValue(value);
+					}
+					point[translatedOLC[i]] = yAxis.toPixels(value, true);
+				}
+			});
 		});
 	},
 

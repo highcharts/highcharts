@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-09-08)
+ * @license Highstock JS v4.2.6-modified (2016-09-12)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -20455,7 +20455,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-09-08)
+     * Highstock JS v4.2.6-modified (2016-09-12)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -21436,20 +21436,22 @@
          */
         translate: function () {
             var series = this,
-                yAxis = series.yAxis;
+                yAxis = series.yAxis,
+                hasModifyValue = !!series.modifyValue,
+                translatedOLC = ['plotOpen', 'yBottom', 'plotClose'];
 
             seriesTypes.column.prototype.translate.apply(series);
 
-            // do the translation
+            // Do the translation
             each(series.points, function (point) {
-                // the graphics
-                if (point.open !== null) {
-                    point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
-                }
-                if (point.close !== null) {
-                    point.plotClose = yAxis.translate(point.close, 0, 1, 0, 1);
-                }
-
+                each([point.open, point.low, point.close], function (value, i) {
+                    if (value !== null) {
+                        if (hasModifyValue) {
+                            value = series.modifyValue(value);
+                        }
+                        point[translatedOLC[i]] = yAxis.toPixels(value, true);
+                    }
+                });
             });
         },
 
@@ -25130,9 +25132,9 @@
             length = processedYData.length;
 
             // For series with more than one value (range, OHLC etc), compare against
-            // the pointValKey (#4922)
+            // close or the pointValKey (#4922, #3112)
             if (series.pointArrayMap) {
-                keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+                keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
             }
 
             // find the first value for comparison
