@@ -101,7 +101,7 @@ const build = userOptions=> {
                 if (o.pretty) {
                     file = beautify(file);
                 }
-                fs.writeFileSync(o.outputPath, file, 'utf8');
+                U.writeFile(o.outputPath, file);
                 U.debug(o.debug, [
                     'Completed ' + (i + 1) + ' of ' + arr.length,
                     '- type: ' + o.type,
