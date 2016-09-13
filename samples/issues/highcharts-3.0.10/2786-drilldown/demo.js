@@ -3,7 +3,6 @@ $(function () {
 
         chart: {
             height: 300,
-            renderTo: 'container',
             type: 'column',
             animation: false
         },
@@ -69,6 +68,6 @@ $(function () {
         }]
     };
 
-    var chart1 = new Highcharts.Chart(options);
+    Highcharts.chart('container', options);
 });
 

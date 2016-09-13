@@ -68,8 +68,8 @@ $(function () {
 
         // Run update
         chart.yAxis[0].update({
-            min:0,
-            max:400
+            min: 0,
+            max: 400
         });
 
         assert.strictEqual(
@@ -96,8 +96,8 @@ $(function () {
 
         // Run update
         chart.yAxis[0].update({
-            min:0,
-            max:400
+            min: 0,
+            max: 400
         });
 
         assert.strictEqual(

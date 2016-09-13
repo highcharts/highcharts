@@ -15,8 +15,8 @@ $(function () {
                 }
             },
 
-            title : {
-                text : 'Chart with a plot background gradient'
+            title: {
+                text: 'Chart with a plot background gradient'
             },
 
             mapNavigation: {
@@ -53,8 +53,8 @@ $(function () {
             },
 
             // The map series
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

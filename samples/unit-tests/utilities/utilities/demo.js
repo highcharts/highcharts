@@ -7,17 +7,13 @@ $(function () {
         numberFormat = Highcharts.numberFormat,
         pInt = Highcharts.pInt,
         setOptions = Highcharts.setOptions,
-        splat = Highcharts.splat,
-        stableSort = Highcharts.stabeSort;
+        splat = Highcharts.splat;
 
     /**
      * Wrapper because of fast migration from earlier system
      */
     function assertEquals(assert, message, actual, expected) {
         assert.equal(expected, actual, message);
-    }
-    function assertUndefined(assert, message, actual) {
-        assert.strictEqual(undefined, actual, message);
     }
 
     function countMembers(obj) {
@@ -180,7 +176,7 @@ $(function () {
         assertEquals(assert, "splat object", 1, splat({}).length);
 
         // test with array
-        assertEquals(assert, "splat array", 3, splat([1,2,3]).length);
+        assertEquals(assert, "splat array", 3, splat([1, 2, 3]).length);
     });
 
 /*
@@ -414,7 +410,7 @@ $(function () {
             'number with decimals (0.12) returns true'
         );
         assert.strictEqual(
-            isNumber(.12),
+            isNumber(0.12),
             true,
             'number with only decimals (.12) returns true'
         );

@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
 
     // First drill down, emulate category click
     chart.series[0].points[0].doDrilldown(true);

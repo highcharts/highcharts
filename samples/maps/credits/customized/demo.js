@@ -5,8 +5,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Credits with custom text, href and position'
+            title: {
+                text: 'Credits with custom text, href and position'
             },
 
             credits: {
@@ -37,8 +37,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

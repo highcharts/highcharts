@@ -178,7 +178,7 @@
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
-			color: color,
+			color: point.isNull ? new Highcharts.Color(color).setOpacity(0).get() : color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-08-31)
+ * @license Highmaps JS v4.2.6-modified (2016-09-13)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -479,7 +479,7 @@
                         value = original[key];
 
                         // Copy the contents of objects, but not arrays or DOM nodes
-                        if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
+                        if (Highcharts.isObject(value, true) &&
                                 key !== 'renderTo' && typeof value.nodeType !== 'number') {
                             copy[key] = doCopy(copy[key] || {}, value);
 
@@ -529,7 +529,8 @@
      * @param {Object} obj
      */
     function isArray(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
+        var str = Object.prototype.toString.call(obj);
+        return str === '[object Array]' || str === '[object Array Iterator]';
     }
 
     /**
@@ -7520,11 +7521,21 @@
         nameToX: function (point) {
             var explicitCategories = isArray(this.categories),
                 names = explicitCategories ? this.categories : this.names,
-                nameX,
+                nameX = point.options.x,
                 x;
 
             point.series.requireSorting = false;
-            nameX = pick(point.options.x, inArray(point.name, names)); // #2522
+
+            if (!defined(nameX)) {
+                // docs: When nameToX is true, points are placed on the X axis according to their
+                // names. If the same point name is repeated in the same or another series, the point
+                // is placed together with other points of the same name. When nameToX is false,
+                // the points are laid out in increasing X positions regardless of their names, and
+                // the X axis category will take the name of the last point in each position.
+                nameX = this.options.nameToX === false ?
+                    point.series.autoIncrement() : 
+                    inArray(point.name, names);
+            }
             if (nameX === -1) { // The name is not found in currenct categories
                 if (!explicitCategories) {
                     x = names.length;
@@ -7850,7 +7861,7 @@
             }
 
             // Prevent ticks from getting so close that we can't draw the labels
-            if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
+            if (!this.tickAmount) {
                 axis.tickInterval = axis.unsquish();
             }
 
@@ -8422,7 +8433,7 @@
                 labelMetrics = this.labelMetrics(),
                 textOverflowOption = labelOptions.style.textOverflow,
                 css,
-                labelLength = 0,
+                maxLabelLength = 0,
                 label,
                 i,
                 pos;
@@ -8432,20 +8443,22 @@
                 attr.rotation = labelOptions.rotation || 0; // #4443
             }
 
+            // Get the longest label length
+            each(tickPositions, function (tick) {
+                tick = ticks[tick];
+                if (tick && tick.labelLength > maxLabelLength) {
+                    maxLabelLength = tick.labelLength;
+                }
+            });
+            this.maxLabelLength = maxLabelLength;
+        
+
             // Handle auto rotation on horizontal axis
             if (this.autoRotation) {
 
-                // Get the longest label length
-                each(tickPositions, function (tick) {
-                    tick = ticks[tick];
-                    if (tick && tick.labelLength > labelLength) {
-                        labelLength = tick.labelLength;
-                    }
-                });
-
                 // Apply rotation only if the label is too wide for the slot, and
                 // the label is wider than its height.
-                if (labelLength > innerWidth && labelLength > labelMetrics.h) {
+                if (maxLabelLength > innerWidth && maxLabelLength > labelMetrics.h) {
                     attr.rotation = this.labelRotation;
                 } else {
                     this.labelRotation = 0;
@@ -9873,16 +9886,15 @@
                 tooltip = chart.tooltip,
                 shared = tooltip ? tooltip.shared : false,
                 followPointer,
+                updatePosition = true,
                 hoverPoint = chart.hoverPoint,
                 hoverSeries = chart.hoverSeries,
                 i,
-                distance = [Number.MAX_VALUE, Number.MAX_VALUE], // #4511
                 anchor,
                 noSharedTooltip,
                 stickToHoverSeries,
                 directTouch,
                 kdpoints = [],
-                kdpoint = [],
                 kdpointT;
 
             // For hovering over the empty parts of the plot area (hoverSeries is undefined).
@@ -9900,7 +9912,7 @@
             // search the k-d tree.
             stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
             if (stickToHoverSeries && hoverPoint) {
-                kdpoint = [hoverPoint];
+                kdpoints = [hoverPoint];
 
             // Handle shared tooltip or cases where a series is not yet hovered
             } else {
@@ -9921,25 +9933,22 @@
                         }
                     }
                 });
-                // Find absolute nearest point
-                each(kdpoints, function (p) {
-                    if (p) {
-                        // Store both closest points, using point.dist and point.distX comparisons (#4645):
-                        each(['dist', 'distX'], function (dist, k) {
-                            if (isNumber(p[dist])) {
-                                var
-                                    // It is closer than the reference point
-                                    isCloser = p[dist] < distance[k],
-                                    // It is equally close, but above the reference point (#4679)
-                                    isAbove = p[dist] === distance[k] && p.series.group.zIndex >= kdpoint[k].series.group.zIndex;
 
-                                if (isCloser || isAbove) {
-                                    distance[k] = p[dist];
-                                    kdpoint[k] = p;
-                                }
-                            }
-                        });
+                // Sort kdpoints by distance to mouse pointer
+                kdpoints.sort(function (p1, p2) {
+                    var isCloserX = p1.distX - p2.distX,
+                        isCloser = p1.dist - p2.dist,
+                        isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
+                    // We have two points which are not in the same place on xAxis and shared tooltip:
+                    if (isCloserX !== 0) {
+                        return isCloserX;
                     }
+                    // Points are not exactly in the same place on x/yAxis:
+                    if (isCloser !== 0) {
+                        return isCloser;
+                    }
+                    // The same xAxis and yAxis position, sort by z-index:
+                    return isAbove;
                 });
             }
 
@@ -9947,37 +9956,43 @@
             if (shared) {
                 i = kdpoints.length;
                 while (i--) {
-                    if (kdpoints[i].clientX !== kdpoint[1].clientX || kdpoints[i].series.noSharedTooltip) {
+                    if (kdpoints[i].clientX !== kdpoints[0].clientX || kdpoints[i].series.noSharedTooltip) {
                         kdpoints.splice(i, 1);
                     }
                 }
             }
 
             // Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-            if (kdpoint[0] && (kdpoint[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+            if (kdpoints[0] && (kdpoints[0] !== pointer.hoverPoint || (tooltip && tooltip.isHidden))) {
                 // Draw tooltip if necessary
-                if (shared && !kdpoint[0].series.noSharedTooltip) {
-                    if (kdpoints.length && tooltip) {
-                        tooltip.refresh(kdpoints, e);
-                    }
-
+                if (shared && !kdpoints[0].series.noSharedTooltip) {
                     // Do mouseover on all points (#3919, #3985, #4410)
-                    each(kdpoints, function (point) {
-                        point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint[0]));
-                    });
-                    this.prevKDPoint = kdpoint[1];
+                    for (i = 0; i >= 0; i--) {
+                        kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
+                    }
+                    // Make sure that the hoverPoint and hoverSeries are stored for events (e.g. click), #5622
+                    if (hoverSeries && hoverSeries.directTouch && hoverPoint && hoverPoint !== kdpoints[0]) {
+                        hoverPoint.onMouseOver(e, false);
+                    }
+                    if (kdpoints.length && tooltip) {
+                        // Keep the order of series in tooltip:
+                        tooltip.refresh(kdpoints.sort(function (p1, p2) {
+                            return p1.series.index - p2.series.index;
+                        }), e);
+                    }
                 } else {
                     if (tooltip) {
-                        tooltip.refresh(kdpoint[0], e);
+                        tooltip.refresh(kdpoints[0], e);
                     }
                     if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-                        kdpoint[0].onMouseOver(e);
+                        kdpoints[0].onMouseOver(e);
                     }
-                    this.prevKDPoint = kdpoint[0];
                 }
-
+                pointer.prevKDPoint = kdpoints[0];
+                updatePosition = false;
+            }
             // Update positions (regardless of kdpoint or hoverPoint)
-            } else {
+            if (updatePosition) {
                 followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
                 if (tooltip && followPointer && !tooltip.isHidden) {
                     anchor = tooltip.getAnchor([{}], e);
@@ -9997,10 +10012,10 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-            each(shared ? kdpoints : [pick(hoverPoint, kdpoint[1])], function (point) { // #5269
-                each(chart.axes, function (axis) {
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
+                each(chart.axes, function drawAxisCrosshair(axis) {
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
-                    if (!point || point.series[axis.coll] === axis) {
+                    if (!point || point.series && point.series[axis.coll] === axis) { // #5658
                         axis.drawCrosshair(e, point);
                     }
                 });
@@ -13125,6 +13140,11 @@
             extend(point, options);
             point.options = point.options ? extend(point.options, options) : options;
 
+            // Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+            if (options.group) {
+                delete point.group;
+            }
+
             // For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
             if (pointValKey) {
                 point.y = point[pointValKey];
@@ -14208,13 +14228,8 @@
             var series = this,
                 chart = series.chart,
                 clipRect,
-                animation = series.options.animation,
+                animation = animObject(series.options.animation),
                 sharedClipKey;
-
-            // Animation option is set to true
-            if (animation && !isObject(animation)) {
-                animation = defaultPlotOptions[series.type].animation;
-            }
 
             // Initialize the animation. Set up the clipping rectangle.
             if (init) {
@@ -15474,8 +15489,6 @@
                 i,
                 x;
 
-            setAnimation(animation, chart);
-
             // Optional redraw, defaults to true
             redraw = pick(redraw, true);
 
@@ -15527,9 +15540,10 @@
             // redraw
             series.isDirty = true;
             series.isDirtyData = true;
+
             if (redraw) {
                 series.getAttribs(); // #1937
-                chart.redraw();
+                chart.redraw(animation); // Animation is set anyway on redraw, #5665
             }
         },
 
@@ -15991,7 +16005,12 @@
 
                 // Register shape type and arguments to be used in drawPoints
                 point.shapeType = 'rect';
-                point.shapeArgs = series.crispCol(barX, barY, barW, barH);
+                point.shapeArgs = series.crispCol.apply(
+                    series,
+                    point.isNull ? 
+                        [point.plotX, yAxis.len / 2, 0, 0] : // #3169, drilldown from null must have a position to work from
+                        [barX, barY, barW, barH]
+                );
             });
 
         },
@@ -17254,6 +17273,9 @@
             // Override original axis properties
             this.horiz = horiz;
             this.zoomEnabled = false;
+        
+            // Add default values    
+            this.defaultLegendLength = 200;
         },
 
         /*
@@ -17343,6 +17365,7 @@
         setAxisSize: function () {
             var symbol = this.legendSymbol,
                 chart = this.chart,
+                legendOptions = chart.options.legend || {},
                 x,
                 y,
                 width,
@@ -17358,6 +17381,9 @@
 
                 this.len = this.horiz ? width : height;
                 this.pos = this.horiz ? x : y;
+            } else {
+                // Fake length for disabled legend to avoid tick issues and such (#5205)
+                this.len = (this.horiz ? legendOptions.symbolWidth : legendOptions.symbolHeight) || this.defaultLegendLength;
             }
         },
 
@@ -17472,8 +17498,8 @@
             var padding = legend.padding,
                 legendOptions = legend.options,
                 horiz = this.horiz,
-                width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
-                height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+                width = pick(legendOptions.symbolWidth, horiz ? this.defaultLegendLength : 12),
+                height = pick(legendOptions.symbolHeight, horiz ? 12 : this.defaultLegendLength),
                 labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
                 itemDistance = pick(legendOptions.itemDistance, 10);
 
@@ -17829,7 +17855,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null) {
+            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);
@@ -20576,7 +20602,7 @@
                 oldVisibility = series.visible;
 
             // if called without an argument, toggle visibility
-            series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
+            series.visible = vis = series.options.visible = series.userOptions.visible = vis === undefined ? !oldVisibility : vis; // #5618
             showOrHide = vis ? 'show' : 'hide';
 
             // show or hide elements

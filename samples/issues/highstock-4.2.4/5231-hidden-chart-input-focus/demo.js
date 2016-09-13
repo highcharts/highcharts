@@ -1,11 +1,11 @@
 $(function () {
     QUnit.test('Input focus of previously hidden chart', function (assert) {
         Highcharts.StockChart({
-          chart: {
-            renderTo: 'container'
-          },
-          series: [{
-            data: [
+            chart: {
+                renderTo: 'container'
+            },
+            series: [{
+                data: [
               [1241136000000, 18.18],
               [1241395200000, 18.87],
               [1241481600000, 18.96],
@@ -15,8 +15,8 @@ $(function () {
               [1242000000000, 18.51],
               [1242086400000, 17.77],
               [1242172800000, 17.07]
-            ]
-          }]
+                ]
+            }]
         });
         $('#container').show();
         assert.strictEqual(

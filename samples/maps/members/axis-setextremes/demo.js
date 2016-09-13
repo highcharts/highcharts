@@ -10,8 +10,8 @@ $(function () {
                 height: 500
             },
 
-            title : {
-                text : 'Set axis extremes'
+            title: {
+                text: 'Set axis extremes'
             },
 
             colorAxis: {
@@ -20,8 +20,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

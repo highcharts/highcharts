@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
 
     // Grab the left handle
     chart.scroller.mouseDownHandler({

@@ -27,10 +27,10 @@ $(function () {
         }],
 
         series: [{
-            data: [1,3,2,4],
+            data: [1, 3, 2, 4],
             name: 'left: auto'
         }, {
-            data: [3,2,4,1].reverse(),
+            data: [3, 2, 4, 1].reverse(),
             yAxis: 1,
             name: 'left: 200'
         }]

@@ -1,9 +1,7 @@
 $(function () {
     var seriesOptions = [],
-        yAxisOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'],
-        colors = Highcharts.getOptions().colors;
+        names = ['MSFT', 'AAPL', 'GOOG'];
 
     // create the chart when all data is loaded
     function createChart() {

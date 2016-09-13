@@ -9,7 +9,7 @@ jQuery(function () {
                 animation: false
             },
 
-              
+
 
             yAxis: {
                 startOnTick: false,
@@ -47,6 +47,6 @@ jQuery(function () {
             chart.yAxis[0].max > 102.9,
             'DE point is within range'
         );
-        
+
     });
 });

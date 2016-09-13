@@ -1,6 +1,6 @@
 $(function () {
     // create the chart
-    var chart = $('#container').highcharts('StockChart', {
+    $('#container').highcharts('StockChart', {
 
 
         rangeSelector: {
@@ -14,7 +14,7 @@ $(function () {
 
         series: [{
             type: 'column',
-            data: [4,2,3,1]
+            data: [4, 2, 3, 1]
         }]
     });
 

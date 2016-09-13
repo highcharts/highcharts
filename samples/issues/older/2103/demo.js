@@ -9,7 +9,7 @@ $(function () {
         },
 
         series: [{
-            data: [0,0,0],
+            data: [0, 0, 0],
             center: ['30%', '30%']
         }, {
             data: [null, null, null],

@@ -9,13 +9,13 @@ $(function () {
             each = H.each,
             extendClass = H.extendClass,
             pick = H.pick,
-            Point = H.Point;
+            Point = H.Point,
+            Series = H.Series;
 
         defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
             tooltip: {
                 pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
-            },
-            cropThreshold: Number.MAX_VALUE // a workaround for #5647 - a real fix would be to check both x1 and x2 in a cropData override
+            }
         });
         H.seriesTypes.xrange = H.extendClass(columnType, {
             pointClass: extendClass(Point, {
@@ -59,6 +59,22 @@ $(function () {
 
                 return metrics;
             },
+
+            /**
+             * Override cropData to show a point where x is outside visible range
+             * but x2 is outside.
+             */
+            cropData: function (xData, yData, min, max) {
+
+                // Replace xData with x2Data to find the appropriate cropStart
+                var crop = Series.prototype.cropData.call(this, this.x2Data, yData, min, max);
+
+                // Re-insert the cropped xData
+                crop.xData = xData.slice(crop.start, crop.end);
+
+                return crop;
+            },
+
             translate: function () {
                 columnType.prototype.translate.apply(this, arguments);
                 var series = this,
@@ -67,19 +83,27 @@ $(function () {
                     minPointLength = series.options.minPointLength || 0;
 
                 H.each(series.points, function (point) {
-                    var barWidth = Math.min(
-                            xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX,
-                            xAxis.len
-                        ),
-                        barWidthDifference = barWidth < minPointLength ? minPointLength - barWidth : 0;
+                    var plotX = point.plotX,
+                        plotX2 = xAxis.toPixels(H.pick(point.x2, point.x + (point.len || 0)), true),
+                        width = plotX2 - plotX,
+                        widthDifference;
+
+                    if (minPointLength) {
+                        widthDifference = width < minPointLength ? minPointLength - width : 0;
+                        plotX -= widthDifference / 2;
+                        plotX2 += widthDifference / 2;
+                    }
+
+                    plotX = Math.max(plotX, -10);
+                    plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
                     point.shapeArgs = {
-                        x: Math.max(0, point.plotX) - barWidthDifference / 2,
+                        x: plotX,
                         y: point.plotY + metrics.offset,
-                        width: barWidth + barWidthDifference,
+                        width: plotX2 - plotX,
                         height: metrics.width
                     };
-                    point.tooltipPos[0] += barWidth / 2;
+                    point.tooltipPos[0] += width / 2;
                     point.tooltipPos[1] -= metrics.width / 2;
                 });
             }
@@ -121,7 +145,8 @@ $(function () {
             text: 'Highcharts X-range study'
         },
         xAxis: {
-            type: 'datetime'
+            type: 'datetime',
+            min: Date.UTC(2014, 11, 3)
         },
         yAxis: {
             title: '',

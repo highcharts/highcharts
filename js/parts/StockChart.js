@@ -524,9 +524,9 @@ seriesProto.processData = function () {
 		length = processedYData.length;
 
 		// For series with more than one value (range, OHLC etc), compare against
-		// the pointValKey (#4922)
+		// close or the pointValKey (#4922, #3112)
 		if (series.pointArrayMap) {
-			keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+			keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
 		}
 
 		// find the first value for comparison

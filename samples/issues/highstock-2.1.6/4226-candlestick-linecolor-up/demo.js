@@ -6,7 +6,7 @@ $(function () {
             [3, 4.5, 6, 3, 5.5],
             [4, 5.5, 6, 0.5, 1],
             {
-                x : 5,
+                x: 5,
                 open: 1,
                 high: 3,
                 low: 0.5,
@@ -14,7 +14,7 @@ $(function () {
                 lineColor: "#FF0000"
             },
             {
-                x : 6,
+                x: 6,
                 open: 2,
                 high: 2,
                 low: 0.5,

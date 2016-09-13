@@ -26,7 +26,7 @@ $(function () {
         },
         series: [{
             name: 'Year 1800',
-            data: [31, { dataLabels : { style: { fontWeight: 'bold',  fontSize : '20px' } },
+            data: [31, { dataLabels: { style: { fontWeight: 'bold',  fontSize: '20px' } },
                                  y: 107 }, 635, 203, 2]
         }]
     });

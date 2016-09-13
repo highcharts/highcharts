@@ -74,16 +74,15 @@ $(function () {
         scatterData.push([i, Math.sin(i / 10) + Math.random() - 0.5]);
     }
 
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             zoomType: 'x'
         },
         title: {
             text: 'Measured vs Expected Data'
         },
         subtitle: {
-            text:'y = sin(x)'
+            text: 'y = sin(x)'
         },
         series: [{
             type: 'scatter',

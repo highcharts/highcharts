@@ -6,9 +6,8 @@ $(function () {
         [1369844100000, 5]
     ];
 
-    var chart = Highcharts.StockChart({
+    Highcharts.stockChart('container', {
         chart: {
-            renderTo: 'container',
             zoomType: 'x'
         },
         title: {

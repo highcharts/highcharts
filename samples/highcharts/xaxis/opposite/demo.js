@@ -1,7 +1,6 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             type: 'column'
         },
         xAxis: {
@@ -11,7 +10,7 @@ $(function () {
             labels: {
                 autoRotation: 0,
                 style: {
-                    color: 'red',
+                    color: 'red'
                     //fontSize: '24px'
                 }
             }

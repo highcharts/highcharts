@@ -47,12 +47,12 @@ $(function () {
     // Initiate the chart
     $('#map-container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps basic demo'
+        title: {
+            text: 'Highmaps basic demo'
         },
 
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
         },
 
         mapNavigation: {
@@ -67,7 +67,7 @@ $(function () {
         },
 
         series: [{
-            data : data,
+            data: data,
             mapData: Highcharts.maps['countries/au/au-all'],
             joinBy: 'hc-key',
             name: 'Random data',

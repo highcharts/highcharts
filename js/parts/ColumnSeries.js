@@ -251,7 +251,12 @@ var ColumnSeries = extendClass(Series, {
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';
-			point.shapeArgs = series.crispCol(barX, barY, barW, barH);
+			point.shapeArgs = series.crispCol.apply(
+				series,
+				point.isNull ? 
+					[point.plotX, yAxis.len / 2, 0, 0] : // #3169, drilldown from null must have a position to work from
+					[barX, barY, barW, barH]
+			);
 		});
 
 	},

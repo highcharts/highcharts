@@ -22,7 +22,7 @@ $(function () {
 
         }).highcharts();
 
-        console.log()
+        console.log();
         assert.ok(
             parseInt(chart.series[0].checkbox.style.top, 10) > chart.legend.group.translateY + chart.legend.titleHeight,
             'Checkbox is below title'

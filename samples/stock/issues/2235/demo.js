@@ -7,11 +7,11 @@ $(function () {
 
         series: [{
             data: [
-                [Date.UTC(2013, 8, 1),1],
-                [Date.UTC(2013, 8, 2),1],
+                [Date.UTC(2013, 8, 1), 1],
+                [Date.UTC(2013, 8, 2), 1],
                 // gap
-                [Date.UTC(2013, 8, 4),1],
-                [Date.UTC(2013, 8, 5),1]
+                [Date.UTC(2013, 8, 4), 1],
+                [Date.UTC(2013, 8, 5), 1]
             ],
             gapSize: 1,
             type: 'area'

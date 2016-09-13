@@ -1,17 +1,3 @@
-var toggle = true;
-
-function toggleDataLabels(chart) {
-    $.each(chart.series, function (i, el) {
-        el.update({
-            dataLabels: {
-                enabled: toggle
-            }
-        }, false);
-
-    });
-    toggle = !toggle;
-    chart.redraw();
-}
 $(function () {
     var ids = ['a', 'b', 'c'],
         series = [],
@@ -31,10 +17,7 @@ $(function () {
         };
     }
 
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
+    Highcharts.chart('container', {
         title: {
             text: 'Linked series bug'
         },

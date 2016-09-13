@@ -123,12 +123,12 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps basic demo'
+        title: {
+            text: 'Highmaps basic demo'
         },
 
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nato.js">North Atlantic Treaty Organization</a>'
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nato.js">North Atlantic Treaty Organization</a>'
         },
 
         mapNavigation: {
@@ -142,8 +142,8 @@ $(function () {
             min: 0
         },
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             mapData: Highcharts.maps['custom/nato'],
             joinBy: 'hc-key',
             name: 'Random data',

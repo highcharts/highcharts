@@ -47,6 +47,11 @@ Point.prototype = {
 		extend(point, options);
 		point.options = point.options ? extend(point.options, options) : options;
 
+		// Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+		if (options.group) {
+			delete point.group;
+		}
+
 		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];

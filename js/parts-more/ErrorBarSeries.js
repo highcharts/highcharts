@@ -22,7 +22,14 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
+	drawDataLabels: seriesTypes.arearange ? function () {
+		var valKey = this.pointValKey;
+		seriesTypes.arearange.prototype.drawDataLabels.call(this);
+		// Arearange drawDataLabels does not reset point.y to high, but to low after drawing. #4133 
+		each(this.data, function (point) {
+			point.y = point[valKey];
+		});
+	} : noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column

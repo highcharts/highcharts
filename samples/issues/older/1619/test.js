@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
 
     for (var i = 0; i < 3; i++) {
         chart.setSize(chart.chartWidth - 1, chart.chartHeight - 1);
