@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-12)
+ * @license Highmaps JS v4.2.6-modified (2016-09-13)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -479,7 +479,7 @@
                         value = original[key];
 
                         // Copy the contents of objects, but not arrays or DOM nodes
-                        if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
+                        if (Highcharts.isObject(value, true) &&
                                 key !== 'renderTo' && typeof value.nodeType !== 'number') {
                             copy[key] = doCopy(copy[key] || {}, value);
 
@@ -529,7 +529,8 @@
      * @param {Object} obj
      */
     function isArray(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
+        var str = Object.prototype.toString.call(obj);
+        return str === '[object Array]' || str === '[object Array Iterator]';
     }
 
     /**
