@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-08-11)
+ * @license Highmaps JS v4.2.6-modified (2016-09-13)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -1076,7 +1076,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null) {
+            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);
