@@ -209,9 +209,9 @@ Navigator.prototype = {
 	 * @param {Object} options Options to merge in when updating navigator
 	 */
 	update: function (options) {
-		var chartOptions = this.chart.options;
 		this.destroy();
-		chartOptions.navigator = merge(true, chartOptions.navigator || {}, this.options, options);
+		var chartOptions = this.chart.options;
+		chartOptions.navigator = merge(true, chartOptions.navigator, this.options, options);
 		this.init(this.chart);
 	},
 
@@ -964,24 +964,6 @@ Navigator.prototype = {
 					}
 				});		
 			}, this);
-
-			// Handle adding new series
-			wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
-				proceed.call(this, options, false, animation);
-				scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
-				if (pick(redraw, true)) {
-					this.redraw();
-				}
-			});
-
-			// Handle updating series
-			wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
-				proceed.call(this, newOptions, false);
-				scroller.update();
-				if (pick(redraw, true)) {
-					this.chart.redraw();
-				}
-			});
 		}
 	},
 
@@ -1186,6 +1168,24 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 		error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);
+});
+
+// Handle adding new series
+wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
+	proceed.call(this, options, false, animation);
+	this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+	if (pick(redraw, true)) {
+		this.redraw();
+	}
+});
+
+// Handle updating series
+wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
+	proceed.call(this, newOptions, false);
+	this.chart.scroller.setBaseSeries();
+	if (pick(redraw, true)) {
+		this.chart.redraw();
+	}
 });
 
 /* ****************************************************************************
