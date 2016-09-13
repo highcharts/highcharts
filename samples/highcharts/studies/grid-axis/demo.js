@@ -229,7 +229,6 @@ $(function () {
 
                     // Center x position
                     if (this.axis.side === axisSide.left) {
-                        console.log(returnValue.x - x);
                         returnValue.x = returnValue.x + (this.getLabelWidth() / 2) - (this.axis.maxLabelLength / 2);
                     } else {
                         returnValue.x = returnValue.x - (this.getLabelWidth() / 2) + (this.axis.maxLabelLength / 2);
@@ -293,7 +292,7 @@ $(function () {
                         H.wrap(axis, 'getLinePath', function (proceed) {
                             var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
                                 xStart = returnValue.indexOf('M') + 1,
-                                firstTick = this.ticks[Object.keys(this.ticks)[0]],
+                                firstTick = this.ticks[this.tickPositions[0]],
                                 firstTickPos = firstTick ? firstTick.pos : this.getExtremes().min;
 
                             returnValue[xStart] = this.translate(firstTickPos) + this.left;
