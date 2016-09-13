@@ -172,31 +172,6 @@ $(function () {
             return this.label.getBBox().width;
         };
 
-        H.Axis.prototype.getMaxTickLabelWidth = function (reset) {
-
-            var key,
-                tick,
-                ticks = this.ticks,
-                labelWidth,
-                width = 0;
-
-            if (!this.maxTickLabelWidth || reset) {
-                for (key in ticks) {
-                    if (ticks.hasOwnProperty(key)) {
-                        tick = ticks[key];
-                        if (tick.label) {
-                            labelWidth = tick.getLabelWidth();
-                            if (labelWidth > width) {
-                                width = labelWidth;
-                            }
-                        }
-                    }
-                }
-                this.maxTickLabelWidth = width;
-            }
-            return this.maxTickLabelWidth;
-        };
-
         /**
          * Add custom date formats
          */
@@ -255,9 +230,9 @@ $(function () {
                     // Center x position
                     if (this.axis.side === axisSide.left) {
                         console.log(returnValue.x - x);
-                        returnValue.x = returnValue.x + (this.getLabelWidth() / 2) - (this.axis.getMaxTickLabelWidth() / 2);
+                        returnValue.x = returnValue.x + (this.getLabelWidth() / 2) - (this.axis.maxLabelLength / 2);
                     } else {
-                        returnValue.x = returnValue.x - (this.getLabelWidth() / 2) + (this.axis.getMaxTickLabelWidth() / 2);
+                        returnValue.x = returnValue.x - (this.getLabelWidth() / 2) + (this.axis.maxLabelLength / 2);
                     }
                 }
             }
@@ -332,7 +307,7 @@ $(function () {
                      */
                     H.wrap(axis, 'render', function (proceed) {
                         var labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2),
-                            distance = this.getMaxTickLabelWidth() + labelPadding,
+                            distance = this.maxLabelLength + labelPadding,
                             lineWidth = this.options.lineWidth,
                             linePath,
                             yStart,

@@ -1740,7 +1740,7 @@ Axis.prototype = {
 			labelMetrics = this.labelMetrics(),
 			textOverflowOption = labelOptions.style.textOverflow,
 			css,
-			labelLength = 0,
+			maxLabelLength = 0,
 			label,
 			i,
 			pos;
@@ -1750,20 +1750,22 @@ Axis.prototype = {
 			attr.rotation = labelOptions.rotation || 0; // #4443
 		}
 
+		// Get the longest label length
+		each(tickPositions, function (tick) {
+			tick = ticks[tick];
+			if (tick && tick.labelLength > maxLabelLength) {
+				maxLabelLength = tick.labelLength;
+			}
+		});
+		this.maxLabelLength = maxLabelLength;
+		
+
 		// Handle auto rotation on horizontal axis
 		if (this.autoRotation) {
 
-			// Get the longest label length
-			each(tickPositions, function (tick) {
-				tick = ticks[tick];
-				if (tick && tick.labelLength > labelLength) {
-					labelLength = tick.labelLength;
-				}
-			});
-
 			// Apply rotation only if the label is too wide for the slot, and
 			// the label is wider than its height.
-			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
+			if (maxLabelLength > innerWidth && maxLabelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
 				this.labelRotation = 0;
