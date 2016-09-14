@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-13)
+ * @license Highmaps JS v4.2.6-modified (2016-09-14)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -18761,7 +18761,11 @@
                     y: yAxis.dataMin,
                     width: xAxis.dataMax - xAxis.dataMin,
                     height: yAxis.dataMax - yAxis.dataMin
-                });
+                }),
+                zoomOut = newExt.x <= xAxis.dataMin &&
+                    newExt.width >= xAxis.dataMax - xAxis.dataMin &&
+                    newExt.y <= yAxis.dataMin &&
+                    newExt.height >= yAxis.dataMax - yAxis.dataMin;
 
             // When mousewheel zooming, fix the point under the mouse
             if (mouseX) {
@@ -18772,7 +18776,7 @@
             }
 
             // Zoom
-            if (howMuch !== undefined) {
+            if (howMuch !== undefined && !zoomOut) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
                 yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
