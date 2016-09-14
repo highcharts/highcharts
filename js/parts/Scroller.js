@@ -211,7 +211,7 @@ Navigator.prototype = {
 	update: function (options) {
 		this.destroy();
 		var chartOptions = this.chart.options;
-		chartOptions.navigator = merge(true, chartOptions.navigator, this.options, options);
+		merge(true, chartOptions.navigator, this.options, options);
 		this.init(this.chart);
 	},
 
