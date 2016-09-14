@@ -12,32 +12,32 @@ $(function () {
 
         defs: {
             gradient0: {
-                tag: 'linearGradient',
+                tagName: 'linearGradient',
                 id: 'gradient-0',
                 x1: 0,
                 y1: 0,
                 x2: 0,
                 y2: 1,
                 children: [{
-                    tag: 'stop',
+                    tagName: 'stop',
                     offset: 0
                 }, {
-                    tag: 'stop',
+                    tagName: 'stop',
                     offset: 1
                 }]
             },
             gradient1: {
-                tag: 'linearGradient',
+                tagName: 'linearGradient',
                 id: 'gradient-1',
                 x1: 0,
                 y1: 0,
                 x2: 0,
                 y2: 1,
                 children: [{
-                    tag: 'stop',
+                    tagName: 'stop',
                     offset: 0
                 }, {
-                    tag: 'stop',
+                    tagName: 'stop',
                     offset: 1
                 }]
             }

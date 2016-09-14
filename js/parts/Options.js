@@ -92,36 +92,36 @@ H.defaultOptions = {
 	/*= if (!build.classic) { =*/
 	defs: { // docs
 		dropShadow: { // used by tooltip
-			tag: 'filter',
+			tagName: 'filter',
 			id: 'drop-shadow',
 			opacity: 0.5,
 			children: [{
-				tag: 'feGaussianBlur',
+				tagName: 'feGaussianBlur',
 				in: 'SourceAlpha',
 				stdDeviation: 1
 			}, {
-				tag: 'feOffset',
+				tagName: 'feOffset',
 				dx: 1,
 				dy: 1
 			}, {
-				tag: 'feComponentTransfer',
+				tagName: 'feComponentTransfer',
 				children: [{
-					tag: 'feFuncA',
+					tagName: 'feFuncA',
 					type: 'linear',
 					slope: 0.3
 				}]
 			}, {
-				tag: 'feMerge',
+				tagName: 'feMerge',
 				children: [{
-					tag: 'feMergeNode'
+					tagName: 'feMergeNode'
 				}, {
-					tag: 'feMergeNode',
+					tagName: 'feMergeNode',
 					in: 'SourceGraphic'
 				}]
 			}]
 		},
 		style: {
-			tag: 'style',
+			tagName: 'style',
 			textContent: '.highcharts-tooltip{' +
 				'filter:url(#drop-shadow)' +
 			'}'

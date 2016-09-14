@@ -1451,13 +1451,13 @@ SVGRenderer.prototype = {
 
 		function recurse(config, parent) {
 			each(splat(config), function (item) {
-				var node = ren.createElement(item.tag),
+				var node = ren.createElement(item.tagName),
 					key,
 					attr = {};
 
 				// Set attributes
 				for (key in item) {
-					if (key !== 'tag' && key !== 'children' && key !== 'textContent') {
+					if (key !== 'tagName' && key !== 'children' && key !== 'textContent') {
 						attr[key] = item[key];
 					}
 				}
