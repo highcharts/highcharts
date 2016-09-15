@@ -239,6 +239,35 @@ $(function () {
         });
 
         /**
+         * Replicates category axis translation to all axis types.
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
+            console.log('@ setAxisTranslation()');
+
+            // Call the original setAxisTranslation()
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+            this.minPointOffset = 0.5;
+            this.pointRangePadding = 1;
+
+            this.translationSlope = this.transA = this.len / ((this.max - this.min + this.pointRangePadding) || 1);
+            this.transB = this.horiz ? this.left : this.bottom; // translation addend
+            this.minPixelPadding = this.transA * this.minPointOffset;
+        });
+
+        /**
+         * Prevents rotation of labels when squished, as rotating them would not
+         * help.
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
+            this.labelRotation = 0;
+            this.options.labels.rotation = 0;
+            proceed.apply(this);
+        });
          * Wraps chart rendering with the following customizations:
          * 1. Prohibit timespans of multitudes of a time unit
          * 2. Draw a grid
@@ -399,12 +428,13 @@ $(function () {
             labels: {
                 format: '{value:%E}'
             },
-            min: Date.UTC(2014, 10, 17)
+            min: Date.UTC(2014, 10, 17),
+            max: Date.UTC(2014, 10, 30)
         }, {
             grid: true,
             categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
             min: 0,
-            max: 13
+            max: 12
         }, {
             grid: true,
             type: 'datetime',
@@ -416,7 +446,6 @@ $(function () {
                     fontSize: '1.5em'
                 }
             },
-            min: Date.UTC(2014, 10, 17),
             linkedTo: 0
         }, {
             grid: true,
@@ -430,6 +459,12 @@ $(function () {
                 }
             },
             linkedTo: 0
+        }, {
+            grid: true,
+            tickInterval: 1,
+            min: 0,
+            startAtTick: false,
+            minPadding: 0.5
         }],
         yAxis: [{
             title: '',
@@ -526,6 +561,19 @@ $(function () {
                 x: 12,
                 x2: 13,
                 y: Date.UTC(2014, 10, 21)
+            }]
+        }, {
+            name: 'Project 4',
+            borderRadius: 10,
+            xAxis: 4,
+            data: [{
+                x: 1,
+                x2: 2,
+                y: 1
+            }, {
+                x: 3,
+                x2: 4,
+                y: 2
             }]
         }]
     });
