@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-14)
+ * @license Highmaps JS v4.2.6-modified (2016-09-15)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -8499,7 +8499,7 @@
             // Add ellipsis if the label length is significantly longer than ideal
             if (attr.rotation) {
                 css = {
-                    width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
+                    width: (maxLabelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
                 };
                 if (!textOverflowOption) {
                     css.textOverflow = 'ellipsis';

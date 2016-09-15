@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-09-08)
+ * @license Highcharts JS v4.2.6-modified (2016-09-15)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -519,8 +519,6 @@ var arrayMin = Highcharts.arrayMin,
             isX = userOptions.isX,
             isHidden = angular && isX,
             isCircular,
-            startAngleRad,
-            endAngleRad,
             options,
             chartOptions = chart.options,
             paneIndex = userOptions.pane || 0,
@@ -570,8 +568,8 @@ var arrayMin = Highcharts.arrayMin,
             // given in degrees relative to top, while internal computations are
             // in radians relative to right (like SVG).
             this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts // docs. Sample created. API marked "next".
-            this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
-            this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
+            this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
+            this.endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
             this.offset = options.offset || 0;
 
             this.isCircular = isCircular;
