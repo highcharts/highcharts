@@ -3682,7 +3682,8 @@
                                 // Check width and apply soft breaks or ellipsis
                                 if (width) {
                                     var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+                                        noWrap = textStyles.whiteSpace === 'nowrap',
+                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
                                         tooLong,
                                         actualWidth,
                                         rest = [],
@@ -3726,7 +3727,7 @@
                                             words = rest;
                                             rest = [];
 
-                                            if (words.length) {
+                                            if (words.length && !noWrap) {
                                                 softLineNo++;
 
                                                 tspan = doc.createElementNS(SVG_NS, 'tspan');
