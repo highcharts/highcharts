@@ -349,10 +349,11 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	}
 	return points;
 };
+/*= if (build.classic) { =*/
 if (Renderer === VMLRenderer) {
 	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
-
+/*= } =*/
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {

@@ -207,6 +207,17 @@ Navigator.prototype = {
 	},
 
 	/**
+	 * Update navigator
+	 * @param {Object} options Options to merge in when updating navigator
+	 */
+	update: function (options) {
+		this.destroy();
+		var chartOptions = this.chart.options;
+		merge(true, chartOptions.navigator, this.options, options);
+		this.init(this.chart);
+	},
+
+	/**
 	 * Render the navigator
 	 * @param {Number} min X axis value minimum
 	 * @param {Number} max X axis value maximum
@@ -419,7 +430,7 @@ Navigator.prototype = {
 		this._events = _events;
 
 		// Data events
-		if (this.series) {
+		if (this.series && this.series[0]) {
 			addEvent(this.series[0].xAxis, 'foundExtremes', function () {
 				chart.scroller.modifyNavigatorAxisExtremes();
 			});
@@ -428,7 +439,7 @@ Navigator.prototype = {
 		addEvent(chart, 'redraw', function () {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
-				xAxis = scroller && scroller.baseSeries && scroller.baseSeries[0].xAxis;
+				xAxis = scroller && scroller.baseSeries && scroller.baseSeries[0] && scroller.baseSeries[0].xAxis;
 			
 			if (xAxis) {
 				scroller.render(xAxis.min, xAxis.max);
@@ -440,17 +451,26 @@ Navigator.prototype = {
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		each(this._events, function (args) {
-			removeEvent.apply(null, args);
-		});
-		this._events = undefined;
+		if (this._events) {
+			each(this._events, function (args) {
+				removeEvent.apply(null, args);
+			});
+			this._events = undefined;
+		}
 		this.removeBaseSeriesEvents();
 	},
 
 	removeBaseSeriesEvents: function () {
-		if (this.navigatorEnabled && this.baseSeries && this.baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
-			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
-			removeEvent(this.baseSeries.xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
+		var baseSeries = this.baseSeries || [];
+		if (this.navigatorEnabled && baseSeries[0] && this.navigatorOptions.adaptToUpdatedData !== false) {
+			each(baseSeries, function (series) {
+				removeEvent(series, 'updatedData', this.updatedDataHandler);	
+			}, this);
+
+			// We only listen for extremes-events on the first baseSeries
+			if (baseSeries[0].xAxis) {
+				removeEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
+			}
 		}
 	},
 
@@ -458,8 +478,6 @@ Navigator.prototype = {
 	 * Initiate the Navigator object
 	 */
 	init: function (chart) {
-
-
 		var chartOptions = chart.options,
 			navigatorOptions = chartOptions.navigator,
 			navigatorEnabled = navigatorOptions.enabled,
@@ -488,6 +506,7 @@ Navigator.prototype = {
 			top = scroller.top,
 			dragOffset,
 			baseSeries = scroller.baseSeries;
+		
 		/**
 		 * Event handler for the mouse down event.
 		 */
@@ -663,9 +682,9 @@ Navigator.prototype = {
 		};
 
 
-
 		var xAxisIndex = chart.xAxis.length,
-			yAxisIndex = chart.yAxis.length;
+			yAxisIndex = chart.yAxis.length,
+			baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis || chart.xAxis[0];
 
 		// make room below the chart
 		chart.extraBottomMargin = scroller.outlineHeight + navigatorOptions.margin;
@@ -675,8 +694,8 @@ Navigator.prototype = {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
-				breaks: baseSeries && baseSeries[0].xAxis.options.breaks,
-				ordinal: baseSeries && baseSeries[0].xAxis.options.ordinal
+				breaks: baseXaxis.options.breaks,
+				ordinal: baseXaxis.options.ordinal
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,
@@ -841,21 +860,23 @@ Navigator.prototype = {
 	 * Set the base series. With a bit of modification we should be able to make
 	 * this an API method to be called from the outside
 	 */
-	setBaseSeries: function (baseSeriesOption) {
+	setBaseSeries: function (baseSeriesOptions) {
 		var chart = this.chart,
 			baseSeries = this.baseSeries = [];
 
-		baseSeriesOption = baseSeriesOption || chart.options.navigator.baseSeries || 0;
+		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;
 
 		// If we're resetting, remove the existing series
 		if (this.series) {
 			this.removeBaseSeriesEvents();
-			this.series.remove();
+			each(this.series, function (s) { 
+				s.remove();
+			});
 		}
 
 		// Iterate through series and add the ones that should be shown in navigator
-		each(chart.series, function (series, i) {
-			if (series.options.showInNavigator || (i === baseSeriesOption || series.options.id === baseSeriesOption) &&
+		each(chart.series || [], function (series, i) {
+			if (series.options.showInNavigator || (i === baseSeriesOptions || series.options.id === baseSeriesOptions) &&
 					series.options.showInNavigator !== false) {
 				baseSeries.push(series);
 			}
@@ -903,7 +924,8 @@ Navigator.prototype = {
 				mergedNavSeriesOptions.data = navigatorSeriesData || baseOptions.data && baseOptions.data.slice(0);
 
 				// Add the series
-				navigatorSeries.push(chart.initSeries(mergedNavSeriesOptions));
+				base.navigatorSeries = chart.initSeries(mergedNavSeriesOptions);
+				navigatorSeries.push(base.navigatorSeries);
 			});
 		} else {
 			// No base series, build from mixin and chart wide options
@@ -914,21 +936,39 @@ Navigator.prototype = {
 		}
 
 		this.addBaseSeriesEvents();
-
 	},
-	addBaseSeriesEvents: function () {
-		var baseSeries = this.baseSeries;
 
-		// Respond to updated data in the base series.
-		// Abort if lazy-loading data from the server.
-		if (baseSeries && baseSeries.xAxis && this.navigatorOptions.adaptToUpdatedData !== false) {
-			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
-			addEvent(baseSeries.xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
-		
-			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+	addBaseSeriesEvents: function () {
+		var scroller = this,
+			baseSeries = scroller.baseSeries || [];
+
+		// Bind modified extremes event to first base's xAxis only. In event of > 1 base-xAxes, the navigator will ignore those.
+		if (baseSeries[0] && baseSeries[0].xAxis) {
+			addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
+		}
+
+		if (this.navigatorOptions.adaptToUpdatedData !== false) {
+			// Respond to updated data in the base series.
+			// Abort if lazy-loading data from the server.
+			each(baseSeries, function (base) {
+				if (base.xAxis) {
+					addEvent(base, 'updatedData', this.updatedDataHandler);
+					// Survive Series.update()
+					base.userOptions.events = extend(base.userOptions.event, { updatedData: this.updatedDataHandler });
+				}
+
+				// Handle series removal
+				addEvent(base, 'remove', function () {
+					if (this.navigatorSeries) {
+						erase(scroller.series, this.navigatorSeries);
+						this.navigatorSeries.remove();
+						delete this.navigatorSeries;
+					}
+				});		
+			}, this);
 		}
 	},
+
 	/**
 	 * Set the scroller x axis extremes to reflect the total. The navigator extremes
 	 * should always be the extremes of the union of all series in the chart as
@@ -951,10 +991,6 @@ Navigator.prototype = {
 	 * Hook to modify the base axis extremes with information from the Navigator
 	 */
 	modifyBaseAxisExtremes: function () {
-		if (!this.chart.scroller.baseSeries || !this.chart.scroller.baseSeries.xAxis) {
-			return;
-		}
-		
 		var baseXAxis = this,
 			scroller = baseXAxis.chart.scroller,
 			baseExtremes = baseXAxis.getExtremes(),
@@ -967,7 +1003,7 @@ Navigator.prototype = {
 			stickToMax = scroller.stickToMax,
 			newMax,
 			newMin,
-			navigatorSeries = scroller.series,
+			navigatorSeries = scroller.series && scroller.series[0],
 			hasSetExtremes = !!baseXAxis.setExtremes,
 
 			// When the extremes have been set by range selector button, don't stick to min or max.
@@ -1012,8 +1048,8 @@ Navigator.prototype = {
 	 */
 	updatedDataHandler: function () {
 		var scroller = this.chart.scroller,
-			baseSeries = scroller.baseSeries[0],
-			navigatorSeries = scroller.series;
+			baseSeries = this,
+			navigatorSeries = this.navigatorSeries;
 
 		// Detect whether the zoomed area should stick to the minimum or maximum. If the current
 		// axis minimum falls outside the new updated dataset, we must adjust.
@@ -1033,6 +1069,7 @@ Navigator.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
+
 		// Disconnect events added in addEvents
 		this.removeEvents();
 
@@ -1044,9 +1081,16 @@ Navigator.prototype = {
 			erase(this.chart.yAxis, this.yAxis);
 			erase(this.chart.axes, this.yAxis);
 		}
+		// Destroy series
+		each(this.series || [], function (s) {
+			if (s.destroy) {
+				s.destroy();
+			}
+		});
+		delete this.series;
 
 		// Destroy properties
-		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+		each(['xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
 				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
 			if (this[prop] && this[prop].destroy) {
 				this[prop] = this[prop].destroy();
@@ -1126,6 +1170,24 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 		error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);
+});
+
+// Handle adding new series
+wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
+	proceed.call(this, options, false, animation);
+	this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+	if (pick(redraw, true)) {
+		this.redraw();
+	}
+});
+
+// Handle updating series
+wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
+	proceed.call(this, newOptions, false);
+	this.chart.scroller.setBaseSeries();
+	if (pick(redraw, true)) {
+		this.chart.redraw();
+	}
 });
 
 /* ****************************************************************************

@@ -161,7 +161,6 @@
             <file name="parts/SvgRenderer.js"/>
             <file name="parts/Html.js"/>
             <file name="parts/VmlRenderer.js"/>
-            <file name="parts/CanVGRenderer.js"/>
             <file name="parts/Tick.js"/>
             <file name="parts/PlotLineOrBand.js"/>
             <file name="parts/Axis.js"/>
@@ -204,7 +203,6 @@
             <file name="parts/SvgRenderer.js"/>
             <file name="parts/Html.js"/>
             <file name="parts/VmlRenderer.js"/>
-            <file name="parts/CanVGRenderer.js"/>
             <file name="parts/Tick.js"/>
             <file name="parts/PlotLineOrBand.js"/>
             <file name="parts/Axis.js"/>
@@ -325,7 +323,6 @@
             <file name="parts/SvgRenderer.js"/>
             <file name="parts/Html.js"/>
             <file name="parts/VmlRenderer.js"/>
-            <file name="parts/CanVGRenderer.js"/>
             <file name="parts/Tick.js"/>
             <!-- file name="parts/Stacking.js"/ -->
             <!-- file name="parts/PlotLineOrBand.js"/ -->
@@ -459,7 +456,6 @@
             <fileset file="${annotations.src.file}"/>
             <fileset dir="${themes.dir}"/>
             <fileset file="js/modules/treemap.src.js"/>
-            <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 
 
@@ -634,10 +630,6 @@
         <antcall target="compile">
             <param name="param.src" value="${annotations.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${annotations.minified.name}"/>
-        </antcall>
-        <antcall target="compile">
-            <param name="param.src" value="build/canvas-tools.src.js"/>
-            <param name="param.out" value="build/canvas-tools.js"/>
         </antcall>
         <!-- Concatenate a single file with minified standalone adapter and highcharts sources -->
         <!-- for faster download from cloud.highcharts.com -->

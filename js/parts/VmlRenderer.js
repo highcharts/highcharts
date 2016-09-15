@@ -28,7 +28,6 @@ import './SvgRenderer.js';
 		svg = H.svg,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer,
-		useCanVG = H.useCanVG,
 		win = H.win;
 
 /* ****************************************************************************
@@ -43,7 +42,7 @@ import './SvgRenderer.js';
 /**
  * @constructor
  */
-if (!svg && !useCanVG) {
+if (!svg) {
 
 /**
  * The VML element wrapper.

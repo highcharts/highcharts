@@ -6,7 +6,6 @@ import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 import '../parts/Html.js';
 import '../parts/VmlRenderer.js';
-import '../parts/CanVGRenderer.js';
 import '../parts/Tick.js';
 import '../parts/Axis.js';
 import '../parts/LogarithmicAxis.js';

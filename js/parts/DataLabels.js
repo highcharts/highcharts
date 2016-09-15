@@ -273,9 +273,10 @@ Series.prototype.drawDataLabels = function () {
 					)
 					.attr(attr);
 
-					if (options.className) { // docs
-						dataLabel.addClass(options.className);
-					}
+					// docs: 
+					// - New className option.
+					// - Default color class name to allow contrast colors. Demo created.
+					dataLabel.addClass('highcharts-data-label-color-' + point.colorIndex + ' ' + (options.className || ''));
 
 					/*= if (build.classic) { =*/
 					// Styles must be applied before add in order to read text bounding box

@@ -35,8 +35,9 @@ H.defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
+		/*= if (build.classic) { =*/
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
+		/*= } =*/
 	},
 	chart: {
 		//animation: true,
@@ -91,33 +92,39 @@ H.defaultOptions = {
 	/*= if (!build.classic) { =*/
 	defs: { // docs
 		dropShadow: { // used by tooltip
-			tag: 'filter',
+			tagName: 'filter',
 			id: 'drop-shadow',
 			opacity: 0.5,
 			children: [{
-				tag: 'feGaussianBlur',
+				tagName: 'feGaussianBlur',
 				in: 'SourceAlpha',
 				stdDeviation: 1
 			}, {
-				tag: 'feOffset',
+				tagName: 'feOffset',
 				dx: 1,
 				dy: 1
 			}, {
-				tag: 'feComponentTransfer',
+				tagName: 'feComponentTransfer',
 				children: [{
-					tag: 'feFuncA',
+					tagName: 'feFuncA',
 					type: 'linear',
 					slope: 0.3
 				}]
 			}, {
-				tag: 'feMerge',
+				tagName: 'feMerge',
 				children: [{
-					tag: 'feMergeNode'
+					tagName: 'feMergeNode'
 				}, {
-					tag: 'feMergeNode',
+					tagName: 'feMergeNode',
 					in: 'SourceGraphic'
 				}]
 			}]
+		},
+		style: {
+			tagName: 'style',
+			textContent: '.highcharts-tooltip{' +
+				'filter:url(#drop-shadow)' +
+			'}'
 		}
 	},
 	/*= } =*/

@@ -252,7 +252,7 @@ extend(Chart.prototype, {
 				this[adders[key]](options[key]);
 			}
 
-			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries !== -1)) {
+			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries) !== -1) {
 				updateAllSeries = true;
 			}
 		}

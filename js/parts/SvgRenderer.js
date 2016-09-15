@@ -36,7 +36,6 @@ import './Color.js';
 		stop = H.stop,
 		svg = H.svg,
 		SVG_NS = H.SVG_NS,
-		useCanVG = H.useCanVG,
 		win = H.win;
 
 /**
@@ -526,7 +525,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (!svg && elemWrapper.renderer.forExport)) {
 				delete styles.width;
 			}
 
@@ -877,7 +876,7 @@ SVGElement.prototype = {
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
 						extend({}, element.getBBox()) :
-						// Canvas renderer and legacy IE in export mode
+						// Legacy IE in export mode
 						{
 							width: element.offsetWidth,
 							height: element.offsetHeight
@@ -1445,20 +1444,21 @@ SVGRenderer.prototype = {
 	},
 	/*= if (!build.classic) { =*/
 	/**
-	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs
+	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs: todo: return node
 	 */
-	addDefinition: function (def) {
+	definition: function (def) {
 		var ren = this;
 
 		function recurse(config, parent) {
+			var ret;
 			each(splat(config), function (item) {
-				var node = ren.createElement(item.tag),
+				var node = ren.createElement(item.tagName),
 					key,
 					attr = {};
 
 				// Set attributes
 				for (key in item) {
-					if (key !== 'tag' && key !== 'children') {
+					if (key !== 'tagName' && key !== 'children' && key !== 'textContent') {
 						attr[key] = item[key];
 					}
 				}
@@ -1467,11 +1467,21 @@ SVGRenderer.prototype = {
 				// Add to the tree
 				node.add(parent || ren.defs);
 
+				// Add text content
+				if (item.textContent) {
+					node.element.appendChild(doc.createTextNode(item.textContent));
+				}
+
 				// Recurse
 				recurse(item.children || [], node);
+
+				ret = node;
 			});
+
+			// Return last node added (on top level it's the only one)
+			return ret;
 		}
-		recurse(def);
+		return recurse(def);
 	},
 	/*= } =*/
 
@@ -1540,7 +1550,7 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Dummy function for use in canvas renderer
+	 * Dummy function for plugins
 	 */
 	draw: noop,
 
@@ -2506,7 +2516,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!svg && renderer.forExport),
+			fakeSVG = !svg && renderer.forExport,
 			wrapper,
 			attribs = {};
 

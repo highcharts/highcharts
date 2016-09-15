@@ -19,7 +19,6 @@ var addEvent = H.addEvent,
 	removeEvent = H.removeEvent,
 	splat = H.splat,
 	Tooltip = H.Tooltip,
-	useCanVG = H.useCanVg,
 	win = H.win;
 
 // Global flag for touch support
@@ -64,7 +63,7 @@ H.Pointer.prototype = {
 	 */
 	zoomOption: function () {
 		var chart = this.chart,
-			zoomType = useCanVG ? '' : chart.options.chart.zoomType,
+			zoomType = chart.options.chart.zoomType,
 			zoomX = /x/.test(zoomType),
 			zoomY = /y/.test(zoomType),
 			inverted = chart.inverted;

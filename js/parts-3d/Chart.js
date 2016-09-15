@@ -122,26 +122,43 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
 	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-var defaultChartOptions = H.getOptions();
-defaultChartOptions.chart.options3d = {
-	enabled: false,
-	alpha: 0,
-	beta: 0,
-	depth: 100,
-	fitToPlot: true,
-	viewDistance: 25,
-	frame: {
-		bottom: {
-			size: 1
-		},
-		side: {
-			size: 1
-		},
-		back: {
-			size: 1
+var defaultOptions = H.getOptions();
+merge(true, defaultOptions, {
+	chart: {
+		options3d: {
+			enabled: false,
+			alpha: 0,
+			beta: 0,
+			depth: 100,
+			fitToPlot: true,
+			viewDistance: 25,
+			frame: {
+				bottom: {
+					size: 1
+				},
+				side: {
+					size: 1
+				},
+				back: {
+					size: 1
+				}
+			}
+		}
+	},
+	/*= if (!build.classic) { =*/
+	defs: {
+		style: {
+			textContent: defaultOptions.defs.style.textContent +
+				'\n.highcharts-3d-top{' +
+					'filter: url(#highcharts-brighter)' +
+				'}' +
+				'\n.highcharts-3d-side{' +
+					'filter: url(#highcharts-darker)' +
+				'}'
 		}
 	}
-};
+	/*= } =*/
+});
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));

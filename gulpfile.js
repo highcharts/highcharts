@@ -60,6 +60,10 @@ gulp.task('scripts', function () {
         base: './js/masters/',
         debug: debug,
         fileOptions: {
+            'modules/accessibility.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'modules/annotations.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false

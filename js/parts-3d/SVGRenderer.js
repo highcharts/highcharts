@@ -95,21 +95,21 @@ wrap(SVGRenderer.prototype, 'init', function (proceed) {
 		name: 'brighter',
 		slope: 1.4
 	}], function (cfg) {
-		this.addDefinition({
-			tag: 'filter',
+		this.definition({
+			tagName: 'filter',
 			id: 'highcharts-' + cfg.name,
 			children: [{
-				tag: 'feComponentTransfer',
+				tagName: 'feComponentTransfer',
 				children: [{
-					tag: 'feFuncR',
+					tagName: 'feFuncR',
 					type: 'linear',
 					slope: cfg.slope
 				}, {
-					tag: 'feFuncG',
+					tagName: 'feFuncG',
 					type: 'linear',
 					slope: cfg.slope
 				}, {
-					tag: 'feFuncB',
+					tagName: 'feFuncB',
 					type: 'linear',
 					slope: cfg.slope
 				}]

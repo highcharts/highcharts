@@ -36,7 +36,7 @@ const cleanPath = path => {
         p = p.replace('/./', '/');
     }
     while (p.indexOf('/../') > -1) {
-        p = p.replace(/\/([^\/]+\/..\/)/g, '/');
+        p = p.replace(/\/([^\/]+\/\.\.\/)/g, '/');
     }
     return p;
 };
@@ -215,6 +215,7 @@ const compileFile = options => {
 };
 
 module.exports = {
+    cleanPath,
     regexGetCapture: regexGetCapture,
     compileFile: compileFile
 };

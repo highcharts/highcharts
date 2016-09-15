@@ -633,10 +633,6 @@ extend(Point.prototype, {
 						)
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
-
-						/*= if (build.classic) { =*/
-						stateMarkerGraphic.attr(series.pointAttribs(point, state));
-						/*= } =*/
 					}
 
 				// Move the existing graphic
@@ -646,6 +642,9 @@ extend(Point.prototype, {
 						y: plotY - radius
 					});
 				}
+				/*= if (build.classic) { =*/
+				stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				/*= } =*/
 			}
 
 			if (stateMarkerGraphic) {

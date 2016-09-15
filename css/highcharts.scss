@@ -119,7 +119,6 @@ $highlight-color-10: #e6ebf5; /* Pressed button, color axis min color. */
     pointer-events: none;
     white-space: nowrap;
     transition: stroke 150ms;
-    filter: url(#drop-shadow);
 }
 .highcharts-tooltip text {
     fill: $neutral-color-80;
@@ -558,12 +557,6 @@ input.highcharts-range-selector {
 }
 .highcharts-column-series .highcharts-point  {
     stroke: inherit; /* use point color */
-}
-.highcharts-3d-top {
-    filter: url(#highcharts-brighter);
-}
-.highcharts-3d-side {
-    filter: url(#highcharts-darker);
 }
 
 /* Exporting module */

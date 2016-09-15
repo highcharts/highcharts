@@ -2,7 +2,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
-import './CanVGRenderer.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
@@ -12,7 +11,6 @@ import './Pointer.js';
 		attr = H.attr,
 		doc = H.doc,
 		Axis = H.Axis, // @todo add as requirement
-		CanVGController = H.CanVGController,
 		createElement = H.createElement,
 		defaultOptions = H.defaultOptions,
 		discardElement = H.discardElement,
@@ -40,8 +38,7 @@ import './Pointer.js';
 		svg = H.svg,
 		syncTimeout = H.syncTimeout,
 		win = H.win,
-		Renderer = H.Renderer,
-		useCanVG = H.useCanVG;
+		Renderer = H.Renderer;
 /**
  * The Chart class
  * @param {String|Object} renderTo The DOM element to render to, or its id
@@ -727,15 +724,10 @@ Chart.prototype = {
 		/*= } else { =*/
 		// Initialize definitions
 		for (key in options.defs) {
-			this.renderer.addDefinition(options.defs[key]);
+			this.renderer.definition(options.defs[key]);
 		}
 		/*= } =*/		
 
-		if (useCanVG) {
-			// If we need canvg library, extend and configure the renderer
-			// to get the tracker for translating mouse events
-			chart.renderer.create(chart, container, chartWidth, chartHeight);
-		}
 		// Add a reference to the charts index
 		chart.renderer.chartIndex = chart.index;
 	},
@@ -1409,6 +1401,11 @@ Chart.prototype = {
 		while (i--) {
 			axes[i] = axes[i].destroy();
 		}
+		
+		// Destroy scroller & scroller series before destroying base series
+		if (this.scroller && this.scroller.destroy) {
+			this.scroller.destroy();
+		}
 
 		// Destroy each series
 		i = series.length;
@@ -1418,7 +1415,7 @@ Chart.prototype = {
 
 		// ==== Destroy chart properties:
 		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage',
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller',
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer',
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
@@ -1453,20 +1450,13 @@ Chart.prototype = {
 		var chart = this;
 
 		// Note: win == win.top is required
-		if ((!svg && (win == win.top && win.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
-			if (useCanVG) {
-				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () {
+		if ((!svg && (win == win.top && win.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
+			doc.attachEvent('onreadystatechange', function () {
+				doc.detachEvent('onreadystatechange', chart.firstRender);
+				if (doc.readyState === 'complete') {
 					chart.firstRender();
-				}, chart.options.global.canvasToolsURL);
-			} else {
-				doc.attachEvent('onreadystatechange', function () {
-					doc.detachEvent('onreadystatechange', chart.firstRender);
-					if (doc.readyState === 'complete') {
-						chart.firstRender();
-					}
-				});
-			}
+				}
+			});
 			return false;
 		}
 		return true;

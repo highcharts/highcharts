@@ -52,14 +52,6 @@ var HighchartsConfig = {
 		},
 		"baseUrl": "parts"
 	}, {
-		"name": "CanVGRenderer",
-		"component": "Canvg renderer",
-		"group": "Renderers",
-		"depends": {
-			"component": ["Core"]
-		},
-		"baseUrl": "parts"
-	}, {
 		"name": "Tick",
 		"component": "Core",
 		"group": "Core",
@@ -549,9 +541,6 @@ var HighchartsConfig = {
 		},
 		"VML renderer": {
 			"description": "This concerns old IE, which doesn't support SVG."
-		},
-		"Canvg renderer": {
-			"description": "For rendering charts with Android 2.* devices, charts are rendered on canvas."
 		},
 		"Tooltip": {
 			"description": "The tooltip appears when hovering over a point in a series"

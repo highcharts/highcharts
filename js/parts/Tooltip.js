@@ -13,8 +13,7 @@ import './Utilities.js';
 		splat = H.splat,
 		stop = H.stop,
 		syncTimeout = H.syncTimeout,
-		timeUnits = H.timeUnits,
-		useCanVG = H.useCanVG;
+		timeUnits = H.timeUnits;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
@@ -80,10 +79,7 @@ H.Tooltip.prototype = {
 				})
 				// #2301, #2657
 				.css(options.style)
-				
-				// When using canVG the shadow shows up as a gray circle
-				// even if the tooltip is hidden.
-				.shadow(!useCanVG && options.shadow);
+				.shadow(options.shadow);
 			/*= } =*/
 		}
 		this.label.attr({
@@ -461,6 +457,14 @@ H.Tooltip.prototype = {
 			options = this.options,
 			headerHeight;
 
+		/**
+		 * Destroy a single-series tooltip
+		 */
+		function destroy(tt) {
+			tt.connector = tt.connector.destroy();
+			tt.destroy();
+		}
+
 		// Create the individual labels
 		each(labels.slice(0, labels.length - 1), function (str, i) {
 			var point = points[i - 1] ||
@@ -502,8 +506,7 @@ H.Tooltip.prototype = {
 						.add(tooltip.label);
 
 					addEvent(point.series, 'hide', function () {
-						this.tt.connector = this.tt.connector.destroy();
-						this.tt = this.tt.destroy();
+						this.tt = destroy(this.tt);
 					});
 				}
 			}
@@ -546,8 +549,7 @@ H.Tooltip.prototype = {
 			var tt = series.tt;
 			if (tt) {
 				if (!tt.isActive) {
-					tt.connector = tt.connector.destroy();
-					series.tt = tt.destroy();
+					series.tt = destroy(tt);
 				} else {
 					tt.isActive = false;
 				}
@@ -563,6 +565,7 @@ H.Tooltip.prototype = {
 
 			// Put the label in place
 			attr = {
+				display: box.pos === undefined ? 'none' : '',
 				x: (rightAligned || point.isHeader ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16)),
 				y: box.pos + chart.plotTop
 			};
