@@ -71,10 +71,11 @@ merge(true, defaultOptions.navigation, {
 		padding: '5px 0'
 	},
 	menuItemStyle: {
-		padding: '0 10px',
+		padding: '0.5em 1em',
 		background: 'none',
 		color: '${palette.neutralColor80}',
-		fontSize: isTouchDevice ? '14px' : '11px'
+		fontSize: isTouchDevice ? '14px' : '11px',
+		transition: 'background 250ms, color 250ms'
 	},
 	menuItemHoverStyle: {
 		background: '${palette.highlightColor80}',

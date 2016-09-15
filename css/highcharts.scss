@@ -587,10 +587,11 @@ input.highcharts-range-selector {
     box-shadow: 3px 3px 10px #888;
 }
 .highcharts-menu-item {
-    padding: 0 1em;
+    padding: 0.5em 1em;
     background: none;
     color: $neutral-color-80;
     cursor: pointer;
+    transition: background 250ms, color 250ms;
 }
 .highcharts-menu-item:hover {
     background: $highlight-color-80;
