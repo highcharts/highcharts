@@ -1446,7 +1446,7 @@ SVGRenderer.prototype = {
 	/**
 	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs: todo: return node
 	 */
-	addDefinition: function (def) {
+	definition: function (def) {
 		var ren = this;
 
 		function recurse(config, parent) {

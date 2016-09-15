@@ -724,7 +724,7 @@ Chart.prototype = {
 		/*= } else { =*/
 		// Initialize definitions
 		for (key in options.defs) {
-			this.renderer.addDefinition(options.defs[key]);
+			this.renderer.definition(options.defs[key]);
 		}
 		/*= } =*/		
 

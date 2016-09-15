@@ -95,7 +95,7 @@ wrap(SVGRenderer.prototype, 'init', function (proceed) {
 		name: 'brighter',
 		slope: 1.4
 	}], function (cfg) {
-		this.addDefinition({
+		this.definition({
 			tagName: 'filter',
 			id: 'highcharts-' + cfg.name,
 			children: [{
