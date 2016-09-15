@@ -1450,6 +1450,7 @@ SVGRenderer.prototype = {
 		var ren = this;
 
 		function recurse(config, parent) {
+			var ret;
 			each(splat(config), function (item) {
 				var node = ren.createElement(item.tagName),
 					key,
@@ -1473,9 +1474,14 @@ SVGRenderer.prototype = {
 
 				// Recurse
 				recurse(item.children || [], node);
+
+				ret = node;
 			});
+
+			// Return last node added (on top level it's the only one)
+			return ret;
 		}
-		recurse(def);
+		return recurse(def);
 	},
 	/*= } =*/
 
