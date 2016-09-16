@@ -48,7 +48,7 @@ $(function () {
         assert.strictEqual(
             chart.tooltip.label.element.lastChild.lastChild.innerHTML,
             flag.text,
-            'Updated title'
+            'Updated text'
         );
     });
 });
