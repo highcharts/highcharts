@@ -135,13 +135,13 @@ import '../parts/Tooltip.js';
 	// Return string with information about point
 	H.Point.prototype.buildPointInfoString = function () {
 		var point = this,
+			a11yOptions = this.series.chart.options.accessibility,
 			infoString = '',
 			hasSpecialKey = false,
 			dateTimePoint = point.series.xAxis.isDatetimeAxis,
-			timeDesc = dateTimePoint && dateFormat(H.Tooltip.prototype.getXDateFormat(point, point.series.chart.options.tooltip, point.series.xAxis), point.x);
+			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat || // docs
+				H.Tooltip.prototype.getXDateFormat(point, point.series.chart.options.tooltip, point.series.xAxis), point.x);
 
-		console.log(point, timeDesc)
-		
 		each(specialKeys, function (key) {
 			if (point[key] !== undefined) {
 				hasSpecialKey = true;
@@ -160,11 +160,11 @@ import '../parts/Tooltip.js';
 			});
 		} else {
 			// Pick and choose properties for a succint label
-			infoString = (this.name || this.category || timeDesc || this.id || 'x, ' + this.x) + ', ' +
+			infoString = (this.name || timeDesc || this.category || this.id || 'x, ' + this.x) + ', ' +
 				(this.value !== undefined ? this.value : this.y);
 		}
 
-		return (this.index + 1) + '. ' + (this.description ? this.description + '. ' : '') + infoString + '.'; // docs
+		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : ''); // docs
 	};
 
 	// Get descriptive label for axis
