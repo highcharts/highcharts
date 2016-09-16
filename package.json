@@ -36,7 +36,6 @@
     "gulp-sass": "^2.3.1",
     "gzip-size": "^3.0.0",
     "js-beautify": "^1.6.2",
-    "null-loader": "^0.1.1",
     "request": "^2.65.0",
     "requirejs": "^2.1.20",
     "vinyl-ftp": "^0.4.5",
