@@ -20,11 +20,8 @@ seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	forceDL: true,
 	pointClass: extendClass(Point, {
 		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
-			if (options.lat !== undefined && options.lon !== undefined) {
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
-			}
-			return point;
+			var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+			return Point.prototype.applyOptions.call(this, mergedOptions, x);
 		}
 	})
 });
