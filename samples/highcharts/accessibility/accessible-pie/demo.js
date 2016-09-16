@@ -1,13 +1,9 @@
 $(function () {
 
     $('#container').highcharts({
-        accessibility: {
-            enabled: true,
-            description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents.'
-        },
-
         chart: {
-            type: 'pie'
+            type: 'pie',
+            description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents.'
         },
 
         title: {
@@ -43,6 +39,7 @@ $(function () {
         series: [{
             name: 'Percentage usage',
             borderColor: Highcharts.getOptions().colors[0],
+            description: "Test series desc",
             data: [{
                 name: 'JAWS',
                 y: 30.2,

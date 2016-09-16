@@ -2,18 +2,16 @@ $(function () {
 
     $('#container').highcharts({
         accessibility: {
-            enabled: true,
-            description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015.',
             keyboardNavigation: {
                 skipNullPoints: true
             },
-            pointInfoFormatter: function (point) {
+            pointDescriptionFormatter: function (point) {
                 return point.category + ', low ' + point.low + ', median ' + point.median + ', high ' + point.high;
             }
         },
-
         chart: {
-            type: 'boxplot'
+            type: 'boxplot',
+            description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015.'
         },
         title: {
             text: 'Daily company fruit consumption 2015'

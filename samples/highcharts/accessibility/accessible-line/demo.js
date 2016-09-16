@@ -1,13 +1,8 @@
 $(function () {
-
     $('#container').highcharts({
-        accessibility: {
-            enabled: true,
-            description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey.'
-        },
-
         chart: {
-            type: 'spline'
+            type: 'spline',
+            description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey.'
         },
 
         legend: {
