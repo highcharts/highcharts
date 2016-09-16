@@ -548,16 +548,20 @@ import '../parts/Tooltip.js';
 			(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 			(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
-		tableShortcutAnchor.innerHTML = 'View as data table.';
-		tableShortcutAnchor.href = '#' + tableId;
-		tableShortcutAnchor.setAttribute('tabindex', '-1'); // Make this unreachable by user tabbing
-		tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () { // docs
-			chart.viewData();
-			doc.getElementById(tableId).focus();
-		};
-		tableShortcut.appendChild(tableShortcutAnchor);
+		// Add shortcut to data table if export-csv is loaded
+		if (chart.getCSV) {
+			tableShortcutAnchor.innerHTML = 'View as data table.';
+			tableShortcutAnchor.href = '#' + tableId;
+			tableShortcutAnchor.setAttribute('tabindex', '-1'); // Make this unreachable by user tabbing
+			tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () { // docs
+				chart.viewData();
+				doc.getElementById(tableId).focus();
+			};
+			tableShortcut.appendChild(tableShortcutAnchor);
 
-		hiddenSection.appendChild(tableShortcut);
+			hiddenSection.appendChild(tableShortcut);
+		}
+		
 		chartHeading.innerHTML = 'Chart graphic.';
 		chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
 		chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
