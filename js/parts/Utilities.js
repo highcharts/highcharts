@@ -1232,7 +1232,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
 		e = doc.createEvent('Events');
 		e.initEvent(type, true, true);
-		e.target = el;
+		//e.target = el;
 
 		H.extend(e, eventArguments);
 
