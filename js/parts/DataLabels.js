@@ -482,8 +482,6 @@ if (seriesTypes.pie) {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			connector,
-			connectorPath,
-			softConnector = pick(options.softConnector, true),
 			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
@@ -598,8 +596,8 @@ if (seriesTypes.pie) {
 						({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
 					y: y + options.y - 10 // 10 is for the baseline (label vs text)
 				};
-				dataLabel.connX = x;
-				dataLabel.connY = y;
+				labelPos.x = x;
+				labelPos.y = y;
 
 
 				// Detect overflowing data labels
@@ -639,30 +637,10 @@ if (seriesTypes.pie) {
 					var isNew;
 
 					connector = point.connector;
-					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
 
 					if (dataLabel && dataLabel._pos && point.visible) {
 						visibility = dataLabel._attr.visibility;
-						x = dataLabel.connX;
-						y = dataLabel.connY;
-						connectorPath = softConnector ? [
-							'M',
-							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							'C',
-							x, y, // first break, next to the label
-							2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
-							labelPos[2], labelPos[3], // second break
-							'L',
-							labelPos[4], labelPos[5] // base
-						] : [
-							'M',
-							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							'L',
-							labelPos[2], labelPos[3], // second break
-							'L',
-							labelPos[4], labelPos[5] // base
-						];
 
 						isNew = !connector;
 
@@ -678,7 +656,9 @@ if (seriesTypes.pie) {
 							});
 							/*= } =*/
 						}
-						connector[isNew ? 'attr' : 'animate']({ d: connectorPath });
+						connector[isNew ? 'attr' : 'animate']({
+							d: series.connectorPath(point.labelPos)
+						});
 						connector.attr('visibility', visibility);
 
 					} else if (connector) {
@@ -688,6 +668,33 @@ if (seriesTypes.pie) {
 			}
 		}
 	};
+
+	/**
+	 * Extendable method for getting the path of the connector between the data label
+	 * and the pie slice.
+	 */
+	seriesTypes.pie.prototype.connectorPath = function (labelPos) {
+		var x = labelPos.x,
+			y = labelPos.y;
+		return pick(this.options.softConnector, true) ? [
+			'M',
+			x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+			'C',
+			x, y, // first break, next to the label
+			2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
+			labelPos[2], labelPos[3], // second break
+			'L',
+			labelPos[4], labelPos[5] // base
+		] : [
+			'M',
+			x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
+			'L',
+			labelPos[2], labelPos[3], // second break
+			'L',
+			labelPos[4], labelPos[5] // base
+		];
+	};
+
 	/**
 	 * Perform the final placement of the data labels after we have verified that they
 	 * fall within the plot area.
