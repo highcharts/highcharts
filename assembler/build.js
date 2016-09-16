@@ -115,5 +115,6 @@ const build = userOptions=> {
 };
 
 module.exports = {
-    build: build
+    build: build,
+    getFilesInFolder
 };

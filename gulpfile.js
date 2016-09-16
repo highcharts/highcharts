@@ -367,6 +367,22 @@ gulp.task('compile', ['scripts'], () => {
     });
 });
 
+gulp.task('copy-to-dist', () => {
+    const B = require('./assembler/build.js');
+    const U = require('./assembler/utilities.js');
+    const sourceFolder = './code/';
+    const distFolder = './build/dist/';
+    const files = B.getFilesInFolder(sourceFolder, true, '');
+    files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
+        .forEach((path) => {
+            const content = fs.readFileSync(sourceFolder + path);
+            ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+                U.writeFile(distFolder + lib + '/js/' + path, content);
+                console.log(sourceFolder + path + ' => ' + distFolder + lib + '/js/' + path);
+            });
+        });
+});
+
 gulp.task('browserify', function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
