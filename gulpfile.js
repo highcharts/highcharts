@@ -216,7 +216,7 @@ gulp.task('default', ['styles', 'scripts'], () => {
 /**
  * Create distribution files
  */
-gulp.task('dist', ['styles', 'scripts']);
+gulp.task('dist', ['styles', 'scripts', 'compile']);
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
@@ -343,26 +343,21 @@ gulp.task('filesize', function () {
 /**
  * Compile the JS files in the /code folder
  */
-gulp.task('compile', function () {
-
-    glob('*.src.js', { cwd: './code/', matchBase: true }, function (globErr, files) {
-
-        files.forEach(function (src) {
+gulp.task('compile', ['scripts'], () => {
+    console.log('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.');
+    return glob('*.src.js', { cwd: './code/', matchBase: true }, (globErr, files) => {
+        files.forEach((src) => {
             src = './code/' + src;
             var dest = src.replace('.src.js', '.js');
             closureCompiler.compile(
                 [src],
                 null,
-                function (error, result) {
+                (error, result) => {
                     if (result) {
-                        fs.writeFile(dest, result, 'utf8', function (writeErr) {
-                            if (!writeErr) {
-                                console.log(colors.green('Compiled ' + src + ' => ' + dest));
-                            } else {
-                                console.log(colors.red('Failed compiling ' + src + ' => ' + dest));
-                            }
+                        fs.writeFileSync(dest, result, 'utf8', (writeErr) => {
+                            let msg = (!writeErr) ? colors.green('Compiled ' + src + ' => ' + dest) : colors.red('Failed compiling ' + src + ' => ' + dest);
+                            console.log(msg);
                         });
-
                     } else {
                         console.log('Compilation error: ' + error);
                     }
