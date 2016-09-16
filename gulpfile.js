@@ -136,6 +136,38 @@ gulp.task('scripts', function () {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'themes/dark-blue.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/dark-green.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/dark-unica.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/gray.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/grid-light.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/grid.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/skies.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/sand-signika.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'highcharts-more.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false

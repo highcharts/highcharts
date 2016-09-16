@@ -6,6 +6,7 @@
 'use strict';
 /* global document */
 // Load the fonts
+import Highcharts from '../parts/Globals.js';
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',
 	rel: 'stylesheet',
