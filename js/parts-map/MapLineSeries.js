@@ -16,6 +16,7 @@ seriesType('mapline', 'map', {
 	colorProp: 'stroke',
 	/*= if (build.classic) { =*/
 	pointAttrToOptions: {
+		'stroke': 'color',
 		'stroke-width': 'lineWidth'
 	},
 	/**

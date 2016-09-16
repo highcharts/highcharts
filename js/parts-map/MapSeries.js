@@ -15,7 +15,6 @@ import './ColorAxis.js';
 		doc = H.doc,
 		each = H.each,
 		extend = H.extend,
-		extendClass = H.extendClass,
 		isNumber = H.isNumber,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		map = H.map,
