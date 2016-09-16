@@ -101,4 +101,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+Highcharts.setOptions(Highcharts.theme);
