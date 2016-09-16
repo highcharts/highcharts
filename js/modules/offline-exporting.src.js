@@ -152,8 +152,9 @@ import '../parts/Options.js';
 		var svgurl,
 			blob,
 			objectURLRevoke = true,
-			finallyHandler;
-console.log(Highcharts.getOptions().exporting.canvasToolsURL)
+			finallyHandler,
+			libURL = Highcharts.getOptions().exporting.libURL;
+
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
 			// SVG download. In this case, we want to use Microsoft specific Blob if available
@@ -223,8 +224,11 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 				} else {
 					// Must load canVG first
 					objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-					getScript(Highcharts.getOptions().exporting.canvasToolsURL, function () {
-						downloadWithCanVG();
+					libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+					getScript(libURL + 'rgbcolor.js', function () { // Get RGBColor.js first
+						getScript(libURL + 'canvg.js', function () {
+							downloadWithCanVG();
+						});
 					});
 				}
 			},
@@ -334,7 +338,7 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 
 	// Extend the default options to use the local exporter logic
 	merge(true, Highcharts.getOptions().exporting, {
-		canvasToolsURL: 'http://code.highcharts.com/4/modules/canvas-tools.js', // docs
+		libURL: 'http://code.highcharts.com/5/lib/', // docs
 		buttons: {
 			contextButton: {
 				menuItems: [{
