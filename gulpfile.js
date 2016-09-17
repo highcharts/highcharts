@@ -216,7 +216,7 @@ gulp.task('default', ['styles', 'scripts'], () => {
 /**
  * Create distribution files
  */
-gulp.task('dist', ['styles', 'scripts', 'compile']);
+gulp.task('dist', ['clean-code', 'styles', 'scripts', 'lint', 'compile', 'clean-dist', 'copy-to-dist']);
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
@@ -365,6 +365,13 @@ gulp.task('compile', ['scripts'], () => {
             );
         });
     });
+});
+
+gulp.task('clean-code', () => {
+    const U = require('./assembler/utilities.js');
+    return U.removeDirectory('./code').then(() => {
+        console.log('Successfully removed code directory.');
+    }).catch(console.log);
 });
 
 gulp.task('clean-dist', () => {
