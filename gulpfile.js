@@ -367,7 +367,14 @@ gulp.task('compile', ['scripts'], () => {
     });
 });
 
-gulp.task('copy-to-dist', () => {
+gulp.task('clean-dist', () => {
+    const U = require('./assembler/utilities.js');
+    return U.removeDirectory('./build/dist').then(() => {
+        console.log('Successfully removed dist directory.');
+    }).catch(console.log);
+});
+
+gulp.task('copy-to-dist', ['clean-dist'], () => {
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
@@ -378,7 +385,6 @@ gulp.task('copy-to-dist', () => {
             const content = fs.readFileSync(sourceFolder + path);
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 U.writeFile(distFolder + lib + '/js/' + path, content);
-                console.log(sourceFolder + path + ' => ' + distFolder + lib + '/js/' + path);
             });
         });
 });
