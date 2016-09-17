@@ -4,7 +4,6 @@
 'use strict';
 var colors = require('colors'),
     exec = require('child_process').exec,
-    glob = require('glob'),
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
@@ -343,27 +342,39 @@ gulp.task('filesize', function () {
 /**
  * Compile the JS files in the /code folder
  */
-gulp.task('compile', ['scripts'], () => {
-    console.log('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.');
-    return glob('*.src.js', { cwd: './code/', matchBase: true }, (globErr, files) => {
-        files.forEach((src) => {
-            src = './code/' + src;
-            var dest = src.replace('.src.js', '.js');
-            closureCompiler.compile(
-                [src],
-                null,
-                (error, result) => {
-                    if (result) {
-                        fs.writeFileSync(dest, result, 'utf8', (writeErr) => {
-                            let msg = (!writeErr) ? colors.green('Compiled ' + src + ' => ' + dest) : colors.red('Failed compiling ' + src + ' => ' + dest);
-                            console.log(msg);
-                        });
-                    } else {
-                        console.log('Compilation error: ' + error);
-                    }
-                }
-            );
-        });
+gulp.task('compile', () => {
+    console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
+    return new Promise((resolve) => {
+        const B = require('./assembler/build.js');
+        const sourceFolder = './code/';
+        const promises = B.getFilesInFolder(sourceFolder, true, '')
+            .filter(path => path.endsWith('.src.js'))
+            .map(path => {
+                return new Promise((resolveCompile, reject) => {
+                    const sourcePath = sourceFolder + path;
+                    const outputPath = sourcePath.replace('.src.js', '.js');
+                    closureCompiler.compile(
+                        [sourcePath],
+                        null,
+                        (error, result) => {
+                            if (result) {
+                                fs.writeFile(outputPath, result, 'utf8', (err) => {
+                                    if (!err) {
+                                        resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+                                    } else {
+                                        reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
+                                    }
+                                });
+                            } else {
+                                reject('Compilation error: ' + error);
+                            }
+                        }
+                    );
+                }).then(console.log);
+            });
+        Promise.all(promises).then(() => {
+            resolve('Compile is complete');
+        }).catch((err) => err.message + '\n\r' + err.stack);
     });
 });
 
