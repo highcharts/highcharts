@@ -449,16 +449,6 @@
         <listfiles></listfiles>
     </target>
 
-    <target name="gulp-dist">
-        <exec osfamily="mac" dir="${basedir}" executable="gulp" outputproperty="output">
-            <arg line="dist" />
-        </exec>
-        <exec osfamily="windows" dir="${basedir}" executable="cmd" outputproperty="output">
-            <arg value="/c gulp dist"/>
-        </exec>
-        <echo message="${output}" />
-    </target>
-
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="set.properties" description="Builds the source and assembles distribution packages.">
         <echo file="${dist.dir}/products.js" append="false">
@@ -477,10 +467,6 @@
                 }
             }
         </echo>
-
-        <!-- 2. Call the gulp dist task. Creates all distribution files, lints them, minify them, and copy them to dist folder. -->
-        <antcall target="gulp-dist"></antcall>
-
 
         <!-- 3. Create samples -->
         <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
