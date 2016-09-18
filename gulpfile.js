@@ -357,6 +357,7 @@ const compile = () => {
                             if (result) {
                                 fs.writeFile(outputPath, result, 'utf8', (err) => {
                                     if (!err) {
+                                        // @todo add filesize information
                                         resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
                                     } else {
                                         reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
@@ -482,6 +483,51 @@ const gulpify = (name, task) => {
     };
 };
 
+/**
+ * Executes a single terminal command and returns when finished.
+ * Outputs stdout to the console.
+ * @param  {string} command Command to execute in terminal
+ * @return {string} Returns all output to the terminal in the form of a string.
+ */
+const commandLine = (command) => {
+    // const exec = require('child_process').exec;
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            } else {
+                console.log(stdout);
+                resolve(stdout);
+            }
+        });
+    });
+};
+
+/**
+ * Download a version of the API for Highstock, Highstock or Highmaps.
+ * Executes a grunt task through command line.
+ * @param  {string} product Which api to download. Must be lowercase.
+ * @param  {string} version Which version to download.
+ * @return {Promise} Returns a promise which resolves when download is completed.
+ */
+const downloadAPI = (product, version) => commandLine('grunt download-api:' + product + ':' + version);
+
+/**
+ * Download all the API's of Highcharts, Highstock and Highmaps.
+ * @return {Promise} Returns a promise which resolves when all downloads are completed.
+ */
+const downloadAllAPI = () => new Promise((resolve, reject) => {
+    // @todo Pass in version, instead of hardcoding it.
+    const version = '5.0.0';
+    const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
+    Promise.all(promises).then(() => {
+        resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
+    }).catch((err) => {
+        reject(err);
+    });
+});
+
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
@@ -496,7 +542,8 @@ gulp.task('dist', () => {
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compile))
         .then(gulpify('cleanDist', cleanDist))
-        .then(gulpify('copyToDist', copyToDist));
+        .then(gulpify('copyToDist', copyToDist))
+        .then(gulpify('downloadAllAPI', downloadAllAPI));
 });
 gulp.task('browserify', function () {
     var browserify = require('browserify');
