@@ -1,5 +1,6 @@
 /* eslint-env node, es6 */
 /* eslint no-console:0, valid-jsdoc:0 */
+/* eslint-disable func-style */
 
 'use strict';
 var colors = require('colors'),
@@ -43,7 +44,8 @@ var paths = {
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
  * @return undefined
  */
-gulp.task('scripts', function () {
+const scripts = () => {
+    console.log('Starting scripts.');
     let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
@@ -180,27 +182,27 @@ gulp.task('scripts', function () {
         output: './code/',
         type: type
     });
-});
+};
 
-gulp.task('styles', function () {
+const styles = () => {
     gulp.src('./css/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
-});
+};
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
  * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
  * @return undefined Returns nothing
  */
-gulp.task('lint', () => {
+const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine();
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**'];
     let report = cli.executeOnFiles(pattern);
     console.log(formatter(report.results));
-});
+};
 
 /**
  * Watch changes to JS and SCSS files
@@ -211,11 +213,6 @@ gulp.task('default', ['styles', 'scripts'], () => {
     // If js parts files changes, then build new js files.
     gulp.watch(['./js/!(adapters|builds)/*.js'], ['scripts']);
 });
-
-/**
- * Create distribution files
- */
-gulp.task('dist', ['clean-code', 'styles', 'scripts', 'lint', 'compile', 'clean-dist', 'copy-to-dist']);
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
@@ -342,7 +339,7 @@ gulp.task('filesize', function () {
 /**
  * Compile the JS files in the /code folder
  */
-gulp.task('compile', () => {
+const compile = () => {
     console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
     return new Promise((resolve) => {
         const B = require('./assembler/build.js');
@@ -376,23 +373,23 @@ gulp.task('compile', () => {
             resolve('Compile is complete');
         }).catch((err) => err.message + '\n\r' + err.stack);
     });
-});
+};
 
-gulp.task('clean-code', () => {
+const cleanCode = () => {
     const U = require('./assembler/utilities.js');
     return U.removeDirectory('./code').then(() => {
         console.log('Successfully removed code directory.');
     }).catch(console.log);
-});
+};
 
-gulp.task('clean-dist', () => {
+const cleanDist = () => {
     const U = require('./assembler/utilities.js');
     return U.removeDirectory('./build/dist').then(() => {
         console.log('Successfully removed dist directory.');
     }).catch(console.log);
-});
+};
 
-gulp.task('copy-to-dist', ['clean-dist'], () => {
+const copyToDist = () => {
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
@@ -405,8 +402,102 @@ gulp.task('copy-to-dist', ['clean-dist'], () => {
                 U.writeFile(distFolder + lib + '/js/' + path, content);
             });
         });
-});
+};
 
+/**
+ * Left pad a string
+ * @param  {string} str    The string we want to pad.
+ * @param  {string} char   The character we want it to be padded with.
+ * @param  {number} length The length of the resulting string.
+ * @return {string}        The string with padding on left.
+ */
+const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
+
+/**
+ * Returns time of date as a string in the format of HH:MM:SS
+ * @param  {Date} d The date object we want to get the time from
+ * @return {string}   The string represantation of the Date object.
+ */
+const toTimeString = (d) => {
+    const pad = (s) => leftPad(s, '0', 2);
+    return pad('' + d.getHours()) + ':' + pad('' + d.getMinutes()) + ':' + pad('' + d.getSeconds());
+};
+
+/**
+ * Returns a string which tells the time difference between to dates.
+ * Difference is formatted as xh xm xs xms. Where x is a number.
+ * @param  {Date} d1 First date
+ * @param  {Date} d2 Second date
+ * @return {string} The time difference between the two dates.
+ */
+const timeDifference = (d1, d2) => {
+    const seconds = 1000;
+    const minutes = 60 * seconds;
+    const hours = 60 * minutes;
+    let diff = d2 - d1;
+    let x = 0;
+    let time = [];
+    if (diff > hours) {
+        x = Math.floor(diff / hours);
+        diff -= x * hours;
+        time.push(x + 'h');
+    }
+    if (diff > minutes || (time.length > 0 && diff > 0)) {
+        x = Math.floor(diff / minutes);
+        diff -= x * minutes;
+        time.push(x + 'm');
+    }
+    if (diff > seconds || (time.length > 0 && diff > 0)) {
+        x = Math.floor(diff / seconds);
+        diff -= x * seconds;
+        time.push(x + 's');
+    }
+    if (diff > 0 || time.length === 0) {
+        time.push(diff + 'ms');
+    }
+    return time.join(' ');
+};
+
+/**
+ * Mirrors the same feedback which gulp gives when executing its tasks.
+ * Says when a task started, when it finished, and how long it took.
+ * @param  {string} name Name of task which is beeing executed.
+ * @param  {string} task A function to execute
+ * @return {*}      Returns whatever the task function returns when it is finished.
+ */
+const gulpify = (name, task) => {
+    // const colors = require('colors');
+    const isPromise = (value) => (typeof value === 'object' && typeof value.then === 'function');
+    return function () {
+        const d1 = new Date();
+        console.log('[' + colors.gray(toTimeString(d1)) + '] Starting \'' + colors.cyan(name) + '\'...');
+        let result = task.apply(null, Array.from(arguments));
+        if (!isPromise(result)) {
+            result = Promise.resolve(result);
+        }
+        return result.then(() => {
+            const d2 = new Date();
+            console.log('[' + colors.gray(toTimeString(d2)) + '] Finished \'' + colors.cyan(name) + '\' after ' + colors.blue(timeDifference(d1, d2)));
+        });
+    };
+};
+
+gulp.task('styles', styles);
+gulp.task('scripts', scripts);
+gulp.task('lint', lint);
+gulp.task('compile', compile);
+/**
+ * Create distribution files
+ */
+gulp.task('dist', () => {
+    return gulpify('cleanCode', cleanCode)()
+        .then(gulpify('styles', styles))
+        .then(gulpify('scripts', scripts))
+        .then(gulpify('lint', lint))
+        .then(gulpify('compile', compile))
+        .then(gulpify('cleanDist', cleanDist))
+        .then(gulpify('copyToDist', copyToDist));
+});
 gulp.task('browserify', function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
