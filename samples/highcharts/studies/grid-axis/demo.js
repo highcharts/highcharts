@@ -1,4 +1,42 @@
 console.clear();
+var logger = {
+    list: [],
+    add: function (obj) {
+        var copy = {},
+            prop;
+        for (prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+                copy[prop] = obj[prop];
+            }
+        }
+        this.list.push(copy);
+        if (this.list.length >= 2) {
+            this.compare();
+        }
+    },
+    compare: function () {
+        var obj1 = this.list[0],
+            obj2 = this.list[1],
+            prop;
+
+        for (prop in obj2) {
+            if (obj2.hasOwnProperty(prop)) {
+                if (obj1.hasOwnProperty(prop)) {
+                    if (obj2[prop] !== obj1[prop]) {
+                        console.log(prop + ': ' + obj1[prop] + ' <-old|new-> ' + obj2[prop]);
+                    }
+                } else {
+                    console.log(prop + ': ' + obj2[prop] + ' does not exist in old');
+                }
+            }
+        }
+        for (prop in obj1) {
+            if (obj1.hasOwnProperty(prop) && !obj2.hasOwnProperty(prop)) {
+                console.log(prop + ': ' + obj1[prop] + ' does not exist in new');
+            }
+        }
+    }
+};
 $(function () {
 
     /************************************
@@ -329,6 +367,11 @@ $(function () {
                     this.options.tickLength = distance;
                 }
 
+                if (this.options.id === 'thisGuy') {
+                    console.log(this.axisGroup.element, this);
+                    logger.add(this);
+                }
+
                 // Call original Axis.render() to obtain this.axisLine and this.axisGroup
                 proceed.apply(this);
 
@@ -497,6 +540,7 @@ $(function () {
             grid: true
         }, {
             title: '',
+            id: 'thisGuy',
             grid: true,
             reversed: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
