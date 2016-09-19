@@ -2657,7 +2657,7 @@ SVGRenderer.prototype = {
 			return box.strokeWidth() % 2 / 2;
 		};
 		/*= } else { =*/
-		needsBox = false;
+		needsBox = hasBGImage;
 		getCrispAdjust = function () {
 			return (strokeWidth || 0) % 2 / 2;
 		};
