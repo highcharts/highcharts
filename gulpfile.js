@@ -396,11 +396,20 @@ const copyToDist = () => {
     const sourceFolder = './code/';
     const distFolder = './build/dist/';
     const files = B.getFilesInFolder(sourceFolder, true, '');
+    // Files that should not be distributed with certain products
+    const filter = {
+        highcharts: ['highmaps.js', 'highstock.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
+        highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
+        highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
+    };
     files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
+            const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-                U.writeFile(distFolder + lib + '/js/' + path, content);
+                if (filter[lib].indexOf(filename) === -1) {
+                    U.writeFile(distFolder + lib + '/js/' + path, content);
+                }
             });
         });
 };
@@ -535,6 +544,7 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
