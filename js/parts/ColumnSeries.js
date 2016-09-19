@@ -300,8 +300,8 @@ seriesType('column', 'line', {
 			p2o = this.pointAttrToOptions || {},
 			strokeOption = p2o.stroke || 'borderColor',
 			strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
-			fill = (point && point.options.color) || this.color,
-			stroke = options[strokeOption] || this.color,
+			fill = (point && point.color) || this.color,
+			stroke = options[strokeOption] || this.color || fill, // set to fill when borderColor = null on pies
 			dashstyle = options.dashStyle,
 			zone,
 			brightness;
