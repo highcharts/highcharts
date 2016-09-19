@@ -724,18 +724,27 @@ import '../parts/Tick.js';
 	});
 
 	wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
+		var css = this.chart.options.drilldown.activeDataLabelStyle,
+			renderer = this.chart.renderer;
+
 		proceed.call(this);
 
 		each(this.points, function (point) {
+			var pointCSS = {};
 			if (point.drilldown && point.dataLabel) {
+				if (css.color === 'contrast') {
+					pointCSS.color = renderer.getContrast(point.color || this.color);
+				}
 				point.dataLabel
 					.addClass('highcharts-drilldown-data-label');
 
 				/*= if (build.classic) { =*/
-				point.dataLabel.css(point.series.chart.options.drilldown.activeDataLabelStyle);
+				point.dataLabel
+					.css(css)
+					.css(pointCSS);
 				/*= } =*/
 			}
-		});
+		}, this);
 	});
 
 	// Mark the trackers with a pointer 
