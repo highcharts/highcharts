@@ -1,4 +1,18 @@
+var toggle = true;
 $(function () {
+
+    Highcharts.Chart.prototype.toggleDataLabels = function () {
+        $.each(this.series, function (i, el) {
+            el.update({
+                dataLabels: {
+                    enabled: toggle
+                }
+            }, false);
+
+        });
+        toggle = !toggle;
+        this.redraw();
+    };
     var ids = ['a', 'b', 'c'],
         series = [],
         i = 0;
