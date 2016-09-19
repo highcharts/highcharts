@@ -300,7 +300,7 @@ seriesType('column', 'line', {
 			p2o = this.pointAttrToOptions || {},
 			strokeOption = p2o.stroke || 'borderColor',
 			strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
-			fill = (point && point.color) || this.color,
+			fill = (point && point.options.color) || this.color,
 			stroke = options[strokeOption] || this.color,
 			dashstyle = options.dashStyle,
 			zone,
@@ -374,14 +374,14 @@ seriesType('column', 'line', {
 							'class': point.getClassName()
 						})
 						.add(point.group || series.group);
-
-					/*= if (build.classic) { =*/
-					// Presentational
-					graphic
-						.attr(series.pointAttribs(point, point.selected && 'select'))
-						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
-					/*= } =*/
 				}
+
+				/*= if (build.classic) { =*/
+				// Presentational
+				graphic
+					.attr(series.pointAttribs(point, point.selected && 'select'))
+					.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+				/*= } =*/
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269

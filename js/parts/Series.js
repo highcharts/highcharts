@@ -1152,12 +1152,12 @@ H.Series = H.seriesType('line', null, { // base series options
 						)
 						.attr({ r: radius })
 						.add(markerGroup);
-
-						/*= if (build.classic) { =*/
-						// Presentational attributes
-						graphic.attr(series.pointAttribs(point, point.selected && 'select'));
-						/*= } =*/
 					}
+
+					/*= if (build.classic) { =*/
+					// Presentational attributes
+					graphic.attr(series.pointAttribs(point, point.selected && 'select'));
+					/*= } =*/
 
 					if (graphic) {
 						graphic.addClass(point.getClassName(), true);
