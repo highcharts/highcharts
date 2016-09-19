@@ -619,6 +619,10 @@ wrap(Series.prototype, 'render', function (proceed) {
 				width: this.xAxis.len,
 				height: this.yAxis.len
 			});
+		// #3111
+		} else if (this.clipBox) {
+			this.clipBox.width = this.xAxis.len;
+			this.clipBox.height = this.yAxis.len;
 		}
 	}
 	proceed.call(this);
