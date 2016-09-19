@@ -515,6 +515,9 @@ Scrollbar.prototype = {
 		this.to = to;
 	},
 
+	/**
+	 * Update the scrollbar with new options
+	 */
 	update: function (options) {
 		this.destroy();
 		this.init(this.chart.renderer, merge(true, this.options, options), this.chart);
@@ -573,17 +576,22 @@ Scrollbar.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var scroller = this;
+
+		var scroller = this.chart.scroller;
 
 		// Disconnect events added in addEvents
-		scroller.removeEvents();
+		this.removeEvents();
 
 		// Destroy properties
 		each(['track', 'scrollbarRifles', 'scrollbar', 'scrollbarGroup', 'group'], function (prop) {
-			if (scroller[prop] && scroller[prop].destroy) {
-				scroller[prop] = scroller[prop].destroy();
+			if (this[prop] && this[prop].destroy) {
+				this[prop] = this[prop].destroy();
 			}
-		});
+		}, this);
+
+		if (scroller && scroller.scrollbar) {
+			scroller.scrollbar = null;
+		}
 
 		// Destroy elements in collection
 		destroyObjectProperties(scroller.scrollbarButtons);

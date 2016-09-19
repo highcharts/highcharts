@@ -760,7 +760,7 @@ Navigator.prototype = {
 
 		// Initialize the scrollbar
 		if (chart.options.scrollbar.enabled) {
-			scroller.scrollbar = new Scrollbar(
+			chart.scrollbar = scroller.scrollbar = new Scrollbar(
 				chart.renderer,
 				merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
 				chart
@@ -783,35 +783,6 @@ Navigator.prototype = {
 
 		// Add data events
 		scroller.addBaseSeriesEvents();
-
-
-		/**
-		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
-		 * of the navigator once the height of the chart, including the legend, is determined. #367.
-		 */
-		wrap(chart, 'getMargins', function (proceed) {
-
-			var legend = this.legend,
-				legendOptions = legend.options,
-				xAxis = scroller.xAxis,
-				yAxis = scroller.yAxis;
-
-			proceed.apply(this, [].slice.call(arguments, 1));
-
-			// Compute the top position
-			scroller.top = top = scroller.navigatorOptions.top ||
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
-						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
-							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
-
-			if (xAxis && yAxis) { // false if navigator is disabled (#904)
-
-				xAxis.options.top = yAxis.options.top = top;
-
-				xAxis.setAxisSize();
-				yAxis.setAxisSize();
-			}
-		});
 
 		scroller.addEvents();
 	},
@@ -1159,6 +1130,37 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	proceed.call(this, options, callback);
 
+});
+
+/**
+ * For stock charts, extend the Chart.getMargins method so that we can set the final top position
+ * of the navigator once the height of the chart, including the legend, is determined. #367.
+ */
+wrap(Chart.prototype, 'getMargins', function (proceed) {
+
+	var legend = this.legend,
+		legendOptions = legend.options,
+		scroller = this.scroller,
+		xAxis = scroller.xAxis,
+		yAxis = scroller.yAxis;
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (scroller) {
+		// Compute the top position
+		scroller.top = scroller.navigatorOptions.top ||
+			this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
+					(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
+						legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+
+		if (xAxis && yAxis) { // false if navigator is disabled (#904)
+
+			xAxis.options.top = yAxis.options.top = scroller.top;
+
+			xAxis.setAxisSize();
+			yAxis.setAxisSize();
+		}
+	}
 });
 
 // Pick up badly formatted point options to addPoint

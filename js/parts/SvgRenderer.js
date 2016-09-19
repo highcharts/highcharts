@@ -1317,7 +1317,6 @@ SVGElement.prototype = {
 		return inserted;
 	},
 	_defaultSetter: function (value, key, element) {
-		// if (key === 'width' && isNaN(value)) debugger;
 		element.setAttribute(key, value);
 	}
 };
@@ -2308,7 +2307,10 @@ SVGRenderer.prototype = {
 						};
 						obj.imgwidth = this.width;
 						obj.imgheight = this.height;
-						centerImage();
+						
+						if (obj.element) {
+							centerImage();
+						}
 
 						// Clean up after #2854 workaround.
 						if (this.parentNode) {

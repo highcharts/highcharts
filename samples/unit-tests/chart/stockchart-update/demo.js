@@ -21,7 +21,7 @@ $(function () {
         };
     }
 
-    
+
 
     QUnit.test('Navigator update', function (assert) {
         var chart = Highcharts.stockChart($('<div>').appendTo('#container')[0], getStockConfig()),
