@@ -501,7 +501,6 @@ Navigator.prototype = {
 
 		var scroller = this,
 			xAxis,
-			top = scroller.top,
 			dragOffset,
 			baseSeries = scroller.baseSeries;
 		
@@ -1141,12 +1140,16 @@ wrap(Chart.prototype, 'getMargins', function (proceed) {
 	var legend = this.legend,
 		legendOptions = legend.options,
 		scroller = this.scroller,
-		xAxis = scroller.xAxis,
-		yAxis = scroller.yAxis;
+		xAxis,
+		yAxis;
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (scroller) {
+
+		xAxis = scroller.xAxis;
+		yAxis = scroller.yAxis;
+
 		// Compute the top position
 		scroller.top = scroller.navigatorOptions.top ||
 			this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
