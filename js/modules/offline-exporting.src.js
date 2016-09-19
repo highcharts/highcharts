@@ -155,6 +155,14 @@ import '../parts/Options.js';
 			finallyHandler,
 			libURL = Highcharts.getOptions().exporting.libURL;
 
+		function svgToPdf(svgElement, margin) {
+			var width = svgElement.width.baseVal.value + 2 * margin;
+			var height = svgElement.height.baseVal.value + 2 * margin;
+			var pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
+			return pdf.output('datauristring');
+		}
+
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
 			// SVG download. In this case, we want to use Microsoft specific Blob if available
@@ -172,6 +180,20 @@ import '../parts/Options.js';
 				}
 			} catch (e) {
 				failCallback();
+			}
+		} else if (imageType === 'application/pdf') {
+			doc.getElementsByTagName('svg')[0].id = 'svgElement';
+// you should set the format dynamically, write [width, height] instead of 'a4'
+			if (win.jsPDF && win.svgElementToPdf) {
+				var dummyContainer = doc.createElement('div');
+				dummyContainer.innerHTML = svg;
+				setTimeout(function () {
+					var data = svgToPdf(dummyContainer.firstChild, 0);
+					Highcharts.downloadURL(data, filename);
+					if (successCallback) {
+						successCallback();
+					}
+				}, 100);
 			}
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
@@ -365,6 +387,13 @@ import '../parts/Options.js';
 					onclick: function () {
 						this.exportChartLocal({
 							type: 'image/svg+xml'
+						});
+					}
+				}, {
+					textKey: 'downloadPDF',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'application/pdf'
 						});
 					}
 				}]
