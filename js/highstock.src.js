@@ -21094,7 +21094,7 @@
             if (groupPixelWidth) {
                 hasGroupedData = true;
 
-                series.points = null; // force recreation of point instances in series.translate
+                series.isDirty = true; // force recreation of point instances in series.translate, #5699
 
                 var extremes = xAxis.getExtremes(),
                     xMin = extremes.min,
