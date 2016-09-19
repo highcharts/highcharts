@@ -271,15 +271,21 @@ $(function () {
          */
         H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
             // Call the original setAxisTranslation() to perform all other calculations
-            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-            if (this.options.grid) {
+            if (this.options.grid && !this.options.categories) {
                 this.minPointOffset = 0.5;
                 this.pointRangePadding = 1;
 
                 this.translationSlope = this.transA = this.len / ((this.max - this.min + this.pointRangePadding) || 1);
                 this.transB = this.horiz ? this.left : this.bottom; // translation addend
                 this.minPixelPadding = this.transA * this.minPointOffset;
+
+                // Ensure that linear axes get a minPixelPadding of 0
+                if (this.options.type === 'linear') {
+                    this.minPixelPadding = 0;
+                }
+            } else {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
             }
         });
 
@@ -380,19 +386,18 @@ $(function () {
         /**
          * Wraps chart rendering with the following customizations:
          * 1. Prohibit timespans of multitudes of a time unit
-         * 2. Draw a grid
+         * 2. Draw cell walls on vertical axes
          *
          * @param proceed - the original function
          */
         H.wrap(H.Chart.prototype, 'render', function (proceed) {
+            // 25 is optimal height for default fontSize (11px)
+            // 25 / 11 ≈ 2.28
+            var fontSizeToCellHeightRatio = 25 / 11,
+                fontMetrics,
+                fontSize;
+
             H.each(this.axes, function (axis) {
-                // 25 is optimal height for default fontSize (11px)
-                // 25 / 11 ≈ 2.28
-                var fontSizeToCellHeightRatio = 25 / 11,
-                    fontMetrics,
-                    fontSize;
-
-
                 if (axis.options.grid) {
                     fontSize = axis.options.labels.style.fontSize;
                     fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
@@ -482,9 +487,7 @@ $(function () {
         }, {
             grid: true,
             tickInterval: 1,
-            min: 0,
-            startAtTick: false,
-            minPadding: 0.5
+            min: 0
         }],
         yAxis: [{
             title: '',
