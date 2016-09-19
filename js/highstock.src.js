@@ -24996,7 +24996,8 @@
             align,
             tickInside = this.options.tickPosition === 'inside',
             snap = this.crosshair.snap !== false,
-            value;
+            value,
+            offset = 0;
 
         // Use last available event (#5287)
         if (!e) {
@@ -25045,12 +25046,11 @@
         value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
         crossLabel.attr({
             text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
-            anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
-            anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
             x: posx,
             y: posy,
             visibility: VISIBLE
         });
+
         crossBox = crossLabel.getBBox();
 
         // now it is placed we can correct its position
@@ -25077,15 +25077,22 @@
 
         // left edge
         if (crossLabel.translateX < limit.left) {
-            posx += limit.left - crossLabel.translateX;
+            offset = limit.left - crossLabel.translateX;
         }
         // right edge
         if (crossLabel.translateX + crossBox.width >= limit.right) {
-            posx -= crossLabel.translateX + crossBox.width - limit.right;
+            offset = -(crossLabel.translateX + crossBox.width - limit.right);
         }
 
         // show the crosslabel
-        crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
+        crossLabel.attr({
+            x: posx + offset,
+            y: posy,
+            visibility: 'visible',
+            // First set x and y, then anchorX and anchorY, when box is actually calculated, #5702
+            anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+            anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy + crossBox.height / 2
+        });
     });
 
     /* ****************************************************************************
