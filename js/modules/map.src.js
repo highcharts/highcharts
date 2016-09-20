@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
  * @license Highmaps JS v4.2.6-modified (bugfix)
-=======
- * @license Highmaps JS v4.2.6-modified (2016-09-14)
->>>>>>> master
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi

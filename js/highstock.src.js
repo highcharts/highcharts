@@ -2,11 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
-<<<<<<< HEAD
  * @license Highstock JS v4.2.6-modified (bugfix)
-=======
- * @license Highstock JS v4.2.6-modified (2016-09-20)
->>>>>>> master
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -10425,11 +10421,7 @@
                     var isCloserX = p1.distX - p2.distX,
                         isCloser = p1.dist - p2.dist,
                         isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
-<<<<<<< HEAD
-                     // We have two points which are not in the same place on xAxis and shared tooltip:
-=======
                     // We have two points which are not in the same place on xAxis and shared tooltip:
->>>>>>> master
                     if (isCloserX !== 0) {
                         return isCloserX;
                     }
@@ -10502,13 +10494,8 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
-<<<<<<< HEAD
-            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function (point) { // #5269
-                each(chart.axes, function (axis) {
-=======
             each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
                 each(chart.axes, function drawAxisCrosshair(axis) {
->>>>>>> master
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
                     if (!point || point.series && point.series[axis.coll] === axis) { // #5658
                         axis.drawCrosshair(e, point);
@@ -19768,11 +19755,7 @@
                 oldVisibility = series.visible;
 
             // if called without an argument, toggle visibility
-<<<<<<< HEAD
-            series.visible = series.options.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis; // #5618
-=======
             series.visible = vis = series.options.visible = series.userOptions.visible = vis === undefined ? !oldVisibility : vis; // #5618
->>>>>>> master
             showOrHide = vis ? 'show' : 'hide';
 
             // show or hide elements
@@ -20517,11 +20500,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-<<<<<<< HEAD
      * Highstock JS v4.2.6-modified (bugfix)
-=======
-     * Highstock JS v4.2.6-modified (2016-09-20)
->>>>>>> master
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
