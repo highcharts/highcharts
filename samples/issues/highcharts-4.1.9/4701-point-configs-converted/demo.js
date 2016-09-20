@@ -2,14 +2,14 @@
 $(function () {
 
     function isArray(obj) {
-       return Object.prototype.toString.call(obj) === '[object Array]';
+        return Object.prototype.toString.call(obj) === '[object Array]';
     }
 
     QUnit.test('Preserve point config initial number type in options.data', function (assert) {
         var chart = $('#container').highcharts({
 
             series: [{
-                data: [1,2,3],
+                data: [1, 2, 3],
                 turboThreshold: 2
             }]
 

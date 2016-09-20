@@ -9,8 +9,8 @@ $(function () {
                 plotBackgroundColor: '#4b96af'
             },
 
-            title : {
-                text : 'Chart with a plot background color'
+            title: {
+                text: 'Chart with a plot background color'
             },
 
             mapNavigation: {
@@ -47,8 +47,8 @@ $(function () {
             },
 
             // The map series
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

@@ -178,7 +178,7 @@
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
-			color: color,
+			color: point.isNull ? new Highcharts.Color(color).setOpacity(0).get() : color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,
@@ -513,15 +513,17 @@
 
 				if (!init) {
 					each(this.points, function (point, i) {
-						point.graphic
-							.attr(H.merge(animateFrom, {
-								start: start + i * startAngle,
-								end: start + (i + 1) * startAngle,
-								fill: level.color
-							}))[animationOptions ? 'animate' : 'attr'](
-								extend(point.shapeArgs, { fill: point.color }), 
-								animationOptions
-							);
+						if (point.graphic) {
+							point.graphic
+								.attr(H.merge(animateFrom, {
+									start: start + i * startAngle,
+									end: start + (i + 1) * startAngle,
+									fill: level.color
+								}))[animationOptions ? 'animate' : 'attr'](
+									extend(point.shapeArgs, { fill: point.color }), 
+									animationOptions
+								);
+						}
 					});
 					this.animate = null;
 				}

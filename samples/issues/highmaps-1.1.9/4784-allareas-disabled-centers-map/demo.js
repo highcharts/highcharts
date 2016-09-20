@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Map with allAreas disabled centers on visible areas.', function (assert) {
         var chart = $('#container').highcharts('Map', {
-            series : [{
+            series: [{
                 data: [{
                     "hc-key": "gb-hi",
                     "value": 2

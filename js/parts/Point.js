@@ -47,11 +47,19 @@ Point.prototype = {
 		extend(point, options);
 		point.options = point.options ? extend(point.options, options) : options;
 
+		// Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+		if (options.group) {
+			delete point.group;
+		}
+
 		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
-		point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+		point.isNull = pick(
+			point.isValid && !point.isValid(),
+			point.x === null || !isNumber(point.y, true)
+		); // #3571, check for NaN
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series

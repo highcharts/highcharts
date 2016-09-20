@@ -1,5 +1,5 @@
 $(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?', function(data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=large-dataset.json&callback=?', function (data) {
         $('#container').highcharts('StockChart', {
             chart: {
                 zoomType: 'xy'

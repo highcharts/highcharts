@@ -1,6 +1,7 @@
 $(function () {
     function sizeof(obj) {
-        var size = 0, key;
+        var size = 0,
+            key;
         for (key in obj) {
             if (obj.hasOwnProperty(key)) {
                 size++;

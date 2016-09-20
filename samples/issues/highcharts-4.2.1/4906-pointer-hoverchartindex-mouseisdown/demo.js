@@ -1,8 +1,7 @@
 $(function () {
     QUnit.test('Do not change hoverChartIndex during a drag.', function (assert) {
         var chart1,
-            chart2,
-            axis;
+            chart2;
 
         chart1 = Highcharts.chart('container1', {
             chart: {

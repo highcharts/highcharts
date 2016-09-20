@@ -5,12 +5,12 @@ $(function () {
         $('#container').highcharts('StockChart', {
 
 
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'Issue in v1.3.6 caused last flag not to appear'
+            title: {
+                text: 'Issue in v1.3.6 caused last flag not to appear'
             },
 
             tooltip: {
@@ -20,28 +20,28 @@ $(function () {
                 valueDecimals: 4
             },
 
-            yAxis : {
-                title : {
-                    text : 'Exchange rate'
+            yAxis: {
+                title: {
+                    text: 'Exchange rate'
                 }
             },
 
-            series : [{
-                name : 'USD to EUR',
-                data : data,
-                id : 'dataseries'
+            series: [{
+                name: 'USD to EUR',
+                data: data,
+                id: 'dataseries'
             },
             // the event marker flags
             {
-                type : 'flags',
-                data : [{
-                    x : data[data.length - 1][0],
-                    title : 'B',
-                    text : 'EURUSD: Bearish Trend Change on Tap?'
+                type: 'flags',
+                data: [{
+                    x: data[data.length - 1][0],
+                    title: 'B',
+                    text: 'EURUSD: Bearish Trend Change on Tap?'
                 }],
-                onSeries : 'dataseries',
-                shape : 'circlepin',
-                width : 16
+                onSeries: 'dataseries',
+                shape: 'circlepin',
+                width: 16
             }]
         });
     });

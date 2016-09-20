@@ -19,7 +19,7 @@ $(function () {
 
     // Instanciate the map
     $('#container').highcharts('Map', {
-        chart : {
+        chart: {
             events: {
                 drilldown: function (e) {
 
@@ -73,8 +73,8 @@ $(function () {
             }
         },
 
-        title : {
-            text : 'Highcharts Map Drilldown'
+        title: {
+            text: 'Highcharts Map Drilldown'
         },
 
         subtitle: {
@@ -116,8 +116,8 @@ $(function () {
             }
         },
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             name: 'USA',
             dataLabels: {
                 enabled: true,

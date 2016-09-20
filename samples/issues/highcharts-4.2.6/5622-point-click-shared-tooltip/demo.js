@@ -1,8 +1,7 @@
 $(function () {
     QUnit.test('Click event was called for a wrong series', function (assert) {
 
-        var status = false,
-            $container = $('#container'),
+        var $container = $('#container'),
             chart = $container.highcharts({
                 yAxis: [{
                     opposite: true
@@ -11,7 +10,7 @@ $(function () {
                 }, {
                     opposite: true
                 }],
-                    tooltip: {
+                tooltip: {
                     shared: true
                 },
                 series: [{
@@ -41,7 +40,7 @@ $(function () {
             pageY: top + point.plotY,
             target: point.series.group.element
         });
-        
+
         assert.strictEqual(
             chart.hoverPoint && chart.hoverPoint.series.type,
             chart.series[2].type,

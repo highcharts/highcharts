@@ -25,7 +25,7 @@ function showMap(mapKey) {
         },
 
         title: {
-            text : 'Draw your own points or lines'
+            text: 'Draw your own points or lines'
         },
 
         subtitle: supportsLatLon ? {} : {
@@ -57,7 +57,7 @@ function showMap(mapKey) {
                 point: {
                     events: {
                         // Update lat/lon properties after dragging point
-                        drop: function (e) {
+                        drop: function () {
                             var newLatLon;
                             if (supportsLatLon) {
                                 newLatLon = this.series.chart.fromPointToLatLon(this);

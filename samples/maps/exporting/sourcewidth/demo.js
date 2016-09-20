@@ -10,8 +10,8 @@ $(function () {
                 height: 500
             },
 
-            title : {
-                text : 'Exporting sourceWidth and sourceHeight demo'
+            title: {
+                text: 'Exporting sourceWidth and sourceHeight demo'
             },
 
             subtitle: {
@@ -33,8 +33,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

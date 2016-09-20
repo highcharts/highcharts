@@ -17,7 +17,6 @@ $(function () {
         seriesTypes.item = extendClass(seriesTypes.column, {
             drawPoints: function () {
                 var series = this,
-                    graphics,
                     renderer = series.chart.renderer;
 
                 each(this.points, function (point) {

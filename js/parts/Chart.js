@@ -1103,7 +1103,7 @@ Chart.prototype = {
 				} else {
 					linkedTo = chart.get(linkedTo);
 				}
-				if (linkedTo) {
+				if (linkedTo && linkedTo.linkedParent !== series) { // #3341 avoid mutual linking
 					linkedTo.linkedSeries.push(series);
 					series.linkedParent = linkedTo;
 					series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879

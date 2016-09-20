@@ -12,10 +12,9 @@ $(function () {
         });
     }(Highcharts));
 
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
 
         chart: {
-            renderTo: 'container',
             zoomType: 'x'
         },
 

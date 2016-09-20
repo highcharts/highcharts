@@ -35,7 +35,7 @@ $(function () {
             pageY: offset.top + 100,
             target: chart.container
         });
-        
+
         assert.strictEqual(
             chart.hoverPoint.y,
             chart.series[1].points[0].y,

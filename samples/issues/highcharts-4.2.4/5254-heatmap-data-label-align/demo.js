@@ -47,7 +47,7 @@ jQuery(function () {
             }
         });
 
-        var point = chart.series[0].points[0];        
+        point = chart.series[0].points[0];
         assert.ok(
             point.dataLabel.translateX > leftX,
             'align:right gives a higher X position than align:left'

@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Axis offsets - test series clips." , function (assert) {
+    QUnit.test("Axis offsets - test series clips.", function (assert) {
         var chart = $('#container').highcharts({
                 xAxis: {
                     offset: -150

@@ -28,9 +28,9 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
+            series: [{
                 animation: true,
-                data : data,
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

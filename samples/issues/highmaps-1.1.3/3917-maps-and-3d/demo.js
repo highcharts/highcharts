@@ -1,7 +1,5 @@
 $(document).ready(function () {
 
-    var blnNoData = true;
-
     var MapSeriesData = [{
         name: '',
         allAreas: true,

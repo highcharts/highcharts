@@ -6,7 +6,7 @@ QUnit.test('yAxis theme settings affected color axis (#5569)', function (assert)
             gridLineColor: 'red'
         }
     };
-    var HighchartsOptions = Highcharts.setOptions(Highcharts.theme);
+    Highcharts.setOptions(Highcharts.theme);
 
     var chart = Highcharts.chart('container', {
         chart: {

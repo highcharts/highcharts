@@ -1,18 +1,18 @@
 var toggle = true;
-
-function toggleDataLabels(chart) {
-    $.each(chart.series, function (i, el) {
-        el.update({
-            dataLabels: {
-                enabled: toggle
-            }
-        }, false);
-
-    });
-    toggle = !toggle;
-    chart.redraw();
-}
 $(function () {
+
+    Highcharts.Chart.prototype.toggleDataLabels = function () {
+        $.each(this.series, function (i, el) {
+            el.update({
+                dataLabels: {
+                    enabled: toggle
+                }
+            }, false);
+
+        });
+        toggle = !toggle;
+        this.redraw();
+    };
     var ids = ['a', 'b', 'c'],
         series = [],
         i = 0;
@@ -31,10 +31,7 @@ $(function () {
         };
     }
 
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
+    Highcharts.chart('container', {
         title: {
             text: 'Linked series bug'
         },

@@ -2,7 +2,11 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
+<<<<<<< HEAD
  * @license Highstock JS v4.2.6-modified (bugfix)
+=======
+ * @license Highstock JS v4.2.6-modified (2016-09-20)
+>>>>>>> master
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -72,7 +76,7 @@
         NONE = 'none',
         M = 'M',
         L = 'L',
-        numRegex = /^[0-9]+$/,
+        numRegex = /[0-9]/g,
         NORMAL_STATE = '',
         HOVER_STATE = 'hover',
         SELECT_STATE = 'select',
@@ -481,7 +485,7 @@
                         value = original[key];
 
                         // Copy the contents of objects, but not arrays or DOM nodes
-                        if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
+                        if (Highcharts.isObject(value, true) &&
                                 key !== 'renderTo' && typeof value.nodeType !== 'number') {
                             copy[key] = doCopy(copy[key] || {}, value);
 
@@ -531,7 +535,8 @@
      * @param {Object} obj
      */
     function isArray(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
+        var str = Object.prototype.toString.call(obj);
+        return str === '[object Array]' || str === '[object Array Iterator]';
     }
 
     /**
@@ -2871,19 +2876,16 @@
 
             if (textStr !== UNDEFINED) {
 
-                // Properties that affect bounding box
-                cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+                cacheKey = 
 
-                // Since numbers are monospaced, and numerical labels appear a lot in a chart,
-                // we assume that a label of n characters has the same bounding box as others
-                // of the same length.
-                if (textStr === '' || numRegex.test(textStr)) {
-                    cacheKey = 'num:' + textStr.toString().length + cacheKey;
+                    // Since numbers are monospaced, and numerical labels appear a lot in a chart,
+                    // we assume that a label of n characters has the same bounding box as others
+                    // of the same length.
+                    textStr.toString().replace(numRegex, '0') + 
 
-                // Caching all strings reduces rendering time by 4-5%.
-                } else {
-                    cacheKey = textStr + cacheKey;
-                }
+                    // Properties that affect bounding box
+                    ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+
             }
 
             if (cacheKey && !reload) {
@@ -2963,8 +2965,9 @@
                     }
                 }
 
-                // Cache it
-                if (cacheKey) {
+                // Cache it. When loading a chart in a hidden iframe in Firefox and IE/Edge, the
+                // bounding box height is 0, so don't cache it (#5620).
+                if (cacheKey && bBox.height > 0) {
 
                     // Rotate (#4681)
                     while (cacheKeys.length > 250) {
@@ -3380,7 +3383,7 @@
     };
     SVGRenderer.prototype = {
         Element: SVGElement,
-
+        urlSymbolRX: /^url\((.*?)\)$/,
         /**
          * Initialize the SVGRenderer
          * @param {Object} container
@@ -3683,7 +3686,8 @@
                                 // Check width and apply soft breaks or ellipsis
                                 if (width) {
                                     var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+                                        noWrap = textStyles.whiteSpace === 'nowrap',
+                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
                                         tooLong,
                                         actualWidth,
                                         rest = [],
@@ -3727,7 +3731,7 @@
                                             words = rest;
                                             rest = [];
 
-                                            if (words.length) {
+                                            if (words.length && !noWrap) {
                                                 softLineNo++;
 
                                                 tspan = doc.createElementNS(SVG_NS, 'tspan');
@@ -4159,7 +4163,6 @@
                     options
                 ),
 
-                imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
                 imageSize,
                 centerImage;
@@ -4181,7 +4184,7 @@
 
 
             // image symbols
-            } else if (imageRegex.test(symbol)) {
+            } else if (this.urlSymbolRX.test(symbol)) {
 
                 // On image load, set the size and position
                 centerImage = function (img, size) {
@@ -4200,7 +4203,7 @@
                     }
                 };
 
-                imageSrc = symbol.match(imageRegex)[1];
+                imageSrc = symbol.match(this.urlSymbolRX)[1];
                 imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
                 // Ireate the image synchronously, add attribs async
@@ -4566,7 +4569,8 @@
                 crispAdjust = 0,
                 deferredAttr = {},
                 baselineOffset,
-                needsBox,
+                hasBGImage = renderer.urlSymbolRX.test(shape),
+                needsBox = hasBGImage,
                 updateBoxSize,
                 updateTextPadding,
                 boxAttr;
@@ -4596,7 +4600,7 @@
                         // create the border box if it is not already present
                         boxX = crispAdjust;
                         boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-                        wrapper.box = box = renderer.symbols[shape] ? // Symbol definition exists (#5324)
+                        wrapper.box = box = renderer.symbols[shape] || hasBGImage ? // Symbol definition exists (#5324)
                                 renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
                                 renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
@@ -7800,11 +7804,21 @@
         nameToX: function (point) {
             var explicitCategories = isArray(this.categories),
                 names = explicitCategories ? this.categories : this.names,
-                nameX,
+                nameX = point.options.x,
                 x;
 
             point.series.requireSorting = false;
-            nameX = pick(point.options.x, inArray(point.name, names)); // #2522
+
+            if (!defined(nameX)) {
+                // docs: When nameToX is true, points are placed on the X axis according to their
+                // names. If the same point name is repeated in the same or another series, the point
+                // is placed together with other points of the same name. When nameToX is false,
+                // the points are laid out in increasing X positions regardless of their names, and
+                // the X axis category will take the name of the last point in each position.
+                nameX = this.options.nameToX === false ?
+                    point.series.autoIncrement() : 
+                    inArray(point.name, names);
+            }
             if (nameX === -1) { // The name is not found in currenct categories
                 if (!explicitCategories) {
                     x = names.length;
@@ -8702,7 +8716,7 @@
                 labelMetrics = this.labelMetrics(),
                 textOverflowOption = labelOptions.style.textOverflow,
                 css,
-                labelLength = 0,
+                maxLabelLength = 0,
                 label,
                 i,
                 pos;
@@ -8712,20 +8726,22 @@
                 attr.rotation = labelOptions.rotation || 0; // #4443
             }
 
+            // Get the longest label length
+            each(tickPositions, function (tick) {
+                tick = ticks[tick];
+                if (tick && tick.labelLength > maxLabelLength) {
+                    maxLabelLength = tick.labelLength;
+                }
+            });
+            this.maxLabelLength = maxLabelLength;
+        
+
             // Handle auto rotation on horizontal axis
             if (this.autoRotation) {
 
-                // Get the longest label length
-                each(tickPositions, function (tick) {
-                    tick = ticks[tick];
-                    if (tick && tick.labelLength > labelLength) {
-                        labelLength = tick.labelLength;
-                    }
-                });
-
                 // Apply rotation only if the label is too wide for the slot, and
                 // the label is wider than its height.
-                if (labelLength > innerWidth && labelLength > labelMetrics.h) {
+                if (maxLabelLength > innerWidth && maxLabelLength > labelMetrics.h) {
                     attr.rotation = this.labelRotation;
                 } else {
                     this.labelRotation = 0;
@@ -8766,7 +8782,7 @@
             // Add ellipsis if the label length is significantly longer than ideal
             if (attr.rotation) {
                 css = {
-                    width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
+                    width: (maxLabelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
                 };
                 if (!textOverflowOption) {
                     css.textOverflow = 'ellipsis';
@@ -10409,7 +10425,11 @@
                     var isCloserX = p1.distX - p2.distX,
                         isCloser = p1.dist - p2.dist,
                         isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
+<<<<<<< HEAD
                      // We have two points which are not in the same place on xAxis and shared tooltip:
+=======
+                    // We have two points which are not in the same place on xAxis and shared tooltip:
+>>>>>>> master
                     if (isCloserX !== 0) {
                         return isCloserX;
                     }
@@ -10482,10 +10502,15 @@
 
             // Crosshair. For each hover point, loop over axes and draw cross if that point
             // belongs to the axis (#4927).
+<<<<<<< HEAD
             each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function (point) { // #5269
                 each(chart.axes, function (axis) {
+=======
+            each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
+                each(chart.axes, function drawAxisCrosshair(axis) {
+>>>>>>> master
                     // In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
-                    if (!point || point.series[axis.coll] === axis) {
+                    if (!point || point.series && point.series[axis.coll] === axis) { // #5658
                         axis.drawCrosshair(e, point);
                     }
                 });
@@ -13219,7 +13244,7 @@
                     } else {
                         linkedTo = chart.get(linkedTo);
                     }
-                    if (linkedTo) {
+                    if (linkedTo && linkedTo.linkedParent !== series) { // #3341 avoid mutual linking
                         linkedTo.linkedSeries.push(series);
                         series.linkedParent = linkedTo;
                         series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
@@ -13650,11 +13675,19 @@
             extend(point, options);
             point.options = point.options ? extend(point.options, options) : options;
 
+            // Since options are copied into the Point instance, some accidental options must be shielded (#5681)
+            if (options.group) {
+                delete point.group;
+            }
+
             // For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
-            point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+            point.isNull = pick(
+                point.isValid && !point.isValid(),
+                point.x === null || !isNumber(point.y, true)
+            ); // #3571, check for NaN
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
@@ -13854,7 +13887,8 @@
             fireEvent(this, eventType, eventArgs, defaultFunction);
         },
         visible: true
-    };/**
+    };
+    /**
      * @classDescription The base function which all other series types inherit from. The data in the series is stored
      * in various arrays.
      *
@@ -14514,7 +14548,7 @@
 
                 // For points within the visible range, including the first point outside the
                 // visible range, consider y extremes
-                validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+                validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
                 withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
                     ((xData[i + 1] || x) >= xMin &&    (xData[i - 1] || x) <= xMax) || (!this.requireSorting && (x >= xMin && x <= xMax)); // #3770
 
@@ -14577,8 +14611,7 @@
 
                 // Discard disallowed y values for log axes (#3434)
                 if (yAxis.isLog && yValue !== null && yValue <= 0) {
-                    point.y = yValue = null;
-                    error(10);
+                    point.isNull = true;
                 }
 
                 // Get the plotX translation
@@ -14734,13 +14767,8 @@
             var series = this,
                 chart = series.chart,
                 clipRect,
-                animation = series.options.animation,
+                animation = animObject(series.options.animation),
                 sharedClipKey;
-
-            // Animation option is set to true
-            if (animation && !isObject(animation)) {
-                animation = defaultPlotOptions[series.type].animation;
-            }
 
             // Initialize the animation. Set up the clipping rectangle.
             if (init) {
@@ -16526,12 +16554,11 @@
          * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
          *    configuration
          */
-        remove: function (redraw, animation) {
+        remove: function (redraw, animation, withEvent) {
             var series = this,
                 chart = series.chart;
 
-            // Fire the event with a default handler of removing the point
-            fireEvent(series, 'remove', null, function () {
+            function remove() {
 
                 // Destroy elements
                 series.destroy();
@@ -16548,7 +16575,14 @@
                 if (pick(redraw, true)) {
                     chart.redraw(animation);
                 }
-            });
+            }
+
+            // Fire the event with a default handler of removing the point
+            if (withEvent !== false) {
+                fireEvent(series, 'remove', null, remove);
+            } else {
+                remove();
+            }
         },
 
         /**
@@ -16585,7 +16619,7 @@
 
             // Destroy the series and delete all properties. Reinsert all methods
             // and properties from the new type prototype (#2270, #3719)
-            this.remove(false);
+            this.remove(false, null, false);
             for (n in proto) {
                 this[n] = UNDEFINED;
             }
@@ -17380,7 +17414,12 @@
 
                 // Register shape type and arguments to be used in drawPoints
                 point.shapeType = 'rect';
-                point.shapeArgs = series.crispCol(barX, barY, barW, barH);
+                point.shapeArgs = series.crispCol.apply(
+                    series,
+                    point.isNull ? 
+                        [point.plotX, yAxis.len / 2, 0, 0] : // #3169, drilldown from null must have a position to work from
+                        [barX, barY, barW, barH]
+                );
             });
 
         },
@@ -19729,7 +19768,11 @@
                 oldVisibility = series.visible;
 
             // if called without an argument, toggle visibility
+<<<<<<< HEAD
             series.visible = series.options.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis; // #5618
+=======
+            series.visible = vis = series.options.visible = series.userOptions.visible = vis === undefined ? !oldVisibility : vis; // #5618
+>>>>>>> master
             showOrHide = vis ? 'show' : 'hide';
 
             // show or hide elements
@@ -20474,7 +20517,11 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
+<<<<<<< HEAD
      * Highstock JS v4.2.6-modified (bugfix)
+=======
+     * Highstock JS v4.2.6-modified (2016-09-20)
+>>>>>>> master
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20997,7 +21044,9 @@
 
                 // get group x and y
                 pointX = groupPositions[pos];
-                series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+                // docs: In the approximation function, meta data are now available in this.dataGroupInfo.
+                // demo: series-datagrouping-approximation
+                series.dataGroupInfo = { start: start, length: values[0].length };
                 groupedY = approximationFn.apply(series, values);
 
                 // push the grouped data
@@ -21453,20 +21502,22 @@
          */
         translate: function () {
             var series = this,
-                yAxis = series.yAxis;
+                yAxis = series.yAxis,
+                hasModifyValue = !!series.modifyValue,
+                translatedOLC = ['plotOpen', 'yBottom', 'plotClose'];
 
             seriesTypes.column.prototype.translate.apply(series);
 
-            // do the translation
+            // Do the translation
             each(series.points, function (point) {
-                // the graphics
-                if (point.open !== null) {
-                    point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
-                }
-                if (point.close !== null) {
-                    point.plotClose = yAxis.translate(point.close, 0, 1, 0, 1);
-                }
-
+                each([point.open, point.low, point.close], function (value, i) {
+                    if (value !== null) {
+                        if (hasModifyValue) {
+                            value = series.modifyValue(value);
+                        }
+                        point[translatedOLC[i]] = yAxis.toPixels(value, true);
+                    }
+                });
             });
         },
 
@@ -25214,9 +25265,9 @@
             length = processedYData.length;
 
             // For series with more than one value (range, OHLC etc), compare against
-            // the pointValKey (#4922)
+            // close or the pointValKey (#4922, #3112)
             if (series.pointArrayMap) {
-                keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+                keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
             }
 
             // find the first value for comparison

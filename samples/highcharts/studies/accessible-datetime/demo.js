@@ -1,5 +1,5 @@
 $(function () {
-    
+
     $('#container').highcharts({
         accessibility: {
             enabled: true,

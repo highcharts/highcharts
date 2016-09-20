@@ -22,14 +22,14 @@ $(function () {
 
             // Initiate the chart
             $('#container').highcharts('Map', {
-                chart : {
-                    borderWidth : 1
+                chart: {
+                    borderWidth: 1
                 },
 
                 colors: ['rgba(19,64,117,0.1)', 'rgba(19,64,117,0.5)', 'rgba(19,64,117,1)'],
 
-                title : {
-                    text : 'Data classes with legend label formatter'
+                title: {
+                    text: 'Data classes with legend label formatter'
                 },
 
                 mapNavigation: {
@@ -72,8 +72,8 @@ $(function () {
                     }]
                 },
 
-                series : [{
-                    data : data,
+                series: [{
+                    data: data,
                     mapData: Highcharts.maps['custom/world'],
                     joinBy: ['iso-a2', 'code'],
                     name: 'Population density',

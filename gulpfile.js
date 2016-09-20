@@ -177,12 +177,12 @@ gulp.task('lint', ['scripts'], function () {
 
 });
 gulp.task('lint-samples', function () {
-    return gulp.src(['./samples/*/*/*/demo.js'])
+    return gulp.src(['./samples/*/*/*/demo.js', './samples/*/*/*/test.js', './samples/*/*/*/unit-test.js'])
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
         .pipe(gulpif(argv.failonerror, eslint.failOnError())) // gulp lint --failonerror
-        .pipe(eslint.formatEach());
+        .pipe(eslint.format()); // .format() counts all errors, .formatEach() shows results as they are available
 
 });
 

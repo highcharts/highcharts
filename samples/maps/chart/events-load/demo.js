@@ -21,8 +21,8 @@ $(function () {
                 }
             },
 
-            title : {
-                text : 'Add series on chart load'
+            title: {
+                text: 'Add series on chart load'
             },
 
             mapNavigation: {
@@ -38,8 +38,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

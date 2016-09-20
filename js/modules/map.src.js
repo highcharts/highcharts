@@ -1,5 +1,9 @@
 /**
+<<<<<<< HEAD
  * @license Highmaps JS v4.2.6-modified (bugfix)
+=======
+ * @license Highmaps JS v4.2.6-modified (2016-09-14)
+>>>>>>> master
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -846,7 +850,11 @@
                     y: yAxis.dataMin,
                     width: xAxis.dataMax - xAxis.dataMin,
                     height: yAxis.dataMax - yAxis.dataMin
-                });
+                }),
+                zoomOut = newExt.x <= xAxis.dataMin &&
+                    newExt.width >= xAxis.dataMax - xAxis.dataMin &&
+                    newExt.y <= yAxis.dataMin &&
+                    newExt.height >= yAxis.dataMax - yAxis.dataMin;
 
             // When mousewheel zooming, fix the point under the mouse
             if (mouseX) {
@@ -857,7 +865,7 @@
             }
 
             // Zoom
-            if (howMuch !== undefined) {
+            if (howMuch !== undefined && !zoomOut) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
                 yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
@@ -1078,7 +1086,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null) {
+            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);

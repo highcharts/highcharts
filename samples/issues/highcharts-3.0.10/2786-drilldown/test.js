@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
     // First drill down
     chart.get('top').points[1].doDrilldown();
 

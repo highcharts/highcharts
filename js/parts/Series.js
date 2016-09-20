@@ -658,7 +658,7 @@ Series.prototype = {
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax) || (!this.requireSorting && (x >= xMin && x <= xMax)); // #3770
 
@@ -721,8 +721,7 @@ Series.prototype = {
 
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.y = yValue = null;
-				error(10);
+				point.isNull = true;
 			}
 
 			// Get the plotX translation
@@ -878,13 +877,8 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			clipRect,
-			animation = series.options.animation,
+			animation = animObject(series.options.animation),
 			sharedClipKey;
-
-		// Animation option is set to true
-		if (animation && !isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
-		}
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {

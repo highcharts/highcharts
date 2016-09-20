@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Series should inherit visibility from parent when is linked." , function (assert) {
+    QUnit.test("Series should inherit visibility from parent when is linked.", function (assert) {
 
         var chart = $('#container').highcharts({
             series: [{
