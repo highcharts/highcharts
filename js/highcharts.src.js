@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-09-15)
+ * @license Highcharts JS v4.2.6-modified (2016-09-20)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -13669,7 +13669,10 @@
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
-            point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+            point.isNull = pick(
+                point.isValid && !point.isValid(),
+                point.x === null || !isNumber(point.y, true)
+            ); // #3571, check for NaN
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
@@ -13869,7 +13872,8 @@
             fireEvent(this, eventType, eventArgs, defaultFunction);
         },
         visible: true
-    };/**
+    };
+    /**
      * @classDescription The base function which all other series types inherit from. The data in the series is stored
      * in various arrays.
      *

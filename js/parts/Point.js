@@ -56,7 +56,10 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
-		point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+		point.isNull = pick(
+			point.isValid && !point.isValid(),
+			point.x === null || !isNumber(point.y, true)
+		); // #3571, check for NaN
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series

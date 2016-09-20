@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.2.6-modified (2016-09-15)
+ * @license Highcharts JS v4.2.6-modified (2016-09-20)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -1670,6 +1670,15 @@ var arrayMin = Highcharts.arrayMin,
         upColorProp: 'fill',
 
         pointValKey: 'y',
+
+        /**
+         * Pass the null test in ColumnSeries.translate.
+         */
+        pointClass: extendClass(Point, {
+            isValid: function () {
+                return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
+            }
+        }),
 
         /**
          * Translate data points from raw values
