@@ -310,7 +310,6 @@ seriesType('map', 'scatter', {
 				mapData = H.geojson(mapData, this.type, this);
 			}
 
-			this.getBox(mapData);
 			this.mapData = mapData;
 			this.mapMap = {};
 
@@ -337,7 +336,7 @@ seriesType('map', 'scatter', {
 			}
 
 			if (options.allAreas) {
-
+				this.getBox(mapData);
 				data = data || [];
 
 				// Registered the point codes that actually hold data
