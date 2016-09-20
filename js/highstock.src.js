@@ -25048,7 +25048,7 @@
             text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
             x: posx,
             y: posy,
-            visibility: VISIBLE
+            visibility: 'visible'
         });
 
         crossBox = crossLabel.getBBox();
@@ -25088,7 +25088,6 @@
         crossLabel.attr({
             x: posx + offset,
             y: posy,
-            visibility: 'visible',
             // First set x and y, then anchorX and anchorY, when box is actually calculated, #5702
             anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
             anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy + crossBox.height / 2
