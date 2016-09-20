@@ -87,7 +87,7 @@ seriesType('map', 'scatter', {
 	searchPoint: noop,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
-	pointArrayMap: ['hc-key', 'value'],
+	pointArrayMap: ['value'],
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -265,15 +265,22 @@ seriesType('map', 'scatter', {
 		// Convert Array point definitions to objects using pointArrayMap
 		if (data) {
 			each(data, function (val, i) {
+				var ix = 0;
 				if (isNumber(val)) {
 					data[i] = {
 						value: val
 					};
 				} else if (isArray(val)) {
 					data[i] = {};
-					for (var ix = 0; ix < val.length; ++ix) {
-						if (pointArrayMap[ix]) {
-							data[i][pointArrayMap[ix]] = val[ix];
+					// Automatically copy first item to hc-key if there is an extra leading string
+					if (!options.keys && val.length > pointArrayMap.length && typeof val[0] === 'string') {
+						data[i]['hc-key'] = val[0];
+						++ix;
+					}
+					// Run through pointArrayMap and what's left of the point data array in parallel, copying over the values
+					for (var j = 0; j < pointArrayMap.length; ++j, ++ix) {
+						if (pointArrayMap[j]) {
+							data[i][pointArrayMap[j]] = val[ix];
 						}
 					}
 				}
