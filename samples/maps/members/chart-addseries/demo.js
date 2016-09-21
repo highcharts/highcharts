@@ -5,8 +5,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Click button to add series'
+            title: {
+                text: 'Click button to add series'
             },
 
             mapNavigation: {

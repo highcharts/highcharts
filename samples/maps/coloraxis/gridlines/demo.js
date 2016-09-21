@@ -5,8 +5,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Grid line options'
+            title: {
+                text: 'Grid line options'
             },
 
             mapNavigation: {
@@ -33,8 +33,8 @@ $(function () {
                 tickLength: 0
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

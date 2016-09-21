@@ -815,12 +815,12 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Highmaps basic demo'
+        title: {
+            text: 'Highmaps basic demo'
         },
 
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-eckert3-highres.js">World, Eckert III projection, high resolution</a>'
+        subtitle: {
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-eckert3-highres.js">World, Eckert III projection, high resolution</a>'
         },
 
         mapNavigation: {
@@ -834,8 +834,8 @@ $(function () {
             min: 0
         },
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             mapData: Highcharts.maps['custom/world-eckert3-highres'],
             joinBy: 'hc-key',
             name: 'Random data',

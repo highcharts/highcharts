@@ -2,7 +2,7 @@ jQuery(function () {
 
     QUnit.test('Plot bands on added axis should be exported', function (assert) {
         var chart = Highcharts.chart('container', {
-    
+
             chart: {
                 height: 300
             },

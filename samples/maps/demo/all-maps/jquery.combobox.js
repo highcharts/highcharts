@@ -32,14 +32,14 @@
                     tooltipClass: "ui-state-highlight"
                 });
 
-            this.input.data('uiAutocomplete')._renderItem = function ( ul, item ) {
-                return $( "<li>" )
+            this.input.data('uiAutocomplete')._renderItem = function (ul, item) {
+                return $("<li>")
                     .attr({
                         "data-value": item.value,
                         "class": item.option.className
                     })
-                    .append( $( "<a>" ).text( item.label ) )
-                    .appendTo( ul );
+                    .append($("<a>").text(item.label))
+                    .appendTo(ul);
             };
 
             // Update input text if underlying select changes

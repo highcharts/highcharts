@@ -3,11 +3,11 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Empty map'
+        title: {
+            text: 'Empty map'
         },
 
-        series : [{
+        series: [{
             mapData: Highcharts.maps['custom/world'],
             name: 'World map'
         }]

@@ -11,7 +11,7 @@ QUnit.test('Show and hide duration', function (assert) {
         0,
         'Starting...'
     );
-   
+
 
     setTimeout(function () {
         newOp = parseFloat(chart.loadingDiv.style.opacity);

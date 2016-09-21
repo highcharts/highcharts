@@ -59,7 +59,7 @@ extend(ColorAxis.prototype, {
 		minColor: '${palette.coloraxisMinColor}',
 		maxColor: '${palette.coloraxisMaxColor}',
 		tickLength: 5,
-		showInLegend: true // docs: API record is being added.
+		showInLegend: true
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
@@ -91,6 +91,9 @@ extend(ColorAxis.prototype, {
 		// Override original axis properties
 		this.horiz = horiz;
 		this.zoomEnabled = false;
+		
+		// Add default values		
+		this.defaultLegendLength = 200;
 	},
 
 	/*
@@ -187,6 +190,7 @@ extend(ColorAxis.prototype, {
 	setAxisSize: function () {
 		var symbol = this.legendSymbol,
 			chart = this.chart,
+			legendOptions = chart.options.legend || {},
 			x,
 			y,
 			width,
@@ -202,6 +206,9 @@ extend(ColorAxis.prototype, {
 
 			this.len = this.horiz ? width : height;
 			this.pos = this.horiz ? x : y;
+		} else {
+			// Fake length for disabled legend to avoid tick issues and such (#5205)
+			this.len = (this.horiz ? legendOptions.symbolWidth : legendOptions.symbolHeight) || this.defaultLegendLength;
 		}
 	},
 
@@ -317,8 +324,8 @@ extend(ColorAxis.prototype, {
 		var padding = legend.padding,
 			legendOptions = legend.options,
 			horiz = this.horiz,
-			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
-			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+			width = pick(legendOptions.symbolWidth, horiz ? this.defaultLegendLength : 12),
+			height = pick(legendOptions.symbolHeight, horiz ? 12 : this.defaultLegendLength),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
 			itemDistance = pick(legendOptions.itemDistance, 10);
 

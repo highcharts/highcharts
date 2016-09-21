@@ -23,7 +23,7 @@ $(function () {
             animation: false,
             type: 'line',
             name: 'AAPL',
-            data: [1,4,2,3]
+            data: [1, 4, 2, 3]
         }]
     }, function (chart) {
 

@@ -127,7 +127,7 @@ $(function () {
     function play(button) {
         button.title = 'pause';
         button.className = 'fa fa-pause';
-        chart.sequenceTimer = setInterval( function () {
+        chart.sequenceTimer = setInterval(function () {
             update(1);
         }, 1000);
 

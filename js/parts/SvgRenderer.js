@@ -1223,10 +1223,6 @@ SVGElement.prototype = {
 		var convert = { left: 'start', center: 'middle', right: 'end' };
 		this.element.setAttribute('text-anchor', convert[value]);
 	},
-	opacitySetter: function (value, key, element) {
-		this[key] = value;
-		element.setAttribute(key, value);
-	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
@@ -1337,6 +1333,11 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 			this[key] = value;
 			this.doTransform = true;
 		};
+// These setters both set the key on the instance itself plus as an attribute
+SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
+	this[key] = value;
+	element.setAttribute(key, value);
+};
 
 /*= if (build.classic) { =*/
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
@@ -1364,7 +1365,6 @@ SVGRenderer = H.SVGRenderer = function () {
 SVGRenderer.prototype = {
 	Element: SVGElement,
 	SVG_NS: SVG_NS,
-	urlSymbolRX: /^url\((.*?)\)$/,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -1731,7 +1731,8 @@ SVGRenderer.prototype = {
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+									noWrap = textStyles.whiteSpace === 'nowrap',
+									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
 									tooLong,
 									actualWidth,
 									rest = [],
@@ -1774,9 +1775,8 @@ SVGRenderer.prototype = {
 										words = rest;
 										rest = [];
 
-										if (words.length) {
-											
-											tspan = doc.createElementNS(renderer.SVG_NS, 'tspan');
+										if (words.length && !noWrap) {
+											tspan = doc.createElementNS(SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
 												x: parentX
@@ -2207,7 +2207,7 @@ SVGRenderer.prototype = {
 				height,
 				options
 			),
-
+			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			centerImage,
 			symbolSizes = {};
@@ -2233,10 +2233,10 @@ SVGRenderer.prototype = {
 
 
 		// image symbols
-		} else if (this.urlSymbolRX.test(symbol)) {
+		} else if (imageRegex.test(symbol)) {
 
 			
-			imageSrc = symbol.match(this.urlSymbolRX)[1];
+			imageSrc = symbol.match(imageRegex)[1];
 
 			// Create the image synchronously, add attribs async
 			obj = this.image(imageSrc);
@@ -2648,7 +2648,7 @@ SVGRenderer.prototype = {
 			deferredAttr = {},
 			strokeWidth,
 			baselineOffset,
-			hasBGImage = renderer.urlSymbolRX.test(shape),
+			hasBGImage = /^url\((.*?)\)$/.test(shape),
 			needsBox = hasBGImage,
 			getCrispAdjust,
 			updateBoxSize,

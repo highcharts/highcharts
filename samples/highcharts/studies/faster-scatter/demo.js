@@ -97,7 +97,6 @@ $(function () {
             var paths = [];
             while (i--) {
                 var path = [],
-                    size = radius * 2,
                     y;
 
                 group = groups[i];

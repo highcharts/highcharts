@@ -12,8 +12,8 @@ $(function () {
                 plotBackgroundColor: '#FFFFE0'
             },
 
-            title : {
-                text : 'Chart with a plot border'
+            title: {
+                text: 'Chart with a plot border'
             },
 
             mapNavigation: {
@@ -48,8 +48,8 @@ $(function () {
             },
 
             // The map series
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

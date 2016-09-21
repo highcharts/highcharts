@@ -1,7 +1,7 @@
 
 $(function () {
-    function test(options) {
-        QUnit.test('In a crossing point, tooltip should show top series', function (assert) {
+    function test(key, options) {
+        QUnit.test('In a crossing point, tooltip should show top series, ' + key, function (assert) {
             var chart = Highcharts.chart('container', options);
 
             var offset = $("#container").offset(),
@@ -24,7 +24,7 @@ $(function () {
     }
 
     // No z-index
-    test({
+    test('no z-index', {
         plotOptions: {
             series: {
                 kdNow: true
@@ -43,7 +43,7 @@ $(function () {
     });
 
     // z-index is set
-    test({
+    test('zIndexed', {
         plotOptions: {
             series: {
                 kdNow: true
@@ -65,7 +65,7 @@ $(function () {
     });
 
     // Mixed
-    test({
+    test('mixed', {
         plotOptions: {
             series: {
                 kdNow: true

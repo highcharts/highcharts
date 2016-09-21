@@ -7,9 +7,8 @@ $(function () {
         },
         colors: ['#DF5353', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee', '#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee']
     });
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             borderColor: '#4572A7',
             plotBorderWidth: 1,
             plotBorderColor: '#CCCCCC',

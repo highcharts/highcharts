@@ -44,7 +44,7 @@ $(function () {
                 fontSize: '16px'
             },
             pointFormat: '{series.name}<br><span style="font-size:2em; color: {point.color}; font-weight: bold">{point.y}%</span>',
-            positioner: function (labelWidth, labelHeight) {
+            positioner: function (labelWidth) {
                 return {
                     x: 200 - labelWidth / 2,
                     y: 180

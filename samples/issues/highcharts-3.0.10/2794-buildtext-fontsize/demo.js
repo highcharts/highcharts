@@ -1,8 +1,5 @@
 $(function () {
-    var chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
-        },
+    Highcharts.chart('container', {
         series: [{
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0]
         }]

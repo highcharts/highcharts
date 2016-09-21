@@ -180,8 +180,8 @@ $(function () {
         // Initiate the map chart
         mapChart = $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Population history by country'
+            title: {
+                text: 'Population history by country'
             },
 
             subtitle: {
@@ -206,8 +206,8 @@ $(function () {
                 footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: mapData,
                 joinBy: ['iso-a3', 'code3'],
                 name: 'Current population',

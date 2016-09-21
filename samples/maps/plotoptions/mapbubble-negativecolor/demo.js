@@ -4,7 +4,7 @@ $(function () {
 
         $('#container').highcharts('Map', {
             chart : {
-                borderWidth : 1,
+                borderWidth: 1,
                 map: 'custom/world'
             },
 
@@ -12,8 +12,8 @@ $(function () {
                 text: 'World population 2010 by country'
             },
 
-            subtitle : {
-                text : 'Negative color demo. Red bubbles are smaller than the UK.'
+            subtitle: {
+                text: 'Negative color demo. Red bubbles are smaller than the UK.'
             },
 
             legend: {
@@ -27,7 +27,7 @@ $(function () {
                 }
             },
 
-            series : [{
+            series: [{
                 name: 'Countries',
                 color: '#E0E0E0',
                 enableMouseTracking: false

@@ -30,21 +30,17 @@ $(function () {
                     [46, 59]
                 ]
             }]
-        },
-        chart_inverted,
-        chart_inverted_offsets,
-        chart,
-        chart_offsets;
+        };
 
-    chart_inverted_offsets = $("#container_inverted_offsets").highcharts(options).highcharts();
+    $("#container_inverted_offsets").highcharts(options).highcharts();
 
     options.chart.inverted = false;
-    chart_offsets = $("#container_offsets").highcharts(options).highcharts();  
+    $("#container_offsets").highcharts(options).highcharts();
 
     options.xAxis = UNDEFINED;
     options.yAxis = UNDEFINED;
-    chart = $("#container").highcharts(options).highcharts();
+    $("#container").highcharts(options).highcharts();
 
     options.chart.inverted = true;
-    chart_inverted = $("#container_inverted").highcharts(options).highcharts();
+    $("#container_inverted").highcharts(options).highcharts();
 });

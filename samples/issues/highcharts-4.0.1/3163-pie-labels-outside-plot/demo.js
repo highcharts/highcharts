@@ -20,7 +20,7 @@ $(function () {
             "dataLabels": {
                 "format": "{y:,f}"
             },
-            minSize:150,
+            minSize: 150,
             data: [{
                 name: "641397 (Description 641397)",
                 y: 46115816.00

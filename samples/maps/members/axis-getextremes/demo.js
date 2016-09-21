@@ -5,8 +5,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Get axis extremes'
+            title: {
+                text: 'Get axis extremes'
             },
 
             colorAxis: {
@@ -15,8 +15,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

@@ -1,8 +1,8 @@
 $(function () {
     QUnit.test('Update flag', function (assert) {
         var chart = $('#container').highcharts('StockChart', {
-            series : [{
-                data : [
+            series: [{
+                data: [
                      [Date.UTC(2014, 6, 1), 10],
                      [Date.UTC(2014, 7, 1), 10],
                      [Date.UTC(2014, 8, 1), 10],
@@ -15,16 +15,16 @@ $(function () {
                      [Date.UTC(2015, 5, 1), 11],
                      [Date.UTC(2015, 6, 1), 5]
                 ],
-                id : 'dataseries'
+                id: 'dataseries'
             }, {
-                type : 'flags',
-                data : [{
-                    x : Date.UTC(2015, 3, 1),
-                    title : 'H',
-                    text : 'Name'
+                type: 'flags',
+                data: [{
+                    x: Date.UTC(2015, 3, 1),
+                    title: 'H',
+                    text: 'Name'
                 }],
-                onSeries : 'dataseries',
-                shape : 'circlepin'
+                onSeries: 'dataseries',
+                shape: 'circlepin'
             }]
         }).highcharts();
 

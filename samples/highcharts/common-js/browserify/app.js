@@ -146,9 +146,9 @@ QUnit.test("Highstock", function (assert) {
                 to: Date.UTC(2015, 7, 6)
             }]
         },
-        series : [{
-            name : 'AAPL',
-            data : Highcharts.map(new Array(365), function (undef, i) { 
+        series: [{
+            name: 'AAPL',
+            data: Highcharts.map(new Array(365), function (undef, i) {
                 return i;
             }),
             pointStart: Date.UTC(2015, 0, 1),
@@ -203,12 +203,12 @@ QUnit.test("Highmaps", function (assert) {
         });
         // Instanciate the map
         Highcharts.Map({
-            chart : {
+            chart: {
                 renderTo: 'container-map',
-                borderWidth : 1
+                borderWidth: 1
             },
-            title : {
-                text : 'US population density (/km²)'
+            title: {
+                text: 'US population density (/km²)'
             },
             legend: {
                 layout: 'horizontal',
@@ -232,11 +232,11 @@ QUnit.test("Highmaps", function (assert) {
                     [1, '#000022']
                 ]
             },
-            series : [{
+            series: [{
                 animation: {
                     duration: 1000
                 },
-                data : data,
+                data: data,
                 mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {

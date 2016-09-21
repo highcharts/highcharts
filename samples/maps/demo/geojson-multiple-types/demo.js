@@ -57,8 +57,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Highmaps from geojson with multiple geometry types'
+            title: {
+                text: 'Highmaps from geojson with multiple geometry types'
             },
 
             mapNavigation: {
@@ -69,7 +69,7 @@ $(function () {
             },
 
 
-            series : [{
+            series: [{
                 name: 'States and territories',
                 data: states,
                 color: Highcharts.getOptions().colors[2],

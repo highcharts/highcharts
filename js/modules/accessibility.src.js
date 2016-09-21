@@ -138,7 +138,7 @@ import '../parts/Tooltip.js';
 			a11yOptions = this.series.chart.options.accessibility,
 			infoString = '',
 			hasSpecialKey = false,
-			dateTimePoint = point.series.xAxis.isDatetimeAxis,
+			dateTimePoint = point.series.xAxis && point.series.xAxis.isDatetimeAxis,
 			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat || // docs
 				H.Tooltip.prototype.getXDateFormat(point, point.series.chart.options.tooltip, point.series.xAxis), point.x);
 

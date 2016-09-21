@@ -18,7 +18,7 @@ $(function () {
             categories: ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December'],
             labels: {
-                autoRotation:[0]
+                autoRotation: [0]
             }
         },
 

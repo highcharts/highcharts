@@ -25,14 +25,14 @@ $(function () {
                 name: 'AAPL Stock Price',
                 data: data,
                 threshold: null,
-                fillColor : {
-                    linearGradient : {
+                fillColor: {
+                    linearGradient: {
                         x1: 0,
                         y1: 1,
                         x2: 0,
                         y2: 0
                     },
-                    stops : [
+                    stops: [
                         [0, Highcharts.getOptions().colors[0]],
                         [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                     ]

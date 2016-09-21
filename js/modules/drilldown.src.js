@@ -273,7 +273,7 @@ import '../parts/Tick.js';
 			.addClass('highcharts-drillup-button')
 			.attr({
 				align: buttonOptions.position.align,
-				zIndex: 9
+				zIndex: 7
 			})
 			.add()
 			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
@@ -543,14 +543,16 @@ import '../parts/Tick.js';
 						animateTo.fill = point.color;
 						/*= } =*/
 
-						point.graphic
-							.attr(H.merge(animateFrom, {
-								start: start + i * startAngle,
-								end: start + (i + 1) * startAngle
-							}))[animationOptions ? 'animate' : 'attr'](
-								animateTo, 
-								animationOptions
-							);
+						if (point.graphic) {
+							point.graphic
+								.attr(H.merge(animateFrom, {
+									start: start + i * startAngle,
+									end: start + (i + 1) * startAngle
+								}))[animationOptions ? 'animate' : 'attr'](
+									animateTo, 
+									animationOptions
+								);
+						}
 					});
 					this.animate = null;
 				}
@@ -643,9 +645,10 @@ import '../parts/Tick.js';
 		var pos = this.pos,
 			label = this.label,
 			axis = this.axis,
-			ddPointsX = axis.getDDPoints(pos);
+			isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
+			ddPointsX = isDrillable && axis.getDDPoints(pos);
 
-		if (axis.coll === 'xAxis') {
+		if (isDrillable) {
 			if (label && ddPointsX.length) {
 				label.drillable = true;
 

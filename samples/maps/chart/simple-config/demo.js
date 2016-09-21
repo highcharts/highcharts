@@ -1,14 +1,14 @@
 $(function () {
     $('#container').highcharts('Map', {
-        chart : {
+        chart: {
             map: 'custom/europe'
         },
 
-        title : {
-            text : 'Nordic countries'
+        title: {
+            text: 'Nordic countries'
         },
 
-        series : [{
+        series: [{
             data: [
                 ['is', 1],
                 ['no', 1],

@@ -9,12 +9,12 @@ $(function () {
 
         // Instanciate the map
         $('#container').highcharts('Map', {
-            chart : {
-                borderWidth : 1
+            chart: {
+                borderWidth: 1
             },
 
-            title : {
-                text : 'Data label format to show value'
+            title: {
+                text: 'Data label format to show value'
             },
 
             legend: {
@@ -39,8 +39,8 @@ $(function () {
                 ]
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: 'hasc',
                 dataLabels: {

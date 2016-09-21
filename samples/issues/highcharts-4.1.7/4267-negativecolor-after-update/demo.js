@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Negative color should be updated with point's value" , function (assert) {
+    QUnit.test("Negative color should be updated with point's value", function (assert) {
 
         var color = '#00ff00',
             negativeColor = '#ff0000',

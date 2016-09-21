@@ -5,17 +5,17 @@ $(function () {
         $('#container').highcharts('StockChart', {
 
 
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'Chart.pan failed in Highstock 1.3.8'
+            title: {
+                text: 'Chart.pan failed in Highstock 1.3.8'
             },
 
-            series : [{
-                name : 'AAPL',
-                data : data,
+            series: [{
+                name: 'AAPL',
+                data: data,
                 tooltip: {
                     valueDecimals: 2
                 }

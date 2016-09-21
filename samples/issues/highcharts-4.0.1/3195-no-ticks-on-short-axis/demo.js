@@ -1,7 +1,6 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             height: 180,
             width: 400
         },

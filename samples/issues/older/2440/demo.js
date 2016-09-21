@@ -23,7 +23,7 @@ $(function () {
             }
         },
         plotOptions: {
-            column:{
+            column: {
                 stacking: 'normal'
             }
         },
