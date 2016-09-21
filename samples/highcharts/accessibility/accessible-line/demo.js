@@ -32,9 +32,11 @@ $(function () {
 
         plotOptions: {
             series: {
-                events: {
-                    click: function () {
-                        window.location.href = this.options.website;
+                point: {
+                    events: {
+                        click: function () {
+                            window.location.href = this.series.options.website;
+                        }
                     }
                 },
                 cursor: 'pointer'
