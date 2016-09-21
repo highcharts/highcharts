@@ -3239,10 +3239,6 @@
         alignSetter: function (value) {
             this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
         },
-        opacitySetter: function (value, key, element) {
-            this[key] = value;
-            element.setAttribute(key, value);
-        },
         titleSetter: function (value) {
             var titleNode = this.element.getElementsByTagName('title')[0];
             if (!titleNode) {
@@ -3353,6 +3349,13 @@
                 this[key] = value;
                 this.doTransform = true;
             };
+
+    // These setters both set the key on the instance itself plus as an attribute
+    SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
+        this[key] = value;
+        element.setAttribute(key, value);
+    };
+    
 
     // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
     // stroke attribute altogether. #1270, #1369, #3065, #3072.
@@ -5018,7 +5021,7 @@
                 addSetters = function (element, style) {
                     // These properties are set as attributes on the SVG group, and as
                     // identical CSS properties on the div. (#3542)
-                    each(['opacity', 'visibility'], function (prop) {
+                    each(['display', 'opacity', 'visibility'], function (prop) {
                         wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
                             proceed.call(this, value, key, elem);
                             style[key] = value;
@@ -5109,6 +5112,7 @@
                                     position: ABSOLUTE,
                                     left: (parentGroup.translateX || 0) + PX,
                                     top: (parentGroup.translateY || 0) + PX,
+                                    display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
                                 }, htmlGroup || container); // the top group is appended to container

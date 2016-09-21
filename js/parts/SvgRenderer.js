@@ -1097,10 +1097,6 @@ SVGElement.prototype = {
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
-	opacitySetter: function (value, key, element) {
-		this[key] = value;
-		element.setAttribute(key, value);
-	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
@@ -1211,6 +1207,13 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 			this[key] = value;
 			this.doTransform = true;
 		};
+
+// These setters both set the key on the instance itself plus as an attribute
+SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
+	this[key] = value;
+	element.setAttribute(key, value);
+};
+	
 
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
