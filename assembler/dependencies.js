@@ -4,6 +4,7 @@
 const fs = require('fs');
 const LE = '\n';
 let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/;
+const licenseExp = /(\/\*\*[\s\S]+@license[\s\S]+?(?=\*\/)\*\/)/;
 
 /**
  * Test if theres is a match between
@@ -110,7 +111,7 @@ const applyModule = content => {
  */
 const addLicenseHeader = (content, o) => {
     const str = getContents(o.entry);
-    let header = regexGetCapture(/(\/\*\*[\s\S]+@license[\s\S]+\*\/)/, str);
+    let header = regexGetCapture(licenseExp, str);
     header = (header || '').replace('@product.name@', o.product)
         .replace('@product.version@', o.version)
         .replace('@product.date@', o.date);
@@ -122,7 +123,7 @@ const addLicenseHeader = (content, o) => {
  * @param  {string} content Module content.
  * @returns {string} Returns module content without license header.
  */
-const removeLicenseHeader = content => content.replace(/(\/\*\*[\s\S]+@license[\s\S]+\*\/)/, '');
+const removeLicenseHeader = content => content.replace(licenseExp, '');
 
 /**
  * List of names for the exported variable per module.
