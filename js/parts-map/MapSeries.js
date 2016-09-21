@@ -77,7 +77,7 @@ var MapAreaPoint = extendClass(Point, extend({
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
+		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);

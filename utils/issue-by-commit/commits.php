@@ -1,9 +1,41 @@
 <?php 
-	// Move the log file back from temp dir
-	if (!is_dir('../samples/temp')) {
-		mkdir('../samples/temp');
+
+session_start();
+require_once('../settings.php');
+require_once('Git.php');
+
+try {
+	Git::set_bin(Settings::$git);
+	$repo = Git::open(dirname(__FILE__) . '/../../');
+	$branches = $repo->list_branches();
+} catch (Exception $e) {
+	$error = "Error connecting to the local git repo <b>highcharts.com</b>. Make sure git is running.<br/><br>" . $e->getMessage();
+}
+if (@$_POST['branch']) {
+	try {
+		$_SESSION['branch'] = @$_POST['branch'];
+		$_SESSION['after'] = @$_POST['after'];
+		$_SESSION['before'] = @$_POST['before'];
+		$activeBranch = $repo->active_branch();
+		$repo->checkout($_SESSION['branch']);
+		$repo->run('log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ' .
+			//'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+			'--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+		$repo->checkout($activeBranch);
+
+
+		$commitsKey = join(array($_SESSION['branch'],$_SESSION['after'],$_SESSION['before']), ',');
+	} catch (Exception $e) {
+		$error = $e->getMessage();
 	}
-	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+}
+
+// Move the log file back from temp dir
+if (!is_dir('../samples/temp')) {
+	mkdir('../samples/temp');
+}
+copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+
 ?>
 <html>
 	
@@ -171,13 +203,7 @@
 					],
 					branchCounter = 0;
 
-				if (window.parent.commitsKey) {
-
-
-					commits = window.parent.commitsKey.split(',');
-					$('#loaded').html("Loaded branch <b>" + commits[0] + "</b> from " + commits[1] + " to " + commits[2]);
-
-				}
+				
 			
 				$.get('../samples/temp/log.txt?d' + (new Date()).getTime(), function(log) {
 					log = log.split('\n');
@@ -307,7 +333,7 @@
 				background: white;
 			}
 			ul {
-				margin: 50px 1em 1em 1em;
+				margin: 150px 1em 1em 1em;
 				padding-left: 10px;
 				
 			}
@@ -381,10 +407,12 @@
 				box-shadow: 5px 5px 5px #888;
 				background: white;
 				width: 100%; 
-				height: 30px;
 				padding-top: 1em;
 			}
-			#topnav a {
+			#topnav a, input[type="submit"] {
+				background: white;
+				color: black;
+				cursor: pointer;
 				border: 1px solid silver;
 				border-radius: 5px;
 				margin: 0.5em;
@@ -392,6 +420,10 @@
 			}
 			#topnav span {
 				padding-left: 5px;
+			}
+			#topnav div {
+				padding: 1em;
+				line-height: 1.5em;
 			}
 			#graph {
 				position: absolute;
@@ -403,7 +435,7 @@
 				display: none;
 			}
 
-			.compare #topnav {
+			.compare #setdata {
 				display: none;
 			}
 			.compare #compare-header {
@@ -419,8 +451,29 @@
 	
 	<body>
 		<div id="topnav">
-			<span id="loaded"></span>
-			<a href="main.php" target="main">Set new test data</a>
+			
+			<form method="post" action="commits.php">
+			<div>
+			Branch
+
+			<select name="branch">
+			<?php
+			foreach ($branches as $branchOption) {
+				$selected = ($branchOption == $_SESSION['branch']) ? 'selected="selected"' : '';
+				echo "<option value='$branchOption' $selected>$branchOption</option>\n";
+			}
+			?>
+			</select>
+			from
+			<input type="text" name="after" value="<?php echo $_SESSION['after'] ?>" />
+			to
+			<input type="text" name="before" value="<?php echo $_SESSION['before'] ?>" />
+			
+			<input type="submit" value="Submit"/>
+			<a id="setdata" href="main.php" target="main">Change test data</a>
+			</div>
+
+			</form>
 		</div>
 		<div id="compare-header">
 		Click commit messages to compare the left side (usually the latest stable version) on the left, with the actual commit on the right.

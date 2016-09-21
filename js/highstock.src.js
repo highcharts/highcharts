@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.6-modified (2016-09-13)
+ * @license Highstock JS v4.2.7-modified (2016-09-21)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '4.2.6-modified',
+        VERSION = '4.2.7-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1602,7 +1602,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.6-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.7-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -3239,10 +3239,6 @@
         alignSetter: function (value) {
             this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
         },
-        opacitySetter: function (value, key, element) {
-            this[key] = value;
-            element.setAttribute(key, value);
-        },
         titleSetter: function (value) {
             var titleNode = this.element.getElementsByTagName('title')[0];
             if (!titleNode) {
@@ -3354,6 +3350,13 @@
                 this.doTransform = true;
             };
 
+    // These setters both set the key on the instance itself plus as an attribute
+    SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
+        this[key] = value;
+        element.setAttribute(key, value);
+    };
+    
+
     // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
     // stroke attribute altogether. #1270, #1369, #3065, #3072.
     SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
@@ -3379,7 +3382,6 @@
     };
     SVGRenderer.prototype = {
         Element: SVGElement,
-        urlSymbolRX: /^url\((.*?)\)$/,
         /**
          * Initialize the SVGRenderer
          * @param {Object} container
@@ -3682,7 +3684,8 @@
                                 // Check width and apply soft breaks or ellipsis
                                 if (width) {
                                     var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+                                        noWrap = textStyles.whiteSpace === 'nowrap',
+                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
                                         tooLong,
                                         actualWidth,
                                         rest = [],
@@ -3726,7 +3729,7 @@
                                             words = rest;
                                             rest = [];
 
-                                            if (words.length) {
+                                            if (words.length && !noWrap) {
                                                 softLineNo++;
 
                                                 tspan = doc.createElementNS(SVG_NS, 'tspan');
@@ -4157,7 +4160,7 @@
                     height,
                     options
                 ),
-
+                imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
                 imageSize,
                 centerImage;
@@ -4179,7 +4182,7 @@
 
 
             // image symbols
-            } else if (this.urlSymbolRX.test(symbol)) {
+            } else if (imageRegex.test(symbol)) {
 
                 // On image load, set the size and position
                 centerImage = function (img, size) {
@@ -4198,7 +4201,7 @@
                     }
                 };
 
-                imageSrc = symbol.match(this.urlSymbolRX)[1];
+                imageSrc = symbol.match(imageRegex)[1];
                 imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
                 // Ireate the image synchronously, add attribs async
@@ -4564,7 +4567,7 @@
                 crispAdjust = 0,
                 deferredAttr = {},
                 baselineOffset,
-                hasBGImage = renderer.urlSymbolRX.test(shape),
+                hasBGImage = /^url\((.*?)\)$/.test(shape),
                 needsBox = hasBGImage,
                 updateBoxSize,
                 updateTextPadding,
@@ -5017,7 +5020,7 @@
                 addSetters = function (element, style) {
                     // These properties are set as attributes on the SVG group, and as
                     // identical CSS properties on the div. (#3542)
-                    each(['opacity', 'visibility'], function (prop) {
+                    each(['display', 'opacity', 'visibility'], function (prop) {
                         wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
                             proceed.call(this, value, key, elem);
                             style[key] = value;
@@ -5108,6 +5111,7 @@
                                     position: ABSOLUTE,
                                     left: (parentGroup.translateX || 0) + PX,
                                     top: (parentGroup.translateY || 0) + PX,
+                                    display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
                                 }, htmlGroup || container); // the top group is appended to container
@@ -5619,6 +5623,9 @@
                 }
                 key = 'top';
             }
+            element.style[key] = value;
+        },
+        displaySetter: function (value, key, element) {
             element.style[key] = value;
         },
         xSetter: function (value, key, element) {
@@ -7801,11 +7808,6 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                // docs: When nameToX is true, points are placed on the X axis according to their
-                // names. If the same point name is repeated in the same or another series, the point
-                // is placed together with other points of the same name. When nameToX is false,
-                // the points are laid out in increasing X positions regardless of their names, and
-                // the X axis category will take the name of the last point in each position.
                 nameX = this.options.nameToX === false ?
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
@@ -8773,7 +8775,7 @@
             // Add ellipsis if the label length is significantly longer than ideal
             if (attr.rotation) {
                 css = {
-                    width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
+                    width: (maxLabelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
                 };
                 if (!textOverflowOption) {
                     css.textOverflow = 'ellipsis';
@@ -13668,7 +13670,10 @@
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
-            point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+            point.isNull = pick(
+                point.isValid && !point.isValid(),
+                point.x === null || !isNumber(point.y, true)
+            ); // #3571, check for NaN
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
@@ -13868,7 +13873,8 @@
             fireEvent(this, eventType, eventArgs, defaultFunction);
         },
         visible: true
-    };/**
+    };
+    /**
      * @classDescription The base function which all other series types inherit from. The data in the series is stored
      * in various arrays.
      *
@@ -20463,7 +20469,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.6-modified (2016-09-13)
+     * Highstock JS v4.2.7-modified (2016-09-21)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license
@@ -20986,8 +20992,6 @@
 
                 // get group x and y
                 pointX = groupPositions[pos];
-                // docs: In the approximation function, meta data are now available in this.dataGroupInfo.
-                // demo: series-datagrouping-approximation
                 series.dataGroupInfo = { start: start, length: values[0].length };
                 groupedY = approximationFn.apply(series, values);
 
@@ -21085,7 +21089,7 @@
             if (groupPixelWidth) {
                 hasGroupedData = true;
 
-                series.points = null; // force recreation of point instances in series.translate
+                series.isDirty = true; // force recreation of point instances in series.translate, #5699
 
                 var extremes = xAxis.getExtremes(),
                     xMin = extremes.min,
@@ -22310,6 +22314,8 @@
             var scroller = this,
                 options = scroller.options,
                 vertical = options.vertical,
+                minWidth = options.minWidth,
+                fullWidth = scroller.barWidth,
                 fromPX,
                 toPX,
                 newPos,
@@ -22317,13 +22323,21 @@
                 newRiflesPos,
                 method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
-            if (!defined(scroller.barWidth)) {
+            if (!defined(fullWidth)) {
                 return;
             }
 
-            fromPX = scroller.barWidth * Math.max(from, 0);
-            toPX = scroller.barWidth * Math.min(to, 1);
-            newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
+            from = Math.max(from, 0);
+
+            fromPX = fullWidth * from;
+            toPX = fullWidth * Math.min(to, 1);
+            scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
+
+            // We need to recalculate position, if minWidth is used
+            if (newSize < minWidth) {
+                fromPX = (fullWidth - minWidth + newSize) * from;
+                newSize = minWidth;
+            }
             newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
             newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
@@ -22395,11 +22409,7 @@
                 // In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
                 // down in the center of the scrollbar. This should be ignored.
                 if (scroller.grabbedCenter && (!e.touches || e.touches[0][direction] !== 0)) { // #4696, scrollbar failed on Android
-
-                    chartPosition = {
-                        chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth,
-                        chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth
-                    }[direction];
+                    chartPosition = scroller.cursorToScrollbarPosition(normalizedEvent)[direction];
                     scrollPosition = scroller[direction];
 
                     change = chartPosition - scrollPosition;
@@ -22436,10 +22446,11 @@
             };
 
             scroller.mouseDownHandler = function (e) {
-                var normalizedEvent = scroller.chart.pointer.normalize(e);
+                var normalizedEvent = scroller.chart.pointer.normalize(e),
+                    mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);
 
-                scroller.chartX = (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth;
-                scroller.chartY = (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth;
+                scroller.chartX = mousePosition.chartX;
+                scroller.chartY = mousePosition.chartY;
                 scroller.initPositions = [scroller.from, scroller.to];
 
                 scroller.grabbedCenter = true;
@@ -22488,6 +22499,22 @@
                     trigger: 'scrollbar',
                     DOMEvent: e
                 });
+            };
+        },
+
+        /**
+         * Get normalized (0-1) cursor position over the scrollbar
+         * @param {Event} normalizedEvent - normalized event, with chartX and chartY values
+         * @return {Object} Local position {chartX, chartY}
+         */
+        cursorToScrollbarPosition: function (normalizedEvent) {
+            var scroller = this,
+                options = scroller.options,
+                minWidthDifference = options.minWidth > scroller.calculatedWidth ? options.minWidth : 0; // minWidth distorts translation
+
+            return {
+                chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / (scroller.barWidth - minWidthDifference),
+                chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / (scroller.barWidth - minWidthDifference)
             };
         },
 
@@ -24966,7 +24993,8 @@
             align,
             tickInside = this.options.tickPosition === 'inside',
             snap = this.crosshair.snap !== false,
-            value;
+            value,
+            offset = 0;
 
         // Use last available event (#5287)
         if (!e) {
@@ -25015,12 +25043,11 @@
         value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
         crossLabel.attr({
             text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
-            anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
-            anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
             x: posx,
             y: posy,
-            visibility: VISIBLE
+            visibility: 'visible'
         });
+
         crossBox = crossLabel.getBBox();
 
         // now it is placed we can correct its position
@@ -25047,15 +25074,21 @@
 
         // left edge
         if (crossLabel.translateX < limit.left) {
-            posx += limit.left - crossLabel.translateX;
+            offset = limit.left - crossLabel.translateX;
         }
         // right edge
         if (crossLabel.translateX + crossBox.width >= limit.right) {
-            posx -= crossLabel.translateX + crossBox.width - limit.right;
+            offset = -(crossLabel.translateX + crossBox.width - limit.right);
         }
 
         // show the crosslabel
-        crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
+        crossLabel.attr({
+            x: posx + offset,
+            y: posy,
+            // First set x and y, then anchorX and anchorY, when box is actually calculated, #5702
+            anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+            anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy + crossBox.height / 2
+        });
     });
 
     /* ****************************************************************************
@@ -25142,7 +25175,11 @@
             // For series with more than one value (range, OHLC etc), compare against
             // close or the pointValKey (#4922, #3112)
             if (series.pointArrayMap) {
-                keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
+                // Use close if present (#3112)
+                keyIndex = inArray('close', series.pointArrayMap);
+                if (keyIndex === -1) {
+                    keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+                }
             }
 
             // find the first value for comparison
@@ -25229,6 +25266,10 @@
                     width: this.xAxis.len,
                     height: this.yAxis.len
                 });
+            // #3111
+            } else if (this.clipBox) {
+                this.clipBox.width = this.xAxis.len;
+                this.clipBox.height = this.yAxis.len;
             }
         }
         proceed.call(this);

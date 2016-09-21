@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-13)
+ * @license Highmaps JS v4.2.7-modified (2016-09-21)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -184,7 +184,7 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true // docs: API record is being added.
+            showInLegend: true
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
@@ -844,7 +844,11 @@
                     y: yAxis.dataMin,
                     width: xAxis.dataMax - xAxis.dataMin,
                     height: yAxis.dataMax - yAxis.dataMin
-                });
+                }),
+                zoomOut = newExt.x <= xAxis.dataMin &&
+                    newExt.width >= xAxis.dataMax - xAxis.dataMin &&
+                    newExt.y <= yAxis.dataMin &&
+                    newExt.height >= yAxis.dataMax - yAxis.dataMin;
 
             // When mousewheel zooming, fix the point under the mouse
             if (mouseX) {
@@ -855,7 +859,7 @@
             }
 
             // Zoom
-            if (howMuch !== undefined) {
+            if (howMuch !== undefined && !zoomOut) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
                 yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
@@ -1076,7 +1080,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
+            if (this.value !== null || this.series.options.nullInteraction) {
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);
@@ -1755,11 +1759,8 @@
         forceDL: true,
         pointClass: extendClass(Point, {
             applyOptions: function (options, x) {
-                var point = Point.prototype.applyOptions.call(this, options, x);
-                if (options.lat !== undefined && options.lon !== undefined) {
-                    point = extend(point, this.series.chart.fromLatLonToPoint(point));
-                }
-                return point;
+                var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+                return Point.prototype.applyOptions.call(this, mergedOptions, x);
             }
         })
     });

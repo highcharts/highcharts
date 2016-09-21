@@ -28,6 +28,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	pointValKey: 'y',
 
 	/**
+	 * Pass the null test in ColumnSeries.translate.
+	 */
+	pointClass: extendClass(Point, {
+		isValid: function () {
+			return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
+		}
+	}),
+
+	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {

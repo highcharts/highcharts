@@ -325,7 +325,6 @@
 			};
 
 		// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-		// docs
 		if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
 			fallbackToExportServer();
 			return;

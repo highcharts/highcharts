@@ -265,7 +265,7 @@
 			)
 			.attr({
 				align: buttonOptions.position.align,
-				zIndex: 9
+				zIndex: 7
 			})
 			.add()
 			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
@@ -616,9 +616,10 @@
 		var pos = this.pos,
 			label = this.label,
 			axis = this.axis,
-			ddPointsX = axis.getDDPoints(pos);
+			isDrillable = axis.coll === 'xAxis' && axis.getDDPoints,
+			ddPointsX = isDrillable && axis.getDDPoints(pos);
 
-		if (axis.coll === 'xAxis') {
+		if (isDrillable) {
 			if (label && ddPointsX.length) {
 				if (!label.basicStyles) {
 					label.basicStyles = H.merge(label.styles);

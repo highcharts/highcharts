@@ -199,8 +199,6 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			// docs: In the approximation function, meta data are now available in this.dataGroupInfo.
-			// demo: series-datagrouping-approximation
 			series.dataGroupInfo = { start: start, length: values[0].length };
 			groupedY = approximationFn.apply(series, values);
 
@@ -298,7 +296,7 @@ seriesProto.processData = function () {
 		if (groupPixelWidth) {
 			hasGroupedData = true;
 
-			series.points = null; // force recreation of point instances in series.translate
+			series.isDirty = true; // force recreation of point instances in series.translate, #5699
 
 			var extremes = xAxis.getExtremes(),
 				xMin = extremes.min,

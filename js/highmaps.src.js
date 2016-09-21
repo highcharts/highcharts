@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-13)
+ * @license Highmaps JS v4.2.7-modified (2016-09-21)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -57,7 +57,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highmaps',
-        VERSION = '4.2.6-modified',
+        VERSION = '4.2.7-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1600,7 +1600,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.6-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.7-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -3237,10 +3237,6 @@
         alignSetter: function (value) {
             this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
         },
-        opacitySetter: function (value, key, element) {
-            this[key] = value;
-            element.setAttribute(key, value);
-        },
         titleSetter: function (value) {
             var titleNode = this.element.getElementsByTagName('title')[0];
             if (!titleNode) {
@@ -3352,6 +3348,13 @@
                 this.doTransform = true;
             };
 
+    // These setters both set the key on the instance itself plus as an attribute
+    SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
+        this[key] = value;
+        element.setAttribute(key, value);
+    };
+    
+
     // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
     // stroke attribute altogether. #1270, #1369, #3065, #3072.
     SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
@@ -3377,7 +3380,6 @@
     };
     SVGRenderer.prototype = {
         Element: SVGElement,
-        urlSymbolRX: /^url\((.*?)\)$/,
         /**
          * Initialize the SVGRenderer
          * @param {Object} container
@@ -3680,7 +3682,8 @@
                                 // Check width and apply soft breaks or ellipsis
                                 if (width) {
                                     var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+                                        noWrap = textStyles.whiteSpace === 'nowrap',
+                                        hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
                                         tooLong,
                                         actualWidth,
                                         rest = [],
@@ -3724,7 +3727,7 @@
                                             words = rest;
                                             rest = [];
 
-                                            if (words.length) {
+                                            if (words.length && !noWrap) {
                                                 softLineNo++;
 
                                                 tspan = doc.createElementNS(SVG_NS, 'tspan');
@@ -4155,7 +4158,7 @@
                     height,
                     options
                 ),
-
+                imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
                 imageSize,
                 centerImage;
@@ -4177,7 +4180,7 @@
 
 
             // image symbols
-            } else if (this.urlSymbolRX.test(symbol)) {
+            } else if (imageRegex.test(symbol)) {
 
                 // On image load, set the size and position
                 centerImage = function (img, size) {
@@ -4196,7 +4199,7 @@
                     }
                 };
 
-                imageSrc = symbol.match(this.urlSymbolRX)[1];
+                imageSrc = symbol.match(imageRegex)[1];
                 imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
                 // Ireate the image synchronously, add attribs async
@@ -4562,7 +4565,7 @@
                 crispAdjust = 0,
                 deferredAttr = {},
                 baselineOffset,
-                hasBGImage = renderer.urlSymbolRX.test(shape),
+                hasBGImage = /^url\((.*?)\)$/.test(shape),
                 needsBox = hasBGImage,
                 updateBoxSize,
                 updateTextPadding,
@@ -5015,7 +5018,7 @@
                 addSetters = function (element, style) {
                     // These properties are set as attributes on the SVG group, and as
                     // identical CSS properties on the div. (#3542)
-                    each(['opacity', 'visibility'], function (prop) {
+                    each(['display', 'opacity', 'visibility'], function (prop) {
                         wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
                             proceed.call(this, value, key, elem);
                             style[key] = value;
@@ -5106,6 +5109,7 @@
                                     position: ABSOLUTE,
                                     left: (parentGroup.translateX || 0) + PX,
                                     top: (parentGroup.translateY || 0) + PX,
+                                    display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
                                     pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
                                 }, htmlGroup || container); // the top group is appended to container
@@ -5617,6 +5621,9 @@
                 }
                 key = 'top';
             }
+            element.style[key] = value;
+        },
+        displaySetter: function (value, key, element) {
             element.style[key] = value;
         },
         xSetter: function (value, key, element) {
@@ -7527,11 +7534,6 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                // docs: When nameToX is true, points are placed on the X axis according to their
-                // names. If the same point name is repeated in the same or another series, the point
-                // is placed together with other points of the same name. When nameToX is false,
-                // the points are laid out in increasing X positions regardless of their names, and
-                // the X axis category will take the name of the last point in each position.
                 nameX = this.options.nameToX === false ?
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
@@ -8499,7 +8501,7 @@
             // Add ellipsis if the label length is significantly longer than ideal
             if (attr.rotation) {
                 css = {
-                    width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
+                    width: (maxLabelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
                 };
                 if (!textOverflowOption) {
                     css.textOverflow = 'ellipsis';
@@ -13149,7 +13151,10 @@
             if (pointValKey) {
                 point.y = point[pointValKey];
             }
-            point.isNull = point.x === null || !isNumber(point.y, true); // #3571, check for NaN
+            point.isNull = pick(
+                point.isValid && !point.isValid(),
+                point.x === null || !isNumber(point.y, true)
+            ); // #3571, check for NaN
 
             // If no x is set by now, get auto incremented value. All points must have an
             // x value, however the y value can be null to create a gap in the series
@@ -13349,7 +13354,8 @@
             fireEvent(this, eventType, eventArgs, defaultFunction);
         },
         visible: true
-    };/**
+    };
+    /**
      * @classDescription The base function which all other series types inherit from. The data in the series is stored
      * in various arrays.
      *
@@ -17241,7 +17247,7 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true // docs: API record is being added.
+            showInLegend: true
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
@@ -17855,7 +17861,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
+            if (this.value !== null || this.series.options.nullInteraction) {
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);
@@ -18761,7 +18767,11 @@
                     y: yAxis.dataMin,
                     width: xAxis.dataMax - xAxis.dataMin,
                     height: yAxis.dataMax - yAxis.dataMin
-                });
+                }),
+                zoomOut = newExt.x <= xAxis.dataMin &&
+                    newExt.width >= xAxis.dataMax - xAxis.dataMin &&
+                    newExt.y <= yAxis.dataMin &&
+                    newExt.height >= yAxis.dataMax - yAxis.dataMin;
 
             // When mousewheel zooming, fix the point under the mouse
             if (mouseX) {
@@ -18772,7 +18782,7 @@
             }
 
             // Zoom
-            if (howMuch !== undefined) {
+            if (howMuch !== undefined && !zoomOut) {
                 xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
                 yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
@@ -18954,11 +18964,8 @@
         forceDL: true,
         pointClass: extendClass(Point, {
             applyOptions: function (options, x) {
-                var point = Point.prototype.applyOptions.call(this, options, x);
-                if (options.lat !== undefined && options.lon !== undefined) {
-                    point = extend(point, this.series.chart.fromLatLonToPoint(point));
-                }
-                return point;
+                var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+                return Point.prototype.applyOptions.call(this, mergedOptions, x);
             }
         })
     });

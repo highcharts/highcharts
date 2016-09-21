@@ -14,9 +14,9 @@ QUnit.test('showInLegend. #5544', function (assert) {
             chart.destroy();
             return Highcharts.chart(newOptions);
         };
-    assert.strictEqual(
-        items[0].isColorAxis,
-        undefined,
+    assert.notEqual(
+        items[0].coll,
+        'colorAxis',
         'colorAxis is not enabled, then it is also not shown in the legend.'
     );
 
@@ -25,8 +25,8 @@ QUnit.test('showInLegend. #5544', function (assert) {
     });
     items = chart.legend.getAllItems();
     assert.strictEqual(
-        items[0].isColorAxis,
-        true,
+        items[0].coll,
+        'colorAxis',
         'colorAxis.showInLegend: true by default'
     );
 
@@ -36,9 +36,9 @@ QUnit.test('showInLegend. #5544', function (assert) {
         }
     });
     items = chart.legend.getAllItems();
-    assert.strictEqual(
-        items[0].isColorAxis,
-        undefined,
+    assert.notEqual(
+        items[0].coll,
+        'colorAxis',
         'colorAxis.showInLegend: false'
     );
 
@@ -49,8 +49,8 @@ QUnit.test('showInLegend. #5544', function (assert) {
     });
     items = chart.legend.getAllItems();
     assert.strictEqual(
-        items[0].isColorAxis,
-        true,
+        items[0].coll,
+        'colorAxis',
         'colorAxis.showInLegend: true'
     );
 });

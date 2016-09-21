@@ -350,7 +350,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		align,
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
-		value;
+		value,
+		offset = 0;
 
 	// Use last available event (#5287)
 	if (!e) {
@@ -399,12 +400,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
 	crossLabel.attr({
 		text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
-		anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
-		anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
 		x: posx,
 		y: posy,
-		visibility: VISIBLE
+		visibility: 'visible'
 	});
+
 	crossBox = crossLabel.getBBox();
 
 	// now it is placed we can correct its position
@@ -431,15 +431,21 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// left edge
 	if (crossLabel.translateX < limit.left) {
-		posx += limit.left - crossLabel.translateX;
+		offset = limit.left - crossLabel.translateX;
 	}
 	// right edge
 	if (crossLabel.translateX + crossBox.width >= limit.right) {
-		posx -= crossLabel.translateX + crossBox.width - limit.right;
+		offset = -(crossLabel.translateX + crossBox.width - limit.right);
 	}
 
 	// show the crosslabel
-	crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
+	crossLabel.attr({
+		x: posx + offset,
+		y: posy,
+		// First set x and y, then anchorX and anchorY, when box is actually calculated, #5702
+		anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+		anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy + crossBox.height / 2
+	});
 });
 
 /* ****************************************************************************
@@ -526,7 +532,11 @@ seriesProto.processData = function () {
 		// For series with more than one value (range, OHLC etc), compare against
 		// close or the pointValKey (#4922, #3112)
 		if (series.pointArrayMap) {
-			keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
+			// Use close if present (#3112)
+			keyIndex = inArray('close', series.pointArrayMap);
+			if (keyIndex === -1) {
+				keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+			}
 		}
 
 		// find the first value for comparison
@@ -613,6 +623,10 @@ wrap(Series.prototype, 'render', function (proceed) {
 				width: this.xAxis.len,
 				height: this.yAxis.len
 			});
+		// #3111
+		} else if (this.clipBox) {
+			this.clipBox.width = this.xAxis.len;
+			this.clipBox.height = this.yAxis.len;
 		}
 	}
 	proceed.call(this);

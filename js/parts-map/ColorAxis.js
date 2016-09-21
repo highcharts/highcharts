@@ -31,7 +31,7 @@ extend(ColorAxis.prototype, {
 		minColor: '#EFEFFF',
 		maxColor: '#003875',
 		tickLength: 5,
-		showInLegend: true // docs: API record is being added.
+		showInLegend: true
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
