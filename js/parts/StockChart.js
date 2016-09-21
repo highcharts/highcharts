@@ -532,7 +532,11 @@ seriesProto.processData = function () {
 		// For series with more than one value (range, OHLC etc), compare against
 		// close or the pointValKey (#4922, #3112)
 		if (series.pointArrayMap) {
-			keyIndex = inArray('close' || series.pointValKey || 'y', series.pointArrayMap);
+			// Use close if present (#3112)
+			keyIndex = inArray('close', series.pointArrayMap);
+			if (keyIndex === -1) {
+				keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+			}
 		}
 
 		// find the first value for comparison
