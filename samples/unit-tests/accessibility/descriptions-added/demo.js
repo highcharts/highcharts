@@ -37,6 +37,11 @@ $(function () {
         );
     });
 
+    QUnit.test('Empty chart', function (assert) {
+        var chart = Highcharts.chart('container', {});
+        assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    });
+
     // Pie charts are treated somewhat differently, so do a separate test for these
     QUnit.test('Accessible pie', function (assert) {
         var chart = Highcharts.chart('container', {

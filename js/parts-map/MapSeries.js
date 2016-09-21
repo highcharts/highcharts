@@ -312,6 +312,7 @@ seriesType('map', 'scatter', {
 
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				this.mapTitle = mapData.title;
 				mapData = H.geojson(mapData, this.type, this);
 			}
 

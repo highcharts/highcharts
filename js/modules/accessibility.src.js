@@ -25,7 +25,7 @@ import '../parts/Tooltip.js';
 		merge = H.merge,
 		// Human readable description of series and each point in singular and plural
 		typeToSeriesMap = {
-			'default': ['series', 'data point', 'data point'],
+			'default': ['series', 'data point', 'data points'],
 			'line': ['line', 'data point', 'data points'],
 			'spline': ['line', 'data point', 'data points'],
 			'area': ['line', 'data point', 'data points'],
@@ -42,7 +42,11 @@ import '../parts/Tooltip.js';
 			'errorbar': ['errorbar series', 'errorbar', 'errorbars'],
 			'funnel': ['funnel', 'data point', 'data points'],
 			'pyramid': ['pyramid', 'data point', 'data points'],
-			'waterfall': ['waterfall series', 'column', 'columns']
+			'waterfall': ['waterfall series', 'column', 'columns'],
+			'map': ['map', 'area', 'areas'],
+			'mapline': ['line', 'data point', 'data points'],
+			'mappoint': ['point series', 'data point', 'data points'],
+			'mapbubble': ['bubble series', 'bubble', 'bubbles']
 		},
 		// Descriptions for exotic chart types
 		typeDescriptionMap = {
@@ -64,7 +68,7 @@ import '../parts/Tooltip.js';
 	H.setOptions({
 		accessibility: { // docs
 			enabled: true,
-			pointDescriptionThreshold: 30,
+			pointDescriptionThreshold: 30, // set to false to disable
 			keyboardNavigation: {
 				enabled: true
 			//	skipNullPoints: false
@@ -103,7 +107,7 @@ import '../parts/Tooltip.js';
 				reverseChildNodes(seriesEl);
 			}
 			// Make individual point elements accessible if possible. Note: If markers are disabled there might not be any elements there to make accessible.
-			if (this.points && (this.points.length < a11yOptions.pointDescriptionThreshold)) {
+			if (this.points && (this.points.length < a11yOptions.pointDescriptionThreshold || a11yOptions.pointDescriptionThreshold === false)) {
 				each(this.points, function (point) {
 					if (point.graphic) {
 						point.graphic.element.setAttribute('role', 'img');
@@ -208,9 +212,12 @@ import '../parts/Tooltip.js';
 
 	// Return simplified description of chart type. Some types will not be familiar to most screen reader users, but we try.
 	H.Chart.prototype.getTypeDescription = function () {
-		var firstType = this.types && this.types[0];
+		var firstType = this.types && this.types[0],
+			mapTitle = this.series[0] && this.series[0].mapTitle;
 		if (!firstType) {
 			return 'Empty chart.';
+		} else if (firstType === 'map') {
+			return mapTitle ? 'Map of ' + mapTitle : 'Map of unspecified region.';
 		} else if (this.types.length > 1) {
 			return 'Combination chart.';
 		} else if (['spline', 'area', 'areaspline'].indexOf(firstType) > -1) {
@@ -539,8 +546,9 @@ import '../parts/Tooltip.js';
 				height: '1px',
 				overflow: 'hidden'
 			},
+			chartTypes = chart.types || [],
 			// Build axis info - but not for pies. Consider not adding for certain other types as well (funnel, pyramid?)
-			axesDesc = chart.types.length === 1 && chart.types[0] === 'pie' && {} || chart.getAxesDescription(),
+			axesDesc = chartTypes.length === 1 && chartTypes[0] === 'pie' && {} || chart.getAxesDescription(),
 			chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
 
 		hiddenSection.setAttribute('role', 'region');
@@ -551,7 +559,7 @@ import '../parts/Tooltip.js';
 			(series.length > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + (options.title.text || 'Chart') +
 			(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
 			'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') + // docs
-			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
+			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' + // docs
 			(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
 				(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
 			(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
@@ -664,15 +672,16 @@ import '../parts/Tooltip.js';
 		});
 
 		// Add ID and title/caption to table HTML
-		H.wrap(H.Chart.prototype, 'getTable', function (proceed) {
+		H.wrap(chart, 'getTable', function (proceed) {
 			return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
 				.replace('<table>', '<table id="' + tableId + '" summary="Table representation of chart"><caption>' + chartTitle + '</caption>');
 		});
 
 		// Add accessibility attributes and top level columns
-		H.wrap(H.Chart.prototype, 'viewData', function (proceed) {
+		H.wrap(chart, 'viewData', function (proceed) {
 			if (!this.insertedTable) {
 				proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
 				var table = doc.getElementById(tableId),
 					body = table.getElementsByTagName('tbody')[0],
 					firstRow = body.firstChild.children,
