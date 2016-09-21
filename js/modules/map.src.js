@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.6-modified (2016-09-14)
+ * @license Highmaps JS v4.2.6-modified (2016-09-21)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2016 Torstein Honsi
@@ -184,7 +184,7 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true // docs: API record is being added.
+            showInLegend: true
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
@@ -1080,7 +1080,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
+            if (this.value !== null || this.series.options.nullInteraction) {
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);

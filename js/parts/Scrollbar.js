@@ -267,9 +267,7 @@ Scrollbar.prototype = {
 		toPX = fullWidth * Math.min(to, 1);
 		scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
-		// We need to recalculate position, if minWidth is used:
-		// docs: navigator handles are decoupled from scrollbar when minWidth is higher than a minimum range
-		// demo: http://jsfiddle.net/51pwa1a8/ vs http://jsfiddle.net/51pwa1a8/1/
+		// We need to recalculate position, if minWidth is used
 		if (newSize < minWidth) {
 			fromPX = (fullWidth - minWidth + newSize) * from;
 			newSize = minWidth;

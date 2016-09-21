@@ -5625,6 +5625,9 @@
             }
             element.style[key] = value;
         },
+        displaySetter: function (value, key, element) {
+            element.style[key] = value;
+        },
         xSetter: function (value, key, element) {
             this[key] = value; // used in getter
 
@@ -7805,11 +7808,6 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                // docs: When nameToX is true, points are placed on the X axis according to their
-                // names. If the same point name is repeated in the same or another series, the point
-                // is placed together with other points of the same name. When nameToX is false,
-                // the points are laid out in increasing X positions regardless of their names, and
-                // the X axis category will take the name of the last point in each position.
                 nameX = this.options.nameToX === false ?
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
@@ -20994,8 +20992,6 @@
 
                 // get group x and y
                 pointX = groupPositions[pos];
-                // docs: In the approximation function, meta data are now available in this.dataGroupInfo.
-                // demo: series-datagrouping-approximation
                 series.dataGroupInfo = { start: start, length: values[0].length };
                 groupedY = approximationFn.apply(series, values);
 
@@ -22337,9 +22333,7 @@
             toPX = fullWidth * Math.min(to, 1);
             scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
-            // We need to recalculate position, if minWidth is used:
-            // docs: navigator handles are decoupled from scrollbar when minWidth is higher than a minimum range
-            // demo: http://jsfiddle.net/51pwa1a8/ vs http://jsfiddle.net/51pwa1a8/1/
+            // We need to recalculate position, if minWidth is used
             if (newSize < minWidth) {
                 fromPX = (fullWidth - minWidth + newSize) * from;
                 newSize = minWidth;

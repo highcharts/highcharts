@@ -443,7 +443,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
-		this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts // docs. Sample created. API marked "next".
+		this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts
 		this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
 		this.endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
 		this.offset = options.offset || 0;

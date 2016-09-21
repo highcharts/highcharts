@@ -5623,6 +5623,9 @@
             }
             element.style[key] = value;
         },
+        displaySetter: function (value, key, element) {
+            element.style[key] = value;
+        },
         xSetter: function (value, key, element) {
             this[key] = value; // used in getter
 
@@ -7531,11 +7534,6 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                // docs: When nameToX is true, points are placed on the X axis according to their
-                // names. If the same point name is repeated in the same or another series, the point
-                // is placed together with other points of the same name. When nameToX is false,
-                // the points are laid out in increasing X positions regardless of their names, and
-                // the X axis category will take the name of the last point in each position.
                 nameX = this.options.nameToX === false ?
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
@@ -17249,7 +17247,7 @@
             minColor: '#EFEFFF',
             maxColor: '#003875',
             tickLength: 5,
-            showInLegend: true // docs: API record is being added.
+            showInLegend: true
         },
         init: function (chart, userOptions) {
             var horiz = chart.options.legend.layout !== 'vertical',
@@ -17863,7 +17861,7 @@
          */
         onMouseOver: function (e) {
             clearTimeout(this.colorInterval);
-            if (this.value !== null || this.series.options.nullInteraction) { // docs, added with "next" version
+            if (this.value !== null || this.series.options.nullInteraction) {
                 Point.prototype.onMouseOver.call(this, e);
             } else { //#3401 Tooltip doesn't hide when hovering over null points
                 this.series.onMouseOut(e);

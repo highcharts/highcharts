@@ -834,11 +834,6 @@ Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			// docs: When nameToX is true, points are placed on the X axis according to their
-			// names. If the same point name is repeated in the same or another series, the point
-			// is placed together with other points of the same name. When nameToX is false,
-			// the points are laid out in increasing X positions regardless of their names, and
-			// the X axis category will take the name of the last point in each position.
 			nameX = this.options.nameToX === false ?
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
