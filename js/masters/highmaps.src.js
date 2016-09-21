@@ -1,3 +1,10 @@
+/**
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * (c) 2011-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
