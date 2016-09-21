@@ -19,6 +19,7 @@ import '../parts/Tooltip.js';
 		each = H.each,
 		erase = H.erase,
 		addEvent = H.addEvent,
+		removeEvent = H.removeEvent,
 		fireEvent = H.fireEvent,
 		dateFormat = H.dateFormat,
 		merge = H.merge,
@@ -93,30 +94,32 @@ import '../parts/Tooltip.js';
 	H.Series.prototype.setA11yDescription = function () {
 		var a11yOptions = this.chart.options.accessibility,
 			firstPointEl = this.points && this.points[0].graphic && this.points[0].graphic.element,
-			seriesEl = firstPointEl && firstPointEl.parentNode; // Could be tracker series depending on series type
+			seriesEl = firstPointEl && firstPointEl.parentNode || this.graph && this.graph.element || this.group && this.group.element; // Could be tracker series depending on series type
+
 		if (seriesEl) {
+			// For some series types the order of elements do not match the order of points in series
+			// In that case we have to reverse them in order for AT to read them out in an understandable order
+			if (seriesEl.lastChild === firstPointEl) {
+				reverseChildNodes(seriesEl);
+			}
+			// Make individual point elements accessible if possible. Note: If markers are disabled there might not be any elements there to make accessible.
+			if (this.points && (this.points.length < a11yOptions.pointDescriptionThreshold)) {
+				each(this.points, function (point) {
+					if (point.graphic) {
+						point.graphic.element.setAttribute('role', 'img');
+						point.graphic.element.setAttribute('tabindex', '-1');
+						point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) || // docs
+							point.buildPointInfoString());
+					}
+				});
+			}
+			// Make series element accessible
 			if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 				seriesEl.setAttribute('role', 'region');
 				seriesEl.setAttribute('tabindex', '-1');
 				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) || // docs
 					this.buildSeriesInfoString());
 			}
-			// For some series types the order of elements do not match the order of points in series
-			// In that case we have to reverse them in order for AT to read them out in an understandable order
-			if (seriesEl.lastChild === firstPointEl) {
-				reverseChildNodes(seriesEl);
-			}
-		}
-		if (this.points && (this.points.length < a11yOptions.pointDescriptionThreshold)) {
-			each(this.points, function (point) {
-				// Set aria label on point
-				if (point.graphic) {
-					point.graphic.element.setAttribute('role', 'img');
-					point.graphic.element.setAttribute('tabindex', '-1');
-					point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) || // docs
-						point.buildPointInfoString());
-				}
-			});
 		}
 	};
 
@@ -126,10 +129,10 @@ import '../parts/Tooltip.js';
 		return (this.name ? this.name + ', ' : '') +
 			(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
 			(this.chart.types.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
-			(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2]) + '.') +
-			(this.description || '') +	// docs
-			(this.chart.yAxis.length > 1 && this.yAxis ? 'Y axis, ' + this.yAxis.getLabel() : '') +
-			(this.chart.xAxis.length > 1 && this.xAxis ? 'X axis, ' + this.xAxis.getLabel() : '');
+			(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2])) +
+			(this.description ? '. ' + this.description : '') +	// docs
+			(this.chart.yAxis.length > 1 && this.yAxis ? '. Y axis, ' + this.yAxis.getDescription() : '') +
+			(this.chart.xAxis.length > 1 && this.xAxis ? '. X axis, ' + this.xAxis.getDescription() : '');
 	};
 
 	// Return string with information about point
@@ -277,7 +280,7 @@ import '../parts/Tooltip.js';
 		}
 		if (!this.isNull) {
 			this.onMouseOver(); // Show the hover marker
-			chart.tooltip.refresh(this); // Show the tooltip
+			chart.tooltip.refresh(chart.tooltip.shared ? [this] : this); // Show the tooltip
 		} else {
 			chart.tooltip.hide(0);
 			// Don't call blur on the element, as it messes up the chart div's focus
@@ -374,142 +377,147 @@ import '../parts/Tooltip.js';
 	// Add keyboard navigation handling to chart
 	H.Chart.prototype.addKeyboardNavEvents = function () {
 		var chart = this,
-			series = chart.series;
-		
+			series = chart.series,
+			keydownHandler = function (ev) {
+				var e = ev || win.event,
+					keyCode = e.which || e.keyCode,
+					highlightedExportItem = chart.highlightedExportItem,
+					newSeries,
+					doExporting = chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false),
+					reachedEnd,
+					fakeEvent,
+					i;
+
+				// Handle tabbing
+				if (keyCode === 9) {
+					// If we reached end of chart, we need to let this tab slip through to allow users to tab further
+					if (chart.slipNextTab && !e.shiftKey) {
+						chart.slipNextTab = false;
+						return;
+					}
+					// Interpret tab as left/right
+					keyCode = e.shiftKey ? 37 : 39;
+				}
+				// If key was not tab, or shift+tab instead, don't slip the next tab
+				chart.slipNextTab = false;
+
+				if (!chart.isExporting) {
+					// Navigating through points
+					switch (keyCode) {
+					case 37: // Left
+					case 39: // Right
+						if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
+							if (keyCode === 39 && doExporting) {
+								// Start export menu navigation
+								chart.highlightedPoint = null;
+								chart.isExporting = true;
+								chart.showExportMenu();
+							} else {
+								// Try to return as if user tabbed or shift+tabbed
+								try {
+									e.which = e.keyCode = 9; // Some browsers won't allow mutation of event object, but try anyway
+								} catch (ignore) {}
+								return;
+							}
+						}
+						break;
+
+					case 38: // Up
+					case 40: // Down
+						if (chart.highlightedPoint) {
+							newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)];
+							if (newSeries && newSeries.points[0]) {
+								newSeries.points[0].highlight();
+							} else if (keyCode === 40 && doExporting) {
+								// Start export menu navigation
+								chart.highlightedPoint = null;
+								chart.isExporting = true;
+								chart.showExportMenu();
+							}
+						}
+						break;
+
+					case 13: // Enter
+					case 32: // Spacebar
+						if (chart.highlightedPoint) {
+							chart.highlightedPoint.firePointEvent('click');
+						}
+						break;
+
+					default: return;
+					}
+				} else {
+					// Keyboard nav for exporting menu
+					switch (keyCode) {
+					case 37: // Left
+					case 38: // Up
+						i = highlightedExportItem = highlightedExportItem || 0;
+						reachedEnd = true;
+						while (i--) {
+							if (chart.highlightExportItem(i)) {
+								reachedEnd = false;
+								break;
+							}
+						}
+						if (reachedEnd) {
+							chart.hideExportMenu();
+							chart.isExporting = false;
+							// Wrap to last point
+							if (series && series.length) {
+								newSeries = series[series.length - 1];
+								if (newSeries.points.length) {
+									newSeries.points[newSeries.points.length - 1].highlight();
+								}
+							}
+						}
+						break;
+
+					case 39: // Right
+					case 40: // Down
+						highlightedExportItem = highlightedExportItem || 0;
+						reachedEnd = true;
+						for (i = highlightedExportItem + 1; i < chart.exportDivElements.length; ++i) {
+							if (chart.highlightExportItem(i)) {
+								reachedEnd = false;
+								break;
+							}
+						}
+						if (reachedEnd) {
+							chart.hideExportMenu();
+							chart.isExporting = false;
+							// Try to return as if user tabbed
+							try {
+								e.which = e.keyCode = 9; // Some browsers won't allow mutation of event object, but try anyway
+								e.shiftKey = false;
+							} catch (ignore) {}
+							chart.slipNextTab = true; // Allow next tab to slip through without processing
+							return;
+						}
+						break;
+
+					case 13: // Enter
+					case 32: // Spacebar
+						if (highlightedExportItem !== undefined) {
+							fakeEvent = doc.createEvent('Events');
+							fakeEvent.initEvent('click', true, false);
+							chart.exportDivElements[highlightedExportItem].onclick(fakeEvent);
+						}
+						break;
+
+					default: return;
+					}
+				}
+				e.preventDefault();
+			};
+
 		// Make chart reachable by tab
 		chart.renderTo.setAttribute('tabindex', '0');
 
 		// Handle keyboard events
-		addEvent(chart.renderTo, 'keydown', function (ev) {
-			var e = ev || win.event,
-				keyCode = e.which || e.keyCode,
-				highlightedExportItem = chart.highlightedExportItem,
-				newSeries,
-				doExporting = chart.options.exporting && chart.options.exporting.enabled !== false,
-				reachedEnd,
-				fakeEvent,
-				i;
-
-			// Handle tabbing
-			if (keyCode === 9) {
-				// If we reached end of chart, we need to let this tab slip through to allow users to tab further
-				if (chart.slipNextTab && !e.shiftKey) {
-					chart.slipNextTab = false;
-					return;
-				}
-				// Interpret tab as left/right
-				keyCode = e.shiftKey ? 37 : 39;
-			}
-			// If key was not tab, or shift+tab instead, don't slip the next tab
-			chart.slipNextTab = false;
-
-			if (!chart.isExporting) {
-				// Navigating through points
-				switch (keyCode) {
-				case 37: // Left
-				case 39: // Right
-					if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
-						if (keyCode === 39 && doExporting) {
-							// Start export menu navigation
-							chart.highlightedPoint = null;
-							chart.isExporting = true;
-							chart.showExportMenu();
-						} else {
-							// Try to return as if user tabbed or shift+tabbed
-							try {
-								e.which = e.keyCode = 9; // Some browsers won't allow mutation of event object, but try anyway
-							} catch (ignore) {}
-							return;
-						}
-					}
-					break;
-
-				case 38: // Up
-				case 40: // Down
-					if (chart.highlightedPoint) {
-						newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)];
-						if (newSeries && newSeries.points[0]) {
-							newSeries.points[0].highlight();
-						} else if (keyCode === 40 && doExporting) {
-							// Start export menu navigation
-							chart.highlightedPoint = null;
-							chart.isExporting = true;
-							chart.showExportMenu();
-						}
-					}
-					break;
-
-				case 13: // Enter
-				case 32: // Spacebar
-					if (chart.highlightedPoint) {
-						chart.highlightedPoint.firePointEvent('click');
-					}
-					break;
-
-				default: return;
-				}
-			} else {
-				// Keyboard nav for exporting menu
-				switch (keyCode) {
-				case 37: // Left
-				case 38: // Up
-					i = highlightedExportItem = highlightedExportItem || 0;
-					reachedEnd = true;
-					while (i--) {
-						if (chart.highlightExportItem(i)) {
-							reachedEnd = false;
-							break;
-						}
-					}
-					if (reachedEnd) {
-						chart.hideExportMenu();
-						chart.isExporting = false;
-						// Wrap to last point
-						if (series && series.length) {
-							newSeries = series[series.length - 1];
-							if (newSeries.points.length) {
-								newSeries.points[newSeries.points.length - 1].highlight();
-							}
-						}
-					}
-					break;
-
-				case 39: // Right
-				case 40: // Down
-					highlightedExportItem = highlightedExportItem || 0;
-					reachedEnd = true;
-					for (i = highlightedExportItem + 1; i < chart.exportDivElements.length; ++i) {
-						if (chart.highlightExportItem(i)) {
-							reachedEnd = false;
-							break;
-						}
-					}
-					if (reachedEnd) {
-						chart.hideExportMenu();
-						chart.isExporting = false;
-						// Try to return as if user tabbed
-						// Some browsers won't allow mutation of event object, but try anyway
-						e.which = e.keyCode = 9;
-						e.shiftKey = false;
-						chart.slipNextTab = true; // Allow next tab to slip through without processing
-						return;
-					}
-					break;
-
-				case 13: // Enter
-				case 32: // Spacebar
-					if (highlightedExportItem !== undefined) {
-						fakeEvent = doc.createEvent('Events');
-						fakeEvent.initEvent('click', true, false);
-						chart.exportDivElements[highlightedExportItem].onclick(fakeEvent);
-					}
-					break;
-
-				default: return;
-				}
-			}
-			e.preventDefault();
-		});		
+		addEvent(chart.renderTo, 'keydown', keydownHandler);
+		addEvent(chart, 'destroy', function () {
+			removeEvent(chart.renderTo, 'keydown', keydownHandler);
+		});
 	};
 
 	// Add screen reader region to chart.
