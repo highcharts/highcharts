@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.7 (2016-09-21)
+ * @license Highstock JS v4.2.7-modified (2016-09-21)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -59,7 +59,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highstock',
-        VERSION = '4.2.7',
+        VERSION = '4.2.7-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1602,7 +1602,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.7/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/stock/4.2.7-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -20469,7 +20469,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.7 (2016-09-21)
+     * Highstock JS v4.2.7-modified (2016-09-21)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

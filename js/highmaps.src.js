@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.7 (2016-09-21)
+ * @license Highmaps JS v4.2.7-modified (2016-09-21)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -57,7 +57,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highmaps',
-        VERSION = '4.2.7',
+        VERSION = '4.2.7-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -1600,7 +1600,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.7/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/maps/4.2.7-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
