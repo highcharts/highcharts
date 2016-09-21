@@ -3380,7 +3380,6 @@
     };
     SVGRenderer.prototype = {
         Element: SVGElement,
-        urlSymbolRX: /^url\((.*?)\)$/,
         /**
          * Initialize the SVGRenderer
          * @param {Object} container
@@ -4159,7 +4158,7 @@
                     height,
                     options
                 ),
-
+                imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
                 imageSize,
                 centerImage;
@@ -4181,7 +4180,7 @@
 
 
             // image symbols
-            } else if (this.urlSymbolRX.test(symbol)) {
+            } else if (imageRegex.test(symbol)) {
 
                 // On image load, set the size and position
                 centerImage = function (img, size) {
@@ -4200,7 +4199,7 @@
                     }
                 };
 
-                imageSrc = symbol.match(this.urlSymbolRX)[1];
+                imageSrc = symbol.match(imageRegex)[1];
                 imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
                 // Ireate the image synchronously, add attribs async
@@ -4566,7 +4565,7 @@
                 crispAdjust = 0,
                 deferredAttr = {},
                 baselineOffset,
-                hasBGImage = renderer.urlSymbolRX.test(shape),
+                hasBGImage = /^url\((.*?)\)$/.test(shape),
                 needsBox = hasBGImage,
                 updateBoxSize,
                 updateTextPadding,
