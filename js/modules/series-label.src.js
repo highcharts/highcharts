@@ -1,4 +1,11 @@
 /**
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+/**
  * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
  *
  * TODO:

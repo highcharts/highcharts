@@ -1,4 +1,11 @@
 /**
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ *
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+/**
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
  *
