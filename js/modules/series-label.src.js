@@ -30,7 +30,7 @@
         SVGRenderer = H.SVGRenderer,
         Chart = H.Chart;
 
-    Highcharts.setOptions({
+    H.setOptions({
         plotOptions: {
             series: {
                 label: {
