@@ -1780,8 +1780,7 @@
                 applyOptions: function (options, x) {
                     var point;
                     if (options && options.lat !== undefined && options.lon !== undefined) {
-                        point = Point.prototype.applyOptions.call(this, options, x);
-                        point = extend(point, this.series.chart.fromLatLonToPoint(point));
+                        point = Point.prototype.applyOptions.call(this, merge(options, this.series.chart.fromLatLonToPoint(options)), x);
                     } else {
                         point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
                     }
