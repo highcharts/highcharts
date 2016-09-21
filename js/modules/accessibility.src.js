@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Accessibility module
  *
  * (c) 2010-2016 Highsoft AS
@@ -69,6 +68,7 @@ import '../parts/Tooltip.js';
 				enabled: true
 			//	skipNullPoints: false
 			}
+			// describeSingleSeries: false
 		}
 	});
 
@@ -95,7 +95,7 @@ import '../parts/Tooltip.js';
 			firstPointEl = this.points && this.points[0].graphic && this.points[0].graphic.element,
 			seriesEl = firstPointEl && firstPointEl.parentNode; // Could be tracker series depending on series type
 		if (seriesEl) {
-			if (this.chart.series.length > 1) {
+			if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 				seriesEl.setAttribute('role', 'region');
 				seriesEl.setAttribute('tabindex', '-1');
 				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) || // docs
@@ -135,12 +135,13 @@ import '../parts/Tooltip.js';
 	// Return string with information about point
 	H.Point.prototype.buildPointInfoString = function () {
 		var point = this,
-			a11yOptions = this.series.chart.options.accessibility,
+			series = point.series,
+			a11yOptions = series.chart.options.accessibility,
 			infoString = '',
 			hasSpecialKey = false,
-			dateTimePoint = point.series.xAxis && point.series.xAxis.isDatetimeAxis,
+			dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat || // docs
-				H.Tooltip.prototype.getXDateFormat(point, point.series.chart.options.tooltip, point.series.xAxis), point.x);
+				H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
 
 		each(specialKeys, function (key) {
 			if (point[key] !== undefined) {
@@ -518,7 +519,7 @@ import '../parts/Tooltip.js';
 			series = chart.series,
 			options = chart.options,
 			a11yOptions = options.accessibility,
-			hiddenSection = doc.createElement('div'),
+			hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
 			tableShortcut = doc.createElement('h3'),
 			tableShortcutAnchor = doc.createElement('a'),
 			chartHeading = doc.createElement('h3'),
