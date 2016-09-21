@@ -1,6 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
- *
  * (c) 2014 Highsoft AS
  * Authors: Jon Arild Nygard / Oystein Moseng
  *

@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Highcharts Drilldown module
  * 
  * Author: Torstein Honsi

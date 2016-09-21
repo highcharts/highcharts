@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
  * (c) 2010-2016 Torstein Honsi

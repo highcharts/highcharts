@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Data module
  *
  * (c) 2012-2016 Torstein Honsi
