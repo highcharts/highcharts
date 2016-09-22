@@ -16,7 +16,6 @@ import './Tick.js';
 		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
 		correctFloat = H.correctFloat,
 		defaultOptions = H.defaultOptions,
-		defaultPlotOptions = H.defaultPlotOptions,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		destroyObjectProperties = H.destroyObjectProperties,
@@ -2413,9 +2412,9 @@ H.Axis.prototype = {
 
 
 		// Delete all properties and fall back to the prototype.
-		// Preserve the series, needed for Axis.update.
+		// Preserve the series and names, needed for Axis.update.
 		for (n in axis) {
-			if (axis.hasOwnProperty(n) && n !== 'series') {
+			if (axis.hasOwnProperty(n) && n !== 'series' && n !== 'names') {
 				delete axis[n];
 			}
 		}
