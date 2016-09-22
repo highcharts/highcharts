@@ -227,7 +227,7 @@ seriesType('flags', 'column', {
 				// Create the flag
 				if (!graphic) {
 					graphic = point.graphic = renderer.label(
-						point.options.title || options.title || 'A',
+						'',
 						null,
 						null,
 						shape,
@@ -259,6 +259,7 @@ seriesType('flags', 'column', {
 
 				// Plant the flag
 				graphic.attr({
+					text: point.options.title || options.title || 'A',
 					x: plotX,
 					y: plotY,
 					anchorX: anchorX,
