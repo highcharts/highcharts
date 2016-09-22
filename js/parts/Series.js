@@ -596,7 +596,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 
 			// redraw
-			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			series.isDirty = chart.isDirtyBox = true;
+			series.isDirtyData = !!oldData;
 			animation = false;
 		}
 
