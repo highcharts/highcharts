@@ -6,6 +6,7 @@
  * License: www.highcharts.com/license
  */
 
+/* global jQuery */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';

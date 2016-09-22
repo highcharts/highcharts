@@ -27,14 +27,12 @@ import './SvgRenderer.js';
 		grep = H.grep,
 		isArray = H.isArray,
 		isNumber = H.isNumber,
-		isObject = H.isObject,
 		isString = H.isString,
 		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 		merge = H.merge,
 		pick = H.pick,
 		Point = H.Point, // @todo  add as a requirement
 		removeEvent = H.removeEvent,
-		seriesType = H.seriesType,
 		splat = H.splat,
 		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,

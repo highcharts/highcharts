@@ -14,8 +14,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
 
-	'use strict';
-
 	var each = H.each;
 
 	H.wrap(H.Data.prototype, 'init', function (proceed, options) {

@@ -8,7 +8,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
-		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,

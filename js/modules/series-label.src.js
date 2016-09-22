@@ -17,7 +17,7 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
-/* eslint indent: [2, 4] */
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
