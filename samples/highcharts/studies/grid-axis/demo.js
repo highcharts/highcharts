@@ -260,6 +260,7 @@ $(function () {
         H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
             var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
                 axis = this.axis,
+                tickInterval = axis.options.tickInterval || 1,
                 newPos,
                 axisHeight,
                 fontSize,
@@ -273,10 +274,8 @@ $(function () {
 
                 if (axis.horiz && axis.options.categories === undefined) {
                     // Center x position
-                    if (axis.options.tickInterval !== undefined) {
-                        newPos = this.pos + axis.options.tickInterval / 2;
-                        returnValue.x = axis.translate(newPos) + axis.left;
-                    }
+                    newPos = this.pos + tickInterval / 2;
+                    returnValue.x = axis.translate(newPos) + axis.left;
 
                     // Center y position
                     if (axis.side === axisSide.top) {
@@ -286,8 +285,8 @@ $(function () {
                     }
                 } else {
                     // Center y position
-                    if (axis.options.tickInterval !== undefined && axis.options.categories === undefined) {
-                        newPos = this.pos + (axis.options.tickInterval / 2);
+                    if (axis.options.categories === undefined) {
+                        newPos = this.pos + (tickInterval / 2);
                         returnValue.y = axis.translate(newPos) + axis.top + (labelMetrics.b / 2);
                     }
 
@@ -368,7 +367,6 @@ $(function () {
                 }
 
                 if (this.options.id === 'thisGuy') {
-                    console.log(this.axisGroup.element, this);
                     logger.add(this);
                 }
 
