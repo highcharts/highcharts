@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
     chart.rangeSelector.clickButton(0, {
         type: 'm',
         count: 1,

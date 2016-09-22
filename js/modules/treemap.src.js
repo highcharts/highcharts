@@ -74,7 +74,7 @@
 		},
 		tooltip: {
 			headerFormat: '',
-			pointFormat: '<b>{point.name}</b>: {point.node.val}</b><br/>'
+			pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
@@ -254,7 +254,10 @@
 				return a.sortIndex - b.sortIndex;
 			});
 			// Set the values
-			val = pick(point && point.value, childrenTotal);
+			val = pick(point && point.options.value, childrenTotal);
+			if (point) {
+				point.value = val;
+			}
 			extend(tree, {
 				children: children,
 				childrenTotal: childrenTotal,
@@ -716,9 +719,11 @@
 				};
 
 				// Crisp correction
-				crispCorr = pointAttribs['stroke-width'] % 2 / 2;
-				point.shapeArgs.x -= crispCorr;
-				point.shapeArgs.y -= crispCorr;
+				if (point.shapeArgs) {
+					crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
+					point.shapeArgs.x -= crispCorr;
+					point.shapeArgs.y -= crispCorr;
+				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
@@ -844,7 +849,7 @@
 				)
 				.attr({
 					align: buttonOptions.position.align,
-					zIndex: 9
+					zIndex: 7
 				})
 				.add()
 				.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');

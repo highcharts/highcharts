@@ -956,12 +956,12 @@ $(function () {
 
     // Instanciate the map
     $('#container').highcharts('Map', {
-        title : {
-            text : 'Habitat of the Rusty Blackbird'
+        title: {
+            text: 'Habitat of the Rusty Blackbird'
         },
 
-        subtitle : {
-            text : 'An example of a distribution map in Highcharts.<br/>' +
+        subtitle: {
+            text: 'An example of a distribution map in Highcharts.<br/>' +
                 'Source: <a href="http://en.wikipedia.org/wiki/File:Euphagus_carolinus_map.svg">Wikipedia</a>.'
         },
 
@@ -984,6 +984,6 @@ $(function () {
         },
 
 
-        series : series
+        series: series
     });
 });

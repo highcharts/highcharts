@@ -6,7 +6,7 @@ $(function () {
         300
     );
 
-    var lbl = renderer.label('<span>Header</span><br>Body', 100, 100)
+    renderer.label('<span>Header</span><br>Body', 100, 100)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'

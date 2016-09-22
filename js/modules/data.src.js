@@ -766,6 +766,9 @@
 					chartOptions.xAxis = {
 						type: type
 					};
+					if (type === 'category') {
+						chartOptions.xAxis.nameToX = false;
+					}
 				}
 				
 				if (options.complete) {

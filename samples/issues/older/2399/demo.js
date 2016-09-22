@@ -13,7 +13,7 @@ $(function () {
             data: [1, 3, 2],
             xAxis: 0
         }, {
-            data: [4,6,5],
+            data: [4, 6, 5],
             xAxis: 1
         }],
 

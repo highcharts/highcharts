@@ -146,9 +146,9 @@ $(function () {
                     // run animation unless we're wrapping around from 59 to 0
                     animation = now.seconds === 0 ?
                         false :
-                        {
-                            easing: 'easeOutBounce'
-                        };
+                    {
+                        easing: 'easeOutBounce'
+                    };
 
                 // Cache the tooltip text
                 chart.tooltipText =

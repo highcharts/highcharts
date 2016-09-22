@@ -3,7 +3,7 @@ $(function () {
 
         assert.expect(0); // We just expect it to not throw
 
-        var chart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
             rangeSelector: {
                 enabled: true,
                 selected: 1

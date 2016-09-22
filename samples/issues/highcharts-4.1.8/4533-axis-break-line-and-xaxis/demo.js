@@ -5,7 +5,7 @@ $(function () {
             iteratorAB = 0;
 
         $('#container').highcharts({
-            yAxis:{
+            yAxis: {
                 breaks: [{
                     from: 5,
                     to: 15,
@@ -20,7 +20,7 @@ $(function () {
                     }
                 }
             },
-            xAxis:{
+            xAxis: {
                 breaks: [{
                     from: 5,
                     to: 15,
@@ -46,8 +46,6 @@ $(function () {
                 }())
             }]
         });
-
-        var chart = $('#container').highcharts();
 
         assert.strictEqual(
             iteratorAB,

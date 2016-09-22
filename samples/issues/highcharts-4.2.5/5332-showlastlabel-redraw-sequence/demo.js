@@ -11,11 +11,11 @@ QUnit.test('Show last label hiding interrupted by animation', function (assert) 
             height: 300
         },
         series: [{
-            data: [25, 125],
+            data: [25, 125]
         }],
         yAxis: {
             showLastLabel: false
-        },
+        }
     });
 
     assert.ok(

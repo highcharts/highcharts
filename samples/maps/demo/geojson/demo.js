@@ -73,8 +73,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'GeoJSON in Highmaps'
+            title: {
+                text: 'GeoJSON in Highmaps'
             },
 
             mapNavigation: {
@@ -87,8 +87,8 @@ $(function () {
             colorAxis: {
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: geojson,
                 joinBy: ['code_hasc', 'code'],
                 name: 'Random data',

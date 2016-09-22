@@ -1,7 +1,6 @@
 $(function () {
-    QUnit.test("Compare hover color for points with negative and positive values." , function (assert) {
-        var len = 10,
-            chart = $('#container').highcharts({
+    QUnit.test("Compare hover color for points with negative and positive values.", function (assert) {
+        var chart = $('#container').highcharts({
                 chart: {
                     type: 'waterfall'
                 },
@@ -43,7 +42,8 @@ $(function () {
         assert.strictEqual(
             points[0].graphic.attr("fill"),
             points[4].graphic.attr("fill"),
-            "The same hover color for positive ant negative bars")
+            "The same hover color for positive and negative bars"
+        );
+
     });
-    
 });

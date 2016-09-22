@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
     var point = chart.series[1].points[2],
         offset = $(chart.container).offset();
 

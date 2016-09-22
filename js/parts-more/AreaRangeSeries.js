@@ -91,13 +91,12 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	 * Extend the line series' getSegmentPath method by applying the segment
 	 * path to both lower and higher values of the range
 	 */
-	getGraphPath: function () {
+	getGraphPath: function (points) {
 		
-		var points = this.points,
-			highPoints = [],
+		var highPoints = [],
 			highAreaPoints = [],
-			i = points.length,
-			getGraphPath = Series.prototype.getGraphPath,
+			i,
+			getGraphPath = seriesTypes.area.prototype.getGraphPath,
 			point,
 			pointShim,
 			linePath,
@@ -107,6 +106,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			higherPath,
 			higherAreaPath;
 
+		points = points || this.points;
+		i = points.length;
+
 		// Create the top line and the top part of the area fill. The area fill compensates for 
 		// null points by drawing down to the lower graph, moving across the null gap and 
 		// starting again at the lower graph.
@@ -114,23 +116,29 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		while (i--) {
 			point = points[i];
 		
-			if (!point.isNull && (!points[i + 1] || points[i + 1].isNull)) {
+			if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
 				highAreaPoints.push({
 					plotX: point.plotX,
-					plotY: point.plotLow
+					plotY: point.plotY,
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
+			
 			pointShim = {
-				plotX: point.plotX,
+				polarPlotY: point.polarPlotY,
+				rectPlotX: point.rectPlotX,
+				yBottom: point.yBottom,
+				plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
 				plotY: point.plotHigh,
 				isNull: point.isNull
 			};
 			highAreaPoints.push(pointShim);
 			highPoints.push(pointShim);
-			if (!point.isNull && (!points[i - 1] || points[i - 1].isNull)) {
+			if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
 				highAreaPoints.push({
 					plotX: point.plotX,
-					plotY: point.plotLow
+					plotY: point.plotY,
+					doCurve: false // #5186, gaps in areasplinerange fill
 				});
 			}
 		}

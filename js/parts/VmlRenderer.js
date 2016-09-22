@@ -468,6 +468,9 @@ VMLElement = {
 		}
 		element.style[key] = value;
 	},
+	displaySetter: function (value, key, element) {
+		element.style[key] = value;
+	},
 	xSetter: function (value, key, element) {
 		this[key] = value; // used in getter
 

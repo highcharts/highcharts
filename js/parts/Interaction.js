@@ -748,7 +748,7 @@ extend(Series.prototype, {
 			oldVisibility = series.visible;
 
 		// if called without an argument, toggle visibility
-		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
+		series.visible = vis = series.options.visible = series.userOptions.visible = vis === undefined ? !oldVisibility : vis; // #5618
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements

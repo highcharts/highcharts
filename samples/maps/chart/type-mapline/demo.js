@@ -9,8 +9,8 @@ $(function () {
                 type: 'mapline'
             },
 
-            title : {
-                text : 'Chart of type mapline'
+            title: {
+                text: 'Chart of type mapline'
             },
 
             mapNavigation: {
@@ -32,8 +32,8 @@ $(function () {
                 }
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

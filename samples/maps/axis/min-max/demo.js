@@ -9,8 +9,8 @@ $(function () {
                 height: 500
             },
 
-            title : {
-                text : 'Predefined axis min/max to define zoomed area'
+            title: {
+                text: 'Predefined axis min/max to define zoomed area'
             },
 
             mapNavigation: {
@@ -42,8 +42,8 @@ $(function () {
                 }
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

@@ -5,12 +5,12 @@ $(function () {
 
         // Initiate the chart
         $('#container').highcharts('Map', {
-            chart : {
-                borderWidth : 1
+            chart: {
+                borderWidth: 1
             },
 
-            title : {
-                text : 'Legend padding and item margin'
+            title: {
+                text: 'Legend padding and item margin'
             },
 
             mapNavigation: {
@@ -65,8 +65,8 @@ $(function () {
                 }]
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

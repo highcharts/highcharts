@@ -71,7 +71,8 @@
 	}
 
 	function isArray(obj) {
-		return Object.prototype.toString.call(obj) === '[object Array]';
+		var str = Object.prototype.toString.call(obj);
+		return str === '[object Array]' || str === '[object Array Iterator]';
 	}
 
 	function defined(obj) {

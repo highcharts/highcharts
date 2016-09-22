@@ -103,16 +103,16 @@ $(function () {
 
         series: [{
             name: 'Really, really long series name 1',
-            data: [1,4,2,3]
+            data: [1, 4, 2, 3]
         }, {
             name: 'Really, really long series name 2',
-            data: [4,2,5,3]
+            data: [4, 2, 5, 3]
         }, {
             name: 'Really, really long series name 2',
-            data: [6,5,3,1]
+            data: [6, 5, 3, 1]
         }, {
             name: 'Really, really long series name 2',
-            data: [6,4,2,1]
+            data: [6, 4, 2, 1]
         }]
 
     });
@@ -139,16 +139,16 @@ $(function () {
 
         series: [{
             name: 'Really, really long series name 1',
-            data: [1,4,2,3]
+            data: [1, 4, 2, 3]
         }, {
             name: 'Really, really long series name 2',
-            data: [4,2,5,3]
+            data: [4, 2, 5, 3]
         }, {
             name: 'Really, really long series name 2',
-            data: [6,5,3,1]
+            data: [6, 5, 3, 1]
         }, {
             name: 'Really, really long series name 2',
-            data: [6,4,2,1]
+            data: [6, 4, 2, 1]
         }]
 
     });

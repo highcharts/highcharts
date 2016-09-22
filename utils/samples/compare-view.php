@@ -46,8 +46,8 @@
 		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
-		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/rgbcolor.js"></script>
-		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
+		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
+		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 
@@ -502,6 +502,12 @@
 									}
 									callback(data);
 								}
+								image.onerror = function (e) {
+									var side = source === source1 ? 'left' : 'right';
+									report += '<div>Failed painting SVG to canvas on ' + side + ' side.</div>';
+									$('#report').html(report).css('background', '#f15c80');
+									onDifferent('Error');
+								}
 								image.src = useBlob ?
 									svgurl :
 									'data:image/svg+xml,' + source;
@@ -521,7 +527,7 @@
 								diff /= dividend;
 
 								if (diff > 0 && diff < 0.005) {
-									diff = 0.01;
+									diff = 0;
 								}
 								return diff;
 							}
@@ -565,7 +571,7 @@
 								});
 
 							// start converting
-							if (navigator.userAgent.indexOf('Trident') !== -1) {
+							if (/Edge\/|Trident\/|MSIE /.test(navigator.userAgent)) {
 								try {
 									canvg(canvas1, source1, {
 										scaleWidth: canvasWidth,

@@ -1,8 +1,7 @@
 $(function () {
     // Set up the chart
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             type: 'column',
             margin: 75,
             options3d: {

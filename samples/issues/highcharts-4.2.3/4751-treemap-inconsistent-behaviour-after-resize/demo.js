@@ -92,14 +92,10 @@ jQuery(function () {
         });
     });
     QUnit.test('Points behave equally on a resize as with a first render', function (assert) {
-        var bounding1,
-            point2,
-            bounding2;
+        var point2;
         chart1.series[0].points.forEach(function (point1, i) {
             // Get datalabel from point of both charts
             point2 = chart2.series[0].points[i];
-            bounding1 = point1.graphic.element.getBoundingClientRect();
-            bounding2 = point2.graphic.element.getBoundingClientRect();
             // Check if height, left, right and width is equal
             ['height', 'left', 'right', 'width'].forEach(function (prop) {
                 assert.strictEqual(

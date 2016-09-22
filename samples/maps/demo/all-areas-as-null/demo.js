@@ -1,22 +1,22 @@
 $(function () {
     // Instanciate the map
     $('#container').highcharts('Map', {
-        chart : {
-            borderWidth : 1
+        chart: {
+            borderWidth: 1
         },
 
-        title : {
-            text : 'Nordic countries'
+        title: {
+            text: 'Nordic countries'
         },
-        subtitle : {
-            text : 'Demo of drawing all areas in the map, only highlighting partial data'
+        subtitle: {
+            text: 'Demo of drawing all areas in the map, only highlighting partial data'
         },
 
         legend: {
             enabled: false
         },
 
-        series : [{
+        series: [{
             name: 'Country',
             mapData: Highcharts.maps['custom/europe'],
             data: [{

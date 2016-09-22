@@ -13,7 +13,7 @@ $(function () {
 
             series: [{
                 animation: false,
-                data: [1,2,3,4,5],
+                data: [1, 2, 3, 4, 5, -5],
                 showInLegend: true
             }]
 
@@ -61,6 +61,13 @@ $(function () {
             chart.series[0].points[0].legendItem.textStr,
             'Slice (6.7%)',
             'Visible data label text string'
+        );
+
+        // @todo Create an extensive unit test for PieSeries.updateTotals to replace this
+        assert.equal(
+            chart.series[0].points[5].y,
+            null,
+            'Disallow negative data. #5322'
         );
 
 

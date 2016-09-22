@@ -68,7 +68,9 @@ defaultOptions = {
 				y: 10
 			}
 			// relativeTo: 'plot'
-		}
+		},
+		width: null,
+		height: null
 	},
 	title: {
 		text: 'Chart title',

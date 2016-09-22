@@ -6,7 +6,7 @@ $(function () {
         len = 600;
 
     /**
-     * Generatl distribution algorithm for distributing labels of differing size along a
+     * General distribution algorithm for distributing labels of differing size along a
      * confined length in two dimensions.
      */
     function distribute(boxes, len) {
@@ -19,7 +19,7 @@ $(function () {
         /**
          * Create a composite box, average of targets
          */
-        function joinBoxes(box, i) {
+        function joinBoxes(box) {
             var target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
             box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
         }
@@ -84,7 +84,7 @@ $(function () {
         i = 0;
         each(boxes, function (box) {
             var posInCompositeBox = 0;
-            each(box.targets, function (tgt) {
+            each(box.targets, function () {
                 origBoxes[i].pos = box.pos + posInCompositeBox;
                 posInCompositeBox += origBoxes[i].size;
                 i++;

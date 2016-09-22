@@ -3,25 +3,27 @@ $(function () {
 
     QUnit.test('Load event without images', function (assert) {
         var flagLoad = false,
-            flagCallback = false,
-            chart = Highcharts.chart('container', {
+            flagCallback = false;
 
-                chart: {
-                    events: {
-                        load: function (e) {
-                            flagLoad = true;
-                        }
+
+        Highcharts.chart('container', {
+
+            chart: {
+                events: {
+                    load: function () {
+                        flagLoad = true;
                     }
-                },
+                }
+            },
 
-                series: [{
-                    animation: false,
-                    data: [1, 2, 3]
-                }]
+            series: [{
+                animation: false,
+                data: [1, 2, 3]
+            }]
 
-            }, function () {
-                flagCallback = true;
-            });
+        }, function () {
+            flagCallback = true;
+        });
 
         assert.strictEqual(
             flagLoad,
@@ -46,7 +48,7 @@ $(function () {
 
                 chart: {
                     events: {
-                        load: function (e) {
+                        load: function () {
                             assert.strictEqual(
                                 chart.container.querySelector('image').getAttribute('width'),
                                 '30',
@@ -103,51 +105,53 @@ $(function () {
 
         var flagLoad = false,
             flagCallback = false,
-            done = assert.async(),
-            chart = Highcharts.chart('container', {
+            done = assert.async();
 
-                chart: {
-                    events: {
-                        load: function (e) {
-                            assert.strictEqual(
-                                this.container.querySelectorAll('image').length,
-                                1,
-                                'events.load: Image added after callbacks'
-                            );
-                            flagLoad = true;
+        Highcharts.chart('container', {
 
-                            if (flagLoad && flagCallback) {
-                                done();
-                            }
-                        }
-                    }
-                },
+            chart: {
+                events: {
+                    load: function () {
+                        assert.strictEqual(
+                            this.container.querySelectorAll('image').length,
+                            1,
+                            'events.load: Image added after callbacks'
+                        );
+                        flagLoad = true;
 
-                series: [{
-                    data: [1, 2, 3]
-                }],
-
-                exporting: {
-                    buttons: {
-                        customButton: {
-                            symbol: 'url(http://www.highcharts.com/demo/gfx/sun.png)'
+                        if (flagLoad && flagCallback) {
+                            done();
                         }
                     }
                 }
+            },
 
-            }, function () {
-                assert.strictEqual(
-                    this.container.querySelectorAll('image').length,
-                    0,
-                    'callback: Image not yet added'
-                );
+            series: [{
+                data: [1, 2, 3]
+            }],
 
-                flagCallback = true;
-
-                if (flagLoad && flagCallback) {
-                    done();
+            exporting: {
+                buttons: {
+                    customButton: {
+                        symbol: 'url(http://www.highcharts.com/demo/gfx/sun.png)'
+                    }
                 }
-            });
+            }
+
+        }, function () {
+            assert.strictEqual(
+                this.container.querySelectorAll('image').length,
+                0,
+                'callback: Image not yet added'
+            );
+
+            flagCallback = true;
+
+            if (flagLoad && flagCallback) {
+                done();
+            }
+        });
+
         // Fail safe
         setTimeout(done, 2000);
 
@@ -156,8 +160,7 @@ $(function () {
     QUnit.test('Image size is cached (#5053, second case)', function (assert) {
 
         var count = 0,
-            done = assert.async(),
-            symbol = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAB3RJTUUH4AISFiQGWmDmBwAAAAd0RVh0QXV0aG9yAKmuzEgAAAAMdEVYdERlc2NyaXB0aW9uABMJISMAAAAKdEVYdENvcHlyaWdodACsD8w6AAAADnRFWHRDcmVhdGlvbiB0aW1lADX3DwkAAAAJdEVYdFNvZnR3YXJlAF1w/zoAAAALdEVYdERpc2NsYWltZXIAt8C0jwAAAAh0RVh0V2FybmluZwDAG+aHAAAAB3RFWHRTb3VyY2UA9f+D6wAAAAh0RVh0Q29tbWVudAD2zJa/AAAABnRFWHRUaXRsZQCo7tInAAABCklEQVQokY2OsUrDUBSGv2YTdHSzDgUfoO/gIr6GCN36IC6FUokYh0jAzYKUIB3sYrcKZrBBJ02oiUiCNZWSm3IdvIJtQ80//efjfIeDzM2rfKrvybv6lXzPX5AaOZn0DT5dAW6LoJ/krZAjDvGbPdUFadMkLCLGnRZf8V9wSdgJ/hGTW0a6C5Ua23aXqn3ORgVmusFzskIMrQapAMKA7IeQeYDoEVtDxRbF6Jq3tvpxkiJ+uSqyfcpLtCSm+Nbx3MXlOIyte6ZqKkkpZeZd8HBoMFspApRZPzljpwwaRHi6uSDts2l3qdpHrM1xj0S/YQxoU8fkYyAonEGDkZNSejzYlYlf3ANgq8Y32NWhiQdfoqsAAAAASUVORK5CYII=)";
+            done = assert.async();
 
         function finito() {
             assert.strictEqual(
@@ -173,7 +176,7 @@ $(function () {
 
                 chart: {
                     events: {
-                        load: function (e) {
+                        load: function () {
                             count++;
 
                             if (count === 4) {
@@ -209,6 +212,21 @@ $(function () {
         // Fail safe
         setTimeout(done, 2000);
 
+    });
+
+    QUnit.test('Issue #5606, error when chart was destroyed before images were loaded', function (assert) {
+        assert.expect(0);
+        var chart = Highcharts.chart('container', {
+
+            series: [{
+                name: 'Image symbol',
+                data: [1, 2, 3],
+                marker: {
+                    symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png?dummy=' + Date.now() + ')'
+                }
+            }]
+        });
+        chart.destroy();
     });
 
 });

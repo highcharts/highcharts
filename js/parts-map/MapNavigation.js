@@ -1,3 +1,14 @@
+function stopEvent(e) {
+	if (e) {
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
+		if (e.stopPropagation) {
+			e.stopPropagation();
+		}
+		e.cancelBubble = true;
+	}
+}
 
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -9,18 +20,7 @@ extend(Chart.prototype, {
 			button,
 			buttonOptions,
 			attr,
-			states,
-			stopEvent = function (e) {
-				if (e) {
-					if (e.preventDefault) {
-						e.preventDefault();
-					}
-					if (e.stopPropagation) {
-						e.stopPropagation();
-					}
-					e.cancelBubble = true;
-				}
-			},
+			states,			
 			outerHandler = function (e) {
 				this.handler.call(chart, e);
 				stopEvent(e); // Stop default click event (#4444)
@@ -123,7 +123,11 @@ extend(Chart.prototype, {
 				y: yAxis.dataMin,
 				width: xAxis.dataMax - xAxis.dataMin,
 				height: yAxis.dataMax - yAxis.dataMin
-			});
+			}),
+			zoomOut = newExt.x <= xAxis.dataMin &&
+				newExt.width >= xAxis.dataMax - xAxis.dataMin &&
+				newExt.y <= yAxis.dataMin &&
+				newExt.height >= yAxis.dataMax - yAxis.dataMin;
 
 		// When mousewheel zooming, fix the point under the mouse
 		if (mouseX) {
@@ -134,7 +138,7 @@ extend(Chart.prototype, {
 		}
 
 		// Zoom
-		if (howMuch !== undefined) {
+		if (howMuch !== undefined && !zoomOut) {
 			xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
 			yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
 
@@ -188,6 +192,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 	if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
 		addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
 			chart.pointer.onContainerMouseWheel(e);
+			stopEvent(e); // Issue #5011, returning false from non-jQuery event does not prevent default
 			return false;
 		});
 	}

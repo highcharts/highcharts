@@ -77,7 +77,7 @@ var MapAreaPoint = extendClass(Point, extend({
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		if (this.value !== null) {
+		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
@@ -574,7 +574,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
 		// set.
 		if (!supportsVectorEffect) {
-			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
+			series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();

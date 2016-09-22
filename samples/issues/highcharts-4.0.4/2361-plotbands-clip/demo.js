@@ -9,7 +9,7 @@ $(function () {
                 color: '#FCFFC5',
                 from: 1,
                 to: 3,
-                label:{
+                label: {
                     text: "I will dissapear if you zoom in <br/>so the start of the band isn't visible"
                 }
             }]
@@ -20,8 +20,8 @@ $(function () {
         },
 
         series: [{
-            type:"column",
-            data: [1,2,3,4,5,6],
+            type: "column",
+            data: [1, 2, 3, 4, 5, 6],
             pointPlacement: "between"
         }]
     });

@@ -23,11 +23,11 @@ $(function () {
         },
 
         series: [{
-            data: [1,2,3],
+            data: [1, 2, 3],
             negativeColor: 'green',
             yAxis: 0
         }, {
-            data: [3,2,1],
+            data: [3, 2, 1],
             negativeColor: 'green',
             threshold: 2,
             yAxis: 1

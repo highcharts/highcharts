@@ -11,13 +11,13 @@ var defaultScrollbarOptions =  {
 	buttonBorderColor: '#bbb',
 	buttonBorderRadius: 0,
 	buttonBorderWidth: 1,
-	//showFull: true, // docs
-	margin: 10, // docs
+	//showFull: true,
+	margin: 10,
 	minWidth: 6,
 	rifleColor: '#666',
-	zIndex: 3,		// docs
-	step: 0.2,		// docs
-	//size: null,	// docs
+	zIndex: 3,
+	step: 0.2,
+	//size: null,
 	trackBackgroundColor: '#eeeeee',
 	trackBorderColor: '#eeeeee',
 	trackBorderWidth: 1,
@@ -33,7 +33,7 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  * @param {Object} options
  * @param {Object} chart
  */
-function Scrollbar(renderer, options, chart) { // docs
+function Scrollbar(renderer, options, chart) {
 	this.scrollbarButtons = [];
 
 	this.renderer = renderer;
@@ -248,20 +248,30 @@ Scrollbar.prototype = {
 		var scroller = this,
 			options = scroller.options,
 			vertical = options.vertical,
+			minWidth = options.minWidth,
+			fullWidth = scroller.barWidth,
 			fromPX,
 			toPX,
 			newPos,
 			newSize,
 			newRiflesPos,
-			method = this.rendered ? 'animate' : 'attr';
+			method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
-		if (!defined(scroller.barWidth)) {
+		if (!defined(fullWidth)) {
 			return;
 		}
 
-		fromPX = scroller.barWidth * Math.max(from, 0);
-		toPX = scroller.barWidth * Math.min(to, 1);
-		newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
+		from = Math.max(from, 0);
+
+		fromPX = fullWidth * from;
+		toPX = fullWidth * Math.min(to, 1);
+		scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
+
+		// We need to recalculate position, if minWidth is used
+		if (newSize < minWidth) {
+			fromPX = (fullWidth - minWidth + newSize) * from;
+			newSize = minWidth;
+		}
 		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
 		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
@@ -333,26 +343,23 @@ Scrollbar.prototype = {
 			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
 			// down in the center of the scrollbar. This should be ignored.
 			if (scroller.grabbedCenter && (!e.touches || e.touches[0][direction] !== 0)) { // #4696, scrollbar failed on Android
-
-				chartPosition = {
-					chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth,
-					chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth
-				}[direction];
+				chartPosition = scroller.cursorToScrollbarPosition(normalizedEvent)[direction];
 				scrollPosition = scroller[direction];
 
 				change = chartPosition - scrollPosition;
 
+				scroller.hasDragged = true;
 				scroller.updatePosition(initPositions[0] + change, initPositions[1] + change);
 
-				if (scroller.options.liveRedraw) {
-					setTimeout(function () {
-						scroller.mouseUpHandler(e);
-					}, 0);
-				} else {
-					scroller.setRange(scroller.from, scroller.to);
+				if (scroller.hasDragged) {
+					fireEvent(scroller, 'changed', {
+						from: scroller.from,
+						to: scroller.to,
+						trigger: 'scrollbar',
+						DOMType: e.type,
+						DOMEvent: e
+					});
 				}
-
-				scroller.hasDragged = true;
 			}
 		};
 
@@ -365,20 +372,19 @@ Scrollbar.prototype = {
 					from: scroller.from,
 					to: scroller.to,
 					trigger: 'scrollbar',
+					DOMType: e.type,
 					DOMEvent: e
 				});
 			}
-
-			if (e.type !== 'mousemove') {
-				scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
-			}
+			scroller.grabbedCenter = scroller.hasDragged = scroller.chartX = scroller.chartY = null;
 		};
 
 		scroller.mouseDownHandler = function (e) {
-			var normalizedEvent = scroller.chart.pointer.normalize(e);
+			var normalizedEvent = scroller.chart.pointer.normalize(e),
+				mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);
 
-			scroller.chartX = (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth;
-			scroller.chartY = (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth;
+			scroller.chartX = mousePosition.chartX;
+			scroller.chartY = mousePosition.chartY;
 			scroller.initPositions = [scroller.from, scroller.to];
 
 			scroller.grabbedCenter = true;
@@ -427,6 +433,22 @@ Scrollbar.prototype = {
 				trigger: 'scrollbar',
 				DOMEvent: e
 			});
+		};
+	},
+
+	/**
+	 * Get normalized (0-1) cursor position over the scrollbar
+	 * @param {Event} normalizedEvent - normalized event, with chartX and chartY values
+	 * @return {Object} Local position {chartX, chartY}
+	 */
+	cursorToScrollbarPosition: function (normalizedEvent) {
+		var scroller = this,
+			options = scroller.options,
+			minWidthDifference = options.minWidth > scroller.calculatedWidth ? options.minWidth : 0; // minWidth distorts translation
+
+		return {
+			chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / (scroller.barWidth - minWidthDifference),
+			chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / (scroller.barWidth - minWidthDifference)
 		};
 	},
 
@@ -528,7 +550,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 	if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
 		// Predefined options:
 		axis.options.scrollbar.vertical = !axis.horiz;
-		axis.options.startOnTick = axis.options.endOnTick = false; // docs
+		axis.options.startOnTick = axis.options.endOnTick = false;
 
 		axis.scrollbar = new Scrollbar(axis.chart.renderer, axis.options.scrollbar, axis.chart);
 
@@ -548,7 +570,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 				from = unitedMin + range * (1 - this.to);
 			}
 
-			axis.setExtremes(from, to, true, null, e);
+			axis.setExtremes(from, to, true, false, e);
 		});
 	}
 });

@@ -3,7 +3,6 @@ $(function () {
 
         chart: {
             height: 300,
-            renderTo: 'container',
             type: 'column',
             animation: false
         },
@@ -16,7 +15,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: true
+            type: 'category'
         },
 
         drilldown: {
@@ -60,7 +59,7 @@ $(function () {
         }]
     };
 
-    var chart1 = new Highcharts.Chart(options, function (chart) {
+    Highcharts.chart('container', options, function (chart) {
         chart.series[0].setData([{
             name: 'Fruits',
             y: 10,

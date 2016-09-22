@@ -19,7 +19,9 @@
 	var win = Highcharts.win,
 		nav = win.navigator,
 		doc = win.document,
-		domurl = win.URL || win.webkitURL || win;
+		domurl = win.URL || win.webkitURL || win,
+		isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
+		loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
 	Highcharts.CanVGRenderer = {};
@@ -96,35 +98,32 @@
 		var img = new win.Image(),
 			taintedHandler,
 			loadHandler = function () {
-				var canvas = doc.createElement('canvas'),
-					ctx = canvas.getContext && canvas.getContext('2d'),
-					dataURL;
-				try {
-					if (!ctx) {
-						noCanvasSupportCallback(imageURL, imageType, callbackArgs, scale);
-					} else {
-						canvas.height = img.height * scale;
-						canvas.width = img.width * scale;
-						ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+				setTimeout(function () {
+					var canvas = doc.createElement('canvas'),
+						ctx = canvas.getContext && canvas.getContext('2d'),
+						dataURL;
+					try {
+						if (!ctx) {
+							noCanvasSupportCallback(imageURL, imageType, callbackArgs, scale);
+						} else {
+							canvas.height = img.height * scale;
+							canvas.width = img.width * scale;
+							ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-						// Now we try to get the contents of the canvas.
-						try {
-							dataURL = canvas.toDataURL(imageType);
-							successCallback(dataURL, imageType, callbackArgs, scale);
-						} catch (e) {
-							// Failed - either tainted canvas or something else went horribly wrong
-							if (e.name === 'SecurityError' || e.name === 'SECURITY_ERR' || e.message === 'SecurityError') {
+							// Now we try to get the contents of the canvas.
+							try {
+								dataURL = canvas.toDataURL(imageType);
+								successCallback(dataURL, imageType, callbackArgs, scale);
+							} catch (e) {
 								taintedHandler(imageURL, imageType, callbackArgs, scale);
-							} else {
-								throw e;
 							}
 						}
+					} finally {
+						if (finallyCallback) {
+							finallyCallback(imageURL, imageType, callbackArgs, scale);
+						}
 					}
-				} finally {
-					if (finallyCallback) {
-						finallyCallback(imageURL, imageType, callbackArgs, scale);
-					}
-				}
+				}, loadEventDeferDelay); // IE bug where image is not always ready despite calling load event.
 			},
 			// Image load failed (e.g. invalid URL)
 			errorHandler = function () {
@@ -133,7 +132,7 @@
 					finallyCallback(imageURL, imageType, callbackArgs, scale);
 				}
 			};
-		
+
 		// This is called on load if the image drawing to canvas failed with a security error.
 		// We retry the drawing with crossOrigin set to Anonymous.
 		taintedHandler = function () {
@@ -153,7 +152,9 @@
 	// Get data URL to an image of an SVG and call download on it
 	Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCallback, successCallback) {
 		var svgurl,
-			blob;
+			blob,
+			objectURLRevoke = true,
+			finallyHandler;
 
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
@@ -175,9 +176,16 @@
 			}
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
-			
-			// First, try to get PNG by rendering on canvas
+
 			svgurl = Highcharts.svgToDataUrl(svg);
+			finallyHandler = function () {
+				try {
+					domurl.revokeObjectURL(svgurl);
+				} catch (e) {
+					// Ignore
+				}
+			};
+			// First, try to get PNG by rendering on canvas
 			Highcharts.imageToDataUrl(svgurl, imageType, { /* args */ }, scale, function (imageURL) {
 				// Success
 				try {
@@ -204,6 +212,8 @@
 							}
 						} catch (e) {
 							failCallback();
+						} finally {
+							finallyHandler();
 						}
 					};
 
@@ -214,6 +224,7 @@
 					downloadWithCanVG();
 				} else {
 					// Must load canVG first
+					objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
 					getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
 						downloadWithCanVG();
 					});
@@ -225,10 +236,8 @@
 			failCallback,
 			// Finally
 			function () {
-				try {
-					domurl.revokeObjectURL(svgurl);
-				} catch (e) {
-					// Ignore
+				if (objectURLRevoke) {
+					finallyHandler();
 				}
 			});
 		}
@@ -281,7 +290,7 @@
 					embeddedSuccess,
 					// Tainted canvas
 					failCallback,
-					// No canvas support 
+					// No canvas support
 					failCallback,
 					// Failed to load source
 					failCallback
@@ -298,6 +307,7 @@
 	Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 		var chart = this,
 			options = Highcharts.merge(chart.options.exporting, exportingOptions),
+			imageType = options && options.type || 'image/png',
 			fallbackToExportServer = function () {
 				if (options.fallbackToExportServer === false) {
 					if (options.error) {
@@ -310,10 +320,15 @@
 				}
 			},
 			svgSuccess = function (svg) {
-				var	imageType = options && options.type || 'image/png',
-					filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
+				var filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
 				Highcharts.downloadSVGLocal(svg, filename, imageType, options.scale, fallbackToExportServer);
 			};
+
+		// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
+		if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
+			fallbackToExportServer();
+			return;
+		}
 
 		chart.getSVGForLocalExport(options, chartOptions, fallbackToExportServer, svgSuccess);
 	};

@@ -39,12 +39,12 @@ Tooltip.prototype = {
 				fill: options.backgroundColor,
 				'stroke-width': borderWidth,
 				r: options.borderRadius,
-				zIndex: 8
+				zIndex: 8,
+				display: 'none' // #2301, #2657, #3532, #5570
 			})
 			.css(style)
 			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
-			.add()
-			.attr({ y: -9999 }); // #2301, #2657
+			.add();
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
@@ -368,7 +368,10 @@ Tooltip.prototype = {
 			// show it
 			if (tooltip.isHidden) {
 				stop(label);
-				label.attr('opacity', 1).show();
+				label.attr({
+					opacity: 1,
+					display: 'block'
+				}).show();
 			}
 
 			// update text

@@ -5,21 +5,21 @@ $(function () {
         $('#container').highcharts('StockChart', {
 
 
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'AAPL Stock Price'
+            title: {
+                text: 'AAPL Stock Price'
             },
 
-            scrollbar : {
-                enabled : false
+            scrollbar: {
+                enabled: false
             },
 
-            series : [{
-                name : 'AAPL Stock Price',
-                data : data,
+            series: [{
+                name: 'AAPL Stock Price',
+                data: data,
                 tooltip: {
                     valueDecimals: 2
                 }

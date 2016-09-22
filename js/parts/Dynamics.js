@@ -151,8 +151,7 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options,
-			names = series.xAxis && series.xAxis.names;
+			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
@@ -182,10 +181,7 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
-			if (names && point.name) {
-				names[point.x] = point.name;
-			}
-
+			
 			// Record the options to options.data. If there is an object from before,
 			// use point options, otherwise use raw options. (#4701)
 			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
@@ -247,8 +243,6 @@ extend(Series.prototype, {
 			i,
 			x;
 
-		setAnimation(animation, chart);
-
 		// Optional redraw, defaults to true
 		redraw = pick(redraw, true);
 
@@ -300,9 +294,10 @@ extend(Series.prototype, {
 		// redraw
 		series.isDirty = true;
 		series.isDirtyData = true;
+
 		if (redraw) {
 			series.getAttribs(); // #1937
-			chart.redraw();
+			chart.redraw(animation); // Animation is set anyway on redraw, #5665
 		}
 	},
 
@@ -355,12 +350,11 @@ extend(Series.prototype, {
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
-	remove: function (redraw, animation) {
+	remove: function (redraw, animation, withEvent) {
 		var series = this,
 			chart = series.chart;
 
-		// Fire the event with a default handler of removing the point
-		fireEvent(series, 'remove', null, function () {
+		function remove() {
 
 			// Destroy elements
 			series.destroy();
@@ -372,7 +366,14 @@ extend(Series.prototype, {
 			if (pick(redraw, true)) {
 				chart.redraw(animation);
 			}
-		});
+		}
+
+		// Fire the event with a default handler of removing the point
+		if (withEvent !== false) {
+			fireEvent(series, 'remove', null, remove);
+		} else {
+			remove();
+		}
 	},
 
 	/**
@@ -409,7 +410,7 @@ extend(Series.prototype, {
 
 		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
-		this.remove(false);
+		this.remove(false, null, false);
 		for (n in proto) {
 			this[n] = UNDEFINED;
 		}

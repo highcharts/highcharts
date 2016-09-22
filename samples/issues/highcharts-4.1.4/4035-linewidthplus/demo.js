@@ -5,7 +5,7 @@ $(function () {
                 renderTo: 'container'
             },
             series: [{
-                data: [1,3,2,4],
+                data: [1, 3, 2, 4],
                 lineWidth: 2,
                 states: {
                     hover: {
@@ -36,7 +36,7 @@ $(function () {
                 renderTo: 'container'
             },
             series: [{
-                data: [1,3,2,4],
+                data: [1, 3, 2, 4],
                 lineWidth: 2,
                 states: {
                     hover: {
@@ -68,7 +68,7 @@ $(function () {
                 renderTo: 'container'
             },
             series: [{
-                data: [1,3,2,4],
+                data: [1, 3, 2, 4],
                 lineWidth: 3,
                 states: {
                     hover: {

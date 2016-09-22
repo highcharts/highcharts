@@ -1,10 +1,11 @@
+/* global CodeMirror */
 $(function () {
     (function (H) {
         var Chart = H.Chart,
             each = H.each,
             SVGRenderer = H.SVGRenderer,
             wrap = H.wrap;
-        
+
         // These ones are translated to attributes rather than styles
         SVGRenderer.prototype.inlineToAttributes = [
             'fill',
@@ -29,7 +30,7 @@ $(function () {
             'defs',
             'desc'
         ];
-            
+
 
         /**
          * Analyze inherited styles from stylesheets and add them inline
@@ -44,14 +45,14 @@ $(function () {
                 unstyledElements = renderer.unstyledElements,
                 defaultStyles = {},
                 dummySVG;
-            console.time('inlineStyles')
+            console.time('inlineStyles');
             /**
              * Make hyphenated property names out of camelCase
              */
             function hyphenate(prop) {
                 return prop.replace(
-                    /([A-Z])/g, 
-                    function (a, b) { 
+                    /([A-Z])/g,
+                    function (a, b) {
                         return '-' + b.toLowerCase();
                     }
                 );
@@ -69,7 +70,7 @@ $(function () {
                     styleAttr,
                     blacklisted,
                     i;
-                
+
                 if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
                     styles = window.getComputedStyle(node, null);
                     parentStyles = window.getComputedStyle(node.parentNode, null);
@@ -87,29 +88,31 @@ $(function () {
                         dummySVG.removeChild(dummy);
                     }
 
-                    // Loop over all the computed styles and check whether they are in the 
+                    // Loop over all the computed styles and check whether they are in the
                     // white list for styles or atttributes.
                     for (prop in styles) {
+                        if (styles.hasOwnProperty(prop)) {
 
-                        // Check against blacklist
-                        blacklisted = false;
-                        i = blacklist.length
-                        while (i-- && !blacklisted) {
-                            blacklisted = blacklist[i].test(prop);
-                        }
+                            // Check against blacklist
+                            blacklisted = false;
+                            i = blacklist.length;
+                            while (i-- && !blacklisted) {
+                                blacklisted = blacklist[i].test(prop);
+                            }
 
-                        if (!blacklisted) {
-                            
-                             // If parent node has the same style, it gets inherited, no need to inline it
-                            if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
+                            if (!blacklisted) {
 
-                                // Attributes
-                                if (inlineToAttributes.indexOf(prop) !== -1) {
-                                    node.setAttribute(hyphenate(prop), styles[prop]);
+                                 // If parent node has the same style, it gets inherited, no need to inline it
+                                if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
 
-                                // Styles
-                                } else {
-                                    cssText += hyphenate(prop) + ':' + styles[prop] + ';';
+                                    // Attributes
+                                    if (inlineToAttributes.indexOf(prop) !== -1) {
+                                        node.setAttribute(hyphenate(prop), styles[prop]);
+
+                                    // Styles
+                                    } else {
+                                        cssText += hyphenate(prop) + ':' + styles[prop] + ';';
+                                    }
                                 }
                             }
                         }
@@ -121,7 +124,9 @@ $(function () {
                         node.setAttribute('style', (styleAttr ? styleAttr + ';' : '') + cssText);
                     }
 
-                    if (node.nodeName === 'text') return;
+                    if (node.nodeName === 'text') {
+                        return;
+                    }
                     // Recurse
                     each(node.children || node.childNodes, recurse);
                 }
@@ -139,21 +144,21 @@ $(function () {
 
             console.timeEnd('inlineStyles');
 
-            console.log('SVG length (characters) ', this.container.innerHTML.length)
+            console.log('SVG length (characters) ', this.container.innerHTML.length);
 
         };
 
         // Override the method used from export
         wrap(Chart.prototype, 'getChartHTML', function (proceed) {
             this.inlineStyles();
-            return proceed.call(this); 
+            return proceed.call(this);
         });
 
     }(Highcharts));
 
 
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column'
         },
@@ -163,16 +168,16 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
+
         plotOptions: {
             series: {
                 stacking: 'normal'
             }
         },
-        
+
         legend: {
             align: 'right',
             verticalAlign: 'middle',
@@ -181,13 +186,13 @@ $(function () {
 
         series: [{
             data: [1, 2, 3]
-            
+
         }, {
             data: [1, 2, 3]
-            
+
         }, {
             data: [1, 2, 3]
-            
+
         }]
 
     });

@@ -612,10 +612,7 @@ $(function () {
         [1363824000000, 4.75]
     ];
 
-    var chart = new Highcharts.StockChart({
-        chart: {
-            renderTo: 'container'
-        },
+    Highcharts.stockChart('container', {
         plotOptions: {
             series: {
                 dataGrouping: {

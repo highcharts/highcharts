@@ -10,8 +10,8 @@ $(function () {
                 height: 300
             },
 
-            title : {
-                text : 'Chart with explicit width and height'
+            title: {
+                text: 'Chart with explicit width and height'
             },
 
             mapNavigation: {
@@ -31,8 +31,8 @@ $(function () {
                 enabled: false
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

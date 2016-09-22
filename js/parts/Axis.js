@@ -209,7 +209,7 @@ Axis.prototype = {
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
-		axis.coll = isXAxis ? 'xAxis' : 'yAxis';
+		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
 		axis.opposite = userOptions.opposite; // needed in setOptions
 		axis.side = userOptions.side || (axis.horiz ?
@@ -237,7 +237,8 @@ Axis.prototype = {
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
-		axis.categories = options.categories || type === 'category';
+		axis.hasNames = type === 'category' || options.categories === true;
+		axis.categories = options.categories || axis.hasNames;
 		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
@@ -321,7 +322,7 @@ Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			if (isXAxis && !this.isColorAxis) { // #2713
+			if (isXAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
 				chart.axes.push(axis);
@@ -359,7 +360,7 @@ Axis.prototype = {
 	setOptions: function (userOptions) {
 		this.options = merge(
 			this.defaultOptions,
-			this.isXAxis ? {} : this.defaultYAxisOptions,
+			this.coll === 'yAxis' && this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
@@ -401,7 +402,7 @@ Axis.prototype = {
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
-				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null) {
+				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
 					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
@@ -775,13 +776,13 @@ Axis.prototype = {
 			// if min and max options have been set, don't go beyond it
 			minArgs = [min - zoomOffset, pick(options.min, min - zoomOffset)];
 			if (spaceAvailable) { // if space is available, stay within the data range
-				minArgs[2] = axis.dataMin;
+				minArgs[2] = axis.isLog ? axis.log2lin(axis.dataMin) : axis.dataMin;
 			}
 			min = arrayMax(minArgs);
 
 			maxArgs = [min + minRange, pick(options.max, min + minRange)];
 			if (spaceAvailable) { // if space is availabe, stay within the data range
-				maxArgs[2] = axis.dataMax;
+				maxArgs[2] = axis.isLog ? axis.log2lin(axis.dataMax) : axis.dataMax;
 			}
 
 			max = arrayMin(maxArgs);
@@ -818,6 +819,68 @@ Axis.prototype = {
 			});
 		}
 		return ret;
+	},
+
+	/**
+	 * When a point name is given and no x, search for the name in the existing categories,
+	 * or if categories aren't provided, search names or create a new category (#2522).
+	 */
+	nameToX: function (point) {
+		var explicitCategories = isArray(this.categories),
+			names = explicitCategories ? this.categories : this.names,
+			nameX = point.options.x,
+			x;
+
+		point.series.requireSorting = false;
+
+		if (!defined(nameX)) {
+			nameX = this.options.nameToX === false ?
+				point.series.autoIncrement() : 
+				inArray(point.name, names);
+		}
+		if (nameX === -1) { // The name is not found in currenct categories
+			if (!explicitCategories) {
+				x = names.length;
+			}
+		} else {
+			x = nameX;
+		}
+
+		// Write the last point's name to the names array
+		this.names[x] = point.name;
+
+		return x;
+	},
+
+	/**
+	 * When changes have been done to series data, update the axis.names.
+	 */
+	updateNames: function () {
+		var axis = this;
+
+		if (this.names.length > 0) {
+			this.names.length = 0;
+			this.minRange = undefined;
+			each(this.series || [], function (series) {
+			
+				// When adding a series, points are not yet generated
+				if (!series.processedXData) {
+					series.processData();
+					series.generatePoints();
+				}
+
+				each(series.points, function (point, i) {
+					var x;
+					if (point.options && point.options.x === undefined) {
+						x = axis.nameToX(point);
+						if (x !== point.x) {
+							point.x = x;
+							series.xData[i] = x;
+						}
+					}
+				});
+			});
+		}
 	},
 
 	/**
@@ -1100,7 +1163,7 @@ Axis.prototype = {
 		}
 
 		// Prevent ticks from getting so close that we can't draw the labels
-		if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
+		if (!this.tickAmount) {
 			axis.tickInterval = axis.unsquish();
 		}
 
@@ -1517,10 +1580,8 @@ Axis.prototype = {
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
-		// With a threshold of null, make the columns/areas rise from the top or bottom
-		// depending on the value, assuming an actual threshold of 0 (#4233).
 		if (threshold === null) {
-			threshold = realMax < 0 ? realMax : realMin;
+			threshold = realMin;
 		} else if (realMin > threshold) {
 			threshold = realMin;
 		} else if (realMax < threshold) {
@@ -1674,7 +1735,7 @@ Axis.prototype = {
 			labelMetrics = this.labelMetrics(),
 			textOverflowOption = labelOptions.style.textOverflow,
 			css,
-			labelLength = 0,
+			maxLabelLength = 0,
 			label,
 			i,
 			pos;
@@ -1684,20 +1745,22 @@ Axis.prototype = {
 			attr.rotation = labelOptions.rotation || 0; // #4443
 		}
 
+		// Get the longest label length
+		each(tickPositions, function (tick) {
+			tick = ticks[tick];
+			if (tick && tick.labelLength > maxLabelLength) {
+				maxLabelLength = tick.labelLength;
+			}
+		});
+		this.maxLabelLength = maxLabelLength;
+		
+
 		// Handle auto rotation on horizontal axis
 		if (this.autoRotation) {
 
-			// Get the longest label length
-			each(tickPositions, function (tick) {
-				tick = ticks[tick];
-				if (tick && tick.labelLength > labelLength) {
-					labelLength = tick.labelLength;
-				}
-			});
-
 			// Apply rotation only if the label is too wide for the slot, and
 			// the label is wider than its height.
-			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
+			if (maxLabelLength > innerWidth && maxLabelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
 				this.labelRotation = 0;
@@ -1738,7 +1801,7 @@ Axis.prototype = {
 		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
 			css = {
-				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
+				width: (maxLabelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
 			};
 			if (!textOverflowOption) {
 				css.textOverflow = 'ellipsis';
@@ -1992,7 +2055,7 @@ Axis.prototype = {
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style.fontSize).f,
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -2293,6 +2356,12 @@ Axis.prototype = {
 			categorized,
 			strokeWidth;
 
+		// Use last available event when updating non-snapped crosshairs without
+		// mouse interaction (#5287)
+		if (!e) {
+			e = this.cross && this.cross.e;
+		}
+
 		if (
 			// Disabled in options
 			!this.crosshair ||
@@ -2300,7 +2369,6 @@ Axis.prototype = {
 			((defined(point) || !pick(options.snap, true)) === false)
 		) {
 			this.hideCrosshair();
-
 		} else {
 
 			// Get the path
@@ -2344,7 +2412,7 @@ Axis.prototype = {
 				}
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
-
+			this.cross.e = e;
 		}
 
 	},

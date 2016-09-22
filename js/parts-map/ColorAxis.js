@@ -5,7 +5,6 @@
  * The ColorAxis object for inclusion in gradient legends
  */
 var ColorAxis = Highcharts.ColorAxis = function () {
-	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -31,11 +30,14 @@ extend(ColorAxis.prototype, {
 		},
 		minColor: '#EFEFFF',
 		maxColor: '#003875',
-		tickLength: 5
+		tickLength: 5,
+		showInLegend: true
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
 			options;
+
+		this.coll = 'colorAxis';
 
 		// Build the options
 		options = merge(this.defaultColorAxisOptions, {
@@ -44,8 +46,7 @@ extend(ColorAxis.prototype, {
 		}, userOptions, {
 			opposite: !horiz,
 			showEmpty: false,
-			title: null,
-			isColor: true
+			title: null
 		});
 
 		Axis.prototype.init.call(this, chart, options);
@@ -62,6 +63,9 @@ extend(ColorAxis.prototype, {
 		// Override original axis properties
 		this.horiz = horiz;
 		this.zoomEnabled = false;
+		
+		// Add default values		
+		this.defaultLegendLength = 200;
 	},
 
 	/*
@@ -146,12 +150,12 @@ extend(ColorAxis.prototype, {
 		Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
-		this.coll = 'colorAxis';
 	},
 
 	setAxisSize: function () {
 		var symbol = this.legendSymbol,
 			chart = this.chart,
+			legendOptions = chart.options.legend || {},
 			x,
 			y,
 			width,
@@ -167,6 +171,9 @@ extend(ColorAxis.prototype, {
 
 			this.len = this.horiz ? width : height;
 			this.pos = this.horiz ? x : y;
+		} else {
+			// Fake length for disabled legend to avoid tick issues and such (#5205)
+			this.len = (this.horiz ? legendOptions.symbolWidth : legendOptions.symbolHeight) || this.defaultLegendLength;
 		}
 	},
 
@@ -281,8 +288,8 @@ extend(ColorAxis.prototype, {
 		var padding = legend.padding,
 			legendOptions = legend.options,
 			horiz = this.horiz,
-			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
-			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
+			width = pick(legendOptions.symbolWidth, horiz ? this.defaultLegendLength : 12),
+			height = pick(legendOptions.symbolHeight, horiz ? 12 : this.defaultLegendLength),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
 			itemDistance = pick(legendOptions.itemDistance, 10);
 
@@ -483,14 +490,15 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		colorAxis = this.chart.colorAxis[0];
 
 	if (colorAxis) {
-
-		// Data classes
-		if (colorAxis.options.dataClasses) {
-			allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
-		// Gradient legend
-		} else {
-			// Add this axis on top
-			allItems.push(colorAxis);
+		if (colorAxis.options.showInLegend) {
+			// Data classes
+			if (colorAxis.options.dataClasses) {
+				allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+			// Gradient legend
+			} else {
+				// Add this axis on top
+				allItems.push(colorAxis);
+			}
 		}
 
 		// Don't add the color axis' series

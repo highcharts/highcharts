@@ -11,9 +11,9 @@ $(function () {
                 type: 'pie',
                 depth: 50,
                 borderColor: 'green',
-                data: [null,1]
+                data: [null, 1]
             }]
-        },function () {
+        }, function () {
             this.series[0].addPoint({ y: 2 });
         }).highcharts();
 

@@ -49,6 +49,7 @@ nbproject/
 *.access_log
 
 *.log
+*.patch
 samples/highcharts/common-js/browserify/demo.js
 samples/highcharts/common-js/webpack/demo.js
 /samples/cloud/charts

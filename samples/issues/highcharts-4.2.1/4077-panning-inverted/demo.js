@@ -30,7 +30,6 @@ $(function () {
                     animation: false
                 }]
             }),
-            offset,
             firstZoom = {};
 
         chart.container.parentNode.style.position = 'absolute';
