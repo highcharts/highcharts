@@ -2117,13 +2117,16 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		renderer.boxWrapper.animate({
 			width: width,
 			height: height
-		});
-
-		renderer.boxWrapper.attr({
-			viewBox: '0 0 ' + width + ' ' + height
+		}, {
+			step: function () {
+				this.attr({
+					viewBox: '0 0 ' + this.attr('width') + ' ' + this.attr('height')
+				});
+			},
+			duration: pick(animate, true) ? undefined : 0
 		});
 
 		while (i--) {
