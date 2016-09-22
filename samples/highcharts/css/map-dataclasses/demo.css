@@ -12,6 +12,10 @@
     color: gray;
 }
 
+.highcharts-legend .highcharts-point {
+    stroke-width: 0;
+}
+
 /* Data class colors */
 .highcharts-color-0 {
 	fill: rgb(239, 239, 255);
