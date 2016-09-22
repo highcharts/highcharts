@@ -88,6 +88,7 @@ let defaultOptions = {
     exclude: null,
     fileOptions: {},
     files: null, // Array of files to compile
+    jsBase: null, // Path to where the js folder is located. Used when masters file is not in same location as the source files. @todo Refine this logic.
     output: './', // Folder to output compiled files
     palette: null, // Highcharts palette
     pretty: true,
@@ -109,7 +110,7 @@ const build = userOptions=> {
     let options = Object.assign({}, defaultOptions, userOptions);
     // Check if required options are set
     if (options.base) {
-        options.palette = (options.palette) ? options.palette : p.getPalette(options.base + '../../css/highcharts.scss');
+        options.palette = (options.palette) ? options.palette : p.getPalette((options.jsBase ? options.jsBase : options.base + '../') + '../css/highcharts.scss');
         p.printPalette(options.output + 'palette.html', options.palette);
         options.date = options.date ? options.date : getDate();
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
