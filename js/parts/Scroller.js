@@ -700,6 +700,7 @@ Navigator.prototype = {
 				ordinal: baseXaxis.options.ordinal
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
+				yAxis: 'navigator-y-axis',
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,

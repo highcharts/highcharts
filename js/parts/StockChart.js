@@ -227,26 +227,36 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		uniqueAxes,
 		transVal;
 
+	/**
+	 * Return the other axis based on either the axis option or on related series.
+	 */
+	function getAxis(coll) {
+		var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+			opt = axis.options[otherColl];
+
+		// Other axis indexed by number
+		if (isNumber(opt)) {
+			return [chart[otherColl][opt]];
+		}
+
+		// Other axis indexed by id (like navigator)
+		if (isString(opt)) {
+			return [chart.get(opt)];
+		}
+		
+		// Auto detect based on existing series
+		return map(series, function (s) {
+			return s[otherColl];
+		});
+	}
+
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ?
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] :
-			map(series, function (s) {
-				return s.yAxis;
-			})
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] :
-			map(series, function (s) {
-				return s.xAxis;
-			})
-		)
-	);
+	axes = getAxis(axis.coll);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
