@@ -1,42 +1,4 @@
 console.clear();
-var logger = {
-    list: [],
-    add: function (obj) {
-        var copy = {},
-            prop;
-        for (prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                copy[prop] = obj[prop];
-            }
-        }
-        this.list.push(copy);
-        if (this.list.length >= 2) {
-            this.compare();
-        }
-    },
-    compare: function () {
-        var obj1 = this.list[this.list.length - 2],
-            obj2 = this.list[this.list.length - 1],
-            prop;
-
-        for (prop in obj2) {
-            if (obj2.hasOwnProperty(prop)) {
-                if (obj1.hasOwnProperty(prop)) {
-                    if (obj2[prop] !== obj1[prop]) {
-                        console.log(prop + ': ' + obj1[prop] + ' <-old|new-> ' + obj2[prop]);
-                    }
-                } else {
-                    console.log(prop + ': ' + obj2[prop] + ' does not exist in old');
-                }
-            }
-        }
-        for (prop in obj1) {
-            if (obj1.hasOwnProperty(prop) && !obj2.hasOwnProperty(prop)) {
-                console.log(prop + ': ' + obj1[prop] + ' does not exist in new');
-            }
-        }
-    }
-};
 $(function () {
 
     /************************************
@@ -386,10 +348,6 @@ $(function () {
 
                 // Call original Axis.render() to obtain this.axisLine and this.axisGroup
                 proceed.apply(this);
-
-                if (this.options.id === 'thisGuy') {
-                    logger.add(this);
-                }
 
                 if (this.isOuterAxis() && this.axisLine) {
                     if (this.horiz) {
