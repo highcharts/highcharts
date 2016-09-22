@@ -265,6 +265,23 @@ $(function () {
             return returnValue;
         });
 
+        H.Axis.prototype.getMaxLabelLength = function (force) {
+            var tickPositions = this.tickPositions,
+                ticks = this.ticks,
+                maxLabelLength = 0;
+
+            if (!this.maxLabelLength || force) {
+                H.each(tickPositions, function (tick) {
+                    tick = ticks[tick];
+                    if (tick && tick.labelLength > maxLabelLength) {
+                        maxLabelLength = tick.labelLength;
+                    }
+                });
+                this.maxLabelLength = maxLabelLength;
+            }
+            return this.maxLabelLength;
+        };
+
         /**
          * Draw vertical ticks extra long to create cell floors and roofs.
          * Overrides the tickLength for vertical axes.
@@ -279,11 +296,19 @@ $(function () {
 
             if (!this.horiz) {
                 labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
+                if (!this.maxLabelLength) {
+                    this.maxLabelLength = this.getMaxLabelLength();
+                }
                 distance = this.maxLabelLength + labelPadding;
 
                 returnValue[0] = distance;
             }
             return returnValue;
+        });
+
+        H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
+            this.options.title.margin = 0;
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
         });
 
         /**
