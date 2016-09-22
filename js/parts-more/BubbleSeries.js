@@ -13,13 +13,10 @@ import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
-		defaultPlotOptions = H.defaultPlotOptions,
 		Axis = H.Axis,
 		color = H.color,
 		each = H.each,
-		extendClass = H.extendClass,
 		isNumber = H.isNumber,
-		merge = H.merge,
 		noop = H.noop,
 		pick = H.pick,
 		pInt = H.pInt,
@@ -41,13 +38,20 @@ seriesType('bubble', 'scatter', {
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,
-	/*= if (build.classic) { =*/
 	marker: {
+		/*= if (build.classic) { =*/
 		// fillOpacity: 0.5,
 		lineColor: null, // inherit from series.color
-		lineWidth: 1
+		lineWidth: 1,
+		/*= } =*/
+		// Avoid offset in Point.setState
+		radius: null,
+		states: {
+			hover: {
+				radiusPlus: 0
+			}
+		}
 	},
-	/*= } =*/
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
