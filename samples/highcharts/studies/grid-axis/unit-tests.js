@@ -100,7 +100,7 @@ QUnit.test('dateFormats', function (assert) {
 /**
  * Tests the additions to Highcharts.dateFormats
  */
-QUnit.test('axis horizontal placement', function (assert) {
+QUnit.test('Axis horizontal placement', function (assert) {
     var chart,
         axes = [];
 

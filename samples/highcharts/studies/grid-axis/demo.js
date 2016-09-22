@@ -15,8 +15,8 @@ var logger = {
         }
     },
     compare: function () {
-        var obj1 = this.list[0],
-            obj2 = this.list[1],
+        var obj1 = this.list[this.list.length - 2],
+            obj2 = this.list[this.list.length - 1],
             prop;
 
         for (prop in obj2) {
@@ -261,6 +261,7 @@ $(function () {
             var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
                 axis = this.axis,
                 tickInterval = axis.options.tickInterval || 1,
+                newX,
                 newPos,
                 axisHeight,
                 fontSize,
@@ -291,12 +292,34 @@ $(function () {
                     }
 
                     // Center x position
+                    newX = (this.getLabelWidth() / 2) - (axis.maxLabelLength / 2);
                     if (axis.side === axisSide.left) {
-                        returnValue.x = returnValue.x + (this.getLabelWidth() / 2) - (axis.maxLabelLength / 2);
+                        returnValue.x += newX;
                     } else {
-                        returnValue.x = returnValue.x - (this.getLabelWidth() / 2) + (axis.maxLabelLength / 2);
+                        returnValue.x -= newX;
                     }
                 }
+            }
+            return returnValue;
+        });
+
+        /**
+         * Draw vertical ticks extra long to create cell floors and roofs.
+         * Overrides the tickLength for vertical axes.
+         *
+         * @param {function} proceed - the original function
+         * @returns {array} returnValue -
+         */
+        H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
+            var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+                labelPadding,
+                distance;
+
+            if (!this.horiz) {
+                labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
+                distance = this.maxLabelLength + labelPadding;
+
+                returnValue[0] = distance;
             }
             return returnValue;
         });
@@ -351,27 +374,22 @@ $(function () {
                 distance,
                 lineWidth,
                 linePath,
-                yStart,
-                yEnd,
-                xStart,
-                xEnd;
+                yStartIndex,
+                yEndIndex,
+                xStartIndex,
+                xEndIndex;
 
             if (this.options.grid) {
                 labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
                 distance = this.maxLabelLength + labelPadding;
                 lineWidth = this.options.lineWidth;
 
-                // Draw vertical ticks extra long to create cell walls
-                if (!this.horiz) {
-                    this.options.tickLength = distance;
-                }
+                // Call original Axis.render() to obtain this.axisLine and this.axisGroup
+                proceed.apply(this);
 
                 if (this.options.id === 'thisGuy') {
                     logger.add(this);
                 }
-
-                // Call original Axis.render() to obtain this.axisLine and this.axisGroup
-                proceed.apply(this);
 
                 if (this.isOuterAxis() && this.axisLine) {
                     if (this.horiz) {
@@ -381,10 +399,10 @@ $(function () {
 
                     if (lineWidth) {
                         linePath = this.getLinePath(lineWidth);
-                        yStart = linePath.indexOf('M') + 2;
-                        yEnd = linePath.indexOf('L') + 2;
-                        xStart = linePath.indexOf('M') + 1;
-                        xEnd = linePath.indexOf('L') + 1;
+                        yStartIndex = linePath.indexOf('M') + 2;
+                        yEndIndex = linePath.indexOf('L') + 2;
+                        xStartIndex = linePath.indexOf('M') + 1;
+                        xEndIndex = linePath.indexOf('L') + 1;
 
                         // Negate distance if top or left axis
                         if (this.side === axisSide.top || this.side === axisSide.left) {
@@ -393,12 +411,12 @@ $(function () {
 
                         // If axis is horizontal, reposition line path vertically
                         if (this.horiz) {
-                            linePath[yStart] = linePath[yStart] + distance;
-                            linePath[yEnd] = linePath[yEnd] + distance;
+                            linePath[yStartIndex] = linePath[yStartIndex] + distance;
+                            linePath[yEndIndex] = linePath[yEndIndex] + distance;
                         } else {
                             // If axis is vertical, reposition line path horizontally
-                            linePath[xStart] = linePath[xStart] + distance;
-                            linePath[xEnd] = linePath[xEnd] + distance;
+                            linePath[xStartIndex] = linePath[xStartIndex] + distance;
+                            linePath[xEndIndex] = linePath[xEndIndex] + distance;
                         }
 
                         if (!this.axisLineExtra) {
@@ -460,8 +478,9 @@ $(function () {
 
                     // Make tick marks taller, creating cell walls of a grid.
                     // Use cellHeight axis option if set
-                    axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
-                    if (!axis.horiz) {
+                    if (axis.horiz) {
+                        axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
+                    } else {
                         axis.options.tickWidth = 1;
                         if (!axis.options.lineWidth) {
                             axis.options.lineWidth = 1;
@@ -538,7 +557,6 @@ $(function () {
             grid: true
         }, {
             title: '',
-            id: 'thisGuy',
             grid: true,
             reversed: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -553,6 +571,7 @@ $(function () {
             max: Date.UTC(2014, 10, 21)
         }, {
             title: '',
+            id: 'thisGuy',
             grid: true,
             reversed: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
