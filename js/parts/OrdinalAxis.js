@@ -98,7 +98,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
+			if (Highcharts.dateFormat('%d', groupPositions[start]) !== Highcharts.dateFormat('%d', groupPositions[start - 1])) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}

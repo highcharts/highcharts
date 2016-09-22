@@ -444,11 +444,11 @@ Tooltip.prototype = {
 			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
-			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);
+			date = Highcharts.dateFormat('%m-%d %H:%M:%S.%L', point.x);
 			for (n in timeUnits) {
 
 				// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
-				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek &&
+				if (closestPointRange === timeUnits.week && + Highcharts.dateFormat('%w', point.x) === xAxis.options.startOfWeek &&
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;

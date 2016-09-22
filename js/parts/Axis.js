@@ -394,7 +394,7 @@ Axis.prototype = {
 			ret = value;
 
 		} else if (dateTimeLabelFormat) { // datetime axis
-			ret = dateFormat(dateTimeLabelFormat, value);
+			ret = Highcharts.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
