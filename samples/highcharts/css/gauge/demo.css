@@ -31,6 +31,9 @@
 	stroke-width: 2px;
 	stroke: #666666;
 }
+.highcharts-yaxis-grid .highcharts-minor-grid-line {
+	display: none;
+}
 
 .highcharts-yaxis .highcharts-minor-tick {
 	stroke-width: 1px;

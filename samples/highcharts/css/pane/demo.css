@@ -1,5 +1,9 @@
 @import 'https://code.highcharts.com/5/css/highcharts.css';
 
+.highcharts-yaxis-grid .highcharts-grid-line,
+.highcharts-yaxis-grid .highcharts-minor-grid-line {
+	display: none;
+}
 .highcharts-plot-band.good {
 	fill: #90ed7d;
 }
