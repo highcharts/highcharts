@@ -77,8 +77,8 @@ QUnit.test("Highcharts", function (assert) {
     );
 
     assert.strictEqual(
-        window.Highcharts,
-        undefined,
+        typeof window.Highcharts,
+        'undefined',
         "No global Highcharts variable."
     );
 
@@ -103,8 +103,8 @@ QUnit.test("Highcharts More", function (assert) {
     );
 
     assert.strictEqual(
-        window.Highcharts,
-        undefined,
+        typeof window.Highcharts,
+        'undefined',
         "No global Highcharts variable."
     );
 
