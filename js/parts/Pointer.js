@@ -450,7 +450,7 @@ H.Pointer.prototype = {
 			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 			// make a selection
-			if (chart.hasCartesianSeries && this.hasZoom && clickedInside && !panKey) {
+			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
 				if (!selectionMarker) {
 					this.selectionMarker = selectionMarker = chart.renderer.rect(
 						plotLeft,
