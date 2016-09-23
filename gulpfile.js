@@ -176,6 +176,12 @@ const scripts = () => {
             'highcharts-3d.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
+            },
+            'highmaps.src.js': {
+                product: 'Highmaps'
+            },
+            'highstock.src.js': {
+                product: 'Highstock'
             }
         },
         files: files,
