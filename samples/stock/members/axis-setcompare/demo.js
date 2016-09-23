@@ -17,7 +17,9 @@ $(function () {
             yAxis: {
                 labels: {
                     formatter: function () {
-                        return (this.value > 0 ? ' + ' : '') + this.value;
+                        var compare = this.axis.series[0].userOptions.compare || 'none';
+                        return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value + 
+                            { 'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
                     }
                 }
             },
