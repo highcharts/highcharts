@@ -10422,7 +10422,7 @@
                         isCloser = p1.dist - p2.dist,
                         isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
                     // We have two points which are not in the same place on xAxis and shared tooltip:
-                    if (isCloserX !== 0) {
+                    if (isCloserX !== 0 && shared) { // #5721
                         return isCloserX;
                     }
                     // Points are not exactly in the same place on x/yAxis:
