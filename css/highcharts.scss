@@ -441,6 +441,8 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 1px;
 }
 .highcharts-button {
+    fill: $neutral-color-3;
+    stroke: $neutral-color-20;
     cursor: default;
     stroke-width: 1px;
     transition: fill 250ms;
@@ -450,19 +452,11 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-button-hover {
     transition: fill 0ms;
-}
-.highcharts-button-pressed {
-    font-weight: bold;
-}
-.highcharts-button-box {
-    fill: $neutral-color-3;
-    stroke: $neutral-color-20;
-}
-.highcharts-button-hover .highcharts-button-box {
     fill: $neutral-color-10;
     stroke: $neutral-color-80;
 }
-.highcharts-button-pressed .highcharts-button-box {
+.highcharts-button-pressed {
+    font-weight: bold;
     fill: $highlight-color-10;
     stroke: $highlight-color-80;
 }
