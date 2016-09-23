@@ -112,9 +112,6 @@ const applyModule = content => {
 const addLicenseHeader = (content, o) => {
     const str = getContents(o.entry);
     let header = regexGetCapture(licenseExp, str);
-    header = (header || '').replace('@product.name@', o.product)
-        .replace('@product.version@', o.version)
-        .replace('@product.date@', o.date);
     return header + content;
 };
 
@@ -214,6 +211,9 @@ const fileTransform = (content, options) => {
     let umd = options.umd;
     let result = umd ? applyUMD(content) : applyModule(content);
     result = addLicenseHeader(result, options);
+    result = result.replace(/@product.name@/g, options.product)
+        .replace(/@product.version@/g, options.version)
+        .replace(/@product.date@/g, options.date);
     return result;
 };
 
