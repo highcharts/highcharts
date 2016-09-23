@@ -181,6 +181,24 @@ import '../parts/Tooltip.js';
 				this.options.id || this.categories && 'categories' || 'values';
 	};
 
+	// Pan along axis in a direction (1 or -1), optionally with a defined granularity (number of steps it takes to walk across current view)
+	H.Axis.prototype.panStep = function (direction, granularity) {
+		var gran = granularity || 3,
+			extremes = this.getExtremes(),
+			step = (extremes.max - extremes.min) / gran * direction,
+			newMax = extremes.max + step,
+			newMin = extremes.min + step,
+			size = newMax - newMin;
+		if (direction < 0 && newMin < extremes.dataMin) {
+			newMin = extremes.dataMin;
+			newMax = newMin + size;
+		} else if (direction > 0 && newMax > extremes.dataMax) {
+			newMax = extremes.dataMax;
+			newMin = newMax - size;
+		}
+		this.setExtremes(newMin, newMax);
+	};
+
 	// Whenever adding or removing series, keep track of types present in chart
 	H.wrap(H.Series.prototype, 'init', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -389,20 +407,24 @@ import '../parts/Tooltip.js';
 		// The module's keyCode handlers determine when to move to another module.
 		// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 		// Init holds a function to run once before any keyCodes are interpreted.
+		// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 		function KeyboardNavigationModule(options) {
 			this.keyCodeMap = options.keyCodeMap;
 			this.move = options.move;
 			this.validate = options.validate;
 			this.init = options.init;
+			this.transformTabs = options.transformTabs !== false;
 		}
 		KeyboardNavigationModule.prototype = {
 			// Find handler function(s) for key code in the keyCodeMap and run it.
-			run: function (keyCode) {
+			run: function (e) {
 				var navModule = this,
+					keyCode = e.which || e.keyCode,
 					handled = false;
+				keyCode = this.transformTabs && keyCode === 9 ? (e.shiftKey ? 37 : 39) : keyCode; // Transform tabs
 				each(this.keyCodeMap, function (codeSet) {
 					if (codeSet[0].indexOf(keyCode) > -1) {
-						handled = codeSet[1].call(navModule, keyCode) === false ? false : true; // If explicitly returning false, we haven't handled it
+						handled = codeSet[1].call(navModule, keyCode, e) === false ? false : true; // If explicitly returning false, we haven't handled it
 					}
 				});
 				return handled;
@@ -423,7 +445,7 @@ import '../parts/Tooltip.js';
 							return this.move(direction); // Invalid module
 						}
 						if (newModule.init) {
-							newModule.init(); // Valid module, init it
+							newModule.init(direction); // Valid module, init it
 							return true;
 						}
 					}
@@ -438,7 +460,8 @@ import '../parts/Tooltip.js';
 		// Route keydown events
 		function keydownHandler(ev) {
 			var e = ev || win.event,
-				keyCode = e.which || e.keyCode;
+				keyCode = e.which || e.keyCode,
+				curNavModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
 
 			// Handle tabbing
 			if (keyCode === 9) {
@@ -447,15 +470,13 @@ import '../parts/Tooltip.js';
 					chart.slipNextTab = false;
 					return;
 				}
-				// Interpret tab as left/right
-				keyCode = e.shiftKey ? 37 : 39;
 			}
 			// If key was not tab, don't slip the next tab
 			chart.slipNextTab = false;
 
 			// If there is a navigation module for the current index, run it. Otherwise, we are outside of the chart in some direction.
-			if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex]) {
-				if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex].run(keyCode)) {
+			if (curNavModule) {
+				if (curNavModule.run(e)) {
 					e.preventDefault(); // If successfully handled, stop the event here.
 				}
 			}
@@ -491,7 +512,16 @@ import '../parts/Tooltip.js';
 						chart.highlightedPoint.firePointEvent('click');
 					}
 				}]
-			]),
+			], {
+				// If coming back to points from other module, highlight last point
+				init: function (direction) {
+					var lastSeries = chart.series && chart.series[chart.series.length - 1],
+						lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
+					if (direction < 0 && lastPoint) {
+						lastPoint.highlight();
+					}
+				}
+			}),
 
 			// Exporting
 			navModuleFactory([
@@ -552,9 +582,85 @@ import '../parts/Tooltip.js';
 					return chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false);
 				},
 				// Show export menu
-				init: function () {
+				init: function (direction) {
 					chart.highlightedPoint = null;
 					chart.showExportMenu();
+					// If coming back to export menu from other module, try to highlight last item in menu
+					if (direction < 0 && chart.exportDivElements) {
+						for (var i = chart.exportDivElements.length; i > -1; --i) {
+							if (chart.highlightExportItem(i)) {
+								break;
+							}
+						}
+					}
+				}
+			}),
+
+			// Map zoom
+			navModuleFactory([
+
+				// Up/down/left/right
+				[[38, 40, 37, 39], function (keyCode) {
+					chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
+				}],
+
+				// Tabs
+				[[9], function (keyCode, e) {
+					if (e.shiftKey) { // Back
+						if (!chart.focusedMapNavButtonIx) { 
+							chart.mapZoom(); // Reset zoom
+							return this.move(-1); // Nowhere to go, go to prev module
+						}
+						--chart.focusedMapNavButtonIx;
+					} else { // Forward
+						if (chart.focusedMapNavButtonIx) {
+							chart.mapZoom(); // Reset zoom
+							return this.move(1); // Nowhere to go, go to next module
+						}
+						++chart.focusedMapNavButtonIx;
+					}
+					var button = chart.mapNavButtons[chart.focusedMapNavButtonIx].element;
+					if (button.focus) {
+						button.focus();
+					}
+				}],
+
+				// Enter/Spacebar
+				[[13, 32], function () {
+					var fakeEvent,
+						button = chart.mapNavButtons[chart.focusedMapNavButtonIx].element;
+					if (button) {
+						fakeEvent = doc.createEvent('Events');
+						fakeEvent.initEvent('click', true, false);
+						button.onclick(fakeEvent);
+					}
+				}]
+			], {
+				// Only run this module if we have map zoom on the chart
+				validate: function () {
+					return chart.mapZoom && chart.mapNavButtons && chart.mapNavButtons.length === 2;
+				},
+
+				// Handle tabs separately
+				transformTabs: false,
+
+				// Make zoom buttons do their magic
+				init: function () {
+					var zoomIn = chart.mapNavButtons[0].element,
+						zoomOut = chart.mapNavButtons[1].element;
+
+					each(chart.mapNavButtons, function (button) {
+						button.element.setAttribute('tabindex', -1);
+						button.element.setAttribute('role', 'button');
+					});
+
+					zoomIn.setAttribute('aria-label', 'Zoom chart');
+					zoomOut.setAttribute('aria-label', 'Zoom out chart');
+
+					if (zoomIn.focus) {
+						zoomIn.focus();
+					}
+					chart.focusedMapNavButtonIx = 0;
 				}
 			})
 		];
@@ -668,7 +774,6 @@ import '../parts/Tooltip.js';
 				oldExportCallback.apply(this, Array.prototype.slice.call(arguments));
 				chart.addAccessibleContextMenuAttribs();
 				chart.highlightExportItem(0);
-				chart.isExporting = true;
 			};
 			chart.exportSVGElements[0].element.setAttribute('role', 'button');
 			chart.exportSVGElements[0].element.setAttribute('aria-label', 'View export menu');
