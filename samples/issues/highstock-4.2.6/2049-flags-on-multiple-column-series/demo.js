@@ -11,36 +11,35 @@ $(function () {
                       [1, 22.0]
                     ],
                     id: 'left'
-                  }, {
+                }, {
                     data: [
                       [0, 55.0],
                       [1, 22.0]
                     ],
-                    id: 'right',
-                  }, {
+                    id: 'right'
+                }, {
                     data: [{
-                      x: 0
+                        x: 0
                     }, {
-                      x: 1
+                        x: 1
                     }],
                     onSeries: 'left',
                     type: 'flags'
-                  }, {
+                }, {
                     data: [{
-                      x: 0
+                        x: 0
                     }, {
-                      x: 1
+                        x: 1
                     }],
                     onSeries: 'right',
                     type: 'flags'
-                  }
+                }
                 ]
-              }),
-            i = 0,
+            }),
             series,
             xOffset;
 
-        for (; i < 2; i++) {
+        Highcharts.each([0, 1], function (i) {
             series = chart.series[i];
             xOffset = series.pointXOffset + series.barW / 2;
             Highcharts.each(series.points, function (point, j) {
@@ -50,6 +49,6 @@ $(function () {
                     'Flag ' + j + ' from series ' + chart.series[i + 2].name + ' matches corresponding column.'
                 );
             });
-        }
+        });
     });
 });

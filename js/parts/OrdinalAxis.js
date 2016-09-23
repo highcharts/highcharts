@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Axis.js';
@@ -220,6 +225,7 @@ extend(Axis.prototype, {
 			slope,
 			hasBreaks = axis.isXAxis && !!axis.options.breaks,
 			isOrdinal = axis.options.ordinal,
+			ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries,
 			i;
 
 		// apply the ordinal logic
@@ -227,7 +233,7 @@ extend(Axis.prototype, {
 
 			each(axis.series, function (series, i) {
 
-				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
+				if ((!ignoreHiddenSeries || series.visible !== false) && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
 					// concatenate the processed X data into the existing positions, or the empty array
 					ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -429,6 +435,7 @@ extend(Axis.prototype, {
 			// Create a fake axis object where the extended ordinal positions are emulated
 			fakeAxis = {
 				series: [],
+				chart: chart,
 				getExtremes: function () {
 					return {
 						min: extremes.dataMin,

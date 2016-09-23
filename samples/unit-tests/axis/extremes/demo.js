@@ -8,9 +8,11 @@ QUnit.test('getSeriesExtremes', function (assert) {
                 options: {}
             }]
         };
-    
+
     assert.throws(
-        function () { getSeriesExtremes.call(xAxis); },
+        function () {
+            getSeriesExtremes.call(xAxis);
+        },
         'xAxis with undefined xData throws an error'
     );
 

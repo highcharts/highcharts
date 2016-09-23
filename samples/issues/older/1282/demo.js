@@ -31,7 +31,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text:'Gradients should be individual colors'
+            text: 'Gradients should be individual colors'
         },
 
         xAxis: {
@@ -52,7 +52,7 @@ $(function () {
             }],
             color: 'white'
         }],
-        legend: { enabled:false },
+        legend: { enabled: false },
         yAxis: {
             min: 0,
             title: {

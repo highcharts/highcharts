@@ -3,7 +3,7 @@ $(function () {
      * Faster scatter charts mod for Highcharts
      *
      * Author: Torstein Honsi
-     * Last updated: 2014-03-05
+     * Last updated: 2016-09-23
      */
     (function (H) {
 
@@ -97,7 +97,6 @@ $(function () {
             var paths = [];
             while (i--) {
                 var path = [],
-                    size = radius * 2,
                     y;
 
                 group = groups[i];
@@ -135,7 +134,7 @@ $(function () {
             for (i = 0; i < paths.length; i += 1) {
                 if (!layers[i]) {
                     layers[i] = renderer.path(paths[i]).attr({
-                        fill: this.pointAttr[''].fill
+                        fill: this.pointAttribs().fill
                     }).add(this.markerGroup);
                 } else {
                     layers[i].attr({

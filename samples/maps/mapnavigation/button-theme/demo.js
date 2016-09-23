@@ -8,8 +8,8 @@ $(function () {
                 text: 'World population 2010 by country'
             },
 
-            subtitle : {
-                text : 'Demo of map button theming'
+            subtitle: {
+                text: 'Demo of map button theming'
             },
 
             legend: {
@@ -46,7 +46,7 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
+            series: [{
                 name: 'Population',
                 mapData: Highcharts.maps['custom/world'],
                 data: data,

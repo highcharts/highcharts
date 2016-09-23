@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("setExtremes shouldn't return undefined min or max after zooming." , function (assert) {
+    QUnit.test("setExtremes shouldn't return undefined min or max after zooming.", function (assert) {
         var min,
             max,
             UNDEFINED,
@@ -27,7 +27,7 @@ $(function () {
             });
 
         // Set testing extremes:
-        chart.xAxis[0].setExtremes(Date.UTC(2010, 1),Date.UTC(2013, 1), true, false);
+        chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
 
         // Imitate left side zooming:
         chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 50, chart.plotTop, 200, chart.plotHeight).add();
@@ -42,7 +42,7 @@ $(function () {
         );
 
         // Reset extremes for a second test:
-        chart.xAxis[0].setExtremes(Date.UTC(2010, 1),Date.UTC(2013, 1), true, false);
+        chart.xAxis[0].setExtremes(Date.UTC(2010, 1), Date.UTC(2013, 1), true, false);
 
         // Imitate right side zooming:
         chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 200, chart.plotTop, 200, chart.plotHeight).add();

@@ -14,7 +14,7 @@ function addJQuery() {
 QUnit.test("Highcharts", function (assert) {
     removeJQuery();
 
-    var Highcharts = require('../../../../js/highcharts.src'),
+    var Highcharts = require('../../../../code/highcharts.src'),
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container'
@@ -77,8 +77,8 @@ QUnit.test("Highcharts", function (assert) {
     );
 
     assert.strictEqual(
-        window.Highcharts,
-        undefined,
+        typeof window.Highcharts,
+        'undefined',
         "No global Highcharts variable."
     );
 
@@ -93,8 +93,8 @@ QUnit.test("Highcharts", function (assert) {
 QUnit.test("Highcharts More", function (assert) {
     removeJQuery();
 
-    var Highcharts = require('../../../../js/highcharts.src');
-    require('../../../../js/highcharts-more.src')(Highcharts);
+    var Highcharts = require('../../../../code/highcharts.src');
+    require('../../../../code/highcharts-more.src')(Highcharts);
 
     assert.strictEqual(
         window.HighchartsAdapter,
@@ -103,8 +103,8 @@ QUnit.test("Highcharts More", function (assert) {
     );
 
     assert.strictEqual(
-        window.Highcharts,
-        undefined,
+        typeof window.Highcharts,
+        'undefined',
         "No global Highcharts variable."
     );
 
@@ -121,7 +121,7 @@ QUnit.test("Highcharts More", function (assert) {
     );
 
     // Solid Gauge
-    require('../../../../js/modules/solid-gauge.src')(Highcharts);
+    require('../../../../code/modules/solid-gauge.src')(Highcharts);
     assert.strictEqual(
         typeof Highcharts.seriesTypes.solidgauge,
         'function',
@@ -134,7 +134,7 @@ QUnit.test("Highcharts More", function (assert) {
 QUnit.test("Highstock", function (assert) {
     removeJQuery();
 
-    var Highcharts = require('../../../../js/highstock.src');
+    var Highcharts = require('../../../../code/highstock.src');
 
     var chart = new Highcharts.StockChart({
         chart: {
@@ -146,9 +146,9 @@ QUnit.test("Highstock", function (assert) {
                 to: Date.UTC(2015, 7, 6)
             }]
         },
-        series : [{
-            name : 'AAPL',
-            data : Highcharts.map(new Array(365), function (undef, i) { 
+        series: [{
+            name: 'AAPL',
+            data: Highcharts.map(new Array(365), function (undef, i) {
                 return i;
             }),
             pointStart: Date.UTC(2015, 0, 1),
@@ -194,7 +194,7 @@ QUnit.test("Highstock", function (assert) {
 QUnit.test("Highmaps", function (assert) {
     removeJQuery();
 
-    var Highcharts = require('../../../../js/highmaps.src');
+    var Highcharts = require('../../../../code/highmaps.src');
     Highcharts.maps["countries/us/us-all"] = require('./us-all');
     jQueryParked.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
         // Make codes uppercase to match the map data
@@ -203,12 +203,12 @@ QUnit.test("Highmaps", function (assert) {
         });
         // Instanciate the map
         Highcharts.Map({
-            chart : {
+            chart: {
                 renderTo: 'container-map',
-                borderWidth : 1
+                borderWidth: 1
             },
-            title : {
-                text : 'US population density (/km²)'
+            title: {
+                text: 'US population density (/km²)'
             },
             legend: {
                 layout: 'horizontal',
@@ -232,11 +232,11 @@ QUnit.test("Highmaps", function (assert) {
                     [1, '#000022']
                 ]
             },
-            series : [{
+            series: [{
                 animation: {
                     duration: 1000
                 },
-                data : data,
+                data: data,
                 mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {
@@ -277,100 +277,100 @@ QUnit.test("Highcharts in use with modules", function (assert) {
 
     removeJQuery();
 
-    var Highcharts = require('../../../../js/highcharts.src');
+    var Highcharts = require('../../../../code/highcharts.src');
     // Annotations
-    require('../../../../js/modules/annotations.src')(Highcharts);
+    require('../../../../code/modules/annotations.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Chart.prototype.annotations,
         true,
         "Annotations is loaded."
     );
     // Boost
-    require('../../../../js/modules/boost.src')(Highcharts);
+    require('../../../../code/modules/boost.src')(Highcharts);
     assert.strictEqual(
         typeof Highcharts.Series.prototype.getContext,
         'function',
         "Boost is loaded."
     );
     // Broken Axis
-    require('../../../../js/modules/broken-axis.src')(Highcharts);
+    require('../../../../code/modules/broken-axis.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Series.prototype.drawBreaks,
         true,
         "Broken Axis is loaded."
     );
     // Data
-    require('../../../../js/modules/data.src')(Highcharts);
+    require('../../../../code/modules/data.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Data,
         true,
         "Data is loaded."
     );
     // Drilldown
-    require('../../../../js/modules/drilldown.src')(Highcharts);
+    require('../../../../code/modules/drilldown.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Point.prototype.doDrilldown,
         true,
         "Drilldown is loaded."
     );
     // Exporting
-    require('../../../../js/modules/exporting.src')(Highcharts);
+    require('../../../../code/modules/exporting.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.getOptions().exporting,
         true,
         "Exporting is loaded."
     );
     // Funnel
-    require('../../../../js/modules/funnel.src')(Highcharts);
+    require('../../../../code/modules/funnel.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.seriesTypes.funnel,
         true,
         "Funnel is loaded."
     );
     // Heatmap
-    require('../../../../js/modules/heatmap.src')(Highcharts);
+    require('../../../../code/modules/heatmap.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.seriesTypes.heatmap,
         true,
         "Heatmap is loaded."
     );
     // Map Parser
-    require('../../../../js/modules/map-parser.src')(Highcharts);
+    require('../../../../code/modules/map-parser.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Data.prototype.loadSVG,
         true,
         "Map Parser is loaded."
     );
     // Map
-    require('../../../../js/modules/map.src')(Highcharts);
+    require('../../../../code/modules/map.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.seriesTypes.map,
         true,
         "Map is loaded."
     );
     // No Data To Display
-    require('../../../../js/modules/no-data-to-display.src')(Highcharts);
+    require('../../../../code/modules/no-data-to-display.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Series.prototype.hasData,
         true,
         "No Data To Display is loaded."
     );
     // Offline Exporting
-    require('../../../../js/modules/offline-exporting.src')(Highcharts);
+    require('../../../../code/modules/offline-exporting.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Chart.prototype.exportChartLocal,
         true,
         "Offline Exporting is loaded."
     );
     // Series Label
-    require('../../../../js/modules/series-label.src')(Highcharts);
+    require('../../../../code/modules/series-label.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.Series.prototype.checkClearPoint,
         true,
         "Series Label is loaded."
     );
     // Treemap
-    require('../../../../js/modules/treemap.src')(Highcharts);
+    require('../../../../code/modules/treemap.src')(Highcharts);
     assert.strictEqual(
         !!Highcharts.seriesTypes.treemap,
         true,

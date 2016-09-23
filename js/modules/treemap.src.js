@@ -1,6 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
- *
  * (c) 2014 Highsoft AS
  * Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -835,7 +833,7 @@ import '../parts/Color.js';
 				)
 				.attr({
 					align: buttonOptions.position.align,
-					zIndex: 9
+					zIndex: 7
 				})
 				.add()
 				.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');

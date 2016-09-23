@@ -16,17 +16,16 @@ globals:
     usdeur: true
 
 rules:
-    comma-spacing: 0            # 5333 errors. Wait for --fix, https://github.com/eslint/eslint/pull/4233
+    consistent-return: 0
     eol-last: 0
+    func-style: 0
     indent: [2, 4]
-    key-spacing: 0              # TODO: Fix manually. Wait for --fix.
     max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-undefined: 0
-    no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
     no-shadow: 0                # 10 violations as of 2015-10-31
     object-curly-spacing: [2, "always"]
     quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.

@@ -42,9 +42,11 @@ $(function () {
             }).highcharts(),
             point = chart.series[0].points[0];
 
-        assert.strictEqual(
-            Math.round(point.graphic.attr('y') + point.graphic.attr('height')),
-            Math.round(chart.yAxis[0].toPixels(point.y, true)),
+        assert.ok(
+            Math.abs(
+                point.graphic.attr('y') + point.graphic.attr('height') -
+                chart.yAxis[0].toPixels(point.y, true)
+            ) < 2,
             'Intermediate sum inside plot area'
         );
     });

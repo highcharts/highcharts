@@ -24,8 +24,8 @@ $(function () {
     // Initiate the chart
     $('#container').highcharts('Map', {
 
-        title : {
-            text : 'Data joined by "name"'
+        title: {
+            text: 'Data joined by "name"'
         },
 
         mapNavigation: {
@@ -37,8 +37,8 @@ $(function () {
 
         colorAxis: {},
 
-        series : [{
-            data : data,
+        series: [{
+            data: data,
             mapData: Highcharts.maps['custom/nordic-countries-core'],
             joinBy: 'name',
             name: 'Random data',

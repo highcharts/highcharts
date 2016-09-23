@@ -56,8 +56,8 @@ $(function () {
             }];
 
         Highcharts.each(series, function (s) {
-            chart.addSeries(s, false)
-        });;
+            chart.addSeries(s, false);
+        });
         chart.xAxis[0].setExtremes();
 
         Highcharts.each(points, function (s, index) {
@@ -66,7 +66,7 @@ $(function () {
                     chart.series[index].addPoint(p, false);
                 });
             }
-        });;
+        });
         chart.xAxis[0].setExtremes();
 
         assert.strictEqual(

@@ -5,8 +5,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Destroy chart from button'
+            title: {
+                text: 'Destroy chart from button'
             },
 
             mapNavigation: {
@@ -22,8 +22,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

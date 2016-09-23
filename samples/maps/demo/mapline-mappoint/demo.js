@@ -141,18 +141,18 @@ $(function () {
 
     // Instanciate the map
     $('#container').highcharts('Map', {
-        chart : {
-            plotBorderWidth : 1,
+        chart: {
+            plotBorderWidth: 1,
             plotBackgroundColor: '#f4e2ba',
             ignoreHiddenSeries: false
         },
 
-        title : {
-            text : 'Drainage basin of the Meuse river'
+        title: {
+            text: 'Drainage basin of the Meuse river'
         },
 
-        subtitle : {
-            text : 'An example of <i>mapline</i> and <i>mappoint</i> series in Highcharts Maps. ' +
+        subtitle: {
+            text: 'An example of <i>mapline</i> and <i>mappoint</i> series in Highcharts Maps. ' +
                 ' (Source: <a href="http://en.wikipedia.org/wiki/File:Bassin_de_la_Meuse.svg">Wikipedia</a>)'
         },
 
@@ -183,6 +183,6 @@ $(function () {
         },
 
 
-        series : series
+        series: series
     });
 });

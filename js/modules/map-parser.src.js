@@ -1,4 +1,9 @@
 /**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+/**
  * SVG map parser. 
  * This file requires data.js.
  */
@@ -8,8 +13,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
-
-	'use strict';
 
 	var each = H.each;
 

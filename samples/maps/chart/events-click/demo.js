@@ -22,7 +22,7 @@ $(function () {
             },
 
             title: {
-                text : 'Add points on chart click'
+                text: 'Add points on chart click'
             },
 
             mapNavigation: {
@@ -39,7 +39,7 @@ $(function () {
             },
 
             series: [{
-                data : data,
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

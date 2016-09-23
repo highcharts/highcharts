@@ -4,6 +4,7 @@
 const fs = require('fs');
 const LE = '\n';
 let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/;
+const licenseExp = /(\/\*\*[\s\S]+@license[\s\S]+?(?=\*\/)\*\/)/;
 
 /**
  * Test if theres is a match between
@@ -102,6 +103,26 @@ const applyModule = content => {
 };
 
 /**
+ * Adds a license header to the top of a distribution file.
+ * License header is collected from the "masters" file.
+ * @param  {string} content Content of distribution file.
+ * @param  {object} o Object containing all build options.
+ * @returns {string} Returns the distribution file with a header.
+ */
+const addLicenseHeader = (content, o) => {
+    const str = getContents(o.entry);
+    let header = regexGetCapture(licenseExp, str);
+    return header + content;
+};
+
+/**
+ * Removes a license code block from a string.
+ * @param  {string} content Module content.
+ * @returns {string} Returns module content without license header.
+ */
+const removeLicenseHeader = content => content.replace(licenseExp, '');
+
+/**
  * List of names for the exported variable per module.
  * @param  {[string]} dependencies Dependencies array. List of paths, ordered.
  * @returns {[?string]}  Path of module and name of its exported variable.
@@ -159,6 +180,8 @@ const moduleTransform = (content, options) => {
     let exclude = options.exclude;
     let params = imported.map(m => m[0]).join(', ');
     let mParams = imported.map(m => m[1]).join(', ');
+    // Remove license headers from modules
+    content = removeLicenseHeader(content);
     // Remove use strict from modules
     content = content.replace(/\'use strict\';\r\n/, '');
     // Remove import statements
@@ -187,6 +210,10 @@ const moduleTransform = (content, options) => {
 const fileTransform = (content, options) => {
     let umd = options.umd;
     let result = umd ? applyUMD(content) : applyModule(content);
+    result = addLicenseHeader(result, options);
+    result = result.replace(/@product.name@/g, options.product)
+        .replace(/@product.version@/g, options.version)
+        .replace(/@product.date@/g, options.date);
     return result;
 };
 

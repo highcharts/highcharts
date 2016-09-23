@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -222,7 +227,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// get group x and y
 			pointX = groupPositions[pos];
-			series.dataGroupInfo = { start: start, length: values[0].length }; // docs: In the approximation function, meta data are now available in _this.dataGroupMeta_.
+			series.dataGroupInfo = { start: start, length: values[0].length };
 			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
@@ -319,7 +324,7 @@ seriesProto.processData = function () {
 		if (groupPixelWidth) {
 			hasGroupedData = true;
 
-			series.points = null; // force recreation of point instances in series.translate
+			series.isDirty = true; // force recreation of point instances in series.translate, #5699
 
 			var extremes = xAxis.getExtremes(),
 				xMin = extremes.min,

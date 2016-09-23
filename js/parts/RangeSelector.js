@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Axis.js';
@@ -458,7 +463,7 @@ RangeSelector.prototype = {
 		function updateExtremes() {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
-				xAxis = chart.xAxis[0],
+				xAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chart.xAxis[0],
 				dataMin = xAxis.dataMin,
 				dataMax = xAxis.dataMax;
 			if (value !== input.previousValue) {

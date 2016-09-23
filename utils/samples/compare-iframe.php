@@ -24,11 +24,13 @@ if (isset($_GET['rightcommit'])) {
 
 // A commit or tag is given, insert the full path
 $commitOrTag = '/^[a-z0-9]+$/';
+//$githubServer = 'http://github.highcharts.com';
+$githubServer = 'http://github-highcharts.us-east-1.elasticbeanstalk.com';
 if (preg_match($commitOrTag, $leftPath)) {
-	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
+	$leftPath = "cache.php?file=$githubServer/$leftPath";
 }
 if (preg_match($commitOrTag, $rightPath)) {
-	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
+	$rightPath = "cache.php?file=$githubServer/$rightPath";
 }
 
 // Forced options
@@ -118,7 +120,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest, $githubServer;
 	$bogus = md5('bogus');
 
 	// No idea why file_get_contents doesn't work here...
@@ -132,10 +134,10 @@ function getHTML($which) {
 
 	// for issue-by-commit
 	$issueHTML = $s;
-	$issueHTML = str_replace('https://code.highcharts.com/stock/', 'http://github.highcharts.com/%s/', $issueHTML);
-	$issueHTML = str_replace('https://code.highcharts.com/maps/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/stock/', $githubServer . '/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/maps/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace('https://code.highcharts.com/mapdata/', $bogus, $issueHTML);
-	$issueHTML = str_replace('https://code.highcharts.com/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace($bogus, 'https://code.highcharts.com/mapdata/', $issueHTML);
 
 	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;

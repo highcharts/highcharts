@@ -30,7 +30,7 @@ $(function () {
         if (path[1] === 9727) {
 
             // Identify the box
-            Highcharts.seriesTypes.map.prototype.getBox.call(0, [copy]);
+            Highcharts.seriesTypes.map.prototype.getBox.call({}, [copy]);
 
             // Place the center of the data label in the center of the point legend box
             this.middleX = ((path[1] + path[4]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
@@ -66,7 +66,11 @@ $(function () {
             }
         },
 
-        colorAxis: {},
+        colorAxis: {
+            labels: {
+                format: '{value}%'
+            }
+        },
 
         series: [{
             mapData: mapData,

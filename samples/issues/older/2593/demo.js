@@ -1,9 +1,8 @@
 
 $(function () {
 
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
         chart: {
-            renderTo: 'container',
             type: 'gauge'
 
         },

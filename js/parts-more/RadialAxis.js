@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -201,6 +206,11 @@ radialAxisMixin = {
 	 * tickPositions are computed, so that ticks will extend passed the real max.
 	 */
 	beforeSetTickPositions: function () {
+		// If autoConnect is true, polygonal grid lines are connected, and one closestPointRange
+		// is added to the X axis to prevent the last point from overlapping the first.
+		this.autoConnect = this.isCircular && pick(this.userMax, this.options.max) === undefined &&
+			this.endAngleRad - this.startAngleRad === 2 * Math.PI;
+		
 		if (this.autoConnect) {
 			this.max += (this.categories && 1) || this.pointRange || this.closestPointRange || 0; // #1197, #2260
 		}
@@ -412,8 +422,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		isX = userOptions.isX,
 		isHidden = angular && isX,
 		isCircular,
-		startAngleRad,
-		endAngleRad,
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
@@ -464,17 +472,13 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
-		this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts // docs. Sample created. API marked "next".
-		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
-		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
+		this.angleRad = (options.angle || 0) * Math.PI / 180; // Y axis in polar charts
+		this.startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180; // Gauges
+		this.endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180; // Gauges
 		this.offset = options.offset || 0;
 
 		this.isCircular = isCircular;
 
-		// Automatically connect grid lines?
-		if (isCircular && userOptions.max === undefined && endAngleRad - startAngleRad === 2 * Math.PI) {
-			this.autoConnect = true;
-		}
 	}
 
 });

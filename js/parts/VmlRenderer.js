@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -497,6 +502,9 @@ VMLElement = {
 			}
 			key = 'top';
 		}
+		element.style[key] = value;
+	},
+	displaySetter: function (value, key, element) {
 		element.style[key] = value;
 	},
 	xSetter: function (value, key, element) {

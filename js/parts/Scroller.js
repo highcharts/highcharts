@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -503,7 +508,6 @@ Navigator.prototype = {
 
 		var scroller = this,
 			xAxis,
-			top = scroller.top,
 			dragOffset,
 			baseSeries = scroller.baseSeries;
 		
@@ -698,6 +702,7 @@ Navigator.prototype = {
 				ordinal: baseXaxis.options.ordinal
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
+				yAxis: 'navigator-y-axis',
 				isX: true,
 				type: 'datetime',
 				index: xAxisIndex,
@@ -762,7 +767,7 @@ Navigator.prototype = {
 
 		// Initialize the scrollbar
 		if (chart.options.scrollbar.enabled) {
-			scroller.scrollbar = new Scrollbar(
+			chart.scrollbar = scroller.scrollbar = new Scrollbar(
 				chart.renderer,
 				merge(chart.options.scrollbar, { margin: scroller.navigatorEnabled ? 0 : 10 }),
 				chart
@@ -785,35 +790,6 @@ Navigator.prototype = {
 
 		// Add data events
 		scroller.addBaseSeriesEvents();
-
-
-		/**
-		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
-		 * of the navigator once the height of the chart, including the legend, is determined. #367.
-		 */
-		wrap(chart, 'getMargins', function (proceed) {
-
-			var legend = this.legend,
-				legendOptions = legend.options,
-				xAxis = scroller.xAxis,
-				yAxis = scroller.yAxis;
-
-			proceed.apply(this, [].slice.call(arguments, 1));
-
-			// Compute the top position
-			scroller.top = top = scroller.navigatorOptions.top ||
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
-						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
-							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
-
-			if (xAxis && yAxis) { // false if navigator is disabled (#904)
-
-				xAxis.options.top = yAxis.options.top = top;
-
-				xAxis.setAxisSize();
-				yAxis.setAxisSize();
-			}
-		});
 
 		scroller.addEvents();
 	},
@@ -1163,6 +1139,41 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 });
 
+/**
+ * For stock charts, extend the Chart.getMargins method so that we can set the final top position
+ * of the navigator once the height of the chart, including the legend, is determined. #367.
+ */
+wrap(Chart.prototype, 'getMargins', function (proceed) {
+
+	var legend = this.legend,
+		legendOptions = legend.options,
+		scroller = this.scroller,
+		xAxis,
+		yAxis;
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (scroller) {
+
+		xAxis = scroller.xAxis;
+		yAxis = scroller.yAxis;
+
+		// Compute the top position
+		scroller.top = scroller.navigatorOptions.top ||
+			this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
+					(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
+						legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+
+		if (xAxis && yAxis) { // false if navigator is disabled (#904)
+
+			xAxis.options.top = yAxis.options.top = scroller.top;
+
+			xAxis.setAxisSize();
+			yAxis.setAxisSize();
+		}
+	}
+});
+
 // Pick up badly formatted point options to addPoint
 wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
@@ -1175,7 +1186,9 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 // Handle adding new series
 wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
 	proceed.call(this, options, false, animation);
-	this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+	if (this.scroller) {
+		this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
+	}
 	if (pick(redraw, true)) {
 		this.redraw();
 	}
@@ -1184,7 +1197,9 @@ wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation
 // Handle updating series
 wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
 	proceed.call(this, newOptions, false);
-	this.chart.scroller.setBaseSeries();
+	if (this.chart.scroller) {
+		this.chart.scroller.setBaseSeries();
+	}
 	if (pick(redraw, true)) {
 		this.chart.redraw();
 	}

@@ -1,10 +1,12 @@
 /**
+ * License: www.highcharts.com/license
+ * Author: Torstein Honsi
+ * 
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
  *
  * Compatible with HTML5 canvas compatible browsers (not IE < 9).
  *
- * Author: Torstein Honsi
  *
  * 
  * Development plan
@@ -45,15 +47,12 @@
  *   use optimizations.
  */
 
-/* eslint indent: [2, 4] */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
-
-    'use strict';
 
     var win = H.win,
         doc = win.document,
@@ -576,7 +575,7 @@ import '../parts/Options.js';
         var point = boostPoint;
 
         if (boostPoint && !(boostPoint instanceof this.pointClass)) {
-            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]); // eslint-disable-line new-cap
             point.category = point.x;
 
             point.dist = boostPoint.dist;

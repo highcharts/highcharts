@@ -25,8 +25,8 @@ $(function () {
         // Initiate the chart
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'GeoJSON in Highmaps'
+            title: {
+                text: 'GeoJSON in Highmaps'
             },
 
             mapNavigation: {
@@ -39,8 +39,8 @@ $(function () {
             colorAxis: {
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: geojson,
                 joinBy: ['code_hasc', 0],
                 keys: ['code_hasc', 'value'],

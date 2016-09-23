@@ -24,7 +24,7 @@ $(function () {
 
 
         assert.strictEqual(
-            chart.series[0].data[0].dataLabel.x < chart.series[0].data[0].dataLabelUpper.x ,
+            chart.series[0].data[0].dataLabel.x < chart.series[0].data[0].dataLabelUpper.x,
             true,
             'Correct positions'
         );

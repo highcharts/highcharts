@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -317,6 +322,8 @@ Scrollbar.prototype = {
 		var scroller = this,
 			options = scroller.options,
 			vertical = options.vertical,
+			minWidth = options.minWidth,
+			fullWidth = scroller.barWidth,
 			fromPX,
 			toPX,
 			newPos,
@@ -324,57 +331,66 @@ Scrollbar.prototype = {
 			newRiflesPos,
 			method = this.rendered && !this.hasDragged ? 'animate' : 'attr';
 
-		if (defined(scroller.barWidth) && scroller.group) {
+		if (!defined(fullWidth)) {
+			return;
+		}
 
-			fromPX = scroller.barWidth * Math.max(from, 0);
-			toPX = scroller.barWidth * Math.min(to, 1);
-			newSize = Math.max(correctFloat(toPX - fromPX), options.minWidth);
-			newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset) - scroller.scrollbarStrokeWidth % 2 / 2;
-			newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
+		from = Math.max(from, 0);
 
-			// Store current position:
-			scroller.from = from;
-			scroller.to = to;
+		fromPX = fullWidth * from;
+		toPX = fullWidth * Math.min(to, 1);
+		scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
-			if (!vertical) {
-				scroller.scrollbarGroup[method]({
-					translateX: newPos
-				});
-				scroller.scrollbar[method]({
-					width: newSize
-				});
-				scroller.scrollbarRifles[method]({
-					translateX: newRiflesPos
-				});
-				scroller.scrollbarLeft = newPos;
-				scroller.scrollbarTop = 0;
+		// We need to recalculate position, if minWidth is used
+		if (newSize < minWidth) {
+			fromPX = (fullWidth - minWidth + newSize) * from;
+			newSize = minWidth;
+		}
+		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
+		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
+
+		// Store current position:
+		scroller.from = from;
+		scroller.to = to;
+
+		if (!vertical) {
+			scroller.scrollbarGroup[method]({
+				translateX: newPos
+			});
+			scroller.scrollbar[method]({
+				width: newSize
+			});
+			scroller.scrollbarRifles[method]({
+				translateX: newRiflesPos
+			});
+			scroller.scrollbarLeft = newPos;
+			scroller.scrollbarTop = 0;
+		} else {
+			scroller.scrollbarGroup[method]({
+				translateY: newPos
+			});
+			scroller.scrollbar[method]({
+				height: newSize
+			});
+			scroller.scrollbarRifles[method]({
+				translateY: newRiflesPos
+			});
+			scroller.scrollbarTop = newPos;
+			scroller.scrollbarLeft = 0;
+		}
+
+		if (newSize <= 12) {
+			scroller.scrollbarRifles.hide();
+		} else {
+			scroller.scrollbarRifles.show(true);
+		}
+
+		// Show or hide the scrollbar based on the showFull setting
+		if (options.showFull === false) {
+			if (from <= 0 && to >= 1) {
+				scroller.group.hide();
 			} else {
-				scroller.scrollbarGroup[method]({
-					translateY: newPos
-				});
-				scroller.scrollbar[method]({
-					height: newSize
-				});
-				scroller.scrollbarRifles[method]({
-					translateY: newRiflesPos
-				});
-				scroller.scrollbarTop = newPos;
-				scroller.scrollbarLeft = 0;
-			}
-
-			if (newSize <= 12) {
-				scroller.scrollbarRifles.hide();
-			} else {
-				scroller.scrollbarRifles.show(true);
-			}
-
-			// Show or hide the scrollbar based on the showFull setting
-			if (options.showFull === false) {
-				if (from <= 0 && to >= 1) {
-					scroller.group.hide();
-				} else {
-					scroller.group.show();
-				}
+				scroller.group.show();
 			}
 		}
 
@@ -401,11 +417,7 @@ Scrollbar.prototype = {
 			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
 			// down in the center of the scrollbar. This should be ignored.
 			if (scroller.grabbedCenter && (!e.touches || e.touches[0][direction] !== 0)) { // #4696, scrollbar failed on Android
-
-				chartPosition = {
-					chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth,
-					chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth
-				}[direction];
+				chartPosition = scroller.cursorToScrollbarPosition(normalizedEvent)[direction];
 				scrollPosition = scroller[direction];
 
 				change = chartPosition - scrollPosition;
@@ -442,10 +454,11 @@ Scrollbar.prototype = {
 		};
 
 		scroller.mouseDownHandler = function (e) {
-			var normalizedEvent = scroller.chart.pointer.normalize(e);
+			var normalizedEvent = scroller.chart.pointer.normalize(e),
+				mousePosition = scroller.cursorToScrollbarPosition(normalizedEvent);
 
-			scroller.chartX = (normalizedEvent.chartX - scroller.x - scroller.xOffset) / scroller.barWidth;
-			scroller.chartY = (normalizedEvent.chartY - scroller.y - scroller.yOffset) / scroller.barWidth;
+			scroller.chartX = mousePosition.chartX;
+			scroller.chartY = mousePosition.chartY;
 			scroller.initPositions = [scroller.from, scroller.to];
 
 			scroller.grabbedCenter = true;
@@ -498,6 +511,22 @@ Scrollbar.prototype = {
 	},
 
 	/**
+	 * Get normalized (0-1) cursor position over the scrollbar
+	 * @param {Event} normalizedEvent - normalized event, with chartX and chartY values
+	 * @return {Object} Local position {chartX, chartY}
+	 */
+	cursorToScrollbarPosition: function (normalizedEvent) {
+		var scroller = this,
+			options = scroller.options,
+			minWidthDifference = options.minWidth > scroller.calculatedWidth ? options.minWidth : 0; // minWidth distorts translation
+
+		return {
+			chartX: (normalizedEvent.chartX - scroller.x - scroller.xOffset) / (scroller.barWidth - minWidthDifference),
+			chartY: (normalizedEvent.chartY - scroller.y - scroller.yOffset) / (scroller.barWidth - minWidthDifference)
+		};
+	},
+
+	/**
 	* Update position option in the Scrollbar, with normalized 0-1 scale
 	*/
 	updatePosition: function (from, to) {
@@ -515,6 +544,9 @@ Scrollbar.prototype = {
 		this.to = to;
 	},
 
+	/**
+	 * Update the scrollbar with new options
+	 */
 	update: function (options) {
 		this.destroy();
 		this.init(this.chart.renderer, merge(true, this.options, options), this.chart);
@@ -573,20 +605,25 @@ Scrollbar.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var scroller = this;
+
+		var scroller = this.chart.scroller;
 
 		// Disconnect events added in addEvents
-		scroller.removeEvents();
+		this.removeEvents();
 
 		// Destroy properties
 		each(['track', 'scrollbarRifles', 'scrollbar', 'scrollbarGroup', 'group'], function (prop) {
-			if (scroller[prop] && scroller[prop].destroy) {
-				scroller[prop] = scroller[prop].destroy();
+			if (this[prop] && this[prop].destroy) {
+				this[prop] = this[prop].destroy();
 			}
-		});
+		}, this);
 
-		// Destroy elements in collection
-		destroyObjectProperties(scroller.scrollbarButtons);
+		if (scroller) {
+			scroller.scrollbar = null;
+
+			// Destroy elements in collection
+			destroyObjectProperties(scroller.scrollbarButtons);
+		}
 	}
 };
 

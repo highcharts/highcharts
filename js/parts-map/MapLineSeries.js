@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -16,6 +21,7 @@ seriesType('mapline', 'map', {
 	colorProp: 'stroke',
 	/*= if (build.classic) { =*/
 	pointAttrToOptions: {
+		'stroke': 'color',
 		'stroke-width': 'lineWidth'
 	},
 	/**

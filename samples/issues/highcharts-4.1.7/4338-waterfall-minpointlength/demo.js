@@ -1,13 +1,13 @@
 $(function () {
-    QUnit.test("Apply minPointLength for a waterfall series" , function (assert) { 
+    QUnit.test("Apply minPointLength for a waterfall series", function (assert) {
         var len = 10,
             chart = $('#container').highcharts({
                 chart: {
                     type: 'waterfall',
                     animation: false
                 },
-                plotOptions:{
-                    series:{
+                plotOptions: {
+                    series: {
                         minPointLength: len
                     }
                 },
@@ -24,7 +24,7 @@ $(function () {
                         y: 1200
                     }, {
                         name: 'Positive Balance',
-                        isIntermediateSum: true,
+                        isIntermediateSum: true
                     }, {
                         name: 'Fixed Costs',
                         y: -342000
@@ -33,7 +33,7 @@ $(function () {
                         y: -233000
                     }, {
                         name: 'Balance',
-                        isSum: true,
+                        isSum: true
                     }]
                 }]
             }).highcharts(),
@@ -64,5 +64,5 @@ $(function () {
             "isSum point has proper height"
         );
     });
-    
+
 });

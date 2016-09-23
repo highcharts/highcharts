@@ -1,4 +1,8 @@
-/* eslint indent: [2, 4] */
+/**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/SVGRenderer.js';

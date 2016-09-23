@@ -68,8 +68,7 @@ $(function () {
     // Iterate over the track points, get cumulative distance and elevation
     $.each(trackPoints, function (i, trkpt) {
 
-        var time = Date.parse(trkpt.getElementsByTagName('time')[0].textContent),
-            ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
+        var ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
             lat = parseFloat(trkpt.getAttribute('lat')),
             lon = parseFloat(trkpt.getAttribute('lon')),
             point = {
@@ -100,10 +99,9 @@ $(function () {
 
 
     // Now create the chart
-    var chart = new Highcharts.Chart({
+    Highcharts.chart('container', {
 
         chart: {
-            renderTo: 'container',
             type: 'area'
         },
 

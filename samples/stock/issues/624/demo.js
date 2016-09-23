@@ -1,11 +1,10 @@
 $(function () {
-    var chart = new Highcharts.StockChart({
+    Highcharts.stockChart('container', {
 
         title: {
             text: 'Adding series dynamically failed in Highstock <= 1.3.7'
         },
         chart: {
-            renderTo: 'container',
             events: {
                 load: function () {
                     this.addSeries({

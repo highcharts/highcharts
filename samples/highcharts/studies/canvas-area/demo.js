@@ -6,7 +6,6 @@ $(function () {
             a,
             b,
             c,
-            low,
             spike;
         for (i = 0; i < n; i = i + 1) {
             if (i % 100 === 0) {

@@ -1,10 +1,10 @@
 /* eslint-env node, es6 */
 /* eslint no-console:0, valid-jsdoc:0 */
+/* eslint-disable func-style */
 
 'use strict';
 var colors = require('colors'),
     exec = require('child_process').exec,
-    glob = require('glob'),
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
     closureCompiler = require('closurecompiler'),
@@ -44,7 +44,8 @@ var paths = {
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
  * @return undefined
  */
-gulp.task('scripts', function () {
+const scripts = () => {
+    console.log('Starting scripts.');
     let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
@@ -136,6 +137,38 @@ gulp.task('scripts', function () {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'themes/dark-blue.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/dark-green.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/dark-unica.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/gray.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/grid-light.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/grid.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/skies.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'themes/sand-signika.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'highcharts-more.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
@@ -143,33 +176,39 @@ gulp.task('scripts', function () {
             'highcharts-3d.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
+            },
+            'highmaps.src.js': {
+                product: 'Highmaps'
+            },
+            'highstock.src.js': {
+                product: 'Highstock'
             }
         },
         files: files,
         output: './code/',
         type: type
     });
-});
+};
 
-gulp.task('styles', function () {
+const styles = () => {
     gulp.src('./css/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
-});
+};
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
  * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
  * @return undefined Returns nothing
  */
-gulp.task('lint', () => {
+const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine();
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**'];
     let report = cli.executeOnFiles(pattern);
     console.log(formatter(report.results));
-});
+};
 
 /**
  * Watch changes to JS and SCSS files
@@ -180,11 +219,6 @@ gulp.task('default', ['styles', 'scripts'], () => {
     // If js parts files changes, then build new js files.
     gulp.watch(['./js/!(adapters|builds)/*.js'], ['scripts']);
 });
-
-/**
- * Create distribution files
- */
-gulp.task('dist', ['styles', 'scripts']);
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
@@ -239,7 +273,8 @@ gulp.task('nightly', function () {
 
 gulp.task('filesize', function () {
     var oldSize,
-        newSize;
+        newSize,
+        filename = argv.file ? argv.file : 'highcharts.src.js';
 
     /**
      * Pad a string to a given length by adding spaces to the beginning
@@ -261,7 +296,7 @@ gulp.task('filesize', function () {
             color = diff > 0 ? 'yellow' : 'green';
         console.log([
             '',
-            colors.cyan('highcharts.js ') + colors.gray('(gzipped)'),
+            colors.cyan(filename.replace('.src', '')) + colors.gray('(gzipped)'),
             'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
             'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
             colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
@@ -270,7 +305,7 @@ gulp.task('filesize', function () {
     }
 
     closureCompiler.compile(
-        ['code/highcharts.src.js'],
+        ['js/' + filename],
         null,
         function (error, ccResult) {
             if (ccResult) {
@@ -283,7 +318,7 @@ gulp.task('filesize', function () {
                     }
 
                     closureCompiler.compile(
-                        ['code/highcharts.src.js'],
+                        ['js/' + filename],
                         null,
                         function (ccError, ccResultOld) {
                             if (ccResultOld) {
@@ -311,35 +346,230 @@ gulp.task('filesize', function () {
 /**
  * Compile the JS files in the /code folder
  */
-gulp.task('compile', function () {
-
-    glob('*.src.js', { cwd: './code/', matchBase: true }, function (globErr, files) {
-
-        files.forEach(function (src) {
-            src = './code/' + src;
-            var dest = src.replace('.src.js', '.js');
-            closureCompiler.compile(
-                [src],
-                null,
-                function (error, result) {
-                    if (result) {
-                        fs.writeFile(dest, result, 'utf8', function (writeErr) {
-                            if (!writeErr) {
-                                console.log(colors.green('Compiled ' + src + ' => ' + dest));
+const compile = () => {
+    console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
+    return new Promise((resolve) => {
+        const B = require('./assembler/build.js');
+        const sourceFolder = './code/';
+        const promises = B.getFilesInFolder(sourceFolder, true, '')
+            .filter(path => path.endsWith('.src.js'))
+            .map(path => {
+                return new Promise((resolveCompile, reject) => {
+                    const sourcePath = sourceFolder + path;
+                    const outputPath = sourcePath.replace('.src.js', '.js');
+                    closureCompiler.compile(
+                        [sourcePath],
+                        null,
+                        (error, result) => {
+                            if (result) {
+                                fs.writeFile(outputPath, result, 'utf8', (err) => {
+                                    if (!err) {
+                                        // @todo add filesize information
+                                        resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+                                    } else {
+                                        reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
+                                    }
+                                });
                             } else {
-                                console.log(colors.red('Failed compiling ' + src + ' => ' + dest));
+                                reject('Compilation error: ' + error);
                             }
-                        });
+                        }
+                    );
+                }).then(console.log);
+            });
+        Promise.all(promises).then(() => {
+            resolve('Compile is complete');
+        }).catch((err) => err.message + '\n\r' + err.stack);
+    });
+};
 
-                    } else {
-                        console.log('Compilation error: ' + error);
-                    }
+const cleanCode = () => {
+    const U = require('./assembler/utilities.js');
+    return U.removeDirectory('./code').then(() => {
+        console.log('Successfully removed code directory.');
+    }).catch(console.log);
+};
+
+const cleanDist = () => {
+    const U = require('./assembler/utilities.js');
+    return U.removeDirectory('./build/dist').then(() => {
+        console.log('Successfully removed dist directory.');
+    }).catch(console.log);
+};
+
+const copyToDist = () => {
+    const B = require('./assembler/build.js');
+    const U = require('./assembler/utilities.js');
+    const sourceFolder = './code/';
+    const distFolder = './build/dist/';
+    const files = B.getFilesInFolder(sourceFolder, true, '');
+    // Files that should not be distributed with certain products
+    const filter = {
+        highcharts: ['highmaps.js', 'highstock.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
+        highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
+        highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
+    };
+    files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
+        .forEach((path) => {
+            const content = fs.readFileSync(sourceFolder + path);
+            const filename = path.replace('.src.js', '.js').replace('js/', '');
+            ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+                if (filter[lib].indexOf(filename) === -1) {
+                    U.writeFile(distFolder + lib + '/js/' + path, content);
                 }
-            );
+            });
         });
+};
+
+/**
+ * Left pad a string
+ * @param  {string} str    The string we want to pad.
+ * @param  {string} char   The character we want it to be padded with.
+ * @param  {number} length The length of the resulting string.
+ * @return {string}        The string with padding on left.
+ */
+const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
+
+/**
+ * Returns time of date as a string in the format of HH:MM:SS
+ * @param  {Date} d The date object we want to get the time from
+ * @return {string}   The string represantation of the Date object.
+ */
+const toTimeString = (d) => {
+    const pad = (s) => leftPad(s, '0', 2);
+    return pad('' + d.getHours()) + ':' + pad('' + d.getMinutes()) + ':' + pad('' + d.getSeconds());
+};
+
+/**
+ * Returns a string which tells the time difference between to dates.
+ * Difference is formatted as xh xm xs xms. Where x is a number.
+ * @param  {Date} d1 First date
+ * @param  {Date} d2 Second date
+ * @return {string} The time difference between the two dates.
+ */
+const timeDifference = (d1, d2) => {
+    const seconds = 1000;
+    const minutes = 60 * seconds;
+    const hours = 60 * minutes;
+    let diff = d2 - d1;
+    let x = 0;
+    let time = [];
+    if (diff > hours) {
+        x = Math.floor(diff / hours);
+        diff -= x * hours;
+        time.push(x + 'h');
+    }
+    if (diff > minutes || (time.length > 0 && diff > 0)) {
+        x = Math.floor(diff / minutes);
+        diff -= x * minutes;
+        time.push(x + 'm');
+    }
+    if (diff > seconds || (time.length > 0 && diff > 0)) {
+        x = Math.floor(diff / seconds);
+        diff -= x * seconds;
+        time.push(x + 's');
+    }
+    if (diff > 0 || time.length === 0) {
+        time.push(diff + 'ms');
+    }
+    return time.join(' ');
+};
+
+/**
+ * Mirrors the same feedback which gulp gives when executing its tasks.
+ * Says when a task started, when it finished, and how long it took.
+ * @param  {string} name Name of task which is beeing executed.
+ * @param  {string} task A function to execute
+ * @return {*}      Returns whatever the task function returns when it is finished.
+ */
+const gulpify = (name, task) => {
+    // const colors = require('colors');
+    const isPromise = (value) => (typeof value === 'object' && typeof value.then === 'function');
+    return function () {
+        const d1 = new Date();
+        console.log('[' + colors.gray(toTimeString(d1)) + '] Starting \'' + colors.cyan(name) + '\'...');
+        let result = task.apply(null, Array.from(arguments));
+        if (!isPromise(result)) {
+            result = Promise.resolve(result);
+        }
+        return result.then(() => {
+            const d2 = new Date();
+            console.log('[' + colors.gray(toTimeString(d2)) + '] Finished \'' + colors.cyan(name) + '\' after ' + colors.blue(timeDifference(d1, d2)));
+        });
+    };
+};
+
+/**
+ * Executes a single terminal command and returns when finished.
+ * Outputs stdout to the console.
+ * @param  {string} command Command to execute in terminal
+ * @return {string} Returns all output to the terminal in the form of a string.
+ */
+const commandLine = (command) => {
+    // const exec = require('child_process').exec;
+    return new Promise((resolve, reject) => {
+        const cli = exec(command, (error, stdout) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            } else {
+                console.log('Command finished: ' + command);
+                resolve(stdout);
+            }
+        });
+        cli.stdout.on('data', (data) => console.log(data.toString()));
+    });
+};
+
+/**
+ * Download a version of the API for Highstock, Highstock or Highmaps.
+ * Executes a grunt task through command line.
+ * @param  {string} product Which api to download. Must be lowercase.
+ * @param  {string} version Which version to download.
+ * @return {Promise} Returns a promise which resolves when download is completed.
+ */
+const downloadAPI = (product, version) => commandLine('grunt download-api:' + product + ':' + version);
+
+/**
+ * Download all the API's of Highcharts, Highstock and Highmaps.
+ * @return {Promise} Returns a promise which resolves when all downloads are completed.
+ */
+const downloadAllAPI = () => new Promise((resolve, reject) => {
+    // @todo Pass in version, instead of hardcoding it.
+    const version = '5.0.0';
+    const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
+    Promise.all(promises).then(() => {
+        resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
+    }).catch((err) => {
+        reject(err);
     });
 });
 
+/**
+ * Run remaining dist tasks in build.xml.
+ * @return {Promise} Returns a promise which resolves when scripts is finished.
+ */
+const antDist = () => commandLine('ant dist');
+
+gulp.task('copy-to-dist', copyToDist);
+gulp.task('styles', styles);
+gulp.task('scripts', scripts);
+gulp.task('lint', lint);
+gulp.task('compile', compile);
+/**
+ * Create distribution files
+ */
+gulp.task('dist', () => {
+    return gulpify('cleanCode', cleanCode)()
+        .then(gulpify('styles', styles))
+        .then(gulpify('scripts', scripts))
+        .then(gulpify('lint', lint))
+        .then(gulpify('compile', compile))
+        .then(gulpify('cleanDist', cleanDist))
+        .then(gulpify('copyToDist', copyToDist))
+        .then(gulpify('downloadAllAPI', downloadAllAPI))
+        .then(gulpify('ant-dist', antDist));
+});
 gulp.task('browserify', function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')

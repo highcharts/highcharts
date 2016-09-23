@@ -6,8 +6,8 @@ $(function () {
         chart: {
             spacingBottom: 20
         },
-        title : {
-            text : 'Europe time zones'
+        title: {
+            text: 'Europe time zones'
         },
 
         legend: {
@@ -40,7 +40,7 @@ $(function () {
             }
         },
 
-        series : [{
+        series: [{
             name: 'UTC',
             data: $.map(['IE', 'IS', 'GB', 'PT'], function (code) {
                 return { code: code };

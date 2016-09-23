@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Chart has proper dimensions after resize using standalone adapter." , function (assert) {
+    QUnit.test("Chart has proper dimensions after resize using standalone adapter.", function (assert) {
         var width = 200,
             height = 300,
             chart = new Highcharts.Chart({

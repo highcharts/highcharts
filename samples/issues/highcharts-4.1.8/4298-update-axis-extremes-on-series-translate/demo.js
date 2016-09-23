@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test("Axis extremes should be reset after updated data." , function (assert) {
+    QUnit.test("Axis extremes should be reset after updated data.", function (assert) {
         var chart = $('#container').highcharts({
                 series: [{
                     type: "treemap",

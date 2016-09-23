@@ -32,6 +32,21 @@ const getFilesInFolder = (base, includeSubfolders, path) => {
 };
 
 /**
+ * Left pad a string
+ * @param  {string} str    The string we want to pad.
+ * @param  {string} char   The character we want it to be padded with.
+ * @param  {number} length The length of the resulting string.
+ * @returns {string}        The string with padding on left.
+ */
+const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
+
+const getDate = () => {
+    const date = new Date();
+    const pad = (str) => leftPad(str, '0', 2);  
+    return ['' + date.getFullYear(), pad('' + (date.getMonth() + 1)), pad('' + date.getDate())].join('-');
+};
+
+/**
  * Get options foreach individual
  * @param  {object} options General options for all files
  * @returns {[object]}       Array of indiviual file options
@@ -69,13 +84,17 @@ const getIndividualOptions = (options) => {
 
 let defaultOptions = {
     base: null, // Path to where the build files are located
+    date: null,
     exclude: null,
     fileOptions: {},
     files: null, // Array of files to compile
+    jsBase: null, // Path to where the js folder is located. Used when masters file is not in same location as the source files. @todo Refine this logic.
     output: './', // Folder to output compiled files
     palette: null, // Highcharts palette
     pretty: true,
+    product: 'Highcharts', // Which product we're building.
     umd: true, // Wether to use UMD pattern or a module pattern
+    version: 'x.x.x', // Version number of Highcharts
     type: 'classic' // Type of Highcharts version. Classic or css.
 };
 
@@ -91,8 +110,9 @@ const build = userOptions=> {
     let options = Object.assign({}, defaultOptions, userOptions);
     // Check if required options are set
     if (options.base) {
-        options.palette = (options.palette) ? options.palette : p.getPalette(options.base + '../../css/highcharts.scss');
+        options.palette = (options.palette) ? options.palette : p.getPalette((options.jsBase ? options.jsBase : options.base + '../') + '../css/highcharts.scss');
         p.printPalette(options.output + 'palette.html', options.palette);
+        options.date = options.date ? options.date : getDate();
         options.files = (options.files) ? options.files : getFilesInFolder(options.base, true);
         getIndividualOptions(options)
             .forEach((o, i, arr) => {
@@ -115,5 +135,6 @@ const build = userOptions=> {
 };
 
 module.exports = {
-    build: build
+    build: build,
+    getFilesInFolder
 };

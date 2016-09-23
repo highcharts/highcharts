@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -5,6 +10,7 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 	var correctFloat = H.correctFloat,
+		isNumber = H.isNumber,
 		noop = H.noop,
 		pick = H.pick,
 		Point = H.Point,
@@ -86,25 +92,25 @@ seriesType('waterfall', 'column', {
 			}
 			// up points
 			y = Math.max(previousY, previousY + point.y) + range[0];
-			shapeArgs.y = yAxis.translate(y, 0, 1);
+			shapeArgs.y = yAxis.toPixels(y, true);
 
 
 			// sum points
 			if (point.isSum) {
-				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
+				shapeArgs.y = yAxis.toPixels(range[1], true);
+				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
 			} else if (point.isIntermediateSum) {
-				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
+				shapeArgs.y = yAxis.toPixels(range[1], true);
+				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get
 			// shape height (#3886)
 			} else {
 				shapeArgs.height = yValue > 0 ?
-					yAxis.translate(previousY, 0, 1) - shapeArgs.y :
-					yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
+					yAxis.toPixels(previousY, true) - shapeArgs.y :
+					yAxis.toPixels(previousY, true) - yAxis.toPixels(previousY - yValue, true);
 				previousY += yValue;
 			}
 			// #3952 Negative sum or intermediate sum not rendered correctly
@@ -287,7 +293,14 @@ seriesType('waterfall', 'column', {
 			className += ' highcharts-intermediate-sum';
 		}
 		return className;
+	},
+	/**
+	 * Pass the null test in ColumnSeries.translate.
+	 */
+	isValid: function () {
+		return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
 	}
+	
 });
 
 /* ****************************************************************************

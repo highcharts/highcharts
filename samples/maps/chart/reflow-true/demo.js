@@ -10,8 +10,8 @@ $(function () {
                 // reflow: true // by default
             },
 
-            title : {
-                text : 'Chart with reflow enabled'
+            title: {
+                text: 'Chart with reflow enabled'
             },
 
             mapNavigation: {
@@ -46,8 +46,8 @@ $(function () {
             },
 
             // The map series
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

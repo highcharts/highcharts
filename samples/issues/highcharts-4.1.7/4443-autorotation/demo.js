@@ -9,8 +9,8 @@ $(function () {
             },
 
             xAxis: {
-                labels:{
-                    useHTML:true,
+                labels: {
+                    useHTML: true,
                     autoRotation: [-25]
                 },
                 categories: [
@@ -21,7 +21,7 @@ $(function () {
             },
             series: [{
                 name: 'Tokyo',
-                data: [7.0, 6.9, 9.5,7.0, 6.9, 9.5]
+                data: [7.0, 6.9, 9.5, 7.0, 6.9, 9.5]
             }]
         });
 

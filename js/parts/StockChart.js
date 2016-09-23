@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -222,26 +227,36 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		uniqueAxes,
 		transVal;
 
+	/**
+	 * Return the other axis based on either the axis option or on related series.
+	 */
+	function getAxis(coll) {
+		var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+			opt = axis.options[otherColl];
+
+		// Other axis indexed by number
+		if (isNumber(opt)) {
+			return [chart[otherColl][opt]];
+		}
+
+		// Other axis indexed by id (like navigator)
+		if (isString(opt)) {
+			return [chart.get(opt)];
+		}
+		
+		// Auto detect based on existing series
+		return map(series, function (s) {
+			return s[otherColl];
+		});
+	}
+
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ?
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] :
-			map(series, function (s) {
-				return s.yAxis;
-			})
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] :
-			map(series, function (s) {
-				return s.xAxis;
-			})
-		)
-	);
+	axes = getAxis(axis.coll);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -392,7 +407,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		align,
 		tickInside = this.options.tickPosition === 'inside',
 		snap = this.crosshair.snap !== false,
-		value;
+		value,
+		offset = 0;
 
 	// Use last available event (#5287)
 	if (!e) {
@@ -448,12 +464,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
 	crossLabel.attr({
 		text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
-		anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
-		anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
 		x: posx,
 		y: posy,
 		visibility: 'visible'
 	});
+
 	crossBox = crossLabel.getBBox();
 
 	// now it is placed we can correct its position
@@ -480,15 +495,21 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// left edge
 	if (crossLabel.translateX < limit.left) {
-		posx += limit.left - crossLabel.translateX;
+		offset = limit.left - crossLabel.translateX;
 	}
 	// right edge
 	if (crossLabel.translateX + crossBox.width >= limit.right) {
-		posx -= crossLabel.translateX + crossBox.width - limit.right;
+		offset = -(crossLabel.translateX + crossBox.width - limit.right);
 	}
 
 	// show the crosslabel
-	crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
+	crossLabel.attr({
+		x: posx + offset,
+		y: posy,
+		// First set x and y, then anchorX and anchorY, when box is actually calculated, #5702
+		anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+		anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy + crossBox.height / 2
+	});
 });
 
 /* ****************************************************************************
@@ -569,9 +590,13 @@ seriesProto.processData = function () {
 		length = processedYData.length;
 
 		// For series with more than one value (range, OHLC etc), compare against
-		// the pointValKey (#4922)
+		// close or the pointValKey (#4922, #3112)
 		if (series.pointArrayMap) {
-			keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+			// Use close if present (#3112)
+			keyIndex = inArray('close', series.pointArrayMap);
+			if (keyIndex === -1) {
+				keyIndex = inArray(series.pointValKey || 'y', series.pointArrayMap);
+			}
 		}
 
 		// find the first value for comparison
@@ -658,6 +683,10 @@ wrap(Series.prototype, 'render', function (proceed) {
 				width: this.xAxis.len,
 				height: this.yAxis.len
 			});
+		// #3111
+		} else if (this.clipBox) {
+			this.clipBox.width = this.xAxis.len;
+			this.clipBox.height = this.yAxis.len;
 		}
 	}
 	proceed.call(this);

@@ -136,7 +136,7 @@ $(function () {
         );
         assert.ok(
             Math.abs(
-                Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top) - 
+                Math.round(chart.series[0].points[1].dataLabel.element.getBoundingClientRect().top) -
                 Math.round(chart.series[0].points[1].graphic.element.getBoundingClientRect().top)
             ) < 12,
             'Label is top aligned to element'

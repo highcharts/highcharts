@@ -10,12 +10,12 @@ $(function () {
         // Instanciate the map
         $('#container').highcharts('Map', {
 
-            chart : {
-                borderWidth : 1
+            chart: {
+                borderWidth: 1
             },
 
-            title : {
-                text : 'US population density (/km²)'
+            title: {
+                text: 'US population density (/km²)'
             },
 
             legend: {
@@ -43,11 +43,11 @@ $(function () {
                 ]
             },
 
-            series : [{
+            series: [{
                 animation: {
                     duration: 1000
                 },
-                data : data,
+                data: data,
                 mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {

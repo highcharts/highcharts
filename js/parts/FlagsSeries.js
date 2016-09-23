@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -222,7 +227,7 @@ seriesType('flags', 'column', {
 				// Create the flag
 				if (!graphic) {
 					graphic = point.graphic = renderer.label(
-						point.options.title || options.title || 'A',
+						'',
 						null,
 						null,
 						shape,
@@ -254,6 +259,7 @@ seriesType('flags', 'column', {
 
 				// Plant the flag
 				graphic.attr({
+					text: point.options.title || options.title || 'A',
 					x: plotX,
 					y: plotY,
 					anchorX: anchorX,

@@ -1,4 +1,9 @@
 /**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+/**
  * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
  *
  * TODO:
@@ -12,7 +17,7 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
-/* eslint indent: [2, 4] */
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -28,7 +33,7 @@ import '../parts/Series.js';
         SVGRenderer = H.SVGRenderer,
         Chart = H.Chart;
 
-    Highcharts.setOptions({
+    H.setOptions({
         plotOptions: {
             series: {
                 label: {

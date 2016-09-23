@@ -37,8 +37,8 @@ $(function () {
                 }
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world-highres'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',

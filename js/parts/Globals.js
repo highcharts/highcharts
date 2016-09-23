@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 /* global window */
 	var win = window,
@@ -11,7 +16,7 @@
 		isFirefox = /Firefox/.test(userAgent),
 		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
-	var Highcharts = win.Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
+	var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 		product: '@product.name@',
 		version: '@product.version@',
 		deg2rad: Math.PI * 2 / 360,

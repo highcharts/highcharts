@@ -1,4 +1,4 @@
-function test(chart) {
+function test(chart) { // eslint-disable-line no-unused-vars
 
     // Second point, in order to unselect the first
     var point = chart.series[0].points[202]; // USA

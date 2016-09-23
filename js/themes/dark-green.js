@@ -1,12 +1,17 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Dark blue theme for Highcharts JS
  * @author Torstein Honsi
  */
 
 'use strict';
+import Highcharts from '../parts/Globals.js';
 Highcharts.theme = {
-	colors: ["#DDDF0D", "#55BF3B", "#DF5353", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
-		"#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+	colors: ['#DDDF0D', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
+		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
 	chart: {
 		backgroundColor: {
 			linearGradient: [0, 0, 250, 500],
@@ -253,4 +258,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+Highcharts.setOptions(Highcharts.theme);

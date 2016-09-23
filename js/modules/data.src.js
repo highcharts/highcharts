@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Data module
  *
  * (c) 2012-2016 Torstein Honsi
@@ -7,6 +6,7 @@
  * License: www.highcharts.com/license
  */
 
+/* global jQuery */
 'use strict';
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -762,6 +762,9 @@ import '../parts/Chart.js';
 					chartOptions.xAxis = {
 						type: type
 					};
+					if (type === 'category') {
+						chartOptions.xAxis.nameToX = false;
+					}
 				}
 				
 				if (options.complete) {

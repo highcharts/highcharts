@@ -7,7 +7,7 @@ $(function () {
             text: 'Highcharts 3.0.9: Too many pages in the legend.'
         },
         legend: {
-            maxHeight : 40
+            maxHeight: 40
         },
         series: [
             { name: 'Series 1', data: [7.0, 6.9, 9.5 ] },

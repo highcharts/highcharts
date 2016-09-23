@@ -47,7 +47,7 @@ $(function () {
         series: [{
             name: 'blue',
             color: '#0000FF',
-            data: [1,4,3,4,5,5,4,34,23,2,3,3,4,45,5,6],
+            data: [1, 4, 3, 4, 5, 5, 4, 34, 23, 2, 3, 3, 4, 45, 5, 6],
             pointStart: Date.UTC(2014, 4, 5),
             pointInterval: 24 * 36e5
         }]

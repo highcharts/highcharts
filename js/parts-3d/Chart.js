@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -6,6 +11,7 @@ import '../parts/Chart.js';
 		each = H.each,
 		merge = H.merge,
 		perspective = H.perspective,
+		pick = H.pick,
 		wrap = H.wrap;
 
 /*** 
@@ -227,7 +233,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
 		i = 1;
 
 	each(this.series, function (s) {
-		stackNumber = stacking ? (s.options.stack || 0) : series.length - 1 - s.index; // #3841
+		stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [s], position: i };
 			i++;

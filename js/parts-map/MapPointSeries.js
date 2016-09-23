@@ -1,11 +1,15 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
-	var extend = H.extend,
-		extendClass = H.extendClass,
+	var merge = H.merge,
 		Point = H.Point,
 		seriesType = H.seriesType;
 
@@ -32,10 +36,7 @@ seriesType('mappoint', 'scatter', {
 // Point class
 }, {
 	applyOptions: function (options, x) {
-		var point = Point.prototype.applyOptions.call(this, options, x);
-		if (options.lat !== undefined && options.lon !== undefined) {
-			point = extend(point, this.series.chart.fromLatLonToPoint(point));
-		}
-		return point;
+		var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+		return Point.prototype.applyOptions.call(this, mergedOptions, x);
 	}
 });

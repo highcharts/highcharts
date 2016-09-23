@@ -1,3 +1,8 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
@@ -207,7 +212,7 @@ extend(SVGRenderer.prototype, {
 			addSetters = function (element, style) {
 				// These properties are set as attributes on the SVG group, and as
 				// identical CSS properties on the div. (#3542)
-				each(['opacity', 'visibility'], function (prop) {
+				each(['display', 'opacity', 'visibility'], function (prop) {
 					wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
 						proceed.call(this, value, key, elem);
 						style[key] = value;
@@ -300,6 +305,7 @@ extend(SVGRenderer.prototype, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
 								top: (parentGroup.translateY || 0) + 'px',
+								display: parentGroup.display,
 								opacity: parentGroup.opacity, // #5075
 								pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
 							}, htmlGroup || container); // the top group is appended to container

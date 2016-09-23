@@ -270,7 +270,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 		</a>
 
 		<div class="text">
-			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.1.1">PhantomJS</a>
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=Safari">Safari</a>, <a href="?browserKey=PhantomJS">PhantomJS</a>
 		</div>
 
 		<div style="margin-top: 1em">
@@ -330,8 +330,14 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
 										<i class='$compareIcon'></i></a>
 								";
-								if (isset($compare->$path->$browserKey)) {
-									$diff = $compare->$path->$browserKey;
+
+								// Handle browser keys for inspecting results from other browsers
+								foreach($compare->$path as $key => $value) {
+									if (strpos($key, $browserKey) !== false) {
+										$diff = $compare->$path->$key;
+									}
+								}
+								if ($diff !== '') {
 									if (!preg_match('/^[0-9\\.]+$/', $diff) || $diff > 0) {
 										if (strstr($diff, '.')) {
 											$diff = round($diff, 2);

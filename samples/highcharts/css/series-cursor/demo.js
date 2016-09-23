@@ -17,10 +17,10 @@ $(function () {
         },
 
         series: [{
-            data: [1,3,2,4],
+            data: [1, 3, 2, 4],
             type: 'column'
         }, {
-            data: [5,4,6,7],
+            data: [5, 4, 6, 7],
             type: 'line',
             dataLabels: {
                 enabled: true

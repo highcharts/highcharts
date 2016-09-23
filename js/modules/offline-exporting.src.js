@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Client side exporting module
  *
  * (c) 2015 Torstein Honsi / Oystein Moseng
@@ -152,8 +151,17 @@ import '../parts/Options.js';
 		var svgurl,
 			blob,
 			objectURLRevoke = true,
-			finallyHandler;
-console.log(Highcharts.getOptions().exporting.canvasToolsURL)
+			finallyHandler,
+			libURL = Highcharts.getOptions().exporting.libURL;
+
+		function svgToPdf(svgElement, margin) {
+			var width = svgElement.width.baseVal.value + 2 * margin;
+			var height = svgElement.height.baseVal.value + 2 * margin;
+			var pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
+			return pdf.output('datauristring');
+		}
+
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
 			// SVG download. In this case, we want to use Microsoft specific Blob if available
@@ -171,6 +179,20 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 				}
 			} catch (e) {
 				failCallback();
+			}
+		} else if (imageType === 'application/pdf') {
+			doc.getElementsByTagName('svg')[0].id = 'svgElement';
+// you should set the format dynamically, write [width, height] instead of 'a4'
+			if (win.jsPDF && win.svgElementToPdf) {
+				var dummyContainer = doc.createElement('div');
+				dummyContainer.innerHTML = svg;
+				setTimeout(function () {
+					var data = svgToPdf(dummyContainer.firstChild, 0);
+					Highcharts.downloadURL(data, filename);
+					if (successCallback) {
+						successCallback();
+					}
+				}, 100);
 			}
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
@@ -223,8 +245,11 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 				} else {
 					// Must load canVG first
 					objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-					getScript(Highcharts.getOptions().exporting.canvasToolsURL, function () {
-						downloadWithCanVG();
+					libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+					getScript(libURL + 'rgbcolor.js', function () { // Get RGBColor.js first
+						getScript(libURL + 'canvg.js', function () {
+							downloadWithCanVG();
+						});
 					});
 				}
 			},
@@ -323,7 +348,6 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 			};
 
 		// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-		// docs
 		if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
 			fallbackToExportServer();
 			return;
@@ -334,7 +358,7 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 
 	// Extend the default options to use the local exporter logic
 	merge(true, Highcharts.getOptions().exporting, {
-		canvasToolsURL: 'http://code.highcharts.com/4/modules/canvas-tools.js', // docs
+		libURL: 'http://code.highcharts.com/5/lib/', // docs
 		buttons: {
 			contextButton: {
 				menuItems: [{
@@ -361,6 +385,13 @@ console.log(Highcharts.getOptions().exporting.canvasToolsURL)
 					onclick: function () {
 						this.exportChartLocal({
 							type: 'image/svg+xml'
+						});
+					}
+				}, {
+					textKey: 'downloadPDF',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'application/pdf'
 						});
 					}
 				}]

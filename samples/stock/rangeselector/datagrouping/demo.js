@@ -8,7 +8,7 @@ $(function () {
                 height: 300
             },
 
-            rangeSelector : {
+            rangeSelector: {
                 allButtonsEnabled: true,
                 buttons: [{
                     type: 'month',
@@ -40,8 +40,8 @@ $(function () {
                 selected: 2
             },
 
-            title : {
-                text : 'AAPL Stock Price'
+            title: {
+                text: 'AAPL Stock Price'
             },
 
             subtitle: {
@@ -52,9 +52,9 @@ $(function () {
                 enabled: false
             },
 
-            series : [{
-                name : 'AAPL',
-                data : data,
+            series: [{
+                name: 'AAPL',
+                data: data,
                 marker: {
                     enabled: null, // auto
                     radius: 3,
@@ -68,7 +68,7 @@ $(function () {
         });
 
         console.log('--- exporting ---');
-        $('#container').append($('#container').highcharts().getSVG())
+        $('#container').append($('#container').highcharts().getSVG());
     });
 
 });

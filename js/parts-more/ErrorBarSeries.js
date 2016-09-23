@@ -1,9 +1,15 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-	var noop = H.noop,
+	var each = H.each,
+		noop = H.noop,
 		seriesType = H.seriesType,
 		seriesTypes = H.seriesTypes;
 
@@ -31,7 +37,14 @@ seriesType('errorbar', 'boxplot', {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
+	drawDataLabels: seriesTypes.arearange ? function () {
+		var valKey = this.pointValKey;
+		seriesTypes.arearange.prototype.drawDataLabels.call(this);
+		// Arearange drawDataLabels does not reset point.y to high, but to low after drawing. #4133 
+		each(this.data, function (point) {
+			point.y = point[valKey];
+		});
+	} : noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column

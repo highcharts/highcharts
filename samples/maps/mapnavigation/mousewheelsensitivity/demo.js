@@ -4,8 +4,8 @@ $(function () {
 
         $('#container').highcharts('Map', {
 
-            title : {
-                text : 'Increase mouse wheel sensitivity to zoom faster'
+            title: {
+                text: 'Increase mouse wheel sensitivity to zoom faster'
             },
 
             mapNavigation: {
@@ -19,8 +19,8 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
-                data : data,
+            series: [{
+                data: data,
                 mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
