@@ -2141,7 +2141,7 @@ SVGRenderer.prototype = {
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
-		return defined(name) ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
+		return name ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
 	},
 
 	/**
@@ -2630,7 +2630,7 @@ SVGRenderer.prototype = {
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
 		var renderer = this,
-			wrapper = renderer.g('label'),
+			wrapper = renderer.g(className !== 'button' && 'label'),
 			text = wrapper.text = renderer.text('', 0, 0, useHTML)
 				.attr({
 					zIndex: 1
@@ -2699,7 +2699,10 @@ SVGRenderer.prototype = {
 						renderer.symbol(shape) :
 						renderer.rect();
 					
-					box.addClass('highcharts-label-box' + (className ? ' highcharts-' + className + '-box' : ''));
+					box.addClass(
+						(className === 'button' ? '' : 'highcharts-label-box') + // Don't use label className for buttons
+						(className ? ' highcharts-' + className + '-box' : '')
+					);
 
 					box.add(wrapper);
 
