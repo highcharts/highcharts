@@ -523,6 +523,8 @@ g.highcharts-series, .highcharts-point {
     stroke-width: 1px;
 }
 .highcharts-button {
+    fill: $button-fill;
+    stroke: $button-stroke;
     cursor: default;
     stroke-width: 1px;
     transition: fill 250ms;
@@ -532,19 +534,11 @@ g.highcharts-series, .highcharts-point {
 }
 .highcharts-button-hover {
     transition: fill 0ms;
-}
-.highcharts-button-pressed {
-    font-weight: bold;
-}
-.highcharts-button-box {
-    fill: $button-fill;
-    stroke: $button-stroke;
-}
-.highcharts-button-hover .highcharts-button-box {
     fill: $button-hover-fill;
     stroke: $button-hover-stroke;
 }
-.highcharts-button-pressed .highcharts-button-box {
+.highcharts-button-pressed {
+    font-weight: bold;
     fill: $button-pressed-fill;
     stroke: $button-hover-stroke;
 }
