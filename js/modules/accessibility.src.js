@@ -383,139 +383,184 @@ import '../parts/Tooltip.js';
 
 	// Add keyboard navigation handling to chart
 	H.Chart.prototype.addKeyboardNavEvents = function () {
-		var chart = this,
-			series = chart.series,
-			keydownHandler = function (ev) {
-				var e = ev || win.event,
-					keyCode = e.which || e.keyCode,
-					highlightedExportItem = chart.highlightedExportItem,
-					newSeries,
-					doExporting = chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false),
-					reachedEnd,
-					fakeEvent,
-					i;
+		var chart = this;
 
-				// Handle tabbing
-				if (keyCode === 9) {
-					// If we reached end of chart, we need to let this tab slip through to allow users to tab further
-					if (chart.slipNextTab && !e.shiftKey) {
-						chart.slipNextTab = false;
-						return;
+		// Abstraction layer for keyboard navigation. Keep a map of keyCodes to handler functions, and a next/prev move handler for tab order.
+		// The module's keyCode handlers determine when to move to another module.
+		// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
+		// Init holds a function to run once before any keyCodes are interpreted.
+		function KeyboardNavigationModule(options) {
+			this.keyCodeMap = options.keyCodeMap;
+			this.move = options.move;
+			this.validate = options.validate;
+			this.init = options.init;
+		}
+		KeyboardNavigationModule.prototype = {
+			// Find handler function(s) for key code in the keyCodeMap and run it.
+			run: function (keyCode) {
+				var navModule = this,
+					handled = false;
+				each(this.keyCodeMap, function (codeSet) {
+					if (codeSet[0].indexOf(keyCode) > -1) {
+						handled = codeSet[1].call(navModule, keyCode) === false ? false : true; // If explicitly returning false, we haven't handled it
 					}
-					// Interpret tab as left/right
-					keyCode = e.shiftKey ? 37 : 39;
+				});
+				return handled;
+			}
+		};
+		// Maintain abstraction between KeyboardNavigationModule and Highcharts
+		// The chart object keeps track of a list of KeyboardNavigationModules that we move through
+		function navModuleFactory(keyMap, options) {
+			return new KeyboardNavigationModule(merge({
+				keyCodeMap: keyMap,
+				// Move to next/prev valid module, or undefined if none, and init it.
+				// Returns true on success and false if there is no valid module to move to.
+				move: function (direction) {
+					chart.keyboardNavigationModuleIndex += direction;
+					var newModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
+					if (newModule) {
+						if (newModule.validate && !newModule.validate()) {
+							return this.move(direction); // Invalid module
+						}
+						if (newModule.init) {
+							newModule.init(); // Valid module, init it
+							return true;
+						}
+					}
+					// No module
+					chart.keyboardNavigationModuleIndex = 0; // Reset counter
+					chart.slipNextTab = true; // Allow next tab to slip, as we will have focus on chart now
+					return false;
 				}
-				// If key was not tab, or shift+tab instead, don't slip the next tab
-				chart.slipNextTab = false;
+			}, options));
+		}
 
-				if (!chart.isExporting) {
-					// Navigating through points
-					switch (keyCode) {
-					case 37: // Left
-					case 39: // Right
-						if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
-							if (keyCode === 39 && doExporting) {
-								// Start export menu navigation
-								chart.highlightedPoint = null;
-								chart.isExporting = true;
-								chart.showExportMenu();
-							} else {
-								// Try to return as if user tabbed or shift+tabbed
-								try {
-									e.which = e.keyCode = 9; // Some browsers won't allow mutation of event object, but try anyway
-								} catch (ignore) {}
-								return;
-							}
-						}
-						break;
+		// Route keydown events
+		function keydownHandler(ev) {
+			var e = ev || win.event,
+				keyCode = e.which || e.keyCode;
 
-					case 38: // Up
-					case 40: // Down
-						if (chart.highlightedPoint) {
-							newSeries = series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)];
-							if (newSeries && newSeries.points[0]) {
-								newSeries.points[0].highlight();
-							} else if (keyCode === 40 && doExporting) {
-								// Start export menu navigation
-								chart.highlightedPoint = null;
-								chart.isExporting = true;
-								chart.showExportMenu();
-							}
-						}
-						break;
-
-					case 13: // Enter
-					case 32: // Spacebar
-						if (chart.highlightedPoint) {
-							chart.highlightedPoint.firePointEvent('click');
-						}
-						break;
-
-					default: return;
-					}
-				} else {
-					// Keyboard nav for exporting menu
-					switch (keyCode) {
-					case 37: // Left
-					case 38: // Up
-						i = highlightedExportItem = highlightedExportItem || 0;
-						reachedEnd = true;
-						while (i--) {
-							if (chart.highlightExportItem(i)) {
-								reachedEnd = false;
-								break;
-							}
-						}
-						if (reachedEnd) {
-							chart.hideExportMenu();
-							chart.isExporting = false;
-							// Wrap to last point
-							if (series && series.length) {
-								newSeries = series[series.length - 1];
-								if (newSeries.points.length) {
-									newSeries.points[newSeries.points.length - 1].highlight();
-								}
-							}
-						}
-						break;
-
-					case 39: // Right
-					case 40: // Down
-						highlightedExportItem = highlightedExportItem || 0;
-						reachedEnd = true;
-						for (i = highlightedExportItem + 1; i < chart.exportDivElements.length; ++i) {
-							if (chart.highlightExportItem(i)) {
-								reachedEnd = false;
-								break;
-							}
-						}
-						if (reachedEnd) {
-							chart.hideExportMenu();
-							chart.isExporting = false;
-							// Try to return as if user tabbed
-							try {
-								e.which = e.keyCode = 9; // Some browsers won't allow mutation of event object, but try anyway
-								e.shiftKey = false;
-							} catch (ignore) {}
-							chart.slipNextTab = true; // Allow next tab to slip through without processing
-							return;
-						}
-						break;
-
-					case 13: // Enter
-					case 32: // Spacebar
-						if (highlightedExportItem !== undefined) {
-							fakeEvent = doc.createEvent('Events');
-							fakeEvent.initEvent('click', true, false);
-							chart.exportDivElements[highlightedExportItem].onclick(fakeEvent);
-						}
-						break;
-
-					default: return;
-					}
+			// Handle tabbing
+			if (keyCode === 9) {
+				// If we reached end of chart, we need to let this tab slip through to allow users to tab further
+				if (chart.slipNextTab) {
+					chart.slipNextTab = false;
+					return;
 				}
-				e.preventDefault();
-			};
+				// Interpret tab as left/right
+				keyCode = e.shiftKey ? 37 : 39;
+			}
+			// If key was not tab, don't slip the next tab
+			chart.slipNextTab = false;
+
+			// If there is a navigation module for the current index, run it. Otherwise, we are outside of the chart in some direction.
+			if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex]) {
+				if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex].run(keyCode)) {
+					e.preventDefault(); // If successfully handled, stop the event here.
+				}
+			}
+		}
+
+		// List of the different keyboard handling modes we use depending on where we are in the chart.
+		// Each mode has a set of handling functions mapped to key codes.
+		// Each mode determines when to move to the next/prev mode.
+		chart.keyboardNavigationModules = [
+			// Points
+			navModuleFactory([
+				// Left/Right
+				[[37, 39], function (keyCode) {
+					if (!chart.highlightAdjacentPoint(keyCode === 39)) { // Try to highlight adjacent point
+						return this.move(keyCode === 39 ? 1 : -1); // Failed. Move to next/prev module
+					}
+				}],
+				// Up/Down
+				[[38, 40], function (keyCode) {
+					var newSeries;
+					if (chart.highlightedPoint) {
+						newSeries = chart.series[chart.highlightedPoint.series.index + (keyCode === 38 ? -1 : 1)]; // Find prev/next series
+						if (newSeries && newSeries.points[0]) { // If series exists and has data, go for it
+							newSeries.points[0].highlight();
+						} else {
+							return this.move(keyCode === 40 ? 1 : -1); // Otherwise, attempt to move to next/prev module
+						}
+					}
+				}],
+				// Enter/Spacebar
+				[[13, 32], function () {
+					if (chart.highlightedPoint) {
+						chart.highlightedPoint.firePointEvent('click');
+					}
+				}]
+			]),
+
+			// Exporting
+			navModuleFactory([
+				// Left/Up
+				[[37, 38], function () {
+					var i = chart.highlightedExportItem || 0,
+						reachedEnd = true,
+						series = chart.series,
+						newSeries;
+					// Try to highlight prev item in list. Highlighting e.g. separators will fail.
+					while (i--) {
+						if (chart.highlightExportItem(i)) {
+							reachedEnd = false;
+							break;
+						}
+					}
+					if (reachedEnd) {
+						chart.hideExportMenu();
+						// Wrap to last point
+						if (series && series.length) {
+							newSeries = series[series.length - 1];
+							if (newSeries.points.length) {
+								newSeries.points[newSeries.points.length - 1].highlight();
+							}
+						}
+						// Try to move to prev module (should be points, since we wrapped to last point)
+						return this.move(-1);
+					}
+				}],
+				// Right/Down
+				[[39, 40], function () {
+					var highlightedExportItem = chart.highlightedExportItem || 0,
+						reachedEnd = true;
+					// Try to highlight next item in list. Highlighting e.g. separators will fail.
+					for (var i = highlightedExportItem + 1; i < chart.exportDivElements.length; ++i) {
+						if (chart.highlightExportItem(i)) {
+							reachedEnd = false;
+							break;
+						}
+					}
+					if (reachedEnd) {
+						chart.hideExportMenu();
+						return this.move(1); // Next module
+					}
+				}],
+				// Enter/Spacebar
+				[[13, 32], function () {
+					var fakeEvent;
+					if (chart.highlightedExportItem !== undefined) {
+						fakeEvent = doc.createEvent('Events');
+						fakeEvent.initEvent('click', true, false);
+						chart.exportDivElements[chart.highlightedExportItem].onclick(fakeEvent);
+					}
+				}]
+			], {
+				// Only run exporting navigation if exporting support exists and is enabled on chart
+				validate: function () {
+					return chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false);
+				},
+				// Show export menu
+				init: function () {
+					chart.highlightedPoint = null;
+					chart.showExportMenu();
+				}
+			})
+		];
+
+		// Init nav module index. We start at the first module, and as the user navigates through the chart the index will increase to use different handler modules.
+		chart.keyboardNavigationModuleIndex = 0;
 
 		// Make chart reachable by tab
 		chart.renderTo.setAttribute('tabindex', '0');
