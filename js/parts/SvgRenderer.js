@@ -1857,7 +1857,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (rgba) {
 		rgba = color(rgba).rgba;
-		return rgba[0] + rgba[1] + rgba[2] > 384 ? '#000000' : '#FFFFFF';
+		return rgba[0] + rgba[1] + rgba[2] > 2 * 255 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
