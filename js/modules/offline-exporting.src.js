@@ -154,6 +154,7 @@ import '../parts/Options.js';
 			finallyHandler,
 			libURL = Highcharts.getOptions().exporting.libURL;
 
+/*
 		function svgToPdf(svgElement, margin) {
 			var width = svgElement.width.baseVal.value + 2 * margin;
 			var height = svgElement.height.baseVal.value + 2 * margin;
@@ -161,6 +162,7 @@ import '../parts/Options.js';
 			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
 			return pdf.output('datauristring');
 		}
+*/
 
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
@@ -180,9 +182,9 @@ import '../parts/Options.js';
 			} catch (e) {
 				failCallback();
 			}
-		} else if (imageType === 'application/pdf') {
+		/*} else if (imageType === 'application/pdf') {
 			doc.getElementsByTagName('svg')[0].id = 'svgElement';
-// you should set the format dynamically, write [width, height] instead of 'a4'
+			// you should set the format dynamically, write [width, height] instead of 'a4'
 			if (win.jsPDF && win.svgElementToPdf) {
 				var dummyContainer = doc.createElement('div');
 				dummyContainer.innerHTML = svg;
@@ -193,7 +195,7 @@ import '../parts/Options.js';
 						successCallback();
 					}
 				}, 100);
-			}
+			}*/
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
 
@@ -387,14 +389,14 @@ import '../parts/Options.js';
 							type: 'image/svg+xml'
 						});
 					}
-				}, {
+				}/*, {
 					textKey: 'downloadPDF',
 					onclick: function () {
 						this.exportChartLocal({
 							type: 'application/pdf'
 						});
 					}
-				}]
+				}*/]
 			}
 		}
 	});
