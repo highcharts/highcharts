@@ -358,7 +358,7 @@ import '../parts/Options.js';
 
 	// Extend the default options to use the local exporter logic
 	merge(true, Highcharts.getOptions().exporting, {
-		libURL: 'http://code.highcharts.com/5/lib/', // docs
+		libURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/lib/', // docs
 		buttons: {
 			contextButton: {
 				menuItems: [{
