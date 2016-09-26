@@ -33,7 +33,8 @@ Point.prototype = {
 
 		var point = this,
 			colors,
-			colorCount = series.chart.colorCount;
+			colorCount = series.chart.colorCount,
+			colorIndex;
 
 		point.series = series;
 		/*= if (build.classic) { =*/
@@ -47,15 +48,16 @@ Point.prototype = {
 			point.color = point.color || colors[series.colorCounter];
 			colorCount = colors.length;
 			/*= } =*/
-			point.colorIndex = series.colorCounter;
+			colorIndex = series.colorCounter;
 			series.colorCounter++;
 			// loop back to zero
 			if (series.colorCounter === colorCount) {
 				series.colorCounter = 0;
 			}
 		} else {
-			point.colorIndex = series.colorIndex;
+			colorIndex = series.colorIndex;
 		}
+		point.colorIndex = pick(point.colorIndex, colorIndex); // docs: Point.colorIndex option
 
 		series.chart.pointCount++;
 		return point;
