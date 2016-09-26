@@ -85,6 +85,15 @@ import '../parts/Tooltip.js';
 		}
 	}
 	
+	// Utility function to attempt to fake a click event on an element
+	function fakeClickEvent(element) {
+		var fakeEvent;
+		if (element && element.onclick) {
+			fakeEvent = doc.createEvent('Events');
+			fakeEvent.initEvent('click', true, false);
+			element.onclick(fakeEvent);
+		}
+	}
 	
 	// Whenever drawing series, put info on DOM elements
 	H.wrap(H.Series.prototype, 'render', function (proceed) {
@@ -384,6 +393,26 @@ import '../parts/Tooltip.js';
 		}
 	};
 
+	// Highlight range selector button by index
+	H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
+		var buttons = this.rangeSelector.buttons;
+		// Deselect old
+		if (buttons[this.highlightedRangeSelectorItemIx]) {
+			buttons[this.highlightedRangeSelectorItemIx].setState(this.oldRangeSelectorItemState || 0);
+		}
+		// Select new
+		this.highlightedRangeSelectorItemIx = ix;
+		if (buttons[ix]) {
+			if (buttons[ix].element.focus) {
+				buttons[ix].element.focus();
+			}
+			this.oldRangeSelectorItemState = buttons[ix].state;
+			buttons[ix].setState(2);
+			return true;
+		}
+		return false;
+	};
+
 	// Hide export menu
 	H.Chart.prototype.hideExportMenu = function () {
 		var exportList = this.exportDivElements;
@@ -569,12 +598,7 @@ import '../parts/Tooltip.js';
 				}],
 				// Enter/Spacebar
 				[[13, 32], function () {
-					var fakeEvent;
-					if (chart.highlightedExportItem !== undefined) {
-						fakeEvent = doc.createEvent('Events');
-						fakeEvent.initEvent('click', true, false);
-						chart.exportDivElements[chart.highlightedExportItem].onclick(fakeEvent);
-					}
+					fakeClickEvent(chart.exportDivElements[chart.highlightedExportItem]);
 				}]
 			], {
 				// Only run exporting navigation if exporting support exists and is enabled on chart
@@ -598,7 +622,6 @@ import '../parts/Tooltip.js';
 
 			// Map zoom
 			navModuleFactory([
-
 				// Up/down/left/right
 				[[38, 40, 37, 39], function (keyCode) {
 					chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
@@ -606,34 +629,23 @@ import '../parts/Tooltip.js';
 
 				// Tabs
 				[[9], function (keyCode, e) {
-					if (e.shiftKey) { // Back
-						if (!chart.focusedMapNavButtonIx) { 
-							chart.mapZoom(); // Reset zoom
-							return this.move(-1); // Nowhere to go, go to prev module
-						}
-						--chart.focusedMapNavButtonIx;
-					} else { // Forward
-						if (chart.focusedMapNavButtonIx) {
-							chart.mapZoom(); // Reset zoom
-							return this.move(1); // Nowhere to go, go to next module
-						}
-						++chart.focusedMapNavButtonIx;
+					var button;
+					chart.mapNavButtons[chart.focusedMapNavButtonIx].setState(0); // Deselect old
+					if (e.shiftKey && !chart.focusedMapNavButtonIx || !e.shiftKey && chart.focusedMapNavButtonIx) { // trying to go somewhere we can't?
+						chart.mapZoom(); // Reset zoom
+						return this.move(e.shiftKey ? -1 : 1); // Nowhere to go, go to prev/next module
 					}
-					var button = chart.mapNavButtons[chart.focusedMapNavButtonIx].element;
-					if (button.focus) {
-						button.focus();
+					chart.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
+					button = chart.mapNavButtons[chart.focusedMapNavButtonIx];
+					if (button.element.focus) {
+						button.element.focus();
 					}
+					button.setState(2);
 				}],
 
 				// Enter/Spacebar
 				[[13, 32], function () {
-					var fakeEvent,
-						button = chart.mapNavButtons[chart.focusedMapNavButtonIx].element;
-					if (button) {
-						fakeEvent = doc.createEvent('Events');
-						fakeEvent.initEvent('click', true, false);
-						button.onclick(fakeEvent);
-					}
+					fakeClickEvent(chart.mapNavButtons[chart.focusedMapNavButtonIx].element);
 				}]
 			], {
 				// Only run this module if we have map zoom on the chart
@@ -645,22 +657,92 @@ import '../parts/Tooltip.js';
 				transformTabs: false,
 
 				// Make zoom buttons do their magic
-				init: function () {
-					var zoomIn = chart.mapNavButtons[0].element,
-						zoomOut = chart.mapNavButtons[1].element;
+				init: function (direction) {
+					var zoomIn = chart.mapNavButtons[0],
+						zoomOut = chart.mapNavButtons[1],
+						initialButton = direction > 0 ? zoomIn : zoomOut;
 
-					each(chart.mapNavButtons, function (button) {
+					each(chart.mapNavButtons, function (button, i) {
 						button.element.setAttribute('tabindex', -1);
 						button.element.setAttribute('role', 'button');
+						button.element.setAttribute('aria-label', 'Zoom ' + (i ? 'out' : '') + 'chart');
 					});
 
-					zoomIn.setAttribute('aria-label', 'Zoom chart');
-					zoomOut.setAttribute('aria-label', 'Zoom out chart');
-
-					if (zoomIn.focus) {
-						zoomIn.focus();
+					if (initialButton.element.focus) {						
+						initialButton.element.focus();
 					}
-					chart.focusedMapNavButtonIx = 0;
+					initialButton.setState(2);
+					chart.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
+				}
+			}),
+
+			// Highstock range selector (minus input boxes)
+			navModuleFactory([
+				// Left/Right/Up/Down
+				[[37, 39, 38, 40], function (keyCode) {
+					var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
+					// Try to highlight next/prev button
+					if (!chart.highlightRangeSelectorButton(chart.highlightedRangeSelectorItemIx + direction)) {
+						return this.move(direction);
+					}
+				}],
+				// Enter/Spacebar
+				[[13, 32], function () {
+					if (chart.oldRangeSelectorItemState !== 3) { // Don't allow click if button used to be disabled
+						fakeClickEvent(chart.rangeSelector.buttons[chart.highlightedRangeSelectorItemIx].element);
+					}
+				}]
+			], {
+				// Only run this module if we have range selector
+				validate: function () {
+					return chart.rangeSelector && chart.rangeSelector.buttons && chart.rangeSelector.buttons.length;
+				},
+
+				// Make elements focusable and accessible
+				init: function (direction) {
+					each(chart.rangeSelector.buttons, function (button) {
+						button.element.setAttribute('tabindex', '-1');
+						button.element.setAttribute('role', 'button');
+						button.element.setAttribute('aria-label', 'Select range ' + (button.text && button.text.textStr));
+					});
+					// Focus first/last button
+					chart.highlightRangeSelectorButton(direction > 0 ? 0 : chart.rangeSelector.buttons.length - 1);
+				}
+			}),
+
+			// Highstock range selector, input boxes
+			navModuleFactory([
+				// Tab/Up/Down
+				[[9, 38, 40], function (keyCode, e) {
+					var direction = (keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
+						newIx = chart.highlightedInputRangeIx = chart.highlightedInputRangeIx + direction;
+					// Try to highlight next/prev item in list.
+					if (newIx > 1 || newIx < 0) { // Out of range
+						return this.move(direction);
+					}
+					chart.rangeSelector[newIx ? 'maxInput' : 'minInput'].focus(); // Input boxes are HTML, and should have focus support in all browsers
+				}]
+			], {
+				// Only run if we have range selector with input boxes
+				validate: function () {
+					return chart.rangeSelector && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
+				},
+
+				// Handle tabs different from left/right (because we don't want to catch left/right in a text area)
+				transformTabs: false,
+
+				// Make boxes focusable by script, and accessible
+				init: function (direction) {
+					each(['minInput', 'maxInput'], function (key, i) {
+						if (chart.rangeSelector[key]) {
+							chart.rangeSelector[key].setAttribute('tabindex', '-1');
+							chart.rangeSelector[key].setAttribute('role', 'textbox');
+							chart.rangeSelector[key].setAttribute('aria-label', 'Select ' + (i ? 'end' : 'start') + ' date.');
+						}
+					});
+					// Highlight first/last input box
+					chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
+					chart.rangeSelector[chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'].focus();
 				}
 			})
 		];
