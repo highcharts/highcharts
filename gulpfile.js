@@ -402,6 +402,18 @@ const compileScripts = () => {
         .then(console.log)
         .catch(console.log);
 }
+
+/**
+ * Compile the JS files in the /code folder
+ */
+const compileLib = () => {
+    const sourceFolder = './vendor/';
+    const files = ['canvg.src.js', 'rgbcolor.src.js'];
+    return compile(files, sourceFolder)
+        .then(console.log)
+        .catch(console.log);
+}
+
 const cleanCode = () => {
     const U = require('./assembler/utilities.js');
     return U.removeDirectory('./code').then(() => {
@@ -443,7 +455,7 @@ const copyToDist = () => {
         });
 
     // Copy lib files to the distribution packages. These files are used in the offline-export.
-    ['canvg.js', 'rgbcolor.js'].forEach((path) => {
+    ['canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
             U.writeFile(distFolder + lib + '/js/lib/' + path, content);
@@ -586,6 +598,7 @@ gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
 gulp.task('compile', compileScripts);
+gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);
 /**
  * Create distribution files
