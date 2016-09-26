@@ -33,7 +33,7 @@ Point.prototype = {
 
 		var point = this,
 			colors,
-			colorCount = series.chart.colorCount,
+			colorCount = series.chart.options.chart.colorCount,
 			colorIndex;
 
 		point.series = series;

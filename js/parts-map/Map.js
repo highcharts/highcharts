@@ -36,7 +36,7 @@ defaultOptions.mapNavigation = {
 		x: 0,
 		width: 18,
 		height: 18,
-		padding: 5, // docs
+		padding: 5,
 		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '15px',

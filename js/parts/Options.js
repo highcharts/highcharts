@@ -56,6 +56,9 @@ H.defaultOptions = {
 		//marginBottom: null,
 		//marginLeft: null,
 		borderRadius: 0,
+		/*= if (!build.classic) { =*/
+		colorCount: 10,
+		/*= } =*/
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
