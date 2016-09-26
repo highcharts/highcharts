@@ -107,11 +107,13 @@ const scripts = () => {
             },
             'modules/map.src.js': {
                 exclude: new RegExp(folders.parts),
-                umd: false
+                umd: false,
+                product: 'Highmaps'
             },
             'modules/map-parser.src.js': {
                 exclude: new RegExp([folders.parts, 'data\.src\.js$'].join('|')),
-                umd: false
+                umd: false,
+                product: 'Highmaps'
             },
             'modules/no-data-to-display.src.js': {
                 exclude: new RegExp(folders.parts),
