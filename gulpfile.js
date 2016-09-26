@@ -40,17 +40,29 @@ var paths = {
 };
 
 /**
+ * Get the product version from build.properties.
+ * The product version is used in license headers and in package names.
+ * @return {string|null} Returns version number or null if not found.
+ */
+const getProductVersion = () => {
+    // const fs = require('fs');
+    const D = require('./assembler/dependencies.js');
+    const properties = fs.readFileSync('./build.properties', 'utf8');
+    return D.regexGetCapture(/product\.version=(.+)/, properties);
+};
+
+/**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
  * @return undefined
  */
 const scripts = () => {
-    console.log('Starting scripts.');
     let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
         type = (argv.type) ? argv.type : 'both',
         debug = argv.d || false,
+        version = getProductVersion(),
         DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
         folders = {
             'parts': 'parts' + DS + '+\.js$',
@@ -188,7 +200,8 @@ const scripts = () => {
         },
         files: files,
         output: './code/',
-        type: type
+        type: type,
+        version: version
     });
 };
 
@@ -538,7 +551,7 @@ const downloadAPI = (product, version) => commandLine('grunt download-api:' + pr
  */
 const downloadAllAPI = () => new Promise((resolve, reject) => {
     // @todo Pass in version, instead of hardcoding it.
-    const version = '5.0.0';
+    const version = getProductVersion();
     const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
     Promise.all(promises).then(() => {
         resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
