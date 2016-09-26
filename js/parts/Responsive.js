@@ -11,6 +11,7 @@ import './Utilities.js';
 		each = H.each,
 		inArray = H.inArray,
 		isObject = H.isObject,
+		pick = H.pick,
 		splat = H.splat;
 
 /**
@@ -33,7 +34,12 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 	var respRules = this.respRules,
 		condition = rule.condition,
 		matches,
-		fn = rule.callback || new Function('return ' + condition.key + condition.operator + condition.value); // eslint-disable-line no-new-func
+		fn = rule.callback || function () { // docs minWidth, maxWidth, minHeight, maxHeight
+			return this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
+				this.chartHeight <= pick(condition.maxHeight, Number.MAX_VALUE) &&
+				this.chartWidth >= pick(condition.minWidth, 0) &&
+				this.chartHeight >= pick(condition.minHeight, 0);
+		};
 		
 
 	if (rule._id === undefined) {

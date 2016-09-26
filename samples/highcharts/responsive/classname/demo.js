@@ -31,9 +31,7 @@ $(function () {
         responsive: {
             rules: [{
                 condition: {
-                    key: 'this.chartWidth',
-                    operator: '<',
-                    value: 500
+                    maxWidth: 500
                 },
                 chartOptions: {
                     chart: {
