@@ -571,6 +571,7 @@ gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
 gulp.task('compile', compile);
+gulp.task('download-api', downloadAllAPI);
 /**
  * Create distribution files
  */
