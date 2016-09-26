@@ -358,17 +358,10 @@ gulp.task('filesize', function () {
     );
 });
 
-/**
- * Compile the JS files in the /code folder
- */
-const compile = () => {
+const compile = (files, sourceFolder) => {
     console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve) => {
-        const B = require('./assembler/build.js');
-        const sourceFolder = './code/';
-        const promises = B.getFilesInFolder(sourceFolder, true, '')
-            .filter(path => path.endsWith('.src.js'))
-            .map(path => {
+    return new Promise((resolve, reject) => {
+        const promises = files.map(path => {
                 return new Promise((resolveCompile, reject) => {
                     const sourcePath = sourceFolder + path;
                     const outputPath = sourcePath.replace('.src.js', '.js');
@@ -394,10 +387,21 @@ const compile = () => {
             });
         Promise.all(promises).then(() => {
             resolve('Compile is complete');
-        }).catch((err) => err.message + '\n\r' + err.stack);
+        }).catch((err) => reject(err.message + '\n\r' + err.stack));
     });
 };
 
+/**
+ * Compile the JS files in the /code folder
+ */
+const compileScripts = () => {
+    const B = require('./assembler/build.js');
+    const sourceFolder = './code/';
+    const files = B.getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
+    return compile(files, sourceFolder)
+        .then(console.log)
+        .catch(console.log);
+}
 const cleanCode = () => {
     const U = require('./assembler/utilities.js');
     return U.removeDirectory('./code').then(() => {
@@ -581,7 +585,7 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
-gulp.task('compile', compile);
+gulp.task('compile', compileScripts);
 gulp.task('download-api', downloadAllAPI);
 /**
  * Create distribution files
@@ -591,7 +595,7 @@ gulp.task('dist', () => {
         .then(gulpify('styles', styles))
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
-        .then(gulpify('compile', compile))
+        .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
