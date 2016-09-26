@@ -416,6 +416,7 @@ const copyToDist = () => {
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
+    const libFolder = './vendor/';
     const distFolder = './build/dist/';
     const files = B.getFilesInFolder(sourceFolder, true, '');
     // Files that should not be distributed with certain products
@@ -424,6 +425,8 @@ const copyToDist = () => {
         highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
         highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
     };
+
+    // Copy source files to the distribution packages.
     files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
@@ -434,6 +437,14 @@ const copyToDist = () => {
                 }
             });
         });
+
+    // Copy lib files to the distribution packages. These files are used in the offline-export.
+    ['canvg.js', 'rgbcolor.js'].forEach((path) => {
+        const content = fs.readFileSync(libFolder + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+        });
+    });
 };
 
 /**
