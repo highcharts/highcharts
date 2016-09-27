@@ -348,7 +348,6 @@ $(function () {
             chart.plotBackground.getBBox().height <= chart.chartHeight - 100,
             'Plot area height ok'
         );
-return;
 
         // Test for array
         chart.update({
