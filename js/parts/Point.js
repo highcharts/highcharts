@@ -57,7 +57,7 @@ Point.prototype = {
 		} else {
 			colorIndex = series.colorIndex;
 		}
-		point.colorIndex = pick(point.colorIndex, colorIndex); // docs: Point.colorIndex option
+		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
 		return point;
@@ -169,7 +169,7 @@ Point.prototype = {
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
 			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
-			(this.options.className ? ' ' + this.options.className : ''); // docs
+			(this.options.className ? ' ' + this.options.className : '');
 	},
 
 	/**

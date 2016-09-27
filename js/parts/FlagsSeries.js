@@ -29,7 +29,7 @@ seriesType('flags', 'column', {
 	//radius: 2,
 	shape: 'flag',
 	stackDistance: 12,
-	textAlign: 'center', // docs: No longer a style, but an option
+	textAlign: 'center',
 	tooltip: {
 		pointFormat: '{point.text}<br/>'
 	},

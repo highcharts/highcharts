@@ -1650,7 +1650,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				.add(parent);
 
 			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
-				' ' + (this.options.className || '')); // docs: className
+				' ' + (this.options.className || ''));
 		}
 
 		// Place it on first and subsequent (redraw) calls
