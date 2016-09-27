@@ -1,3 +1,5 @@
+/* global CodeMirror*/
+
 $(function () {
 
     $('#container').highcharts({
