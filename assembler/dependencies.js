@@ -112,7 +112,7 @@ const applyModule = content => {
 const addLicenseHeader = (content, o) => {
     const str = getContents(o.entry);
     let header = regexGetCapture(licenseExp, str);
-    return header + content;
+    return (header ? header: '') + content;
 };
 
 /**
