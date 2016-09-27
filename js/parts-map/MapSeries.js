@@ -298,7 +298,7 @@ seriesType('map', 'scatter', {
 		this.getBox(data);
 
 		// Pick up transform definitions for chart
-		this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms; // docs
+		this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms;
 
 		// Cache cos/sin of transform rotation angle
 		if (mapTransforms) {

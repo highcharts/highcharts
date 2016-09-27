@@ -66,7 +66,7 @@ import '../parts/Tooltip.js';
 
 	// Default a11y options
 	H.setOptions({
-		accessibility: { // docs
+		accessibility: {
 			enabled: true,
 			pointDescriptionThreshold: 30, // set to false to disable
 			keyboardNavigation: {
@@ -121,7 +121,7 @@ import '../parts/Tooltip.js';
 					if (point.graphic) {
 						point.graphic.element.setAttribute('role', 'img');
 						point.graphic.element.setAttribute('tabindex', '-1');
-						point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) || // docs
+						point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) ||
 							point.buildPointInfoString());
 					}
 				});
@@ -130,7 +130,7 @@ import '../parts/Tooltip.js';
 			if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 				seriesEl.setAttribute('role', 'region');
 				seriesEl.setAttribute('tabindex', '-1');
-				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) || // docs
+				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
 					this.buildSeriesInfoString());
 			}
 		}
@@ -143,7 +143,7 @@ import '../parts/Tooltip.js';
 			(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
 			(this.chart.types.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
 			(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2])) +
-			(this.description ? '. ' + this.description : '') +	// docs
+			(this.description ? '. ' + this.description : '') +
 			(this.chart.yAxis.length > 1 && this.yAxis ? '. Y axis, ' + this.yAxis.getDescription() : '') +
 			(this.chart.xAxis.length > 1 && this.xAxis ? '. X axis, ' + this.xAxis.getDescription() : '');
 	};
@@ -156,7 +156,7 @@ import '../parts/Tooltip.js';
 			infoString = '',
 			hasSpecialKey = false,
 			dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
-			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat || // docs
+			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat ||
 				H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
 
 		each(specialKeys, function (key) {
@@ -181,7 +181,7 @@ import '../parts/Tooltip.js';
 				(this.value !== undefined ? this.value : this.y);
 		}
 
-		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : ''); // docs
+		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : '');
 	};
 
 	// Get descriptive label for axis
@@ -787,12 +787,12 @@ import '../parts/Tooltip.js';
 		hiddenSection.setAttribute('role', 'region');
 		hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
-		hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) || // docs
+		hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 			'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
 			(series.length > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + (options.title.text || 'Chart') +
 			(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
-			'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') + // docs
-			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' + // docs
+			'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
+			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 			(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
 				(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
 			(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
@@ -803,7 +803,7 @@ import '../parts/Tooltip.js';
 			tableShortcutAnchor.innerHTML = 'View as data table.';
 			tableShortcutAnchor.href = '#' + tableId;
 			tableShortcutAnchor.setAttribute('tabindex', '-1'); // Make this unreachable by user tabbing
-			tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () { // docs
+			tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () {
 				chart.viewData();
 				doc.getElementById(tableId).focus();
 			};
