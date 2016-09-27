@@ -17,7 +17,7 @@ $(function () {
             'stroke-width': 2
         })
         .add();
-            
+
         each(boxes, function (box, i) {
             if (box.pos !== undefined) {
                 ren.rect(box.pos + 0.5, row + 10.5, box.size - 1, 20)
@@ -27,7 +27,7 @@ $(function () {
                     'stroke': Highcharts.getOptions().colors[i % 10]
                 })
                 .add();
-                
+
                 ren.path(['M', box.pos + box.size / 2, row + 30, 'L', box.target, row + 55, 'z'])
                 .attr({
                     'stroke-width': 1,
@@ -35,7 +35,7 @@ $(function () {
                 })
                 .add();
             }
-                
+
             ren.circle(box.target, row + 55, 2)
             .attr({
                 fill: 'blue'
@@ -53,12 +53,12 @@ $(function () {
                 return typeof box.pos === 'number';
             })
             .reduce(function (prev, box) {
-            if (box.pos < 0 || prev.pos + prev.size > box.pos || box.pos + box.size > len) {
-                pass = false;
-            }
+                if (box.pos < 0 || prev.pos + prev.size > box.pos || box.pos + box.size > len) {
+                    pass = false;
+                }
 
-            return box;
-        });
+                return box;
+            });
         return pass;
     }
 
