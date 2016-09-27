@@ -422,7 +422,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
 			counterName = prop + 'Counter',
-			len = defaults ? defaults.length : this.chart[prop + 'Count'],
+			len = defaults ? defaults.length : pick(this.chart.options.chart[prop + 'Count'], this.chart[prop + 'Count']),
 			setting;
 
 		if (!value) {
@@ -1650,7 +1650,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				.add(parent);
 
 			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
-				' ' + (this.options.className || '')); // docs: className
+				' ' + (this.options.className || ''));
 		}
 
 		// Place it on first and subsequent (redraw) calls

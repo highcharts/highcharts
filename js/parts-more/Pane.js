@@ -76,7 +76,7 @@ extend(Pane.prototype, {
 	 * The default background options
 	 */
 	defaultBackgroundOptions: {
-		className: 'highcharts-pane', // docs
+		className: 'highcharts-pane',
 		shape: 'circle',
 		/*= if (build.classic) { =*/
 		borderWidth: 1,

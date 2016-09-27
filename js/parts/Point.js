@@ -33,7 +33,8 @@ Point.prototype = {
 
 		var point = this,
 			colors,
-			colorCount = series.chart.colorCount;
+			colorCount = series.chart.options.chart.colorCount,
+			colorIndex;
 
 		point.series = series;
 		/*= if (build.classic) { =*/
@@ -47,15 +48,16 @@ Point.prototype = {
 			point.color = point.color || colors[series.colorCounter];
 			colorCount = colors.length;
 			/*= } =*/
-			point.colorIndex = series.colorCounter;
+			colorIndex = series.colorCounter;
 			series.colorCounter++;
 			// loop back to zero
 			if (series.colorCounter === colorCount) {
 				series.colorCounter = 0;
 			}
 		} else {
-			point.colorIndex = series.colorIndex;
+			colorIndex = series.colorIndex;
 		}
+		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
 		return point;
@@ -167,7 +169,7 @@ Point.prototype = {
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
 			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
-			(this.options.className ? ' ' + this.options.className : ''); // docs
+			(this.options.className ? ' ' + this.options.className : '');
 	},
 
 	/**

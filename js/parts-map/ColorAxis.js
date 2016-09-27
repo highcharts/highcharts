@@ -128,7 +128,7 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
-			colorCount = chart.colorCount,
+			colorCount = chart.options.chart.colorCount,
 			options = this.options,
 			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];

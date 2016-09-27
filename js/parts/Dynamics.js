@@ -274,7 +274,7 @@ extend(Chart.prototype, {
 
 		// Setters for collections. For axes and series, each item is referred by an id. If the 
 		// id is not found, it defaults to the first item in the collection, so setting series
-		// without an id, will update the first series in the chart. // docs
+		// without an id, will update the first series in the chart.
 		each(['xAxis', 'yAxis', 'series'], function (coll) {
 			if (options[coll]) {
 				each(splat(options[coll]), function (newOptions) {

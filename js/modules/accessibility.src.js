@@ -66,7 +66,7 @@ import '../parts/Tooltip.js';
 
 	// Default a11y options
 	H.setOptions({
-		accessibility: { // docs
+		accessibility: {
 			enabled: true,
 			pointDescriptionThreshold: 30, // set to false to disable
 			keyboardNavigation: {
@@ -85,6 +85,15 @@ import '../parts/Tooltip.js';
 		}
 	}
 	
+	// Utility function to attempt to fake a click event on an element
+	function fakeClickEvent(element) {
+		var fakeEvent;
+		if (element && element.onclick) {
+			fakeEvent = doc.createEvent('Events');
+			fakeEvent.initEvent('click', true, false);
+			element.onclick(fakeEvent);
+		}
+	}
 	
 	// Whenever drawing series, put info on DOM elements
 	H.wrap(H.Series.prototype, 'render', function (proceed) {
@@ -112,7 +121,7 @@ import '../parts/Tooltip.js';
 					if (point.graphic) {
 						point.graphic.element.setAttribute('role', 'img');
 						point.graphic.element.setAttribute('tabindex', '-1');
-						point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) || // docs
+						point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) ||
 							point.buildPointInfoString());
 					}
 				});
@@ -121,7 +130,7 @@ import '../parts/Tooltip.js';
 			if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 				seriesEl.setAttribute('role', 'region');
 				seriesEl.setAttribute('tabindex', '-1');
-				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) || // docs
+				seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
 					this.buildSeriesInfoString());
 			}
 		}
@@ -134,7 +143,7 @@ import '../parts/Tooltip.js';
 			(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
 			(this.chart.types.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
 			(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2])) +
-			(this.description ? '. ' + this.description : '') +	// docs
+			(this.description ? '. ' + this.description : '') +
 			(this.chart.yAxis.length > 1 && this.yAxis ? '. Y axis, ' + this.yAxis.getDescription() : '') +
 			(this.chart.xAxis.length > 1 && this.xAxis ? '. X axis, ' + this.xAxis.getDescription() : '');
 	};
@@ -147,7 +156,7 @@ import '../parts/Tooltip.js';
 			infoString = '',
 			hasSpecialKey = false,
 			dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
-			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat || // docs
+			timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat ||
 				H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
 
 		each(specialKeys, function (key) {
@@ -172,13 +181,31 @@ import '../parts/Tooltip.js';
 				(this.value !== undefined ? this.value : this.y);
 		}
 
-		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : ''); // docs
+		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : '');
 	};
 
 	// Get descriptive label for axis
 	H.Axis.prototype.getDescription = function () {
 		return this.userOptions && this.userOptions.description || this.axisTitle && this.axisTitle.textStr ||
 				this.options.id || this.categories && 'categories' || 'values';
+	};
+
+	// Pan along axis in a direction (1 or -1), optionally with a defined granularity (number of steps it takes to walk across current view)
+	H.Axis.prototype.panStep = function (direction, granularity) {
+		var gran = granularity || 3,
+			extremes = this.getExtremes(),
+			step = (extremes.max - extremes.min) / gran * direction,
+			newMax = extremes.max + step,
+			newMin = extremes.min + step,
+			size = newMax - newMin;
+		if (direction < 0 && newMin < extremes.dataMin) {
+			newMin = extremes.dataMin;
+			newMax = newMin + size;
+		} else if (direction > 0 && newMax > extremes.dataMax) {
+			newMax = extremes.dataMax;
+			newMin = newMax - size;
+		}
+		this.setExtremes(newMin, newMax);
 	};
 
 	// Whenever adding or removing series, keep track of types present in chart
@@ -366,6 +393,26 @@ import '../parts/Tooltip.js';
 		}
 	};
 
+	// Highlight range selector button by index
+	H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
+		var buttons = this.rangeSelector.buttons;
+		// Deselect old
+		if (buttons[this.highlightedRangeSelectorItemIx]) {
+			buttons[this.highlightedRangeSelectorItemIx].setState(this.oldRangeSelectorItemState || 0);
+		}
+		// Select new
+		this.highlightedRangeSelectorItemIx = ix;
+		if (buttons[ix]) {
+			if (buttons[ix].element.focus) {
+				buttons[ix].element.focus();
+			}
+			this.oldRangeSelectorItemState = buttons[ix].state;
+			buttons[ix].setState(2);
+			return true;
+		}
+		return false;
+	};
+
 	// Hide export menu
 	H.Chart.prototype.hideExportMenu = function () {
 		var exportList = this.exportDivElements;
@@ -389,20 +436,24 @@ import '../parts/Tooltip.js';
 		// The module's keyCode handlers determine when to move to another module.
 		// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 		// Init holds a function to run once before any keyCodes are interpreted.
+		// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 		function KeyboardNavigationModule(options) {
 			this.keyCodeMap = options.keyCodeMap;
 			this.move = options.move;
 			this.validate = options.validate;
 			this.init = options.init;
+			this.transformTabs = options.transformTabs !== false;
 		}
 		KeyboardNavigationModule.prototype = {
 			// Find handler function(s) for key code in the keyCodeMap and run it.
-			run: function (keyCode) {
+			run: function (e) {
 				var navModule = this,
+					keyCode = e.which || e.keyCode,
 					handled = false;
+				keyCode = this.transformTabs && keyCode === 9 ? (e.shiftKey ? 37 : 39) : keyCode; // Transform tabs
 				each(this.keyCodeMap, function (codeSet) {
 					if (codeSet[0].indexOf(keyCode) > -1) {
-						handled = codeSet[1].call(navModule, keyCode) === false ? false : true; // If explicitly returning false, we haven't handled it
+						handled = codeSet[1].call(navModule, keyCode, e) === false ? false : true; // If explicitly returning false, we haven't handled it
 					}
 				});
 				return handled;
@@ -423,7 +474,7 @@ import '../parts/Tooltip.js';
 							return this.move(direction); // Invalid module
 						}
 						if (newModule.init) {
-							newModule.init(); // Valid module, init it
+							newModule.init(direction); // Valid module, init it
 							return true;
 						}
 					}
@@ -438,7 +489,8 @@ import '../parts/Tooltip.js';
 		// Route keydown events
 		function keydownHandler(ev) {
 			var e = ev || win.event,
-				keyCode = e.which || e.keyCode;
+				keyCode = e.which || e.keyCode,
+				curNavModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
 
 			// Handle tabbing
 			if (keyCode === 9) {
@@ -447,15 +499,13 @@ import '../parts/Tooltip.js';
 					chart.slipNextTab = false;
 					return;
 				}
-				// Interpret tab as left/right
-				keyCode = e.shiftKey ? 37 : 39;
 			}
 			// If key was not tab, don't slip the next tab
 			chart.slipNextTab = false;
 
 			// If there is a navigation module for the current index, run it. Otherwise, we are outside of the chart in some direction.
-			if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex]) {
-				if (chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex].run(keyCode)) {
+			if (curNavModule) {
+				if (curNavModule.run(e)) {
 					e.preventDefault(); // If successfully handled, stop the event here.
 				}
 			}
@@ -491,7 +541,16 @@ import '../parts/Tooltip.js';
 						chart.highlightedPoint.firePointEvent('click');
 					}
 				}]
-			]),
+			], {
+				// If coming back to points from other module, highlight last point
+				init: function (direction) {
+					var lastSeries = chart.series && chart.series[chart.series.length - 1],
+						lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
+					if (direction < 0 && lastPoint) {
+						lastPoint.highlight();
+					}
+				}
+			}),
 
 			// Exporting
 			navModuleFactory([
@@ -539,12 +598,7 @@ import '../parts/Tooltip.js';
 				}],
 				// Enter/Spacebar
 				[[13, 32], function () {
-					var fakeEvent;
-					if (chart.highlightedExportItem !== undefined) {
-						fakeEvent = doc.createEvent('Events');
-						fakeEvent.initEvent('click', true, false);
-						chart.exportDivElements[chart.highlightedExportItem].onclick(fakeEvent);
-					}
+					fakeClickEvent(chart.exportDivElements[chart.highlightedExportItem]);
 				}]
 			], {
 				// Only run exporting navigation if exporting support exists and is enabled on chart
@@ -552,9 +606,143 @@ import '../parts/Tooltip.js';
 					return chart.exportChart && !(chart.options.exporting && chart.options.exporting.enabled === false);
 				},
 				// Show export menu
-				init: function () {
+				init: function (direction) {
 					chart.highlightedPoint = null;
 					chart.showExportMenu();
+					// If coming back to export menu from other module, try to highlight last item in menu
+					if (direction < 0 && chart.exportDivElements) {
+						for (var i = chart.exportDivElements.length; i > -1; --i) {
+							if (chart.highlightExportItem(i)) {
+								break;
+							}
+						}
+					}
+				}
+			}),
+
+			// Map zoom
+			navModuleFactory([
+				// Up/down/left/right
+				[[38, 40, 37, 39], function (keyCode) {
+					chart[keyCode === 38 || keyCode === 40 ? 'yAxis' : 'xAxis'][0].panStep(keyCode < 39 ? -1 : 1);
+				}],
+
+				// Tabs
+				[[9], function (keyCode, e) {
+					var button;
+					chart.mapNavButtons[chart.focusedMapNavButtonIx].setState(0); // Deselect old
+					if (e.shiftKey && !chart.focusedMapNavButtonIx || !e.shiftKey && chart.focusedMapNavButtonIx) { // trying to go somewhere we can't?
+						chart.mapZoom(); // Reset zoom
+						return this.move(e.shiftKey ? -1 : 1); // Nowhere to go, go to prev/next module
+					}
+					chart.focusedMapNavButtonIx += e.shiftKey ? -1 : 1;
+					button = chart.mapNavButtons[chart.focusedMapNavButtonIx];
+					if (button.element.focus) {
+						button.element.focus();
+					}
+					button.setState(2);
+				}],
+
+				// Enter/Spacebar
+				[[13, 32], function () {
+					fakeClickEvent(chart.mapNavButtons[chart.focusedMapNavButtonIx].element);
+				}]
+			], {
+				// Only run this module if we have map zoom on the chart
+				validate: function () {
+					return chart.mapZoom && chart.mapNavButtons && chart.mapNavButtons.length === 2;
+				},
+
+				// Handle tabs separately
+				transformTabs: false,
+
+				// Make zoom buttons do their magic
+				init: function (direction) {
+					var zoomIn = chart.mapNavButtons[0],
+						zoomOut = chart.mapNavButtons[1],
+						initialButton = direction > 0 ? zoomIn : zoomOut;
+
+					each(chart.mapNavButtons, function (button, i) {
+						button.element.setAttribute('tabindex', -1);
+						button.element.setAttribute('role', 'button');
+						button.element.setAttribute('aria-label', 'Zoom ' + (i ? 'out' : '') + 'chart');
+					});
+
+					if (initialButton.element.focus) {						
+						initialButton.element.focus();
+					}
+					initialButton.setState(2);
+					chart.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
+				}
+			}),
+
+			// Highstock range selector (minus input boxes)
+			navModuleFactory([
+				// Left/Right/Up/Down
+				[[37, 39, 38, 40], function (keyCode) {
+					var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
+					// Try to highlight next/prev button
+					if (!chart.highlightRangeSelectorButton(chart.highlightedRangeSelectorItemIx + direction)) {
+						return this.move(direction);
+					}
+				}],
+				// Enter/Spacebar
+				[[13, 32], function () {
+					if (chart.oldRangeSelectorItemState !== 3) { // Don't allow click if button used to be disabled
+						fakeClickEvent(chart.rangeSelector.buttons[chart.highlightedRangeSelectorItemIx].element);
+					}
+				}]
+			], {
+				// Only run this module if we have range selector
+				validate: function () {
+					return chart.rangeSelector && chart.rangeSelector.buttons && chart.rangeSelector.buttons.length;
+				},
+
+				// Make elements focusable and accessible
+				init: function (direction) {
+					each(chart.rangeSelector.buttons, function (button) {
+						button.element.setAttribute('tabindex', '-1');
+						button.element.setAttribute('role', 'button');
+						button.element.setAttribute('aria-label', 'Select range ' + (button.text && button.text.textStr));
+					});
+					// Focus first/last button
+					chart.highlightRangeSelectorButton(direction > 0 ? 0 : chart.rangeSelector.buttons.length - 1);
+				}
+			}),
+
+			// Highstock range selector, input boxes
+			navModuleFactory([
+				// Tab/Up/Down
+				[[9, 38, 40], function (keyCode, e) {
+					var direction = (keyCode === 9 && e.shiftKey || keyCode === 38) ? -1 : 1,
+						newIx = chart.highlightedInputRangeIx = chart.highlightedInputRangeIx + direction;
+					// Try to highlight next/prev item in list.
+					if (newIx > 1 || newIx < 0) { // Out of range
+						return this.move(direction);
+					}
+					chart.rangeSelector[newIx ? 'maxInput' : 'minInput'].focus(); // Input boxes are HTML, and should have focus support in all browsers
+				}]
+			], {
+				// Only run if we have range selector with input boxes
+				validate: function () {
+					return chart.rangeSelector && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
+				},
+
+				// Handle tabs different from left/right (because we don't want to catch left/right in a text area)
+				transformTabs: false,
+
+				// Make boxes focusable by script, and accessible
+				init: function (direction) {
+					each(['minInput', 'maxInput'], function (key, i) {
+						if (chart.rangeSelector[key]) {
+							chart.rangeSelector[key].setAttribute('tabindex', '-1');
+							chart.rangeSelector[key].setAttribute('role', 'textbox');
+							chart.rangeSelector[key].setAttribute('aria-label', 'Select ' + (i ? 'end' : 'start') + ' date.');
+						}
+					});
+					// Highlight first/last input box
+					chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
+					chart.rangeSelector[chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'].focus();
 				}
 			})
 		];
@@ -599,12 +787,12 @@ import '../parts/Tooltip.js';
 		hiddenSection.setAttribute('role', 'region');
 		hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
-		hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) || // docs
+		hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 			'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
 			(series.length > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + (options.title.text || 'Chart') +
 			(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
-			'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') + // docs
-			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' + // docs
+			'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
+			'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 			(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
 				(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
 			(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
@@ -615,7 +803,7 @@ import '../parts/Tooltip.js';
 			tableShortcutAnchor.innerHTML = 'View as data table.';
 			tableShortcutAnchor.href = '#' + tableId;
 			tableShortcutAnchor.setAttribute('tabindex', '-1'); // Make this unreachable by user tabbing
-			tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () { // docs
+			tableShortcutAnchor.onclick = a11yOptions.onTableAnchorClick || function () {
 				chart.viewData();
 				doc.getElementById(tableId).focus();
 			};
@@ -668,7 +856,6 @@ import '../parts/Tooltip.js';
 				oldExportCallback.apply(this, Array.prototype.slice.call(arguments));
 				chart.addAccessibleContextMenuAttribs();
 				chart.highlightExportItem(0);
-				chart.isExporting = true;
 			};
 			chart.exportSVGElements[0].element.setAttribute('role', 'button');
 			chart.exportSVGElements[0].element.setAttribute('aria-label', 'View export menu');

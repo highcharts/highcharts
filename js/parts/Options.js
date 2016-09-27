@@ -56,6 +56,9 @@ H.defaultOptions = {
 		//marginBottom: null,
 		//marginLeft: null,
 		borderRadius: 0,
+		/*= if (!build.classic) { =*/
+		colorCount: 10,
+		/*= } =*/
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
@@ -95,7 +98,7 @@ H.defaultOptions = {
 		/*= } =*/
 	},
 	/*= if (!build.classic) { =*/
-	defs: { // docs
+	defs: {
 		dropShadow: { // used by tooltip
 			tagName: 'filter',
 			id: 'drop-shadow',
@@ -277,7 +280,7 @@ H.defaultOptions = {
 		/* todo: em font-size when finished comparing against HC4
 		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
 		*/
-		padding: 8, // docs
+		padding: 8,
 
 		//shape: 'callout',
 		//shared: false,

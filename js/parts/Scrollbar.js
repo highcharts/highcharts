@@ -32,12 +32,12 @@ var defaultScrollbarOptions =  {
 	barBorderRadius: 0,
 	buttonBorderRadius: 0,
 	liveRedraw: svg && !isTouchDevice,
-	margin: 10, // docs
+	margin: 10,
 	minWidth: 6,
-	//showFull: true, // docs
-	//size: null,	// docs
-	step: 0.2,		// docs
-	zIndex: 3,		// docs
+	//showFull: true,
+	//size: null,
+	step: 0.2,
+	zIndex: 3,
 	/*= if (build.classic) { =*/
 	barBackgroundColor: '${palette.neutralColor20}',
 	barBorderWidth: 1,

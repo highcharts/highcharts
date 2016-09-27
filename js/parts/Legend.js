@@ -73,7 +73,13 @@ Legend.prototype = {
 
 	},
 
-	update: function (options, redraw) { // docs. Sample created.
+	/**
+	 * Update the legend with new options. Equivalent to running chart.update with a legend
+	 * configuration option.
+	 * @param {Object} options Legend options
+	 * @param {Boolean} redraw Whether to redraw the chart, defaults to true.
+	 */
+	update: function (options, redraw) {
 		var chart = this.chart;
 
 		this.setOptions(merge(true, this.options, options));

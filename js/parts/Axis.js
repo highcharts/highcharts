@@ -1922,7 +1922,7 @@ H.Axis.prototype = {
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
-			className = options.className, // docs
+			className = options.className,
 			textAlign,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
@@ -1939,11 +1939,11 @@ H.Axis.prototype = {
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
-				.addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' + (className || '')) // docs: className
+				.addClass('highcharts-' + this.coll.toLowerCase() + '-grid ' + (className || ''))
 				.add(axisParent);
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.addClass('highcharts-' + this.coll.toLowerCase() + ' ' + (className || '')) // docs: className
+				.addClass('highcharts-' + this.coll.toLowerCase() + ' ' + (className || ''))
 				.add(axisParent);
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
@@ -2478,7 +2478,7 @@ H.Axis.prototype = {
 				this.cross = graphic = this.chart.renderer
 					.path()
 					.addClass('highcharts-crosshair highcharts-crosshair-' + 
-						(categorized ? 'category ' : 'thin ') + options.className) // docs: className
+						(categorized ? 'category ' : 'thin ') + options.className)
 					.attr({
 						zIndex: pick(options.zIndex, 2)
 					})

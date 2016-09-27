@@ -57,4 +57,28 @@ $(function () {
             'There be ARIA on point'
         );
     });
+
+    QUnit.test('Map navigation', function (assert) {
+        var chart = Highcharts.mapChart('container', {
+            accessibility: {
+                pointDescriptionThreshold: false
+            },
+            chart: {
+                map: 'custom/europe'
+            },
+            mapNavigation: {
+                enabled: true
+            },
+            series: [{
+                data: [
+                    ['no', 1], ['se', 2], ['fi', 3], ['gb', 4], ['fr', 5], ['it', 6]
+                ]
+            }]
+        });
+
+        assert.ok(
+            chart.series[0].points[0].graphic.element.getAttribute('aria-label'),
+            'There be ARIA on point'
+        );
+    });
 });

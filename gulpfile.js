@@ -40,17 +40,29 @@ var paths = {
 };
 
 /**
+ * Get the product version from build.properties.
+ * The product version is used in license headers and in package names.
+ * @return {string|null} Returns version number or null if not found.
+ */
+const getProductVersion = () => {
+    // const fs = require('fs');
+    const D = require('./assembler/dependencies.js');
+    const properties = fs.readFileSync('./build.properties', 'utf8');
+    return D.regexGetCapture(/product\.version=(.+)/, properties);
+};
+
+/**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
  * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
  * @return undefined
  */
 const scripts = () => {
-    console.log('Starting scripts.');
     let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
     let files = (argv.file) ? [argv.file] : null,
         type = (argv.type) ? argv.type : 'both',
         debug = argv.d || false,
+        version = getProductVersion(),
         DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
         folders = {
             'parts': 'parts' + DS + '+\.js$',
@@ -107,11 +119,13 @@ const scripts = () => {
             },
             'modules/map.src.js': {
                 exclude: new RegExp(folders.parts),
-                umd: false
+                umd: false,
+                product: 'Highmaps'
             },
             'modules/map-parser.src.js': {
                 exclude: new RegExp([folders.parts, 'data\.src\.js$'].join('|')),
-                umd: false
+                umd: false,
+                product: 'Highmaps'
             },
             'modules/no-data-to-display.src.js': {
                 exclude: new RegExp(folders.parts),
@@ -186,7 +200,8 @@ const scripts = () => {
         },
         files: files,
         output: './code/',
-        type: type
+        type: type,
+        version: version
     });
 };
 
@@ -343,17 +358,10 @@ gulp.task('filesize', function () {
     );
 });
 
-/**
- * Compile the JS files in the /code folder
- */
-const compile = () => {
+const compile = (files, sourceFolder) => {
     console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve) => {
-        const B = require('./assembler/build.js');
-        const sourceFolder = './code/';
-        const promises = B.getFilesInFolder(sourceFolder, true, '')
-            .filter(path => path.endsWith('.src.js'))
-            .map(path => {
+    return new Promise((resolve, reject) => {
+        const promises = files.map(path => {
                 return new Promise((resolveCompile, reject) => {
                     const sourcePath = sourceFolder + path;
                     const outputPath = sourcePath.replace('.src.js', '.js');
@@ -379,9 +387,32 @@ const compile = () => {
             });
         Promise.all(promises).then(() => {
             resolve('Compile is complete');
-        }).catch((err) => err.message + '\n\r' + err.stack);
+        }).catch((err) => reject(err.message + '\n\r' + err.stack));
     });
 };
+
+/**
+ * Compile the JS files in the /code folder
+ */
+const compileScripts = () => {
+    const B = require('./assembler/build.js');
+    const sourceFolder = './code/';
+    const files = B.getFilesInFolder(sourceFolder, true, '').filter(path => path.endsWith('.src.js'));
+    return compile(files, sourceFolder)
+        .then(console.log)
+        .catch(console.log);
+}
+
+/**
+ * Compile the JS files in the /code folder
+ */
+const compileLib = () => {
+    const sourceFolder = './vendor/';
+    const files = ['canvg.src.js', 'rgbcolor.src.js'];
+    return compile(files, sourceFolder)
+        .then(console.log)
+        .catch(console.log);
+}
 
 const cleanCode = () => {
     const U = require('./assembler/utilities.js');
@@ -401,6 +432,7 @@ const copyToDist = () => {
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
+    const libFolder = './vendor/';
     const distFolder = './build/dist/';
     const files = B.getFilesInFolder(sourceFolder, true, '');
     // Files that should not be distributed with certain products
@@ -409,6 +441,8 @@ const copyToDist = () => {
         highstock: ['highcharts.js', 'highmaps.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map.js', 'modules/map-parser.js'],
         highmaps: ['highstock.js', 'modules/broken-axis.js', 'modules/canvasrenderer.experimental.js', 'modules/map-parser.js', 'modules/series-label.js', 'modules/solid-gauge.js']
     };
+
+    // Copy source files to the distribution packages.
     files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
@@ -419,6 +453,14 @@ const copyToDist = () => {
                 }
             });
         });
+
+    // Copy lib files to the distribution packages. These files are used in the offline-export.
+    ['canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
+        const content = fs.readFileSync(libFolder + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+        });
+    });
 };
 
 /**
@@ -536,7 +578,7 @@ const downloadAPI = (product, version) => commandLine('grunt download-api:' + pr
  */
 const downloadAllAPI = () => new Promise((resolve, reject) => {
     // @todo Pass in version, instead of hardcoding it.
-    const version = '5.0.0';
+    const version = getProductVersion();
     const promises = ['highcharts', 'highstock', 'highmaps'].map((product) => downloadAPI(product, version));
     Promise.all(promises).then(() => {
         resolve('Finished downloading api\'s for Highcharts, Highstock and Highmaps');
@@ -555,7 +597,9 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('lint', lint);
-gulp.task('compile', compile);
+gulp.task('compile', compileScripts);
+gulp.task('compile-lib', compileLib);
+gulp.task('download-api', downloadAllAPI);
 /**
  * Create distribution files
  */
@@ -564,7 +608,7 @@ gulp.task('dist', () => {
         .then(gulpify('styles', styles))
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
-        .then(gulpify('compile', compile))
+        .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
