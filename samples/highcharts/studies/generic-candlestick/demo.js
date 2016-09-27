@@ -178,8 +178,8 @@ $(function () {
                     graphic = point.graphic;
                     if (point.plotY !== UNDEFINED) {
 
-                        pointAttr = point.pointAttr ? 
-                            point.pointAttr[point.selected ? 'select' : ''] : 
+                        pointAttr = point.pointAttr ?
+                            point.pointAttr[point.selected ? 'select' : ''] :
                             series.pointAttribs(point, point.selected && 'select');
 
                         // crisp vector coordinates
