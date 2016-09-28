@@ -127,7 +127,7 @@ VMLElement = {
 
 		// IE8 Standards can't set the class name before the element is appended
 		if (this.className) {
-			this.attr('class', this.className + ' added');
+			this.attr('class', this.className);
 		}
 
 		return wrapper;
