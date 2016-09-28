@@ -14,7 +14,6 @@ import './SvgRenderer.js';
 
 		createElement = H.createElement,
 		css = H.css,
-		defaultOptions = H.defaultOptions,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		discardElement = H.discardElement,
@@ -802,7 +801,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 								sizex *= radialReference[2] / bBox.width;
 								sizey *= radialReference[2] / bBox.height;
 							}
-							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
+							fillAttr = 'src="' + H.getOptions().global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
