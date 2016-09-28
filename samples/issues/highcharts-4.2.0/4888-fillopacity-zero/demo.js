@@ -16,7 +16,7 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.series[0].area.element.getAttribute('fill'),
+            chart.series[0].area.element.getAttribute('fill').replace(/ /g, ''),
             'rgba(124,181,236,0)',
             'Fill opacity is set'
         );
