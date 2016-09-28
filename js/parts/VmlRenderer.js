@@ -1059,7 +1059,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, w, h, wrapper) {
 
-			if (wrapper) {
+			if (wrapper && defined(wrapper.r)) {
 				w = h = 2 * wrapper.r;
 			}
 
