@@ -70,6 +70,7 @@
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="offline-exporting.src.name" value="offline-exporting.src.js"/>
+        <property name="canvgrenderer-extended.src.name" value="canvgrenderer-extended.src.js"/>
         <property name="boost.src.name" value="boost.src.js"/>
         <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
@@ -86,7 +87,8 @@
         <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
-        <property name="offline-exporting.minified.name" value="offline-exporting.js"/>        
+        <property name="offline-exporting.minified.name" value="offline-exporting.js"/>
+        <property name="canvgrenderer-extended.minified.name" value="canvgrenderer-extended.js"/>
         <property name="boost.minified.name" value="boost.js"/>
         <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
@@ -104,6 +106,7 @@
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="offline-exporting.src.file" value="${basedir}/js/modules/${offline-exporting.src.name}"/>
+        <property name="canvgrenderer-extended.src.file" value="${basedir}/js/modules/${canvgrenderer-extended.src.name}"/>
         <property name="boost.src.file" value="${basedir}/js/modules/boost.src.js"/>
         <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
@@ -394,6 +397,7 @@
         <filelist id="highcharts-modules.files" dir="${basedir}/js">
             <file name="modules/${exporting.src.name}"/>
             <file name="modules/${offline-exporting.src.name}"/>
+            <file name="modules/${canvgrenderer-extended.src.name}"/>
             <file name="modules/${data.src.name}"/>
             <file name="modules/${drilldown.src.name}"/>
             <file name="modules/${nodata.src.name}"/>
@@ -585,7 +589,11 @@
         <antcall target="compile">
             <param name="param.src" value="${offline-exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${offline-exporting.minified.name}"/>
-        </antcall>        
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${canvgrenderer-extended.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${canvgrenderer-extended.minified.name}"/>
+        </antcall>
         <antcall target="compile">
             <param name="param.src" value="${overlapping-datalabels.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
@@ -847,6 +855,13 @@
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+
+        <copy file="${canvgrenderer-extended.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${canvgrenderer-extended.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${canvgrenderer-extended.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${canvgrenderer-extended.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${canvgrenderer-extended.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${canvgrenderer-extended.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${boost.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>

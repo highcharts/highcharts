@@ -14,17 +14,18 @@
 	} else {
 		factory(Highcharts);
 	}
-}(function (Highcharts) {
+}(function (Highcharts, canVGIn) {
 
 	var win = Highcharts.win,
 		nav = win.navigator,
 		doc = win.document,
 		domurl = win.URL || win.webkitURL || win,
 		isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-		loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
+		loadEventDeferDelay = isMSBrowser ? 150 : 0, // Milliseconds to defer image load event handlers to offset IE bug
+    CanVGRenderer = {};
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
-	Highcharts.CanVGRenderer = {};
+	Highcharts.CanVGRenderer = CanVGRenderer;
 
 
 	/**
@@ -200,11 +201,20 @@
 				// Failed due to tainted canvas
 				// Create new and untainted canvas
 				var canvas = doc.createElement('canvas'),
-					ctx = canvas.getContext('2d'),
 					imageWidth = svg.match(/^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale,
 					imageHeight = svg.match(/^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1] * scale,
 					downloadWithCanVG = function () {
-						ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
+						var canVG = typeof CanVGIn === 'function' ? canVGIn : win.canvg;
+						canVG(canvas, svg, {
+							ignoreMouse: true,
+							ignoreAnimation: true,
+							ignoreDimensions: true,
+							ignoreClear: true,
+							offsetX: 0,
+							offsetY: 0,
+							scaleWidth: imageWidth,
+							scaleHeight: imageHeight
+						});
 						try {
 							Highcharts.downloadURL(nav.msSaveOrOpenBlob ? canvas.msToBlob() : canvas.toDataURL(imageType), filename);
 							if (successCallback) {
@@ -219,7 +229,7 @@
 
 				canvas.width = imageWidth;
 				canvas.height = imageHeight;
-				if (win.canvg) {
+				if (typeof canVGIn === 'function' || typeof win.canvg === 'function') {
 					// Use preloaded canvg
 					downloadWithCanVG();
 				} else {

@@ -6,8 +6,13 @@
  *
  * License: www.highcharts.com/license
  */
-
-(function (Highcharts) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts, canVGIn) {
 	var UNDEFINED,
 		win = Highcharts.win,
 		DIV = 'div',
@@ -23,7 +28,8 @@
 		merge = Highcharts.merge,
 		addEvent = Highcharts.addEvent,
 		createElement = Highcharts.createElement,
-		discardElement = Highcharts.discardElement;
+		discardElement = Highcharts.discardElement,
+		canVG = typeof canVGIn === 'function' ? canVGIn : win.canvg;
 
 	// Extend CanVG renderer on demand, inherit from SVGRenderer
 	extend(CanVGRenderer.prototype, SVGRenderer.prototype);
@@ -200,7 +206,7 @@
 		 */
 		draw: function () {
 			var renderer = this;
-			win.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
+			canVG(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
-}(Highcharts));
+}));
