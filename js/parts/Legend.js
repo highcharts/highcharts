@@ -269,7 +269,7 @@ Legend.prototype = {
 	setText: function (item) {
 		var options = this.options;
 		item.legendItem.attr({
-			text: options.labelFormat ? Highcharts.format(options.labelFormat, item) : options.labelFormatter.call(item)
+			text: options.labelFormat ? H.format(options.labelFormat, item) : options.labelFormatter.call(item)
 		});
 	},
 

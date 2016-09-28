@@ -733,4 +733,4 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-Highcharts.Scrollbar = Scrollbar;
+H.Scrollbar = Scrollbar;

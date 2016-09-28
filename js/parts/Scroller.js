@@ -1079,7 +1079,7 @@ Navigator.prototype = {
 	}
 };
 
-Highcharts.Navigator = Navigator;
+H.Navigator = Navigator;
 
 /**
  * For Stock charts, override selection zooming with some special features because

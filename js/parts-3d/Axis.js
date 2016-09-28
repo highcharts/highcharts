@@ -249,7 +249,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	return pos;
 });
 
-Highcharts.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
+H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	var is3d = this.chart.is3d(),
 		pos,
 		axisTitleMargin;

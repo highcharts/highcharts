@@ -174,7 +174,7 @@ SVGElement.prototype = {
 				each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Highcharts.color(stop[1]);
+						colorObject = H.color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {

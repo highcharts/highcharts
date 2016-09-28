@@ -30,7 +30,7 @@ import './Series.js';
  * a size, a target and a rank. It will place the labels as close as possible to their 
  * targets, skipping the lowest ranked labels if necessary.
  */
-Highcharts.distribute = function (boxes, len) {
+H.distribute = function (boxes, len) {
 	
 	var i, 
 		overlapping = true,
@@ -555,7 +555,7 @@ if (seriesTypes.pie) {
 						};
 					}
 				});
-				Highcharts.distribute(positions, bottom + size - top);
+				H.distribute(positions, bottom + size - top);
 			}
 
 			// now the used slots are sorted, fill them up sequentially

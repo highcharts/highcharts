@@ -387,7 +387,7 @@ import '../parts/Options.js';
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: Highcharts.color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: H.color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

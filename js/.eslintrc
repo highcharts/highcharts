@@ -3,7 +3,6 @@
         "clearInterval": true,
         "clearTimeout": true,
         "console": true,
-        "Highcharts": true,
         "module": true,
         "setInterval": true,
         "setTimeout": true,

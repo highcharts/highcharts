@@ -496,7 +496,7 @@ extend(ColorAxis.prototype, {
  * Handle animation of the color attributes directly
  */
 each(['fill', 'stroke'], function (prop) {
-	Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+	H.Fx.prototype[prop + 'Setter'] = function () {
 		this.elem.attr(prop, ColorAxis.prototype.tweenColors(color(this.start), color(this.end), this.pos));
 	};
 });

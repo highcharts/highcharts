@@ -203,7 +203,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1], zIndex: paths[4] });
 			this.side.attr({ d: paths[2], zIndex: paths[5] });
 		} else {
-			return Highcharts.SVGElement.prototype.attr.call(this, args); // getter returns value
+			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
 		}
 
 		return this;
@@ -305,7 +305,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 
 ////// SECTORS //////
-Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
+H.SVGRenderer.prototype.arc3d = function (attribs) {
 
 	var wrapper = this.g(),
 		renderer = wrapper.renderer,

@@ -255,7 +255,7 @@ seriesType('map', 'scatter', {
 
 		// Collect mapData from chart options if not defined on series
 		if (!mapData && globalMapData) {
-			mapData = typeof globalMapData === 'string' ? Highcharts.maps[globalMapData] : globalMapData;
+			mapData = typeof globalMapData === 'string' ? H.maps[globalMapData] : globalMapData;
 		}
 
 		if (joinByNull) {

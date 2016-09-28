@@ -124,7 +124,7 @@ function getScale(chart, depth) {
 
 
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
@@ -174,7 +174,7 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
+H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
 

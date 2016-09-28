@@ -80,7 +80,7 @@ H.perspective = function (points, chart, insidePlotArea) {
 	}
 
 	// Transform each point
-	return Highcharts.map(points, function (point) {
+	return H.map(points, function (point) {
 		var rotated = rotate3D(
 				(inverted ? point.y : point.x) - origin.x,
 				(inverted ? point.x : point.y) - origin.y,
