@@ -113,20 +113,7 @@
 
         // Copy Highstock and Highmaps into the Highcharts release repo for use
         // with npm and bower.
-        if (product === 'highcharts') {
-            const folder = 'assembler/';
-            ['build.js', 'dependencies.js', 'process.js', 'utilities.js'].forEach((file) => {
-                fs.copy(
-                    folder + file,
-                    '../highcharts-dist/' + folder + file,
-                    function (err) {
-                        if (err) {
-                            throw err;
-                        }
-                    }
-                );
-            });
-        } else if (product === 'highstock') {
+        if (product === 'highstock') {
             extras = ['highstock.src.js', 'highstock.js'];
         } else if (product === 'highmaps') {
             extras = ['highmaps.src.js', 'highmaps.js', 'modules/map.src.js', 'modules/map.js'];
