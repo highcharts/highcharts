@@ -46,7 +46,7 @@ import '../parts/Chart.js';
 			},
 			shape: {
 				params: {
-					stroke: '${palette.textHeavyColor}',
+					stroke: '${palette.neutralColor100}',
 					fill: 'transparent',
 					strokeWidth: 2
 				}

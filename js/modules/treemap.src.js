@@ -80,12 +80,12 @@ import '../parts/Color.js';
 		},
 		/*= if (build.classic) { =*/
 		// Presentational options
-		borderColor: '${palette.treemapStroke}',
+		borderColor: '${palette.neutralColor10}',
 		borderWidth: 1,
 		opacity: 0.15,
 		states: {
 			hover: {
-				borderColor: '${palette.treemapHoverStroke}',
+				borderColor: '${palette.neutralColor40}',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				opacity: 0.75,
 				shadow: false

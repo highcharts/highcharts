@@ -1111,7 +1111,7 @@ SVGElement.prototype = {
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': shadowOptions.color || 'black',
+					'stroke': shadowOptions.color || '${palette.neutralColor100}',
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
@@ -1858,7 +1858,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (rgba) {
 		rgba = color(rgba).rgba;
-		return rgba[0] + rgba[1] + rgba[2] > 384 ? '#000000' : '#FFFFFF';
+		return rgba[0] + rgba[1] + rgba[2] > 2 * 255 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
@@ -1890,11 +1890,11 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			fill: '${palette.buttonFill}',
-			stroke: '${palette.buttonStroke}',
+			fill: '${palette.neutralColor3}',
+			stroke: '${palette.neutralColor20}',
 			'stroke-width': 1,
 			style: {
-				color: '${palette.buttonTextColor}',
+				color: '${palette.neutralColor80}',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			}
@@ -1904,16 +1904,16 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			fill: '${palette.buttonHoverFill}'
+			fill: '${palette.neutralColor10}'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '${palette.buttonPressedFill}',
+			fill: '${palette.highlightColor10}',
 			style: {
-				color: '${palette.textHeavyColor}',
+				color: '${palette.neutralColor100}',
 				fontWeight: 'bold'
 			}
 		}, pressedState);
@@ -1923,7 +1923,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '${palette.buttonDisabledColor}'
+				color: '${palette.neutralColor20}'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;

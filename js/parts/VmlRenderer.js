@@ -382,7 +382,7 @@ VMLElement = {
 				}
 
 				// apply the opacity
-				markup = ['<stroke color="', shadowOptions.color || 'black', '" opacity="', shadowElementOpacity * i, '"/>'];
+				markup = ['<stroke color="', shadowOptions.color || '${palette.neutralColor100}', '" opacity="', shadowElementOpacity * i, '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
 
 

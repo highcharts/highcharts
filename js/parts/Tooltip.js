@@ -431,7 +431,7 @@ H.Tooltip.prototype = {
 
 				/*= if (build.classic) { =*/
 				label.attr({
-					stroke: options.borderColor || point.color || currentSeries.color || '${palette.weakColor}'
+					stroke: options.borderColor || point.color || currentSeries.color || '${palette.neutralColor60}'
 				});
 				/*= } =*/
 
@@ -492,7 +492,7 @@ H.Tooltip.prototype = {
 						'r': options.borderRadius,
 						/*= if (build.classic) { =*/
 						'fill': options.backgroundColor,
-						'stroke': point.color || series.color || '${palette.textColor}',
+						'stroke': point.color || series.color || '${palette.neutralColor80}',
 						'stroke-width': options.borderWidth
 						/*= } =*/
 					})
@@ -505,7 +505,7 @@ H.Tooltip.prototype = {
 						/*= if (build.classic) { =*/
 						.attr({
 							'stroke-width': series.options.lineWidth || 2,
-							'stroke': point.color || series.color || '${palette.weakColor}'
+							'stroke': point.color || series.color || '${palette.neutralColor60}'
 						})
 						/*= } =*/
 						.add(tooltip.label);

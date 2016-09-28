@@ -47,14 +47,14 @@ extend(ColorAxis.prototype, {
 			},
 			width: 0.01,
 			/*= if (build.classic) { =*/
-			color: '${palette.coloraxisMarker}'
+			color: '${palette.neutralColor40}'
 			/*= } =*/
 		},
 		labels: {
 			overflow: 'justify'
 		},
-		minColor: '${palette.coloraxisMinColor}',
-		maxColor: '${palette.coloraxisMaxColor}',
+		minColor: '${palette.highlightColor10}',
+		maxColor: '${palette.highlightColor100}',
 		tickLength: 5,
 		showInLegend: true
 	},

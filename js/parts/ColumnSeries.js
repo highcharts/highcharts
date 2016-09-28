@@ -47,8 +47,8 @@ seriesType('column', 'line', {
 		},
 		/*= if (build.classic) { =*/
 		select: {
-			color: '${palette.pointSelectFill}',
-			borderColor: '${palette.pointSelectStroke}',
+			color: '${palette.neutralColor20}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
 		/*= } =*/
@@ -66,7 +66,7 @@ seriesType('column', 'line', {
 	},
 	threshold: 0,
 	/*= if (build.classic) { =*/
-	borderColor: '${palette.pointStroke}'
+	borderColor: '${palette.backgroundColor}'
 	// borderWidth: 1
 	/*= } =*/
 

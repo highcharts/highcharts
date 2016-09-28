@@ -209,7 +209,7 @@ Series.prototype.drawDataLabels = function () {
 
 				/*= if (build.classic) { =*/
 				// Determine the color
-				style.color = pick(options.color, style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
 				/*= } =*/
 
 				// update existing label
@@ -249,7 +249,7 @@ Series.prototype.drawDataLabels = function () {
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
 							renderer.getContrast(point.color || series.color) :
-							'${palette.textHeavyColor}';
+							'${palette.neutralColor100}';
 					}
 
 					if (seriesOptions.cursor) {
@@ -654,7 +654,7 @@ if (seriesTypes.pie) {
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '${palette.weakColor}'
+								'stroke': options.connectorColor || point.color || '${palette.neutralColor60}'
 							});
 							/*= } =*/
 						}

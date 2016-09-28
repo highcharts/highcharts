@@ -84,7 +84,7 @@ H.defaultOptions = {
 		height: null,
 		
 		/*= if (build.classic) { =*/
-		borderColor: '${palette.chartBorderColor}',
+		borderColor: '${palette.highlightColor80}',
 		//borderWidth: 0,
 		//style: {
 		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
@@ -92,7 +92,7 @@ H.defaultOptions = {
 		//},
 		backgroundColor: '${palette.backgroundColor}',
 		//plotBackgroundColor: null,
-		plotBorderColor: '${palette.plotBorderColor}'
+		plotBorderColor: '${palette.neutralColor20}'
 		//plotBorderWidth: 0,
 		//plotShadow: false,
 		/*= } =*/
@@ -146,7 +146,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.titleColor}',
+			color: '${palette.neutralColor80}',
 			fontSize: '18px'
 		},
 		/*= } =*/
@@ -162,7 +162,7 @@ H.defaultOptions = {
 		// y: null,
 		/*= if (build.classic) { =*/
 		style: {
-			color: '${palette.subtitleColor}'
+			color: '${palette.neutralColor60}'
 		},
 		/*= } =*/
 		widthAdjust: -44
@@ -174,7 +174,7 @@ H.defaultOptions = {
 		style: {
 			//font: defaultFont,
 			position: 'absolute',
-			color: '${palette.textColor}'
+			color: '${palette.neutralColor80}'
 		}
 	},
 	legend: {
@@ -186,12 +186,12 @@ H.defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '${palette.legendBorderColor}',
+		borderColor: '${palette.neutralColor40}',
 		borderRadius: 0,
 		navigation: {
 			/*= if (build.classic) { =*/
-			activeColor: '${palette.legendNavActiveColor}',
-			inactiveColor: '${palette.legendNavInactiveColor}'
+			activeColor: '${palette.highlightColor100}',
+			inactiveColor: '${palette.neutralColor20}'
 			/*= } =*/
 			// animation: true,
 			// arrowSize: 12
@@ -205,16 +205,16 @@ H.defaultOptions = {
 		},*/
 		/*= if (build.classic) { =*/
 		itemStyle: {			
-			color: '${palette.legendTextColor}',
+			color: '${palette.neutralColor80}',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '${palette.legendTextHoverColor}'
+			color: '${palette.neutralColor100}'
 		},
 		itemHiddenStyle: {
-			color: '${palette.legendTextHiddenColor}'
+			color: '${palette.neutralColor20}'
 		},
 		shadow: false,
 		/*= } =*/
@@ -224,6 +224,7 @@ H.defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		squareSymbol: true,
 		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
@@ -288,13 +289,13 @@ H.defaultOptions = {
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		/*= } else { =*/
-		backgroundColor: color('${palette.tooltipBackgroundColor}').setOpacity(0.85).get(),
+		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
 		borderWidth: 1,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		style: {
-			color: '${palette.tooltipTextColor}',
+			color: '${palette.neutralColor80}',
 			cursor: 'default',
 			fontSize: '12px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
@@ -319,7 +320,7 @@ H.defaultOptions = {
 		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
-			color: '${palette.creditsColor}',
+			color: '${palette.neutralColor40}',
 			fontSize: '9px'
 		},
 		/*= } =*/

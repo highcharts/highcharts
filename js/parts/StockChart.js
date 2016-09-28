@@ -432,12 +432,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		/*= if (build.classic) { =*/
 		// Presentational
 		crossLabel.attr({
-				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
+				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
 				stroke: options.borderColor || '',
 				'stroke-width': options.borderWidth || 0
 			})
 			.css(extend({
-				color: 'white',
+				color: '${palette.backgroundColor}',
 				fontWeight: 'normal',
 				fontSize: '11px',
 				textAlign: 'center'

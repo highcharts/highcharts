@@ -39,16 +39,16 @@ var defaultScrollbarOptions =  {
 	step: 0.2,
 	zIndex: 3,
 	/*= if (build.classic) { =*/
-	barBackgroundColor: '${palette.scrollbarThumb}',
+	barBackgroundColor: '${palette.neutralColor20}',
 	barBorderWidth: 1,
-	barBorderColor: '${palette.scrollbarThumb}',
-	buttonArrowColor: '${palette.scrollbarArrow}',
-	buttonBackgroundColor: '${palette.scrollbarButton}',
-	buttonBorderColor: '${palette.scrollbarStroke}',
+	barBorderColor: '${palette.neutralColor20}',
+	buttonArrowColor: '${palette.neutralColor80}',
+	buttonBackgroundColor: '${palette.neutralColor10}',
+	buttonBorderColor: '${palette.neutralColor20}',
 	buttonBorderWidth: 1,
-	rifleColor: '${palette.scrollbarArrow}',
-	trackBackgroundColor: '${palette.scrollbarTrack}',
-	trackBorderColor: '${palette.scrollbarTrack}',
+	rifleColor: '${palette.neutralColor80}',
+	trackBackgroundColor: '${palette.neutralColor5}',
+	trackBorderColor: '${palette.neutralColor5}',
 	trackBorderWidth: 1
 	/*= } =*/
 };

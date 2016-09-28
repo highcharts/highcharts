@@ -80,12 +80,12 @@ extend(Pane.prototype, {
 		shape: 'circle',
 		/*= if (build.classic) { =*/
 		borderWidth: 1,
-		borderColor: 'silver',
+		borderColor: '${palette.neutralColor20}',
 		backgroundColor: {
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 			stops: [
 				[0, '${palette.backgroundColor}'],
-				[1, '${palette.paneBackgroundGradient}']
+				[1, '${palette.neutralColor10}']
 			]
 		},
 		/*= } =*/

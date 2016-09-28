@@ -59,7 +59,7 @@ seriesType('pie', 'line', {
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
-	borderColor: '${palette.pointStroke}',
+	borderColor: '${palette.backgroundColor}',
 	borderWidth: 1,
 	states: {
 		hover: {

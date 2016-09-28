@@ -24,7 +24,7 @@ seriesType('mappoint', 'scatter', {
 		defer: false,
 		overflow: false,
 		style: {
-			color: '${palette.textHeavyColor}'
+			color: '${palette.neutralColor100}'
 		}
 	}
 

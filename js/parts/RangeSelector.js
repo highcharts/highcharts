@@ -56,7 +56,7 @@ extend(defaultOptions, {
 		/*= if (build.classic) { =*/
 		// inputStyle: {},
 		labelStyle: {
-			color: '${palette.weakColor}'
+			color: '${palette.neutralColor60}'
 		}
 		/*= } =*/
 	}
@@ -529,7 +529,7 @@ RangeSelector.prototype = {
 				padding: 2,
 				width: options.inputBoxWidth || 90,
 				height: options.inputBoxHeight || 17,
-				stroke: options.inputBoxBorderColor || 'silver',
+				stroke: options.inputBoxBorderColor || '${palette.neutralColor20}',
 				'stroke-width': 1,
 				'text-align': 'center'
 			})
@@ -556,7 +556,7 @@ RangeSelector.prototype = {
 		label.css(merge(chartStyle, options.labelStyle));
 
 		dateBox.css(merge({
-			color: '${palette.rangeselectorInputColor}'
+			color: '${palette.neutralColor80}'
 		}, chartStyle, options.inputStyle));
 
 		css(input, extend({

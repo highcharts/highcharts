@@ -34,7 +34,7 @@ seriesType('gauge', 'line', {
 		/*= if (build.classic) { =*/
 		// Presentational
 		borderWidth: 1,
-		borderColor: 'silver'
+		borderColor: '${palette.neutralColor20}'
 		/*= } =*/
 	},
 	dial: {
@@ -44,8 +44,8 @@ seriesType('gauge', 'line', {
 		// baseLength: '70%' // of radius
 		// rearLength: '10%'
 		/*= if (build.classic) { =*/
-		// backgroundColor: 'black',
-		// borderColor: 'silver',
+		// backgroundColor: '${palette.neutralColor100}',
+		// borderColor: '${palette.neutralColor20}',
 		// borderWidth: 0,
 		/*= } =*/
 		
@@ -54,8 +54,8 @@ seriesType('gauge', 'line', {
 		//radius: 5,
 		/*= if (build.classic) { =*/
 		//borderWidth: 0
-		//borderColor: 'silver',
-		//backgroundColor: 'black'
+		//borderColor: '${palette.neutralColor20}',
+		//backgroundColor: '${palette.neutralColor100}'
 		/*= } =*/
 	},
 	tooltip: {
@@ -169,7 +169,7 @@ seriesType('gauge', 'line', {
 				point.graphic.attr({
 					stroke: dialOptions.borderColor || 'none',
 					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || 'black'
+					fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
 				});
 				/*= } =*/
 			}
@@ -194,8 +194,8 @@ seriesType('gauge', 'line', {
 			// Presentational attributes
 			series.pivot.attr({
 				'stroke-width': pivotOptions.borderWidth || 0,
-				stroke: pivotOptions.borderColor || 'silver',
-				fill: pivotOptions.backgroundColor || 'black'
+				stroke: pivotOptions.borderColor || '${palette.neutralColor20}',
+				fill: pivotOptions.backgroundColor || '${palette.neutralColor100}'
 			});
 			/*= } =*/
 		}

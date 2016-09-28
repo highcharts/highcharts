@@ -6,6 +6,7 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
+import './Color.js';
 import './Options.js';
 import './PlotLineOrBand.js';
 import './Tick.js';
@@ -14,6 +15,7 @@ import './Tick.js';
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
 		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
+		color = H.color,
 		correctFloat = H.correctFloat,
 		defaultOptions = H.defaultOptions,
 		defined = H.defined,
@@ -76,7 +78,7 @@ H.Axis.prototype = {
 			// step: null,
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisLabelColor}',
+				color: '${palette.neutralColor60}',
 				cursor: 'default',
 				fontSize: '11px'
 			},
@@ -127,7 +129,7 @@ H.Axis.prototype = {
 			//side: 'outside',
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisTitleColor}'
+				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
 			//x: 0,
@@ -136,17 +138,17 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
-		minorGridLineColor: '${palette.minorGridLineColor}',
+		minorGridLineColor: '${palette.neutralColor5}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
-		minorTickColor: '${palette.minorTickColor}',
+		minorTickColor: '${palette.neutralColor40}',
 		//minorTickWidth: 0,
-		lineColor: '${palette.axisLineColor}',
+		lineColor: '${palette.highlightColor20}',
 		lineWidth: 1,
-		gridLineColor: '${palette.gridLineColor}',
+		gridLineColor: '${palette.neutralColor10}',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
-		tickColor: '${palette.tickColor}'
+		tickColor: '${palette.highlightColor20}'
 		// tickWidth: 1
 		/*= } =*/		
 	},
@@ -183,8 +185,8 @@ H.Axis.prototype = {
 			style: {
 				fontSize: '11px',
 				fontWeight: 'bold',
-				color: '${palette.textHeavyColor}',
-				textShadow: '0 0 6px contrast, 0 0 3px contrast'
+				color: '${palette.neutralColor100}',
+				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast' // docs
 			}
 			/*= } =*/
 		},
@@ -2485,7 +2487,7 @@ H.Axis.prototype = {
 				/*= if (build.classic) { =*/
 				// Presentational attributes
 				graphic.attr({
-					'stroke': options.color || (categorized ? '${palette.crosshairCategoryColor}' : '${palette.crosshairThinColor}'),
+					'stroke': options.color || (categorized ? color('${palette.highlightColor20}').setOpacity(0.25).get() : '${palette.neutralColor20}'),
 					'stroke-width': pick(options.width, 1)
 				});
 				if (options.dashStyle) {
