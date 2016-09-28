@@ -751,8 +751,10 @@ import '../parts/Tooltip.js';
 		chart.keyboardNavigationModuleIndex = 0;
 
 		// Make chart reachable by tab
-		chart.renderTo.setAttribute('tabindex', '0');
-
+		if (!chart.renderTo.tabIndex) {
+			chart.renderTo.setAttribute('tabindex', '0');
+		}
+		
 		// Handle keyboard events
 		addEvent(chart.renderTo, 'keydown', keydownHandler);
 		addEvent(chart, 'destroy', function () {

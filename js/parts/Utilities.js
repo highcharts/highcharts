@@ -304,7 +304,7 @@ H.Fx.prototype = {
 			}
 		}
 
-		if (start.length && Highcharts.isNumber(shift)) {
+		if (start.length && H.isNumber(shift)) {
 
 			// The common target length for the start and end array, where both 
 			// arrays are padded in opposite ends
@@ -365,7 +365,7 @@ H.merge = function () {
 					value = original[key];
 
 					// Copy the contents of objects, but not arrays or DOM nodes
-					if (Highcharts.isObject(value, true) &&
+					if (H.isObject(value, true) &&
 							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 
@@ -1386,7 +1386,7 @@ if (win.jQuery) {
 
 			// Create the chart
 			if (args[0]) {
-				new Highcharts[ // eslint-disable-line no-new
+				new H[ // eslint-disable-line no-new
 					H.isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
 				](this[0], args[0], args[1]);
 				return this;

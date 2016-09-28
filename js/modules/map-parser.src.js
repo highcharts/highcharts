@@ -8,7 +8,7 @@
  * This file requires data.js.
  */
 
-/*global document, Highcharts, jQuery, $ */
+/*global document, jQuery, $ */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -193,7 +193,7 @@ import './data.src.js';
 		 * Scale the path to fit within a given box and round all numbers
 		 */
 		roundPaths: function (arr, scale) {
-			var mapProto = Highcharts.seriesTypes.map.prototype,
+			var mapProto = H.seriesTypes.map.prototype,
 				fakeSeries,
 				origSize,
 				transA;
@@ -202,7 +202,7 @@ import './data.src.js';
 				xAxis: {
 					//min: arr.minX,
 					//len: scale,
-					translate: Highcharts.Axis.prototype.translate,
+					translate: H.Axis.prototype.translate,
 					options: {},
 					minPixelPadding: 0
 					//transA: transA
@@ -210,7 +210,7 @@ import './data.src.js';
 				yAxis: {
 					//min: (arr.minY + scale) / transA,
 					//len: scale,
-					translate: Highcharts.Axis.prototype.translate,
+					translate: H.Axis.prototype.translate,
 					options: {},
 					minPixelPadding: 0
 					//transA: transA

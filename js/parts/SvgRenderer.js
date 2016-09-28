@@ -174,7 +174,7 @@ SVGElement.prototype = {
 				each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Highcharts.color(stop[1]);
+						colorObject = H.color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {
@@ -397,14 +397,13 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className, replace) {
-		var element = this.element,
-			currentClassName = attr(element, 'class') || '';
+		var currentClassName = this.attr('class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
 				className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
 			}
-			attr(element, 'class', className);
+			this.attr('class', className);
 		}
 		return this;
 	},

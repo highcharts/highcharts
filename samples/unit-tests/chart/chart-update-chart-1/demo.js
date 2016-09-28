@@ -142,8 +142,8 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.chartBackground.element.getAttribute('fill'),
-            '#FFFFFF',
+            chart.chartBackground.element.getAttribute('fill').toLowerCase(),
+            '#ffffff',
             'Chart background is updated'
         );
         assert.strictEqual(

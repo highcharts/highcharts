@@ -255,7 +255,7 @@ seriesType('map', 'scatter', {
 
 		// Collect mapData from chart options if not defined on series
 		if (!mapData && globalMapData) {
-			mapData = typeof globalMapData === 'string' ? Highcharts.maps[globalMapData] : globalMapData;
+			mapData = typeof globalMapData === 'string' ? H.maps[globalMapData] : globalMapData;
 		}
 
 		if (joinByNull) {
@@ -550,7 +550,12 @@ seriesType('map', 'scatter', {
 		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
 		// set.
 		if (!supportsVectorEffect) {
-			series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
+			series.group.element.setAttribute(
+				'stroke-width',
+				series.options[
+					(series.pointAttrToOptions && series.pointAttrToOptions['stroke-width']) || 'borderWidth'
+				] / (scaleX || 1)
+			);
 		}
 
 		this.drawMapDataLabels();

@@ -1451,7 +1451,7 @@ Chart.prototype = {
 		var chart = this;
 
 		// Note: win == win.top is required
-		if ((!svg && (win == win.top && win.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
+		if ((!svg && (win == win.top && doc.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
 			doc.attachEvent('onreadystatechange', function () {
 				doc.detachEvent('onreadystatechange', chart.firstRender);
 				if (doc.readyState === 'complete') {

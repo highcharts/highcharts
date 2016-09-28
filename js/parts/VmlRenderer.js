@@ -14,7 +14,6 @@ import './SvgRenderer.js';
 
 		createElement = H.createElement,
 		css = H.css,
-		defaultOptions = H.defaultOptions,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		discardElement = H.discardElement,
@@ -124,6 +123,11 @@ VMLElement = {
 		// fire an event for internal hooks
 		if (wrapper.onAdd) {
 			wrapper.onAdd();
+		}
+
+		// IE8 Standards can't set the class name before the element is appended
+		if (this.className) {
+			this.attr('class', this.className);
 		}
 
 		return wrapper;
@@ -408,8 +412,9 @@ VMLElement = {
 		}
 	},
 	classSetter: function (value) {
-		// IE8 Standards mode has problems retrieving the className unless set like this
-		this.element.className = value;
+		// IE8 Standards mode has problems retrieving the className unless set like this.
+		// IE8 Standards can't set the class name before the element is appended.
+		(this.added ? this.element : this).className = value;
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
@@ -531,8 +536,8 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
+H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -741,7 +746,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 			// Compute the stops
 			each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
-					colorObject = Highcharts.color(stop[1]);
+					colorObject = H.color(stop[1]);
 					stopColor = colorObject.get('rgb');
 					stopOpacity = colorObject.get('a');
 				} else {
@@ -796,7 +801,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 								sizex *= radialReference[2] / bBox.width;
 								sizey *= radialReference[2] / bBox.height;
 							}
-							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
+							fillAttr = 'src="' + H.getOptions().global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
@@ -827,7 +832,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
-			colorObject = Highcharts.color(color);
+			colorObject = H.color(color);
 
 			wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
 
@@ -1054,7 +1059,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, w, h, wrapper) {
 
-			if (wrapper) {
+			if (wrapper && defined(wrapper.r)) {
 				w = h = 2 * wrapper.r;
 			}
 

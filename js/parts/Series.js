@@ -1445,7 +1445,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			} else if (graphPath.length) { // #1487
 				
 				series[graphKey] = series.chart.renderer.path(graphPath)
-					.addClass('highcharts-graph ' + (prop[1] || ''))
+					.addClass(prop[1])
 					.attr({ zIndex: 1 }) // #1069
 					.add(series.group);
 

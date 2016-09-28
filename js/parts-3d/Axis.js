@@ -75,12 +75,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			if (fbottom.color) {
-				this.bottomFrame.attr({
-					fill: fbottom.color,
-					stroke: fbottom.color
-				});
-			}
+			this.bottomFrame.attr({
+				fill: fbottom.color || 'none',
+				stroke: fbottom.color || 'none'
+			});
 			/*= } =*/
 		} else {
 			this.bottomFrame.animate(bottomShape);
@@ -103,12 +101,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			if (fback.color) {
-				this.backFrame.attr({
-					fill: fback.color,
-					stroke: fback.color
-				});
-			}
+			this.backFrame.attr({
+				fill: fback.color || 'none',
+				stroke: fback.color || 'none'
+			});
 			/*= } =*/
 		} else {
 			this.backFrame.animate(backShape);
@@ -129,12 +125,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			}).add();
 
 			/*= if (build.classic) { =*/
-			if (fside.color) {
-				this.sideFrame.attr({
-					fill: fside.color,
-					stroke: fside.color
-				});
-			}
+			this.sideFrame.attr({
+				fill: fside.color || 'none',
+				stroke: fside.color || 'none'
+			});
 			/*= } =*/
 
 		} else {
@@ -249,7 +243,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	return pos;
 });
 
-Highcharts.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
+H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	var is3d = this.chart.is3d(),
 		pos,
 		axisTitleMargin;
