@@ -648,7 +648,9 @@ extend(Point.prototype, {
 					});
 				}
 				/*= if (build.classic) { =*/
-				stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				if (stateMarkerGraphic) {
+					stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				}
 				/*= } =*/
 			}
 
