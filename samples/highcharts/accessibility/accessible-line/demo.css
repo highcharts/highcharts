@@ -33,11 +33,11 @@ th {
 }
 
 th[scope="col"] {
-	background-color: #ffffcc;
+	background-color: #ffffee;
 }
 
 th[scope="row"] {
-	background-color: #d5f2fd;
+	background-color: #f0fcff;
 	text-align:left;
 }
 

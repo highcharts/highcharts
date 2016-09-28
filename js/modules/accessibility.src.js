@@ -138,12 +138,13 @@ import '../parts/Tooltip.js';
 
 	// Return string with information about series
 	H.Series.prototype.buildSeriesInfoString = function () {
-		var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap.default;
+		var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap.default,
+			description = this.description || this.options.description;
 		return (this.name ? this.name + ', ' : '') +
 			(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
 			(this.chart.types.length === 1 ? ' with ' : '. ' + typeInfo[0] + ' with ') +
 			(this.points.length + ' ' + (this.points.length === 1 ? typeInfo[1] : typeInfo[2])) +
-			(this.description ? '. ' + this.description : '') +
+			(description ? '. ' + description : '') +
 			(this.chart.yAxis.length > 1 && this.yAxis ? '. Y axis, ' + this.yAxis.getDescription() : '') +
 			(this.chart.xAxis.length > 1 && this.xAxis ? '. X axis, ' + this.xAxis.getDescription() : '');
 	};
@@ -181,7 +182,7 @@ import '../parts/Tooltip.js';
 				(this.value !== undefined ? this.value : this.y);
 		}
 
-		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? this.description + '. ' : '');
+		return (this.index + 1) + '. ' + infoString + '.' + (this.description ? ' ' + this.description : '');
 	};
 
 	// Get descriptive label for axis
@@ -782,8 +783,8 @@ import '../parts/Tooltip.js';
 				overflow: 'hidden'
 			},
 			chartTypes = chart.types || [],
-			// Build axis info - but not for pies. Consider not adding for certain other types as well (funnel, pyramid?)
-			axesDesc = chartTypes.length === 1 && chartTypes[0] === 'pie' && {} || chart.getAxesDescription(),
+			// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
+			axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),
 			chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
 
 		hiddenSection.setAttribute('role', 'region');

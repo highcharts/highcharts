@@ -3,7 +3,7 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: 'pie',
-            description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents.'
+            description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'
         },
 
         title: {
@@ -17,7 +17,9 @@ $(function () {
         plotOptions: {
             series: {
                 dataLabels: {
-                    connectorColor: Highcharts.getOptions().colors[0]
+                    enabled: true,
+                    connectorColor: Highcharts.getOptions().colors[0],
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
                 },
                 point: {
                     events: {
@@ -25,27 +27,20 @@ $(function () {
                             window.location.href = this.website;
                         }
                     }
-                }
-            },
-            pie: {
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-                }
+                },
+                cursor: 'pointer'
             }
         },
 
         series: [{
             name: 'Percentage usage',
             borderColor: Highcharts.getOptions().colors[0],
-            description: "Test series desc",
             data: [{
                 name: 'JAWS',
                 y: 30.2,
                 website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
                 color: 'url(#highcharts-default-pattern-0)',
-                description: 'Test description'
+                description: 'This is the most used desktop screen reader'
             }, {
                 name: 'ZoomText',
                 y: 22.2,
