@@ -25,6 +25,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			optionsLabel = options.label,
 			label = plotLine.label,
 			width = options.width,
+			formatter = options.formatter,
 			to = options.to,
 			from = options.from,
 			isBand = defined(from) && defined(to),
@@ -51,6 +52,11 @@ Highcharts.PlotLineOrBand.prototype = {
 		// plot line
 		if (width) {
 			path = axis.getPlotLinePath(value, width);
+
+			if (typeof formatter === 'function') {
+				path = formatter.call(options, path);
+			}
+
 			attribs = {
 				stroke: color,
 				'stroke-width': width
