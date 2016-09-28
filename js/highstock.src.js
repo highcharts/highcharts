@@ -23942,7 +23942,6 @@
             // Select this button
             if (buttons[i]) {
                 buttons[i].setState(2);
-                rangeSelector.lastSelected = i;
             }
 
             // Update the chart
@@ -24112,7 +24111,7 @@
                 // The new zoom area happens to match the range for a button - mark it selected.
                 // This happens when scrolling across an ordinal gap. It can be seen in the intraday
                 // demos when selecting 1h and scroll across the night gap.
-                if (isSelectedForExport || (isSameRange && i !== selected) && i === rangeSelector.lastSelected) {
+                if (isSelectedForExport || (isSameRange && i !== selected)) {
                     rangeSelector.setSelected(i);
                     buttons[i].setState(2);
 
