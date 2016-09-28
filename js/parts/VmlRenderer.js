@@ -531,8 +531,8 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
+H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
