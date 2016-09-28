@@ -767,7 +767,7 @@
 						type: type
 					};
 					if (type === 'category') {
-						chartOptions.xAxis.nameToX = false;
+						chartOptions.xAxis.uniqueNames = false;
 					}
 				}
 				

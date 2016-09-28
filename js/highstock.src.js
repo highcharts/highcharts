@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v4.2.7-modified (2016-09-21)
+ * @license Highstock JS v4.2.7-modified (2016-09-28)
  *
  * (c) 2009-2016 Torstein Honsi
  *
@@ -7808,7 +7808,7 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                nameX = this.options.nameToX === false ?
+                nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
             }
@@ -20472,7 +20472,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v4.2.7-modified (2016-09-21)
+     * Highstock JS v4.2.7-modified (2016-09-28)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

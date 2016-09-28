@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v4.2.7-modified (2016-09-21)
+ * @license Highmaps JS v4.2.7-modified (2016-09-28)
  *
  * (c) 2011-2016 Torstein Honsi
  *
@@ -7534,7 +7534,7 @@
             point.series.requireSorting = false;
 
             if (!defined(nameX)) {
-                nameX = this.options.nameToX === false ?
+                nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
                     point.series.autoIncrement() : 
                     inArray(point.name, names);
             }
