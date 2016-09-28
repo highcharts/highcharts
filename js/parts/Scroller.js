@@ -850,7 +850,7 @@ Navigator.prototype = {
 
 		// Iterate through series and add the ones that should be shown in navigator
 		each(chart.series || [], function (series, i) {
-			if (series.options.showInNavigator || (i === baseSeriesOptions || series.options.id === baseSeriesOptions) && // docs: showInNavigator
+			if (series.options.showInNavigator || (i === baseSeriesOptions || series.options.id === baseSeriesOptions) &&
 					series.options.showInNavigator !== false) {
 				baseSeries.push(series);
 			}
@@ -889,7 +889,7 @@ Navigator.prototype = {
 				navSeriesMixin.name = 'Navigator ' + (i + 1);
 
 				baseOptions = base.options || {};
-				baseNavigatorOptions = baseOptions.navigatorOptions || {}; // docs: navigatorOptions
+				baseNavigatorOptions = baseOptions.navigatorOptions || {};
 				mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, chartNavigatorOptions, baseNavigatorOptions);
 
 				// Merge data separately. Do a slice to avoid mutating the navigator options from base series (#4923).
