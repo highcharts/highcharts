@@ -21,14 +21,14 @@ class Settings {
 	// to one or more specific changes. May be a call to setOptions or wrapping Highcharts
 	// functions.
 	static $overrides = "
-		Highcharts.setOptions({
+		/*Highcharts.setOptions({
 			chart: {
 				marginTop: 30
 			},
 			subtitle: {
 				y: 30
 			}
-		});
+		});*/
 	";
 }
 
