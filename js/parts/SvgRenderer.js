@@ -397,14 +397,13 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className, replace) {
-		var element = this.element,
-			currentClassName = attr(element, 'class') || '';
+		var currentClassName = this.attr('class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
 				className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
 			}
-			attr(element, 'class', className);
+			this.attr('class', className);
 		}
 		return this;
 	},

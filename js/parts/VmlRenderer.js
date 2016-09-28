@@ -126,6 +126,11 @@ VMLElement = {
 			wrapper.onAdd();
 		}
 
+		// IE8 Standards can't set the class name before the element is appended
+		if (this.className) {
+			this.attr('class', this.className + ' added');
+		}
+
 		return wrapper;
 	},
 
@@ -408,8 +413,9 @@ VMLElement = {
 		}
 	},
 	classSetter: function (value) {
-		// IE8 Standards mode has problems retrieving the className unless set like this
-		this.element.className = value;
+		// IE8 Standards mode has problems retrieving the className unless set like this.
+		// IE8 Standards can't set the class name before the element is appended.
+		(this.added ? this.element : this).className = value;
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
