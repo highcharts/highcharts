@@ -613,7 +613,7 @@ H.Pointer.prototype = {
 
 		var chart = this.chart;
 
-		if (!defined(H.hoverChartIndex) || !charts[H.hoverChartIndex] || charts[H.hoverChartIndex].mouseIsDown) {
+		if (!defined(H.hoverChartIndex) || !charts[H.hoverChartIndex] || !charts[H.hoverChartIndex].mouseIsDown) {
 			H.hoverChartIndex = chart.index;
 		}
 
