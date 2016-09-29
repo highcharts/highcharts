@@ -857,11 +857,6 @@ Navigator.prototype = {
 				baseSeries.push(series);
 			}
 		});
-
-		// When run after render, this.xAxis already exists
-		if (this.xAxis) {
-			this.addBaseSeries();
-		}
 	},
 
 	addBaseSeries: function () {
