@@ -695,7 +695,7 @@ Chart.prototype = {
 			lineHeight: 'normal', // #427
 			zIndex: 0, // #1072
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-		});
+		}, optionsChart.style);
 		/*= } =*/
 		chart.container = container = createElement('div', {
 				id: containerId
