@@ -5,6 +5,10 @@ $(function () {
         // Create the chart
         var chart = Highcharts.stockChart('container', {
 
+            chart: {
+                height: 400
+            },
+
             title: {
                 text: 'Highstock Responsive Chart'
             },
@@ -33,10 +37,13 @@ $(function () {
                         maxWidth: 500
                     },
                     chartOptions: {
-                        navigator: {
-                            enabled: false
+                        chart: {
+                            height: 300
                         },
-                        scrollbar: {
+                        subtitle: {
+                            text: null
+                        },
+                        navigator: {
                             enabled: false
                         }
                     }
@@ -51,6 +58,10 @@ $(function () {
 
         $('#large').click(function () {
             chart.setSize(800);
+        });
+
+        $('#auto').click(function () {
+            chart.setSize(null);
         });
     });
 
