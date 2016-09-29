@@ -723,7 +723,7 @@ RangeSelector.prototype = {
 			// Hide if overlapping - inputEnabled is null or undefined
 			if (!defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
-				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+				inputGroup[inputGroup.alignAttr.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
 			}
 
 			// Set or reset the input values
