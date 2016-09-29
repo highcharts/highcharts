@@ -22,6 +22,7 @@ import './Series.js';
 		extend = H.extend,
 		fireEvent = H.fireEvent,
 		inArray = H.inArray,
+		isNumber = H.isNumber,
 		isObject = H.isObject,
 		merge = H.merge,
 		pick = H.pick,
@@ -203,7 +204,9 @@ extend(Chart.prototype, {
 			},
 			optionsChart = options.chart,
 			updateAllAxes,
-			updateAllSeries;
+			updateAllSeries,
+			newWidth,
+			newHeight;
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
@@ -306,8 +309,11 @@ extend(Chart.prototype, {
 		}
 
 		// Update size. Redraw is forced.
-		if (optionsChart && ('width' in optionsChart || 'height' in optionsChart)) {
-			this.setSize(optionsChart.width, optionsChart.height);
+		newWidth = optionsChart && optionsChart.width;
+		newHeight = optionsChart && optionsChart.height;
+		if ((isNumber(newWidth) && newWidth !== this.chartWidth) ||
+				(isNumber(newHeight) && newHeight !== this.chartHeight)) {
+			this.setSize(newWidth, newHeight);
 		} else if (pick(redraw, true)) {
 			this.redraw();
 		}
