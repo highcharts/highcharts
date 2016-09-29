@@ -21,12 +21,12 @@ order to run concatenated scripts from the local repo. Best practice is also to 
 2. Add them to the httpd.conf config file for Apache:
 ```xml
 <VirtualHost *>
-DocumentRoot "/Users/{...}/highcharts.com/js"
+DocumentRoot "/Users/{...}/highcharts.com/code"
 ServerName code.highcharts.local
 </VirtualHost>
 ```
 ```xml
-<Directory "/Users/{...}/highcharts.com/js">
+<Directory "/Users/{...}/highcharts.com/code">
 	AllowOverride All
 </Directory>
 ```
@@ -54,7 +54,7 @@ before the comparison runs. This enables things like popping up the tooltip befo
 Auto-visual tests are less performant than unit tests, and unit tests should be favoured for regression tests.
 
 2. **Manual tests**. Some tests, like those dealing with animation or complicated user input, are still manual. They are marked with
-`[m]` in front of the name. We are gradually replacing these with automatic tests.
+a hand next to the name. We are gradually replacing these with automatic tests.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer and in jsFiddle. They load QUnit. Unit tests are recognized
 by a jigsaw puzzle piece next to the name. QUnit is loaded in the `demo.details` files and the required HTML must be present in `demo.html`.
