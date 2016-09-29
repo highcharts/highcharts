@@ -329,6 +329,7 @@ import '../parts/Tooltip.js';
 	H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		var series = this.series,
 			curPoint = this.highlightedPoint,
+			curPointIndex = curPoint && curPoint.index || 0,
 			newSeries,
 			newPoint;
 
@@ -342,13 +343,19 @@ import '../parts/Tooltip.js';
 			return series[0].points[0].highlight();
 		}
 
+		// Find index of current point in series.points array. Necessary for dataGrouping (and maybe zoom?)
+		if (curPoint.series.points[curPointIndex] !== curPoint) {
+			for (var i = 0; i < curPoint.series.points.length; ++i) {
+				if (curPoint.series.points[i] === curPoint) {
+					curPointIndex = i;
+					break;
+				}
+			}
+		}
+
+		// Try to grab next/prev point
 		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-		newPoint = next ?
-			// Try to grab next point
-			curPoint.series.points[curPoint.index + 1] || newSeries && newSeries.points[0] :
-			// Try to grab previous point
-			curPoint.series.points[curPoint.index - 1] ||
-				newSeries && newSeries.points[newSeries.points.length - 1];
+		newPoint = curPoint.series.points[curPointIndex + (next ? 1 : -1)] || newSeries && newSeries.points[next ? 0 : newSeries.points.length - 1];
 
 		// If there is no adjacent point, we return false
 		if (newPoint === undefined) {
@@ -726,22 +733,15 @@ import '../parts/Tooltip.js';
 			], {
 				// Only run if we have range selector with input boxes
 				validate: function () {
-					return chart.rangeSelector && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
+					var inputVisible = chart.rangeSelector && chart.rangeSelector.inputGroup && chart.rangeSelector.inputGroup.element.getAttribute('visibility') !== 'hidden';
+					return chart.options.rangeSelector.inputEnabled !== false && inputVisible && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
 				},
 
 				// Handle tabs different from left/right (because we don't want to catch left/right in a text area)
 				transformTabs: false,
 
-				// Make boxes focusable by script, and accessible
+				// Highlight first/last input box
 				init: function (direction) {
-					each(['minInput', 'maxInput'], function (key, i) {
-						if (chart.rangeSelector[key]) {
-							chart.rangeSelector[key].setAttribute('tabindex', '-1');
-							chart.rangeSelector[key].setAttribute('role', 'textbox');
-							chart.rangeSelector[key].setAttribute('aria-label', 'Select ' + (i ? 'end' : 'start') + ' date.');
-						}
-					});
-					// Highlight first/last input box
 					chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
 					chart.rangeSelector[chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'].focus();
 				}
@@ -866,6 +866,18 @@ import '../parts/Tooltip.js';
 			exportGroupElement.setAttribute('role', 'region');
 			exportGroupElement.setAttribute('aria-label', 'Chart export menu');
 			parent.appendChild(exportGroupElement);
+		}
+
+		// Set screen reader properties on input boxes for range selector. We need to do this regardless of whether or not these are visible, as they are 
+		// by default part of the page's tabindex unless we set them to -1.
+		if (chart.rangeSelector) {
+			each(['minInput', 'maxInput'], function (key, i) {
+				if (chart.rangeSelector[key]) {
+					chart.rangeSelector[key].setAttribute('tabindex', '-1');
+					chart.rangeSelector[key].setAttribute('role', 'textbox');
+					chart.rangeSelector[key].setAttribute('aria-label', 'Select ' + (i ? 'end' : 'start') + ' date.');
+				}
+			});
 		}
 
 		// Hide text elements from screen readers
