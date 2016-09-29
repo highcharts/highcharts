@@ -207,7 +207,7 @@ const scripts = () => {
 
 const styles = () => {
     gulp.src('./css/*.scss')
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
 };
 
