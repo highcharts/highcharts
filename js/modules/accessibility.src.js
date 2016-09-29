@@ -421,6 +421,23 @@ import '../parts/Tooltip.js';
 		return false;
 	};
 
+	// Highlight legend item by index
+	H.Chart.prototype.highlightLegendItem = function (ix) {
+		var items = this.legend.allItems;
+		if (items[this.highlightedLegendItemIx]) {
+			fireEvent(items[this.highlightedLegendItemIx].legendGroup.element, 'mouseout');
+		}
+		this.highlightedLegendItemIx = ix;
+		if (items[ix]) {
+			if (items[ix].legendGroup.element.focus) {
+				items[ix].legendGroup.element.focus();
+			}
+			fireEvent(items[ix].legendGroup.element, 'mouseover');
+			return true;
+		}
+		return false;
+	};
+
 	// Hide export menu
 	H.Chart.prototype.hideExportMenu = function () {
 		var exportList = this.exportDivElements;
@@ -734,7 +751,7 @@ import '../parts/Tooltip.js';
 				// Only run if we have range selector with input boxes
 				validate: function () {
 					var inputVisible = chart.rangeSelector && chart.rangeSelector.inputGroup && chart.rangeSelector.inputGroup.element.getAttribute('visibility') !== 'hidden';
-					return chart.options.rangeSelector.inputEnabled !== false && inputVisible && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
+					return inputVisible && chart.options.rangeSelector.inputEnabled !== false && chart.rangeSelector.minInput && chart.rangeSelector.maxInput;
 				},
 
 				// Handle tabs different from left/right (because we don't want to catch left/right in a text area)
@@ -744,6 +761,38 @@ import '../parts/Tooltip.js';
 				init: function (direction) {
 					chart.highlightedInputRangeIx = direction > 0 ? 0 : 1;
 					chart.rangeSelector[chart.highlightedInputRangeIx ? 'maxInput' : 'minInput'].focus();
+				}
+			}),
+
+			// Legend navigation
+			navModuleFactory([
+				// Left/Right/Up/Down
+				[[37, 39, 38, 40], function (keyCode) {
+					var direction = (keyCode === 37 || keyCode === 38) ? -1 : 1;
+					// Try to highlight next/prev legend item
+					if (!chart.highlightLegendItem(chart.highlightedLegendItemIx + direction)) {
+						return this.move(direction);
+					}
+				}],
+				// Enter/Spacebar
+				[[13, 32], function () {
+					fakeClickEvent(chart.legend.allItems[chart.highlightedLegendItemIx].legendItem.element.parentNode);
+				}]
+			], {
+				// Only run this module if we have at least one legend - wait for it - item.
+				validate: function () {
+					return chart.legend && chart.legend.allItems && !chart.colorAxis;
+				},
+
+				// Make elements focusable and accessible
+				init: function (direction) {
+					each(chart.legend.allItems, function (item) {
+						item.legendGroup.element.setAttribute('tabindex', '-1');
+						item.legendGroup.element.setAttribute('role', 'button');
+						item.legendGroup.element.setAttribute('aria-label', 'Toggle visibility of series ' + item.name);
+					});
+					// Focus first/last item
+					chart.highlightLegendItem(direction > 0 ? 0 : chart.legend.allItems.length - 1);
 				}
 			})
 		];
