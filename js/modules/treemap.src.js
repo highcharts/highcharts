@@ -1,34 +1,27 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
- *
  * (c) 2014 Highsoft AS
  * Authors: Jon Arild Nygard / Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
-
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	var seriesTypes = H.seriesTypes,
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+import '../parts/Color.js';
+	var seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
 		extend = H.extend,
-		extendClass = H.extendClass,
-		defaultOptions = H.getOptions(),
-		plotOptions = defaultOptions.plotOptions,
-		noop = function () {
-		},
+		noop = H.noop,
 		each = H.each,
 		grep = H.grep,
 		pick = H.pick,
 		Series = H.Series,
 		stableSort = H.stableSort,
-		Color = H.Color,
+		color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
 			context = context || this;
@@ -57,12 +50,10 @@
 			}
 		};
 
-	// Define default options
-	plotOptions.treemap = merge(plotOptions.scatter, {
+	// The Treemap series type
+	seriesType('treemap', 'scatter', {
 		showInLegend: false,
 		marker: false,
-		borderColor: '#E0E0E0',
-		borderWidth: 1,
 		dataLabels: {
 			enabled: true,
 			defer: false,
@@ -80,44 +71,38 @@
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
 		levelIsConstant: true,
-		opacity: 0.15,
-		states: {
-			hover: {
-				borderColor: '#A0A0A0',
-				brightness: seriesTypes.heatmap ? 0 : 0.1,
-				opacity: 0.75,
-				shadow: false
-			}
-		},
 		drillUpButton: {
 			position: { 
 				align: 'right',
 				x: -10,
 				y: 10
 			}
+		},
+		/*= if (build.classic) { =*/
+		// Presentational options
+		borderColor: '${palette.neutralColor10}',
+		borderWidth: 1,
+		opacity: 0.15,
+		states: {
+			hover: {
+				borderColor: '${palette.neutralColor40}',
+				brightness: seriesTypes.heatmap ? 0 : 0.1,
+				opacity: 0.75,
+				shadow: false
+			}
 		}
-	});
+		/*= } =*/
 	
-	// Stolen from heatmap	
-	var colorSeriesMixin = {
-		// mapping between SVG attributes and the corresponding options
-		pointAttrToOptions: {},
+	// Prototype members
+	}, {
 		pointArrayMap: ['value'],
 		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
 		optionalAxis: 'colorAxis',
 		getSymbol: noop,
 		parallelArrays: ['x', 'y', 'value', 'colorValue'],
 		colorKey: 'colorValue', // Point color option key
-		translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors
-	};
-
-	// The Treemap series type
-	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
-		type: 'treemap',
+		translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		pointClass: extendClass(H.Point, {
-			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
-		}),
 		/**
 		 * Creates an object map from parent id to childrens index.
 		 * @param {Array} data List of points set in options.
@@ -320,13 +305,15 @@
 					x1,
 					x2,
 					y1,
-					y2;
+					y2,
+					crispCorr = 0.5; // Assume 1px borderWidth for simplicity
+
 				// Points which is ignored, have no values.
 				if (values && node.visible) {
-					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
-					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
-					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
-					y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
+					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1)) - crispCorr;
+					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1)) - crispCorr;
+					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1)) - crispCorr;
+					y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1)) - crispCorr;
 					// Set point values
 					point.shapeType = 'rect';
 					point.shapeArgs = {
@@ -344,7 +331,7 @@
 				}
 			});
 		},
-		setColorRecursive: function (node, color) {
+		setColorRecursive: function (node, color, colorIndex) {
 			var series = this,
 				point,
 				level;
@@ -353,13 +340,16 @@
 				level = series.levelMap[node.levelDynamic];
 				// Select either point color, level color or inherited color.
 				color = pick(point && point.options.color, level && level.color, color);
+				colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
 				if (point) {
 					point.color = color;
+					point.colorIndex = colorIndex;
 				}
+				
 				// Do it all again with the children	
 				if (node.children.length) {
 					each(node.children, function (child) {
-						series.setColorRecursive(child, color);
+						series.setColorRecursive(child, color, colorIndex);
 					});
 				}
 			}
@@ -492,7 +482,7 @@
 				direction = parent.direction,
 				i = 0,
 				end = children.length - 1,
-				group = new this.algorithmGroup(parent.height, parent.width, direction, plot);
+				group = new this.algorithmGroup(parent.height, parent.width, direction, plot); // eslint-disable-line new-cap
 			// Loop through and calculate all areas
 			each(children, function (child) {
 				pTot = (parent.width * parent.height) * (child.val / parent.val);
@@ -591,7 +581,7 @@
 			if (this.colorAxis) {
 				this.translateColors();
 			} else if (!this.options.colorByPoint) {
-				this.setColorRecursive(this.tree, undefined);
+				this.setColorRecursive(this.tree);
 			}
 
 			// Update axis extremes according to the root node.
@@ -648,8 +638,18 @@
 			});
 			Series.prototype.drawDataLabels.call(this);
 		},
-		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 
+		/**
+		 * Over the alignment method by setting z index
+		 */
+		alignDataLabel: function (point) {
+			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+			if (point.dataLabel) {
+				point.dataLabel.attr({ zIndex: point.node.zIndex + 1 });
+			}
+		},
+
+		/*= if (build.classic) { =*/
 		/**
 		 * Get presentational attributes
 		 */
@@ -658,6 +658,7 @@
 				options = this.options,
 				attr,
 				stateOptions = (state && options.states[state]) || {},
+				className = point.getClassName(),
 				opacity;
 
 			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
@@ -666,28 +667,30 @@
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
 				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-				'fill': point.color || this.color,
-				'zIndex': state === 'hover' ? 1 : 0
+				'fill': point.color || this.color
 			};
 
-			if (point.node.level <= this.nodeMap[this.rootNode].level) {
-				// Hide levels above the current view
+			// Hide levels above the current view
+			if (className.indexOf('highcharts-above-level') !== -1) {
 				attr.fill = 'none';
 				attr['stroke-width'] = 0;
-			} else if (!point.node.isLeaf) {
-				// If not a leaf, either set opacity or remove fill
-				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
-					attr.fill = 'none';
-				} else {
-					opacity = pick(stateOptions.opacity, options.opacity);
-					attr.fill = Color(attr.fill).setOpacity(opacity).get();
-				}
+
+			// Nodes with children that accept interaction
+			} else if (className.indexOf('highcharts-internal-node-interactive') !== -1) {
+				opacity = pick(stateOptions.opacity, options.opacity);
+				attr.fill = color(attr.fill).setOpacity(opacity).get();
+				attr.cursor = 'pointer';
+			// Hide nodes that have children
+			} else if (className.indexOf('highcharts-internal-node') !== -1) {
+				attr.fill = 'none';
+
 			} else if (state) {
 				// Brighten and hoist the hover nodes
-				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
+				attr.fill = color(attr.fill).brighten(stateOptions.brightness).get();
 			}
 			return attr;
 		},
+		/*= } =*/
 
 		/**
 		* Extending ColumnSeries drawPoints
@@ -699,9 +702,7 @@
 				});
 
 			each(points, function (point) {
-				var groupKey = 'levelGroup-' + point.node.levelDynamic,
-					pointAttribs,
-					crispCorr;
+				var groupKey = 'levelGroup-' + point.node.levelDynamic;
 				if (!series[groupKey]) {
 					series[groupKey] = series.chart.renderer.g(groupKey)
 						.attr({
@@ -710,20 +711,7 @@
 						.add(series.group);
 				}
 				point.group = series[groupKey];
-				// Preliminary code in prepraration for HC5 that uses pointAttribs for all series
-				pointAttribs = series.pointAttribs(point);
-				point.pointAttr = {
-					'': pointAttribs,
-					'hover': series.pointAttribs(point, 'hover'),
-					'select': {}
-				};
-
-				// Crisp correction
-				if (point.shapeArgs) {
-					crispCorr = parseInt(pointAttribs['stroke-width'], 10) % 2 / 2;
-					point.shapeArgs.x -= crispCorr;
-					point.shapeArgs.y -= crispCorr;
-				}
+				
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
@@ -731,12 +719,8 @@
 			// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
 			if (series.options.allowDrillToNode) {
 				each(points, function (point) {
-					var cursor,
-						drillId;
 					if (point.graphic) {
-						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
-						cursor = drillId ? 'pointer' : 'default';
-						point.graphic.css({ cursor: cursor });
+						point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
 					}
 				});
 			}
@@ -891,5 +875,31 @@
 			H.extend(this.yAxis.options, treeAxis);
 			H.extend(this.xAxis.options, treeAxis);
 		}
-	}));
-}));
+
+	// Point class
+	}, {
+		getClassName: function () {
+			var className = H.Point.prototype.getClassName.call(this),
+				series = this.series,
+				options = series.options;
+
+			// Above the current level
+			if (this.node.level <= series.nodeMap[series.rootNode].level) {
+				className += ' highcharts-above-level';
+			
+			} else if (!this.node.isLeaf && !pick(options.interactByLeaf, !options.allowDrillToNode)) {
+				className += ' highcharts-internal-node-interactive';
+
+			} else if (!this.node.isLeaf) {
+				className += ' highcharts-internal-node';
+			}
+			return className;
+		},
+		setState: function (state) {
+			H.Point.prototype.setState.call(this, state);
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		},
+		setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
+	});

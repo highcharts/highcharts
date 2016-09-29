@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Plugin for displaying a message when there is no data visible in chart.
  *
  * (c) 2010-2016 Highsoft AS
@@ -7,14 +6,11 @@
  *
  * License: www.highcharts.com/license
  */
-
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Series.js';
+import '../parts/Options.js';
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -34,16 +30,18 @@
 			y: 0,			
 			align: 'center',
 			verticalAlign: 'middle'
-		},
-		attr: {						
-		},
-		style: {	
-			fontWeight: 'bold',		
-			fontSize: '12px',
-			color: '#60606a'		
 		}
 		// useHTML: false
 	};
+
+	/*= if (build.classic) { =*/
+	// Presentational
+	defaultOptions.noData.style = {
+		fontWeight: 'bold',
+		fontSize: '12px',
+		color: '${palette.neutralColor60}'
+	};
+	/*= } =*/
 
 	/**
 	 * Define hasData functions for series. These return true if there are data points on this series within the plot area
@@ -85,10 +83,16 @@
 					noDataOptions.useHTML, 
 					null, 
 					'no-data'
-				)
+				);
+
+			/*= if (build.classic) { =*/
+			chart.noDataLabel
 				.attr(noDataOptions.attr)
-				.css(noDataOptions.style)
-				.add();
+				.css(noDataOptions.style);
+			/*= } =*/
+
+			chart.noDataLabel.add();
+
 			chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
 		}
 	};
@@ -139,5 +143,3 @@
 		H.addEvent(chart, 'load', handleNoData);
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
-
-}));

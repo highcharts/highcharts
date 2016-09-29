@@ -1,10 +1,12 @@
 /**
+ * License: www.highcharts.com/license
+ * Author: Torstein Honsi
+ * 
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
  *
  * Compatible with HTML5 canvas compatible browsers (not IE < 9).
  *
- * Author: Torstein Honsi
  *
  * 
  * Development plan
@@ -45,16 +47,12 @@
  *   use optimizations.
  */
 
-/* eslint indent: [2, 4] */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (H) {
-
-    'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Color.js';
+import '../parts/Series.js';
+import '../parts/Options.js';
 
     var win = H.win,
         doc = win.document,
@@ -376,7 +374,6 @@
                 chart.seriesGroup
             );
 
-            series.getAttribs();
             series.markerGroup = series.group;
             addEvent(series, 'destroy', function () {
                 series.markerGroup = null;
@@ -390,7 +387,7 @@
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: 'rgba(255,255,255,0.75)',
+                        backgroundColor: H.color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -578,7 +575,7 @@
         var point = boostPoint;
 
         if (boostPoint && !(boostPoint instanceof this.pointClass)) {
-            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]); // eslint-disable-line new-cap
             point.category = point.x;
 
             point.dist = boostPoint.dist;
@@ -618,4 +615,3 @@
             proceed.apply(this, [].slice.call(arguments, 1))
         );
     });
-}));

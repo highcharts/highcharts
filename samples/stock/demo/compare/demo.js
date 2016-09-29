@@ -30,13 +30,15 @@ $(function () {
 
             plotOptions: {
                 series: {
-                    compare: 'percent'
+                    compare: 'percent',
+                    showInNavigator: true
                 }
             },
 
             tooltip: {
                 pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-                valueDecimals: 2
+                valueDecimals: 2,
+                split: true
             },
 
             series: seriesOptions

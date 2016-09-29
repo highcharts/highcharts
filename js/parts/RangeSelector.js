@@ -1,3 +1,34 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Axis.js';
+import './Chart.js';
+	var addEvent = H.addEvent,
+		Axis = H.Axis,
+		Chart = H.Chart,
+		css = H.css,
+		createElement = H.createElement,
+		dateFormat = H.dateFormat,
+		defaultOptions = H.defaultOptions,
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		discardElement = H.discardElement,
+		each = H.each,
+		extend = H.extend,
+		fireEvent = H.fireEvent,
+		HCDate = H.Date,
+		isNumber = H.isNumber,
+		merge = H.merge,
+		pick = H.pick,
+		pInt = H.pInt,
+		removeEvent = H.removeEvent,
+		splat = H.splat,
+		wrap = H.wrap;
+		
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
@@ -8,30 +39,11 @@ extend(defaultOptions, {
 		// buttons: {Object}
 		// buttonSpacing: 0,
 		buttonTheme: {
+			'stroke-width': 0,
 			width: 28,
 			height: 18,
-			fill: '#f7f7f7',
 			padding: 2,
-			r: 0,
-			'stroke-width': 0,
-			style: {
-				color: '#444',
-				cursor: 'pointer',
-				fontWeight: 'normal'
-			},
-			zIndex: 7, // #484, #852
-			states: {
-				hover: {
-					fill: '#e7e7e7'
-				},
-				select: {
-					fill: '#e7f0f9',
-					style: {
-						color: 'black',
-						fontWeight: 'bold'
-					}
-				}
-			}
+			zIndex: 7 // #484, #852
 		},
 		height: 35, // reserved space for buttons and input
 		inputPosition: {
@@ -40,11 +52,13 @@ extend(defaultOptions, {
 		// inputDateFormat: '%b %e, %Y',
 		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
+		// selected: undefined,
+		/*= if (build.classic) { =*/
 		// inputStyle: {},
 		labelStyle: {
-			color: '#666'
+			color: '${palette.neutralColor60}'
 		}
-		// selected: undefined
+		/*= } =*/
 	}
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
@@ -81,7 +95,7 @@ RangeSelector.prototype = {
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
+			newMax = baseAxis && Math.round(Math.min(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			type = rangeOptions.type,
 			baseXAxisOptions,
@@ -128,9 +142,9 @@ RangeSelector.prototype = {
 
 		// Fixed times like minutes, hours, days
 		} else if (range) {
-			newMin = mathMax(newMax - range, dataMin);
-			newMax = mathMin(newMin + range, dataMax);
-
+			newMin = Math.max(newMax - range, dataMin);
+			newMax = Math.min(newMin + range, dataMax);
+		
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender
@@ -141,21 +155,21 @@ RangeSelector.prototype = {
 				// is delayed and rerun in the beforeRender event (below). When the series
 				// are initialized, but before the chart is rendered, we have access to the xData
 				// array (#942).
-				if (dataMax === UNDEFINED) {
+				if (dataMax === undefined) {
 					dataMin = Number.MAX_VALUE;
 					dataMax = Number.MIN_VALUE;
 					each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
-						dataMin = mathMin(xData[0], dataMin);
-						dataMax = mathMax(xData[xData.length - 1], dataMax);
+						dataMin = Math.min(xData[0], dataMin);
+						dataMax = Math.max(xData[xData.length - 1], dataMax);
 					});
 					redraw = false;
 				}
-				now = new Date(dataMax);
-				year = now.getFullYear();
-				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
+				now = new HCDate(dataMax);
+				year = now[HCDate.hcGetFullYear]();
+				newMin = rangeMin = Math.max(dataMin || 0, HCDate.UTC(year, 0, 1)); // eslint-disable-line new-cap
 				now = now.getTime();
-				newMax = mathMin(dataMax || now, now);
+				newMax = Math.min(dataMax || now, now);
 
 			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
@@ -249,7 +263,6 @@ RangeSelector.prototype = {
 	 * Initialize the range selector
 	 */
 	init: function (chart) {
-
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
@@ -279,7 +292,7 @@ RangeSelector.prototype = {
 		each(buttonOptions, rangeSelector.computeButtonRange);
 
 		// zoomed range based on a pre-selected button index
-		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
+		if (selectedOption !== undefined && buttonOptions[selectedOption]) {
 			this.clickButton(selectedOption, false);
 		}
 
@@ -313,7 +326,7 @@ RangeSelector.prototype = {
 			allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
 			buttons = rangeSelector.buttons;
 
-		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
+		if (updating && chart.fixedRange !== Math.round(baseAxis.max - baseAxis.min)) {
 			if (buttons[selected]) {
 				buttons[selected].setState(0);
 			}
@@ -321,7 +334,7 @@ RangeSelector.prototype = {
 		}
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			var actualRange = mathRound(baseAxis.max - baseAxis.min),
+			var actualRange = Math.round(baseAxis.max - baseAxis.min),
 				range = rangeOptions._range,
 				type = rangeOptions.type,
 				count = rangeOptions.count || 1,
@@ -412,10 +425,10 @@ RangeSelector.prototype = {
 			dateBox = this[name + 'DateBox'];
 
 		css(this[name + 'Input'], {
-			left: (inputGroup.translateX + dateBox.x) + PX,
-			top: inputGroup.translateY + PX,
-			width: (dateBox.width - 2) + PX,
-			height: (dateBox.height - 2) + PX,
+			left: (inputGroup.translateX + dateBox.x) + 'px',
+			top: inputGroup.translateY + 'px',
+			width: (dateBox.width - 2) + 'px',
+			height: (dateBox.height - 2) + 'px',
 			border: '2px solid silver'
 		});
 	},
@@ -436,7 +449,7 @@ RangeSelector.prototype = {
 	drawInput: function (name) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			chartStyle = chart.renderer.style,
+			chartStyle = chart.renderer.style || {},
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
 			lang = defaultOptions.lang,
@@ -473,25 +486,25 @@ RangeSelector.prototype = {
 					// actual data extreme (#2438).
 					if (isMin) {
 						if (value > rangeSelector.maxInput.HCTime) {
-							value = UNDEFINED;
+							value = undefined;
 						} else if (value < dataMin) {
 							value = dataMin;
 						}
 					} else {
 						if (value < rangeSelector.minInput.HCTime) {
-							value = UNDEFINED;
+							value = undefined;
 						} else if (value > dataMax) {
 							value = dataMax;
 						}
 					}
 
 					// Set the extremes
-					if (value !== UNDEFINED) {
+					if (value !== undefined) {
 						chart.xAxis[0].setExtremes(
 							isMin ? value : xAxis.min,
 							isMin ? xAxis.max : value,
-							UNDEFINED,
-							UNDEFINED,
+							undefined,
+							undefined,
 							{ trigger: 'rangeSelectorInput' }
 						);
 					}
@@ -501,27 +514,25 @@ RangeSelector.prototype = {
 
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
+			.addClass('highcharts-range-label')
 			.attr({
 				padding: 2
 			})
-			.css(merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
 		inputGroup.offset += label.width + 5;
 
 		// Create an SVG label that shows updated date ranges and and records click events that
 		// bring in the HTML input.
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
+			.addClass('highcharts-range-input')
 			.attr({
 				padding: 2,
 				width: options.inputBoxWidth || 90,
 				height: options.inputBoxHeight || 17,
-				stroke: options.inputBoxBorderColor || 'silver',
-				'stroke-width': 1
+				stroke: options.inputBoxBorderColor || '${palette.neutralColor20}',
+				'stroke-width': 1,
+				'text-align': 'center'
 			})
-			.css(merge({
-				textAlign: 'center',
-				color: '#444'
-			}, chartStyle, options.inputStyle))
 			.on('click', function () {
 				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
@@ -534,10 +545,22 @@ RangeSelector.prototype = {
 		// when focused.
 		this[name + 'Input'] = input = createElement('input', {
 			name: name,
-			className: PREFIX + 'range-selector',
+			className: 'highcharts-range-selector',
 			type: 'text'
-		}, extend({
-			position: ABSOLUTE,
+		}, {
+			top: chart.plotTop + 'px' // prevent jump on focus in Firefox
+		}, div);
+
+		/*= if (build.classic) { =*/
+		// Styles
+		label.css(merge(chartStyle, options.labelStyle));
+
+		dateBox.css(merge({
+			color: '${palette.neutralColor80}'
+		}, chartStyle, options.inputStyle));
+
+		css(input, extend({
+			position: 'absolute',
 			border: 0,
 			width: '1px', // Chrome needs a pixel to see it
 			height: '1px',
@@ -545,9 +568,9 @@ RangeSelector.prototype = {
 			textAlign: 'center',
 			fontSize: chartStyle.fontSize,
 			fontFamily: chartStyle.fontFamily,
-			left: '-9em', // #4798
-			top: chart.plotTop + PX // prevent jump on focus in Firefox
-		}, options.inputStyle), div);
+			left: '-9em' // #4798
+		}, options.inputStyle));
+		/*= } =*/
 
 		// Blow up the input box
 		input.onfocus = function () {
@@ -615,6 +638,9 @@ RangeSelector.prototype = {
 			buttonBBox,
 			rendered = rangeSelector.rendered;
 
+		if (options.enabled === false) {
+			return;
+		}
 
 		// create the elements
 		if (!rendered) {
@@ -642,8 +668,8 @@ RangeSelector.prototype = {
 						states && states.select,
 						states && states.disabled
 					)
-					.css({
-						textAlign: 'center'
+					.attr({
+						'text-align': 'center'
 					})
 					.add(buttonGroup);
 
@@ -709,6 +735,16 @@ RangeSelector.prototype = {
 	},
 
 	/**
+	 * Update the range selector with new options
+	 */
+	update: function (options) {
+		var chart = this.chart;
+		merge(true, chart.options.rangeSelector, options);
+		this.destroy();
+		this.init(chart);
+	},
+
+	/**
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
@@ -741,7 +777,9 @@ RangeSelector.prototype = {
 					discardElement(this[key]);
 				}
 			}
-			this[key] = null;
+			if (this[key] !== RangeSelector.prototype[key]) {
+				this[key] = null;
+			}
 		}
 	}
 };
@@ -806,7 +844,7 @@ Axis.prototype.minFromRange = function () {
 		if (range === undefined) { // #4501
 			range = getTrueRange(min, rangeOptions.count);
 		}
-		this.newMax = mathMin(min + range, this.dataMax);
+		this.newMax = Math.min(min + range, this.dataMax);
 	}
 	if (!isNumber(max)) {
 		min = undefined;
@@ -829,7 +867,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 });
 
 
-Highcharts.RangeSelector = RangeSelector;
+H.RangeSelector = RangeSelector;
 
 /* ****************************************************************************
  * End Range Selector code													*

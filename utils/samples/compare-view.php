@@ -7,15 +7,16 @@
 	$i = $_GET['i'];
 	$rightcommit = @$_GET['rightcommit'];
 	$commit = @$_GET['commit']; // Used from Phantom test
+	$compareJSON = compareJSON();
 
-	if (file_exists('temp/compare.json')) {
-		$compare = json_decode(file_get_contents('temp/compare.json'));
+	if (file_exists($compareJSON)) {
+		$compare = json_decode(file_get_contents($compareJSON));
 		$comment = @$compare->$path->comment;
 	}
 
 	$nightly = json_decode(@file_get_contents('nightly/nightly.json'));
 	if ($nightly) {
-		$nightly = $nightly->results->$path;
+		$nightly = @$nightly->results->$path;
 	}
 
 	$details = @file_get_contents("../../samples/$path/demo.details");

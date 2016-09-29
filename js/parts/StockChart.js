@@ -1,7 +1,51 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Chart.js';
+import './Axis.js';
+import './Point.js';
+import './Pointer.js';
+import './Series.js';
+import './SvgRenderer.js';
+import './VmlRenderer.js';
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		Axis = H.Axis,
+		Chart = H.Chart,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		format = H.format,
+		inArray = H.inArray,
+		isNumber = H.isNumber,
+		isString = H.isString,
+		map = H.map,
+		merge = H.merge,
+		pick = H.pick,
+		Point = H.Point,
+		Pointer = H.Pointer,
+		Renderer = H.Renderer,
+		Series = H.Series,
+		splat = H.splat,
+		stop = H.stop,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer,
+		wrap = H.wrap,
+
+
+		seriesProto = Series.prototype,
+		seriesInit = seriesProto.init, 
+		seriesProcessData = seriesProto.processData,
+		pointTooltipFormatter = Point.prototype.tooltipFormatter;
+/**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
+H.StockChart = H.stockChart = function (a, b, c) {
 	var hasRenderToArg = isString(a) || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],
 		seriesOptions = options.series, // to increase performance, don't merge the data
@@ -183,26 +227,36 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		uniqueAxes,
 		transVal;
 
+	/**
+	 * Return the other axis based on either the axis option or on related series.
+	 */
+	function getAxis(coll) {
+		var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+			opt = axis.options[otherColl];
+
+		// Other axis indexed by number
+		if (isNumber(opt)) {
+			return [chart[otherColl][opt]];
+		}
+
+		// Other axis indexed by id (like navigator)
+		if (isString(opt)) {
+			return [chart.get(opt)];
+		}
+		
+		// Auto detect based on existing series
+		return map(series, function (s) {
+			return s[otherColl];
+		});
+	}
+
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ?
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] :
-			map(series, function (s) {
-				return s.yAxis;
-			})
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] :
-			map(series, function (s) {
-				return s.xAxis;
-			})
-		)
-	);
+	axes = getAxis(axis.coll);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -236,11 +290,11 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = mathRound(transVal + axis.transB);
+				x1 = x2 = Math.round(transVal + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
-						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+						x1 = x2 = Math.min(Math.max(axisLeft, x1), axisLeft + axis.width);
 					} else {
 						skip = true;
 					}
@@ -255,11 +309,11 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = mathRound(axisTop + axis.height - transVal);
+				y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
-						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+						y1 = y2 = Math.min(Math.max(axisTop, y1), axis.top + axis.height);
 					} else {
 						skip = true;
 					}
@@ -296,27 +350,29 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-	// points format: [M, 0, 0, L, 100, 0]
+	// points format: ['M', 0, 0, 'L', 100, 0]		
 	// normalize to a crisp line
 	var i;
 	for (i = 0; i < points.length; i = i + 6) {
 		if (points[i + 1] === points[i + 4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+			points[i + 1] = points[i + 4] = Math.round(points[i + 1]) - (width % 2 / 2);
 		}
 		if (points[i + 2] === points[i + 5]) {
-			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+			points[i + 2] = points[i + 5] = Math.round(points[i + 2]) + (width % 2 / 2);
 		}
 	}
 	return points;
 };
-if (Renderer === Highcharts.VMLRenderer) {
+/*= if (build.classic) { =*/
+if (Renderer === VMLRenderer) {
 	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
-
+/*= } =*/
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	
 	proceed.call(this, i);
 
 	if (this.crossLabel) {
@@ -326,6 +382,7 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 
 // Wrapper to draw the label
 wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	
 	// Draw the crosshair
 	proceed.call(this, e, point);
 
@@ -363,22 +420,29 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
-		.attr({
-			align: options.align || align,
-			zIndex: 12,
-			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 8),
-			stroke: options.borderColor || '',
-			'stroke-width': options.borderWidth || 0,
-			r: pick(options.borderRadius, 3)
-		})
-		.css(extend({
-			color: 'white',
-			fontWeight: 'normal',
-			fontSize: '11px',
-			textAlign: 'center'
-		}, options.style))
-		.add();
+			.addClass('highcharts-crosshair-label' + (this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
+			.attr({
+				align: options.align || align,
+				padding: pick(options.padding, 8),
+				r: pick(options.borderRadius, 3),
+				zIndex: 2
+			})
+			.add(this.labelGroup);
+
+		/*= if (build.classic) { =*/
+		// Presentational
+		crossLabel.attr({
+				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
+				stroke: options.borderColor || '',
+				'stroke-width': options.borderWidth || 0
+			})
+			.css(extend({
+				color: '${palette.backgroundColor}',
+				fontWeight: 'normal',
+				fontSize: '11px',
+				textAlign: 'center'
+			}, options.style));
+		/*= } =*/
 	}
 
 	if (horiz) {
@@ -451,11 +515,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 /* ****************************************************************************
  * Start value compare logic                                                  *
  *****************************************************************************/
-
-var seriesInit = seriesProto.init,
-	seriesProcessData = seriesProto.processData,
-	pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
+	
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
@@ -478,8 +538,8 @@ seriesProto.setCompare = function (compare) {
 	// Set or unset the modifyValue method
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
-
-		if (value !== UNDEFINED) { // #2601
+		
+		if (value !== undefined) { // #2601
 
 			// get the modified value
 			value = compare === 'value' ?
@@ -590,9 +650,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
-	);
-
+		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+	); 
+	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 

@@ -1,11 +1,39 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/CenteredSeriesMixin.js';
+import '../parts/Tick.js';
+import './Pane.js';
+var Axis = H.Axis,
+	CenteredSeriesMixin = H.CenteredSeriesMixin,
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
+	Pane = H.Pane,
+	pick = H.pick,
+	pInt = H.pInt,
+	Tick = H.Tick,
+	splat = H.splat,
+	wrap = H.wrap,
+	
 
-var axisProto = Axis.prototype,
+	hiddenAxisMixin, // @todo Extract this to a new file
+	radialAxisMixin, // @todo Extract this to a new file
+	axisProto = Axis.prototype,
 	tickProto = Tick.prototype;
 
 /**
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
  */
-var hiddenAxisMixin = {
+hiddenAxisMixin = {
 	getOffset: noop,
 	redraw: function () {
 		this.isDirty = false; // prevent setting Y axis dirty
@@ -21,9 +49,8 @@ var hiddenAxisMixin = {
 /**
  * Augmented methods for the value axis
  */
-var radialAxisMixin = {
-	isRadial: true,
-
+radialAxisMixin = {
+	
 	/**
 	 * The default options extend defaultYAxisOptions
 	 */
@@ -200,7 +227,7 @@ var radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+			this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 
 			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
 			if (this.isCircular) {
@@ -410,17 +437,19 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		}
 
 	} else if (polar) {
-		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
 		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
-
+	
 	}
 
 	// Disable certain features on angular and polar axes
 	if (angular || polar) {
+		this.isRadial = true;
 		chart.inverted = false;
 		chartOptions.chart.zoomType = null;
+	} else {
+		this.isRadial = false;
 	}
 
 	// Run prototype.init

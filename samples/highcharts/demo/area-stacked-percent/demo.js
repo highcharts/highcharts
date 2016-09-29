@@ -23,7 +23,7 @@ $(function () {
         },
         tooltip: {
             pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f} millions)<br/>',
-            shared: true
+            split: true
         },
         plotOptions: {
             area: {

@@ -1,7 +1,20 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+	var defined = H.defined,
+		each = H.each,
+		noop = H.noop,
+		seriesTypes = H.seriesTypes;
+
+/**
  * Mixin for maps and heatmaps
  */
-var colorPointMixin = {
+H.colorPointMixin = {
 	/**
 	 * Set the visibility of a single point
 	 */
@@ -17,14 +30,8 @@ var colorPointMixin = {
 		});
 	}
 };
-var colorSeriesMixin = {
 
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
-	},
+H.colorSeriesMixin = {
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
@@ -33,6 +40,10 @@ var colorSeriesMixin = {
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 
+	/*= if (build.classic) { =*/
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
+	/*= } =*/
+	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
 	 */
@@ -53,5 +64,16 @@ var colorSeriesMixin = {
 				point.color = color;
 			}
 		});
+	},
+
+	/**
+	 * Get the color attibutes to apply on the graphic
+	 */
+	colorAttribs: function (point) {
+		var ret = {};
+		if (defined(point.color)) {
+			ret[this.colorProp || 'fill'] = point.color;
+		}
+		return ret;
 	}
 };

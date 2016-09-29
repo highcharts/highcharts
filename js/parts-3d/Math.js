@@ -1,12 +1,16 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+/**
  *	Mathematical Functionility
  */
-var PI = Math.PI,
-	deg2rad = (PI / 180), // degrees to radians
-	sin = Math.sin,
-	cos = Math.cos,
-	round = Math.round;
-
+var deg2rad = H.deg2rad,
+	pick = H.pick;
 /**
  * Apply 3-D rotation
  * Euler Angles (XYZ): cosA = cos(Alfa|Roll), cosB = cos(Beta|Pitch), cosG = cos(Gamma|Yaw) 
@@ -51,7 +55,7 @@ function perspective3D(coordinate, origin, distance) {
  * Returns:
  *		- an array of transformed points
  */
-var perspective = Highcharts.perspective = function (points, chart, insidePlotArea) {
+H.perspective = function (points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
 		inverted = insidePlotArea ? chart.inverted : false,
 		origin = {
@@ -64,10 +68,10 @@ var perspective = Highcharts.perspective = function (points, chart, insidePlotAr
 		beta = deg2rad * options3d.beta * (inverted ? -1 : 1),
 		alpha = deg2rad * options3d.alpha * (inverted ? -1 : 1),
 		angles = {
-			cosA: cos(alpha),
-			cosB: cos(-beta),
-			sinA: sin(alpha),
-			sinB: sin(-beta)
+			cosA: Math.cos(alpha),
+			cosB: Math.cos(-beta),
+			sinA: Math.sin(alpha),
+			sinB: Math.sin(-beta)
 		};
 
 	if (!insidePlotArea) {
@@ -76,7 +80,7 @@ var perspective = Highcharts.perspective = function (points, chart, insidePlotAr
 	}
 
 	// Transform each point
-	return Highcharts.map(points, function (point) {
+	return H.map(points, function (point) {
 		var rotated = rotate3D(
 				(inverted ? point.y : point.x) - origin.x,
 				(inverted ? point.x : point.y) - origin.y,

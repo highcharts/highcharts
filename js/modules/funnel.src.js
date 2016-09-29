@@ -1,5 +1,4 @@
 /**
- * @license 
  * Highcharts funnel module
  *
  * (c) 2010-2016 Torstein Honsi
@@ -7,26 +6,20 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent:0 */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (Highcharts) {
-	
 'use strict';
+import Highcharts from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
 
 // create shortcuts
-var defaultOptions = Highcharts.getOptions(),
-	defaultPlotOptions = defaultOptions.plotOptions,
+var seriesType = Highcharts.seriesType,
 	seriesTypes = Highcharts.seriesTypes,
-	merge = Highcharts.merge,
-	noop = function () {},
+	noop = Highcharts.noop,
 	each = Highcharts.each;
 
-// set default options
-defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
+
+seriesType('funnel', 'pie', {
 	animation: false,
 	center: ['50%', '50%'],
 	width: '90%',
@@ -34,25 +27,27 @@ defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
 	height: '100%',
 	neckHeight: '25%',
 	reversed: false,
+	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
+
+	/*= if (build.classic) { =*/
+	// Presentational
 	dataLabels: {
 		//position: 'right',
-		connectorWidth: 1,
-		connectorColor: '#606060'
+		connectorWidth: 1
+		//connectorColor: null
 	},
-	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 	states: {
 		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
+			color: '${palette.neutralColor20}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
-	}	
-});
+	}
+	/*= } =*/
+},
 
-
-seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
-	
-	type: 'funnel',
+// Properties
+{
 	animate: noop,
 
 	/**
@@ -226,30 +221,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	 * @param {Object} color The color of the point
 	 * @param {Number} brightness The brightness relative to the color
 	 */
-	drawPoints: function () {
-		var series = this,
-			chart = series.chart,
-			renderer = chart.renderer,
-			pointAttr,
-			shapeArgs,
-			graphic;
-
-		each(series.data, function (point) {
-			graphic = point.graphic;
-			shapeArgs = point.shapeArgs;
-
-			pointAttr = point.pointAttr[point.selected ? 'select' : ''];
-
-			if (!graphic) { // Create the shapes				
-				point.graphic = renderer.path(shapeArgs)
-					.attr(pointAttr)
-					.add(series.group);
-					
-			} else { // Update the shapes
-				graphic.attr(pointAttr).animate(shapeArgs);
-			}
-		});
-	},
+	drawPoints: seriesTypes.column.prototype.drawPoints,
 
 	/**
 	 * Funnel items don't have angles (#2289)
@@ -308,13 +280,8 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
  * Pyramid series type.
  * A pyramid series is a special type of funnel, without neck and reversed by default.
  */
-defaultOptions.plotOptions.pyramid = Highcharts.merge(defaultOptions.plotOptions.funnel, {        
+seriesType('pyramid', 'funnel', {
 	neckWidth: '0%',
 	neckHeight: '0%',
 	reversed: true
 });
-Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.funnel, {
-	type: 'pyramid'
-});
-
-}));

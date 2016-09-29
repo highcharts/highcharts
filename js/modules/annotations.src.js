@@ -1,20 +1,24 @@
+/**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
 
+	var defined = H.defined,
+		isNumber = H.isNumber,
+		inArray = H.inArray,
+		isArray = H.isArray,
+		merge = H.merge,
+		Chart = H.Chart,
+		extend = H.extend,
+		each = H.each;
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
-
-	var UNDEFINED,
-		ALIGN_FACTOR,
-		ALLOWED_SHAPES,
-		Chart = Highcharts.Chart,
-		extend = Highcharts.extend,
-		each = Highcharts.each,
-		isNumber = Highcharts.isNumber;
+	var ALIGN_FACTOR,
+		ALLOWED_SHAPES;
 
 	ALLOWED_SHAPES = ['path', 'rect', 'circle'];
 
@@ -26,11 +30,6 @@
 		bottom: 1,
 		right: 1
 	};
-
-
-	// Highcharts helper methods
-	var inArray = Highcharts.inArray,
-		merge = Highcharts.merge;
 
 	function defaultOptions(shapeType) {
 		var shapeOptions,
@@ -47,7 +46,7 @@
 			},
 			shape: {
 				params: {
-					stroke: '#000000',
+					stroke: '${palette.neutralColor100}',
 					fill: 'transparent',
 					strokeWidth: 2
 				}
@@ -68,15 +67,6 @@
 		}
 
 		return options;
-	}
-
-	function isArray(obj) {
-		var str = Object.prototype.toString.call(obj);
-		return str === '[object Array]' || str === '[object Array Iterator]';
-	}
-
-	function defined(obj) {
-		return obj !== UNDEFINED && obj !== null;
 	}
 
 	function translatePath(d, xAxis, yAxis, xOffset, yOffset) {
@@ -176,8 +166,8 @@
 				y;
 
 			if (linkedTo) {
-				linkType = (linkedTo instanceof Highcharts.Point) ? 'point' :
-							(linkedTo instanceof Highcharts.Series) ? 'series' : null;
+				linkType = (linkedTo instanceof H.Point) ? 'point' :
+							(linkedTo instanceof H.Series) ? 'series' : null;
 
 				if (linkType === 'point') {
 					options.xValue = linkedTo.x;
@@ -273,7 +263,7 @@
 			x = x - width * anchorX;
 			y = y - height * anchorY;
 
-			if (chart.animation && defined(group.translateX) && defined(group.translateY)) {
+			if (defined(group.translateX) && defined(group.translateY)) {
 				group.animate({
 					translateX: x,
 					translateY: y
@@ -397,8 +387,7 @@
 		}
 
 		// update annotations after chart redraw
-		Highcharts.addEvent(chart, 'redraw', function () {
+		H.addEvent(chart, 'redraw', function () {
 			chart.annotations.redraw();
 		});
 	});
-}));

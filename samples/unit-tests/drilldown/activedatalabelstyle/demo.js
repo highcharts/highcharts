@@ -1,7 +1,7 @@
 QUnit.test('activeDataLabelStyle', function (assert) {
-    var getDataLabelFill = function (point) {
+    function getDataLabelFill(point) {
         return point.dataLabel.element.childNodes[0].style.fill;
-    };
+    }
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column'
@@ -9,7 +9,6 @@ QUnit.test('activeDataLabelStyle', function (assert) {
             plotOptions: {
                 series: {
                     dataLabels: {
-                        color: '#FF0000',
                         enabled: true,
                         inside: true
                     }
@@ -23,6 +22,9 @@ QUnit.test('activeDataLabelStyle', function (assert) {
                 }]
             }],
             drilldown: {
+                activeDataLabelStyle: {
+                    color: 'contrast'
+                },
                 series: [{
                     id: 'fruits',
                     data: [2]
@@ -31,45 +33,6 @@ QUnit.test('activeDataLabelStyle', function (assert) {
         }),
         series = chart.series[0],
         point = series.points[0];
-    assert.ok(
-        getDataLabelFill(point) === 'rgb(255, 0, 0)' || getDataLabelFill(point) === '#ff0000',
-        'activeDataLabelStyle.color: undefined is default. Picks the color from dataLabels.'
-    );
-
-    // @notice Would have been nice with a chart.update.
-    // @notice activeDataLabelStyle should probably be possible to override on a series or point level.
-    chart.destroy();
-    chart = Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        plotOptions: {
-            series: {
-                dataLabels: {
-                    enabled: true,
-                    inside: true
-                }
-            }
-        },
-        series: [{
-            data: [{
-                drilldown: 'fruits',
-                y: 20,
-                color: '#000000'
-            }]
-        }],
-        drilldown: {
-            activeDataLabelStyle: {
-                color: 'contrast'
-            },
-            series: [{
-                id: 'fruits',
-                data: [2]
-            }]
-        }
-    });
-    series = chart.series[0];
-    point = series.points[0];
 
     assert.ok(
         getDataLabelFill(point) === 'rgb(255, 255, 255)' || getDataLabelFill(point) === '#ffffff',

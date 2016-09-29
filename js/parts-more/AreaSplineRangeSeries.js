@@ -1,14 +1,17 @@
 /**
- * The AreaSplineRangeSeries class
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-
-defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
-
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+	var seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes;
 /**
- * AreaSplineRangeSeries object
+ * The areasplinerange series type
  */
-seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
-	type: 'areasplinerange',
+seriesType('areasplinerange', 'arearange', null, {
 	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });
-

@@ -1,5 +1,21 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+	var charts = H.charts,
+		each = H.each,
+		extend = H.extend,
+		map = H.map,
+		noop = H.noop,
+		pick = H.pick,
+		Pointer = H.Pointer;
+
 /* Support for touch devices */
-extend(Highcharts.Pointer.prototype, {
+extend(Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -38,8 +54,8 @@ extend(Highcharts.Pointer.prototype, {
 			transformScale,
 			scaleKey,
 			setScale = function () {
-				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);
+				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
 
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
@@ -105,7 +121,7 @@ extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') &&
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
@@ -140,12 +156,12 @@ extend(Highcharts.Pointer.prototype, {
 						minPixelPadding = axis.minPixelPadding,
 						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
 						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
-						absMin = mathMin(min, max),
-						absMax = mathMax(min, max);
+						absMin = Math.min(min, max),
+						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
-					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
+					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
 			self.res = true; // reset on next move
@@ -187,7 +203,7 @@ extend(Highcharts.Pointer.prototype, {
 			hasMoved,
 			pinchDown;
 
-		hoverChartIndex = chart.index;
+		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -228,6 +244,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onContainerTouchStart: function (e) {
+		this.zoomOption();
 		this.touch(e, true);
 	},
 
@@ -236,8 +253,8 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	}
 

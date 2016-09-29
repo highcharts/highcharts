@@ -1,3 +1,27 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Axis.js';
+import './Utilities.js';
+import './Chart.js';
+import './Series.js';
+	var addEvent = H.addEvent,
+		Axis = H.Axis,
+		Chart = H.Chart,
+		css = H.css,
+		dateFormat = H.dateFormat,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		noop = H.noop,
+		Series = H.Series,
+		timeUnits = H.timeUnits,
+		wrap = H.wrap;
+
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
@@ -43,7 +67,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
-	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === UNDEFINED) {
+	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === undefined) {
 		return proceed.call(this, normalizedInterval, min, max, startOfWeek);
 	}
 
@@ -141,7 +165,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 			translatedArr[i] = lastTranslated = translated;
 		}
 		distances.sort();
-		medianDistance = distances[mathFloor(distances.length / 2)];
+		medianDistance = distances[Math.floor(distances.length / 2)];
 		if (medianDistance < tickPixelIntervalOption * 0.6) {
 			medianDistance = null;
 		}
@@ -261,17 +285,17 @@ extend(Axis.prototype, {
 				// Register
 				axis.ordinalPositions = ordinalPositions;
 
-				// This relies on the ordinalPositions being set. Use mathMax and mathMin to prevent
+				// This relies on the ordinalPositions being set. Use Math.max and Math.min to prevent
 				// padding on either sides of the data.
-				minIndex = axis.val2lin(mathMax(min, ordinalPositions[0]), true);
-				maxIndex = mathMax(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
+				minIndex = axis.val2lin(Math.max(min, ordinalPositions[0]), true);
+				maxIndex = Math.max(axis.val2lin(Math.min(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
 				// Set the slope and offset of the values compared to the indices in the ordinal positions
 				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
 				axis.ordinalOffset = min - (minIndex * slope);
 
 			} else {
-				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
+				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = undefined;
 			}
 		}
 		axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
@@ -357,7 +381,7 @@ extend(Axis.prototype, {
 				} else if (val > i) { // out of range, panning to the right
 					val = ordinalPositions[i];
 				} else { // split it up
-					i = mathFloor(val);
+					i = Math.floor(val);
 					distance = val - i; // the decimal
 				}
 
@@ -376,7 +400,7 @@ extend(Axis.prototype, {
 
 			// If the index is within the range of the ordinal positions, return the associated
 			// or interpolated value. If not, just return the value
-			ret = distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+			return distance !== undefined && ordinalPositions[i] !== undefined ?
 				ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
 				val;
 		}
@@ -497,11 +521,11 @@ extend(Axis.prototype, {
 			distances.sort(function (a, b) {
 				return a - b;
 			});
-			median = distances[mathFloor(len / 2)];
+			median = distances[Math.floor(len / 2)];
 
 			// Compensate for series that don't extend through the entire axis extent. #1675.
-			xMin = mathMax(xMin, processedXData[0]);
-			xMax = mathMin(xMax, processedXData[len - 1]);
+			xMin = Math.max(xMin, processedXData[0]);
+			xMax = Math.min(xMax, processedXData[len - 1]);
 
 			this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
 		}
@@ -565,7 +589,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 		if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
 			runBase = true;
 
-		} else if (mathAbs(movedUnits) > 1) {
+		} else if (Math.abs(movedUnits) > 1) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
@@ -607,7 +631,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 			);
 
 			// Apply it if it is within the available data range
-			if (trimmedRange.min >= mathMin(extremes.dataMin, min) && trimmedRange.max <= mathMax(dataMax, max)) {
+			if (trimmedRange.min >= Math.min(extremes.dataMin, min) && trimmedRange.max <= Math.max(dataMax, max)) {
 				xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 			}
 

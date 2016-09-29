@@ -3,10 +3,8 @@
 class Settings {
 	// Path to the Git Executable
 	//static $git = "C:\Git\bin\git"; // Typical Windows path
-	static $git = '/usr/bin/git'; // Typical Mac path
+	static $git = "/usr/bin/git";
 
-	// The correct or expected (old) version. Set it to commit id to test against a certain commit. To test against
-	// a certain version, use the version's commit id.
 	static $leftPath = "http://code.highcharts.com";
 	// The candidate for release, new version. Inserts top domain from utils.highcharts.{whatever}/samples. 
 	// This means that if you are running your tests from utils.highcharts.local/samples, the code
@@ -18,6 +16,20 @@ class Settings {
 	
 	static $exportServer = "http://export.highcharts.com";
 	static $jQueryVersion = "1.8.3";
+
+	// Use this when default settings have changed, to rule out all difference related 
+	// to one or more specific changes. May be a call to setOptions or wrapping Highcharts
+	// functions.
+	static $overrides = "
+		/*Highcharts.setOptions({
+			chart: {
+				marginTop: 30
+			},
+			subtitle: {
+				y: 30
+			}
+		});*/
+	";
 }
 
 ?>

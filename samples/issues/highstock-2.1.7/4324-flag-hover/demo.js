@@ -20,7 +20,6 @@ $(function () {
             })
             .add();
 
-
         assert.strictEqual(
             image.box.element.getAttribute('fill'),
             null,

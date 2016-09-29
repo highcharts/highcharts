@@ -1,8 +1,36 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Series.js';
+import './Tooltip.js';
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		Axis = H.Axis,
+		defaultPlotOptions = H.defaultPlotOptions,
+		defined = H.defined,
+		each = H.each,
+		error = H.error,
+		extend = H.extend,
+		format = H.format,
+		isNumber = H.isNumber,
+		merge = H.merge,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		Tooltip = H.Tooltip,
+		wrap = H.wrap;
+	
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
-var DATA_GROUPING = 'dataGrouping',
-	seriesProto = Series.prototype,
+
+var seriesProto = Series.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
@@ -57,7 +85,7 @@ var DATA_GROUPING = 'dataGrouping',
 	},
 
 	// units are defined in a separate array to allow complete overriding in case of a user option
-	defaultDataGroupingUnits = [
+	defaultDataGroupingUnits = H.defaultDataGroupingUnits = [
 		[
 			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -125,16 +153,16 @@ var DATA_GROUPING = 'dataGrouping',
 			return ret;
 		},
 		open: function (arr) {
-			return arr.length ? arr[0] : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
 		},
 		high: function (arr) {
-			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
-			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
 		},
 		// ohlc and range are special cases where a multidimensional array is input and an array is output
 		ohlc: function (open, high, low, close) {
@@ -203,7 +231,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			groupedY = approximationFn.apply(series, values);
 
 			// push the grouped data
-			if (groupedY !== UNDEFINED) {
+			if (groupedY !== undefined) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
 				groupMap.push(series.dataGroupInfo);
@@ -269,7 +297,7 @@ seriesProto.processData = function () {
 	var series = this,
 		chart = series.chart,
 		options = series.options,
-		dataGroupingOptions = options[DATA_GROUPING],
+		dataGroupingOptions = options.dataGrouping,
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData,
 		skip;
@@ -400,6 +428,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, label
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
+		dateFormat = H.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
@@ -524,7 +553,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
-			groupPixelWidth = mathMax(groupPixelWidth, dgOptions.groupPixelWidth);
+			groupPixelWidth = Math.max(groupPixelWidth, dgOptions.groupPixelWidth);
 
 		}
 	}

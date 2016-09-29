@@ -1,2 +1,5 @@
-rules:
-    indent: [2, "tab"]
+{
+	"rules": {
+	    "indent": 0 /*@todo: Before release HC5, do a pure whitespace commit*/
+	}
+}

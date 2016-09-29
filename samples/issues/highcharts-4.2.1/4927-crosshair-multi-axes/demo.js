@@ -26,16 +26,13 @@ $(function () {
             }]
         });
 
-        chart.renderTo.style.position = 'absolute';
-        chart.renderTo.style.top = 0;
-        chart.renderTo.style.left = 0;
-
+        var offset = Highcharts.offset(chart.renderTo);
 
         chart.series[0].points[0].onMouseOver();
         chart.pointer.onContainerMouseMove({
             type: 'mousemove',
-            pageX: 300,
-            pageY: 300,
+            pageX: offset.left + 300,
+            pageY: offset.top + 300,
             target: chart.container
         });
 
@@ -51,7 +48,6 @@ $(function () {
             'Secondary axis has cross'
         );
 
-        chart.renderTo.style.position = 'static';
     });
 
     QUnit.test('Crosshair with snap false (#5066)', function (assert) {
@@ -76,15 +72,13 @@ $(function () {
 
         });
 
-        chart.renderTo.style.position = 'absolute';
-        chart.renderTo.style.top = 0;
-        chart.renderTo.style.left = 0;
+        var offset = Highcharts.offset(chart.renderTo);
 
 
         chart.pointer.onContainerMouseMove({
             type: 'mousemove',
-            pageX: 100,
-            pageY: 100,
+            pageX: offset.left + 100,
+            pageY: offset.top + 100,
             target: chart.container
         });
 

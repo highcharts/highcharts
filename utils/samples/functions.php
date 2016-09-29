@@ -1,8 +1,26 @@
 <?php
 
+require_once('../issue-by-commit/Git.php');
 require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
 
+
+function getBranch() {
+
+    try {
+        Git::set_bin(Settings::$git);
+        $repo = Git::open(dirname(__FILE__) . '/../../');
+
+        return $repo->active_branch();
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+        
+}
+
+function compareJSON() {
+    return 'temp/compare.' . getBranch() . '.json';
+}
 
 /**
  * getBrowser function from http://php.net/manual/en/function.get-browser.php#101125

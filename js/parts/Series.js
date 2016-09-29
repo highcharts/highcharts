@@ -1,4 +1,45 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Options.js';
+import './Legend.js';
+import './Point.js';
+import './SvgRenderer.js';
+	var addEvent = H.addEvent,
+		animObject = H.animObject,
+		arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		correctFloat = H.correctFloat,
+		Date = H.Date,
+		defaultOptions = H.defaultOptions,
+		defaultPlotOptions = H.defaultPlotOptions,
+		defined = H.defined,
+		each = H.each,
+		erase = H.erase,
+		error = H.error,
+		extend = H.extend,
+		fireEvent = H.fireEvent,
+		grep = H.grep,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		isString = H.isString,
+		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+		merge = H.merge,
+		pick = H.pick,
+		Point = H.Point, // @todo  add as a requirement
+		removeEvent = H.removeEvent,
+		splat = H.splat,
+		stableSort = H.stableSort,
+		SVGElement = H.SVGElement,
+		syncTimeout = H.syncTimeout,
+		win = H.win;
+
+/**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
  * in various arrays.
  *
@@ -17,25 +58,132 @@
  * @param {Object} chart
  * @param {Object} options
  */
-var Series = Highcharts.Series = function () {};
+H.Series = H.seriesType('line', null, { // base series options
+	/*= if (build.classic) { =*/
+	//cursor: 'default',
+	//dashStyle: null,
+	//linecap: 'round',
+	lineWidth: 2,
+	//shadow: false,
+	/*= } =*/
+	allowPointSelect: false,
+	showCheckbox: false,
+	animation: {
+		duration: 1000
+	},
+	//clip: true,
+	//connectNulls: false,
+	//enableMouseTracking: true,
+	events: {},
+	//legendIndex: 0,
+	// stacking: null,
+	marker: {
+		/*= if (build.classic) { =*/
+		lineWidth: 0,
+		lineColor: '${palette.backgroundColor}',
+		//fillColor: null,
+		/*= } =*/				
+		//enabled: true,
+		//symbol: null,
+		radius: 4,
+		states: { // states for a single point
+			hover: {
+				enabled: true,
+				radiusPlus: 2,
+				/*= if (build.classic) { =*/
+				lineWidthPlus: 1
+				/*= } =*/
+			},
+			/*= if (build.classic) { =*/
+			select: {
+				fillColor: '${palette.neutralColor20}',
+				lineColor: '${palette.neutralColor100}',
+				lineWidth: 2
+			}
+			/*= } =*/
+		}
+	},
+	point: {
+		events: {}
+	},
+	dataLabels: {
+		align: 'center',
+		// defer: true,
+		// enabled: false,
+		formatter: function () {
+			return this.y === null ? '' : H.numberFormat(this.y, -1);
+		},
+		/*= if (!build.classic) { =*/
+		/*style: {
+			color: 'contrast',
+			textShadow: '0 0 6px contrast, 0 0 3px contrast'
+		},*/
+		/*= } else { =*/
+		style: {
+			fontSize: '11px',
+			fontWeight: 'bold',
+			color: 'contrast',
+			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+		},
+		// backgroundColor: undefined,
+		// borderColor: undefined,
+		// borderWidth: undefined,
+		// shadow: false
+		/*= } =*/
+		verticalAlign: 'bottom', // above singular point
+		x: 0,
+		y: 0,
+		// borderRadius: undefined,
+		padding: 5
+	},
+	cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
+	pointRange: 0,
+	//pointStart: 0,
+	//pointInterval: 1,
+	//showInLegend: null, // auto: true for standalone series, false for linked series
+	softThreshold: true,
+	states: { // states for the entire series
+		hover: {
+			//enabled: false,
+			lineWidthPlus: 1,
+			marker: {
+				// lineWidth: base + 1,
+				// radius: base + 1
+			},
+			halo: {
+				size: 10,
+				/*= if (build.classic) { =*/
+				opacity: 0.25
+				/*= } =*/
+			}
+		},
+		select: {
+			marker: {}
+		}
+	},
+	stickyTracking: true,
+	//tooltip: {
+		//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+		//valueDecimals: null,
+		//xDateFormat: '%A, %b %e, %Y',
+		//valuePrefix: '',
+		//ySuffix: ''
+	//}
+	turboThreshold: 1000
+	// zIndex: null
+},
 
-Series.prototype = {
-
+// Prototype properties
+{
 	isCartesian: true,
-	type: 'line',
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
-		r: 'radius'
-	},
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
+	coll: 'series',
 	init: function (chart, options) {
 		var series = this,
 			eventType,
@@ -55,16 +203,10 @@ Series.prototype = {
 		// set some variables
 		extend(series, {
 			name: options.name,
-			state: NORMAL_STATE,
-			pointAttr: {},
+			state: '',
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
-
-		// special
-		if (useCanVG) {
-			options.animation = false;
-		}
 
 		// register event listeners
 		events = options.events;
@@ -128,8 +270,8 @@ Series.prototype = {
 				// apply if the series xAxis or yAxis option mathches the number of the
 				// axis, or if undefined, use the first axis
 				if ((seriesOptions[AXIS] === axisOptions.index) ||
-						(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
-						(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
+						(seriesOptions[AXIS] !== undefined && seriesOptions[AXIS] === axisOptions.id) ||
+						(seriesOptions[AXIS] === undefined && axisOptions.index === 0)) {
 
 					// register this series in the axis.series lookup
 					axis.series.push(series);
@@ -194,13 +336,14 @@ Series.prototype = {
 			date = new Date(xIncrement);
 
 			if (pointIntervalUnit === 'day') {
-				date = +date[setDate](date[getDate]() + pointInterval);
+				date = +date[Date.hcSetDate](date[Date.hcGetDate]() + pointInterval);
 			} else if (pointIntervalUnit === 'month') {
-				date = +date[setMonth](date[getMonth]() + pointInterval);
+				date = +date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval);
 			} else if (pointIntervalUnit === 'year') {
-				date = +date[setFullYear](date[getFullYear]() + pointInterval);
+				date = +date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
 			}
 			pointInterval = date - xIncrement;
+
 		}
 
 		this.xIncrement = xIncrement + pointInterval;
@@ -254,15 +397,20 @@ Series.prototype = {
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
 				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				className: 'highcharts-negative',
+				/*= if (build.classic) { =*/
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
+				/*= } =*/
 			});
 		}
 		if (zones.length) { // Push one extra zone for the rest
 			if (defined(zones[zones.length - 1].value)) {
 				zones.push({
+					/*= if (build.classic) { =*/
 					color: this.color,
 					fillColor: this.fillColor
+					/*= } =*/
 				});
 			}
 		}
@@ -272,17 +420,27 @@ Series.prototype = {
 	getCyclic: function (prop, value, defaults) {
 		var i,
 			userOptions = this.userOptions,
-			indexName = '_' + prop + 'Index',
-			counterName = prop + 'Counter';
+			indexName = prop + 'Index',
+			counterName = prop + 'Counter',
+			len = defaults ? defaults.length : pick(this.chart.options.chart[prop + 'Count'], this.chart[prop + 'Count']),
+			setting;
 
 		if (!value) {
-			if (defined(userOptions[indexName])) { // after Series.update()
-				i = userOptions[indexName];
+			// Pick up either the colorIndex option, or the _colorIndex after Series.update()
+			setting = pick(userOptions[indexName], userOptions['_' + indexName]);
+			if (defined(setting)) { // after Series.update()
+				i = setting;
 			} else {
-				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
+				userOptions['_' + indexName] = i = this.chart[counterName] % len;
 				this.chart[counterName] += 1;
 			}
-			value = defaults[i];
+			if (defaults) {
+				value = defaults[i];
+			}
+		}
+		// Set the colorIndex
+		if (i !== undefined) {
+			this[indexName] = i;
 		}
 		this[prop] = value;
 	},
@@ -290,6 +448,12 @@ Series.prototype = {
 	/**
 	 * Get the series' color
 	 */
+	/*= if (!build.classic) { =*/
+	getColor: function () {
+		this.getCyclic('color');
+	},
+
+	/*= } else { =*/
 	getColor: function () {
 		if (this.options.colorByPoint) {
 			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
@@ -297,6 +461,7 @@ Series.prototype = {
 			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
+	/*= } =*/
 	/**
 	 * Get the series' symbol
 	 */
@@ -399,7 +564,7 @@ Series.prototype = {
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
-					if (data[i] !== UNDEFINED) { // stray commas in oldIE
+					if (data[i] !== undefined) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
@@ -429,7 +594,8 @@ Series.prototype = {
 			}
 
 			// redraw
-			series.isDirty = series.isDirtyData = chart.isDirtyBox = true;
+			series.isDirty = chart.isDirtyBox = true;
+			series.isDirtyData = !!oldData;
 			animation = false;
 		}
 
@@ -509,7 +675,7 @@ Series.prototype = {
 				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
 				processedXData[i] - processedXData[i - 1];
 
-			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
+			if (distance > 0 && (closestPointRange === undefined || distance < closestPointRange)) {
 				closestPointRange = distance;
 
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
@@ -544,7 +710,7 @@ Series.prototype = {
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - cropShoulder);
+				cropStart = Math.max(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -578,7 +744,7 @@ Series.prototype = {
 			dataLength,
 			processedXData = series.processedXData,
 			processedYData = series.processedYData,
-			pointClass = series.pointClass,
+			PointClass = series.pointClass,
 			processedDataLength = processedXData.length,
 			cropStart = series.cropStart || 0,
 			cursor,
@@ -598,13 +764,13 @@ Series.prototype = {
 			if (!hasGroupedData) {
 				if (data[cursor]) {
 					point = data[cursor];
-				} else if (dataOptions[cursor] !== UNDEFINED) { // #970
-					data[cursor] = point = (new pointClass()).init(series, dataOptions[cursor], processedXData[i]);
+				} else if (dataOptions[cursor] !== undefined) { // #970
+					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i] = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 				points[i].dataGroup = series.groupMap[i];
 			}
 			points[i].index = cursor; // For faster access in Point.update
@@ -619,7 +785,7 @@ Series.prototype = {
 				}
 				if (data[i]) {
 					data[i].destroyElements();
-					data[i].plotX = UNDEFINED; // #1003
+					data[i].plotX = undefined; // #1003
 				}
 			}
 		}
@@ -726,7 +892,7 @@ Series.prototype = {
 
 			// Get the plotX translation
 			point.plotX = plotX = correctFloat( // #5236
-				mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+				Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
 			);
 
 			// Calculate the bottom y value for stacked series
@@ -765,9 +931,9 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
-				UNDEFINED;
-			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
+				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
+				undefined;
+			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
 
 
@@ -777,13 +943,13 @@ Series.prototype = {
 			point.negative = point.y < (threshold || 0);
 
 			// some API data
-			point.category = categories && categories[point.x] !== UNDEFINED ?
+			point.category = categories && categories[point.x] !== undefined ?
 				categories[point.x] : point.x;
 
 			// Determine auto enabling of markers (#3635, #5099)
 			if (!point.isNull) {
 				if (lastPlotX !== undefined) {
-					closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+					closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
 				}
 				lastPlotX = plotX;
 			}
@@ -919,7 +1085,6 @@ Series.prototype = {
 	 */
 	drawPoints: function () {
 		var series = this,
-			pointAttr,
 			points = series.points,
 			chart = series.chart,
 			plotX,
@@ -932,7 +1097,6 @@ Series.prototype = {
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
-			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
 			hasPointMarker,
 			enabled,
@@ -941,7 +1105,7 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled,
-				xAxis.isRadial,
+				xAxis.isRadial ? true : null,
 				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
 
@@ -950,26 +1114,25 @@ Series.prototype = {
 			i = points.length;
 			while (i--) {
 				point = points[i];
-				plotX = mathFloor(point.plotX); // #1843
+				plotX = Math.floor(point.plotX); // #1843
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
-				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
+				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
 				// only draw the point if y is defined
 				if (enabled && isNumber(plotY) && point.y !== null) {
 
-					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
-					radius = pointAttr.r;
+					// Shortcuts
+					radius = seriesMarkerOptions.radius;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
-							.attr(pointAttr) // #4759
+							//.attr(pointAttr) // #4759
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -986,8 +1149,19 @@ Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
-						.attr(pointAttr)
+						.attr({ r: radius })
 						.add(markerGroup);
+					}
+
+					/*= if (build.classic) { =*/
+					// Presentational attributes
+					if (graphic) {
+						graphic.attr(series.pointAttribs(point, point.selected && 'select'));
+					}
+					/*= } =*/
+
+					if (graphic) {
+						graphic.addClass(point.getClassName(), true);
 					}
 
 				} else if (graphic) {
@@ -998,207 +1172,59 @@ Series.prototype = {
 
 	},
 
+	/*= if (build.classic) { =*/
 	/**
-	 * Convert state properties from API naming conventions to SVG attributes
-	 *
-	 * @param {Object} options API options object
-	 * @param {Object} base1 SVG attribute object to inherit from
-	 * @param {Object} base2 Second level SVG attribute object to inherit from
+	 * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
 	 */
-	convertAttribs: function (options, base1, base2, base3) {
-		var conversion = this.pointAttrToOptions,
-			attr,
-			option,
-			obj = {};
+	pointAttribs: function (point, state) {
+		var seriesMarkerOptions = this.options.marker,
+			seriesStateOptions,
+			pointOptions = point && point.options,
+			pointMarkerOptions = (pointOptions && pointOptions.marker) || {},
+			pointStateOptions,
+			strokeWidth = seriesMarkerOptions.lineWidth,
+			color = this.color,
+			pointColorOption = pointOptions && pointOptions.color,
+			pointColor = point && point.color,
+			zoneColor,
+			fill,
+			stroke,
+			zone;
 
-		options = options || {};
-		base1 = base1 || {};
-		base2 = base2 || {};
-		base3 = base3 || {};
-
-		for (attr in conversion) {
-			option = conversion[attr];
-			obj[attr] = pick(options[option], base1[attr], base2[attr], base3[attr]);
-		}
-		return obj;
-	},
-
-	/**
-	 * Get the state attributes. Each series type has its own set of attributes
-	 * that are allowed to change on a point's state change. Series wide attributes are stored for
-	 * all series, and additionally point specific attributes are stored for all
-	 * points with individual marker options. If such options are not defined for the point,
-	 * a reference to the series wide attributes is stored in point.pointAttr.
-	 */
-	getAttribs: function () {
-		var series = this,
-			seriesOptions = series.options,
-			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
-			stateOptions = normalOptions.states,
-			stateOptionsHover = stateOptions[HOVER_STATE],
-			pointStateOptionsHover,
-			seriesColor = series.color,
-			seriesNegativeColor = series.options.negativeColor,
-			normalDefaults = {
-				stroke: seriesColor,
-				fill: seriesColor
-			},
-			points = series.points || [], // #927
-			i,
-			j,
-			threshold,
-			point,
-			seriesPointAttr = [],
-			pointAttr,
-			pointAttrToOptions = series.pointAttrToOptions,
-			hasPointSpecificOptions = series.hasPointSpecificOptions,
-			defaultLineColor = normalOptions.lineColor,
-			defaultFillColor = normalOptions.fillColor,
-			turboThreshold = seriesOptions.turboThreshold,
-			zones = series.zones,
-			zoneAxis = series.zoneAxis || 'y',
-			zoneColor, 
-			attr,
-			key;
-
-		// series type specific modifications
-		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
-
-			// if no hover radius is given, default to normal radius + 2
-			stateOptionsHover.radius = +stateOptionsHover.radius || +normalOptions.radius + +stateOptionsHover.radiusPlus;
-			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + stateOptionsHover.lineWidthPlus;
-
-		} else { // column, bar, pie
-
-			// if no hover color is given, brighten the normal color
-			stateOptionsHover.color = stateOptionsHover.color ||
-				Color(stateOptionsHover.color || seriesColor)
-					.brighten(stateOptionsHover.brightness).get();
-
-			// if no hover negativeColor is given, brighten the normal negativeColor
-			stateOptionsHover.negativeColor = stateOptionsHover.negativeColor ||
-				Color(stateOptionsHover.negativeColor || seriesNegativeColor)
-					.brighten(stateOptionsHover.brightness).get();
-		}
-
-		// general point attributes for the series normal state
-		seriesPointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, normalDefaults);
-
-		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
-		each([HOVER_STATE, SELECT_STATE], function (state) {
-			seriesPointAttr[state] =
-					series.convertAttribs(stateOptions[state], seriesPointAttr[NORMAL_STATE]);
-		});
-
-		// set it
-		series.pointAttr = seriesPointAttr;
-
-
-		// Generate the point-specific attribute collections if specific point
-		// options are given. If not, create a referance to the series wide point
-		// attributes
-		i = points.length;
-		if (!turboThreshold || i < turboThreshold || hasPointSpecificOptions) {
-			while (i--) {
-				point = points[i];
-				normalOptions = (point.options && point.options.marker) || point.options;
-				if (normalOptions && normalOptions.enabled === false) {
-					normalOptions.radius = 0;
-				}
-
-				zoneColor = null;
-				if (zones.length) {
-					j = 0;
-					threshold = zones[j];
-					while (point[zoneAxis] >= threshold.value) {
-						threshold = zones[++j];
-					}
-
-					point.color = point.fillColor = zoneColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
-
-				}
-
-				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
-
-				// check if the point has specific visual options
-				if (point.options) {
-					for (key in pointAttrToOptions) {
-						if (defined(normalOptions[pointAttrToOptions[key]])) {
-							hasPointSpecificOptions = true;
-						}
-					}
-				}
-
-				// a specific marker config object is defined for the individual point:
-				// create it's own attribute collection
-				if (hasPointSpecificOptions) {
-					normalOptions = normalOptions || {};
-					pointAttr = [];
-					stateOptions = normalOptions.states || {}; // reassign for individual point
-					pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
-
-					// Handle colors for column and pies
-					if (!seriesOptions.marker || (point.negative && !pointStateOptionsHover.fillColor && !stateOptionsHover.fillColor)) { // column, bar, point or negative threshold for series with markers (#3636)
-						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover[series.pointAttrToOptions.fill] = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
-							Color(point.color)
-								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
-								.get();
-					}
-
-					// normal point state inherits series wide normal state
-					attr = { color: point.color }; // #868
-					if (!defaultFillColor) { // Individual point color or negative color markers (#2219)
-						attr.fillColor = point.color;
-					}
-					if (!defaultLineColor) {
-						attr.lineColor = point.color; // Bubbles take point color, line markers use white
-					}
-					// Color is explicitly set to null or undefined (#1288, #4068)
-					if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
-						delete normalOptions.color;
-					}
-
-					// When zone is set, but series.states.hover.color is not set, apply zone color on hover, #4670: 
-					if (zoneColor && !stateOptionsHover.fillColor) {
-						pointStateOptionsHover.fillColor = zoneColor;
-					}
-
-					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
-
-					// inherit from point normal and series hover
-					pointAttr[HOVER_STATE] = series.convertAttribs(
-						stateOptions[HOVER_STATE],
-						seriesPointAttr[HOVER_STATE],
-						pointAttr[NORMAL_STATE]
-					);
-
-					// inherit from point normal and series hover
-					pointAttr[SELECT_STATE] = series.convertAttribs(
-						stateOptions[SELECT_STATE],
-						seriesPointAttr[SELECT_STATE],
-						pointAttr[NORMAL_STATE]
-					);
-
-
-				// no marker config object is created: copy a reference to the series-wide
-				// attribute collection
-				} else {
-					pointAttr = seriesPointAttr;
-				}
-
-				point.pointAttr = pointAttr;
+		if (point && this.zones.length) {
+			zone = point.getZone();
+			if (zone && zone.color) {
+				zoneColor = zone.color;
 			}
 		}
-	},
 
+		color = pointColorOption || zoneColor || pointColor || color;
+		fill = pointMarkerOptions.fillColor || seriesMarkerOptions.fillColor || color;
+		stroke = pointMarkerOptions.lineColor || seriesMarkerOptions.lineColor || color;
+
+		// Handle hover and select states
+		if (state) {
+			seriesStateOptions = seriesMarkerOptions.states[state];
+			pointStateOptions = (pointMarkerOptions.states && pointMarkerOptions.states[state]) || {};
+			strokeWidth = seriesStateOptions.lineWidth || strokeWidth + seriesStateOptions.lineWidthPlus;
+			fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
+			stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
+		}
+		
+		return {
+			'stroke': stroke,
+			'stroke-width': strokeWidth,
+			'fill': fill
+		};
+	},
+	/*= } =*/
 	/**
 	 * Clear DOM objects and free up memory
 	 */
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
-			issue134 = /AppleWebKit\/533/.test(userAgent),
+			issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
 			destroy,
 			i,
 			data = series.data || [],
@@ -1215,7 +1241,7 @@ Series.prototype = {
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
-			if (axis) {
+			if (axis && axis.series) {
 				erase(axis.series, series);
 				axis.isDirty = axis.forceRedraw = true;
 			}
@@ -1317,7 +1343,7 @@ Series.prototype = {
 			} else {
 
 				if (i === 0 || gap) {
-					pathToPoint = [M, point.plotX, point.plotY];
+					pathToPoint = ['M', point.plotX, point.plotY];
 				
 				} else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
 					
@@ -1327,34 +1353,34 @@ Series.prototype = {
 
 					if (step === 1) { // right
 						pathToPoint = [
-							L,
+							'L',
 							lastPoint.plotX,
 							plotY
 						];
 						
 					} else if (step === 2) { // center
 						pathToPoint = [
-							L,
+							'L',
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
-							L,
+							'L',
 							(lastPoint.plotX + plotX) / 2,
 							plotY
 						];
 						
 					} else {
 						pathToPoint = [
-							L,
+							'L',
 							plotX,
 							lastPoint.plotY
 						];
 					}
-					pathToPoint.push(L, plotX, plotY);
+					pathToPoint.push('L', plotX, plotY);
 
 				} else {
 					// normal line to next point
 					pathToPoint = [
-						L,
+						'L',
 						plotX,
 						plotY
 					];
@@ -1384,14 +1410,26 @@ Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color, options.dashStyle]],
-			lineWidth = options.lineWidth,
-			roundCap = options.linecap !== 'square',
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
-			zones = this.zones;
+			props = [[
+				'graph', 
+				'highcharts-graph', 
+				/*= if (build.classic) { =*/
+				options.lineColor || this.color, 
+				options.dashStyle
+				/*= } =*/
+			]];
 
-		each(zones, function (threshold, i) {
-			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		// Add the zone properties if any
+		each(this.zones, function (zone, i) {
+			props.push([
+				'zone-graph-' + i,
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+				/*= if (build.classic) { =*/
+				zone.color || series.color, 
+				zone.dashStyle || options.dashStyle
+				/*= } =*/
+			]);
 		});
 
 		// Draw the graph
@@ -1404,23 +1442,30 @@ Series.prototype = {
 				graph.endX = graphPath.xMap;
 				graph.animate({ d: graphPath });
 
-			} else if (lineWidth && graphPath.length) { // #1487
+			} else if (graphPath.length) { // #1487
+				
+				series[graphKey] = series.chart.renderer.path(graphPath)
+					.addClass(prop[1])
+					.attr({ zIndex: 1 }) // #1069
+					.add(series.group);
+
+				/*= if (build.classic) { =*/
 				attribs = {
-					stroke: prop[1],
-					'stroke-width': lineWidth,
-					fill: 'none',
-					zIndex: 1 // #1069
+					'stroke': prop[2],
+					'stroke-width': options.lineWidth,
+					'fill': (series.fillGraph && series.color) || 'none' // Polygon series use filled graph
 				};
-				if (prop[2]) {
-					attribs.dashstyle = prop[2];
-				} else if (roundCap) {
+
+				if (prop[3]) {
+					attribs.dashstyle = prop[3];
+				} else if (options.linecap !== 'square') {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
 
-				graph = series[graphKey] = series.chart.renderer.path(graphPath)
+				graph = series[graphKey]
 					.attr(attribs)
-					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
+				/*= } =*/
 			}
 
 			// Helpers for animation
@@ -1446,7 +1491,7 @@ Series.prototype = {
 			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
 			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
 			reversed,
@@ -1457,7 +1502,7 @@ Series.prototype = {
 			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area) && axis && axis.min !== UNDEFINED) {
+		if (zones.length && (graph || area) && axis && axis.min !== undefined) {
 			reversed = axis.reversed;
 			horiz = axis.horiz;
 			// The use of the Color Threshold assumes there are no gaps
@@ -1476,16 +1521,16 @@ Series.prototype = {
 				translatedFrom = reversed ?
 					(horiz ? chart.plotWidth : 0) :
 					(horiz ? 0 : axis.toPixels(extremes.min));
-				translatedFrom = mathMin(mathMax(pick(translatedTo, translatedFrom), 0), chartSizeMax);
-				translatedTo = mathMin(mathMax(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
-
+				translatedFrom = Math.min(Math.max(pick(translatedTo, translatedFrom), 0), chartSizeMax);
+				translatedTo = Math.min(Math.max(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
+				
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
 
 				pxRange = Math.abs(translatedFrom - translatedTo);
-				pxPosMin = mathMin(translatedFrom, translatedTo);
-				pxPosMax = mathMax(translatedFrom, translatedTo);
+				pxPosMin = Math.min(translatedFrom, translatedTo);
+				pxPosMax = Math.max(translatedFrom, translatedTo);
 				if (axis.isXAxis) {
 					clipAttr = {
 						x: inverted ? pxPosMax : pxPosMin,
@@ -1508,6 +1553,7 @@ Series.prototype = {
 					}
 				}
 
+				/*= if (build.classic) { =*/
 				/// VML SUPPPORT
 				if (inverted && renderer.isVML) {
 					if (axis.isXAxis) {
@@ -1527,6 +1573,7 @@ Series.prototype = {
 					}
 				}
 				/// END OF VML SUPPORT
+				/*= } =*/
 
 				if (clips[i]) {
 					clips[i].animate(clipAttr);
@@ -1534,11 +1581,11 @@ Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['zoneGraph' + i].clip(clips[i]);
+						series['zone-graph-' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['zoneArea' + i].clip(clips[i]);
+						series['zone-area-' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
@@ -1551,7 +1598,7 @@ Series.prototype = {
 	/**
 	 * Initialize and perform group inversion on series.group and series.markerGroup
 	 */
-	invertGroups: function () {
+	invertGroups: function (inverted) {
 		var series = this,
 			chart = series.chart;
 
@@ -1569,7 +1616,7 @@ Series.prototype = {
 
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
-					series[groupName].attr(size).invert();
+					series[groupName].attr(size).invert(inverted);
 				}
 			});
 		}
@@ -1580,7 +1627,7 @@ Series.prototype = {
 		});
 
 		// Do it now
-		setInvert(); // do it now
+		setInvert(inverted); // do it now
 
 		// On subsequent render and redraw, just do setInvert without setting up events again
 		series.invertGroups = setInvert;
@@ -1602,7 +1649,8 @@ Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index);
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
+				' ' + (this.options.className || ''));
 		}
 
 		// Place it on first and subsequent (redraw) calls
@@ -1645,7 +1693,8 @@ Series.prototype = {
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
-			chartSeriesGroup = chart.seriesGroup;
+			chartSeriesGroup = chart.seriesGroup,
+			inverted = chart.inverted;
 
 		// the group
 		group = series.plotGroup(
@@ -1669,11 +1718,8 @@ Series.prototype = {
 			series.animate(true);
 		}
 
-		// cache attributes for shapes
-		series.getAttribs();
-
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
-		group.inverted = series.isCartesian ? chart.inverted : false;
+		group.inverted = series.isCartesian ? inverted : false;
 
 		// draw the graph if any
 		if (series.drawGraph) {
@@ -1681,11 +1727,11 @@ Series.prototype = {
 			series.applyZones();
 		}
 
-		each(series.points, function (point) {
+/*		each(series.points, function (point) {
 			if (point.redraw) {
 				point.redraw();
 			}
-		});
+		});*/
 
 		// draw the data labels (inn pies they go before the points)
 		if (series.drawDataLabels) {
@@ -1704,9 +1750,7 @@ Series.prototype = {
 		}
 
 		// Handle inverted series and tracker groups
-		if (chart.inverted) {
-			series.invertGroups();
-		}
+		series.invertGroups(inverted);
 
 		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
@@ -1891,5 +1935,4 @@ Series.prototype = {
 		}
 	}
 
-}; // end Series prototype
-
+}); // end Series prototype

@@ -24,13 +24,20 @@ if (isset($_GET['rightcommit'])) {
 
 // A commit or tag is given, insert the full path
 $commitOrTag = '/^[a-z0-9]+$/';
+//$githubServer = 'http://github.highcharts.com';
+$githubServer = 'http://github-highcharts.us-east-1.elasticbeanstalk.com';
 if (preg_match($commitOrTag, $leftPath)) {
-	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
+	$leftPath = "cache.php?file=$githubServer/$leftPath";
 }
 if (preg_match($commitOrTag, $rightPath)) {
-	$rightPath = "cache.php?file=http://github.highcharts.com/$rightPath";
+	$rightPath = "cache.php?file=$githubServer/$rightPath";
 }
 
+// Forced options
+$overrides = Settings::$overrides;
+if ($overrides && $_GET['which'] == 'left') {
+	$overrides .= "\nconsole.warn('Running tests with overrides. To disable these, modify settings.php.');";
+}
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
@@ -113,7 +120,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest, $githubServer;
 	$bogus = md5('bogus');
 
 	// No idea why file_get_contents doesn't work here...
@@ -121,12 +128,16 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 
+	// Highchart 5 preview
+	$s = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $s);
+
+
 	// for issue-by-commit
 	$issueHTML = $s;
-	$issueHTML = str_replace('https://code.highcharts.com/stock/', 'http://github.highcharts.com/%s/', $issueHTML);
-	$issueHTML = str_replace('https://code.highcharts.com/maps/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/stock/', $githubServer . '/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/maps/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace('https://code.highcharts.com/mapdata/', $bogus, $issueHTML);
-	$issueHTML = str_replace('https://code.highcharts.com/', 'http://github.highcharts.com/%s/', $issueHTML);
+	$issueHTML = str_replace('https://code.highcharts.com/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace($bogus, 'https://code.highcharts.com/mapdata/', $issueHTML);
 
 	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;
@@ -213,8 +224,15 @@ function getExportInnerHTML() {
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
-			<?php
-			$_SESSION['css'] = @file_get_contents("$path/demo.css");
+			<?php 
+			$css = @file_get_contents("$path/demo.css");
+
+			// Highchart 5 preview
+			$css = str_replace("code.highcharts.com/5/", "code.highcharts.com/", $css);
+
+			$css = str_replace("https://code.highcharts.com/", "http://code.highcharts.$topDomain/", $css);
+
+			$_SESSION['css'] = $css;
 			echo $_SESSION['css'];
 			?>
 		</style>
@@ -346,6 +364,8 @@ function getExportInnerHTML() {
 							animation: animation
 						}
 					});
+
+					<?php echo $overrides; ?>
 
 					// Wrap constructors in order to catch JS errors
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);

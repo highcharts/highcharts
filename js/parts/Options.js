@@ -1,9 +1,28 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Color.js';
+import './Utilities.js';
+	var color = H.color,
+		each = H.each,
+		getTZOffset = H.getTZOffset,
+		isTouchDevice = H.isTouchDevice,
+		merge = H.merge,
+		pick = H.pick,
+		svg = H.svg,
+		win = H.win;
+		
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-defaultOptions = {
-	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c',
-		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
+H.defaultOptions = {
+	/*= if (build.classic) { =*/
+	colors: '${palette.colors}'.split(' '),
+	/*= } =*/
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -21,8 +40,9 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
+		/*= if (build.classic) { =*/
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
+		/*= } =*/
 	},
 	chart: {
 		//animation: true,
@@ -35,27 +55,18 @@ defaultOptions = {
 		//marginRight: null,
 		//marginBottom: null,
 		//marginLeft: null,
-		borderColor: '#4572A7',
-		//borderWidth: 0,
 		borderRadius: 0,
+		/*= if (!build.classic) { =*/
+		colorCount: 10,
+		/*= } =*/
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
-		//shadow: false,
 		spacing: [10, 10, 15, 10],
 		//spacingTop: 10,
 		//spacingRight: 10,
 		//spacingBottom: 15,
 		//spacingLeft: 10,
-		//style: {
-		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-		//	fontSize: '12px'
-		//},
-		backgroundColor: '#FFFFFF',
-		//plotBackgroundColor: null,
-		plotBorderColor: '#C0C0C0',
-		//plotBorderWidth: 0,
-		//plotShadow: false,
 		//zoomType: ''
 		resetZoomButton: {
 			theme: {
@@ -70,8 +81,61 @@ defaultOptions = {
 			// relativeTo: 'plot'
 		},
 		width: null,
-		height: null
+		height: null,
+		
+		/*= if (build.classic) { =*/
+		borderColor: '${palette.highlightColor80}',
+		//borderWidth: 0,
+		//style: {
+		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+		//	fontSize: '12px'
+		//},
+		backgroundColor: '${palette.backgroundColor}',
+		//plotBackgroundColor: null,
+		plotBorderColor: '${palette.neutralColor20}'
+		//plotBorderWidth: 0,
+		//plotShadow: false,
+		/*= } =*/
 	},
+	/*= if (!build.classic) { =*/
+	defs: {
+		dropShadow: { // used by tooltip
+			tagName: 'filter',
+			id: 'drop-shadow',
+			opacity: 0.5,
+			children: [{
+				tagName: 'feGaussianBlur',
+				in: 'SourceAlpha',
+				stdDeviation: 1
+			}, {
+				tagName: 'feOffset',
+				dx: 1,
+				dy: 1
+			}, {
+				tagName: 'feComponentTransfer',
+				children: [{
+					tagName: 'feFuncA',
+					type: 'linear',
+					slope: 0.3
+				}]
+			}, {
+				tagName: 'feMerge',
+				children: [{
+					tagName: 'feMergeNode'
+				}, {
+					tagName: 'feMergeNode',
+					in: 'SourceGraphic'
+				}]
+			}]
+		},
+		style: {
+			tagName: 'style',
+			textContent: '.highcharts-tooltip{' +
+				'filter:url(#drop-shadow)' +
+			'}'
+		}
+	},
+	/*= } =*/
 	title: {
 		text: 'Chart title',
 		align: 'center',
@@ -80,10 +144,12 @@ defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
+		/*= if (build.classic) { =*/
 		style: {
-			color: '#333333',
+			color: '${palette.neutralColor80}',
 			fontSize: '18px'
 		},
+		/*= } =*/
 		widthAdjust: -44
 
 	},
@@ -94,117 +160,21 @@ defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
+		/*= if (build.classic) { =*/
 		style: {
-			color: '#555555'
+			color: '${palette.neutralColor60}'
 		},
+		/*= } =*/
 		widthAdjust: -44
 	},
 
-	plotOptions: {
-		line: { // base series options
-			allowPointSelect: false,
-			showCheckbox: false,
-			animation: {
-				duration: 1000
-			},
-			//connectNulls: false,
-			//cursor: 'default',
-			//clip: true,
-			//dashStyle: null,
-			//enableMouseTracking: true,
-			events: {},
-			//legendIndex: 0,
-			//linecap: 'round',
-			lineWidth: 2,
-			//shadow: false,
-			// stacking: null,
-			marker: {
-				//enabled: true,
-				//symbol: null,
-				lineWidth: 0,
-				radius: 4,
-				lineColor: '#FFFFFF',
-				//fillColor: null,
-				states: { // states for a single point
-					hover: {
-						enabled: true,
-						lineWidthPlus: 1,
-						radiusPlus: 2
-					},
-					select: {
-						fillColor: '#FFFFFF',
-						lineColor: '#000000',
-						lineWidth: 2
-					}
-				}
-			},
-			point: {
-				events: {}
-			},
-			dataLabels: {
-				align: 'center',
-				// defer: true,
-				// enabled: false,
-				formatter: function () {
-					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
-				},
-				style: {
-					color: 'contrast',
-					fontSize: '11px',
-					fontWeight: 'bold',
-					textShadow: '0 0 6px contrast, 0 0 3px contrast'
-				},
-				verticalAlign: 'bottom', // above singular point
-				x: 0,
-				y: 0,
-				// backgroundColor: undefined,
-				// borderColor: undefined,
-				// borderRadius: undefined,
-				// borderWidth: undefined,
-				padding: 5
-				// shadow: false
-			},
-			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
-			pointRange: 0,
-			//pointStart: 0,
-			//pointInterval: 1,
-			//showInLegend: null, // auto: true for standalone series, false for linked series
-			softThreshold: true,
-			states: { // states for the entire series
-				hover: {
-					//enabled: false,
-					lineWidthPlus: 1,
-					marker: {
-						// lineWidth: base + 1,
-						// radius: base + 1
-					},
-					halo: {
-						size: 10,
-						opacity: 0.25
-					}
-				},
-				select: {
-					marker: {}
-				}
-			},
-			stickyTracking: true,
-			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
-				//valueDecimals: null,
-				//xDateFormat: '%A, %b %e, %Y',
-				//valuePrefix: '',
-				//ySuffix: ''
-			//}
-			turboThreshold: 1000
-			// zIndex: null
-		}
-	},
+	plotOptions: {},
 	labels: {
 		//items: [],
 		style: {
 			//font: defaultFont,
-			position: ABSOLUTE,
-			color: '#3E576F'
+			position: 'absolute',
+			color: '${palette.neutralColor80}'
 		}
 	},
 	legend: {
@@ -216,40 +186,45 @@ defaultOptions = {
 			return this.name;
 		},
 		//borderWidth: 0,
-		borderColor: '#909090',
+		borderColor: '${palette.neutralColor40}',
 		borderRadius: 0,
 		navigation: {
+			/*= if (build.classic) { =*/
+			activeColor: '${palette.highlightColor100}',
+			inactiveColor: '${palette.neutralColor20}'
+			/*= } =*/
 			// animation: true,
-			activeColor: '#274b6d',
 			// arrowSize: 12
-			inactiveColor: '#CCC'
 			// style: {} // text styles
 		},
 		// margin: 20,
 		// reversed: false,
-		shadow: false,
 		// backgroundColor: null,
 		/*style: {
 			padding: '5px'
 		},*/
-		itemStyle: {
-			color: '#333333',
+		/*= if (build.classic) { =*/
+		itemStyle: {			
+			color: '${palette.neutralColor80}',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '#000'
+			color: '${palette.neutralColor100}'
 		},
 		itemHiddenStyle: {
-			color: '#CCC'
+			color: '${palette.neutralColor20}'
 		},
+		shadow: false,
+		/*= } =*/
 		itemCheckboxStyle: {
-			position: ABSOLUTE,
+			position: 'absolute',
 			width: '13px', // for IE precision
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		squareSymbol: true,
 		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
@@ -259,34 +234,36 @@ defaultOptions = {
 		y: 0,
 		title: {
 			//text: null,
+			/*= if (build.classic) { =*/
 			style: {
 				fontWeight: 'bold'
 			}
-		}
+			/*= } =*/
+		}			
 	},
 
 	loading: {
 		// hideDuration: 100,
+		// showDuration: 0,
+		/*= if (build.classic) { =*/
 		labelStyle: {
 			fontWeight: 'bold',
-			position: RELATIVE,
+			position: 'relative',
 			top: '45%'
 		},
-		// showDuration: 0,
 		style: {
-			position: ABSOLUTE,
-			backgroundColor: 'white',
+			position: 'absolute',
+			backgroundColor: '${palette.backgroundColor}',
 			opacity: 0.5,
 			textAlign: 'center'
 		}
+		/*= } =*/
 	},
 
 	tooltip: {
 		enabled: true,
-		animation: hasSVG,
+		animation: svg,
 		//crosshairs: null,
-		backgroundColor: 'rgba(249, 249, 249, .85)',
-		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: {
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
@@ -300,20 +277,31 @@ defaultOptions = {
 		},
 		footerFormat: '',
 		//formatter: defaultFormatter,
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-		shadow: true,
+		/* todo: em font-size when finished comparing against HC4
+		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
+		*/
+		padding: 8,
+
 		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
+		/*= if (!build.classic) { =*/
+		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		/*= } else { =*/
+		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
+		borderWidth: 1,
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		shadow: true,
 		style: {
-			color: '#333333',
+			color: '${palette.neutralColor80}',
 			cursor: 'default',
 			fontSize: '12px',
-			padding: '8px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
 			whiteSpace: 'nowrap'
 		}
+		/*= } =*/
 		//xDateFormat: '%A, %b %e, %Y',
 		//valueDecimals: null,
 		//valuePrefix: '',
@@ -322,7 +310,6 @@ defaultOptions = {
 
 	credits: {
 		enabled: true,
-		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
 		position: {
 			align: 'right',
@@ -330,11 +317,14 @@ defaultOptions = {
 			verticalAlign: 'bottom',
 			y: -5
 		},
+		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
-			color: '#909090',
+			color: '${palette.neutralColor40}',
 			fontSize: '9px'
-		}
+		},
+		/*= } =*/
+		text: 'Highcharts.com'
 	}
 };
 
@@ -345,16 +335,16 @@ defaultOptions = {
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var globalOptions = defaultOptions.global,
+	var globalOptions = H.defaultOptions.global,
+		Date,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
-
-	Date = globalOptions.Date || win.Date;
-	timezoneOffset = useUTC && globalOptions.timezoneOffset;
-	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
-	makeTime = function (year, month, date, hours, minutes, seconds) {
+	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
+	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
+	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
 			d = Date.UTC.apply(0, arguments);
@@ -371,54 +361,40 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	getMinutes =      GET + 'Minutes';
-	getHours =        GET + 'Hours';
-	getDay =          GET + 'Day';
-	getDate =         GET + 'Date';
-	getMonth =        GET + 'Month';
-	getFullYear =     GET + 'FullYear';
-	setMilliseconds = SET + 'Milliseconds';
-	setSeconds =      SET + 'Seconds';
-	setMinutes =      SET + 'Minutes';
-	setHours =        SET + 'Hours';
-	setDate =         SET + 'Date';
-	setMonth =        SET + 'Month';
-	setFullYear =     SET + 'FullYear';
-
+	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
+		Date['hcGet' + s] = GET + s;
+	});
+	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
+		Date['hcSet' + s] = SET + s;
+	});
 }
 
 /**
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-function setOptions(options) {
-
+H.setOptions = function (options) {
+	
 	// Copy in the default options
-	defaultOptions = merge(true, defaultOptions, options);
-
+	H.defaultOptions = merge(true, H.defaultOptions, options);
+	
 	// Apply UTC
 	setTimeMethods();
 
-	return defaultOptions;
-}
+	return H.defaultOptions;
+};
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
  * wasn't enough because the setOptions method created a new object.
  */
-function getOptions() {
-	return defaultOptions;
-}
-
-
-
-
+H.getOptions = function () {
+	return H.defaultOptions;
+};
 
 
 // Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
-	defaultSeriesOptions = defaultPlotOptions.line;
+H.defaultPlotOptions = H.defaultOptions.plotOptions;
 
 // set the default time methods
 setTimeMethods();
-

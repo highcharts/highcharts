@@ -9,12 +9,16 @@
  * License: www.highcharts.com/license
  */
 
-(function (root, factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = root.document ?
-        	factory(root) : 
-            factory;
-    } else {
-        root.Highcharts = factory(root);
+/*(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return factory(root);
+        });
+    } else if (typeof module === "object" && typeof module.exports === "object") {
+        module.exports = factory(root);
+    else {
+        factory(global);
     }
-}(typeof window !== 'undefined' ? window : this, function (win) { // eslint-disable-line no-undef
+}(this, function(window) {
+    // @code
+}));*/

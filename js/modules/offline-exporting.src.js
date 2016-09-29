@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Client side exporting module
  *
  * (c) 2015 Torstein Honsi / Oystein Moseng
@@ -7,16 +6,14 @@
  * License: www.highcharts.com/license
  */
 
+'use strict';
+import Highcharts from '../parts/Globals.js';
+import '../parts/Chart.js';
+import '../parts/Options.js';
 /*global MSBlobBuilder */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
 
-	var win = Highcharts.win,
+	var merge = Highcharts.merge,
+		win = Highcharts.win,
 		nav = win.navigator,
 		doc = win.document,
 		domurl = win.URL || win.webkitURL || win,
@@ -154,7 +151,18 @@
 		var svgurl,
 			blob,
 			objectURLRevoke = true,
-			finallyHandler;
+			finallyHandler,
+			libURL = Highcharts.getOptions().exporting.libURL;
+
+/*
+		function svgToPdf(svgElement, margin) {
+			var width = svgElement.width.baseVal.value + 2 * margin;
+			var height = svgElement.height.baseVal.value + 2 * margin;
+			var pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
+			return pdf.output('datauristring');
+		}
+*/
 
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
@@ -174,6 +182,20 @@
 			} catch (e) {
 				failCallback();
 			}
+		/*} else if (imageType === 'application/pdf') {
+			doc.getElementsByTagName('svg')[0].id = 'svgElement';
+			// you should set the format dynamically, write [width, height] instead of 'a4'
+			if (win.jsPDF && win.svgElementToPdf) {
+				var dummyContainer = doc.createElement('div');
+				dummyContainer.innerHTML = svg;
+				setTimeout(function () {
+					var data = svgToPdf(dummyContainer.firstChild, 0);
+					Highcharts.downloadURL(data, filename);
+					if (successCallback) {
+						successCallback();
+					}
+				}, 100);
+			}*/
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
 
@@ -225,8 +247,11 @@
 				} else {
 					// Must load canVG first
 					objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-					getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
-						downloadWithCanVG();
+					libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+					getScript(libURL + 'rgbcolor.js', function () { // Get RGBColor.js first
+						getScript(libURL + 'canvg.js', function () {
+							downloadWithCanVG();
+						});
 					});
 				}
 			},
@@ -334,32 +359,44 @@
 	};
 
 	// Extend the default options to use the local exporter logic
-	Highcharts.getOptions().exporting.buttons.contextButton.menuItems = [{
-		textKey: 'printChart',
-		onclick: function () {
-			this.print();
+	merge(true, Highcharts.getOptions().exporting, {
+		libURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/lib/',
+		buttons: {
+			contextButton: {
+				menuItems: [{
+					textKey: 'printChart',
+					onclick: function () {
+						this.print();
+					}
+				}, {
+					separator: true
+				}, {
+					textKey: 'downloadPNG',
+					onclick: function () {
+						this.exportChartLocal();
+					}
+				}, {
+					textKey: 'downloadJPEG',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'image/jpeg'
+						});
+					}
+				}, {
+					textKey: 'downloadSVG',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'image/svg+xml'
+						});
+					}
+				}/*, {
+					textKey: 'downloadPDF',
+					onclick: function () {
+						this.exportChartLocal({
+							type: 'application/pdf'
+						});
+					}
+				}*/]
+			}
 		}
-	}, {
-		separator: true
-	}, {
-		textKey: 'downloadPNG',
-		onclick: function () {
-			this.exportChartLocal();
-		}
-	}, {
-		textKey: 'downloadJPEG',
-		onclick: function () {
-			this.exportChartLocal({
-				type: 'image/jpeg'
-			});
-		}
-	}, {
-		textKey: 'downloadSVG',
-		onclick: function () {
-			this.exportChartLocal({
-				type: 'image/svg+xml'
-			});
-		}
-	}];
-
-}));
+	});

@@ -1,17 +1,34 @@
-/*
- * The AreaRangeSeries class
- *
- */
-
 /**
- * Extend the default options with map options
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+	var each = H.each,
+		noop = H.noop,
+		pick = H.pick,
+		Series = H.Series,
+		seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes;
+/* 
+ * The arearangeseries series type
+ */
+seriesType('arearange', 'area', {
+	/*= if (build.classic) { =*/
 	lineWidth: 1,
+	/*= } =*/
 	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+		/*= if (!build.classic) { =*/
+		pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
+		/*= } else { =*/
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
+		/*= } =*/
 	},
 	trackByArea: true,
 	dataLabels: {
@@ -27,13 +44,9 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 			halo: false
 		}
 	}
-});
 
-/**
- * Add the series type
- */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
-	type: 'arearange',
+// Prototype members
+}, {
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {

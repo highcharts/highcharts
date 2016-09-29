@@ -1,7 +1,27 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+	var Point,
+
+		each = H.each,
+		extend = H.extend,
+		erase = H.erase,
+		fireEvent = H.fireEvent,
+		format = H.format,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		pick = H.pick,
+		removeEvent = H.removeEvent;
+
+/**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
-var Point = function () {};
+Point = H.Point = function () {};
 Point.prototype = {
 
 	/**
@@ -12,20 +32,32 @@ Point.prototype = {
 	init: function (series, options, x) {
 
 		var point = this,
-			colors;
+			colors,
+			colorCount = series.chart.options.chart.colorCount,
+			colorIndex;
+
 		point.series = series;
+		/*= if (build.classic) { =*/
 		point.color = series.color; // #3445
+		/*= } =*/
 		point.applyOptions(options, x);
-		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
+			/*= if (build.classic) { =*/
 			colors = series.options.colors || series.chart.options.colors;
-			point.color = point.color || colors[series.colorCounter++];
+			point.color = point.color || colors[series.colorCounter];
+			colorCount = colors.length;
+			/*= } =*/
+			colorIndex = series.colorCounter;
+			series.colorCounter++;
 			// loop back to zero
-			if (series.colorCounter === colors.length) {
+			if (series.colorCounter === colorCount) {
 				series.colorCounter = 0;
 			}
+		} else {
+			colorIndex = series.colorIndex;
 		}
+		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
 		return point;
@@ -126,6 +158,40 @@ Point.prototype = {
 			}
 		}
 		return ret;
+	},
+
+	/**
+	 * Get the CSS class names for individual points
+	 * @returns {String} The class name
+	 */
+	getClassName: function () {
+		return 'highcharts-point' + 
+			(this.selected ? ' highcharts-point-select' : '') + 
+			(this.negative ? ' highcharts-negative' : '') + 
+			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
+			(this.options.className ? ' ' + this.options.className : '');
+	},
+
+	/**
+	 * Return the zone that the point belongs to
+	 */
+	getZone: function () {
+		var series = this.series,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
+			i = 0,
+			zone;
+
+		zone = zones[i];
+		while (this[zoneAxis] >= zone.value) {				
+			zone = zones[++i];
+		}
+
+		if (zone && zone.color && !this.options.color) {
+			this.color = zone.color;
+		}
+
+		return zone;
 	},
 
 	/**

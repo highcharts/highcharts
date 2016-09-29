@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Data module
  *
  * (c) 2012-2016 Torstein Honsi
@@ -7,14 +6,11 @@
  * License: www.highcharts.com/license
  */
 
-/*global jQuery */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (Highcharts) {
+/* global jQuery */
+'use strict';
+import Highcharts from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
 	
 	// Utilities
 	var win = Highcharts.win,
@@ -967,7 +963,3 @@
 		}
 		// Else return undefined
 	};
-
-
-
-}));

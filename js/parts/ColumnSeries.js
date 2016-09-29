@@ -1,9 +1,32 @@
 /**
- * Set the default options for column
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
-	//borderWidth: 1,
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+import './Legend.js';
+import './Series.js';
+import './Options.js';
+	var animObject = H.animObject,
+		color = H.color,
+		each = H.each,
+		extend = H.extend,
+		isNumber = H.isNumber,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		Series = H.Series,
+		seriesType = H.seriesType,
+		stop = H.stop,
+		svg = H.svg;
+/**
+ * The column series type
+ */
+seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -16,15 +39,19 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
 	states: {
 		hover: {
+			halo: false,
+			/*= if (build.classic) { =*/
 			brightness: 0.1,
-			shadow: false,
-			halo: false
+			shadow: false
+			/*= } =*/
 		},
+		/*= if (build.classic) { =*/
 		select: {
-			color: '#C0C0C0',
-			borderColor: '#000000',
+			color: '${palette.neutralColor20}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
+		/*= } =*/
 	},
 	dataLabels: {
 		align: null, // auto
@@ -37,19 +64,14 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	tooltip: {
 		distance: 6
 	},
-	threshold: 0
-});
+	threshold: 0,
+	/*= if (build.classic) { =*/
+	borderColor: '${palette.backgroundColor}'
+	// borderWidth: 1
+	/*= } =*/
 
-/**
- * ColumnSeries object
- */
-var ColumnSeries = extendClass(Series, {
-	type: 'column',
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		fill: 'color',
-		r: 'borderRadius'
-	},
+// Prototype members
+}, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -105,7 +127,7 @@ var ColumnSeries = extendClass(Series, {
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
-						if (stackGroups[stackKey] === UNDEFINED) {
+						if (stackGroups[stackKey] === undefined) {
 							stackGroups[stackKey] = columnCount++;
 						}
 						columnIndex = stackGroups[stackKey];
@@ -117,14 +139,14 @@ var ColumnSeries = extendClass(Series, {
 			});
 		}
 
-		var categoryWidth = mathMin(
-				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
+		var categoryWidth = Math.min(
+				Math.abs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
 				xAxis.len // #1535
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
-			pointWidth = mathMin(
+			pointWidth = Math.min(
 				options.maxPointWidth || xAxis.len,
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
@@ -167,7 +189,7 @@ var ColumnSeries = extendClass(Series, {
 
 		// Vertical
 		bottom = Math.round(y + h) + yCrisp;
-		fromTop = mathAbs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+		fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
@@ -192,9 +214,10 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
+			dense = series.dense = series.closestPointRange * series.xAxis.transA < 2,
 			borderWidth = series.borderWidth = pick(
-				options.borderWidth,
-				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
+				options.borderWidth, 
+				dense ? 0 : 1  // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -202,7 +225,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
+			seriesBarW = series.barW = Math.max(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset;
 
 		if (chart.inverted) {
@@ -213,28 +236,28 @@ var ColumnSeries = extendClass(Series, {
 		// columns to have individual sizes. When pointPadding is greater, we strive for equal-width
 		// columns (#2694).
 		if (options.pointPadding) {
-			seriesBarW = mathCeil(seriesBarW);
+			seriesBarW = Math.ceil(seriesBarW);
 		}
 
 		Series.prototype.translate.apply(series);
 
 		// Record the new values
 		each(series.points, function (point) {
-			var yBottom = mathMin(pick(point.yBottom, translatedThreshold), 9e4), // #3575
-				safeDistance = 999 + mathAbs(yBottom),
-				plotY = mathMin(mathMax(-safeDistance, point.plotY), yAxis.len + safeDistance), // Don't draw too far outside plot area (#1303, #2241, #4264)
+			var yBottom = pick(point.yBottom, translatedThreshold),
+				safeDistance = 999 + Math.abs(yBottom),
+				plotY = Math.min(Math.max(-safeDistance, point.plotY), yAxis.len + safeDistance), // Don't draw too far outside plot area (#1303, #2241, #4264)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
-				barY = mathMin(plotY, yBottom),
+				barY = Math.min(plotY, yBottom),
 				up,
-				barH = mathMax(plotY, yBottom) - barY;
+				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
-			if (mathAbs(barH) < minPointLength) {
+			if (Math.abs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
 					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
-					barY = mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+					barY = Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (up ? minPointLength : 0); // #1485, #4051
 				}
@@ -272,7 +295,60 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: noop,
+	drawGraph: function () {
+		this.group[this.dense ? 'addClass' : 'removeClass']('highcharts-dense-data');
+	},
+
+	/*= if (build.classic) { =*/
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			stateOptions,
+			ret,
+			p2o = this.pointAttrToOptions || {},
+			strokeOption = p2o.stroke || 'borderColor',
+			strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
+			fill = (point && point.color) || this.color,
+			stroke = options[strokeOption] || this.color || fill, // set to fill when borderColor = null on pies
+			dashstyle = options.dashStyle,
+			zone,
+			brightness;
+		
+		// Handle zone colors
+		if (point && this.zones.length) {
+			zone = point.getZone();
+			fill = (zone && zone.color) || point.options.color || this.color; // When zones are present, don't use point.color (#4267)
+		}
+
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			brightness = stateOptions.brightness;
+			fill = stateOptions.color || 
+				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||
+				fill;
+			stroke = stateOptions[strokeOption] || stroke;
+			dashstyle = stateOptions.dashStyle || dashstyle;
+		}
+
+		ret = {
+			'fill': fill,
+			'stroke': stroke,
+			'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
+		};
+		if (options.borderRadius) {
+			ret.r = options.borderRadius;
+		}
+
+		if (dashstyle) {
+			ret.dashstyle = dashstyle;
+		}
+
+		return ret;
+	},
+	/*= } =*/
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
@@ -285,35 +361,36 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			shapeArgs,
-			pointAttr;
+			shapeArgs;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic,
-				borderAttr;
+				graphic = point.graphic;
 
 			if (isNumber(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				borderAttr = defined(series.borderWidth) ? {
-					'stroke-width': series.borderWidth
-				} : {};
-
-				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
-
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
+					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
+						merge(shapeArgs)
+					);
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(borderAttr)
-						.attr(pointAttr)
-						.add(point.group || series.group)
-						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+						.attr({
+							'class': point.getClassName()
+						})
+						.add(point.group || series.group);
 				}
+
+				/*= if (build.classic) { =*/
+				// Presentational
+				graphic
+					.attr(series.pointAttribs(point, point.selected && 'select'))
+					.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+				/*= } =*/
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
@@ -333,10 +410,10 @@ var ColumnSeries = extendClass(Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (hasSVG) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
-				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));
+				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
 				if (inverted) {
 					attr.translateX = translatedThreshold - yAxis.len;
 				} else {
@@ -351,7 +428,7 @@ var ColumnSeries = extendClass(Series, {
 					// Do the scale synchronously to ensure smooth updating (#5030)
 					step: function (val, fx) {
 						series.group.attr({
-							scaleY: mathMax(0.001, fx.pos) // #5250
+							scaleY: Math.max(0.001, fx.pos) // #5250
 						});
 					}
 				}));
@@ -382,4 +459,3 @@ var ColumnSeries = extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-seriesTypes.column = ColumnSeries;

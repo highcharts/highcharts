@@ -1,17 +1,29 @@
-var timers = [],
-	getStyle,
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+var timers = [];
 
-	// Previous adapter functions
-	inArray,
-	each,
-	grep,
-	offset,
-	map,
-	addEvent,
-	removeEvent,
-	fireEvent,
-	animate,
-	stop;
+var charts = H.charts,
+	doc = H.doc,
+	win = H.win;
+
+/**
+ * Provide error messages for debugging, with links to online explanation
+ */
+H.error = function (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw new Error(msg);
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg); // eslint-disable-line no-console
+	}
+};
 
 /**
  * An animator object. One instance applies to one property (attribute or style prop) 
@@ -21,12 +33,12 @@ var timers = [],
  * @param {object} options Animation options, including duration, easing, step and complete.
  * @param {object} prop	The property to animate.
  */
-function Fx(elem, options, prop) {
+H.Fx = function (elem, options, prop) {
 	this.options = options;
 	this.elem = elem;
 	this.prop = prop;
-}
-Fx.prototype = {
+};
+H.Fx.prototype = {
 	
 	/**
 	 * Animating a path definition on SVGElement
@@ -196,7 +208,7 @@ Fx.prototype = {
 		function sixify(arr) {
 			i = arr.length;
 			while (i--) {
-				if (arr[i] === M || arr[i] === L) {
+				if (arr[i] === 'M' || arr[i] === 'L') {
 					arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
 				}
 			}
@@ -292,7 +304,7 @@ Fx.prototype = {
 			}
 		}
 
-		if (start.length && Highcharts.isNumber(shift)) {
+		if (start.length && H.isNumber(shift)) {
 
 			// The common target length for the start and end array, where both 
 			// arrays are padded in opposite ends
@@ -317,7 +329,7 @@ Fx.prototype = {
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-var extend = Highcharts.extend = function (a, b) {
+H.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -335,7 +347,7 @@ var extend = Highcharts.extend = function (a, b) {
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
  * it copied properties from extended prototypes.
  */
-function merge() {
+H.merge = function () {
 	var i,
 		args = arguments,
 		len,
@@ -353,7 +365,7 @@ function merge() {
 					value = original[key];
 
 					// Copy the contents of objects, but not arrays or DOM nodes
-					if (Highcharts.isObject(value, true) &&
+					if (H.isObject(value, true) &&
 							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 
@@ -379,49 +391,48 @@ function merge() {
 	}
 
 	return ret;
-}
+};
 
 /**
  * Shortcut for parseInt
  * @param {Object} s
  * @param {Number} mag Magnitude
  */
-function pInt(s, mag) {
+H.pInt = function (s, mag) {
 	return parseInt(s, mag || 10);
-}
+};
 
 /**
  * Check for string
  * @param {Object} s
  */
-function isString(s) {
+H.isString = function (s) {
 	return typeof s === 'string';
-}
-
-/**
- * Check for array
- * @param {Object} obj
- */
-function isArray(obj) {
-	var str = Object.prototype.toString.call(obj);
-	return str === '[object Array]' || str === '[object Array Iterator]';
-}
+};
 
 /**
  * Check for object
  * @param {Object} obj
  * @param {Boolean} strict Also checks that the object is not an array
  */
-var isObject = Highcharts.isObject = function (obj, strict) {
-	//debugger;
-	return obj && typeof obj === 'object' && (!strict || !isArray(obj));
+H.isArray = function (obj) {
+	var str = Object.prototype.toString.call(obj);
+	return str === '[object Array]' || str === '[object Array Iterator]';
+};
+
+/**
+ * Check for array
+ * @param {Object} obj
+ */
+H.isObject = function (obj, strict) {
+	return obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
 };
 
 /**
  * Check for number
  * @param {Object} n
  */
-var isNumber = Highcharts.isNumber = function isNumber(n) {
+H.isNumber = function (n) {
 	return typeof n === 'number' && !isNaN(n);
 };
 
@@ -430,7 +441,7 @@ var isNumber = Highcharts.isNumber = function isNumber(n) {
  * @param {Array} arr
  * @param {Mixed} item
  */
-function erase(arr, item) {
+H.erase = function (arr, item) {
 	var i = arr.length;
 	while (i--) {
 		if (arr[i] === item) {
@@ -439,15 +450,15 @@ function erase(arr, item) {
 		}
 	}
 	//return arr;
-}
+};
 
 /**
  * Returns true if the object is not null or undefined.
  * @param {Object} obj
  */
-function defined(obj) {
-	return obj !== UNDEFINED && obj !== null;
-}
+H.defined = function (obj) {
+	return obj !== undefined && obj !== null;
+};
 
 /**
  * Set or get an attribute or an object of attributes. Can't use jQuery attr because
@@ -457,14 +468,14 @@ function defined(obj) {
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
  */
-function attr(elem, prop, value) {
+H.attr = function (elem, prop, value) {
 	var key,
 		ret;
 
 	// if the prop is a string
-	if (isString(prop)) {
+	if (H.isString(prop)) {
 		// set the value
-		if (defined(value)) {
+		if (H.defined(value)) {
 			elem.setAttribute(prop, value);
 
 		// get the value
@@ -473,19 +484,19 @@ function attr(elem, prop, value) {
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
-	} else if (defined(prop) && isObject(prop)) {
+	} else if (H.defined(prop) && H.isObject(prop)) {
 		for (key in prop) {
 			elem.setAttribute(key, prop[key]);
 		}
 	}
 	return ret;
-}
+};
 /**
  * Check if an element is an array, and if not, make it into an array.
  */
-function splat(obj) {
-	return isArray(obj) ? obj : [obj];
-}
+H.splat = function (obj) {
+	return H.isArray(obj) ? obj : [obj];
+};
 
 /**
  * Set a timeout if the delay is given, otherwise perform the function synchronously
@@ -494,25 +505,25 @@ function splat(obj) {
  * @param   {Ojbect}   context The context
  * @returns {Nubmer}		   An identifier for the timeout
  */
-function syncTimeout(fn, delay, context) {
+H.syncTimeout = function (fn, delay, context) {
 	if (delay) {
 		return setTimeout(fn, delay, context);
 	}
 	fn.call(0, context);
-}
+};
 
 
 /**
  * Return the first value that is defined.
  */
-var pick = Highcharts.pick = function () {
+H.pick = function () {
 	var args = arguments,
 		i,
 		arg,
 		length = args.length;
 	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (arg !== UNDEFINED && arg !== null) {
+		if (arg !== undefined && arg !== null) {
 			return arg;
 		}
 	}
@@ -523,14 +534,14 @@ var pick = Highcharts.pick = function () {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-function css(el, styles) {
-	if (isMS && !hasSVG) { // #2686
-		if (styles && styles.opacity !== UNDEFINED) {
+H.css = function (el, styles) {
+	if (H.isMS && !H.svg) { // #2686
+		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
-	extend(el.style, styles);
-}
+	H.extend(el.style, styles);
+};
 
 /**
  * Utility function to create element with attributes and styles
@@ -540,10 +551,11 @@ function css(el, styles) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-function createElement(tag, attribs, styles, parent, nopad) {
-	var el = doc.createElement(tag);
+H.createElement = function (tag, attribs, styles, parent, nopad) {
+	var el = doc.createElement(tag),
+		css = H.css;
 	if (attribs) {
-		extend(el, attribs);
+		H.extend(el, attribs);
 	}
 	if (nopad) {
 		css(el, { padding: 0, border: 'none', margin: 0 });
@@ -555,36 +567,35 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		parent.appendChild(el);
 	}
 	return el;
-}
+};
 
 /**
  * Extend a prototyped class by new members
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(Parent, members) {
-	var object = function () {
-	};
+H.extendClass = function (Parent, members) {
+	var object = function () {};
 	object.prototype = new Parent();
-	extend(object.prototype, members);
+	H.extend(object.prototype, members);
 	return object;
-}
+};
 
 /**
  * Pad a string to a given length by adding 0 to the beginning
  * @param {Number} number
  * @param {Number} length
  */
-function pad(number, length, padder) {
+H.pad = function (number, length, padder) {
 	return new Array((length || 2) + 1 - String(number).length).join(padder || 0) + number;
-}
+};
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  */
-function relativeLength(value, base) {
+H.relativeLength = function (value, base) {
 	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
-}
+};
 
 /**
  * Wrap a method with extended functionality, preserving the original function
@@ -594,7 +605,7 @@ function relativeLength(value, base) {
  * as the original function, except that the original function is unshifted and passed as the first
  * argument.
  */
-var wrap = Highcharts.wrap = function (obj, method, func) {
+H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -604,9 +615,10 @@ var wrap = Highcharts.wrap = function (obj, method, func) {
 };
 
 
-function getTZOffset(timestamp) {
-	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
-}
+H.getTZOffset = function (timestamp) {
+	var d = H.Date;
+	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
+};
 
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
@@ -614,26 +626,28 @@ function getTZOffset(timestamp) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-dateFormat = function (format, timestamp, capitalize) {
-	if (!defined(timestamp) || isNaN(timestamp)) {
-		return defaultOptions.lang.invalidDate || '';
+H.dateFormat = function (format, timestamp, capitalize) {
+	if (!H.defined(timestamp) || isNaN(timestamp)) {
+		return H.defaultOptions.lang.invalidDate || '';
 	}
-	format = pick(format, '%Y-%m-%d %H:%M:%S');
+	format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - getTZOffset(timestamp)),
+	var D = H.Date,
+		date = new D(timestamp - H.getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
-		hours = date[getHours](),
-		day = date[getDay](),
-		dayOfMonth = date[getDate](),
-		month = date[getMonth](),
-		fullYear = date[getFullYear](),
-		lang = defaultOptions.lang,
+		hours = date[D.hcGetHours](),
+		day = date[D.hcGetDay](),
+		dayOfMonth = date[D.hcGetDate](),
+		month = date[D.hcGetMonth](),
+		fullYear = date[D.hcGetFullYear](),
+		lang = H.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 		shortWeekdays = lang.shortWeekdays,
+		pad = H.pad,
 
-		// List all format keys. Custom formats can be added from the outside.
-		replacements = extend({
+		// List all format keys. Custom formats can be added from the outside. 
+		replacements = H.extend({
 
 			// Day
 			'a': shortWeekdays ? shortWeekdays[day] : langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
@@ -659,12 +673,12 @@ dateFormat = function (format, timestamp, capitalize) {
 			'k': hours, // Hours in 24h format, 0 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
+			'M': pad(date[D.hcGetMinutes]()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
-			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
-		}, Highcharts.dateFormats);
+			'L': pad(Math.round(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
+		}, H.dateFormats);
 
 
 	// do the replaces
@@ -681,17 +695,17 @@ dateFormat = function (format, timestamp, capitalize) {
 /**
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
-function formatSingle(format, val) {
+H.formatSingle = function (format, val) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
-		lang = defaultOptions.lang,
+		lang = H.defaultOptions.lang,
 		decimals;
 
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = Highcharts.numberFormat(
+			val = H.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -699,15 +713,15 @@ function formatSingle(format, val) {
 			);
 		}
 	} else {
-		val = dateFormat(format, val);
+		val = H.dateFormat(format, val);
 	}
 	return val;
-}
+};
 
 /**
  * Format a string according to a subset of the rules of Python's String.format method.
  */
-function format(str, ctx) {
+H.format = function (str, ctx) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -719,7 +733,11 @@ function format(str, ctx) {
 		val,
 		index;
 
-	while ((index = str.indexOf(splitter)) !== -1) {
+	while (str) {
+		index = str.indexOf(splitter);
+		if (index === -1) {
+			break;
+		}
 
 		segment = str.slice(0, index);
 		if (isInside) { // we're on the closing bracket looking back
@@ -736,7 +754,7 @@ function format(str, ctx) {
 
 			// Format the replacement
 			if (valueAndFormat.length) {
-				val = formatSingle(valueAndFormat.join(':'), val);
+				val = H.formatSingle(valueAndFormat.join(':'), val);
 			}
 
 			// Push the result and advance the cursor
@@ -752,14 +770,14 @@ function format(str, ctx) {
 	}
 	ret.push(str);
 	return ret.join('');
-}
+};
 
 /**
  * Get the magnitude of a number
  */
-function getMagnitude(num) {
-	return math.pow(10, mathFloor(math.log(num) / math.LN10));
-}
+H.getMagnitude = function (num) {
+	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
+};
 
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
@@ -768,13 +786,13 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
-	var normalized,
+H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
+	var normalized, 
 		i,
 		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	magnitude = pick(magnitude, 1);
+	magnitude = H.pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
@@ -804,14 +822,14 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 	retInterval *= magnitude;
 
 	return retInterval;
-}
+};
 
 
 /**
  * Utility method that sorts an object array and keeping the order of equal items.
  * ECMA script standard does not specify the behaviour when items are equal.
  */
-function stableSort(arr, sortFunction) {
+H.stableSort = function (arr, sortFunction) {
 	var length = arr.length,
 		sortValue,
 		i;
@@ -830,14 +848,14 @@ function stableSort(arr, sortFunction) {
 	for (i = 0; i < length; i++) {
 		delete arr[i].safeI; // stable sort index
 	}
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMin(data) {
+H.arrayMin = function (data) {
 	var i = data.length,
 		min = data[0];
 
@@ -847,14 +865,14 @@ function arrayMin(data) {
 		}
 	}
 	return min;
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMax(data) {
+H.arrayMax = function (data) {
 	var i = data.length,
 		max = data[0];
 
@@ -864,7 +882,7 @@ function arrayMax(data) {
 		}
 	}
 	return max;
-}
+};
 
 /**
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
@@ -873,7 +891,7 @@ function arrayMax(data) {
  * @param {Object} The object to destroy properties on
  * @param {Object} Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj, except) {
+H.destroyObjectProperties = function (obj, except) {
 	var n;
 	for (n in obj) {
 		// If the object is non-null and destroy is defined
@@ -885,17 +903,18 @@ function destroyObjectProperties(obj, except) {
 		// Delete the property from the object.
 		delete obj[n];
 	}
-}
+};
 
 
 /**
  * Discard an element by moving it to the bin and delete
  * @param {Object} The HTML node to discard
  */
-function discardElement(element) {
+H.discardElement = function (element) {
+	var garbageBin = H.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = createElement(DIV);
+		garbageBin = H.createElement('div');
 	}
 
 	// move the node and empty bin
@@ -903,17 +922,17 @@ function discardElement(element) {
 		garbageBin.appendChild(element);
 	}
 	garbageBin.innerHTML = '';
-}
+};
 
 /**
  * Fix JS round off float errors
  * @param {Number} num
  */
-function correctFloat(num, prec) {
+H.correctFloat = function (num, prec) {
 	return parseFloat(
 		num.toPrecision(prec || 14)
 	);
-}
+};
 
 /**
  * Set the global animation to either a given value, or fall back to the
@@ -921,22 +940,22 @@ function correctFloat(num, prec) {
  * @param {Object} animation
  * @param {Object} chart
  */
-function setAnimation(animation, chart) {
-	chart.renderer.globalAnimation = pick(animation, chart.animation);
-}
+H.setAnimation = function (animation, chart) {
+	chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
+};
 
 /**
  * Get the animation in object form, where a disabled animation is always
  * returned with duration: 0
  */
-function animObject(animation) {
-	return isObject(animation) ? merge(animation) : { duration: animation ? 500 : 0 };
-}
+H.animObject = function (animation) {
+	return H.isObject(animation) ? H.merge(animation) : { duration: animation ? 500 : 0 };
+};
 
 /**
  * The time unit lookup
  */
-timeUnits = {
+H.timeUnits = {
 	millisecond: 1,
 	second: 1000,
 	minute: 60000,
@@ -947,7 +966,6 @@ timeUnits = {
 	year: 364 * 24 * 3600000
 };
 
-
 /**
  * Format a number and return a string based on input settings
  * @param {Number} number The input number to format
@@ -955,12 +973,12 @@ timeUnits = {
  * @param {String} decimalPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
+H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 	number = +number || 0;
 	decimals = +decimals;
 
-	var lang = defaultOptions.lang,
+	var lang = H.defaultOptions.lang,
 		origDec = (number.toString().split('.')[1] || '').length,
 		decimalComponent,
 		strinteger,
@@ -970,19 +988,19 @@ Highcharts.numberFormat = function (number, decimals, decimalPoint, thousandsSep
 
 	if (decimals === -1) {
 		decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
-	} else if (!isNumber(decimals)) {
+	} else if (!H.isNumber(decimals)) {
 		decimals = 2;
 	}
 
 	// A string containing the positive integer component of the number
-	strinteger = String(pInt(absNumber.toFixed(decimals)));
+	strinteger = String(H.pInt(absNumber.toFixed(decimals)));
 
 	// Leftover after grouping into thousands. Can be 0, 1 or 3.
 	thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
 	// Language
-	decimalPoint = pick(decimalPoint, lang.decimalPoint);
-	thousandsSep = pick(thousandsSep, lang.thousandsSep);
+	decimalPoint = H.pick(decimalPoint, lang.decimalPoint);
+	thousandsSep = H.pick(thousandsSep, lang.thousandsSep);
 
 	// Start building the return
 	ret = number < 0 ? '-' : '';
@@ -1015,40 +1033,40 @@ Math.easeInOutSine = function (pos) {
 /**
  * Internal method to return CSS value for given element and property
  */
-getStyle = function (el, prop) {
+H.getStyle = function (el, prop) {
 
 	var style;
 
 	// For width and height, return the actual inner pixel size (#4913)
 	if (prop === 'width') {
-		return Math.min(el.offsetWidth, el.scrollWidth) - getStyle(el, 'padding-left') - getStyle(el, 'padding-right');
+		return Math.min(el.offsetWidth, el.scrollWidth) - H.getStyle(el, 'padding-left') - H.getStyle(el, 'padding-right');
 	} else if (prop === 'height') {
-		return Math.min(el.offsetHeight, el.scrollHeight) - getStyle(el, 'padding-top') - getStyle(el, 'padding-bottom');
+		return Math.min(el.offsetHeight, el.scrollHeight) - H.getStyle(el, 'padding-top') - H.getStyle(el, 'padding-bottom');
 	}
 
 	// Otherwise, get the computed style
 	style = win.getComputedStyle(el, undefined);
-	return style && pInt(style.getPropertyValue(prop));
+	return style && H.pInt(style.getPropertyValue(prop));
 };
 
 /**
  * Return the index of an item in an array, or -1 if not found
  */
-inArray = function (item, arr) {
+H.inArray = function (item, arr) {
 	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
 };
 
 /**
  * Filter an array
  */
-grep = function (elements, callback) {
+H.grep = function (elements, callback) {
 	return [].filter.call(elements, callback);
 };
 
 /**
  * Map an array
  */
-map = function (arr, fn) {
+H.map = function (arr, fn) {
 	var results = [],
 		i = 0,
 		len = arr.length;
@@ -1063,7 +1081,7 @@ map = function (arr, fn) {
 /**
  * Get the element's offset position, corrected by overflow:auto.
  */
-offset = function (el) {
+H.offset = function (el) {
 	var docElem = doc.documentElement,
 		box = el.getBoundingClientRect();
 
@@ -1081,7 +1099,7 @@ offset = function (el) {
  * in all cases where we stop the animation from .attr. Instead of stopping
  * everything, we can just stop the actual attributes we're setting.
  */
-stop = function (el) {
+H.stop = function (el) {
 
 	var i = timers.length;
 
@@ -1098,14 +1116,14 @@ stop = function (el) {
  * @param {Array} arr
  * @param {Function} fn
  */
-each = function (arr, fn) { // modern browsers
-	return Array.prototype.forEach.call(arr, fn);
+H.each = function (arr, fn, ctx) { // modern browsers
+	return Array.prototype.forEach.call(arr, fn, ctx);
 };
 
 /**
  * Add an event listener
  */
-addEvent = function (el, type, fn) {
+H.addEvent = function (el, type, fn) {
 	
 	var events = el.hcEvents = el.hcEvents || {};
 
@@ -1141,7 +1159,7 @@ addEvent = function (el, type, fn) {
 /**
  * Remove event added with addEvent
  */
-removeEvent = function (el, type, fn) {
+H.removeEvent = function (el, type, fn) {
 	
 	var events,
 		hcEvents = el.hcEvents,
@@ -1186,7 +1204,7 @@ removeEvent = function (el, type, fn) {
 		if (type) {
 			events = hcEvents[type] || [];
 			if (fn) {
-				index = inArray(fn, events);
+				index = H.inArray(fn, events);
 				if (index > -1) {
 					events.splice(index, 1);
 					hcEvents[type] = events;
@@ -1207,7 +1225,7 @@ removeEvent = function (el, type, fn) {
 /**
  * Fire an event on a custom object
  */
-fireEvent = function (el, type, eventArguments, defaultFunction) {
+H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	var e,
 		hcEvents = el.hcEvents,
 		events,
@@ -1220,9 +1238,9 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 	if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
 		e = doc.createEvent('Events');
 		e.initEvent(type, true, true);
-		e.target = el;
+		//e.target = el;
 
-		extend(e, eventArguments);
+		H.extend(e, eventArguments);
 
 		if (el.dispatchEvent) {
 			el.dispatchEvent(e);
@@ -1235,22 +1253,23 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 		events = hcEvents[type] || [];
 		len = events.length;
 
-		// Attach a simple preventDefault function to skip default handler if called. 
-		// The built-in defaultPrevented property is not overwritable (#5112)
-		if (!eventArguments.preventDefault) {
-			eventArguments.preventDefault = function () {
-				eventArguments.defaultPrevented = true;
-			};
+		if (!eventArguments.target) { // We're running a custom event
+
+			H.extend(eventArguments, {
+				// Attach a simple preventDefault function to skip default handler if called. 
+				// The built-in defaultPrevented property is not overwritable (#5112)
+				preventDefault: function () {
+					eventArguments.defaultPrevented = true;
+				},
+				// Setting target to native events fails with clicking the zoom-out button in Chrome.
+				target: el,
+				// If the type is not set, we're running a custom event (#2297). If it is set,
+				// we're running a browser event, and setting it will cause en error in
+				// IE8 (#2465).		
+				type: type
+			});
 		}
 
-		eventArguments.target = el;
-
-		// If the type is not set, we're running a custom event (#2297). If it is set,
-		// we're running a browser event, and setting it will cause en error in
-		// IE8 (#2465).
-		if (!eventArguments.type) {
-			eventArguments.type = type;
-		}
 		
 		for (i = 0; i < len; i++) {
 			fn = events[i];
@@ -1271,7 +1290,7 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 /**
  * The global animate method, which uses Fx to create individual animators.
  */
-animate = function (el, params, opt) {
+H.animate = function (el, params, opt) {
 	var start,
 		unit = '',
 		end,
@@ -1279,7 +1298,7 @@ animate = function (el, params, opt) {
 		args,
 		prop;
 
-	if (!isObject(opt)) { // Number or undefined/null
+	if (!H.isObject(opt)) { // Number or undefined/null
 		args = arguments;
 		opt = {
 			duration: args[2],
@@ -1287,14 +1306,14 @@ animate = function (el, params, opt) {
 			complete: args[4]
 		};
 	}
-	if (!isNumber(opt.duration)) {
+	if (!H.isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
 	opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
-	opt.curAnim = merge(params);
+	opt.curAnim = H.merge(params);
 
 	for (prop in params) {
-		fx = new Fx(el, opt, prop);
+		fx = new H.Fx(el, opt, prop);
 		end = null;
 
 		if (prop === 'd') {
@@ -1309,7 +1328,7 @@ animate = function (el, params, opt) {
 		} else if (el.attr) {
 			start = el.attr(prop);
 		} else {
-			start = parseFloat(getStyle(el, prop)) || 0;
+			start = parseFloat(H.getStyle(el, prop)) || 0;
 			if (prop !== 'opacity') {
 				unit = 'px';
 			}
@@ -1326,6 +1345,37 @@ animate = function (el, params, opt) {
 };
 
 /**
+ * The series type factory.
+ *
+ * @param {string} type The series type name.
+ * @param {string} parent The parent series type name.
+ * @param {object} options The additional default options that is merged with the parent's options.
+ * @param {object} props The properties (functions and primitives) to set on the new prototype.
+ * @param {object} pointProps Members for a series-specific Point prototype if needed.
+ */
+H.seriesType = function (type, parent, options, props, pointProps) { // docs: add to API + extending Highcharts
+	var defaultOptions = H.getOptions(),
+		seriesTypes = H.seriesTypes;
+    
+    // Merge the options
+    defaultOptions.plotOptions[type] = H.merge(
+        defaultOptions.plotOptions[parent], 
+        options
+    );
+    
+    // Create the class
+    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
+    seriesTypes[type].prototype.type = type;
+
+    // Create the point class if needed
+    if (pointProps) {
+		seriesTypes[type].prototype.pointClass = H.extendClass(H.Point, pointProps);
+    }
+
+    return seriesTypes[type];
+};
+
+/**
  * Register Highcharts as a plugin in jQuery
  */
 if (win.jQuery) {
@@ -1336,14 +1386,14 @@ if (win.jQuery) {
 
 			// Create the chart
 			if (args[0]) {
-				new Highcharts[ // eslint-disable-line no-new
-					isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
+				new H[ // eslint-disable-line no-new
+					H.isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
 				](this[0], args[0], args[1]);
 				return this;
 			}
 
 			// When called without parameters or with the return argument, return an existing chart
-			return charts[attr(this[0], 'data-highcharts-chart')];
+			return charts[H.attr(this[0], 'data-highcharts-chart')];
 		}
 	};
 }
@@ -1354,12 +1404,12 @@ if (win.jQuery) {
  * support is not needed.
  */
 if (doc && !doc.defaultView) {
-	getStyle = function (el, prop) {
+	H.getStyle = function (el, prop) {
 		var val,
 			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
 			
 		if (el.style[prop]) {
-			return pInt(el.style[prop]);
+			return H.pInt(el.style[prop]);
 		}
 		if (prop === 'opacity') {
 			prop = 'filter';
@@ -1368,7 +1418,7 @@ if (doc && !doc.defaultView) {
 		// Getting the rendered width and height
 		if (alias) {
 			el.style.zoom = 1;
-			return Math.max(el[alias] - 2 * getStyle(el, 'padding'), 0);
+			return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
 		}
 		
 		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
@@ -1383,16 +1433,16 @@ if (doc && !doc.defaultView) {
 			);
 		}
 		
-		return val === '' ? 1 : pInt(val);
+		return val === '' ? 1 : H.pInt(val);
 	};
 }
 
 if (!Array.prototype.forEach) {
-	each = function (arr, fn) { // legacy
+	H.each = function (arr, fn, ctx) { // legacy
 		var i = 0, 
 			len = arr.length;
 		for (; i < len; i++) {
-			if (fn.call(arr[i], arr[i], i, arr) === false) {
+			if (fn.call(ctx, arr[i], i, arr) === false) {
 				return i;
 			}
 		}
@@ -1400,7 +1450,7 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-	inArray = function (item, arr) {
+	H.inArray = function (item, arr) {
 		var len, 
 			i = 0;
 
@@ -1419,7 +1469,7 @@ if (!Array.prototype.indexOf) {
 }
 
 if (!Array.prototype.filter) {
-	grep = function (elements, fn) {
+	H.grep = function (elements, fn) {
 		var ret = [],
 			i = 0,
 			length = elements.length;
@@ -1435,18 +1485,3 @@ if (!Array.prototype.filter) {
 }
 
 //--- End compatibility section ---
-
-// Expose utilities
-Highcharts.Fx = Fx;
-Highcharts.inArray = inArray;
-Highcharts.each = each;
-Highcharts.grep = grep;
-Highcharts.offset = offset;
-Highcharts.map = map;
-Highcharts.addEvent = addEvent;
-Highcharts.removeEvent = removeEvent;
-Highcharts.fireEvent = fireEvent;
-Highcharts.animate = animate;
-Highcharts.animObject = animObject;
-Highcharts.stop = stop;
-

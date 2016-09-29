@@ -1,4 +1,24 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Axis.js';
+import './Chart.js';
+import './Series.js';
+	var Axis = H.Axis,
+		Chart = H.Chart,
+		correctFloat = H.correctFloat,
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		each = H.each,
+		format = H.format,
+		pick = H.pick,
+		Series = H.Series;
+/**
  * The class for stack items
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
@@ -66,8 +86,8 @@ StackItem.prototype = {
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
 						rotation: options.rotation,	// rotation
-						visibility: HIDDEN					// hidden until setOffset is called
-					})
+						visibility: 'hidden'					// hidden until setOffset is called
+					})				
 					.add(group);							// add to the labels-group
 		}
 	},
@@ -84,7 +104,7 @@ StackItem.prototype = {
 			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
-			h = mathAbs(y - yZero),							// stack height
+			h = Math.abs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
 			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
@@ -176,7 +196,7 @@ Axis.prototype.renderStackTotals = function () {
 		axis.stackTotalGroup = stackTotalGroup =
 			renderer.g('stack-labels')
 				.attr({
-					visibility: VISIBLE,
+					visibility: 'visible',
 					zIndex: 6
 				})
 				.add();
@@ -330,11 +350,11 @@ Series.prototype.setStackedPoints = function () {
 			other = isNegative ? stackKey : negKey;
 			if (negStacks && stacks[other] && stacks[other][x]) {
 				other = stacks[other][x];
-				stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
+				stack.total = other.total = Math.max(other.total, stack.total) + Math.abs(y) || 0;
 
 			// Percent stacked areas
 			} else {
-				stack.total = correctFloat(stack.total + (mathAbs(y) || 0));
+				stack.total = correctFloat(stack.total + (Math.abs(y) || 0));
 			}
 		} else {
 			stack.total = correctFloat(stack.total + (y || 0));
@@ -408,4 +428,3 @@ Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
 
 	return stackIndicator;
 };
-

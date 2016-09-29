@@ -1,20 +1,30 @@
-(function () {
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes;
 
 	var colProto = seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
-	});
 
-	/**
-	 * ColumnRangeSeries object
-	 */
-	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
-		type: 'columnrange',
+	// Prototype members
+	}), {
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
 		 */
@@ -85,7 +95,6 @@
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		crispCol: colProto.crispCol,
-		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		getColumnMetrics: colProto.getColumnMetrics,
@@ -94,7 +103,6 @@
 		},
 		polarArc: function () {
 			return colProto.polarArc.apply(this, arguments);
-		}
+		},
+		pointAttribs: colProto.pointAttribs
 	});
-}());
-

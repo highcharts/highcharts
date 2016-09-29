@@ -1,3 +1,23 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
+import '../parts/SvgRenderer.js';
+	var Chart = H.Chart,
+		defaultOptions = H.defaultOptions,
+		each = H.each,
+		extend = H.extend,
+		merge = H.merge,
+		pick = H.pick,
+		Renderer = H.Renderer,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer;
 
 
 // Add language
@@ -16,14 +36,17 @@ defaultOptions.mapNavigation = {
 		x: 0,
 		width: 18,
 		height: 18,
+		padding: 5,
+		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '15px',
-			fontWeight: 'bold',
-			textAlign: 'center'
+			fontWeight: 'bold'
 		},
 		theme: {
-			'stroke-width': 1
+			'stroke-width': 1,
+			'text-align': 'center'
 		}
+		/*= } =*/
 	},
 	buttons: {
 		zoomIn: {
@@ -53,7 +76,7 @@ defaultOptions.mapNavigation = {
 /**
  * Utility for reading SVG paths directly.
  */
-Highcharts.splitPath = function (path) {
+H.splitPath = function (path) {
 	var i;
 
 	// Move letters apart
@@ -62,8 +85,8 @@ Highcharts.splitPath = function (path) {
 	path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
 	// Split on spaces and commas
-	path = path.split(/[ ,]+/);
-
+	path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
+	
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {
 		if (!/[a-zA-Z]/.test(path[i])) {
@@ -74,7 +97,7 @@ Highcharts.splitPath = function (path) {
 };
 
 // A placeholder for map definitions
-Highcharts.maps = {};
+H.maps = {};
 
 
 
@@ -121,22 +144,19 @@ if (Renderer === VMLRenderer) {
 /**
  * A wrapper for Chart with all the default values for a Map
  */
-Highcharts.Map = Highcharts.mapChart = function (a, b, c) {
+H.Map = H.mapChart = function (a, b, c) {
 
 	var hasRenderToArg = typeof a === 'string' || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],
 		hiddenAxis = {
 			endOnTick: false,
-			gridLineWidth: 0,
-			lineWidth: 0,
+			visible: false,
 			minPadding: 0,
 			maxPadding: 0,
-			startOnTick: false,
-			title: null,
-			tickPositions: []
+			startOnTick: false
 		},
 		seriesOptions,
-		defaultCreditsOptions = Highcharts.getOptions().credits;
+		defaultCreditsOptions = H.getOptions().credits;
 
 	/* For visual testing
 	hiddenAxis.gridLineWidth = 1;

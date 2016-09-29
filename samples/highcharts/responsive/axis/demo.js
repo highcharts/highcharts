@@ -35,9 +35,7 @@ $(function () {
         responsive: {
             rules: [{
                 condition: {
-                    key: 'this.chartWidth',
-                    operator: '<',
-                    value: 500
+                    maxWidth: 500
                 },
                 // Make the labels less space demanding on mobile
                 chartOptions: {

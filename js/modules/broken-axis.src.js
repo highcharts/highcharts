@@ -1,22 +1,13 @@
 /**
- * @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts Broken Axis module
- * 
+ * (c) 2009-2016 Torstein Honsi
+ *
  * License: www.highcharts.com/license
  */
-
-(function (factory) {
-	/*= if (!build.assembly) { =*/
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-		return;
-	}
-	/*= } =*/
-	factory(Highcharts);
-	
-}(function (H) {
-
-	'use strict';
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Series.js';
 
 	var pick = H.pick,
 		wrap = H.wrap,
@@ -324,5 +315,3 @@
 
 	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
-
-}));

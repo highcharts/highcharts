@@ -1,7 +1,15 @@
 /**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+/**
  * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-(function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
@@ -139,4 +147,3 @@
 			}
 		});
 	};
-}(Highcharts));

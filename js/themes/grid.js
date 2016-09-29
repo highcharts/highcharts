@@ -1,8 +1,14 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Grid theme for Highcharts JS
  * @author Torstein Honsi
  */
 
+'use strict';
+import Highcharts from '../parts/Globals.js';
 Highcharts.theme = {
 	colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
 	chart: {
@@ -100,4 +106,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+Highcharts.setOptions(Highcharts.theme);

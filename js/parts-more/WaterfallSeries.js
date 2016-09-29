@@ -1,40 +1,45 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+import '../parts/Point.js';
+	var correctFloat = H.correctFloat,
+		isNumber = H.isNumber,
+		noop = H.noop,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		seriesType = H.seriesType,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
-
-// 1 - set default options
-defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
-	lineWidth: 1,
-	lineColor: '#333',
-	dashStyle: 'dot',
-	borderColor: '#333',
+seriesType('waterfall', 'column', {
 	dataLabels: {
 		inside: true
 	},
+	/*= if (build.classic) { =*/
+	lineWidth: 1,
+	lineColor: '${palette.neutralColor80}',
+	dashStyle: 'dot',
+	borderColor: '${palette.neutralColor80}',
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126
 		}
 	}
-});
+	/*= } =*/
 
-
-// 2 - Create the series object
-seriesTypes.waterfall = extendClass(seriesTypes.column, {
-	type: 'waterfall',
-
-	upColorProp: 'fill',
-
+// Prototype members
+}, {
 	pointValKey: 'y',
-
-	/**
-	 * Pass the null test in ColumnSeries.translate.
-	 */
-	pointClass: extendClass(Point, {
-		isValid: function () {
-			return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
-		}
-	}),
 
 	/**
 	 * Translate data points from raw values
@@ -86,7 +91,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				point.y = correctFloat(yValue - previousIntermediate); // #3840
 			}
 			// up points
-			y = mathMax(previousY, previousY + point.y) + range[0];
+			y = Math.max(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.toPixels(y, true);
 
 
@@ -114,8 +119,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height *= -1;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
-			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
+			point.plotY = shapeArgs.y = Math.round(shapeArgs.y) - (series.borderWidth % 2) / 2;
+			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
 			if (shapeArgs.height <= minPointLength) {
@@ -192,51 +197,48 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		return pt.y;
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+	pointAttribs: function (point, state) {
 
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor || series.color,
-			hoverColor = Highcharts.Color(upColor).brighten(options.states.hover.brightness).get(),
-			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+		var upColor = this.options.upColor,
+			attr;
 
-		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
-		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+		// Set or reset up color (#3710, update to negative)
+		if (upColor && !point.options.color) {
+			point.color = point.y > 0 ? upColor : null;
+		}
 
-		each(series.points, function (point) {
-			if (!point.options.color) {
-				// Up color
-				if (point.y > 0) {
-					point.pointAttr = seriesDownPointAttr;
-					point.color = upColor;
+		attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
 
-				// Down color (#3710, update to negative)
-				} else {
-					point.pointAttr = series.pointAttr;
-				}
-			}
-		});
+		// The dashStyle option in waterfall applies to the graph, not
+		// the points
+		delete attr.dashstyle;
+
+		return attr;
+	},
+	/*= } =*/
+
+	/**
+	 * Return an empty path initially, because we need to know the stroke-width in order 
+	 * to set the final path.
+	 */
+	getGraphPath: function () {
+		return ['M', 0, 0];
 	},
 
 	/**
 	 * Draw columns' connector lines
 	 */
-	getGraphPath: function () {
+	getCrispPath: function () {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.borderWidth,
-			normalizer = mathRound(lineWidth) % 2 / 2,
+			lineWidth = this.graph.strokeWidth() + this.borderWidth,
+			normalizer = Math.round(lineWidth) % 2 / 2,
 			path = [],
-			M = 'M',
-			L = 'L',
 			prevArgs,
 			pointArgs,
 			i,
@@ -247,9 +249,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			prevArgs = data[i - 1].shapeArgs;
 
 			d = [
-				M,
+				'M',
 				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
-				L,
+				'L',
 				pointArgs.x, prevArgs.y + normalizer
 			];
 
@@ -265,11 +267,40 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	},
 
 	/**
+	 * The graph is initally drawn with an empty definition, then updated with
+	 * crisp rendering.
+	 */
+	drawGraph: function () {
+		Series.prototype.drawGraph.call(this);
+		this.graph.attr({
+			d: this.getCrispPath()
+		});
+	},
+
+	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: noop,
+	getExtremes: noop
 
-	drawGraph: Series.prototype.drawGraph
+// Point members
+}, {
+	getClassName: function () {
+		var className = Point.prototype.getClassName.call(this);
+
+		if (this.isSum) {
+			className += ' highcharts-sum';
+		} else if (this.isIntermediateSum) {
+			className += ' highcharts-intermediate-sum';
+		}
+		return className;
+	},
+	/**
+	 * Pass the null test in ColumnSeries.translate.
+	 */
+	isValid: function () {
+		return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
+	}
+	
 });
 
 /* ****************************************************************************

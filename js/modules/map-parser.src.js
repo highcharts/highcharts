@@ -1,18 +1,18 @@
 /**
+ * (c) 2009-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+/**
  * SVG map parser. 
  * This file requires data.js.
  */
 
-/*global document, Highcharts, jQuery, $ */
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-
-	'use strict';
+/*global document, jQuery, $ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import './data.src.js';
 
 	var each = H.each;
 
@@ -193,7 +193,7 @@
 		 * Scale the path to fit within a given box and round all numbers
 		 */
 		roundPaths: function (arr, scale) {
-			var mapProto = Highcharts.seriesTypes.map.prototype,
+			var mapProto = H.seriesTypes.map.prototype,
 				fakeSeries,
 				origSize,
 				transA;
@@ -202,7 +202,7 @@
 				xAxis: {
 					//min: arr.minX,
 					//len: scale,
-					translate: Highcharts.Axis.prototype.translate,
+					translate: H.Axis.prototype.translate,
 					options: {},
 					minPixelPadding: 0
 					//transA: transA
@@ -210,7 +210,7 @@
 				yAxis: {
 					//min: (arr.minY + scale) / transA,
 					//len: scale,
-					translate: Highcharts.Axis.prototype.translate,
+					translate: H.Axis.prototype.translate,
 					options: {},
 					minPixelPadding: 0
 					//transA: transA
@@ -426,4 +426,3 @@
 			}
 		}
 	});
-}));

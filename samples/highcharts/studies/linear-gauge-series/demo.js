@@ -54,7 +54,8 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: 'lineargauge',
-            inverted: true
+            inverted: true,
+            height: 100
         },
         title: {
             text: 'A Horizontal Linear Gauge'

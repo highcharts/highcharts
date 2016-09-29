@@ -1,5 +1,14 @@
-
-(function () {
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Pointer.js';
+import '../parts/Series.js';
+import '../parts/Pointer.js';
 
 	/**
 	 * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
@@ -7,7 +16,14 @@
 	 *
 	 */
 
-	var seriesProto = Series.prototype,
+	var each = H.each,
+		pick = H.pick,
+		Pointer = H.Pointer,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		wrap = H.wrap,
+
+		seriesProto = Series.prototype,
 		pointerProto = Pointer.prototype,
 		colProto;
 
@@ -454,5 +470,3 @@
 
 		return ret;
 	});
-
-}());

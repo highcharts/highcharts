@@ -1,20 +1,33 @@
 /**
- * Set the default options for area
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.area = merge(defaultSeriesOptions, {
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Color.js';
+import './Legend.js';
+import './Series.js';
+import './Options.js';
+	var color = H.color,
+		each = H.each,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		map = H.map,
+		pick = H.pick,
+		Series = H.Series,
+		seriesType = H.seriesType;
+/**
+ * Area series type
+ */
+seriesType('area', 'line', {
 	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: 0.75,
 	// fillColor: null
-});
-
-/**
- * AreaSeries object
- */
-var AreaSeries = extendClass(Series, {
-	type: 'area',
+}, {
 	singleStacks: false,
 	/** 
 	 * Return an array of stacked points, where null and missing points are replaced by 
@@ -232,7 +245,7 @@ var AreaSeries = extendClass(Series, {
 		bottomPoints.reversed = true;
 		bottomPath = getGraphPath.call(this, bottomPoints, true, true);
 		if (bottomPath.length) {
-			bottomPath[0] = L;
+			bottomPath[0] = 'L';
 		}
 
 		areaPath = topPath.concat(bottomPath);
@@ -261,15 +274,29 @@ var AreaSeries = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
-			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
-
-		each(zones, function (threshold, i) {
-			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			props = [[
+				'area',
+				'highcharts-area',
+				/*= if (build.classic) { =*/
+				this.color,
+				options.fillColor
+				/*= } =*/
+			]]; // area name, main color, fill color
+		
+		each(zones, function (zone, i) {
+			props.push([
+				'zone-area-' + i, 
+				'highcharts-area highcharts-zone-area-' + i + ' ' + zone.className,
+				/*= if (build.classic) { =*/
+				zone.color || series.color, 
+				zone.fillColor || options.fillColor
+				/*= } =*/
+			]);
 		});
+
 		each(props, function (prop) {
 			var areaKey = prop[0],
-				area = series[areaKey],
-				attr;
+				area = series[areaKey];
 
 			// Create or update the area
 			if (area) { // update
@@ -277,16 +304,17 @@ var AreaSeries = extendClass(Series, {
 				area.animate({ d: areaPath });
 
 			} else { // create
-				attr = {
-					fill: prop[2] || prop[1],
-					zIndex: 0 // #1069
-				};
-				if (!prop[2]) {
-					attr['fill-opacity'] = pick(options.fillOpacity, 0.75);
-				}
 				area = series[areaKey] = series.chart.renderer.path(areaPath)
-					.attr(attr)
-					.add(series.group);
+					.addClass(prop[1])
+					.attr({
+						/*= if (build.classic) { =*/
+						fill: pick(
+							prop[3],
+							color(prop[2]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+						),
+						/*= } =*/
+						zIndex: 0 // #1069
+					}).add(series.group);
 				area.isArea = true;
 			}
 			area.startX = areaPath.xMap;
@@ -296,5 +324,3 @@ var AreaSeries = extendClass(Series, {
 
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-
-seriesTypes.area = AreaSeries;

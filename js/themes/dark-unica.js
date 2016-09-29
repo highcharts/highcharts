@@ -1,9 +1,16 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Dark theme for Highcharts JS
  * @author Torstein Honsi
  */
 
+'use strict';
+/* global document */
 // Load the fonts
+import Highcharts from '../parts/Globals.js';
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',
 	rel: 'stylesheet',
@@ -11,8 +18,8 @@ Highcharts.createElement('link', {
 }, null, document.getElementsByTagName('head')[0]);
 
 Highcharts.theme = {
-	colors: ["#2b908f", "#90ee7e", "#f45b5b", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
-		"#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+	colors: ['#2b908f', '#90ee7e', '#f45b5b', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
+		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
 	chart: {
 		backgroundColor: {
 			linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
@@ -22,7 +29,7 @@ Highcharts.theme = {
 			]
 		},
 		style: {
-			fontFamily: "'Unica One', sans-serif"
+			fontFamily: '\'Unica One\', sans-serif'
 		},
 		plotBorderColor: '#606063'
 	},

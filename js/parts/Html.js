@@ -1,3 +1,27 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './SvgRenderer.js';
+	var attr = H.attr,
+		createElement = H.createElement,
+		css = H.css,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		isFirefox = H.isFirefox,
+		isMS = H.isMS,
+		isWebKit = H.isWebKit,
+		pInt = H.pInt,
+		SVGElement = H.SVGElement,
+		SVGRenderer = H.SVGRenderer,
+		win = H.win,
+		wrap = H.wrap;
+
 // extend SvgElement for useHTML option
 extend(SVGElement.prototype, {
 	/**
@@ -39,7 +63,7 @@ extend(SVGElement.prototype, {
 		// faking getBBox in exported SVG in legacy IE
 		// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 		if (element.nodeName === 'text') {
-			element.style.position = ABSOLUTE;
+			element.style.position = 'absolute';
 		}
 
 		return {
@@ -70,7 +94,6 @@ extend(SVGElement.prototype, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			shadows = wrapper.shadows,
 			styles = wrapper.styles;
 
 		// apply translate
@@ -78,14 +101,17 @@ extend(SVGElement.prototype, {
 			marginLeft: translateX,
 			marginTop: translateY
 		});
-		if (shadows) { // used in labels/tooltip
-			each(shadows, function (shadow) {
+
+		/*= if (build.classic) { =*/
+		if (wrapper.shadows) { // used in labels/tooltip
+			each(wrapper.shadows, function (shadow) {
 				css(shadow, {
 					marginLeft: translateX + 1,
 					marginTop: translateY + 1
 				});
 			});
 		}
+		/*= } =*/
 
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
@@ -121,7 +147,7 @@ extend(SVGElement.prototype, {
 				// Update textWidth
 				if (elem.offsetWidth > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
-						width: textWidth + PX,
+						width: textWidth + 'px',
 						display: 'block',
 						whiteSpace: whiteSpace || 'normal' // #3331
 					});
@@ -133,8 +159,8 @@ extend(SVGElement.prototype, {
 
 			// apply position with correction
 			css(elem, {
-				left: (x + (wrapper.xCorr || 0)) + PX,
-				top: (y + (wrapper.yCorr || 0)) + PX
+				left: (x + (wrapper.xCorr || 0)) + 'px',
+				top: (y + (wrapper.yCorr || 0)) + 'px'
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
@@ -152,7 +178,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : win.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
@@ -221,13 +247,15 @@ extend(SVGRenderer.prototype, {
 		wrapper
 			.attr({
 				text: str,
-				x: mathRound(x),
-				y: mathRound(y)
+				x: Math.round(x),
+				y: Math.round(y)
 			})
 			.css({
-				position: ABSOLUTE,
+				/*= if (build.classic) { =*/
 				fontFamily: this.style.fontFamily,
-				fontSize: this.style.fontSize
+				fontSize: this.style.fontSize,
+				/*= } =*/
+				position: 'absolute'
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
@@ -273,10 +301,10 @@ extend(SVGRenderer.prototype, {
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
-								position: ABSOLUTE,
-								left: (parentGroup.translateX || 0) + PX,
-								top: (parentGroup.translateY || 0) + PX,
+							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', cls, {
+								position: 'absolute',
+								left: (parentGroup.translateX || 0) + 'px',
+								top: (parentGroup.translateY || 0) + 'px',
 								display: parentGroup.display,
 								opacity: parentGroup.opacity, // #5075
 								pointerEvents: parentGroup.styles && parentGroup.styles.pointerEvents // #5595
@@ -289,12 +317,12 @@ extend(SVGRenderer.prototype, {
 							// position is changed
 							extend(parentGroup, {
 								translateXSetter: function (value, key) {
-									htmlGroupStyle.left = value + PX;
+									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								},
 								translateYSetter: function (value, key) {
-									htmlGroupStyle.top = value + PX;
+									htmlGroupStyle.top = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								}

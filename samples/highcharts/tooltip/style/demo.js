@@ -3,7 +3,7 @@ $(function () {
 
         tooltip: {
             style: {
-                padding: 10,
+                color: 'blue',
                 fontWeight: 'bold'
             }
         },

@@ -1,5 +1,4 @@
 /**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
  * Solid angular gauge module
  *
  * (c) 2010-2016 Torstein Honsi
@@ -7,28 +6,16 @@
  * License: www.highcharts.com/license
  */
 
-(function (factory) {
-	if (typeof module === 'object' && module.exports) {
-		module.exports = factory;
-	} else {
-		factory(Highcharts);
-	}
-}(function (H) {
-	'use strict';
-
-	var defaultPlotOptions = H.getOptions().plotOptions,
-		pInt = H.pInt,
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts-more/GaugeSeries.js';
+	var pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
 		isNumber = H.isNumber,
-		colorAxisMethods,
-		UNDEFINED;
-
-	// The default options
-	defaultPlotOptions.solidgauge = H.merge(defaultPlotOptions.gauge, {
-		colorByPoint: true
-	});
-
+		colorAxisMethods;
 
 	// These methods are defined in the ColorAxis object, and copied here.
 	// If we implement an AMD system we should make ColorAxis a dependency.
@@ -57,7 +44,7 @@
 							colorCounter = 0;
 						}
 					} else {
-						dataClass.color = axis.tweenColors(H.Color(options.minColor), H.Color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+						dataClass.color = axis.tweenColors(H.color(options.minColor), H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
 					}
 				}
 			});
@@ -69,7 +56,7 @@
 				[1, this.options.maxColor]
 			];
 			each(this.stops, function (stop) {
-				stop.color = H.Color(stop[1]);
+				stop.color = H.color(stop[1]);
 			});
 		},
 		/** 
@@ -91,7 +78,7 @@
 					dataClass = dataClasses[i];
 					from = dataClass.from;
 					to = dataClass.to;
-					if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+					if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
 						color = dataClass.color;
 						if (point) {
 							point.dataClass = i;
@@ -160,14 +147,15 @@
 	 */
 	each(['fill', 'stroke'], function (prop) {
 		H.Fx.prototype[prop + 'Setter'] = function () {
-			this.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+			this.elem.attr(prop, colorAxisMethods.tweenColors(H.color(this.start), H.color(this.end), this.pos));
 		};
 	});
 
-	// The series prototype
-	H.seriesTypes.solidgauge = H.extendClass(H.seriesTypes.gauge, {
-		type: 'solidgauge',
-		pointAttrToOptions: {}, // #4301, don't inherit line marker's attribs
+	// The solidgauge series type
+	H.seriesType('solidgauge', 'gauge', {
+		colorByPoint: true
+	
+	}, {
 		bindAxes: function () {
 			var axis;
 			H.seriesTypes.gauge.prototype.bindAxes.call(this);
@@ -194,7 +182,7 @@
 				overshoot = options.overshoot,
 				overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
 
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var graphic = point.graphic,
 					rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
 					radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200,
@@ -205,8 +193,7 @@
 					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
 					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
 					minAngle,
-					maxAngle,
-					attribs;
+					maxAngle;
 
 				if (toColor === 'none') { // #3708
 					toColor = point.color || series.color || 'none';
@@ -248,18 +235,26 @@
 						shapeArgs.d = d; // animate alters it
 					}
 				} else {
-					attribs = {
-						stroke: options.borderColor || 'none',
-						'stroke-width': options.borderWidth || 0,
-						fill: toColor,
-						'sweep-flag': 0
-					};
-					if (options.linecap !== 'square') {
-						attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
-					}
 					point.graphic = renderer.arc(shapeArgs)
-						.attr(attribs)
+						.addClass('highcharts-point')
+						.attr({
+							fill: toColor,
+							'sweep-flag': 0
+						})
 						.add(series.group);
+
+					/*= if (build.classic) { =*/
+					if (options.linecap !== 'square') {
+						point.graphic.attr({
+							'stroke-linecap': 'round',
+							'stroke-linejoin': 'round'
+						});
+					}
+					point.graphic.attr({
+						stroke: options.borderColor || 'none',
+						'stroke-width': options.borderWidth || 0
+					});
+					/*= } =*/
 				}
 			});
 		},
@@ -275,5 +270,3 @@
 			}
 		}
 	});
-
-}));

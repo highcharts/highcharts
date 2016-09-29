@@ -130,15 +130,15 @@ Status
         } else {
             /*
             if (trace && trace.length) {
-                msgStack.push('TRACE:');
+                msgStack.push('Trace:');
                 trace.forEach(function(t) {
                     msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
                 });
             }
 
             console.error(
-                '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' +
-                    i + '\n\n.' + msgStack.join('\n')
+                '\n  To start again from this sample, run with argument --start ' +
+                    i + '.\n\n  ' + msgStack.join('\n   ')
             );
             */
             console.log(

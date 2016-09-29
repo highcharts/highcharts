@@ -10,7 +10,6 @@ $(function () {
                 depth: 50,
                 frame: {
                     bottom: {
-                        size: 1,
                         color: '#C0C0C0'
                     },
                     side: {

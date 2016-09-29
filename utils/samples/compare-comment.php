@@ -1,6 +1,7 @@
 <?php
-
-$compare = json_decode(file_get_contents('temp/compare.json'));
+require_once('functions.php');
+$compareJSON = compareJSON();
+$compare = json_decode(@file_get_contents($compareJSON));
 $path = $_GET['path'];
 $diff = $_GET['diff'];
 $focus = @$_GET['focus'] === 'false' ? false : true;
@@ -13,7 +14,7 @@ if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
 		$compare->$path = new StdClass;
 	}
 	$compare->$path->comment = (object) $_POST;
-	file_put_contents('temp/compare.json', json_encode($compare, JSON_PRETTY_PRINT));
+	file_put_contents($compareJSON, json_encode($compare, JSON_PRETTY_PRINT));
 	$updateContents = true;
 }
 

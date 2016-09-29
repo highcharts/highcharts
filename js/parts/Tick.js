@@ -1,7 +1,24 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+	var correctFloat = H.correctFloat,
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		isNumber = H.isNumber,
+		merge = H.merge,
+		pick = H.pick,
+		stop = H.stop,
+		deg2rad = H.deg2rad;
+
+/**
  * The Tick class
  */
-function Tick(axis, pos, type, noLabel) {
+H.Tick = function (axis, pos, type, noLabel) {
 	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
@@ -10,9 +27,9 @@ function Tick(axis, pos, type, noLabel) {
 	if (!type && !noLabel) {
 		this.addLabel();
 	}
-}
+};
 
-Tick.prototype = {
+H.Tick.prototype = {
 	/**
 	 * Write the tick label
 	 */
@@ -56,8 +73,8 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
-
+		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
+		
 		// first call
 		if (!defined(label)) {
 
@@ -69,9 +86,10 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						//.attr(attr)
+						/*= if (build.classic) { =*/
 						// without position absolute, IE export sometimes is wrong
 						.css(merge(labelOptions.style))
+						/*= } =*/
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
@@ -101,8 +119,8 @@ Tick.prototype = {
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
-			leftBound = pick(axis.labelLeft, mathMin(axis.pos, spacing[3])),
-			rightBound = pick(axis.labelRight, mathMax(axis.pos + axis.len, chartWidth - spacing[1])),
+			leftBound = pick(axis.labelLeft, Math.min(axis.pos, spacing[3])),
+			rightBound = pick(axis.labelRight, Math.max(axis.pos + axis.len, chartWidth - spacing[1])),
 			label = this.label,
 			rotation = this.rotation,
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
@@ -129,27 +147,27 @@ Tick.prototype = {
 				goRight = -1;
 			}
 
-			modifiedSlotWidth = mathMin(slotWidth, modifiedSlotWidth); // #4177
+			modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
 			if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - mathMin(labelWidth, modifiedSlotWidth)));
+				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - Math.min(labelWidth, modifiedSlotWidth)));
 			}
 			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
-			if (labelWidth > modifiedSlotWidth || (axis.autoRotation && label.styles.width)) {
+			if (labelWidth > modifiedSlotWidth || (axis.autoRotation && (label.styles || {}).width)) {
 				textWidth = modifiedSlotWidth;
 			}
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(pxPos / Math.cos(rotation * deg2rad) - leftBound);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad));
+			textWidth = Math.round((chartWidth - pxPos) / Math.cos(rotation * deg2rad));
 		}
 
 		if (textWidth) {
 			css.width = textWidth;
-			if (!axis.options.labels.style.textOverflow) {
+			if (!(axis.options.labels.style || {}).textOverflow) {
 				css.textOverflow = 'ellipsis';
 			}
 			label.css(css);
@@ -195,7 +213,7 @@ Tick.prototype = {
 				yOffset = rotCorr.y + 8;
 			} else {
 				// #3140, #3140
-				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
 			}
 		}
 
@@ -215,7 +233,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: mathRound(y)
+			y: Math.round(y)
 		};
 	},
 
@@ -224,10 +242,10 @@ Tick.prototype = {
 	 */
 	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
 		return renderer.crispLine([
-			M,
+			'M',
 			x,
 			y,
-			L,
+			'L',
 			x + (horiz ? 0 : -tickLength),
 			y + (horiz ? tickLength : 0)
 		], tickWidth);
@@ -251,18 +269,13 @@ Tick.prototype = {
 			pos = tick.pos,
 			labelOptions = options.labels,
 			gridLine = tick.gridLine,
-			gridPrefix = type ? type + 'Grid' : 'grid',
 			tickPrefix = type ? type + 'Tick' : 'tick',
-			gridLineWidth = options[gridPrefix + 'LineWidth'],
-			gridLineColor = options[gridPrefix + 'LineColor'],
-			dashStyle = options[gridPrefix + 'LineDashStyle'],
 			tickSize = axis.tickSize(tickPrefix),
-			tickColor = options[tickPrefix + 'Color'],
 			gridLinePath,
 			mark = tick.mark,
-			markPath,
-			step = /*axis.labelStep || */labelOptions.step,
-			attribs,
+			isNewMark = !mark,
+			step = labelOptions.step,
+			attribs = {},
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
@@ -270,37 +283,44 @@ Tick.prototype = {
 			y = xy.y,
 			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
+		/*= if (build.classic) { =*/
+		var gridPrefix = type ? type + 'Grid' : 'grid',
+			gridLineWidth = options[gridPrefix + 'LineWidth'],
+			gridLineColor = options[gridPrefix + 'LineColor'],
+			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
+			tickColor = options[tickPrefix + 'Color'];
+		/*= } =*/
+
 		opacity = pick(opacity, 1);
 		this.isActive = true;
 
-		// create the grid line
-		if (gridLineWidth) {
-			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
-
-			if (gridLine === UNDEFINED) {
-				attribs = {
-					stroke: gridLineColor,
-					'stroke-width': gridLineWidth
-				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
-				}
-				if (!type) {
-					attribs.zIndex = 1;
-				}
-				if (old) {
-					attribs.opacity = 0;
-				}
-				tick.gridLine = gridLine =
-					gridLineWidth ?
-						renderer.path(gridLinePath)
-							.attr(attribs).add(axis.gridGroup) :
-						null;
+		// Create the grid line
+		if (!gridLine) {
+			/*= if (build.classic) { =*/
+			attribs.stroke = gridLineColor;
+			attribs['stroke-width'] = gridLineWidth;
+			if (dashStyle) {
+				attribs.dashstyle = dashStyle;
 			}
+			/*= } =*/
+			if (!type) {
+				attribs.zIndex = 1;
+			}
+			if (old) {
+				attribs.opacity = 0;
+			}
+			tick.gridLine = gridLine = renderer.path()
+				.attr(attribs)
+				.addClass('highcharts-' + (type ? type + '-' : '') + 'grid-line')
+				.add(axis.gridGroup);
+		}
 
-			// If the parameter 'old' is set, the current call will be followed
-			// by another call, therefore do not do any animations this time
-			if (!old && gridLine && gridLinePath) {
+		// If the parameter 'old' is set, the current call will be followed
+		// by another call, therefore do not do any animations this time
+		if (!old && gridLine) {
+			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
+			if (gridLinePath) {
 				gridLine[tick.isNew ? 'attr' : 'animate']({
 					d: gridLinePath,
 					opacity: opacity
@@ -310,24 +330,30 @@ Tick.prototype = {
 
 		// create the tick mark
 		if (tickSize) {
+
+			// negate the length
 			if (axis.opposite) {
 				tickSize[0] = -tickSize[0];
 			}
-			markPath = tick.getMarkPath(x, y, tickSize[0], tickSize[1] * reverseCrisp, horiz, renderer);
-			if (mark) { // updating
-				mark.animate({
-					d: markPath,
-					opacity: opacity
-				});
-			} else { // first time
-				tick.mark = renderer.path(
-					markPath
-				).attr({
+
+			// First time, create it
+			if (isNewMark) {
+				tick.mark = mark = renderer.path()
+					.addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
+					.add(axis.axisGroup);
+
+				/*= if (build.classic) { =*/
+				mark.attr({
 					stroke: tickColor,
-					'stroke-width': tickSize[1],
-					opacity: opacity
-				}).add(axis.axisGroup);
+					'stroke-width': tickWidth
+				});
+				/*= } =*/
 			}
+			mark[isNewMark ? 'attr' : 'animate']({
+				d: tick.getMarkPath(x, y, tickSize[0], mark.strokeWidth() * reverseCrisp, horiz, renderer),
+				opacity: opacity
+			});
+
 		}
 
 		// the label is created on init - now move it into place
@@ -370,4 +396,3 @@ Tick.prototype = {
 		destroyObjectProperties(this, this.axis);
 	}
 };
-
