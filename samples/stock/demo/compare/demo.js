@@ -30,7 +30,8 @@ $(function () {
 
             plotOptions: {
                 series: {
-                    compare: 'percent'
+                    compare: 'percent',
+                    showInNavigator: true
                 }
             },
 
