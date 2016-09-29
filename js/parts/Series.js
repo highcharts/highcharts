@@ -123,7 +123,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			fontSize: '11px',
 			fontWeight: 'bold',
 			color: 'contrast',
-			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast' // docs
+			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
 		},
 		// backgroundColor: undefined,
 		// borderColor: undefined,
