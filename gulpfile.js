@@ -151,6 +151,10 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/wip.xrange-series.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'themes/dark-blue.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
