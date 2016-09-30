@@ -473,6 +473,13 @@ const copyToDist = () => {
             U.writeFile(distFolder + lib + '/js/lib/' + path, content);
         });
     });
+    // Copy radial gradient to dist.
+    ['vml-radial-gradient.png'].forEach((path) => {
+        const content = fs.readFileSync('./gfx/' + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/gfx/' + path, content);
+        });
+    });
 };
 
 /**
