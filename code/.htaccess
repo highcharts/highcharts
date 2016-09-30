@@ -32,6 +32,7 @@ RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
 RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
 RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
 RewriteRule (.*?)wip.grid-axis.js $1wip.grid-axis.src.js
+RewriteRule (.*?)wip.part-fill-point.js $1wip.part-fill-point.src.js
 RewriteRule (.*?)wip.xrange-series.js $1wip.xrange-series.src.js
 
 # Map data
