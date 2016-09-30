@@ -1,6 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
- * X-range series
+ * GridAxis
  *
  * (c) 2016 Lars A. V. Cabrera
  *

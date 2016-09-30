@@ -97,7 +97,7 @@ H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
     var axis = this.axis,
         tickPositions = axis.tickPositions;
 
-    if (axis.options.type !== 'datetime' || this.pos !== tickPositions[tickPositions.length - 1]) {
+    if (axis.options.grid && axis.options.type !== 'datetime' || this.pos !== tickPositions[tickPositions.length - 1]) {
         proceed.apply(this);
     }
 });
@@ -185,7 +185,7 @@ H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
         labelPadding,
         distance;
 
-    if (!this.horiz) {
+    if (this.options.grid && !this.horiz) {
         labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
         if (!this.maxLabelLength) {
             this.maxLabelLength = this.getMaxLabelLength();
