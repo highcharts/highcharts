@@ -889,7 +889,7 @@ H.Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			nameX = this.options.nameToX === false ?
+			nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
 		}

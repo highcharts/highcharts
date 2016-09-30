@@ -276,7 +276,7 @@ QUnit.test('nameToX: false', function (assert) {
 
         xAxis: {
             type: 'category',
-            nameToX: false
+            uniqueNames: false
         },
 
         series: [{

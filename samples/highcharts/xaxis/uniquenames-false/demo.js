@@ -8,7 +8,7 @@ $(function () {
         },
         xAxis: {
             type: 'category',
-            nameToX: false
+            uniqueNames: false
         },
         series: [{
             colorByPoint: true,

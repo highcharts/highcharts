@@ -398,7 +398,7 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
-			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
+			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index, key);
 			stack = stacks[key] && stacks[key][x];
 			pointExtremes = stack && stack.points[stackIndicator.key];
 			if (pointExtremes) {
@@ -414,11 +414,14 @@ Series.prototype.setPercentStacks = function () {
 /**
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
-Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
-	if (!defined(stackIndicator) || stackIndicator.x !== x) {
+Series.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
+	// Update stack indicator, when:
+	// first point in a stack || x changed || stack type (negative vs positive) changed:
+	if (!defined(stackIndicator) || stackIndicator.x !== x || (key && stackIndicator.key !== key)) {
 		stackIndicator = {
 			x: x,
-			index: 0
+			index: 0,
+			key: key
 		};
 	} else {
 		stackIndicator.index++;

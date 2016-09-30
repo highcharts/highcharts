@@ -228,7 +228,7 @@ function getResources() {
 		}());
 		</script>
 		<script>
-
+		console.clear();
 		function next() {
 			window.location.href =
 				window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;

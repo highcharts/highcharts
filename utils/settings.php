@@ -20,16 +20,7 @@ class Settings {
 	// Use this when default settings have changed, to rule out all difference related 
 	// to one or more specific changes. May be a call to setOptions or wrapping Highcharts
 	// functions.
-	static $overrides = "
-		/*Highcharts.setOptions({
-			chart: {
-				marginTop: 30
-			},
-			subtitle: {
-				y: 30
-			}
-		});*/
-	";
+	static $overrides = "";
 }
 
 ?>

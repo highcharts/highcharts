@@ -444,8 +444,8 @@ Navigator.prototype = {
 		addEvent(chart, 'redraw', function () {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
-				xAxis = scroller && scroller.baseSeries && scroller.baseSeries[0] && scroller.baseSeries[0].xAxis;
-			
+				xAxis = scroller && (scroller.baseSeries && scroller.baseSeries[0] && scroller.baseSeries[0].xAxis || scroller.scrollbar && this.xAxis[0]); // #5709
+
 			if (xAxis) {
 				scroller.render(xAxis.min, xAxis.max);
 			}
@@ -760,7 +760,8 @@ Navigator.prototype = {
 						// from value to pixel
 						scrollTrackWidth * (value - min) / valueRange;
 				},
-				toFixedRange: Axis.prototype.toFixedRange
+				toFixedRange: Axis.prototype.toFixedRange,
+				fake: true
 			};
 		}
 
@@ -858,9 +859,8 @@ Navigator.prototype = {
 			}
 		});
 
-
 		// When run after render, this.xAxis already exists
-		if (this.xAxis) {
+		if (this.xAxis && !this.xAxis.fake) {
 			this.addBaseSeries();
 		}
 	},
