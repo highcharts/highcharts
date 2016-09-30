@@ -137,8 +137,6 @@ $(function () {
          * this function returns true if the axis supplied is the last
          * of the x-axes.
          *
-         * @param axis - the axis to check
-         *
          * @return true if the axis is the outermost axis in its dimension;
          *         false if not
          */
@@ -168,6 +166,11 @@ $(function () {
             return isOuter;
         };
 
+        /**
+         * Shortcut function to Tick.label.getBBox().width.
+         *
+         * @return {number} width - the width of the tick label
+         */
         H.Tick.prototype.getLabelWidth = function () {
             return this.label.getBBox().width;
         };
@@ -192,69 +195,251 @@ $(function () {
         };
 
         /**
+         * Prevents adding the last tick label if the axis type is datetime.
+         *
+         * Since datetime labels are normally placed at starts and ends of a
+         * period of time, and this module converts labels to
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
+            var axis = this.axis,
+                tickPositions = axis.tickPositions;
+
+            if (axis.options.type !== 'datetime' || this.pos !== tickPositions[tickPositions.length - 1]) {
+                proceed.apply(this);
+            }
+        });
+
+        /**
          * Center tick labels vertically and horizontally between ticks
+         *
+         * @param proceed - the original function
+         *
+         * @return {object} object - an object containing x and y positions
+         *                         for the tick
          */
         H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
             var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+                axis = this.axis,
+                tickInterval = axis.options.tickInterval || 1,
+                newX,
                 newPos,
                 axisHeight,
                 fontSize,
                 labelMetrics;
 
             // Only center tick labels if axis has option grid: true
-            if (this.axis.options.grid) {
-                fontSize = this.axis.options.labels.style.fontSize;
-                labelMetrics = this.axis.chart.renderer.fontMetrics(fontSize, label);
-                axisHeight = this.axis.axisGroup.getBBox().height;
+            if (axis.options.grid) {
+                fontSize = axis.options.labels.style.fontSize;
+                labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label);
+                axisHeight = axis.axisGroup.getBBox().height;
 
-                if (this.axis.horiz && this.axis.options.categories === undefined) {
+                if (axis.horiz && axis.options.categories === undefined) {
                     // Center x position
-                    if (this.axis.options.tickInterval !== undefined) {
-                        newPos = this.pos + this.axis.options.tickInterval / 2;
-                        returnValue.x = this.axis.translate(newPos) + this.axis.left;
-                    }
+                    newPos = this.pos + tickInterval / 2;
+                    returnValue.x = axis.translate(newPos) + axis.left;
 
                     // Center y position
-                    if (this.axis.side === axisSide.top) {
+                    if (axis.side === axisSide.top) {
                         returnValue.y = y - (axisHeight / 2) + (labelMetrics.h / 2) - Math.abs(labelMetrics.h - labelMetrics.b);
                     } else {
                         returnValue.y = y + (axisHeight / 2) + (labelMetrics.h / 2) - Math.abs(labelMetrics.h - labelMetrics.b);
                     }
                 } else {
                     // Center y position
-                    if (this.axis.options.tickInterval !== undefined && this.axis.options.categories === undefined) {
-                        newPos = this.pos + (this.axis.options.tickInterval / 2);
-                        returnValue.y = this.axis.translate(newPos) + this.axis.top + (labelMetrics.b / 2);
+                    if (axis.options.categories === undefined) {
+                        newPos = this.pos + (tickInterval / 2);
+                        returnValue.y = axis.translate(newPos) + axis.top + (labelMetrics.b / 2);
                     }
 
                     // Center x position
-                    if (this.axis.side === axisSide.left) {
-                        returnValue.x = returnValue.x + (this.getLabelWidth() / 2) - (this.axis.maxLabelLength / 2);
+                    newX = (this.getLabelWidth() / 2) - (axis.maxLabelLength / 2);
+                    if (axis.side === axisSide.left) {
+                        returnValue.x += newX;
                     } else {
-                        returnValue.x = returnValue.x - (this.getLabelWidth() / 2) + (this.axis.maxLabelLength / 2);
+                        returnValue.x -= newX;
                     }
                 }
             }
             return returnValue;
         });
 
+        H.Axis.prototype.getMaxLabelLength = function (force) {
+            var tickPositions = this.tickPositions,
+                ticks = this.ticks,
+                maxLabelLength = 0;
+
+            if (!this.maxLabelLength || force) {
+                H.each(tickPositions, function (tick) {
+                    tick = ticks[tick];
+                    if (tick && tick.labelLength > maxLabelLength) {
+                        maxLabelLength = tick.labelLength;
+                    }
+                });
+                this.maxLabelLength = maxLabelLength;
+            }
+            return this.maxLabelLength;
+        };
+
+        /**
+         * Draw vertical ticks extra long to create cell floors and roofs.
+         * Overrides the tickLength for vertical axes.
+         *
+         * @param {function} proceed - the original function
+         * @returns {array} returnValue -
+         */
+        H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
+            var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+                labelPadding,
+                distance;
+
+            if (!this.horiz) {
+                labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
+                if (!this.maxLabelLength) {
+                    this.maxLabelLength = this.getMaxLabelLength();
+                }
+                distance = this.maxLabelLength + labelPadding;
+
+                returnValue[0] = distance;
+            }
+            return returnValue;
+        });
+
+        H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
+            this.options.title.margin = 0;
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        });
+
+        /**
+         * Replicates category axis translation to all axis types.
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
+            // Call the original setAxisTranslation() to perform all other calculations
+
+            if (this.options.grid && !this.options.categories) {
+                this.minPointOffset = 0.5;
+                this.pointRangePadding = 1;
+
+                this.translationSlope = this.transA = this.len / ((this.max - this.min + this.pointRangePadding) || 1);
+                this.transB = this.horiz ? this.left : this.bottom; // translation addend
+                this.minPixelPadding = this.transA * this.minPointOffset;
+
+                // Ensure that linear axes get a minPixelPadding of 0
+                if (this.options.type === 'linear') {
+                    this.minPixelPadding = 0;
+                }
+            } else {
+                proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+        });
+
+        /**
+         * Prevents rotation of labels when squished, as rotating them would not
+         * help.
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
+            if (this.options.grid) {
+                this.labelRotation = 0;
+                this.options.labels.rotation = 0;
+            }
+            proceed.apply(this);
+        });
+
+        /**
+         * Draw an extra line on the far side of the the axisLine,
+         * creating cell roofs of a grid.
+         *
+         * @param proceed - the original function
+         */
+        H.wrap(H.Axis.prototype, 'render', function (proceed) {
+            var labelPadding,
+                distance,
+                lineWidth,
+                linePath,
+                yStartIndex,
+                yEndIndex,
+                xStartIndex,
+                xEndIndex;
+
+            if (this.options.grid) {
+                labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
+                distance = this.maxLabelLength + labelPadding;
+                lineWidth = this.options.lineWidth;
+
+                // Call original Axis.render() to obtain this.axisLine and this.axisGroup
+                proceed.apply(this);
+
+                if (this.isOuterAxis() && this.axisLine) {
+                    if (this.horiz) {
+                        // -1 to avoid adding distance each time the chart updates
+                        distance = this.axisGroup.getBBox().height - 1;
+                    }
+
+                    if (lineWidth) {
+                        linePath = this.getLinePath(lineWidth);
+                        yStartIndex = linePath.indexOf('M') + 2;
+                        yEndIndex = linePath.indexOf('L') + 2;
+                        xStartIndex = linePath.indexOf('M') + 1;
+                        xEndIndex = linePath.indexOf('L') + 1;
+
+                        // Negate distance if top or left axis
+                        if (this.side === axisSide.top || this.side === axisSide.left) {
+                            distance = -distance;
+                        }
+
+                        // If axis is horizontal, reposition line path vertically
+                        if (this.horiz) {
+                            linePath[yStartIndex] = linePath[yStartIndex] + distance;
+                            linePath[yEndIndex] = linePath[yEndIndex] + distance;
+                        } else {
+                            // If axis is vertical, reposition line path horizontally
+                            linePath[xStartIndex] = linePath[xStartIndex] + distance;
+                            linePath[xEndIndex] = linePath[xEndIndex] + distance;
+                        }
+
+                        if (!this.axisLineExtra) {
+                            this.axisLineExtra = this.chart.renderer.path(linePath)
+                                .attr({
+                                    stroke: this.options.lineColor,
+                                    'stroke-width': lineWidth,
+                                    zIndex: 7
+                                })
+                                .add(this.axisGroup);
+                        } else {
+                            this.axisLineExtra.animate({
+                                d: linePath
+                            });
+                        }
+
+                        // show or hide the line depending on options.showEmpty
+                        this.axisLine[this.showAxis ? 'show' : 'hide'](true);
+                    }
+                }
+            } else {
+                proceed.apply(this);
+            }
+        });
+
         /**
          * Wraps chart rendering with the following customizations:
          * 1. Prohibit timespans of multitudes of a time unit
-         * 2. Draw a grid
+         * 2. Draw cell walls on vertical axes
+         *
+         * @param proceed - the original function
          */
         H.wrap(H.Chart.prototype, 'render', function (proceed) {
-            var renderer = this.renderer;
+            // 25 is optimal height for default fontSize (11px)
+            // 25 / 11 ≈ 2.28
+            var fontSizeToCellHeightRatio = 25 / 11,
+                fontMetrics,
+                fontSize;
 
-            // Get the topmost datetime xAxis
             H.each(this.axes, function (axis) {
-                // 25 is optimal height for default fontSize (11px)
-                // 25 / 11 ≈ 2.28
-                var fontSizeToCellHeightRatio = 25 / 11,
-                    fontMetrics,
-                    fontSize;
-
-
                 if (axis.options.grid) {
                     fontSize = axis.options.labels.style.fontSize;
                     fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
@@ -276,102 +461,14 @@ $(function () {
 
                     // Make tick marks taller, creating cell walls of a grid.
                     // Use cellHeight axis option if set
-                    axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
-                    if (!axis.horiz) {
+                    if (axis.horiz) {
+                        axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
+                    } else {
                         axis.options.tickWidth = 1;
                         if (!axis.options.lineWidth) {
                             axis.options.lineWidth = 1;
                         }
                     }
-
-
-                    /**
-                     * Axis lines start at first tick
-                     */
-                    if (axis.options.categories === undefined && axis.horiz) {
-                        H.wrap(axis, 'getLinePath', function (proceed) {
-                            var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
-                                xStart = returnValue.indexOf('M') + 1,
-                                firstTick = this.ticks[this.tickPositions[0]],
-                                firstTickPos = firstTick ? firstTick.pos : this.getExtremes().min;
-
-                            returnValue[xStart] = this.translate(firstTickPos) + this.left;
-                            return returnValue;
-                        });
-                    }
-
-                    /**
-                     * Draw an extra line on the other side of the the axisLine,
-                     * creating cell roofs of a grid
-                     */
-                    H.wrap(axis, 'render', function (proceed) {
-                        var labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2),
-                            distance = this.maxLabelLength + labelPadding,
-                            lineWidth = this.options.lineWidth,
-                            linePath,
-                            yStart,
-                            yEnd,
-                            xStart,
-                            xEnd;
-
-                        if (!this.horiz) {
-                            this.options.tickLength = distance;
-
-                            // Remove last tick if type is datetime
-                            if (this.options.type === 'datetime') {
-                                this.tickPositions.pop();
-                            }
-                        }
-
-                        // Call original Axis.render() to obtain this.axisLine and this.axisGroup
-                        proceed.apply(this);
-                        if (this.isOuterAxis() && this.axisLine) {
-                            if (this.horiz) {
-                                // -1 to avoid adding distance each time the chart updates
-                                distance = this.axisGroup.getBBox().height - 1;
-                            }
-
-                            if (lineWidth) {
-                                linePath = this.getLinePath(lineWidth);
-                                yStart = linePath.indexOf('M') + 2;
-                                yEnd = linePath.indexOf('L') + 2;
-                                xStart = linePath.indexOf('M') + 1;
-                                xEnd = linePath.indexOf('L') + 1;
-
-                                // Negate distance if top or left axis
-                                if (this.side === axisSide.top || this.side === axisSide.left) {
-                                    distance = -distance;
-                                }
-
-                                // If axis is horizontal, reposition line path vertically
-                                if (this.horiz) {
-                                    linePath[yStart] = linePath[yStart] + distance;
-                                    linePath[yEnd] = linePath[yEnd] + distance;
-                                } else {
-                                    // If axis is vertical, reposition line path horizontally
-                                    linePath[xStart] = linePath[xStart] + distance;
-                                    linePath[xEnd] = linePath[xEnd] + distance;
-                                }
-
-                                if (!this.axisLineExtra) {
-                                    this.axisLineExtra = renderer.path(linePath)
-                                        .attr({
-                                            stroke: this.options.lineColor,
-                                            'stroke-width': lineWidth,
-                                            zIndex: 7
-                                        })
-                                        .add(this.axisGroup);
-                                } else {
-                                    this.axisLineExtra.animate({
-                                        d: linePath
-                                    });
-                                }
-
-                                // show or hide the line depending on options.showEmpty
-                                this.axisLine[this.showAxis ? 'show' : 'hide'](true);
-                            }
-                        }
-                    });
                 }
             });
 
@@ -399,12 +496,13 @@ $(function () {
             labels: {
                 format: '{value:%E}'
             },
-            min: Date.UTC(2014, 10, 17)
+            min: Date.UTC(2014, 10, 17),
+            max: Date.UTC(2014, 10, 30)
         }, {
             grid: true,
             categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
             min: 0,
-            max: 13
+            max: 12
         }, {
             grid: true,
             type: 'datetime',
@@ -416,7 +514,6 @@ $(function () {
                     fontSize: '1.5em'
                 }
             },
-            min: Date.UTC(2014, 10, 17),
             linkedTo: 0
         }, {
             grid: true,
@@ -430,6 +527,10 @@ $(function () {
                 }
             },
             linkedTo: 0
+        }, {
+            grid: true,
+            tickInterval: 1,
+            min: 0
         }],
         yAxis: [{
             title: '',
@@ -453,6 +554,7 @@ $(function () {
             max: Date.UTC(2014, 10, 21)
         }, {
             title: '',
+            id: 'thisGuy',
             grid: true,
             reversed: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -526,6 +628,19 @@ $(function () {
                 x: 12,
                 x2: 13,
                 y: Date.UTC(2014, 10, 21)
+            }]
+        }, {
+            name: 'Project 4',
+            borderRadius: 10,
+            xAxis: 4,
+            data: [{
+                x: 1,
+                x2: 2,
+                y: 1
+            }, {
+                x: 3,
+                x2: 4,
+                y: 2
             }]
         }]
     });
