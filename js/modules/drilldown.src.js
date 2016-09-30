@@ -627,7 +627,7 @@ import '../parts/Tick.js';
 				points = series.points;
 			
 			for (i = 0; i < xData.length; i++) {
-				if (xData[i] === x && series.options.data[i].drilldown) {
+				if (xData[i] === x && series.options.data[i] && series.options.data[i].drilldown) {
 					ret.push(points ? points[i] : true);
 					break;
 				}
