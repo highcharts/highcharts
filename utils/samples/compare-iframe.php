@@ -260,6 +260,25 @@ function getExportInnerHTML() {
 
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
+					/**
+					 * Compare numbers taking in account an error.
+					 * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
+					 *
+					 * @param  {Float} number
+					 * @param  {Float} expected
+					 * @param  {Float} error    Optional
+					 * @param  {String} message  Optional
+					 */
+					QUnit.assert.close = function (number, expected, error, message) {
+					    if (error === void 0 || error === null) {
+					        error = 0.00001; // default error
+					    }
+
+					    var result = number === expected || (number < expected + error && number > expected - error) || false;
+
+					    QUnit.push(result, number, expected, message);
+					};
+
 					QUnit.done(function (e) {
 						if (e.passed === e.total) {
 							window.parent.onIdentical();
