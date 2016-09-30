@@ -857,6 +857,12 @@ Navigator.prototype = {
 				baseSeries.push(series);
 			}
 		});
+
+
+		// When run after render, this.xAxis already exists
+		if (this.xAxis) {
+			this.addBaseSeries();
+		}
 	},
 
 	addBaseSeries: function () {
@@ -1058,16 +1064,15 @@ Navigator.prototype = {
 				s.destroy();
 			}
 		});
-		delete this.series;
 
 		// Destroy properties
-		each(['xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
-				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
+		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
 			if (this[prop] && this[prop].destroy) {
-				this[prop] = this[prop].destroy();
+				this[prop].destroy();
 			}
+			this[prop] = null;
 		}, this);
-		this.rendered = null;
 
 		// Destroy elements in collection
 		each([this.handles, this.elementsToDestroy], function (coll) {
