@@ -73,7 +73,8 @@ seriesType('arearange', 'area', {
 	 */
 	translate: function () {
 		var series = this,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			hasModifyValue = !!series.modifyValue;
 
 		seriesTypes.area.prototype.translate.apply(series);
 
@@ -88,7 +89,10 @@ seriesType('arearange', 'area', {
 				point.isNull = true;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
+				point.plotHigh = point.yBottom = yAxis.toPixels(
+					hasModifyValue ? series.modifyValue(high, point) : high,
+					true
+				);
 			}
 		});
 
