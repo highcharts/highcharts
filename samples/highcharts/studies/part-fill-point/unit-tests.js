@@ -1,23 +1,4 @@
 /**
- * Compare numbers taking in account an error.
- * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
- *
- * @param  {Float} number
- * @param  {Float} expected
- * @param  {Float} error    Optional
- * @param  {String} message  Optional
- */
-QUnit.assert.close = function (number, expected, error, message) {
-    if (error === void 0 || error === null) {
-        error = 0.00001; // default error
-    }
-
-    var result = number === expected || (number < expected + error && number > expected - error) || false;
-
-    QUnit.push(result, number, expected, message);
-};
-
-/**
  * Checks that the correct series types 'bar', 'column', 'columnrange', 'pie',
  * 'gauge' and 'solidgauge' are marked as supported.
  */
