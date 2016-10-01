@@ -234,7 +234,7 @@
 
 						}
 
-						if (window.parent.frames[0] && window.parent.frames[0].continueBatch) {
+						if (window.parent.frames[0]) {
 							$(contentDoc.body).animate({
 								scrollTop: $(li).offset().top - 300
 							}, 0);
