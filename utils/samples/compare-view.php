@@ -235,9 +235,9 @@
 						}
 
 						if (window.parent.frames[0]) {
-							$(contentDoc.body).animate({
+							$('html,body', contentDoc).animate({
 								scrollTop: $(li).offset().top - 300
-							}, 0);
+							}, window.parent.frames[0].continueBatch ? 0 : 'slow');
 						}
 					}
 
