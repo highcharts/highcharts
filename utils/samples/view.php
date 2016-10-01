@@ -18,9 +18,6 @@ if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	exit;
 }
 
-$i = (int)$_GET['i'];
-$next = $i + 1;
-$previous = $i - 1;
 
 $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
@@ -129,8 +126,13 @@ function getResources() {
 
 
 		<script type="text/javascript">
+		/* eslint-disable */
+		var sampleIndex,
+			path = '<?php echo $path ?>';
 
 		(function () {
+
+
 			if (typeof $ === 'undefined') {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
@@ -158,10 +160,15 @@ function getResources() {
 				}
 
 				if (window.parent.frames[0]) {
+
+					window.parent.history.pushState(null, null, '#view/' + path);
+					
 					var contentDoc = window.parent.frames[0].document;
 
+					sampleIndex = window.parent.frames[0].samples.indexOf(path);
+
 					// Highlight the current sample in the left
-					var li = contentDoc.getElementById('li<?php echo $i ?>');
+					var li = contentDoc.getElementById('li' + sampleIndex);
 					if (li) {
 						// previous
 						if (contentDoc.currentLi) {
@@ -178,7 +185,7 @@ function getResources() {
 					}
 
 					// add the next button
-					if (contentDoc.getElementById('i<?php echo $next ?>')) {
+					if (contentDoc.getElementById('i' + (sampleIndex + 1))) {
 						
 						$('#next').click(function() {
 							next();
@@ -230,12 +237,16 @@ function getResources() {
 		<script>
 		console.clear();
 		function next() {
-			window.location.href =
-				window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
+			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
+			if (a) {
+				window.location.href = a.href;
+			}
 		}
 		function previous() {
-			window.location.href =
-				window.parent.frames[0].document.getElementById('i<?php echo $previous ?>').href;
+			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex - 1));
+			if (a) {
+				window.location.href = a.href;
+			}
 		}
 
 
@@ -379,7 +390,7 @@ function getResources() {
 
 			<div id="version" style="float:right; color: white"></div>
 
-			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2>
+			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: center">
 				<form method="post" action="" style="display:inline">
@@ -395,17 +406,17 @@ function getResources() {
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;styled=true">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
 				<?php } else { ?>
 				<a class="button active" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;styled=false">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
 				<?php } ?>
 				<a class="button"
-					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
+					href="compare-view.php?path=<?php echo $path ?>">Compare</a>
 				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
+					href="view.php?path=<?php echo $path ?>&amp;profile=1">Profile</a>
 				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
+					href="view.php?path=<?php echo $path ?>&amp;time=1">Time</a>
 				<a class="button"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">jsFiddle</a>
