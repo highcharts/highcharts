@@ -87,7 +87,10 @@
 
 				if (window.parent) {
 					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
-					window.parent.history.pushState(null, null, hash + '/' + path);
+					hash += '/' + path;
+					if (hash !== window.parent.location.hash) {
+						window.parent.history.pushState(null, null, hash);
+					}
 				}
 
 			}
@@ -278,7 +281,7 @@
 
 
 			function proceed() {
-				updateHash(); // Bath may be stopped
+				updateHash(); // Batch may be stopped
 				if (window.parent.frames[0] && sampleIndex !== -1 && window.parent.frames[0].continueBatch) {
 					var contentDoc = window.parent.frames[0].document,
 						href,
@@ -305,7 +308,14 @@
 
 					href = href.replace("view.php", "compare-view.php");
 
-					window.location.href = href;
+
+					window.parent.batchRuns++;
+					// Clear memory build-up from time to time by reloading the whole thing
+					if (window.parent.batchRuns > 90) {
+						window.parent.location.hash = '#batch/' + window.parent.frames[0].samples[nextIndex];
+					} else {
+						window.location.href = href;
+					}
 
 				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
 				} else {
