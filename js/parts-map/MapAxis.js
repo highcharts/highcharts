@@ -7,10 +7,10 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
-	var Axis = H.Axis,
-		each = H.each,
-		pick = H.pick,
-		wrap = H.wrap;
+var Axis = H.Axis,
+	each = H.each,
+	pick = H.pick,
+	wrap = H.wrap;
 /**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values

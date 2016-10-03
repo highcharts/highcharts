@@ -9,9 +9,9 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
-	var merge = H.merge,
-		Point = H.Point,
-		seriesType = H.seriesType;
+var merge = H.merge,
+	Point = H.Point,
+	seriesType = H.seriesType;
 
 // The mappoint series type
 seriesType('mappoint', 'scatter', {

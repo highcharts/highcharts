@@ -6,10 +6,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-	var defined = H.defined,
-		each = H.each,
-		noop = H.noop,
-		seriesTypes = H.seriesTypes;
+var defined = H.defined,
+	each = H.each,
+	noop = H.noop,
+	seriesTypes = H.seriesTypes;
 
 /**
  * Mixin for maps and heatmaps

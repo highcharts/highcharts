@@ -7,14 +7,14 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-	var addEvent = H.addEvent,
-		Chart = H.Chart,
-		doc = H.doc,
-		each = H.each,
-		extend = H.extend,
-		merge = H.merge,
-		pick = H.pick,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	Chart = H.Chart,
+	doc = H.doc,
+	each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	pick = H.pick,
+	wrap = H.wrap;
 
 function stopEvent(e) {
 	if (e) {

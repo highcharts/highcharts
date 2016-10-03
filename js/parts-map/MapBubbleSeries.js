@@ -8,10 +8,10 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
-	var merge = H.merge,
-		Point = H.Point,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var merge = H.merge,
+	Point = H.Point,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {

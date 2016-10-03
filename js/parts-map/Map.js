@@ -9,15 +9,15 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
-	var Chart = H.Chart,
-		defaultOptions = H.defaultOptions,
-		each = H.each,
-		extend = H.extend,
-		merge = H.merge,
-		pick = H.pick,
-		Renderer = H.Renderer,
-		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer;
+var Chart = H.Chart,
+	defaultOptions = H.defaultOptions,
+	each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	pick = H.pick,
+	Renderer = H.Renderer,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer;
 
 
 // Add language

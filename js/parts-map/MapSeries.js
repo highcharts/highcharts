@@ -13,25 +13,25 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './ColorAxis.js';
-	var color = H.color,
-		ColorAxis = H.ColorAxis,
-		colorPointMixin = H.colorPointMixin,
-		colorSeriesMixin = H.colorSeriesMixin,
-		doc = H.doc,
-		each = H.each,
-		extend = H.extend,
-		isNumber = H.isNumber,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		map = H.map,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		isArray = H.isArray,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		splat = H.splat;
+var color = H.color,
+	ColorAxis = H.ColorAxis,
+	colorPointMixin = H.colorPointMixin,
+	colorSeriesMixin = H.colorSeriesMixin,
+	doc = H.doc,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	isArray = H.isArray,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	splat = H.splat;
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
 // diffent logic (#3218)
