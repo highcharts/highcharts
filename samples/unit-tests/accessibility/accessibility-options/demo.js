@@ -18,6 +18,13 @@ $(function () {
         assert.notOk(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be no screen reader region');
     });
 
+    QUnit.test('No data', function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{}]
+        });
+        assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    });
+
     QUnit.test('pointDescriptionThreshold', function (assert) {
         var chart = Highcharts.chart('container', {
                 accessibility: {
