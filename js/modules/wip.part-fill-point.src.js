@@ -4,56 +4,83 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-/**
- * Returns an array of PartFillPoint-supported series types.
- * Instead of making a local variable, this is added as a function on
- * the Series prototype so it can easily be overridden at a later time.
- *
- * @return {array} array of PartFillPoint-supported series types
- */
-H.Series.prototype.getPartFillSupportedSeries = function () {
-    return ['bar', 'column', 'columnrange', 'pie', 'gauge', 'solidgauge'];
-};
-
-/**
- * Checks if a series type is supported, by using the
- * Series.getPartFillSupportedSeries() function.
- *
- * @param  {string} type - the series type to check
- * @return {boolean} true if the series type is supported, and
- *                   false if not
- */
-H.Series.prototype.isPartFillSupported = function () {
-    return H.inArray(this.type, this.getPartFillSupportedSeries()) >= 0;
-};
-
-H.wrap(H.Series.prototype, 'translate', function (proceed) {
-    var series = this,
-        i,
-        points,
-        point;
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    if (series.isPartFillSupported()) {
-        points = series.points;
-        // console.log('series', series);
-        // console.log('points[0]', points[0]);
-        // console.log('series.type', series.type);
-        for (i = 0; i < points.length; i++) {
-            point = points[i];
-            // console.log(point);
-            if (point.partialFill) {
-                var string = '';
-                console.log(point);
-                for (var attr in point) {
-                    string += attr + ', ';
-                }
-                console.log(string);
-            }
-        }
-    }
+H.each(['column', 'columnrange'], function (type) {
+    H.seriesTypes[type].prototype.supportsPartFill = true;
 });
 
-H.wrap(H.Series.prototype, 'drawPoints', function (proceed) {
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+H.wrap(H.Chart.prototype, 'render', function (proceed) {
+    var chart = this;
+
+    H.each(chart.series, function (series) {
+
+        if (series.supportsPartFill) {
+            H.wrap(series, 'translate', function (proceed) {
+                var i,
+                    points,
+                    point,
+                    shapeArgs;
+
+                proceed.apply(series, Array.prototype.slice.call(arguments, 1));
+
+                points = series.points;
+                for (i = 0; i < points.length; i++) {
+                    point = points[i];
+                    if (point.partialFill) {
+                        shapeArgs = point.shapeArgs;
+                        point.partFillShape = {
+                            x: shapeArgs.x + 1,
+                            y: shapeArgs.y + Math.abs(shapeArgs.height - (shapeArgs.height * point.partialFill)),
+                            width: shapeArgs.width - 2,
+                            height: shapeArgs.height * point.partialFill
+                        };
+                    }
+                }
+            });
+
+            H.wrap(series, 'drawPoints', function (proceed) {
+                var series = this,
+                    chart = this.chart,
+                    options = series.options,
+                    renderer = chart.renderer,
+                    animationLimit = options.animationLimit || 250,
+                    partFillShape;
+
+                proceed.apply(series, Array.prototype.slice.call(arguments, 1));
+                // draw the columns
+                H.each(series.points, function (point) {
+                    var plotY = point.plotY,
+                        partFillOptions = (H.isObject(point.partialFill)) ? point.partialFill : {},
+                        fill = partFillOptions.fill || '#000',
+                        partFillGraphic = point.partFillGraphic;
+
+                    if (H.isNumber(plotY) && point.y !== null) {
+                        partFillShape = point.partFillShape;
+
+                        if (partFillGraphic) {
+                            H.stop(partFillGraphic);
+                            partFillGraphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
+                                H.merge(partFillShape)
+                            );
+                        } else {
+                            point.partFillGraphic = partFillGraphic = renderer[point.shapeType](partFillShape)
+                                .attr({
+                                    'class': point.getClassName()
+                                })
+                                .add(point.group || series.group);
+                        }
+
+                        partFillGraphic
+                            .attr(series.pointAttribs(point, point.selected && 'select'))
+                            .attr('fill', fill)
+                            .attr('stroke-width', 0)
+                            .shadow(options.shadow, null, options.stacking && !options.borderRadius);
+
+                    } else if (partFillGraphic) {
+                        point.partFillGraphic = partFillGraphic.destroy();
+                    }
+                });
+            });
+        }
+    });
+    proceed.apply(chart, Array.prototype.slice.call(arguments, 1));
 });

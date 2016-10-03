@@ -2,10 +2,10 @@
  * Checks that the correct series types 'bar', 'column', 'columnrange', 'pie',
  * 'gauge' and 'solidgauge' are marked as supported.
  */
-QUnit.test('isPartFillSupported()', function (assert) {
+QUnit.test('supportsPartFill', function (assert) {
     var chart,
-        supportedTypes = ['bar', 'column', 'columnrange', 'pie', 'gauge', 'solidgauge'],
-        someUnSupportedTypes = ['line', 'area', 'arearange', 'areaspline', 'boxplot', 'bubble', 'errorbar', 'funnel'],
+        supportedTypes = ['bar', 'column', 'columnrange'],
+        someUnSupportedTypes = ['line', 'area', 'arearange', 'areaspline', 'bubble', 'funnel', 'pie', 'gauge', 'solidgauge'],
         type,
         i,
         chartOptions = {
@@ -13,7 +13,7 @@ QUnit.test('isPartFillSupported()', function (assert) {
                 type: ''
             },
             series: [{
-                data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4]
+                data: [29.9, 71.5, 106.4]
             }]
         };
 
@@ -25,7 +25,7 @@ QUnit.test('isPartFillSupported()', function (assert) {
         chart = $('#container').highcharts();
 
         assert.equal(
-            chart.series[0].isPartFillSupported(),
+            chart.series[0].supportsPartFill === true,
             true,
             'Series type "' + type + '" is marked as supported'
         );
@@ -39,7 +39,7 @@ QUnit.test('isPartFillSupported()', function (assert) {
         chart = $('#container').highcharts();
 
         assert.equal(
-            chart.series[0].isPartFillSupported(),
+            chart.series[0].supportsPartFill === true,
             false,
             'Series type "' + type + '" is not marked as supported'
         );
