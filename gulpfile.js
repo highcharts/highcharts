@@ -332,7 +332,7 @@ gulp.task('filesize', function () {
     }
 
     closureCompiler.compile(
-        ['js/' + filename],
+        ['code/' + filename],
         null,
         function (error, ccResult) {
             if (ccResult) {
@@ -345,7 +345,7 @@ gulp.task('filesize', function () {
                     }
 
                     closureCompiler.compile(
-                        ['js/' + filename],
+                        ['code/' + filename],
                         null,
                         function (ccError, ccResultOld) {
                             if (ccResultOld) {
