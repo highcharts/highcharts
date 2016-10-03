@@ -233,7 +233,7 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
     );
 });
 
-QUnit.test('nameToX default in the data module', function (assert) {
+QUnit.test('uniqueNames default in the data module', function (assert) {
     var chart = Highcharts.chart('container', {
         data: {
             "seriesMapping": [{
@@ -271,7 +271,7 @@ QUnit.test('nameToX default in the data module', function (assert) {
     );
 });
 
-QUnit.test('nameToX: false', function (assert) {
+QUnit.test('uniqueNames: false', function (assert) {
     var chart = Highcharts.chart('container', {
 
         xAxis: {
@@ -302,12 +302,12 @@ QUnit.test('nameToX: false', function (assert) {
     );
 });
 
-QUnit.test('nameToX: true', function (assert) {
+QUnit.test('uniqueNames: true', function (assert) {
     var chart = Highcharts.chart('container', {
 
         xAxis: {
             type: 'category',
-            nameToX: true
+            uniqueNames: true
         },
 
         series: [{
