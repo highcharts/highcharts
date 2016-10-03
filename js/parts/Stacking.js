@@ -9,15 +9,15 @@ import './Utilities.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-	var Axis = H.Axis,
-		Chart = H.Chart,
-		correctFloat = H.correctFloat,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		each = H.each,
-		format = H.format,
-		pick = H.pick,
-		Series = H.Series;
+var Axis = H.Axis,
+	Chart = H.Chart,
+	correctFloat = H.correctFloat,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	each = H.each,
+	format = H.format,
+	pick = H.pick,
+	Series = H.Series;
 /**
  * The class for stack items
  */

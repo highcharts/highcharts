@@ -13,35 +13,35 @@ import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-	var arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		Axis = H.Axis,
-		Chart = H.Chart,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		format = H.format,
-		inArray = H.inArray,
-		isNumber = H.isNumber,
-		isString = H.isString,
-		map = H.map,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Pointer = H.Pointer,
-		Renderer = H.Renderer,
-		Series = H.Series,
-		splat = H.splat,
-		stop = H.stop,
-		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer,
-		wrap = H.wrap,
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	inArray = H.inArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	map = H.map,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Pointer = H.Pointer,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	splat = H.splat,
+	stop = H.stop,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer,
+	wrap = H.wrap,
 
 
-		seriesProto = Series.prototype,
-		seriesInit = seriesProto.init, 
-		seriesProcessData = seriesProto.processData,
-		pointTooltipFormatter = Point.prototype.tooltipFormatter;
+	seriesProto = Series.prototype,
+	seriesInit = seriesProto.init, 
+	seriesProcessData = seriesProto.processData,
+	pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
@@ -431,7 +431,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 		/*= if (build.classic) { =*/
 		// Presentational
-		crossLabel.attr({
+		crossLabel
+			.attr({
 				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
 				stroke: options.borderColor || '',
 				'stroke-width': options.borderWidth || 0

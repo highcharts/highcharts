@@ -6,14 +6,14 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var correctFloat = H.correctFloat,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		isNumber = H.isNumber,
-		merge = H.merge,
-		pick = H.pick,
-		stop = H.stop,
-		deg2rad = H.deg2rad;
+var correctFloat = H.correctFloat,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	stop = H.stop,
+	deg2rad = H.deg2rad;
 
 /**
  * The Tick class

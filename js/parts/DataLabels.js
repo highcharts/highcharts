@@ -7,21 +7,21 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		arrayMax = H.arrayMax,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		format = H.format,
-		map = H.map,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		relativeLength = H.relativeLength,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		stableSort = H.stableSort,
-		stop = H.stop;
+var addEvent = H.addEvent,
+	arrayMax = H.arrayMax,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	relativeLength = H.relativeLength,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	stableSort = H.stableSort,
+	stop = H.stop;
 
 
 /**

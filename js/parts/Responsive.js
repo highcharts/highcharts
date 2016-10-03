@@ -7,12 +7,12 @@
 import H from './Globals.js';
 import './Chart.js';
 import './Utilities.js';
-	var Chart = H.Chart,
-		each = H.each,
-		inArray = H.inArray,
-		isObject = H.isObject,
-		pick = H.pick,
-		splat = H.splat;
+var Chart = H.Chart,
+	each = H.each,
+	inArray = H.inArray,
+	isObject = H.isObject,
+	pick = H.pick,
+	splat = H.splat;
 
 /**
  * Update the chart based on the current chart/document size and options for responsiveness

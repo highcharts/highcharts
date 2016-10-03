@@ -7,14 +7,14 @@
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
-	var color = H.color,
-		each = H.each,
-		getTZOffset = H.getTZOffset,
-		isTouchDevice = H.isTouchDevice,
-		merge = H.merge,
-		pick = H.pick,
-		svg = H.svg,
-		win = H.win;
+var color = H.color,
+	each = H.each,
+	getTZOffset = H.getTZOffset,
+	isTouchDevice = H.isTouchDevice,
+	merge = H.merge,
+	pick = H.pick,
+	svg = H.svg,
+	win = H.win;
 		
 /* ****************************************************************************
  * Handle the options                                                         *

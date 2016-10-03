@@ -6,17 +6,17 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var Point,
+var Point,
 
-		each = H.each,
-		extend = H.extend,
-		erase = H.erase,
-		fireEvent = H.fireEvent,
-		format = H.format,
-		isArray = H.isArray,
-		isNumber = H.isNumber,
-		pick = H.pick,
-		removeEvent = H.removeEvent;
+	each = H.each,
+	extend = H.extend,
+	erase = H.erase,
+	fireEvent = H.fireEvent,
+	format = H.format,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	pick = H.pick,
+	removeEvent = H.removeEvent;
 
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint

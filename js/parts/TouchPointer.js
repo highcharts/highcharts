@@ -6,13 +6,13 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var charts = H.charts,
-		each = H.each,
-		extend = H.extend,
-		map = H.map,
-		noop = H.noop,
-		pick = H.pick,
-		Pointer = H.Pointer;
+var charts = H.charts,
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	noop = H.noop,
+	pick = H.pick,
+	Pointer = H.Pointer;
 
 /* Support for touch devices */
 extend(Pointer.prototype, {

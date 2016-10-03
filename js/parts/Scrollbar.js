@@ -8,22 +8,22 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
 import './Options.js';
-	var addEvent = H.addEvent,
-		Axis = H.Axis,
-		correctFloat = H.correctFloat,
-		defaultOptions = H.defaultOptions,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		doc = H.doc,
-		each = H.each,
-		fireEvent = H.fireEvent,
-		hasTouch = H.hasTouch,
-		isTouchDevice = H.isTouchDevice,
-		merge = H.merge,
-		pick = H.pick,
-		removeEvent = H.removeEvent,
-		svg = H.svg,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	Axis = H.Axis,
+	correctFloat = H.correctFloat,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	doc = H.doc,
+	each = H.each,
+	fireEvent = H.fireEvent,
+	hasTouch = H.hasTouch,
+	isTouchDevice = H.isTouchDevice,
+	merge = H.merge,
+	pick = H.pick,
+	removeEvent = H.removeEvent,
+	svg = H.svg,
+	wrap = H.wrap;
 
 var defaultScrollbarOptions =  {
 	//enabled: true
@@ -138,7 +138,8 @@ Scrollbar.prototype = {
 				r: options.barBorderRadius || 0
 			}).add(scroller.scrollbarGroup);
 
-		scroller.scrollbarRifles = renderer.path(scroller.swapXY([
+		scroller.scrollbarRifles = renderer.path(scroller.swapXY(
+			[
 				'M',
 				-3, size / 4,
 				'L',

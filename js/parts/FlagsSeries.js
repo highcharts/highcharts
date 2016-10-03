@@ -9,18 +9,18 @@ import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-	var addEvent = H.addEvent,
-		each = H.each,
-		merge = H.merge,
-		noop = H.noop,
-		Renderer = H.Renderer,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		SVGRenderer = H.SVGRenderer,
-		TrackerMixin = H.TrackerMixin,
-		VMLRenderer = H.VMLRenderer,
-		symbols = SVGRenderer.prototype.symbols;
+var addEvent = H.addEvent,
+	each = H.each,
+	merge = H.merge,
+	noop = H.noop,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	SVGRenderer = H.SVGRenderer,
+	TrackerMixin = H.TrackerMixin,
+	VMLRenderer = H.VMLRenderer,
+	symbols = SVGRenderer.prototype.symbols;
 /* ****************************************************************************
  * Start Flags series code													*
  *****************************************************************************/

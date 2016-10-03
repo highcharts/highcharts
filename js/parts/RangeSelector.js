@@ -7,27 +7,27 @@
 import H from './Globals.js';
 import './Axis.js';
 import './Chart.js';
-	var addEvent = H.addEvent,
-		Axis = H.Axis,
-		Chart = H.Chart,
-		css = H.css,
-		createElement = H.createElement,
-		dateFormat = H.dateFormat,
-		defaultOptions = H.defaultOptions,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		discardElement = H.discardElement,
-		each = H.each,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		HCDate = H.Date,
-		isNumber = H.isNumber,
-		merge = H.merge,
-		pick = H.pick,
-		pInt = H.pInt,
-		removeEvent = H.removeEvent,
-		splat = H.splat,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	css = H.css,
+	createElement = H.createElement,
+	dateFormat = H.dateFormat,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	discardElement = H.discardElement,
+	each = H.each,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	HCDate = H.Date,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	pInt = H.pInt,
+	removeEvent = H.removeEvent,
+	splat = H.splat,
+	wrap = H.wrap;
 		
 /* ****************************************************************************
  * Start Range Selector code												  *

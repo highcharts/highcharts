@@ -7,16 +7,16 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Pointer.js';
-	var addEvent = H.addEvent,
-		charts = H.charts,
-		css = H.css,
-		doc = H.doc,
-		extend = H.extend,
-		noop = H.noop,
-		Pointer = H.Pointer,
-		removeEvent = H.removeEvent,
-		win = H.win,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	charts = H.charts,
+	css = H.css,
+	doc = H.doc,
+	extend = H.extend,
+	noop = H.noop,
+	Pointer = H.Pointer,
+	removeEvent = H.removeEvent,
+	win = H.win,
+	wrap = H.wrap;
 
 if (win.PointerEvent || win.MSPointerEvent) {
 	

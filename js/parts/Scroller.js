@@ -195,7 +195,8 @@ Navigator.prototype = {
 
 			/*= if (build.classic) { =*/
 			var handlesOptions = scroller.navigatorOptions.handles;
-			handles[index].attr({
+			handles[index]
+				.attr({
 					fill: handlesOptions.backgroundColor,
 					stroke: handlesOptions.borderColor,
 					'stroke-width': 1

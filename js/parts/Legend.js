@@ -6,22 +6,22 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var Legend,
+var Legend,
 		
-		addEvent = H.addEvent,
-		css = H.css,
-		discardElement = H.discardElement,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		isFirefox = H.isFirefox,
-		marginNames = H.marginNames,
-		merge = H.merge,
-		pick = H.pick,
-		setAnimation = H.setAnimation,
-		stableSort = H.stableSort,
-		win = H.win,
-		wrap = H.wrap;
+	addEvent = H.addEvent,
+	css = H.css,
+	discardElement = H.discardElement,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	isFirefox = H.isFirefox,
+	marginNames = H.marginNames,
+	merge = H.merge,
+	pick = H.pick,
+	setAnimation = H.setAnimation,
+	stableSort = H.stableSort,
+	win = H.win,
+	wrap = H.wrap;
 /**
  * The overview of the chart's series
  */
@@ -126,7 +126,7 @@ Legend.prototype = {
 				symbolAttr = item.pointAttribs();
 				if (!visible) {
 					for (key in symbolAttr) {
-							symbolAttr[key] = hiddenColor;
+						symbolAttr[key] = hiddenColor;
 					}
 				}
 			}
@@ -549,7 +549,8 @@ Legend.prototype = {
 
 		/*= if (build.classic) { =*/
 		// Presentational
-		box.attr({
+		box
+			.attr({
 				stroke: options.borderColor,
 				'stroke-width': options.borderWidth || 0,
 				fill: options.backgroundColor || 'none'
