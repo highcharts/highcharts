@@ -29,7 +29,7 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.8.0",
     "browserify": "^12.0.1",
-    "closurecompiler": "^1.5.2",
+    "closure-compiler": "^0.2.12",
     "colors": "~1.1.2",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
