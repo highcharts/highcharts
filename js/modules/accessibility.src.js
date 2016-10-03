@@ -106,7 +106,7 @@ import '../parts/Tooltip.js';
 	// Put accessible info on series and points of a series
 	H.Series.prototype.setA11yDescription = function () {
 		var a11yOptions = this.chart.options.accessibility,
-			firstPointEl = this.points && this.points[0].graphic && this.points[0].graphic.element,
+			firstPointEl = this.points && this.points.length && this.points[0].graphic && this.points[0].graphic.element,
 			seriesEl = firstPointEl && firstPointEl.parentNode || this.graph && this.graph.element || this.group && this.group.element; // Could be tracker series depending on series type
 
 		if (seriesEl) {
