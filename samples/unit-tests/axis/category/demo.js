@@ -332,3 +332,52 @@ QUnit.test('uniqueNames: true', function (assert) {
         'Equal categories creates stacks'
     );
 });
+
+QUnit.test('Keeping updated with setData (#5768)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        xAxis: {
+            type: 'category'
+        },
+
+        series: [{
+            data: [{
+                name: 'Point 1',
+                color: '#00FF00',
+                y: 1
+            }, {
+                name: 'Point 2',
+                color: '#FF00FF',
+                y: 5
+            }]
+        }]
+    });
+    assert.strictEqual(
+        chart.xAxis[0].names.join(','),
+        'Point 1,Point 2',
+        'Good to go'
+    );
+
+    chart.series[0].setData([{
+        name: 'Updated 1',
+        color: '#00FF00',
+        y: 2
+    }, {
+        name: 'Updated 2',
+        color: '#FF00FF',
+        y: 3
+    }, {
+        name: 'Updated 3',
+        color: '#8800FF',
+        y: 3
+    }]);
+
+    assert.strictEqual(
+        chart.xAxis[0].names.join(','),
+        'Updated 1,Updated 2,Updated 3',
+        'Changed with setData'
+    );
+});

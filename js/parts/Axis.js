@@ -919,7 +919,7 @@ H.Axis.prototype = {
 			each(this.series || [], function (series) {
 			
 				// When adding a series, points are not yet generated
-				if (!series.processedXData) {
+				if (!series.points || series.isDirtyData) {
 					series.processData();
 					series.generatePoints();
 				}
