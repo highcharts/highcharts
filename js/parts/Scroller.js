@@ -1185,13 +1185,14 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 
 // Handle adding new series
 wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
-	proceed.call(this, options, false, animation);
+	var series = proceed.call(this, options, false, animation);
 	if (this.scroller) {
 		this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
 	}
 	if (pick(redraw, true)) {
 		this.redraw();
 	}
+	return series;
 });
 
 // Handle updating series
