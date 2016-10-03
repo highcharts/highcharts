@@ -9,14 +9,14 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
-	var correctFloat = H.correctFloat,
-		isNumber = H.isNumber,
-		noop = H.noop,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var correctFloat = H.correctFloat,
+	isNumber = H.isNumber,
+	noop = H.noop,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Waterfall series code                                                *

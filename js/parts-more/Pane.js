@@ -6,10 +6,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-	var each = H.each,
-		extend = H.extend,
-		merge = H.merge,
-		splat = H.splat;
+var each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	splat = H.splat;
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
