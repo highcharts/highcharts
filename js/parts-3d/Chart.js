@@ -7,12 +7,12 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-	var Chart = H.Chart,
-		each = H.each,
-		merge = H.merge,
-		perspective = H.perspective,
-		pick = H.pick,
-		wrap = H.wrap;
+var Chart = H.Chart,
+	each = H.each,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	wrap = H.wrap;
 
 /*** 
 	EXTENSION FOR 3D CHARTS

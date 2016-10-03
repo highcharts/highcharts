@@ -9,18 +9,18 @@ import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Tick.js';
-	var ZAxis,
+var ZAxis,
 
-		Axis = H.Axis,
-		Chart = H.Chart,
-		each = H.each,
-		extend = H.extend,
-		merge = H.merge,
-		perspective = H.perspective,
-		pick = H.pick,
-		splat = H.splat,
-		Tick = H.Tick,
-		wrap = H.wrap;
+	Axis = H.Axis,
+	Chart = H.Chart,
+	each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	splat = H.splat,
+	Tick = H.Tick,
+	wrap = H.wrap;
 /***
 	EXTENSION TO THE AXIS
 ***/

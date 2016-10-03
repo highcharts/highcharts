@@ -10,9 +10,9 @@ import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 import '../parts/VmlRenderer.js';
 /*= if (build.classic) { =*/
-	var Axis = H.Axis,
-		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer;
+var Axis = H.Axis,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer;
 
 /**
  *	Extension to the VML Renderer
