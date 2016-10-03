@@ -224,21 +224,21 @@ Highcharts.theme = {
 
 	scrollbar: {
 		barBackgroundColor: {
-				linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-				stops: [
-					[0.4, '#888'],
-					[0.6, '#555']
-				]
-			},
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
+				[0.4, '#888'],
+				[0.6, '#555']
+			]
+		},
 		barBorderColor: '#CCC',
 		buttonArrowColor: '#CCC',
 		buttonBackgroundColor: {
-				linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-				stops: [
-					[0.4, '#888'],
-					[0.6, '#555']
-				]
-			},
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
+				[0.4, '#888'],
+				[0.6, '#555']
+			]
+		},
 		buttonBorderColor: '#CCC',
 		rifleColor: '#FFF',
 		trackBackgroundColor: {

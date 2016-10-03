@@ -22,25 +22,30 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
+			/* eslint-disable */
 			var diffThreshold = 0;
 			window.continueBatch = false;
+
+			function batchMode() {
+				window.continueBatch = true;
+				$('#batch-compare').hide();
+				$('#batch-stop').show();
+			}
 			function runBatch() {
 				var currentLi = document.currentLi || $('#li1')[0];
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
-					window.continueBatch = true;
 				
 					href = href.replace("view.php", "compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
-				$(this).toggle();
-				$('#batch-stop').toggle();
+				batchMode();
 			}
 
 			function stopBatch() {
 				window.continueBatch = false;
-				$('#batch-stop').toggle();
-				$('#batch-compare').toggle();
+				$('#batch-stop').hide();
+				$('#batch-compare').show();
 			}
 
 			function countFails() {
@@ -289,17 +294,20 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 	<?php
 	$products = array('highcharts', 'maps', 'stock', 'unit-tests', 'issues', 'cloud');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
+
+	$html = "";
+	$samples = array('');
 	
 
 	$i = 1;
 	foreach ($products as $dir) {
 		if ($handle = opendir($samplesDir . $dir)) {
 
-			echo "<h2>$dir</h2>";
+			$html .= "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
 				if (is_dir("$samplesDir/$dir/$file") && substr($file, 0, 1) != '.') {
-					echo "
+					$html .= "
 					<h4>$dir/$file</h4>
 					<ul>
 					";
@@ -307,7 +315,6 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					// loop over the inner directories
 					if ($innerHandle = opendir($samplesDir . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
-							$next = $i + 1;
 							$batchClass = 'batch';
 							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
@@ -318,7 +325,6 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								$isUnitTest = strstr($yaml, 'qunit') || file_exists($samplesDir ."/$dir/$file/$innerFile/unit-tests.js");
 								$diff = '';
 
-
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$compareClass = 'manual';
@@ -327,7 +333,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								// Display diff from previous comparison
 								$compareIcon = $isUnitTest ? 'icon-puzzle-piece' : 'icon-columns';
 								$dissIndex = "
-									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+									<a class='dissimilarity-index' href='compare-view.php?path=$path' target='main'>
 										<i class='$compareIcon'></i></a>
 								";
 
@@ -345,7 +351,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 										$compareClass = 'different';
 										$dummy = mktime();
 										$dissIndex = "
-											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i&amp;dummy=$dummy'
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=$dummy'
 												target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
@@ -356,7 +362,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								// No symbol for manual tests
 								if ($compareClass == 'manual') {
 									$dissIndex = "
-										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path' target='main'>
 											<i class='icon-hand-left'></i>
 										</a>
 									";
@@ -385,19 +391,21 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 									";
 								}
 
-								echo "
+								$html .= "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
-									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i&amp;diff=$diff' target='main'>
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path'>$innerFile</a>
+									<a class='comment' href='compare-comment.php?path=$path&amp;diff=$diff' target='main'>
 										$comment
 									</a>
 									$dissIndex
 								</li>
 								";
+
+								$samples[$i] = $path;
 								$i++;
 							
 							} elseif (preg_match('/^[a-zA-Z0-9\-,]+$/', $innerFile)) {
-								echo "
+								$html .= "
 								<li class='different'>
 									Invalid sample name, use lower case only:<br>$innerFile
 								</li>
@@ -406,7 +414,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						}
 					}
 				
-					echo "</ul>";
+					$html .= "</ul>";
 				}
 			}
 		
@@ -414,7 +422,13 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			closedir($handle);
 		}
 	}
+
+	echo $html;
 ?>
 </div>
+
+<script>
+var samples = ['<?php echo join("', '", $samples); ?>'];
+</script>
 </body>
 </html>

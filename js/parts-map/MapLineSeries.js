@@ -7,8 +7,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 // The mapline series type
 seriesType('mapline', 'map', {

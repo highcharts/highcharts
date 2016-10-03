@@ -11,26 +11,26 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		Chart = H.Chart,
-		createElement = H.createElement,
-		css = H.css,
-		defaultOptions = H.defaultOptions,
-		defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		hasTouch = H.hasTouch,
-		inArray = H.inArray,
-		isObject = H.isObject,
-		Legend = H.Legend,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		svg = H.svg,
-		TrackerMixin;
+var addEvent = H.addEvent,
+	Chart = H.Chart,
+	createElement = H.createElement,
+	css = H.css,
+	defaultOptions = H.defaultOptions,
+	defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	hasTouch = H.hasTouch,
+	inArray = H.inArray,
+	isObject = H.isObject,
+	Legend = H.Legend,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	TrackerMixin;
 /**
  * TrackerMixin for points and graphs
  */

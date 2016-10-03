@@ -151,6 +151,18 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/wip.grid-axis.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'modules/wip.part-fill-point.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'modules/wip.xrange-series.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'themes/dark-blue.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
@@ -320,7 +332,7 @@ gulp.task('filesize', function () {
     }
 
     closureCompiler.compile(
-        ['js/' + filename],
+        ['code/' + filename],
         null,
         function (error, ccResult) {
             if (ccResult) {
@@ -333,7 +345,7 @@ gulp.task('filesize', function () {
                     }
 
                     closureCompiler.compile(
-                        ['js/' + filename],
+                        ['code/' + filename],
                         null,
                         function (ccError, ccResultOld) {
                             if (ccResultOld) {
@@ -459,6 +471,13 @@ const copyToDist = () => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
             U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+        });
+    });
+    // Copy radial gradient to dist.
+    ['vml-radial-gradient.png'].forEach((path) => {
+        const content = fs.readFileSync('./gfx/' + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/gfx/' + path, content);
         });
     });
 };

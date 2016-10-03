@@ -10,19 +10,19 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-	var Axis = H.Axis,
-		Chart = H.Chart,
-		color = H.color,
-		ColorAxis,
-		each = H.each,
-		extend = H.extend,
-		isNumber = H.isNumber,
-		Legend = H.Legend,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		noop = H.noop,
-		merge = H.merge,
-		pick = H.pick,
-		wrap = H.wrap;
+var Axis = H.Axis,
+	Chart = H.Chart,
+	color = H.color,
+	ColorAxis,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	Legend = H.Legend,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	noop = H.noop,
+	merge = H.merge,
+	pick = H.pick,
+	wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends

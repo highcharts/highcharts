@@ -204,7 +204,7 @@ H.Pointer.prototype = {
 					isCloser = p1.dist - p2.dist,
 					isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
 				// We have two points which are not in the same place on xAxis and shared tooltip:
-				if (isCloserX !== 0) {
+				if (isCloserX !== 0 && shared) { // #5721
 					return isCloserX;
 				}
 				// Points are not exactly in the same place on x/yAxis:
@@ -227,7 +227,7 @@ H.Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoints[0] && (kdpoints[0] !== pointer.hoverPoint || (tooltip && tooltip.isHidden))) {
+		if (kdpoints[0] && (kdpoints[0] !== chart.hoverPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoints[0].series.noSharedTooltip) {
 				// Do mouseover on all points (#3919, #3985, #4410)

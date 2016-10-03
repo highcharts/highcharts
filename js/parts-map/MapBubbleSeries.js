@@ -8,10 +8,10 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
-	var extend = H.extend,
-		Point = H.Point,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var merge = H.merge,
+	Point = H.Point,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {
@@ -39,8 +39,11 @@ if (seriesTypes.bubble) {
 		applyOptions: function (options, x) {
 			var point;
 			if (options && options.lat !== undefined && options.lon !== undefined) {
-				point = Point.prototype.applyOptions.call(this, options, x);
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = Point.prototype.applyOptions.call(
+					this,
+					merge(options, this.series.chart.fromLatLonToPoint(options)),
+					x
+				);
 			} else {
 				point = seriesTypes.map.prototype.pointClass.prototype.applyOptions.call(this, options, x);
 			}

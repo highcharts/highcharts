@@ -6,18 +6,18 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var Axis = H.Axis,
-		Date = H.Date,
-		defaultOptions = H.defaultOptions,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		getMagnitude = H.getMagnitude,
-		getTZOffset = H.getTZOffset,
-		grep = H.grep,
-		normalizeTickInterval = H.normalizeTickInterval,
-		pick = H.pick,
-		timeUnits = H.timeUnits;
+var Axis = H.Axis,
+	Date = H.Date,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	getMagnitude = H.getMagnitude,
+	getTZOffset = H.getTZOffset,
+	grep = H.grep,
+	normalizeTickInterval = H.normalizeTickInterval,
+	pick = H.pick,
+	timeUnits = H.timeUnits;
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array

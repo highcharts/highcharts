@@ -7,20 +7,20 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './SvgRenderer.js';
-	var attr = H.attr,
-		createElement = H.createElement,
-		css = H.css,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		isFirefox = H.isFirefox,
-		isMS = H.isMS,
-		isWebKit = H.isWebKit,
-		pInt = H.pInt,
-		SVGElement = H.SVGElement,
-		SVGRenderer = H.SVGRenderer,
-		win = H.win,
-		wrap = H.wrap;
+var attr = H.attr,
+	createElement = H.createElement,
+	css = H.css,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	isFirefox = H.isFirefox,
+	isMS = H.isMS,
+	isWebKit = H.isWebKit,
+	pInt = H.pInt,
+	SVGElement = H.SVGElement,
+	SVGRenderer = H.SVGRenderer,
+	win = H.win,
+	wrap = H.wrap;
 
 // extend SvgElement for useHTML option
 extend(SVGElement.prototype, {

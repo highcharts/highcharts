@@ -185,6 +185,7 @@ import '../parts/Tick.js';
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
+			color: point.isNull ? new H.Color(color).setOpacity(0).get() : color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,
@@ -627,7 +628,7 @@ import '../parts/Tick.js';
 				points = series.points;
 			
 			for (i = 0; i < xData.length; i++) {
-				if (xData[i] === x && series.options.data[i].drilldown) {
+				if (xData[i] === x && series.options.data[i] && series.options.data[i].drilldown) {
 					ret.push(points ? points[i] : true);
 					break;
 				}

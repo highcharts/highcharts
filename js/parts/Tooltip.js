@@ -6,19 +6,19 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var addEvent = H.addEvent,
-		dateFormat = H.dateFormat,
-		each = H.each,
-		extend = H.extend,
-		format = H.format,
-		isNumber = H.isNumber,
-		map = H.map,
-		merge = H.merge,
-		pick = H.pick,
-		splat = H.splat,
-		stop = H.stop,
-		syncTimeout = H.syncTimeout,
-		timeUnits = H.timeUnits;
+var addEvent = H.addEvent,
+	dateFormat = H.dateFormat,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	isNumber = H.isNumber,
+	map = H.map,
+	merge = H.merge,
+	pick = H.pick,
+	splat = H.splat,
+	stop = H.stop,
+	syncTimeout = H.syncTimeout,
+	timeUnits = H.timeUnits;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
@@ -87,7 +87,8 @@ H.Tooltip.prototype = {
 				.shadow(options.shadow);
 			/*= } =*/
 		}
-		this.label.attr({
+		this.label
+			.attr({
 				zIndex: 8
 			})
 			.add();

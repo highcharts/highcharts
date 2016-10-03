@@ -12,20 +12,20 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		CenteredSeriesMixin = H.CenteredSeriesMixin,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		inArray = H.inArray,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		noop = H.noop,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		setAnimation = H.setAnimation;
+var addEvent = H.addEvent,
+	CenteredSeriesMixin = H.CenteredSeriesMixin,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	inArray = H.inArray,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	noop = H.noop,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	setAnimation = H.setAnimation;
 /**
  * Pie series type
  */

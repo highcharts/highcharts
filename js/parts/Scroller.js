@@ -195,7 +195,8 @@ Navigator.prototype = {
 
 			/*= if (build.classic) { =*/
 			var handlesOptions = scroller.navigatorOptions.handles;
-			handles[index].attr({
+			handles[index]
+				.attr({
 					fill: handlesOptions.backgroundColor,
 					stroke: handlesOptions.borderColor,
 					'stroke-width': 1
@@ -444,8 +445,8 @@ Navigator.prototype = {
 		addEvent(chart, 'redraw', function () {
 			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
 			var scroller = this.scroller,
-				xAxis = scroller && scroller.baseSeries && scroller.baseSeries[0] && scroller.baseSeries[0].xAxis;
-			
+				xAxis = scroller && (scroller.baseSeries && scroller.baseSeries[0] && scroller.baseSeries[0].xAxis || scroller.scrollbar && this.xAxis[0]); // #5709
+
 			if (xAxis) {
 				scroller.render(xAxis.min, xAxis.max);
 			}
@@ -760,7 +761,8 @@ Navigator.prototype = {
 						// from value to pixel
 						scrollTrackWidth * (value - min) / valueRange;
 				},
-				toFixedRange: Axis.prototype.toFixedRange
+				toFixedRange: Axis.prototype.toFixedRange,
+				fake: true
 			};
 		}
 
@@ -859,7 +861,7 @@ Navigator.prototype = {
 		});
 
 		// When run after render, this.xAxis already exists
-		if (this.xAxis) {
+		if (this.xAxis && !this.xAxis.fake) {
 			this.addBaseSeries();
 		}
 	},
@@ -1063,16 +1065,15 @@ Navigator.prototype = {
 				s.destroy();
 			}
 		});
-		delete this.series;
 
 		// Destroy properties
-		each(['xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
-				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup'], function (prop) {
+		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
 			if (this[prop] && this[prop].destroy) {
-				this[prop] = this[prop].destroy();
+				this[prop].destroy();
 			}
+			this[prop] = null;
 		}, this);
-		this.rendered = null;
 
 		// Destroy elements in collection
 		each([this.handles, this.elementsToDestroy], function (coll) {
@@ -1185,13 +1186,14 @@ wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, an
 
 // Handle adding new series
 wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation) {
-	proceed.call(this, options, false, animation);
+	var series = proceed.call(this, options, false, animation);
 	if (this.scroller) {
 		this.scroller.setBaseSeries(); // Recompute which series should be shown in navigator, and add them
 	}
 	if (pick(redraw, true)) {
 		this.redraw();
 	}
+	return series;
 });
 
 // Handle updating series

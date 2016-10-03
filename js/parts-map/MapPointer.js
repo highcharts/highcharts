@@ -7,10 +7,10 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Pointer.js';
-	var extend = H.extend,
-		pick = H.pick,
-		Pointer = H.Pointer,
-		wrap = H.wrap;
+var extend = H.extend,
+	pick = H.pick,
+	Pointer = H.Pointer,
+	wrap = H.wrap;
 		
 // Extend the Pointer
 extend(Pointer.prototype, {

@@ -8,26 +8,26 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
-	var cos = Math.cos,
-		PI = Math.PI,
-		sin = Math.sin;
+var cos = Math.cos,
+	PI = Math.PI,
+	sin = Math.sin;
 		
 
-	var animObject = H.animObject,
-		charts = H.charts,
-		color = H.color,
-		defined = H.defined,
-		deg2rad = H.deg2rad,
-		each = H.each,
-		extend = H.extend,
-		inArray = H.inArray,
-		map = H.map,
-		merge = H.merge,
-		perspective = H.perspective,
-		pick = H.pick,
-		SVGElement = H.SVGElement,
-		SVGRenderer = H.SVGRenderer,
-		wrap = H.wrap;
+var animObject = H.animObject,
+	charts = H.charts,
+	color = H.color,
+	defined = H.defined,
+	deg2rad = H.deg2rad,
+	each = H.each,
+	extend = H.extend,
+	inArray = H.inArray,
+	map = H.map,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	SVGElement = H.SVGElement,
+	SVGRenderer = H.SVGRenderer,
+	wrap = H.wrap;
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
@@ -448,21 +448,25 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		if (anim.duration) {
 			params = merge(params); // Don't mutate the original object
 			ca = suckOutCustom(params);
-			
+			params.dummy = 1; // Params need to have a property in order for the step to run (#5765)
+
 			if (ca) {
 				to = ca;
 				anim.step = function (a, fx) {
 					function interpolate(key) {
 						return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
 					}
-					fx.elem.setPaths(merge(from, {
-						x: interpolate('x'),
-						y: interpolate('y'),
-						r: interpolate('r'),
-						innerR: interpolate('innerR'),
-						start: interpolate('start'),
-						end: interpolate('end')
-					}));
+						
+					if (fx.prop === 'dummy') {
+						fx.elem.setPaths(merge(from, {
+							x: interpolate('x'),
+							y: interpolate('y'),
+							r: interpolate('r'),
+							innerR: interpolate('innerR'),
+							start: interpolate('start'),
+							end: interpolate('end')
+						}));
+					}
 				};
 			}
 			animation = anim; // Only when duration (#5572)
@@ -591,7 +595,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	} else if (end > PI - a && start < PI - a) { // But shape can cross also only (c) edge:
 		// Go to outer side
 		out = out.concat([
-		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
+			'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 		]);
 		// Curve to the true end of the slice
 		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));

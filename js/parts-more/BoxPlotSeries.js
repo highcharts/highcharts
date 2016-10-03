@@ -7,11 +7,11 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var each = H.each,
-		noop = H.noop,
-		pick = H.pick,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var each = H.each,
+	noop = H.noop,
+	pick = H.pick,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Box plot series code											      *

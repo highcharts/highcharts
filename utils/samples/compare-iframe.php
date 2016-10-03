@@ -144,10 +144,18 @@ function getHTML($which) {
 	$_SESSION['html'] = $issueHTML;
 
 	if (strstr($s, 'http://code.highcharts.com') || strstr($s, 'http://www.highcharts.com')) {
-		$s .= "<script>throw 'Do not use http in demo.html. Use secure https. ($path)';</script>";
+		$s .= "
+		<script>
+		window.demoError = 'Do not use http in demo.html. Use secure https. ($path)';
+		throw window.demoError;
+		</script>";
 	}
 	if (strstr($s, '.src.js')) {
-		$s .= "<script>throw 'Do not use src.js files in demos. Use .js compiled files. ($path)';</script>";
+		$s .= "
+		<script>
+		window.demoError = 'Do not use src.js files in demos. Use .js compiled files, and add rewrite in .htaccess ($path)';
+		throw window.demoError;
+		</script>";
 	}
 
 	$s = cachify($s);
@@ -260,6 +268,25 @@ function getExportInnerHTML() {
 
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
+					/**
+					 * Compare numbers taking in account an error.
+					 * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/
+					 *
+					 * @param  {Float} number
+					 * @param  {Float} expected
+					 * @param  {Float} error    Optional
+					 * @param  {String} message  Optional
+					 */
+					QUnit.assert.close = function (number, expected, error, message) {
+					    if (error === void 0 || error === null) {
+					        error = 0.00001; // default error
+					    }
+
+					    var result = number === expected || (number < expected + error && number > expected - error) || false;
+
+					    QUnit.push(result, number, expected, message);
+					};
+
 					QUnit.done(function (e) {
 						if (e.passed === e.total) {
 							window.parent.onIdentical();
@@ -349,6 +376,13 @@ function getExportInnerHTML() {
 
 				if (window.Highcharts) {
 					var animation = <?php echo ($isManual ? 'undefined' : 'false') ?>;
+
+
+					if (window.demoError) {
+						parent.window.error = window.demoError;
+						parent.window.onDifferent('Error');
+					}
+
 					Highcharts.setOptions({
 						chart: {
 							animation: animation

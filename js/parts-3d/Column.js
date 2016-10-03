@@ -7,13 +7,13 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-	var each = H.each,
-		perspective = H.perspective,
-		pick = H.pick,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		svg = H.svg,
-		wrap = H.wrap;
+var each = H.each,
+	perspective = H.perspective,
+	pick = H.pick,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	wrap = H.wrap;
 /***
 	EXTENSION FOR 3D COLUMNS
 ***/

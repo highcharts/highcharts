@@ -10,15 +10,15 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-	var each = H.each,
-		isNumber = H.isNumber,
-		merge = H.merge,
-		noop = H.noop,		
-		pick = H.pick,
-		pInt = H.pInt,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		TrackerMixin = H.TrackerMixin;
+var each = H.each,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	noop = H.noop,		
+	pick = H.pick,
+	pInt = H.pInt,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	TrackerMixin = H.TrackerMixin;
 /* 
  * The GaugeSeries class
  */

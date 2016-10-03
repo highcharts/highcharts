@@ -64,6 +64,24 @@ $(function () {
             document.querySelector('.highcharts-plot-background').getBBox().height > originalPlotHeight,
             'Plot area is now higher than it was'
         );
+
+        chart.update({
+            navigator: {
+                enabled: true
+            }
+        });
+
+
+        assert.strictEqual(
+            typeof chart.container.querySelector('.highcharts-navigator'),
+            'object',
+            'Navigator element added'
+        );
+        assert.strictEqual(
+            typeof chart.container.querySelector('.highcharts-navigator-mask-inside').getBBox().height,
+            'number',
+            'Height is valid'
+        );
     });
 
     QUnit.test('Scrollbar update', function (assert) {

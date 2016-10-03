@@ -8,14 +8,14 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
-	var Chart = H.Chart,
-		each = H.each,
-		extend = H.extend,
-		error = H.error,
-		format = H.format,
-		merge = H.merge,
-		win = H.win,
-		wrap = H.wrap;
+var Chart = H.Chart,
+	each = H.each,
+	extend = H.extend,
+	error = H.error,
+	format = H.format,
+	merge = H.merge,
+	win = H.win,
+	wrap = H.wrap;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */

@@ -1356,23 +1356,23 @@ H.animate = function (el, params, opt) {
 H.seriesType = function (type, parent, options, props, pointProps) { // docs: add to API + extending Highcharts
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
-    
-    // Merge the options
-    defaultOptions.plotOptions[type] = H.merge(
-        defaultOptions.plotOptions[parent], 
-        options
-    );
-    
-    // Create the class
-    seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
-    seriesTypes[type].prototype.type = type;
+	
+	// Merge the options
+	defaultOptions.plotOptions[type] = H.merge(
+		defaultOptions.plotOptions[parent], 
+		options
+	);
+	
+	// Create the class
+	seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
+	seriesTypes[type].prototype.type = type;
 
-    // Create the point class if needed
-    if (pointProps) {
+	// Create the point class if needed
+	if (pointProps) {
 		seriesTypes[type].prototype.pointClass = H.extendClass(H.Point, pointProps);
-    }
+	}
 
-    return seriesTypes[type];
+	return seriesTypes[type];
 };
 
 /**

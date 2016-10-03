@@ -11,19 +11,19 @@ import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
-	var arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		Axis = H.Axis,
-		color = H.color,
-		each = H.each,
-		isNumber = H.isNumber,
-		noop = H.noop,
-		pick = H.pick,
-		pInt = H.pInt,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	color = H.color,
+	each = H.each,
+	isNumber = H.isNumber,
+	noop = H.noop,
+	pick = H.pick,
+	pInt = H.pInt,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Bubble series code											          *

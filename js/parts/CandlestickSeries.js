@@ -6,11 +6,11 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		merge = H.merge,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	merge = H.merge,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Candlestick series code											  *

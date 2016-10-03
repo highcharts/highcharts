@@ -7,7 +7,9 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './ColumnSeries.js';
-	var seriesType = H.seriesType;
+
+var seriesType = H.seriesType;
+
 /**
  * The Bar series class
  */

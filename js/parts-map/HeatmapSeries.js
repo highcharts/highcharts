@@ -11,16 +11,16 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
-	var colorPointMixin = H.colorPointMixin,
-		colorSeriesMixin = H.colorSeriesMixin,
-		each = H.each,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var colorPointMixin = H.colorPointMixin,
+	colorSeriesMixin = H.colorSeriesMixin,
+	each = H.each,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 // The Heatmap series type
 seriesType('heatmap', 'scatter', {

@@ -10,34 +10,34 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-	var addEvent = H.addEvent,
-		animObject = H.animObject,
-		arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		correctFloat = H.correctFloat,
-		Date = H.Date,
-		defaultOptions = H.defaultOptions,
-		defaultPlotOptions = H.defaultPlotOptions,
-		defined = H.defined,
-		each = H.each,
-		erase = H.erase,
-		error = H.error,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		grep = H.grep,
-		isArray = H.isArray,
-		isNumber = H.isNumber,
-		isString = H.isString,
-		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point, // @todo  add as a requirement
-		removeEvent = H.removeEvent,
-		splat = H.splat,
-		stableSort = H.stableSort,
-		SVGElement = H.SVGElement,
-		syncTimeout = H.syncTimeout,
-		win = H.win;
+var addEvent = H.addEvent,
+	animObject = H.animObject,
+	arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	correctFloat = H.correctFloat,
+	Date = H.Date,
+	defaultOptions = H.defaultOptions,
+	defaultPlotOptions = H.defaultPlotOptions,
+	defined = H.defined,
+	each = H.each,
+	erase = H.erase,
+	error = H.error,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	grep = H.grep,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point, // @todo  add as a requirement
+	removeEvent = H.removeEvent,
+	splat = H.splat,
+	stableSort = H.stableSort,
+	SVGElement = H.SVGElement,
+	syncTimeout = H.syncTimeout,
+	win = H.win;
 
 /**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -171,10 +171,10 @@ H.Series = H.seriesType('line', null, { // base series options
 	//}
 	turboThreshold: 1000
 	// zIndex: null
-},
+
 
 // Prototype properties
-{
+}, {
 	isCartesian: true,
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted

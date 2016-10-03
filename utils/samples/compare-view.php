@@ -4,7 +4,6 @@
 	require_once('functions.php');
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
-	$i = $_GET['i'];
 	$rightcommit = @$_GET['rightcommit'];
 	$commit = @$_GET['commit']; // Used from Phantom test
 	$compareJSON = compareJSON();
@@ -55,7 +54,7 @@
 		<script type="text/javascript">
 			var diff,
 				path = '<?php echo $path ?>',
-				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
+				commentHref = 'compare-comment.php?path=<?php echo $path ?>&diff=',
 				commentFrame,
 				leftSVG,
 				rightSVG,
@@ -65,7 +64,7 @@
 				chartHeight,
 				error,
 				mode = '<?php echo $mode ?>',
-				i = '<?php echo $i ?>',
+				sampleIndex = window.parent.frames[0] && window.parent.frames[0].samples.indexOf(path),
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
@@ -84,8 +83,23 @@
 				}
 			}
 
+			function updateHash() {
+
+				if (window.parent) {
+					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
+					hash += '/' + path;
+					if (hash !== window.parent.location.hash) {
+						window.parent.history.pushState(null, null, hash);
+					}
+				}
+
+			}
+
 
 			$(function() {
+
+				updateHash();
+
 				// the reload button
 				$('#reload').click(function() {
 					location.reload();
@@ -159,7 +173,7 @@
 
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
-						li = contentDoc.getElementById('li<?php echo $i ?>'),
+						li = contentDoc.getElementById('li' + sampleIndex),
 						background = 'none';
 
 					if (li) {
@@ -223,10 +237,10 @@
 
 						}
 
-						if (window.parent.frames[0] && window.parent.frames[0].continueBatch) {
-							$(contentDoc.body).animate({
+						if (window.parent.frames[0]) {
+							$('html,body', contentDoc).animate({
 								scrollTop: $(li).offset().top - 300
-							}, 0);
+							}, window.parent.frames[0].continueBatch ? 0 : 'slow');
 						}
 					}
 
@@ -236,7 +250,7 @@
 			function hilightCurrent() {
 
 				var contentDoc = window.parent.frames[0].document,
-					li = contentDoc.getElementById('li<?php echo $i ?>');
+					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// previous
 				if (contentDoc.currentLi) {
@@ -267,20 +281,19 @@
 
 
 			function proceed() {
-				var i = '<?php echo $i ?>';
-				if (window.parent.frames[0] && i !== '' && window.parent.frames[0].continueBatch) {
+				updateHash(); // Batch may be stopped
+				if (window.parent.frames[0] && sampleIndex !== -1 && window.parent.frames[0].continueBatch) {
 					var contentDoc = window.parent.frames[0].document,
 						href,
-						next;
+						next,
+						nextIndex = sampleIndex;
 
-					i = parseInt(i);
-
-					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
+					if (!contentDoc || !contentDoc.getElementById('i' + sampleIndex)) {
 						return;
 					}
 
-					while (i++) {
-						next = contentDoc.getElementById('i' + i);
+					while (nextIndex++) {
+						next = contentDoc.getElementById('i' + nextIndex);
 						if (next) {
 							href = next.href;
 						} else {
@@ -288,14 +301,21 @@
 							return;
 						}
 
-						if (!contentDoc.getElementById('i' + i) || /batch/.test(contentDoc.getElementById('i' + i).className)) {
+						if (!contentDoc.getElementById('i' + nextIndex) || /batch/.test(contentDoc.getElementById('i' + nextIndex).className)) {
 							break;
 						}
 					}
 
 					href = href.replace("view.php", "compare-view.php");
 
-					window.location.href = href;
+
+					window.parent.batchRuns++;
+					// Clear memory build-up from time to time by reloading the whole thing
+					if (window.parent.batchRuns > 90) {
+						window.parent.location.hash = '#batch/' + window.parent.frames[0].samples[nextIndex];
+					} else {
+						window.location.href = href;
+					}
 
 				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
 				} else {

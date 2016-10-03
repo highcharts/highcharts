@@ -10,13 +10,13 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-	var color = H.color,
-		each = H.each,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		map = H.map,
-		pick = H.pick,
-		Series = H.Series,
-		seriesType = H.seriesType;
+var color = H.color,
+	each = H.each,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	map = H.map,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType;
 /**
  * Area series type
  */
