@@ -91,7 +91,7 @@ H.dateFormats = {
  * Since datetime labels are normally placed at starts and ends of a
  * period of time, and this module converts labels to
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  */
 H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
@@ -105,7 +105,7 @@ H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
 /**
  * Center tick labels vertically and horizontally between ticks
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  *
  * @return {object} object - an object containing x and y positions
  *						 for the tick
@@ -178,10 +178,10 @@ H.Axis.prototype.getMaxLabelLength = function (force) {
  * Overrides the tickLength for vertical axes.
  *
  * @param {function} proceed - the original function
- * @returns {array} returnValue -
+ * @returns {array} retVal -
  */
 H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
-	var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		labelPadding,
 		distance;
 
@@ -192,9 +192,9 @@ H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
 		}
 		distance = this.maxLabelLength + labelPadding;
 
-		returnValue[0] = distance;
+		retVal[0] = distance;
 	}
-	return returnValue;
+	return retVal;
 });
 
 /**
@@ -231,7 +231,7 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 /**
  * Replicates category axis translation to all axis types.
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  */
 H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 	// Call the original setAxisTranslation() to perform all other calculations
@@ -240,8 +240,9 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 		this.minPointOffset = 0.5;
 		this.pointRangePadding = 1;
 
-		this.translationSlope = this.transA = this.len / ((this.max - this.min + this.pointRangePadding) || 1);
-		this.transB = this.horiz ? this.left : this.bottom; // translation addend
+		this.translationSlope = this.transA =
+			this.len / ((this.max - this.min + this.pointRangePadding) || 1);
+		this.transB = this.horiz ? this.left : this.bottom; // translation added
 		this.minPixelPadding = this.transA * this.minPointOffset;
 
 		// Ensure that linear axes get a minPixelPadding of 0
@@ -257,7 +258,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  * Prevents rotation of labels when squished, as rotating them would not
  * help.
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  */
 H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
 	if (this.options.grid) {
@@ -271,10 +272,11 @@ H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
  * Draw an extra line on the far side of the the axisLine,
  * creating cell roofs of a grid.
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  */
 H.wrap(H.Axis.prototype, 'render', function (proceed) {
-	var labelPadding,
+	var axis = this,
+		labelPadding,
 		distance,
 		lineWidth,
 		linePath,
@@ -283,34 +285,35 @@ H.wrap(H.Axis.prototype, 'render', function (proceed) {
 		xStartIndex,
 		xEndIndex;
 
-	if (this.options.grid) {
-		labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
-		distance = this.maxLabelLength + labelPadding;
-		lineWidth = this.options.lineWidth;
+	if (axis.options.grid) {
+		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
+		distance = axis.maxLabelLength + labelPadding;
+		lineWidth = axis.options.lineWidth;
 
-		// Call original Axis.render() to obtain this.axisLine and this.axisGroup
-		proceed.apply(this);
+		// Call original Axis.render() to obtain axis.axisLine and
+		// axis.axisGroup
+		proceed.apply(axis);
 
-		if (this.isOuterAxis() && this.axisLine) {
-			if (this.horiz) {
+		if (axis.isOuterAxis() && axis.axisLine) {
+			if (axis.horiz) {
 				// -1 to avoid adding distance each time the chart updates
-				distance = this.axisGroup.getBBox().height - 1;
+				distance = axis.axisGroup.getBBox().height - 1;
 			}
 
 			if (lineWidth) {
-				linePath = this.getLinePath(lineWidth);
+				linePath = axis.getLinePath(lineWidth);
 				yStartIndex = linePath.indexOf('M') + 2;
 				yEndIndex = linePath.indexOf('L') + 2;
 				xStartIndex = linePath.indexOf('M') + 1;
 				xEndIndex = linePath.indexOf('L') + 1;
 
 				// Negate distance if top or left axis
-				if (this.side === axisSide.top || this.side === axisSide.left) {
+				if (axis.side === axisSide.top || axis.side === axisSide.left) {
 					distance = -distance;
 				}
 
 				// If axis is horizontal, reposition line path vertically
-				if (this.horiz) {
+				if (axis.horiz) {
 					linePath[yStartIndex] = linePath[yStartIndex] + distance;
 					linePath[yEndIndex] = linePath[yEndIndex] + distance;
 				} else {
@@ -319,26 +322,26 @@ H.wrap(H.Axis.prototype, 'render', function (proceed) {
 					linePath[xEndIndex] = linePath[xEndIndex] + distance;
 				}
 
-				if (!this.axisLineExtra) {
-					this.axisLineExtra = this.chart.renderer.path(linePath)
+				if (!axis.axisLineExtra) {
+					axis.axisLineExtra = axis.chart.renderer.path(linePath)
 						.attr({
-							stroke: this.options.lineColor,
+							stroke: axis.options.lineColor,
 							'stroke-width': lineWidth,
 							zIndex: 7
 						})
-						.add(this.axisGroup);
+						.add(axis.axisGroup);
 				} else {
-					this.axisLineExtra.animate({
+					axis.axisLineExtra.animate({
 						d: linePath
 					});
 				}
 
 				// show or hide the line depending on options.showEmpty
-				this.axisLine[this.showAxis ? 'show' : 'hide'](true);
+				axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
 			}
 		}
 	} else {
-		proceed.apply(this);
+		proceed.apply(axis);
 	}
 });
 
@@ -347,7 +350,7 @@ H.wrap(H.Axis.prototype, 'render', function (proceed) {
  * 1. Prohibit timespans of multitudes of a time unit
  * 2. Draw cell walls on vertical axes
  *
- * @param proceed - the original function
+ * @param {function} proceed - the original function
  */
 H.wrap(H.Chart.prototype, 'render', function (proceed) {
 	// 25 is optimal height for default fontSize (11px)
@@ -379,7 +382,8 @@ H.wrap(H.Chart.prototype, 'render', function (proceed) {
 			// Make tick marks taller, creating cell walls of a grid.
 			// Use cellHeight axis option if set
 			if (axis.horiz) {
-				axis.options.tickLength = axis.options.cellHeight || fontMetrics.h * fontSizeToCellHeightRatio;
+				axis.options.tickLength = axis.options.cellHeight ||
+						fontMetrics.h * fontSizeToCellHeightRatio;
 			} else {
 				axis.options.tickWidth = 1;
 				if (!axis.options.lineWidth) {
