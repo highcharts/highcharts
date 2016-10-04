@@ -152,17 +152,25 @@ import '../parts/Options.js';
 			blob,
 			objectURLRevoke = true,
 			finallyHandler,
-			libURL = Highcharts.getOptions().exporting.libURL;
+			libURL = Highcharts.getOptions().exporting.libURL,
+			dummySVGContainer = doc.createElement('div');
 
-/*
 		function svgToPdf(svgElement, margin) {
-			var width = svgElement.width.baseVal.value + 2 * margin;
-			var height = svgElement.height.baseVal.value + 2 * margin;
-			var pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+			var width = svgElement.width.baseVal.value + 2 * margin,
+					height = svgElement.height.baseVal.value + 2 * margin,
+					pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
 			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
 			return pdf.output('datauristring');
 		}
-*/
+
+		function downloadPDF() {
+			dummySVGContainer.innerHTML = svg;
+			var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
+			Highcharts.downloadURL(svgData, filename);
+			if (successCallback) {
+				successCallback();
+			}
+		}
 
 		// Initiate download depending on file type
 		if (imageType === 'image/svg+xml') {
@@ -182,20 +190,21 @@ import '../parts/Options.js';
 			} catch (e) {
 				failCallback();
 			}
-		/*} else if (imageType === 'application/pdf') {
-			doc.getElementsByTagName('svg')[0].id = 'svgElement';
-			// you should set the format dynamically, write [width, height] instead of 'a4'
+		} else if (imageType === 'application/pdf') {
 			if (win.jsPDF && win.svgElementToPdf) {
-				var dummyContainer = doc.createElement('div');
-				dummyContainer.innerHTML = svg;
-				setTimeout(function () {
-					var data = svgToPdf(dummyContainer.firstChild, 0);
-					Highcharts.downloadURL(data, filename);
-					if (successCallback) {
-						successCallback();
-					}
-				}, 100);
-			}*/
+				downloadPDF();
+			} else {
+				// Must load pdf libraries first
+				objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
+				libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+				getScript(libURL + 'jspdf.js', function () {
+					getScript(libURL + 'rgbcolor.js', function () {
+						getScript(libURL + 'svg2pdf.js', function () {
+							downloadPDF();
+						});
+					});
+				});
+			}
 		} else {
 			// PNG/JPEG download - create bitmap from SVG
 
@@ -389,14 +398,14 @@ import '../parts/Options.js';
 							type: 'image/svg+xml'
 						});
 					}
-				}/*, {
+				}, {
 					textKey: 'downloadPDF',
 					onclick: function () {
 						this.exportChartLocal({
 							type: 'application/pdf'
 						});
 					}
-				}*/]
+				}]
 			}
 		}
 	});
