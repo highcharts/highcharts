@@ -155,10 +155,6 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
-            'modules/wip.part-fill-point.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
             'modules/wip.xrange-series.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
