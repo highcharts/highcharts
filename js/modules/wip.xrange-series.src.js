@@ -89,7 +89,9 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			var plotX = point.plotX,
 				plotX2 = xAxis.toPixels(H.pick(point.x2, point.x + (point.len || 0)), true),
 				width = plotX2 - plotX,
-				widthDifference;
+				widthDifference,
+				shapeArgs,
+				partialFill;
 
 			if (minPointLength) {
 				widthDifference = width < minPointLength ? minPointLength - width : 0;
@@ -108,6 +110,82 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			};
 			point.tooltipPos[0] += width / 2;
 			point.tooltipPos[1] -= metrics.width / 2;
+
+			// Add a partFillShape to the point, based on the shapeArgs property
+			partialFill = point.partialFill;
+			if (partialFill) {
+				// Get the partial fill amount
+				if (H.isObject(partialFill)) {
+					partialFill = partialFill.amount;
+				}
+				// If it was not a number, assume 0
+				if (!H.isNumber(partialFill)) {
+					partialFill = 0;
+				}
+				shapeArgs = point.shapeArgs;
+				point.partFillShape = {
+					x: shapeArgs.x,
+					y: shapeArgs.y + 1,
+					width: shapeArgs.width * partialFill,
+					height: shapeArgs.height - 2
+				};
+			}
+		});
+	},
+
+	drawPoints: function () {
+		var series = this,
+			chart = this.chart,
+			options = series.options,
+			renderer = chart.renderer,
+			animationLimit = options.animationLimit || 250,
+			method,
+			partFillShape;
+
+		columnType.prototype.drawPoints.apply(series);
+		// draw the columns
+		H.each(series.points, function (point) {
+			var plotY = point.plotY,
+				partFillOptions = point.partialFill,
+				fill,
+				partFillGraphic = point.partFillGraphic;
+
+			// If partFillOptions was not an object, create an empty object
+			if (!H.isObject(partFillOptions)) {
+				partFillOptions = {};
+			}
+			fill = partFillOptions.fill || '#000';
+
+			if (H.isNumber(plotY) && point.y !== null) {
+				partFillShape = point.partFillShape;
+
+				if (partFillGraphic) {
+					H.stop(partFillGraphic);
+					method = chart.pointCount < animationLimit ?
+						'animate' :
+						'attr';
+					partFillGraphic[method](
+						H.merge(partFillShape)
+					);
+				} else {
+					partFillGraphic = renderer[point.shapeType](partFillShape)
+					.attr({
+						'class': point.getClassName()
+					})
+					.add(point.group || series.group);
+					point.partFillGraphic = partFillGraphic;
+				}
+
+				partFillGraphic
+					.attr(series.pointAttribs(
+							point,
+							point.selected && 'select'))
+					.attr('fill', fill)
+					.attr('stroke-width', 0);
+
+			} else if (partFillGraphic) {
+				point.partFillGraphic = partFillGraphic.destroy();
+			}
 		});
 	}
 });
@@ -135,79 +213,4 @@ H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
 			axis.dataMax = dataMax;
 		}
 	}
-});
-
-/**
- * Sets a partFillShape property to each point, based on the shapeArgs property.
- *
- */
-H.wrap(H.seriesTypes.xrange.prototype, 'translate', function (proceed) {
-    var series = this,
-    i,
-    points,
-    point,
-    shapeArgs;
-
-    proceed.apply(series, Array.prototype.slice.call(arguments, 1));
-
-    points = series.points;
-    for (i = 0; i < points.length; i++) {
-        point = points[i];
-        if (point.partialFill) {
-            shapeArgs = point.shapeArgs;
-            point.partFillShape = {
-                x: shapeArgs.x + 1,
-                y: shapeArgs.y + Math.abs(shapeArgs.height -
-                    (shapeArgs.height * point.partialFill)),
-                width: shapeArgs.width - 2,
-                height: shapeArgs.height * point.partialFill
-            };
-        }
-    }
-});
-
-H.wrap(H.seriesTypes.xrange.prototype, 'drawPoints', function (proceed) {
-    var series = this,
-    chart = this.chart,
-    options = series.options,
-    renderer = chart.renderer,
-    animationLimit = options.animationLimit || 250,
-    partFillShape;
-
-    proceed.apply(series, Array.prototype.slice.call(arguments, 1));
-    // draw the columns
-    H.each(series.points, function (point) {
-        var plotY = point.plotY,
-            partFillOptions = (H.isObject(point.partialFill)) ?
-                point.partialFill :
-                {},
-            fill = partFillOptions.fill || '#000',
-            partFillGraphic = point.partFillGraphic;
-
-        if (H.isNumber(plotY) && point.y !== null) {
-            partFillShape = point.partFillShape;
-
-            if (partFillGraphic) {
-                H.stop(partFillGraphic);
-                partFillGraphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
-                    H.merge(partFillShape)
-                );
-            } else {
-                point.partFillGraphic = partFillGraphic = renderer[point.shapeType](partFillShape)
-                .attr({
-                    'class': point.getClassName()
-                })
-                .add(point.group || series.group);
-            }
-
-            partFillGraphic
-            .attr(series.pointAttribs(point, point.selected && 'select'))
-            .attr('fill', fill)
-            .attr('stroke-width', 0)
-            .shadow(options.shadow, null, options.stacking && !options.borderRadius);
-
-        } else if (partFillGraphic) {
-            point.partFillGraphic = partFillGraphic.destroy();
-        }
-    });
 });
