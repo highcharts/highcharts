@@ -13,11 +13,15 @@ var defaultPlotOptions = H.getOptions().plotOptions,
 	extendClass = H.extendClass,
 	pick = H.pick,
 	Point = H.Point,
-	Series = H.Series;
+	Series = H.Series,
+	xrange = 'xrange',
+	pointFormat = 	'<span style="color:{point.color}">' +
+						'\u25CF' +
+					'</span> {series.name}: <b>{point.yCategory}</b><br/>';
 
 defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+		pointFormat: pointFormat
 	}
 });
 H.seriesTypes.xrange = H.extendClass(columnType, {
@@ -31,7 +35,7 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			return cfg;
 		}
 	}),
-	type: 'xrange',
+	type: xrange,
 	forceDL: true,
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
@@ -70,7 +74,8 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 	cropData: function (xData, yData, min, max) {
 
 		// Replace xData with x2Data to find the appropriate cropStart
-		var crop = Series.prototype.cropData.call(this, this.x2Data, yData, min, max);
+		var cropData = Series.prototype.cropData,
+			crop = cropData.call(this, this.x2Data, yData, min, max);
 
 		// Re-insert the cropped xData
 		crop.xData = xData.slice(crop.start, crop.end);
@@ -87,14 +92,18 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 
 		H.each(series.points, function (point) {
 			var plotX = point.plotX,
-				plotX2 = xAxis.toPixels(H.pick(point.x2, point.x + (point.len || 0)), true),
+				posX = H.pick(point.x2, point.x + (point.len || 0)),
+				plotX2 = xAxis.toPixels(posX, true),
 				width = plotX2 - plotX,
 				widthDifference,
 				shapeArgs,
 				partialFill;
 
 			if (minPointLength) {
-				widthDifference = width < minPointLength ? minPointLength - width : 0;
+				widthDifference = minPointLength - width;
+				if (widthDifference < 0) {
+					widthDifference = 0;
+				}
 				plotX -= widthDifference / 2;
 				plotX2 += widthDifference / 2;
 			}
@@ -195,11 +204,12 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
  */
 H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var axis = this,
+		series = axis.series,
 		dataMax,
 		modMax;
 
 	proceed.call(this);
-	if (this.isXAxis) {
+	if (axis.isXAxis && series.type === xrange) {
 		dataMax = pick(axis.dataMax, Number.MIN_VALUE);
 		each(this.series, function (series) {
 			each(series.x2Data || [], function (val) {
