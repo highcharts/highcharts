@@ -1,5 +1,5 @@
 {
 	"rules": {
-	    "indent": 0 /*@todo: Before release HC5, do a pure whitespace commit*/
+	    //"indent": 0 /*@todo: Before release HC5, do a pure whitespace commit*/
 	}
 }
