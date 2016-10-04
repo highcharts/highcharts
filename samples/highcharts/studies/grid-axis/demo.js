@@ -1,4 +1,3 @@
-console.clear();
 $(function () {
 
     // THE CHART
@@ -12,6 +11,7 @@ $(function () {
             text: 'Highcharts GridAxis'
         },
         xAxis: [{
+            id: 'bottom-datetime-axis',
             grid: true,
             type: 'datetime',
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -21,6 +21,14 @@ $(function () {
             min: Date.UTC(2014, 10, 17),
             max: Date.UTC(2014, 10, 30)
         }, {
+            id: 'bottom-linear-axis',
+            grid: true,
+            tickInterval: 1,
+            tickPixelInterval: 45,
+            min: 1,
+            max: 13
+        }, {
+            id: 'bottom-categories-axis',
             grid: true,
             categories: ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
             min: 0,
@@ -49,10 +57,6 @@ $(function () {
                 }
             },
             linkedTo: 0
-        }, {
-            grid: true,
-            tickInterval: 1,
-            min: 0
         }],
         yAxis: [{
             title: '',
@@ -136,7 +140,7 @@ $(function () {
         }, {
             name: 'Project 3',
             borderRadius: 10,
-            xAxis: 1,
+            xAxis: 2,
             yAxis: 2,
             data: [{
                 x: 7,
@@ -154,14 +158,14 @@ $(function () {
         }, {
             name: 'Project 4',
             borderRadius: 10,
-            xAxis: 4,
+            xAxis: 1,
             data: [{
                 x: 1,
                 x2: 2,
                 y: 1
             }, {
                 x: 3,
-                x2: 4,
+                x2: 8,
                 y: 2
             }]
         }]

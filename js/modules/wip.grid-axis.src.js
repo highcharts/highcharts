@@ -197,11 +197,35 @@ H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
 	return returnValue;
 });
 
+/**
+ * Disregard title margin and recalculate axisOffset to get correct horizontal
+ * and vertical placement of axes.
+ *
+ * @param {function} proceed - the original function
+ */
 H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
-	if (this.options.grid && isObject(this.options.title)) {
-		this.options.title.margin = 0;
+	var axis = this,
+		axisOffset = axis.chart.axisOffset,
+		side = axis.side,
+		axisHeight,
+		tickSize;
+
+	if (axis.options.grid && isObject(axis.options.title)) {
+		axis.options.title.margin = 0;
+
+		tickSize = axis.tickSize('tick')[0];
+		if (axisOffset[side] && tickSize) {
+			axisHeight = axisOffset[side] + tickSize;
+		}
+
+		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+
+		axisOffset[side] = H.pick(axisHeight, axisOffset[side]);
+
+
+	} else {
+		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 /**
