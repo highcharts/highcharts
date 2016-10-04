@@ -16,6 +16,7 @@ import '../parts/Options.js';
 		win = Highcharts.win,
 		nav = win.navigator,
 		doc = win.document,
+		each = Highcharts.each,
 		domurl = win.URL || win.webkitURL || win,
 		isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
 		loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
@@ -157,14 +158,24 @@ import '../parts/Options.js';
 
 		function svgToPdf(svgElement, margin) {
 			var width = svgElement.width.baseVal.value + 2 * margin,
-					height = svgElement.height.baseVal.value + 2 * margin,
-					pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+				height = svgElement.height.baseVal.value + 2 * margin,
+				pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
 			win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
 			return pdf.output('datauristring');
 		}
 
 		function downloadPDF() {
 			dummySVGContainer.innerHTML = svg;
+			var textElements = dummySVGContainer.getElementsByTagName('text'),
+				svgElementStyle = dummySVGContainer.getElementsByTagName('svg')[0].style;
+			//workaround for the text styling. making sure it does pick up the root element
+			each(textElements, function (el) {
+				each(['font-family', 'font-size'], function (property) {
+					if (!el.style[property] && svgElementStyle[property]) {
+						el.style[property] = svgElementStyle[property];
+					}
+				});
+			});
 			var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
 			Highcharts.downloadURL(svgData, filename);
 			if (successCallback) {
