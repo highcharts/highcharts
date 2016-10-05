@@ -16,6 +16,7 @@ var merge = Highcharts.merge,
 	win = Highcharts.win,
 	nav = win.navigator,
 	doc = win.document,
+	each = Highcharts.each,
 	domurl = win.URL || win.webkitURL || win,
 	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
 	loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
@@ -165,6 +166,16 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 
 	function downloadPDF() {
 		dummySVGContainer.innerHTML = svg;
+		var textElements = dummySVGContainer.getElementsByTagName('text'),
+			svgElementStyle = dummySVGContainer.getElementsByTagName('svg')[0].style;
+		// Workaround for the text styling. Making sure it does pick up the root element
+		each(textElements, function (el) {
+			each(['font-family', 'font-size'], function (property) {
+				if (!el.style[property] && svgElementStyle[property]) {
+					el.style[property] = svgElementStyle[property];
+				}
+			});
+		});
 		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
 		Highcharts.downloadURL(svgData, filename);
 		if (successCallback) {
