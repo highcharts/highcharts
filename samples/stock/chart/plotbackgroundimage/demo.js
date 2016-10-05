@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         chart: {
             plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'

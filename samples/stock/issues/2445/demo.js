@@ -31,7 +31,7 @@ $(function () {
         };
     });
 
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
         chart: {
             type: 'column'
         },

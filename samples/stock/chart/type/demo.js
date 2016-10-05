@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
         title: {
             text: 'chart.type is set to \'areaspline\''
         },

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         chart: {
             map: 'custom/europe'
         },

@@ -18,7 +18,7 @@ $(function () {
     });
 
     // Instanciate the map
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         chart: {
             events: {
                 drilldown: function (e) {

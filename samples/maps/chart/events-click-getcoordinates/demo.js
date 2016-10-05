@@ -3,7 +3,7 @@ function showMap(mapKey) {
     var supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         chart: {
             events: {

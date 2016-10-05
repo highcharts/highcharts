@@ -2,7 +2,7 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
             chart : {
                 borderWidth: 1,
                 map: 'custom/world'

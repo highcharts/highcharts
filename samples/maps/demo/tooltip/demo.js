@@ -8,7 +8,7 @@ $(function () {
         });
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
 
             title: {
                 text: 'Fixed tooltip with HTML'

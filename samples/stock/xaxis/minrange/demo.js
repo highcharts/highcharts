@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         xAxis: {
             minRange: 30 * 24 * 3600 * 1000

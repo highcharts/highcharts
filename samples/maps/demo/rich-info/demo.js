@@ -178,7 +178,7 @@ $(function () {
         });
 
         // Initiate the map chart
-        mapChart = $('#container').highcharts('Map', {
+        mapChart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Population history by country'

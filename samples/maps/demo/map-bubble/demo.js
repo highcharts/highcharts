@@ -9,7 +9,7 @@ $(function () {
             }
         });
 
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
             chart : {
                 borderWidth: 1,
                 map: 'custom/world'

@@ -21,7 +21,7 @@ $(function () {
 
 
             // Initiate the chart
-            $('#container').highcharts('Map', {
+            Highcharts.mapChart('container', {
                 chart: {
                     borderWidth: 1
                 },

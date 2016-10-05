@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
         xAxis: {
             events: {
                 setExtremes: function (e) {
