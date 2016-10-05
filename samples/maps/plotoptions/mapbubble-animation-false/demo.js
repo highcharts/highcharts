@@ -2,13 +2,8 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-<<<<<<< HEAD
-        $('#container').highcharts('Map', {
-            chart: {
-=======
         Highcharts.mapChart('container', {
-            chart : {
->>>>>>> 803b650... High stock and High-ups - Replaces the old constructors with the new ones.
+            chart: {
                 borderWidth: 1,
                 map: 'custom/world'
             },

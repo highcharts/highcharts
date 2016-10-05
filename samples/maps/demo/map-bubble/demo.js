@@ -9,13 +9,8 @@ $(function () {
             }
         });
 
-<<<<<<< HEAD
-        $('#container').highcharts('Map', {
-            chart: {
-=======
         Highcharts.mapChart('container', {
-            chart : {
->>>>>>> 803b650... High stock and High-ups - Replaces the old constructors with the new ones.
+            chart: {
                 borderWidth: 1,
                 map: 'custom/world'
             },
