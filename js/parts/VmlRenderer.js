@@ -382,7 +382,10 @@ if (!svg) {
 					}
 
 					// apply the opacity
-					markup = ['<stroke color="', shadowOptions.color || '${palette.neutralColor100}', '" opacity="', shadowElementOpacity * i, '"/>'];
+					markup = [
+						'<stroke color="', 
+						shadowOptions.color || '${palette.neutralColor100}',
+						'" opacity="', shadowElementOpacity * i, '"/>'];
 					createElement(renderer.prepVML(markup), null, null, shadow);
 
 
@@ -669,7 +672,10 @@ if (!svg) {
 				// used in attr and animation to update the clipping of all members
 				updateClipping: function () {
 					each(clipRect.members, function (member) {
-						if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
+						// Member.element is falsy on deleted series, like in
+						// stock/members/series-remove demo. Should be removed
+						// from members, but this will do.
+						if (member.element) {
 							member.css(clipRect.getCSS(member));
 						}
 					});
@@ -722,8 +728,10 @@ if (!svg) {
 					addFillNode = function () {
 						// Add the fill subnode. When colors attribute is used, the meanings of opacity and o:opacity2
 						// are reversed.
-						markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
-							'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
+						markup = ['<fill colors="' + colors.join(',') + 
+							'" opacity="', opacity2, '" o:opacity2="',
+							opacity1, '" type="', fillType, '" ', fillAttr,
+							'focus="100%" method="any" />'];
 						createElement(renderer.prepVML(markup), null, null, elem);
 					};
 
@@ -970,7 +978,9 @@ if (!svg) {
 		 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 		 */
 		createElement: function (nodeName) {
-			return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);
+			return nodeName === 'rect' ?
+				this.symbol(nodeName) :
+				SVGRenderer.prototype.createElement.call(this, nodeName);
 		},
 
 		/**
@@ -990,7 +1000,8 @@ if (!svg) {
 				rotation: -90
 			});
 
-			// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
+			// Recursively invert child elements, needed for nested composite
+			// shapes like box plots and error bars. #1680, #1806.
 			each(element.childNodes, function (child) {
 				ren.invertChild(child, element);
 			});

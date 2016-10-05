@@ -146,7 +146,8 @@ H.Tooltip.prototype = {
 
 			// Set the fixed interval ticking for the smooth tooltip
 			this.tooltipTimeout = setTimeout(function () {
-				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				// The interval function may still be running during destroy,
+				// so check that the chart is really there before calling.
 				if (tooltip) {
 					tooltip.move(x, y, anchorX, anchorY);
 				}
@@ -235,8 +236,12 @@ H.Tooltip.prototype = {
 			ret = {},
 			h = point.h || 0, // #4117
 			swapped,
-			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop, chart.plotTop, chart.plotTop + chart.plotHeight],
-			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft, chart.plotLeft, chart.plotLeft + chart.plotWidth],
+			first = ['y', chart.chartHeight, boxHeight,
+				point.plotY + chart.plotTop, chart.plotTop,
+				chart.plotTop + chart.plotHeight],
+			second = ['x', chart.chartWidth, boxWidth,
+				point.plotX + chart.plotLeft, chart.plotLeft,
+				chart.plotLeft + chart.plotWidth],
 			// The far side is right or bottom
 			preferFarSide = !this.followPointer && pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
 			/**
@@ -256,7 +261,12 @@ H.Tooltip.prototype = {
 				} else if (roomLeft) {
 					ret[dim] = Math.min(max - innerSize, alignedLeft - h < 0 ? alignedLeft : alignedLeft - h);
 				} else if (roomRight) {
-					ret[dim] = Math.max(min, alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h);
+					ret[dim] = Math.max(
+						min,
+						alignedRight + h + innerSize > outerSize ?
+							alignedRight :
+							alignedRight + h
+					);
 				} else {
 					return false;
 				}
@@ -328,14 +338,14 @@ H.Tooltip.prototype = {
 		var items = this.points || splat(this),
 			s;
 
-		// build the header
-		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
+		// Build the header
+		s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
 
 		// build the values
 		s = s.concat(tooltip.bodyFormatter(items));
 
 		// footer
-		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
+		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
 
 		return s;
 	},
@@ -715,7 +725,8 @@ H.Tooltip.prototype = {
 	bodyFormatter: function (items) {
 		return map(items, function (item) {
 			var tooltipOptions = item.series.tooltipOptions;
-			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
+			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter)
+				.call(item.point, tooltipOptions.pointFormat);
 		});
 	}
 

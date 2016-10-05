@@ -339,7 +339,8 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	if (path && toPath && path.toString() !== toPath.toString()) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4],
+				path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -415,12 +416,15 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		e = this.cross && this.cross.e;
 	}
 
-	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
+	align = (horiz ? 'center' : opposite ?
+		(this.labelAlign === 'right' ? 'right' : 'left') :
+		(this.labelAlign === 'left' ? 'left' : 'center'));
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
-			.addClass('highcharts-crosshair-label' + (this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
+			.addClass('highcharts-crosshair-label' +
+				(this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
 			.attr({
 				align: options.align || align,
 				padding: pick(options.padding, 8),
@@ -433,7 +437,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		// Presentational
 		crossLabel
 			.attr({
-				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
+				fill: options.backgroundColor ||
+					(this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
 				stroke: options.borderColor || '',
 				'stroke-width': options.borderWidth || 0
 			})
@@ -651,7 +656,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') +
+			H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
