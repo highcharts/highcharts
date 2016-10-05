@@ -34,7 +34,7 @@ $(function () {
 
 
     console.time('line');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             zoomType: 'x'

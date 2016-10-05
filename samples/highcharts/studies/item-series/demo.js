@@ -61,7 +61,7 @@ $(function () {
     }(Highcharts));
 
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'item'

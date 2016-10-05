@@ -51,7 +51,7 @@ $(function () {
         });
     }(Highcharts));
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'lineargauge',
             inverted: true,

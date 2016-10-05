@@ -17,7 +17,7 @@ $(function () {
 
 
     // create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         loading: {
             labelStyle: {

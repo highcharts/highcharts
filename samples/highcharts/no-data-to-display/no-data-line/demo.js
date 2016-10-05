@@ -22,7 +22,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'No data in line chart - with custom options'
         },

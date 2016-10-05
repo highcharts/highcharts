@@ -89,7 +89,7 @@ $(function () {
         return arr;
     }
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },

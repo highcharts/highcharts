@@ -7,7 +7,7 @@ $(function () {
             .get('rgba');
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },

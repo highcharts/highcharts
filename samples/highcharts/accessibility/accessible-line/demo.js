@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'spline',
             description: 'Most commonly used desktop screen readers from January 2009 to July 2015 as reported in the Webaim Survey.'

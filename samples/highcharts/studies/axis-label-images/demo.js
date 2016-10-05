@@ -37,7 +37,7 @@ $(function () {
 
 
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Highcharts snippet to add images to axis labels'
