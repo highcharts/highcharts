@@ -213,6 +213,19 @@ const scripts = () => {
     });
 };
 
+/**
+ * Creates a set of ES6-modules which is distributable.
+ * @return {undefined}
+ */
+const buildModules = () => {
+    const B = require('./assembler/build');
+    B.buildModules({
+        base: './js/',
+        output: './code/modules/',
+        type: 'both'
+    });
+};
+
 const styles = () => {
     gulp.src('./css/*.scss')
         .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
@@ -611,6 +624,7 @@ const antDist = () => commandLine('ant dist');
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
+gulp.task('build-modules', buildModules);
 gulp.task('lint', lint);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
