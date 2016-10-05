@@ -1,4 +1,4 @@
-/*
+/** @preserve
  * canvg.js - Javascript SVG parser and renderer on Canvas
  * MIT Licensed
  * Gabe Lerner (gabelerner@gmail.com)
