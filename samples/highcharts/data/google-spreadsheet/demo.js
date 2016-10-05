@@ -1,6 +1,6 @@
 $(function () {
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Highcharts data from Google Spreadsheets'

@@ -16,7 +16,7 @@ Math.easeOutBounce = function (pos) {
 
 
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },

@@ -159,7 +159,7 @@ $(function () {
 
     var start = +new Date();
     //console.profile('scatter');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         xAxis: {
             gridLineWidth: 1

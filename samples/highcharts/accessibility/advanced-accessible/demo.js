@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         accessibility: {
             keyboardNavigation: {
                 skipNullPoints: true

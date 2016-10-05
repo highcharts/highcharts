@@ -2,7 +2,7 @@ $(function () {
     var i = 1,
         chart;
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         subtitle: {
             text: 'Subtitle'
         },

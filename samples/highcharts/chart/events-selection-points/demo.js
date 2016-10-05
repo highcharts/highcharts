@@ -66,7 +66,7 @@ $(function () {
         }
     }
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Select points by click-drag'

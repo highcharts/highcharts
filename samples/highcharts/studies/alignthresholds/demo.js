@@ -58,7 +58,7 @@ $(function () {
         });
     }(Highcharts));
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
             type: 'area'

@@ -2,7 +2,7 @@ console.clear();
 $(function () {
 
     // THE CHART
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },

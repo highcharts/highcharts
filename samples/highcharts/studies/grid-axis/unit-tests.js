@@ -4,7 +4,7 @@
 QUnit.test('isOuterAxis()', function (assert) {
     var chart;
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },
@@ -105,7 +105,7 @@ QUnit.test('Linear axis horizontal placement', function (assert) {
         error;
 
     // Chart 1
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -178,7 +178,7 @@ QUnit.test('Datetime axis horizontal placement', function (assert) {
         axes = [],
         error;
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             type: 'scatter'
         },

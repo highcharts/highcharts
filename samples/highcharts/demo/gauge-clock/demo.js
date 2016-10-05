@@ -24,7 +24,7 @@ $(function () {
     var now = getNow();
 
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'gauge',
