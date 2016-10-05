@@ -11,7 +11,7 @@
  * 
  * Development plan
  * - Column range.
- * - Heatmap.
+ * - Heatmap. Modify the heatmap-canvas demo so that it uses this module.
  * - Treemap.
  * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
  *   is false. It is also recommended to set scrollbar.liveRedraw to false.
