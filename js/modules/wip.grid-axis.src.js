@@ -67,6 +67,93 @@ H.Tick.prototype.getLabelWidth = function () {
 };
 
 /**
+ * Get the maximum label length.
+ * This function can be used in states where the axis.maxLabelLength has not
+ * been set.
+ * 
+ * @param  {boolean} force - Optional parameter to force a new calculation, even
+ *                           if a value has already been set
+ * @return {number} maxLabelLength - the maximum label length of the axis
+ */
+H.Axis.prototype.getMaxLabelLength = function (force) {
+	var tickPositions = this.tickPositions,
+		ticks = this.ticks,
+		maxLabelLength = 0;
+	
+	if (!this.maxLabelLength || force) {
+		H.each(tickPositions, function (tick) {
+			tick = ticks[tick];
+			if (tick && tick.labelLength > maxLabelLength) {
+				maxLabelLength = tick.labelLength;
+			}
+		});
+		this.maxLabelLength = maxLabelLength;
+	}
+	return this.maxLabelLength;
+};
+
+/**
+ * Adds the axis defined in axis.options.title
+ */
+H.Axis.prototype.addTitle = function () {
+	var axis = this,
+		renderer = axis.chart.renderer,
+		axisParent = axis.axisParent,
+		horiz = axis.horiz,
+		opposite = axis.opposite,
+		options = axis.options,
+		axisTitleOptions = options.title,
+		hasData,
+		showAxis,
+		textAlign;
+		
+	// For reuse in Axis.render
+	hasData = axis.hasData();
+	axis.showAxis = showAxis = hasData || H.pick(options.showEmpty, true);
+	
+	// Disregard title generation in original Axis.getOffset()
+	options.title = '';
+	
+	if (!axis.axisTitle) {
+		textAlign = axisTitleOptions.textAlign;
+		if (!textAlign) {
+			textAlign = (horiz ? { 
+				low: 'left',
+				middle: 'center',
+				high: 'right'
+			} : { 
+				low: opposite ? 'right' : 'left',
+				middle: 'center',
+				high: opposite ? 'left' : 'right'
+			})[axisTitleOptions.align];
+		}
+		axis.axisTitle = renderer.text(
+			axisTitleOptions.text,
+			0,
+			0,
+			axisTitleOptions.useHTML
+		)
+		.attr({
+			zIndex: 7,
+			rotation: axisTitleOptions.rotation || 0,
+			align: textAlign
+		})
+		.addClass('highcharts-axis-title')
+		/*= if (build.classic) { =*/
+		.css(axisTitleOptions.style)
+		/*= } =*/
+		// Add to axisParent instead of axisGroup, to ignore the space
+		// it takes
+		.add(axisParent);
+		axis.axisTitle.isNew = true;
+	}
+
+
+	// hide or show the title depending on whether showEmpty is set
+	axis.axisTitle[showAxis ? 'show' : 'hide'](true);
+};
+
+/**
  * Add custom date formats
  */
 H.dateFormats = {
@@ -158,22 +245,6 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	return returnValue;
 });
 
-H.Axis.prototype.getMaxLabelLength = function (force) {
-	var tickPositions = this.tickPositions,
-		ticks = this.ticks,
-		maxLabelLength = 0;
-
-	if (!this.maxLabelLength || force) {
-		H.each(tickPositions, function (tick) {
-			tick = ticks[tick];
-			if (tick && tick.labelLength > maxLabelLength) {
-				maxLabelLength = tick.labelLength;
-			}
-		});
-		this.maxLabelLength = maxLabelLength;
-	}
-	return this.maxLabelLength;
-};
 
 /**
  * Draw vertical ticks extra long to create cell floors and roofs.
@@ -212,18 +283,11 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 		side = axis.side,
 		axisHeight,
 		tickSize,
-		renderer = axis.chart.renderer,
-		axisParent = axis.axisParent,
-		horiz = axis.horiz,
-		opposite = axis.opposite,
 		options = axis.options,
 		axisTitleOptions = options.title,
 		addTitle = axisTitleOptions &&
 				axisTitleOptions.text &&
-				axisTitleOptions.enabled !== false,
-		hasData,
-		showAxis,
-		textAlign;
+				axisTitleOptions.enabled !== false;
 
 	if (axis.options.grid && isObject(axis.options.title)) {
 		
@@ -232,52 +296,10 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 			axisHeight = axisOffset[side] + tickSize;
 		}
 		
-		// For reuse in Axis.render
-		hasData = axis.hasData();
-		axis.showAxis = showAxis = hasData || H.pick(options.showEmpty, true);
-		
 		if (addTitle) {
-			
-			// Disregard title generation in original Axis.getOffset()
-			options.title = '';
-			
-			if (!axis.axisTitle) {
-				textAlign = axisTitleOptions.textAlign;
-				if (!textAlign) {
-					textAlign = (horiz ? { 
-						low: 'left',
-						middle: 'center',
-						high: 'right'
-					} : { 
-						low: opposite ? 'right' : 'left',
-						middle: 'center',
-						high: opposite ? 'left' : 'right'
-					})[axisTitleOptions.align];
-				}
-				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
-					0,
-					0,
-					axisTitleOptions.useHTML
-				)
-				.attr({
-					zIndex: 7,
-					rotation: axisTitleOptions.rotation || 0,
-					align: textAlign
-				})
-				.addClass('highcharts-axis-title')
-				/*= if (build.classic) { =*/
-				.css(axisTitleOptions.style)
-				/*= } =*/
-				// Add to axisParent instead of axisGroup, to ignore the space
-				// it takes
-				.add(axisParent);
-				axis.axisTitle.isNew = true;
-			}
-
-
-			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
+			// Use the custom addTitle() to add it, while preventing making room
+			// for it
+			axis.addTitle();
 		}
 
 		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
