@@ -15,7 +15,7 @@ If you want to do modifications to Highcharts or fix issues, you may build your 
 ```
 npm install
 gulp
-``
+```
 
 ## Usage in Node/Browserify/Webpack
 This uses the [distribution package](https://www.npmjs.com/package/highcharts) which points to a separate repo.
