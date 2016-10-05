@@ -22,7 +22,7 @@ $(function () {
 
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Data joined by "name"'

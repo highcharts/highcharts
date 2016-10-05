@@ -2,7 +2,7 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
 
             title: {
                 text: 'Increase mouse wheel sensitivity to zoom faster'

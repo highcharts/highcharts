@@ -2,7 +2,7 @@ $(function () {
     var data = usdeur.splice(0, 500);
 
 
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1

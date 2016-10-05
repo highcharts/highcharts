@@ -22,7 +22,7 @@ $(function () {
         data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 type: 'candlestick',
                 zoomType: 'x'

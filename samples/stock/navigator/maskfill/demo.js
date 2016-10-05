@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         navigator: {
             maskFill: 'rgba(180, 198, 220, 0.75)'

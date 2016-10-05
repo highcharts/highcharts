@@ -8,7 +8,7 @@ $(function () {
         });
 
         // Instanciate the map
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
             chart: {
                 borderWidth: 1
             },

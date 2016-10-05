@@ -23,7 +23,7 @@ $(function () {
         }
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 alignTicks: false,
                 zoomType: 'y',

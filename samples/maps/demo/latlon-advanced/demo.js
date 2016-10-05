@@ -13,7 +13,7 @@ $(function () {
             data.push(this);
         });
 
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
 
             title: {
                 text: 'Highmaps lat/lon demo'

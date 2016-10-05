@@ -140,7 +140,7 @@ $(function () {
     }];
 
     // Instanciate the map
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         chart: {
             plotBorderWidth: 1,
             plotBackgroundColor: '#f4e2ba',
