@@ -7,7 +7,6 @@ var colors = require('colors'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
-    closureCompiler = require('closurecompiler'),
     argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
@@ -308,6 +307,7 @@ gulp.task('nightly', function () {
 });
 
 gulp.task('filesize', function () {
+    const closureCompiler = require('closurecompiler');
     var oldSize,
         newSize,
         filename = argv.file ? argv.file : 'highcharts.src.js';
@@ -381,34 +381,27 @@ gulp.task('filesize', function () {
 
 const compile = (files, sourceFolder) => {
     console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve, reject) => {
-        const promises = files.map(path => {
-                return new Promise((resolveCompile, reject) => {
-                    const sourcePath = sourceFolder + path;
-                    const outputPath = sourcePath.replace('.src.js', '.js');
-                    closureCompiler.compile(
-                        [sourcePath],
-                        null,
-                        (error, result) => {
-                            if (result) {
-                                fs.writeFile(outputPath, result, 'utf8', (err) => {
-                                    if (!err) {
-                                        // @todo add filesize information
-                                        resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-                                    } else {
-                                        reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
-                                    }
-                                });
-                            } else {
-                                reject('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                }).then(console.log);
+    return new Promise((resolve) => {
+        files.forEach(path => {
+            const closureCompiler = require('google-closure-compiler-js');
+            // const fs = require('fs');
+            const U = require('./assembler/utilities.js');
+            const sourcePath = sourceFolder + path;
+            const outputPath = sourcePath.replace('.src.js', '.js');
+            const src = U.getFile(sourcePath);
+            const out = closureCompiler.compile({
+                compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+                jsCode: [{
+                    src: src
+                }],
+                languageIn: 'ES5',
+                languageOut: 'ES5'
             });
-        Promise.all(promises).then(() => {
-            resolve('Compile is complete');
-        }).catch((err) => reject(err.message + '\n\r' + err.stack));
+            U.writeFile(outputPath, out.compiledCode);
+            // @todo add filesize information
+            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+        });
+        resolve('Compile is complete');
     });
 };
 
