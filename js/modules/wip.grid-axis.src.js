@@ -95,9 +95,11 @@ H.dateFormats = {
  */
 H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
-		tickPositions = axis.tickPositions;
+		tickPositions = axis.tickPositions,
+		isNotDatetimeAxis = axis.options.type !== 'datetime',
+		lastTick = tickPositions[tickPositions.length - 1];
 
-	if (axis.options.grid && axis.options.type !== 'datetime' || this.pos !== tickPositions[tickPositions.length - 1]) {
+	if (!axis.options.grid || isNotDatetimeAxis || this.pos !== lastTick) {
 		proceed.apply(this);
 	}
 });
@@ -198,8 +200,9 @@ H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
 });
 
 /**
- * Disregard title margin and recalculate axisOffset to get correct horizontal
- * and vertical placement of axes.
+ * Disregards space required by axisTitle, by adding axisTitle to axisParent
+ * instead of axisGroup, and disregarding margins and offsets related to
+ * axisTitle.
  *
  * @param {function} proceed - the original function
  */
@@ -208,20 +211,82 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 		axisOffset = axis.chart.axisOffset,
 		side = axis.side,
 		axisHeight,
-		tickSize;
+		tickSize,
+		renderer = axis.chart.renderer,
+		axisParent = axis.axisParent,
+		horiz = axis.horiz,
+		opposite = axis.opposite,
+		options = axis.options,
+		axisTitleOptions = options.title,
+		addTitle = axisTitleOptions &&
+				axisTitleOptions.text &&
+				axisTitleOptions.enabled !== false,
+		hasData,
+		showAxis,
+		textAlign;
 
 	if (axis.options.grid && isObject(axis.options.title)) {
-		axis.options.title.margin = 0;
-
+		
 		tickSize = axis.tickSize('tick')[0];
 		if (axisOffset[side] && tickSize) {
 			axisHeight = axisOffset[side] + tickSize;
+		}
+		
+		// For reuse in Axis.render
+		hasData = axis.hasData();
+		axis.showAxis = showAxis = hasData || H.pick(options.showEmpty, true);
+		
+		if (addTitle) {
+			
+			// Disregard title generation in original Axis.getOffset()
+			options.title = '';
+			
+			if (!axis.axisTitle) {
+				textAlign = axisTitleOptions.textAlign;
+				if (!textAlign) {
+					textAlign = (horiz ? { 
+						low: 'left',
+						middle: 'center',
+						high: 'right'
+					} : { 
+						low: opposite ? 'right' : 'left',
+						middle: 'center',
+						high: opposite ? 'left' : 'right'
+					})[axisTitleOptions.align];
+				}
+				axis.axisTitle = renderer.text(
+					axisTitleOptions.text,
+					0,
+					0,
+					axisTitleOptions.useHTML
+				)
+				.attr({
+					zIndex: 7,
+					rotation: axisTitleOptions.rotation || 0,
+					align: textAlign
+				})
+				.addClass('highcharts-axis-title')
+				/*= if (build.classic) { =*/
+				.css(axisTitleOptions.style)
+				/*= } =*/
+				// Add to axisParent instead of axisGroup, to ignore the space
+				// it takes
+				.add(axisParent);
+				axis.axisTitle.isNew = true;
+			}
+
+
+			// hide or show the title depending on whether showEmpty is set
+			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 		axisOffset[side] = H.pick(axisHeight, axisOffset[side]);
 
+		
+		// Put axis options back after original Axis.getOffset() has been called
+		options.title = axisTitleOptions;
 
 	} else {
 		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
