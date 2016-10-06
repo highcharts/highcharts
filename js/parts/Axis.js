@@ -1547,27 +1547,31 @@ H.Axis.prototype = {
 			min = Math.min(dataMin, pick(options.min, dataMin)),
 			max = Math.max(dataMax, pick(options.max, dataMax));
 
-		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
-		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= min) {
-				newMin = min;
+		if (newMin !== this.min || newMax !== this.max) { // #5790
+			
+			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
+			if (!this.allowZoomOutside) {
+				if (defined(dataMin) && newMin <= min) {
+					newMin = min;
+				}
+				if (defined(dataMax) && newMax >= max) {
+					newMax = max;
+				}
 			}
-			if (defined(dataMax) && newMax >= max) {
-				newMax = max;
-			}
+
+			// In full view, displaying the reset zoom button is not required
+			this.displayBtn = newMin !== undefined || newMax !== undefined;
+
+			// Do it
+			this.setExtremes(
+				newMin,
+				newMax,
+				false,
+				undefined,
+				{ trigger: 'zoom' }
+			);
 		}
 
-		// In full view, displaying the reset zoom button is not required
-		this.displayBtn = newMin !== undefined || newMax !== undefined;
-
-		// Do it
-		this.setExtremes(
-			newMin,
-			newMax,
-			false,
-			undefined,
-			{ trigger: 'zoom' }
-		);
 		return true;
 	},
 
