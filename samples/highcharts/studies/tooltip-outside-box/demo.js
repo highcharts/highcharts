@@ -5,33 +5,37 @@ $(function () {
      * bounding box, so that it can utilize all space available in the page.
      */
     (function (H) {
-        H.wrap(H.Tooltip.prototype, 'init', function (proceed, chart, options) {
+        H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
 
-            var chartRenderer = chart.renderer,
+            var chart = this.chart,
+                options = this.options,
+                chartRenderer = chart.renderer,
                 box;
 
-            if (!this.renderer) {
+            if (!this.label) {
+
                 this.renderer = new H.Renderer(document.body, 400, 60);
                 box = this.renderer.boxWrapper;
                 box.css({
                     position: 'absolute',
                     top: '-9999px'
                 });
-            }
-            chart.renderer = this.renderer;
-            proceed.call(this, chart, options);
-            chart.renderer = chartRenderer;
+                chart.renderer = this.renderer;
+                proceed.call(this, chart, options);
+                chart.renderer = chartRenderer;
 
-            this.label.attr({
-                x: 0,
-                y: 0
-            });
-            this.label.xSetter = function (value) {
-                box.element.style.left = value + 'px';
-            };
-            this.label.ySetter = function (value) {
-                box.element.style.top = value + 'px';
-            };
+                this.label.attr({
+                    x: 0,
+                    y: 0
+                });
+                this.label.xSetter = function (value) {
+                    box.element.style.left = value + 'px';
+                };
+                this.label.ySetter = function (value) {
+                    box.element.style.top = value + 'px';
+                };
+            }
+            return this.label;
         });
 
         H.wrap(H.Tooltip.prototype, 'getPosition', function (proceed, boxWidth, boxHeight, point) {

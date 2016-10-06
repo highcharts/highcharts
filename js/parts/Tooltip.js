@@ -54,44 +54,56 @@ H.Tooltip.prototype = {
 		this.split = options.split && !chart.inverted;
 		this.shared = options.shared || this.split;
 
+	},
 
-		// Create the label
-		if (this.split) {
-			this.label = this.chart.renderer.g('tooltip');
-		} else {
-			this.label = chart.renderer.label(
-					'',
-					0,
-					0,
-					options.shape || 'callout',
-					null,
-					null,
-					options.useHTML,
-					null,
-					'tooltip'
-				)
-				.attr({
-					padding: options.padding,
-					r: options.borderRadius,
-					display: 'none' // #2301, #2657, #3532, #5570
-				});
+	/**
+	 * Create the Tooltip label element if it doesn't exist, then return the
+	 * label.
+	 */
+	getLabel: function () {
 
-			/*= if (build.classic) { =*/
+		var renderer = this.chart.renderer,
+			options = this.options;
+
+		if (!this.label) {
+			// Create the label
+			if (this.split) {
+				this.label = renderer.g('tooltip');
+			} else {
+				this.label = renderer.label(
+						'',
+						0,
+						0,
+						options.shape || 'callout',
+						null,
+						null,
+						options.useHTML,
+						null,
+						'tooltip'
+					)
+					.attr({
+						padding: options.padding,
+						r: options.borderRadius
+					});
+
+				/*= if (build.classic) { =*/
+				this.label
+					.attr({
+						'fill': options.backgroundColor,
+						'stroke-width': options.borderWidth
+					})
+					// #2301, #2657
+					.css(options.style)
+					.shadow(options.shadow);
+				/*= } =*/
+			}
 			this.label
 				.attr({
-					'fill': options.backgroundColor,
-					'stroke-width': options.borderWidth
+					zIndex: 8
 				})
-				// #2301, #2657
-				.css(options.style)
-				.shadow(options.shadow);
-			/*= } =*/
+				.add();
 		}
-		this.label
-			.attr({
-				zIndex: 8
-			})
-			.add();
+		return this.label;
 	},
 
 	update: function (options) {
@@ -135,7 +147,7 @@ H.Tooltip.prototype = {
 		});
 
 		// Move to the intermediate value
-		tooltip.label.attr(now);
+		tooltip.getLabel().attr(now);
 
 
 		// Run on next tick of the mouse tracker
@@ -165,7 +177,7 @@ H.Tooltip.prototype = {
 		delay = pick(delay, this.options.hideDelay, 500);
 		if (!this.isHidden) {
 			this.hideTimer = syncTimeout(function () {
-				tooltip.label[delay ? 'fadeOut' : 'hide']();
+				tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
 				tooltip.isHidden = true;
 			}, delay);
 		}
@@ -357,7 +369,7 @@ H.Tooltip.prototype = {
 	refresh: function (point, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
-			label = tooltip.label,
+			label = tooltip.getLabel(),
 			options = tooltip.options,
 			x,
 			y,
@@ -423,8 +435,7 @@ H.Tooltip.prototype = {
 			if (tooltip.isHidden) {
 				stop(label);
 				label.attr({
-					opacity: 1,
-					display: 'block'
+					opacity: 1
 				}).show();
 			}
 
@@ -471,7 +482,8 @@ H.Tooltip.prototype = {
 			ren = chart.renderer,
 			rightAligned = true,
 			options = this.options,
-			headerHeight;
+			headerHeight,
+			tooltipLabel = this.getLabel();
 
 		/**
 		 * Destroy a single-series tooltip
@@ -507,7 +519,7 @@ H.Tooltip.prototype = {
 						'stroke-width': options.borderWidth
 						/*= } =*/
 					})
-					.add(tooltip.label);
+					.add(tooltipLabel);
 
 				// Add a connector back to the point
 				if (point.series) {
@@ -519,7 +531,7 @@ H.Tooltip.prototype = {
 							'stroke': point.color || series.color || '${palette.neutralColor60}'
 						})
 						/*= } =*/
-						.add(tooltip.label);
+						.add(tooltipLabel);
 
 					addEvent(point.series, 'hide', function () {
 						this.tt = destroy(this.tt);
@@ -581,7 +593,7 @@ H.Tooltip.prototype = {
 
 			// Put the label in place
 			attr = {
-				display: box.pos === undefined ? 'none' : '',
+				visibility: box.pos === undefined ? 'hidden' : 'inherit',
 				x: (rightAligned || point.isHeader ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16)),
 				y: box.pos + chart.plotTop
 			};
@@ -614,7 +626,7 @@ H.Tooltip.prototype = {
 	 */
 	updatePosition: function (point) {
 		var chart = this.chart,
-			label = this.label,
+			label = this.getLabel(),
 			pos = (this.options.positioner || this.getPosition).call(
 				this,
 				label.width,
