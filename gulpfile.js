@@ -35,6 +35,7 @@ var paths = {
     parts3D: ['./js/parts-3d/*.js'],
     partsMap: ['./js/parts-map/*.js'],
     partsMore: ['./js/parts-more/*.js'],
+    partsGantt: ['./js/parts-gantt/*.js'],
     themes: ['./js/themes/*.js']
 };
 
@@ -112,6 +113,14 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/gantt.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'modules/grid-axis.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'modules/heatmap.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
@@ -150,11 +159,7 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
-            'modules/wip.grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/wip.xrange-series.src.js': {
+            'modules/xrange-series.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
@@ -415,7 +420,7 @@ const compileScripts = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 /**
  * Compile the JS files in the /code folder
@@ -426,7 +431,7 @@ const compileLib = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 const cleanCode = () => {
     const U = require('./assembler/utilities.js');
