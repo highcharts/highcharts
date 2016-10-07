@@ -2421,8 +2421,8 @@ H.Axis.prototype = {
 
 
 		// Delete all properties and fall back to the prototype.
-		// Preserve some properties, needed for Axis.update (#4317).
-		keepProps = ['names', 'series', 'userMax', 'userMin'];
+		// Preserve some properties, needed for Axis.update (#4317, #5773).
+		keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 		for (n in axis) {
 			if (axis.hasOwnProperty(n) && inArray(n, keepProps) === -1) {
 				delete axis[n];
