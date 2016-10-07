@@ -1,6 +1,54 @@
 $(function () {
 
-    $('#container').highcharts({
+    // Change point shape to a line with three crossing lines for low/median/high
+    // Stroke width is hardcoded to 1 for simplicity
+    Highcharts.seriesTypes.boxplot.prototype.drawPoints = function () {
+        var series = this,
+            renderer = series.chart.renderer;
+
+        Highcharts.each(this.points, function (point) {
+            var graphic = point.graphic,
+                verb = graphic ? 'animate' : 'attr',
+                shapeArgs = point.shapeArgs,
+                width = shapeArgs.width,
+                left = Math.floor(shapeArgs.x) + 0.5,
+                right = left + width,
+                crispX = left + Math.round(width / 2) + 0.5;
+
+            if (!graphic) {
+                point.graphic = graphic = renderer.path('point').attr({ zIndex: 50 }).add(series.group);
+            }
+
+            graphic.attr({
+                stroke: point.color || series.color,
+                "stroke-width": 1
+            });
+
+            if (point.low === 0) {
+                point.lowPlot -= 1; // Sneakily draw low marker even if 0
+            }
+
+            graphic[verb]({
+                d: [
+                    'M', left, Math.floor(point.highPlot) + 0.5,
+                    'L', right, Math.floor(point.highPlot) + 0.5,
+                    'M', left, Math.floor(point.medianPlot) + 0.5,
+                    'L', right, Math.floor(point.medianPlot) + 0.5,
+                    'M', left, Math.floor(point.lowPlot) + 0.5,
+                    'L', right, Math.floor(point.lowPlot) + 0.5,
+                    'M', crispX, Math.floor(point.highPlot) + 0.5,
+                    'L', crispX, Math.floor(point.lowPlot) + 0.5
+                ]
+            });
+
+            point.stemWidth = 2;
+            point.stemColor = '#cccccc';
+        });
+    };
+
+
+    // Create chart
+    Highcharts.chart('container', {
         accessibility: {
             keyboardNavigation: {
                 skipNullPoints: true
@@ -21,6 +69,7 @@ $(function () {
             text: 'Daily company fruit consumption 2015'
         },
         xAxis: [{
+            crosshair: true,
             description: 'Months of the year',
             categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         }],
@@ -32,6 +81,7 @@ $(function () {
         },
         plotOptions: {
             series: {
+                stickyTracking: true,
                 keys: ['low', 'median', 'high'],
                 whiskerWidth: 5
             }
