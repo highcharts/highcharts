@@ -4,7 +4,7 @@
 QUnit.test('isOuterAxis()', function (assert) {
     var chart;
 
-    Highcharts.chart('container', {
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },
@@ -45,8 +45,6 @@ QUnit.test('isOuterAxis()', function (assert) {
             xAxis: 3
         }]
     });
-
-    chart = $('#container').highcharts();
 
     assert.equal(
         chart.xAxis[1].isOuterAxis(),
@@ -105,7 +103,7 @@ QUnit.test('Linear axis horizontal placement', function (assert) {
         error;
 
     // Chart 1
-    Highcharts.chart('container', {
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -147,7 +145,6 @@ QUnit.test('Linear axis horizontal placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
     axes[1] = chart.yAxis[1].axisGroup.getBBox();
     axes[2] = chart.yAxis[2].axisGroup.getBBox();
@@ -178,7 +175,7 @@ QUnit.test('Datetime axis horizontal placement', function (assert) {
         axes = [],
         error;
 
-    Highcharts.chart('container', {
+    chart = Highcharts.chart('container', {
         title: {
             type: 'scatter'
         },
@@ -265,7 +262,6 @@ QUnit.test('Datetime axis horizontal placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
     axes[1] = chart.yAxis[1].axisGroup.getBBox();
     axes[2] = chart.yAxis[2].axisGroup.getBBox();

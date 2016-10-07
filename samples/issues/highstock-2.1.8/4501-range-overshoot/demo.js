@@ -22,7 +22,7 @@ $(function () {
             });
         }
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             rangeSelector: {
                 buttons: buttons
                 //allButtonsEnabled: true //or false - doesn't matter

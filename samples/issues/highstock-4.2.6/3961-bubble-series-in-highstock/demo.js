@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Zone zAxis shouldn\'t cause errors in Navigator series.', function (assert) {
-        var chart = $('#container').highcharts('StockChart', {
+        var chart = Highcharts.stockChart('container', {
             series: [{
                 type: 'bubble',
                 data: [

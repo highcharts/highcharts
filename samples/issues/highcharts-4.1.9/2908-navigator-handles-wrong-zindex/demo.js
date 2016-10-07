@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Handles should not be overlapped by xAxis labels", function (assert) {
-        var chart = $('#container').highcharts('StockChart', {
+        var chart = Highcharts.stockChart('container', {
             navigator: {
                 height: 20
             },

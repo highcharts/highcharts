@@ -3,7 +3,7 @@ $(function () {
         var min = Date.UTC(2000, 0, 1),
             middle = Date.UTC(2005, 0, 1),
             max = Date.UTC(20010, 0, 1),
-            chart = $('#container').highcharts('StockChart', {
+            chart = Highcharts.stockChart('container', {
                 navigator: {
                     adaptToUpdatedData: false,
                     series: []

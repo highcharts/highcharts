@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Compare to negative', function (assert) {
-        var chart = $('#container').highcharts('StockChart', {
+        var chart = Highcharts.stockChart('container', {
             series: [{
                 data: [-100, -150, -125, -300, -250],
                 compare: 'percent'

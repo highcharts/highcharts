@@ -2,7 +2,7 @@ $(function () {
 
     QUnit.test('Flag on first point', function (assert) {
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             series: [{
                 data: [1, 2],
                 id: 'first'

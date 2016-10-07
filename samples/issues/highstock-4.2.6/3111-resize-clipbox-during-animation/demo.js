@@ -19,7 +19,7 @@ $(function () {
         }
 
     // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 animation: false,
                 width: 550

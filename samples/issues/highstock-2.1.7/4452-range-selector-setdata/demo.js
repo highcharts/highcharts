@@ -17,7 +17,7 @@ $(function () {
             chart.series[0].setData(data);
         }
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             rangeSelector: {
                 inputEnabled: false,
                 buttons: [{

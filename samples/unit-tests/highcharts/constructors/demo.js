@@ -150,7 +150,7 @@ $(function () {
             'Is stock chart'
         );
 
-        chart = $('#container').highcharts('StockChart', {
+        chart = Highcharts.stockChart('container', {
             series: [{
                 data: [1, 2, 3, 4]
             }]

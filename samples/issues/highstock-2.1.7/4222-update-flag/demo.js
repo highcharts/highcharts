@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Update flag', function (assert) {
-        var chart = $('#container').highcharts('StockChart', {
+        var chart = Highcharts.stockChart('container', {
             series: [{
                 data: [
                      [Date.UTC(2014, 6, 1), 10],

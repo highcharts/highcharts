@@ -1,6 +1,6 @@
 $(function () {
 
-    var chart = $('#container').highcharts('StockChart', {
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             plotBackgroundColor: '#E0FFFF',

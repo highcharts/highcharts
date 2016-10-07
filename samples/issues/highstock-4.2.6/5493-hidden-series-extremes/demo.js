@@ -17,7 +17,7 @@ $(function () {
     QUnit.test('Extremes for xAxis with hidden series and dataGrouping.', function (assert) {
         var min = Date.UTC(2000, 0, 2),
             max = Date.UTC(2000, 0, 4),
-            chart = $('#container').highcharts('StockChart', {
+            chart = Highcharts.stockChart('container', {
                 series: [{
                     data: getRandomData(Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 5))
                 }, {

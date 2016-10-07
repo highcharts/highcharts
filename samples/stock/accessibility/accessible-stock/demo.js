@@ -1,6 +1,6 @@
 $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 description: 'Accessible stock chart demo'
             },
