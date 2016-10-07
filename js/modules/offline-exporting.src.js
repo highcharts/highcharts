@@ -210,7 +210,7 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 		} else {
 			// Must load pdf libraries first
 			objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-			libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+			libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
 			getScript(libURL + 'jspdf.js', function () {
 				getScript(libURL + 'rgbcolor.js', function () {
 					getScript(libURL + 'svg2pdf.js', function () {
