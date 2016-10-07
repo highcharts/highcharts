@@ -3,9 +3,7 @@ $(function () {
     // Change point shape to a line with three crossing lines for low/median/high
     // Stroke width is hardcoded to 1 for simplicity
     Highcharts.seriesTypes.boxplot.prototype.drawPoints = function () {
-        var series = this,
-            renderer = series.chart.renderer;
-
+        var series = this;
         Highcharts.each(this.points, function (point) {
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
@@ -13,10 +11,13 @@ $(function () {
                 width = shapeArgs.width,
                 left = Math.floor(shapeArgs.x) + 0.5,
                 right = left + width,
-                crispX = left + Math.round(width / 2) + 0.5;
+                crispX = left + Math.round(width / 2) + 0.5,
+                highPlot = Math.floor(point.highPlot) + 0.5,
+                medianPlot = Math.floor(point.medianPlot) + 0.5,
+                lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
 
             if (!graphic) {
-                point.graphic = graphic = renderer.path('point').attr({ zIndex: 50 }).add(series.group);
+                point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
             }
 
             graphic.attr({
@@ -24,25 +25,18 @@ $(function () {
                 "stroke-width": 1
             });
 
-            if (point.low === 0) {
-                point.lowPlot -= 1; // Sneakily draw low marker even if 0
-            }
-
             graphic[verb]({
                 d: [
-                    'M', left, Math.floor(point.highPlot) + 0.5,
-                    'L', right, Math.floor(point.highPlot) + 0.5,
-                    'M', left, Math.floor(point.medianPlot) + 0.5,
-                    'L', right, Math.floor(point.medianPlot) + 0.5,
-                    'M', left, Math.floor(point.lowPlot) + 0.5,
-                    'L', right, Math.floor(point.lowPlot) + 0.5,
-                    'M', crispX, Math.floor(point.highPlot) + 0.5,
-                    'L', crispX, Math.floor(point.lowPlot) + 0.5
+                    'M', left, highPlot,
+                    'H', right,
+                    'M', left, medianPlot,
+                    'H', right,
+                    'M', left, lowPlot,
+                    'H', right,
+                    'M', crispX, highPlot,
+                    'V', lowPlot
                 ]
             });
-
-            point.stemWidth = 2;
-            point.stemColor = '#cccccc';
         });
     };
 
