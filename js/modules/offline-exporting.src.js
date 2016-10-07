@@ -37,6 +37,9 @@ function getScript(scriptLocation, callback) {
 	script.type = 'text/javascript';
 	script.src = scriptLocation;
 	script.onload = callback;
+	script.onerror = function () {
+		console.error('Error loading script', scriptLocation); // eslint-disable-line no-console
+	};
 
 	head.appendChild(script);
 }
