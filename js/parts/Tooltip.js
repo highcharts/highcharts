@@ -504,7 +504,8 @@ H.Tooltip.prototype = {
 				colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none'),
 				target,
 				x,
-				bBox;
+				bBox,
+				boxWidth;
 
 			// Store the tooltip referance on the series
 			if (!tt) {
@@ -545,12 +546,19 @@ H.Tooltip.prototype = {
 
 			// Get X position now, so we can move all to the other side in case of overflow
 			bBox = tt.getBBox();
+			boxWidth = bBox.width + tt.strokeWidth();
 			if (point.isHeader) {
 				headerHeight = bBox.height;
-				x = point.plotX + chart.plotLeft - bBox.width / 2;
+				x = Math.max(
+					0, // No left overflow
+					Math.min(
+						point.plotX + chart.plotLeft - boxWidth / 2,
+						chart.chartWidth - boxWidth // No right overflow (#5794)
+					)
+				);
 			} else {
 				x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
-					bBox.width;
+					boxWidth;
 			}
 
 
