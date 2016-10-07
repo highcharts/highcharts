@@ -30,6 +30,10 @@ $(function () {
             categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
         },
 
+        tooltip: {
+            split: true
+        },
+
         plotOptions: {
             series: {
                 point: {
