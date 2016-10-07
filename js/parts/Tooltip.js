@@ -54,44 +54,56 @@ H.Tooltip.prototype = {
 		this.split = options.split && !chart.inverted;
 		this.shared = options.shared || this.split;
 
+	},
 
-		// Create the label
-		if (this.split) {
-			this.label = this.chart.renderer.g('tooltip');
-		} else {
-			this.label = chart.renderer.label(
-					'',
-					0,
-					0,
-					options.shape || 'callout',
-					null,
-					null,
-					options.useHTML,
-					null,
-					'tooltip'
-				)
-				.attr({
-					padding: options.padding,
-					r: options.borderRadius,
-					display: 'none' // #2301, #2657, #3532, #5570
-				});
+	/**
+	 * Create the Tooltip label element if it doesn't exist, then return the
+	 * label.
+	 */
+	getLabel: function () {
 
-			/*= if (build.classic) { =*/
+		var renderer = this.chart.renderer,
+			options = this.options;
+
+		if (!this.label) {
+			// Create the label
+			if (this.split) {
+				this.label = renderer.g('tooltip');
+			} else {
+				this.label = renderer.label(
+						'',
+						0,
+						0,
+						options.shape || 'callout',
+						null,
+						null,
+						options.useHTML,
+						null,
+						'tooltip'
+					)
+					.attr({
+						padding: options.padding,
+						r: options.borderRadius
+					});
+
+				/*= if (build.classic) { =*/
+				this.label
+					.attr({
+						'fill': options.backgroundColor,
+						'stroke-width': options.borderWidth
+					})
+					// #2301, #2657
+					.css(options.style)
+					.shadow(options.shadow);
+				/*= } =*/
+			}
 			this.label
 				.attr({
-					'fill': options.backgroundColor,
-					'stroke-width': options.borderWidth
+					zIndex: 8
 				})
-				// #2301, #2657
-				.css(options.style)
-				.shadow(options.shadow);
-			/*= } =*/
+				.add();
 		}
-		this.label
-			.attr({
-				zIndex: 8
-			})
-			.add();
+		return this.label;
 	},
 
 	update: function (options) {
@@ -135,7 +147,7 @@ H.Tooltip.prototype = {
 		});
 
 		// Move to the intermediate value
-		tooltip.label.attr(now);
+		tooltip.getLabel().attr(now);
 
 
 		// Run on next tick of the mouse tracker
@@ -146,7 +158,8 @@ H.Tooltip.prototype = {
 
 			// Set the fixed interval ticking for the smooth tooltip
 			this.tooltipTimeout = setTimeout(function () {
-				// The interval function may still be running during destroy, so check that the chart is really there before calling.
+				// The interval function may still be running during destroy,
+				// so check that the chart is really there before calling.
 				if (tooltip) {
 					tooltip.move(x, y, anchorX, anchorY);
 				}
@@ -164,7 +177,7 @@ H.Tooltip.prototype = {
 		delay = pick(delay, this.options.hideDelay, 500);
 		if (!this.isHidden) {
 			this.hideTimer = syncTimeout(function () {
-				tooltip.label[delay ? 'fadeOut' : 'hide']();
+				tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
 				tooltip.isHidden = true;
 			}, delay);
 		}
@@ -235,8 +248,12 @@ H.Tooltip.prototype = {
 			ret = {},
 			h = point.h || 0, // #4117
 			swapped,
-			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop, chart.plotTop, chart.plotTop + chart.plotHeight],
-			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft, chart.plotLeft, chart.plotLeft + chart.plotWidth],
+			first = ['y', chart.chartHeight, boxHeight,
+				point.plotY + chart.plotTop, chart.plotTop,
+				chart.plotTop + chart.plotHeight],
+			second = ['x', chart.chartWidth, boxWidth,
+				point.plotX + chart.plotLeft, chart.plotLeft,
+				chart.plotLeft + chart.plotWidth],
 			// The far side is right or bottom
 			preferFarSide = !this.followPointer && pick(point.ttBelow, !chart.inverted === !!point.negative), // #4984
 			/**
@@ -256,7 +273,12 @@ H.Tooltip.prototype = {
 				} else if (roomLeft) {
 					ret[dim] = Math.min(max - innerSize, alignedLeft - h < 0 ? alignedLeft : alignedLeft - h);
 				} else if (roomRight) {
-					ret[dim] = Math.max(min, alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h);
+					ret[dim] = Math.max(
+						min,
+						alignedRight + h + innerSize > outerSize ?
+							alignedRight :
+							alignedRight + h
+					);
 				} else {
 					return false;
 				}
@@ -328,14 +350,14 @@ H.Tooltip.prototype = {
 		var items = this.points || splat(this),
 			s;
 
-		// build the header
-		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
+		// Build the header
+		s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
 
 		// build the values
 		s = s.concat(tooltip.bodyFormatter(items));
 
 		// footer
-		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
+		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
 
 		return s;
 	},
@@ -347,7 +369,7 @@ H.Tooltip.prototype = {
 	refresh: function (point, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
-			label = tooltip.label,
+			label = tooltip.getLabel(),
 			options = tooltip.options,
 			x,
 			y,
@@ -413,8 +435,7 @@ H.Tooltip.prototype = {
 			if (tooltip.isHidden) {
 				stop(label);
 				label.attr({
-					opacity: 1,
-					display: 'block'
+					opacity: 1
 				}).show();
 			}
 
@@ -461,7 +482,8 @@ H.Tooltip.prototype = {
 			ren = chart.renderer,
 			rightAligned = true,
 			options = this.options,
-			headerHeight;
+			headerHeight,
+			tooltipLabel = this.getLabel();
 
 		/**
 		 * Destroy a single-series tooltip
@@ -482,7 +504,8 @@ H.Tooltip.prototype = {
 				colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none'),
 				target,
 				x,
-				bBox;
+				bBox,
+				boxWidth;
 
 			// Store the tooltip referance on the series
 			if (!tt) {
@@ -497,7 +520,7 @@ H.Tooltip.prototype = {
 						'stroke-width': options.borderWidth
 						/*= } =*/
 					})
-					.add(tooltip.label);
+					.add(tooltipLabel);
 
 				// Add a connector back to the point
 				if (point.series) {
@@ -509,7 +532,7 @@ H.Tooltip.prototype = {
 							'stroke': point.color || series.color || '${palette.neutralColor60}'
 						})
 						/*= } =*/
-						.add(tooltip.label);
+						.add(tooltipLabel);
 
 					addEvent(point.series, 'hide', function () {
 						this.tt = destroy(this.tt);
@@ -523,12 +546,19 @@ H.Tooltip.prototype = {
 
 			// Get X position now, so we can move all to the other side in case of overflow
 			bBox = tt.getBBox();
+			boxWidth = bBox.width + tt.strokeWidth();
 			if (point.isHeader) {
 				headerHeight = bBox.height;
-				x = point.plotX + chart.plotLeft - bBox.width / 2;
+				x = Math.max(
+					0, // No left overflow
+					Math.min(
+						point.plotX + chart.plotLeft - boxWidth / 2,
+						chart.chartWidth - boxWidth // No right overflow (#5794)
+					)
+				);
 			} else {
 				x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
-					bBox.width;
+					boxWidth;
 			}
 
 
@@ -571,7 +601,7 @@ H.Tooltip.prototype = {
 
 			// Put the label in place
 			attr = {
-				display: box.pos === undefined ? 'none' : '',
+				visibility: box.pos === undefined ? 'hidden' : 'inherit',
 				x: (rightAligned || point.isHeader ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16)),
 				y: box.pos + chart.plotTop
 			};
@@ -604,7 +634,7 @@ H.Tooltip.prototype = {
 	 */
 	updatePosition: function (point) {
 		var chart = this.chart,
-			label = this.label,
+			label = this.getLabel(),
 			pos = (this.options.positioner || this.getPosition).call(
 				this,
 				label.width,
@@ -715,7 +745,8 @@ H.Tooltip.prototype = {
 	bodyFormatter: function (items) {
 		return map(items, function (item) {
 			var tooltipOptions = item.series.tooltipOptions;
-			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
+			return (tooltipOptions.pointFormatter || item.point.tooltipFormatter)
+				.call(item.point, tooltipOptions.pointFormat);
 		});
 	}
 

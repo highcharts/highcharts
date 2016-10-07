@@ -7,7 +7,6 @@ var colors = require('colors'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
-    closureCompiler = require('closurecompiler'),
     argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
@@ -36,6 +35,7 @@ var paths = {
     parts3D: ['./js/parts-3d/*.js'],
     partsMap: ['./js/parts-map/*.js'],
     partsMore: ['./js/parts-more/*.js'],
+    partsGantt: ['./js/parts-gantt/*.js'],
     themes: ['./js/themes/*.js']
 };
 
@@ -113,6 +113,14 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/gantt.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'modules/grid-axis.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'modules/heatmap.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
@@ -151,15 +159,7 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
-            'modules/wip.grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/wip.part-fill-point.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/wip.xrange-series.src.js': {
+            'modules/xrange-series.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
@@ -214,6 +214,19 @@ const scripts = () => {
         output: './code/',
         type: type,
         version: version
+    });
+};
+
+/**
+ * Creates a set of ES6-modules which is distributable.
+ * @return {undefined}
+ */
+const buildModules = () => {
+    const B = require('./assembler/build');
+    B.buildModules({
+        base: './js/',
+        output: './code/modules/',
+        type: 'both'
     });
 };
 
@@ -299,6 +312,7 @@ gulp.task('nightly', function () {
 });
 
 gulp.task('filesize', function () {
+    const closureCompiler = require('closurecompiler');
     var oldSize,
         newSize,
         filename = argv.file ? argv.file : 'highcharts.src.js';
@@ -372,34 +386,27 @@ gulp.task('filesize', function () {
 
 const compile = (files, sourceFolder) => {
     console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve, reject) => {
-        const promises = files.map(path => {
-                return new Promise((resolveCompile, reject) => {
-                    const sourcePath = sourceFolder + path;
-                    const outputPath = sourcePath.replace('.src.js', '.js');
-                    closureCompiler.compile(
-                        [sourcePath],
-                        null,
-                        (error, result) => {
-                            if (result) {
-                                fs.writeFile(outputPath, result, 'utf8', (err) => {
-                                    if (!err) {
-                                        // @todo add filesize information
-                                        resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-                                    } else {
-                                        reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
-                                    }
-                                });
-                            } else {
-                                reject('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                }).then(console.log);
+    return new Promise((resolve) => {
+        files.forEach(path => {
+            const closureCompiler = require('google-closure-compiler-js');
+            // const fs = require('fs');
+            const U = require('./assembler/utilities.js');
+            const sourcePath = sourceFolder + path;
+            const outputPath = sourcePath.replace('.src.js', '.js');
+            const src = U.getFile(sourcePath);
+            const out = closureCompiler.compile({
+                compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+                jsCode: [{
+                    src: src
+                }],
+                languageIn: 'ES5',
+                languageOut: 'ES5'
             });
-        Promise.all(promises).then(() => {
-            resolve('Compile is complete');
-        }).catch((err) => reject(err.message + '\n\r' + err.stack));
+            U.writeFile(outputPath, out.compiledCode);
+            // @todo add filesize information
+            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+        });
+        resolve('Compile is complete');
     });
 };
 
@@ -413,7 +420,7 @@ const compileScripts = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 /**
  * Compile the JS files in the /code folder
@@ -424,7 +431,7 @@ const compileLib = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 const cleanCode = () => {
     const U = require('./assembler/utilities.js');
@@ -615,6 +622,7 @@ const antDist = () => commandLine('ant dist');
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
+gulp.task('build-modules', buildModules);
 gulp.task('lint', lint);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);

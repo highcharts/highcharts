@@ -26,6 +26,16 @@ const exists = path => {
 };
 
 /**
+ * Get content of file.
+ * @param  {string} path Path to file.
+ * @return {string|null} Returns content of file as a string. Returns null if file is not found.
+ */
+const getFile = path => {
+    const fs = require('fs');
+    return (exists(path) ? fs.readFileSync(path, 'utf8') : null);
+};
+
+/**
  * Gets directory path from a file path
  * @param  {string} path File path
  * @returns {string} Path to directory where the file is located
@@ -109,6 +119,7 @@ module.exports = {
     debug,
     exists,
     folder,
+    getFile,
     removeDirectory,
     removeFile,
     writeFile

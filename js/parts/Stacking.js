@@ -81,7 +81,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -102,7 +102,8 @@ StackItem.prototype = {
 			inverted = chart.inverted,
 			reversed = axis.reversed,
 			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
-			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			// stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1),
 			yZero = axis.translate(0),						// stack origin
 			h = Math.abs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position

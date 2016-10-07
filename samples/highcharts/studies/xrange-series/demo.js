@@ -10,7 +10,8 @@ $(function () {
         },
         xAxis: {
             type: 'datetime',
-            min: Date.UTC(2014, 11, 3)
+            min: Date.UTC(2014, 11, 1),
+            max: Date.UTC(2014, 11, 9)
         },
         yAxis: {
             title: '',

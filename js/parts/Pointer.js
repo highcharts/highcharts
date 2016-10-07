@@ -25,9 +25,6 @@ var addEvent = H.addEvent,
 	Tooltip = H.Tooltip,
 	win = H.win;
 
-// Global flag for touch support
-H.hasTouch = doc && doc.documentElement.ontouchstart !== undefined;
-
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
  * Subsequent methods should be named differently from what they are doing.

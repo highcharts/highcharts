@@ -497,7 +497,7 @@ seriesType('map', 'scatter', {
 			each(series.points, function (point) {
 				if (point.graphic) {
 					if (point.name) {
-						point.graphic.addClass('highcharts-name-' + point.name.replace(' ', '-').toLowerCase());
+						point.graphic.addClass('highcharts-name-' + point.name.replace(/ /g, '-').toLowerCase());
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());

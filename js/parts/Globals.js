@@ -22,6 +22,7 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
 	doc: doc,
 	hasBidiBug: hasBidiBug,
+	hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
 	isMS: isMS,
 	isWebKit: /AppleWebKit/.test(userAgent),
 	isFirefox: isFirefox,
