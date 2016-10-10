@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Tooltip isn't displayed when on column, when yAxis.max is lower than column's value.", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: "column"
             },

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Highcharts <= 3.0.9, Axis.remove didn\'t remove all child series. Only one line series should remain.'
         },

@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie with zeroes', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             series: [{
                 type: 'pie',
                 borderColor: 'green',
@@ -33,7 +33,7 @@ $(function () {
     });
 
     QUnit.test('Pie with nulls', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             series: [{
                 type: 'pie',
                 borderColor: 'green',

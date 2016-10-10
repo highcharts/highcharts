@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Point colors within color zones', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
             },

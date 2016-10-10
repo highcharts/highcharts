@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Null inside break', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             title: {
                 text: 'Sample of a simple break'
             },
@@ -48,7 +48,7 @@ $(function () {
 
 
 
-        chart = $('#container').highcharts({
+        chart = Highcharts.chart('container', {
             title: {
                 text: 'Sample of a simple break'
             },

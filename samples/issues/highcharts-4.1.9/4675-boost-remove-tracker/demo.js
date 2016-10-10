@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Null points should not have data labels", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             series: [{
                 boostThreshold: 100,
                 data: (function () {

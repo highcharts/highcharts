@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Polar and categorized chart should not render extra alternate band.", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
                 chart: {
                     polar: true
                 },

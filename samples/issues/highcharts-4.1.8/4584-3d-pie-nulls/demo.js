@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('3d pie with zeroes', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 options3d: {
                     enabled: true,

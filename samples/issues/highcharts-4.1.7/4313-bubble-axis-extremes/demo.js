@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Distinct min and max for bubble padding.', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
                 chart: {
                     type: 'bubble'
                 },

@@ -2,7 +2,7 @@ $(function () {
     QUnit.test('Columnrange series should work with broken-axis.', function (assert) {
         var iter = 0;
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             chart: {
                 type: 'columnrange'
             },

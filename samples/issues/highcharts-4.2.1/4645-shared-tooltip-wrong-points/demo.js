@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Shared tooltip should compare point.distX, not point.dist to find absolute closest point.", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
                 chart: {
                     type: 'column'
                 },

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'X axis is log. <br/>Y axis extremes should be 0 - 250.'
         },

@@ -7,7 +7,7 @@ $(function () {
             data.push([i, i + 100]);
         }
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             chart: {
                 type: 'arearange'
             },

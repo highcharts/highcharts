@@ -12,7 +12,7 @@ $(function () {
 
 
     QUnit.test('Stack memory build-up', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             plotOptions: {
                 area: {
                     stacking: 'normal'

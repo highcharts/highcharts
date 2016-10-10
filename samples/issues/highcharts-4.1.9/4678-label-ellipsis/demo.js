@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Ellipsis should be reset after zoom", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'bar',
                 zoomType: 'x',

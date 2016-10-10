@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Column update', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 animation: false
             },

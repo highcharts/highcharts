@@ -3,7 +3,7 @@ $(function () {
         var chart;
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
             series: [{
                 allowPointSelect: true,
                 cursor: 'pointer',

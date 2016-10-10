@@ -17,7 +17,7 @@ $(function () {
     ];
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps basic demo'

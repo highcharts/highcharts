@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Parts of 3d pie should have correct zIndexes.', function (assert) {
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             chart: {
                 type: 'pie',
                 options3d: {

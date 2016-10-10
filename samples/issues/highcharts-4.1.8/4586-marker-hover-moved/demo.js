@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Marker should not move after hover", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             plotOptions: {
                 series: {
                     states: {

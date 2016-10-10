@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Bubble with null", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
 
             chart: {
                 type: 'bubble'

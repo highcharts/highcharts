@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Errors on stacked area with log axis and odd series length", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'area'
             },

@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie update color point and update color legend item.', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
                 chart: {
                     type: 'pie',
                     marginRight: 100

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Issue in Highcharts 3.0.8 caused wrong hover color (should be lighter green)'

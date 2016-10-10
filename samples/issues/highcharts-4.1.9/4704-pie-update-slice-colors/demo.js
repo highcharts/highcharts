@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie slices should update colors after setData() or point.update().', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'pie'
             },

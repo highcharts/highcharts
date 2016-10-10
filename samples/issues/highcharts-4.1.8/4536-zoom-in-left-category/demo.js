@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Zooming too tight on left category should show full category.", function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'column'
             },

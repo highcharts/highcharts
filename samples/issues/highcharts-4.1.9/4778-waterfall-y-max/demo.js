@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Proper plotY for first point when using yAxis.max', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
                 chart: {
                     type: 'waterfall'
                 },

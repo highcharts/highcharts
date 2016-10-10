@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Ticks were drawn in break', function (assert) {
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             title: {
                 text: 'Sample of a simple break'
             },

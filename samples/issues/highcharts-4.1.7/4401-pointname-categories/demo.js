@@ -2,7 +2,7 @@ $(function () {
     QUnit.test('Test different point.name types.', function (assert) {
         var UNDEFINED,
             labels = ['0', true, false, NaN, '', 'Proper', '6', 0, Infinity],
-            chart = $('#container').highcharts({
+            chart = Highcharts.chart('container', {
                 xAxis: {
                     type: "category"
                 },

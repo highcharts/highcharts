@@ -15,7 +15,7 @@ $(document).ready(function () {
     MapSeries1.data[0] = MapData1;
     MapSeriesData.push(MapSeries1);
 
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         title: {
             text: 'Highmaps combined with 3D module'
         },

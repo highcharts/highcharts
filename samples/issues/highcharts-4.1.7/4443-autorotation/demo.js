@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Auto rotation and useHTML', function (assert) {
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
 
             chart: {
                 width: 1000,

@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('alignTicks should consider only axes with series.', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             yAxis: [{
                 endOnTick: false,
                 maxPadding: 0.0

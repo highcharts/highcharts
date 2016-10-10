@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Label formatting', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             series: [{
                 data: [0, 79962.57, 9e4]
             }],

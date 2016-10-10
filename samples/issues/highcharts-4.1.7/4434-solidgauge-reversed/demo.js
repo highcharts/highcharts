@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Reversed solid gauge', function (assert) {
-        var chart = $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'solidgauge'
             },
