@@ -48,9 +48,11 @@ var defaultChartConfig = {
  */
 QUnit.test('translate()', function (assert) {
     var chart,
+        i,
         point,
+        points,
         shapeArgs,
-        partFillShape,
+        partShapeArgs,
         partialFill;
 
         // THE CHART
@@ -58,34 +60,37 @@ QUnit.test('translate()', function (assert) {
 
     chart = $('#container').highcharts();
 
-    point = chart.series[0].points[0];
-    shapeArgs = point.shapeArgs;
-    partFillShape = point.partFillShape;
-    partialFill = point.partialFill;
+    points = chart.series[0].points;
+    for (i = 0; i < points.length; i++) {
+        point = points[i];
+        shapeArgs = point.shapeArgs;
+        partShapeArgs = point.partShapeArgs;
+        partialFill = point.partialFill;
 
-    assert.equal(
-        partFillShape.y,
-        shapeArgs.y + 1,
-        'partFillShape y-position is calculated as shapeArgs y-position + 1'
-    );
+        assert.equal(
+            partShapeArgs.y,
+            shapeArgs.y + 1,
+            'point ' + i + ' partShapeArgs y-position is correctly calculated'
+        );
 
-    assert.equal(
-        partFillShape.height,
-        shapeArgs.height - 2,
-        'partFillShape height is calculated as shapeArgs height - 2'
-    );
+        assert.equal(
+            partShapeArgs.height,
+            shapeArgs.height - 2,
+            'point ' + i + ' partShapeArgs height is correctly calculated'
+        );
 
-    assert.equal(
-        partFillShape.x,
-        shapeArgs.x,
-        'partFillShape and shapeArgs have same calcuated x-position'
-    );
+        assert.equal(
+            partShapeArgs.x,
+            shapeArgs.x,
+            'point ' + i + ' partShapeArgs has correct calulated x-position'
+        );
 
-    assert.equal(
-        partFillShape.width,
-        shapeArgs.width * partialFill,
-        'partFillShape has correct calculated width'
-    );
+        assert.equal(
+            partShapeArgs.width,
+            shapeArgs.width * partialFill,
+            'point ' + i + ' partShapeArgs has correct calculated width'
+        );
+    }
 });
 
 /**
@@ -93,56 +98,109 @@ QUnit.test('translate()', function (assert) {
  */
 QUnit.test('drawPoints()', function (assert) {
     var chart,
+        i,
+        points,
+        point,
         $graphic,
-        $extraGraphic,
+        $graphOrig,
+        $graphOver,
         origX,
-        extraX,
+        overX,
         origY,
-        extraY,
+        overY,
         origWidth,
-        extraWidth,
+        overWidth,
         origHeight,
-        extraHeight,
+        overHeight,
         partialFill;
 
     // THE CHART
-    $('#container').highcharts(defaultChartConfig);
+    chart = Highcharts.chart('container', defaultChartConfig);
 
-    chart = $('#container').highcharts();
+    points = chart.series[0].points;
+    for (i = 0; i < points.length; i++) {
+        point = points[i];
+        $graphic = $(point.graphic.element);
+        $graphOrig = $($graphic.find('.highcharts-partfill-original'));
+        $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
+        origX = parseFloat($graphOrig.attr('x'));
+        overX = parseFloat($graphOver.attr('x'));
+        origY = parseFloat($graphOrig.attr('y'));
+        overY = parseFloat($graphOver.attr('y'));
+        origWidth = parseFloat($graphOrig.attr('width'));
+        overWidth = parseFloat($graphOver.attr('width'));
+        origHeight = parseFloat($graphOrig.attr('height'));
+        overHeight = parseFloat($graphOver.attr('height'));
+        partialFill = point.partialFill;
 
-    $graphic = $(chart.series[0].points[0].graphic.element);
-    $extraGraphic = $(chart.series[0].points[0].partFillGraphic.element);
-    origX = parseFloat($graphic.attr('x'));
-    extraX = parseFloat($extraGraphic.attr('x'));
-    origY = parseFloat($graphic.attr('y'));
-    extraY = parseFloat($extraGraphic.attr('y'));
-    origWidth = parseFloat($graphic.attr('width'));
-    extraWidth = parseFloat($extraGraphic.attr('width'));
-    origHeight = parseFloat($graphic.attr('height'));
-    extraHeight = parseFloat($extraGraphic.attr('height'));
-    partialFill = chart.series[0].points[0].partialFill;
+        assert.equal(
+            overY,
+            origY + 1,
+            'point ' + i + ' partShapeArgs y-position is rendered correctly'
+        );
 
+        assert.equal(
+            overHeight,
+            origHeight - 2,
+            'point ' + i + ' partShapeArgs height is rendered correctly'
+        );
+
+        assert.equal(
+            overX,
+            origX,
+            'point ' + i + ' partShapeArgs has correct rendered x-position'
+        );
+
+        assert.equal(
+            overWidth,
+            origWidth * partialFill,
+            'point ' + i + ' partShapeArgs has correct rendered width'
+        );
+    }
+});
+
+/**
+ * Checks that the fill option in a point's partialFill options is applied
+ */
+QUnit.test('point fill option is applied in drawPoints()', function (assert) {
+    var chart,
+        $graphic,
+        expected = "#fa0",
+        actual;
+
+    defaultChartConfig.series[0].data[0].partialFill = {
+        amount: 0.25,
+        fill: expected
+    };
+    chart = Highcharts.chart('container', defaultChartConfig);
+    $graphic = $(chart.series[0].data[0].graphic.element);
+    actual = $graphic.find('.highcharts-partfill-overlay').attr('fill');
     assert.equal(
-        extraY,
-        origY + 1,
-        'partFillShape y-position is rendered as shapeArgs y-position + 1'
+        actual,
+        expected,
+        'fill in point.partialFill options is applied'
     );
+});
 
-    assert.equal(
-        extraHeight,
-        origHeight - 2,
-        'partFillShape height is rendered as shapeArgs height - 2'
-    );
+/**
+ * Checks that the fill option in a series' partialFill options is applied
+ */
+QUnit.test('series fill option is applied in drawPoints()', function (assert) {
+    var chart,
+        $graphic,
+        expected = "#000",
+        actual;
 
+    defaultChartConfig.series[0].partialFill = {
+        amount: 0.25,
+        fill: expected
+    };
+    chart = Highcharts.chart('container', defaultChartConfig);
+    $graphic = $(chart.series[0].data[0].graphic.element);
+    actual = $graphic.find('.highcharts-partfill-overlay').attr('fill');
     assert.equal(
-        extraX,
-        origX,
-        'partFillShape and shapeArgs have same rendered x-position'
-    );
-
-    assert.equal(
-        extraWidth,
-        origWidth * partialFill,
-        'partFillShape has correct rendered width'
+        actual,
+        expected,
+        'fill in point.partialFill options is applied'
     );
 });

@@ -8,23 +8,31 @@
 import H from '../parts/Globals.js';
 
 var defaultPlotOptions = H.getOptions().plotOptions,
+	color = H.Color,
 	columnType = H.seriesTypes.column,
 	each = H.each,
 	extendClass = H.extendClass,
+	isNumber = H.isNumber,
+	isObject = H.isObject,
+	merge = H.merge,
 	pick = H.pick,
+	seriesTypes = H.seriesTypes,
+	stop = H.stop,
+	wrap = H.wrap,
+	Axis = H.Axis,
 	Point = H.Point,
 	Series = H.Series,
-	xrange = 'xrange',
 	pointFormat = 	'<span style="color:{point.color}">' +
 						'\u25CF' +
-					'</span> {series.name}: <b>{point.yCategory}</b><br/>';
+					'</span> {series.name}: <b>{point.yCategory}</b><br/>',
+	xrange = 'xrange';
 
-defaultPlotOptions.xrange = H.merge(defaultPlotOptions.column, {
+defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
 	tooltip: {
 		pointFormat: pointFormat
 	}
 });
-H.seriesTypes.xrange = H.extendClass(columnType, {
+seriesTypes.xrange = extendClass(columnType, {
 	pointClass: extendClass(Point, {
 		// Add x2 and yCategory to the available properties for tooltip formats
 		getLabelConfig: function () {
@@ -39,7 +47,7 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 	forceDL: true,
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
-	animate: H.seriesTypes.line.prototype.animate,
+	animate: seriesTypes.line.prototype.animate,
 
 	/**
 	 * Borrow the column series metrics, but with swapped axes. This gives free access
@@ -90,9 +98,9 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			metrics = series.columnMetrics,
 			minPointLength = series.options.minPointLength || 0;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			var plotX = point.plotX,
-				posX = H.pick(point.x2, point.x + (point.len || 0)),
+				posX = pick(point.x2, point.x + (point.len || 0)),
 				plotX2 = xAxis.toPixels(posX, true),
 				width = plotX2 - plotX,
 				widthDifference,
@@ -120,19 +128,19 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			point.tooltipPos[0] += width / 2;
 			point.tooltipPos[1] -= metrics.width / 2;
 
-			// Add a partFillShape to the point, based on the shapeArgs property
+			// Add a partShapeArgs to the point, based on the shapeArgs property
 			partialFill = point.partialFill;
 			if (partialFill) {
 				// Get the partial fill amount
-				if (H.isObject(partialFill)) {
+				if (isObject(partialFill)) {
 					partialFill = partialFill.amount;
 				}
 				// If it was not a number, assume 0
-				if (!H.isNumber(partialFill)) {
+				if (!isNumber(partialFill)) {
 					partialFill = 0;
 				}
 				shapeArgs = point.shapeArgs;
-				point.partFillShape = {
+				point.partShapeArgs = {
 					x: shapeArgs.x,
 					y: shapeArgs.y + 1,
 					width: shapeArgs.width * partialFill,
@@ -148,52 +156,76 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			method,
-			partFillShape;
+			verb = chart.pointCount < animationLimit ? 'animate' : 'attr';
 
-		columnType.prototype.drawPoints.apply(series);
 		// draw the columns
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			var plotY = point.plotY,
-				partFillOptions = point.partialFill,
+				graphic = point.graphic,
+				type = point.shapeType,
+				shapeArgs = point.shapeArgs,
+				partShapeArgs = point.partShapeArgs,
+				seriesOpts = series.options,
+				pfOptions = point.partialFill,
 				fill,
-				partFillGraphic = point.partFillGraphic;
+				state = point.selected && 'select',
+				cutOff = options.stacking && !options.borderRadius;
 
-			// If partFillOptions was not an object, create an empty object
-			if (!H.isObject(partFillOptions)) {
-				partFillOptions = {};
-			}
-			fill = partFillOptions.fill || '#000';
-
-			if (H.isNumber(plotY) && point.y !== null) {
-				partFillShape = point.partFillShape;
-
-				if (partFillGraphic) {
-					H.stop(partFillGraphic);
-					method = chart.pointCount < animationLimit ?
-						'animate' :
-						'attr';
-					partFillGraphic[method](
-						H.merge(partFillShape)
+			if (isNumber(plotY) && point.y !== null) {
+				if (graphic) { // update
+					stop(graphic);
+					point.graphicOriginal[verb](
+						merge(shapeArgs)
 					);
+					if (partShapeArgs) {
+						point.graphicOverlay[verb](
+							merge(partShapeArgs)
+						);
+					}
+
 				} else {
-					partFillGraphic = renderer[point.shapeType](partFillShape)
-					.attr({
-						'class': point.getClassName()
-					})
-					.add(point.group || series.group);
-					point.partFillGraphic = partFillGraphic;
+					point.graphic = graphic = renderer.g('point')
+						.attr({
+							'class': point.getClassName()
+						})
+						.add(point.group || series.group);
+					
+					point.graphicOriginal = renderer[type](shapeArgs)
+						.addClass('highcharts-partfill-original')
+						.add(graphic);
+					if (partShapeArgs) {
+						point.graphicOverlay = renderer[type](partShapeArgs)
+							.addClass('highcharts-partfill-overlay')
+							.add(graphic);
+					}
 				}
 
-				partFillGraphic
-					.attr(series.pointAttribs(
-							point,
-							point.selected && 'select'))
-					.attr('fill', fill)
-					.attr('stroke-width', 0);
+				/*= if (build.classic) { =*/
+				// Presentational
+				point.graphicOriginal
+					.attr(series.pointAttribs(point, state))
+					.shadow(options.shadow, null, cutOff);
+				if (partShapeArgs) {
+					// Ensure pfOptions is an object
+					if (!isObject(pfOptions)) {
+						pfOptions = {};
+					}
+					if (isObject(seriesOpts.partialFill)) {
+						pfOptions = merge(pfOptions, seriesOpts.partialFill);
+					}
+					
+					fill = pfOptions.fill ||
+							color(series.color).brighten(-0.3).get('rgb');
+					point.graphicOverlay
+						.attr(series.pointAttribs(point, state))
+						.attr('fill', fill)
+						.attr('stroke-width', 0)
+						.shadow(options.shadow, null, cutOff);
+				}
+				/*= } =*/
 
-			} else if (partFillGraphic) {
-				point.partFillGraphic = partFillGraphic.destroy();
+			} else if (graphic) {
+				point.graphic = graphic.destroy(); // #1269
 			}
 		});
 	}
@@ -202,7 +234,7 @@ H.seriesTypes.xrange = H.extendClass(columnType, {
 /**
  * Max x2 should be considered in xAxis extremes
  */
-H.wrap(H.Axis.prototype, 'getSeriesExtremes', function (proceed) {
+wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var axis = this,
 		series = axis.series,
 		dataMax,
