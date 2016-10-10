@@ -537,6 +537,10 @@ H.Tooltip.prototype = {
 					addEvent(point.series, 'hide', function () {
 						this.tt = destroy(this.tt);
 					});
+
+					addEvent(point.series, 'destroy', function () {
+						this.tt = destroy(this.tt);
+					});
 				}
 			}
 			tt.isActive = true;
