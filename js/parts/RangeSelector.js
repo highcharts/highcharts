@@ -405,18 +405,20 @@ RangeSelector.prototype = {
 	 * @param {Number} time
 	 */
 	setInputValue: function (name, time) {
-		var options = this.chart.options.rangeSelector;
+		var options = this.chart.options.rangeSelector,
+			input = this[name + 'Input'];
 
 		if (defined(time)) {
-			this[name + 'Input'].HCTime = time;
+			input.previousValue = input.HCTime;
+			input.HCTime = time;
 		}
 
-		this[name + 'Input'].value = dateFormat(
+		input.value = dateFormat(
 			options.inputEditDateFormat || '%Y-%m-%d',
-			this[name + 'Input'].HCTime
+			input.HCTime
 		);
 		this[name + 'DateBox'].attr({
-			text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+			text: dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
 		});
 	},
 
