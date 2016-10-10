@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie slice updating', function (assert) {
-        $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
 
             chart: {
                 type: 'pie',
@@ -19,7 +19,6 @@ $(function () {
 
         });
 
-        var chart = $('#container').highcharts();
 
         chart.series[0].points[0].setVisible(false);
 

@@ -1,7 +1,7 @@
 $(function () {
 
 
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         xAxis: {
             minRange: 1,
@@ -27,6 +27,6 @@ $(function () {
     });
 
     $('#zoom-in').click(function () {
-        $('#container').highcharts().xAxis[0].setExtremes(2, 5);
+        chart.xAxis[0].setExtremes(2, 5);
     });
 });

@@ -1,7 +1,5 @@
 QUnit.test('alignThreshold', function (assert) {
-    var chart;
-
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
             type: 'area'
@@ -26,7 +24,6 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),
@@ -60,7 +57,6 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),

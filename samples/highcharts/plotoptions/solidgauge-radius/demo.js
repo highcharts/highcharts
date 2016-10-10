@@ -1,7 +1,7 @@
 $(function () {
 
     // The speed gauge
-    $('#container-speed').highcharts({
+    Highcharts.chart('container-speed', {
 
         chart: {
             type: 'solidgauge'

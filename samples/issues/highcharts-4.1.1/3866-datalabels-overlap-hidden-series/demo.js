@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         chart: {
             type: 'column'
@@ -29,6 +29,6 @@ $(function () {
     });
 
     $('#hide').click(function () {
-        $('#container').highcharts().series[0].hide();
+        chart.series[0].hide();
     });
 });

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         "series": [{
             "data": [
                 [1998, 26927],

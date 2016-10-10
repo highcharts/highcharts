@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Tick marks should be <em>on</em> tick when tickInterval != 1'
         },

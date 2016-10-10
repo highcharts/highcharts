@@ -1,5 +1,5 @@
 $(function () {
-    $('#container4').highcharts({
+    Highcharts.chart('container4', {
         data: {
             csv: document.getElementById('data').innerHTML
         }

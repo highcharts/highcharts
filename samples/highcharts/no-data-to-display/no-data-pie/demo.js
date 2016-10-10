@@ -30,6 +30,5 @@ $(function () {
         }]
     });
 
-    chart = $('#container').highcharts();
+    chart = Highcharts.chart('container');
 });
-

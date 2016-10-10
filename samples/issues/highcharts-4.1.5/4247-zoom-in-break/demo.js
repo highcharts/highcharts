@@ -1,8 +1,6 @@
 $(function () {
     QUnit.test('Sub-millisecond tooltip', function (assert) {
-        var chart;
-
-        $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             "title": {
                 "text": "Y axis translation failed"
             },
@@ -27,9 +25,6 @@ $(function () {
                 "data": [9, 8, 7, 6, 5, 4, 3, 2, 1]
             }]
         });
-
-        chart = $('#container').highcharts();
-
 
         assert.equal(
             chart.yAxis[0].min,

@@ -5,7 +5,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             width: 600

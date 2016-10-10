@@ -1,10 +1,7 @@
 QUnit.test('Max point width', function (assert) {
 
-    var chart,
-        point;
-
-    chart = $('#container').highcharts();
-    point = chart.series[0].points[0];
+    var chart = Highcharts.chart('container'),
+        point = chart.series[0].points[0];
 
     assert.strictEqual(
         parseInt(point.graphic.attr('width'), 10) <= 50,
@@ -33,7 +30,6 @@ QUnit.test('Max point width', function (assert) {
         }]
 
     });
-    chart = $('#container').highcharts();
     point = chart.series[0].points[0];
 
     // The bar chart plot area is rotated 90 degrees, so we check the width even though it

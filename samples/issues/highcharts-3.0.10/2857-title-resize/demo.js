@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         title: {
             text: 'Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014'
         },
@@ -10,7 +10,7 @@ $(function () {
     });
 
     $('#small').click(function () {
-        $('#container').highcharts().setSize(300);
+        chart.setSize(300);
     });
 
 });

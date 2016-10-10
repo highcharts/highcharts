@@ -1,10 +1,9 @@
 $(function () {
     QUnit.test('Point range after setData', function (assert) {
-        var chart,
-            initialPointRange;
+        var initialPointRange;
 
         // Create the chart
-        $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
 
             chart: {
                 type: 'heatmap'
@@ -32,7 +31,6 @@ $(function () {
 
         });
 
-        chart = $('#container').highcharts();
         initialPointRange = chart.series[0].pointRange;
 
         // Run setData

@@ -1,6 +1,6 @@
 $(function () {
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Huge numbers failed with JS error'

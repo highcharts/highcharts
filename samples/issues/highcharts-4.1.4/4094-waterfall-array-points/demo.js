@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Waterfall point definitions', function (assert) {
-        $('#container').highcharts({
+        var chart = Highcharts.chart('container', {
             chart: {
                 type: 'waterfall'
             },
@@ -19,7 +19,6 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts();
         assert.equal(
             chart.xAxis[0].dataMin,
             Date.UTC(2015, 0, 1),

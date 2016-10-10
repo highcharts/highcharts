@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Tooltip showed week formats, should be date'
