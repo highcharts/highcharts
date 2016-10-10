@@ -28,7 +28,7 @@ const exists = path => {
 /**
  * Get content of file.
  * @param  {string} path Path to file.
- * @return {string|null} Returns content of file as a string. Returns null if file is not found.
+ * @returns {string|null} Returns content of file as a string. Returns null if file is not found.
  */
 const getFile = path => {
     const fs = require('fs');
