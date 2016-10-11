@@ -22,7 +22,7 @@ $(function () {
         }]
     });
 
-    $('#width').bind('input', function () {
+    $('#width').on('input', function () {
         $('#container').highcharts().setSize(this.value, 400, false);
     });
 });

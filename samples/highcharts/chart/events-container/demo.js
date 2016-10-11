@@ -17,7 +17,7 @@ $(function () {
     });
 
 
-    $('.chart-container').bind('mousedown', function () {
+    $('.chart-container').on('mousedown', function () {
         $(this).toggleClass('modal');
         $('.chart', this).highcharts().reflow();
     });

@@ -28,7 +28,7 @@ $(function () {
     });
 
 
-    $('#em').bind('input', function () {
+    $('#em').on('input', function () {
         chart.container.style.fontSize = this.value + 'em';
 
         // Update layout based on new font and line sizes
