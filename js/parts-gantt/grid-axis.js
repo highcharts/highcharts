@@ -73,7 +73,7 @@ H.Tick.prototype.getLabelWidth = function () {
  * Get the maximum label length.
  * This function can be used in states where the axis.maxLabelLength has not
  * been set.
- * 
+ *
  * @param  {boolean} force - Optional parameter to force a new calculation, even
  *                           if a value has already been set
  * @return {number} maxLabelLength - the maximum label length of the axis
@@ -82,7 +82,7 @@ H.Axis.prototype.getMaxLabelLength = function (force) {
 	var tickPositions = this.tickPositions,
 		ticks = this.ticks,
 		maxLabelLength = 0;
-	
+
 	if (!this.maxLabelLength || force) {
 		H.each(tickPositions, function (tick) {
 			tick = ticks[tick];
@@ -109,22 +109,22 @@ H.Axis.prototype.addTitle = function () {
 		hasData,
 		showAxis,
 		textAlign;
-		
+
 	// For reuse in Axis.render
 	hasData = axis.hasData();
 	axis.showAxis = showAxis = hasData || H.pick(options.showEmpty, true);
-	
+
 	// Disregard title generation in original Axis.getOffset()
 	options.title = '';
-	
+
 	if (!axis.axisTitle) {
 		textAlign = axisTitleOptions.textAlign;
 		if (!textAlign) {
-			textAlign = (horiz ? { 
+			textAlign = (horiz ? {
 				low: 'left',
 				middle: 'center',
 				high: 'right'
-			} : { 
+			} : {
 				low: opposite ? 'right' : 'left',
 				middle: 'center',
 				high: opposite ? 'left' : 'right'
@@ -164,9 +164,11 @@ H.dateFormats = {
 	W: function (timestamp) {
 		var date = new Date(timestamp),
 			day = date.getUTCDay() === 0 ? 7 : date.getUTCDay(),
+			time = date.getTime(),
+			startOfYear = new Date(date.getUTCFullYear(), 0, 1, -6),
 			dayNumber;
 		date.setDate(date.getUTCDate() + 4 - day);
-		dayNumber = Math.floor((date.getTime() - new Date(date.getUTCFullYear(), 0, 1, -6)) / 86400000);
+		dayNumber = Math.floor((time - startOfYear) / 86400000);
 		return 1 + Math.floor(dayNumber / 7);
 	},
 	// First letter of the day of the week, e.g. 'M' for 'Monday'.
@@ -203,49 +205,55 @@ H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
  *						 for the tick
  */
 H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
-	var returnValue = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		axis = this.axis,
 		tickInterval = axis.options.tickInterval || 1,
 		newX,
 		newPos,
 		axisHeight,
 		fontSize,
-		labelMetrics;
+		labelMetrics,
+		lblB,
+		lblH,
+		labelCenter;
 
 	// Only center tick labels if axis has option grid: true
 	if (axis.options.grid) {
 		fontSize = axis.options.labels.style.fontSize;
 		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label);
-		axisHeight = axis.axisGroup.getBBox().height;
+		lblB = labelMetrics.b;
+		lblH = labelMetrics.h;
 
 		if (axis.horiz && axis.options.categories === undefined) {
 			// Center x position
+			axisHeight = axis.axisGroup.getBBox().height;
 			newPos = this.pos + tickInterval / 2;
-			returnValue.x = axis.translate(newPos) + axis.left;
+			retVal.x = axis.translate(newPos) + axis.left;
+			labelCenter = (axisHeight / 2) + (lblH / 2) - Math.abs(lblH - lblB);
 
 			// Center y position
 			if (axis.side === axisSide.top) {
-				returnValue.y = y - (axisHeight / 2) + (labelMetrics.h / 2) - Math.abs(labelMetrics.h - labelMetrics.b);
+				retVal.y = y - labelCenter;
 			} else {
-				returnValue.y = y + (axisHeight / 2) + (labelMetrics.h / 2) - Math.abs(labelMetrics.h - labelMetrics.b);
+				retVal.y = y + labelCenter;
 			}
 		} else {
 			// Center y position
 			if (axis.options.categories === undefined) {
 				newPos = this.pos + (tickInterval / 2);
-				returnValue.y = axis.translate(newPos) + axis.top + (labelMetrics.b / 2);
+				retVal.y = axis.translate(newPos) + axis.top + (lblB / 2);
 			}
 
 			// Center x position
 			newX = (this.getLabelWidth() / 2) - (axis.maxLabelLength / 2);
 			if (axis.side === axisSide.left) {
-				returnValue.x += newX;
+				retVal.x += newX;
 			} else {
-				returnValue.x -= newX;
+				retVal.x -= newX;
 			}
 		}
 	}
-	return returnValue;
+	return retVal;
 });
 
 
@@ -293,12 +301,12 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 				axisTitleOptions.enabled !== false;
 
 	if (axis.options.grid && isObject(axis.options.title)) {
-		
+
 		tickSize = axis.tickSize('tick')[0];
 		if (axisOffset[side] && tickSize) {
 			axisHeight = axisOffset[side] + tickSize;
 		}
-		
+
 		if (addTitle) {
 			// Use the custom addTitle() to add it, while preventing making room
 			// for it
@@ -309,7 +317,7 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 
 		axisOffset[side] = H.pick(axisHeight, axisOffset[side]);
 
-		
+
 		// Put axis options back after original Axis.getOffset() has been called
 		options.title = axisTitleOptions;
 
