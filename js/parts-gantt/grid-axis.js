@@ -7,7 +7,15 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var isObject = H.isObject;
+var dateFormat = H.dateFormat,
+	each = H.each,
+	isObject = H.isObject,
+	pick = H.pick,
+	wrap = H.wrap,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	Tick = H.Tick;
+
 
 // Enum for which side the axis is on.
 // Maps to axis.side
@@ -34,12 +42,12 @@ var axisSide = {
  * @return true if the axis is the outermost axis in its dimension;
  *		 false if not
  */
-H.Axis.prototype.isOuterAxis = function () {
+Axis.prototype.isOuterAxis = function () {
 	var axis = this,
 		thisIndex = -1,
 		isOuter = true;
 
-	H.each(this.chart.axes, function (otherAxis, index) {
+	each(this.chart.axes, function (otherAxis, index) {
 		if (otherAxis.side === axis.side) {
 			if (otherAxis === axis) {
 				// Get the index of the axis in question
@@ -65,7 +73,7 @@ H.Axis.prototype.isOuterAxis = function () {
  *
  * @return {number} width - the width of the tick label
  */
-H.Tick.prototype.getLabelWidth = function () {
+Tick.prototype.getLabelWidth = function () {
 	return this.label.getBBox().width;
 };
 
@@ -78,13 +86,13 @@ H.Tick.prototype.getLabelWidth = function () {
  *                           if a value has already been set
  * @return {number} maxLabelLength - the maximum label length of the axis
  */
-H.Axis.prototype.getMaxLabelLength = function (force) {
+Axis.prototype.getMaxLabelLength = function (force) {
 	var tickPositions = this.tickPositions,
 		ticks = this.ticks,
 		maxLabelLength = 0;
 
 	if (!this.maxLabelLength || force) {
-		H.each(tickPositions, function (tick) {
+		each(tickPositions, function (tick) {
 			tick = ticks[tick];
 			if (tick && tick.labelLength > maxLabelLength) {
 				maxLabelLength = tick.labelLength;
@@ -98,7 +106,7 @@ H.Axis.prototype.getMaxLabelLength = function (force) {
 /**
  * Adds the axis defined in axis.options.title
  */
-H.Axis.prototype.addTitle = function () {
+Axis.prototype.addTitle = function () {
 	var axis = this,
 		renderer = axis.chart.renderer,
 		axisParent = axis.axisParent,
@@ -112,7 +120,7 @@ H.Axis.prototype.addTitle = function () {
 
 	// For reuse in Axis.render
 	hasData = axis.hasData();
-	axis.showAxis = showAxis = hasData || H.pick(options.showEmpty, true);
+	axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 	// Disregard title generation in original Axis.getOffset()
 	options.title = '';
@@ -173,7 +181,7 @@ H.dateFormats = {
 	},
 	// First letter of the day of the week, e.g. 'M' for 'Monday'.
 	E: function (timestamp) {
-		return H.dateFormat('%a', timestamp, true).charAt(0);
+		return dateFormat('%a', timestamp, true).charAt(0);
 	}
 };
 
@@ -185,7 +193,7 @@ H.dateFormats = {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
+wrap(Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
 		tickPositions = axis.tickPositions,
 		isNotDatetimeAxis = axis.options.type !== 'datetime',
@@ -204,7 +212,7 @@ H.wrap(H.Tick.prototype, 'addLabel', function (proceed) {
  * @return {object} object - an object containing x and y positions
  *						 for the tick
  */
-H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		axis = this.axis,
 		tickInterval = axis.options.tickInterval || 1,
@@ -264,7 +272,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
  * @param {function} proceed - the original function
  * @returns {array} retVal -
  */
-H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
+wrap(Axis.prototype, 'tickSize', function (proceed) {
 	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		labelPadding,
 		distance;
@@ -288,7 +296,7 @@ H.wrap(H.Axis.prototype, 'tickSize', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
+wrap(Axis.prototype, 'getOffset', function (proceed) {
 	var axis = this,
 		axisOffset = axis.chart.axisOffset,
 		side = axis.side,
@@ -315,7 +323,7 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
 
 		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
-		axisOffset[side] = H.pick(axisHeight, axisOffset[side]);
+		axisOffset[side] = pick(axisHeight, axisOffset[side]);
 
 
 		// Put axis options back after original Axis.getOffset() has been called
@@ -331,7 +339,7 @@ H.wrap(H.Axis.prototype, 'getOffset', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
+wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	// Call the original setAxisTranslation() to perform all other calculations
 
 	if (this.options.grid && !this.options.categories) {
@@ -358,7 +366,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
+wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
 	if (this.options.grid) {
 		this.labelRotation = 0;
 		this.options.labels.rotation = 0;
@@ -372,7 +380,7 @@ H.wrap(H.Axis.prototype, 'renderUnsquish', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Axis.prototype, 'render', function (proceed) {
+wrap(Axis.prototype, 'render', function (proceed) {
 	var axis = this,
 		labelPadding,
 		distance,
@@ -381,16 +389,25 @@ H.wrap(H.Axis.prototype, 'render', function (proceed) {
 		yStartIndex,
 		yEndIndex,
 		xStartIndex,
-		xEndIndex;
+		xEndIndex,
+		x1,
+		x2,
+		ticks = axis.ticks,
+		tickPositions = axis.tickPositions;
 
 	if (axis.options.grid) {
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
 		distance = axis.maxLabelLength + labelPadding;
 		lineWidth = axis.options.lineWidth;
 
+		x1 = ticks[tickPositions[0]];
+		x2 = ticks[tickPositions[tickPositions.length - 1]];
+
+		console.log(x1.getPosition().x, x2.getPosition().x, axis.axisGroup.element.getBBox().x);
 		// Call original Axis.render() to obtain axis.axisLine and
 		// axis.axisGroup
 		proceed.apply(axis);
+
 
 		if (axis.isOuterAxis() && axis.axisLine) {
 			if (axis.horiz) {
@@ -450,14 +467,14 @@ H.wrap(H.Axis.prototype, 'render', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-H.wrap(H.Chart.prototype, 'render', function (proceed) {
+wrap(Chart.prototype, 'render', function (proceed) {
 	// 25 is optimal height for default fontSize (11px)
 	// 25 / 11 ≈ 2.28
 	var fontSizeToCellHeightRatio = 25 / 11,
 		fontMetrics,
 		fontSize;
 
-	H.each(this.axes, function (axis) {
+	each(this.axes, function (axis) {
 		if (axis.options.grid) {
 			fontSize = axis.options.labels.style.fontSize;
 			fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
