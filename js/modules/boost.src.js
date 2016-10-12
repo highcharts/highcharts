@@ -71,9 +71,242 @@ var win = H.win,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
-	destroyLoadingDiv;
+	destroyLoadingDiv,
+	index
+;
 
-function eachAsync(arr, fn, finalFunc, chunkSize, i) {
+////////////////////////////////////////////////////////////////////////////////
+
+//Keep the GL renderer somewhat isolated
+function GLRenderer() {
+    var mainBuffer = false,
+        //Vertex shader source
+        vertShade = [
+        	'precision highp float;',
+            'attribute vec2 aVertexPosition;',
+            'uniform mat4 uPMatrix;',
+            'uniform float pSize;',
+
+            'void main(void) {',
+                'gl_PointSize = pSize;',
+                'gl_Position = uPMatrix * vec4(aVertexPosition, 0.0, 1.0);',
+            '}'
+        ].join('\n'),
+        //Fragment shader source
+        fragShade = [
+        	'precision highp float;',
+        	'uniform vec4 fillColor;',
+
+            'void main(void) {',
+            	'gl_FragColor =  fillColor;',
+            '}'
+        ].join('\n'),
+        //Vertex program
+        vertProgram,
+        //Fragment program
+        fragProgram,
+        //The shader program
+        shaderProgram,
+        //The vertex attribute handle
+        vertAttr,
+        //Uniform handle to the perspective matrix
+        pUniform,
+        //Uniform for point size
+        psUniform,
+        //Uniform for fill color
+        fillColorUniform,
+        //Opengl context
+        gl = false,
+        //Width of our viewport in pixels
+        width = 0,
+        //Height of our viewport in pixels
+        height = 0,
+        //The data to render - array of coordinates
+        data = [],
+        //Render settings
+        settings = {
+        	pointSize: 1,
+        	lineWidth: 1,
+        	drawMode: 'points',
+        	fillColor: '#AA00AA',
+        	useAlpha: false	
+        }       
+    ;
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    /* String to shader program
+     * @param {string} str - the program source
+     * @param {string} type - the program type: either `vertex` or `fragment`
+     * @returns {bool|shader}
+     */
+    function stringToProgram(str, type) {
+        var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
+            shader = gl.createShader(t)
+        ;
+
+        gl.shaderSource(shader, str);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('error compiling shaders:', gl.getShaderInfoLog(shader));
+            return false;
+        }
+
+        return shader;
+    }
+
+    /* Create the shader */
+    function createShader() {
+        var v = stringToProgram(vertShade, 'vertex'),
+            f = stringToProgram(fragShade, 'fragment')
+        ;
+
+        if (!v || !f) {
+            shaderProgram = false;
+            console.error('error creating shader program');
+            return false;
+        }
+
+        shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, v);
+        gl.attachShader(shaderProgram, f);
+        gl.linkProgram(shaderProgram);
+
+        gl.useProgram(shaderProgram);
+
+        pUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+        psUniform = gl.getUniformLocation(shaderProgram, "pSize");
+        fillColorUniform = gl.getUniformLocation(shaderProgram, "fillColor");
+
+        vertAttr = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(vertAttr);
+
+        return true;
+    }
+
+    /* Create a vertex buffer containing our data */
+    function createBuffer() {
+        mainBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, mainBuffer);
+        gl.bufferData(
+            gl.ARRAY_BUFFER, 
+            new Float32Array(data), 
+            gl.STATIC_DRAW
+        );
+        return mainBuffer;
+    }
+
+     /* Returns an orthographic perspective matrix
+     *  @param {number} width - the width of the viewport in pixels
+     *  @param {number} height - the height of the viewport in pixels
+     */
+    function orthoMatrix(width, height) {        
+        return [
+            2 / width, 0, 0, 0,
+            0, -2 / height, 0, 0,
+            0, 0, 50, 0,
+            -1, 1, 0, 1,
+        ];
+    }
+
+    /* Render the data */
+    function render() {
+        if (!gl || !width || !height) {
+            console.error('no valid gl context: w =', width, 'h =', height, 'gl =', gl);
+            return false;
+        }
+
+        var color = H.color(settings.fillColor).rgba;
+
+      	if (!settings.useAlpha) {
+      		color[3] = 1.0;
+      	}
+
+        console.time('gl rendering');
+     
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.enable(gl.BLEND);
+        //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.blendEquation(gl.FUNC_ADD);
+        gl.enable(gl.DEPTH_TEST);
+
+        createBuffer();
+        createShader();
+
+        gl.lineWidth(2);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, mainBuffer);
+        gl.vertexAttribPointer(vertAttr, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(vertAttr);
+                           
+        gl.uniformMatrix4fv(pUniform, false, orthoMatrix(width, height));
+        gl.uniform1f(psUniform, settings.pointSize);
+        gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
+
+        gl.drawArrays(gl[settings.drawMode.toUpperCase()], 0, data.length / 2);       
+
+        console.timeEnd('gl rendering');
+    }
+
+    /* Init OpenGL */
+    function init(canvas) {
+        if (!canvas) {
+            return false;
+        }
+
+        gl = canvas.getContext('webgl');
+        width = canvas.width;
+        height = canvas.height;
+
+        if (gl) {        	
+        	clear();
+        	flush();
+        }
+    }
+
+    /* Add data to render */
+    function push(x, y, bottom) {
+        data.push(x);
+        data.push(y);
+
+        if (bottom) {
+        	data.push(x);
+        	data.push(y + bottom);
+        	settings.drawMode = 'line_strip';
+        }
+    }
+
+    /* Check if we have a valid OGL context */
+    function valid() {
+        return gl !== false;
+    }
+
+    function clear() {
+    	gl.clearColor(1.0, 1.0, 1.0, 0.0);
+    	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+
+
+    function flush() {
+    	data = [];
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    return {
+        init: init,
+        push: push,
+        render: render,
+        settings: settings,
+        valid: valid,
+        clear: clear,
+        flush: flush
+    };
+};  
+
+////////////////////////////////////////////////////////////////////////////////
+
+function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	i = i || 0;
 	chunkSize = chunkSize || CHUNK_SIZE;
 	
@@ -82,13 +315,24 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i) {
 
 	while (proceed && i < threshold && i < arr.length) {
 		proceed = fn(arr[i], i);
-		i = i + 1;
+		++i;
 	}
 	if (proceed) {
 		if (i < arr.length) {
-			setTimeout(function () {
-				eachAsync(arr, fn, finalFunc, chunkSize, i);
-			});
+
+			if (noTimeout) {
+				eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout);
+			} else if (window.requestAnimationFrame) {
+				//If available, do requestAnimationFrame - shaves off a few ms 
+				window.requestAnimationFrame(function () {
+					eachAsync(arr, fn, finalFunc, chunkSize, i);
+				});
+			} else {
+				setTimeout(function () {
+					eachAsync(arr, fn, finalFunc, chunkSize, i);
+				});
+			}
+			
 		} else if (finalFunc) {
 			finalFunc();
 		}
@@ -159,8 +403,8 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
-
 H.extend(Series.prototype, {
+	gl: GLRenderer(),
 	pointRange: 0,
 	allowDG: false, // No data grouping, let boost handle large data 
 	hasExtremes: function (checkX) {
@@ -214,6 +458,12 @@ H.extend(Series.prototype, {
 		if (!this.canvas) {
 			this.canvas = doc.createElement('canvas');
 			this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
+
+			this.canvas.width = width;
+			this.canvas.height = height;
+
+			this.gl.init(this.canvas);
+			
 			this.ctx = ctx = this.canvas.getContext('2d');
 			if (chart.inverted) {
 				each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
@@ -221,11 +471,18 @@ H.extend(Series.prototype, {
 				});
 			}
 		} else {
-			ctx.clearRect(0, 0, width, height);
+
+			//ctx.clearRect(0, 0, width, height);
+			if (!this.gl.valid()) {
+				ctx.rect(0, 0, width, height);				
+			} else {
+				this.gl.flush();
+			}
 		}
 
 		this.canvas.width = width;
 		this.canvas.height = height;
+	
 		this.image.attr({
 			width: width,
 			height: height
@@ -247,6 +504,7 @@ H.extend(Series.prototype, {
 
 	renderCanvas: function () {
 		var series = this,
+			gl = this.gl,
 			options = series.options,
 			chart = series.chart,
 			xAxis = this.xAxis,
@@ -288,28 +546,17 @@ H.extend(Series.prototype, {
 			minVal,
 			maxVal,
 			minI,
-			maxI,
+			maxI,			
 			fillColor = series.fillOpacity ?
 					new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 					series.color,
 			stroke = function () {
-				if (doFill) {
-					ctx.fillStyle = fillColor;
-					ctx.fill();
-				} else {
-					ctx.strokeStyle = series.color;
-					ctx.lineWidth = options.lineWidth;
-					ctx.stroke();
-				}
+				return (doFill ? ctx.fill() : ctx.stroke());
 			},
 			drawPoint = function (clientX, plotY, yBottom) {
-				if (c === 0) {
-					ctx.beginPath();
-
-					if (cvsLineTo) {
-						ctx.lineJoin = 'round';
-					}
-				}
+				 if (c === 0) {
+				 	ctx.beginPath();
+				 }
 
 				if (wasNull) {
 					ctx.moveTo(clientX, plotY);
@@ -324,11 +571,10 @@ H.extend(Series.prototype, {
 				}
 
 				// We need to stroke the line for every 1000 pixels. It will crash the browser
-				// memory use if we stroke too infrequently.
-				c = c + 1;
-				if (c === 1000) {
+				// memory use if we stroke too infrequently.			
+				if (++c === 1000) {
 					stroke();
-					c = 0;
+					c = 0;			
 				}
 
 				// Area charts need to keep track of the last point
@@ -340,11 +586,13 @@ H.extend(Series.prototype, {
 			},
 
 			addKDPoint = function (clientX, plotY, i) {
+				//Shaves off about 60ms in canvas-scatter test
+				index = clientX + ',' + plotY;
 
 				// The k-d tree requires series points. Reduce the amount of points, since the time to build the 
 				// tree increases exponentially.
-				if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
-					pointTaken[clientX + ',' + plotY] = true;
+				if (enableMouseTracking && !pointTaken[index]) {
+					pointTaken[index] = true;
 
 					if (chart.inverted) {
 						clientX = xAxis.len - clientX;
@@ -352,14 +600,15 @@ H.extend(Series.prototype, {
 					}
 
 					points.push({
-						clientX: clientX,
+						clientX: clientX, 
 						plotX: clientX,
 						plotY: plotY,
 						i: cropStart + i
 					});
 				}
-			};
-
+			}
+		;			
+			
 		// If we are zooming out from SVG mode, destroy the graphics
 		if (this.points || this.graph) {
 			this.destroyGraphics();
@@ -383,6 +632,34 @@ H.extend(Series.prototype, {
 		ctx = this.getContext();
 		series.buildKDTree = noop; // Do not start building while drawing 
 
+		//We don't want to do state switches more often than needed,
+		//so do it once
+		if (!gl.valid()) {
+			if (doFill) {
+				ctx.fillStyle = fillColor;
+			} else {
+				ctx.strokeStyle = series.color;
+				ctx.lineWidth = options.lineWidth;
+			}			
+		} 
+		
+		gl.settings.fillColor = series.color;
+		if (!doFill) {
+			gl.settings.lineWidth = options.lineWidth + 1;
+			gl.settings.drawMode = 'line_strip';			
+		}
+
+		if (options.marker) {
+			gl.settings.pointSize = options.marker.radius || 1;			
+		}
+
+		if (!gl.valid()) {
+			if (cvsLineTo) {
+				gl.settings.drawMode = 'line_strip';
+		 		ctx.lineJoin = 'round';
+		 	}			
+		}
+
 		// Display a loading indicator
 		if (rawData.length > 99999) {
 			chart.options.loading = merge(loadingOptions, {
@@ -397,12 +674,11 @@ H.extend(Series.prototype, {
 				}
 			});
 			clearTimeout(destroyLoadingDiv);
-			chart.showLoading('Drawing...');
+			chart.showLoading('Processing...');
 			chart.options.loading = loadingOptions; // reset
 		}
 
-		// Loop over the points
-		eachAsync(isStacked ? series.data : (xData || rawData), function (d, i) {
+		function processPoint(d, i) {
 			var x,
 				y,
 				clientX,
@@ -410,7 +686,8 @@ H.extend(Series.prototype, {
 				isNull,
 				low,
 				chartDestroyed = typeof chart.index === 'undefined',
-				isYInside = true;
+				isYInside = true
+			;
 
 			if (!chartDestroyed) {
 				if (useRaw) {
@@ -464,39 +741,82 @@ H.extend(Series.prototype, {
 							if (minI !== undefined) { // then maxI is also a number
 								plotY = yAxis.toPixels(maxVal, true);
 								yBottom = yAxis.toPixels(minVal, true);
-								drawPoint(
-									clientX,
-									hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
-									hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
-								);
+
+								if (gl.valid()) {
+									gl.push(
+										clientX,
+										hasThreshold ? 
+												//Math.min(plotY, translatedThreshold) 
+												(plotY < translatedThreshold ? plotY : translatedThreshold) 
+												: plotY,
+
+										hasThreshold ? 
+											//Math.max(yBottom, translatedThreshold) 
+											(yBottom > translatedThreshold ? yBottom : translatedThreshold) 
+											: yBottom
+									);
+								} else {
+									//Fall back to regular canvas
+									drawPoint(
+										clientX,
+										hasThreshold ? 
+												//Math.min(plotY, translatedThreshold) 
+												(plotY < translatedThreshold ? plotY : translatedThreshold) 
+												: plotY,
+
+										hasThreshold ? 
+											//Math.max(yBottom, translatedThreshold) 
+											(yBottom > translatedThreshold ? yBottom : translatedThreshold) 
+											: yBottom
+									);
+								}
+
 								addKDPoint(clientX, plotY, maxI);
 								if (yBottom !== plotY) {
 									addKDPoint(clientX, yBottom, minI);
 								}
 							}
 
-
 							minI = maxI = undefined;
 							lastClientX = clientX;
 						}
 					} else {
 						plotY = Math.round(yAxis.toPixels(y, true));
-						drawPoint(clientX, plotY, yBottom);
+						
+						if (gl.valid()) {
+							gl.push(clientX, plotY, yBottom);
+						} else {
+							drawPoint(clientX, plotY, yBottom);							
+						}
+
 						addKDPoint(clientX, plotY, i);
 					}
 				}
 				wasNull = isNull && !connectNulls;
 
 				if (i % CHUNK_SIZE === 0) {
-					series.canvasToSVG();
+					//This is like super expensive, better to do it when done.
+				 	//Later we can superimpose the canvas onto the chart using CSS,
+					//then remove it when we're done drawing.
+				 	//Could also check the animation settings, and show it if it's active,
+				 	//to give people more flexibility.
+					//series.canvasToSVG();
 				}
 			}
 
 			return !chartDestroyed;
-		}, function () {
+		}
+
+		function doneProcessing() {
 			var loadingDiv = chart.loadingDiv,
 				loadingShown = chart.loadingShown;
-			stroke();
+			
+			if (gl.valid()) {			
+				gl.render();
+			} else {
+				stroke();
+			}
+
 			series.canvasToSVG();
 
 			fireEvent(series, 'renderedCanvas');
@@ -526,9 +846,22 @@ H.extend(Series.prototype, {
 
 			delete series.buildKDTree; // Go back to prototype, ready to build
 			series.buildKDTree();
+		}
 
-		// Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
-		}, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
+		// if (gl.valid()) {
+		// 	var d = isStacked ? series.data : (xData || rawData);
+		// 	for (var i = 0; i < d.length; i++) {
+		// 		processPoint(d[i], i);
+		// 	}
+		// 	return doneProcessing();
+		// }
+
+		// Loop over the points
+		eachAsync(isStacked ? series.data : (xData || rawData), 
+				  processPoint, 
+				  doneProcessing, 
+				  chart.renderer.forExport ? Number.MAX_VALUE : undefined
+		);
 	}
 });
 
