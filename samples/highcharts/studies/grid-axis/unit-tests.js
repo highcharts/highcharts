@@ -476,3 +476,99 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         'Top outer datetime axis vertical placement'
     );
 });
+
+/**
+ * Checks that datetime and linear axes have ticks placed at the start and end
+ * of the axis, creating a grid:
+ *   ___________________
+ *   |__|__|__|__|__|__|
+ *   ^                 ^
+ */
+QUnit.test('Horizontal axis ticks at start and end', function (assert) {
+    var chart,
+        axes,
+        axis,
+        $axisGroup,
+        axisGroupBox,
+        leftTick,
+        rightTick,
+        i;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            opposite: true
+        }],
+        series: [{
+            xAxis: 0,
+            data: [[129.9, 271.5], [306.4, -29.2], [544.0, 376.0]]
+        }, {
+            xAxis: 1,
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
+        }, {
+            xAxis: 2,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 3,
+            data: [{
+                x: Date.UTC(2016, 10, 13),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 15),
+                y: 2
+            }]
+        }]
+    });
+
+    axes = chart.xAxis;
+
+    for (i = 0; i < axes.length; i++) {
+        axis = axes[0];
+        $axisGroup = $(axis.axisGroup.element);
+        axisGroupBox = $axisGroup[0].getBBox();
+        leftTick = $axisGroup.children()[0];
+        rightTick = $axisGroup.children()[1];
+
+        assert.equal(
+            leftTick.getBBox().x,
+            axisGroupBox.x,
+            'Leftmost tick has same x value as leftmost point of axisGroup'
+        );
+
+        assert.equal(
+            rightTick.getBBox().x,
+            axisGroupBox.x + axisGroupBox.width,
+            'Rightmost tick has same x value as rightmost point of axisGroup'
+        );
+    }
+});
