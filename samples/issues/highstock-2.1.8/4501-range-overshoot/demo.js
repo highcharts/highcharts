@@ -35,7 +35,7 @@ $(function () {
                 data: eps
             }]
         });
-        chart = $('#container').highcharts();
+        chart = document.getElementById('container').highcharts();
 
         assert.strictEqual(
             chart.xAxis[0].max,

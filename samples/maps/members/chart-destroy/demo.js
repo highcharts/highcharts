@@ -42,7 +42,7 @@ $(function () {
         $('#destroy')
             .attr('disabled', false)
             .click(function () {
-                $('#container').highcharts().destroy();
+                document.getElementById('container').highcharts().destroy();
                 $(this).attr('disabled', true);
             });
 

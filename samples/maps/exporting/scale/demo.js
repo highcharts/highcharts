@@ -51,7 +51,7 @@ $(function () {
 
 
     $('button.export').click(function () {
-        $('#container').highcharts()
+        document.getElementById('container').highcharts()
             .exportChart({
                 scale: $(this).data().scale
             });

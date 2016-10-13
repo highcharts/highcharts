@@ -49,7 +49,7 @@ $(function () {
 
 
 
-        chart = $('#container').highcharts(options).highcharts();
+        chart = document.getElementById('container').highcharts(options).highcharts();
         assert.equal(
             allLabelsVisible(chart),
             true,
@@ -58,7 +58,7 @@ $(function () {
 
 
         options.chart.inverted = true;
-        chart = $('#container').highcharts(options).highcharts();
+        chart = document.getElementById('container').highcharts(options).highcharts();
         assert.equal(
             allLabelsVisible(chart),
             true,

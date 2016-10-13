@@ -42,13 +42,13 @@ $(function () {
         }]
     };
 
-    $('#container').highcharts(options);
+    document.getElementById('container').highcharts(options);
 
     $('#margin').bind('input', function () {
         options.chart.marginRight = this.value;
         options.chart.marginLeft = this.value;
         $('#value').html(this.value);
-        $('#container').highcharts(options);
+        document.getElementById('container').highcharts(options);
     })
     .attr({
         value: margin

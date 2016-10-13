@@ -58,7 +58,7 @@ $(function () {
             plotBackgroundImage: null,
             plotBorderWidth: 0,
             plotShadow: false,
-            height: $('#container').width(),
+            height: document.getElementById('container').width(),
             events: {
                 load: onDraw,
                 resize: onDraw
@@ -97,7 +97,7 @@ $(function () {
                 useHTML: true,
                 formatter: function () {
                     var style = '',
-                        scale = $('#container').width() * 0.005;
+                        scale = document.getElementById('container').width() * 0.005;
                     if (this.value.length === 1) {
                         style = 'font-size:' + (scale * 1.3) + 'em';
                     } else if (this.value.length === 2) {
@@ -153,4 +153,3 @@ $(function () {
             }
         });
 });
-

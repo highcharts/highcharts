@@ -21,7 +21,7 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts();
+        var chart = document.getElementById('container').highcharts();
 
         assert.strictEqual(
             chart.yAxis[0].tickPositions.length < chart.yAxis[0].len,

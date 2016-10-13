@@ -46,7 +46,7 @@ $(function () {
 
         // Activate the button
         $('#remove').click(function () {
-            $.each($('#container').highcharts().getSelectedPoints(), function () {
+            $.each(document.getElementById('container').highcharts().getSelectedPoints(), function () {
                 this.remove();
             });
         });

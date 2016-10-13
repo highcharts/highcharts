@@ -12,7 +12,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
+        var chart = document.getElementById('container').highcharts();
         chart.series[0].setData(ADBE);
         this.disabled = true;
     });

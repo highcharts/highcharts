@@ -20,7 +20,7 @@ $(function () {
         }]
     });
 
-    var chart = $('#container').highcharts();
+    var chart = document.getElementById('container').highcharts();
     $('#showloading').click(function () {
         chart.showLoading();
     });

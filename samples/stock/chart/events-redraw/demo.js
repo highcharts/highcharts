@@ -22,7 +22,7 @@ $(function () {
 
     // activate the button
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
+        var chart = document.getElementById('container').highcharts();
         chart.addSeries({
             name: 'ADBE',
             data: ADBE

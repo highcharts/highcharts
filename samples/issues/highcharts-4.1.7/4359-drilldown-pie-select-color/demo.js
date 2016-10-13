@@ -43,9 +43,9 @@ $(function () {
             },
             chart, chart3d;
 
-        chart = $('#container').highcharts(options).highcharts();
+        chart = document.getElementById('container').highcharts(options).highcharts();
         options.chart.options3d.enabled = true;
-        chart3d = $('#container_2').highcharts(options).highcharts();
+        chart3d = document.getElementById('container_2').highcharts(options).highcharts();
 
         chart.series[0].points[1].doDrilldown();
         chart.series[0].points[0].select();

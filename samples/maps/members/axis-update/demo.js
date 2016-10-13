@@ -38,7 +38,7 @@ $(function () {
         log = true;
 
     $('#update-color').click(function () {
-        var colorAxis = $('#container').highcharts().colorAxis[0];
+        var colorAxis = document.getElementById('container').highcharts().colorAxis[0];
 
         colorAxis.update({
             maxColor: blackAndWhite ? '#980043' : '#000000'
@@ -47,7 +47,7 @@ $(function () {
     });
 
     $('#update-linlog').click(function () {
-        var colorAxis = $('#container').highcharts().colorAxis[0];
+        var colorAxis = document.getElementById('container').highcharts().colorAxis[0];
 
         colorAxis.update({
             type: log ? 'linear' : 'logarithmic'

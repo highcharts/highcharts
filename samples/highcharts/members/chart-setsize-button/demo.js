@@ -1,5 +1,5 @@
 $(function () {
-    var $container = $('#container'),
+    var $container = document.getElementById('container'),
         chart,
         origChartWidth = 400,
         origChartHeight = 300,

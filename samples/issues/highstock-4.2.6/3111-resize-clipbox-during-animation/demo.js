@@ -44,7 +44,7 @@ $(function () {
         });
 
         setTimeout(function () {
-            chart = $('#container').highcharts();
+            chart = document.getElementById('container').highcharts();
 
             chart.setSize(700, 450);
 

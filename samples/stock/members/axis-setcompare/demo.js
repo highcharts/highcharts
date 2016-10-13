@@ -62,7 +62,7 @@ $(function () {
 
     // buttons behaviour
     $('button.compare').click(function () {
-        var chart = $('#container').highcharts(),
+        var chart = document.getElementById('container').highcharts(),
             compare = $(this).data().compare;
         chart.yAxis[0].setCompare(compare);
 

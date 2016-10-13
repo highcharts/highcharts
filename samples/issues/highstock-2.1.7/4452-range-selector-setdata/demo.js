@@ -46,7 +46,7 @@ $(function () {
             },
             series: [{}]
         });
-        chart = $('#container').highcharts();
+        chart = document.getElementById('container').highcharts();
 
         assert.strictEqual(
             typeof chart.rangeSelector.group,

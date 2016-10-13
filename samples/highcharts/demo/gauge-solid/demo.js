@@ -55,7 +55,7 @@ $(function () {
     };
 
     // The speed gauge
-    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+    document.getElementById('container-speed').highcharts(Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 200,
@@ -84,7 +84,7 @@ $(function () {
     }));
 
     // The RPM gauge
-    $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+    document.getElementById('container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 5,
@@ -111,7 +111,7 @@ $(function () {
     // Bring life to the dials
     setInterval(function () {
         // Speed
-        var chart = $('#container-speed').highcharts(),
+        var chart = document.getElementById('container-speed').highcharts(),
             point,
             newVal,
             inc;
@@ -129,7 +129,7 @@ $(function () {
         }
 
         // RPM
-        chart = $('#container-rpm').highcharts();
+        chart = document.getElementById('container-rpm').highcharts();
         if (chart) {
             point = chart.series[0].points[0];
             inc = Math.random() - 0.5;

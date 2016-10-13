@@ -24,6 +24,6 @@ $(function () {
             data: usdeur
         }]
     });
-    chart = $('#container').highcharts();
+    chart = document.getElementById('container').highcharts();
 
 });

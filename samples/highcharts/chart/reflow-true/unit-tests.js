@@ -12,7 +12,7 @@ QUnit.test('Set width', function (assert) {
     );
 
     // Change the container size and trigger window resize to make the chart resize
-    $('#container').width(300);
+    document.getElementById('container').width(300);
     Highcharts.fireEvent(window, 'resize');
 
     setTimeout(function () {

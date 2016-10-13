@@ -217,7 +217,7 @@ $(function () {
             }
 
             // make the container smaller and add a second container for the master chart
-            var $container = $('#container')
+            var $container = document.getElementById('container')
                 .css('position', 'relative');
 
             $('<div id="detail-container">')

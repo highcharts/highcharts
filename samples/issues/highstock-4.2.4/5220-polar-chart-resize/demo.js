@@ -1,8 +1,7 @@
 $(function () {
 
     QUnit.test('Polar chart resize', function (assert) {
-        var chart;
-        Highcharts.chart('container', {
+        var chart = Highcharts.chart('container', {
 
             chart: {
                 polar: true,
@@ -61,7 +60,6 @@ $(function () {
             }]
         });
 
-        chart = $('#container').highcharts();
 
         assert.strictEqual(
             chart.container.querySelector('svg').getAttribute('width'),

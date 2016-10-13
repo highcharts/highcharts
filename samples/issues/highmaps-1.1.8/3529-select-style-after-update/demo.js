@@ -58,7 +58,7 @@ $(function () {
             }]
         });
 
-        chart = $('#container').highcharts();
+        chart = document.getElementById('container').highcharts();
         chart.series[0].data[4].select();
         chart.series[0].data[0].update(100);
 

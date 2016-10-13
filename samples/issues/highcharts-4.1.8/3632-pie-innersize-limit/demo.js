@@ -16,7 +16,7 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts(),
+        var chart = document.getElementById('container').highcharts(),
             center = chart.series[0].center;
 
         assert.strictEqual(

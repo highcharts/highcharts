@@ -1,7 +1,6 @@
 QUnit.test('No animation', function (assert) {
     var chart = Highcharts.charts[0],
-        point = chart.series[0].points[0],
-        bBox;
+        point = chart.series[0].points[0];
 
     chart.series[0].points[0].update(200);
     assert.strictEqual(

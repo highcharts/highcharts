@@ -98,7 +98,7 @@ $(function () {
             });
         },
         error: function () {
-            $('#container').html('<div class="loading">' +
+            document.getElementById('container').html('<div class="loading">' +
                 '<i class="icon-frown icon-large"></i> ' +
                 'Error loading data from Google Spreadsheets' +
                 '</div>');

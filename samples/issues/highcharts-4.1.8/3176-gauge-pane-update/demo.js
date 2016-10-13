@@ -58,7 +58,7 @@ $(function () {
             };
         }
 
-        chart = $('#container').highcharts(getOptions()).highcharts();
+        chart = document.getElementById('container').highcharts(getOptions()).highcharts();
 
         assert.strictEqual(
             chart.yAxis[0].plotLinesAndBands.length,
@@ -86,7 +86,7 @@ $(function () {
             to: 80,
             color: 'green'
         }];
-        chart = $('#container').highcharts(options).highcharts();
+        chart = document.getElementById('container').highcharts(options).highcharts();
 
         assert.strictEqual(
             chart.yAxis[0].plotLinesAndBands.length,

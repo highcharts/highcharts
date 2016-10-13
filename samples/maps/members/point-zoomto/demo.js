@@ -63,13 +63,13 @@ $(function () {
 
         // Activate the buttons
         $('#ecuador').click(function () {
-            $('#container').highcharts().get('EC').zoomTo();
+            document.getElementById('container').highcharts().get('EC').zoomTo();
         });
         $('#south-korea').click(function () {
-            $('#container').highcharts().get('KR').zoomTo();
+            document.getElementById('container').highcharts().get('KR').zoomTo();
         });
         $('#zoom-out').click(function () {
-            $('#container').highcharts().mapZoom();
+            document.getElementById('container').highcharts().mapZoom();
         });
     });
 });

@@ -12,7 +12,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
+        var chart = document.getElementById('container').highcharts(),
             series = chart.series[0];
         if (series.visible) {
             series.hide();

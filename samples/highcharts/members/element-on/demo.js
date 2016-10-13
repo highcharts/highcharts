@@ -1,6 +1,6 @@
 $(function () {
     var renderer = new Highcharts.Renderer(
-            $('#container')[0],
+            document.getElementById('#container'),
             400,
             300
         ),

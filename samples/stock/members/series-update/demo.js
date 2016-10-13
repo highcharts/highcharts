@@ -37,7 +37,7 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts(),
+        var chart = document.getElementById('container').highcharts(),
             enableMarkers = true,
             color = false;
 

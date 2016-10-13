@@ -38,7 +38,7 @@ $(function () {
 
         // Activate the button
         $('#update').click(function () {
-            $('#container').highcharts().series[0].update({
+            document.getElementById('container').highcharts().series[0].update({
                 name: 'Updated series name',
                 borderColor: 'black',
                 dashStyle: 'dot'

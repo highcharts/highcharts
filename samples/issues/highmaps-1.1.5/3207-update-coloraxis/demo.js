@@ -75,7 +75,7 @@ $(function () {
             }]
         });
 
-        chart = $('#container').highcharts();
+        chart = document.getElementById('container').highcharts();
 
         assert.equal(
             chart.series[0].points[1].color,
@@ -114,7 +114,7 @@ $(function () {
         // Test the SVG
         var svg = chart.getSVG();
         chart.destroy();
-        $('#container').html(svg);
+        document.getElementById('container').html(svg);
 
 
         assert.equal(

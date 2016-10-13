@@ -115,7 +115,7 @@ $(function () {
         );
 
         // Test that it responds to reflow
-        $('#container').width(700);
+        document.getElementById('container').width(700);
         chart.reflow();
 
         assert.strictEqual(

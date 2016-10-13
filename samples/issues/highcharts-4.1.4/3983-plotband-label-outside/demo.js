@@ -38,7 +38,7 @@ $(function () {
             };
 
         // Create the Highcharts chart
-        chart = $('#container').highcharts(options).highcharts();
+        chart = document.getElementById('container').highcharts(options).highcharts();
 
         assert.equal(
             typeof chart.xAxis[0].plotLinesAndBands[0].label,
@@ -57,7 +57,7 @@ $(function () {
         );
 
         // Create the Highstock chart
-        chart = $('#container').highcharts('StockChart', options).highcharts();
+        chart = document.getElementById('container').highcharts('StockChart', options).highcharts();
 
         assert.equal(
             typeof chart.xAxis[0].plotLinesAndBands[0].label,

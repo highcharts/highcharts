@@ -14,7 +14,7 @@ $(function () {
 
     var wide = false;
     $('#set-div-size').click(function () {
-        $('#container').width(wide ? 400 : 500);
+        document.getElementById('container').width(wide ? 400 : 500);
         wide = !wide;
     });
     $('#reflow-chart').click(function () {

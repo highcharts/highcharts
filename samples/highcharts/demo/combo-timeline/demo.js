@@ -393,5 +393,5 @@ $(function () {
         });
     }
 
-    $('#container').highcharts(options);
+    document.getElementById('container').highcharts(options);
 });

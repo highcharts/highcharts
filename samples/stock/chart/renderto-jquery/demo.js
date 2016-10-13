@@ -1,7 +1,7 @@
 $(function () {
     window.chart = new Highcharts.StockChart({
         chart: {
-            renderTo: $('#container')[0]
+            renderTo: document.getElementById('container')[0]
         },
 
         rangeSelector: {

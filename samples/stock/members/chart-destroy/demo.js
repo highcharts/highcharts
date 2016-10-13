@@ -14,7 +14,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        $('#container').highcharts().destroy();
+        document.getElementById('container').highcharts().destroy();
         $(this).attr('disabled', true);
     });
 });

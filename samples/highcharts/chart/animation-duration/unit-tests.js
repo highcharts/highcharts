@@ -2,7 +2,6 @@ QUnit.test('Animation duration', function (assert) {
     var chart = Highcharts.charts[0],
         point = chart.series[0].points[0],
         initialPos = point.series.yAxis.toPixels(point.y, true),
-        bBox,
         realPos,
         done = assert.async();
 

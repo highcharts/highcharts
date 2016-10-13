@@ -10,7 +10,7 @@ $(function () {
      * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
-    $('#container').bind('mousemove touchmove touchstart', function (e) {
+    document.getElementById('container').bind('mousemove touchmove touchstart', function (e) {
         var chart,
             point,
             i,

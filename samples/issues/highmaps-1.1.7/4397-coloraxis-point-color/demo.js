@@ -76,7 +76,7 @@ $(function () {
             }]
         });
 
-        chart = $('#container').highcharts();
+        chart = document.getElementById('container').highcharts();
 
         assert.strictEqual(
             chart.series[0].points[0].graphic.attr('fill'),
