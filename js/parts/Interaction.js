@@ -482,19 +482,6 @@ extend(Point.prototype, {
 			hoverPoint = chart.hoverPoint;
 
 		if (point.series) { // It may have been destroyed, #4130
-
-			// trigger the event
-			point.firePointEvent('mouseOver');
-
-			// update the tooltip
-			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-				tooltip.refresh(point, e);
-				// hover point only for non shared points: (#5766)
-				point.setState('hover');
-			} else if (!tooltip) {
-				point.setState('hover');
-			}
-
 			// In shared tooltip, call mouse over when point/series is actually hovered: (#5766)
 			if (!byProximity) {
 				// set normal state to previous series
@@ -506,6 +493,18 @@ extend(Point.prototype, {
 				}
 				chart.hoverPoint = point;
 			}
+
+			// update the tooltip
+			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				// hover point only for non shared points: (#5766)
+				point.setState('hover');
+				tooltip.refresh(point, e);
+			} else if (!tooltip) {
+				point.setState('hover');
+			}
+
+			// trigger the event
+			point.firePointEvent('mouseOver');
 		}
 	},
 
