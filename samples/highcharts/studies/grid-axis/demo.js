@@ -3,7 +3,9 @@ $(function () {
     // THE CHART
     $('#container').highcharts({
         chart: {
-            type: 'scatter'
+            type: 'scatter',
+            marginLeft: 150,
+            marginRight: 150
         },
         title: {
             text: 'Highcharts GridAxis'
