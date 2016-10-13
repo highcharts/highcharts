@@ -933,6 +933,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				undefined;
+
 			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
 
