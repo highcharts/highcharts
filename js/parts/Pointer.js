@@ -227,14 +227,11 @@ H.Pointer.prototype = {
 		if (kdpoints[0] && (kdpoints[0] !== chart.hoverPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoints[0].series.noSharedTooltip) {
-				// Do mouseover on all points (#3919, #3985, #4410)
-				for (i = 0; i >= 0; i--) {
+				// Do mouseover on all points (#3919, #3985, #4410, #5622)
+				for (i = 0; i < kdpoints.length; i++) {
 					kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
 				}
-				// Make sure that the hoverPoint and hoverSeries are stored for events (e.g. click), #5622
-				if (hoverSeries && hoverSeries.directTouch && hoverPoint && hoverPoint !== kdpoints[0]) {
-					hoverPoint.onMouseOver(e, false);
-				}
+
 				if (kdpoints.length && tooltip) {
 					// Keep the order of series in tooltip:
 					tooltip.refresh(kdpoints.sort(function (p1, p2) {
@@ -249,7 +246,6 @@ H.Pointer.prototype = {
 					kdpoints[0].onMouseOver(e);
 				}
 			}
-			pointer.prevKDPoint = kdpoints[0];
 			updatePosition = false;
 		}
 		// Update positions (regardless of kdpoint or hoverPoint)
@@ -351,7 +347,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
+			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 
