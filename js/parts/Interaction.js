@@ -665,7 +665,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(chart.seriesGroup);
+					.add(series.group);
 			}
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -699,13 +699,12 @@ extend(Point.prototype, {
 	haloPath: function (size) {
 		var series = this.series,
 			chart = series.chart,
-			plotBox = series.getPlotBox(),
 			inverted = chart.inverted,
 			plotX = Math.floor(this.plotX);
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+			(inverted ? series.yAxis.len - this.plotY : plotX) - size,
+			(inverted ? series.xAxis.len - plotX : this.plotY) - size,
 			size * 2, 
 			size * 2
 		);
