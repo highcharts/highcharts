@@ -2509,7 +2509,7 @@ H.Axis.prototype = {
 				d: path
 			});
 
-			if (categorized) {
+			if (categorized && !options.width) {
 				graphic.attr({
 					'stroke-width': this.transA
 				});
