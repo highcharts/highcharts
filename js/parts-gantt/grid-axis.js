@@ -390,37 +390,55 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		yEndIndex,
 		xStartIndex,
 		xEndIndex,
-		x1,
-		x2,
-		ticks = axis.ticks,
-		tickPositions = axis.tickPositions;
+		renderer = axis.chart.renderer,
+		axisGroupBox;
 
 	if (axis.options.grid) {
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
 		distance = axis.maxLabelLength + labelPadding;
 		lineWidth = axis.options.lineWidth;
 
-		x1 = ticks[tickPositions[0]];
-		x2 = ticks[tickPositions[tickPositions.length - 1]];
+		if (axis.rightWall) {
+			axis.rightWall.destroy();
+		}
 
-		console.log(x1.getPosition().x, x2.getPosition().x, axis.axisGroup.element.getBBox().x);
 		// Call original Axis.render() to obtain axis.axisLine and
 		// axis.axisGroup
 		proceed.apply(axis);
 
+		axisGroupBox = axis.axisGroup.getBBox();
+
+		// Add a wall at the end
+		if (axis.horiz) {
+			axis.rightWall = renderer.path([
+				'M',
+				axisGroupBox.x + axis.width,
+				axisGroupBox.y,
+				'L',
+				axisGroupBox.x + axis.width,
+				axisGroupBox.y + axisGroupBox.height
+			])
+			.attr({
+				stroke: axis.options.lineColor,
+				'stroke-width': lineWidth,
+				zIndex: 7,
+				class: 'grid-wall'
+			})
+			.add(axis.axisGroup);
+		}
 
 		if (axis.isOuterAxis() && axis.axisLine) {
 			if (axis.horiz) {
 				// -1 to avoid adding distance each time the chart updates
-				distance = axis.axisGroup.getBBox().height - 1;
+				distance = axisGroupBox.height - 1;
 			}
 
 			if (lineWidth) {
 				linePath = axis.getLinePath(lineWidth);
-				yStartIndex = linePath.indexOf('M') + 2;
-				yEndIndex = linePath.indexOf('L') + 2;
 				xStartIndex = linePath.indexOf('M') + 1;
 				xEndIndex = linePath.indexOf('L') + 1;
+				yStartIndex = linePath.indexOf('M') + 2;
+				yEndIndex = linePath.indexOf('L') + 2;
 
 				// Negate distance if top or left axis
 				if (axis.side === axisSide.top || axis.side === axisSide.left) {
@@ -438,7 +456,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 				}
 
 				if (!axis.axisLineExtra) {
-					axis.axisLineExtra = axis.chart.renderer.path(linePath)
+					axis.axisLineExtra = renderer.path(linePath)
 						.attr({
 							stroke: axis.options.lineColor,
 							'stroke-width': lineWidth,

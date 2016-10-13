@@ -492,6 +492,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         axisGroupBox,
         leftTick,
         rightTick,
+        ticks,
         i;
 
     chart = Highcharts.chart('container', {
@@ -556,8 +557,9 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         axis = axes[0];
         $axisGroup = $(axis.axisGroup.element);
         axisGroupBox = $axisGroup[0].getBBox();
-        leftTick = $axisGroup.children()[0];
-        rightTick = $axisGroup.children()[1];
+        ticks = $axisGroup.children();
+        leftTick = ticks[0];
+        rightTick = ticks.slice(-1)[0];
 
         assert.equal(
             leftTick.getBBox().x,
