@@ -374,6 +374,16 @@ wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
 	proceed.apply(this);
 });
 
+
+wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+	var axis = this;
+	if (userOptions.grid && axis.horiz) {
+		userOptions.startOnTick = true;
+		userOptions.minPadding = 0;
+	}
+	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
 /**
  * Draw an extra line on the far side of the the axisLine,
  * creating cell roofs of a grid.
@@ -398,6 +408,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		distance = axis.maxLabelLength + labelPadding;
 		lineWidth = axis.options.lineWidth;
 
+		// Remove right wall before rendering
 		if (axis.rightWall) {
 			axis.rightWall.destroy();
 		}
@@ -408,14 +419,14 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 		axisGroupBox = axis.axisGroup.getBBox();
 
-		// Add a wall at the end
+		// Add right wall on horizontal axes
 		if (axis.horiz) {
 			axis.rightWall = renderer.path([
 				'M',
-				axisGroupBox.x + axis.width,
+				axisGroupBox.x + axis.width + 0.5, // account for left wall
 				axisGroupBox.y,
 				'L',
-				axisGroupBox.x + axis.width,
+				axisGroupBox.x + axis.width + 0.5, // account for left wall
 				axisGroupBox.y + axisGroupBox.height
 			])
 			.attr({
