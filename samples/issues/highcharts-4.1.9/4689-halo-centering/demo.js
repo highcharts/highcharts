@@ -50,7 +50,7 @@ $(function () {
         for (var i = 0; i < chart.series[0].points.length; i++) {
             chart.series[0].points[i].onMouseOver();
             assert.strictEqual(
-                getCenter(chart.series[0].points[i].graphic.getBBox(), chart.plotBox),
+                getCenter(chart.series[0].points[i].graphic.getBBox()),
                 getCenter(chart.series[0].halo.getBBox()),
                 'Point ' + i + ' and halo has the same center'
             );
