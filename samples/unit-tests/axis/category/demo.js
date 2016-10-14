@@ -381,3 +381,24 @@ QUnit.test('Keeping updated with setData (#5768)', function (assert) {
         'Changed with setData'
     );
 });
+
+
+QUnit.test('Set crosshair width (#5819)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category',
+            crosshair: {
+                color: 'black',
+                width: 1
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }]
+    });
+
+    chart.series[0].points[1].onMouseOver();
+    chart.xAxis[0].drawCrosshair({}, chart.series[0].points[1]);
+
+    assert.strictEqual(chart.xAxis[0].cross['stroke-width'], 1, 'Stroke width is set to 1');
+});
