@@ -702,7 +702,7 @@ H.extend(Series.prototype, {
 			cropStart = series.cropStart || 0,
 			//loadingOptions = chart.options.loading,
 			requireSorting = series.requireSorting,
-		//	wasNull,
+			wasNull,
 			connectNulls = options.connectNulls,
 			useRaw = !xData,
 			minVal,
