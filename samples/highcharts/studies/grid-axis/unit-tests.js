@@ -574,3 +574,102 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         );
     }
 });
+
+/**
+ * Checks that the ticks in independent horizontal axes are equally distributed,
+ * by checking that the space between the first and second tick is equal to the
+ * second last and last tick.
+ *
+ * It is however fine that ticks in axes which are linked to other axes are not
+ * equally distributed, because they may not have the same tick interval as the
+ * inner axes.
+ */
+QUnit.test('Independent horizontal axis ticks equally distributed', function (assert) {
+    var chart,
+        axes,
+        i,
+        axis,
+        // tickPositions,
+        ticks,
+        $axisGroup,
+        axisGroupBox,
+        secondLeftmostTick,
+        rightmostTick,
+        leftSpace,
+        rightSpace;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            opposite: true
+        }],
+        series: [{
+            xAxis: 0,
+            data: [[129.9, 271.5], [306.4, -29.2], [544.0, 376.0]]
+        }, {
+            xAxis: 1,
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
+        }, {
+            xAxis: 2,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 3,
+            data: [{
+                x: Date.UTC(2016, 10, 13),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 15),
+                y: 2
+            }]
+        }]
+    });
+
+    axes = chart.xAxis;
+
+    for (i = 0; i < axes.length; i++) {
+        axis = axes[i];
+        $axisGroup = $(axis.axisGroup.element);
+        ticks = $axisGroup.find('.highcharts-tick');
+        secondLeftmostTick = ticks[1];
+        rightmostTick = ticks.slice(-1)[0];
+        axisGroupBox = $axisGroup[0].getBBox();
+        leftSpace = secondLeftmostTick.getBBox().x - axisGroupBox.x;
+        rightSpace = (axisGroupBox.x + axisGroupBox.width) - rightmostTick.getBBox().x;
+
+        assert.equal(
+            leftSpace,
+            rightSpace,
+            'Left space is equal to right space in xAxis[' + i + ']'
+        );
+    }
+});
