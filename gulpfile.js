@@ -245,7 +245,7 @@ const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine();
     const formatter = cli.getFormatter();
-    let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**'];
+    let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
     console.log(formatter(report.results));
 };
