@@ -374,6 +374,8 @@ seriesProto.processData = function () {
 			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
+	} else if (!series.visible) {
+		series.closestPointRange = null; // #5823
 	}
 };
 
