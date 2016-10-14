@@ -78,6 +78,16 @@ var win = H.win,
 ////////////////////////////////////////////////////////////////////////////////
 
 //Keep the GL renderer somewhat isolated
+/*
+	Notes to self:
+		- If we need varrying sizes for things (e.g. bubble charts) we can
+		  use a vec3 instead, and use z as the size.
+		- May be able to build a point map by rendering to a separate canvas
+		  and encoding values in the color data.
+		- If we need colors per. point/line we need a separate vertex buffer
+		- Need to figure out a way to transform the data quicker
+
+*/
 function GLRenderer() {
     var mainBuffer = false,
         //Vertex shader source
@@ -115,6 +125,10 @@ function GLRenderer() {
         psUniform,
         //Uniform for fill color
         fillColorUniform,
+
+        //Vertex buffers - keyed on shader attribute name
+        vbuffers = {},
+
         //Opengl context
         gl = false,
         //Width of our viewport in pixels
@@ -125,7 +139,7 @@ function GLRenderer() {
         data = [],
         //Render settings
         settings = {
-        	pointSize: 1,
+        	pointSize: 2,
         	lineWidth: 1,
         	drawMode: 'points',
         	fillColor: '#AA00AA',
@@ -134,6 +148,55 @@ function GLRenderer() {
     ;
 
     ////////////////////////////////////////////////////////////////////////////
+
+    /* Vertex Buffer abstraction */
+    function VertexBuffer() {
+    	var buffer = false,
+    		vertAttribute = false,
+    		components,
+    		drawMode,
+    		data
+    	;
+
+    	/* Build the buffer */
+    	function build(dataIn, attrib, dataComponents, dMode) {
+    		data = dataIn;
+
+    		components = dataComponents || 2;
+    		drawMode = dMode || false;
+
+    		buffer = gl.createBuffer();
+	        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	        gl.bufferData(
+	            gl.ARRAY_BUFFER, 
+	            new Float32Array(data), 
+	            gl.STATIC_DRAW
+	        );
+
+	        vertAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        	gl.enableVertexAttribArray(vertAttribute);
+    	}
+
+    	/* Render the buffer */
+    	function render() {
+    		if (!buffer) {
+    			return console.error('opengl: tried rendering buffer, but no buffer defined');
+    		}
+
+    		drawMode = drawMode || settings.drawMode;
+
+    		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        	gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
+        	gl.enableVertexAttribArray(vertAttribute);
+        	gl.drawArrays(gl[drawMode.toUpperCase()], 0, data.length / 2); 
+    	}
+
+    	////////////////////////////////////////////////////////////////////////
+    	return {
+    		build: build,
+    		render: render
+    	};    	
+    }
 
     /* String to shader program
      * @param {string} str - the program source
@@ -178,23 +241,8 @@ function GLRenderer() {
         pUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         psUniform = gl.getUniformLocation(shaderProgram, "pSize");
         fillColorUniform = gl.getUniformLocation(shaderProgram, "fillColor");
-
-        vertAttr = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-        gl.enableVertexAttribArray(vertAttr);
-
+     
         return true;
-    }
-
-    /* Create a vertex buffer containing our data */
-    function createBuffer() {
-        mainBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, mainBuffer);
-        gl.bufferData(
-            gl.ARRAY_BUFFER, 
-            new Float32Array(data), 
-            gl.STATIC_DRAW
-        );
-        return mainBuffer;
     }
 
      /* Returns an orthographic perspective matrix
@@ -231,22 +279,36 @@ function GLRenderer() {
         gl.blendEquation(gl.FUNC_ADD);
         gl.enable(gl.DEPTH_TEST);
 
-        createBuffer();
         createShader();
 
         gl.lineWidth(2);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, mainBuffer);
-        gl.vertexAttribPointer(vertAttr, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(vertAttr);
                            
         gl.uniformMatrix4fv(pUniform, false, orthoMatrix(width, height));
         gl.uniform1f(psUniform, settings.pointSize);
         gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
 
-        gl.drawArrays(gl[settings.drawMode.toUpperCase()], 0, data.length / 2);       
+       	addVBuffer('aVertexPosition', data);
+
+       	Object.keys(vbuffers).forEach(function (attrib) {
+       	 	var def = vbuffers[attrib],
+       	 		buffer = VertexBuffer()
+       	 	;
+        	
+        	buffer.build(def.data, attrib, def.components);
+        	buffer.render();
+        });
 
         console.timeEnd('gl rendering');
+    }
+
+    /* Add a vertex buffer */
+    function addVBuffer(attribName, dataIn, components) {
+    	vbuffers[attribName] = {
+    		data: dataIn || [],
+    		components: components
+    	};
+
+    	return vbuffers[attribName].data;
     }
 
     /* Init OpenGL */
@@ -295,6 +357,7 @@ function GLRenderer() {
     ////////////////////////////////////////////////////////////////////////////
     return {
         init: init,
+        addVBuffer: addVBuffer,
         push: push,
         render: render,
         settings: settings,
@@ -340,7 +403,7 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 }
 
 // Set default options
-each(['area', 'arearange', 'column', 'line', 'scatter'], function (type) {
+each(['area', 'arearange', 'column', 'line', 'scatter', 'heatmap'], function (type) {
 	if (plotOptions[type]) {
 		plotOptions[type].boostThreshold = 5000;
 	}
@@ -380,6 +443,9 @@ each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], fun
 		if (seriesTypes.arearange) {
 			wrap(seriesTypes.arearange.prototype, method, branch);
 		}
+		if (seriesTypes.heatmap) {
+			wrap(seriesTypes.heatmap.prototype, method, branch);
+		}
 	}
 });
 
@@ -406,6 +472,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 H.extend(Series.prototype, {
 	gl: GLRenderer(),
 	pointRange: 0,
+	directTouch: false,
 	allowDG: false, // No data grouping, let boost handle large data 
 	hasExtremes: function (checkX) {
 		var options = this.options,
@@ -511,8 +578,8 @@ H.extend(Series.prototype, {
 			yAxis = this.yAxis,
 			ctx,
 			c = 0,
-			xData = series.processedXData,
-			yData = series.processedYData,
+			xData = options.xData && series.processedXData,
+			yData = options.yData && series.processedYData,
 			rawData = options.data,
 			xExtremes = xAxis.getExtremes(),
 			xMin = xExtremes.min,
@@ -739,8 +806,8 @@ H.extend(Series.prototype, {
 						}
 						if (clientX !== lastClientX) { // Add points and reset
 							if (minI !== undefined) { // then maxI is also a number
-								plotY = yAxis.toPixels(maxVal, true);
-								yBottom = yAxis.toPixels(minVal, true);
+								plotY = 0;// yAxis.toPixels(maxVal, true);
+								yBottom = 0;//yAxis.toPixels(minVal, true);
 
 								if (gl.valid()) {
 									gl.push(
@@ -771,10 +838,10 @@ H.extend(Series.prototype, {
 									);
 								}
 
-								addKDPoint(clientX, plotY, maxI);
-								if (yBottom !== plotY) {
-									addKDPoint(clientX, yBottom, minI);
-								}
+								// //addKDPoint(clientX, plotY, maxI);
+								// if (yBottom !== plotY) {
+								// 	addKDPoint(clientX, yBottom, minI);
+								// }
 							}
 
 							minI = maxI = undefined;
@@ -789,7 +856,7 @@ H.extend(Series.prototype, {
 							drawPoint(clientX, plotY, yBottom);							
 						}
 
-						addKDPoint(clientX, plotY, i);
+						//addKDPoint(clientX, plotY, i);
 					}
 				}
 				wasNull = isNull && !connectNulls;
