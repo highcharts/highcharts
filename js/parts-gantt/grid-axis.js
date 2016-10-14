@@ -374,12 +374,19 @@ wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
 	proceed.apply(this);
 });
 
-
+/**
+ * Places leftmost tick at the start of the axis, to create a left wall.
+ *
+ * @param {function} proceed - the original function
+ */
 wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	var axis = this;
 	if (userOptions.grid && axis.horiz) {
 		userOptions.startOnTick = true;
+		userOptions.endOnTick = true;
 		userOptions.minPadding = 0;
+		userOptions.maxPadding = 5;
+		userOptions.pointPlacement = 'on';
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });

@@ -584,17 +584,19 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
  * equally distributed, because they may not have the same tick interval as the
  * inner axes.
  */
-QUnit.test('Independent horizontal axis ticks equally distributed', function (assert) {
+QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
     var chart,
         axes,
         i,
         axis,
-        // tickPositions,
+        error = 0.5000000001,
         ticks,
         $axisGroup,
         axisGroupBox,
         secondLeftmostTick,
         rightmostTick,
+        axisLeftPoint,
+        axisRightPoint,
         leftSpace,
         rightSpace;
 
@@ -661,14 +663,17 @@ QUnit.test('Independent horizontal axis ticks equally distributed', function (as
         $axisGroup = $(axis.axisGroup.element);
         ticks = $axisGroup.find('.highcharts-tick');
         secondLeftmostTick = ticks[1];
-        rightmostTick = ticks.slice(-1)[0];
+        rightmostTick = ticks.slice(-2)[0];
         axisGroupBox = $axisGroup[0].getBBox();
-        leftSpace = secondLeftmostTick.getBBox().x - axisGroupBox.x;
-        rightSpace = (axisGroupBox.x + axisGroupBox.width) - rightmostTick.getBBox().x;
+        axisLeftPoint = axisGroupBox.x;
+        axisRightPoint = axisGroupBox.x + axisGroupBox.width;
+        leftSpace = secondLeftmostTick.getBBox().x - axisLeftPoint;
+        rightSpace = axisRightPoint - rightmostTick.getBBox().x;
 
-        assert.equal(
+        assert.close(
             leftSpace,
             rightSpace,
+            error,
             'Left space is equal to right space in xAxis[' + i + ']'
         );
     }
