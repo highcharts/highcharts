@@ -1097,18 +1097,9 @@ SOFTWARE.
   };
 
   function setTextProperties(node, fillRGB) {
-    var fontFamily = getAttribute(node, "font-family"),
-        newFont,
-        fontList;
+    var fontFamily = getAttribute(node, "font-family");
     if (fontFamily) {
-      var fontFamilySplitted = fontFamily.split(", ");
-      fontFamilySplitted.forEach(function(value){
-        var newValue = value.replace(/"/g, "");
-        newFont = newValue.trim();
-        fontList = [newFont];
-      });
-      console.log(fontList);
-      _pdf.setFont(newFont);
+      _pdf.setFont(fontFamily);
     }
 
     if (fillRGB && fillRGB.ok) {
