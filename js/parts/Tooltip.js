@@ -534,8 +534,9 @@ H.Tooltip.prototype = {
 						/*= } =*/
 						.add(tooltipLabel);
 
-					addEvent(point.series, 'hide', function () {
+					addEvent(point.series, 'hide', function ttHide() {
 						this.tt = destroy(this.tt);
+						H.removeEvent(point.series, 'hide', ttHide); // #5833
 					});
 				}
 			}
