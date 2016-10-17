@@ -186,20 +186,22 @@ H.dateFormats = {
 };
 
 /**
- * Prevents adding the last tick label if the axis type is datetime.
+ * Prevents adding the last tick label if the axis is not a category axis.
  *
- * Since datetime labels are normally placed at starts and ends of a
- * period of time, and this module converts labels to
+ * Since numeric labels are normally placed at starts and ends of a range of
+ * value, and this module makes the label point at the value, an "extra" label
+ * would appear.
  *
  * @param {function} proceed - the original function
  */
 wrap(Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
+		isCategoryAxis = axis.options.categories !== undefined,
 		tickPositions = axis.tickPositions,
-		isNotDatetimeAxis = axis.options.type !== 'datetime',
-		lastTick = tickPositions[tickPositions.length - 1];
+		lastTick = tickPositions[tickPositions.length - 1],
+		isLastTick = this.pos !== lastTick;
 
-	if (!axis.options.grid || isNotDatetimeAxis || this.pos !== lastTick) {
+	if (!axis.options.grid || isCategoryAxis || isLastTick) {
 		proceed.apply(this);
 	}
 });
@@ -215,7 +217,8 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
 wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
 		axis = this.axis,
-		tickInterval = axis.options.tickInterval || 1,
+		options = axis.options,
+		tickInterval = options.tickInterval || 1,
 		newX,
 		newPos,
 		axisHeight,
@@ -226,13 +229,13 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		labelCenter;
 
 	// Only center tick labels if axis has option grid: true
-	if (axis.options.grid) {
-		fontSize = axis.options.labels.style.fontSize;
+	if (options.grid) {
+		fontSize = options.labels.style.fontSize;
 		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label);
 		lblB = labelMetrics.b;
 		lblH = labelMetrics.h;
 
-		if (axis.horiz && axis.options.categories === undefined) {
+		if (axis.horiz && options.categories === undefined) {
 			// Center x position
 			axisHeight = axis.axisGroup.getBBox().height;
 			newPos = this.pos + tickInterval / 2;
@@ -247,7 +250,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 			}
 		} else {
 			// Center y position
-			if (axis.options.categories === undefined) {
+			if (options.categories === undefined) {
 				newPos = this.pos + (tickInterval / 2);
 				retVal.y = axis.translate(newPos) + axis.top + (lblB / 2);
 			}
@@ -273,16 +276,17 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
  * @returns {array} retVal -
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
-	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+	var axis = this,
+		retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
 		labelPadding,
 		distance;
 
-	if (this.options.grid && !this.horiz) {
-		labelPadding = (Math.abs(this.defaultLeftAxisOptions.labels.x) * 2);
-		if (!this.maxLabelLength) {
-			this.maxLabelLength = this.getMaxLabelLength();
+	if (axis.options.grid && !axis.horiz) {
+		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
+		if (!axis.maxLabelLength) {
+			axis.maxLabelLength = axis.getMaxLabelLength();
 		}
-		distance = this.maxLabelLength + labelPadding;
+		distance = axis.maxLabelLength + labelPadding;
 
 		retVal[0] = distance;
 	}
@@ -335,32 +339,6 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 });
 
 /**
- * Replicates category axis translation to all axis types.
- *
- * @param {function} proceed - the original function
- */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
-	// Call the original setAxisTranslation() to perform all other calculations
-
-	if (this.options.grid && !this.options.categories) {
-		this.minPointOffset = 0.5;
-		this.pointRangePadding = 1;
-
-		this.translationSlope = this.transA =
-			this.len / ((this.max - this.min + this.pointRangePadding) || 1);
-		this.transB = this.horiz ? this.left : this.bottom; // translation added
-		this.minPixelPadding = this.transA * this.minPointOffset;
-
-		// Ensure that linear axes get a minPixelPadding of 0
-		if (this.options.type === 'linear') {
-			this.minPixelPadding = 0;
-		}
-	} else {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	}
-});
-
-/**
  * Prevents rotation of labels when squished, as rotating them would not
  * help.
  *
@@ -383,10 +361,8 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	var axis = this;
 	if (userOptions.grid && axis.horiz) {
 		userOptions.startOnTick = true;
-		userOptions.endOnTick = true;
 		userOptions.minPadding = 0;
-		userOptions.maxPadding = 5;
-		userOptions.pointPlacement = 'on';
+		userOptions.endOnTick = true;
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
@@ -399,6 +375,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
  */
 wrap(Axis.prototype, 'render', function (proceed) {
 	var axis = this,
+		options = axis.options,
 		labelPadding,
 		distance,
 		lineWidth,
@@ -410,10 +387,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		renderer = axis.chart.renderer,
 		axisGroupBox;
 
-	if (axis.options.grid) {
+	if (options.grid) {
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
 		distance = axis.maxLabelLength + labelPadding;
-		lineWidth = axis.options.lineWidth;
+		lineWidth = options.lineWidth;
 
 		// Remove right wall before rendering
 		if (axis.rightWall) {
@@ -428,17 +405,18 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 		// Add right wall on horizontal axes
 		if (axis.horiz) {
+			console.log('hallais');
 			axis.rightWall = renderer.path([
 				'M',
-				axisGroupBox.x + axis.width + 0.5, // account for left wall
+				axisGroupBox.x + axis.width + 1,
 				axisGroupBox.y,
 				'L',
-				axisGroupBox.x + axis.width + 0.5, // account for left wall
+				axisGroupBox.x + axis.width + 1, // account for left wall
 				axisGroupBox.y + axisGroupBox.height
 			])
 			.attr({
-				stroke: axis.options.lineColor,
-				'stroke-width': lineWidth,
+				stroke: options.tickColor || '#ccd6eb',
+				'stroke-width': options.tickWidth || 1,
 				zIndex: 7,
 				class: 'grid-wall'
 			})
@@ -476,7 +454,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 				if (!axis.axisLineExtra) {
 					axis.axisLineExtra = renderer.path(linePath)
 						.attr({
-							stroke: axis.options.lineColor,
+							stroke: options.lineColor,
 							'stroke-width': lineWidth,
 							zIndex: 7
 						})
@@ -511,14 +489,15 @@ wrap(Chart.prototype, 'render', function (proceed) {
 		fontSize;
 
 	each(this.axes, function (axis) {
-		if (axis.options.grid) {
-			fontSize = axis.options.labels.style.fontSize;
+		var options = axis.options;
+		if (options.grid) {
+			fontSize = options.labels.style.fontSize;
 			fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
 
 			// Prohibit timespans of multitudes of a time unit,
 			// e.g. two days, three weeks, etc.
-			if (axis.options.type === 'datetime') {
-				axis.options.units = [
+			if (options.type === 'datetime') {
+				options.units = [
 					['millisecond', [1]],
 					['second', [1]],
 					['minute', [1]],
@@ -533,12 +512,12 @@ wrap(Chart.prototype, 'render', function (proceed) {
 			// Make tick marks taller, creating cell walls of a grid.
 			// Use cellHeight axis option if set
 			if (axis.horiz) {
-				axis.options.tickLength = axis.options.cellHeight ||
+				options.tickLength = options.cellHeight ||
 						fontMetrics.h * fontSizeToCellHeightRatio;
 			} else {
-				axis.options.tickWidth = 1;
-				if (!axis.options.lineWidth) {
-					axis.options.lineWidth = 1;
+				options.tickWidth = 1;
+				if (!options.lineWidth) {
+					options.lineWidth = 1;
 				}
 			}
 		}

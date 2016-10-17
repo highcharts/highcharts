@@ -631,7 +631,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         }],
         series: [{
             xAxis: 0,
-            data: [[129.9, 271.5], [306.4, -29.2], [544.0, 376.0]]
+            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
         }, {
             xAxis: 1,
             data: [{

@@ -22,11 +22,7 @@ $(function () {
             max: Date.UTC(2014, 10, 30)
         }, {
             id: 'bottom-linear-axis',
-            grid: true,
-            tickInterval: 1,
-            tickPixelInterval: 45,
-            min: 1,
-            max: 13
+            grid: true
         }, {
             id: 'bottom-categories-axis',
             grid: true,
