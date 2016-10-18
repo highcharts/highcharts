@@ -12,7 +12,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = document.getElementById('container').highcharts();
+        var chart = $('#container').highcharts();
         chart.print();
     });
 });

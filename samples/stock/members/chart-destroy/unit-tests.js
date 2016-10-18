@@ -1,5 +1,5 @@
 QUnit.test('Chart destroy', function (assert) {
-    var chart = document.getElementById('container').highcharts();
+    var chart = $('#container').highcharts();
 
     assert.strictEqual(
         chart.container.innerHTML.indexOf('<svg'),
@@ -16,7 +16,7 @@ QUnit.test('Chart destroy', function (assert) {
     );
 
     assert.strictEqual(
-        document.getElementById('container').html(),
+        $('#container').html(),
         '',
         'Container div emptied'
     );

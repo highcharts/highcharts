@@ -89,7 +89,7 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-    chart = document.getElementById('container').highcharts();
+    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),

@@ -13,7 +13,7 @@ $(function () {
     });
 
     // the button handler
-    var chart = document.getElementById('container').highcharts(),
+    var chart = $('#container').highcharts(),
         isLoading = false,
         $button = $('#button');
     $button.click(function () {

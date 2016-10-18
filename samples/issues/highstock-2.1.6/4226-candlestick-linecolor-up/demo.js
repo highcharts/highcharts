@@ -35,7 +35,7 @@ $(function () {
             }]
         });
 
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             points = chart.series[0].points;
 
 

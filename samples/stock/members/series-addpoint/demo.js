@@ -15,7 +15,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             i = 0,
             series = chart.series[0];
         data = usdeur.splice(0, 100);

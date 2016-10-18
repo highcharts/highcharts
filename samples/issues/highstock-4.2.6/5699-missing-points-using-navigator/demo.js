@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Points are missing when series is added after chart was created and using navigator.', function (assert) {
-        var container = document.getElementById('container'),
+        var container = $('#container'),
             chart = container.highcharts('StockChart', {
                 chart: {
                     width: 600,

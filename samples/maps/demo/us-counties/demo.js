@@ -112,6 +112,6 @@ $(function () {
         };
 
         // Instanciate the map
-        document.getElementById('container').highcharts('Map', options);
+        $('#container').highcharts('Map', options);
     });
 });

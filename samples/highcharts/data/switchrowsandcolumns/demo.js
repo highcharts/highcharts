@@ -19,11 +19,11 @@ $(function () {
         }
     };
 
-    document.getElementById('container').highcharts(Highcharts.merge(options));
+    $('#container').highcharts(Highcharts.merge(options));
 
 
     $('#toggle').click(function () {
         options.data.switchRowsAndColumns = !options.data.switchRowsAndColumns;
-        document.getElementById('container').highcharts(Highcharts.merge(options));
+        $('#container').highcharts(Highcharts.merge(options));
     });
 });

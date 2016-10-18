@@ -78,7 +78,7 @@ $(function () {
         });
 
         $('#getselectedpoints').click(function () {
-            var chart = document.getElementById('container').highcharts(),
+            var chart = $('#container').highcharts(),
                 selectedPoints = chart.getSelectedPoints();
             alert('You selected ' + selectedPoints.length + ' points');
         });

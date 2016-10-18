@@ -38,7 +38,7 @@ $(function () {
     });
 
     $('#setextremes').click(function () {
-        var chart = document.getElementById('container').highcharts();
+        var chart = $('#container').highcharts();
 
         chart.xAxis[0].setExtremes(740, 1180, false);
         chart.yAxis[0].setExtremes(-1730, -1470, false);

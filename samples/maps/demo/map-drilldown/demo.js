@@ -9,7 +9,7 @@ $(function () {
 
     var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']),
         // Some responsiveness
-        small = document.getElementById('container').width() < 400;
+        small = $('#container').width() < 400;
 
     // Set drilldown pointers
     $.each(data, function (i) {

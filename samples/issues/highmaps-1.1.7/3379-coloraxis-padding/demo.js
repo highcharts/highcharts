@@ -21,7 +21,7 @@ $(function () {
 
         });
 
-        chart = document.getElementById('container').highcharts();
+        chart = $('#container').highcharts();
 
         assert.strictEqual(
             chart.colorAxis[0].toPixels(-1),

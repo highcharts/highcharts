@@ -2,7 +2,7 @@ $(function () {
     // the button handler
     var isLoading = false,
         $button = $('#button'),
-        $container = document.getElementById('container'),
+        $container = $('#container'),
         chart;
 
     $container.highcharts({

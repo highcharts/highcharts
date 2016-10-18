@@ -33,7 +33,7 @@ $(function () {
     });
 
     $('#getextremes').click(function () {
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             xExt = chart.xAxis[0].getExtremes(),
             yExt = chart.yAxis[0].getExtremes(),
             colorExt = chart.colorAxis[0].getExtremes();

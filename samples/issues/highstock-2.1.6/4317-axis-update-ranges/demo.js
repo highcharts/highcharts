@@ -24,7 +24,7 @@ $(function () {
             }]
         });
 
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             xAxis = chart.xAxis[0];
 
 
@@ -44,7 +44,7 @@ $(function () {
 
 
         // Run axis update
-        document.getElementById('container').highcharts().xAxis[0].update();
+        $('#container').highcharts().xAxis[0].update();
         assert.equal(
             182 * 24 * 36e5 - 36e5, // half a year minus a DST crossover
             xAxis.max - xAxis.min,

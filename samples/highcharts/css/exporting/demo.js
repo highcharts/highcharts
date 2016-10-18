@@ -41,7 +41,7 @@ $(function () {
     });
 
     var start = Date.now();
-    var svg = document.getElementById('container').highcharts().getSVGForExport();
+    var svg = $('#container').highcharts().getSVGForExport();
 
     $('#report').html('SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms');
     $('#pre').html((function () {

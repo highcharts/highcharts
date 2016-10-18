@@ -41,7 +41,7 @@ $(function () {
             $.each(data, function () {
                 this.value = Math.round(Math.random() * 1000);
             });
-            document.getElementById('container').highcharts().series[0].setData(data);
+            $('#container').highcharts().series[0].setData(data);
         });
     });
 });

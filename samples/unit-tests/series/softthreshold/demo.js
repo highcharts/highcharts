@@ -2,7 +2,7 @@ $(function () {
 
     QUnit.test('Soft threshold', function (assert) {
         var chart,
-            $container = document.getElementById('container');
+            $container = $('#container');
 
         $container.highcharts({
             series: [{
@@ -108,7 +108,7 @@ $(function () {
 
     QUnit.test('Soft threshold = false', function (assert) {
         var chart,
-            $container = document.getElementById('container');
+            $container = $('#container');
 
 
         // Tests for softThreshold: false

@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Auto rotation and useHTML', function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
 
             chart: {
                 width: 1000,
@@ -25,7 +25,8 @@ $(function () {
             }]
         });
 
-        var xAxis = chart.xAxis[0];
+        var chart = $('#container').highcharts(),
+            xAxis = chart.xAxis[0];
 
         assert.strictEqual(
             xAxis.ticks[xAxis.tickPositions[0]].label.rotation,

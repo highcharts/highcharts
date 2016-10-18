@@ -14,7 +14,7 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var chart = document.getElementById('container').highcharts();
+        var chart = $('#container').highcharts();
         alert('The axis object: ' + chart.get('x-axis'));
     });
 });

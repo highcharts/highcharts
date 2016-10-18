@@ -73,6 +73,6 @@ $(function () {
     });
 
     $('#select').click(function () {
-        document.getElementById('container').highcharts().get('nt').select();
+        $('#container').highcharts().get('nt').select();
     });
 });

@@ -7,7 +7,7 @@ $(function () {
             data.push([i, i + 100]);
         }
 
-        var chart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
             chart: {
                 type: 'arearange'
             },
@@ -22,6 +22,8 @@ $(function () {
             }]
 
         });
+
+        var chart = $('#container').highcharts();
 
         assert.strictEqual(
             chart.series[0].points[0].dataLabelUpper.attr('opacity'),

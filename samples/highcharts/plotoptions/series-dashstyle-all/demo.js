@@ -15,7 +15,7 @@ $(function () {
     ];
 
     renderer = new Highcharts.Renderer(
-        document.getElementById('container'),
+        $('#container')[0],
         400,
         400
     );

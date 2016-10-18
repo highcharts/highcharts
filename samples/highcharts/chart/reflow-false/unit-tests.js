@@ -12,7 +12,7 @@ QUnit.test('Set width', function (assert) {
     );
 
     // Change the container size and trigger window resize to make the chart resize
-    document.getElementById('container').width(300);
+    $('#container').width(300);
     $(window).resize();
 
     setTimeout(function () {

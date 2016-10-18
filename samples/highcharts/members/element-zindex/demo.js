@@ -3,7 +3,7 @@ var renderer,
 $(function () {
 
     renderer = new Highcharts.Renderer(
-        document.getElementById('container'),
+        $('#container')[0],
         450,
         300
     );

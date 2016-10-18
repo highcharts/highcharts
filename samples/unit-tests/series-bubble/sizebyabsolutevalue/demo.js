@@ -2,7 +2,7 @@ $(function () {
 
     QUnit.test('Size by threshold', function (assert) {
         var chart,
-            $container = document.getElementById('container');
+            $container = $('#container');
 
         $container.highcharts({
 

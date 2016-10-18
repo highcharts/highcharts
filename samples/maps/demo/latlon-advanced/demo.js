@@ -70,11 +70,11 @@ $(function () {
             }]
         });
 
-        chart = document.getElementById('container').highcharts();
+        chart = $('#container').highcharts();
     });
 
     // Display custom label with lat/lon next to crosshairs
-    document.getElementById('container').mousemove(function (e) {
+    $('#container').mousemove(function (e) {
         var position;
 
         if (chart) {
@@ -103,7 +103,7 @@ $(function () {
         }
     });
 
-    document.getElementById('container').mouseout(function () {
+    $('#container').mouseout(function () {
         if (chart && chart.lab) {
             chart.lab.destroy();
             chart.lab = null;

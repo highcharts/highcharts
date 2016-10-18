@@ -1,9 +1,9 @@
 QUnit.test('Add point without shift', function (assert) {
-    var chart = document.getElementById('container').highcharts(),
+    var chart = $('#container').highcharts(),
         maxX;
 
     function add100() {
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             i = 0,
             series = chart.series[0],
             data = usdeur.splice(0, 100);

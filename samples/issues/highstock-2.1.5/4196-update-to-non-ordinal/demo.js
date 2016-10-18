@@ -58,7 +58,7 @@ $(function () {
             }]
         });
 
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             xAxis = chart.xAxis[0],
             points = chart.series[0].points;
 

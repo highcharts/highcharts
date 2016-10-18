@@ -45,7 +45,7 @@ $(function () {
         }
 
         // Non-inverted chart
-        chart = document.getElementById('container').highcharts(options).highcharts();
+        chart = $('#container').highcharts(options).highcharts();
 
         for (var i = 0; i < chart.series[0].points.length; i++) {
             chart.series[0].points[i].onMouseOver();

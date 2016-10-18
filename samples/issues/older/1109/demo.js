@@ -22,7 +22,7 @@ $(function () {
 
     $('#add-point').click(function () {
 
-        var chart = document.getElementById('container').highcharts();
+        var chart = $('#container').highcharts();
 
         // Add before
         chart.series[0].addPoint({

@@ -25,7 +25,7 @@ $(function () {
 
         $('#addseries')
             .click(function () {
-                document.getElementById('container').highcharts().addSeries({
+                $('#container').highcharts().addSeries({
                     data: data,
                     mapData: Highcharts.maps['custom/world'],
                     joinBy: ['iso-a2', 'code'],

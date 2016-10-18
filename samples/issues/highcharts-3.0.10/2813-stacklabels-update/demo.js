@@ -111,7 +111,7 @@ $(function () {
     });
 
     $('#update').click(function () {
-        $.each(document.getElementById('container').highcharts().series, function (key, value) {
+        $.each($('#container').highcharts().series, function (key, value) {
             value.update({
                 stacking: percent ? 'normal' : 'percent'
             });

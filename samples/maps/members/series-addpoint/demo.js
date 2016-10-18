@@ -61,7 +61,7 @@ $(function () {
 
         // Activate the button
         $('#addpoint').click(function () {
-            document.getElementById('container').highcharts().series[0].addPoint(greenland);
+            $('#container').highcharts().series[0].addPoint(greenland);
             $(this).attr('disabled', true);
         });
     });

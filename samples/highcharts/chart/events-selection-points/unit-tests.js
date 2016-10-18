@@ -3,14 +3,14 @@ QUnit.test('Chart select points by drag', function (assert) {
 
     // Prepare
     chart.setSize(400, 400, false);
-    document.getElementById('container').css({
+    $('#container').css({
         position: 'absolute',
         top: 0,
         left: 0
     });
 
     setTimeout(function () {
-        document.getElementById('container').css({
+        $('#container').css({
             position: 'static'
         });
     }, 0);

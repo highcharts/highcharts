@@ -40,7 +40,7 @@ $(function () {
 
         // Activate the button
         $('#update').click(function () {
-            document.getElementById('container').highcharts().series[0].points[73].update(1000);
+            $('#container').highcharts().series[0].points[73].update(1000);
         });
     });
 });

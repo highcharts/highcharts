@@ -123,7 +123,7 @@ $(function () {
 
 
     $('#getconfig').click(function () {
-        var chart = document.getElementById('container').highcharts(),
+        var chart = $('#container').highcharts(),
             points,
             html = '';
 
@@ -151,7 +151,7 @@ $(function () {
         }
 
         $('#code-inner').html(html);
-        document.getElementById('container').css({
+        $('#container').css({
             'margin-top': -500
         });
 
@@ -160,7 +160,7 @@ $(function () {
     });
 
     $('#close').click(function () {
-        document.getElementById('container').css({
+        $('#container').css({
             'margin-top': 0
         });
     });

@@ -18,9 +18,9 @@ $(function () {
                 ]
             }]
         });
-        document.getElementById('container').show();
+        $('#container').show();
         assert.strictEqual(
-            !!document.getElementById('container').highcharts().renderTo.getElementsByTagName('input').length,
+            !!$('#container').highcharts().renderTo.getElementsByTagName('input').length,
             true,
             'Chart has input fields'
         );

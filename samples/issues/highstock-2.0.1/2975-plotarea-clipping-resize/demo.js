@@ -20,6 +20,6 @@ $(function () {
 
 
     $('#resize').click(function () {
-        document.getElementById('container').highcharts().setSize(400, 400, false);
+        $('#container').highcharts().setSize(400, 400, false);
     });
 });
