@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -16,7 +16,8 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var selectedPoints = chart.getSelectedPoints();
+        var chart = $('#container').highcharts(),
+            selectedPoints = chart.getSelectedPoints();
 
         if (chart.lbl) {
             chart.lbl.destroy();

@@ -2,7 +2,8 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
-        Highcharts.stockChart('container', {
+        $('#container').highcharts('StockChart', {
+
             chart: {
                 marginRight: 50
             },

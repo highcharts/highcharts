@@ -1,7 +1,7 @@
 $(function () {
 
     // Create the chart
-    Highcharts.stockChart('container', {
+    $('#container').highcharts('StockChart', {
         chart: {
             width: 400,
             height: 300,

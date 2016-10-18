@@ -28,7 +28,7 @@ $(function () {
         ];
 
         // Create the chart
-        Highcharts.stockChart('container', {
+        $('#container').highcharts('StockChart', {
 
 
             rangeSelector: {

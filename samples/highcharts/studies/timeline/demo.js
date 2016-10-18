@@ -32,7 +32,7 @@ $(function () {
     ];
 
     // Initiate the chart
-    Highcharts.mapChart('container', {
+    $('#container').highcharts('Map', {
 
         title: {
             text: 'Highmaps with time control'

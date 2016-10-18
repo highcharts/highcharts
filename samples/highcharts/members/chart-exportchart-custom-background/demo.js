@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         chart: {
             backgroundColor: {
@@ -32,6 +32,7 @@ $(function () {
 
     // the button handler
     $('#button').click(function () {
+        var chart = $('#container').highcharts();
         chart.exportChart(null, {
             chart: {
                 backgroundColor: '#FFFFFF'

@@ -125,7 +125,7 @@ $(function () {
             [1317895200000, 376.94, 377.01, 375.75, 375.98]
         ];
 
-        var chart = Highcharts.stockChart('container', {
+        var chart = $('#container').highcharts('StockChart', {
             rangeSelector: {
                 buttons: [{
                     type: 'hour',

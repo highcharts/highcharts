@@ -1,5 +1,8 @@
 $(function () {
 
+
+
+
     // Load the data from a Google Spreadsheet
     // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
     Highcharts.data({
@@ -22,7 +25,7 @@ $(function () {
 
 
             // Initiate the chart
-            Highcharts.mapChart('container', {
+            $('#container').highcharts('Map', {
                 title: {
                     text: 'Named data classes'
                 },

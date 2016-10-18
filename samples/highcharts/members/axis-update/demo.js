@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         title: {
             text: 'Axis.update() demo'
@@ -16,7 +16,8 @@ $(function () {
     });
 
 
-    var type = 1,
+    var chart = $('#container').highcharts(),
+        type = 1,
         types = ['linear', 'datetime', 'logarithmic'],
         opposite = true,
         lineWidth = 2,

@@ -13,7 +13,7 @@ $(function () {
             chart.redraw();
         }
 
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             "legend": {
                 "enabled": false
             },
@@ -112,6 +112,7 @@ $(function () {
             }]
         });
 
+        var chart = $('#container').highcharts();
         toggle(chart);
 
         // After update, long labels should have the same height as short ones because they should have ellipsis

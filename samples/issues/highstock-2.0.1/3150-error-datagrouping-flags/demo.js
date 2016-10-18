@@ -5,7 +5,7 @@ $(function () {
         data[i] = i;
     }
 
-    Highcharts.stockChart('container', {
+    $('#container').highcharts('StockChart', {
         series: [{
             data: data,
             type: 'flags',

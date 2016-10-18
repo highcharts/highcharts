@@ -22,7 +22,7 @@ $(function () {
                 lineColor: "#FF0000"
             }
         ];
-        Highcharts.stockChart('container', {
+        $('#container').highcharts('StockChart', {
             rangeSelector: {
                 selected: 1
             },

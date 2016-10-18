@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Series clip-path after updating axis.', function (assert) {
-        var chart = Highcharts.stockChart('container', {
+        var chart = $('#container').highcharts('StockChart', {
             yAxis: [{
                 id: 'yAxis-1',
                 top: '0%',

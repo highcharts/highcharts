@@ -1,5 +1,6 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
+
         chart: {
             animation: {
                 duration: 1000
@@ -18,6 +19,7 @@ $(function () {
 
     var i = 1;
     $('#update').click(function () {
+        var chart = $('#container').highcharts();
         chart.series[0].data[0].update(i % 2 ? 200 : 0);
         i += 1;
     });

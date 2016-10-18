@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
         chart: {
             type: 'pie'
         },
@@ -19,7 +19,8 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var selectedPoints = chart.getSelectedPoints();
+        var chart = $('#container').highcharts(),
+            selectedPoints = chart.getSelectedPoints();
 
         if (chart.lbl) {
             chart.lbl.destroy();

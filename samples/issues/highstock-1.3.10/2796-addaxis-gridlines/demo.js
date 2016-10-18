@@ -1,6 +1,6 @@
 $(function () {
            // create the chart
-    Highcharts.stockChart('container', {
+    $('#container').highcharts('StockChart', {
 
         chart: {
             animation: false

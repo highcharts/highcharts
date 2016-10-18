@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         chart: {
             type: 'pie'
@@ -13,6 +13,7 @@ $(function () {
     // the button action
     var i = 0;
     $('#button').click(function () {
+        var chart = $('#container').highcharts();
         chart.series[0].addPoint((50 * (i % 3)) + 10);
         i += 1;
     });

@@ -1,7 +1,7 @@
 $(function () {
 
     // Configure the chart
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         chart: {
             type: 'column'
@@ -46,13 +46,13 @@ $(function () {
         xVis = true;
     $('#toggle-y').click(function () {
         yVis = !yVis;
-        chart.yAxis[0].update({
+        $('#container').highcharts().yAxis[0].update({
             visible: yVis
         });
     });
     $('#toggle-x').click(function () {
         xVis = !xVis;
-        chart.xAxis[0].update({
+        $('#container').highcharts().xAxis[0].update({
             visible: xVis
         });
     });

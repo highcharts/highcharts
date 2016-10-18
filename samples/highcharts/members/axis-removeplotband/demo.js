@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 
@@ -18,6 +18,7 @@ $(function () {
 
     // button action
     $('#button').click(function () {
+        var chart = $('#container').highcharts();
         chart.xAxis[0].removePlotBand('plotband-1');
     });
 });

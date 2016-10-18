@@ -1,6 +1,6 @@
 $(function () {
 
-    var chart = Highcharts.chart('container', {
+    var chart = $('#container').highcharts({
 
         chart: {
             plotBackgroundColor: '#E0FFFF',

@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             showEmpty: false
@@ -37,7 +37,8 @@ $(function () {
         }]
     });
 
-    var name = false,
+    var chart = $('#container').highcharts(),
+        name = false,
         enableDataLabels = true,
         enableMarkers = true,
         color = false;

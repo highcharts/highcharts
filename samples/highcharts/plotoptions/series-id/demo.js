@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -19,7 +19,8 @@ $(function () {
 
     // The button action
     $('#button').click(function () {
-        var series = chart.get('series-1'),
+        var chart = $('#container').highcharts(),
+            series = chart.get('series-1'),
             text = 'The first series\' name is ' + series.name;
         if (!chart.lbl) {
             chart.lbl = chart.renderer.label(text, 100, 70)

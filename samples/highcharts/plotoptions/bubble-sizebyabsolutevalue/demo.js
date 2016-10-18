@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         chart: {
             type: 'bubble'
@@ -36,7 +36,7 @@ $(function () {
 
     // Add the slider to view changes
     $('input#zthreshold').bind('input', function () {
-        chart.series[0].update({
+        $('#container').highcharts().series[0].update({
             zThreshold: parseInt(this.value, 10)
         });
     });

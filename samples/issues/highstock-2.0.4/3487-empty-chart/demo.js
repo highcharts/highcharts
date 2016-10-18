@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.stockChart('container', {
+    $('#container').highcharts('StockChart', {
         navigator: {
             adaptToUpdatedData: false
         },

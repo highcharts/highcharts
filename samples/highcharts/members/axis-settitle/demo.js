@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -12,6 +12,7 @@ $(function () {
     });
 
     $('#set-y-title').click(function () {
+        var chart = $('#container').highcharts();
         chart.yAxis[0].setTitle({
             text: 'New Y axis title'
         });

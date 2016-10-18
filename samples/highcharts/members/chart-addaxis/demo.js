@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -22,6 +22,7 @@ $(function () {
     });
 
     // the button handlera
+    var chart = $('#container').highcharts();
     $('#add').click(function () {
         chart.addAxis({ // Secondary yAxis
             id: 'rainfall-axis',

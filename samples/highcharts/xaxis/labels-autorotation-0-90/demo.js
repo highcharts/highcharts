@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         title: {
             text: 'Auto rotated X axis labels'
@@ -23,6 +23,6 @@ $(function () {
     });
 
     $('#width').bind('input', function () {
-        chart.setSize(this.value, 400, false);
+        $('#container').highcharts().setSize(this.value, 400, false);
     });
 });

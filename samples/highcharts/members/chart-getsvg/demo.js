@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         credits: {
             enabled: false
@@ -17,7 +17,8 @@ $(function () {
 
     // the button handler
     $('#button').click(function () {
-        var svg = chart.getSVG()
+        var chart = $('#container').highcharts(),
+            svg = chart.getSVG()
                 .replace(/</g, '\n&lt;') // make it slightly more readable
                 .replace(/>/g, '&gt;');
 

@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Formats in tooltip header', function (assert) {
-        var chart = Highcharts.stockChart('container', {
+        var chart = $('#container').highcharts('StockChart', {
             chart: {
                 type: 'column'
             },
