@@ -53,7 +53,7 @@ $(function () {
     };
 
     // The speed gauge
-    Highcharts.chart('container-speed').merge(gaugeOptions, {
+    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 200,
@@ -79,10 +79,10 @@ $(function () {
             }
         }]
 
-    });
+    }));
 
     // The RPM gauge
-    Highcharts.chart('container-rpm').merge(gaugeOptions, {
+    $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
         yAxis: {
             min: 0,
             max: 5,
@@ -104,7 +104,7 @@ $(function () {
             }
         }]
 
-    });
+    }));
 
 
 });

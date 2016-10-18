@@ -1,6 +1,6 @@
 var percent = false;
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             type: 'column',
             marginTop: 70

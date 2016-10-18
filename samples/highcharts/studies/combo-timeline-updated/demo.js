@@ -684,5 +684,5 @@ $(function () {
         });
     }
 
-    Highcharts.chart(options);
+    $('#container').highcharts(options);
 });

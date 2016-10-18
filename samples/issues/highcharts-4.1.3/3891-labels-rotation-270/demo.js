@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Text height', function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             xAxis: {
                 labels: {
                     rotation: 270
@@ -15,7 +15,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.xAxis[0].ticks[0].label.rotation,
+            $('#container').highcharts().xAxis[0].ticks[0].label.rotation,
             270,
             'Rotation set to 270'
         );

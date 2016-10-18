@@ -1,6 +1,6 @@
 $(function () {
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             "type": "pie",
             plotBackgroundColor: '#EFEFFF',

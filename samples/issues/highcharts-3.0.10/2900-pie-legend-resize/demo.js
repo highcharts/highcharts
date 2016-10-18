@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    $('#container').highcharts({
 
         series: [{
             type: 'pie',
@@ -19,7 +19,7 @@ $(function () {
     });
 
     $('#update').click(function () {
-        chart.series[0].setData([{
+        $('#container').highcharts().series[0].setData([{
             y: 1,
             name: 'A with a longer series name'
         }]);

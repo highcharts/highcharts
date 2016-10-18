@@ -5,7 +5,7 @@ $(function () {
         }
     });
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         xAxis: {
             type: 'datetime'
         },

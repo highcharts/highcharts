@@ -1,7 +1,7 @@
 $(function () {
 
     // Create the chart
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             type: 'column',
             animation: false

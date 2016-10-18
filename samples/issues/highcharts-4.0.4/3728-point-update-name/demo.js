@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    $('#container').highcharts({
 
         xAxis: {
             type: 'category',
@@ -26,7 +26,7 @@ $(function () {
     });
 
     $('button').click(function () {
-        chart.series[0].points[0].update({
+        $('#container').highcharts().series[0].points[0].update({
             name: 'Vier',
             y: 4
         });

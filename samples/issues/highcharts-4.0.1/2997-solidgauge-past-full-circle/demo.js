@@ -1,6 +1,6 @@
 $(function () {
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
 
         chart: {
             type: 'solidgauge'
@@ -26,3 +26,4 @@ $(function () {
         }]
     });
 });
+

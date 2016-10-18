@@ -1,6 +1,6 @@
 $(function () {
 
-    Highcharts.chart('container-rpm', {
+    $('#container-rpm').highcharts({
 
         chart: {
             type: 'gauge'

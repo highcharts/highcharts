@@ -2,8 +2,9 @@
  * Tests the isOuterAxis() function
  */
 QUnit.test('isOuterAxis()', function (assert) {
+    var chart;
 
-    var chart = Highcharts.chart('container', {
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },

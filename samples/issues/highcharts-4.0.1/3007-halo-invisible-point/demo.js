@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Hover over legend item of invisible point'
         },

@@ -1,6 +1,8 @@
 $(function () {
     QUnit.test('Column outside plot area', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart;
+
+        $('#container').highcharts({
             chart: {
                 type: 'column',
                 zoomType: 'xy'
@@ -60,6 +62,9 @@ $(function () {
                 data: [-97, -91, 44]
             }]
         });
+
+        chart = $('#container').highcharts();
+
 
         assert.equal(
             chart.series[0].points[0].graphic.attr('y') + chart.series[0].points[0].graphic.attr('height') < 0,

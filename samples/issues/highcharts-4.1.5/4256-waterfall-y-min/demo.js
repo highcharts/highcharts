@@ -1,6 +1,8 @@
 $(function () {
     QUnit.test('Sum height not exceeding plot area', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart;
+
+        $('#container').highcharts({
             chart: {
                 type: 'waterfall'
             },
@@ -68,6 +70,8 @@ $(function () {
                 "pointPadding": 0
             }]
         });
+
+        chart = $('#container').highcharts();
 
         assert.equal(
             chart.series[0].points[6].graphic.attr('y') + chart.series[0].points[6].graphic.attr('height') <=

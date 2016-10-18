@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Gauge background', function (assert) {
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             chart: {
                 type: "gauge"
             },
@@ -8,7 +8,7 @@ $(function () {
                 data: [10]
             }]
         });
-        Highcharts.chart('container', {
+        $('#container').highcharts({
             id: 'LINE',
             chart: {
                 polar: true,
@@ -20,7 +20,7 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.xAxis[0].plotLinesAndBands.length,
+            $('#container').highcharts().xAxis[0].plotLinesAndBands.length,
             0,
             'No plot bands exist'
         );

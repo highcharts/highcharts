@@ -1,7 +1,8 @@
 $(function () {
     QUnit.test('Show-hide linked series', function (assert) {
-        var chart;
-        chart = Highcharts.chart('container', {
+
+
+        $('#container').highcharts({
             series: [{
                 id: 'tokyo',
                 name: 'Tokyo',
@@ -23,6 +24,7 @@ $(function () {
                 visible: false
             }]
         });
+        var chart = $('#container').highcharts();
 
         function hide() {
             chart.series[1].setVisible(false, false);

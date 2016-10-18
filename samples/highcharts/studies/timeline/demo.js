@@ -1,36 +1,38 @@
 $(function () {
 
-    var dataSequence = [{
-        name: '2009',
-        data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
-    }, {
-        name: '2010',
-        data: [6, 12, 2, 3, 3, 2, 2, 3, 2, 2]
-    }, {
-        name: '2011',
-        data: [4, 5, 6, 5, 5, 4, 9, 5, 3, 4]
-    }, {
-        name: '2012',
-        data: [5, 5, 6, 6, 5, 6, 6, 5, 5, 6]
-    }, {
-        name: '2013',
-        data: [6, 7, 7, 6, 6, 6, 7, 7, 6, 7]
-    }, {
-        name: '2014',
-        data: [8, 9, 9, 8, 8, 8, 9, 9, 8, 9]
-    }, {
-        name: '2015',
-        data: [9, 10, 4, 10, 9, 9, 9, 10, 10, 10]
-    }, {
-        name: '2016',
-        data: [1, 10, 10, 10, 10, 11, 11, 11, 12, 12]
-    }, {
-        name: '2017',
-        data: [11, 11, 12, 12, 12, 11, 11, 12, 12, 12]
-    }];
+    var chart,
+        dataSequence = [{
+            name: '2009',
+            data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
+        }, {
+            name: '2010',
+            data: [6, 12, 2, 3, 3, 2, 2, 3, 2, 2]
+        }, {
+            name: '2011',
+            data: [4, 5, 6, 5, 5, 4, 9, 5, 3, 4]
+        }, {
+            name: '2012',
+            data: [5, 5, 6, 6, 5, 6, 6, 5, 5, 6]
+        }, {
+            name: '2013',
+            data: [6, 7, 7, 6, 6, 6, 7, 7, 6, 7]
+        }, {
+            name: '2014',
+            data: [8, 9, 9, 8, 8, 8, 9, 9, 8, 9]
+        }, {
+            name: '2015',
+            data: [9, 10, 4, 10, 9, 9, 9, 10, 10, 10]
+        }, {
+            name: '2016',
+            data: [1, 10, 10, 10, 10, 11, 11, 11, 12, 12]
+        }, {
+            name: '2017',
+            data: [11, 11, 12, 12, 12, 11, 11, 12, 12, 12]
+        }
+    ];
 
     // Initiate the chart
-    var chart = Highcharts.mapChart('container', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps with time control'
@@ -68,6 +70,8 @@ $(function () {
             }
         }]
     });
+
+    chart = $('#container').highcharts();
 
     /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.

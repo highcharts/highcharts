@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Ellipsis', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 height: 62,
                 margin: 0,

@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Legend should be drawn below chart',
             x: -20 //center

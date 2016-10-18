@@ -1,5 +1,5 @@
 $(function () {
-    var chart = Highcharts.chart('container', {
+    $('#container').highcharts({
 
         chart: {
             width: 300,
@@ -28,7 +28,7 @@ $(function () {
     });
 
     $('#setsize').click(function () {
-        chart.setSize(500, 300, false);
+        $('#container').highcharts().setSize(500, 300, false);
     });
 
 });

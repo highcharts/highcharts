@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Null color in pie', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'pie'
             },
@@ -28,7 +28,7 @@ $(function () {
 
 
     QUnit.test('Null color in column', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'column'
             },

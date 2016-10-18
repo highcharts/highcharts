@@ -82,7 +82,7 @@ $(function () {
     }(Highcharts));
 
 
-    Highcharts.chart('container1', {
+    $('#container1').highcharts({
 
         chart: {
             type: 'column',
@@ -118,7 +118,7 @@ $(function () {
     });
 
 
-    Highcharts.chart('container2', {
+    $('#container2').highcharts({
 
         chart: {
             type: 'line',

@@ -2,7 +2,7 @@ $(function () {
 
     QUnit.test('Stacked box plot', function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             "chart": {
                 "type": "boxplot"
             },
@@ -20,7 +20,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[0].type,
+            $('#container').highcharts().series[0].type,
             'boxplot',
             'Successful boxplot'
         );
@@ -28,7 +28,7 @@ $(function () {
 
     QUnit.test('Stacked error bar', function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             "chart": {
                 "type": "column"
             },
@@ -50,7 +50,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[1].type,
+            $('#container').highcharts().series[1].type,
             'errorbar',
             'Successful error bar'
         );

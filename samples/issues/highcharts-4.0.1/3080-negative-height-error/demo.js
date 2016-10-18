@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             height: 80
         },

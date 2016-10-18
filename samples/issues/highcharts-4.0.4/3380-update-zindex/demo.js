@@ -1,12 +1,11 @@
 $(function () {
-    var chart;
     $("#b").click(function () {
-        chart.series[0].update({
+        $('#container').highcharts().series[0].update({
             zIndex: 1
         });
     });
 
-    chart = Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Yellow line should be on top after click'
         },
