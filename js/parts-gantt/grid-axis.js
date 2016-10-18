@@ -405,10 +405,9 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 		// Add right wall on horizontal axes
 		if (axis.horiz) {
-			console.log('hallais');
 			axis.rightWall = renderer.path([
 				'M',
-				axisGroupBox.x + axis.width + 1,
+				axisGroupBox.x + axis.width + 1, // account for left wall
 				axisGroupBox.y,
 				'L',
 				axisGroupBox.x + axis.width + 1, // account for left wall
