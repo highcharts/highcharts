@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Tooltip does not work after updating from column series.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             series: [{
                 data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5],
                 type: 'column'

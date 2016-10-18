@@ -2,7 +2,7 @@ $(function () {
 
     var category = "first first first first first first first <br/> second second second <br/> third third third third";
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         "title": {
             "text": "'first', 'second', and 'third', should be on their own individual lines"
         },

@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test('Default alignment of opposite axis titles', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             yAxis: [{
                 lineWidth: 1,
                 title: {

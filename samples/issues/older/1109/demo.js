@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
 
         title: {
             text: 'Series.addPoint() in the midddle didn\'t work in Highcharts 3.0.8'

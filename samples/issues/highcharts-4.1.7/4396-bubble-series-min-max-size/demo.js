@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Test different minSize and maxSize per series.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 chart: {
                     type: 'bubble'
                 },

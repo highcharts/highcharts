@@ -4,7 +4,7 @@ $(function () {
         var iteratorPB = 0,
             iteratorAB = 0;
 
-        Highcharts.chart('container', {
+        $('#container').highcharts({
             yAxis: {
                 breaks: [{
                     from: 5,

@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Line series markers should be updated on redraw.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             series: [{
                 data: [{
                     y: 55,
@@ -38,7 +38,7 @@ $(function () {
     });
 
     QUnit.test('Column series point should be updated on redraw.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'column'
             },
@@ -67,7 +67,7 @@ $(function () {
     });
 
     QUnit.test('Pie series point should be updated on redraw.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'pie'
             },

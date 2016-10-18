@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Datalabel inside on columnrange", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'columnrange',
                 inverted: true

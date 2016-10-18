@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Non-polar and categorized chart should render last alternate plotBand.", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 xAxis: {
                     alternateGridColor: '#FDFFD5',
                     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

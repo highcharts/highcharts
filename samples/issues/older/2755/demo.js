@@ -1,6 +1,6 @@
 $(function () {
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             inverted: true,
             width: 400,

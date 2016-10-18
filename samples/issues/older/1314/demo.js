@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Minor grid lines on datetime axis'
         },

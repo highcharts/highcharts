@@ -53,7 +53,7 @@ if ($mapkey = $_GET['mapkey']) {
 
                     
                 // Initiate the chart
-                Highcharts.mapChart('container', {
+                $('#container').highcharts('Map', {
                     
                     title : {
                         text : 'Highmaps basic demo'

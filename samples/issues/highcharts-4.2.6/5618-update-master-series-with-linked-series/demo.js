@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Updating master series, cause linked series to hide, with visible graph.', function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 series: []
             }).highcharts(),
             offset;

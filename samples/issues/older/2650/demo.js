@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         "title": {
             "text": "Data label was mispositioned due to rounding error, Highcharts 3.0.9"
         },

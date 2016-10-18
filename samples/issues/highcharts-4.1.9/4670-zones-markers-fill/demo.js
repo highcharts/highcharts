@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Point markers fills should be taken from zones on hover.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             series: [{
                 data: [-6, -1, 4, 9, 14, 19, 14, 14, 9, 4, -1],
                 zones: [{

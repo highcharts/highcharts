@@ -3,7 +3,7 @@ $(function () {
 
         var color = '#00ff00',
             negativeColor = '#ff0000',
-            chart = Highcharts.chart('container', {
+            chart = $('#container').highcharts({
                 series: [{
                     type: 'column',
                     data: [5, 10, -5, -10],

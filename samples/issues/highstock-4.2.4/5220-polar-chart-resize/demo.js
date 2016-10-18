@@ -2,7 +2,7 @@ $(function () {
 
     QUnit.test('Polar chart resize', function (assert) {
         var chart;
-        Highcharts.chart('container', {
+        $('#container').highcharts({
 
             chart: {
                 polar: true,

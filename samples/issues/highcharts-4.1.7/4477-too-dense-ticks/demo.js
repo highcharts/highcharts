@@ -2,7 +2,7 @@ $(function () {
     QUnit.test('Prevent dense ticks', function (assert) {
 
 
-        Highcharts.chart('container', {
+        $('#container').highcharts({
             "chart": {
                 "type": "bar"
             },

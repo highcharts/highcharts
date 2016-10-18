@@ -1,6 +1,6 @@
 $(function () {
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
 
         data: {
             csv: document.getElementById('csv').innerHTML

@@ -1,7 +1,7 @@
 $(function () {
 
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Highcharts <= 3.0.9: Data labels on error bars not displayed.'
         },

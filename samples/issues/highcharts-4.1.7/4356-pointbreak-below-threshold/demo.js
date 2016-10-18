@@ -8,7 +8,7 @@ $(function () {
             to: 40000
         }];
 
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'column'
             },

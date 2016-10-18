@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'Highcharts <= 3.0.9: The line was not vertically centered'
         },

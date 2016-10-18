@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("X axis label rotation ignored step", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
 
             xAxis: {
                 categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -26,7 +26,7 @@ $(function () {
 
 
     QUnit.test("Auto label alignment is still working when step is set", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 marginBottom: 80
             },

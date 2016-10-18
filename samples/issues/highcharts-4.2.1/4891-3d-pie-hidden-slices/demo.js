@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie points\' graphic should have visibility=hidden when slices are hidden.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 chart: {
                     type: 'pie',
                     options3d: {

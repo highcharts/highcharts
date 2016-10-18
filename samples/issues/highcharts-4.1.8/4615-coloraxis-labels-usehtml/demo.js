@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Use HTML in color axis data labels caused misposition.", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
 
             chart: {
                 type: 'heatmap'

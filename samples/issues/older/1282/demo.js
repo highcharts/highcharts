@@ -26,7 +26,7 @@ $(function () {
         ] }
         ];
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             type: 'column'
         },

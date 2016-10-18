@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: "Reading point names from different series.<br/>Categories should be Apr, May, Jun."
         },

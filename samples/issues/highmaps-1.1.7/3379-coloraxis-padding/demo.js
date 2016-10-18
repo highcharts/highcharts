@@ -4,7 +4,7 @@ $(function () {
 
         var chart;
 
-        Highcharts.chart('container', {
+        $('#container').highcharts({
 
             chart: {
                 type: 'heatmap'

@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test("Negative color shoud be respected for hover state", function (assert) {
 
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 series: [{
                     color: '#FF0000',
                     negativeColor: '#0066CC',

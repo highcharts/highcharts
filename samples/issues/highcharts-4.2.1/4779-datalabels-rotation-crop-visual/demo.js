@@ -13,7 +13,7 @@ $(function () {
         return data;
     }
 
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         chart: {
             type: 'scatter',
             margin: 100,

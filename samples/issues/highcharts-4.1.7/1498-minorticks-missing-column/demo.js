@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Missing minor tick lines before and after extremes for a column chart.', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
                 xAxis: {
                     minorTickInterval: 1 // easier for tests - otherwise floating numbers in JS gives error, for example: 0.9-0.3 = 0.6000000001 etc. but we need to test strict numbers
                 },

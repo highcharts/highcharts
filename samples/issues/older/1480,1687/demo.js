@@ -1,6 +1,6 @@
 $(function () {
     var w = 1;
-    Highcharts.chart('container', {
+    $('#container').highcharts({
 
         chart: {
             plotBorderWidth: w,

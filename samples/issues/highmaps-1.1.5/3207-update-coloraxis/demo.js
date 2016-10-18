@@ -5,7 +5,7 @@ $(function () {
         var chart;
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        $('#container').highcharts('Map', {
 
             title: {
                 text: 'Map with inline point paths'

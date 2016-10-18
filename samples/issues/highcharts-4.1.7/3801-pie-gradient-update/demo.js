@@ -18,7 +18,7 @@ $(function () {
         });
 
         // Build the chart
-        var chart = Highcharts.chart('container', {
+        $('#container').highcharts({
             chart: {
                 type: 'pie',
                 width: 300,
@@ -32,7 +32,8 @@ $(function () {
             }]
         });
 
-        var series = chart.series[0],
+        var chart = $('#container').highcharts(),
+            series = chart.series[0],
             gradient;
 
 

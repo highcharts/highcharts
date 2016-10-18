@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Step=1 should preserve ticks', function (assert) {
         var data = [107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2, 107, 31, 635, 203, 2];
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 type: 'bar'
             },

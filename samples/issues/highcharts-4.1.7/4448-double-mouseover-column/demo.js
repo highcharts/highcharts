@@ -2,7 +2,7 @@ $(function () {
     QUnit.test("Hover on column should call mouseOver only once.", function (assert) {
 
         var iter = 0,
-            chart = Highcharts.chart('container', {
+            chart = $('#container').highcharts({
                 series: [{
                     type: 'column',
                     data: [107, 31, 635, 203, 2],

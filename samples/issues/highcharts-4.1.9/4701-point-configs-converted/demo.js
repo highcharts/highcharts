@@ -6,7 +6,7 @@ $(function () {
     }
 
     QUnit.test('Preserve point config initial number type in options.data', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
 
             series: [{
                 data: [1, 2, 3],
@@ -59,7 +59,7 @@ $(function () {
     });
 
     QUnit.test('Preserve point config initial array type in options.data', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
 
             series: [{
                 data: [[0, 1], [1, 2], [2, 3]],

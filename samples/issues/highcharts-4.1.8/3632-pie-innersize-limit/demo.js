@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('innerSize cannot be greater than size.', function (assert) {
 
-        Highcharts.chart('container', {
+        $('#container').highcharts({
             chart: {
                 width: 200,
                 type: 'pie'

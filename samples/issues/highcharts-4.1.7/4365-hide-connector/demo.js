@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Pie connector with HTML', function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
 
             series: [{
                 type: 'pie',

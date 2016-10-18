@@ -1,6 +1,6 @@
 
 $(function () {
-    Highcharts.chart('container', {
+    $('#container').highcharts({
         title: {
             text: 'All flags should be crisp with a straight stem'
         },

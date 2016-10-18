@@ -1,7 +1,7 @@
 
 $(function () {
     QUnit.test("Preserve gradients in format strings", function (assert) {
-        var chart = Highcharts.chart('container', {
+        var chart = $('#container').highcharts({
             chart: {
                 renderTo: 'container',
                 type: 'column'

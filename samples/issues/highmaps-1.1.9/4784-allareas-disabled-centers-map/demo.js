@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Map with allAreas disabled centers on visible areas.', function (assert) {
-        var chart = Highcharts.mapChart('container', {
+        var chart = $('#container').highcharts('Map', {
             series: [{
                 data: [['gb-hi', 2]],
                 mapData: Highcharts.maps['custom/british-isles-all'],

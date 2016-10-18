@@ -60,7 +60,7 @@ $(function () {
             'Chart constructor, renderTo string option, callback fired'
         );
 
-        chart = Highcharts.chart('container', {
+        chart = $('#container').highcharts({
             series: [{
                 data: [1, 2, 3, 4]
             }]
@@ -253,7 +253,7 @@ $(function () {
             'Is map chart'
         );
 
-        chart = Highcharts.mapChart('container', {
+        chart = $('#container').highcharts('Map', {
             series: [{
                 data: [{
                     path: 'M 0 0 L 100 0 100 100 0 100',
