@@ -557,7 +557,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         axis = axes[0];
         $axisGroup = $(axis.axisGroup.element);
         axisGroupBox = $axisGroup[0].getBBox();
-        ticks = $axisGroup.children();
+        ticks = $axisGroup.find('.highcharts-tick');
         leftTick = ticks[0];
         rightTick = ticks.slice(-1)[0];
 
@@ -578,7 +578,14 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
 /**
  * Checks that the ticks in independent horizontal axes are equally distributed,
  * by checking that the space between the first and second tick is equal to the
- * second last and last tick.
+ * second last and last tick:
+ *
+ *               _________________________
+ * Avoid this:   |______|______|______|__|
+ *                  ^                  ^
+ *               _________________________
+ * Want this:    |_____|_____|_____|_____|
+ *                  ^                 ^
  *
  * It is however fine that ticks in axes which are linked to other axes are not
  * equally distributed, because they may not have the same tick interval as the
@@ -589,12 +596,13 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         axes,
         i,
         axis,
-        error = 0.5000000001,
+        // There is often a 1px difference in spacing between ticks
+        error = 1.00000000000001,
         ticks,
         $axisGroup,
         axisGroupBox,
         secondLeftmostTick,
-        rightmostTick,
+        secondRightmostTick,
         axisLeftPoint,
         axisRightPoint,
         leftSpace,
@@ -663,16 +671,16 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         $axisGroup = $(axis.axisGroup.element);
         ticks = $axisGroup.find('.highcharts-tick');
         secondLeftmostTick = ticks[1];
-        rightmostTick = ticks.slice(-2)[0];
+        secondRightmostTick = ticks.slice(-2)[0];
         axisGroupBox = $axisGroup[0].getBBox();
         axisLeftPoint = axisGroupBox.x;
         axisRightPoint = axisGroupBox.x + axisGroupBox.width;
         leftSpace = secondLeftmostTick.getBBox().x - axisLeftPoint;
-        rightSpace = axisRightPoint - rightmostTick.getBBox().x;
+        rightSpace = axisRightPoint - secondRightmostTick.getBBox().x;
 
         assert.close(
-            leftSpace,
             rightSpace,
+            leftSpace,
             error,
             'Left space is equal to right space in xAxis[' + i + ']'
         );

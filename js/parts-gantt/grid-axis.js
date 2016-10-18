@@ -353,16 +353,36 @@ wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
 });
 
 /**
- * Places leftmost tick at the start of the axis, to create a left wall.
+ * Creates a left and right wall on horizontal axes:
+ * - Places leftmost tick at the start of the axis, to create a left wall
+ * - Ensures that the rightmost tick is at the end of the axis, minus the tick
+ *   interval, to create a right wall.
  *
  * @param {function} proceed - the original function
+ * @param {object} options - the pure axis options as input by the user
  */
-wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 	var axis = this;
-	if (userOptions.grid && axis.horiz) {
-		userOptions.startOnTick = true;
-		userOptions.minPadding = 0;
-		userOptions.endOnTick = true;
+	if (options.grid && axis.horiz) {
+
+		/*               _________________________
+		 * Make this:    ___|_____|_____|_____|__|
+		 *               ^
+		 *               _________________________
+		 * Into this:    |_____|_____|_____|_____|
+		 *               ^
+		 */
+		options.startOnTick = true;
+		options.minPadding = 0;
+
+		/*               _________________________
+		 * Make this:    |______|______|______|__|
+		 *                  ^                  ^
+		 *               _________________________
+		 * Into this:    |_____|_____|_____|_____|
+		 *                  ^                 ^
+		 */
+		options.endOnTick = true;
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
@@ -385,6 +405,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		xStartIndex,
 		xEndIndex,
 		renderer = axis.chart.renderer,
+		horiz = axis.horiz,
 		axisGroupBox;
 
 	if (options.grid) {
@@ -403,8 +424,16 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 		axisGroupBox = axis.axisGroup.getBBox();
 
-		// Add right wall on horizontal axes
-		if (axis.horiz) {
+		/*
+		 * Add right wall on horizontal axes:
+		 *               _________________________
+ 		 * Make this:    |______|______|______|___
+ 		 *                                       ^
+ 		 *               _________________________
+ 		 * Into this:    |______|______|______|__|
+ 		 *                                       ^
+		 */
+		if (horiz) {
 			axis.rightWall = renderer.path([
 				'M',
 				axisGroupBox.x + axis.width + 1, // account for left wall
@@ -422,8 +451,17 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			.add(axis.axisGroup);
 		}
 
+		/*
+		 * Draw an extra axis line on outer axes
+		 *             >
+		 * Make this:    |______|______|______|___
+		 *
+		 *             > _________________________
+		 * Into this:    |______|______|______|__|
+		 *
+		 */
 		if (axis.isOuterAxis() && axis.axisLine) {
-			if (axis.horiz) {
+			if (horiz) {
 				// -1 to avoid adding distance each time the chart updates
 				distance = axisGroupBox.height - 1;
 			}
@@ -441,7 +479,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 				}
 
 				// If axis is horizontal, reposition line path vertically
-				if (axis.horiz) {
+				if (horiz) {
 					linePath[yStartIndex] = linePath[yStartIndex] + distance;
 					linePath[yEndIndex] = linePath[yEndIndex] + distance;
 				} else {
