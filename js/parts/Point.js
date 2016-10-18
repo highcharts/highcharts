@@ -6,17 +6,17 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var Point,
+var Point,
 
-		each = H.each,
-		extend = H.extend,
-		erase = H.erase,
-		fireEvent = H.fireEvent,
-		format = H.format,
-		isArray = H.isArray,
-		isNumber = H.isNumber,
-		pick = H.pick,
-		removeEvent = H.removeEvent;
+	each = H.each,
+	extend = H.extend,
+	erase = H.erase,
+	fireEvent = H.fireEvent,
+	format = H.format,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	pick = H.pick,
+	removeEvent = H.removeEvent;
 
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
@@ -57,7 +57,7 @@ Point.prototype = {
 		} else {
 			colorIndex = series.colorIndex;
 		}
-		point.colorIndex = pick(point.colorIndex, colorIndex); // docs: Point.colorIndex option
+		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
 		return point;
@@ -92,6 +92,11 @@ Point.prototype = {
 			point.isValid && !point.isValid(),
 			point.x === null || !isNumber(point.y, true)
 		); // #3571, check for NaN
+
+		// The point is initially selected by options (#5777)
+		if (point.selected) {
+			point.state = 'select';
+		}
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -169,7 +174,7 @@ Point.prototype = {
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
 			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
-			(this.options.className ? ' ' + this.options.className : ''); // docs
+			(this.options.className ? ' ' + this.options.className : '');
 	},
 
 	/**

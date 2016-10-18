@@ -11,26 +11,26 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		Chart = H.Chart,
-		createElement = H.createElement,
-		css = H.css,
-		defaultOptions = H.defaultOptions,
-		defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		hasTouch = H.hasTouch,
-		inArray = H.inArray,
-		isObject = H.isObject,
-		Legend = H.Legend,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		svg = H.svg,
-		TrackerMixin;
+var addEvent = H.addEvent,
+	Chart = H.Chart,
+	createElement = H.createElement,
+	css = H.css,
+	defaultOptions = H.defaultOptions,
+	defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	hasTouch = H.hasTouch,
+	inArray = H.inArray,
+	isObject = H.isObject,
+	Legend = H.Legend,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	TrackerMixin;
 /**
  * TrackerMixin for points and graphs
  */
@@ -316,9 +316,9 @@ extend(Chart.prototype, {
 		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
-				title: lang.resetZoomTitle,
-				'class': 'highcharts-reset-zoom'
+				title: lang.resetZoomTitle
 			})
+			.addClass('highcharts-reset-zoom')
 			.add()
 			.align(btnOptions.position, false, alignTo);
 
@@ -481,30 +481,30 @@ extend(Point.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
-		if (chart.hoverSeries !== series) {
-			series.onMouseOver();
-		}
-
-		// set normal state to previous series
-		if (hoverPoint && hoverPoint !== point) {
-			hoverPoint.onMouseOut();
-		}
-
 		if (point.series) { // It may have been destroyed, #4130
-
-			// trigger the event
-			point.firePointEvent('mouseOver');
+			// In shared tooltip, call mouse over when point/series is actually hovered: (#5766)
+			if (!byProximity) {
+				// set normal state to previous series
+				if (hoverPoint && hoverPoint !== point) {
+					hoverPoint.onMouseOut();
+				}
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+				chart.hoverPoint = point;
+			}
 
 			// update the tooltip
 			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				// hover point only for non shared points: (#5766)
+				point.setState('hover');
 				tooltip.refresh(point, e);
+			} else if (!tooltip) {
+				point.setState('hover');
 			}
 
-			// hover this
-			point.setState('hover');
-			if (!byProximity) {
-				chart.hoverPoint = point;
-			}
+			// trigger the event
+			point.firePointEvent('mouseOver');
 		}
 	},
 
@@ -648,7 +648,9 @@ extend(Point.prototype, {
 					});
 				}
 				/*= if (build.classic) { =*/
-				stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				if (stateMarkerGraphic) {
+					stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				}
 				/*= } =*/
 			}
 
@@ -663,7 +665,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(chart.seriesGroup);
+					.add(series.group);
 			}
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -697,13 +699,12 @@ extend(Point.prototype, {
 	haloPath: function (size) {
 		var series = this.series,
 			chart = series.chart,
-			plotBox = series.getPlotBox(),
 			inverted = chart.inverted,
 			plotX = Math.floor(this.plotX);
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+			(inverted ? series.yAxis.len - this.plotY : plotX) - size,
+			(inverted ? series.xAxis.len - plotX : this.plotY) - size,
 			size * 2, 
 			size * 2
 		);

@@ -10,9 +10,9 @@ import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 import '../parts/VmlRenderer.js';
 /*= if (build.classic) { =*/
-	var Axis = H.Axis,
-		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer;
+var Axis = H.Axis,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer;
 
 /**
  *	Extension to the VML Renderer
@@ -34,9 +34,9 @@ if (VMLRenderer) {
 		return result;
 	};
 
-	Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
+	H.VMLRenderer.prototype.arc3dPath = H.SVGRenderer.prototype.arc3dPath;
 
-	Highcharts.wrap(Axis.prototype, 'render', function (proceed) {
+	H.wrap(Axis.prototype, 'render', function (proceed) {
 		proceed.apply(this, [].slice.call(arguments, 1));
 		// VML doesn't support a negative z-index
 		if (this.sideFrame) {

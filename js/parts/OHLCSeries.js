@@ -7,10 +7,10 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
-	var each = H.each,
-		Point = H.Point,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var each = H.each,
+	Point = H.Point,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start OHLC series code													 *

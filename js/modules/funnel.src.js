@@ -38,8 +38,8 @@ seriesType('funnel', 'pie', {
 	},
 	states: {
 		select: {
-			color: '${palette.pointSelectFill}',
-			borderColor: '${palette.pointSelectStroke}',
+			color: '${palette.neutralColor20}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
 	}

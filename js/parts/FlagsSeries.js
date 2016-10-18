@@ -9,18 +9,18 @@ import './Utilities.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-	var addEvent = H.addEvent,
-		each = H.each,
-		merge = H.merge,
-		noop = H.noop,
-		Renderer = H.Renderer,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		SVGRenderer = H.SVGRenderer,
-		TrackerMixin = H.TrackerMixin,
-		VMLRenderer = H.VMLRenderer,
-		symbols = SVGRenderer.prototype.symbols;
+var addEvent = H.addEvent,
+	each = H.each,
+	merge = H.merge,
+	noop = H.noop,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	SVGRenderer = H.SVGRenderer,
+	TrackerMixin = H.TrackerMixin,
+	VMLRenderer = H.VMLRenderer,
+	symbols = SVGRenderer.prototype.symbols;
 /* ****************************************************************************
  * Start Flags series code													*
  *****************************************************************************/
@@ -29,20 +29,20 @@ seriesType('flags', 'column', {
 	//radius: 2,
 	shape: 'flag',
 	stackDistance: 12,
-	textAlign: 'center', // docs: No longer a style, but an option
+	textAlign: 'center',
 	tooltip: {
 		pointFormat: '{point.text}<br/>'
 	},
 	threshold: null,
 	y: -30,
 	/*= if (build.classic) { =*/
-	fillColor: '${palette.flagFill}',
+	fillColor: '${palette.backgroundColor}',
 	// lineColor: color,
 	lineWidth: 1,
 	states: {
 		hover: {
-			lineColor: '${palette.flagHoverStroke}',
-			fillColor: '${palette.flagHoverFill}'
+			lineColor: '${palette.neutralColor100}',
+			fillColor: '${palette.highlightColor20}'
 		}
 	},
 	style: {

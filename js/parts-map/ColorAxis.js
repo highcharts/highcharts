@@ -10,19 +10,19 @@ import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
-	var Axis = H.Axis,
-		Chart = H.Chart,
-		color = H.color,
-		ColorAxis,
-		each = H.each,
-		extend = H.extend,
-		isNumber = H.isNumber,
-		Legend = H.Legend,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		noop = H.noop,
-		merge = H.merge,
-		pick = H.pick,
-		wrap = H.wrap;
+var Axis = H.Axis,
+	Chart = H.Chart,
+	color = H.color,
+	ColorAxis,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	Legend = H.Legend,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	noop = H.noop,
+	merge = H.merge,
+	pick = H.pick,
+	wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
@@ -47,14 +47,14 @@ extend(ColorAxis.prototype, {
 			},
 			width: 0.01,
 			/*= if (build.classic) { =*/
-			color: '${palette.coloraxisMarker}'
+			color: '${palette.neutralColor40}'
 			/*= } =*/
 		},
 		labels: {
 			overflow: 'justify'
 		},
-		minColor: '${palette.coloraxisMinColor}',
-		maxColor: '${palette.coloraxisMaxColor}',
+		minColor: '${palette.highlightColor10}',
+		maxColor: '${palette.highlightColor100}',
 		tickLength: 5,
 		showInLegend: true
 	},
@@ -496,7 +496,7 @@ extend(ColorAxis.prototype, {
  * Handle animation of the color attributes directly
  */
 each(['fill', 'stroke'], function (prop) {
-	Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+	H.Fx.prototype[prop + 'Setter'] = function () {
 		this.elem.attr(prop, ColorAxis.prototype.tweenColors(color(this.start), color(this.end), this.pos));
 	};
 });

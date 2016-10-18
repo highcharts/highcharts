@@ -8,12 +8,12 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-	var each = H.each,
-		noop = H.noop,
-		pick = H.pick,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var each = H.each,
+	noop = H.noop,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 /* 
  * The arearangeseries series type
  */
@@ -73,7 +73,8 @@ seriesType('arearange', 'area', {
 	 */
 	translate: function () {
 		var series = this,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			hasModifyValue = !!series.modifyValue;
 
 		seriesTypes.area.prototype.translate.apply(series);
 
@@ -88,7 +89,13 @@ seriesType('arearange', 'area', {
 				point.isNull = true;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
+				point.plotHigh = yAxis.translate(
+					hasModifyValue ? series.modifyValue(high, point) : high,
+					0,
+					1,
+					0,
+					1
+				);
 			}
 		});
 
@@ -141,6 +148,7 @@ seriesType('arearange', 'area', {
 				polarPlotY: point.polarPlotY,
 				rectPlotX: point.rectPlotX,
 				yBottom: point.yBottom,
+				plotHigh: point.plotHigh,
 				plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
 				plotY: point.plotHigh,
 				isNull: point.isNull

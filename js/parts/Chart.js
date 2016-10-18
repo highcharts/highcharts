@@ -10,40 +10,40 @@ import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-	var addEvent = H.addEvent,
-		animate = H.animate,
-		animObject = H.animObject,
-		attr = H.attr,
-		doc = H.doc,
-		Axis = H.Axis, // @todo add as requirement
-		createElement = H.createElement,
-		defaultOptions = H.defaultOptions,
-		discardElement = H.discardElement,
-		charts = H.charts,
-		css = H.css,
-		defined = H.defined,
-		each = H.each,
-		error = H.error,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		getStyle = H.getStyle,
-		grep = H.grep,
-		isNumber = H.isNumber,
-		isObject = H.isObject,
-		isString = H.isString,
-		Legend = H.Legend, // @todo add as requirement
-		marginNames = H.marginNames,
-		merge = H.merge,
-		Pointer = H.Pointer, // @todo add as requirement
-		pick = H.pick,
-		pInt = H.pInt,
-		removeEvent = H.removeEvent,
-		seriesTypes = H.seriesTypes,
-		splat = H.splat,
-		svg = H.svg,
-		syncTimeout = H.syncTimeout,
-		win = H.win,
-		Renderer = H.Renderer;
+var addEvent = H.addEvent,
+	animate = H.animate,
+	animObject = H.animObject,
+	attr = H.attr,
+	doc = H.doc,
+	Axis = H.Axis, // @todo add as requirement
+	createElement = H.createElement,
+	defaultOptions = H.defaultOptions,
+	discardElement = H.discardElement,
+	charts = H.charts,
+	css = H.css,
+	defined = H.defined,
+	each = H.each,
+	error = H.error,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	getStyle = H.getStyle,
+	grep = H.grep,
+	isNumber = H.isNumber,
+	isObject = H.isObject,
+	isString = H.isString,
+	Legend = H.Legend, // @todo add as requirement
+	marginNames = H.marginNames,
+	merge = H.merge,
+	Pointer = H.Pointer, // @todo add as requirement
+	pick = H.pick,
+	pInt = H.pInt,
+	removeEvent = H.removeEvent,
+	seriesTypes = H.seriesTypes,
+	splat = H.splat,
+	svg = H.svg,
+	syncTimeout = H.syncTimeout,
+	win = H.win,
+	Renderer = H.Renderer;
 /**
  * The Chart class
  * @param {String|Object} renderTo The DOM element to render to, or its id
@@ -331,8 +331,7 @@ Chart.prototype = {
 
 		// redraw affected series
 		each(series, function (serie) {
-			if (serie.isDirty && serie.visible &&
-					(!serie.isCartesian || serie.xAxis)) { // issue #153
+			if ((isDirtyBox || serie.isDirty) && serie.visible) {
 				serie.redraw();
 			}
 		});
@@ -695,9 +694,11 @@ Chart.prototype = {
 			lineHeight: 'normal', // #427
 			zIndex: 0, // #1072
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-		});
+		}, optionsChart.style);
 		/*= } =*/
-		chart.container = container = createElement('div', {
+		chart.container = container = createElement(
+			'div',
+			{
 				id: containerId
 			},
 			containerStyle,
@@ -882,11 +883,6 @@ Chart.prototype = {
 		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
-		});
-
-		// make sure non-cartesian series are also handled
-		each(chart.series, function (serie) {
-			serie.isDirty = true;
 		});
 
 		chart.isDirtyLegend = true; // force legend redraw
@@ -1451,7 +1447,7 @@ Chart.prototype = {
 		var chart = this;
 
 		// Note: win == win.top is required
-		if ((!svg && (win == win.top && win.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
+		if ((!svg && (win == win.top && doc.readyState !== 'complete'))) { // eslint-disable-line eqeqeq
 			doc.attachEvent('onreadystatechange', function () {
 				doc.detachEvent('onreadystatechange', chart.firstRender);
 				if (doc.readyState === 'complete') {

@@ -6,22 +6,22 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var Legend,
+var Legend,
 		
-		addEvent = H.addEvent,
-		css = H.css,
-		discardElement = H.discardElement,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		isFirefox = H.isFirefox,
-		marginNames = H.marginNames,
-		merge = H.merge,
-		pick = H.pick,
-		setAnimation = H.setAnimation,
-		stableSort = H.stableSort,
-		win = H.win,
-		wrap = H.wrap;
+	addEvent = H.addEvent,
+	css = H.css,
+	discardElement = H.discardElement,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	isFirefox = H.isFirefox,
+	marginNames = H.marginNames,
+	merge = H.merge,
+	pick = H.pick,
+	setAnimation = H.setAnimation,
+	stableSort = H.stableSort,
+	win = H.win,
+	wrap = H.wrap;
 /**
  * The overview of the chart's series
  */
@@ -73,7 +73,13 @@ Legend.prototype = {
 
 	},
 
-	update: function (options, redraw) { // docs. Sample created.
+	/**
+	 * Update the legend with new options. Equivalent to running chart.update with a legend
+	 * configuration option.
+	 * @param {Object} options Legend options
+	 * @param {Boolean} redraw Whether to redraw the chart, defaults to true.
+	 */
+	update: function (options, redraw) {
 		var chart = this.chart;
 
 		this.setOptions(merge(true, this.options, options));
@@ -120,7 +126,7 @@ Legend.prototype = {
 				symbolAttr = item.pointAttribs();
 				if (!visible) {
 					for (key in symbolAttr) {
-							symbolAttr[key] = hiddenColor;
+						symbolAttr[key] = hiddenColor;
 					}
 				}
 			}
@@ -263,7 +269,7 @@ Legend.prototype = {
 	setText: function (item) {
 		var options = this.options;
 		item.legendItem.attr({
-			text: options.labelFormat ? Highcharts.format(options.labelFormat, item) : options.labelFormatter.call(item)
+			text: options.labelFormat ? H.format(options.labelFormat, item) : options.labelFormatter.call(item)
 		});
 	},
 
@@ -543,7 +549,8 @@ Legend.prototype = {
 
 		/*= if (build.classic) { =*/
 		// Presentational
-		box.attr({
+		box
+			.attr({
 				stroke: options.borderColor,
 				'stroke-width': options.borderWidth || 0,
 				fill: options.backgroundColor || 'none'
@@ -804,14 +811,17 @@ H.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
+		var options = legend.options,
+			symbolHeight = options.symbolHeight || legend.fontMetrics.f,
+			square = options.squareSymbol,
+			symbolWidth = square ? symbolHeight : legend.symbolWidth; // docs: square
 
 		item.legendSymbol = this.chart.renderer.rect(
-			0,
+			square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
 			legend.baseline - symbolHeight + 1, // #3988
-			legend.symbolWidth,
+			symbolWidth,
 			symbolHeight,
-			legend.options.symbolRadius || 0
+			pick(legend.options.symbolRadius, symbolHeight / 2) // docs: new default
 		)
 		.addClass('highcharts-point')
 		.attr({

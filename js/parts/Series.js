@@ -10,34 +10,34 @@ import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-	var addEvent = H.addEvent,
-		animObject = H.animObject,
-		arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		correctFloat = H.correctFloat,
-		Date = H.Date,
-		defaultOptions = H.defaultOptions,
-		defaultPlotOptions = H.defaultPlotOptions,
-		defined = H.defined,
-		each = H.each,
-		erase = H.erase,
-		error = H.error,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		grep = H.grep,
-		isArray = H.isArray,
-		isNumber = H.isNumber,
-		isString = H.isString,
-		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point, // @todo  add as a requirement
-		removeEvent = H.removeEvent,
-		splat = H.splat,
-		stableSort = H.stableSort,
-		SVGElement = H.SVGElement,
-		syncTimeout = H.syncTimeout,
-		win = H.win;
+var addEvent = H.addEvent,
+	animObject = H.animObject,
+	arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	correctFloat = H.correctFloat,
+	Date = H.Date,
+	defaultOptions = H.defaultOptions,
+	defaultPlotOptions = H.defaultPlotOptions,
+	defined = H.defined,
+	each = H.each,
+	erase = H.erase,
+	error = H.error,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	grep = H.grep,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point, // @todo  add as a requirement
+	removeEvent = H.removeEvent,
+	splat = H.splat,
+	stableSort = H.stableSort,
+	SVGElement = H.SVGElement,
+	syncTimeout = H.syncTimeout,
+	win = H.win;
 
 /**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -80,7 +80,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	marker: {
 		/*= if (build.classic) { =*/
 		lineWidth: 0,
-		lineColor: '${palette.pointStroke}',
+		lineColor: '${palette.backgroundColor}',
 		//fillColor: null,
 		/*= } =*/				
 		//enabled: true,
@@ -96,8 +96,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			},
 			/*= if (build.classic) { =*/
 			select: {
-				fillColor: '${palette.pointSelectFill}',
-				lineColor: '${palette.pointSelectStroke}',
+				fillColor: '${palette.neutralColor20}',
+				lineColor: '${palette.neutralColor100}',
 				lineWidth: 2
 			}
 			/*= } =*/
@@ -123,7 +123,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			fontSize: '11px',
 			fontWeight: 'bold',
 			color: 'contrast',
-			textShadow: '0 0 6px contrast, 0 0 3px contrast'
+			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
 		},
 		// backgroundColor: undefined,
 		// borderColor: undefined,
@@ -171,10 +171,10 @@ H.Series = H.seriesType('line', null, { // base series options
 	//}
 	turboThreshold: 1000
 	// zIndex: null
-},
+
 
 // Prototype properties
-{
+}, {
 	isCartesian: true,
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
@@ -933,6 +933,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				undefined;
+
 			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
 
@@ -1445,7 +1446,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			} else if (graphPath.length) { // #1487
 				
 				series[graphKey] = series.chart.renderer.path(graphPath)
-					.addClass('highcharts-graph ' + (prop[1] || ''))
+					.addClass(prop[1])
 					.attr({ zIndex: 1 }) // #1069
 					.add(series.group);
 
@@ -1650,7 +1651,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				.add(parent);
 
 			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
-				' ' + (this.options.className || '')); // docs: className
+				' ' + (this.options.className || ''));
 		}
 
 		// Place it on first and subsequent (redraw) calls

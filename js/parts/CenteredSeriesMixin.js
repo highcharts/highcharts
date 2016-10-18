@@ -6,8 +6,8 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var pick = H.pick,
-		relativeLength = H.relativeLength;
+var pick = H.pick,
+	relativeLength = H.relativeLength;
 
 H.CenteredSeriesMixin = {
 	/**

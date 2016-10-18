@@ -120,15 +120,18 @@
         }
 
         extras.forEach(function (src) {
-            fs.copy(
-                'build/dist/' + product + '/js/' + src,
-                '../highcharts-dist/' + src,
-                function (err) {
-                    if (err) {
-                        throw err;
+            ['', 'js/'].forEach(function (folder) {
+                var path = folder + src;
+                fs.copy(
+                    'build/dist/' + product + '/js/' + path,
+                    '../' + releaseRepo('highcharts') + '/' + path,
+                    function (err) {
+                        if (err) {
+                            throw err;
+                        }
                     }
-                }
-            );
+                );
+            });
         });
     }
 

@@ -6,13 +6,13 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var charts = H.charts,
-		each = H.each,
-		extend = H.extend,
-		map = H.map,
-		noop = H.noop,
-		pick = H.pick,
-		Pointer = H.Pointer;
+var charts = H.charts,
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	noop = H.noop,
+	pick = H.pick,
+	Pointer = H.Pointer;
 
 /* Support for touch devices */
 extend(Pointer.prototype, {
@@ -32,7 +32,8 @@ extend(Pointer.prototype, {
 	/**
 	 * Run translation operations for each direction (horizontal and vertical) independently
 	 */
-	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch, forcedScale) {
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
+			selectionMarker, clip, lastValidTouch, forcedScale) {
 		var chart = this.chart,
 			xy = horiz ? 'x' : 'y',
 			XY = horiz ? 'X' : 'Y',
@@ -54,7 +55,8 @@ extend(Pointer.prototype, {
 			transformScale,
 			scaleKey,
 			setScale = function () {
-				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+				// Don't zoom if fingers are too close on this axis
+				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) {
 					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
 

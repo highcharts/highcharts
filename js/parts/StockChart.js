@@ -13,35 +13,35 @@ import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
 import './VmlRenderer.js';
-	var arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		Axis = H.Axis,
-		Chart = H.Chart,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		format = H.format,
-		inArray = H.inArray,
-		isNumber = H.isNumber,
-		isString = H.isString,
-		map = H.map,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Pointer = H.Pointer,
-		Renderer = H.Renderer,
-		Series = H.Series,
-		splat = H.splat,
-		stop = H.stop,
-		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer,
-		wrap = H.wrap,
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	inArray = H.inArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	map = H.map,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Pointer = H.Pointer,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	splat = H.splat,
+	stop = H.stop,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer,
+	wrap = H.wrap,
 
 
-		seriesProto = Series.prototype,
-		seriesInit = seriesProto.init, 
-		seriesProcessData = seriesProto.processData,
-		pointTooltipFormatter = Point.prototype.tooltipFormatter;
+	seriesProto = Series.prototype,
+	seriesInit = seriesProto.init, 
+	seriesProcessData = seriesProto.processData,
+	pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
@@ -339,7 +339,8 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	if (path && toPath && path.toString() !== toPath.toString()) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4],
+				path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -415,12 +416,15 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		e = this.cross && this.cross.e;
 	}
 
-	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
+	align = (horiz ? 'center' : opposite ?
+		(this.labelAlign === 'right' ? 'right' : 'left') :
+		(this.labelAlign === 'left' ? 'left' : 'center'));
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
-			.addClass('highcharts-crosshair-label' + (this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
+			.addClass('highcharts-crosshair-label' +
+				(this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
 			.attr({
 				align: options.align || align,
 				padding: pick(options.padding, 8),
@@ -431,13 +435,15 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 		/*= if (build.classic) { =*/
 		// Presentational
-		crossLabel.attr({
-				fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
+		crossLabel
+			.attr({
+				fill: options.backgroundColor ||
+					(this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
 				stroke: options.borderColor || '',
 				'stroke-width': options.borderWidth || 0
 			})
 			.css(extend({
-				color: 'white',
+				color: '${palette.backgroundColor}',
 				fontWeight: 'normal',
 				fontSize: '11px',
 				textAlign: 'center'
@@ -539,7 +545,7 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		if (value !== undefined) { // #2601
+		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
 			// get the modified value
 			value = compare === 'value' ?
@@ -551,9 +557,8 @@ seriesProto.setCompare = function (compare) {
 				point.change = value;
 			}
 
+			return value;
 		}
-
-		return value;
 	} : null;
 
 	// Survive to export, #5485
@@ -650,7 +655,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') +
+			H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);

@@ -8,8 +8,8 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
-	var Series = H.Series,
-		seriesType = H.seriesType;
+var Series = H.Series,
+	seriesType = H.seriesType;
 /**
  * The scatter series type
  */

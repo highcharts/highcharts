@@ -6,11 +6,11 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var each = H.each,
-		isNumber = H.isNumber,
-		map = H.map,
-		merge = H.merge,
-		pInt = H.pInt;
+var each = H.each,
+	isNumber = H.isNumber,
+	map = H.map,
+	merge = H.merge,
+	pInt = H.pInt;
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format

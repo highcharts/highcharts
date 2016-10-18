@@ -25,9 +25,6 @@ var addEvent = H.addEvent,
 	Tooltip = H.Tooltip,
 	win = H.win;
 
-// Global flag for touch support
-H.hasTouch = doc && doc.documentElement.ontouchstart !== undefined;
-
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
  * Subsequent methods should be named differently from what they are doing.
@@ -204,7 +201,7 @@ H.Pointer.prototype = {
 					isCloser = p1.dist - p2.dist,
 					isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
 				// We have two points which are not in the same place on xAxis and shared tooltip:
-				if (isCloserX !== 0) {
+				if (isCloserX !== 0 && shared) { // #5721
 					return isCloserX;
 				}
 				// Points are not exactly in the same place on x/yAxis:
@@ -227,17 +224,14 @@ H.Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoints[0] && (kdpoints[0] !== pointer.hoverPoint || (tooltip && tooltip.isHidden))) {
+		if (kdpoints[0] && (kdpoints[0] !== chart.hoverPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoints[0].series.noSharedTooltip) {
-				// Do mouseover on all points (#3919, #3985, #4410)
-				for (i = 0; i >= 0; i--) {
+				// Do mouseover on all points (#3919, #3985, #4410, #5622)
+				for (i = 0; i < kdpoints.length; i++) {
 					kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
 				}
-				// Make sure that the hoverPoint and hoverSeries are stored for events (e.g. click), #5622
-				if (hoverSeries && hoverSeries.directTouch && hoverPoint && hoverPoint !== kdpoints[0]) {
-					hoverPoint.onMouseOver(e, false);
-				}
+
 				if (kdpoints.length && tooltip) {
 					// Keep the order of series in tooltip:
 					tooltip.refresh(kdpoints.sort(function (p1, p2) {
@@ -252,7 +246,6 @@ H.Pointer.prototype = {
 					kdpoints[0].onMouseOver(e);
 				}
 			}
-			pointer.prevKDPoint = kdpoints[0];
 			updatePosition = false;
 		}
 		// Update positions (regardless of kdpoint or hoverPoint)
@@ -354,7 +347,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
+			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 
@@ -461,7 +454,7 @@ H.Pointer.prototype = {
 					)
 					.attr({
 						/*= if (build.classic) { =*/
-						fill: chartOptions.selectionMarkerFill || color('${palette.selectionMarkerColor}').setOpacity(0.25).get(),
+						fill: chartOptions.selectionMarkerFill || color('${palette.highlightColor80}').setOpacity(0.25).get(),
 						/*= } =*/
 						'class': 'highcharts-selection-marker',						
 						'zIndex': 7
@@ -613,7 +606,7 @@ H.Pointer.prototype = {
 
 		var chart = this.chart;
 
-		if (!defined(H.hoverChartIndex) || !charts[H.hoverChartIndex] || charts[H.hoverChartIndex].mouseIsDown) {
+		if (!defined(H.hoverChartIndex) || !charts[H.hoverChartIndex] || !charts[H.hoverChartIndex].mouseIsDown) {
 			H.hoverChartIndex = chart.index;
 		}
 

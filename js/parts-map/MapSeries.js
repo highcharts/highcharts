@@ -13,25 +13,25 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './ColorAxis.js';
-	var color = H.color,
-		ColorAxis = H.ColorAxis,
-		colorPointMixin = H.colorPointMixin,
-		colorSeriesMixin = H.colorSeriesMixin,
-		doc = H.doc,
-		each = H.each,
-		extend = H.extend,
-		isNumber = H.isNumber,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		map = H.map,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		isArray = H.isArray,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		splat = H.splat;
+var color = H.color,
+	ColorAxis = H.ColorAxis,
+	colorPointMixin = H.colorPointMixin,
+	colorSeriesMixin = H.colorSeriesMixin,
+	doc = H.doc,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	isArray = H.isArray,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	splat = H.splat;
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
 // diffent logic (#3218)
@@ -48,8 +48,8 @@ seriesType('map', 'scatter', {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
-	nullColor: '${palette.nullPointColor}',
-	borderColor: '${palette.mapStroke}',
+	nullColor: '${palette.neutralColor3}',
+	borderColor: '${palette.neutralColor20}',
 	borderWidth: 1,
 	marker: null,
 	stickyTracking: false,
@@ -78,7 +78,7 @@ seriesType('map', 'scatter', {
 			halo: null
 		},
 		select: {
-			color: '${palette.pointSelectFill}'
+			color: '${palette.neutralColor20}'
 		}
 	}
 
@@ -255,7 +255,7 @@ seriesType('map', 'scatter', {
 
 		// Collect mapData from chart options if not defined on series
 		if (!mapData && globalMapData) {
-			mapData = typeof globalMapData === 'string' ? Highcharts.maps[globalMapData] : globalMapData;
+			mapData = typeof globalMapData === 'string' ? H.maps[globalMapData] : globalMapData;
 		}
 
 		if (joinByNull) {
@@ -298,7 +298,7 @@ seriesType('map', 'scatter', {
 		this.getBox(data);
 
 		// Pick up transform definitions for chart
-		this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms; // docs
+		this.chart.mapTransforms = mapTransforms = chartOptions && chartOptions.mapTransforms || mapData && mapData['hc-transform'] || mapTransforms;
 
 		// Cache cos/sin of transform rotation angle
 		if (mapTransforms) {
@@ -497,7 +497,7 @@ seriesType('map', 'scatter', {
 			each(series.points, function (point) {
 				if (point.graphic) {
 					if (point.name) {
-						point.graphic.addClass('highcharts-name-' + point.name.replace(' ', '-').toLowerCase());
+						point.graphic.addClass('highcharts-name-' + point.name.replace(/ /g, '-').toLowerCase());
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
@@ -550,7 +550,12 @@ seriesType('map', 'scatter', {
 		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be
 		// set.
 		if (!supportsVectorEffect) {
-			series.group.element.setAttribute('stroke-width', series.options[series.pointAttrToOptions['stroke-width']] / (scaleX || 1));
+			series.group.element.setAttribute(
+				'stroke-width',
+				series.options[
+					(series.pointAttrToOptions && series.pointAttrToOptions['stroke-width']) || 'borderWidth'
+				] / (scaleX || 1)
+			);
 		}
 
 		this.drawMapDataLabels();

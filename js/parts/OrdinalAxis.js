@@ -9,18 +9,18 @@ import './Axis.js';
 import './Utilities.js';
 import './Chart.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		Axis = H.Axis,
-		Chart = H.Chart,
-		css = H.css,
-		dateFormat = H.dateFormat,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		noop = H.noop,
-		Series = H.Series,
-		timeUnits = H.timeUnits,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	css = H.css,
+	dateFormat = H.dateFormat,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	noop = H.noop,
+	Series = H.Series,
+	timeUnits = H.timeUnits,
+	wrap = H.wrap;
 
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *

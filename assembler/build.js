@@ -42,7 +42,7 @@ const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
 
 const getDate = () => {
     const date = new Date();
-    const pad = (str) => leftPad(str, '0', 2);  
+    const pad = (str) => leftPad(str, '0', 2);
     return ['' + date.getFullYear(), pad('' + (date.getMonth() + 1)), pad('' + date.getDate())].join('-');
 };
 
@@ -134,7 +134,29 @@ const build = userOptions=> {
     }
 };
 
+const buildModules = userOptions => {
+    // userOptions is an empty object by default
+    userOptions = (typeof userOptions === 'undefined') ? {} : userOptions;
+    // Merge the userOptions with defaultOptions
+    let options = Object.assign({}, defaultOptions, userOptions);
+    // Check if required options are set
+    if (options.base) {
+        options.palette = (options.palette) ? options.palette : p.getPalette((options.pathPalette ? options.pathPalette : options.base + '../css/highcharts.scss'));
+        options.files = getFilesInFolder(options.base, true).filter(path => path.endsWith('.js'));
+        getIndividualOptions(options)
+            .forEach((o) => {
+                let content = U.getFile(o.entry);
+                let outputPath = options.output + o.type + '/' + o.filename;
+                let file = p.preProcess(content, o.build);
+                U.writeFile(outputPath, file);
+            });
+    } else {
+        U.debug(true, 'Missing required option! The options \'base\' is required for the script to run');
+    }
+};
+
 module.exports = {
-    build: build,
+    build,
+    buildModules,
     getFilesInFolder
 };

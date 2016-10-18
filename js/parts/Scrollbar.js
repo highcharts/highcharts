@@ -8,22 +8,22 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
 import './Options.js';
-	var addEvent = H.addEvent,
-		Axis = H.Axis,
-		correctFloat = H.correctFloat,
-		defaultOptions = H.defaultOptions,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		doc = H.doc,
-		each = H.each,
-		fireEvent = H.fireEvent,
-		hasTouch = H.hasTouch,
-		isTouchDevice = H.isTouchDevice,
-		merge = H.merge,
-		pick = H.pick,
-		removeEvent = H.removeEvent,
-		svg = H.svg,
-		wrap = H.wrap;
+var addEvent = H.addEvent,
+	Axis = H.Axis,
+	correctFloat = H.correctFloat,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	doc = H.doc,
+	each = H.each,
+	fireEvent = H.fireEvent,
+	hasTouch = H.hasTouch,
+	isTouchDevice = H.isTouchDevice,
+	merge = H.merge,
+	pick = H.pick,
+	removeEvent = H.removeEvent,
+	svg = H.svg,
+	wrap = H.wrap;
 
 var defaultScrollbarOptions =  {
 	//enabled: true
@@ -32,23 +32,23 @@ var defaultScrollbarOptions =  {
 	barBorderRadius: 0,
 	buttonBorderRadius: 0,
 	liveRedraw: svg && !isTouchDevice,
-	margin: 10, // docs
+	margin: 10,
 	minWidth: 6,
-	//showFull: true, // docs
-	//size: null,	// docs
-	step: 0.2,		// docs
-	zIndex: 3,		// docs
+	//showFull: true,
+	//size: null,
+	step: 0.2,
+	zIndex: 3,
 	/*= if (build.classic) { =*/
-	barBackgroundColor: '${palette.scrollbarThumb}',
+	barBackgroundColor: '${palette.neutralColor20}',
 	barBorderWidth: 1,
-	barBorderColor: '${palette.scrollbarThumb}',
-	buttonArrowColor: '${palette.scrollbarArrow}',
-	buttonBackgroundColor: '${palette.scrollbarButton}',
-	buttonBorderColor: '${palette.scrollbarStroke}',
+	barBorderColor: '${palette.neutralColor20}',
+	buttonArrowColor: '${palette.neutralColor80}',
+	buttonBackgroundColor: '${palette.neutralColor10}',
+	buttonBorderColor: '${palette.neutralColor20}',
 	buttonBorderWidth: 1,
-	rifleColor: '${palette.scrollbarArrow}',
-	trackBackgroundColor: '${palette.scrollbarTrack}',
-	trackBorderColor: '${palette.scrollbarTrack}',
+	rifleColor: '${palette.neutralColor80}',
+	trackBackgroundColor: '${palette.neutralColor5}',
+	trackBorderColor: '${palette.neutralColor5}',
 	trackBorderWidth: 1
 	/*= } =*/
 };
@@ -138,7 +138,8 @@ Scrollbar.prototype = {
 				r: options.barBorderRadius || 0
 			}).add(scroller.scrollbarGroup);
 
-		scroller.scrollbarRifles = renderer.path(scroller.swapXY([
+		scroller.scrollbarRifles = renderer.path(scroller.swapXY(
+			[
 				'M',
 				-3, size / 4,
 				'L',
@@ -733,4 +734,4 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-Highcharts.Scrollbar = Scrollbar;
+H.Scrollbar = Scrollbar;

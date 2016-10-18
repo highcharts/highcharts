@@ -10,26 +10,27 @@ import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		animate = H.animate,
-		Axis = H.Axis,
-		Chart = H.Chart,
-		createElement = H.createElement,
-		css = H.css,
-		defined = H.defined,
-		each = H.each,
-		erase = H.erase,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		inArray = H.inArray,
-		isObject = H.isObject,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		setAnimation = H.setAnimation,
-		splat = H.splat;
+var addEvent = H.addEvent,
+	animate = H.animate,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	createElement = H.createElement,
+	css = H.css,
+	defined = H.defined,
+	each = H.each,
+	erase = H.erase,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	inArray = H.inArray,
+	isNumber = H.isNumber,
+	isObject = H.isObject,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	setAnimation = H.setAnimation,
+	splat = H.splat;
 		
 // Extend the Chart prototype for dynamic methods
 extend(Chart.prototype, {
@@ -203,7 +204,9 @@ extend(Chart.prototype, {
 			},
 			optionsChart = options.chart,
 			updateAllAxes,
-			updateAllSeries;
+			updateAllSeries,
+			newWidth,
+			newHeight;
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
@@ -306,8 +309,11 @@ extend(Chart.prototype, {
 		}
 
 		// Update size. Redraw is forced.
-		if (optionsChart && ('width' in optionsChart || 'height' in optionsChart)) {
-			this.setSize(optionsChart.width, optionsChart.height);
+		newWidth = optionsChart && optionsChart.width;
+		newHeight = optionsChart && optionsChart.height;
+		if ((isNumber(newWidth) && newWidth !== this.chartWidth) ||
+				(isNumber(newHeight) && newHeight !== this.chartHeight)) {
+			this.setSize(newWidth, newHeight);
 		} else if (pick(redraw, true)) {
 			this.redraw();
 		}

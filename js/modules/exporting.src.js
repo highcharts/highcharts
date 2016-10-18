@@ -65,23 +65,24 @@ defaultOptions.navigation = {
 // Presentational attributes
 merge(true, defaultOptions.navigation, {
 	menuStyle: {
-		border: '1px solid ${palette.menuBorder}',
+		border: '1px solid ${palette.neutralColor40}',
 		background: '${palette.backgroundColor}',
 		padding: '5px 0'
 	},
 	menuItemStyle: {
-		padding: '0 10px',
+		padding: '0.5em 1em',
 		background: 'none',
-		color: '${palette.menuTextColor}',
-		fontSize: isTouchDevice ? '14px' : '11px'
+		color: '${palette.neutralColor80}',
+		fontSize: isTouchDevice ? '14px' : '11px',
+		transition: 'background 250ms, color 250ms'
 	},
 	menuItemHoverStyle: {
-		background: '${palette.menuHoverBackground}',
+		background: '${palette.highlightColor80}',
 		color: '${palette.backgroundColor}'
 	},
 	buttonOptions: {
-		symbolFill: '${palette.buttonSymbolStroke}',
-		symbolStroke: '${palette.buttonSymbolStroke}',
+		symbolFill: '${palette.neutralColor60}',
+		symbolStroke: '${palette.neutralColor60}',
 		symbolStrokeWidth: 3,
 		theme: {
 			fill: '${palette.backgroundColor}', // capture hover
@@ -863,7 +864,7 @@ Chart.prototype.inlineStyles = function () {
 			// Get default styles from the browser so that we don't have to add these
 			if (!defaultStyles[node.nodeName]) {
 				if (!dummySVG) {
-					dummySVG = doc.createElementNS(Highcharts.SVG_NS, 'svg');
+					dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
 					dummySVG.setAttribute('version', '1.1');
 					doc.body.appendChild(dummySVG);
 				}

@@ -613,7 +613,7 @@
         <echo message="placing zipped folder structure in ${gzip.dir}"/>
         <!-- make copy so we don't double-compress files -->
         <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
-            <fileset dir="${js.dir}" includes="**/*.js"/>
+            <fileset dir="${js.dir}" includes="**/*.js,**/*.css"/>
         </sync>
         <ac:for param="file">
             <path>
@@ -1064,30 +1064,4 @@
             <fileset dir="vendor"/>
         </copy>
     </target>
-
-    <target name="copy-to-download-builder" depends="set.properties" description="Copy parts files from this repo to repository highcharts.com.site">
-        <property file="git-ignore-me.properties"/>
-        
-        <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/php-app/joomla/media/com_download/js/parts.js" overwrite="true"/>
-        <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
-            <filelist refid="highstock.files"/>
-            <filterset refid="download.builder.filter"/>
-        </copy>
-        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/parts-more" overwrite="true">
-            <filelist refid="highchartsmore.files"/>
-            <filterset refid="download.builder.filter"/>
-        </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
-        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
-            <filelist refid="highcharts-modules.files"/>
-            <filterset refid="download.builder.filter"/>
-        </copy>
-        <copy todir="${highcharts.site.dir}/php-app/joomla/components/com_download/source" overwrite="true">
-            <filelist refid="heatmap.files"/>
-            <filterset refid="download.builder.filter"/>
-        </copy>
-    </target>
-
 </project>

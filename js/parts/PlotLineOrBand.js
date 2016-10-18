@@ -6,14 +6,14 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		each = H.each,
-		erase = H.erase,
-		merge = H.merge,
-		pick = H.pick;
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	each = H.each,
+	erase = H.erase,
+	merge = H.merge,
+	pick = H.pick;
 /*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
@@ -54,7 +54,7 @@ H.PlotLineOrBand.prototype = {
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,
 			attribs = {
-				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '') // docs: className
+				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '')
 			},
 			groupAttribs = {},
 			renderer = axis.chart.renderer,

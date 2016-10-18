@@ -7,20 +7,20 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './SvgRenderer.js';
-	var attr = H.attr,
-		createElement = H.createElement,
-		css = H.css,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		isFirefox = H.isFirefox,
-		isMS = H.isMS,
-		isWebKit = H.isWebKit,
-		pInt = H.pInt,
-		SVGElement = H.SVGElement,
-		SVGRenderer = H.SVGRenderer,
-		win = H.win,
-		wrap = H.wrap;
+var attr = H.attr,
+	createElement = H.createElement,
+	css = H.css,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	isFirefox = H.isFirefox,
+	isMS = H.isMS,
+	isWebKit = H.isWebKit,
+	pInt = H.pInt,
+	SVGElement = H.SVGElement,
+	SVGRenderer = H.SVGRenderer,
+	win = H.win,
+	wrap = H.wrap;
 
 // extend SvgElement for useHTML option
 extend(SVGElement.prototype, {
@@ -212,7 +212,7 @@ extend(SVGRenderer.prototype, {
 			addSetters = function (element, style) {
 				// These properties are set as attributes on the SVG group, and as
 				// identical CSS properties on the div. (#3542)
-				each(['display', 'opacity', 'visibility'], function (prop) {
+				each(['opacity', 'visibility'], function (prop) {
 					wrap(element, prop + 'Setter', function (proceed, value, key, elem) {
 						proceed.call(this, value, key, elem);
 						style[key] = value;

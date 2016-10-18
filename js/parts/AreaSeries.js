@@ -10,13 +10,13 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-	var color = H.color,
-		each = H.each,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		map = H.map,
-		pick = H.pick,
-		Series = H.Series,
-		seriesType = H.seriesType;
+var color = H.color,
+	each = H.each,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	map = H.map,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType;
 /**
  * Area series type
  */
@@ -217,7 +217,11 @@ seriesType('area', 'line', {
 		for (i = 0; i < points.length; i++) {
 			isNull = points[i].isNull;
 			plotX = pick(points[i].rectPlotX, points[i].plotX);
-			yBottom = pick(points[i].yBottom, translatedThreshold);
+			yBottom = pick(
+				points[i].plotHigh, // #5706, area ranges in compare mode
+				points[i].yBottom,
+				translatedThreshold
+			);
 
 			if (!isNull || connectNulls) {
 

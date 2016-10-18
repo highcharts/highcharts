@@ -3,7 +3,6 @@
         "clearInterval": true,
         "clearTimeout": true,
         "console": true,
-        "Highcharts": true,
         "module": true,
         "setInterval": true,
         "setTimeout": true,
@@ -16,8 +15,9 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
-        "indent": 0,                                /*@todo: Before release HC5, do a pure whitespace commit*/
+        "indent": ["error", "tab"],
         "lines-around-comment": 0,
+        //"max-len": ["warn", 80, 4],
         "newline-after-var": 0,
         "no-alert": 2,
         "no-console": 2,

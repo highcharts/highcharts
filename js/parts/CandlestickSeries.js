@@ -6,11 +6,11 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
-		merge = H.merge,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	merge = H.merge,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Candlestick series code											  *
@@ -24,9 +24,9 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	/*= if (build.classic) { =*/
-	lineColor: 'black',
+	lineColor: '${palette.neutralColor100}',
 	lineWidth: 1,
-	upColor: 'white'
+	upColor: '${palette.backgroundColor}'
 	// upLineColor: null
 	/*= } =*/
 

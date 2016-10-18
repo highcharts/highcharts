@@ -6,14 +6,14 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-	var correctFloat = H.correctFloat,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		isNumber = H.isNumber,
-		merge = H.merge,
-		pick = H.pick,
-		stop = H.stop,
-		deg2rad = H.deg2rad;
+var correctFloat = H.correctFloat,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	stop = H.stop,
+	deg2rad = H.deg2rad;
 
 /**
  * The Tick class
@@ -56,7 +56,10 @@ H.Tick.prototype = {
 		// Set the datetime label format. If a higher rank is set for this position, use that. If not,
 		// use the general format.
 		if (axis.isDatetimeAxis && tickPositionInfo) {
-			dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
+			dateTimeLabelFormat =
+				options.dateTimeLabelFormats[
+					tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName
+				];
 		}
 		// set properties for access in render method
 		tick.isFirst = isFirst;
@@ -149,7 +152,8 @@ H.Tick.prototype = {
 
 			modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
 			if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection * (slotWidth - Math.min(labelWidth, modifiedSlotWidth)));
+				xy.x += goRight * (slotWidth - modifiedSlotWidth - xCorrection *
+					(slotWidth - Math.min(labelWidth, modifiedSlotWidth)));
 			}
 			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
@@ -185,7 +189,11 @@ H.Tick.prototype = {
 		return {
 			x: horiz ?
 				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
-				axis.left + axis.offset + (axis.opposite ? ((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left : 0),
+				axis.left + axis.offset +
+					(axis.opposite ?
+						((old && chart.oldChartWidth) || chart.chartWidth) - axis.right - axis.left :
+						0
+					),
 
 			y: horiz ?
 				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
@@ -281,7 +289,8 @@ H.Tick.prototype = {
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+			reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
+				(!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
 		/*= if (build.classic) { =*/
 		var gridPrefix = type ? type + 'Grid' : 'grid',
@@ -367,7 +376,8 @@ H.Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (horiz && !axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+			} else if (horiz && !axis.isRadial && !labelOptions.step &&
+					!labelOptions.rotation && !old && opacity !== 0) {
 				tick.handleOverflow(xy);
 			}
 

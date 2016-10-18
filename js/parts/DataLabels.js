@@ -7,21 +7,21 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		arrayMax = H.arrayMax,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		format = H.format,
-		map = H.map,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		relativeLength = H.relativeLength,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes,
-		stableSort = H.stableSort,
-		stop = H.stop;
+var addEvent = H.addEvent,
+	arrayMax = H.arrayMax,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	relativeLength = H.relativeLength,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	stableSort = H.stableSort,
+	stop = H.stop;
 
 
 /**
@@ -30,7 +30,7 @@ import './Series.js';
  * a size, a target and a rank. It will place the labels as close as possible to their 
  * targets, skipping the lowest ranked labels if necessary.
  */
-Highcharts.distribute = function (boxes, len) {
+H.distribute = function (boxes, len) {
 	
 	var i, 
 		overlapping = true,
@@ -209,7 +209,7 @@ Series.prototype.drawDataLabels = function () {
 
 				/*= if (build.classic) { =*/
 				// Determine the color
-				style.color = pick(options.color, style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
 				/*= } =*/
 
 				// update existing label
@@ -249,7 +249,7 @@ Series.prototype.drawDataLabels = function () {
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
 							renderer.getContrast(point.color || series.color) :
-							'${palette.textHeavyColor}';
+							'${palette.neutralColor100}';
 					}
 
 					if (seriesOptions.cursor) {
@@ -555,7 +555,7 @@ if (seriesTypes.pie) {
 						};
 					}
 				});
-				Highcharts.distribute(positions, bottom + size - top);
+				H.distribute(positions, bottom + size - top);
 			}
 
 			// now the used slots are sorted, fill them up sequentially
@@ -654,7 +654,7 @@ if (seriesTypes.pie) {
 							/*= if (build.classic) { =*/
 							connector.attr({
 								'stroke-width': connectorWidth,
-								'stroke': options.connectorColor || point.color || '${palette.weakColor}'
+								'stroke': options.connectorColor || point.color || '${palette.neutralColor60}'
 							});
 							/*= } =*/
 						}

@@ -6,12 +6,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-	var deg2rad = H.deg2rad,
-		each = H.each,
-		pick = H.pick,
-		seriesTypes = H.seriesTypes,
-		svg = H.svg,
-		wrap = H.wrap;
+var deg2rad = H.deg2rad,
+	each = H.each,
+	pick = H.pick,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	wrap = H.wrap;
 
 /*** 
 	EXTENSION FOR 3D PIES
@@ -28,7 +28,7 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 	var series = this,
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 0,
-        options3d = series.chart.options.chart.options3d,
+		options3d = series.chart.options.chart.options3d,
 		alpha = options3d.alpha,
 		beta = options3d.beta,
 		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
@@ -100,7 +100,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	if (this.chart.is3d()) {
 		var series = this,
 			chart = series.chart,
-            options3d = chart.options.chart.options3d;
+			options3d = chart.options.chart.options3d;
 		each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,

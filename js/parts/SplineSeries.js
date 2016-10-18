@@ -8,13 +8,13 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
-	var defaultPlotOptions = H.defaultPlotOptions,
-		defaultSeriesOptions = H.defaultPlotOptions.line,
-		extendClass = H.extendClass,
-		merge = H.merge,
-		pick = H.pick,
-		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+var defaultPlotOptions = H.defaultPlotOptions,
+	defaultSeriesOptions = H.defaultPlotOptions.line,
+	extendClass = H.extendClass,
+	merge = H.merge,
+	pick = H.pick,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes;
 
 /**
  * Set the default options for spline

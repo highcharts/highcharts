@@ -5,7 +5,6 @@ $compare = json_decode(@file_get_contents($compareJSON));
 $path = $_GET['path'];
 $diff = $_GET['diff'];
 $focus = @$_GET['focus'] === 'false' ? false : true;
-$i = $_GET['i'];
 $updateContents = false;
 
 
@@ -90,7 +89,8 @@ $symbols = array('check', 'exclamation-sign');
 			if (window.parent.frames[0]) {
 				var contentWin = (window.parent.parent || window.parent).frames[0],
 					contentDoc = contentWin.document,
-					li = contentDoc.getElementById('li<?php echo $i ?>');
+					sampleIndex = window.parent.frames[0].samples.indexOf('<?php echo $path ?>'),
+					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// Sample is different but approved
 				<?php if ($comment->symbol === 'check' && $comment->diff == $diff): ?>

@@ -7,41 +7,41 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
-	var SVGElement,
-		SVGRenderer,
+var SVGElement,
+	SVGRenderer,
 
-		addEvent = H.addEvent,
-		animate = H.animate,
-		attr = H.attr,
-		charts = H.charts,
-		color = H.color,
-		css = H.css,
-		createElement = H.createElement,
-		defined = H.defined,
-		deg2rad = H.deg2rad,
-		destroyObjectProperties = H.destroyObjectProperties,
-		doc = H.doc,
-		each = H.each,
-		extend = H.extend,
-		erase = H.erase,
-		grep = H.grep,
-		hasTouch = H.hasTouch,
-		isArray = H.isArray,
-		isFirefox = H.isFirefox,
-		isMS = H.isMS,
-		isObject = H.isObject,
-		isString = H.isString,
-		isWebKit = H.isWebKit,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		pInt = H.pInt,
-		removeEvent = H.removeEvent,
-		splat = H.splat,
-		stop = H.stop,
-		svg = H.svg,
-		SVG_NS = H.SVG_NS,
-		win = H.win;
+	addEvent = H.addEvent,
+	animate = H.animate,
+	attr = H.attr,
+	charts = H.charts,
+	color = H.color,
+	css = H.css,
+	createElement = H.createElement,
+	defined = H.defined,
+	deg2rad = H.deg2rad,
+	destroyObjectProperties = H.destroyObjectProperties,
+	doc = H.doc,
+	each = H.each,
+	extend = H.extend,
+	erase = H.erase,
+	grep = H.grep,
+	hasTouch = H.hasTouch,
+	isArray = H.isArray,
+	isFirefox = H.isFirefox,
+	isMS = H.isMS,
+	isObject = H.isObject,
+	isString = H.isString,
+	isWebKit = H.isWebKit,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	pInt = H.pInt,
+	removeEvent = H.removeEvent,
+	splat = H.splat,
+	stop = H.stop,
+	svg = H.svg,
+	SVG_NS = H.SVG_NS,
+	win = H.win;
 
 /**
  * A wrapper object for SVG elements
@@ -174,7 +174,7 @@ SVGElement.prototype = {
 				each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Highcharts.color(stop[1]);
+						colorObject = H.color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {
@@ -397,14 +397,13 @@ SVGElement.prototype = {
 	 * Add a class name to an element
 	 */
 	addClass: function (className, replace) {
-		var element = this.element,
-			currentClassName = attr(element, 'class') || '';
+		var currentClassName = this.attr('class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
 				className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
 			}
-			attr(element, 'class', className);
+			this.attr('class', className);
 		}
 		return this;
 	},
@@ -1112,7 +1111,7 @@ SVGElement.prototype = {
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
 				attr(shadow, {
 					'isShadow': 'true',
-					'stroke': shadowOptions.color || 'black',
+					'stroke': shadowOptions.color || '${palette.neutralColor100}',
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
@@ -1219,6 +1218,10 @@ SVGElement.prototype = {
 	alignSetter: function (value) {
 		var convert = { left: 'start', center: 'middle', right: 'end' };
 		this.element.setAttribute('text-anchor', convert[value]);
+	},
+	opacitySetter: function (value, key, element) {		
+		this[key] = value;		
+		element.setAttribute(key, value);		
 	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
@@ -1330,11 +1333,6 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 			this[key] = value;
 			this.doTransform = true;
 		};
-// These setters both set the key on the instance itself plus as an attribute
-SVGElement.prototype.opacitySetter = SVGElement.prototype.displaySetter = function (value, key, element) {
-	this[key] = value;
-	element.setAttribute(key, value);
-};
 
 /*= if (build.classic) { =*/
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
@@ -1448,7 +1446,9 @@ SVGRenderer.prototype = {
 	},
 	/*= if (!build.classic) { =*/
 	/**
-	 * General method for adding a definition. Can be used for gradients, fills, filters etc. // docs: todo: return node
+	 * General method for adding a definition. Can be used for gradients, fills, filters etc.
+	 *
+	 * @return SVGElement The inserted node 
 	 */
 	definition: function (def) {
 		var ren = this;
@@ -1857,7 +1857,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (rgba) {
 		rgba = color(rgba).rgba;
-		return rgba[0] + rgba[1] + rgba[2] > 384 ? '#000000' : '#FFFFFF';
+		return rgba[0] + rgba[1] + rgba[2] > 2 * 255 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
@@ -1889,11 +1889,11 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			fill: '${palette.buttonFill}',
-			stroke: '${palette.buttonStroke}',
+			fill: '${palette.neutralColor3}',
+			stroke: '${palette.neutralColor20}',
 			'stroke-width': 1,
 			style: {
-				color: '${palette.buttonTextColor}',
+				color: '${palette.neutralColor80}',
 				cursor: 'pointer',
 				fontWeight: 'normal'
 			}
@@ -1903,16 +1903,16 @@ SVGRenderer.prototype = {
 
 		// Hover state
 		hoverState = merge(normalState, {
-			fill: '${palette.buttonHoverFill}'
+			fill: '${palette.neutralColor10}'
 		}, hoverState);
 		hoverStyle = hoverState.style;
 		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
-			fill: '${palette.buttonPressedFill}',
+			fill: '${palette.highlightColor10}',
 			style: {
-				color: '${palette.textHeavyColor}',
+				color: '${palette.neutralColor100}',
 				fontWeight: 'bold'
 			}
 		}, pressedState);
@@ -1922,7 +1922,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '${palette.buttonDisabledColor}'
+				color: '${palette.neutralColor20}'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;

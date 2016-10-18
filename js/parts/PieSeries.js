@@ -12,20 +12,20 @@ import './Legend.js';
 import './Options.js';
 import './Point.js';
 import './Series.js';
-	var addEvent = H.addEvent,
-		CenteredSeriesMixin = H.CenteredSeriesMixin,
-		defined = H.defined,
-		each = H.each,
-		extend = H.extend,
-		inArray = H.inArray,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		noop = H.noop,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes,
-		setAnimation = H.setAnimation;
+var addEvent = H.addEvent,
+	CenteredSeriesMixin = H.CenteredSeriesMixin,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	inArray = H.inArray,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	noop = H.noop,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	setAnimation = H.setAnimation;
 /**
  * Pie series type
  */
@@ -59,7 +59,7 @@ seriesType('pie', 'line', {
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
-	borderColor: '${palette.pointStroke}',
+	borderColor: '${palette.backgroundColor}',
 	borderWidth: 1,
 	states: {
 		hover: {
@@ -475,13 +475,19 @@ seriesType('pie', 'line', {
 	},
 
 	haloPath: function (size) {
-		var shapeArgs = this.shapeArgs,
-			chart = this.series.chart;
+		var shapeArgs = this.shapeArgs;
 
-		return this.sliced || !this.visible ? [] : this.series.chart.renderer.symbols.arc(chart.plotLeft + shapeArgs.x, chart.plotTop + shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
-			innerR: this.shapeArgs.r,
-			start: shapeArgs.start,
-			end: shapeArgs.end
-		});
+		return this.sliced || !this.visible ? 
+			[] :
+			this.series.chart.renderer.symbols.arc(
+				shapeArgs.x,
+				shapeArgs.y,
+				shapeArgs.r + size,
+				shapeArgs.r + size, {
+					innerR: this.shapeArgs.r,
+					start: shapeArgs.start,
+					end: shapeArgs.end
+				}
+			);
 	}
 });

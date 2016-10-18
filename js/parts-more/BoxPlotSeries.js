@@ -7,11 +7,11 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-	var each = H.each,
-		noop = H.noop,
-		pick = H.pick,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var each = H.each,
+	noop = H.noop,
+	pick = H.pick,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Box plot series code											      *
@@ -37,7 +37,7 @@ seriesType('boxplot', 'column', {
 	},
 	whiskerLength: '50%',
 	/*= if (build.classic) { =*/
-	fillColor: '${palette.boxPlotFill}',
+	fillColor: '${palette.backgroundColor}',
 	lineWidth: 1,
 	//medianColor: null,
 	medianWidth: 2,
@@ -71,7 +71,7 @@ seriesType('boxplot', 'column', {
 			color = (point && point.color) || this.color;
 
 		return {
-			'fill': options.fillColor || color,
+			'fill': point.fillColor || options.fillColor || color,
 			'stroke': options.lineColor || color,
 			'stroke-width': options.lineWidth || 0
 		};

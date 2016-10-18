@@ -10,19 +10,19 @@ import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-	var animObject = H.animObject,
-		color = H.color,
-		each = H.each,
-		extend = H.extend,
-		isNumber = H.isNumber,
-		LegendSymbolMixin = H.LegendSymbolMixin,
-		merge = H.merge,
-		noop = H.noop,
-		pick = H.pick,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		stop = H.stop,
-		svg = H.svg;
+var animObject = H.animObject,
+	color = H.color,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	stop = H.stop,
+	svg = H.svg;
 /**
  * The column series type
  */
@@ -47,8 +47,8 @@ seriesType('column', 'line', {
 		},
 		/*= if (build.classic) { =*/
 		select: {
-			color: '${palette.pointSelectFill}',
-			borderColor: '${palette.pointSelectStroke}',
+			color: '${palette.neutralColor20}',
+			borderColor: '${palette.neutralColor100}',
 			shadow: false
 		}
 		/*= } =*/
@@ -66,7 +66,7 @@ seriesType('column', 'line', {
 	},
 	threshold: 0,
 	/*= if (build.classic) { =*/
-	borderColor: '${palette.pointStroke}'
+	borderColor: '${palette.backgroundColor}'
 	// borderWidth: 1
 	/*= } =*/
 

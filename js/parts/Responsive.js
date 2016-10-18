@@ -7,12 +7,12 @@
 import H from './Globals.js';
 import './Chart.js';
 import './Utilities.js';
-	var Chart = H.Chart,
-		each = H.each,
-		inArray = H.inArray,
-		isObject = H.isObject,
-		pick = H.pick,
-		splat = H.splat;
+var Chart = H.Chart,
+	each = H.each,
+	inArray = H.inArray,
+	isObject = H.isObject,
+	pick = H.pick,
+	splat = H.splat;
 
 /**
  * Update the chart based on the current chart/document size and options for responsiveness
@@ -34,7 +34,7 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 	var respRules = this.respRules,
 		condition = rule.condition,
 		matches,
-		fn = rule.callback || function () { // docs minWidth, maxWidth, minHeight, maxHeight
+		fn = rule.callback || function () {
 			return this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
 				this.chartHeight <= pick(condition.maxHeight, Number.MAX_VALUE) &&
 				this.chartWidth >= pick(condition.minWidth, 0) &&

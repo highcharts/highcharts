@@ -27,7 +27,7 @@ $(function () {
             }
         },
         tooltip: {
-            shared: true,
+            split: true,
             valueSuffix: ' millions'
         },
         plotOptions: {

@@ -7,12 +7,12 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-	var Chart = H.Chart,
-		each = H.each,
-		merge = H.merge,
-		perspective = H.perspective,
-		pick = H.pick,
-		wrap = H.wrap;
+var Chart = H.Chart,
+	each = H.each,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	wrap = H.wrap;
 
 /*** 
 	EXTENSION FOR 3D CHARTS
@@ -124,7 +124,7 @@ function getScale(chart, depth) {
 
 
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
@@ -174,7 +174,7 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
+H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
 

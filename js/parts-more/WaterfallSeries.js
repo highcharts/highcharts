@@ -9,14 +9,14 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
-	var correctFloat = H.correctFloat,
-		isNumber = H.isNumber,
-		noop = H.noop,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var correctFloat = H.correctFloat,
+	isNumber = H.isNumber,
+	noop = H.noop,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 /* ****************************************************************************
  * Start Waterfall series code                                                *
@@ -27,9 +27,9 @@ seriesType('waterfall', 'column', {
 	},
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
-	lineColor: '${palette.waterfallStroke}',
+	lineColor: '${palette.neutralColor80}',
 	dashStyle: 'dot',
-	borderColor: '${palette.waterfallStroke}',
+	borderColor: '${palette.neutralColor80}',
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126

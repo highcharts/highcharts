@@ -6,38 +6,42 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
+import './Color.js';
 import './Options.js';
 import './PlotLineOrBand.js';
 import './Tick.js';
-	var addEvent = H.addEvent,
-		animObject = H.animObject,
-		arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
-		correctFloat = H.correctFloat,
-		defaultOptions = H.defaultOptions,
-		defined = H.defined,
-		deg2rad = H.deg2rad,
-		destroyObjectProperties = H.destroyObjectProperties,
-		each = H.each,
-		error = H.error,
-		extend = H.extend,
-		fireEvent = H.fireEvent,
-		format = H.format,
-		getMagnitude = H.getMagnitude,
-		grep = H.grep,
-		inArray = H.inArray,
-		isArray = H.isArray,
-		isNumber = H.isNumber,
-		isString = H.isString,
-		merge = H.merge,
-		normalizeTickInterval = H.normalizeTickInterval,
-		pick = H.pick,
-		PlotLineOrBand = H.PlotLineOrBand,
-		removeEvent = H.removeEvent,
-		splat = H.splat,
-		syncTimeout = H.syncTimeout,
-		Tick = H.Tick;
+
+var addEvent = H.addEvent,
+	animObject = H.animObject,
+	arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
+	color = H.color,
+	correctFloat = H.correctFloat,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	deg2rad = H.deg2rad,
+	destroyObjectProperties = H.destroyObjectProperties,
+	each = H.each,
+	error = H.error,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	format = H.format,
+	getMagnitude = H.getMagnitude,
+	grep = H.grep,
+	inArray = H.inArray,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	merge = H.merge,
+	normalizeTickInterval = H.normalizeTickInterval,
+	pick = H.pick,
+	PlotLineOrBand = H.PlotLineOrBand,
+	removeEvent = H.removeEvent,
+	splat = H.splat,
+	syncTimeout = H.syncTimeout,
+	Tick = H.Tick;
+	
 /**
  * Create a new axis object
  * @param {Object} chart
@@ -76,7 +80,7 @@ H.Axis.prototype = {
 			// step: null,
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisLabelColor}',
+				color: '${palette.neutralColor60}',
 				cursor: 'default',
 				fontSize: '11px'
 			},
@@ -127,7 +131,7 @@ H.Axis.prototype = {
 			//side: 'outside',
 			/*= if (build.classic) { =*/
 			style: {
-				color: '${palette.axisTitleColor}'
+				color: '${palette.neutralColor60}'
 			}
 			/*= } =*/
 			//x: 0,
@@ -136,17 +140,17 @@ H.Axis.prototype = {
 		type: 'linear', // linear, logarithmic or datetime
 		//visible: true
 		/*= if (build.classic) { =*/
-		minorGridLineColor: '${palette.minorGridLineColor}',
+		minorGridLineColor: '${palette.neutralColor5}',
 		// minorGridLineDashStyle: null,
 		minorGridLineWidth: 1,
-		minorTickColor: '${palette.minorTickColor}',
+		minorTickColor: '${palette.neutralColor40}',
 		//minorTickWidth: 0,
-		lineColor: '${palette.axisLineColor}',
+		lineColor: '${palette.highlightColor20}',
 		lineWidth: 1,
-		gridLineColor: '${palette.gridLineColor}',
+		gridLineColor: '${palette.neutralColor10}',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
-		tickColor: '${palette.tickColor}'
+		tickColor: '${palette.highlightColor20}'
 		// tickWidth: 1
 		/*= } =*/		
 	},
@@ -183,8 +187,8 @@ H.Axis.prototype = {
 			style: {
 				fontSize: '11px',
 				fontWeight: 'bold',
-				color: '${palette.textHeavyColor}',
-				textShadow: '0 0 6px contrast, 0 0 3px contrast'
+				color: '${palette.neutralColor100}',
+				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
 			}
 			/*= } =*/
 		},
@@ -887,7 +891,7 @@ H.Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			nameX = this.options.nameToX === false ?
+			nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
 		}
@@ -917,7 +921,7 @@ H.Axis.prototype = {
 			each(this.series || [], function (series) {
 			
 				// When adding a series, points are not yet generated
-				if (!series.processedXData) {
+				if (!series.points || series.isDirtyData) {
 					series.processData();
 					series.generatePoints();
 				}
@@ -1130,12 +1134,16 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Stay within floor and ceiling
+		// Handle options for floor, ceiling, softMin and softMax
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
+		} else if (isNumber(options.softMin)) { // docs. API added as next
+			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
+		} else if (isNumber(options.softMax)) { // docs. API added as next
+			axis.max = Math.max(axis.max, options.softMax);
 		}
 
 		// When the threshold is soft, adjust the extreme value only if
@@ -1543,27 +1551,31 @@ H.Axis.prototype = {
 			min = Math.min(dataMin, pick(options.min, dataMin)),
 			max = Math.max(dataMax, pick(options.max, dataMax));
 
-		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
-		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= min) {
-				newMin = min;
+		if (newMin !== this.min || newMax !== this.max) { // #5790
+			
+			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
+			if (!this.allowZoomOutside) {
+				if (defined(dataMin) && newMin <= min) {
+					newMin = min;
+				}
+				if (defined(dataMax) && newMax >= max) {
+					newMax = max;
+				}
 			}
-			if (defined(dataMax) && newMax >= max) {
-				newMax = max;
-			}
+
+			// In full view, displaying the reset zoom button is not required
+			this.displayBtn = newMin !== undefined || newMax !== undefined;
+
+			// Do it
+			this.setExtremes(
+				newMin,
+				newMax,
+				false,
+				undefined,
+				{ trigger: 'zoom' }
+			);
 		}
 
-		// In full view, displaying the reset zoom button is not required
-		this.displayBtn = newMin !== undefined || newMax !== undefined;
-
-		// Do it
-		this.setExtremes(
-			newMin,
-			newMax,
-			false,
-			undefined,
-			{ trigger: 'zoom' }
-		);
 		return true;
 	},
 
@@ -2413,8 +2425,8 @@ H.Axis.prototype = {
 
 
 		// Delete all properties and fall back to the prototype.
-		// Preserve some properties, needed for Axis.update (#4317).
-		keepProps = ['names', 'series', 'userMax', 'userMin'];
+		// Preserve some properties, needed for Axis.update (#4317, #5773).
+		keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 		for (n in axis) {
 			if (axis.hasOwnProperty(n) && inArray(n, keepProps) === -1) {
 				delete axis[n];
@@ -2485,7 +2497,7 @@ H.Axis.prototype = {
 				/*= if (build.classic) { =*/
 				// Presentational attributes
 				graphic.attr({
-					'stroke': options.color || (categorized ? '${palette.crosshairCategoryColor}' : '${palette.crosshairThinColor}'),
+					'stroke': options.color || (categorized ? color('${palette.highlightColor20}').setOpacity(0.25).get() : '${palette.neutralColor20}'),
 					'stroke-width': pick(options.width, 1)
 				});
 				if (options.dashStyle) {
@@ -2501,7 +2513,7 @@ H.Axis.prototype = {
 				d: path
 			});
 
-			if (categorized) {
+			if (categorized && !options.width) {
 				graphic.attr({
 					'stroke-width': this.transA
 				});

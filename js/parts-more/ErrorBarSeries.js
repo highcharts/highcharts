@@ -8,10 +8,10 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-	var each = H.each,
-		noop = H.noop,
-		seriesType = H.seriesType,
-		seriesTypes = H.seriesTypes;
+var each = H.each,
+	noop = H.noop,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
 
 /* ****************************************************************************
@@ -19,7 +19,7 @@ import './BoxPlotSeries.js';
  *****************************************************************************/
 seriesType('errorbar', 'boxplot', {
 	/*= if (build.classic) { =*/
-	color: '${palette.errorBarColor}',
+	color: '${palette.neutralColor100}',
 	/*= } =*/
 	grouping: false,
 	linkedTo: ':previous',

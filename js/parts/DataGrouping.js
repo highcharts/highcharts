@@ -9,22 +9,22 @@ import './Utilities.js';
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-	var arrayMax = H.arrayMax,
-		arrayMin = H.arrayMin,
-		Axis = H.Axis,
-		defaultPlotOptions = H.defaultPlotOptions,
-		defined = H.defined,
-		each = H.each,
-		error = H.error,
-		extend = H.extend,
-		format = H.format,
-		isNumber = H.isNumber,
-		merge = H.merge,
-		pick = H.pick,
-		Point = H.Point,
-		Series = H.Series,
-		Tooltip = H.Tooltip,
-		wrap = H.wrap;
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	defaultPlotOptions = H.defaultPlotOptions,
+	defined = H.defined,
+	each = H.each,
+	error = H.error,
+	extend = H.extend,
+	format = H.format,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	Tooltip = H.Tooltip,
+	wrap = H.wrap;
 	
 /* ****************************************************************************
  * Start data grouping module												 *
@@ -374,6 +374,8 @@ seriesProto.processData = function () {
 			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
+	} else if (!series.visible) {
+		series.closestPointRange = null; // #5823
 	}
 };
 

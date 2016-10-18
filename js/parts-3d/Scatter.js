@@ -6,10 +6,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-	var perspective = H.perspective,
-		pick = H.pick,
-		seriesTypes = H.seriesTypes,
-		wrap = H.wrap;
+var perspective = H.perspective,
+	pick = H.pick,
+	seriesTypes = H.seriesTypes,
+	wrap = H.wrap;
 
 /*** 
 	EXTENSION FOR 3D SCATTER CHART

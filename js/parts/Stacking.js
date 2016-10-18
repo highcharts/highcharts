@@ -9,15 +9,15 @@ import './Utilities.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
-	var Axis = H.Axis,
-		Chart = H.Chart,
-		correctFloat = H.correctFloat,
-		defined = H.defined,
-		destroyObjectProperties = H.destroyObjectProperties,
-		each = H.each,
-		format = H.format,
-		pick = H.pick,
-		Series = H.Series;
+var Axis = H.Axis,
+	Chart = H.Chart,
+	correctFloat = H.correctFloat,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	each = H.each,
+	format = H.format,
+	pick = H.pick,
+	Series = H.Series;
 /**
  * The class for stack items
  */
@@ -81,7 +81,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -102,7 +102,8 @@ StackItem.prototype = {
 			inverted = chart.inverted,
 			reversed = axis.reversed,
 			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
-			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			// stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1),
 			yZero = axis.translate(0),						// stack origin
 			h = Math.abs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
@@ -398,7 +399,7 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
-			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
+			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index, key);
 			stack = stacks[key] && stacks[key][x];
 			pointExtremes = stack && stack.points[stackIndicator.key];
 			if (pointExtremes) {
@@ -414,11 +415,14 @@ Series.prototype.setPercentStacks = function () {
 /**
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
-Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
-	if (!defined(stackIndicator) || stackIndicator.x !== x) {
+Series.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
+	// Update stack indicator, when:
+	// first point in a stack || x changed || stack type (negative vs positive) changed:
+	if (!defined(stackIndicator) || stackIndicator.x !== x || (key && stackIndicator.key !== key)) {
 		stackIndicator = {
 			x: x,
-			index: 0
+			index: 0,
+			key: key
 		};
 	} else {
 		stackIndicator.index++;

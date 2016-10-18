@@ -7,10 +7,10 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Chart.js';
-	var addEvent = H.addEvent,
-		Chart = H.Chart,
-		isNumber = H.isNumber,
-		removeEvent = H.removeEvent;
+var addEvent = H.addEvent,
+	Chart = H.Chart,
+	isNumber = H.isNumber,
+	removeEvent = H.removeEvent;
 
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,

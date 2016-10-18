@@ -30,7 +30,7 @@ $(function () {
     });
 
     $('#setsize').click(function () {
-        $('#container').highcharts().setSize(500, 300);
+        $('#container').highcharts().setSize(500, 300, false);
     });
 
 });
