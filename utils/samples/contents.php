@@ -20,7 +20,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
   		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-		
+
 		<script>
 			/* eslint-disable */
 			var diffThreshold = 0;
@@ -35,7 +35,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				var currentLi = document.currentLi || $('#li1')[0];
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
-				
+
 					href = href.replace("view.php", "compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
@@ -49,7 +49,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			}
 
 			function countFails() {
-				$('#count-fails').html('(' + ($('#main-nav li').length - 
+				$('#count-fails').html('(' + ($('#main-nav li').length -
 					$('#main-nav li.identical, #main-nav li.approved').length) + ')');
 			}
 
@@ -63,7 +63,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					}
 				});
 
-				
+
 				$("#batch-compare").click(runBatch);
 				$("#batch-stop").click(stopBatch);
 
@@ -84,16 +84,16 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					if (fails === 1) { // Hide passed tests
 						$('#filtered').css('display', 'block');
 						$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
-					
+
 					} else if (fails === 2) { // Hide manual tests
 						$('#main-nav li.manual').css('display', 'none');
-					
+
 					} else if (fails === 0) { // Reset
 						$('#filtered').css('display', 'none');
-						$('#main-nav li').css('display', '');	
+						$('#main-nav li').css('display', '');
 					}
 
-					
+
 				});
 
 				$("#slider").slider({
@@ -120,9 +120,9 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				$('#main-nav').css('margin-top', $('#top-nav').height());
 
 				countFails();
-				
+
 			});
-			
+
 		</script>
 		<style type="text/css">
 			* {
@@ -149,7 +149,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			a {
 				text-decoration: none;
 			}
-			
+
 			h2 {
 				border-bottom: 1px solid gray;
 				text-transform: uppercase;
@@ -163,8 +163,8 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			li.visited a {
 				color: gray;
 			}
-			
-			
+
+
 			li.different, li.different a {
 				background: #f15c80;
 				color: white;
@@ -176,8 +176,8 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				color: #039;
 				font-weight: normal;
 			}
-			
-			
+
+
 			li.hilighted {
 				border-color: black;
 				border-left-width: 1em;
@@ -186,9 +186,9 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				margin: 0;
 			}
 			#top-nav {
-				color: white; 
-				font-family: Arial, sans-serif; 
-				padding: 10px; 
+				color: white;
+				font-family: Arial, sans-serif;
+				padding: 10px;
 				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 				position: fixed;
@@ -240,11 +240,11 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 			}
 
 		</style>
-		
-		
+
+
 	</head>
 	<body>
-		
+
 	<div id="top-nav">
 		<a class="button" href="index.php" target="main">
 			<i class="icon-home"></i>
@@ -292,26 +292,26 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 		Showing only failed samples. Click "Fails only" again to change.
 	</div>
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'unit-tests', 'issues', 'cloud');
+	$products = array('highcharts', 'maps', 'stock', 'gantt', 'unit-tests', 'issues', 'cloud');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 
 	$html = "";
 	$samples = array('');
-	
+
 
 	$i = 1;
 	foreach ($products as $dir) {
 		if ($handle = opendir($samplesDir . $dir)) {
 
 			$html .= "<h2>$dir</h2>";
-			
+
 			while (false !== ($file = readdir($handle))) {
 				if (is_dir("$samplesDir/$dir/$file") && substr($file, 0, 1) != '.') {
 					$html .= "
 					<h4>$dir/$file</h4>
 					<ul>
 					";
-				
+
 					// loop over the inner directories
 					if ($innerHandle = opendir($samplesDir . $dir . '/'. $file)) {
 						while (false !== ($innerFile = readdir($innerHandle))) {
@@ -371,20 +371,20 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								// Comments
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
-									
+
 									// Sample is different but approved
 									if ($comment->symbol === 'check' && $comment->diff == $diff) {
 										$compareClass = 'approved';
 									} else if ($comment->symbol === 'exclamation-sign') {
 										$compareClass = 'different';
 									}
-									
+
 									// Make it string
 									$comment = "
 										<i class='icon-$comment->symbol' title='$comment->title'></i>
 										<span class='comment-title'>$comment->title<br>(Approved diff: $comment->diff)</span>
 									";
-									
+
 								} else {
 									$comment = "
 										<i class='icon-pencil' title='Add comment'></i>
@@ -392,7 +392,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								}
 
 								$html .= "
-								<li id='li$i' class='$compareClass'>$i. $suffix 
+								<li id='li$i' class='$compareClass'>$i. $suffix
 									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path'>$innerFile</a>
 									<a class='comment' href='compare-comment.php?path=$path&amp;diff=$diff' target='main'>
 										$comment
@@ -403,7 +403,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 
 								$samples[$i] = $path;
 								$i++;
-							
+
 							} elseif (preg_match('/^[a-zA-Z0-9\-,]+$/', $innerFile)) {
 								$html .= "
 								<li class='different'>
@@ -413,12 +413,12 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 							}
 						}
 					}
-				
+
 					$html .= "</ul>";
 				}
 			}
-		
-		
+
+
 			closedir($handle);
 		}
 	}
