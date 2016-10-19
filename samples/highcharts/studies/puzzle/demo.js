@@ -193,7 +193,7 @@ $(function () {
     });
 
 
-    $('#container').highcharts('Map', {
+    Highcharts.chart('container', {
 
         title: {
             text: 'Highmaps puzzle',

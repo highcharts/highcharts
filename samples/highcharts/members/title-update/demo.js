@@ -1,8 +1,7 @@
 $(function () {
-    var i = 1,
-        chart;
+    var i = 1;
 
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
         subtitle: {
             text: 'Subtitle'
         },
@@ -16,7 +15,6 @@ $(function () {
         }]
 
     });
-    chart = $('#container').highcharts();
 
 
     $('#title').click(function () {

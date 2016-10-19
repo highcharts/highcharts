@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
 
         loading: {
             style: {
@@ -20,7 +20,6 @@ $(function () {
         }]
     });
 
-    var chart = $('#container').highcharts();
     $('#showloading').click(function () {
         chart.showLoading();
     });

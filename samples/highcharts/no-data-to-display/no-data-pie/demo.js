@@ -14,7 +14,7 @@ $(function () {
         }
     });
 
-    Highcharts.chart('container', {
+    chart = Highcharts.chart('container', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -29,7 +29,4 @@ $(function () {
             data: []
         }]
     });
-
-    chart = $('#container').highcharts();
 });
-

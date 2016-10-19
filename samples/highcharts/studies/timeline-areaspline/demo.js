@@ -1,38 +1,36 @@
 $(function () {
 
-    var chart,
-        dataSequence = [{
-            name: 'Week 1',
-            data: [1, 2, 2, 1, 1, 2, 2]
-        }, {
-            name: 'Week 2',
-            data: [6, 12, 2, 3, 3, 2, 2]
-        }, {
-            name: 'Week 3',
-            data: [4, 5, 6, 5, 5, 4, 9]
-        }, {
-            name: 'Week 4',
-            data: [5, 5, 6, 6, 5, 6, 6]
-        }, {
-            name: 'Week 5',
-            data: [6, 7, 7, 6, 6, 6, 7]
-        }, {
-            name: 'Week 6',
-            data: [8, 9, 9, 8, 8, 8, 9]
-        }, {
-            name: 'Week 7',
-            data: [9, 10, 4, 10, 9, 9, 9]
-        }, {
-            name: 'Week 8',
-            data: [1, 10, 10, 10, 10, 11, 11]
-        }, {
-            name: 'Week 9',
-            data: [11, 11, 12, 12, 12, 11, 11]
-        }
-    ];
+    var dataSequence = [{
+        name: 'Week 1',
+        data: [1, 2, 2, 1, 1, 2, 2]
+    }, {
+        name: 'Week 2',
+        data: [6, 12, 2, 3, 3, 2, 2]
+    }, {
+        name: 'Week 3',
+        data: [4, 5, 6, 5, 5, 4, 9]
+    }, {
+        name: 'Week 4',
+        data: [5, 5, 6, 6, 5, 6, 6]
+    }, {
+        name: 'Week 5',
+        data: [6, 7, 7, 6, 6, 6, 7]
+    }, {
+        name: 'Week 6',
+        data: [8, 9, 9, 8, 8, 8, 9]
+    }, {
+        name: 'Week 7',
+        data: [9, 10, 4, 10, 9, 9, 9]
+    }, {
+        name: 'Week 8',
+        data: [1, 10, 10, 10, 10, 11, 11]
+    }, {
+        name: 'Week 9',
+        data: [11, 11, 12, 12, 12, 11, 11]
+    }];
 
     // Initiate the chart
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         chart: {
             type: 'areaspline'
@@ -89,8 +87,6 @@ $(function () {
             data: [6, 8, 6, 7, 7, 7, 6]
         }]
     });
-
-    chart = $('#container').highcharts();
 
     /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.

@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         title: {
             text: 'Highcharts exporting scale demo'
@@ -26,9 +26,8 @@ $(function () {
     });
 
     $('button.export').click(function () {
-        $('#container').highcharts()
-            .exportChart({
-                scale: $(this).data().scale
-            });
+        chart.exportChart({
+            scale: $(this).data().scale
+        });
     });
 });

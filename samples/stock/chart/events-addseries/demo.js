@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
 
         chart: {
             events: {
@@ -22,7 +22,6 @@ $(function () {
 
     // activate the button
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
         chart.addSeries({
             name: 'ADBE',
             data: ADBE

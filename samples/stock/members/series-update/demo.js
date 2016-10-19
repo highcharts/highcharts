@@ -18,7 +18,7 @@ $(function () {
         });
 
         // create the chart
-        Highcharts.stockChart('container', {
+        var chart = Highcharts.stockChart('container', {
 
 
             rangeSelector: {
@@ -37,8 +37,7 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts(),
-            enableMarkers = true,
+        var enableMarkers = true,
             color = false;
 
         // Toggle point markers

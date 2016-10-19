@@ -32,7 +32,7 @@ $(function () {
     ];
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps with time control'
@@ -70,8 +70,6 @@ $(function () {
             }
         }]
     });
-
-    chart = $('#container').highcharts();
 
     /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.

@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -13,7 +13,6 @@ $(function () {
 
     // the button action
     var hasPlotBand = false,
-        chart = $('#container').highcharts(),
         $button = $('#button');
 
     $button.click(function () {

@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         xAxis: {
             id: 'x-axis'
         },
@@ -14,7 +14,6 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
         alert('The axis object: ' + chart.get('x-axis'));
     });
 });

@@ -18,7 +18,7 @@ $(function () {
                 });
 
                 // create a detail chart referenced by a global variable
-                detailChart = $('#detail-container').highcharts({
+                detailChart = Highcharts.chart('detail-container', {
                     chart: {
                         marginBottom: 120,
                         reflow: false,
@@ -86,7 +86,7 @@ $(function () {
 
             // create the master chart
             function createMaster() {
-                $('#master-container').highcharts({
+                Highcharts.chart('master-container', {
                     chart: {
                         reflow: false,
                         borderWidth: 0,
