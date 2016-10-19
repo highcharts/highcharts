@@ -3,7 +3,7 @@ $(function () {
     // THE CHART
     $('#container').highcharts({
         chart: {
-            type: 'xrange',
+            type: 'gantt',
             marginLeft: 150,
             marginRight: 150
         },
@@ -46,47 +46,55 @@ $(function () {
             name: 'Project 1',
             borderRadius: 10,
             data: [{
-                x: Date.UTC(2014, 10, 18),
-                x2: Date.UTC(2014, 10, 25),
-                y: 0,
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 25),
+                taskGroup: 0,
+                taskName: 'Start prototype',
                 partialFill: 0.25
             }, {
-                x: Date.UTC(2014, 10, 20),
-                x2: Date.UTC(2014, 10, 25),
-                y: 1,
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                taskGroup: 1,
+                taskName: 'Develop',
                 partialFill: {
                     amount: 0.12,
                     fill: '#fa0'
                 }
             }, {
-                x: Date.UTC(2014, 10, 26),
-                x2: Date.UTC(2014, 10, 28),
-                y: 0
+                start: Date.UTC(2014, 10, 26),
+                end: Date.UTC(2014, 10, 28),
+                taskName: 'Test prototype',
+                taskGroup: 0
             }, {
-                x: Date.UTC(2014, 10, 23),
-                x2: Date.UTC(2014, 10, 26),
-                y: 2
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26),
+                taskName: 'Run acceptance tests',
+                taskGroup: 2
             }]
         }, {
             name: 'Project 2',
             borderRadius: 10,
             visible: false,
             data: [{
-                x: Date.UTC(2014, 10, 24),
-                x2: Date.UTC(2014, 10, 27),
-                y: 1
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 19),
+                taskName: 'Create protoype',
+                taskGroup: 0
             }, {
-                x: Date.UTC(2014, 10, 27),
-                x2: Date.UTC(2014, 10, 28),
-                y: 2
+                start: Date.UTC(2014, 10, 19),
+                end: Date.UTC(2014, 10, 23),
+                taskName: 'Write unit tests',
+                taskGroup: 1
             }, {
-                x: Date.UTC(2014, 10, 27),
-                x2: Date.UTC(2014, 10, 28),
-                y: 1
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 28),
+                taskName: 'Run user tests',
+                taskGroup: 2
             }, {
-                x: Date.UTC(2014, 10, 18),
-                x2: Date.UTC(2014, 10, 19),
-                y: 2
+                start: Date.UTC(2014, 10, 24),
+                end: Date.UTC(2014, 10, 28),
+                taskName: 'Develop',
+                taskGroup: 1
             }]
         }]
     });
