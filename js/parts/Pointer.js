@@ -651,7 +651,11 @@ H.Pointer.prototype = {
 		
 		if (series && relatedTarget && !series.options.stickyTracking && 
 				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
-				!this.inClass(relatedTarget, 'highcharts-series-' + series.index)) { // #2499, #4465
+					(
+						!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465
+						!this.inClass(relatedTarget, 'highcharts-tracker') // #5553
+					)
+				) {
 			series.onMouseOut();
 		}
 	},
