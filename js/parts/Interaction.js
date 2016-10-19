@@ -613,7 +613,10 @@ extend(Point.prototype, {
 			/*= } =*/
 
 			if (markerAttribs) {
-				point.graphic.attr(markerAttribs);
+				point.graphic.animate(
+					markerAttribs,
+					pick(markerStateOptions.animation, markerOptions.animation)
+				);
 			}
 
 			// Zooming in from a range with no markers to a range with markers

@@ -88,6 +88,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		radius: 4,
 		states: { // states for a single point
 			hover: {
+				animation: {
+					duration: 50
+				},
 				enabled: true,
 				radiusPlus: 2,
 				/*= if (build.classic) { =*/

@@ -7,7 +7,10 @@ $(function () {
             },
             series: [{
                 data: [1, 2, 3],
-                animation: false
+                animation: false,
+                marker: {
+                    animation: false
+                }
             }]
         }).series[0];
 
