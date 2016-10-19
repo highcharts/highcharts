@@ -89,9 +89,12 @@ seriesType('arearange', 'area', {
 				point.isNull = true;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = point.yBottom = yAxis.toPixels(
+				point.plotHigh = yAxis.translate(
 					hasModifyValue ? series.modifyValue(high, point) : high,
-					true
+					0,
+					1,
+					0,
+					1
 				);
 			}
 		});
@@ -145,6 +148,7 @@ seriesType('arearange', 'area', {
 				polarPlotY: point.polarPlotY,
 				rectPlotX: point.rectPlotX,
 				yBottom: point.yBottom,
+				plotHigh: point.plotHigh,
 				plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
 				plotY: point.plotHigh,
 				isNull: point.isNull

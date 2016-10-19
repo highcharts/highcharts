@@ -3,7 +3,7 @@ $(function () {
     // THE CHART
     Highcharts.chart('container', {
         chart: {
-            type: 'xrange',
+            type: 'scatter',
             marginLeft: 150,
             marginRight: 150
         },
@@ -22,11 +22,7 @@ $(function () {
             max: Date.UTC(2014, 10, 30)
         }, {
             id: 'bottom-linear-axis',
-            grid: true,
-            tickInterval: 1,
-            tickPixelInterval: 45,
-            min: 1,
-            max: 13
+            grid: true
         }, {
             id: 'bottom-categories-axis',
             grid: true,
@@ -100,19 +96,15 @@ $(function () {
             xAxis: 0,
             data: [{
                 x: Date.UTC(2014, 10, 18),
-                x2: Date.UTC(2014, 10, 25),
                 y: 0
             }, {
                 x: Date.UTC(2014, 10, 20),
-                x2: Date.UTC(2014, 10, 25),
                 y: 1
             }, {
                 x: Date.UTC(2014, 10, 26),
-                x2: Date.UTC(2014, 10, 28),
                 y: 0
             }, {
                 x: Date.UTC(2014, 10, 23),
-                x2: Date.UTC(2014, 10, 26),
                 y: 2
             }]
         }, {
@@ -122,19 +114,15 @@ $(function () {
             xAxis: 0,
             data: [{
                 x: Date.UTC(2014, 10, 24),
-                x2: Date.UTC(2014, 10, 27),
                 y: 1
             }, {
                 x: Date.UTC(2014, 10, 27),
-                x2: Date.UTC(2014, 10, 28),
                 y: 2
             }, {
                 x: Date.UTC(2014, 10, 27),
-                x2: Date.UTC(2014, 10, 28),
                 y: 1
             }, {
                 x: Date.UTC(2014, 10, 18),
-                x2: Date.UTC(2014, 10, 19),
                 y: 2
             }]
         }, {
@@ -144,15 +132,12 @@ $(function () {
             yAxis: 2,
             data: [{
                 x: 7,
-                x2: 9,
                 y: Date.UTC(2014, 10, 19)
             }, {
                 x: 7,
-                x2: 12,
                 y: Date.UTC(2014, 10, 20)
             }, {
                 x: 12,
-                x2: 13,
                 y: Date.UTC(2014, 10, 21)
             }]
         }, {
@@ -161,11 +146,9 @@ $(function () {
             xAxis: 1,
             data: [{
                 x: 1,
-                x2: 2,
                 y: 1
             }, {
                 x: 3,
-                x2: 8,
                 y: 2
             }]
         }]

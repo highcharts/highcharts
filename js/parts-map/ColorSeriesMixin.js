@@ -16,6 +16,13 @@ var defined = H.defined,
  */
 H.colorPointMixin = {
 	/**
+	 * Color points have a value option that determines whether or not it is a null point
+	 */
+	isValid: function () {
+		return this.value !== null;
+	},
+
+	/**
 	 * Set the visibility of a single point
 	 */
 	setVisible: function (vis) {
@@ -58,7 +65,7 @@ H.colorSeriesMixin = {
 				color;
 
 			color = point.options.color ||
-				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
+				(point.isNull ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {
 				point.color = color;
