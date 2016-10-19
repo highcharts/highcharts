@@ -9,7 +9,12 @@ $(function () {
                 data: [1, 2, 3],
                 animation: false,
                 marker: {
-                    animation: false
+                    animation: false,
+                    states: {
+                        hover: {
+                            animation: false
+                        }
+                    }
                 }
             }]
         }).series[0];
