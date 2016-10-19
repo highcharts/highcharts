@@ -545,7 +545,7 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		if (value !== undefined) { // #2601
+		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
 			// get the modified value
 			value = compare === 'value' ?
@@ -557,9 +557,8 @@ seriesProto.setCompare = function (compare) {
 				point.change = value;
 			}
 
+			return value;
 		}
-
-		return value;
 	} : null;
 
 	// Survive to export, #5485

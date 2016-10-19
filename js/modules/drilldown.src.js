@@ -703,7 +703,7 @@ wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 		// Add the click event to the point 
 		H.addEvent(point, 'click', function (e) {
 			if (series.xAxis && series.chart.options.drilldown.allowPointDrilldown === false) {
-				series.xAxis.drilldownCategory(x, e);
+				series.xAxis.drilldownCategory(point.x, e); // #5822, x changed
 			} else {
 				point.doDrilldown(undefined, undefined, e);
 			}

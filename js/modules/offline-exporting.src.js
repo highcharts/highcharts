@@ -383,7 +383,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 
 // Extend the default options to use the local exporter logic
 merge(true, Highcharts.getOptions().exporting, {
-	libURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/lib/',
+	libURL: 'http://code.highcharts.com/@product.version@/lib/',
 	buttons: {
 		contextButton: {
 			menuItems: [{
