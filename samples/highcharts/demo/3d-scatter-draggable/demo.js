@@ -75,7 +75,7 @@ $(function () {
 
 
     // Add mouse events for rotation
-    $(chart.container).bind('mousedown.hc touchstart.hc', function (eStart) {
+    $(chart.container).on('mousedown.hc touchstart.hc', function (eStart) {
         eStart = chart.pointer.normalize(eStart);
 
         var posX = eStart.pageX,
@@ -86,7 +86,7 @@ $(function () {
             newBeta,
             sensitivity = 5; // lower is more sensitive
 
-        $(document).bind({
+        $(document).on({
             'mousemove.hc touchdrag.hc': function (e) {
                 // Run beta
                 newBeta = beta + (posX - e.pageX) / sensitivity;
@@ -99,7 +99,7 @@ $(function () {
                 chart.redraw(false);
             },
             'mouseup touchend': function () {
-                $(document).unbind('.hc');
+                $(document).off('.hc');
             }
         });
     });

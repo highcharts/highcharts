@@ -136,7 +136,7 @@ $(function () {
     /**
      * Toggle play and pause from the button
      */
-    $('#play-pause-button').bind('click', function () {
+    $('#play-pause-button').on('click', function () {
         if (chart.sequenceTimer === undefined) {
             play(this);
         } else {
@@ -147,7 +147,7 @@ $(function () {
     /**
      * Update the chart when the input is changed
      */
-    $('#play-range').bind('input', function () {
+    $('#play-range').on('input', function () {
         update();
     });
 });

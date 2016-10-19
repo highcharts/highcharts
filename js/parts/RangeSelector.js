@@ -405,18 +405,20 @@ RangeSelector.prototype = {
 	 * @param {Number} time
 	 */
 	setInputValue: function (name, time) {
-		var options = this.chart.options.rangeSelector;
+		var options = this.chart.options.rangeSelector,
+			input = this[name + 'Input'];
 
 		if (defined(time)) {
-			this[name + 'Input'].HCTime = time;
+			input.previousValue = input.HCTime;
+			input.HCTime = time;
 		}
 
-		this[name + 'Input'].value = dateFormat(
+		input.value = dateFormat(
 			options.inputEditDateFormat || '%Y-%m-%d',
-			this[name + 'Input'].HCTime
+			input.HCTime
 		);
 		this[name + 'DateBox'].attr({
-			text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+			text: dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
 		});
 	},
 
@@ -463,9 +465,10 @@ RangeSelector.prototype = {
 		function updateExtremes() {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
-				xAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chart.xAxis[0],
-				dataMin = xAxis.dataMin,
-				dataMax = xAxis.dataMax;
+				chartAxis = chart.xAxis[0],
+				dataAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chartAxis,
+				dataMin = dataAxis.dataMin,
+				dataMax = dataAxis.dataMax;
 			if (value !== input.previousValue) {
 				input.previousValue = value;
 				// If the value isn't parsed directly to a value by the browser's Date.parse method,
@@ -500,9 +503,9 @@ RangeSelector.prototype = {
 
 					// Set the extremes
 					if (value !== undefined) {
-						chart.xAxis[0].setExtremes(
-							isMin ? value : xAxis.min,
-							isMin ? xAxis.max : value,
+						chartAxis.setExtremes(
+							isMin ? value : chartAxis.min,
+							isMin ? chartAxis.max : value,
 							undefined,
 							undefined,
 							{ trigger: 'rangeSelectorInput' }

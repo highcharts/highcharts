@@ -554,17 +554,18 @@ extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states[state] || {},
-			markerOptions = (defaultPlotOptions[series.type].marker && series.options.marker) || {},
-			normalDisabled = markerOptions.enabled === false,
-			markerStateOptions = (markerOptions.states && markerOptions.states[state]) || {},
+			markerOptions = defaultPlotOptions[series.type].marker &&
+				series.options.marker,
+			normalDisabled = markerOptions && markerOptions.enabled === false,
+			markerStateOptions = (markerOptions && markerOptions.states &&
+				markerOptions.states[state]) || {},
 			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
-			radius,
 			halo = series.halo,
 			haloOptions,
-			attribs,
+			markerAttribs,
 			newSymbol;
 
 		state = state || ''; // empty string
@@ -585,8 +586,10 @@ extend(Point.prototype, {
 			return;
 		}
 
-		radius = markerStateOptions.radius || (markerOptions.radius + (markerStateOptions.radiusPlus || 0));
-		
+		if (markerOptions) {
+			markerAttribs = series.markerAttribs(point, state);
+		}
+
 		// Apply hover styles to the existing point
 		if (point.graphic) {
 
@@ -597,18 +600,24 @@ extend(Point.prototype, {
 				point.graphic.addClass('highcharts-point-' + state);
 			}
 
-			attribs = radius ? { // new symbol attributes (#507, #612)
+			/*attribs = radius ? { // new symbol attributes (#507, #612)
 				x: plotX - radius,
 				y: plotY - radius,
 				width: 2 * radius,
 				height: 2 * radius
-			} : {};
+			} : {};*/
 
 			/*= if (build.classic) { =*/
-			attribs = merge(series.pointAttribs(point, state), attribs);
+			//attribs = merge(series.pointAttribs(point, state), attribs);
+			point.graphic.attr(series.pointAttribs(point, state));
 			/*= } =*/
 
-			point.graphic.attr(attribs);
+			if (markerAttribs) {
+				point.graphic.animate(
+					markerAttribs,
+					pick(markerStateOptions.animation, markerOptions.animation)
+				);
+			}
 
 			// Zooming in from a range with no markers to a range with markers
 			if (stateMarkerGraphic) {
@@ -631,10 +640,10 @@ extend(Point.prototype, {
 					if (newSymbol) {
 						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 							newSymbol,
-							plotX - radius,
-							plotY - radius,
-							2 * radius,
-							2 * radius
+							markerAttribs.x,
+							markerAttribs.y,
+							markerAttribs.width,
+							markerAttribs.height
 						)
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
@@ -643,8 +652,8 @@ extend(Point.prototype, {
 				// Move the existing graphic
 				} else {
 					stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-						x: plotX - radius,
-						y: plotY - radius
+						x: markerAttribs.x,
+						y: markerAttribs.y
 					});
 				}
 				/*= if (build.classic) { =*/
@@ -665,7 +674,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.group);
+					.add(series.markerGroup || series.group);
 			}
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -849,9 +858,9 @@ extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker', 'tt'], function (key) {
 			if (series[key]) {
-				series[key][showOrHide]();
+				series[key][showOrHide]();				
 			}
 		});
 

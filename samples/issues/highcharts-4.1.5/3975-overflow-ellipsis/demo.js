@@ -44,7 +44,7 @@ $(function () {
 
     $('#container').highcharts(options);
 
-    $('#margin').bind('input', function () {
+    $('#margin').on('input', function () {
         options.chart.marginRight = this.value;
         options.chart.marginLeft = this.value;
         $('#value').html(this.value);
