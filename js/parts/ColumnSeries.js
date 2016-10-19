@@ -311,7 +311,8 @@ seriesType('column', 'line', {
 			strokeOption = p2o.stroke || 'borderColor',
 			strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
 			fill = (point && point.color) || this.color,
-			stroke = options[strokeOption] || this.color || fill, // set to fill when borderColor = null on pies
+			stroke = point[strokeOption] || options[strokeOption] ||
+				this.color || fill, // set to fill when borderColor null
 			dashstyle = options.dashStyle,
 			zone,
 			brightness;
