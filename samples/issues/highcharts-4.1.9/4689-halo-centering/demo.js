@@ -37,7 +37,7 @@ $(function () {
                 }
             };
 
-        function getCenter(box, plotBox) {
+        function getCenter(box) {
             return [
                 (box.x + box.width / 2 + (plotBox ? plotBox.x : 0)).toFixed(2),
                 (box.y + box.height / 2 + (plotBox ? plotBox.y : 0)).toFixed(2)

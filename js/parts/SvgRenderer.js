@@ -1307,7 +1307,11 @@ SVGElement.prototype = {
 						// Insert before the first element with a higher zIndex
 						pInt(otherZIndex) > value ||
 						// If no zIndex given, insert before the first element with a zIndex
-						(!defined(value) && defined(otherZIndex))
+						(!defined(value) && defined(otherZIndex)) ||
+						// Negative zIndex versus no zIndex:
+						// On all levels except the highest. If the parent is <svg>,
+						// then we don't want to put items before <desc> or <defs>
+						(value < 0 && !defined(otherZIndex) && parentNode !== renderer.box)
 
 					)) {
 					parentNode.insertBefore(element, otherElement);
