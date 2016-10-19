@@ -8,7 +8,7 @@ $(function () {
             marginRight: 150
         },
         title: {
-            text: 'Highcharts GridAxis'
+            text: 'Projects'
         },
         xAxis: [{
             grid: true,
