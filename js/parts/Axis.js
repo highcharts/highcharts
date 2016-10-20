@@ -2444,6 +2444,7 @@ H.Axis.prototype = {
 
 		var path,
 			options = this.crosshair,
+			snap = pick(options.snap, true),
 			pos,
 			categorized,
 			graphic = this.cross;
@@ -2458,25 +2459,30 @@ H.Axis.prototype = {
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(options.snap, true)) === false)
+			((defined(point) || !snap) === false)
 		) {
 			this.hideCrosshair();
 		} else {
 
 			// Get the path
-			if (!pick(options.snap, true)) {
-				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+			if (!snap) {				
+				pos = e && (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
 				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
 			}
 
-			if (this.isRadial) {
-				path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
-			} else {
-				path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
+			if (defined(pos)) {
+				path = this.getPlotLinePath(
+					// First argument, value, only used on radial
+					this.isXAxis ? point.x : pick(point.stackY, point.y),
+					null,
+					null,
+					null,
+					pos // Translated position
+				) || null; // #3189
 			}
 
-			if (path === null) {
+			if (!defined(path)) {
 				this.hideCrosshair();
 				return;
 			}
@@ -2520,7 +2526,6 @@ H.Axis.prototype = {
 			}
 			this.cross.e = e;
 		}
-
 	},
 
 	/**
