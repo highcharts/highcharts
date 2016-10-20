@@ -217,7 +217,7 @@ H.Pointer.prototype = {
 		if (shared) {
 			i = kdpoints.length;
 			while (i--) {
-				if (kdpoints[i].clientX !== kdpoints[0].clientX || kdpoints[i].series.noSharedTooltip) {
+				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
 					kdpoints.splice(i, 1);
 				}
 			}
