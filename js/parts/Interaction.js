@@ -676,6 +676,7 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(series.markerGroup || series.group);
 			}
+			H.stop(halo);
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
@@ -684,17 +685,14 @@ extend(Point.prototype, {
 			});
 
 			/*= if (build.classic) { =*/
-			halo.attr(extend({
+			halo.attr({
 				'fill': point.color || series.color,
 				'fill-opacity': haloOptions.opacity,
 				'zIndex': -1 // #4929, IE8 added halo above everything
-			},
-			haloOptions.attributes))[move ? 'animate' : 'attr']({
-				d: point.haloPath(haloOptions.size)
 			});
 			/*= } =*/
 		} else if (halo) {
-			halo.attr({ d: [] });
+			halo.animate({ d: point.haloPath(0) }); // Hide
 		}
 
 		point.state = state;
