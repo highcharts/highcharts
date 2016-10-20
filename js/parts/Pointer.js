@@ -362,7 +362,7 @@ H.Pointer.prototype = {
 		// Scale each series
 		each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
-			if (series.xAxis && series.xAxis.zoomEnabled) {
+			if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
 				series.group.attr(seriesAttribs);
 				if (series.markerGroup) {
 					series.markerGroup.attr(seriesAttribs);
