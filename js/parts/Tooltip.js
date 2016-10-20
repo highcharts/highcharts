@@ -485,14 +485,6 @@ H.Tooltip.prototype = {
 			headerHeight,
 			tooltipLabel = this.getLabel();
 
-		/**
-		 * Destroy a single-series tooltip
-		 */
-		function destroy(tt) {
-			tt.connector = tt.connector.destroy();
-			tt.destroy();
-		}
-
 		// Create the individual labels
 		each(labels.slice(0, labels.length - 1), function (str, i) {
 			var point = points[i - 1] ||
@@ -532,14 +524,12 @@ H.Tooltip.prototype = {
 							'stroke': point.color || series.color || '${palette.neutralColor60}'
 						})
 						/*= } =*/
-						.add(tooltipLabel);
-
-					addEvent(point.series, 'hide', function ttHide() {
-						this.tt = destroy(this.tt);
-						H.removeEvent(point.series, 'hide', ttHide); // #5833
-					});
+						// Add it inside the label group so we will get hide and
+						// destroy for free
+						.add(tt);
 				}
 			}
+
 			tt.isActive = true;
 			tt.attr({
 				text: str
@@ -586,7 +576,7 @@ H.Tooltip.prototype = {
 			var tt = series.tt;
 			if (tt) {
 				if (!tt.isActive) {
-					series.tt = destroy(tt);
+					series.tt = tt.destroy();
 				} else {
 					tt.isActive = false;
 				}
@@ -617,13 +607,13 @@ H.Tooltip.prototype = {
 				tt.connector.attr({
 					d: [
 						'M',
-						point.plotX + chart.plotLeft,
-						point.plotY + point.series.yAxis.pos,
+						point.plotX + chart.plotLeft - attr.x,
+						point.plotY + point.series.yAxis.pos - attr.y,
 						'L',
-						rightAligned ?
-							point.plotX + chart.plotLeft - pick(options.distance, 16) :
-							point.plotX + chart.plotLeft + pick(options.distance, 16),
-						box.pos + chart.plotTop + tt.getBBox().height / 2
+						(rightAligned ? -1 : 1) * pick(options.distance, 16) +
+							point.plotX + chart.plotLeft - attr.x,
+						box.pos + chart.plotTop + tt.getBBox().height / 2 -
+							attr.y
 					]
 				});
 			}

@@ -472,11 +472,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		var seriesMarkerOption = this.options.marker;
 
 		this.getCyclic('symbol', seriesMarkerOption.symbol, this.chart.options.symbols);
-
-		// don't substract radius in image symbols (#604)
-		if (/^url/.test(this.symbol)) {
-			seriesMarkerOption.radius = 0;
-		}
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
@@ -1123,22 +1118,23 @@ H.Series = H.seriesType('line', null, { // base series options
 				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
-				markerAttribs = series.markerAttribs(
-					point,
-					point.selected && 'select'
-				);
 
 				// only draw the point if y is defined
 				if (enabled && isNumber(plotY) && point.y !== null) {
 
 					// Shortcuts
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
-					isImage = symbol.indexOf('url') === 0;
+					point.hasImage = symbol.indexOf('url') === 0;
+
+					markerAttribs = series.markerAttribs(
+						point,
+						point.selected && 'select'
+					);
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
 							.animate(markerAttribs);
-					} else if (isInside && (markerAttribs.width > 0 || isImage)) {
+					} else if (isInside && (markerAttribs.width > 0 || point.hasImage)) {
 						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							markerAttribs.x,
@@ -1195,7 +1191,10 @@ H.Series = H.seriesType('line', null, { // base series options
 				seriesStateOptions && seriesStateOptions.radius,
 				radius + (seriesStateOptions && seriesStateOptions.radiusPlus || 0)
 			);
+		}
 
+		if (point.hasImage) {
+			radius = 0; // and subsequently width and height is not set
 		}
 
 		attribs = {

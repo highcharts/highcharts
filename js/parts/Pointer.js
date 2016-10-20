@@ -217,7 +217,7 @@ H.Pointer.prototype = {
 		if (shared) {
 			i = kdpoints.length;
 			while (i--) {
-				if (kdpoints[i].clientX !== kdpoints[0].clientX || kdpoints[i].series.noSharedTooltip) {
+				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
 					kdpoints.splice(i, 1);
 				}
 			}
@@ -362,7 +362,7 @@ H.Pointer.prototype = {
 		// Scale each series
 		each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
-			if (series.xAxis && series.xAxis.zoomEnabled) {
+			if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
 				series.group.attr(seriesAttribs);
 				if (series.markerGroup) {
 					series.markerGroup.attr(seriesAttribs);

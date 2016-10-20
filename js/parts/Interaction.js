@@ -858,9 +858,9 @@ extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker', 'tt'], function (key) {
 			if (series[key]) {
-				series[key][showOrHide]();
+				series[key][showOrHide]();				
 			}
 		});
 

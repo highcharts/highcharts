@@ -1534,7 +1534,9 @@ Chart.prototype = {
 		fireEvent(this, 'load');
 
 		// Set up auto resize
-		this.initReflow();
+		if (this.options.chart.reflow !== false) {
+			this.initReflow();
+		}
 
 		// Don't run again
 		this.onload = null;

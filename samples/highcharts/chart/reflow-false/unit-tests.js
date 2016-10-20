@@ -1,12 +1,13 @@
 QUnit.test('Set width', function (assert) {
 
     var chart = Highcharts.charts[0],
-        width = chart.chartWidth,
+        chartWidth = chart.chartWidth,
+        containerWidth = $('#container').width(),
         done = assert.async();
 
 
     assert.strictEqual(
-        typeof width,
+        typeof chartWidth,
         'number',
         'Width is set'
     );
@@ -16,10 +17,15 @@ QUnit.test('Set width', function (assert) {
     $(window).resize();
 
     setTimeout(function () {
+        assert.notEqual(
+            containerWidth,
+            $('#container').width(),
+            'Container width has changed'
+        );
         assert.strictEqual(
-            chart.chartWidth === width,
-            true,
-            'Width has not changed'
+            chart.chartWidth,
+            chartWidth,
+            'Chart width has not changed'
         );
         done();
     }, 200);

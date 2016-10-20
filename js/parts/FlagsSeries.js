@@ -71,16 +71,20 @@ seriesType('flags', 'column', {
 	pointAttribs: function (point, state) {
 		var options = this.options,
 			color = (point && point.color) || this.color,
+			lineColor =  options.lineColor,
+			lineWidth = (point && point.lineWidth),
 			fill = options.fillColor;
 
 		if (state) {
 			fill = options.states[state].fillColor;
+			lineColor = options.states[state].lineColor;
+			lineWidth = options.states[state].lineWidth;
 		}
 
 		return {
 			'fill': fill || color,
-			'stroke': options.lineColor || color,
-			'stroke-width': (point && point.lineWidth) || options.lineWidth || 0
+			'stroke': lineColor || color,
+			'stroke-width': lineWidth || options.lineWidth || 0
 		};
 	},
 	/*= } =*/
