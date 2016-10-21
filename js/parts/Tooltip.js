@@ -58,13 +58,11 @@ H.Tooltip.prototype = {
 	/**
 	 * Destroy the single tooltips in a split tooltip.
 	 * If the tooltip is active then it is not destroyed, unless forced to.
-	 * @param  {Object} chart A chart object.
 	 * @param  {boolean} force Force destroy all tooltips.
 	 * @return {undefined}
 	 */
-	cleanSplit: function (chart, force) {
-		// Clean previous run (for missing points)
-		each(chart.series, function (series) {
+	cleanSplit: function (force) {
+		each(this.chart.series, function (series) {
 			var tt = series.tt;
 			if (tt) {
 				if (!tt.isActive || force) {
@@ -595,7 +593,8 @@ H.Tooltip.prototype = {
 			});
 		});
 
-		this.cleanSplit(chart);
+		// Clean previous run (for missing points)
+		this.cleanSplit();
 
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);
