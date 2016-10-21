@@ -1,0 +1,10 @@
+.container {
+	max-width: 600px;
+	min-width: 320px;
+	margin: 0 auto;
+}
+#buttonrow {
+	max-width: 600px;
+	min-width: 320px;
+	margin: 0 auto;
+}
