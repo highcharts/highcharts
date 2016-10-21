@@ -1,14 +1,15 @@
 $(function () {
     var seriesOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+        names = ['MSFT', 'AAPL', 'GOOG'],
+        chart;
 
     /**
      * Create the chart
      */
     function createChart() {
 
-        Highcharts.stockChart('container', {
+        chart = Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 4
@@ -62,8 +63,7 @@ $(function () {
 
     // buttons behaviour
     $('button.compare').click(function () {
-        var chart = $('#container').highcharts(),
-            compare = $(this).data().compare;
+        var compare = $(this).data().compare;
         chart.yAxis[0].setCompare(compare);
 
     });

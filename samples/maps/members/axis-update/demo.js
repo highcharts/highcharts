@@ -1,9 +1,9 @@
 $(function () {
-
+    var chart;
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Update the color axis'
@@ -38,7 +38,7 @@ $(function () {
         log = true;
 
     $('#update-color').click(function () {
-        var colorAxis = $('#container').highcharts().colorAxis[0];
+        var colorAxis = chart.colorAxis[0];
 
         colorAxis.update({
             maxColor: blackAndWhite ? '#980043' : '#000000'
@@ -47,7 +47,7 @@ $(function () {
     });
 
     $('#update-linlog').click(function () {
-        var colorAxis = $('#container').highcharts().colorAxis[0];
+        var colorAxis = chart.colorAxis[0];
 
         colorAxis.update({
             type: log ? 'linear' : 'logarithmic'

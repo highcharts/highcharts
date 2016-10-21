@@ -26,7 +26,7 @@ $(function () {
 
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        var chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Add point'
@@ -61,7 +61,7 @@ $(function () {
 
         // Activate the button
         $('#addpoint').click(function () {
-            $('#container').highcharts().series[0].addPoint(greenland);
+            chart.series[0].addPoint(greenland);
             $(this).attr('disabled', true);
         });
     });

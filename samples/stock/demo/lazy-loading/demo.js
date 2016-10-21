@@ -4,7 +4,7 @@ $(function () {
      */
     function afterSetExtremes(e) {
 
-        var chart = $('#container').highcharts();
+        var chart = Highcharts.chart('container');
 
         chart.showLoading('Loading data from server...');
         $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +

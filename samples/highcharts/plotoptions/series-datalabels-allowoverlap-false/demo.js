@@ -1,5 +1,5 @@
 $(function () {
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         chart: {
             zoomType: 'x'
@@ -26,10 +26,10 @@ $(function () {
     });
 
     $('#setextremes').click(function () {
-        $('#container').highcharts().xAxis[0].setExtremes(10, 15);
+        chart.xAxis[0].setExtremes(10, 15);
     });
 
     $('#unsetextremes').click(function () {
-        $('#container').highcharts().xAxis[0].setExtremes();
+        chart.xAxis[0].setExtremes();
     });
 });

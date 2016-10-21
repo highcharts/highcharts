@@ -1,5 +1,5 @@
 $(function () {
-    $('#chart1').highcharts({
+    Highcharts.chart('chart1', {
 
         title: {
             text: 'Click chart to view full page'
@@ -19,6 +19,6 @@ $(function () {
 
     $('.chart-container').bind('mousedown', function () {
         $(this).toggleClass('modal');
-        $('.chart', this).highcharts().reflow();
+        $('.chart', this).reflow();
     });
 });

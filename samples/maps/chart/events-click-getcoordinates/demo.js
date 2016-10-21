@@ -121,9 +121,8 @@ $(function () {
 
     showMap('custom/world');
 
-
     $('#getconfig').click(function () {
-        var chart = $('#container').highcharts(),
+        var chart = Highcharts.charts[0],
             points,
             html = '';
 

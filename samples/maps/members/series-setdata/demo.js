@@ -3,7 +3,7 @@ $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        var chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Set random data'
@@ -41,7 +41,7 @@ $(function () {
             $.each(data, function () {
                 this.value = Math.round(Math.random() * 1000);
             });
-            $('#container').highcharts().series[0].setData(data);
+            chart.series[0].setData(data);
         });
     });
 });

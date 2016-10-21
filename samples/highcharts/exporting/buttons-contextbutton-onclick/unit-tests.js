@@ -3,7 +3,7 @@ QUnit.test('Capture POST', function (assert) {
         button = chart.renderer.box.querySelector('.highcharts-button'),
         postData;
 
-    Highcharts.post = function (url, data, formAttributes) {
+    Highcharts.post = function (url, data) {
         postData = data;
     };
 

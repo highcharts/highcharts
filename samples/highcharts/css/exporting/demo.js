@@ -2,7 +2,7 @@
 
 $(function () {
 
-    Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
 
         chart: {
             type: 'column'
@@ -41,7 +41,7 @@ $(function () {
     });
 
     var start = Date.now();
-    var svg = document.getElementById('container').highcharts().getSVGForExport();
+    var svg = chart.getSVGForExport();
 
     $('#report').html('SVG size: ' + Highcharts.numberFormat(svg.length, 0) + ' B<br>Export generation time: ' + (Date.now() - start) + ' ms');
     $('#pre').html((function () {

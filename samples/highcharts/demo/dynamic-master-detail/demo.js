@@ -81,7 +81,7 @@ $(function () {
                         enabled: false
                     }
 
-                }).highcharts(); // return chart
+                }); // return chart
             }
 
             // create the master chart
@@ -212,8 +212,7 @@ $(function () {
 
                 }, function (masterChart) {
                     createDetail(masterChart);
-                })
-                    .highcharts(); // return chart instance
+                }); // return chart instance
             }
 
             // make the container smaller and add a second container for the master chart

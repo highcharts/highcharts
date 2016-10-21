@@ -2,7 +2,7 @@ QUnit.test('Capture POST', function (assert) {
     var chart = Highcharts.charts[0],
         postData;
 
-    Highcharts.post = function (url, data, formAttributes) {
+    Highcharts.post = function (url, data) {
         postData = data;
     };
 

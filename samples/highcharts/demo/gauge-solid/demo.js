@@ -111,7 +111,7 @@ $(function () {
     // Bring life to the dials
     setInterval(function () {
         // Speed
-        var chart = $('#container-speed').highcharts(),
+        var chart = Highcharts.chart('container-speed'),
             point,
             newVal,
             inc;
@@ -129,7 +129,7 @@ $(function () {
         }
 
         // RPM
-        chart = $('#container-rpm').highcharts();
+        chart = Highcharts.chart('container-rpm');
         if (chart) {
             point = chart.series[0].points[0];
             inc = Math.random() - 0.5;

@@ -8,7 +8,7 @@ $(function () {
         });
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        var chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Zoom to point'
@@ -63,13 +63,13 @@ $(function () {
 
         // Activate the buttons
         $('#ecuador').click(function () {
-            $('#container').highcharts().get('EC').zoomTo();
+            chart.get('EC').zoomTo();
         });
         $('#south-korea').click(function () {
-            $('#container').highcharts().get('KR').zoomTo();
+            chart.get('KR').zoomTo();
         });
         $('#zoom-out').click(function () {
-            $('#container').highcharts().mapZoom();
+            chart.mapZoom();
         });
     });
 });

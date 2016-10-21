@@ -100,7 +100,7 @@ $(function () {
                 $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>');
 
                 if (!countryChart) {
-                    countryChart = $('#country-chart').highcharts({
+                    countryChart = Highcharts.chart('country-chart', {
                         chart: {
                             height: 250,
                             spacingLeft: 0
@@ -137,7 +137,7 @@ $(function () {
                                 pointStart: parseInt(categories[0], 10)
                             }
                         }
-                    }).highcharts();
+                    });
                 }
 
                 $.each(points, function (i) {
@@ -172,9 +172,6 @@ $(function () {
                     countryChart = countryChart.destroy();
                 }
             }
-
-
-
         });
 
         // Initiate the map chart
@@ -221,7 +218,7 @@ $(function () {
                     }
                 }
             }]
-        }).highcharts();
+        });
 
         // Pre-select a country
         mapChart.get('us').select();

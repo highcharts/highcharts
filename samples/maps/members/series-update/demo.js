@@ -3,7 +3,7 @@ $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Initiate the chart
-        Highcharts.mapChart('container', {
+        var chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Update series'
@@ -38,7 +38,7 @@ $(function () {
 
         // Activate the button
         $('#update').click(function () {
-            $('#container').highcharts().series[0].update({
+            chart.series[0].update({
                 name: 'Updated series name',
                 borderColor: 'black',
                 dashStyle: 'dot'

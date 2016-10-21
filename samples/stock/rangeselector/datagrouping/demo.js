@@ -2,7 +2,7 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
-        Highcharts.stockChart('container', {
+        var chart = Highcharts.stockChart('container', {
 
             chart: {
                 height: 300
@@ -68,7 +68,7 @@ $(function () {
         });
 
         console.log('--- exporting ---');
-        $('#container').append($('#container').highcharts().getSVG());
+        document.getElementById('container').append(chart.getSVG());
     });
 
 });
