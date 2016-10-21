@@ -4,7 +4,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'X axis nameToX = true'
+            text: 'X axis uniqueNames = true'
         },
         xAxis: {
             type: 'category'
