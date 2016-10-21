@@ -872,7 +872,7 @@ H.LegendSymbolMixin = {
 		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
-			radius = markerOptions.radius;
+			radius = this.symbol.indexOf('url') === 0 ? 0 : markerOptions.radius;
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,

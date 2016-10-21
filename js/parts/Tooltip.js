@@ -6,8 +6,7 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-var addEvent = H.addEvent,
-	dateFormat = H.dateFormat,
+var dateFormat = H.dateFormat,
 	each = H.each,
 	extend = H.extend,
 	format = H.format,
