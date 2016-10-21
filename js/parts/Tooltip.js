@@ -63,7 +63,7 @@ H.Tooltip.prototype = {
 	 */
 	cleanSplit: function (force) {
 		each(this.chart.series, function (series) {
-			var tt = series.tt;
+			var tt = series && series.tt;
 			if (tt) {
 				if (!tt.isActive || force) {
 					series.tt = tt.destroy();
@@ -137,7 +137,7 @@ H.Tooltip.prototype = {
 		if (this.label) {
 			this.label = this.label.destroy();
 		}
-		if (this.split) {
+		if (this.split && this.tt) {
 			this.cleanSplit(this.chart, true);
 			this.tt = this.tt.destroy();
 		}
