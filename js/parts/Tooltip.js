@@ -593,12 +593,8 @@ H.Tooltip.prototype = {
 			});
 		});
 
-<<<<<<< HEAD
-		this.cleanSplit(chart);
-=======
 		// Clean previous run (for missing points)
 		this.cleanSplit();
->>>>>>> master
 
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);
