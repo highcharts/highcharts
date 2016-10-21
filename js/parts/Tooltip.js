@@ -56,6 +56,27 @@ H.Tooltip.prototype = {
 	},
 
 	/**
+	 * Destroy the single tooltips in a split tooltip.
+	 * If the tooltip is active then it is not destroyed, unless forced to.
+	 * @param  {Object} chart A chart object.
+	 * @param  {boolean} force Force destroy all tooltips.
+	 * @return {undefined}
+	 */
+	cleanSplit: function (chart, force) {
+		// Clean previous run (for missing points)
+		each(chart.series, function (series) {
+			var tt = series.tt;
+			if (tt) {
+				if (!tt.isActive || force) {
+					series.tt = tt.destroy();
+				} else {
+					tt.isActive = false;
+				}
+			}
+		});
+	},
+
+	/**
 	 * Create the Tooltip label element if it doesn't exist, then return the
 	 * label.
 	 */
@@ -117,6 +138,10 @@ H.Tooltip.prototype = {
 		// Destroy and clear local variables
 		if (this.label) {
 			this.label = this.label.destroy();
+		}
+		if (this.split) {
+			this.cleanSplit(this.chart, true);
+			this.tt = this.tt.destroy();
 		}
 		clearTimeout(this.hideTimer);
 		clearTimeout(this.tooltipTimeout);
@@ -570,17 +595,7 @@ H.Tooltip.prototype = {
 			});
 		});
 
-		// Clean previous run (for missing points)
-		each(chart.series, function (series) {
-			var tt = series.tt;
-			if (tt) {
-				if (!tt.isActive) {
-					series.tt = tt.destroy();
-				} else {
-					tt.isActive = false;
-				}
-			}
-		});
+		this.cleanSplit(chart);
 
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);
