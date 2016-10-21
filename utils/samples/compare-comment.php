@@ -89,7 +89,7 @@ $symbols = array('check', 'exclamation-sign');
 			if (window.parent.frames[0]) {
 				var contentWin = (window.parent.parent || window.parent).frames[0],
 					contentDoc = contentWin.document,
-					sampleIndex = window.parent.frames[0].samples.indexOf('<?php echo $path ?>'),
+					sampleIndex = contentWin.samples.indexOf('<?php echo $path ?>'),
 					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// Sample is different but approved

@@ -35,7 +35,7 @@ $(function () {
 
 
     // Add the slider to view changes
-    $('input#zthreshold').bind('input', function () {
+    $('input#zthreshold').on('input', function () {
         chart.series[0].update({
             zThreshold: parseInt(this.value, 10)
         });

@@ -22,7 +22,7 @@ $(function () {
         }]
     });
 
-    $('#width').bind('input', function () {
+    $('#width').on('input', function () {
         chart.setSize(this.value, 400, false);
     });
 });
