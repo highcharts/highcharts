@@ -41,6 +41,7 @@ var SVGElement,
 	stop = H.stop,
 	svg = H.svg,
 	SVG_NS = H.SVG_NS,
+	symbolSizes = H.symbolSizes,
 	win = H.win;
 
 /**
@@ -2213,8 +2214,7 @@ SVGRenderer.prototype = {
 			),
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
-			centerImage,
-			symbolSizes = {};
+			centerImage;
 
 		if (symbolFn) {
 			obj = this.path(path);
@@ -2245,10 +2245,17 @@ SVGRenderer.prototype = {
 			// Create the image synchronously, add attribs async
 			obj = this.image(imageSrc);
 
-			// The image width is not always the same as the symbol width. The image may be centered within the symbol,
-			// as is the case when image shapes are used as label backgrounds, for example in flags.
-			obj.imgwidth = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].width, options && options.width);
-			obj.imgheight = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].height, options && options.height);
+			// The image width is not always the same as the symbol width. The
+			// image may be centered within the symbol, as is the case when
+			// image shapes are used as label backgrounds, for example in flags.
+			obj.imgwidth = pick(
+				symbolSizes[imageSrc] && symbolSizes[imageSrc].width,
+				options && options.width
+			);
+			obj.imgheight = pick(
+				symbolSizes[imageSrc] && symbolSizes[imageSrc].height,
+				options && options.height
+			);
 			/**
 			 * Set the size and position
 			 */
@@ -2260,20 +2267,22 @@ SVGRenderer.prototype = {
 			};
 
 			/**
-			 * Width and height setters that take both the image's physical size and the label size into 
-			 * consideration, and translates the image to center within the label.
+			 * Width and height setters that take both the image's physical size
+			 * and the label size into consideration, and translates the image
+			 * to center within the label.
 			 */
 			each(['width', 'height'], function (key) {
 				obj[key + 'Setter'] = function (value, key) {
 					var attribs = {},
-						imgSize = this['img' + key];
+						imgSize = this['img' + key],
+						trans = key === 'width' ? 'translateX' : 'translateY';
 					this[key] = value;
 					if (defined(imgSize)) {
 						if (this.element) {
 							this.element.setAttribute(key, imgSize);
 						}
 						if (!this.alignByTranslate) {
-							attribs[key === 'width' ? 'translateX' : 'translateY'] = (this[key] - imgSize) / 2;
+							attribs[trans] = ((this[key] || 0) - imgSize) / 2;
 							this.attr(attribs);
 						}
 					}

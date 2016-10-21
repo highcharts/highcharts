@@ -31,6 +31,7 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	idCounter: 0,
 	chartCount: 0,
 	seriesTypes: {},
+	symbolSizes: {},
 	svg: svg,
 	vml: vml,
 	win: win,

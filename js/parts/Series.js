@@ -1090,7 +1090,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			i,
 			point,
 			symbol,
-			isImage,
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
