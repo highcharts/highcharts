@@ -14,6 +14,7 @@ var dateFormat = H.dateFormat,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Chart = H.Chart,
+	Series = H.Series,
 	Tick = H.Tick;
 
 
@@ -385,6 +386,31 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 		options.endOnTick = true;
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
+/**
+ * Ensures a left wall on horizontal axes with series inheriting from column:
+ * ColumnSeries normally sets pointRange to null, resulting in Axis to select
+ * other values for point ranges. This enforces the above Axis.setOptions()
+ * override.
+ *                  _________________________
+ * Enforce this:    ___|_____|_____|_____|__|
+ *                  ^
+ *                  _________________________
+ * To be this:      |_____|_____|_____|_____|
+ *                  ^
+ *
+ * @param {function} proceed - the original function
+ * @param {object} options - the pure axis options as input by the user
+ */
+wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+	var axis = this;
+	if (axis.options.grid && axis.horiz) {
+		each(axis.series, function (series) {
+			series.options.pointRange = 0;
+		});
+	}
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 });
 
 /**

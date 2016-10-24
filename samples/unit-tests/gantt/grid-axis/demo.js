@@ -478,26 +478,23 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
 });
 
 /**
- * Checks that datetime and linear axes have ticks placed at the start and end
- * of the axis, creating a grid:
+ * Checks that datetime and linear axes for each series type (except 'pie')have
+ * ticks placed at the start and end of the axis, creating a grid:
  *   ___________________
  *   |__|__|__|__|__|__|
  *   ^                 ^
  */
 QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     var chart,
-        axes,
-        axis,
-        $axisGroup,
-        axisGroupBox,
-        leftTick,
-        rightTick,
-        ticks,
-        i;
+        types = Highcharts.seriesTypes,
+        // No grids for pies!
+        ignoreTypes = ['pie'],
+        ignore,
+        type;
 
     chart = Highcharts.chart('container', {
         chart: {
-            type: 'scatter'
+            type: 'column'
         },
         xAxis: [{
             title: {
@@ -526,7 +523,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         }],
         series: [{
             xAxis: 0,
-            data: [[129.9, 271.5], [306.4, -29.2], [544.0, 376.0]]
+            data: [[129.9, -29.2], [306.4, 271.5], [544.0, 376.0]]
         }, {
             xAxis: 1,
             data: [{
@@ -538,7 +535,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             }]
         }, {
             xAxis: 2,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+            data: [[-144.0, -176.0], [-106.4, -129.2], [29.9, -71.5]]
         }, {
             xAxis: 3,
             data: [{
@@ -551,27 +548,55 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
         }]
     });
 
-    axes = chart.xAxis;
 
-    for (i = 0; i < axes.length; i++) {
-        axis = axes[0];
-        $axisGroup = $(axis.axisGroup.element);
-        axisGroupBox = $axisGroup[0].getBBox();
-        ticks = $axisGroup.find('.highcharts-tick');
-        leftTick = ticks[0];
-        rightTick = ticks.slice(-1)[0];
 
-        assert.equal(
-            leftTick.getBBox().x,
-            axisGroupBox.x,
-            'Leftmost tick has same x value as leftmost point of axisGroup'
-        );
+    function test(type) {
+        var axes,
+            axis,
+            $axisGroup,
+            axisGroupBox,
+            leftTick,
+            rightTick,
+            ticks,
+            i;
 
-        assert.equal(
-            rightTick.getBBox().x,
-            axisGroupBox.x + axisGroupBox.width,
-            'Rightmost tick has same x value as rightmost point of axisGroup'
-        );
+        chart.options.chart.type = type;
+        chart = Highcharts.chart('container', chart.options);
+
+        axes = chart.xAxis;
+        for (i = 0; i < axes.length; i++) {
+            axis = axes[0];
+            $axisGroup = $(axis.axisGroup.element);
+            axisGroupBox = $axisGroup[0].getBBox();
+            ticks = $axisGroup.find('.highcharts-tick');
+            leftTick = ticks[0];
+            rightTick = ticks.slice(-1)[0];
+
+            assert.equal(
+                leftTick.getBBox().x,
+                axisGroupBox.x,
+                type + ' chart leftmost tick is placed correctly'
+            );
+
+            assert.equal(
+                rightTick.getBBox().x,
+                axisGroupBox.x + axisGroupBox.width,
+                type + ' chart rightmost tick is placed correctly'
+            );
+        }
+    }
+
+    types = {
+        column: true
+    };
+
+    for (type in types) {
+        if (types.hasOwnProperty(type)) {
+            ignore = Highcharts.inArray(type, ignoreTypes) > -1;
+            if (!ignore) {
+                test(type);
+            }
+        }
     }
 });
 
