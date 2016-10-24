@@ -19,6 +19,7 @@ var seriesType = H.seriesType,
 	noop = H.noop,
 	each = H.each,
 	grep = H.grep,
+	isNumber = H.isNumber,
 	pick = H.pick,
 	Series = H.Series,
 	stableSort = H.stableSort,
@@ -895,6 +896,9 @@ seriesType('treemap', 'scatter', {
 			className += ' highcharts-internal-node';
 		}
 		return className;
+	},
+	isValid: function () {
+		return isNumber(this.value);
 	},
 	setState: function (state) {
 		H.Point.prototype.setState.call(this, state);
