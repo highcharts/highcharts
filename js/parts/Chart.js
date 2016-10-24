@@ -206,7 +206,7 @@ Chart.prototype = {
 	 * Redraw legend, axes or series based on updated data
 	 *
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 *	configuration
 	 */
 	redraw: function (animation) {
 		var chart = this,
@@ -838,6 +838,17 @@ Chart.prototype = {
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
 		});
+
+		// The following will add listeners to re-fit the chart before and after
+		// printing (#2284). However it only works in WebKit. Should have worked
+		// in Firefox, but not supported in IE.
+		/*
+		if (win.matchMedia) {
+			win.matchMedia('print').addListener(function reflow() {
+				chart.reflow();
+			});
+		}
+		*/
 	},
 
 	/**
@@ -1534,7 +1545,9 @@ Chart.prototype = {
 		fireEvent(this, 'load');
 
 		// Set up auto resize
-		this.initReflow();
+		if (this.options.chart.reflow !== false) {
+			this.initReflow();
+		}
 
 		// Don't run again
 		this.onload = null;
