@@ -737,7 +737,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: right">
-				<a class="button" id="commits" style="margin-left: 1em" >Test by commit</a>
+				<a class="button" id="commits" style="margin-left: 1em" >Bisect</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
