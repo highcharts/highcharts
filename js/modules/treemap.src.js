@@ -49,6 +49,20 @@ var seriesType = H.seriesType,
 		if (next !== false) {
 			recursive(next, func, context);
 		}
+	},
+	// Array.some implementation if not supported natively
+	// (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
+	some = function (array, predicate) {
+		if (Array.prototype.some) {
+			return Array.prototype.some.call(array, predicate);
+		}
+
+		for (var i = 0, len = array.length >>> 0; i < len; ++i) {
+			if (i in t && predicate.call(array, array[i], i, array)) {
+				return true;
+			}
+		}
+		return false;
 	};
 
 // The Treemap series type
@@ -173,7 +187,7 @@ seriesType('treemap', 'scatter', {
 		var series = this;
 		Series.prototype.init.call(series, chart, options);
 		if (series.options.allowDrillToNode) {
-			series.drillTo();
+			series.drillOnClick();
 		}
 	},
 	buildNode: function (id, i, level, list, parent) {
@@ -550,6 +564,22 @@ seriesType('treemap', 'scatter', {
 	stripes: function (parent, children) {
 		return this.algorithmFill(false, parent, children);
 	},
+	setData: function (data) {
+		// The currently drilled-to node might be a leaf or not exist at all in the new data.
+		// => Drill up to first node that has some children in the new data.
+		var node = this.rootNode;
+		function hasNodeAsParent(otherNode) {
+			return (otherNode.parent === node);
+		}
+		while (node && !some(data, hasNodeAsParent)) {
+			node = this.nodeMap[node].parent;
+		}
+		if (node !== this.rootNode) {
+			this.drillTo(node, false);
+		}
+
+		Series.prototype.setData.apply(this, arguments);
+	},
 	translate: function () {
 		var pointValues,
 			seriesArea,
@@ -729,7 +759,7 @@ seriesType('treemap', 'scatter', {
 	/**
 	* Add drilling on the suitable points
 	*/
-	drillTo: function () {
+	drillOnClick: function () {
 		var series = this;
 		H.addEvent(series, 'click', function (event) {
 			var point = event.point,
@@ -780,32 +810,32 @@ seriesType('treemap', 'scatter', {
 		return drillId;
 	},
 	drillUp: function () {
-		var drillPoint = null,
-			node,
-			parent;
+		var node;
 		if (this.rootNode) {
 			node = this.nodeMap[this.rootNode];
-			if (node.parent !== null) {
-				drillPoint = this.nodeMap[node.parent];
-			} else {
-				drillPoint = this.nodeMap[''];
-			}
+			this.drillTo((node.parent !== null) ? node.parent : '');
 		}
-
-		if (drillPoint !== null) {
-			this.drillToNode(drillPoint.id);
-			if (drillPoint.id === '') {
-				this.drillUpButton = this.drillUpButton.destroy();
-			} else {
-				parent = this.nodeMap[drillPoint.parent];
-				this.showDrillUpButton((parent.name || parent.id));
-			}
-		} 
 	},
-	drillToNode: function (id) {
+	drillTo: function (id, redraw) {
+		var node = this.nodeMap[id],
+			resolvedId = node ? id : '',
+			parent;
+
+		this.drillToNode(resolvedId, redraw);
+
+		if (resolvedId === '') {
+			this.drillUpButton = this.drillUpButton.destroy();
+		} else {
+			parent = this.nodeMap[node.parent];
+			this.showDrillUpButton((parent.name || parent.id));
+		}
+	},
+	drillToNode: function (id, redraw) {
 		this.options.rootId = id;
 		this.isDirty = true; // Force redraw
-		this.chart.redraw();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
 	},
 	showDrillUpButton: function (name) {
 		var series = this,
