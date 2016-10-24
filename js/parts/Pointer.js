@@ -224,7 +224,7 @@ H.Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoints[0] && (kdpoints[0] !== chart.hoverPoint || (tooltip && tooltip.isHidden))) {
+		if (kdpoints[0] && (kdpoints[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoints[0].series.noSharedTooltip) {
 				// Do mouseover on all points (#3919, #3985, #4410, #5622)
@@ -246,6 +246,7 @@ H.Pointer.prototype = {
 					kdpoints[0].onMouseOver(e);
 				}
 			}
+			this.prevKDPoint = kdpoints[0];
 			updatePosition = false;
 		}
 		// Update positions (regardless of kdpoint or hoverPoint)
@@ -347,7 +348,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
+			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 
