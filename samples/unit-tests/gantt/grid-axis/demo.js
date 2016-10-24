@@ -703,3 +703,123 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         );
     }
 });
+
+QUnit.test('Horizontal axis tick labels centered', function (assert) {
+    var chart,
+        axes;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            min: Date.UTC(2016, 10, 11),
+            max: Date.UTC(2016, 10, 15),
+            tickInterval: 1000 * 60 * 60 * 24, // Day
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            min: Date.UTC(2016, 10, 12),
+            max: Date.UTC(2016, 10, 16),
+            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+            opposite: true
+        }],
+        series: [{
+            xAxis: 0,
+            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
+        }, {
+            xAxis: 1,
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
+        }, {
+            xAxis: 2,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 3,
+            data: [{
+                x: Date.UTC(2016, 10, 13),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 15),
+                y: 2
+            }]
+        }]
+    });
+
+    axes = chart.xAxis;
+
+    Highcharts.each(axes, function (axis) {
+        var axisType = axis.options.type || 'linear',
+            tickPositions = axis.tickPositions,
+            ticks = axis.ticks,
+            tick,
+            nextTick,
+            tickBox,
+            nextTickBox,
+            labelBox,
+            actual,
+            expected,
+            i;
+
+        for (i = 0; i < tickPositions.length; i++) {
+            tick = ticks[tickPositions[i]];
+            nextTick = ticks[tickPositions[i + 1]];
+            if (tick.mark && tick.label && nextTick && nextTick.mark) {
+                tickBox = tick.mark.element.getBBox();
+                nextTickBox = nextTick.mark.element.getBBox();
+                labelBox = tick.label.element.getBBox();
+                expected = {
+                    x: nextTickBox.x - tickBox.x,
+                    y: tickBox.y - (tickBox.height / 2)
+                };
+                actual = {
+                    x: labelBox.x + (labelBox.width / 2),
+                    y: labelBox.y - (labelBox.height / 2)
+                };
+                console.log(tick.mark.element, nextTick.mark.element, tickBox.x, nextTickBox.x);
+                console.log(tick.label.element, labelBox);
+                console.log(expected, actual);
+
+                assert.equal(
+                    actual.x,
+                    expected.x,
+                    axisType + ' tick label x position correct'
+                );
+
+                assert.equal(
+                    actual.y,
+                    expected.y,
+                    axisType + ' tick label y position correct'
+                );
+            }
+        }
+    });
+});
+
+QUnit.test('Vertical axis tick labels centered', function (assert) {
+    assert.ok(false, 'Not implemented');
+});
