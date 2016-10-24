@@ -2,9 +2,7 @@
  * Tests the isOuterAxis() function
  */
 QUnit.test('isOuterAxis()', function (assert) {
-    var chart;
-
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },
@@ -45,8 +43,6 @@ QUnit.test('isOuterAxis()', function (assert) {
             xAxis: 3
         }]
     });
-
-    chart = $('#container').highcharts();
 
     assert.ok(
         chart.xAxis[1].isOuterAxis(),
@@ -102,7 +98,7 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         error;
 
     // Chart 1
-    $('#container').highcharts({
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -144,7 +140,6 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
     axes[1] = chart.yAxis[1].axisGroup.getBBox();
     axes[2] = chart.yAxis[2].axisGroup.getBBox();
@@ -175,7 +170,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         axes = [],
         error;
 
-    $('#container').highcharts({
+    chart = Highcharts.chart('container', {
         title: {
             type: 'scatter'
         },
@@ -262,7 +257,6 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.yAxis[0].axisGroup.getBBox();
     axes[1] = chart.yAxis[1].axisGroup.getBBox();
     axes[2] = chart.yAxis[2].axisGroup.getBBox();
@@ -294,7 +288,7 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
         error;
 
     // Chart 1
-    $('#container').highcharts({
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -336,7 +330,6 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.xAxis[0].axisGroup.getBBox();
     axes[1] = chart.xAxis[1].axisGroup.getBBox();
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
@@ -367,7 +360,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         axes = [],
         error;
 
-    $('#container').highcharts({
+    chart = Highcharts.chart('container', {
         title: {
             type: 'scatter'
         },
@@ -454,7 +447,6 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     axes[0] = chart.xAxis[0].axisGroup.getBBox();
     axes[1] = chart.xAxis[1].axisGroup.getBBox();
     axes[2] = chart.xAxis[2].axisGroup.getBBox();
