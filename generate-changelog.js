@@ -136,11 +136,18 @@
 
         log.forEach((li, i) => {
 
-            // Hyperlinked issue numbers
-            li = li.replace(
-                /#([0-9]+)/g,
-                '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
-            );
+            li = li
+
+                // Hyperlinked issue numbers
+                .replace(
+                    /#([0-9]+)/g,
+                    '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
+                )
+                // Code tags
+                .replace(
+                    /`([^`]+)`/g,
+                    '<code>$1</code>'
+                );
 
             // Start fixes
             if (i === log.startFixes) {
