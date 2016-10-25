@@ -466,9 +466,14 @@ const copyToDist = () => {
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
             const filename = path.replace('.src.js', '.js').replace('js/', '');
+            let parts = path.split('/');
+            const type = ['js', 'css'].indexOf(parts[0]) > -1 ? 'styled' : 'classic';
+            if (type === 'styled') {
+                parts = parts.slice(1);
+            }
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/js/' + path, content);
+                    U.writeFile(distFolder + lib + '/js/' + type + '/' + parts.join('/'), content);
                 }
             });
         });
@@ -619,6 +624,7 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('clean-dist', cleanDist);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
