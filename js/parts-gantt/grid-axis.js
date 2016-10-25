@@ -69,15 +69,6 @@ Axis.prototype.isOuterAxis = function () {
 };
 
 /**
- * Shortcut function to Tick.label.getBBox().width.
- *
- * @return {number} width - the width of the tick label
- */
-Tick.prototype.getLabelWidth = function () {
-	return this.label.getBBox().width;
-};
-
-/**
  * Get the maximum label length.
  * This function can be used in states where the axis.maxLabelLength has not
  * been set.
@@ -215,10 +206,11 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
  *						 for the tick
  */
 wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
-	var retVal = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
-		axis = this.axis,
+	var tick = this,
+		retVal = proceed.apply(tick, Array.prototype.slice.call(arguments, 1)),
+		axis = tick.axis,
 		options = axis.options,
-		tickInterval = options.tickInterval || 1,
+		tickInterval = options.tickInterval || axis.tickInterval,
 		newX,
 		newPos,
 		axisHeight,
@@ -226,6 +218,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		labelMetrics,
 		lblB,
 		lblH,
+		axisCenter,
 		labelCenter;
 
 	// Only center tick labels if axis has option grid: true
@@ -235,28 +228,32 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		lblB = labelMetrics.b;
 		lblH = labelMetrics.h;
 
+		if (options.categories === undefined) {
+			newPos = tick.pos + (tickInterval / 2);
+		}
+
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
 			axisHeight = axis.axisGroup.getBBox().height;
-			newPos = this.pos + tickInterval / 2;
 			retVal.x = axis.translate(newPos) + axis.left;
-			labelCenter = (axisHeight / 2) + (lblH / 2) - Math.abs(lblH - lblB);
+			axisCenter = (axisHeight / 2);
+			labelCenter = (lblH / 2) - Math.abs(lblH - lblB);
+			y = y + labelCenter;
 
 			// Center y position
 			if (axis.side === axisSide.top) {
-				retVal.y = y - labelCenter;
+				retVal.y = y - axisCenter;
 			} else {
-				retVal.y = y + labelCenter;
+				retVal.y = y + axisCenter;
 			}
 		} else {
 			// Center y position
 			if (options.categories === undefined) {
-				newPos = this.pos + (tickInterval / 2);
 				retVal.y = axis.translate(newPos) + axis.top + (lblB / 2);
 			}
 
 			// Center x position
-			newX = (this.getLabelWidth() / 2) - (axis.maxLabelLength / 2);
+			newX = (tick.label.getBBox().width / 2) - (axis.maxLabelLength / 2);
 			if (axis.side === axisSide.left) {
 				retVal.x += newX;
 			} else {
