@@ -706,7 +706,8 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
-        axes;
+        axes,
+        yError = 0.3;
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -794,25 +795,27 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
                 labelBox = tick.label.element.getBBox();
                 expected = {
                     x: nextTickBox.x - tickBox.x,
-                    y: tickBox.y - (tickBox.height / 2)
+                    y: tickBox.y + (tickBox.height / 2)
                 };
                 actual = {
                     x: labelBox.x + (labelBox.width / 2),
-                    y: labelBox.y - (labelBox.height / 2)
+                    y: labelBox.y + (labelBox.height / 2)
                 };
-                console.log(tick.mark.element, nextTick.mark.element, tickBox.x, nextTickBox.x);
-                console.log(tick.label.element, labelBox);
-                console.log(expected, actual);
+                console.log('tick:', tick.mark.element, tickBox, '\nnextTick:', nextTick.mark.element, nextTickBox);
+                console.log('label:', tick.label.element, labelBox);
+                console.log('expected:', expected, 'actual:', actual);
 
-                assert.equal(
+                assert.close(
                     actual.x,
                     expected.x,
+                    0,
                     axisType + ' tick label x position correct'
                 );
 
-                assert.equal(
+                assert.close(
                     actual.y,
                     expected.y,
+                    yError,
                     axisType + ' tick label y position correct'
                 );
             }
