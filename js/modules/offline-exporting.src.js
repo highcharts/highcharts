@@ -191,6 +191,7 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 					el.style[property] = svgElementStyle[property];
 				}
 			});
+			el.style['font-family'] = el.style['font-family'] && el.style['font-family'].split(' ').splice(-1);
 		});
 		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
 		Highcharts.downloadURL(svgData, filename);
