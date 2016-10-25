@@ -466,14 +466,9 @@ const copyToDist = () => {
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
             const filename = path.replace('.src.js', '.js').replace('js/', '');
-            let parts = path.split('/');
-            const type = ['js', 'css'].indexOf(parts[0]) > -1 ? 'styled' : 'classic';
-            if (type === 'styled') {
-                parts = parts.slice(1);
-            }
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/js/' + type + '/' + parts.join('/'), content);
+                    U.writeFile(distFolder + lib + '/code/' + path, content);
                 }
             });
         });
