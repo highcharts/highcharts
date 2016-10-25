@@ -161,11 +161,14 @@ function getResources() {
 
 				if (window.parent.frames[0]) {
 
-					window.parent.history.pushState(null, null, '#view/' + path);
+					if (window.parent.history.pushState) {
+						window.parent.history.pushState(null, null, '#view/' + path);
+					}
 					
 					var contentDoc = window.parent.frames[0].document;
 
-					sampleIndex = window.parent.frames[0].samples.indexOf(path);
+					sampleIndex = window.parent.frames[0].samples.indexOf &&
+						window.parent.frames[0].samples.indexOf(path);
 
 					// Highlight the current sample in the left
 					var li = contentDoc.getElementById('li' + sampleIndex);
@@ -262,9 +265,9 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
-							"    type: 'mousedown',\n" +
-							"    pageX: " + e.pageX + ",\n" + 
-							"    pageY: " + e.pageY + "\n" + 
+							"	type: 'mousedown',\n" +
+							"	pageX: " + e.pageX + ",\n" + 
+							"	pageY: " + e.pageY + "\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);
@@ -272,10 +275,10 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-							"    type: 'mousemove',\n" +
-							"    pageX: " + e.pageX + ",\n" + 
-							"    pageY: " + e.pageY + ",\n" +  
-							"    target: chart.container\n" + 
+							"	type: 'mousemove',\n" +
+							"	pageX: " + e.pageX + ",\n" + 
+							"	pageY: " + e.pageY + ",\n" +  
+							"	target: chart.container\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);
@@ -283,7 +286,7 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-							"    type: 'mouseup'\n" + 
+							"	type: 'mouseup'\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);

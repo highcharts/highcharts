@@ -85,7 +85,7 @@
 
 			function updateHash() {
 
-				if (window.parent) {
+				if (window.parent && window.parent.history.pushState) {
 					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
 					hash += '/' + path;
 					if (hash !== window.parent.location.hash) {
