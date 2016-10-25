@@ -712,7 +712,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
  *
  *                        _________________________________
  *                        |       |       |   3   |       |
- * Avois any of these:    |      1|2      |       |       |
+ * Avoid any of these:    |      1|2      |       |       |
  *                        |_______|_______|_______|___4___|
  *
  *                        _________________________________
@@ -803,6 +803,14 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             expected,
             i;
 
+        if (!axisType) {
+            if (axis.options.categories) {
+                axisType = 'categories';
+            } else {
+                axisType = 'linear';
+            }
+        }
+
         for (i = 0; i < tickPositions.length; i++) {
             tick = ticks[tickPositions[i]];
             nextTick = ticks[tickPositions[i + 1]];
@@ -818,9 +826,6 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
                     x: labelBox.x + (labelBox.width / 2),
                     y: labelBox.y + (labelBox.height / 2)
                 };
-                console.log('tick:', tick.mark.element, tickBox, '\nnextTick:', nextTick.mark.element, nextTickBox);
-                console.log('label:', tick.label.element, labelBox);
-                console.log('expected:', expected, 'actual:', actual);
 
                 assert.close(
                     actual.x,
@@ -840,6 +845,169 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     });
 });
 
+/**
+ * Checks that the tick labels in vertical axes are centered in their cells,
+ * both vertically and horizontally. This is checked by asserting that the
+ * midpoint of each tick label is the same as the midpoint between the tick it
+ * belongs to, and the next one.
+ *
+ *                        _________
+ *                        |       |
+ *                        |      1|
+ *                        |_______|
+ *                        |       |
+ *                        |2      |
+ * Avoid any of these:    |_______|
+ *                        |   3   |
+ *                        |       |
+ *                        |_______|
+ *                        |       |
+ *                        |       |
+ *                        |___4___|
+ *
+ *                        _________
+ *                        |       |
+ *                        |   1   |
+ *                        |_______|
+ *                        |       |
+ *                        |   2   |
+ * Want this:             |_______|
+ *                        |       |
+ *                        |   3   |
+ *                        |_______|
+ *                        |       |
+ *                        |   4   |
+ *                        |_______|
+ */
 QUnit.test('Vertical axis tick labels centered', function (assert) {
-    assert.ok(false, 'Not implemented');
+    var chart,
+        axes,
+        xError = 0.5001,
+        yError = 1.4;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        yAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            min: Date.UTC(2016, 10, 11),
+            max: Date.UTC(2016, 10, 15),
+            tickInterval: 1000 * 60 * 60 * 24, // Day
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            min: Date.UTC(2016, 10, 12),
+            max: Date.UTC(2016, 10, 16),
+            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+            opposite: true
+        }],
+        series: [{
+            yAxis: 0,
+            data: [[271.5, 1], [-29.2, 2], [376.0, 3]]
+        }, {
+            yAxis: 1,
+            data: [{
+                x: 1,
+                y: Date.UTC(2016, 10, 12)
+            }, {
+                x: 2,
+                y: Date.UTC(2016, 10, 14)
+            }]
+        }, {
+            yAxis: 2,
+            data: [[-71.5, 29.9], [-129.2, -106.4], [-176.0, -144.0]]
+        }, {
+            yAxis: 3,
+            data: [{
+                x: 1,
+                y: Date.UTC(2016, 10, 13)
+            }, {
+                x: 2,
+                y: Date.UTC(2016, 10, 15)
+            }]
+        }]
+    });
+
+    axes = chart.yAxis;
+
+    Highcharts.each(axes, function (axis) {
+        var axisType = axis.options.type,
+            tickPositions = axis.tickPositions,
+            ticks = axis.ticks,
+            tick,
+            nextTick,
+            tickBox,
+            nextTickBox,
+            oppositeTick,
+            labelBox,
+            actual,
+            expected,
+            i;
+
+        if (!axisType) {
+            if (axis.options.categories) {
+                axisType = 'categories';
+            } else {
+                axisType = 'linear';
+            }
+        }
+
+        for (i = 0; i < tickPositions.length; i++) {
+            tick = ticks[tickPositions[i]];
+            tickPositions.reverse();
+            oppositeTick = ticks[tickPositions[i + 1]];
+            tickPositions.reverse();
+            nextTick = ticks[tickPositions[i + 1]];
+            if (tick.mark && oppositeTick && oppositeTick.label && nextTick && nextTick.mark) {
+                tickBox = tick.mark.element.getBBox();
+                nextTickBox = nextTick.mark.element.getBBox();
+
+                labelBox = oppositeTick.label.element.getBBox();
+                expected = {
+                    x: tickBox.x + (tickBox.width / 2),
+                    y: (tickBox.y + nextTickBox.y) / 2
+                };
+                actual = {
+                    x: labelBox.x + (labelBox.width / 2),
+                    y: labelBox.y + (labelBox.height / 2)
+                };
+                console.log('tick:', tick.mark.element, tickBox, '\nnextTick:', nextTick.mark.element, nextTickBox);
+                console.log('label:', oppositeTick.label.element, labelBox);
+                console.log('expected:', expected, 'actual:', actual);
+
+                assert.close(
+                    actual.x,
+                    expected.x,
+                    xError,
+                    axisType + ' tick label x position correct'
+                );
+
+                assert.close(
+                    actual.y,
+                    expected.y,
+                    yError,
+                    axisType + ' tick label y position correct'
+                );
+            }
+        }
+    });
 });
