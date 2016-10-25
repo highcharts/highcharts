@@ -704,6 +704,22 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
     }
 });
 
+/**
+ * Checks that the tick labels in horizontal axes are centered in their cells,
+ * both vertically and horizontally. This is checked by asserting that the
+ * midpoint of each tick label is the same as the midpoint between the tick it
+ * belongs to, and the next one.
+ *
+ *                        _________________________________
+ *                        |       |       |   3   |       |
+ * Avois any of these:    |      1|2      |       |       |
+ *                        |_______|_______|_______|___4___|
+ *
+ *                        _________________________________
+ *                        |       |       |       |       |
+ * Want this:             |   1   |   2   |   3   |   4   |
+ *                        |_______|_______|_______|_______|
+ */
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
