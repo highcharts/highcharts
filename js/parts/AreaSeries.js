@@ -217,11 +217,7 @@ seriesType('area', 'line', {
 		for (i = 0; i < points.length; i++) {
 			isNull = points[i].isNull;
 			plotX = pick(points[i].rectPlotX, points[i].plotX);
-			yBottom = pick(
-				points[i].plotHigh, // #5706, area ranges in compare mode
-				points[i].yBottom,
-				translatedThreshold
-			);
+			yBottom = pick(points[i].yBottom, translatedThreshold);
 
 			if (!isNull || connectNulls) {
 
