@@ -489,6 +489,37 @@ const copyToDist = () => {
     });
 };
 
+const createProductJS = () => {
+    const U = require('./assembler/utilities.js');
+    const D = require('./assembler/dependencies.js');
+    const path = './build/dist/products.js';
+
+    // @todo Get rid of build.properties and perhaps use package.json in stead.
+    const buildProperties = U.getFile('./build.properties');
+    let date = D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties);
+    let version = D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties);
+
+    // @todo Add reasonable defaults
+    date = date === null ? '' : date;
+    version = version === null ? '' : version;
+
+    const content = `var products = {
+    "Highcharts": {
+    "date": "${date}", 
+    "nr": "${version}"
+    },
+    "Highstock": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    }
+}`;
+    U.writeFile(path, content);
+};
+
 /**
  * Left pad a string
  * @param  {string} str    The string we want to pad.
@@ -619,6 +650,7 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
@@ -640,6 +672,7 @@ gulp.task('dist', () => {
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
+        .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {
