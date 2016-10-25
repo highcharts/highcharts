@@ -383,7 +383,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 		};
 
 	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-	if (isMSBrowser && options.imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
+	if ((isMSBrowser && options.imageType !== 'image/svg+xml' || options.imageType !== 'application/pdf') && chart.container.getElementsByTagName('image').length) {
 		fallbackToExportServer();
 		return;
 	}
