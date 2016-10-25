@@ -891,7 +891,7 @@ H.Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
+			nameX = this.options.uniqueNames === false ?
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
 		}
@@ -1137,12 +1137,12 @@ H.Axis.prototype = {
 		// Handle options for floor, ceiling, softMin and softMax
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) { // docs. API added as next
+		} else if (isNumber(options.softMin)) {
 			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) { // docs. API added as next
+		} else if (isNumber(options.softMax)) {
 			axis.max = Math.max(axis.max, options.softMax);
 		}
 

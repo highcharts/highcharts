@@ -814,14 +814,14 @@ H.LegendSymbolMixin = {
 		var options = legend.options,
 			symbolHeight = options.symbolHeight || legend.fontMetrics.f,
 			square = options.squareSymbol,
-			symbolWidth = square ? symbolHeight : legend.symbolWidth; // docs: square
+			symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
 			legend.baseline - symbolHeight + 1, // #3988
 			symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, symbolHeight / 2) // docs: new default
+			pick(legend.options.symbolRadius, symbolHeight / 2)
 		)
 		.addClass('highcharts-point')
 		.attr({
