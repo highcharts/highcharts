@@ -14,7 +14,6 @@ var dateFormat = H.dateFormat,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Chart = H.Chart,
-	Series = H.Series,
 	Tick = H.Tick;
 
 
