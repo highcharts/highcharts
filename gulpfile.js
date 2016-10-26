@@ -434,10 +434,16 @@ const compileLib = () => {
 };
 
 const cleanCode = () => {
+    const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
-    return U.removeDirectory('./code').then(() => {
-        console.log('Successfully removed code directory.');
-    }).catch(console.log);
+    const codeFolder = './code/';
+    const files = B.getFilesInFolder(codeFolder, true, '');
+    const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
+    const promises = files
+        .filter(file => keep.indexOf(file) === -1)
+        .map(file => U.removeFile(codeFolder + file));
+    return Promise.all(promises)
+        .then(() => console.log('Successfully removed code directory.'));
 };
 
 const cleanDist = () => {
@@ -660,6 +666,7 @@ const antDist = () => commandLine('ant dist');
 
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
+gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
