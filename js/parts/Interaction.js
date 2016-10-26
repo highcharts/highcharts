@@ -586,7 +586,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		if (markerOptions) {
+		if (markerOptions && series.markerAttribs) {
 			markerAttribs = series.markerAttribs(point, state);
 		}
 
