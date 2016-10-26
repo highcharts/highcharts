@@ -848,7 +848,7 @@ Navigator.prototype = {
 		if (this.series) {
 			this.removeBaseSeriesEvents();
 			each(this.series, function (s) { 
-				s.remove();
+				s.destroy();
 			});
 		}
 
