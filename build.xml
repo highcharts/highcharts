@@ -725,7 +725,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highcharts/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highcharts.product.version}" delimiter="." param="val">
@@ -819,7 +819,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highstock/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highstock.product.version}" delimiter="." param="val">
@@ -913,7 +913,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highmaps/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highmaps/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highmaps.product.version}" delimiter="." param="val">
