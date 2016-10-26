@@ -31,6 +31,7 @@
     "browserify": "^12.0.1",
     "closurecompiler": "^1.5.2",
     "colors": "~1.1.2",
+    "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
     "gulp": "^3.9.1",
