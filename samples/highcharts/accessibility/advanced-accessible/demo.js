@@ -1,45 +1,49 @@
 $(function () {
 
-    // Change point shape to a line with three crossing lines for low/median/high
-    // Stroke width is hardcoded to 1 for simplicity
-    Highcharts.seriesTypes.boxplot.prototype.drawPoints = function () {
-        var series = this;
-        Highcharts.each(this.points, function (point) {
-            var graphic = point.graphic,
-                verb = graphic ? 'animate' : 'attr',
-                shapeArgs = point.shapeArgs,
-                width = shapeArgs.width,
-                left = Math.floor(shapeArgs.x) + 0.5,
-                right = left + width,
-                crispX = left + Math.round(width / 2) + 0.5,
-                highPlot = Math.floor(point.highPlot) + 0.5,
-                medianPlot = Math.floor(point.medianPlot) + 0.5,
-                lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
+    // Define custom series type for displaying low/med/high values using boxplot as a base
+    Highcharts.seriesType('lowmedhigh', 'boxplot', {
+        keys: ['low', 'median', 'high']
+    }, {
+        // Change point shape to a line with three crossing lines for low/median/high
+        // Stroke width is hardcoded to 1 for simplicity
+        drawPoints: function () {
+            var series = this;
+            Highcharts.each(this.points, function (point) {
+                var graphic = point.graphic,
+                    verb = graphic ? 'animate' : 'attr',
+                    shapeArgs = point.shapeArgs,
+                    width = shapeArgs.width,
+                    left = Math.floor(shapeArgs.x) + 0.5,
+                    right = left + width,
+                    crispX = left + Math.round(width / 2) + 0.5,
+                    highPlot = Math.floor(point.highPlot) + 0.5,
+                    medianPlot = Math.floor(point.medianPlot) + 0.5,
+                    lowPlot = Math.floor(point.lowPlot) + 0.5 - (point.low === 0 ? 1 : 0); // Sneakily draw low marker even if 0
 
-            if (!graphic) {
-                point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
-            }
+                if (!graphic) {
+                    point.graphic = graphic = series.chart.renderer.path('point').add(series.group);
+                }
 
-            graphic.attr({
-                stroke: point.color || series.color,
-                "stroke-width": 1
+                graphic.attr({
+                    stroke: point.color || series.color,
+                    "stroke-width": 1
+                });
+
+                graphic[verb]({
+                    d: [
+                        'M', left, highPlot,
+                        'H', right,
+                        'M', left, medianPlot,
+                        'H', right,
+                        'M', left, lowPlot,
+                        'H', right,
+                        'M', crispX, highPlot,
+                        'V', lowPlot
+                    ]
+                });
             });
-
-            graphic[verb]({
-                d: [
-                    'M', left, highPlot,
-                    'H', right,
-                    'M', left, medianPlot,
-                    'H', right,
-                    'M', left, lowPlot,
-                    'H', right,
-                    'M', crispX, highPlot,
-                    'V', lowPlot
-                ]
-            });
-        });
-    };
-
+        }
+    });
 
     // Create chart
     Highcharts.chart('container', {
@@ -55,7 +59,7 @@ $(function () {
             }
         },
         chart: {
-            type: 'boxplot',
+            type: 'lowmedhigh',
             typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.', // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
             description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
         },
@@ -76,7 +80,6 @@ $(function () {
         plotOptions: {
             series: {
                 stickyTracking: true,
-                keys: ['low', 'median', 'high'],
                 whiskerWidth: 5
             }
         },
