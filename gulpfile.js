@@ -385,7 +385,7 @@ gulp.task('filesize', function () {
 });
 
 const compile = (files, sourceFolder) => {
-    console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
+    console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
     return new Promise((resolve) => {
         files.forEach(path => {
             const closureCompiler = require('google-closure-compiler-js');
@@ -679,8 +679,9 @@ gulp.task('download-api', downloadAllAPI);
  * Create distribution files
  */
 gulp.task('dist', () => {
-    return gulpify('cleanCode', cleanCode)()
-        .then(gulpify('styles', styles))
+    //return gulpify('cleanCode', cleanCode)()
+    //    .then(gulpify('styles', styles))
+    return gulpify('styles', styles)()
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))

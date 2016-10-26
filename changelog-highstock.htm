@@ -1,7 +1,30 @@
-<p>Highstock 5.0.0 (2016-09-29)</p>
+<p>Highstock 5.0.1 (2016-10-26)</p>
 <ul>
-	<li>Most changes listed under Highcharts 5.0.0 above also apply to Highstock 5.0.0.</li>
-	<li>Added support for multiple series in the navigator, see <a href="http://api.highcharts.com/highstock/plotOptions.series.showInNavigator">series.showInNavigator</a> and <a href="http://api.highcharts.com/highstock/plotOptions.series.navigatorOptions">series.navigatorOptions</a>.
-	<li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.flags.textAlign">plotOptions.flags.textAlign</a>.</li>
-	<li>Deprecated the <a href="http://api.highcharts.com/highstock/navigator.baseSeries">baseSeries</a> option, now replaced by <code>showInNavigator</code>.</li>
+    <li>Most changes listed under Highcharts 5.0.1 above also apply to Highstock 5.0.1.</li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="hs-heading-5-0-1-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#hs-5-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="hs-5-0-1-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed issues with Highstock keyboard navigation in the Accessibility module.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5602">#5602</a>, issues with setting range by inputs.</li>
+                    <li>Fixed issue with input range where the range would be reset based on wrong extremes. Ref <a href="https://github.com/highslide-software/highcharts.com/issues/5602">#5602</a>.</li>                    
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5088">#5088</a>, marker states on flags were ignored.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5706">#5706</a>, wrong series visualization when using compare.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5814">#5814</a>, one all-zero series caused others to fail with compare.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5823">#5823</a>, regression caused wrong columns width when one of the series was hidden.</li>
+                    <li>Fixed issue where removing and re-adding navigator via <code>chart.update</code> caused errors.</li>
+                    <li>Fixed issue with range selector inputs not hiding or showing correctly when setting chart size with animation.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
