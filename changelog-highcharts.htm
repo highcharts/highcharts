@@ -1,9 +1,6 @@
-<p>Highcharts 5.0.1 (2016-10-26)</p>
+<p>Highcharts 5.0.2 (2016-10-26)</p>
 <ul>
-    <li>Added new options, axis.softMin and axis.softMax. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/5824">#5824</a>.</li>
-    <li>Added Legend keyboard navigation to the accessibility module.</li>
-    <li>Added animation on hovering point markers.</li>
-    <li>Added offline PDF export support.</li>
+    <li>Fixed two regressions.</li>
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
@@ -17,44 +14,8 @@
         <div id="5-0-1-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Refactored tooltip delay the generation of the empty label container. This prevents the empty label from being present in exported SVG.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1880">#1880</a>, individual column <code>borderColor</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4951">#4951</a>, issue with placing tick marks on round times when using <code>getTimezoneOffset</code>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5427">#5427</a>, JS error on async destroy when triggered from custom exporting menu.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5483">#5483</a> without breaking <a href="https://github.com/highslide-software/highcharts.com/issues/5823">#5823</a>.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5538">#5538</a>, pie series was not redrawn after modifying title and other elements.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5553">#5553</a>, disabled <code>trackByArea</code> did not hide tooltip, when moving mouse out of the area shape.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5736">#5736</a>, zooming in multiple X axes with crosshairs and snap false caused JS error.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5745">#5745</a>, a regression causing <code>chart.style</code> not to apply to the container.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5750">#5750</a>, null points on categorized axis caused blank chart when drilldown module was present.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5757">#5757</a>, empty chart throws error with accessibility module.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5764">#5764</a>, drilldown not working with Highstock.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5765">#5765</a>, a regression causing 3D pie slices not to update on show/hide when animation was set.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5766">#5766</a>, halo was not rendered for shared tooltip when density of points was high.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5768">#5768</a>, regression since v4.2.7 causing setData with xAxis.type = category to break categories.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5770">#5770</a>, regression causing individual box plot fill not to apply.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5773">#5773</a>, a regression causing axis events not to be called after axis update.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5777">#5777</a>, selected class name remained after unselecting a point by selecting another.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5779">#5779</a>, zoom-out button not working on first touch on touch devices.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5787">#5787</a>, a regression causing the <code>chart.reflow</code> option to never take effect.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5790">#5790</a>, zoom button appeared on swiping already zoomed-out line chart.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5794">#5794</a>, header on <code>tooltip.split</code> was cut off near the ends of the axis.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5801">#5801</a>, artefacts when updating series with tooltip.split.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5817">#5817</a>, a regression causing point-specific marker radius not to be applied. Refactored point sizing logic for initial render, updates and states.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5818">#5818</a>, render halo in a series group, not under all of the groups.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5819">#5819</a>, crosshair width can now be set on category axes also.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5822">#5822</a>, a regression causing drilldown to fail the second time when <code>allowPointDrilldown</code> was false.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5832">#5832</a>, shared tooltip failed with points of the same X value but different pointPlacement.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5833">#5833</a>, split tooltip tried to remove series tooltip again after destruction.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5837">#5837</a>, could not style null points with CSS.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5839">#5839</a>, errors on touch-dragging on mobile devices after dynamically adding a series with visible false.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5842">#5842</a>, image marker symbols were misplaced and missing from exported charts.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5850">#5850</a>, hideLoading didn't work right after calling showLoading in styled mode.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5855">#5855</a>, split tooltip was not destroyed properly.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5862">#5862</a>, wrong hover point, when tooltip was shared.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5866">#5866</a>, treemap <code>point.isNull</code> was always true.</li>
-                    <li>Fixed duplicate setting of halo path since HC5. Added animation to hiding halo.</li>
-                    <li>Fixed eternal loop when setting a new <code>chart.height</code> in a responsive rule.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5887">#5887</a>, a regression causing bubbles to move on hover.</li>
+                    <li>Fixed regression in v5.0.1 where the halo would be mispositioned in inverted charts.</li>
                 </ul>
             </div>
         </div>
