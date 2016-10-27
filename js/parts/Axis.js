@@ -607,11 +607,9 @@ H.Axis.prototype = {
 			if (doPostTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-			if (pointPlacement === 'between') {
-				pointPlacement = 0.5;
-			}
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
+			returnValue = sign * (val - localMin) * localA + cvsOffset +
+				(sign * minPixelPadding) +
+				(isNumber(pointPlacement) ? localA * pointPlacement : 0);
 		}
 
 		return returnValue;

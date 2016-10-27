@@ -873,6 +873,14 @@ H.Series = H.seriesType('line', null, { // base series options
 			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
+		// Point placement is relative to each series pointRange (#5889)
+		if (pointPlacement === 'between') {
+			pointPlacement = 0.5;
+		}
+		if (isNumber(pointPlacement)) {
+			pointPlacement *= pick(options.pointRange || xAxis.pointRange);
+		}
+
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
 			var point = points[i],
@@ -890,9 +898,17 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Get the plotX translation
 			point.plotX = plotX = correctFloat( // #5236
-				Math.min(Math.max(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5) // #3923
+				Math.min(Math.max(-1e5, xAxis.translate(
+					xValue,
+					0,
+					0,
+					0,
+					1,
+					pointPlacement,
+					this.type === 'flags'
+				)), 1e5) // #3923
 			);
-
+			
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
 				stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
