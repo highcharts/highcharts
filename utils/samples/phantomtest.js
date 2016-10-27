@@ -7,6 +7,7 @@ phantomjs [arguments] phantomtest.js
 Arguments:
 --commit What commit number to run visual tests against.
 --rightcommit What commit to test (on the right side).
+--single What sample number to run as a single test.
 --start  What sample number to start from. Use this to resume after error.
 
 Status
@@ -36,7 +37,9 @@ Status
 
     // Parse arguments into the params object
     args.forEach(function (arg, j) {
-        if (arg === '--start') {
+        if (arg === '--single') {
+            params.single = parseInt(args[j + 1], 10);
+        } else if (arg === '--start') {
             params.start = parseInt(args[j + 1], 10);
         } else if (arg === '--commit') {
             params.commit = args[j + 1];
@@ -46,6 +49,9 @@ Status
     });
 
     i = params.start;
+    if (typeof params.single !== 'undefined') {
+        i = params.single;
+    }
 
     // Add all the samples to the samples array
     ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
@@ -172,11 +178,13 @@ Status
             );
 
             i = i + 1;
-            if (samples[i]) {
+            if (samples[i] && typeof params.single === 'undefined') {
                 runRecursive();
             } else {
                 phantom.exit();
             }
+        } else {
+            console.log(colors.gray('     ' + m));
         }
     };
 
