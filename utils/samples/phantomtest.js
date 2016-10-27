@@ -110,7 +110,7 @@ Status
      * On page error, it may be that files are temporarily not loaded (typically jQuery),
      * so we try again three times.
      */
-    page.onError = function () {
+    page.onError = function (msg) {
 
         // var msgStack = [msg];
 
@@ -146,6 +146,15 @@ Status
                 colors.red(pad(samples[i], 60, false)) + ' ' +
                 'Error'
             );
+            // Error message
+            console.log('     ' + colors.red(msg));
+
+            // Clickable link
+            console.log(
+                '     Cmd-click: ' +
+                colors.blue('utils.highcharts.local/samples/#test/' + samples[i])
+            );
+
 
             i++;
             runRecursive();
