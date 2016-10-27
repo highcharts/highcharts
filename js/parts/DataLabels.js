@@ -678,7 +678,7 @@ if (seriesTypes.pie) {
 	seriesTypes.pie.prototype.connectorPath = function (labelPos) {
 		var x = labelPos.x,
 			y = labelPos.y;
-		return pick(this.options.softConnector, true) ? [
+		return pick(this.options.dataLabels.softConnector, true) ? [
 			'M',
 			x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 			'C',
