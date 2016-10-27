@@ -413,6 +413,7 @@ function getExportInnerHTML() {
 					// Start with tooltip open
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						if (chart.series[0] && chart.series[0].points[2]) {
+							chart.series[0].points[2].onMouseOver();
 							chart.tooltip.refresh(
 								chart.tooltip.options.shared ?
 									[chart.series[0].points[2]] :

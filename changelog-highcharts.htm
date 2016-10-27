@@ -1,33 +1,23 @@
-<p>Highcharts 5.0.0 (2016-09-29)</p>
+<p>Highcharts 5.0.2 (2016-10-26)</p>
 <ul>
-    <li>Added <a href="www.highcharts.com/docs/chart-design-and-style/style-by-css">styled mode</a> for optional separation of SVG and CSS.</li>
-    <li>Added <a href="http://api.highcharts.com/highcharts/responsive">responsive</a> option set.</li>
-    <li>Added <a href="http://api.highcharts.com/highcharts/accessibility">accessibility</a> option set.</li>
-    <li>Added new function, <a href="http://api.highcharts.com/highcharts/Chart.update">Chart.update</a> in order to update the chart options after render time.</li>
-    <li>Added new function, <a href="http://api.highcharts.com/highcharts/Chart.addCredits">Chart.addCredits</a>.</li>
-    <li>Added new function, <a href="http://api.highcharts.com/highcharts/Chart.title">Chart.title.update</a>.</li>
-    <li>Added new function, <a href="http://api.highcharts.com/highcharts/Chart.credits">Chart.credits.update</a>.</li>
-    <li>Added new function, <a href="http://api.highcharts.com/highcharts/Legend.update">Legend.update</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/Renderer.definition">Renderer.definition</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/exporting.error">exporting.error</a> for catching errors in offline exporting.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/exporting.libURL">exporting.libURL</a> for use with offline exporting.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/pane.background.className">pane.background.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/xAxis.className">xAxis.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/xAxis.crosshair.className">xAxis.crosshair.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.series.dataLabels.className">plotOptions.series.dataLabels.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.series.className">plotOptions.series.className</a> for styling individual series.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/xAxis.plotBands.className">xAxis.plotBands.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/xAxis.plotLines.className">xAxis.plotLines.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.series.zones.className">plotOptions.series.zones.className</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/chart.colorCount">chart.colorCount</a> for use in styled mode.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/defs">defs</a> for defining reusable elements in styled mode.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/tooltip.padding">tooltip.padding</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/series<line>.data.colorIndex">series&lt;line&gt;.data.colorIndex</a> for coloring points in styled mode.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/tooltip.split">tooltip.split</a>.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/chart.description">chart.description</a> for use with the accessibility module.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/chart.typeDescription">chart.typeDescription</a> for use with the accessibility module.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/xAxis.description">xAxis.description</a> for use with the accessibility module.</li>
-    <li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.series.description">plotOptions.series.description</a> for use with the accessibility module.</li>
-    <li>Refactored build system to use ES6 imports and node-based build script.</li>
-    <li>Changed all default colors (except series data colors) to a simplified color scheme based on just a few shared colors.</li>
+    <li>Fixed two regressions.</li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="heading-5-0-1-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#5-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="5-0-1-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5887">#5887</a>, a regression causing bubbles to move on hover.</li>
+                    <li>Fixed regression in v5.0.1 where the halo would be mispositioned in inverted charts.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
