@@ -455,10 +455,16 @@ const compileLib = () => {
 };
 
 const cleanCode = () => {
+    const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
-    return U.removeDirectory('./code').then(() => {
-        console.log('Successfully removed code directory.');
-    }).catch(console.log);
+    const codeFolder = './code/';
+    const files = B.getFilesInFolder(codeFolder, true, '');
+    const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
+    const promises = files
+        .filter(file => keep.indexOf(file) === -1)
+        .map(file => U.removeFile(codeFolder + file));
+    return Promise.all(promises)
+        .then(() => console.log('Successfully removed code directory.'));
 };
 
 const cleanDist = () => {
@@ -489,16 +495,24 @@ const copyToDist = () => {
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/js/' + path, content);
+                    U.writeFile(distFolder + lib + '/code/' + path, content);
                 }
             });
         });
+
+    // Copy readme to distribution packages
+    ['readme.txt'].forEach((path) => {
+        const content = fs.readFileSync(sourceFolder + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/code/' + path, content);
+        });
+    });
 
     // Copy lib files to the distribution packages. These files are used in the offline-export.
     ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+            U.writeFile(distFolder + lib + '/code/lib/' + path, content);
         });
     });
     // Copy radial gradient to dist.
@@ -508,6 +522,37 @@ const copyToDist = () => {
             U.writeFile(distFolder + lib + '/gfx/' + path, content);
         });
     });
+};
+
+const createProductJS = () => {
+    const U = require('./assembler/utilities.js');
+    const D = require('./assembler/dependencies.js');
+    const path = './build/dist/products.js';
+
+    // @todo Get rid of build.properties and perhaps use package.json in stead.
+    const buildProperties = U.getFile('./build.properties');
+    let date = D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties);
+    let version = D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties);
+
+    // @todo Add reasonable defaults
+    date = date === null ? '' : date;
+    version = version === null ? '' : version;
+
+    const content = `var products = {
+    "Highcharts": {
+    "date": "${date}", 
+    "nr": "${version}"
+    },
+    "Highstock": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    }
+}`;
+    U.writeFile(path, content);
 };
 
 /**
@@ -640,6 +685,9 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('create-productjs', createProductJS);
+gulp.task('clean-dist', cleanDist);
+gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
@@ -661,6 +709,7 @@ gulp.task('dist', () => {
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
+        .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {

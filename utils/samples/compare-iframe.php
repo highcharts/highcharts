@@ -24,8 +24,7 @@ if (isset($_GET['rightcommit'])) {
 
 // A commit or tag is given, insert the full path
 $commitOrTag = '/^[a-z0-9]+$/';
-//$githubServer = 'http://github.highcharts.com';
-$githubServer = 'http://github-highcharts.us-east-1.elasticbeanstalk.com';
+$githubServer = 'http://github.highcharts.com';
 if (preg_match($commitOrTag, $leftPath)) {
 	$leftPath = "cache.php?file=$githubServer/$leftPath";
 }
@@ -384,6 +383,9 @@ function getExportInnerHTML() {
 					}
 
 					Highcharts.setOptions({
+						exporting: {
+							libURL: 'https://code.highcharts.com/lib' // Avoid the '../x.y.z-modified/lib' issue to allow for testing
+						},
 						chart: {
 							animation: animation
 						},

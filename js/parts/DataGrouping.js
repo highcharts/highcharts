@@ -298,7 +298,9 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options.dataGrouping,
-		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
+			pick(dataGroupingOptions.enabled, chart.options._stock),
+		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
 		skip;
 
@@ -308,7 +310,8 @@ seriesProto.processData = function () {
 	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order) or #5493
-	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
+	skip = baseProcessData.apply(series, arguments) === false ||
+		!groupingEnabled || !visible;
 	if (!skip) {
 		series.destroyGroupedData();
 
@@ -374,8 +377,6 @@ seriesProto.processData = function () {
 			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
-	} else if (!series.visible) {
-		series.closestPointRange = null; // #5823
 	}
 };
 

@@ -615,7 +615,11 @@ extend(Point.prototype, {
 			if (markerAttribs) {
 				point.graphic.animate(
 					markerAttribs,
-					pick(markerStateOptions.animation, markerOptions.animation)
+					pick(
+						chart.options.chart.animation, // Turn off globally
+						markerStateOptions.animation,
+						markerOptions.animation
+					)
 				);
 			}
 
@@ -685,11 +689,11 @@ extend(Point.prototype, {
 			});
 
 			/*= if (build.classic) { =*/
-			halo.attr({
+			halo.attr(extend({
 				'fill': point.color || series.color,
 				'fill-opacity': haloOptions.opacity,
 				'zIndex': -1 // #4929, IE8 added halo above everything
-			});
+			}, haloOptions.attributes));
 			/*= } =*/
 		} else if (halo) {
 			halo.animate({ d: point.haloPath(0) }); // Hide

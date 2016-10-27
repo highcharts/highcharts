@@ -6,8 +6,7 @@
 'use strict';
 import H from './Globals.js';
 import './Utilities.js';
-var addEvent = H.addEvent,
-	dateFormat = H.dateFormat,
+var dateFormat = H.dateFormat,
 	each = H.each,
 	extend = H.extend,
 	format = H.format,
@@ -54,6 +53,25 @@ H.Tooltip.prototype = {
 		this.split = options.split && !chart.inverted;
 		this.shared = options.shared || this.split;
 
+	},
+
+	/**
+	 * Destroy the single tooltips in a split tooltip.
+	 * If the tooltip is active then it is not destroyed, unless forced to.
+	 * @param  {boolean} force Force destroy all tooltips.
+	 * @return {undefined}
+	 */
+	cleanSplit: function (force) {
+		each(this.chart.series, function (series) {
+			var tt = series && series.tt;
+			if (tt) {
+				if (!tt.isActive || force) {
+					series.tt = tt.destroy();
+				} else {
+					tt.isActive = false;
+				}
+			}
+		});
 	},
 
 	/**
@@ -118,6 +136,10 @@ H.Tooltip.prototype = {
 		// Destroy and clear local variables
 		if (this.label) {
 			this.label = this.label.destroy();
+		}
+		if (this.split && this.tt) {
+			this.cleanSplit(this.chart, true);
+			this.tt = this.tt.destroy();
 		}
 		clearTimeout(this.hideTimer);
 		clearTimeout(this.tooltipTimeout);
@@ -572,16 +594,7 @@ H.Tooltip.prototype = {
 		});
 
 		// Clean previous run (for missing points)
-		each(chart.series, function (series) {
-			var tt = series.tt;
-			if (tt) {
-				if (!tt.isActive) {
-					series.tt = tt.destroy();
-				} else {
-					tt.isActive = false;
-				}
-			}
-		});
+		this.cleanSplit();
 
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);

@@ -150,14 +150,27 @@ Highcharts.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, 
 	img.src = imageURL;
 };
 
-// Get data URL to an image of an SVG and call download on it
-Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCallback, successCallback) {
+/**
+ * Get data URL to an image of an SVG and call download on it
+ *
+ * options object:
+ *		filename: Name of resulting downloaded file without extension
+ *		type: File type of resulting download
+ *		scale: Scaling factor of downloaded image compared to source
+ *      libURL: URL pointing to location of dependency scripts to download on demand
+ */
+Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
 	var svgurl,
 		blob,
 		objectURLRevoke = true,
 		finallyHandler,
-		libURL = Highcharts.getOptions().exporting.libURL,
-		dummySVGContainer = doc.createElement('div');
+		libURL = options.libURL || Highcharts.getOptions().exporting.libURL,
+		dummySVGContainer = doc.createElement('div'),
+		imageType = options.type || 'image/png',
+		filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]),
+		scale = options.scale || 1;
+
+	libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
 
 	function svgToPdf(svgElement, margin) {
 		var width = svgElement.width.baseVal.value + 2 * margin,
@@ -178,6 +191,7 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 					el.style[property] = svgElementStyle[property];
 				}
 			});
+			el.style['font-family'] = el.style['font-family'] && el.style['font-family'].split(' ').splice(-1);
 		});
 		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
 		Highcharts.downloadURL(svgData, filename);
@@ -210,7 +224,6 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 		} else {
 			// Must load pdf libraries first
 			objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-			libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
 			getScript(libURL + 'jspdf.js', function () {
 				getScript(libURL + 'rgbcolor.js', function () {
 					getScript(libURL + 'svg2pdf.js', function () {
@@ -270,7 +283,6 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 			} else {
 				// Must load canVG first
 				objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-				libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
 				getScript(libURL + 'rgbcolor.js', function () { // Get RGBColor.js first
 					getScript(libURL + 'canvg.js', function () {
 						downloadWithCanVG();
@@ -355,7 +367,6 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 	var chart = this,
 		options = Highcharts.merge(chart.options.exporting, exportingOptions),
-		imageType = options && options.type || 'image/png',
 		fallbackToExportServer = function () {
 			if (options.fallbackToExportServer === false) {
 				if (options.error) {
@@ -368,12 +379,11 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 		},
 		svgSuccess = function (svg) {
-			var filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
-			Highcharts.downloadSVGLocal(svg, filename, imageType, options.scale, fallbackToExportServer);
+			Highcharts.downloadSVGLocal(svg, options, fallbackToExportServer);
 		};
 
 	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-	if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
+	if (isMSBrowser && options.imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
 		fallbackToExportServer();
 		return;
 	}

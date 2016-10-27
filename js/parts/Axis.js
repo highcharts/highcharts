@@ -2474,7 +2474,7 @@ H.Axis.prototype = {
 			if (defined(pos)) {
 				path = this.getPlotLinePath(
 					// First argument, value, only used on radial
-					this.isXAxis ? point.x : pick(point.stackY, point.y),
+					point && (this.isXAxis ? point.x : pick(point.stackY, point.y)),
 					null,
 					null,
 					null,

@@ -451,23 +451,6 @@
 
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="set.properties" description="Builds the source and assembles distribution packages.">
-        <echo file="${dist.dir}/products.js" append="false">
-            var products = {
-                "Highcharts": {
-                    "date": "${highcharts.product.date}", 
-                    "nr": "${highcharts.product.version}"
-                },
-                "Highstock": {
-                    "date": "${highstock.product.date}",
-                    "nr": "${highstock.product.version}"
-                },
-                "Highmaps": {
-                    "date": "${highmaps.product.date}",
-                    "nr": "${highmaps.product.version}"
-                }
-            }
-        </echo>
-
         <!-- 3. Create samples -->
         <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
         <antcall target="create-samples">
@@ -742,7 +725,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highcharts/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highcharts.product.version}" delimiter="." param="val">
@@ -836,7 +819,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highstock/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highstock.product.version}" delimiter="." param="val">
@@ -930,7 +913,7 @@
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
-            <param name="js.dir" value="${basedir}/build/dist/highmaps/js/"/>
+            <param name="js.dir" value="${basedir}/build/dist/highmaps/code/"/>
         </antcall>
         <ac:var name="path.var" value=""/>
         <ac:for list="${highmaps.product.version}" delimiter="." param="val">
