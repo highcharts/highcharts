@@ -9,7 +9,7 @@ $(function () {
         }, function () {
             var opts = this.options;
             this.destroy();
-            newChart = new Highcharts.Chart(opts);
+            newChart = Highcharts.chart('container', opts);
             newChart.setTitle({
                 text: 'New chart title'
             });

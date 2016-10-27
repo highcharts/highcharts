@@ -586,7 +586,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		if (markerOptions) {
+		if (markerOptions && series.markerAttribs) {
 			markerAttribs = series.markerAttribs(point, state);
 		}
 
@@ -709,13 +709,11 @@ extend(Point.prototype, {
 	 */
 	haloPath: function (size) {
 		var series = this.series,
-			chart = series.chart,
-			inverted = chart.inverted,
-			plotX = Math.floor(this.plotX);
+			chart = series.chart;
 
 		return chart.renderer.symbols.circle(
-			(inverted ? series.yAxis.len - this.plotY : plotX) - size,
-			(inverted ? series.xAxis.len - plotX : this.plotY) - size,
+			Math.floor(this.plotX) - size,
+			this.plotY - size,
 			size * 2, 
 			size * 2
 		);
