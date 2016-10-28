@@ -10,7 +10,7 @@ $(function () {
             chart: {
                 events: {
                     load: function () {
-                        console.log('@load')
+                        console.log('@load');
                         this.setTitle(null, {
                             text: 'Built chart in ' + (new Date() - start) + 'ms'
                         });
