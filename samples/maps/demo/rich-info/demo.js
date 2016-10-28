@@ -87,7 +87,6 @@ $(function () {
             proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
             var points = mapChart.getSelectedPoints();
-
             if (points.length) {
                 if (points.length === 1) {
                     $('#info #flag').attr('class', 'flag ' + points[0].flag);
