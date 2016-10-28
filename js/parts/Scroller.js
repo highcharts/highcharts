@@ -225,6 +225,7 @@ Navigator.prototype = {
 	 * @param {Number} zoomedMin in pixels position where zoomed range starts
 	 * @param {Number} zoomedMax in pixels position where zoomed range ends
 	 * @param {Boolean} inverted flag in chart is inverted
+	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawOutline: function (zoomedMin, zoomedMax, inverted, verb) {
 		var scroller = this,
@@ -296,6 +297,7 @@ Navigator.prototype = {
 	 * @param {Number} zoomedMin in pixels position where zoomed range starts
 	 * @param {Number} zoomedMax in pixels position where zoomed range ends
 	 * @param {Boolean} inverted flag in chart is inverted
+	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawMasks: function (zoomedMin, zoomedMax, inverted, verb) {
 		var scroller = this,
