@@ -157,18 +157,21 @@ H.seriesType('solidgauge', 'gauge', {
 	colorByPoint: true
 
 }, {
-	bindAxes: function () {
-		var axis;
-		H.seriesTypes.gauge.prototype.bindAxes.call(this);
 
-		axis = this.yAxis;
+	/**
+	 * Extend the translate function to extend the Y axis with the necessary
+	 * decoration (#5895).
+	 */
+	translate: function () {
+		var axis = this.yAxis;
 		H.extend(axis, colorAxisMethods);
 
 		// Prepare data classes
-		if (axis.options.dataClasses) {
+		if (!axis.dataClasses && axis.options.dataClasses) {
 			axis.initDataClasses(axis.options);
 		}
 		axis.initStops(axis.options);
+		this.generatePoints();
 	},
 
 	/**
