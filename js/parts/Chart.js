@@ -668,11 +668,11 @@ Chart.prototype = {
 		// remove previous chart
 		renderTo.innerHTML = '';
 
-		// If the container doesn't have an offsetWidth, it has or is a child of a node
-		// that has display:none. We need to temporarily move it out to a visible
-		// state to determine the size, else the legend and tooltips won't render
-		// properly. The allowClone option is used in sparklines as a micro optimization,
-		// saving about 1-2 ms each chart.
+		// If the container doesn't have an offsetWidth, it has or is a child of
+		// a node that has display:none. We need to temporarily move it out to a
+		// visible state to determine the size, else the legend and tooltips
+		// won't render properly. The skipClone option is used in sparklines as
+		// a micro optimization, saving about 1-2 ms each chart.
 		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}

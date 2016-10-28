@@ -19,6 +19,8 @@ $(function () {
                     style: {
                         overflow: 'visible'
                     },
+
+                    // small optimalization, saves 1-2 ms each sparkline
                     skipClone: true
                 },
                 title: {
