@@ -2464,23 +2464,53 @@ SVGRenderer.prototype = {
 				'L', x + r, y + h, // bottom side
 				'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
 				'L', x, y + r, // left side
-				'C', x, y, x, y, x + r, y // top-right corner
+				'C', x, y, x, y, x + r, y // top-left corner
 			];
 
-			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
-				path.splice(13, 3,
-					'L', x + w, anchorY - halfDistance,
-					x + w + arrowLength, anchorY,
-					x + w, anchorY + halfDistance,
-					x + w, y + h - r
+			// Anchor on right side
+			if (anchorX && anchorX > w) {
+
+				// Chevron
+				if (anchorY > y + safeDistance && anchorY < y + h - safeDistance) {
+					path.splice(13, 3,
+						'L', x + w, anchorY - halfDistance,
+						x + w + arrowLength, anchorY,
+						x + w, anchorY + halfDistance,
+						x + w, y + h - r
 					);
-			} else if (anchorX && anchorX < 0 && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace left side
-				path.splice(33, 3,
-					'L', x, anchorY + halfDistance,
-					x - arrowLength, anchorY,
-					x, anchorY - halfDistance,
-					x, y + r
+
+				// Simple connector
+				} else {
+					path.splice(13, 3,
+						'L', x + w, h / 2,
+						anchorX, anchorY,
+						x + w, h / 2,
+						x + w, y + h - r
 					);
+				}
+
+			// Anchor on left side
+			} else if (anchorX && anchorX < 0) {
+
+				// Chevron
+				if (anchorY > y + safeDistance && anchorY < y + h - safeDistance) {
+					path.splice(33, 3,
+						'L', x, anchorY + halfDistance,
+						x - arrowLength, anchorY,
+						x, anchorY - halfDistance,
+						x, y + r
+					);
+
+				// Simple connector
+				} else {
+					path.splice(33, 3,
+						'L', x, h / 2,
+						anchorX, anchorY,
+						x, h / 2,
+						x, y + r
+					);
+				}
+				
 			} else if (anchorY && anchorY > h && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace bottom
 				path.splice(23, 3,
 					'L', anchorX + halfDistance, y + h,
@@ -2494,8 +2524,9 @@ SVGRenderer.prototype = {
 					anchorX, y - arrowLength,
 					anchorX + halfDistance, y,
 					w - r, y
-					);
+				);
 			}
+			
 			return path;
 		}
 	},
