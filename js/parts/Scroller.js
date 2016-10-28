@@ -161,8 +161,10 @@ Navigator.prototype = {
 	 * Draw one of the handles on the side of the zoomed range in the navigator
 	 * @param {Number} x The x center for the handle
 	 * @param {Number} index 0 for left and 1 for right
+	 * @param {Boolean} inverted flag for chart.inverted
+	 * @param {String} verb use 'animate' or 'attr'
 	 */
-	drawHandle: function (x, index) {
+	drawHandle: function (x, index, inverted, verb) {
 		var scroller = this,
 			chart = scroller.chart,
 			renderer = chart.renderer,
@@ -191,7 +193,7 @@ Navigator.prototype = {
 					0.5, 4,
 					'L',
 					0.5, 12
-				], chart.inverted))
+				], inverted))
 				.attr({ zIndex: 10 - index }) // zIndex = 3 for right handle, 4 for left / 10 - #2908
 				.addClass('highcharts-navigator-handle highcharts-navigator-handle-' + ['left', 'right'][index])
 				.add();
@@ -204,14 +206,14 @@ Navigator.prototype = {
 					stroke: handlesOptions.borderColor,
 					'stroke-width': 1
 				})
-				.css({ cursor: chart.inverted ? 'ns-resize' : 'ew-resize' });
+				.css({ cursor: inverted ? 'ns-resize' : 'ew-resize' });
 			/*= } =*/
 		}
 
 		// Place it
-		handles[index][scroller.rendered && !scroller.hasDragged ? 'animate' : 'attr'](chart.inverted ? {
+		handles[index][verb](inverted ? {
 			translateX: scroller.left + scroller.navigatorWidth / 2 - 8,
-			translateY: scroller.top + scroller.navigatorHeight - parseInt(x, 10) + 2
+			translateY: scroller.top + scroller.navigatorHeight - parseInt(x, 10)
 		} : {
 			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
 			translateY: scroller.top + scroller.height / 2 - 8
@@ -246,15 +248,15 @@ Navigator.prototype = {
 
 			path = [
 				'M',
-				navigatorLeft + outlineHeight, navigatorTop - scrollbarHeight, // top edge
+				navigatorLeft + outlineHeight, navigatorTop - scrollbarHeight - halfOutline, // top edge
 				'L',
-				navigatorLeft + outlineHeight, verticalMin, // top right of zoomed range
-				navigatorLeft, verticalMin, // top left of z.r.
+				navigatorLeft + outlineHeight, verticalMin - halfOutline, // top right of zoomed range
+				navigatorLeft, verticalMin - halfOutline, // top left of z.r.
 				'L',
-				navigatorLeft, zoomedMax, // bottom left of z.r.
+				navigatorLeft, zoomedMax - halfOutline, // bottom left of z.r.
 				'L',
-				navigatorLeft + outlineHeight, zoomedMax, // bottom right of z.r.
-				navigatorLeft + outlineHeight, navigatorTop + navigatorHeight + scrollbarHeight // bottom edge
+				navigatorLeft + outlineHeight, zoomedMax - halfOutline, // bottom right of z.r.
+				navigatorLeft + outlineHeight, navigatorTop + navigatorHeight + scrollbarHeight - halfOutline // bottom edge
 			].concat(maskInside ? [
 				'M',
 				navigatorLeft + outlineHeight, verticalMin, // upper left of zoomed range
@@ -270,18 +272,18 @@ Navigator.prototype = {
 				'M',
 				navigatorLeft, navigatorTop, // left
 				'L',
-				zoomedMin - halfOutline, navigatorTop, // upper left of zoomed range
-				zoomedMin - halfOutline, navigatorTop + outlineHeight, // lower left of z.r.
+				zoomedMin, navigatorTop, // upper left of zoomed range
+				zoomedMin, navigatorTop + outlineHeight, // lower left of z.r.
 				'L',
-				zoomedMax + halfOutline, navigatorTop + outlineHeight, // lower right of z.r.
+				zoomedMax, navigatorTop + outlineHeight, // lower right of z.r.
 				'L',
-				zoomedMax + halfOutline, navigatorTop, // upper right of z.r.
+				zoomedMax, navigatorTop, // upper right of z.r.
 				navigatorLeft + navigatorWidth + scrollbarHeight * 2, navigatorTop // right
 			].concat(maskInside ? [
 				'M',
-				zoomedMin + halfOutline, navigatorTop, // upper left of zoomed range
+				zoomedMin - halfOutline, navigatorTop, // upper left of zoomed range
 				'L',
-				zoomedMax - halfOutline, navigatorTop // upper right of z.r.
+				zoomedMax + halfOutline, navigatorTop // upper right of z.r.
 			] : []);
 		}
 		scroller.outline[verb]({
@@ -309,14 +311,14 @@ Navigator.prototype = {
 				x: scroller.left,
 				y: scroller.top,
 				width: scroller.height,
-				height: zoomedMin
+				height: scroller.navigatorHeight - zoomedMax
 			});
 			if (scroller.rightShade) {
 				scroller.rightShade[verb]({
 					x: scroller.left,
-					y: scroller.top + zoomedMin,
-					width: scroller.navigatorWidth - zoomedMax,
-					height: scroller.height
+					y: scroller.top + scroller.navigatorHeight - zoomedMin,
+					width: scroller.height,
+					height: zoomedMin
 				});
 			}
 		} else {
@@ -394,7 +396,7 @@ Navigator.prototype = {
 				xAxis.top,
 				chart.plotTop + scrollbarHeight // in case of scrollbar only, without navigator
 			);
-			scroller.navigatorHeight = zoomedMax = navigatorHeight = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
+			scroller.navigatorHeight = zoomedMax = navigatorHeight = pick(xAxis.len, chart.plotHeight - 2 * scrollbarHeight);
 			scroller.navigatorWidth = navigatorWidth = height;
 			scroller.scrollerTop = scrollerTop = navigatorTop - scrollbarHeight;
 			scroller.scrollerHeight = scrollerHeight = navigatorHeight + 2 * scrollbarHeight;
@@ -476,8 +478,8 @@ Navigator.prototype = {
 
 			scroller.drawMasks(zoomedMin, zoomedMax, inverted, verb);
 			scroller.drawOutline(zoomedMin, zoomedMax, inverted, verb);
-			scroller.drawHandle(zoomedMin, 0);
-			scroller.drawHandle(zoomedMax, 1);
+			scroller.drawHandle(zoomedMin, 0, inverted, verb);
+			scroller.drawHandle(zoomedMax, 1, inverted, verb);
 		}
 
 		if (scroller.scrollbar) {
@@ -487,7 +489,7 @@ Navigator.prototype = {
 			// Keep scale 0-1
 			if (inverted) {
 				scroller.scrollbar.position(
-					scroller.left + (navigatorEnabled ? -scroller.scrollbarHeight : scroller.height),
+					scroller.left + (navigatorEnabled ? -scrollbarHeight : scroller.height),
 					scrollerTop,
 					scrollbarHeight,
 					scrollerHeight
@@ -499,9 +501,9 @@ Navigator.prototype = {
 			} else {
 				scroller.scrollbar.position(
 					scroller.scrollerLeft,
-					scroller.top + (navigatorEnabled ? scroller.height : -scroller.scrollbarHeight),
-					scroller.scrollerWidth,
-					scroller.scrollbarHeight
+					scroller.top + (navigatorEnabled ? scroller.height : -scrollbarHeight),
+					scrollerWidth,
+					scrollbarHeight
 				);
 				scroller.scrollbar.setRange(
 					zoomedMin / navigatorWidth,
@@ -837,7 +839,7 @@ Navigator.prototype = {
 				offsets: [scrollbarHeight, 0, -scrollbarHeight, 0],
 				width: height
 			} : {
-				offsets: [0, scrollbarHeight, 0, -scrollbarHeight],
+				offsets: [0, -scrollbarHeight, 0, scrollbarHeight],
 				height: height
 			}));
 
