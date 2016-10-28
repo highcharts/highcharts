@@ -6,6 +6,9 @@ phantomjs [arguments] phantomtest.js
 
 Arguments:
 --commit What commit number to run visual tests against.
+--debug  When this is set, errors and logs from the samples is printed in the
+         terminal. It is only useful when PhantomJS gives errors where the
+         browsers don't.
 --rightcommit What commit to test (on the right side).
 --single What sample number to run as a single test.
 --start  What sample number to start from. Use this to resume after error.
@@ -37,7 +40,9 @@ Status
 
     // Parse arguments into the params object
     args.forEach(function (arg, j) {
-        if (arg === '--single') {
+        if (arg === '--debug') {
+            params.debug = true;
+        } else if (arg === '--single') {
             params.single = parseInt(args[j + 1], 10);
         } else if (arg === '--start') {
             params.start = parseInt(args[j + 1], 10);
@@ -152,15 +157,17 @@ Status
                 colors.red(pad(samples[i], 60, false)) + ' ' +
                 'Error'
             );
-            // Error message
-            console.log('     ' + colors.red(msg));
 
-            // Clickable link
-            console.log(
-                '     Cmd-click: ' +
-                colors.blue('utils.highcharts.local/samples/#test/' + samples[i])
-            );
+            if (params.debug) {
+                // Error message
+                console.log('     ' + colors.red(msg));
 
+                // Clickable link
+                console.log(
+                    '     Cmd-click: ' +
+                    colors.blue('utils.highcharts.local/samples/#test/' + samples[i])
+                );
+            }
 
             i++;
             runRecursive();
@@ -183,7 +190,7 @@ Status
             } else {
                 phantom.exit();
             }
-        } else {
+        } else if (params.debug) {
             console.log(colors.gray('     ' + m));
         }
     };
