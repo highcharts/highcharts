@@ -199,7 +199,8 @@ H.Pointer.prototype = {
 			kdpoints.sort(function (p1, p2) {
 				var isCloserX = p1.distX - p2.distX,
 					isCloser = p1.dist - p2.dist,
-					isAbove = p1.series.group.zIndex > p2.series.group.zIndex ? -1 : 1;
+					isAbove = p2.series.group.zIndex - p1.series.group.zIndex;
+
 				// We have two points which are not in the same place on xAxis and shared tooltip:
 				if (isCloserX !== 0 && shared) { // #5721
 					return isCloserX;
@@ -209,7 +210,12 @@ H.Pointer.prototype = {
 					return isCloser;
 				}
 				// The same xAxis and yAxis position, sort by z-index:
-				return isAbove;
+				if (isAbove !== 0) {
+					return isAbove;
+				}
+
+				// The same zIndex, sort by array index:
+				return p1.series.index > p2.series.index ? -1 : 1;
 			});
 		}
 

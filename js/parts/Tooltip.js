@@ -523,7 +523,7 @@ H.Tooltip.prototype = {
 
 			// Store the tooltip referance on the series
 			if (!tt) {
-				owner.tt = tt = ren.label(null, null, null, point.isHeader && 'callout')
+				owner.tt = tt = ren.label(null, null, null, 'callout')
 					.addClass('highcharts-tooltip-box ' + colorClass)
 					.attr({
 						'padding': options.padding,
@@ -535,21 +535,6 @@ H.Tooltip.prototype = {
 						/*= } =*/
 					})
 					.add(tooltipLabel);
-
-				// Add a connector back to the point
-				if (point.series) {
-					tt.connector = ren.path()
-						.addClass('highcharts-tooltip-connector ' + colorClass)
-						/*= if (build.classic) { =*/
-						.attr({
-							'stroke-width': series.options.lineWidth || 2,
-							'stroke': point.color || series.color || '${palette.neutralColor60}'
-						})
-						/*= } =*/
-						// Add it inside the label group so we will get hide and
-						// destroy for free
-						.add(tt);
-				}
 			}
 
 			tt.isActive = true;
@@ -599,37 +584,20 @@ H.Tooltip.prototype = {
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);
 		each(boxes, function (box) {
-			var point = box.point,
-				tt = box.tt,
-				attr;
+			var point = box.point;
 
 			// Put the label in place
-			attr = {
+			box.tt.attr({
 				visibility: box.pos === undefined ? 'hidden' : 'inherit',
-				x: (rightAligned || point.isHeader ? box.x : point.plotX + chart.plotLeft + pick(options.distance, 16)),
-				y: box.pos + chart.plotTop
-			};
-			if (point.isHeader) {
-				attr.anchorX = point.plotX + chart.plotLeft;
-				attr.anchorY = attr.y - 100;
-			}
-			tt.attr(attr);
-
-			// Draw the connector to the point
-			if (!point.isHeader) {
-				tt.connector.attr({
-					d: [
-						'M',
-						point.plotX + chart.plotLeft - attr.x,
-						point.plotY + point.series.yAxis.pos - attr.y,
-						'L',
-						(rightAligned ? -1 : 1) * pick(options.distance, 16) +
-							point.plotX + chart.plotLeft - attr.x,
-						box.pos + chart.plotTop + tt.getBBox().height / 2 -
-							attr.y
-					]
-				});
-			}
+				x: (rightAligned || point.isHeader ? 
+					box.x :
+					point.plotX + chart.plotLeft + pick(options.distance, 16)),
+				y: box.pos + chart.plotTop,
+				anchorX: point.plotX + chart.plotLeft,
+				anchorY: point.isHeader ?
+					box.pos + chart.plotTop - 15 :
+					point.plotY + chart.plotTop
+			});
 		});
 	},
 

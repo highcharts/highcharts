@@ -19,3 +19,37 @@ QUnit.test('titleSetter', function (assert) {
         'Text element title has been updated. #5211'
     );
 });
+
+QUnit.test('getBBox with useHTML (#5899)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var text = ren.text(
+            '<div style="width: 500px">Styled div</div>',
+            20,
+            20,
+            true
+        )
+        .add();
+
+
+    assert.strictEqual(
+        text.getBBox().width,
+        500,
+        'Initial bounding box'
+    );
+
+
+    text.attr({
+        text: '<div style="width: 400px">Styled div</div>'
+    });
+
+    assert.strictEqual(
+        text.getBBox().width,
+        400,
+        'Updated bounding box'
+    );
+});

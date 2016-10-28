@@ -789,9 +789,11 @@ H.getMagnitude = function (num) {
  * @param {Number} interval
  * @param {Array} multiples
  * @param {Number} magnitude
- * @param {Object} options
+ * @param {Boolean} allowDecimals
+ * @param {Boolean} hasTickAmount
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
+H.normalizeTickInterval = function (interval, multiples, magnitude,
+		allowDecimals, hasTickAmount) {
 	var normalized, 
 		i,
 		retInterval = interval;
@@ -802,12 +804,21 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
 
 	// multiples for a linear scale
 	if (!multiples) {
-		multiples = [1, 2, 2.5, 5, 10];
+		multiples = hasTickAmount ? 
+			// Finer grained ticks when the tick amount is hard set, including
+			// when alignTicks is true on multiple axes (#4580).
+			[1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10] :
+
+			// Else, let ticks fall on rounder numbers
+			[1, 2, 2.5, 5, 10];
+
 
 		// the allowDecimals option
 		if (allowDecimals === false) {
 			if (magnitude === 1) {
-				multiples = [1, 2, 5, 10];
+				multiples = H.grep(multiples, function (num) {
+					return num % 1 === 0;
+				});
 			} else if (magnitude <= 0.1) {
 				multiples = [1 / magnitude];
 			}
@@ -817,8 +828,8 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
-		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
-				(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
+		if ((hasTickAmount && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+				(!hasTickAmount && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}

@@ -36,9 +36,8 @@ $(function () {
             point = chart.series[1].points[0];
 
         point.update(flag, true, false);
-
         assert.strictEqual(
-            point.graphic.element.children[1].innerHTML,
+            point.graphic.element.querySelector('text').textContent,
             flag.title,
             'Updated title'
         );
@@ -46,7 +45,7 @@ $(function () {
         chart.tooltip.refresh([point]);
 
         assert.strictEqual(
-            chart.tooltip.label.element.lastChild.lastChild.innerHTML,
+            chart.tooltip.label.element.lastChild.lastChild.textContent,
             flag.text,
             'Updated text'
         );

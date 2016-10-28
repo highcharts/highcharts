@@ -88,7 +88,7 @@ $(function () {
                 events: {
                     drilldown: function (event) {
                         // do not drilldown for categories
-                        if (Number.isInteger(event.category)) {
+                        if (typeof event.category === 'number') {
                             return;
                         }
 
