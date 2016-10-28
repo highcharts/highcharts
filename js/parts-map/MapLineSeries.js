@@ -37,4 +37,8 @@ seriesType('mapline', 'map', {
 	},
 	/*= } =*/
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+}, {
+	isValid: function () { 
+		return !this.isNull; 
+	}
 });
