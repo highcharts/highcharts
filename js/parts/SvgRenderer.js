@@ -838,15 +838,19 @@ SVGElement.prototype = {
 
 		if (textStr !== undefined) {
 
-			cacheKey = 
+			cacheKey = textStr.toString();
+			
+			// Since numbers are monospaced, and numerical labels appear a lot
+			// in a chart, we assume that a label of n characters has the same
+			// bounding box as others of the same length. Unless there is inner
+			// HTML in the label. In that case, leave the numbers as is (#5899).
+			if (cacheKey.indexOf('<') === -1) {
+				cacheKey = cacheKey.replace(/[0-9]/g, '0');
+			}
 
-				// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-				// we assume that a label of n characters has the same bounding box as others
-				// of the same length.
-				textStr.toString().replace(/[0-9]/g, '0') + 
-
-				// Properties that affect bounding box
-				['', rotation || 0, fontSize, element.style.width].join(',');
+			// Properties that affect bounding box
+			cacheKey += ['', rotation || 0, fontSize, element.style.width]
+				.join(',');
 
 		}
 
