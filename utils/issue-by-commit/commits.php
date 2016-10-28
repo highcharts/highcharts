@@ -29,6 +29,13 @@ if (@$_POST['branch']) {
 		$error = $e->getMessage();
 	}
 }
+// Populate input fields
+if (!$_SESSION['branch']) {
+	$_SESSION['branch'] = 'master';
+}
+if (!$_SESSION['after']) {
+	$_SESSION['after'] = strftime('%Y-%m-%d', mktime() - 31 * 24 * 3600);
+}
 
 // Move the log file back from temp dir
 if (!is_dir('../samples/temp')) {

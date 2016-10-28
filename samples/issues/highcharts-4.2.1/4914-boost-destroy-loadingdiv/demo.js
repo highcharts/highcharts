@@ -40,7 +40,7 @@ $(function () {
                     'loadingDiv is destroyed'
                 );
                 done();
-            }, 1000);
-        }, 500);
+            }, 1500);
+        }, 1000);
     });
 });

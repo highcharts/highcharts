@@ -267,6 +267,24 @@ function getExportInnerHTML() {
 
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
+					if (navigator.userAgent.indexOf('PhantomJS') !== -1) {
+						QUnit.config.notrycatch = true;
+						QUnit.log(function( details ) {
+							if (!details.result ) {
+								var loc = details.module + ": " + details.name + ": ",
+								output = "FAILED: " + loc + ( details.message ? details.message + ". " : "" );
+							 
+								if (details.actual) {
+									output += "Expected: " + details.expected + ", actual: " + details.actual;
+								}
+								if (details.source) {
+									output += "\n     " + details.source;
+								}
+								console.log( output );
+							}
+						});
+					}
+
 					/**
 					 * Compare numbers taking in account an error.
 					 * http://bumbu.me/comparing-numbers-approximately-in-qunitjs/

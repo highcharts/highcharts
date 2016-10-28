@@ -37,4 +37,6 @@ seriesType('mapline', 'map', {
 	},
 	/*= } =*/
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+}, {
+	isValid: 0 // Disable isValid function for maplines
 });

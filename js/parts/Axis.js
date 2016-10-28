@@ -2379,6 +2379,10 @@ H.Axis.prototype = {
 
 	},
 
+	// Properties to survive after destroy, needed for Axis.update (#4317,
+	// #5773, #5881).
+	keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'],
+	
 	/**
 	 * Destroys an Axis instance.
 	 */
@@ -2388,8 +2392,7 @@ H.Axis.prototype = {
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
 			i,
-			n,
-			keepProps;
+			n;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2421,12 +2424,9 @@ H.Axis.prototype = {
 			}
 		});
 
-
 		// Delete all properties and fall back to the prototype.
-		// Preserve some properties, needed for Axis.update (#4317, #5773).
-		keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 		for (n in axis) {
-			if (axis.hasOwnProperty(n) && inArray(n, keepProps) === -1) {
+			if (axis.hasOwnProperty(n) && inArray(n, axis.keepProps) === -1) {
 				delete axis[n];
 			}
 		}
