@@ -1,7 +1,7 @@
 $(function () {
     var data = usdeur.splice(0, 500);
 
-    $('#container').highcharts('StockChart', {
+    var chart = Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1
@@ -14,8 +14,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            i = 0,
+        var i = 0,
             series = chart.series[0];
         data = usdeur.splice(0, 100);
 

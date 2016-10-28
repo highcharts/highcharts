@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         scrollbar: {
             height: 30

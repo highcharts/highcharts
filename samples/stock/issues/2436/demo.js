@@ -5,7 +5,7 @@ var data = [
 
 
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
         chart: {
             type: "area",
             width: 500,

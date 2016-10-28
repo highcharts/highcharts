@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         rangeSelector: {
             buttons: [{

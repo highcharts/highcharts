@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
 
     $('#container').highcharts({
         chart: {
@@ -29,13 +29,13 @@ $(function() {
                 [4, 50],
                 [5, 40]
             ],
-            pointRange: 1,
+            pointRange: 1
             //  pointPlacement: 0.25
         }, {
             pointRange: 2,
             data: [
                 [0, 80]
-            ],
+            ]
         }]
     });
 });

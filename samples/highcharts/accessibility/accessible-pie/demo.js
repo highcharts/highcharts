@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'pie',
             description: 'Most commonly used desktop screen readers in July 2015 as reported in the Webaim Survey. Shown as percentage of respondents. JAWS is by far the most used screen reader, with 30% of respondents using it. ZoomText and Window-Eyes follow, each with around 20% usage.'

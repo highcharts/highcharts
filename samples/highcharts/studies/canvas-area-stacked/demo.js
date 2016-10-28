@@ -33,7 +33,7 @@ $(function () {
         data2 = getData(50000);
 
     console.time('area');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'area',

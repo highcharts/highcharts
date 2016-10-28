@@ -1,11 +1,4 @@
 $(function () {
-    function generateData(n, k) {
-        var data = [];
-        while (n--) {
-            data.push(Math.random() + k);
-        }
-        return data;
-    }
 
     QUnit.test('Shared tooltip should always highlight all markers.', function (assert) {
         var hoverColor = 'red',

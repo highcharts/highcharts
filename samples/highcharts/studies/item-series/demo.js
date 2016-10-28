@@ -26,7 +26,7 @@ $(function () {
                         pointAttr;
 
                     point.graphics = graphics = point.graphics || {};
-                    pointAttr = point.pointAttr ? 
+                    pointAttr = point.pointAttr ?
                         point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''] :
                         series.pointAttribs(point, point.selected && 'select');
                     delete pointAttr.r;
@@ -61,7 +61,7 @@ $(function () {
     }(Highcharts));
 
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'item'

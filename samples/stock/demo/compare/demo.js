@@ -9,7 +9,7 @@ $(function () {
      */
     function createChart() {
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 4

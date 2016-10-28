@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Expect the Y axis being rounded down, due to startOnTick is true (default).'
         },

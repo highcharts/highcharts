@@ -5,7 +5,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Timezone offset is 5 hours (=EST). The data series starts at midnight UTC, which is 7 PM EST.'
         },

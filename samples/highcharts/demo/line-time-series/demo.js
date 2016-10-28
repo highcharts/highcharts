@@ -1,7 +1,7 @@
 $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
             },

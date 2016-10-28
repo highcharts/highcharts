@@ -439,7 +439,7 @@ $.each(usdeur, function (i, point) {
 });
 
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         chart: {
             animation: false

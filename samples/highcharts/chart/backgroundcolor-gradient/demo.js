@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             backgroundColor: {
                 linearGradient: [0, 0, 500, 500],

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             borderColor: '#EBBA95',
             borderRadius: 20,

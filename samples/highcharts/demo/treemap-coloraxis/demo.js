@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         colorAxis: {
             minColor: '#FFFFFF',
             maxColor: Highcharts.getOptions().colors[0]

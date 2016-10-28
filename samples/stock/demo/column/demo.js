@@ -2,7 +2,7 @@ $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-v.json&callback=?', function (data) {
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 alignTicks: false
             },

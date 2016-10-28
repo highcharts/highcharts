@@ -2,7 +2,7 @@ $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
         // Create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
 
             rangeSelector: {

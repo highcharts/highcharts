@@ -6,7 +6,7 @@ $(function () {
             }
         });
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
             chart: {
                 type: 'spline',
                 animation: Highcharts.svg, // don't animate in old IE

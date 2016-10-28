@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Legend <em>itemHiddenStyle</em> demo'

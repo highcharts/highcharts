@@ -1,6 +1,6 @@
 $(function () {
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },

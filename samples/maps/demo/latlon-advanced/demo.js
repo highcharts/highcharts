@@ -13,7 +13,7 @@ $(function () {
             data.push(this);
         });
 
-        $('#container').highcharts('Map', {
+        chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Highmaps lat/lon demo'
@@ -69,8 +69,6 @@ $(function () {
                 color: H.getOptions().colors[0]
             }]
         });
-
-        chart = $('#container').highcharts();
     });
 
     // Display custom label with lat/lon next to crosshairs

@@ -7,8 +7,8 @@ QUnit.test('tooltip.destroy #5855', function (assert) {
             }],
             tooltip: {
                 split: true
-            }        
-        }), 
+            }
+        }),
         series1 = chart.series[0],
         series2 = chart.series[1],
         p1 = series1.points[0],

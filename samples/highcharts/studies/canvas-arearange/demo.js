@@ -37,7 +37,7 @@ $(function () {
 
 
     console.time('arearange');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'arearange',

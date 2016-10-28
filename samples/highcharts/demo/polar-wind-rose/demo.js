@@ -1,7 +1,7 @@
 $(function () {
 
     // Parse the data from an inline table using the Highcharts Data plugin
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         data: {
             table: 'freq',
             startRow: 1,

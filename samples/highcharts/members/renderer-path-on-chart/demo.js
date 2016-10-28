@@ -51,7 +51,7 @@ $(function () {
         }
     }
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'gauge',
             plotBackgroundColor: null,

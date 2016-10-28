@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Point interval unit is one month'

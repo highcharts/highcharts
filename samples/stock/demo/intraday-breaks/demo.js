@@ -2,7 +2,7 @@ $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=new-intraday.json&callback=?', function (data) {
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
 
             title: {

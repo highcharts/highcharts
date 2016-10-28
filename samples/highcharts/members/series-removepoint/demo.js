@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         title: {
             text: 'Remove cropped point'
@@ -26,7 +26,6 @@ $(function () {
     });
 
     $('#remove').click(function () {
-        var chart = $('#container').highcharts();
         chart.series[0].removePoint(0);
 
         chart.xAxis[0].setExtremes(0, 100); // Verify that point [0, 0] is removed

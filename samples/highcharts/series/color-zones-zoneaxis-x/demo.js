@@ -2,7 +2,7 @@ $(function () {
 
     var colors = Highcharts.getOptions().colors;
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Zones on X axis'
         },

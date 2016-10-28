@@ -7,8 +7,7 @@ $(function () {
         numberFormat = Highcharts.numberFormat,
         pInt = Highcharts.pInt,
         setOptions = Highcharts.setOptions,
-        splat = Highcharts.splat,
-        stableSort = Highcharts.stableSort;
+        splat = Highcharts.splat;
 
     /**
      * Wrapper because of fast migration from earlier system

@@ -1,6 +1,14 @@
 $(function () {
 
-    var chart;
+    var chart = Highcharts.stockChart('container', {
+        rangeSelector: {
+            selected: 1
+        },
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
     $('#resizer').resizable({
         // On resize, set the chart size to that of the
         // resizer minus padding. If your chart has a lot of data or other
@@ -14,16 +22,4 @@ $(function () {
             );
         }
     });
-
-    $('#container').highcharts('StockChart', {
-        rangeSelector: {
-            selected: 1
-        },
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
-    chart = $('#container').highcharts();
-
 });

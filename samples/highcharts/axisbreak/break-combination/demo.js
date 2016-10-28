@@ -45,7 +45,7 @@ $(function () {
         breakEffect(this, point, path, point.color || point.series.color);
     }
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             animation: false,
             type: 'column'
