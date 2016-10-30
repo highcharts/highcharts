@@ -2,7 +2,7 @@ $(function () {
 
 
     // create the chart
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -13,7 +13,6 @@ $(function () {
         }]
     });
 
-    var chart = $('#container').highcharts();
     $('#button1').click(function () {
         chart.showLoading('Loading AJAX...');
     });

@@ -5,7 +5,7 @@ $(function () {
         'Foobar': 'http://www.bing.com/serach?q=foobar'
     };
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Click categories to search'

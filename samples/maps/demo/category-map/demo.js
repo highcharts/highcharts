@@ -2,7 +2,7 @@ $(function () {
 
 
     // Instanciate the map
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         chart: {
             spacingBottom: 20
         },

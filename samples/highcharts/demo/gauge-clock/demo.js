@@ -24,7 +24,7 @@ $(function () {
     var now = getNow();
 
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'gauge',
@@ -146,8 +146,7 @@ $(function () {
                         second = chart.get('second'),
                         // run animation unless we're wrapping around from 59 to 0
                         animation = now.seconds === 0 ?
-                            false :
-                            {
+                            false : {
                                 easing: 'easeOutBounce'
                             };
 

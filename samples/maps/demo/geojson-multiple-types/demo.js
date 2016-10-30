@@ -55,7 +55,7 @@ $(function () {
 
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
 
             title: {
                 text: 'Highmaps from geojson with multiple geometry types'

@@ -13,7 +13,7 @@ QUnit.test('Max point width', function (assert) {
     );
 
     // Now try a bar chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'bar'

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    var chart = Highcharts.stockChart('container', {
 
         scrollbar: {
             enabled: true
@@ -20,7 +20,6 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
         chart.addSeries({
             name: 'ADBE',
             data: ADBE

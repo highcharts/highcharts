@@ -2,7 +2,7 @@ var data = [1272758.5, 1272758.5, 1272758.5, 1272758.5, 1272758.5, 1272758.5, 12
 
 
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         chart: {
             type: "line",

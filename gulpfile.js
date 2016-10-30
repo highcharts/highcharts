@@ -238,7 +238,8 @@ const styles = () => {
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
- * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
+ * @parameter {string} -p Command line parameter to set pattern. To lint sample
+ *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
 const lint = () => {
@@ -247,6 +248,26 @@ const lint = () => {
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
+    console.log(formatter(report.results));
+};
+
+/**
+ * Gulp task to execute ESLint on samples.
+ * @parameter {string} -p Command line parameter to set pattern. Example usage
+ *     gulp lint -p './samples/**'
+ * @return undefined Returns nothing
+ */
+const lintSamples = () => {
+    const CLIEngine = require('eslint').CLIEngine;
+    const cli = new CLIEngine({
+        ignorePattern: ['./samples/highcharts/common-js/*/demo.js']
+    });
+    const formatter = cli.getFormatter();
+    let report = cli.executeOnFiles([
+        './samples/*/*/*/demo.js',
+        './samples/*/*/*/test.js',
+        './samples/*/*/*/unit-tests.js'
+    ]);
     console.log(formatter(report.results));
 };
 
@@ -672,6 +693,7 @@ gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('build-modules', buildModules);
 gulp.task('lint', lint);
+gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);

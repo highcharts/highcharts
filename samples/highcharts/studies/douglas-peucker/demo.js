@@ -81,7 +81,7 @@ $(function () {
     rawData.length = 0; // clear memory
 
     console.time('Highcharts.Chart');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Trimmed Highcharts'

@@ -33,7 +33,7 @@ $(function () {
 
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 1

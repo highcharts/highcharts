@@ -1,7 +1,7 @@
 $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             chart: {
                 type: 'arearange'

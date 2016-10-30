@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -28,7 +28,6 @@ $(function () {
 
     // button handler
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
         chart.series[0].data[0].update(150);
     });
 });

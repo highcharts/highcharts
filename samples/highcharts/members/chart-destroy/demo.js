@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             height: 300
         },
@@ -14,7 +14,7 @@ $(function () {
 
     // the button handler
     $('#button').click(function () {
-        $('#container').highcharts().destroy();
+        chart.destroy();
         $(this).attr('disabled', true);
     });
 });

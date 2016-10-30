@@ -15,7 +15,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'getTimezoneOffset with local DST crossover'

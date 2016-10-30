@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         plotOptions: {
             series: {
                 showCheckbox: true

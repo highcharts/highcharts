@@ -1,7 +1,7 @@
 $(function () {
     var $report = $('#report');
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         xAxis: {
             plotBands: [{ // mark the weekend
                 color: '#FCFFC5',

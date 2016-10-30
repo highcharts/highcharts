@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         credits: {
             enabled: false
@@ -28,7 +28,6 @@ $(function () {
 
     // the button handler
     $('#button').click(function () {
-        var chart = $('#container').highcharts();
         chart.exportChart();
     });
 });

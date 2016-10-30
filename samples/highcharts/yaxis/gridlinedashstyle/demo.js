@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         yAxis: {
             gridLineDashStyle: 'longdash'

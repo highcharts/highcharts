@@ -5,7 +5,7 @@ $(function () {
             days = 24 * 36e5; // Milliseconds in a day
 
         // Create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 1

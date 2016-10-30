@@ -34,7 +34,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Patterns in styled mode'

@@ -143,7 +143,6 @@ $(function () {
     QUnit.test('Chart.update with with or height', function (assert) {
         var cfg = Highcharts.merge(config),
             chart;
-        
         cfg.chart.width = 400;
         cfg.chart.height = 400;
         chart = Highcharts.chart($('<div>').appendTo('#container')[0], cfg);
