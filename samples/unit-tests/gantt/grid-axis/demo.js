@@ -1010,3 +1010,26 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
         }
     });
 });
+
+/**
+ * Checks that all points are placed according to label and not tick.
+ *                       _________________________
+ *                       |       |       |       |
+ *                       |   1   |   2   |   3   |
+ *                       |_______|_______|_______|
+ *                       |                       |
+ * Avoid any of these:   |     val=1   val=3     |
+ *                       |                       |
+ *
+ *                       _________________________
+ *                       |       |       |       |
+ *                       |   1   |   2   |   3   |
+ *                       |_______|_______|_______|
+ *                       |                       |
+ * Want this:            |     val=1   val=3     |
+ *                       |                       |
+ *
+ */
+QUnit.test('Points placed according to label', function (assert) {
+    assert.ok(false, 'Not implemented');
+});
