@@ -723,8 +723,8 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 QUnit.test('Horizontal axis tick labels centered', function (assert) {
     var chart,
         axes,
-        xError = 0.5001,
-        yError = 0.2500000001;
+        xError = 1.1,
+        yError = 1.1;
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -882,7 +882,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
 QUnit.test('Vertical axis tick labels centered', function (assert) {
     var chart,
         axes,
-        xError = 0.5001,
+        xError = 1.1,
         yError = 1.4;
 
     chart = Highcharts.chart('container', {
@@ -1012,24 +1012,108 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 });
 
 /**
- * Checks that all points are placed according to label and not tick.
+ * Checks that all points are placed according to label, and not tick.
  *                       _________________________
  *                       |       |       |       |
  *                       |   1   |   2   |   3   |
  *                       |_______|_______|_______|
- *                       |                       |
+ *                       |   |       |       |   |
  * Avoid any of these:   |     val=1   val=3     |
- *                       |                       |
+ *                       |   |       |       |   |
  *
  *                       _________________________
  *                       |       |       |       |
  *                       |   1   |   2   |   3   |
  *                       |_______|_______|_______|
- *                       |                       |
- * Want this:            |     val=1   val=3     |
- *                       |                       |
+ *                       |   |       |       |   |
+ * Want this:            | val=1   val=2   val=3 |
+ *                       |   |       |       |   |
  *
  */
 QUnit.test('Points placed according to label', function (assert) {
-    assert.ok(false, 'Not implemented');
+    var chart;
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'xAxis'
+            },
+            grid: true,
+            tickInterval: 1
+        }],
+        yAxis: [{
+            title: {
+                text: 'yAxis'
+            },
+            grid: true,
+            tickInterval: 1
+        }],
+        series: [{
+            data: [[1, 1], [2, 2], [3, 3]]
+        }]
+
+    });
+    Highcharts.each(chart.series, function (series) {
+        var xAxis = series.xAxis,
+            xAxisType = xAxis.options.type,
+            yAxis = series.yAxis,
+            yAxisType = yAxis.options.type;
+
+        if (!xAxisType) {
+            if (xAxis.options.categories) {
+                xAxisType = 'categories';
+            } else {
+                xAxisType = 'linear';
+            }
+        }
+
+        if (!yAxisType) {
+            if (yAxis.options.categories) {
+                yAxisType = 'categories';
+            } else {
+                yAxisType = 'linear';
+            }
+        }
+
+        Highcharts.each(series.points, function (point, index) {
+            var pointBox = point.graphic.getBBox(),
+                pointX = pointBox.x + (pointBox.width / 2),
+                pointY = pointBox.y + (pointBox.height / 2),
+
+                xAxisTick = xAxis.ticks[xAxis.tickPositions[index]],
+                xAxisLabelBox = xAxisTick.label.getBBox(),
+                xAxisLabelX = xAxisLabelBox.x,
+                xAxisLabelY = xAxisLabelBox.y,
+
+                yAxisTick = yAxis.ticks[yAxis.tickPositions[index]],
+                yAxisLabelBox = yAxisTick.label.getBBox(),
+                yAxisLabelX = yAxisLabelBox.x,
+                yAxisLabelY = yAxisLabelBox.y;
+
+            console.log(xAxisTick.label.element);
+
+            assert.equal(
+                pointX,
+                xAxisLabelX,
+                xAxisType + ' x-axis point x position correct'
+            );
+            assert.equal(
+                pointY,
+                xAxisLabelY,
+                xAxisType + ' x-axis point y position correct'
+            );
+            assert.equal(
+                pointX,
+                yAxisLabelX,
+                yAxisType + ' y-axis point x position correct'
+            );
+            assert.equal(
+                pointY,
+                yAxisLabelY,
+                yAxisType + ' y-axis point y position correct'
+            );
+        });
+    });
 });
