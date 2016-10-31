@@ -211,8 +211,8 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		axis = tick.axis,
 		options = axis.options,
 		tickInterval = options.tickInterval || axis.tickInterval,
+		tickPixelInterval,
 		newX,
-		newPos,
 		axisHeight,
 		fontSize,
 		labelMetrics,
@@ -228,15 +228,14 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		lblB = labelMetrics.b;
 		lblH = labelMetrics.h;
 
-		if (options.categories === undefined) {
-			newPos = tick.pos + (tickInterval / 2);
-		}
-
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
+			x = axis.translate(tick.pos + (tickInterval / 2));
+			retVal.x = x + axis.left;
+
 			axisHeight = axis.axisGroup.getBBox().height;
-			retVal.x = axis.translate(newPos) + axis.left;
 			axisCenter = (axisHeight / 2);
+
 			labelCenter = (lblH / 2) - Math.abs(lblH - lblB);
 			y = y + labelCenter;
 
@@ -249,7 +248,8 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		} else {
 			// Center y position
 			if (options.categories === undefined) {
-				retVal.y = axis.translate(newPos) + axis.top + (lblB / 2);
+				tickPixelInterval = axis.translate(axis.min + tickInterval);
+				retVal.y = retVal.y - (tickPixelInterval / 2);
 			}
 
 			// Center x position

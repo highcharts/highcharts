@@ -957,7 +957,6 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
             nextTick,
             tickBox,
             nextTickBox,
-            oppositeTick,
             labelBox,
             actual,
             expected,
@@ -973,16 +972,11 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 
         for (i = 0; i < tickPositions.length; i++) {
             tick = ticks[tickPositions[i]];
-            tickPositions.reverse();
-            oppositeTick = ticks[tickPositions[i + 1]];
-            if (oppositeTick && oppositeTick.label) {
-                labelBox = oppositeTick.label.element.getBBox();
-            }
-            tickPositions.reverse();
             nextTick = ticks[tickPositions[i + 1]];
-            if (tick.mark && labelBox && nextTick && nextTick.mark) {
+            if (tick.mark && tick.label && nextTick && nextTick.mark) {
                 tickBox = tick.mark.element.getBBox();
                 nextTickBox = nextTick.mark.element.getBBox();
+                labelBox = tick.label.element.getBBox();
 
                 expected = {
                     x: tickBox.x + (tickBox.width / 2),
