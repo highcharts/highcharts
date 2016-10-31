@@ -21,10 +21,10 @@ extend(Pointer.prototype, {
 	 * Run translation operations
 	 */
 	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (this.zoomHor || this.pinchHor) {
+		if (this.zoomHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (this.zoomVert || this.pinchVert) {
+		if (this.zoomVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -168,6 +168,10 @@ extend(Pointer.prototype, {
 			});
 			self.res = true; // reset on next move
 
+		// Optionally move the tooltip on touchmove
+		} else if (self.followTouchMove && touchesLength === 1) {
+			this.runPointActions(self.normalize(e));
+
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
 
@@ -187,10 +191,7 @@ extend(Pointer.prototype, {
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
 
-			// Optionally move the tooltip on touchmove
-			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
-				this.runPointActions(self.normalize(e));
-			} else if (self.res) {
+			if (self.res) {
 				self.res = false;
 				this.reset(false, 0);
 			}
@@ -203,7 +204,8 @@ extend(Pointer.prototype, {
 	touch: function (e, start) {
 		var chart = this.chart,
 			hasMoved,
-			pinchDown;
+			pinchDown,
+			isInside;
 
 		H.hoverChartIndex = chart.index;
 
@@ -211,7 +213,11 @@ extend(Pointer.prototype, {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
+			isInside = chart.isInsidePlot(
+				e.chartX - chart.plotLeft,
+				e.chartY - chart.plotTop
+			);
+			if (isInside && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
 				if (start) {
@@ -246,7 +252,7 @@ extend(Pointer.prototype, {
 	},
 
 	onContainerTouchStart: function (e) {
-		this.zoomOption();
+		this.zoomOption(e);
 		this.touch(e, true);
 	},
 

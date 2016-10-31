@@ -28,7 +28,6 @@ var arrayMax = H.arrayMax,
 	merge = H.merge,
 	pick = H.pick,
 	Point = H.Point,
-	Pointer = H.Pointer,
 	Renderer = H.Renderer,
 	Series = H.Series,
 	splat = H.splat,
@@ -171,19 +170,6 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		new Chart(a, options, c) :
 		new Chart(options, b);
 };
-
-// Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-
-	var pinchType = options.chart.pinchType || '';
-
-	proceed.call(this, chart, options);
-
-	// Pinch status
-	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
-	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
-	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
-});
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside

@@ -60,17 +60,24 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Resolve the zoomType option
+	 * Resolve the zoomType option, this is reset on all touch start and mouse
+	 * down events.
 	 */
-	zoomOption: function () {
+	zoomOption: function (e) {
 		var chart = this.chart,
-			zoomType = chart.options.chart.zoomType,
-			zoomX = /x/.test(zoomType),
-			zoomY = /y/.test(zoomType),
-			inverted = chart.inverted;
+			options = chart.options.chart,
+			zoomType = options.zoomType || '',
+			inverted = chart.inverted,
+			zoomX,
+			zoomY;
 
-		this.zoomX = zoomX;
-		this.zoomY = zoomY;
+		// Look for the pinchType option // docs: Now even in Highcharts vanilla!
+		if (/touch/.test(e.type)) {
+			zoomType = pick(options.pinchType, zoomType);
+		}
+
+		this.zoomX = zoomX = /x/.test(zoomType);
+		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
 		this.hasZoom = zoomX || zoomY;
@@ -562,7 +569,7 @@ H.Pointer.prototype = {
 
 		e = this.normalize(e);
 
-		this.zoomOption();
+		this.zoomOption(e);
 
 		// issue #295, dragging not always working in Firefox
 		if (e.preventDefault) {
