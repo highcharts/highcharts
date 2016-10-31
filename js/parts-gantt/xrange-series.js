@@ -218,8 +218,10 @@ seriesTypes.xrange = extendClass(columnType, {
 							color(series.color).brighten(-0.3).get('rgb');
 					point.graphicOverlay
 						.attr(series.pointAttribs(point, state))
-						.attr('fill', fill)
-						.attr('stroke-width', 0)
+						.attr({
+							'fill': fill,
+							'stroke-width': 0.1
+						})
 						.shadow(options.shadow, null, cutOff);
 				}
 				/*= } =*/
