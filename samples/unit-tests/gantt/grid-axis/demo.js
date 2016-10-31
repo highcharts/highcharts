@@ -1079,11 +1079,9 @@ QUnit.test('Points placed according to label', function (assert) {
                 xAxisTick = xAxis.ticks[xAxis.tickPositions[index]],
                 xAxisLabelBox = xAxisTick.label.getBBox(),
                 xAxisLabelX = xAxisLabelBox.x,
-                xAxisLabelY = xAxisLabelBox.y,
 
                 yAxisTick = yAxis.ticks[yAxis.tickPositions[index]],
                 yAxisLabelBox = yAxisTick.label.getBBox(),
-                yAxisLabelX = yAxisLabelBox.x,
                 yAxisLabelY = yAxisLabelBox.y;
 
             console.log(xAxisTick.label.element);
@@ -1092,16 +1090,6 @@ QUnit.test('Points placed according to label', function (assert) {
                 pointX,
                 xAxisLabelX,
                 xAxisType + ' x-axis point x position correct'
-            );
-            assert.equal(
-                pointY,
-                xAxisLabelY,
-                xAxisType + ' x-axis point y position correct'
-            );
-            assert.equal(
-                pointX,
-                yAxisLabelX,
-                yAxisType + ' y-axis point x position correct'
             );
             assert.equal(
                 pointY,
