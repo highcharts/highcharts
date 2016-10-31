@@ -360,6 +360,11 @@ wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
  */
 wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 	var axis = this;
+
+	if (options.grid && !options.title) {
+		options.title = '';
+	}
+
 	if (options.grid && axis.horiz) {
 
 		/*               _________________________

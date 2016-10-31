@@ -37,7 +37,6 @@ $(function () {
             linkedTo: 0
         }],
         yAxis: [{
-            title: '',
             categories: ['Prototyping', 'Development', 'Testing'],
             reversed: true,
             grid: true
