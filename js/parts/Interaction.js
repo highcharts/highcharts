@@ -566,6 +566,7 @@ extend(Point.prototype, {
 			halo = series.halo,
 			haloOptions,
 			markerAttribs,
+			hasMarkers = markerOptions && series.markerAttribs,
 			newSymbol;
 
 		state = state || ''; // empty string
@@ -586,7 +587,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		if (markerOptions && series.markerAttribs) {
+		if (hasMarkers) {
 			markerAttribs = series.markerAttribs(point, state);
 		}
 
@@ -678,7 +679,8 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.markerGroup || series.group);
+					// #5818, #5903
+					.add(hasMarkers ? series.markerGroup : series.group);
 			}
 			H.stop(halo);
 			halo[move ? 'animate' : 'attr']({
