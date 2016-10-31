@@ -1042,7 +1042,10 @@ QUnit.test('Points placed according to label', function (assert) {
                 text: 'yAxis'
             },
             grid: true,
-            tickInterval: 1
+            tickInterval: 1,
+            startOnTick: true,
+            minPadding: 0,
+            maxPadding: 0.5
         }],
         series: [{
             data: [[1, 1], [2, 2], [3, 3]]
