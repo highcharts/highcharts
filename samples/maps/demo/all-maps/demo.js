@@ -51,8 +51,8 @@ $(function () {
         }
 
         // Show loading
-        if ($("#container").highcharts()) {
-            $("#container").highcharts().showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
+        if (Highcharts.charts[0]) {
+            Highcharts.charts[0].showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
         }
 
 

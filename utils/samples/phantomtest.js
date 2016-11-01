@@ -6,7 +6,11 @@ phantomjs [arguments] phantomtest.js
 
 Arguments:
 --commit What commit number to run visual tests against.
+--debug  When this is set, errors and logs from the samples is printed in the
+         terminal. It is only useful when PhantomJS gives errors where the
+         browsers don't.
 --rightcommit What commit to test (on the right side).
+--single What sample number to run as a single test.
 --start  What sample number to start from. Use this to resume after error.
 
 Status
@@ -36,7 +40,11 @@ Status
 
     // Parse arguments into the params object
     args.forEach(function (arg, j) {
-        if (arg === '--start') {
+        if (arg === '--debug') {
+            params.debug = true;
+        } else if (arg === '--single') {
+            params.single = parseInt(args[j + 1], 10);
+        } else if (arg === '--start') {
             params.start = parseInt(args[j + 1], 10);
         } else if (arg === '--commit') {
             params.commit = args[j + 1];
@@ -46,6 +54,9 @@ Status
     });
 
     i = params.start;
+    if (typeof params.single !== 'undefined') {
+        i = params.single;
+    }
 
     // Add all the samples to the samples array
     ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
@@ -110,7 +121,7 @@ Status
      * On page error, it may be that files are temporarily not loaded (typically jQuery),
      * so we try again three times.
      */
-    page.onError = function () {
+    page.onError = function (msg) {
 
         // var msgStack = [msg];
 
@@ -147,6 +158,17 @@ Status
                 'Error'
             );
 
+            if (params.debug) {
+                // Error message
+                console.log('     ' + colors.red(msg));
+
+                // Clickable link
+                console.log(
+                    '     Cmd-click: ' +
+                    colors.blue('utils.highcharts.local/samples/#test/' + samples[i])
+                );
+            }
+
             i++;
             runRecursive();
         }
@@ -163,11 +185,13 @@ Status
             );
 
             i = i + 1;
-            if (samples[i]) {
+            if (samples[i] && typeof params.single === 'undefined') {
                 runRecursive();
             } else {
                 phantom.exit();
             }
+        } else if (params.debug) {
+            console.log(colors.gray('     ' + m));
         }
     };
 

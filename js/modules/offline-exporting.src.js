@@ -16,6 +16,7 @@ var merge = Highcharts.merge,
 	win = Highcharts.win,
 	nav = win.navigator,
 	doc = win.document,
+	each = Highcharts.each,
 	domurl = win.URL || win.webkitURL || win,
 	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
 	loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
@@ -36,6 +37,9 @@ function getScript(scriptLocation, callback) {
 	script.type = 'text/javascript';
 	script.src = scriptLocation;
 	script.onload = callback;
+	script.onerror = function () {
+		console.error('Error loading script', scriptLocation); // eslint-disable-line no-console
+	};
 
 	head.appendChild(script);
 }
@@ -146,23 +150,55 @@ Highcharts.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, 
 	img.src = imageURL;
 };
 
-// Get data URL to an image of an SVG and call download on it
-Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCallback, successCallback) {
+/**
+ * Get data URL to an image of an SVG and call download on it
+ *
+ * options object:
+ *		filename: Name of resulting downloaded file without extension
+ *		type: File type of resulting download
+ *		scale: Scaling factor of downloaded image compared to source
+ *      libURL: URL pointing to location of dependency scripts to download on demand
+ */
+Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
 	var svgurl,
 		blob,
 		objectURLRevoke = true,
 		finallyHandler,
-		libURL = Highcharts.getOptions().exporting.libURL;
+		libURL = options.libURL || Highcharts.getOptions().exporting.libURL,
+		dummySVGContainer = doc.createElement('div'),
+		imageType = options.type || 'image/png',
+		filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]),
+		scale = options.scale || 1;
 
-/*
+	libURL = libURL.slice(-1) !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
+
 	function svgToPdf(svgElement, margin) {
-		var width = svgElement.width.baseVal.value + 2 * margin;
-		var height = svgElement.height.baseVal.value + 2 * margin;
-		var pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
+		var width = svgElement.width.baseVal.value + 2 * margin,
+			height = svgElement.height.baseVal.value + 2 * margin,
+			pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
 		win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
 		return pdf.output('datauristring');
 	}
-*/
+
+	function downloadPDF() {
+		dummySVGContainer.innerHTML = svg;
+		var textElements = dummySVGContainer.getElementsByTagName('text'),
+			svgElementStyle = dummySVGContainer.getElementsByTagName('svg')[0].style;
+		// Workaround for the text styling. Making sure it does pick up the root element
+		each(textElements, function (el) {
+			each(['font-family', 'font-size'], function (property) {
+				if (!el.style[property] && svgElementStyle[property]) {
+					el.style[property] = svgElementStyle[property];
+				}
+			});
+			el.style['font-family'] = el.style['font-family'] && el.style['font-family'].split(' ').splice(-1);
+		});
+		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
+		Highcharts.downloadURL(svgData, filename);
+		if (successCallback) {
+			successCallback();
+		}
+	}
 
 	// Initiate download depending on file type
 	if (imageType === 'image/svg+xml') {
@@ -182,20 +218,20 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 		} catch (e) {
 			failCallback();
 		}
-	/*} else if (imageType === 'application/pdf') {
-		doc.getElementsByTagName('svg')[0].id = 'svgElement';
-		// you should set the format dynamically, write [width, height] instead of 'a4'
+	} else if (imageType === 'application/pdf') {
 		if (win.jsPDF && win.svgElementToPdf) {
-			var dummyContainer = doc.createElement('div');
-			dummyContainer.innerHTML = svg;
-			setTimeout(function () {
-				var data = svgToPdf(dummyContainer.firstChild, 0);
-				Highcharts.downloadURL(data, filename);
-				if (successCallback) {
-					successCallback();
-				}
-			}, 100);
-		}*/
+			downloadPDF();
+		} else {
+			// Must load pdf libraries first
+			objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
+			getScript(libURL + 'jspdf.js', function () {
+				getScript(libURL + 'rgbcolor.js', function () {
+					getScript(libURL + 'svg2pdf.js', function () {
+						downloadPDF();
+					});
+				});
+			});
+		}
 	} else {
 		// PNG/JPEG download - create bitmap from SVG
 
@@ -247,7 +283,6 @@ Highcharts.downloadSVGLocal = function (svg, filename, imageType, scale, failCal
 			} else {
 				// Must load canVG first
 				objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
-				libURL = libURL.substr[-1] !== '/' ? libURL + '/' : libURL; // Allow libURL to end with or without fordward slash
 				getScript(libURL + 'rgbcolor.js', function () { // Get RGBColor.js first
 					getScript(libURL + 'canvg.js', function () {
 						downloadWithCanVG();
@@ -332,7 +367,6 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 	var chart = this,
 		options = Highcharts.merge(chart.options.exporting, exportingOptions),
-		imageType = options && options.type || 'image/png',
 		fallbackToExportServer = function () {
 			if (options.fallbackToExportServer === false) {
 				if (options.error) {
@@ -345,12 +379,11 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 		},
 		svgSuccess = function (svg) {
-			var filename = (options.filename || 'chart') + '.' + (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1]);
-			Highcharts.downloadSVGLocal(svg, filename, imageType, options.scale, fallbackToExportServer);
+			Highcharts.downloadSVGLocal(svg, options, fallbackToExportServer);
 		};
 
 	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-	if (isMSBrowser && imageType !== 'image/svg+xml' && chart.container.getElementsByTagName('image').length) {
+	if ((isMSBrowser && options.imageType !== 'image/svg+xml' || options.imageType !== 'application/pdf') && chart.container.getElementsByTagName('image').length) {
 		fallbackToExportServer();
 		return;
 	}
@@ -360,7 +393,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 
 // Extend the default options to use the local exporter logic
 merge(true, Highcharts.getOptions().exporting, {
-	libURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/lib/',
+	libURL: 'http://code.highcharts.com/@product.version@/lib/',
 	buttons: {
 		contextButton: {
 			menuItems: [{
@@ -389,14 +422,14 @@ merge(true, Highcharts.getOptions().exporting, {
 						type: 'image/svg+xml'
 					});
 				}
-			}/*, {
+			}, {
 				textKey: 'downloadPDF',
 				onclick: function () {
 					this.exportChartLocal({
 						type: 'application/pdf'
 					});
 				}
-			}*/]
+			}]
 		}
 	}
 });

@@ -4,7 +4,7 @@
 QUnit.test('isOuterAxis()', function (assert) {
     var chart;
 
-    $('#container').highcharts({
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
         },
@@ -32,37 +32,32 @@ QUnit.test('isOuterAxis()', function (assert) {
             opposite: true
         }],
         series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4],
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
             xAxis: 0
         }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5, -216.4, -194.1, -95.6, -54.4],
+            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
             xAxis: 1
         }, {
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4],
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
             xAxis: 2
         }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5, -216.4, -194.1, -95.6, -54.4],
+            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
             xAxis: 3
         }]
     });
 
-    chart = $('#container').highcharts();
-
-    assert.equal(
+    assert.ok(
         chart.xAxis[1].isOuterAxis(),
-        true,
         'Lowermost bottom x-axis is outerAxis'
     );
 
-    assert.notEqual(
+    assert.notOk(
         chart.xAxis[2].isOuterAxis(),
-        true,
         'Lowermost top x-axis is not outerAxis'
     );
 
-    assert.equal(
+    assert.ok(
         chart.xAxis[3].isOuterAxis(),
-        true,
         'Topmost top x-axis is outerAxis'
     );
 });
@@ -105,7 +100,7 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         error;
 
     // Chart 1
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -139,10 +134,10 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
             id: 'axis4'
         }],
         series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4],
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
             yAxis: 0
         }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5, -216.4, -194.1, -95.6, -54.4],
+            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
             yAxis: 1
         }]
     });
@@ -178,7 +173,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         axes = [],
         error;
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             type: 'scatter'
         },
@@ -331,10 +326,10 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
             id: 'axis4'
         }],
         series: [{
-            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4],
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5],
             xAxis: 0
         }, {
-            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5, -216.4, -194.1, -95.6, -54.4],
+            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5],
             xAxis: 1
         }]
     });
@@ -478,4 +473,206 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         error,
         'Top outer datetime axis vertical placement'
     );
+});
+
+/**
+ * Checks that datetime and linear axes have ticks placed at the start and end
+ * of the axis, creating a grid:
+ *   ___________________
+ *   |__|__|__|__|__|__|
+ *   ^                 ^
+ */
+QUnit.test('Horizontal axis ticks at start and end', function (assert) {
+    var chart,
+        axes,
+        axis,
+        $axisGroup,
+        axisGroupBox,
+        leftTick,
+        rightTick,
+        ticks,
+        i;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            opposite: true
+        }],
+        series: [{
+            xAxis: 0,
+            data: [[129.9, 271.5], [306.4, -29.2], [544.0, 376.0]]
+        }, {
+            xAxis: 1,
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
+        }, {
+            xAxis: 2,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 3,
+            data: [{
+                x: Date.UTC(2016, 10, 13),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 15),
+                y: 2
+            }]
+        }]
+    });
+
+    axes = chart.xAxis;
+
+    for (i = 0; i < axes.length; i++) {
+        axis = axes[0];
+        $axisGroup = $(axis.axisGroup.element);
+        axisGroupBox = $axisGroup[0].getBBox();
+        ticks = $axisGroup.children();
+        leftTick = ticks[0];
+        rightTick = ticks.slice(-1)[0];
+
+        assert.equal(
+            leftTick.getBBox().x,
+            axisGroupBox.x,
+            'Leftmost tick has same x value as leftmost point of axisGroup'
+        );
+
+        assert.equal(
+            rightTick.getBBox().x,
+            axisGroupBox.x + axisGroupBox.width,
+            'Rightmost tick has same x value as rightmost point of axisGroup'
+        );
+    }
+});
+
+/**
+ * Checks that the ticks in independent horizontal axes are equally distributed,
+ * by checking that the space between the first and second tick is equal to the
+ * second last and last tick.
+ *
+ * It is however fine that ticks in axes which are linked to other axes are not
+ * equally distributed, because they may not have the same tick interval as the
+ * inner axes.
+ */
+QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
+    var chart,
+        axes,
+        i,
+        axis,
+        error = 0.5000000001,
+        ticks,
+        $axisGroup,
+        axisGroupBox,
+        secondLeftmostTick,
+        rightmostTick,
+        axisLeftPoint,
+        axisRightPoint,
+        leftSpace,
+        rightSpace;
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'scatter'
+        },
+        xAxis: [{
+            title: {
+                text: 'First Axis'
+            },
+            grid: true
+        }, {
+            title: {
+                text: 'Second Axis'
+            },
+            type: 'datetime',
+            grid: true
+        }, {
+            title: {
+                text: 'Third Axis'
+            },
+            grid: true,
+            opposite: true
+        }, {
+            title: {
+                text: 'Fourth Axis'
+            },
+            grid: true,
+            type: 'datetime',
+            opposite: true
+        }],
+        series: [{
+            xAxis: 0,
+            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
+        }, {
+            xAxis: 1,
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
+        }, {
+            xAxis: 2,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 3,
+            data: [{
+                x: Date.UTC(2016, 10, 13),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 15),
+                y: 2
+            }]
+        }]
+    });
+
+    axes = chart.xAxis;
+
+    for (i = 0; i < axes.length; i++) {
+        axis = axes[i];
+        $axisGroup = $(axis.axisGroup.element);
+        ticks = $axisGroup.find('.highcharts-tick');
+        secondLeftmostTick = ticks[1];
+        rightmostTick = ticks.slice(-2)[0];
+        axisGroupBox = $axisGroup[0].getBBox();
+        axisLeftPoint = axisGroupBox.x;
+        axisRightPoint = axisGroupBox.x + axisGroupBox.width;
+        leftSpace = secondLeftmostTick.getBBox().x - axisLeftPoint;
+        rightSpace = axisRightPoint - rightmostTick.getBBox().x;
+
+        assert.close(
+            leftSpace,
+            rightSpace,
+            error,
+            'Left space is equal to right space in xAxis[' + i + ']'
+        );
+    }
 });

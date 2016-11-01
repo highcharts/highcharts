@@ -437,7 +437,10 @@ H.Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = defaultOptions.lang.numericSymbols,
+			lang = defaultOptions.lang,
+			numericSymbols = lang.numericSymbols,
+			// docs: new option, added to API. Add it to the I18n article too.
+			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
@@ -460,7 +463,7 @@ H.Axis.prototype = {
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === undefined) {
-				multi = Math.pow(1000, i + 1);
+				multi = Math.pow(numSymMagnitude, i + 1);
 				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
 					ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
@@ -607,11 +610,9 @@ H.Axis.prototype = {
 			if (doPostTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-			if (pointPlacement === 'between') {
-				pointPlacement = 0.5;
-			}
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
+			returnValue = sign * (val - localMin) * localA + cvsOffset +
+				(sign * minPixelPadding) +
+				(isNumber(pointPlacement) ? localA * pointPlacement : 0);
 		}
 
 		return returnValue;
@@ -891,7 +892,7 @@ H.Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
+			nameX = this.options.uniqueNames === false ?
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
 		}
@@ -1134,12 +1135,16 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Stay within floor and ceiling
+		// Handle options for floor, ceiling, softMin and softMax
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
+		} else if (isNumber(options.softMin)) {
+			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
+		} else if (isNumber(options.softMax)) {
+			axis.max = Math.max(axis.max, options.softMax);
 		}
 
 		// When the threshold is soft, adjust the extreme value only if
@@ -1547,27 +1552,31 @@ H.Axis.prototype = {
 			min = Math.min(dataMin, pick(options.min, dataMin)),
 			max = Math.max(dataMax, pick(options.max, dataMax));
 
-		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
-		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= min) {
-				newMin = min;
+		if (newMin !== this.min || newMax !== this.max) { // #5790
+			
+			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
+			if (!this.allowZoomOutside) {
+				if (defined(dataMin) && newMin <= min) {
+					newMin = min;
+				}
+				if (defined(dataMax) && newMax >= max) {
+					newMax = max;
+				}
 			}
-			if (defined(dataMax) && newMax >= max) {
-				newMax = max;
-			}
+
+			// In full view, displaying the reset zoom button is not required
+			this.displayBtn = newMin !== undefined || newMax !== undefined;
+
+			// Do it
+			this.setExtremes(
+				newMin,
+				newMax,
+				false,
+				undefined,
+				{ trigger: 'zoom' }
+			);
 		}
 
-		// In full view, displaying the reset zoom button is not required
-		this.displayBtn = newMin !== undefined || newMax !== undefined;
-
-		// Do it
-		this.setExtremes(
-			newMin,
-			newMax,
-			false,
-			undefined,
-			{ trigger: 'zoom' }
-		);
 		return true;
 	},
 
@@ -2373,6 +2382,10 @@ H.Axis.prototype = {
 
 	},
 
+	// Properties to survive after destroy, needed for Axis.update (#4317,
+	// #5773, #5881).
+	keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'],
+	
 	/**
 	 * Destroys an Axis instance.
 	 */
@@ -2382,8 +2395,7 @@ H.Axis.prototype = {
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
 			i,
-			n,
-			keepProps;
+			n;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2415,12 +2427,9 @@ H.Axis.prototype = {
 			}
 		});
 
-
 		// Delete all properties and fall back to the prototype.
-		// Preserve some properties, needed for Axis.update (#4317).
-		keepProps = ['names', 'series', 'userMax', 'userMin'];
 		for (n in axis) {
-			if (axis.hasOwnProperty(n) && inArray(n, keepProps) === -1) {
+			if (axis.hasOwnProperty(n) && inArray(n, axis.keepProps) === -1) {
 				delete axis[n];
 			}
 		}
@@ -2436,6 +2445,7 @@ H.Axis.prototype = {
 
 		var path,
 			options = this.crosshair,
+			snap = pick(options.snap, true),
 			pos,
 			categorized,
 			graphic = this.cross;
@@ -2450,25 +2460,30 @@ H.Axis.prototype = {
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(options.snap, true)) === false)
+			((defined(point) || !snap) === false)
 		) {
 			this.hideCrosshair();
 		} else {
 
 			// Get the path
-			if (!pick(options.snap, true)) {
-				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+			if (!snap) {				
+				pos = e && (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
 				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
 			}
 
-			if (this.isRadial) {
-				path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
-			} else {
-				path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
+			if (defined(pos)) {
+				path = this.getPlotLinePath(
+					// First argument, value, only used on radial
+					point && (this.isXAxis ? point.x : pick(point.stackY, point.y)),
+					null,
+					null,
+					null,
+					pos // Translated position
+				) || null; // #3189
 			}
 
-			if (path === null) {
+			if (!defined(path)) {
 				this.hideCrosshair();
 				return;
 			}
@@ -2505,14 +2520,13 @@ H.Axis.prototype = {
 				d: path
 			});
 
-			if (categorized) {
+			if (categorized && !options.width) {
 				graphic.attr({
 					'stroke-width': this.transA
 				});
 			}
 			this.cross.e = e;
 		}
-
 	},
 
 	/**

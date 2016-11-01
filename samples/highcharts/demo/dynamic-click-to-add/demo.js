@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'scatter',
             margin: [70, 50, 60, 80],

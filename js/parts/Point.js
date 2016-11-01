@@ -93,6 +93,11 @@ Point.prototype = {
 			point.x === null || !isNumber(point.y, true)
 		); // #3571, check for NaN
 
+		// The point is initially selected by options (#5777)
+		if (point.selected) {
+			point.state = 'select';
+		}
+
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if ('name' in point && x === undefined && series.xAxis && series.xAxis.hasNames) {
@@ -168,6 +173,7 @@ Point.prototype = {
 		return 'highcharts-point' + 
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
+			(this.isNull ? ' highcharts-null-point' : '') + 
 			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
 			(this.options.className ? ' ' + this.options.className : '');
 	},

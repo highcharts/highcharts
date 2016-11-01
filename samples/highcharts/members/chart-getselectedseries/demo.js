@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -19,8 +19,7 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            selectedSeries = chart.getSelectedSeries();
+        var selectedSeries = chart.getSelectedSeries();
         alert('You selected ' + selectedSeries.length + ' series');
     });
 });

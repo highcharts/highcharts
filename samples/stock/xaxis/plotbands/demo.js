@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         yAxis: {
             min: 0.6,

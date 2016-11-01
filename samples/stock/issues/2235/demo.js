@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Regression since 3.0.3 caused gap not to apply'

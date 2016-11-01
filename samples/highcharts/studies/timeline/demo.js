@@ -32,7 +32,7 @@ $(function () {
     ];
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps with time control'
@@ -70,8 +70,6 @@ $(function () {
             }
         }]
     });
-
-    chart = $('#container').highcharts();
 
     /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.
@@ -117,7 +115,7 @@ $(function () {
     /**
      * Toggle play and pause from the button
      */
-    $('#play-pause-button').bind('click', function () {
+    $('#play-pause-button').on('click', function () {
         if (chart.sequenceTimer === undefined) {
             play(this);
         } else {
@@ -128,7 +126,7 @@ $(function () {
     /**
      * Update the chart when the input is changed
      */
-    $('#play-range').bind('input', function () {
+    $('#play-range').on('input', function () {
         update();
     });
 });

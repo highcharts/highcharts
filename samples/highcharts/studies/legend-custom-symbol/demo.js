@@ -17,7 +17,7 @@ $(function () {
     });
 
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Custom legend symbol'

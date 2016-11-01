@@ -356,7 +356,7 @@ extend(Chart.prototype, {
 					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -481,30 +481,30 @@ extend(Point.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
-		if (chart.hoverSeries !== series) {
-			series.onMouseOver();
-		}
-
-		// set normal state to previous series
-		if (hoverPoint && hoverPoint !== point) {
-			hoverPoint.onMouseOut();
-		}
-
 		if (point.series) { // It may have been destroyed, #4130
-
-			// trigger the event
-			point.firePointEvent('mouseOver');
+			// In shared tooltip, call mouse over when point/series is actually hovered: (#5766)
+			if (!byProximity) {
+				// set normal state to previous series
+				if (hoverPoint && hoverPoint !== point) {
+					hoverPoint.onMouseOut();
+				}
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+				chart.hoverPoint = point;
+			}
 
 			// update the tooltip
 			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				// hover point only for non shared points: (#5766)
+				point.setState('hover');
 				tooltip.refresh(point, e);
+			} else if (!tooltip) {
+				point.setState('hover');
 			}
 
-			// hover this
-			point.setState('hover');
-			if (!byProximity) {
-				chart.hoverPoint = point;
-			}
+			// trigger the event
+			point.firePointEvent('mouseOver');
 		}
 	},
 
@@ -554,17 +554,19 @@ extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states[state] || {},
-			markerOptions = (defaultPlotOptions[series.type].marker && series.options.marker) || {},
-			normalDisabled = markerOptions.enabled === false,
-			markerStateOptions = (markerOptions.states && markerOptions.states[state]) || {},
+			markerOptions = defaultPlotOptions[series.type].marker &&
+				series.options.marker,
+			normalDisabled = markerOptions && markerOptions.enabled === false,
+			markerStateOptions = (markerOptions && markerOptions.states &&
+				markerOptions.states[state]) || {},
 			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
-			radius,
 			halo = series.halo,
 			haloOptions,
-			attribs,
+			markerAttribs,
+			hasMarkers = markerOptions && series.markerAttribs,
 			newSymbol;
 
 		state = state || ''; // empty string
@@ -585,8 +587,10 @@ extend(Point.prototype, {
 			return;
 		}
 
-		radius = markerStateOptions.radius || (markerOptions.radius + (markerStateOptions.radiusPlus || 0));
-		
+		if (hasMarkers) {
+			markerAttribs = series.markerAttribs(point, state);
+		}
+
 		// Apply hover styles to the existing point
 		if (point.graphic) {
 
@@ -597,18 +601,28 @@ extend(Point.prototype, {
 				point.graphic.addClass('highcharts-point-' + state);
 			}
 
-			attribs = radius ? { // new symbol attributes (#507, #612)
+			/*attribs = radius ? { // new symbol attributes (#507, #612)
 				x: plotX - radius,
 				y: plotY - radius,
 				width: 2 * radius,
 				height: 2 * radius
-			} : {};
+			} : {};*/
 
 			/*= if (build.classic) { =*/
-			attribs = merge(series.pointAttribs(point, state), attribs);
+			//attribs = merge(series.pointAttribs(point, state), attribs);
+			point.graphic.attr(series.pointAttribs(point, state));
 			/*= } =*/
 
-			point.graphic.attr(attribs);
+			if (markerAttribs) {
+				point.graphic.animate(
+					markerAttribs,
+					pick(
+						chart.options.chart.animation, // Turn off globally
+						markerStateOptions.animation,
+						markerOptions.animation
+					)
+				);
+			}
 
 			// Zooming in from a range with no markers to a range with markers
 			if (stateMarkerGraphic) {
@@ -631,10 +645,10 @@ extend(Point.prototype, {
 					if (newSymbol) {
 						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 							newSymbol,
-							plotX - radius,
-							plotY - radius,
-							2 * radius,
-							2 * radius
+							markerAttribs.x,
+							markerAttribs.y,
+							markerAttribs.width,
+							markerAttribs.height
 						)
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
@@ -643,8 +657,8 @@ extend(Point.prototype, {
 				// Move the existing graphic
 				} else {
 					stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-						x: plotX - radius,
-						y: plotY - radius
+						x: markerAttribs.x,
+						y: markerAttribs.y
 					});
 				}
 				/*= if (build.classic) { =*/
@@ -665,8 +679,10 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(chart.seriesGroup);
+					// #5818, #5903
+					.add(hasMarkers ? series.markerGroup : series.group);
 			}
+			H.stop(halo);
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
@@ -679,13 +695,10 @@ extend(Point.prototype, {
 				'fill': point.color || series.color,
 				'fill-opacity': haloOptions.opacity,
 				'zIndex': -1 // #4929, IE8 added halo above everything
-			},
-			haloOptions.attributes))[move ? 'animate' : 'attr']({
-				d: point.haloPath(haloOptions.size)
-			});
+			}, haloOptions.attributes));
 			/*= } =*/
 		} else if (halo) {
-			halo.attr({ d: [] });
+			halo.animate({ d: point.haloPath(0) }); // Hide
 		}
 
 		point.state = state;
@@ -698,14 +711,11 @@ extend(Point.prototype, {
 	 */
 	haloPath: function (size) {
 		var series = this.series,
-			chart = series.chart,
-			plotBox = series.getPlotBox(),
-			inverted = chart.inverted,
-			plotX = Math.floor(this.plotX);
+			chart = series.chart;
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+			Math.floor(this.plotX) - size,
+			this.plotY - size,
 			size * 2, 
 			size * 2
 		);
@@ -850,9 +860,9 @@ extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker', 'tt'], function (key) {
 			if (series[key]) {
-				series[key][showOrHide]();
+				series[key][showOrHide]();				
 			}
 		});
 

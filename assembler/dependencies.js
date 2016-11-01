@@ -1,7 +1,7 @@
 /* eslint-env node, es6 */
 /* eslint func-style: ["error", "expression"] */
 'use strict';
-const fs = require('fs');
+const U = require('./utilities.js');
 const LE = '\n';
 let exportExp = /\n?\s*export default ([^;\n]+)[\n;]+/;
 const licenseExp = /(\/\*\*[\s\S]+@license[\s\S]+?(?=\*\/)\*\/)/;
@@ -32,14 +32,32 @@ const getFileImports = content => {
 };
 
 const cleanPath = path => {
-    let p = path;
-    while (p.indexOf('/./') > -1) {
-        p = p.replace('/./', '/');
-    }
-    while (p.indexOf('/../') > -1) {
-        p = p.replace(/\/([^\/]+\/\.\.\/)/g, '/');
-    }
-    return p;
+    let parts = path.split('/')
+    .reduce((arr, piece) => {
+        if (piece !== '.' || arr.length === 0) {
+            arr.push(piece);
+        }
+        return arr;
+    }, [])
+    .reduce((arr, piece) => {
+        if (piece === '..') {
+            if (arr.length === 0) {
+                arr.push(piece);
+            } else {
+                let popped = arr.pop();
+                if (popped === '.') {
+                    arr.push(piece);
+                } else if (popped === '..') {
+                    arr.push(popped);
+                    arr.push(piece);
+                }
+            }
+        } else {
+            arr.push(piece);
+        }
+        return arr;
+    }, []);
+    return parts.join('/');
 };
 
 const folder = path => {
@@ -50,12 +68,9 @@ const folder = path => {
     return folderPath + '/';
 };
 
-// @todo add "caching" of file content
-const getContents = path => fs.readFileSync(path, 'utf8');
-
 const getOrderedDependencies = (file, parent, dependencies) => {
     let filePath = cleanPath(folder(parent) + file),
-        content = getContents(filePath),
+        content = U.getFile(filePath),
         imports = getFileImports(content);
     if (parent === '') {
         dependencies.unshift(filePath);
@@ -110,9 +125,9 @@ const applyModule = content => {
  * @returns {string} Returns the distribution file with a header.
  */
 const addLicenseHeader = (content, o) => {
-    const str = getContents(o.entry);
+    const str = U.getFile(o.entry);
     let header = regexGetCapture(licenseExp, str);
-    return (header ? header: '') + content;
+    return (header ? header : '') + content;
 };
 
 /**
@@ -129,7 +144,7 @@ const removeLicenseHeader = content => content.replace(licenseExp, '');
  */
 const getExports = dependencies => {
     return dependencies.map(d => {
-        let content = getContents(d),
+        let content = U.getFile(d),
             exported = regexGetCapture(exportExp, content);
         return [d, exported];
     });
@@ -143,7 +158,7 @@ const getExports = dependencies => {
  */
 const getImports = (dependencies, exported) => {
     return dependencies.map(d => {
-        let content = getContents(d),
+        let content = U.getFile(d),
             imports = getFileImports(content);
         return imports.reduce((arr, t) => {
             let path,
@@ -223,7 +238,7 @@ const compileFile = options => {
     let exported = getExports(dependencies);
     let imported = getImports(dependencies, exported);
     let mapTransform = (path, i, arr) => {
-        let content = getContents(path);
+        let content = U.getFile(path);
         let moduleOptions = Object.assign({}, options, {
             path: path,
             imported: imported.find(val => val[0] === path)[1],

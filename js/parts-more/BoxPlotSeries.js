@@ -71,7 +71,7 @@ seriesType('boxplot', 'column', {
 			color = (point && point.color) || this.color;
 
 		return {
-			'fill': options.fillColor || color,
+			'fill': point.fillColor || options.fillColor || color,
 			'stroke': options.lineColor || color,
 			'stroke-width': options.lineWidth || 0
 		};

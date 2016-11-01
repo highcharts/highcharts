@@ -17,7 +17,7 @@ $(function () {
 
             xAxis: [{
                 categories: ['One', 'Two', 'Three', 'Four'],
-                id: 'primary',
+                id: 'primary'
             }, {
                 id: 'secondary',
                 categories: ['Einz', 'Zwei', 'Drei', 'Vier'],

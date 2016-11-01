@@ -20,7 +20,10 @@ $(function () {
             enabled: true
         },
 
-
+        tooltip: {
+            followTouchMove: false
+        },
+        
         series: [{
             name: 'blue',
             color: '#0000FF',

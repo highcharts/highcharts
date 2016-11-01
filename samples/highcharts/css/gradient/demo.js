@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Gradients in styled mode'

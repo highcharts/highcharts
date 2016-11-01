@@ -206,7 +206,7 @@ Chart.prototype = {
 	 * Redraw legend, axes or series based on updated data
 	 *
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 *	configuration
 	 */
 	redraw: function (animation) {
 		var chart = this,
@@ -331,8 +331,7 @@ Chart.prototype = {
 
 		// redraw affected series
 		each(series, function (serie) {
-			if (serie.isDirty && serie.visible &&
-					(!serie.isCartesian || serie.xAxis)) { // issue #153
+			if ((isDirtyBox || serie.isDirty) && serie.visible) {
 				serie.redraw();
 			}
 		});
@@ -669,11 +668,11 @@ Chart.prototype = {
 		// remove previous chart
 		renderTo.innerHTML = '';
 
-		// If the container doesn't have an offsetWidth, it has or is a child of a node
-		// that has display:none. We need to temporarily move it out to a visible
-		// state to determine the size, else the legend and tooltips won't render
-		// properly. The allowClone option is used in sparklines as a micro optimization,
-		// saving about 1-2 ms each chart.
+		// If the container doesn't have an offsetWidth, it has or is a child of
+		// a node that has display:none. We need to temporarily move it out to a
+		// visible state to determine the size, else the legend and tooltips
+		// won't render properly. The skipClone option is used in sparklines as
+		// a micro optimization, saving about 1-2 ms each chart.
 		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
@@ -839,6 +838,17 @@ Chart.prototype = {
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
 		});
+
+		// The following will add listeners to re-fit the chart before and after
+		// printing (#2284). However it only works in WebKit. Should have worked
+		// in Firefox, but not supported in IE.
+		/*
+		if (win.matchMedia) {
+			win.matchMedia('print').addListener(function reflow() {
+				chart.reflow();
+			});
+		}
+		*/
 	},
 
 	/**
@@ -884,11 +894,6 @@ Chart.prototype = {
 		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
-		});
-
-		// make sure non-cartesian series are also handled
-		each(chart.series, function (serie) {
-			serie.isDirty = true;
 		});
 
 		chart.isDirtyLegend = true; // force legend redraw
@@ -1540,7 +1545,9 @@ Chart.prototype = {
 		fireEvent(this, 'load');
 
 		// Set up auto resize
-		this.initReflow();
+		if (this.options.chart.reflow !== false) {
+			this.initReflow();
+		}
 
 		// Don't run again
 		this.onload = null;

@@ -929,7 +929,7 @@ $(function () {
             regionI = regionI + 1;
         }
     }
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         series: [{
             type: 'treemap',
             layoutAlgorithm: 'squarified',

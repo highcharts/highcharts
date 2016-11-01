@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         series: [{
             type: "treemap",
             layoutAlgorithm: 'stripes',

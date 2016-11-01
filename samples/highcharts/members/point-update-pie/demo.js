@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'
         },
@@ -12,8 +12,7 @@ $(function () {
     });
 
     // button handler
-    var chart = $('#container').highcharts(),
-        y = 30;
+    var y = 30;
     $('#button').click(function () {
         y += 10;
         chart.series[0].data[0].update(y);

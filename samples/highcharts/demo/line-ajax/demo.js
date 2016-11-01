@@ -3,7 +3,7 @@ $(function () {
     // Get the CSV and create the chart
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=analytics.csv&callback=?', function (csv) {
 
-        $('#container').highcharts({
+        Highcharts.chart('container', {
 
             data: {
                 csv: csv

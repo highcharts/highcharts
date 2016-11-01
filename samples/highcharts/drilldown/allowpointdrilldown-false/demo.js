@@ -1,7 +1,7 @@
 $(function () {
 
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -59,6 +59,7 @@ $(function () {
             allowPointDrilldown: false,
             series: [{
                 id: 'republican-2010',
+                name: 'Republican 2010',
                 data: [
                     ['East', 4],
                     ['West', 2],
@@ -67,6 +68,7 @@ $(function () {
                 ]
             }, {
                 id: 'democrats-2010',
+                name: 'Republican 2010',
                 data: [
                     ['East', 6],
                     ['West', 2],
@@ -75,6 +77,7 @@ $(function () {
                 ]
             }, {
                 id: 'other-2010',
+                name: 'Other 2010',
                 data: [
                     ['East', 2],
                     ['West', 7],
@@ -83,6 +86,7 @@ $(function () {
                 ]
             }, {
                 id: 'republican-2014',
+                name: 'Republican 2014',
                 data: [
                     ['East', 2],
                     ['West', 4],
@@ -91,6 +95,7 @@ $(function () {
                 ]
             }, {
                 id: 'democrats-2014',
+                name: 'Democrats 2014',
                 data: [
                     ['East', 4],
                     ['West', 2],
@@ -99,6 +104,7 @@ $(function () {
                 ]
             }, {
                 id: 'other-2014',
+                name: 'Other 2014',
                 data: [
                     ['East', 7],
                     ['West', 8],

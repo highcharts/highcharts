@@ -37,6 +37,8 @@ ServerName utils.highcharts.local
 </VirtualHost>
 ```
 
+**Note**: If you're running your apache server in a VirtualBox VM serving the util files from the host system, you may need to add `EnableSendfile Off` to the code directory configuration. This is because re-builds are not always picked up (and sometimes only partly picked up causing mangled output) without it due to internal OS caching.  
+
 3. Restart your browser and point it to <a href="http://utils.highcharts.local">utils.highcharts.local</a>.
 
 ## Tests

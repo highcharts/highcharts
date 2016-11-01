@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         title: {
             text: 'Exporting is loaded but <em>enabled</em> is false'
         },

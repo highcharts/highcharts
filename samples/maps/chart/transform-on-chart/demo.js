@@ -1,18 +1,15 @@
 $(function () {
 
-    var chart,
-        transforms = {
-            default: Highcharts.maps['countries/gb/gb-all']['hc-transform']['default'], // eslint-disable-line dot-notation
-            custom: Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland']
-        },
-        position;
+    var transforms = {
+        'default': Highcharts.maps['countries/gb/gb-all']['hc-transform']['default'], // eslint-disable-line dot-notation
+        custom: Highcharts.maps['countries/gb/gb-all']['hc-transform']['gb-all-shetland']
+    };
 
     delete Highcharts.maps['countries/gb/gb-all']['hc-transform']; // Remove transform from map
 
     // Initiate the chart
-    chart = Highcharts.Map({
+    Highcharts.mapChart('container', {
         chart: {
-            renderTo: 'container',
             map: Highcharts.maps['countries/gb/gb-all'],
             mapTransforms: transforms
         },

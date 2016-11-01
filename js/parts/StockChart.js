@@ -28,7 +28,6 @@ var arrayMax = H.arrayMax,
 	merge = H.merge,
 	pick = H.pick,
 	Point = H.Point,
-	Pointer = H.Pointer,
 	Renderer = H.Renderer,
 	Series = H.Series,
 	splat = H.splat,
@@ -171,19 +170,6 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		new Chart(a, options, c) :
 		new Chart(options, b);
 };
-
-// Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-
-	var pinchType = options.chart.pinchType || '';
-
-	proceed.call(this, chart, options);
-
-	// Pinch status
-	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
-	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
-	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
-});
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
@@ -339,8 +325,13 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	if (path && toPath && path.toString() !== toPath.toString()) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4],
-				path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
+			result.push(
+				'M', path[i + 1], path[i + 2],
+				'L', path[i + 4], path[i + 5],
+				toPath[i + 4], toPath[i + 5],
+				toPath[i + 1], toPath[i + 2],
+				'z'
+			);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -545,7 +536,7 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		if (value !== undefined) { // #2601
+		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
 			// get the modified value
 			value = compare === 'value' ?
@@ -557,9 +548,8 @@ seriesProto.setCompare = function (compare) {
 				point.change = value;
 			}
 
+			return value;
 		}
-
-		return value;
 	} : null;
 
 	// Survive to export, #5485

@@ -124,9 +124,8 @@ extend(Chart.prototype, {
 			);
 			addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
-		setTimeout(function () {
-			loadingDiv.className = 'highcharts-loading';
-		});
+		
+		loadingDiv.className = 'highcharts-loading';
 
 		// Update text
 		chart.loadingSpan.innerHTML = str || options.lang.loading;

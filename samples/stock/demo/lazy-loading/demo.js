@@ -4,7 +4,7 @@ $(function () {
      */
     function afterSetExtremes(e) {
 
-        var chart = $('#container').highcharts();
+        var chart = Highcharts.chart('container');
 
         chart.showLoading('Loading data from server...');
         $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
@@ -22,7 +22,7 @@ $(function () {
         data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 type: 'candlestick',
                 zoomType: 'x'

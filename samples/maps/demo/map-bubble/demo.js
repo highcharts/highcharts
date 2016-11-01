@@ -9,8 +9,8 @@ $(function () {
             }
         });
 
-        $('#container').highcharts('Map', {
-            chart : {
+        Highcharts.mapChart('container', {
+            chart: {
                 borderWidth: 1,
                 map: 'custom/world'
             },

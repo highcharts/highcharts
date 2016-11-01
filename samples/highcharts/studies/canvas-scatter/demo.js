@@ -18,7 +18,7 @@ $(function () {
 
     console.time('scatter');
     console.time('asyncRender');
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             zoomType: 'xy'

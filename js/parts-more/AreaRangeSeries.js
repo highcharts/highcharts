@@ -89,10 +89,16 @@ seriesType('arearange', 'area', {
 				point.isNull = true;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = point.yBottom = yAxis.toPixels(
+				point.plotHigh = yAxis.translate(
 					hasModifyValue ? series.modifyValue(high, point) : high,
-					true
+					0,
+					1,
+					0,
+					1
 				);
+				if (hasModifyValue) {
+					point.yBottom = point.plotHigh;
+				}
 			}
 		});
 

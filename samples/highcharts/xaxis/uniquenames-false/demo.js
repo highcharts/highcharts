@@ -1,10 +1,10 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
         title: {
-            text: 'X axis nameToX = false'
+            text: 'X axis uniqueNames = false'
         },
         xAxis: {
             type: 'category',

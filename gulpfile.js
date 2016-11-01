@@ -7,7 +7,6 @@ var colors = require('colors'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
-    closureCompiler = require('closurecompiler'),
     argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
@@ -36,6 +35,7 @@ var paths = {
     parts3D: ['./js/parts-3d/*.js'],
     partsMap: ['./js/parts-map/*.js'],
     partsMore: ['./js/parts-more/*.js'],
+    partsGantt: ['./js/parts-gantt/*.js'],
     themes: ['./js/themes/*.js']
 };
 
@@ -113,6 +113,14 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/gantt.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
+            'modules/grid-axis.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'modules/heatmap.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
@@ -151,11 +159,7 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
-            'modules/wip.grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/wip.xrange-series.src.js': {
+            'modules/xrange-series.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
@@ -234,15 +238,36 @@ const styles = () => {
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
- * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
+ * @parameter {string} -p Command line parameter to set pattern. To lint sample
+ *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
 const lint = () => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine();
     const formatter = cli.getFormatter();
-    let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**'];
+    let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
+    console.log(formatter(report.results));
+};
+
+/**
+ * Gulp task to execute ESLint on samples.
+ * @parameter {string} -p Command line parameter to set pattern. Example usage
+ *     gulp lint -p './samples/**'
+ * @return undefined Returns nothing
+ */
+const lintSamples = () => {
+    const CLIEngine = require('eslint').CLIEngine;
+    const cli = new CLIEngine({
+        ignorePattern: ['./samples/highcharts/common-js/*/demo.js']
+    });
+    const formatter = cli.getFormatter();
+    let report = cli.executeOnFiles([
+        './samples/*/*/*/demo.js',
+        './samples/*/*/*/test.js',
+        './samples/*/*/*/unit-tests.js'
+    ]);
     console.log(formatter(report.results));
 };
 
@@ -308,6 +333,7 @@ gulp.task('nightly', function () {
 });
 
 gulp.task('filesize', function () {
+    const closureCompiler = require('closurecompiler');
     var oldSize,
         newSize,
         filename = argv.file ? argv.file : 'highcharts.src.js';
@@ -380,35 +406,28 @@ gulp.task('filesize', function () {
 });
 
 const compile = (files, sourceFolder) => {
-    console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
-    return new Promise((resolve, reject) => {
-        const promises = files.map(path => {
-                return new Promise((resolveCompile, reject) => {
-                    const sourcePath = sourceFolder + path;
-                    const outputPath = sourcePath.replace('.src.js', '.js');
-                    closureCompiler.compile(
-                        [sourcePath],
-                        null,
-                        (error, result) => {
-                            if (result) {
-                                fs.writeFile(outputPath, result, 'utf8', (err) => {
-                                    if (!err) {
-                                        // @todo add filesize information
-                                        resolveCompile(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
-                                    } else {
-                                        reject(colors.red('Failed compiling ' + sourcePath + ' => ' + outputPath));
-                                    }
-                                });
-                            } else {
-                                reject('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                }).then(console.log);
+    console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
+    return new Promise((resolve) => {
+        files.forEach(path => {
+            const closureCompiler = require('google-closure-compiler-js');
+            // const fs = require('fs');
+            const U = require('./assembler/utilities.js');
+            const sourcePath = sourceFolder + path;
+            const outputPath = sourcePath.replace('.src.js', '.js');
+            const src = U.getFile(sourcePath);
+            const out = closureCompiler.compile({
+                compilationLevel: 'SIMPLE_OPTIMIZATIONS',
+                jsCode: [{
+                    src: src
+                }],
+                languageIn: 'ES5',
+                languageOut: 'ES5'
             });
-        Promise.all(promises).then(() => {
-            resolve('Compile is complete');
-        }).catch((err) => reject(err.message + '\n\r' + err.stack));
+            U.writeFile(outputPath, out.compiledCode);
+            // @todo add filesize information
+            console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
+        });
+        resolve('Compile is complete');
     });
 };
 
@@ -422,7 +441,7 @@ const compileScripts = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 /**
  * Compile the JS files in the /code folder
@@ -433,13 +452,19 @@ const compileLib = () => {
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
-}
+};
 
 const cleanCode = () => {
+    const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
-    return U.removeDirectory('./code').then(() => {
-        console.log('Successfully removed code directory.');
-    }).catch(console.log);
+    const codeFolder = './code/';
+    const files = B.getFilesInFolder(codeFolder, true, '');
+    const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
+    const promises = files
+        .filter(file => keep.indexOf(file) === -1)
+        .map(file => U.removeFile(codeFolder + file));
+    return Promise.all(promises)
+        .then(() => console.log('Successfully removed code directory.'));
 };
 
 const cleanDist = () => {
@@ -470,16 +495,24 @@ const copyToDist = () => {
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/js/' + path, content);
+                    U.writeFile(distFolder + lib + '/code/' + path, content);
                 }
             });
         });
 
+    // Copy readme to distribution packages
+    ['readme.txt'].forEach((path) => {
+        const content = fs.readFileSync(sourceFolder + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/code/' + path, content);
+        });
+    });
+
     // Copy lib files to the distribution packages. These files are used in the offline-export.
-    ['canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
+    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+            U.writeFile(distFolder + lib + '/code/lib/' + path, content);
         });
     });
     // Copy radial gradient to dist.
@@ -489,6 +522,37 @@ const copyToDist = () => {
             U.writeFile(distFolder + lib + '/gfx/' + path, content);
         });
     });
+};
+
+const createProductJS = () => {
+    const U = require('./assembler/utilities.js');
+    const D = require('./assembler/dependencies.js');
+    const path = './build/dist/products.js';
+
+    // @todo Get rid of build.properties and perhaps use package.json in stead.
+    const buildProperties = U.getFile('./build.properties');
+    let date = D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties);
+    let version = D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties);
+
+    // @todo Add reasonable defaults
+    date = date === null ? '' : date;
+    version = version === null ? '' : version;
+
+    const content = `var products = {
+    "Highcharts": {
+    "date": "${date}", 
+    "nr": "${version}"
+    },
+    "Highstock": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    }
+}`;
+    U.writeFile(path, content);
 };
 
 /**
@@ -621,11 +685,15 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('create-productjs', createProductJS);
+gulp.task('clean-dist', cleanDist);
+gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('build-modules', buildModules);
 gulp.task('lint', lint);
+gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);
@@ -633,14 +701,16 @@ gulp.task('download-api', downloadAllAPI);
  * Create distribution files
  */
 gulp.task('dist', () => {
-    return gulpify('cleanCode', cleanCode)()
-        .then(gulpify('styles', styles))
+    //return gulpify('cleanCode', cleanCode)()
+    //    .then(gulpify('styles', styles))
+    return gulpify('styles', styles)()
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
+        .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {

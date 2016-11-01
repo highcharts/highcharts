@@ -17,7 +17,7 @@
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
         "indent": ["error", "tab"],
         "lines-around-comment": 0,
-        //"_max-len": ["error", 80, 4],
+        //"max-len": ["warn", 80, 4],
         "newline-after-var": 0,
         "no-alert": 2,
         "no-console": 2,
@@ -36,7 +36,7 @@
             "named": "never"
         }], /*JSLint style*/
         "quotes": [2, "single"],
-        "spaced-comment": 0,
+        "spaced-comment": 0, // ["warn", "always", { "markers": ["="] }],
         "require-jsdoc": 0,
         "strict": 0,
         "valid-jsdoc": 0,

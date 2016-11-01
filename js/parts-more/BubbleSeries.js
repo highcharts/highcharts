@@ -78,6 +78,7 @@ seriesType('bubble', 'scatter', {
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
+	markerAttribs: null,
 
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
@@ -241,8 +242,11 @@ seriesType('bubble', 'scatter', {
 
 // Point class
 }, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	haloPath: function (size) {
+		return Point.prototype.haloPath.call(
+			this, 
+			this.shapeArgs.r + size
+		);
 	},
 	ttBelow: false
 });
@@ -296,7 +300,9 @@ Axis.prototype.beforePadding = function () {
 
 				});
 				series.minPxSize = extremes.minSize;
-				series.maxPxSize = extremes.maxSize;
+				// Prioritize min size if conflict to make sure bubbles are
+				// always visible. #5873
+				series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
 				// Find the min and max Z
 				zData = series.zData;

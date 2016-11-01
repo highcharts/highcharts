@@ -1,6 +1,6 @@
 $(function () {
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         exporting: {
             chartOptions: { // specific options for the exported image
@@ -21,7 +21,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Click the button to download as PNG/JPEG/SVG'
+            text: 'Click the button to download as PNG, JPEG, SVG or PDF'
         },
 
         chart: {

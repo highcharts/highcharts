@@ -6,15 +6,13 @@ $(function () {
         var start = +new Date();
 
         // Create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             chart: {
                 events: {
                     load: function () {
-                        if (!window.isComparing) {
-                            this.setTitle(null, {
-                                text: 'Built chart in ' + (new Date() - start) + 'ms'
-                            });
-                        }
+                        this.setTitle(null, {
+                            text: 'Built chart in ' + (new Date() - start) + 'ms'
+                        });
                     }
                 },
                 zoomType: 'x'

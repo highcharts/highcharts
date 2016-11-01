@@ -514,7 +514,6 @@ extend(Chart.prototype, {
 			menuPadding = Math.max(width, height), // for mouse leave detection
 			innerMenu,
 			hide,
-			hideTimer,
 			menuStyle,
 			docMouseUpHandler = function (e) {
 				if (!chart.pointer.inClass(e.target, className)) {
@@ -556,10 +555,10 @@ extend(Chart.prototype, {
 
 			// Hide the menu some time after mouse leave (#1357)
 			addEvent(menu, 'mouseleave', function () {
-				hideTimer = setTimeout(hide, 500);
+				menu.hideTimer = setTimeout(hide, 500);
 			});
 			addEvent(menu, 'mouseenter', function () {
-				clearTimeout(hideTimer);
+				clearTimeout(menu.hideTimer);
 			});
 
 
@@ -776,6 +775,7 @@ extend(Chart.prototype, {
 			each(exportDivElements, function (elem, i) {
 
 				// Remove the event handler
+				clearTimeout(elem.hideTimer); // #5427
 				removeEvent(elem, 'mouseleave');
 
 				// Remove inline events

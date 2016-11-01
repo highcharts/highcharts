@@ -172,8 +172,8 @@
 
                 // some extra thing to download, mainly used by internal links in css files
                 assets.images.push(apiUrl + 'resources/images/sprite.png');
-                assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png');
-                assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png');
+                // assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png');
+                // assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png');
                 assets.fonts.push('http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff');
                 assets.fonts.push('http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff2');
 

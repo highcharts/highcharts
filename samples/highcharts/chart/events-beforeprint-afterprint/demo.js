@@ -15,7 +15,7 @@ $(function () {
         }
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Rescale to print'

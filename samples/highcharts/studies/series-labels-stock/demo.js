@@ -9,7 +9,7 @@ $(function () {
      */
     function createChart() {
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 4
@@ -26,6 +26,10 @@ $(function () {
                     width: 2,
                     color: 'silver'
                 }]
+            },
+
+            xAxis: {
+                gridLineWidth: 1
             },
 
             plotOptions: {

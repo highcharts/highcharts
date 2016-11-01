@@ -23,8 +23,6 @@ $(function () {
         }]
     };
 
-    
-
     QUnit.test('Option chart.polar update', function (assert) {
         var chart = Highcharts.chart($('<div>').appendTo('#container')[0], Highcharts.merge(config));
 
