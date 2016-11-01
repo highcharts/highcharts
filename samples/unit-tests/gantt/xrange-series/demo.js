@@ -55,10 +55,7 @@ QUnit.test('translate()', function (assert) {
         partShapeArgs,
         partialFill;
 
-        // THE CHART
-    $('#container').highcharts(defaultChartConfig);
-
-    chart = $('#container').highcharts();
+    chart = Highcharts.chart('container', defaultChartConfig);
 
     points = chart.series[0].points;
     for (i = 0; i < points.length; i++) {
