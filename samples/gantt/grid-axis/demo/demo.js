@@ -1,7 +1,7 @@
 $(function () {
 
     // THE CHART
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'scatter',
             marginLeft: 150,
