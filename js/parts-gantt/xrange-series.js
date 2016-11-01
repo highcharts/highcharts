@@ -166,8 +166,13 @@ seriesTypes.xrange = extendClass(columnType, {
 				shapeArgs = point.shapeArgs,
 				partShapeArgs = point.partShapeArgs,
 				seriesOpts = series.options,
+				borderRadius = seriesOpts.borderRadius,
 				pfOptions = point.partialFill,
 				fill,
+				w,
+				h,
+				x,
+				y,
 				state = point.selected && 'select',
 				cutOff = options.stacking && !options.borderRadius;
 
@@ -189,12 +194,39 @@ seriesTypes.xrange = extendClass(columnType, {
 							'class': point.getClassName()
 						})
 						.add(point.group || series.group);
-					
+
 					point.graphicOriginal = renderer[type](shapeArgs)
 						.addClass('highcharts-partfill-original')
 						.add(graphic);
 					if (partShapeArgs) {
-						point.graphicOverlay = renderer[type](partShapeArgs)
+						w = partShapeArgs.width;
+						h = partShapeArgs.height;
+						x = partShapeArgs.x;
+						y = partShapeArgs.y;
+						point.graphicOverlay = renderer.path([
+							// Start in upper left corner
+							'M', x + borderRadius, y,
+
+							// Top side
+							'L', x + w - borderRadius, y,
+
+							// Right side
+							'L', x + w - borderRadius, y + h,
+
+							// Bottom side
+							'L', x + borderRadius, y + h,
+
+							// Bottom left corner
+							'C', x + borderRadius / 2, y + h, x, y + h - borderRadius / 2, x, y + h - borderRadius,
+
+							// Left side
+							'L', x, y + borderRadius,
+
+							// top left corner
+							'C', x, y + borderRadius / 2, x + borderRadius / 2, y, x + borderRadius, y,
+
+							'Z'
+						])
 							.addClass('highcharts-partfill-overlay')
 							.add(graphic);
 					}

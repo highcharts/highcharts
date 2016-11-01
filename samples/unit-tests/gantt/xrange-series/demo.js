@@ -104,6 +104,8 @@ QUnit.test('drawPoints()', function (assert) {
         $graphic,
         $graphOrig,
         $graphOver,
+        graphOverBox,
+        overR,
         origX,
         overX,
         origY,
@@ -112,7 +114,8 @@ QUnit.test('drawPoints()', function (assert) {
         overWidth,
         origHeight,
         overHeight,
-        partialFill;
+        partialFill,
+        error = 0.0001;
 
     // THE CHART
     chart = Highcharts.chart('container', defaultChartConfig);
@@ -123,37 +126,43 @@ QUnit.test('drawPoints()', function (assert) {
         $graphic = $(point.graphic.element);
         $graphOrig = $($graphic.find('.highcharts-partfill-original'));
         $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
+        graphOverBox = $graphOver[0].getBBox();
+        overR =  parseFloat($graphOver.attr('r'));
         origX = parseFloat($graphOrig.attr('x'));
-        overX = parseFloat($graphOver.attr('x'));
+        overX = parseFloat(graphOverBox.x);
         origY = parseFloat($graphOrig.attr('y'));
-        overY = parseFloat($graphOver.attr('y'));
+        overY = parseFloat(graphOverBox.y);
         origWidth = parseFloat($graphOrig.attr('width'));
-        overWidth = parseFloat($graphOver.attr('width'));
+        overWidth = parseFloat(graphOverBox.width) + overR;
         origHeight = parseFloat($graphOrig.attr('height'));
-        overHeight = parseFloat($graphOver.attr('height'));
+        overHeight = parseFloat(graphOverBox.height);
         partialFill = point.partialFill;
 
-        assert.equal(
+        assert.close(
             overY,
             origY + 0.5,
+            error,
             'point ' + i + ' partShapeArgs y-position is rendered correctly'
         );
 
-        assert.equal(
+        assert.close(
             overHeight,
             origHeight - 1,
+            error,
             'point ' + i + ' partShapeArgs height is rendered correctly'
         );
 
-        assert.equal(
+        assert.close(
             overX,
             origX,
+            error,
             'point ' + i + ' partShapeArgs has correct rendered x-position'
         );
 
-        assert.equal(
+        assert.close(
             overWidth,
             origWidth * partialFill,
+            error,
             'point ' + i + ' partShapeArgs has correct rendered width'
         );
     }
