@@ -5,12 +5,6 @@ QUnit.testStart(function () {
         chart: {
             type: 'xrange'
         },
-        title: {
-            text: 'Highcharts X-range study'
-        },
-        subtitle: {
-            text: 'With partially filled points'
-        },
         xAxis: {
             type: 'datetime',
             min: Date.UTC(2014, 11, 1),
@@ -133,6 +127,7 @@ QUnit.test('drawPoints()', function (assert) {
         $graphic,
         $graphOrig,
         $graphOver,
+        clipRectID,
         $clipRect,
         graphOverBox,
         origX,
@@ -158,7 +153,8 @@ QUnit.test('drawPoints()', function (assert) {
         $graphOrig = $($graphic.find('.highcharts-partfill-original'));
         $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
         graphOverBox = $graphOver[0].getBBox();
-        $clipRect = $($graphOver.attr('clip-path').replace(/url\(|\)/g, '') + ' rect');
+        clipRectID = $graphOver.attr('clip-path').replace(/url\(|\)/g, '');
+        $clipRect = $(clipRectID + ' rect');
         origX = parseFloat($graphOrig.attr('x'));
         overX = parseFloat(graphOverBox.x);
         origY = parseFloat($graphOrig.attr('y'));
