@@ -142,9 +142,9 @@ seriesTypes.xrange = extendClass(columnType, {
 				shapeArgs = point.shapeArgs;
 				point.partShapeArgs = {
 					x: shapeArgs.x,
-					y: shapeArgs.y + 1,
+					y: shapeArgs.y + 0.5,
 					width: shapeArgs.width * partialFill,
-					height: shapeArgs.height - 2
+					height: shapeArgs.height - 1
 				};
 			}
 		});

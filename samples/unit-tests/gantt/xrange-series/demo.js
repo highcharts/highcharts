@@ -69,13 +69,13 @@ QUnit.test('translate()', function (assert) {
 
         assert.equal(
             partShapeArgs.y,
-            shapeArgs.y + 1,
+            shapeArgs.y + 0.5,
             'point ' + i + ' partShapeArgs y-position is correctly calculated'
         );
 
         assert.equal(
             partShapeArgs.height,
-            shapeArgs.height - 2,
+            shapeArgs.height - 1,
             'point ' + i + ' partShapeArgs height is correctly calculated'
         );
 
@@ -135,13 +135,13 @@ QUnit.test('drawPoints()', function (assert) {
 
         assert.equal(
             overY,
-            origY + 1,
+            origY + 0.5,
             'point ' + i + ' partShapeArgs y-position is rendered correctly'
         );
 
         assert.equal(
             overHeight,
-            origHeight - 2,
+            origHeight - 1,
             'point ' + i + ' partShapeArgs height is rendered correctly'
         );
 
