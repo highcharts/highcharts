@@ -28,6 +28,10 @@ $(function () {
                 }]
             },
 
+            xAxis: {
+                gridLineWidth: 1
+            },
+
             plotOptions: {
                 series: {
                     compare: 'percent'

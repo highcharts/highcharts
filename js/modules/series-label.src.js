@@ -337,71 +337,50 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 
 };
 
-
 /**
  * The main initiator method that runs on chart level after initiation and redraw. It runs in 
  * a timeout to prevent locking, and loops over all series, taking all series and labels into
  * account when placing the labels.
  */
-function drawLabels(proceed) {
-
+Chart.prototype.drawSeriesLabels = function () {
 	var chart = this,
-		labelSeries = [],
-		delay = 0;
+		labelSeries = this.labelSeries;
 
-	proceed.call(chart);
+	chart.boxesToAvoid = [];
 
-	clearTimeout(chart.seriesLabelTimer);
+	// Build the interpolated points
+	each(labelSeries, function (series) {
+		series.interpolatedPoints = series.getPointsOnGraph();
 
-	// Which series should have labels
-	each(chart.series, function (series) {
-		var options = series.options.label;
-		if (options.enabled && series.visible && (series.graph || series.area)) {
-			labelSeries.push(series);
-
-			// The labels are processing heavy, wait until the animation is done
-			delay = Math.max(
-				delay,
-				H.animObject(series.options.animation).duration
-			);
-		}
+		each(series.options.label.boxesToAvoid || [], function (box) {
+			chart.boxesToAvoid.push(box);
+		});
 	});
 
-	chart.seriesLabelTimer = setTimeout(function () {
-		chart.boxesToAvoid = [];
+	each(chart.series, function (series) {
+		var bBox,
+			x,
+			y,
+			results = [],
+			clearPoint,
+			i,
+			best,
+			inverted = chart.inverted,
+			paneLeft = inverted ? series.yAxis.pos : series.xAxis.pos,
+			paneTop = inverted ? series.xAxis.pos : series.yAxis.pos,
+			paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
+			paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
+			points = series.interpolatedPoints;
 
-		// Build the interpolated points
-		each(labelSeries, function (series) {
-			series.interpolatedPoints = series.getPointsOnGraph();
+		function insidePane(x, y, bBox) {
+			return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
+				y >= paneTop && y <= paneTop + paneHeight - bBox.height;
+		}
 
-			each(series.options.label.boxesToAvoid || [], function (box) {
-				chart.boxesToAvoid.push(box);
-			});
-		});
-
-		each(labelSeries, function (series) {
-			var bBox,
-				x,
-				y,
-				results = [],
-				clearPoint,
-				i,
-				best,
-				inverted = chart.inverted,
-				paneLeft = inverted ? series.yAxis.pos : series.xAxis.pos,
-				paneTop = inverted ? series.xAxis.pos : series.yAxis.pos,
-				paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
-				paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
-				points = series.interpolatedPoints;
-
-			function insidePane(x, y, bBox) {
-				return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
-					y >= paneTop && y <= paneTop + paneHeight - bBox.height;
-			}
-
-
+		if (series.visible && points) {
 			if (!series.labelBySeries) {
-				series.labelBySeries = chart.renderer.label(series.name, 0, -9999, 'connector')
+				series.labelBySeries = chart.renderer
+					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
 						color: series.color
 					}, series.options.label.styles))
@@ -418,7 +397,8 @@ function drawLabels(proceed) {
 			bBox = series.labelBySeries.getBBox();
 			bBox.width = Math.round(bBox.width);
 
-			// Ideal positions are centered above or below a point on right side of chart
+			// Ideal positions are centered above or below a point on right side
+			// of chart
 			for (i = points.length - 1; i > 0; i -= 1) {
 
 				// Right - up
@@ -522,8 +502,42 @@ function drawLabels(proceed) {
 			} else if (series.labelBySeries) {
 				series.labelBySeries = series.labelBySeries.destroy();
 			}
-		});
-	}, delay);
+		}
+	});
+};
+
+/**
+ * Prepare drawing series labels
+ */
+function drawLabels(proceed) {
+
+	var chart = this,
+		delay = 0,
+		initial = !chart.hasRendered;
+
+	proceed.apply(chart, [].slice.call(arguments, 1));
+
+	chart.labelSeries = [];
+
+	clearTimeout(chart.seriesLabelTimer);
+
+	// Which series should have labels
+	each(chart.series, function (series) {
+		var options = series.options.label;
+		if (options.enabled && series.visible && (series.graph || series.area)) {
+			chart.labelSeries.push(series);
+
+			// The labels are processing heavy, wait until the animation is done
+			delay = Math.max(
+				delay,
+				H.animObject(series.options.animation).duration
+			);
+		}
+	});
+
+	chart.seriesLabelTimer = setTimeout(function () {
+		chart.drawSeriesLabels();
+	}, initial ? delay : 250);
 
 }
 wrap(Chart.prototype, 'render', drawLabels);
