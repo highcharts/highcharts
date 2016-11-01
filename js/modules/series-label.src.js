@@ -492,11 +492,11 @@ Chart.prototype.drawSeriesLabels = function () {
 						Math.round(best.y) !== Math.round(label.y)) {
 					series.labelBySeries
 						.attr({
+							opacity: 0,
 							x: best.x - paneLeft,
 							y: best.y - paneTop,
 							anchorX: best.connectorPoint && best.connectorPoint.plotX,
-							anchorY: best.connectorPoint && best.connectorPoint.plotY,
-							opacity: 0
+							anchorY: best.connectorPoint && best.connectorPoint.plotY
 						})
 						.animate({ opacity: 1 });
 
@@ -528,7 +528,10 @@ Chart.prototype.drawSeriesLabels = function () {
 function drawLabels(proceed) {
 
 	var chart = this,
-		delay = 0,
+		delay = Math.max(
+			H.animObject(chart.renderer.globalAnimation).duration,
+			250
+		),
 		initial = !chart.hasRendered;
 
 	proceed.apply(chart, [].slice.call(arguments, 1));
@@ -547,24 +550,30 @@ function drawLabels(proceed) {
 			chart.labelSeries.push(series);
 
 			// The labels are processing heavy, wait until the animation is done
-			delay = Math.max(
-				delay,
-				H.animObject(series.options.animation).duration
-			);
+			if (initial) {
+				delay = Math.max(
+					delay,
+					H.animObject(series.options.animation).duration
+				);
+			}
 
 			// Keep the position updated to the axis while redrawing
 			if (closest) {
-				label.animate({
-					x: H.pick(closest[0].plotX, -999) + closest[1],
-					y: closest[0].plotY + closest[2]
-				});
+				if (closest[0].plotX !== undefined) {
+					label.animate({
+						x: closest[0].plotX + closest[1],
+						y: closest[0].plotY + closest[2]
+					});
+				} else {
+					label.attr({ opacity: 0 });
+				}
 			}
 		}
 	});
 
 	chart.seriesLabelTimer = setTimeout(function () {
 		chart.drawSeriesLabels();
-	}, initial ? delay : 250);
+	}, delay);
 
 }
 wrap(Chart.prototype, 'render', drawLabels);
