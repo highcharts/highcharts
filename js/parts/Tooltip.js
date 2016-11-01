@@ -391,7 +391,7 @@ H.Tooltip.prototype = {
 	refresh: function (point, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
-			label = tooltip.getLabel(),
+			label,
 			options = tooltip.options,
 			x,
 			y,
@@ -452,6 +452,8 @@ H.Tooltip.prototype = {
 		if (text === false) {
 			this.hide();
 		} else {
+
+			label = tooltip.getLabel();
 
 			// show it
 			if (tooltip.isHidden) {
