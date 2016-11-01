@@ -632,13 +632,21 @@ Legend.prototype = {
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
-				clipRect.attr({
-					height: height
-				});
+				if (height) {
+					clipRect.attr({
+						height: height
+					});
+				} else { // Reset (#5912)
+					legend.clipRect = clipRect.destroy();
+					legend.contentGroup.clip();
+				}
 
 				// useHTML
 				if (legend.contentGroup.div) {
-					legend.contentGroup.div.style.clip = 'rect(' + padding + 'px,9999px,' + (padding + height) + 'px,0)';
+					legend.contentGroup.div.style.clip = height ? 
+						'rect(' + padding + 'px,9999px,' +
+							(padding + height) + 'px,0)' :
+						'auto';
 				}
 			};
 
@@ -713,8 +721,9 @@ Legend.prototype = {
 
 			legendHeight = spaceHeight;
 
+		// Reset
 		} else if (nav) {
-			clipToHeight(chart.chartHeight);
+			clipToHeight();
 			nav.hide();
 			this.scrollGroup.attr({
 				translateY: 1

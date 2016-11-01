@@ -437,7 +437,10 @@ H.Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = defaultOptions.lang.numericSymbols,
+			lang = defaultOptions.lang,
+			numericSymbols = lang.numericSymbols,
+			// docs: new option, added to API. Add it to the I18n article too.
+			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
@@ -460,7 +463,7 @@ H.Axis.prototype = {
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === undefined) {
-				multi = Math.pow(1000, i + 1);
+				multi = Math.pow(numSymMagnitude, i + 1);
 				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
 					ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
 				}

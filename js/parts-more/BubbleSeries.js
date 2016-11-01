@@ -242,8 +242,11 @@ seriesType('bubble', 'scatter', {
 
 // Point class
 }, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	haloPath: function (size) {
+		return Point.prototype.haloPath.call(
+			this, 
+			this.shapeArgs.r + size
+		);
 	},
 	ttBelow: false
 });

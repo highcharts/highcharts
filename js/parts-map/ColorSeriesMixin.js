@@ -19,7 +19,7 @@ H.colorPointMixin = {
 	 * Color points have a value option that determines whether or not it is a null point
 	 */
 	isValid: function () {
-		return H.isNumber(this.value);
+		return this.value !== null;
 	},
 
 	/**
