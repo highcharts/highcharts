@@ -57,6 +57,7 @@ QUnit.test('translate()', function (assert) {
         points,
         shapeArgs,
         partShapeArgs,
+        clipRectArgs,
         partialFill;
 
     chart = Highcharts.chart('container', defaultChartConfig);
@@ -66,8 +67,10 @@ QUnit.test('translate()', function (assert) {
         point = points[i];
         shapeArgs = point.shapeArgs;
         partShapeArgs = point.partShapeArgs;
+        clipRectArgs = point.clipRectArgs;
         partialFill = point.partialFill;
 
+        // partShapeArgs
         assert.equal(
             partShapeArgs.y,
             shapeArgs.y + 0.5,
@@ -82,14 +85,39 @@ QUnit.test('translate()', function (assert) {
 
         assert.equal(
             partShapeArgs.x,
-            shapeArgs.x,
+            shapeArgs.x + 0.5,
             'point ' + i + ' partShapeArgs has correct calulated x-position'
         );
 
         assert.equal(
             partShapeArgs.width,
-            shapeArgs.width * partialFill,
+            shapeArgs.width - 1,
             'point ' + i + ' partShapeArgs has correct calculated width'
+        );
+
+        // clipRectArgs
+        assert.equal(
+            clipRectArgs.y,
+            shapeArgs.y,
+            'point ' + i + ' clipRectArgs y-position is correctly calculated'
+        );
+
+        assert.equal(
+            clipRectArgs.height,
+            shapeArgs.height,
+            'point ' + i + ' clipRectArgs height is correctly calculated'
+        );
+
+        assert.equal(
+            clipRectArgs.x,
+            shapeArgs.x,
+            'point ' + i + ' clipRectArgs has correct calulated x-position'
+        );
+
+        assert.equal(
+            clipRectArgs.width,
+            shapeArgs.width * partialFill,
+            'point ' + i + ' clipRectArgs has correct calculated width'
         );
     }
 });
@@ -105,16 +133,18 @@ QUnit.test('drawPoints()', function (assert) {
         $graphic,
         $graphOrig,
         $graphOver,
+        $clipRect,
         graphOverBox,
-        overR,
         origX,
         overX,
         origY,
         overY,
         origWidth,
         overWidth,
+        clipWidth,
         origHeight,
         overHeight,
+        clipHeight,
         partialFill,
         error = 0.0001;
 
@@ -128,17 +158,20 @@ QUnit.test('drawPoints()', function (assert) {
         $graphOrig = $($graphic.find('.highcharts-partfill-original'));
         $graphOver = $($graphic.find('.highcharts-partfill-overlay'));
         graphOverBox = $graphOver[0].getBBox();
-        overR =  parseFloat($graphOver.attr('r'));
+        $clipRect = $($graphOver.attr('clip-path').replace(/url\(|\)/g, '') + ' rect');
         origX = parseFloat($graphOrig.attr('x'));
         overX = parseFloat(graphOverBox.x);
         origY = parseFloat($graphOrig.attr('y'));
         overY = parseFloat(graphOverBox.y);
         origWidth = parseFloat($graphOrig.attr('width'));
-        overWidth = parseFloat(graphOverBox.width) + overR;
+        overWidth = parseFloat(graphOverBox.width);
+        clipWidth = parseFloat($clipRect.attr('width'));
         origHeight = parseFloat($graphOrig.attr('height'));
         overHeight = parseFloat(graphOverBox.height);
+        clipHeight = parseFloat($clipRect.attr('height'));
         partialFill = point.partialFill;
 
+        // partShapeArgs
         assert.close(
             overY,
             origY + 0.5,
@@ -155,16 +188,31 @@ QUnit.test('drawPoints()', function (assert) {
 
         assert.close(
             overX,
-            origX,
+            origX + 0.5,
             error,
             'point ' + i + ' partShapeArgs has correct rendered x-position'
         );
 
         assert.close(
             overWidth,
-            origWidth * partialFill,
+            origWidth - 1,
             error,
             'point ' + i + ' partShapeArgs has correct rendered width'
+        );
+
+        // clipRectArgs
+        assert.close(
+            clipHeight,
+            origHeight,
+            error,
+            'point ' + i + ' clipRectArgs height is rendered correctly'
+        );
+
+        assert.close(
+            clipWidth,
+            origWidth * partialFill,
+            error,
+            'point ' + i + ' clipRectArgs has correct rendered width'
         );
     }
 });

@@ -141,10 +141,16 @@ seriesTypes.xrange = extendClass(columnType, {
 				}
 				shapeArgs = point.shapeArgs;
 				point.partShapeArgs = {
-					x: shapeArgs.x,
+					x: shapeArgs.x + 0.5,
 					y: shapeArgs.y + 0.5,
-					width: shapeArgs.width * partialFill,
+					width: shapeArgs.width - 1,
 					height: shapeArgs.height - 1
+				};
+				point.clipRectArgs = {
+					x: shapeArgs.x,
+					y: shapeArgs.y,
+					width: shapeArgs.width * partialFill,
+					height: shapeArgs.height
 				};
 			}
 		});
@@ -165,14 +171,10 @@ seriesTypes.xrange = extendClass(columnType, {
 				type = point.shapeType,
 				shapeArgs = point.shapeArgs,
 				partShapeArgs = point.partShapeArgs,
+				clipRectArgs = point.clipRectArgs,
 				seriesOpts = series.options,
-				borderRadius = seriesOpts.borderRadius,
 				pfOptions = point.partialFill,
 				fill,
-				w,
-				h,
-				x,
-				y,
 				state = point.selected && 'select',
 				cutOff = options.stacking && !options.borderRadius;
 
@@ -186,6 +188,9 @@ seriesTypes.xrange = extendClass(columnType, {
 						point.graphicOverlay[verb](
 							merge(partShapeArgs)
 						);
+						point.clipRect.animate(
+							merge(clipRectArgs)
+						);
 					}
 
 				} else {
@@ -198,37 +203,19 @@ seriesTypes.xrange = extendClass(columnType, {
 					point.graphicOriginal = renderer[type](shapeArgs)
 						.addClass('highcharts-partfill-original')
 						.add(graphic);
-					if (partShapeArgs) {
-						w = partShapeArgs.width;
-						h = partShapeArgs.height;
-						x = partShapeArgs.x;
-						y = partShapeArgs.y;
-						point.graphicOverlay = renderer.path([
-							// Start in upper left corner
-							'M', x + borderRadius, y,
+					if (clipRectArgs && partShapeArgs) {
 
-							// Top side
-							'L', x + w - borderRadius, y,
+						point.clipRect = renderer.clipRect(
+							clipRectArgs.x,
+							clipRectArgs.y,
+							clipRectArgs.width,
+							clipRectArgs.height
+						);
 
-							// Right side
-							'L', x + w - borderRadius, y + h,
-
-							// Bottom side
-							'L', x + borderRadius, y + h,
-
-							// Bottom left corner
-							'C', x + borderRadius / 2, y + h, x, y + h - borderRadius / 2, x, y + h - borderRadius,
-
-							// Left side
-							'L', x, y + borderRadius,
-
-							// top left corner
-							'C', x, y + borderRadius / 2, x + borderRadius / 2, y, x + borderRadius, y,
-
-							'Z'
-						])
+						point.graphicOverlay = renderer[type](partShapeArgs)
 							.addClass('highcharts-partfill-overlay')
-							.add(graphic);
+							.add(graphic)
+							.clip(point.clipRect);
 					}
 				}
 
@@ -245,7 +232,7 @@ seriesTypes.xrange = extendClass(columnType, {
 					if (isObject(seriesOpts.partialFill)) {
 						pfOptions = merge(pfOptions, seriesOpts.partialFill);
 					}
-					
+
 					fill = pfOptions.fill ||
 							color(series.color).brighten(-0.3).get('rgb');
 					point.graphicOverlay
