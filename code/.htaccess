@@ -32,6 +32,7 @@ RewriteRule (.*?)map.js $1map.src.js
 RewriteRule (.*?)no-data-to-display.js $1no-data-to-display.src.js
 RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
 RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
+RewriteRule (.*?)series-label.js $1series-label.src.js
 RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
 RewriteRule (.*?)xrange-series.js $1xrange-series.src.js
 

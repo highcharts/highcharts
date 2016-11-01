@@ -345,26 +345,38 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
  */
 function drawLabels(proceed) {
 
-	var chart = this;
+	var chart = this,
+		labelSeries = [],
+		delay = 0;
 
 	proceed.call(chart);
 
 	clearTimeout(chart.seriesLabelTimer);
 
-	chart.seriesLabelTimer = setTimeout(function () {
+	// Which series should have labels
+	each(chart.series, function (series) {
+		var options = series.options.label;
+		if (options.enabled && series.visible && (series.graph || series.area)) {
+			labelSeries.push(series);
 
+			// The labels are processing heavy, wait until the animation is done
+			delay = Math.max(
+				delay,
+				H.animObject(series.options.animation).duration
+			);
+		}
+	});
+
+	chart.seriesLabelTimer = setTimeout(function () {
 		chart.boxesToAvoid = [];
 
 		// Build the interpolated points
-		each(chart.series, function (series) {
-			var options = series.options.label;
-			if (options.enabled && series.visible && (series.graph || series.area)) {
-				series.interpolatedPoints = series.getPointsOnGraph();
+		each(labelSeries, function (series) {
+			series.interpolatedPoints = series.getPointsOnGraph();
 
-				each(options.boxesToAvoid || [], function (box) {
-					chart.boxesToAvoid.push(box);
-				});
-			}
+			each(series.options.label.boxesToAvoid || [], function (box) {
+				chart.boxesToAvoid.push(box);
+			});
 		});
 
 		each(chart.series, function (series) {
@@ -513,7 +525,7 @@ function drawLabels(proceed) {
 				}
 			}
 		});
-	}, 350);
+	}, delay);
 
 }
 wrap(Chart.prototype, 'render', drawLabels);
