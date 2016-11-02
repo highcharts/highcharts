@@ -5,6 +5,13 @@
  */
 'use strict';
 import H from './Globals.js';
+
+/**
+ * The Highcharts object is the placeholder for all other members, and various
+ * utility functions.
+ * @namespace Highcharts
+ */
+
 var timers = [];
 
 var charts = H.charts,
@@ -12,7 +19,16 @@ var charts = H.charts,
 	win = H.win;
 
 /**
- * Provide error messages for debugging, with links to online explanation
+ * Provide error messages for debugging, with links to online explanation. This
+ * function can be overridden to provide custom error handling.
+ *
+ * @function #error
+ * @memberOf Highcharts
+ * @param {Number} code - The error code. See [errors.xml]{@link 
+ *        https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
+ *        for available codes.
+ * @param {Boolean} stop - Whether to throw an error or just log a warning in
+ *        the console.
  */
 H.error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
@@ -32,6 +48,7 @@ H.error = function (code, stop) {
  * @param {object} elem	The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
  * @param {object} options Animation options, including duration, easing, step and complete.
  * @param {object} prop	The property to animate.
+ * @returns {void}
  */
 H.Fx = function (elem, options, prop) {
 	this.options = options;
@@ -325,9 +342,13 @@ H.Fx.prototype = {
 
 
 /**
- * Extend an object with the members of another
- * @param {Object} a The object to be extended
- * @param {Object} b The object to add to the first one
+ * Utility function to extend an object with the members of another.
+ *
+ * @function #extend
+ * @memberOf Highcharts
+ * @param {Object} a - The object to be extended.
+ * @param {Object} b - The object to add to the first one.
+ * @returns {Object} Object a, the original object.
  */
 H.extend = function (a, b) {
 	var n;
@@ -341,11 +362,20 @@ H.extend = function (a, b) {
 };
 
 /**
- * Deep merge two or more objects and return a third object. If the first argument is
- * true, the contents of the second object is copied into the first object.
- * Previously this function redirected to jQuery.extend(true), but this had two limitations.
- * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
- * it copied properties from extended prototypes.
+ * Utility function to deep merge two or more objects and return a third object.
+ * If the first argument is true, the contents of the second object is copied
+ * into the first object. The merge function can also be used with a single 
+ * object argument to create a deep copy of an object.
+ *
+ * @function #merge
+ * @memberOf Highcharts
+ * @param {Boolean} [extend] - Whether to extend the left-side object (a) or
+          return a whole new object.
+ * @param {Object} a - The first object to extend. When only this is given, the
+          function returns a copy.
+ * @param {...Object} n - The n'th object to merge into the previous ones.
+ * @returns {Object} - The merged object. If the first argument is true, the 
+ *        return is the same as the second argument.
  */
 H.merge = function () {
 	var i,
@@ -403,17 +433,24 @@ H.pInt = function (s, mag) {
 };
 
 /**
- * Check for string
- * @param {Object} s
+ * Utility function to check for string type.
+ *
+ * @function #isString
+ * @memberOf Highcharts
+ * @param {Object} s - The item to check.
+ * @returns {Boolean} - True if the argument is a string.
  */
 H.isString = function (s) {
 	return typeof s === 'string';
 };
 
 /**
- * Check for object
- * @param {Object} obj
- * @param {Boolean} strict Also checks that the object is not an array
+ * Utility function to check if an item is an array.
+ *
+ * @function #isArray
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @returns {Boolean} - True if the argument is an array.
  */
 H.isArray = function (obj) {
 	var str = Object.prototype.toString.call(obj);
@@ -421,25 +458,37 @@ H.isArray = function (obj) {
 };
 
 /**
- * Check for array
- * @param {Object} obj
+ * Utility function to check if an item is of type object.
+ *
+ * @function #isObject
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @param {Boolean} strict - Also checks that the object is not an array.
+ * @returns {Boolean} - True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
 	return obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
 };
 
 /**
- * Check for number
- * @param {Object} n
+ * Utility function to check if an item is of type number.
+ *
+ * @function #isNumber
+ * @memberOf Highcharts
+ * @param {Object} n - The item to check.
+ * @returns {Boolean} - True if the item is a number and is not NaN.
  */
 H.isNumber = function (n) {
 	return typeof n === 'number' && !isNaN(n);
 };
 
 /**
- * Remove last occurence of an item from an array
- * @param {Array} arr
- * @param {Mixed} item
+ * Remove the last occurence of an item from an array.
+ *
+ * @function #erase
+ * @memberOf Highcharts
+ * @param {Array} arr - The array.
+ * @param {*} item - The item to remove.
  */
 H.erase = function (arr, item) {
 	var i = arr.length;
@@ -449,24 +498,32 @@ H.erase = function (arr, item) {
 			break;
 		}
 	}
-	//return arr;
 };
 
 /**
- * Returns true if the object is not null or undefined.
- * @param {Object} obj
+ * Check if an object is null or undefined.
+ *
+ * @function #defined
+ * @memberOf Highcharts
+ * @param {Object} obj - The object to check.
+ * @returns {Boolean} - False if the object is null or undefined, otherwise
+ *        true.
  */
 H.defined = function (obj) {
 	return obj !== undefined && obj !== null;
 };
 
 /**
- * Set or get an attribute or an object of attributes. Can't use jQuery attr because
- * it attempts to set expando properties on the SVG element, which is not allowed.
+ * Set or get an attribute or an object of attributes. To use as a setter, pass
+ * a key and a value, or let the second argument be a collection of keys and
+ * values. To use as a getter, pass only a string as the second argument.
  *
- * @param {Object} elem The DOM element to receive the attribute(s)
- * @param {String|Object} prop The property or an abject of key-value pairs
- * @param {String} value The value if a single property is set
+ * @function #attr
+ * @memberOf Highcharts
+ * @param {Object} elem - The DOM element to receive the attribute(s).
+ * @param {String|Object} prop - The property or an object of key-value pairs.
+ * @param {String} value - The value if a single property is set.
+ * @returns {*} When used as a getter, return the value.
  */
 H.attr = function (elem, prop, value) {
 	var key,
@@ -491,19 +548,30 @@ H.attr = function (elem, prop, value) {
 	}
 	return ret;
 };
+
 /**
  * Check if an element is an array, and if not, make it into an array.
+ *
+ * @function #splat
+ * @memberOf Highcharts
+ * @param obj {*} - The object to splat.
+ * @returns {Array} The produced or original array.
  */
 H.splat = function (obj) {
 	return H.isArray(obj) ? obj : [obj];
 };
 
 /**
- * Set a timeout if the delay is given, otherwise perform the function synchronously
- * @param   {Function} fn	  The function to perform
- * @param   {Number}   delay   Delay in milliseconds
- * @param   {Ojbect}   context The context
- * @returns {Nubmer}		   An identifier for the timeout
+ * Set a timeout if the delay is given, otherwise perform the function
+ * synchronously.
+ *
+ * @function #syncTimeout
+ * @memberOf Highcharts
+ * @param   {Function} fn - The function callback.
+ * @param   {Number}   delay - Delay in milliseconds.
+ * @param   {Object}   context - The context.
+ * @returns {Number} An identifier for the timeout that can later be cleared
+ * with clearTimeout.
  */
 H.syncTimeout = function (fn, delay, context) {
 	if (delay) {
@@ -514,7 +582,12 @@ H.syncTimeout = function (fn, delay, context) {
 
 
 /**
- * Return the first value that is defined.
+ * Return the first value that is not null or undefined.
+ *
+ * @function #pick
+ * @memberOf Highcharts
+ * @param {...*} items - Variable number of arguments to inspect.
+ * @returns {*} The value of the first argument that is not null or undefined.
  */
 H.pick = function () {
 	var args = arguments,
@@ -530,9 +603,13 @@ H.pick = function () {
 };
 
 /**
- * Set CSS on a given element
- * @param {Object} el
- * @param {Object} styles Style object with camel case property names
+ * Set CSS on a given element.
+ *
+ * @function #css
+ * @memberOf Highcharts
+ * @param {Object} el - A HTML DOM element.
+ * @param {Object} styles - Style object with camel case property names.
+ * @returns {void}
  */
 H.css = function (el, styles) {
 	if (H.isMS && !H.svg) { // #2686
@@ -544,12 +621,16 @@ H.css = function (el, styles) {
 };
 
 /**
- * Utility function to create element with attributes and styles
- * @param {Object} tag
- * @param {Object} attribs
- * @param {Object} styles
- * @param {Object} parent
- * @param {Object} nopad
+ * Utility function to create an HTML element with attributes and styles.
+ *
+ * @function #createElement
+ * @memberOf Highcharts
+ * @param {String} tag - The HTML tag.
+ * @param {Object} attribs - Attributes as an object of key-value pairs.
+ * @param {Object} styles - Styles as an object of key-value pairs.
+ * @param {Object} parent - The parent HTML object.
+ * @param {Boolean} nopad - If true, remove all padding, border and margin.
+ * @returns {Object} The created DOM element.
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag),
@@ -570,40 +651,64 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
 };
 
 /**
- * Extend a prototyped class by new members
- * @param {Object} parent
- * @param {Object} members
+ * Extend a prototyped class by new members.
+ *
+ * @function #extendClass
+ * @memberOf Highcharts
+ * @param {Object} parent - The parent prototype to inherit.
+ * @param {Object} members - A collection of prototype members to add or
+ *        override compared to the parent prototype.
+ * @returns {Object} A new prototype.
  */
-H.extendClass = function (Parent, members) {
+H.extendClass = function (parent, members) {
 	var object = function () {};
-	object.prototype = new Parent();
+	object.prototype = new parent(); // eslint-disable-line new-cap
 	H.extend(object.prototype, members);
 	return object;
 };
 
 /**
- * Pad a string to a given length by adding 0 to the beginning
- * @param {Number} number
- * @param {Number} length
+ * Left-pad a string to a given length by adding a character repetetively.
+ *
+ * @function #pad
+ * @memberOf Highcharts
+ * @param {Number} number - The input string or number.
+ * @param {Number} length - The desired string length.
+ * @param {String} padder - The character to pad with. Defaults to "0".
+ * @returns {String} The padded string.
  */
 H.pad = function (number, length, padder) {
-	return new Array((length || 2) + 1 - String(number).length).join(padder || 0) + number;
+	return new Array((length || 2) + 1 -
+		String(number).length).join(padder || 0) + number;
 };
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
+ *
+ * @function #relativeLength
+ * @memberOf Highcharts
+ * @param {*} value - A percentage string or a number. For example "50%" or 50.
+ * @param {Number} base - The full length that represents 100%.
+ * @returns {Number} The computed length.
  */
 H.relativeLength = function (value, base) {
-	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
+	return (/%$/).test(value) ?
+		base * parseFloat(value) / 100 :
+		parseFloat(value);
 };
 
 /**
- * Wrap a method with extended functionality, preserving the original function
- * @param {Object} obj The context object that the method belongs to
- * @param {String} method The name of the method to extend
- * @param {Function} func A wrapper function callback. This function is called with the same arguments
- * as the original function, except that the original function is unshifted and passed as the first
- * argument.
+ * Wrap a method with extended functionality, preserving the original function.
+ *
+ * @function #wrap
+ * @memberOf Highcharts
+ * @param {Object} obj - The context object that the method belongs to. In real
+ *        cases, this is often a prototype.
+ * @param {String} method - The name of the method to extend.
+ * @param {Function} func - A wrapper function callback. This function is called
+ *        with the same arguments as the original function, except that the
+ *        original function is unshifted and passed as the first argument.
+ * @returns {void}
  */
 H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
@@ -614,17 +719,31 @@ H.wrap = function (obj, method, func) {
 	};
 };
 
-
+/**
+ * Get the time zone offset based on the current timezone information as set in
+ * the global options.
+ *
+ * @function #getTZOffset
+ * @memberOf Highcharts
+ * @param  {Number} timestamp - The JavaScript timestamp to inspect.
+ * @return {Number} - The timezone offset in minutes compared to UTC.
+ */
 H.getTZOffset = function (timestamp) {
 	var d = H.Date;
 	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
 };
 
 /**
- * Based on http://www.php.net/manual/en/function.strftime.php
- * @param {String} format
- * @param {Number} timestamp
- * @param {Boolean} capitalize
+ * Format a date, based on the syntax for PHP's [strftime]
+ * {@link http://www.php.net/manual/en/function.strftime.php} function.
+ *
+ * @function #dateFormat
+ * @memberOf Highcharts
+ * @param {String} format - The desired format where various time
+ *        representations av prefixed with %.
+ * @param {Number} timestamp - The JavaScript timestamp.
+ * @param {Boolean} capitalize - Upper case first letter in the return.
+ * @returns {String} The formatted date.
  */
 H.dateFormat = function (format, timestamp, capitalize) {
 	if (!H.defined(timestamp) || isNaN(timestamp)) {
@@ -699,6 +818,15 @@ H.dateFormat = function (format, timestamp, capitalize) {
 
 /**
  * Format a single variable. Similar to sprintf, without the % prefix.
+ *
+ * @example
+ * formatSingle('.2f', 5); // => '5.00'.
+ *
+ * @function #formatSingle
+ * @memberOf Highcharts
+ * @param {String} format The format string.
+ * @param {*} val The value.
+ * @returns {String} The formatted representation of the value.
  */
 H.formatSingle = function (format, val) {
 	var floatRegex = /f$/,
@@ -724,7 +852,22 @@ H.formatSingle = function (format, val) {
 };
 
 /**
- * Format a string according to a subset of the rules of Python's String.format method.
+ * Format a string according to a subset of the rules of Python's String.format
+ * method.
+ *
+ * @function #format
+ * @memberOf Highcharts
+ * @param {String} str The string to format.
+ * @param {Object} ctx The context, a collection of key-value pairs where each
+ *        key is replaced by its value.
+ * @returns {String} The formatted string.
+ *
+ * @example
+ * var s = Highcharts.format(
+ *     'The {color} fox was {len:.2f} feet long',
+ *     { color: 'red', len: Math.PI }
+ * );
+ * // => The red fox was 3.14 feet long
  */
 H.format = function (str, ctx) {
 	var splitter = '{',
@@ -778,19 +921,32 @@ H.format = function (str, ctx) {
 };
 
 /**
- * Get the magnitude of a number
+ * Get the magnitude of a number.
+ *
+ * @function #getMagnitude
+ * @memberOf Highcharts
+ * @param {Number} number The number.
+ * @returns {Number} The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2
+ *        etc.
  */
 H.getMagnitude = function (num) {
 	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 
 /**
- * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
- * @param {Number} interval
- * @param {Array} multiples
- * @param {Number} magnitude
- * @param {Boolean} allowDecimals
- * @param {Boolean} hasTickAmount
+ * Take an interval and normalize it to multiples of round numbers.
+ *
+ * @todo  Move this function to the Axis prototype. It is here only for
+ *        historical reasons.
+ * @function #normalizeTickInterval
+ * @memberOf Highcharts
+ * @param {Number} interval - The raw, un-rounded interval.
+ * @param {Array} [multiples] - Allowed multiples.
+ * @param {Number} [magnitude] - The magnitude of the number.
+ * @param {Boolean} [allowDecimals] - Whether to allow decimals.
+ * @param {Boolean} [hasTickAmount] - If it has tickAmount, avoid landing
+ *        on tick intervals lower than original.
+ * @returns {Number} The normalized interval.
  */
 H.normalizeTickInterval = function (interval, multiples, magnitude,
 		allowDecimals, hasTickAmount) {
@@ -842,8 +998,15 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
 
 
 /**
- * Utility method that sorts an object array and keeping the order of equal items.
- * ECMA script standard does not specify the behaviour when items are equal.
+ * Sort an object array and keep the order of equal items. The ECMAScript
+ * standard does not specify the behaviour when items are equal.
+ *
+ * @function #stableSort
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to sort.
+ * @param {Function} sortFunction - The function to sort it with, like with 
+ *        regular Array.prototype.sort.
+ * @returns {void}
  */
 H.stableSort = function (arr, sortFunction) {
 	var length = arr.length,

@@ -730,7 +730,7 @@ SVGElement.prototype = {
 	 *
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
-	 * @param {String[Object} box The box to align to, needs a width and height. When the
+	 * @param {String|Object} box The box to align to, needs a width and height. When the
 	 *		box is a string, it refers to an object in the Renderer. For example, when
 	 *		box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
 	 *		x and y properties.
