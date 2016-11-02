@@ -68,7 +68,40 @@ QUnit.test('alignThreshold, negative-positive', function (assert) {
 
 });
 
+/* Failing test
+QUnit.test('alignThreshold, nowhere near the threshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            alignThresholds: true,
+            type: 'area'
+        },
+        yAxis: [{
+            title: {
+                text: 'Primary Axis'
+            },
+            gridLineWidth: 0
+        }, {
+            title: {
+                text: 'Secondary Axis'
+            },
+            opposite: true
+        }],
+        series: [{
+            data: [1001, 1002, 1003],
+            yAxis: 0
+        }, {
+            data: [-1001, -1002, -1003],
+            yAxis: 1
+        }]
+    });
 
+    assert.equal(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Same threshold position'
+    );
+});
+*/
 
 QUnit.test('alignThreshold, bar', function (assert) {
     var chart = Highcharts.chart('container', {
