@@ -11,6 +11,7 @@ var colors = require('colors'),
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    jsdoc = require('gulp-jsdoc3'),
     spawn = require('child_process').spawn;
 var paths = {
     buildsDir: './js/builds',
@@ -330,6 +331,18 @@ gulp.task('nightly', function () {
         cwd: 'utils/samples',
         stdio: 'inherit'
     });
+});
+
+/**
+ * Automated generation for internal API docs.
+ */
+gulp.task('jsdoc', function (cb) {
+    gulp.src(['README.md', './code/highcharts.src.js'], {read: false})
+        .pipe(jsdoc({
+            opts: {
+                destination: './internal-docs/',
+            }
+        }, cb));
 });
 
 gulp.task('filesize', function () {
