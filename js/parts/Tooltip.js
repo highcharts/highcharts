@@ -466,7 +466,7 @@ H.Tooltip.prototype = {
 				this.renderSplit(text, chart.hoverPoints);
 			} else {
 				label.attr({
-					text: text.join ? text.join('') : text
+					text: text && text.join ? text.join('') : text
 				});
 
 				// Set the stroke color of the box to reflect the point
