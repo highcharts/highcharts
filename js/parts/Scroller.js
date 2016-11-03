@@ -207,8 +207,11 @@ Navigator.prototype = {
 
 		// Place it
 		handles[index][scroller.rendered && !scroller.hasDragged ? 'animate' : 'attr']({
-			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
-			translateY: scroller.top + scroller.height / 2 - 8
+			translateX: Math.round(
+				scroller.scrollerLeft + scroller.scrollbarHeight +
+					parseInt(x, 10)
+			),
+			translateY: Math.round(scroller.top + scroller.height / 2 - 8)
 		});
 	},
 
