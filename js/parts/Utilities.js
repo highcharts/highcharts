@@ -373,7 +373,7 @@ H.extend = function (a, b) {
           return a whole new object.
  * @param {Object} a - The first object to extend. When only this is given, the
           function returns a copy.
- * @param {...Object} n - The n'th object to merge into the previous ones.
+ * @param {...Object} n - An object to merge into the previous one.
  * @returns {Object} - The merged object. If the first argument is true, the 
  *        return is the same as the second argument.
  */

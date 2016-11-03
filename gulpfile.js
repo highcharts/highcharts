@@ -337,10 +337,10 @@ gulp.task('nightly', function () {
  * Automated generation for internal API docs.
  */
 gulp.task('jsdoc', function (cb) {
-    gulp.src(['README.md', './code/highcharts.src.js'], {read: false})
+    gulp.src(['README.md', './code/highcharts.src.js'], { read: false })
         .pipe(jsdoc({
             opts: {
-                destination: './internal-docs/',
+                destination: './internal-docs/'
             }
         }, cb));
 });

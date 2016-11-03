@@ -24,7 +24,10 @@ var animObject = H.animObject,
 	stop = H.stop,
 	svg = H.svg;
 /**
- * The column series type
+ * The column series type.
+ *
+ * @constructor seriesTypes.column
+ * @augments Series
  */
 seriesType('column', 'line', {
 	borderRadius: 0,
@@ -79,7 +82,12 @@ seriesType('column', 'line', {
 		// point is substracted from previous (#1910)
 
 	/**
-	 * Initialize the series
+	 * Initialize the series. Extends the basic Series.init method by
+	 * marking other series of the same type as dirty.
+	 *
+	 * @function #init
+	 * @memberOf seriesTypes.column
+	 * @returns {void}
 	 */
 	init: function () {
 		Series.prototype.init.apply(this, arguments);

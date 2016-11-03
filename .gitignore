@@ -12,6 +12,7 @@
 /js/modules/exporting.js
 /build
 /code
+/internal-docs
 /.project
 /git-ignore-me.properties
 /.pydevproject
