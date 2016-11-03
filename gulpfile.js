@@ -337,12 +337,16 @@ gulp.task('nightly', function () {
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
-    gulp.src(['README.md', './code/highcharts.src.js'], { read: false })
+    gulp.src(['README.md', './js/parts/Utilities.js'], { read: false })
         .pipe(jsdoc({
             opts: {
                 destination: './internal-docs/'
-            }
+            },
+            plugins: [
+                'plugins/markdown'
+            ]
         }, cb));
+    console.log(colors.green('Writing JSDoc to ./internal-docs/index.html'));
 });
 
 gulp.task('filesize', function () {

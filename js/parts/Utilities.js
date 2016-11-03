@@ -12,6 +12,11 @@ import H from './Globals.js';
  * @namespace Highcharts
  */
 
+/**
+ * A HTML DOM element.
+ * @typedef {Object} HTMLElement
+ */
+
 var timers = [];
 
 var charts = H.charts,
@@ -375,7 +380,7 @@ H.extend = function (a, b) {
           function returns a copy.
  * @param {...Object} n - An object to merge into the previous one.
  * @returns {Object} - The merged object. If the first argument is true, the 
- *        return is the same as the second argument.
+ * return is the same as the second argument.
  */
 H.merge = function () {
 	var i,
@@ -607,7 +612,7 @@ H.pick = function () {
  *
  * @function #css
  * @memberOf Highcharts
- * @param {Object} el - A HTML DOM element.
+ * @param {HTMLElement} el - A HTML DOM element.
  * @param {Object} styles - Style object with camel case property names.
  * @returns {void}
  */
@@ -630,7 +635,7 @@ H.css = function (el, styles) {
  * @param {Object} styles - Styles as an object of key-value pairs.
  * @param {Object} parent - The parent HTML object.
  * @param {Boolean} nopad - If true, remove all padding, border and margin.
- * @returns {Object} The created DOM element.
+ * @returns {HTMLElement} The created DOM element.
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag),
@@ -1030,9 +1035,14 @@ H.stableSort = function (arr, sortFunction) {
 };
 
 /**
- * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
- * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
- * method is slightly slower, but safe.
+ * Non-recursive method to find the lowest member of an array. `Math.min` raises
+ * a maximum call stack size exceeded error in Chrome when trying to apply more
+ * than 150.000 points. This method is slightly slower, but safe.
+ *
+ * @function #arrayMin
+ * @memberOf  Highcharts
+ * @param {Array} data An array of numbers.
+ * @returns {Number} The lowest number.
  */
 H.arrayMin = function (data) {
 	var i = data.length,
@@ -1047,9 +1057,14 @@ H.arrayMin = function (data) {
 };
 
 /**
- * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
- * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
- * method is slightly slower, but safe.
+ * Non-recursive method to find the lowest member of an array. `Math.max` raises
+ * a maximum call stack size exceeded error in Chrome when trying to apply more
+ * than 150.000 points. This method is slightly slower, but safe.
+ *
+ * @function #arrayMax
+ * @memberOf  Highcharts
+ * @param {Array} data - An array of numbers.
+ * @returns {Number} The highest number.
  */
 H.arrayMax = function (data) {
 	var i = data.length,
@@ -1064,11 +1079,15 @@ H.arrayMax = function (data) {
 };
 
 /**
- * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
- * It loops all properties and invokes destroy if there is a destroy method. The property is
- * then delete'ed.
- * @param {Object} The object to destroy properties on
- * @param {Object} Exception, do not destroy this property, only delete it.
+ * Utility method that destroys any SVGElement instances that are properties on
+ * the given object. It loops all properties and invokes destroy if there is a
+ * destroy method. The property is then delete.
+ *
+ * @function #destroyObjectProperties
+ * @memberOf Highcharts
+ * @param {Object} obj - The object to destroy properties on.
+ * @param {Object} except - Exception, do not destroy this property, only delete it.
+ * @returns {void}
  */
 H.destroyObjectProperties = function (obj, except) {
 	var n;
@@ -1086,8 +1105,12 @@ H.destroyObjectProperties = function (obj, except) {
 
 
 /**
- * Discard an element by moving it to the bin and delete
- * @param {Object} The HTML node to discard
+ * Discard a HTML element by moving it to the bin and delete.
+ *
+ * @function #discardElement
+ * @memberOf Highcharts
+ * @param {Object} element - The HTML node to discard.
+ * @returns {void}
  */
 H.discardElement = function (element) {
 	var garbageBin = H.garbageBin;
@@ -1104,8 +1127,13 @@ H.discardElement = function (element) {
 };
 
 /**
- * Fix JS round off float errors
- * @param {Number} num
+ * Fix JS round off float errors.
+ *
+ * @function #correctFloat
+ * @memberOf Highcharts
+ * @param {Number} num - A float number to fix.
+ * @param {Number} prec - The precision, defaults to 14.
+ * @returns {Number} The corrected float number.
  */
 H.correctFloat = function (num, prec) {
 	return parseFloat(
@@ -1114,21 +1142,39 @@ H.correctFloat = function (num, prec) {
 };
 
 /**
- * Set the global animation to either a given value, or fall back to the
- * given chart's animation option
- * @param {Object} animation
- * @param {Object} chart
+ * Set the global animation to either a given value, or fall back to the given
+ * chart's animation option.
+ *
+ * @function #setAnimation
+ * @memberOf Highcharts
+ * @param {Object} animation - The animation object.
+ * @param {Object} chart - The chart instance.
+ * @returns {void}
+ * @todo This function always relates to a chart, and sets a property on the
+ *        renderer, so it should be moved to the SVGRenderer.
  */
 H.setAnimation = function (animation, chart) {
-	chart.renderer.globalAnimation = H.pick(animation, chart.options.chart.animation, true);
+	chart.renderer.globalAnimation = H.pick(
+		animation,
+		chart.options.chart.animation,
+		true
+	);
 };
 
 /**
  * Get the animation in object form, where a disabled animation is always
- * returned with duration: 0
+ * returned as `{ duration: 0 }`.
+ *
+ * @function #animObject
+ * @memberOf Highcharts
+ * @param {*} animation - An animation setting. Can be an object with duration,
+ *        complete and easing properties, or a boolean to enable or disable.
+ * @returns {Object} An object with at least a duration property.
  */
 H.animObject = function (animation) {
-	return H.isObject(animation) ? H.merge(animation) : { duration: animation ? 500 : 0 };
+	return H.isObject(animation) ?
+		H.merge(animation) :
+		{ duration: animation ? 500 : 0 };
 };
 
 /**
@@ -1146,11 +1192,17 @@ H.timeUnits = {
 };
 
 /**
- * Format a number and return a string based on input settings
- * @param {Number} number The input number to format
- * @param {Number} decimals The amount of decimals
- * @param {String} decimalPoint The decimal point, defaults to the one given in the lang options
- * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
+ * Format a number and return a string based on input settings.
+ *
+ * @function #numberFormat
+ * @memberOf Highcharts
+ * @param {Number} number - The input number to format.
+ * @param {Number} decimals - The amount of decimals.
+ * @param {String} decimalPoint - The decimal point, defaults to the one given
+ *        in the lang options.
+ * @param {String} thousandsSep - The thousands separator, defaults to the one
+ *        given in the lang options.
+ * @returns {String} The formatted number.
  */
 H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
@@ -1210,7 +1262,15 @@ Math.easeInOutSine = function (pos) {
 };
 
 /**
- * Internal method to return CSS value for given element and property
+ * Get the computed CSS value for given element and property, only for numerical
+ * properties. For width and height, the dimension of the inner box (excluding
+ * padding) is returned. Used for fitting the chart within the container.
+ *
+ * @function #getStyle
+ * @memberOf Highcharts
+ * @param {HTMLElement} el - A HTML element.
+ * @param {String} prop - The property name.
+ * @returns {Number} - The numeric value.
  */
 H.getStyle = function (el, prop) {
 
@@ -1233,21 +1293,42 @@ H.getStyle = function (el, prop) {
 };
 
 /**
- * Return the index of an item in an array, or -1 if not found
+ * Search for an item in an array.
+ *
+ * @function #inArray
+ * @memberOf Highcharts
+ * @param {*} item - The item to search for.
+ * @param {arr} arr - The array or node collection to search in.
+ * @returns {Number} - The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr) {
 	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
 };
 
 /**
- * Filter an array
+ * Filter an array by a callback.
+ *
+ * @function #grep
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to filter.
+ * @param {Function} callback - The callback function. The function receives the
+ *        item as the first argument. Return `true` if the item is to be
+ *        preserved.
+ * @returns {Array} - A new, filtered array.
  */
-H.grep = function (elements, callback) {
-	return [].filter.call(elements, callback);
+H.grep = function (arr, callback) {
+	return [].filter.call(arr, callback);
 };
 
 /**
- * Map an array
+ * Map an array by a callback.
+ *
+ * @function #map
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to map.
+ * @param {Function} fn - The callback function. Return the new value for the 
+ *        new array.
+ * @returns {Array} - A new array item with modified items.
  */
 H.map = function (arr, fn) {
 	var results = [],
@@ -1262,15 +1343,23 @@ H.map = function (arr, fn) {
 };
 
 /**
- * Get the element's offset position, corrected by overflow:auto.
+ * Get the element's offset position, corrected for `overflow: auto`.
+ *
+ * @function #offset
+ * @memberOf Highcharts
+ * @param {HTMLElement} el - The HTML element.
+ * @returns {Object} An object containing `left` and `top` properties for the
+ * position in the page.
  */
 H.offset = function (el) {
 	var docElem = doc.documentElement,
 		box = el.getBoundingClientRect();
 
 	return {
-		top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
-		left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+		top: box.top  + (win.pageYOffset || docElem.scrollTop) -
+			(docElem.clientTop  || 0),
+		left: box.left + (win.pageXOffset || docElem.scrollLeft) -
+			(docElem.clientLeft || 0)
 	};
 };
 
