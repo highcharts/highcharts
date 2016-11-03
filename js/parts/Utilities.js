@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* eslint max-len: ["warn", 80, 4] */
 'use strict';
 import H from './Globals.js';
 
@@ -10,11 +11,6 @@ import H from './Globals.js';
  * The Highcharts object is the placeholder for all other members, and various
  * utility functions.
  * @namespace Highcharts
- */
-
-/**
- * A HTML DOM element.
- * @typedef {Object} HTMLElement
  */
 
 var timers = [];
@@ -30,13 +26,14 @@ var charts = H.charts,
  * @function #error
  * @memberOf Highcharts
  * @param {Number} code - The error code. See [errors.xml]{@link 
- *        https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
- *        for available codes.
+ *     https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
+ *     for available codes.
  * @param {Boolean} stop - Whether to throw an error or just log a warning in
- *        the console.
+ *     the console.
  */
 H.error = function (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
+		code;
 	if (stop) {
 		throw new Error(msg);
 	}
@@ -47,12 +44,14 @@ H.error = function (code, stop) {
 };
 
 /**
- * An animator object. One instance applies to one property (attribute or style prop) 
- * on one element.
- * 
- * @param {object} elem	The element to animate. May be a DOM element or a Highcharts SVGElement wrapper.
- * @param {object} options Animation options, including duration, easing, step and complete.
- * @param {object} prop	The property to animate.
+ * An animator object. One instance applies to one property (attribute or style
+ * prop) on one element.
+ *
+ * @constructor Fx
+ * @memberOf Highcharts
+ * @param {HTMLElement|SVGElement} elem - The element to animate.
+ * @param {Animation} options - Animation options.
+ * @param {Object} prop - The single attribute or CSS property to animate.
  * @returns {void}
  */
 H.Fx = function (elem, options, prop) {
@@ -63,8 +62,11 @@ H.Fx = function (elem, options, prop) {
 H.Fx.prototype = {
 	
 	/**
-	 * Animating a path definition on SVGElement
-	 * @returns {undefined} 
+	 * Set the current step of a path definition on SVGElement.
+	 *
+	 * @function #dSetter
+	 * @memberOf Highcharts.Fx
+	 * @returns {void} 
 	 */
 	dSetter: function () {
 		var start = this.paths[0],
@@ -74,7 +76,8 @@ H.Fx.prototype = {
 			i = start.length,
 			startVal;
 
-		if (now === 1) { // land on the final path without adjustment points appended in the ends
+		// Land on the final path without adjustment points appended in the ends
+		if (now === 1) {
 			ret = this.toD;
 
 		} else if (i === end.length && now < 1) {
@@ -86,15 +89,19 @@ H.Fx.prototype = {
 							now * (parseFloat(end[i] - startVal)) + startVal;
 
 			}
-		} else { // if animation is finished or length not matching, land on right value
+		// If animation is finished or length not matching, land on right value
+		} else {
 			ret = end;
 		}
 		this.elem.attr('d', ret);
 	},
 
 	/**
-	 * Update the element with the current animation step
-	 * @returns {undefined}
+	 * Update the element with the current animation step.
+	 *
+	 * @function #update
+	 * @memberOf Highcharts.Fx
+	 * @returns {void}
 	 */
 	update: function () {
 		var elem = this.elem,
@@ -124,7 +131,14 @@ H.Fx.prototype = {
 	},
 
 	/**
-	 * Run an animation
+	 * Run an animation.
+	 *
+	 * @function #run
+	 * @memberOf Highcharts.Fx
+	 * @param {Number} from - The current value, value to start from.
+	 * @param {Number} to - The end value, value to land on.
+	 * @param {String} [unit] - The property unit, for example `px`.
+	 * @returns {void}
 	 */
 	run: function (from, to, unit) {
 		var self = this,
@@ -159,9 +173,13 @@ H.Fx.prototype = {
 	},
 	
 	/**
-	 * Run a single step in the animation
-	 * @param   {Boolean} gotoEnd Whether to go to then endpoint of the animation after abort
-	 * @returns {Boolean} True if animation continues
+	 * Run a single step in the animation.
+	 *
+	 * @function #step
+	 * @memberOf Highcharts.Fx
+	 * @param   {Boolean} gotoEnd - Whether to go to the endpoint of the
+	 *     animation after abort.
+	 * @returns {Boolean} Returns `true` if animation continues.
 	 */
 	step: function (gotoEnd) {
 		var t = +new Date(),
@@ -174,7 +192,7 @@ H.Fx.prototype = {
 			curAnim = options.curAnim,
 			i;
 		
-		if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
+		if (elem.attr && !elem.element) { // #2616, element is destroyed
 			ret = false;
 
 		} else if (gotoEnd || t >= duration + this.startTime) {
@@ -206,7 +224,15 @@ H.Fx.prototype = {
 	},
 
 	/**
-	 * Prepare start and end values so that the path can be animated one to one
+	 * Prepare start and end values so that the path can be animated one to one.
+	 *
+	 * @function #initPath
+	 * @memberOf Highcharts.Fx
+	 * @param {SVGElement} elem - The SVGElement item.
+	 * @param {String} fromD - Starting path definition.
+	 * @param {Array} toD - Ending path definition.
+	 * @returns {Array} An array containing start and end paths in array form
+	 * so that they can be animated in parallel.
 	 */
 	initPath: function (elem, fromD, toD) {
 		fromD = fromD || '';
@@ -231,7 +257,11 @@ H.Fx.prototype = {
 			i = arr.length;
 			while (i--) {
 				if (arr[i] === 'M' || arr[i] === 'L') {
-					arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
+					arr.splice(
+						i + 1, 0,
+						arr[i + 1], arr[i + 2],
+						arr[i + 1], arr[i + 2]
+					);
 				}
 			}
 		}
@@ -258,10 +288,13 @@ H.Fx.prototype = {
 				// Prepend a copy of the first point
 				insertSlice(arr, arr.slice(0, numParams), 0);	
 
-				// For areas, the bottom path goes back again to the left, so we need
-				// to append a copy of the last point.
+				// For areas, the bottom path goes back again to the left, so we
+				// need to append a copy of the last point.
 				if (isArea) {
-					insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
+					insertSlice(
+						arr,
+						arr.slice(arr.length - numParams), arr.length
+					);
 					i--;
 				}
 			}
@@ -275,11 +308,12 @@ H.Fx.prototype = {
 			var i = (fullLength - arr.length) / numParams;
 			while (i > 0 && i--) {
 
-				// Pull out the slice that is going to be appended or inserted. In a line graph,
-				// the positionFactor is 1, and the last point is sliced out. In an area graph,
-				// the positionFactor is 2, causing the middle two points to be sliced out, since
-				// an area path starts at left, follows the upper path then turns and follows the
-				// bottom back. 
+				// Pull out the slice that is going to be appended or inserted.
+				// In a line graph, the positionFactor is 1, and the last point
+				// is sliced out. In an area graph, the positionFactor is 2,
+				// causing the middle two points to be sliced out, since an area
+				// path starts at left, follows the upper path then turns and
+				// follows the bottom back. 
 				slice = arr.slice().splice(
 					(arr.length / positionFactor) - numParams, 
 					numParams * positionFactor
@@ -294,7 +328,8 @@ H.Fx.prototype = {
 					slice[numParams - 5] = slice[numParams - 1];
 				}
 				
-				// Now insert the slice, either in the middle (for areas) or at the end (for lines)
+				// Now insert the slice, either in the middle (for areas) or at
+				// the end (for lines)
 				insertSlice(arr, slice, arr.length / positionFactor);
 
 				if (isArea) {
@@ -308,14 +343,17 @@ H.Fx.prototype = {
 			sixify(end);
 		}
 
-		// For sideways animation, find out how much we need to shift to get the start path Xs
-		// to match the end path Xs.
+		// For sideways animation, find out how much we need to shift to get the
+		// start path Xs to match the end path Xs.
 		if (startX && endX) {
 			for (i = 0; i < startX.length; i++) {
-				if (startX[i] === endX[0]) { // Moving left, new points coming in on right
+				// Moving left, new points coming in on right
+				if (startX[i] === endX[0]) {
 					shift = i;
 					break;
-				} else if (startX[0] === endX[endX.length - startX.length + i]) { // Moving right
+				// Moving right
+				} else if (startX[0] ===
+						endX[endX.length - startX.length + i]) {
 					shift = i;
 					reverse = true;
 					break;
@@ -401,7 +439,8 @@ H.merge = function () {
 
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (H.isObject(value, true) &&
-							key !== 'renderTo' && typeof value.nodeType !== 'number') {
+							key !== 'renderTo' &&
+							typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 
 					// Primitives and arrays are copied over directly
@@ -413,7 +452,8 @@ H.merge = function () {
 			return copy;
 		};
 
-	// If first argument is true, copy into the existing object. Used in setOptions.
+	// If first argument is true, copy into the existing object. Used in
+	// setOptions.
 	if (args[0] === true) {
 		ret = args[1];
 		args = Array.prototype.slice.call(args, 2);
@@ -541,7 +581,7 @@ H.attr = function (elem, prop, value) {
 			elem.setAttribute(prop, value);
 
 		// get the value
-		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
+		} else if (elem && elem.getAttribute) {
 			ret = elem.getAttribute(prop);
 		}
 
@@ -624,6 +664,11 @@ H.css = function (el, styles) {
 	}
 	H.extend(el.style, styles);
 };
+
+/**
+ * A HTML DOM element.
+ * @typedef {Object} HTMLElement
+ */
 
 /**
  * Utility function to create an HTML element with attributes and styles.
@@ -735,7 +780,8 @@ H.wrap = function (obj, method, func) {
  */
 H.getTZOffset = function (timestamp) {
 	var d = H.Date;
-	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
+	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) ||
+		d.hcTimezoneOffset || 0) * 60000;
 };
 
 /**
@@ -773,41 +819,62 @@ H.dateFormat = function (format, timestamp, capitalize) {
 		// List all format keys. Custom formats can be added from the outside. 
 		replacements = H.extend({
 
-			// Day
-			'a': shortWeekdays ? shortWeekdays[day] : langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
-			'A': langWeekdays[day], // Long weekday, like 'Monday'
-			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
-			'e': pad(dayOfMonth, 2, ' '), // Day of the month, 1 through 31
+			//-- Day
+			// Short weekday, like 'Mon'
+			'a': shortWeekdays ?
+				shortWeekdays[day] :
+				langWeekdays[day].substr(0, 3),
+			// Long weekday, like 'Monday'
+			'A': langWeekdays[day],
+			// Two digit day of the month, 01 to 31
+			'd': pad(dayOfMonth),
+			// Day of the month, 1 through 31
+			'e': pad(dayOfMonth, 2, ' '),
 			'w': day,
 
 			// Week (none implemented)
 			//'W': weekNumber(),
 
-			// Month
-			'b': lang.shortMonths[month], // Short month, like 'Jan'
-			'B': lang.months[month], // Long month, like 'January'
-			'm': pad(month + 1), // Two digit month number, 01 through 12
+			//-- Month
+			// Short month, like 'Jan'
+			'b': lang.shortMonths[month],
+			// Long month, like 'January'
+			'B': lang.months[month],
+			// Two digit month number, 01 through 12
+			'm': pad(month + 1),
 
-			// Year
-			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
-			'Y': fullYear, // Four digits year, like 2009
+			//-- Year
+			// Two digits year, like 09 for 2009
+			'y': fullYear.toString().substr(2, 2),
+			// Four digits year, like 2009
+			'Y': fullYear,
 
-			// Time
-			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
-			'k': hours, // Hours in 24h format, 0 through 23
-			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
-			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[D.hcGetMinutes]()), // Two digits minutes, 00 through 59
-			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
-			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
-			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
-			'L': pad(Math.round(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
+			//-- Time
+			// Two digits hours in 24h format, 00 through 23
+			'H': pad(hours),
+			// Hours in 24h format, 0 through 23
+			'k': hours,
+			// Two digits hours in 12h format, 00 through 11
+			'I': pad((hours % 12) || 12),
+			// Hours in 12h format, 1 through 12
+			'l': (hours % 12) || 12,
+			// Two digits minutes, 00 through 59
+			'M': pad(date[D.hcGetMinutes]()),
+			// Upper case AM or PM
+			'p': hours < 12 ? 'AM' : 'PM',
+			// Lower case AM or PM
+			'P': hours < 12 ? 'am' : 'pm',
+			// Two digits seconds, 00 through  59
+			'S': pad(date.getSeconds()),
+			// Milliseconds (naming from Ruby)
+			'L': pad(Math.round(timestamp % 1000), 3)
 		}, H.dateFormats);
 
 
-	// do the replaces
+	// Do the replaces
 	for (key in replacements) {
-		while (format.indexOf('%' + key) !== -1) { // regex would do it in one line, but this is faster
+		// Regex would do it in one line, but this is faster
+		while (format.indexOf('%' + key) !== -1) {
 			format = format.replace(
 				'%' + key,
 				typeof replacements[key] === 'function' ?
@@ -818,7 +885,9 @@ H.dateFormat = function (format, timestamp, capitalize) {
 	}
 
 	// Optionally capitalize the string and return
-	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
+	return capitalize ?
+		format.substr(0, 1).toUpperCase() + format.substr(1) :
+		format;
 };
 
 /**
@@ -896,7 +965,7 @@ H.format = function (str, ctx) {
 		if (isInside) { // we're on the closing bracket looking back
 
 			valueAndFormat = segment.split(':');
-			path = valueAndFormat.shift().split('.'); // get first and leave format
+			path = valueAndFormat.shift().split('.'); // get first and leave
 			len = path.length;
 			val = ctx;
 
@@ -989,8 +1058,10 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
-		if ((hasTickAmount && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
-				(!hasTickAmount && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
+		// only allow tick amounts smaller than natural
+		if ((hasTickAmount && retInterval * magnitude >= interval) || 
+				(!hasTickAmount && (normalized <= (multiples[i] +
+				(multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
@@ -1086,7 +1157,8 @@ H.arrayMax = function (data) {
  * @function #destroyObjectProperties
  * @memberOf Highcharts
  * @param {Object} obj - The object to destroy properties on.
- * @param {Object} except - Exception, do not destroy this property, only delete it.
+ * @param {Object} except - Exception, do not destroy this property, only delete
+ *        it.
  * @returns {void}
  */
 H.destroyObjectProperties = function (obj, except) {
@@ -1147,7 +1219,7 @@ H.correctFloat = function (num, prec) {
  *
  * @function #setAnimation
  * @memberOf Highcharts
- * @param {Object} animation - The animation object.
+ * @param {Boolean|Animation} animation - The animation object.
  * @param {Object} chart - The chart instance.
  * @returns {void}
  * @todo This function always relates to a chart, and sets a property on the
@@ -1167,9 +1239,10 @@ H.setAnimation = function (animation, chart) {
  *
  * @function #animObject
  * @memberOf Highcharts
- * @param {*} animation - An animation setting. Can be an object with duration,
- *        complete and easing properties, or a boolean to enable or disable.
- * @returns {Object} An object with at least a duration property.
+ * @param {Boolean|Animation} animation - An animation setting. Can be an object
+ *        with duration, complete and easing properties, or a boolean to enable
+ *        or disable.
+ * @returns {Animation} An Animation object with at least a duration property.
  */
 H.animObject = function (animation) {
 	return H.isObject(animation) ?
@@ -1218,7 +1291,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 		ret;
 
 	if (decimals === -1) {
-		decimals = Math.min(origDec, 20); // Preserve decimals. Not huge numbers (#3793).
+		// Preserve decimals. Not huge numbers (#3793).
+		decimals = Math.min(origDec, 20);
 	} else if (!H.isNumber(decimals)) {
 		decimals = 2;
 	}
@@ -1236,17 +1310,21 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	// Start building the return
 	ret = number < 0 ? '-' : '';
 
-	// Add the leftover after grouping into thousands. For example, in the number 42 000 000,
-	// this line adds 42.
+	// Add the leftover after grouping into thousands. For example, in the
+	// number 42 000 000, this line adds 42.
 	ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
 
 	// Add the remaining thousands groups, joined by the thousands separator
-	ret += strinteger.substr(thousands).replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+	ret += strinteger
+		.substr(thousands)
+		.replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
 
 	// Add the decimal point and the decimal component
 	if (decimals) {
-		// Get the decimal component, and add power to avoid rounding errors with float numbers (#4573)
-		decimalComponent = Math.abs(absNumber - strinteger + Math.pow(10, -Math.max(decimals, origDec) - 1));
+		// Get the decimal component, and add power to avoid rounding errors
+		// with float numbers (#4573)
+		decimalComponent = Math.abs(absNumber - strinteger +
+			Math.pow(10, -Math.max(decimals, origDec) - 1));
 		ret += decimalPoint + decimalComponent.toFixed(decimals).slice(2);
 	}
 
@@ -1410,7 +1488,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @function #addEvent
  * @memberOf Highcharts
  * @param {Object} el - The element or object to add a listener to. It can be a
- *        {@link HTMLElement}, an {@SVGElement} or any other object.
+ *        {@link HTMLElement}, an {@link SVGElement} or any other object.
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is 
  *        fired.
@@ -1525,7 +1603,18 @@ H.removeEvent = function (el, type, fn) {
 };
 
 /**
- * Fire an event on a custom object
+ * Fire an event that was registered with {@link Highcharts#addEvent}.
+ *
+ * @function #fireEvent
+ * @memberOf Highcharts
+ * @param {Object} el - The object to fire the event on. It can be a
+ *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ * @param {String} type - The type of event.
+ * @param {Object} [eventArguments] - Custom event arguments that are passed on
+ *        as an argument to the event handler.
+ * @param {Function} [defaultFunction] - The default function to execute if the 
+ *        other listeners haven't returned false.
+ * @returns {void}
  */
 H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	var e,
@@ -1558,16 +1647,18 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		if (!eventArguments.target) { // We're running a custom event
 
 			H.extend(eventArguments, {
-				// Attach a simple preventDefault function to skip default handler if called. 
-				// The built-in defaultPrevented property is not overwritable (#5112)
+				// Attach a simple preventDefault function to skip default
+				// handler if called. The built-in defaultPrevented property is
+				// not overwritable (#5112)
 				preventDefault: function () {
 					eventArguments.defaultPrevented = true;
 				},
-				// Setting target to native events fails with clicking the zoom-out button in Chrome.
+				// Setting target to native events fails with clicking the
+				// zoom-out button in Chrome.
 				target: el,
-				// If the type is not set, we're running a custom event (#2297). If it is set,
-				// we're running a browser event, and setting it will cause en error in
-				// IE8 (#2465).		
+				// If the type is not set, we're running a custom event (#2297).
+				// If it is set, we're running a browser event, and setting it
+				// will cause en error in IE8 (#2465).		
 				type: type
 			});
 		}
@@ -1576,7 +1667,8 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 		for (i = 0; i < len; i++) {
 			fn = events[i];
 
-			// If the event handler return false, prevent the default handler from executing
+			// If the event handler return false, prevent the default handler
+			// from executing
 			if (fn && fn.call(el, eventArguments) === false) {
 				eventArguments.preventDefault();
 			}
@@ -1590,7 +1682,31 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 };
 
 /**
+ * An animation configuration. Animation configurations can also be defined as
+ * booleans, where `false` turns off animation and `true` defaults to a duration
+ * of 500ms.
+ * @typedef {Object} Animation
+ * @property {Number} duration - The animation duration in milliseconds.
+ * @property {String} [easing] - The name of an easing function as defined on
+ *     the `Math` object.
+ * @property {Function} [complete] - A callback function to exectute when the
+ *     animation finishes.
+ * @property {Function} [step] - A callback function to execute on each step of
+ *     each attribute or CSS property that's being animated. The first argument
+ *     contains information about the animation and progress.
+ */
+
+
+/**
  * The global animate method, which uses Fx to create individual animators.
+ *
+ * @function #animate
+ * @memberOf Highcharts
+ * @param {HTMLElement|SVGElement} el - The element to animate.
+ * @param {Object} params - An object containing key-value pairs of the
+ *        properties to animate. Supports numeric as pixel-based CSS properties
+ *        for HTML objects and attributes for SVGElements.
+ * @param {Animation} [opt] - Animation options.
  */
 H.animate = function (el, params, opt) {
 	var start,
@@ -1611,7 +1727,9 @@ H.animate = function (el, params, opt) {
 	if (!H.isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
-	opt.easing = typeof opt.easing === 'function' ? opt.easing : (Math[opt.easing] || Math.easeInOutSine);
+	opt.easing = typeof opt.easing === 'function' ?
+		opt.easing :
+		(Math[opt.easing] || Math.easeInOutSine);
 	opt.curAnim = H.merge(params);
 
 	for (prop in params) {
@@ -1647,15 +1765,25 @@ H.animate = function (el, params, opt) {
 };
 
 /**
- * The series type factory.
+ * Factory to create new series prototypes.
  *
- * @param {string} type The series type name.
- * @param {string} parent The parent series type name.
- * @param {object} options The additional default options that is merged with the parent's options.
- * @param {object} props The properties (functions and primitives) to set on the new prototype.
- * @param {object} pointProps Members for a series-specific Point prototype if needed.
+ * @function #seriesType
+ * @memberOf Highcharts
+ *
+ * @param {String} type - The series type name.
+ * @param {String} parent - The parent series type name. Use `line` to inherit
+ *        from the basic {@link Series} object.
+ * @param {Object} options - The additional default options that is merged with
+ *        the parent's options.
+ * @param {Object} props - The properties (functions and primitives) to set on
+ *        the new prototype.
+ * @param {Object} [pointProps] - Members for a series-specific extension of the
+ *        {@link Point} prototype if needed.
+ * @returns {*} - The newly created prototype as extended from {@link Series}
+ * or its derivatives.
  */
-H.seriesType = function (type, parent, options, props, pointProps) { // docs: add to API + extending Highcharts
+// docs: add to API + extending Highcharts
+H.seriesType = function (type, parent, options, props, pointProps) {
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
 	
@@ -1666,12 +1794,14 @@ H.seriesType = function (type, parent, options, props, pointProps) { // docs: ad
 	);
 	
 	// Create the class
-	seriesTypes[type] = H.extendClass(seriesTypes[parent] || function () {}, props);
+	seriesTypes[type] = H.extendClass(seriesTypes[parent] ||
+		function () {}, props);
 	seriesTypes[type].prototype.type = type;
 
 	// Create the point class if needed
 	if (pointProps) {
-		seriesTypes[type].prototype.pointClass = H.extendClass(H.Point, pointProps);
+		seriesTypes[type].prototype.pointClass =
+			H.extendClass(H.Point, pointProps);
 	}
 
 	return seriesTypes[type];
@@ -1689,12 +1819,14 @@ if (win.jQuery) {
 			// Create the chart
 			if (args[0]) {
 				new H[ // eslint-disable-line no-new
-					H.isString(args[0]) ? args.shift() : 'Chart' // Constructor defaults to Chart
+					// Constructor defaults to Chart
+					H.isString(args[0]) ? args.shift() : 'Chart'
 				](this[0], args[0], args[1]);
 				return this;
 			}
 
-			// When called without parameters or with the return argument, return an existing chart
+			// When called without parameters or with the return argument,
+			// return an existing chart
 			return charts[H.attr(this[0], 'data-highcharts-chart')];
 		}
 	};
@@ -1702,8 +1834,8 @@ if (win.jQuery) {
 
 
 /**
- * Compatibility section to add support for legacy IE. This can be removed if old IE 
- * support is not needed.
+ * Compatibility section to add support for legacy IE. This can be removed if
+ * old IE support is not needed.
  */
 if (doc && !doc.defaultView) {
 	H.getStyle = function (el, prop) {
