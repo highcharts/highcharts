@@ -1365,11 +1365,17 @@ H.offset = function (el) {
 
 /**
  * Stop running animation.
- * A possible extension to this would be to stop a single property, when
+ *
+ * @todo A possible extension to this would be to stop a single property, when
  * we want to continue animating others. Then assign the prop to the timer
- * in the Fx.run method, and check for the prop here. This would be an improvement
- * in all cases where we stop the animation from .attr. Instead of stopping
- * everything, we can just stop the actual attributes we're setting.
+ * in the Fx.run method, and check for the prop here. This would be an
+ * improvement in all cases where we stop the animation from .attr. Instead of
+ * stopping everything, we can just stop the actual attributes we're setting.
+ *
+ * @function #stop
+ * @memberOf Highcharts
+ * @param {SVGElement} el - The SVGElement to stop animation on.
+ * @returns {void}
  */
 H.stop = function (el) {
 
@@ -1384,16 +1390,31 @@ H.stop = function (el) {
 };
 
 /**
- * Utility for iterating over an array.
- * @param {Array} arr
- * @param {Function} fn
+ * Iterate over an array.
+ *
+ * @function #each
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to iterate over.
+ * @param {Function} fn - The iterator callback. It passes two arguments:
+ * * item - The array item.
+ * * index - The item's index in the array.
+ * @param {Object} ctx The context.
  */
 H.each = function (arr, fn, ctx) { // modern browsers
 	return Array.prototype.forEach.call(arr, fn, ctx);
 };
 
 /**
- * Add an event listener
+ * Add an event listener.
+ *
+ * @function #addEvent
+ * @memberOf Highcharts
+ * @param {Object} el - The element or object to add a listener to. It can be a
+ *        {@link HTMLElement}, an {@SVGElement} or any other object.
+ * @param {String} type - The event type.
+ * @param {Function} fn - The function callback to execute when the event is 
+ *        fired.
+ * @returns {void}
  */
 H.addEvent = function (el, type, fn) {
 	
@@ -1429,7 +1450,16 @@ H.addEvent = function (el, type, fn) {
 };
 
 /**
- * Remove event added with addEvent
+ * Remove an event that was added with {@link Highcharts#addEvent}.
+ *
+ * @function #removeEvent
+ * @memberOf Highcharts
+ * @param {Object} el - The element to remove events on.
+ * @param {String} [type] - The type of events to remove. If undefined, all
+ *        events are removed from the element.
+ * @param {Function} [fn] - The specific callback to remove. If undefined, all
+ *        events that match the element and optionally the type are removed.
+ * @returns {void}
  */
 H.removeEvent = function (el, type, fn) {
 	
