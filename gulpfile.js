@@ -339,12 +339,27 @@ gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
     gulp.src(['README.md', './js/parts/Utilities.js'], { read: false })
         .pipe(jsdoc({
+            navOptions: {
+                theme: 'highsoft'
+            },
             opts: {
                 destination: './internal-docs/'
             },
             plugins: [
                 'plugins/markdown'
-            ]
+            ],
+            templates: {
+                default: {
+                    staticFiles: {
+                        include: [
+                            './tools/jsdoc/static'
+                        ]
+                    }
+                },
+                logoFile: 'img/highcharts-logo.svg',
+                systemName: 'Highcharts',
+                theme: 'highsoft'
+            }
         }, cb));
     console.log(colors.green('Writing JSDoc to ./internal-docs/index.html'));
 });

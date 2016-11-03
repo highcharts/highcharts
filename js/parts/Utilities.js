@@ -785,13 +785,13 @@ H.getTZOffset = function (timestamp) {
 };
 
 /**
- * Format a date, based on the syntax for PHP's [strftime]
- * {@link http://www.php.net/manual/en/function.strftime.php} function.
+ * Format a date, based on the syntax for PHP's [strftime]{@link
+ * http://www.php.net/manual/en/function.strftime.php} function.
  *
  * @function #dateFormat
  * @memberOf Highcharts
  * @param {String} format - The desired format where various time
- *        representations av prefixed with %.
+ *        representations are prefixed with %.
  * @param {Number} timestamp - The JavaScript timestamp.
  * @param {Boolean} capitalize - Upper case first letter in the return.
  * @returns {String} The formatted date.
