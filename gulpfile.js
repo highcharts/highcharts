@@ -11,7 +11,6 @@ var colors = require('colors'),
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    jsdoc = require('gulp-jsdoc3'),
     spawn = require('child_process').spawn;
 var paths = {
     buildsDir: './js/builds',
@@ -337,6 +336,7 @@ gulp.task('nightly', function () {
  * Automated generation for internal API docs.
  */
 gulp.task('jsdoc', function (cb) {
+    const jsdoc = require('gulp-jsdoc3');
     gulp.src(['README.md', './code/highcharts.src.js'], { read: false })
         .pipe(jsdoc({
             opts: {
