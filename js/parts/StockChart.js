@@ -158,10 +158,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		options, // user's options
 
 		{ // forced options
-			_stock: true, // internal flag
-			chart: {
-				inverted: false
-			}
+			_stock: true // internal flag
 		}
 	);
 

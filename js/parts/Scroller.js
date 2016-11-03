@@ -194,7 +194,7 @@ Navigator.prototype = {
 					'L',
 					0.5, 12
 				], inverted))
-				.attr({ zIndex: 10 - index }) // zIndex = 3 for right handle, 4 for left / 10 - #2908
+				.attr({ zIndex: 7 - index }) // zIndex = 6 for right handle, 7 for left. Can't be 10, becuase of tooltip - #2908
 				.addClass('highcharts-navigator-handle highcharts-navigator-handle-' + ['left', 'right'][index])
 				.add();
 
@@ -212,11 +212,11 @@ Navigator.prototype = {
 
 		// Place it
 		handles[index][verb](inverted ? {
-			translateX: scroller.left + scroller.navigatorWidth / 2 - 8,
-			translateY: scroller.top + scroller.navigatorHeight - parseInt(x, 10)
+			translateX: Math.round(scroller.left + scroller.navigatorWidth / 2 - 8),
+			translateY: Math.round(scroller.top + scroller.navigatorHeight - parseInt(x, 10))
 		} : {
-			translateX: scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10),
-			translateY: scroller.top + scroller.height / 2 - 8
+			translateX: Math.round(scroller.scrollerLeft + scroller.scrollbarHeight + parseInt(x, 10)),
+			translateY: Math.round(scroller.top + scroller.height / 2 - 8)
 		});
 	},
 
@@ -1273,21 +1273,22 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 });
 
 /**
- * For stock charts, extend the Chart.getMargins method so that we can set the final top position
+ * For stock charts, extend the Chart.setChartSize method so that we can set the final top position
  * of the navigator once the height of the chart, including the legend, is determined. #367.
+ * We can't use Chart.getMargins, because labels offsets are not calculated yet.
  */
-wrap(Chart.prototype, 'getMargins', function (proceed) {
+wrap(Chart.prototype, 'setChartSize', function (proceed) {
 
 	var legend = this.legend,
-		legendOptions = legend.options,
 		scroller = this.scroller,
+		legendOptions,
 		xAxis,
 		yAxis;
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (scroller) {
-
+		legendOptions = legend.options;
 		xAxis = scroller.xAxis;
 		yAxis = scroller.yAxis;
 
