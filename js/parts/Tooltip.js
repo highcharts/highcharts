@@ -543,6 +543,9 @@ H.Tooltip.prototype = {
 			tt.attr({
 				text: str
 			});
+			/*= if (build.classic) { =*/
+			tt.css(options.style);
+			/*= } =*/
 
 			// Get X position now, so we can move all to the other side in case of overflow
 			bBox = tt.getBBox();
