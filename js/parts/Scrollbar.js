@@ -347,7 +347,7 @@ Scrollbar.prototype = {
 			fromPX = (fullWidth - minWidth + newSize) * from;
 			newSize = minWidth;
 		}
-		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset);
+		newPos = Math.floor(fromPX + scroller.xOffset + scroller.yOffset) - 0.5;
 		newRiflesPos = newSize / 2 - 0.5; // -0.5 -> rifle line width / 2
 
 		// Store current position:
