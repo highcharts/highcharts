@@ -338,7 +338,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								";
 
 								// Handle browser keys for inspecting results from other browsers
-								if ($compare->$path) {
+								if (@$compare->$path) {
 									foreach($compare->$path as $key => $value) {
 										if (strpos($key, $browserKey) !== false) {
 											$diff = $compare->$path->$key;
@@ -351,7 +351,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';
-										$dummy = mktime();
+										$dummy = time();
 										$dissIndex = "
 											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=$dummy'
 												target='main' data-diff='$diff'>$diff</a>

@@ -730,7 +730,7 @@ SVGElement.prototype = {
 	 *
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
-	 * @param {String[Object} box The box to align to, needs a width and height. When the
+	 * @param {String|Object} box The box to align to, needs a width and height. When the
 	 *		box is a string, it refers to an object in the Renderer. For example, when
 	 *		box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
 	 *		x and y properties.
@@ -1437,7 +1437,7 @@ SVGRenderer.prototype = {
 		// iframes though (like in jsFiddle).
 		var subPixelFix, rect;
 		if (isFirefox && container.getBoundingClientRect) {
-			renderer.subPixelFix = subPixelFix = function () {
+			subPixelFix = function () {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
 				css(container, {
@@ -1450,7 +1450,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(win, 'resize', subPixelFix);
+			renderer.unSubPixelFix = addEvent(win, 'resize', subPixelFix);
 		}
 	},
 	/*= if (!build.classic) { =*/
@@ -1540,11 +1540,9 @@ SVGRenderer.prototype = {
 			renderer.defs = rendererDefs.destroy();
 		}
 
-		// Remove sub pixel fix handler
-		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
-		// See issue #982
-		if (renderer.subPixelFix) {
-			removeEvent(win, 'resize', renderer.subPixelFix);
+		// Remove sub pixel fix handler (#982)
+		if (renderer.unSubPixelFix) {
+			renderer.unSubPixelFix();
 		}
 
 		renderer.alignedObjects = null;

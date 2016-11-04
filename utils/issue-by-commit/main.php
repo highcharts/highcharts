@@ -65,7 +65,7 @@
 				window.parent.commitsKey = commitsKey;
 			}
 		</script>
-		<? endif; ?>
+		<?php endif; ?>
 	</head>
 
 	<body>

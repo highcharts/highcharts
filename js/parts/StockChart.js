@@ -48,6 +48,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 	var hasRenderToArg = isString(a) || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],
 		seriesOptions = options.series, // to increase performance, don't merge the data
+		defaultOptions = H.getOptions(),
 		opposite,
 
 		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
@@ -84,7 +85,9 @@ H.StockChart = H.stockChart = function (a, b, c) {
 					overflow: 'justify'
 				},
 				showLastLabel: true
-			}, xAxisOptions, // user options
+			}, 
+			defaultOptions.xAxis, // #3802
+			xAxisOptions, // user options
 			{ // forced options
 				type: 'datetime',
 				categories: null
@@ -105,7 +108,9 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			title: {
 				text: null
 			}
-		}, yAxisOptions // user options
+		}, 
+		defaultOptions.yAxis, // #3802
+		yAxisOptions // user options
 		);
 	});
 

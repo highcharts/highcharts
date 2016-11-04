@@ -13,14 +13,28 @@ try {
 }
 if (@$_POST['branch']) {
 	try {
+
+		// Post to session
 		$_SESSION['branch'] = @$_POST['branch'];
 		$_SESSION['after'] = @$_POST['after'];
 		$_SESSION['before'] = @$_POST['before'];
+		
+		// Prepare command
+		$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ';
+
+		// Date
+		if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {
+			$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}';
+
+		// Tag or commit
+		} else {
+			$cmd .= '' . $_SESSION['after'] . '..' . ($_SESSION['before'] ? $_SESSION['before'] : 'HEAD');
+		}
+
+		// Repo
 		$activeBranch = $repo->active_branch();
 		$repo->checkout($_SESSION['branch']);
-		$repo->run('log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ' .
-			//'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
-			'--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+		$repo->run($cmd);
 		$repo->checkout($activeBranch);
 
 
@@ -460,6 +474,10 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 		<div id="topnav">
 			
 			<form method="post" action="commits.php">
+			<p style="padding: 0 10px; color: gray; font-style: italic">
+			Tip: from and to inputs can be dates (YYYY-mm-dd), tags or commits.
+			Use tags to bisect between two known releases, like from <code>v4.2.6</code>
+			to <code>v4.2.7</code>.</p>
 			<div>
 			Branch
 

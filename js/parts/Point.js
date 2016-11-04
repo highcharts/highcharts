@@ -19,15 +19,23 @@ var Point,
 	removeEvent = H.removeEvent;
 
 /**
- * The Point object and prototype. Inheritable and used as base for PiePoint
+ * The Point object. The point objects are generated from the series.data 
+ * configuration objects or raw numbers. They can be accessed from the
+ * Series.points array.
+ * @constructor Point
  */
 Point = H.Point = function () {};
 Point.prototype = {
 
 	/**
-	 * Initialize the point
-	 * @param {Object} series The series object containing this point
-	 * @param {Object} options The data in either number, array or object format
+	 * Initialize the point. Called internally based on the series.data option.
+	 * @function #init
+	 * @memberOf Point
+	 * @param {Object} series The series object containing this point.
+	 * @param {Object} options The data in either number, array or object
+	 *        format.
+	 * @param {Number} x Optionally, the X value of the.
+	 * @returns {Object} The Point instance.
 	 */
 	init: function (series, options, x) {
 
@@ -63,10 +71,14 @@ Point.prototype = {
 		return point;
 	},
 	/**
-	 * Apply the options containing the x and y data and possible some extra properties.
-	 * This is called on point init or from point.update.
+	 * Apply the options containing the x and y data and possible some extra
+	 * properties. Called on point init or from point.update.
 	 *
-	 * @param {Object} options
+	 * @function #applyOptions
+	 * @memberOf Point
+	 * @param {Object} options The point options as defined in series.data.
+	 * @param {Number} x Optionally, the X value.
+	 * @returns {Object} The Point instance.
 	 */
 	applyOptions: function (options, x) {
 		var point = this,

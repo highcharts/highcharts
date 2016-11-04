@@ -53,13 +53,13 @@ const getProductVersion = () => {
 
 /**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
- * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
+ * @param {string} --file Optional command line argument. Use to build a one or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
  * @return undefined
  */
 const scripts = () => {
     let build = require('./assembler/build').build;
     // let argv = require('yargs').argv; Already declared in the upper scope
-    let files = (argv.file) ? [argv.file] : null,
+    let files = (argv.file) ? argv.file.split(',') : null,
         type = (argv.type) ? argv.type : 'both',
         debug = argv.d || false,
         version = getProductVersion(),
@@ -330,6 +330,38 @@ gulp.task('nightly', function () {
         cwd: 'utils/samples',
         stdio: 'inherit'
     });
+});
+
+/**
+ * Automated generation for internal API docs.
+ */
+gulp.task('jsdoc', function (cb) {
+    const jsdoc = require('gulp-jsdoc3');
+    gulp.src(['README.md', './js/parts/Utilities.js'], { read: false })
+        .pipe(jsdoc({
+            navOptions: {
+                theme: 'highsoft'
+            },
+            opts: {
+                destination: './internal-docs/'
+            },
+            plugins: [
+                'plugins/markdown'
+            ],
+            templates: {
+                default: {
+                    staticFiles: {
+                        include: [
+                            './tools/jsdoc/static'
+                        ]
+                    }
+                },
+                logoFile: 'img/highcharts-logo.svg',
+                systemName: 'Highcharts',
+                theme: 'highsoft'
+            }
+        }, cb));
+    console.log(colors.green('Writing JSDoc to ./internal-docs/index.html'));
 });
 
 gulp.task('filesize', function () {

@@ -40,7 +40,7 @@ var addEvent = H.addEvent,
 	win = H.win;
 
 /**
- * @classDescription The base function which all other series types inherit from. The data in the series is stored
+ * The base function which all other series types inherit from. The data in the series is stored
  * in various arrays.
  *
  * - First, series.options.data contains all the original config options for
@@ -53,10 +53,11 @@ var addEvent = H.addEvent,
  * compared to series.data and series.options.data. If however the series data is grouped, these can't
  * be correlated one to one.
  * - series.xData and series.processedXData contain clean x values, equivalent to series.data and series.points.
- * - series.yData and series.processedYData contain clean x values, equivalent to series.data and series.points.
+ * - series.yData and series.processedYData contain clean y values, equivalent to series.data and series.points.
  *
- * @param {Object} chart
- * @param {Object} options
+ * @constructor Series
+ * @param {Object} chart - The chart instance.
+ * @param {Object} options - The series options.
  */
 H.Series = H.seriesType('line', null, { // base series options
 	/*= if (build.classic) { =*/
@@ -256,8 +257,12 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Set the xAxis and yAxis properties of cartesian series, and register the series
-	 * in the axis.series array
+	 * Set the xAxis and yAxis properties of cartesian series, and register the
+	 * series in the `axis.series` array.
+	 *
+	 * @function #bindAxes
+	 * @memberOf Series
+	 * @returns {void}
 	 */
 	bindAxes: function () {
 		var series = this,
@@ -845,8 +850,12 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Translate data points from raw data values to chart specific positioning data
-	 * needed later in drawPoints, drawGraph and drawTracker.
+	 * Translate data points from raw data values to chart specific positioning
+	 * data needed later in drawPoints, drawGraph and drawTracker.
+	 *
+	 * @function #translate
+	 * @memberOf Series
+	 * @returns {void}
 	 */
 	translate: function () {
 		if (!this.processedXData) { // hidden series
@@ -1096,7 +1105,11 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Draw the markers
+	 * Draw the markers.
+	 *
+	 * @function #drawPoints
+	 * @memberOf Series
+	 * @returns {void}
 	 */
 	drawPoints: function () {
 		var series = this,
@@ -1235,10 +1248,13 @@ H.Series = H.seriesType('line', null, { // base series options
 			pointOptions = point && point.options,
 			pointMarkerOptions = (pointOptions && pointOptions.marker) || {},
 			pointStateOptions,
-			strokeWidth = seriesMarkerOptions.lineWidth,
 			color = this.color,
 			pointColorOption = pointOptions && pointOptions.color,
 			pointColor = point && point.color,
+			strokeWidth = pick(
+				pointMarkerOptions.lineWidth,
+				seriesMarkerOptions.lineWidth
+			),
 			zoneColor,
 			fill,
 			stroke,
@@ -1259,7 +1275,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		if (state) {
 			seriesStateOptions = seriesMarkerOptions.states[state];
 			pointStateOptions = (pointMarkerOptions.states && pointMarkerOptions.states[state]) || {};
-			strokeWidth = seriesStateOptions.lineWidth || strokeWidth + seriesStateOptions.lineWidthPlus;
+			strokeWidth = pick(
+				pointStateOptions.lineWidth, 
+				seriesStateOptions.lineWidth, 
+				strokeWidth + pick(
+					pointStateOptions.lineWidthPlus, 
+					seriesStateOptions.lineWidthPlus,
+					0
+				)
+			);
 			fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
 			stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
 		}
@@ -1653,14 +1677,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	invertGroups: function (inverted) {
 		var series = this,
-			chart = series.chart;
+			chart = series.chart,
+			remover;
 
-		// Pie, go away (#1736)
-		if (!series.xAxis) {
-			return;
-		}
-
-		// A fixed size is needed for inversion to work
 		function setInvert() {
 			var size = {
 				width: series.yAxis.len,
@@ -1674,10 +1693,14 @@ H.Series = H.seriesType('line', null, { // base series options
 			});
 		}
 
-		addEvent(chart, 'resize', setInvert); // do it on resize
-		addEvent(series, 'destroy', function () {
-			removeEvent(chart, 'resize', setInvert);
-		});
+		// Pie, go away (#1736)
+		if (!series.xAxis) {
+			return;
+		}
+
+		// A fixed size is needed for inversion to work
+		remover = addEvent(chart, 'resize', setInvert);
+		addEvent(series, 'destroy', remover);
 
 		// Do it now
 		setInvert(inverted); // do it now

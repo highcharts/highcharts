@@ -391,7 +391,7 @@ H.Tooltip.prototype = {
 	refresh: function (point, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
-			label = tooltip.getLabel(),
+			label,
 			options = tooltip.options,
 			x,
 			y,
@@ -453,6 +453,8 @@ H.Tooltip.prototype = {
 			this.hide();
 		} else {
 
+			label = tooltip.getLabel();
+
 			// show it
 			if (tooltip.isHidden) {
 				stop(label);
@@ -466,7 +468,7 @@ H.Tooltip.prototype = {
 				this.renderSplit(text, chart.hoverPoints);
 			} else {
 				label.attr({
-					text: text.join ? text.join('') : text
+					text: text && text.join ? text.join('') : text
 				});
 
 				// Set the stroke color of the box to reflect the point
@@ -541,6 +543,9 @@ H.Tooltip.prototype = {
 			tt.attr({
 				text: str
 			});
+			/*= if (build.classic) { =*/
+			tt.css(options.style);
+			/*= } =*/
 
 			// Get X position now, so we can move all to the other side in case of overflow
 			bBox = tt.getBBox();
