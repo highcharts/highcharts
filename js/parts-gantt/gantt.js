@@ -9,28 +9,136 @@ import H from '../parts/Globals.js';
 import 'grid-axis.js';
 import 'xrange-series.js';
 
-var
-	// extend = H.extend,
-	// isNumber = H.isNumber,
+var isNumber = H.isNumber,
 	pick = H.pick,
 	seriesType = H.seriesType,
-	Point = H.Point;
+	seriesTypes = H.seriesTypes,
+	stop = H.stop,
+	Point = H.Point,
+	parentName = 'xrange',
+	parent = seriesTypes[parentName];
 
 // type, parent, options, props, pointProps
-seriesType('gantt', 'xrange', {
+seriesType('gantt', parentName, {
 	// options - default options merged with parent
 	dataLabels: {
 		enabled: true,
 		verticalAlign: 'middle',
 		inside: true,
 		formatter: function () {
-			var str = pick(this.taskName, this.y);
+			var point = this,
+				str = pick(point.taskName, point.y);
 			return str === null ? '' : str;
+		}
+	},
+	tooltip: {
+		headerFormat: '<span style="color:{point.color}; text-align: right">{series.name}</span><br/>',
+		pointFormatter: function () {
+			var point = this,
+				taskName = point.taskName,
+				start = new Date(point.start),
+				end = new Date(point.end),
+				milestone = point.options.milestone,
+				dateRowStart = '<span style="font-size: 0.8em">',
+				dateRowEnd = '</span><br/>',
+				retVal = '<b>' + taskName + '</b>';
+
+			retVal += '<br/>';
+
+			if (!milestone) {
+				retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
+				retVal += dateRowStart + 'End: ' + end + dateRowEnd;
+			} else {
+				retVal += dateRowStart + 'Date ' + start + dateRowEnd;
+			}
+
+			return retVal;
 		}
 	}
 }, {
 	// props - member overrides
 
+	translatePoint: function (point) {
+		var series = this,
+			shapeArgs,
+			sizeMod = 1,
+			size,
+			milestone = point.options.milestone,
+			sizeDifference;
+
+
+		parent.prototype.translatePoint.call(series, point);
+
+		if (milestone) {
+			shapeArgs = point.shapeArgs;
+
+			if (isNumber(milestone.sizeModifier)) {
+				sizeMod = milestone.sizeModifier;
+			}
+
+			size = shapeArgs.height * sizeMod;
+			sizeDifference = size - shapeArgs.height;
+
+			point.shapeArgs = {
+				x: shapeArgs.x - (size / 2),
+				y: shapeArgs.y - (sizeDifference / 2),
+				width: size,
+				height: size
+			};
+		}
+	},
+
+	drawPoint: function (point, verb) {
+		var series = this,
+			seriesOpts = series.options,
+			renderer = series.chart.renderer,
+			shapeArgs = point.shapeArgs,
+			plotY = point.plotY,
+			graphic = point.graphic,
+			state = point.selected && 'select',
+			cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+			diamondShape;
+
+		if (point.options.milestone) {
+			if (isNumber(plotY) && point.y !== null) {
+
+				diamondShape = renderer.symbols.diamond(
+					shapeArgs.x,
+					shapeArgs.y,
+					shapeArgs.width,
+					shapeArgs.height
+				);
+
+				if (graphic) {
+					stop(graphic);
+					point.milestone[verb]({
+						d: diamondShape
+					});
+				} else {
+					point.graphic = graphic = renderer.g('point')
+					.attr({
+						'class': point.getClassName()
+					})
+					.add(point.group || series.group);
+
+
+					point.milestone = renderer.path(diamondShape)
+					.addClass(point.getClassName(), true)
+					.add(graphic);
+				}
+				/*= if (build.classic) { =*/
+				// Presentational
+				point.milestone
+					.attr(series.pointAttribs(point, state))
+					.shadow(seriesOpts.shadow, null, cutOff);
+				/*= } =*/
+			} else if (graphic) {
+				point.graphic = graphic.destroy(); // #1269
+			}
+		} else {
+			parent.prototype.drawPoint.call(series, point, verb);
+		}
+	}
 }, {
 	// pointProps - point member overrides
 	/**
@@ -46,6 +154,9 @@ seriesType('gantt', 'xrange', {
 		// Get value from aliases
 		retVal.x = pick(retVal.start, retVal.x);
 		retVal.x2 = pick(retVal.end, retVal.x2);
+		if (options.milestone) {
+			retVal.x2 = retVal.x;
+		}
 		retVal.y = pick(retVal.taskGroup, retVal.name, retVal.taskName, retVal.y);
 		retVal.name = pick(retVal.taskGroup, retVal.name);
 
