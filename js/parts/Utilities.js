@@ -50,7 +50,7 @@ H.error = function (code, stop) {
  * @constructor Fx
  * @memberOf Highcharts
  * @param {HTMLElement|SVGElement} elem - The element to animate.
- * @param {Animation} options - Animation options.
+ * @param {AnimationOptions} options - Animation options.
  * @param {Object} prop - The single attribute or CSS property to animate.
  * @returns {void}
  */
@@ -1239,10 +1239,10 @@ H.setAnimation = function (animation, chart) {
  *
  * @function #animObject
  * @memberOf Highcharts
- * @param {Boolean|Animation} animation - An animation setting. Can be an object
- *        with duration, complete and easing properties, or a boolean to enable
- *        or disable.
- * @returns {Animation} An Animation object with at least a duration property.
+ * @param {Boolean|AnimationOptions} animation - An animation setting. Can be an
+ *        object with duration, complete and easing properties, or a boolean to
+ *        enable or disable.
+ * @returns {AnimationOptions} An object with at least a duration property.
  */
 H.animObject = function (animation) {
 	return H.isObject(animation) ?
@@ -1685,7 +1685,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
- * @typedef {Object} Animation
+ * @typedef {Object} AnimationOptions
  * @property {Number} duration - The animation duration in milliseconds.
  * @property {String} [easing] - The name of an easing function as defined on
  *     the `Math` object.
@@ -1706,7 +1706,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  * @param {Object} params - An object containing key-value pairs of the
  *        properties to animate. Supports numeric as pixel-based CSS properties
  *        for HTML objects and attributes for SVGElements.
- * @param {Animation} [opt] - Animation options.
+ * @param {AnimationOptions} [opt] - Animation options.
  */
 H.animate = function (el, params, opt) {
 	var start,
