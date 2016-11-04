@@ -1677,14 +1677,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	invertGroups: function (inverted) {
 		var series = this,
-			chart = series.chart;
+			chart = series.chart,
+			remover;
 
-		// Pie, go away (#1736)
-		if (!series.xAxis) {
-			return;
-		}
-
-		// A fixed size is needed for inversion to work
 		function setInvert() {
 			var size = {
 				width: series.yAxis.len,
@@ -1698,10 +1693,14 @@ H.Series = H.seriesType('line', null, { // base series options
 			});
 		}
 
-		addEvent(chart, 'resize', setInvert); // do it on resize
-		addEvent(series, 'destroy', function () {
-			removeEvent(chart, 'resize', setInvert);
-		});
+		// Pie, go away (#1736)
+		if (!series.xAxis) {
+			return;
+		}
+
+		// A fixed size is needed for inversion to work
+		remover = addEvent(chart, 'resize', setInvert);
+		addEvent(series, 'destroy', remover);
 
 		// Do it now
 		setInvert(inverted); // do it now

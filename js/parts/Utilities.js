@@ -1492,7 +1492,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is 
  *        fired.
- * @returns {void}
+ * @returns {Function} A callback function to remove the added event.
  */
 H.addEvent = function (el, type, fn) {
 	
@@ -1525,6 +1525,11 @@ H.addEvent = function (el, type, fn) {
 	}
 
 	events[type].push(fn);
+
+	// Return a function that can be called to remove this event.
+	return function () {
+		H.removeEvent(el, type, fn);
+	};
 };
 
 /**
