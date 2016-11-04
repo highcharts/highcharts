@@ -829,15 +829,12 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
-			reflow = function (e) {
-				chart.reflow(e);
-			};
-			
+			unbind;
 		
-		addEvent(win, 'resize', reflow);
-		addEvent(chart, 'destroy', function () {
-			removeEvent(win, 'resize', reflow);
+		unbind = addEvent(win, 'resize', function (e) {
+			chart.reflow(e);
 		});
+		addEvent(chart, 'destroy', unbind);
 
 		// The following will add listeners to re-fit the chart before and after
 		// printing (#2284). However it only works in WebKit. Should have worked

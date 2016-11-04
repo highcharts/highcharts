@@ -265,13 +265,12 @@ H.Pointer.prototype = {
 		}
 
 		// Start the event listener to pick up the tooltip and crosshairs
-		if (!pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
+		if (!pointer.unDocMouseMove) {
+			pointer.unDocMouseMove = addEvent(doc, 'mousemove', function (e) {
 				if (charts[H.hoverChartIndex]) {
 					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+			});
 		}
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
@@ -344,9 +343,8 @@ H.Pointer.prototype = {
 				tooltip.hide(delay);
 			}
 
-			if (pointer._onDocumentMouseMove) {
-				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-				pointer._onDocumentMouseMove = null;
+			if (pointer.unDocMouseMove) {
+				pointer.unDocMouseMove = pointer.unDocMouseMove();
 			}
 
 			// Remove crosshairs

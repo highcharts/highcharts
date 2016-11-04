@@ -1130,7 +1130,16 @@ H.each = function (arr, fn, ctx) { // modern browsers
 };
 
 /**
- * Add an event listener
+ * Add an event listener.
+ *
+ * @function #addEvent
+ * @memberOf Highcharts
+ * @param {Object} el - The element or object to add a listener to. It can be a
+ *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ * @param {String} type - The event type.
+ * @param {Function} fn - The function callback to execute when the event is 
+ *        fired.
+ * @returns {Function} A callback function to remove the added event.
  */
 H.addEvent = function (el, type, fn) {
 	
@@ -1163,6 +1172,11 @@ H.addEvent = function (el, type, fn) {
 	}
 
 	events[type].push(fn);
+
+	// Return a function that can be called to remove this event.
+	return function () {
+		H.removeEvent(el, type, fn);
+	};
 };
 
 /**

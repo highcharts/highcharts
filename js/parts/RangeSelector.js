@@ -25,7 +25,6 @@ var addEvent = H.addEvent,
 	merge = H.merge,
 	pick = H.pick,
 	pInt = H.pInt,
-	removeEvent = H.removeEvent,
 	splat = H.splat,
 	wrap = H.wrap;
 		
@@ -267,7 +266,7 @@ RangeSelector.prototype = {
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
-			blurInputs = rangeSelector.blurInputs = function () {
+			blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
 				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
@@ -285,8 +284,8 @@ RangeSelector.prototype = {
 		chart.extraTopMargin = options.height;
 		rangeSelector.buttonOptions = buttonOptions;
 
-		addEvent(chart.container, 'mousedown', blurInputs);
-		addEvent(chart, 'resize', blurInputs);
+		this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
+		this.unResize = addEvent(chart, 'resize', blurInputs);
 
 		// Extend the buttonOptions with actual range
 		each(buttonOptions, rangeSelector.computeButtonRange);
@@ -754,12 +753,10 @@ RangeSelector.prototype = {
 	destroy: function () {
 		var minInput = this.minInput,
 			maxInput = this.maxInput,
-			chart = this.chart,
-			blurInputs = this.blurInputs,
 			key;
 
-		removeEvent(chart.container, 'mousedown', blurInputs);
-		removeEvent(chart, 'resize', blurInputs);
+		this.unMouseDown();
+		this.unResize();
 
 		// Destroy elements in collections
 		destroyObjectProperties(this.buttons);
