@@ -921,6 +921,9 @@ H.Axis.prototype = {
 			this.minRange = undefined;
 			each(this.series || [], function (series) {
 			
+				// Reset incrementer (#5928)
+				series.xIncrement = null;
+
 				// When adding a series, points are not yet generated
 				if (!series.points || series.isDirtyData) {
 					series.processData();

@@ -402,3 +402,70 @@ QUnit.test('Set crosshair width (#5819)', function (assert) {
 
     assert.strictEqual(chart.xAxis[0].cross['stroke-width'], 1, 'Stroke width is set to 1');
 });
+
+QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            width: 400,
+            animation: false
+        },
+
+        xAxis: {
+            type: 'category',
+            uniqueNames: false
+        },
+
+        "series": [{
+            animation: false,
+            "data": [
+                ["2014", 1.1],
+                ["2013", 11.6],
+                ["2012", 8.4]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Initial min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        2,
+        'Initial max'
+    );
+
+    chart.setSize(390);
+
+
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Unaltered min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        2,
+        'Unaltered max'
+    );
+
+
+    chart.series[0].addPoint(['2016', 3]);
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Unaltered min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        3,
+        'Increased max'
+    );
+});
