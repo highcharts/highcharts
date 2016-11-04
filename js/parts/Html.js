@@ -22,8 +22,8 @@ var attr = H.attr,
 	win = H.win,
 	wrap = H.wrap;
 
-// extend SvgElement for useHTML option
-extend(SVGElement.prototype, {
+// Extend SvgElement for useHTML option
+extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -195,7 +195,7 @@ extend(SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, {
+extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.

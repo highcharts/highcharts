@@ -297,7 +297,7 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Chart.prototype */ {
 	/**
 	 * Display the zoom button
 	 */
@@ -432,7 +432,7 @@ extend(Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, {
+extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -706,7 +706,7 @@ extend(Point.prototype, {
 
 	/**
 	 * Get the circular path definition for the halo
-	 * @param  {Number} size The radius of the circular halo
+	 * @param  {Number} size The radius of the circular halo.
 	 * @returns {Array} The path definition
 	 */
 	haloPath: function (size) {
@@ -726,7 +726,7 @@ extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Series mouse over handler
 	 */

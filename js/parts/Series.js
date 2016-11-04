@@ -177,8 +177,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	// zIndex: null
 
 
-// Prototype properties
-}, {
+}, /** @lends Series.prototype */ {
 	isCartesian: true,
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted

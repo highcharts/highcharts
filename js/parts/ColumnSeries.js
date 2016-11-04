@@ -73,8 +73,7 @@ seriesType('column', 'line', {
 	// borderWidth: 1
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.column.prototype */ {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],

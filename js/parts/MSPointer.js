@@ -57,7 +57,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	extend(Pointer.prototype, {
+	extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };

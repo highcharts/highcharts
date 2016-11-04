@@ -15,7 +15,7 @@ var charts = H.charts,
 	Pointer = H.Pointer;
 
 /* Support for touch devices */
-extend(Pointer.prototype, {
+extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
 	/**
 	 * Run translation operations

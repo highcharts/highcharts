@@ -45,7 +45,9 @@ var SVGElement,
 	win = H.win;
 
 /**
- * A wrapper object for SVG elements
+ * A wrapper object for SVG elements.
+ *
+ * @constructor SVGElement
  */
 SVGElement = H.SVGElement = function () {
 	return this;
@@ -1361,7 +1363,8 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 /*= } =*/
 
 /**
- * The default SVG renderer
+ * The default SVG renderer.
+ * @constructor SVGRenderer
  */
 SVGRenderer = H.SVGRenderer = function () {
 	this.init.apply(this, arguments);
@@ -2922,7 +2925,9 @@ SVGRenderer.prototype = {
 		var baseCss = wrapper.css;
 		return extend(wrapper, {
 			/**
-			 * Pick up some properties and apply them to the text instead of the wrapper
+			 * Pick up some properties and apply them to the text instead of the
+			 * wrapper.
+			 * @ignore
 			 */
 			css: function (styles) {
 				if (styles) {
@@ -2939,7 +2944,8 @@ SVGRenderer.prototype = {
 				return baseCss.call(wrapper, styles);
 			},
 			/**
-			 * Return the bounding box of the box, not the group
+			 * Return the bounding box of the box, not the group.
+			 * @ignore
 			 */
 			getBBox: function () {
 				return {
@@ -2951,7 +2957,8 @@ SVGRenderer.prototype = {
 			},
 			/*= if (build.classic) { =*/
 			/**
-			 * Apply the shadow to the box
+			 * Apply the shadow to the box.
+			 * @ignore
 			 */
 			shadow: function (b) {
 				if (b) {
@@ -2965,6 +2972,7 @@ SVGRenderer.prototype = {
 			/*= } =*/
 			/**
 			 * Destroy and release memory.
+			 * @ignore
 			 */
 			destroy: function () {
 				
