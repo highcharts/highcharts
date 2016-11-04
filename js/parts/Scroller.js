@@ -165,53 +165,10 @@ Navigator.prototype = {
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawHandle: function (x, index, inverted, verb) {
-		var scroller = this,
-			chart = scroller.chart,
-			renderer = chart.renderer,
-			handles = scroller.handles;
-
-		// create the elements
-		if (!scroller.rendered) {
-
-			handles[index] = renderer
-				.path(H.Scrollbar.prototype.swapXY.call(null, [
-					'M',
-					-4.5, 0.5,
-					'L',
-					3.5, 0.5,
-					'L',
-					3.5, 15.5,
-					'L',
-					-4.5, 15.5,
-					'L',
-					-4.5, 0.5,
-					'M',
-					-1.5, 4,
-					'L',
-					-1.5, 12,
-					'M',
-					0.5, 4,
-					'L',
-					0.5, 12
-				], inverted))
-				.attr({ zIndex: 7 - index }) // zIndex = 6 for right handle, 7 for left. Can't be 10, becuase of tooltip - #2908
-				.addClass('highcharts-navigator-handle highcharts-navigator-handle-' + ['left', 'right'][index])
-				.add();
-
-			/*= if (build.classic) { =*/
-			var handlesOptions = scroller.navigatorOptions.handles;
-			handles[index]
-				.attr({
-					fill: handlesOptions.backgroundColor,
-					stroke: handlesOptions.borderColor,
-					'stroke-width': 1
-				})
-				.css({ cursor: inverted ? 'ns-resize' : 'ew-resize' });
-			/*= } =*/
-		}
+		var scroller = this;
 
 		// Place it
-		handles[index][verb](inverted ? {
+		scroller.handles[index][verb](inverted ? {
 			translateX: Math.round(scroller.navigatorLeft + scroller.navigatorWidth / 2 - 8),
 			translateY: Math.round(scroller.top + scroller.navigatorHeight - parseInt(x, 10) + 0.5)
 		} : {
@@ -232,12 +189,12 @@ Navigator.prototype = {
 			maskInside = scroller.navigatorOptions.maskInside,
 			outlineWidth = scroller.outline.strokeWidth(),
 			halfOutline = outlineWidth / 2,
-			scrollbarHeight = scroller.scrollbarHeight,
 			outlineHeight = scroller.outlineHeight,
-			navigatorWidth = scroller.navigatorWidth,
+			scrollbarHeight = scroller.scrollbarHeight,
 			navigatorHeight = scroller.navigatorHeight,
-			navigatorTop = scroller.top,
+			navigatorWidth = scroller.navigatorWidth,
 			navigatorLeft = scroller.navigatorLeft,
+			navigatorTop = scroller.top,
 			verticalMin,
 			path;
 
@@ -271,8 +228,8 @@ Navigator.prototype = {
 			] : []);
 		} else {
 			navigatorLeft = scroller.navigatorLeft - scrollbarHeight;
-			zoomedMin += navigatorLeft + scrollbarHeight - halfOutline;
-			zoomedMax += navigatorLeft + scrollbarHeight - halfOutline;
+			zoomedMin += navigatorLeft + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
+			zoomedMax += navigatorLeft + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
 			navigatorTop += halfOutline;
 
 			path = [
@@ -309,47 +266,123 @@ Navigator.prototype = {
 		var scroller = this,
 			left = scroller.navigatorLeft,
 			top = scroller.navigatorTop,
-			height = scroller.height;
+			scrollerHeight = scroller.height,
+			height,
+			width,
+			x,
+			y;
 
+		// Determine rectangle position & size according to (non)inverted position:
 		if (inverted) {
-			scroller.leftShade[verb]({
-				x: left,
-				y: top,
-				width: height,
-				height: scroller.navigatorHeight - zoomedMax
-			});
-			scroller.centerShade[verb]({
-				x: left,
-				y: top + scroller.navigatorHeight - zoomedMax,
-				width: height,
-				height: zoomedMax - zoomedMin
-			});
-			scroller.rightShade[verb]({
-				x: left,
-				y: top + scroller.navigatorHeight - zoomedMin,
-				width: height,
-				height: zoomedMin
-			});
+			x = [left, left, left];
+			y = [top, top + scroller.navigatorHeight - zoomedMax, top + scroller.navigatorHeight - zoomedMin];
+			width = [scrollerHeight, scrollerHeight, scrollerHeight];
+			height = [scroller.navigatorHeight - zoomedMax, zoomedMax - zoomedMin, zoomedMin];
 		} else {
-			scroller.leftShade[verb]({
-				x: left,
-				y: top,
-				width: zoomedMin,
-				height: height
-			});
-			scroller.centerShade[verb]({
-				x: left + zoomedMin,
-				y: top,
-				width: zoomedMax - zoomedMin,
-				height: height
-			});
-			scroller.rightShade[verb]({
-				x: left + zoomedMax,
-				y: top,
-				width: scroller.navigatorWidth - zoomedMax,
-				height: height
-			});
+			x = [left, left + zoomedMin, left + zoomedMax];
+			y = [top, top, top];
+			width = [zoomedMin, zoomedMax - zoomedMin, scroller.navigatorWidth - zoomedMax];
+			height = [scrollerHeight, scrollerHeight, scrollerHeight];
 		}
+		each(scroller.shades, function (shade, i) {
+			shade[verb]({
+				x: x[i],
+				y: y[i],
+				width: width[i],
+				height: height[i]
+			});
+		});
+	},
+
+	/**
+	 * Generate DOM elements:
+	 * - main navigator group
+	 * - all shades
+	 * - outline
+	 * - handles
+	 */
+	renderElements: function () {
+		var scroller = this,
+			navigatorOptions = scroller.navigatorOptions,
+			maskInside = navigatorOptions.maskInside,
+			chart = scroller.chart,
+			inverted = chart.inverted,
+			renderer = chart.renderer,
+			navigatorGroup;
+
+		// Create the main navigator group
+		scroller.navigatorGroup = navigatorGroup = renderer.g('navigator')
+			.attr({
+				zIndex: 3
+			})
+			.add();
+
+		// Create masks, each mask will get events and fill:
+		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
+			scroller.shades[index] = renderer.rect()
+				.addClass('highcharts-navigator-mask' + (hasMask ? '-inside' : ''))
+				/*= if (build.classic) { =*/
+				.attr({
+					fill: hasMask ? navigatorOptions.maskFill : 'none'
+				})
+				.css(hasMask && { cursor: inverted ? 'ns-resize' : 'ew-resize' })
+				/*= } =*/
+				.add(navigatorGroup);
+		});
+
+		// Create the outline:
+		scroller.outline = renderer.path()
+			.addClass('highcharts-navigator-outline')
+			/*= if (build.classic) { =*/
+			.attr({
+				'stroke-width': navigatorOptions.outlineWidth,
+				stroke: navigatorOptions.outlineColor
+			})
+			/*= } =*/
+			.add(navigatorGroup);
+
+		// Create the handlers:
+		each([0, 1], function (index) {
+			scroller.handles[index] = renderer
+				.path(H.Scrollbar.prototype.swapXY.call(null, [
+					'M',
+					-4.5, 0.5,
+					'L',
+					3.5, 0.5,
+					'L',
+					3.5, 15.5,
+					'L',
+					-4.5, 15.5,
+					'L',
+					-4.5, 0.5,
+					'M',
+					-1.5, 4,
+					'L',
+					-1.5, 12,
+					'M',
+					0.5, 4,
+					'L',
+					0.5, 12
+				], inverted))
+				// zIndex = 6 for right handle, 7 for left.
+				// Can't be 10, becuase of tooltip in inverted chart #2908
+				.attr({ zIndex: 7 - index })
+				.addClass(
+					'highcharts-navigator-handle highcharts-navigator-handle-' +
+					['left', 'right'][index]
+				).add(navigatorGroup);
+
+			/*= if (build.classic) { =*/
+			var handlesOptions = navigatorOptions.handles;
+			scroller.handles[index]
+				.attr({
+					fill: handlesOptions.backgroundColor,
+					stroke: handlesOptions.borderColor,
+					'stroke-width': 1
+				})
+				.css({ cursor: inverted ? 'ns-resize' : 'ew-resize' });
+			/*= } =*/
+		});
 	},
 
 	/**
@@ -373,18 +406,16 @@ Navigator.prototype = {
 	render: function (min, max, pxMin, pxMax) {
 		var scroller = this,
 			chart = scroller.chart,
-			renderer = chart.renderer,
 			navigatorHeight,
 			navigatorLeft,
 			navigatorWidth,
 			scrollerTop,
 			scrollerWidth,
 			scrollerHeight,
-			navigatorGroup = scroller.navigatorGroup,
+			scrollbarLeft,
+			scrollbarTop,
 			scrollbarHeight = scroller.scrollbarHeight,
 			xAxis = scroller.xAxis,
-			navigatorOptions = scroller.navigatorOptions,
-			maskInside = navigatorOptions.maskInside,
 			height = scroller.height,
 			navigatorEnabled = scroller.navigatorEnabled,
 			zoomedMin,
@@ -419,7 +450,7 @@ Navigator.prototype = {
 			xAxis.left,
 			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
 		);
-		scroller.scrollerLeft = navigatorLeft - scrollbarHeight;
+		scroller.scrollerLeft = scrollbarLeft = navigatorLeft - scrollbarHeight;
 
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
@@ -434,8 +465,7 @@ Navigator.prototype = {
 			return;
 		}
 
-
-		// handles are allowed to cross, but never exceed the plot area
+		// Handles are allowed to cross, but never exceed the plot area
 		scroller.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), zoomedMax);
 		scroller.zoomedMin = Math.min(Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0), zoomedMax);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
@@ -445,40 +475,7 @@ Navigator.prototype = {
 
 		if (navigatorEnabled) {
 			if (!rendered) {
-
-				// Draw the navigator group
-				scroller.navigatorGroup = navigatorGroup = renderer.g('navigator')
-					.attr({
-						zIndex: 3
-					})
-					.add();
-
-				// Draw masks, each mask will get events and fill:
-				each([
-						['leftShade', !maskInside],
-						['centerShade', maskInside],
-						['rightShade', !maskInside]
-					], function (shade) {
-						scroller[shade[0]] = renderer.rect()
-							.addClass('highcharts-navigator-mask' + (shade[1] ? '-inside' : ''))
-							/*= if (build.classic) { =*/
-							.attr({
-								fill: shade[1] ? navigatorOptions.maskFill : 'none'
-							})
-							.css(shade[1] && { cursor: inverted ? 'ns-resize' : 'ew-resize' })
-							/*= } =*/
-							.add(navigatorGroup);
-				});
-
-				scroller.outline = renderer.path()
-					.addClass('highcharts-navigator-outline')
-					/*= if (build.classic) { =*/
-					.attr({
-						'stroke-width': navigatorOptions.outlineWidth,
-						stroke: navigatorOptions.outlineColor
-					})
-					/*= } =*/
-					.add(navigatorGroup);
+				scroller.renderElements();
 			}
 
 			// Place elements
@@ -491,33 +488,28 @@ Navigator.prototype = {
 		}
 
 		if (scroller.scrollbar) {
-
 			scroller.scrollbar.hasDragged = scroller.hasDragged;
 				
-			// Keep scale 0-1
 			if (inverted) {
-				scroller.scrollbar.position(
-					scroller.scrollerLeft + (navigatorEnabled ? 0 : scroller.height),
-					scrollerTop,
-					scrollbarHeight,
-					scrollerHeight
-				);
-				scroller.scrollbar.setRange(
-					1 - zoomedMax / navigatorHeight,
-					1 - zoomedMin / navigatorHeight
-				);
+				scrollbarTop = scrollerTop;
+				scrollbarLeft = scroller.scrollerLeft + (navigatorEnabled ? 0 : scroller.height);
+				scrollbarHeight = scrollerHeight;
+				scrollerWidth = scrollbarHeight;
+				zoomedMin = 1 - zoomedMax / navigatorHeight;
+				zoomedMax = 1 - Math.round(scroller.zoomedMin) / navigatorHeight;
 			} else {
-				scroller.scrollbar.position(
-					scroller.scrollerLeft,
-					scroller.top + (navigatorEnabled ? scroller.height : -scrollbarHeight),
-					scrollerWidth,
-					scrollbarHeight
-				);
-				scroller.scrollbar.setRange(
-					zoomedMin / navigatorWidth,
-					zoomedMax / navigatorWidth
-				);
+				scrollbarTop = scroller.top + (navigatorEnabled ? scroller.height : -scrollbarHeight);
+				zoomedMin /= navigatorWidth;
+				zoomedMax /= navigatorWidth;
 			}
+			scroller.scrollbar.position(
+				scrollbarLeft,
+				scrollbarTop,
+				scrollerWidth,
+				scrollbarHeight
+			);
+			// Keep scale 0-1
+			scroller.scrollbar.setRange(zoomedMin, zoomedMax);
 		}
 		scroller.rendered = true;
 	},
@@ -572,6 +564,187 @@ Navigator.prototype = {
 			}
 		});
 	},
+	/**
+	 * Mouse down event based on x/y mouse position.
+	 * @param {Object} e Mouse event
+	 */
+	onMouseDown: function (e) {
+		e = this.chart.pointer.normalize(e);
+
+		var scroller = this,
+			chart = scroller.chart,
+			xAxis = scroller.xAxis,
+			zoomedMin = scroller.zoomedMin,
+			zoomedMax = scroller.zoomedMax,
+			top = scroller.top,
+			scrollerLeft = scroller.scrollerLeft,
+			scrollerWidth = scroller.scrollerWidth,
+			navigatorLeft = scroller.navigatorLeft,
+			navigatorWidth = scroller.navigatorWidth,
+			scrollbarPad = scroller.scrollbarPad || 0,
+			range = scroller.range,
+			chartX = e.chartX,
+			chartY = e.chartY,
+			baseXAxis = chart.xAxis[0],
+			fixedMax,
+			ext,
+			handleSensitivity = isTouchDevice ? 10 : 7,
+			left;
+
+		if (chartY > top && chartY < top + scroller.height) { // we're vertically inside the navigator
+
+			// grab the left handle
+			if (Math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
+				scroller.grabbedLeft = true;
+				scroller.otherHandlePos = zoomedMax;
+				scroller.fixedExtreme = baseXAxis.max;
+				chart.fixedRange = null;
+
+			// grab the right handle
+			} else if (Math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
+				scroller.grabbedRight = true;
+				scroller.otherHandlePos = zoomedMin;
+				scroller.fixedExtreme = baseXAxis.min;
+				chart.fixedRange = null;
+
+			// grab the zoomed range
+			} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
+				scroller.grabbedCenter = chartX;
+				scroller.fixedWidth = range;
+
+				scroller.dragOffset = chartX - zoomedMin;
+
+			// shift the range by clicking on shaded areas
+			} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
+				left = chartX - navigatorLeft - range / 2;
+				if (left < 0) {
+					left = 0;
+				} else if (left + range >= navigatorWidth) {
+					left = navigatorWidth - range;
+					fixedMax = scroller.getUnionExtremes().dataMax; // #2293, #3543
+				}
+				if (left !== zoomedMin) { // it has actually moved
+					scroller.fixedWidth = range; // #1370
+
+					ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
+					baseXAxis.setExtremes(
+						ext.min,
+						ext.max,
+						true,
+						null, // auto animation
+						{ trigger: 'navigator' }
+					);
+				}
+			}
+		}
+	},
+	/**
+	 * Mouse move event based on x/y mouse position.
+	 * @param {Object} e Mouse event
+	 */
+	onMouseMove: function (e) {
+		var scroller = this,
+			chart = scroller.chart,
+			scrollbarHeight = scroller.scrollbarHeight,
+			navigatorLeft = scroller.navigatorLeft,
+			navigatorWidth = scroller.navigatorWidth,
+			scrollerLeft = scroller.scrollerLeft,
+			scrollerWidth = scroller.scrollerWidth,
+			range = scroller.range,
+			dragOffset = scroller.dragOffset,
+			chartX;
+
+		// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
+		// down in the center of the scrollbar. This should be ignored.
+		if (!e.touches || e.touches[0].pageX !== 0) { // #4696, scrollbar failed on Android
+
+			e = chart.pointer.normalize(e);
+			chartX = e.chartX;
+
+			// validation for handle dragging
+			if (chartX < navigatorLeft) {
+				chartX = navigatorLeft;
+			} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
+				chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
+			}
+
+			// drag left handle
+			if (scroller.grabbedLeft) {
+				scroller.hasDragged = true;
+				scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
+
+			// drag right handle
+			} else if (scroller.grabbedRight) {
+				scroller.hasDragged = true;
+				scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
+
+			// drag scrollbar or open area in navigator
+			} else if (scroller.grabbedCenter) {
+
+				scroller.hasDragged = true;
+				if (chartX < dragOffset) { // outside left
+					chartX = dragOffset;
+				} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
+					chartX = navigatorWidth + dragOffset - range;
+				}
+
+				scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
+			}
+			if (scroller.hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
+				e.DOMType = e.type; // DOMType is for IE8 because it can't read type async
+				setTimeout(function () {
+					scroller.mouseUpHandler(e);
+				}, 0);
+			}
+		}
+	},
+
+	/**
+	 * Mouse up event based on x/y mouse position.
+	 * @param {Object} e Mouse event
+	 */
+	onMouseUp: function (e) {
+		var scroller = this,
+			chart = scroller.chart,
+			xAxis = scroller.xAxis,
+			ext,
+			fixedMin,
+			fixedMax,
+			DOMEvent = e.DOMEvent || e;
+
+		if (scroller.hasDragged || e.trigger === 'scrollbar') {
+			// When dragging one handle, make sure the other one doesn't change
+			if (scroller.zoomedMin === scroller.otherHandlePos) {
+				fixedMin = scroller.fixedExtreme;
+			} else if (scroller.zoomedMax === scroller.otherHandlePos) {
+				fixedMax = scroller.fixedExtreme;
+			}
+
+			// Snap to right edge (#4076)
+			if (scroller.zoomedMax === scroller.navigatorWidth) {
+				fixedMax = scroller.getUnionExtremes().dataMax;
+			}
+			ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
+			if (defined(ext.min)) {
+				chart.xAxis[0].setExtremes(
+					Math.min(ext.min, ext.max),
+					Math.max(ext.min, ext.max),
+					true,
+					scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
+					{
+						trigger: 'navigator',
+						triggerOp: 'navigator-drag',
+						DOMEvent: DOMEvent // #1838
+					}
+				);
+			}
+		}
+
+		if (e.DOMType !== 'mousemove') {
+			scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
+				scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = scroller.dragOffset = null;
+		}
+	},
 
 	/**
 	 * Removes the event handlers attached previously with addEvents.
@@ -613,8 +786,7 @@ Navigator.prototype = {
 			scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
 
 		this.handles = [];
-		this.scrollbarButtons = [];
-		this.elementsToDestroy = []; // Array containing the elements to destroy when Scroller is destroyed
+		this.shades = [];
 
 		this.chart = chart;
 		this.setBaseSeries();
@@ -628,194 +800,14 @@ Navigator.prototype = {
 		this.outlineHeight = height + scrollbarHeight;
 
 		var scroller = this,
-			xAxis,
-			dragOffset,
-			baseSeries = scroller.baseSeries;
-		
-		/**
-		 * Event handler for the mouse down event.
-		 // TO DO: refactor logic. How about implementing events on items? Instead of x/y positions.
-		 // Important for inverted chart
-		 */
-		scroller.mouseDownHandler = function (e) {
-			e = chart.pointer.normalize(e);
-
-			var zoomedMin = scroller.zoomedMin,
-				zoomedMax = scroller.zoomedMax,
-				top = scroller.top,
-				scrollerLeft = scroller.scrollerLeft,
-				scrollerWidth = scroller.scrollerWidth,
-				navigatorLeft = scroller.navigatorLeft,
-				navigatorWidth = scroller.navigatorWidth,
-				scrollbarPad = scroller.scrollbarPad || 0,
-				range = scroller.range,
-				chartX = e.chartX,
-				chartY = e.chartY,
-				baseXAxis = chart.xAxis[0],
-				fixedMax,
-				ext,
-				handleSensitivity = isTouchDevice ? 10 : 7,
-				left;
-
-			if (chartY > top && chartY < top + height) { // we're vertically inside the navigator
-
-				// grab the left handle
-				if (Math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
-					scroller.grabbedLeft = true;
-					scroller.otherHandlePos = zoomedMax;
-					scroller.fixedExtreme = baseXAxis.max;
-					chart.fixedRange = null;
-
-				// grab the right handle
-				} else if (Math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
-					scroller.grabbedRight = true;
-					scroller.otherHandlePos = zoomedMin;
-					scroller.fixedExtreme = baseXAxis.min;
-					chart.fixedRange = null;
-
-				// grab the zoomed range
-				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
-					scroller.grabbedCenter = chartX;
-					scroller.fixedWidth = range;
-
-					dragOffset = chartX - zoomedMin;
-
-				// shift the range by clicking on shaded areas
-				} else if (chartX > scrollerLeft && chartX < scrollerLeft + scrollerWidth) {
-					left = chartX - navigatorLeft - range / 2;
-					if (left < 0) {
-						left = 0;
-					} else if (left + range >= navigatorWidth) {
-						left = navigatorWidth - range;
-						fixedMax = scroller.getUnionExtremes().dataMax; // #2293, #3543
-					}
-					if (left !== zoomedMin) { // it has actually moved
-						scroller.fixedWidth = range; // #1370
-
-						ext = xAxis.toFixedRange(left, left + range, null, fixedMax);
-						baseXAxis.setExtremes(
-							ext.min,
-							ext.max,
-							true,
-							null, // auto animation
-							{ trigger: 'navigator' }
-						);
-					}
-				}
-
-			}
-		};
-
-		/**
-		 * Event handler for the mouse move event.
-		 // TO DO: refactor logic. How about implementing events on items? Instead of x/y positions.
-		 // Important for inverted chart
-		 */
-		scroller.mouseMoveHandler = function (e) {
-			var scrollbarHeight = scroller.scrollbarHeight,
-				navigatorLeft = scroller.navigatorLeft,
-				navigatorWidth = scroller.navigatorWidth,
-				scrollerLeft = scroller.scrollerLeft,
-				scrollerWidth = scroller.scrollerWidth,
-				range = scroller.range,
-				chartX;
-
-			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
-			// down in the center of the scrollbar. This should be ignored.
-			if (!e.touches || e.touches[0].pageX !== 0) { // #4696, scrollbar failed on Android
-
-				e = chart.pointer.normalize(e);
-				chartX = e.chartX;
-
-				// validation for handle dragging
-				if (chartX < navigatorLeft) {
-					chartX = navigatorLeft;
-				} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
-					chartX = scrollerLeft + scrollerWidth - scrollbarHeight;
-				}
-
-				// drag left handle
-				if (scroller.grabbedLeft) {
-					scroller.hasDragged = true;
-					scroller.render(0, 0, chartX - navigatorLeft, scroller.otherHandlePos);
-
-				// drag right handle
-				} else if (scroller.grabbedRight) {
-					scroller.hasDragged = true;
-					scroller.render(0, 0, scroller.otherHandlePos, chartX - navigatorLeft);
-
-				// drag scrollbar or open area in navigator
-				} else if (scroller.grabbedCenter) {
-
-					scroller.hasDragged = true;
-					if (chartX < dragOffset) { // outside left
-						chartX = dragOffset;
-					} else if (chartX > navigatorWidth + dragOffset - range) { // outside right
-						chartX = navigatorWidth + dragOffset - range;
-					}
-
-					scroller.render(0, 0, chartX - dragOffset, chartX - dragOffset + range);
-				}
-				if (scroller.hasDragged && scroller.scrollbar && scroller.scrollbar.options.liveRedraw) {
-					e.DOMType = e.type; // DOMType is for IE8 because it can't read type async
-					setTimeout(function () {
-						scroller.mouseUpHandler(e);
-					}, 0);
-				}
-			}
-		};
-
-		/**
-		 * Event handler for the mouse up event.
-		 */
-		scroller.mouseUpHandler = function (e) {
-			var ext,
-				fixedMin,
-				fixedMax,
-				DOMEvent = e.DOMEvent || e;
-
-			if (scroller.hasDragged || e.trigger === 'scrollbar') {
-				// When dragging one handle, make sure the other one doesn't change
-				if (scroller.zoomedMin === scroller.otherHandlePos) {
-					fixedMin = scroller.fixedExtreme;
-				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
-					fixedMax = scroller.fixedExtreme;
-				}
-
-				// Snap to right edge (#4076)
-				if (scroller.zoomedMax === scroller.navigatorWidth) {
-					fixedMax = scroller.getUnionExtremes().dataMax;
-				}
-
-				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
-				if (defined(ext.min)) {
-					chart.xAxis[0].setExtremes(
-						ext.min,
-						ext.max,
-						true,
-						scroller.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
-						{
-							trigger: 'navigator',
-							triggerOp: 'navigator-drag',
-							DOMEvent: DOMEvent // #1838
-						}
-					);
-				}
-			}
-
-			if (e.DOMType !== 'mousemove') {
-				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
-					scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
-			}
-		};
-
-		var xAxisIndex = chart.xAxis.length,
+			baseSeries = scroller.baseSeries,
+			xAxisIndex = chart.xAxis.length,
 			yAxisIndex = chart.yAxis.length,
 			baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis || chart.xAxis[0];
 
-		// Make room below the chart or on the left side:
+		// Make room for the navigator, can be placed around the chart:
 		chart.extraMargin = {
-			type: 'marginBottom',
+			type: navigatorOptions.opposite ? 'plotTop' : 'marginBottom',
 			value: scroller.outlineHeight + navigatorOptions.margin
 		};
 		if (chart.inverted) {
@@ -825,8 +817,7 @@ Navigator.prototype = {
 
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
-			// TO DO: swap options for inverted:
-			scroller.xAxis = xAxis = new Axis(chart, merge({
+			scroller.xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
 				breaks: baseXaxis.options.breaks,
 				ordinal: baseXaxis.options.ordinal
@@ -882,7 +873,7 @@ Navigator.prototype = {
 
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
-			scroller.xAxis = xAxis = {
+			scroller.xAxis = {
 				translate: function (value, reverse) {
 					var axis = chart.xAxis[0],
 						ext = axis.getExtremes(),
@@ -917,6 +908,11 @@ Navigator.prototype = {
 					to = range * this.to,
 					from = range * this.from;
 
+				if (chart.inverted) {
+					from = scroller.navigatorHeight * (1 - this.from);
+					to = scroller.navigatorHeight * (1 - this.to);
+				}
+
 				scroller.hasDragged = scroller.scrollbar.hasDragged;
 				scroller.render(0, 0, from, to);
 
@@ -930,6 +926,19 @@ Navigator.prototype = {
 
 		// Add data events
 		scroller.addBaseSeriesEvents();
+
+		/**
+		 * Create mouse events' handlers, make them as separate functions to enable wrapping them:
+		 */
+		scroller.mouseDownHandler = function (e) {
+			scroller.onMouseDown(e);
+		};
+		scroller.mouseMoveHandler = function (e) {
+			scroller.onMouseMove(e);
+		};
+		scroller.mouseUpHandler = function (e) {
+			scroller.onMouseUp(e);
+		};
 
 		scroller.addEvents();
 	},
@@ -1205,7 +1214,7 @@ Navigator.prototype = {
 		});
 
 		// Destroy properties
-		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
+		each(['series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
 				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
 			if (this[prop] && this[prop].destroy) {
 				this[prop].destroy();
@@ -1214,7 +1223,7 @@ Navigator.prototype = {
 		}, this);
 
 		// Destroy elements in collection
-		each([this.handles, this.elementsToDestroy], function (coll) {
+		each([this.handles], function (coll) {
 			destroyObjectProperties(coll);
 		}, this);
 	}
