@@ -60,7 +60,7 @@ QUnit.testStart(function () {
                 taskName: 'Prototype done',
                 taskGroup: 0
             }, {
-                start: Date.UTC(2014, 10, 26),
+                start: Date.UTC(2014, 10, 27),
                 end: Date.UTC(2014, 10, 28),
                 taskName: 'Test prototype',
                 taskGroup: 0
@@ -78,6 +78,75 @@ QUnit.testStart(function () {
  * Checks that milestones are drawn differently than tasks
  */
 QUnit.test('Milestones', function (assert) {
-    Highcharts.chart('container', defaultChartConfig);
-    assert.ok(false, 'Not implemented');
+    var chart = Highcharts.chart('container', defaultChartConfig),
+        points = chart.series[0].points,
+        taskPoint = points[0],
+        milestonePoint = points[2],
+        milestone = milestonePoint.milestone,
+        path,
+        isDiamond,
+        topX,
+        topY,
+        rightX,
+        rightY,
+        bottomX,
+        bottomY,
+        leftX,
+        leftY,
+        height,
+        width,
+        floatError = 0.00001;
+
+    assert.equal(
+        taskPoint.milestone,
+        undefined,
+        'Task does not have a milestone property'
+    );
+
+    assert.equal(
+        typeof milestonePoint.milestone,
+        'object',
+        'Milestone has a milestone object property'
+    );
+
+    assert.equal(
+        typeof milestone.d,
+        'string',
+        'Milestone has a \'d\' value'
+    );
+
+    // Remove path letters
+    path = milestone.d.replace(/[a-zA-Z]/g, '');
+    // Replace sequences of space characters with single spaces
+    path = path.replace(/\s+/g, ' ');
+    // Remove surrounding spaces
+    path = path.trim();
+    // Split on spaces to create an array
+    path = path.split(' ');
+
+    topX = parseFloat(path[0]);
+    topY = parseFloat(path[1]);
+    rightX = parseFloat(path[2]);
+    rightY = parseFloat(path[3]);
+    bottomX = parseFloat(path[4]);
+    bottomY = parseFloat(path[5]);
+    leftX = parseFloat(path[6]);
+    leftY = parseFloat(path[7]);
+
+    height = bottomY - topY;
+    width = rightX - leftX;
+
+    // The path is a diamond if:
+    // 1. The top and bottom x values are aligned
+    // 2. The left and right y values are aligned
+    // 3. The width and height are the same
+    // 4. The path has only 4 vectors
+    isDiamond = topX === bottomX &&
+                leftY === rightY &&
+                Math.abs(width - height) < floatError;
+
+    assert.ok(
+        isDiamond,
+        'Milestone path is a diamond'
+    );
 });
