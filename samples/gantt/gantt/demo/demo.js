@@ -60,8 +60,13 @@ $(function () {
                     fill: '#fa0'
                 }
             }, {
-                start: Date.UTC(2014, 10, 26),
-                end: Date.UTC(2014, 10, 28),
+                start: Date.UTC(2014, 10, 25, 12),
+                milestone: true,
+                taskName: 'Prototype done',
+                taskGroup: 0
+            }, {
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 29),
                 taskName: 'Test prototype',
                 taskGroup: 0
             }, {
