@@ -338,13 +338,14 @@ gulp.task('nightly', function () {
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
-    gulp.src(['README.md', './code/highcharts.src.js'], { read: false })
+    gulp.src(['README.md', './js/parts/*.js'], { read: false })
         .pipe(jsdoc({
             navOptions: {
                 theme: 'highsoft'
             },
             opts: {
-                destination: './internal-docs/'
+                destination: './internal-docs/',
+                private: true
             },
             plugins: [
                 'plugins/markdown'
@@ -362,7 +363,7 @@ gulp.task('jsdoc', function (cb) {
                 theme: 'highsoft'
             }
         }, function (err) {
-            cb(err);
+            cb(err); // eslint-disable-line
             if (!err) {
                 console.log(
                     colors.green('Wrote JSDoc to ./internal-docs/index.html')

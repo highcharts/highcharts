@@ -45,9 +45,14 @@ var SVGElement,
 	win = H.win;
 
 /**
- * A wrapper object for SVG elements.
+ * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
+ * rendering layer of Highcharts. Combined with the {@link SVGRenderer} object,
+ * these prototypes allow freeform annotation in the charts or even in HTML
+ * pages without instanciating a chart. The SVGElement can also wrap HTML
+ * labels, when `text` or `label` elements are created with the `useHTML`
+ * parameter.
  *
- * @constructor SVGElement
+ * @class
  */
 SVGElement = H.SVGElement = function () {
 	return this;
@@ -57,14 +62,22 @@ SVGElement.prototype = {
 	// Default base for animation
 	opacity: 1,
 	SVG_NS: SVG_NS,
-	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
-		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 
 	/**
-	 * Initialize the SVG renderer
-	 * @param {Object} renderer
-	 * @param {String} nodeName
+	 * For labels, these CSS properties are applied to the `text` node directly.
+	 * @type {Array.<string>}
+	 */
+	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
+		'fontStyle', 'color', 'lineHeight', 'width', 'textDecoration',
+		'textOverflow', 'textShadow'],
+
+	/**
+	 * Initialize the SVG renderer. This function only exists to make the
+	 * initiation process overridable. It should not be called directly.
+	 *
+	 * @param {SVGRenderer} renderer The SVGRenderer instance to initialize to.
+	 * @param {String} nodeName The SVG node name.
+	 * @returns {void}
 	 */
 	init: function (renderer, nodeName) {
 		var wrapper = this;
@@ -75,10 +88,12 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Animate a given attribute
-	 * @param {Object} params
-	 * @param {Number} options Options include duration, easing, step and complete
-	 * @param {Function} complete Function to perform at the end of animation
+	 * Animate to given attributes or CSS properties.
+	 * 
+	 * @param {Object} params SVG attrubutes or CSS to animate.
+	 * @param {AnimationOptions} [options] Animation options.
+	 * @param {Function} [complete] Function to perform at the end of animation.
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = pick(options, this.renderer.globalAnimation, true);
@@ -95,7 +110,39 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Build an SVG gradient out of a common JavaScript configuration object
+	 * @typedef {Object} GradientOptions
+	 * @property {Object} linearGradient Holds an object that defines the start
+	 *    position and the end position relative to the shape.
+	 * @property {Number} linearGradient.x1 Start horizontal position of the
+	 *    gradient. Ranges 0-1.
+	 * @property {Number} linearGradient.x2 End horizontal position of the
+	 *    gradient. Ranges 0-1.
+	 * @property {Number} linearGradient.y1 Start vertical position of the
+	 *    gradient. Ranges 0-1.
+	 * @property {Number} linearGradient.y2 End vertical position of the
+	 *    gradient. Ranges 0-1.
+	 * @property {Object} radialGradient Holds an object that defines the center
+	 *    position and the radius.
+	 * @property {Number} radialGradient.cx Center horizontal position relative
+	 *    to the shape. Ranges 0-1.
+	 * @property {Number} radialGradient.cy Center vertical position relative
+	 *    to the shape. Ranges 0-1.
+	 * @property {Number} radialGradient.r Radius relative to the shape. Ranges
+	 *    0-1.
+	 * @property {Array.<Array>} stops The first item in each tuple is the
+	 *    position in the gradient, where 0 is the start of the gradient and 1
+	 *    is the end of the gradient. Multiple stops can be applied. The second
+	 *    item is the color for each stop. This color can also be given in the
+	 *    rgba format.
+	 */
+	/**
+	 * Build and apply an SVG gradient out of a common JavaScript configuration
+	 * object. This function is called from the attribute setters.
+	 *
+	 * @private
+	 * @param {GradientOptions} color The gradient options structure.
+	 * @param {string} prop The property to apply, can either be `fill` or
+	 * `stroke`. 
 	 */
 	colorGradient: function (color, prop, elem) {
 		var renderer = this.renderer,
