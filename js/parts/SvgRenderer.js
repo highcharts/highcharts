@@ -45,6 +45,9 @@ var SVGElement,
 	win = H.win;
 
 /**
+ * @typedef {Object} SVGDOMElement - An SVG DOM element.
+ */
+/**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link SVGRenderer} object,
  * these prototypes allow freeform annotation in the charts or even in HTML
@@ -80,11 +83,20 @@ SVGElement.prototype = {
 	 * @returns {void}
 	 */
 	init: function (renderer, nodeName) {
-		var wrapper = this;
-		wrapper.element = nodeName === 'span' ?
+		
+		/** 
+		 * The DOM node.
+		 * @type {SVGDOMNode|HTMLDOMNode}
+		 */
+		this.element = nodeName === 'span' ?
 				createElement(nodeName) :
-				doc.createElementNS(wrapper.SVG_NS, nodeName);
-		wrapper.renderer = renderer;
+				doc.createElementNS(this.SVG_NS, nodeName);
+
+		/**
+		 * The renderer that the SVGElement belongs to.
+		 * @type {SVGRenderer}
+		 */
+		this.renderer = renderer;
 	},
 
 	/**
@@ -155,6 +167,7 @@ SVGElement.prototype = {
 	 * @param {GradientOptions} color The gradient options structure.
 	 * @param {string} prop The property to apply, can either be `fill` or
 	 * `stroke`. 
+	 * @param {SVGDOMElement} elem SVG DOM element to apply the gradient on.
 	 */
 	colorGradient: function (color, prop, elem) {
 		var renderer = this.renderer,
@@ -267,10 +280,12 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
-	 * and apply strokes to the copy.
+	 * Apply a polyfill to the text-stroke CSS property, by copying the text
+	 * element and apply strokes to the copy. Used internally. Contrast checks
+	 * at http://jsfiddle.net/highcharts/43soe9m1/2/ .
 	 *
-	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
+	 * @private
+	 * @param {String} textShadow A CSS `text-shadow` setting.
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -355,9 +370,49 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Set or get a given attribute
-	 * @param {Object|String} hash
-	 * @param {Mixed|Undefined} val
+	 * Apply attributes to the SVG elements. These attributes for the most parts
+	 * correspond to SVG, but some are specific to Highcharts, like `zIndex` and
+	 * `rotation`.
+	 * 
+	 * In order to set the rotation center for rotation, set x and y to 0 and
+	 * use `translateX` and `translateY` attributes to position the element
+	 * instead.
+	 *
+	 * Attributes frequently used in Highcharts are `fill`, `stroke`,
+	 * `stroke-width`.
+	 *
+	 * @param {Object|String} hash - If an object, this is an object of
+	 *    key-value pairs containing SVG attributes. SVG attributes containing a
+	 *    hyphen are _not_ camel-cased, they should be quoted to preserve the
+	 *    hyphen.
+	 * @param {string} [val] - If the type of the first argument is `string`, 
+	 *    the second can be a value, which will serve as a single attribute
+	 *    setter. If the first argument is a string and the second is undefined,
+	 *    the function serves as a getter and the current value of the property
+	 *    is returned.
+	 * @param {Function} complete - A callback function to execute after setting
+	 *    the attributes. This makes the function compliant and interchangeable
+	 *    with the {@link SVGElement#animate} function.
+	 *    
+	 * @returns {SVGElement|string|number} If used as a setter, it returns the 
+	 *    current {@link SVGElement} so the calls can be chained. If used as a 
+	 *    getter, the current value of the attribute is returned.
+	 * 
+	 * @example
+	 * // Set multiple attributes
+	 * element.attr({
+	 *     stroke: 'red',
+	 *     fill: 'blue',
+	 *     x: 10,
+	 *     y: 10
+	 * });
+	 *
+	 * // Set a single attribute
+	 * element.attr('stroke', 'red');
+	 *
+	 * // Get an attribute
+	 * element.attr('stroke'); // => 'red'
+	 * 
 	 */
 	attr: function (hash, val, complete) {
 		var key,
@@ -432,11 +487,14 @@ SVGElement.prototype = {
 
 	/*= if (build.classic) { =*/
 	/**
-	 * Update the shadow elements with new attributes
-	 * @param   {String}		key	The attribute name
-	 * @param   {String|Number} value  The value of the attribute
-	 * @param   {Function}	  setter The setter function, inherited from the parent wrapper
-	 * @returns {undefined}
+	 * Update the shadow elements with new attributes.
+	 *
+	 * @private
+	 * @param {String} key - The attribute name.
+	 * @param {String|Number} value - The value of the attribute.
+	 * @param {Function} setter - The setter function, inherited from the
+	 *   parent wrapper
+	 * @returns {void}
 	 */
 	updateShadows: function (key, value, setter) {
 		var shadows = this.shadows,
@@ -456,22 +514,42 @@ SVGElement.prototype = {
 	/*= } =*/
 
 	/**
-	 * Add a class name to an element
+	 * Add a class name to an element.
+	 *
+	 * @param {string} className - The new class name to add.
+	 * @param {boolean} [replace=false] - When true, the existing class name(s)
+	 *    will be overwritten with the new one. When false, the new one is
+	 *    added.
+	 * @returns {SVGElement} Return the SVG element for chainability.
 	 */
 	addClass: function (className, replace) {
 		var currentClassName = this.attr('class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
 			if (!replace) {
-				className = (currentClassName + (currentClassName ? ' ' : '') + className).replace('  ', ' ');
+				className = 
+					(currentClassName + (currentClassName ? ' ' : '') +
+					className).replace('  ', ' ');
 			}
 			this.attr('class', className);
 		}
 		return this;
 	},
+
+	/**
+	 * Check if an element has the given class name.
+	 * @param  {string}  className - The class name to check for.
+	 * @return {Boolean}
+	 */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
+
+	/**
+	 * Remove a class name from the element.
+	 * @param  {string} className The class name to remove.
+	 * @return {SVGElement} Returns the SVG element for chainability.
+	 */
 	removeClass: function (className) {
 		attr(this.element, 'class', (attr(this.element, 'class') || '').replace(className, ''));
 		return this;
@@ -481,7 +559,8 @@ SVGElement.prototype = {
 	 * If one of the symbol size affecting parameters are changed,
 	 * check all the others only once for each call to an element's
 	 * .attr() method
-	 * @param {Object} hash
+	 * @param {Object} hash - The attributes to set.
+	 * @private
 	 */
 	symbolAttr: function (hash) {
 		var wrapper = this;
@@ -502,21 +581,36 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Apply a clipping path to this object
-	 * @param {String} id
+	 * Apply a clipping rectangle to this element.
+	 * 
+	 * @param {ClipRect} [clipRect] - The clipping rectangle. If skipped, the
+	 *    current clip is removed.
+	 * @returns {SVGElement} Returns the SVG element to allow chaining.
 	 */
 	clip: function (clipRect) {
-		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : 'none');
+		return this.attr(
+			'clip-path',
+			clipRect ?
+				'url(' + this.renderer.url + '#' + clipRect.id + ')' :
+				'none'
+		);
 	},
 
 	/**
-	 * Calculate the coordinates needed for drawing a rectangle crisply and return the
-	 * calculated attributes
-	 * @param {Number} strokeWidth
-	 * @param {Number} x
-	 * @param {Number} y
-	 * @param {Number} width
-	 * @param {Number} height
+	 * Calculate the coordinates needed for drawing a rectangle crisply and
+	 * return the calculated attributes.
+	 * 
+	 * @param {Object} rect - A rectangle.
+	 * @param {number} rect.x - The x position.
+	 * @param {Number} rect.y - The y position.
+	 * @param {Number} rect.width - The width.
+	 * @param {Number} rect.height - The height.
+	 * @param {Number} [strokeWidth] - The stroke width to consider when
+	 *    computing crisp positioning. If omitted, the element's existing stroke
+	 *    width will be used, or 0 if not set.
+	 *
+	 * @returns {{x: Number, y: Number, width: Number, height: Number}} The
+	 *    modified rectangle arguments.
 	 */
 	crisp: function (rect, strokeWidth) {
 
@@ -547,8 +641,12 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Set styles for the element
-	 * @param {Object} styles
+	 * Set styles for the element. In addition to CSS styles supported by 
+	 * native SVG and HTML elements, there are also some custom made for 
+	 * Highcharts, like `width`, `ellipsis` and `textOverflow` for SVG text
+	 * elements.
+	 * @param {CSSObject} styles The new CSS styles.
+	 * @returns {SVGElement} Return the SVG element for chaining.
 	 */
 	css: function (styles) {
 		var elemWrapper = this,
@@ -2596,12 +2694,28 @@ SVGRenderer.prototype = {
 	},
 
 	/**
+	 * @typedef {SVGElement} ClipRect - A clipping rectangle that can be applied
+	 * to one or more {@link SVGElement} instances. It is instanciated with the
+	 * {@link SVGRenderer#clipRect} function and applied with the {@link 
+	 * SVGElement#clip} function.
+	 *
+	 * @example
+	 * var circle = renderer.circle(100, 100, 100)
+	 *     .attr({ fill: 'red' })
+	 *     .add();
+	 * var clipRect = renderer.clipRect(100, 100, 100, 100);
+	 *
+	 * // Leave only the lower right quarter visible
+	 * circle.clip(clipRect);
+	 */
+	/**
 	 * Define a clipping rectangle
 	 * @param {String} id
 	 * @param {Number} x
 	 * @param {Number} y
 	 * @param {Number} width
 	 * @param {Number} height
+	 * @returns {ClipRect} A clipping rectangle.
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,

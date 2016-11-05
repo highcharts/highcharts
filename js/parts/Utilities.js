@@ -49,7 +49,7 @@ H.error = function (code, stop) {
  *
  * @constructor Fx
  * @memberOf Highcharts
- * @param {HTMLElement|SVGElement} elem - The element to animate.
+ * @param {HTMLDOMElement|SVGElement} elem - The element to animate.
  * @param {AnimationOptions} options - Animation options.
  * @param {string} prop - The single attribute or CSS property to animate.
  */
@@ -661,7 +661,7 @@ H.pick = function () {
  *
  * @function #css
  * @memberOf Highcharts
- * @param {HTMLElement} el - A HTML DOM element.
+ * @param {HTMLDOMElement} el - A HTML DOM element.
  * @param {CSSObject} styles - Style object with camel case property names.
  * @returns {void}
  */
@@ -676,7 +676,7 @@ H.css = function (el, styles) {
 
 /**
  * A HTML DOM element.
- * @typedef {Object} HTMLElement
+ * @typedef {Object} HTMLDOMElement
  */
 
 /**
@@ -690,7 +690,7 @@ H.css = function (el, styles) {
  * @param {Object} [parent] - The parent HTML object.
  * @param {Boolean} [nopad=false] - If true, remove all padding, border and
  *    margin.
- * @returns {HTMLElement} The created DOM element.
+ * @returns {HTMLDOMElement} The created DOM element.
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag),
@@ -1197,7 +1197,7 @@ H.destroyObjectProperties = function (obj, except) {
  *
  * @function #discardElement
  * @memberOf Highcharts
- * @param {HTMLElement} element - The HTML node to discard.
+ * @param {HTMLDOMElement} element - The HTML node to discard.
  * @returns {void}
  */
 H.discardElement = function (element) {
@@ -1363,7 +1363,7 @@ Math.easeInOutSine = function (pos) {
  *
  * @function #getStyle
  * @memberOf Highcharts
- * @param {HTMLElement} el - A HTML element.
+ * @param {HTMLDOMElement} el - A HTML element.
  * @param {String} prop - The property name.
  * @returns {Number} - The numeric value.
  */
@@ -1442,7 +1442,7 @@ H.map = function (arr, fn) {
  *
  * @function #offset
  * @memberOf Highcharts
- * @param {HTMLElement} el - The HTML element.
+ * @param {HTMLDOMElement} el - The HTML element.
  * @returns {Object} An object containing `left` and `top` properties for the
  * position in the page.
  */
@@ -1505,7 +1505,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @function #addEvent
  * @memberOf Highcharts
  * @param {Object} el - The element or object to add a listener to. It can be a
- *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is 
  *        fired.
@@ -1630,7 +1630,7 @@ H.removeEvent = function (el, type, fn) {
  * @function #fireEvent
  * @memberOf Highcharts
  * @param {Object} el - The object to fire the event on. It can be a
- *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  * @param {String} type - The type of event.
  * @param {Object} [eventArguments] - Custom event arguments that are passed on
  *        as an argument to the event handler.
@@ -1724,7 +1724,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  *
  * @function #animate
  * @memberOf Highcharts
- * @param {HTMLElement|SVGElement} el - The element to animate.
+ * @param {HTMLDOMElement|SVGElement} el - The element to animate.
  * @param {Object} params - An object containing key-value pairs of the
  *        properties to animate. Supports numeric as pixel-based CSS properties
  *        for HTML objects and attributes for SVGElements.

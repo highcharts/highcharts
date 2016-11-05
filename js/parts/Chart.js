@@ -48,7 +48,7 @@ var addEvent = H.addEvent,
  * The Chart class.
  * @class Highcharts.Chart
  * @memberOf Highcharts
- * @param {String|HTMLElement} renderTo - The DOM element to render to, or its
+ * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
  * id.
  * @param {ChartOptions} options - The chart options structure.
  * @param {Function} callback - Function to run when the chart has loaded.
