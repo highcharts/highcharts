@@ -334,6 +334,7 @@ gulp.task('nightly', function () {
 
 /**
  * Automated generation for internal API docs.
+ * Run with --watch argument to watch for changes in the JS files.
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
@@ -360,8 +361,18 @@ gulp.task('jsdoc', function (cb) {
                 systemName: 'Highcharts',
                 theme: 'highsoft'
             }
-        }, cb));
-    console.log(colors.green('Writing JSDoc to ./internal-docs/index.html'));
+        }, function (err) {
+            cb(err);
+            if (!err) {
+                console.log(
+                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                );
+            }
+        }));
+
+    if (argv.watch) {
+        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
+    }
 });
 
 gulp.task('filesize', function () {
@@ -733,7 +744,7 @@ gulp.task('download-api', downloadAllAPI);
  * Create distribution files
  */
 gulp.task('dist', () => {
-    //return gulpify('cleanCode', cleanCode)()
+    // return gulpify('cleanCode', cleanCode)()
     //    .then(gulpify('styles', styles))
     return gulpify('styles', styles)()
         .then(gulpify('scripts', scripts))
