@@ -371,8 +371,8 @@ SVGElement.prototype = {
 
 	/**
 	 * Apply attributes to the SVG elements. These attributes for the most parts
-	 * correspond to SVG, but some are specific to Highcharts, like `zIndex` and
-	 * `rotation`.
+	 * correspond to SVG, but some are specific to Highcharts, like `zIndex`,
+	 * `rotation`, `translateX`, `translateY`, `scaleX` and `scaleY`.
 	 * 
 	 * In order to set the rotation center for rotation, set x and y to 0 and
 	 * use `translateX` and `translateY` attributes to position the element
@@ -606,8 +606,8 @@ SVGElement.prototype = {
 	 * @param {Number} rect.width - The width.
 	 * @param {Number} rect.height - The height.
 	 * @param {Number} [strokeWidth] - The stroke width to consider when
-	 *    computing crisp positioning. If omitted, the element's existing stroke
-	 *    width will be used, or 0 if not set.
+	 *    computing crisp positioning. It can also be set directly on the rect
+	 *    parameter.
 	 *
 	 * @returns {{x: Number, y: Number, width: Number, height: Number}} The
 	 *    modified rectangle arguments.
@@ -717,20 +717,45 @@ SVGElement.prototype = {
 	},
 
 	/*= if (build.classic) { =*/
+	/**
+	 * Get the current stroke width. In classic mode, the setter registers it 
+	 * directly on the element.
+	 * @returns {number} The stroke width in pixels.
+	 * @ignore
+	 */
 	strokeWidth: function () {
 		return this['stroke-width'] || 0;
 	},
 
 	/*= } else { =*/
 	/**
-	 * Get a computed style
+	 * Get the computed style. Only in styled mode.
+	 * @param {string} prop - The property name to check for.
+	 * @returns {string} The current computed value.
+	 * @example
+	 * chart.series[0].points[0].graphic.getStyle('stroke-width'); // => '1px'
 	 */
 	getStyle: function (prop) {
-		return win.getComputedStyle(this.element || this, '').getPropertyValue(prop);
+		return win.getComputedStyle(this.element || this, '')
+			.getPropertyValue(prop);
 	},
 
 	/**
-	 * Get a computed style in pixel values
+	 * Get the computed stroke width in pixel values. This is used extensively
+	 * when drawing shapes to ensure the shapes are rendered crsip and
+	 * positioned correctly relative to each other. Using `shape-rendering: 
+	 * crispEdges` leaves us less control over positioning, for example when we
+	 * want to stack columns next to each other, or position things 
+	 * pixel-perfectly within the plot box.
+	 *
+	 * The common pattern when placing a shape is:
+	 * * Create the SVGElement and add it to the DOM.
+	 * * Read the computed `elem.strokeWidth()`.
+	 * * Place it based on the stroke width.
+	 *
+	 * @returns {number} The stroke width in pixels. Even if the given stroke
+	 * widtch (in CSS or by attributes) is based on `em` or other units, the 
+	 * pixel size is returned.
 	 */
 	strokeWidth: function () {
 		var val = this.getStyle('stroke-width'),
@@ -756,9 +781,15 @@ SVGElement.prototype = {
 	},
 	/*= } =*/
 	/**
-	 * Add an event listener
-	 * @param {String} eventType
-	 * @param {Function} handler
+	 * Add an event listener. This is a simple setter that replaces all other
+	 * events of the same type, opposed to the {@link Highcharts#addEvent}
+	 * function.
+	 * @param {string} eventType - The event type. If the type is `click`, 
+	 *    Highcharts will internally translate it to a `touchstart` event on 
+	 *    touch devices, to prevent the browser from waiting for a click event
+	 *    from firing.
+	 * @param {Function} handler - The handler callback.
+	 * @returns {SVGElement} The SVGElement for chaining.
 	 */
 	on: function (eventType, handler) {
 		var svgElement = this,
@@ -767,12 +798,13 @@ SVGElement.prototype = {
 		// touch
 		if (hasTouch && eventType === 'click') {
 			element.ontouchstart = function (e) {
-				svgElement.touchEventFired = Date.now();
+				svgElement.touchEventFired = Date.now(); // #2269
 				e.preventDefault();
 				handler.call(element, e);
 			};
 			element.onclick = function (e) {												
-				if (win.navigator.userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
+				if (win.navigator.userAgent.indexOf('Android') === -1 ||
+						Date.now() - (svgElement.touchEventFired || 0) > 1100) {
 					handler.call(element, e);
 				}
 			};
@@ -785,8 +817,12 @@ SVGElement.prototype = {
 
 	/**
 	 * Set the coordinates needed to draw a consistent radial gradient across
-	 * pie slices regardless of positioning inside the chart. The format is
-	 * [centerX, centerY, diameter] in pixels.
+	 * a shape regardless of positioning inside the chart. Used on pie slices
+	 * to make all the slices have the same radial reference point.
+	 *
+	 * @param {Array} coordinates The center reference. The format is
+	 *    `[centerX, centerY, diameter]` in pixels.
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	setRadialReference: function (coordinates) {
 		var existingGradient = this.renderer.gradients[this.element.gradient];
@@ -808,9 +844,10 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Move an object and its children by x and y values
-	 * @param {Number} x
-	 * @param {Number} y
+	 * Move an object and its children by x and y values.
+	 * 
+	 * @param {Number} x - The x value.
+	 * @param {Number} y - The y value.
 	 */
 	translate: function (x, y) {
 		return this.attr({
@@ -820,7 +857,13 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Invert a group, rotate and flip
+	 * Invert a group, rotate and flip. This is used internally on inverted 
+	 * charts, where the points and graphs are drawn as if not inverted, then
+	 * the series group elements are inverted.
+	 *
+	 * @param {boolean} inverted - Whether to invert or not. An inverted shape
+	 *    can be un-inverted by setting it to false.
+	 * @returns {SVGElement} Return the SVGElement for chaining.
 	 */
 	invert: function (inverted) {
 		var wrapper = this;
@@ -830,8 +873,11 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Private method to update the transform attribute based on internal
-	 * properties
+	 * Update the transform attribute based on internal properties. Deals with
+	 * the custom `translateX`, `translateY`, `rotation`, `scaleX` and `scaleY`
+	 * attributes and updates the SVG `transform` attribute.
+	 * @private
+	 * @returns {void}
 	 */
 	updateTransform: function () {
 		var wrapper = this,
@@ -873,8 +919,11 @@ SVGElement.prototype = {
 			element.setAttribute('transform', transform.join(' '));
 		}
 	},
+	
 	/**
-	 * Bring the element to the front
+	 * Bring the element to the front.
+	 *
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	toFront: function () {
 		var element = this.element;
