@@ -31,11 +31,17 @@ var addEvent = H.addEvent,
 	seriesTypes = H.seriesTypes,
 	svg = H.svg,
 	TrackerMixin;
+
 /**
- * TrackerMixin for points and graphs
+ * TrackerMixin for points and graphs.
+ *
+ * @mixin
  */
 TrackerMixin = H.TrackerMixin = {
 
+	/**
+	 * Draw the tracker for a point.
+	 */
 	drawTrackerPoint: function () {
 		var series = this,
 			chart = series.chart,

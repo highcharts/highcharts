@@ -55,6 +55,11 @@ var SVGElement,
  * labels, when `text` or `label` elements are created with the `useHTML`
  * parameter.
  *
+ * The SVGElement instances are created through factory functions on the 
+ * {@link SVGRenderer} object, like [rect]{@link SVGRenderer#rect},
+ * [path]{@link SVGRenderer#path}, [text]{@link SVGRenderer#text}, [label]{@link
+ * SVGRenderer#label}, [g]{@link SVGRenderer#g} and more.
+ *
  * @class
  */
 SVGElement = H.SVGElement = function () {
@@ -85,7 +90,8 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		
 		/** 
-		 * The DOM node.
+		 * The DOM node. Each SVGRenderer instance wraps a main DOM node, but 
+		 * may also represent more nodes.
 		 * @type {SVGDOMNode|HTMLDOMNode}
 		 */
 		this.element = nodeName === 'span' ?
@@ -919,7 +925,7 @@ SVGElement.prototype = {
 			element.setAttribute('transform', transform.join(' '));
 		}
 	},
-	
+
 	/**
 	 * Bring the element to the front.
 	 *
@@ -933,16 +939,26 @@ SVGElement.prototype = {
 
 
 	/**
-	 * Break down alignment options like align, verticalAlign, x and y
-	 * to x and y relative to the chart.
-	 *
-	 * @param {Object} alignOptions
-	 * @param {Boolean} alignByTranslate
-	 * @param {String|Object} box The box to align to, needs a width and height. When the
-	 *		box is a string, it refers to an object in the Renderer. For example, when
-	 *		box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
-	 *		x and y properties.
-	 *
+	 * Align the element relative to the chart or another box.
+	 * ß
+	 * @param {Object} [alignOptions] The alignment options. The function can be
+	 *   called without this parameter in order to re-align an element after the
+	 *   box has been updated.
+	 * @param {string} [alignOptions.align=left] Horizontal alignment. Can be
+	 *   one of `left`, `center` and `right`.
+	 * @param {string} [alignOptions.verticalAlign=top] Vertical alignment. Can
+	 *   be one of `top`, `middle` and `bottom`.
+	 * @param {number} [alignOptions.x=0] Horizontal pixel offset from
+	 *   alignment.
+	 * @param {number} [alignOptions.y=0] Vertical pixel offset from alignment.
+	 * @param {Boolean} [alignByTranslate=false] Use the `transform` attribute
+	 *   with translateX and translateY custom attributes to align this elements
+	 *   rather than `x` and `y` attributes.
+	 * @param {String|Object} box The box to align to, needs a width and height.
+	 *   When the box is a string, it refers to an object in the Renderer. For
+	 *   example, when box is `spacingBox`, it refers to `Renderer.spacingBox`
+	 *   which holds `width`, `height`, `x` and `y` properties.
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
 		var align,
@@ -1014,7 +1030,7 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Get the bounding box (width, height, x and y) for the element
+	 * Get the bounding box (width, height, x and y) for the element.
 	 */
 	getBBox: function (reload, rot) {
 		var wrapper = this,

@@ -12,9 +12,12 @@ var each = H.each,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-/* ****************************************************************************
- * Start OHLC series code													 *
- *****************************************************************************/
+/**
+ * The ohlc series type.
+ *
+ * @constructor seriesTypes.ohlc
+ * @augments seriesTypes.column
+ */
 seriesType('ohlc', 'column', {
 	lineWidth: 1,
 	tooltip: {
@@ -42,8 +45,7 @@ seriesType('ohlc', 'column', {
 	//upColor: undefined
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.ohlc */ {
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
@@ -171,15 +173,15 @@ seriesType('ohlc', 'column', {
 
 	},
 
-	/**
-	 * Disable animation
-	 */
-	animate: null
+	animate: null // Disable animation
 
-// Point class override
-}, {
+/**
+ * @constructor seriesTypes.ohlc.prototype.pointClass
+ * @extends {Point}
+ */
+}, /** @lends seriesTypes.ohlc.prototype.pointClass.prototype */ {
 	/**
- 	 * Add up or down to the class name
+ 	 * Extend the parent method by adding up or down to the class name.
  	 */
 	getClassName: function () {
 		return Point.prototype.getClassName.call(this) +

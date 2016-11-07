@@ -21,9 +21,13 @@ var addEvent = H.addEvent,
 	TrackerMixin = H.TrackerMixin,
 	VMLRenderer = H.VMLRenderer,
 	symbols = SVGRenderer.prototype.symbols;
-/* ****************************************************************************
- * Start Flags series code													*
- *****************************************************************************/
+
+/**
+ * The flags series type.
+ *
+ * @constructor seriesTypes.flags
+ * @augments seriesTypes.column
+ */
 seriesType('flags', 'column', {
 	pointRange: 0, // #673
 	//radius: 2,
@@ -51,8 +55,7 @@ seriesType('flags', 'column', {
 	}
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.flags.prototype */ {
 	sorted: false,
 	noSharedTooltip: true,
 	allowDG: false,
@@ -60,7 +63,7 @@ seriesType('flags', 'column', {
 	trackerGroups: ['markerGroup'],
 	forceCrop: true,
 	/**
-	 * Inherit the initialization from base Series
+	 * Inherit the initialization from base Series.
 	 */
 	init: Series.prototype.init,
 
@@ -320,10 +323,7 @@ seriesType('flags', 'column', {
 		});
 	},
 
-	/**
-	 * Disable animation
-	 */
-	animate: noop,
+	animate: noop, // Disable animation
 	buildKDTree: noop,
 	setClip: noop
 

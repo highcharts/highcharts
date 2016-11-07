@@ -56,7 +56,10 @@ var defaultScrollbarOptions =  {
 defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
 
 /**
- * The Scrollbar class 
+ * A reusable scrollbar, internally used in Highstock's navigator and optionally
+ * on individual axes.
+ *
+ * @class
  * @param {Object} renderer
  * @param {Object} options
  * @param {Object} chart

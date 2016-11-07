@@ -149,7 +149,9 @@ extend(defaultOptions, {
 });
 
 /**
- * The Navigator class
+ * The Navigator class.
+ *
+ * @class
  * @param {Object} chart
  */
 function Navigator(chart) {

@@ -67,7 +67,8 @@ defaultOptions.lang = merge(defaultOptions.lang, {
 });
 
 /**
- * The object constructor for the range selector
+ * The range selector.
+ * @class
  * @param {Object} chart
  */
 function RangeSelector(chart) {

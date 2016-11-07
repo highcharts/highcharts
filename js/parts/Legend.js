@@ -23,7 +23,8 @@ var Legend,
 	win = H.win,
 	wrap = H.wrap;
 /**
- * The overview of the chart's series
+ * The overview of the chart's series.
+ * @class
  */
 Legend = H.Legend = function (chart, options) {
 	this.init(chart, options);
