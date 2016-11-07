@@ -2860,22 +2860,48 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Utility to return the baseline offset and total line height from the font size
+	 * Utility to return the baseline offset and total line height from the font
+	 * size.
+	 *
+	 * @param {?string} fontSize The current font size to inspect. If not given,
+	 *   the font size will be found from the DOM element.
+	 * @param {SVGElement|SVGDOMElement} [elem] The element to inspect for a
+	 *   current font size.
+	 * @returns {Object} An object containing `h`: the line height, `b`: the
+	 * baseline relative to the top of the box, and `f`: the font size.
 	 */
-	fontMetrics: function (fontSize, elem) { // eslint-disable-line no-unused-vars
+	fontMetrics: function (fontSize, elem) {
 		var lineHeight,
 			baseline;
 
 		/*= if (build.classic) { =*/
-		fontSize = fontSize || (this.style && this.style.fontSize);
+		fontSize = fontSize ||
+			// When the elem is a DOM element (#5932)
+			(elem && elem.style && elem.style.fontSize) ||
+			// Fall back on the renderer style default
+			(this.style && this.style.fontSize);
+
 		/*= } else { =*/
-		fontSize = elem && SVGElement.prototype.getStyle.call(elem, 'font-size');
+		fontSize = elem && SVGElement.prototype.getStyle.call(
+			elem,
+			'font-size'
+		);
 		/*= } =*/
 
-		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
+		// Handle different units
+		if (/px/.test(fontSize)) {
+			fontSize = pInt(fontSize);
+		} else if (/em/.test(fontSize)) {
+			// The em unit depends on parent items
+			fontSize = parseFloat(fontSize) *
+				this.fontMetrics(null, elem.parentNode).f;
+		} else {
+			fontSize = 12;
+		}
 
-		// Empirical values found by comparing font size and bounding box height.
-		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
+		// Empirical values found by comparing font size and bounding box
+		// height. Applies to the default font family.
+		// http://jsfiddle.net/highcharts/7xvn7/
 		lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2);
 		baseline = Math.round(lineHeight * 0.8);
 
