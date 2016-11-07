@@ -313,9 +313,9 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + 
-					(item.options.className || '') +
-					(isSeries ? 'highcharts-series-' + item.index : '')
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex +
+					(item.options.className ? ' ' + item.options.className : '') +
+					(isSeries ? ' highcharts-series-' + item.index : '')
 				)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
