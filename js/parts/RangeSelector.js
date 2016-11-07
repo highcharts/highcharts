@@ -114,7 +114,7 @@ RangeSelector.prototype = {
 
 		// Set the fixed range before range is altered
 		chart.fixedRange = range;
-
+		
 		// Apply dataGrouping associated to button
 		if (dataGrouping) {
 			this.forcedDataGrouping = true;
@@ -815,6 +815,14 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	};
 };
 
+/**
+ * Get the axis min value based on the range option and the current max. For
+ * stock charts this is extended via the {@link RangeSelector} so that if the
+ * selected range is a multiple of months or years, it is compensated for
+ * various month lengths.
+ * 
+ * @return {number} The new minimum value.
+ */
 Axis.prototype.minFromRange = function () {
 	var rangeOptions = this.range,
 		type = rangeOptions.type,
@@ -831,10 +839,13 @@ Axis.prototype.minFromRange = function () {
 		};
 
 	if (isNumber(rangeOptions)) {
-		min = this.max - rangeOptions;
+		min = max - rangeOptions;
 		range = rangeOptions;
 	} else {
 		min = max + getTrueRange(max, -rangeOptions.count);
+
+		// Let the fixedRange reflect initial settings (#5930)
+		this.chart.fixedRange = max - min;
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
