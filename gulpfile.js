@@ -745,9 +745,8 @@ gulp.task('download-api', downloadAllAPI);
  * Create distribution files
  */
 gulp.task('dist', () => {
-    // return gulpify('cleanCode', cleanCode)()
-    //    .then(gulpify('styles', styles))
-    return gulpify('styles', styles)()
+    return gulpify('cleanCode', cleanCode)()
+        .then(gulpify('styles', styles))
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))
