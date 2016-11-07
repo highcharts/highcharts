@@ -845,7 +845,9 @@ Axis.prototype.minFromRange = function () {
 		min = max + getTrueRange(max, -rangeOptions.count);
 
 		// Let the fixedRange reflect initial settings (#5930)
-		this.chart.fixedRange = max - min;
+		if (this.chart) {
+			this.chart.fixedRange = max - min;
+		}
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
