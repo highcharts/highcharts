@@ -1830,6 +1830,26 @@ H.seriesType = function (type, parent, options, props, pointProps) {
 };
 
 /**
+ * Get a unique key for using in internal element id's and pointers. The key
+ * is composed of a random hash specific to this Highcharts instance, and a 
+ * counter.
+ * @function #uniqueKey
+ * @memberOf Highcharts
+ * @return {string} The key.
+ * @example
+ * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ */
+H.uniqueKey = (function () {
+	
+	var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
+		idCounter = 0;
+
+	return function () {
+		return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+	};
+}());
+
+/**
  * Register Highcharts as a plugin in jQuery
  */
 if (win.jQuery) {

@@ -43,7 +43,7 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 		
 
 	if (rule._id === undefined) {
-		rule._id = H.idCounter++;
+		rule._id = H.uniqueKey();
 	}
 	matches = fn.call(this);
 

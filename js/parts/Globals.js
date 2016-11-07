@@ -28,7 +28,6 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	isFirefox: isFirefox,
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS: SVG_NS,
-	idCounter: 0,
 	chartCount: 0,
 	seriesTypes: {},
 	symbolSizes: {},

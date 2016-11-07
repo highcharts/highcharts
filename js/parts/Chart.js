@@ -639,7 +639,7 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId = 'highcharts-' + H.idCounter++,
+			containerId = H.uniqueKey(),
 			containerStyle,
 			key;
 
