@@ -345,7 +345,7 @@ gulp.task('jsdoc', function (cb) {
             },
             opts: {
                 destination: './internal-docs/',
-                private: true
+                private: false
             },
             plugins: [
                 'plugins/markdown'

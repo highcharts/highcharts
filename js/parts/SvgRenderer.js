@@ -1030,7 +1030,20 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Get the bounding box (width, height, x and y) for the element.
+	 * Get the bounding box (width, height, x and y) for the element. Generally
+	 * used to get rendered text size. Since this is called a lot in charts,
+	 * the results are cached based on text properties, in order to save DOM
+	 * traffic. The returned bounding box includes the rotation, so for example
+	 * a single text line of rotation 90 will report a greater height, and a
+	 * width corresponding to the line-height.
+	 *
+	 * @param {boolean} [reload] Skip the cache and get the updated DOM bouding
+	 *   box.
+	 * @param {number} [rot] Override the element's rotation. This is internally
+	 *   used on axis labels with a value of 0 to find out what the bounding box
+	 *   would be have been if it were not rotated.
+	 * @returns {Object} The bounding box with `x`, `y`, `width` and `height`
+	 * properties.
 	 */
 	getBBox: function (reload, rot) {
 		var wrapper = this,
@@ -1174,19 +1187,34 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Show the element
+	 * Show the element after it has been hidden. 
+	 *
+	 * @param {boolean} [inherit=false] Set the visibility attribute to
+	 * `inherit` rather than `visible`. The difference is that an element with
+	 * `visibility="visible"` will be visible even if the parent is hidden.
+	 *
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	show: function (inherit) {
 		return this.attr({ visibility: inherit ? 'inherit' : 'visible' });
 	},
 
 	/**
-	 * Hide the element
+	 * Hide the element, equivalent to setting the `visibility` attribute to
+	 * `hidden`.
+	 *
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	hide: function () {
 		return this.attr({ visibility: 'hidden' });
 	},
 
+	/**
+	 * Fade out an element by animating its opacity down to 0, and hide it on
+	 * complete. Used internally for the tooltip.
+	 * 
+	 * @param {number} [duration=150] The fade duration in milliseconds.
+	 */
 	fadeOut: function (duration) {
 		var elemWrapper = this;
 		elemWrapper.animate({
@@ -1200,9 +1228,18 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Add the element
-	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
-	 *	to append the element to the renderer.box.
+	 * Add the element to the DOM. All elements must be added this way.
+	 * 
+	 * @param {SVGElement|SVGDOMElement} [parent] The parent item to add it to.
+	 *   If undefined, the element is added to the {@link SVGRenderer.box}.
+	 *
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
+	 * @example
+	 * renderer.rect(10, 10, 100, 100)
+	 *     .attr({
+	 *         fill: 'red'
+	 *     })
+	 *     .add();
 	 */
 	add: function (parent) {
 
@@ -1245,8 +1282,10 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Removes a child either by removeChild or move to garbageBin.
-	 * Issue 490; in VML removeChild results in Orphaned nodes according to sIEve, discardElement does not.
+	 * Removes an element from the DOM.
+	 *
+	 * @private
+	 * @param {SVGDOMElement|HTMLDOMElement} element The DOM node to remove.
 	 */
 	safeRemoveChild: function (element) {
 		var parentNode = element.parentNode;
@@ -1256,7 +1295,10 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Destroy the element and element wrapper
+	 * Destroy the element and element wrapper and clear up the DOM and event
+	 * hooks.
+	 *
+	 * @returns {void}
 	 */
 	destroy: function () {
 		var wrapper = this,
@@ -1311,8 +1353,34 @@ SVGElement.prototype = {
 
 	/*= if (build.classic) { =*/
 	/**
-	 * Add a shadow to the element. Must be done after the element is added to the DOM
-	 * @param {Boolean|Object} shadowOptions
+	 * @typedef {Object} ShadowOptions
+	 * @property {string} [color=${palette.neutralColor100}] The shadow color.
+	 * @property {number} [offsetX=1] The horizontal offset from the element.
+	 * @property {number} [offsetY=1] The vertical offset from the element.
+	 * @property {number} [opacity=0.15] The shadow opacity.
+	 * @property {number} [width=3] The shadow width or distance from the
+	 *    element.
+	 */
+	/**
+	 * Add a shadow to the element. Must be called after the element is added to
+	 * the DOM. In styled mode, this method is not used, instead use `defs` and
+	 * filters.
+	 * 
+	 * @param {boolean|ShadowOptions} shadowOptions The shadow options. If
+	 *    `true`, the default options are applied. If `false`, the current
+	 *    shadow will be removed.
+	 * @param {SVGElement} [group] The SVG group element where the shadows will 
+	 *    be applied. The default is to add it to the same parent as the current
+	 *    element. Internally, this is ised for pie slices, where all the
+	 *    shadows are added to an element behind all the slices.
+	 * @param {boolean} [cutOff] Used internally for column shadows.
+	 *
+	 * @returns {SVGElement} Returns the SVGElement for chaining.
+	 *
+	 * @example
+	 * renderer.rect(10, 100, 100, 100)
+	 *     .attr({ fill: 'red' })
+	 *     .shadow(true);
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
@@ -1366,6 +1434,10 @@ SVGElement.prototype = {
 
 	},
 
+	/**
+	 * Destroy shadows on the element.
+	 * @private
+	 */
 	destroyShadows: function () {
 		each(this.shadows || [], function (shadow) {
 			this.safeRemoveChild(shadow);
@@ -1388,7 +1460,10 @@ SVGElement.prototype = {
 
 	/**
 	 * Get the current value of an attribute or pseudo attribute, used mainly
-	 * for animation.
+	 * for animation. Called internally from the {@link SVGRenderer#attr}
+	 * function.
+	 *
+	 * @private
 	 */
 	_defaultGetter: function (key) {
 		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
@@ -1586,7 +1661,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 
 /**
  * The default SVG renderer.
- * @constructor SVGRenderer
+ * @class
  */
 SVGRenderer = H.SVGRenderer = function () {
 	this.init.apply(this, arguments);
@@ -1625,7 +1700,12 @@ SVGRenderer.prototype = {
 
 		// object properties
 		renderer.isSVG = true;
-		renderer.box = element;
+
+		/** 
+		 * The wrapper for the root `svg` node of the renderer.
+		 * @type {SVGElement}
+		 */
+		this.box = element;
 		renderer.boxWrapper = boxWrapper;
 		renderer.alignedObjects = [];
 
