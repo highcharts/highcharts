@@ -187,9 +187,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		'plotShadow', 'shadow'],
 
 	/** 
-	 * These properties cause all series to be updated when updating. Can be extended from plugins.
+	 * These properties cause all series to be updated when updating. Can be
+	 * extended from plugins.
 	 */
-	propsRequireUpdateSeries: ['chart.polar', 'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
+		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
 
 	/**
 	 * Chart.update function that takes the whole options stucture.
