@@ -1234,12 +1234,8 @@ SVGElement.prototype = {
 	 *   If undefined, the element is added to the {@link SVGRenderer.box}.
 	 *
 	 * @returns {SVGElement} Returns the SVGElement for chaining.
-	 * @example
-	 * renderer.rect(10, 10, 100, 100)
-	 *     .attr({
-	 *         fill: 'red'
-	 *     })
-	 *     .add();
+	 *
+	 * @sample highcharts/members/renderer-g - Elements added to a group
 	 */
 	add: function (parent) {
 
