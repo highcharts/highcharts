@@ -1,3 +1,46 @@
+QUnit.test('getTimezoneOffset is negative, crossing midnight (#5935)', function (assert) {
+
+    Highcharts.setOptions({
+        global: {
+            /**
+             * Use moment-timezone.js to return the timezone offset for individual
+             * timestamps, used in the X axis labels and the tooltip header.
+             */
+            getTimezoneOffset: function (timestamp) {
+                var zone = 'US/Pacific';
+                var timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
+                return timezoneOffset;
+            }
+        }
+    });
+
+    var chart = Highcharts.chart('container', {
+
+        xAxis: {
+            type: 'datetime'
+        },
+
+        series: [{
+            pointStart: Date.UTC(2016, 10, 6, 7),
+            pointInterval: 36e5,
+            data: [1, 4, 2, 5, 3, 6]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]].label.element.textContent,
+        '6. Nov',
+        'Tick positions correct'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[2]].label.element.textContent,
+        '01:00',
+        'Tick positions correct'
+    );
+});
+
+
 QUnit.test('getTimezoneOffset with small interval (#4951)', function (assert) {
 
     Highcharts.setOptions({
