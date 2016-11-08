@@ -208,13 +208,14 @@ Legend.prototype = {
 		if (legendGroup) {
 			legend.group = legendGroup.destroy();
 		}
+		legend.display = null; // Reset in .render on update.
 	},
 
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
 	positionCheckboxes: function (scrollOffset) {
-		var alignAttr = this.group.alignAttr,
+		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
 			titleHeight = this.titleHeight;

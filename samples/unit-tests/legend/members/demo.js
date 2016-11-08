@@ -28,3 +28,38 @@ QUnit.test('Legend.renderItem', function (assert) {
         'className for series index is added.'
     );
 });
+
+QUnit.test('Legend.update', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            animation: false
+        },
+        series: [{
+            data: [1, 3, 2, 4],
+            spacingRight: 10,
+            animation: false
+        }],
+        legend: {
+            align: 'right',
+            verticalAlign: 'middle'
+        }
+    });
+
+    assert.notEqual(
+        chart.marginRight,
+        10,
+        'Margin has room for legend'
+    );
+
+    chart.update({
+        legend: {
+            enabled: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.marginRight,
+        10,
+        'Legend is hidden'
+    );
+});
