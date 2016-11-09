@@ -790,8 +790,8 @@ RangeSelector.prototype = {
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
-		newMin = pick(fixedMin, this.translate(pxMin, true)),
-		newMax = pick(fixedMax, this.translate(pxMax, true)),
+		newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)),
+		newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)),
 		changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
 	// If the difference between the fixed range and the actual requested range is
