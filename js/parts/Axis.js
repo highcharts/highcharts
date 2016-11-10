@@ -868,7 +868,10 @@ H.Axis.prototype = {
 		if (this.categories) {
 			ret = 1;
 		} else {
-			each(this.series, function (series) {
+			var visibleSeries = this.chart.options.chart.ignoreHiddenSeries ?
+				grep(this.series, function(s) { return s.visible; }) : this.series;
+
+			each(visibleSeries, function (series) {
 				var seriesClosest = series.closestPointRange;
 				if (!series.noSharedTooltip && defined(seriesClosest)) {
 					ret = defined(ret) ?
