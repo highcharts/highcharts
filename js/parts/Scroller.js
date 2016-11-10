@@ -164,15 +164,15 @@ Navigator.prototype = {
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawHandle: function (x, index, inverted, verb) {
-		var scroller = this;
+		var navigator = this;
 
 		// Place it
-		scroller.handles[index][verb](inverted ? {
-			translateX: Math.round(scroller.navigatorLeft + scroller.navigatorWidth / 2 - 8),
-			translateY: Math.round(scroller.top + parseInt(x, 10) + 0.5)
+		navigator.handles[index][verb](inverted ? {
+			translateX: Math.round(navigator.navigatorLeft + navigator.navigatorWidth / 2 - 8),
+			translateY: Math.round(navigator.top + parseInt(x, 10) + 0.5)
 		} : {
-			translateX: Math.round(scroller.navigatorLeft + parseInt(x, 10)),
-			translateY: Math.round(scroller.top + scroller.height / 2 - 8)
+			translateX: Math.round(navigator.navigatorLeft + parseInt(x, 10)),
+			translateY: Math.round(navigator.top + navigator.height / 2 - 8)
 		});
 	},
 
@@ -226,7 +226,7 @@ Navigator.prototype = {
 				navigatorLeft + outlineHeight, zoomedMax + halfOutline // upper right of z.r.
 			] : []);
 		} else {
-			navigatorLeft = scroller.navigatorLeft - scrollbarHeight;
+			navigatorLeft -= scrollbarHeight;
 			zoomedMin += navigatorLeft + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
 			zoomedMax += navigatorLeft + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
 			navigatorTop += halfOutline;
@@ -262,10 +262,10 @@ Navigator.prototype = {
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawMasks: function (zoomedMin, zoomedMax, inverted, verb) {
-		var scroller = this,
-			left = scroller.navigatorLeft,
-			top = scroller.navigatorTop,
-			scrollerHeight = scroller.height,
+		var navigator = this,
+			left = navigator.navigatorLeft,
+			top = navigator.navigatorTop,
+			scrollerHeight = navigator.height,
 			height,
 			width,
 			x,
@@ -276,14 +276,14 @@ Navigator.prototype = {
 			x = [left, left, left];
 			y = [top, top + zoomedMin, top + zoomedMax];
 			width = [scrollerHeight, scrollerHeight, scrollerHeight];
-			height = [zoomedMin, zoomedMax - zoomedMin, scroller.navigatorHeight - zoomedMax];
+			height = [zoomedMin, zoomedMax - zoomedMin, navigator.navigatorHeight - zoomedMax];
 		} else {
 			x = [left, left + zoomedMin, left + zoomedMax];
 			y = [top, top, top];
-			width = [zoomedMin, zoomedMax - zoomedMin, scroller.navigatorWidth - zoomedMax];
+			width = [zoomedMin, zoomedMax - zoomedMin, navigator.navigatorWidth - zoomedMax];
 			height = [scrollerHeight, scrollerHeight, scrollerHeight];
 		}
-		each(scroller.shades, function (shade, i) {
+		each(navigator.shades, function (shade, i) {
 			shade[verb]({
 				x: x[i],
 				y: y[i],
@@ -312,14 +312,15 @@ Navigator.prototype = {
 		// Create the main navigator group
 		scroller.navigatorGroup = navigatorGroup = renderer.g('navigator')
 			.attr({
-				zIndex: 8
+				zIndex: 8,
+				visibility: 'hidden'
 			})
 			.add();
 
 		// Create masks, each mask will get events and fill:
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			scroller.shades[index] = renderer.rect()
-				.addClass('highcharts-navigator-mask' + (hasMask ? '-inside' : ''))
+				.addClass('highcharts-navigator-mask' + (hasMask ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
 					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
@@ -364,7 +365,7 @@ Navigator.prototype = {
 					0.5, 12
 				], inverted))
 				// zIndex = 6 for right handle, 7 for left.
-				// Can't be 10, becuase of tooltip in inverted chart #2908
+				// Can't be 10, becuase of the tooltip in inverted chart #2908
 				.attr({ zIndex: 7 - index })
 				.addClass(
 					'highcharts-navigator-handle highcharts-navigator-handle-' +
@@ -424,7 +425,8 @@ Navigator.prototype = {
 			verb;
 
 		// Don't render the navigator until we have data (#486, #4202, #5172). Don't redraw while moving the handles (#4703).
-		if (!isNumber(min) || !isNumber(max) ||	(scroller.hasDragged && !defined(pxMin))) {
+		if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
+				(scroller.hasDragged && !defined(pxMin))) {
 			return;
 		}
 
@@ -460,6 +462,8 @@ Navigator.prototype = {
 		}
 
 		// Are we below the minRange? (#2618)
+
+		console.log("comeon", xAxis.toValue(pxMax, true) - xAxis.toValue(pxMin, true), chart.xAxis[0].minRange);
 		if (xAxis.toValue(pxMax, true) - xAxis.toValue(pxMin, true) < chart.xAxis[0].minRange) {
 			return;
 		}
@@ -473,6 +477,9 @@ Navigator.prototype = {
 		zoomedMin = Math.round(scroller.zoomedMin);
 
 		if (navigatorEnabled) {
+			scroller.navigatorGroup.attr({
+				visibility: 'visible'
+			});
 			// Place elements
 			verb = rendered && !scroller.hasDragged ? 'animate' : 'attr';
 
@@ -929,6 +936,12 @@ Navigator.prototype = {
 						(value * valueRange / scrollTrackWidth) + min :
 						// from value to pixel
 						scrollTrackWidth * (value - min) / valueRange;
+				},
+				toPixels: function (value) {
+					return this.translate(value);
+				},
+				toValue: function (value) {
+					return this.translate(value, true);
 				},
 				toFixedRange: Axis.prototype.toFixedRange,
 				fake: true
