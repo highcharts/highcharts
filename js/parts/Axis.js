@@ -872,8 +872,12 @@ H.Axis.prototype = {
 				var seriesClosest = series.closestPointRange,
 					visible = series.visible ||
 						!series.chart.options.chart.ignoreHiddenSeries;
-				if (!series.noSharedTooltip && defined(seriesClosest) &&
-						visible) {
+				
+				if (
+					!series.noSharedTooltip &&
+					defined(seriesClosest) &&
+					visible
+				) {
 					ret = defined(ret) ?
 						Math.min(ret, seriesClosest) :
 						seriesClosest;
