@@ -24,6 +24,12 @@ h4 {
 h4.name {
 	font-family: "Courier New", Courier, monospace;
 }
+#toc a.list-group-item {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .toc-h4 {
 	font-family: "Courier New", Courier, monospace;
 	display: inline-block;
@@ -31,6 +37,8 @@ h4.name {
 .toc-h4 .params {
 	font-weight: normal;
 	font-size: 0.8em;
+	opacity: 0.6;
+	padding-left: 0.5em;
 }
 hr {
 	margin: 40px -100%; /* -100% to extend from side to side */
