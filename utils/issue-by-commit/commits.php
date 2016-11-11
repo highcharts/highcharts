@@ -24,11 +24,11 @@ if (@$_POST['branch']) {
 
 		// Date
 		if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {
-			$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}';
+			$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . @$_SESSION['before'] . '}';
 
 		// Tag or commit
 		} else {
-			$cmd .= '' . $_SESSION['after'] . '..' . ($_SESSION['before'] ? $_SESSION['before'] : 'HEAD');
+			$cmd .= '' . $_SESSION['after'] . '..' . (isset($_SESSION['before']) ? $_SESSION['before'] : 'HEAD');
 		}
 
 		// Repo
@@ -492,7 +492,7 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 			from
 			<input type="text" name="after" value="<?php echo $_SESSION['after'] ?>" />
 			to
-			<input type="text" name="before" value="<?php echo $_SESSION['before'] ?>" />
+			<input type="text" name="before" value="<?php echo @$_SESSION['before'] ?>" />
 			
 			<input type="submit" value="Submit"/>
 			<a id="setdata" href="main.php" target="main">Change test data</a>
