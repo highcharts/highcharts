@@ -5,7 +5,10 @@ class Settings {
 	//static $git = "C:\Git\bin\git"; // Typical Windows path
 	static $git = "/usr/bin/git";
 
+	// The path to compare against. To compare against a specific version or 
+	// commit, the $leftPath can be set to a commit hash.
 	static $leftPath = "http://code.highcharts.com";
+
 	// The candidate for release, new version. Inserts top domain from utils.highcharts.{whatever}/samples. 
 	// This means that if you are running your tests from utils.highcharts.local/samples, the code
 	// will run from code.highcharts.local. If you run your tests from utils.highcharts.th/samples,
