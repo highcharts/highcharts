@@ -779,9 +779,17 @@ H.relativeLength = function (value, base) {
 H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
-		var args = Array.prototype.slice.call(arguments);
+		var args = Array.prototype.slice.call(arguments),
+			outerArgs = arguments,
+			ctx = this,
+			ret;
+		ctx.proceed = function () {
+			proceed.apply(ctx, arguments.length ? arguments : outerArgs);
+		};
 		args.unshift(proceed);
-		return func.apply(this, args);
+		ret = func.apply(this, args);
+		ctx.proceed = null;
+		return ret;
 	};
 };
 

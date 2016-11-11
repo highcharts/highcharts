@@ -868,12 +868,12 @@ H.Axis.prototype = {
 		if (this.categories) {
 			ret = 1;
 		} else {
-			var visibleSeries = this.chart.options.chart.ignoreHiddenSeries ?
-				grep(this.series, function(s) { return s.visible; }) : this.series;
-
-			each(visibleSeries, function (series) {
-				var seriesClosest = series.closestPointRange;
-				if (!series.noSharedTooltip && defined(seriesClosest)) {
+			each(this.series, function (series) {
+				var seriesClosest = series.closestPointRange,
+					visible = series.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries;
+				if (!series.noSharedTooltip && defined(seriesClosest) &&
+						visible) {
 					ret = defined(ret) ?
 						Math.min(ret, seriesClosest) :
 						seriesClosest;
