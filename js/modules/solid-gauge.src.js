@@ -184,7 +184,23 @@ H.seriesType('solidgauge', 'gauge', {
 			options = series.options,
 			renderer = series.chart.renderer,
 			overshoot = options.overshoot,
-			overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
+			overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0,
+			thresholdAngleRad;
+
+		// Handle the threshold option
+		// docs: Threshold option. Added to the API since "next", but also
+		// remember to remove threshold from the "excluding" list.
+		if (isNumber(options.threshold)) {
+			thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
+				options.threshold,
+				null,
+				null,
+				null,
+				true
+			);
+		}
+		this.thresholdAngleRad = pick(thresholdAngleRad, yAxis.startAngleRad);
+
 
 		each(series.points, function (point) {
 			var graphic = point.graphic,
@@ -214,8 +230,8 @@ H.seriesType('solidgauge', 'gauge', {
 				rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
 			}
 
-			minAngle = Math.min(rotation, yAxis.startAngleRad);
-			maxAngle = Math.max(rotation, yAxis.startAngleRad);
+			minAngle = Math.min(rotation, series.thresholdAngleRad);
+			maxAngle = Math.max(rotation, series.thresholdAngleRad);
 
 			if (maxAngle - minAngle > 2 * Math.PI) {
 				maxAngle = minAngle + 2 * Math.PI;
@@ -269,7 +285,7 @@ H.seriesType('solidgauge', 'gauge', {
 	animate: function (init) {
 
 		if (!init) {
-			this.startAngleRad = this.yAxis.startAngleRad;
+			this.startAngleRad = this.thresholdAngleRad;
 			H.seriesTypes.pie.prototype.animate.call(this, init);
 		}
 	}
