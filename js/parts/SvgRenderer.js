@@ -2486,13 +2486,20 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Draw and return a rectangle
-	 * @param {number} x Left position
-	 * @param {number} y Top position
-	 * @param {number} width
-	 * @param {number} height
-	 * @param {number} r Border corner radius
-	 * @param {number} strokeWidth A stroke width can be supplied to allow crisp drawing
+	 * Draw and return a rectangle.
+	 * @param {number} [x] Left position.
+	 * @param {number} [y] Top position.
+	 * @param {number} [width] Width of the rectangle.
+	 * @param {number} [height] Height of the rectangle.
+	 * @param {number} [r] Border corner radius.
+	 * @param {number} [strokeWidth] A stroke width can be supplied to allow
+	 *    crisp drawing.
+	 * @returns {SVGElement} The generated wrapper element.
+	 *//**
+	 * Draw and return a rectangle.
+	 * @param {SVGAttributes} [attributes] General SVG attributes for the 
+	 *    rectangle.
+	 * @returns {SVGElement} The generated wrapper element.
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 
@@ -2529,11 +2536,11 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Resize the box and re-align all aligned elements
-	 * @param {Object} width
-	 * @param {Object} height
-	 * @param {Boolean} animate
-	 *
+	 * Resize the {@link SVGRenderer#box} and re-align all aligned child
+	 * elements.
+	 * @param {number} width The new pixel width.
+	 * @param {number} height The new pixel height.
+	 * @param {boolean} animate Whether to animate.
 	 */
 	setSize: function (width, height, animate) {
 		var renderer = this,
@@ -2561,9 +2568,11 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Create a group
-	 * @param {String} name The group will be given a class name of 'highcharts-{name}'.
-	 *	 This can be used for styling and scripting.
+	 * Create and return an svg group element.
+	 * 
+	 * @param {string} [name] The group will be given a class name of
+	 * `highcharts-{name}`. This can be used for styling and scripting.
+	 * @returns {SVGElement} The generated wrapper element.
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
@@ -2571,12 +2580,15 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Display an image
-	 * @param {String} src
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {number} width
-	 * @param {number} height
+	 * Display an image.
+	 * @param {string} src The image source.
+	 * @param {number} [x] The X position.
+	 * @param {number} [y] The Y position.
+	 * @param {number} [width] The image width. If omitted, it defaults to the 
+	 *    image file width.
+	 * @param {number} [height] The image height. If omitted it defaults to the
+	 *    image file height.
+	 * @returns {SVGElement} The generated wrapper element.
 	 */
 	image: function (src, x, y, width, height) {
 		var attribs = {
@@ -2609,13 +2621,27 @@ SVGRenderer.prototype = {
 	},
 
 	/**
-	 * Draw a symbol out of pre-defined shape paths from the namespace 'symbol' object.
+	 * Draw a symbol out of pre-defined shape paths from {@SVGRenderer#symbols}.
+	 * It is used in Highcharts for point makers, which cake a `symbol` option,
+	 * and label and button backgrounds like in the tooltip and stock flags.
 	 *
-	 * @param {Object} symbol
-	 * @param {Object} x
-	 * @param {Object} y
-	 * @param {Object} radius
-	 * @param {Object} options
+	 * @param {Symbol} symbol - The symbol name.
+	 * @param {number} x - The X coordinate for the top left position.
+	 * @param {number} y - The Y coordinate for the top left position.
+	 * @param {number} width - The pixel width.
+	 * @param {number} height - The pixel height.
+	 * @param {Object} [options] - Additional options, depending on the actual
+	 *    symbol drawn. 
+	 * @param {number} [options.anchorX] - The anchor X position for the
+	 *    `callout` symbol. This is where the chevron points to.
+	 * @param {number} [options.anchorY] - The anchor Y position for the
+	 *    `callout` symbol. This is where the chevron points to.
+	 * @param {number} [options.end] - The end angle of an `arc` symbol.
+	 * @param {boolean} [options.open] - Whether to draw `arc` symbol open or
+	 *    closed.
+	 * @param {number} [options.r] - The radius of an `arc` symbol, or the
+	 *    border radius for the `callout` symbol.
+	 * @param {number} [options.start] - The start angle of an `arc` symbol.
 	 */
 	symbol: function (symbol, x, y, width, height, options) {
 
