@@ -338,72 +338,38 @@ gulp.task('nightly', function () {
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
-    const ncp = require('ncp').ncp;
-    const del = require('del');
 
-    const templateDir = './tools/jsdoc/ink-docstrap';
+    const templateDir = './../highcharts-docstrap';
 
-    del.sync(['./tools/jsdoc/ink-docstrap']);
-
-    // 1. Copy the ink-docstrap theme into a temporary location
-    ncp(
-        './node_modules/gulp-jsdoc3/node_modules/ink-docstrap',
-        templateDir,
-        (cpErr1) => {
-            if (cpErr1) {
-                console.error(cpErr1);
+    gulp.src(['README.md', './js/parts/*.js'], { read: false })
+    // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
+        .pipe(jsdoc({
+            navOptions: {
+                theme: 'highsoft'
+            },
+            opts: {
+                destination: './internal-docs/',
+                private: false,
+                template: templateDir + '/template'
+            },
+            plugins: [
+                templateDir + '/plugins/markdown',
+                templateDir + '/plugins/optiontag',
+                templateDir + '/plugins/sampletag'
+            ],
+            templates: {
+                logoFile: 'img/highcharts-logo.svg',
+                systemName: 'Highcharts',
+                theme: 'highsoft'
             }
-            console.log('Copied ink-docstrap template to working dir...');
-
-            // 2. Add our own template overrides
-            ncp(
-                './tools/jsdoc/tmpl',
-                templateDir + '/template/tmpl',
-                (cpErr2) => {
-                    if (cpErr2) {
-                        console.error(cpErr2);
-                    }
-
-                    console.log('Copied template overrides to working dir...');
-
-                    gulp.src(['README.md', './js/parts/*.js'], { read: false })
-                        .pipe(jsdoc({
-                            navOptions: {
-                                theme: 'highsoft'
-                            },
-                            opts: {
-                                destination: './internal-docs/',
-                                private: false,
-                                template: './tools/jsdoc/ink-docstrap/template'
-                            },
-                            plugins: [
-                                'plugins/markdown',
-                                './tools/jsdoc/plugins/sampletag'
-                            ],
-                            templates: {
-                                default: {
-                                    staticFiles: {
-                                        include: [
-                                            './tools/jsdoc/static'
-                                        ]
-                                    }
-                                },
-                                logoFile: 'img/highcharts-logo.svg',
-                                systemName: 'Highcharts',
-                                theme: 'highsoft'
-                            }
-                        }, function (err) {
-                            cb(err); // eslint-disable-line
-                            if (!err) {
-                                console.log(
-                                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
-                                );
-                            }
-                        }));
-                }
-            );
-        }
-    );
+        }, function (err) {
+            cb(err); // eslint-disable-line
+            if (!err) {
+                console.log(
+                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                );
+            }
+        }));
 
     if (argv.watch) {
         gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
