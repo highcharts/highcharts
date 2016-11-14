@@ -14,6 +14,7 @@ var addEvent = H.addEvent,
 	createElement = H.createElement,
 	dateFormat = H.dateFormat,
 	defaultOptions = H.defaultOptions,
+	useUTC = defaultOptions.global.useUTC,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
 	discardElement = H.discardElement,
@@ -303,7 +304,7 @@ RangeSelector.prototype = {
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
-			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin),
+			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC),
 			ytdMin = ytdExtremes.min,
 			ytdMax = ytdExtremes.max,
 			selected = rangeSelector.selected,
@@ -470,7 +471,7 @@ RangeSelector.prototype = {
 				if (isNumber(value)) {
 
 					// Correct for timezone offset (#433)
-					if (!defaultOptions.global.useUTC) {
+					if (!useUTC) {
 						value = value + new Date().getTimezoneOffset() * 60 * 1000;
 					}
 
@@ -606,11 +607,12 @@ RangeSelector.prototype = {
 	 * @param  {number} dataMin
 	 * @return {object} Returns min and max for the YTD
 	 */
-	getYTDExtremes: function (dataMax, dataMin) {
+	getYTDExtremes: function (dataMax, dataMin, useUTC) {
 		var min,
 			now = new HCDate(dataMax),
-			year = now[HCDate.hcGetFullYear]();
-		min = Math.max(dataMin || 0, HCDate.UTC(year, 0, 1)); // eslint-disable-line new-cap
+			year = now[HCDate.hcGetFullYear](),
+			startOfYear = useUTC ? HCDate.UTC(year, 0, 1) : +new HCDate(year, 0, 1); // eslint-disable-line new-cap
+		min = Math.max(dataMin || 0, startOfYear);
 		now = now.getTime();
 		return {
 			max: Math.min(dataMax || now, now),

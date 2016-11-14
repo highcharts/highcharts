@@ -90,29 +90,40 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
     var getYTDExtremes = Highcharts.RangeSelector.prototype.getYTDExtremes,
         now = +new Date(),
         month = 30 * 24 * 36e5,
-        startOfUTCYear = +new Date(Date.UTC(new Date().getFullYear(), 0, 1)),
+        year = new Date().getFullYear(),
+        startOfYear = +new Date(year, 0, 1),
+        startOfUTCYear = +new Date(Date.UTC(year, 0, 1)),
         dataMin = now - (24 * month),
         dataMax = now;
     assert.deepEqual(
         getYTDExtremes(dataMax, dataMin),
         {
+            min: startOfYear,
+            max: now
+        },
+        'From start of current year to current date. Local timezone.'
+    );
+
+    assert.deepEqual(
+        getYTDExtremes(dataMax, dataMin, true),
+        {
             min: startOfUTCYear,
             max: now
         },
-        'From start of current UTC year to current date.'
+        'From start of current year to current date. UTC.'
     );
 
     dataMax = now - 1; // Current date minus 1 millisecond
     assert.deepEqual(
         getYTDExtremes(dataMax, dataMin),
         {
-            min: startOfUTCYear,
+            min: startOfYear,
             max: dataMax
         },
         'dataMax is lower than current date.'
     );
 
-    dataMin = startOfUTCYear + 1; // Start of year plus 1 millisecond
+    dataMin = startOfYear + 1; // Start of year plus 1 millisecond
     assert.deepEqual(
         getYTDExtremes(dataMax, dataMin),
         {
