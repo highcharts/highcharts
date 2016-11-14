@@ -327,10 +327,18 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 		};
 
 	// Hook into getSVG to get a copy of the chart copy's container
-	Highcharts.wrap(Highcharts.Chart.prototype, 'getChartHTML', function (proceed) {
-		chartCopyContainer = this.container.cloneNode(true);
-		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	});
+	Highcharts.wrap(
+		Highcharts.Chart.prototype,
+		'getChartHTML',
+		function (proceed) {
+			var ret = proceed.apply(
+				this,
+				Array.prototype.slice.call(arguments, 1)
+			);
+			chartCopyContainer = this.container.cloneNode(true);
+			return ret;
+		}
+	);
 
 	// Trigger hook to get chart copy
 	chart.getSVGForExport(options, chartOptions);

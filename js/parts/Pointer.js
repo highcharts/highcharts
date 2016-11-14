@@ -26,8 +26,11 @@ var addEvent = H.addEvent,
 	win = H.win;
 
 /**
- * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
- * Subsequent methods should be named differently from what they are doing.
+ * The mouse tracker object. All methods starting with "on" are primary DOM
+ * event handlers. Subsequent methods should be named differently from what they
+ * are doing.
+ *
+ * @constructor Pointer
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */

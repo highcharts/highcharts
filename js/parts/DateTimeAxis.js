@@ -36,7 +36,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
-		minHours,
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
@@ -59,7 +58,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		if (interval >= timeUnits.hour) { // hour
 			minDate[Date.hcSetHours](interval >= timeUnits.day ? 0 :
 				count * Math.floor(minDate[Date.hcGetHours]() / count));
-			minHours = minDate[Date.hcGetHours]();
 		}
 
 		if (interval >= timeUnits.day) { // day
@@ -85,8 +83,13 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 				pick(startOfWeek, 1));
 		}
 
-		// get tick positions
-		i = 1;
+
+		// Get basics for variable time spans
+		minYear = minDate[Date.hcGetFullYear]();
+		var minMonth = minDate[Date.hcGetMonth](),
+			minDateDate = minDate[Date.hcGetDate](),
+			minHours = minDate[Date.hcGetHours]();
+		
 
 		// Handle local timezone offset
 		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
@@ -112,12 +115,9 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 		
 
-		minYear = minDate[Date.hcGetFullYear]();
-		var time = minDate.getTime(),
-			minMonth = minDate[Date.hcGetMonth](),
-			minDateDate = minDate[Date.hcGetDate]();
-
-		// iterate and add tick positions at appropriate values
+		// Iterate and add tick positions at appropriate values
+		var time = minDate.getTime();
+		i = 1;
 		while (time < max) {
 			tickPositions.push(time);
 

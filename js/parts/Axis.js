@@ -43,7 +43,8 @@ var addEvent = H.addEvent,
 	Tick = H.Tick;
 	
 /**
- * Create a new axis object
+ * Create a new axis object.
+ * @constructor Axis
  * @param {Object} chart
  * @param {Object} options
  */
@@ -868,8 +869,15 @@ H.Axis.prototype = {
 			ret = 1;
 		} else {
 			each(this.series, function (series) {
-				var seriesClosest = series.closestPointRange;
-				if (!series.noSharedTooltip && defined(seriesClosest)) {
+				var seriesClosest = series.closestPointRange,
+					visible = series.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries;
+				
+				if (
+					!series.noSharedTooltip &&
+					defined(seriesClosest) &&
+					visible
+				) {
 					ret = defined(ret) ?
 						Math.min(ret, seriesClosest) :
 						seriesClosest;

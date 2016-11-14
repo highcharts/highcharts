@@ -334,34 +334,80 @@ gulp.task('nightly', function () {
 
 /**
  * Automated generation for internal API docs.
+ * Run with --watch argument to watch for changes in the JS files.
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
-    gulp.src(['README.md', './js/parts/Utilities.js'], { read: false })
-        .pipe(jsdoc({
-            navOptions: {
-                theme: 'highsoft'
-            },
-            opts: {
-                destination: './internal-docs/'
-            },
-            plugins: [
-                'plugins/markdown'
-            ],
-            templates: {
-                default: {
-                    staticFiles: {
-                        include: [
-                            './tools/jsdoc/static'
-                        ]
-                    }
-                },
-                logoFile: 'img/highcharts-logo.svg',
-                systemName: 'Highcharts',
-                theme: 'highsoft'
+    const ncp = require('ncp').ncp;
+    const del = require('del');
+
+    const templateDir = './tools/jsdoc/ink-docstrap';
+
+    del.sync(['./tools/jsdoc/ink-docstrap']);
+
+    // 1. Copy the ink-docstrap theme into a temporary location
+    ncp(
+        './node_modules/gulp-jsdoc3/node_modules/ink-docstrap',
+        templateDir,
+        (cpErr1) => {
+            if (cpErr1) {
+                console.error(cpErr1);
             }
-        }, cb));
-    console.log(colors.green('Writing JSDoc to ./internal-docs/index.html'));
+            console.log('Copied ink-docstrap template to working dir...');
+
+            // 2. Add our own template overrides
+            ncp(
+                './tools/jsdoc/tmpl',
+                templateDir + '/template/tmpl',
+                (cpErr2) => {
+                    if (cpErr2) {
+                        console.error(cpErr2);
+                    }
+
+                    console.log('Copied template overrides to working dir...');
+
+                    gulp.src(['README.md', './js/parts/*.js'], { read: false })
+                        .pipe(jsdoc({
+                            navOptions: {
+                                theme: 'highsoft'
+                            },
+                            opts: {
+                                destination: './internal-docs/',
+                                private: false,
+                                template: './tools/jsdoc/ink-docstrap/template'
+                            },
+                            plugins: [
+                                'plugins/markdown',
+                                './tools/jsdoc/plugins/sampletag'
+                            ],
+                            templates: {
+                                default: {
+                                    staticFiles: {
+                                        include: [
+                                            './tools/jsdoc/static'
+                                        ]
+                                    }
+                                },
+                                logoFile: 'img/highcharts-logo.svg',
+                                systemName: 'Highcharts',
+                                theme: 'highsoft'
+                            }
+                        }, function (err) {
+                            cb(err); // eslint-disable-line
+                            if (!err) {
+                                console.log(
+                                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                                );
+                            }
+                        }));
+                }
+            );
+        }
+    );
+
+    if (argv.watch) {
+        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
+    }
 });
 
 gulp.task('filesize', function () {
@@ -733,9 +779,8 @@ gulp.task('download-api', downloadAllAPI);
  * Create distribution files
  */
 gulp.task('dist', () => {
-    //return gulpify('cleanCode', cleanCode)()
-    //    .then(gulpify('styles', styles))
-    return gulpify('styles', styles)()
+    return gulpify('cleanCode', cleanCode)()
+        .then(gulpify('styles', styles))
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))

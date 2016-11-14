@@ -206,7 +206,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 });
 
 // Extend the Axis prototype
-extend(Axis.prototype, {
+extend(Axis.prototype, /** @lends Axis.prototype */ {
 
 	/**
 	 * Calculate the ordinal positions before tick positions are calculated.

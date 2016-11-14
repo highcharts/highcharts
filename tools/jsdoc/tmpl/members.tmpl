@@ -1,0 +1,42 @@
+<?js
+var data = obj;
+var self = this;
+?>
+<hr>
+<dt class="name" id="<?js= id ?>">
+    <h4 id="<?js= id ?>"><?js= data.attribs + name + (data.signature ? data.signature : '') ?></h4>
+
+    <?js if (data.summary) { ?>
+    <p class="summary"><?js= summary ?></p>
+    <?js } ?>
+</dt>
+<dd>
+    <?js if (data && data.description) { ?>
+    <div class="description">
+        <?js= data.description ?>
+    </div>
+    <?js } ?>
+
+    <?js if (data && data.type && data.type.names) {?>
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                <?js= self.partial('type.tmpl', data.type.names) ?>
+            </li>
+        </ul>
+    <?js } ?>
+
+    <?js= this.partial('details.tmpl', data) ?>
+
+    <?js if (data.examples && examples.length) { ?>
+        <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
+        <?js= this.partial('examples.tmpl', examples) ?>
+    <?js } ?>
+
+    <?js if (data.samples && data.samples.length) { ?>
+        <h5>Try it</h5>
+        <ul class="samples">
+        <?js= this.partial('samples.tmpl', data.samples) ?>
+        </ul>
+    <?js } ?>
+</dd>

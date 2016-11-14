@@ -45,10 +45,13 @@ var addEvent = H.addEvent,
 	win = H.win,
 	Renderer = H.Renderer;
 /**
- * The Chart class
- * @param {String|Object} renderTo The DOM element to render to, or its id
- * @param {Object} options
- * @param {Function} callback Function to run when the chart has loaded
+ * The Chart class.
+ * @class Highcharts.Chart
+ * @memberOf Highcharts
+ * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
+ * id.
+ * @param {ChartOptions} options - The chart options structure.
+ * @param {Function} callback - Function to run when the chart has loaded.
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
@@ -636,7 +639,7 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId = 'highcharts-' + H.idCounter++,
+			containerId = H.uniqueKey(),
 			containerStyle,
 			key;
 

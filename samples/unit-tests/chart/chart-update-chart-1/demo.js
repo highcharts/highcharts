@@ -210,6 +210,12 @@ $(function () {
             'X axis on left'
         );
 
+        assert.strictEqual(
+            chart.series[0].group.inverted,
+            true,
+            'Series is inverted (#5938)'
+        );
+
         chart.update({
             chart: {
                 inverted: false

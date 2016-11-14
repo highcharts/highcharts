@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
 	splat = H.splat;
 		
 // Extend the Chart prototype for dynamic methods
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Add a series dynamically after  time
@@ -187,9 +187,11 @@ extend(Chart.prototype, {
 		'plotShadow', 'shadow'],
 
 	/** 
-	 * These properties cause all series to be updated when updating. Can be extended from plugins.
+	 * These properties cause all series to be updated when updating. Can be
+	 * extended from plugins.
 	 */
-	propsRequireUpdateSeries: ['chart.polar', 'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
+		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
 
 	/**
 	 * Chart.update function that takes the whole options stucture.
@@ -329,7 +331,7 @@ extend(Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-extend(Point.prototype, {
+extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Point.update with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -410,14 +412,14 @@ extend(Point.prototype, {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start
 	 *    of the series as one is appended to the end.
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
+	 * @param {Boolean|AnimationOptions} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
 	addPoint: function (options, redraw, shift, animation) {
@@ -623,7 +625,7 @@ extend(Series.prototype, {
 });
 
 // Extend the Axis.prototype for dynamic methods
-extend(Axis.prototype, {
+extend(Axis.prototype, /** @lends Axis.prototype */ {
 
 	/**
 	 * Axis.update with a new options structure

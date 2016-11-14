@@ -26,8 +26,12 @@ var addEvent = H.addEvent,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	setAnimation = H.setAnimation;
+
 /**
- * Pie series type
+ * The pie series type.
+ *
+ * @constructor seriesTypes.pie
+ * @augments Series
  */
 seriesType('pie', 'line', {
 	center: [null, null],
@@ -69,8 +73,7 @@ seriesType('pie', 'line', {
 	}
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.pie.prototype */ {
 	isCartesian: false,
 	requireSorting: false,
 	directTouch: true,
@@ -369,8 +372,12 @@ seriesType('pie', 'line', {
 	 */
 	getSymbol: noop
 
-// Point class overrides
-}, {
+
+/**
+ * @constructor seriesTypes.pie.prototype.pointClass
+ * @extends {Point}
+ */
+}, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
 	/**
 	 * Initiate the pie slice
 	 */

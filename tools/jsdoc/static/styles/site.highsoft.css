@@ -13,6 +13,10 @@ a {
 	color: #6699A1;;
 }
 
+h3.subsection-title {
+	margin-top: 36px;
+}
+
 h4 {
 	font-size: 20px;
 	font-weight: bold;
@@ -20,11 +24,22 @@ h4 {
 h4.name {
 	font-family: "Courier New", Courier, monospace;
 }
+#toc a.list-group-item {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .toc-h4 {
 	font-family: "Courier New", Courier, monospace;
 	display: inline-block;
 }
-
+.toc-h4 .params {
+	font-weight: normal;
+	font-size: 0.8em;
+	opacity: 0.6;
+	padding-left: 0.5em;
+}
 hr {
 	margin: 40px -100%; /* -100% to extend from side to side */
 	color: silver;
@@ -34,6 +49,10 @@ h5 {
 	color: #666;
 	font-weight: bold;
 	font-size: 14px;
+}
+
+dt {
+	font-size: 13px;
 }
 
 p {

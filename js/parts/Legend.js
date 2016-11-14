@@ -23,7 +23,8 @@ var Legend,
 	win = H.win,
 	wrap = H.wrap;
 /**
- * The overview of the chart's series
+ * The overview of the chart's series.
+ * @class
  */
 Legend = H.Legend = function (chart, options) {
 	this.init(chart, options);
@@ -207,13 +208,14 @@ Legend.prototype = {
 		if (legendGroup) {
 			legend.group = legendGroup.destroy();
 		}
+		legend.display = null; // Reset in .render on update.
 	},
 
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
 	positionCheckboxes: function (scrollOffset) {
-		var alignAttr = this.group.alignAttr,
+		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
 			titleHeight = this.titleHeight;
@@ -312,9 +314,9 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + 
-					(item.options.className || '') +
-					(isSeries ? 'highcharts-series-' + item.index : '')
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex +
+					(item.options.className ? ' ' + item.options.className : '') +
+					(isSeries ? ' highcharts-series-' + item.index : '')
 				)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);

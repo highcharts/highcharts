@@ -27,9 +27,6 @@ seriesType('plotband', 'column', {
 	threshold: null
 }, {
 	/*= if (build.classic) { =*/
-	/**
-	 * One-to-one mapping from options to SVG attributes
-	 */
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		fill: 'color',
 		stroke: 'lineColor',
@@ -68,13 +65,6 @@ seriesType('plotband', 'column', {
 				height: width
 			};
 		});
-	},
-
-	/**
-	 * Draw the data points
-	 */
-	_drawPoints: function () {
-
 	}
 
 

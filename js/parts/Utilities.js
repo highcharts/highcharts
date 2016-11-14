@@ -28,8 +28,8 @@ var charts = H.charts,
  * @param {Number} code - The error code. See [errors.xml]{@link 
  *     https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
  *     for available codes.
- * @param {Boolean} stop - Whether to throw an error or just log a warning in
- *     the console.
+ * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
+ *     warning in the console.
  */
 H.error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
@@ -49,10 +49,9 @@ H.error = function (code, stop) {
  *
  * @constructor Fx
  * @memberOf Highcharts
- * @param {HTMLElement|SVGElement} elem - The element to animate.
+ * @param {HTMLDOMElement|SVGElement} elem - The element to animate.
  * @param {AnimationOptions} options - Animation options.
- * @param {Object} prop - The single attribute or CSS property to animate.
- * @returns {void}
+ * @param {string} prop - The single attribute or CSS property to animate.
  */
 H.Fx = function (elem, options, prop) {
 	this.options = options;
@@ -66,7 +65,6 @@ H.Fx.prototype = {
 	 *
 	 * @function #dSetter
 	 * @memberOf Highcharts.Fx
-	 * @returns {void} 
 	 */
 	dSetter: function () {
 		var start = this.paths[0],
@@ -101,7 +99,6 @@ H.Fx.prototype = {
 	 *
 	 * @function #update
 	 * @memberOf Highcharts.Fx
-	 * @returns {void}
 	 */
 	update: function () {
 		var elem = this.elem,
@@ -177,7 +174,7 @@ H.Fx.prototype = {
 	 *
 	 * @function #step
 	 * @memberOf Highcharts.Fx
-	 * @param   {Boolean} gotoEnd - Whether to go to the endpoint of the
+	 * @param   {Boolean} [gotoEnd] - Whether to go to the endpoint of the
 	 *     animation after abort.
 	 * @returns {Boolean} Returns `true` if animation continues.
 	 */
@@ -415,8 +412,8 @@ H.extend = function (a, b) {
  * @param {Boolean} [extend] - Whether to extend the left-side object (a) or
           return a whole new object.
  * @param {Object} a - The first object to extend. When only this is given, the
-          function returns a copy.
- * @param {...Object} n - An object to merge into the previous one.
+          function returns a deep copy.
+ * @param {...Object} [n] - An object to merge into the previous one.
  * @returns {Object} - The merged object. If the first argument is true, the 
  * return is the same as the second argument.
  */
@@ -470,6 +467,7 @@ H.merge = function () {
 
 /**
  * Shortcut for parseInt
+ * @ignore
  * @param {Object} s
  * @param {Number} mag Magnitude
  */
@@ -508,7 +506,8 @@ H.isArray = function (obj) {
  * @function #isObject
  * @memberOf Highcharts
  * @param {Object} obj - The item to check.
- * @param {Boolean} strict - Also checks that the object is not an array.
+ * @param {Boolean} [strict=false] - Also checks that the object is not an
+ *    array.
  * @returns {Boolean} - True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
@@ -566,8 +565,8 @@ H.defined = function (obj) {
  * @function #attr
  * @memberOf Highcharts
  * @param {Object} elem - The DOM element to receive the attribute(s).
- * @param {String|Object} prop - The property or an object of key-value pairs.
- * @param {String} value - The value if a single property is set.
+ * @param {String|Object} [prop] - The property or an object of key-value pairs.
+ * @param {String} [value] - The value if a single property is set.
  * @returns {*} When used as a getter, return the value.
  */
 H.attr = function (elem, prop, value) {
@@ -614,7 +613,7 @@ H.splat = function (obj) {
  * @memberOf Highcharts
  * @param   {Function} fn - The function callback.
  * @param   {Number}   delay - Delay in milliseconds.
- * @param   {Object}   context - The context.
+ * @param   {Object}   [context] - The context.
  * @returns {Number} An identifier for the timeout that can later be cleared
  * with clearTimeout.
  */
@@ -648,12 +647,22 @@ H.pick = function () {
 };
 
 /**
+ * @typedef {Object} CSSObject - A style object with camel case property names.
+ * The properties can be whatever styles are supported on the given SVG or HTML
+ * element.
+ * @example
+ * {
+ *    fontFamily: 'monospace',
+ *    fontSize: '1.2em'
+ * }
+ */
+/**
  * Set CSS on a given element.
  *
  * @function #css
  * @memberOf Highcharts
- * @param {HTMLElement} el - A HTML DOM element.
- * @param {Object} styles - Style object with camel case property names.
+ * @param {HTMLDOMElement} el - A HTML DOM element.
+ * @param {CSSObject} styles - Style object with camel case property names.
  * @returns {void}
  */
 H.css = function (el, styles) {
@@ -667,7 +676,7 @@ H.css = function (el, styles) {
 
 /**
  * A HTML DOM element.
- * @typedef {Object} HTMLElement
+ * @typedef {Object} HTMLDOMElement
  */
 
 /**
@@ -676,11 +685,12 @@ H.css = function (el, styles) {
  * @function #createElement
  * @memberOf Highcharts
  * @param {String} tag - The HTML tag.
- * @param {Object} attribs - Attributes as an object of key-value pairs.
- * @param {Object} styles - Styles as an object of key-value pairs.
- * @param {Object} parent - The parent HTML object.
- * @param {Boolean} nopad - If true, remove all padding, border and margin.
- * @returns {HTMLElement} The created DOM element.
+ * @param {Object} [attribs] - Attributes as an object of key-value pairs.
+ * @param {CSSObject} [styles] - Styles as an object of key-value pairs.
+ * @param {Object} [parent] - The parent HTML object.
+ * @param {Boolean} [nopad=false] - If true, remove all padding, border and
+ *    margin.
+ * @returns {HTMLDOMElement} The created DOM element.
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = doc.createElement(tag),
@@ -724,7 +734,7 @@ H.extendClass = function (parent, members) {
  * @memberOf Highcharts
  * @param {Number} number - The input string or number.
  * @param {Number} length - The desired string length.
- * @param {String} padder - The character to pad with. Defaults to "0".
+ * @param {String} [padder=0] - The character to pad with.
  * @returns {String} The padded string.
  */
 H.pad = function (number, length, padder) {
@@ -733,11 +743,17 @@ H.pad = function (number, length, padder) {
 };
 
 /**
+ * @typedef {Number|String} RelativeSize - If a number is given, it defines the
+ *    pixel length. If a percentage string is given, like for example `'50%'`,
+ *    the setting defines a length relative to a base size, for example the size
+ *    of a container.
+ */
+/**
  * Return a length based on either the integer value, or a percentage of a base.
  *
  * @function #relativeLength
  * @memberOf Highcharts
- * @param {*} value - A percentage string or a number. For example "50%" or 50.
+ * @param {RelativeSize} value - A percentage string or a number.
  * @param {Number} base - The full length that represents 100%.
  * @returns {Number} The computed length.
  */
@@ -763,9 +779,17 @@ H.relativeLength = function (value, base) {
 H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
-		var args = Array.prototype.slice.call(arguments);
+		var args = Array.prototype.slice.call(arguments),
+			outerArgs = arguments,
+			ctx = this,
+			ret;
+		ctx.proceed = function () {
+			proceed.apply(ctx, arguments.length ? arguments : outerArgs);
+		};
 		args.unshift(proceed);
-		return func.apply(this, args);
+		ret = func.apply(this, args);
+		ctx.proceed = null;
+		return ret;
 	};
 };
 
@@ -793,7 +817,7 @@ H.getTZOffset = function (timestamp) {
  * @param {String} format - The desired format where various time
  *        representations are prefixed with %.
  * @param {Number} timestamp - The JavaScript timestamp.
- * @param {Boolean} capitalize - Upper case first letter in the return.
+ * @param {Boolean} [capitalize=false] - Upper case first letter in the return.
  * @returns {String} The formatted date.
  */
 H.dateFormat = function (format, timestamp, capitalize) {
@@ -1157,8 +1181,8 @@ H.arrayMax = function (data) {
  * @function #destroyObjectProperties
  * @memberOf Highcharts
  * @param {Object} obj - The object to destroy properties on.
- * @param {Object} except - Exception, do not destroy this property, only delete
- *        it.
+ * @param {Object} [except] - Exception, do not destroy this property, only
+ *    delete it.
  * @returns {void}
  */
 H.destroyObjectProperties = function (obj, except) {
@@ -1181,7 +1205,7 @@ H.destroyObjectProperties = function (obj, except) {
  *
  * @function #discardElement
  * @memberOf Highcharts
- * @param {Object} element - The HTML node to discard.
+ * @param {HTMLDOMElement} element - The HTML node to discard.
  * @returns {void}
  */
 H.discardElement = function (element) {
@@ -1204,7 +1228,7 @@ H.discardElement = function (element) {
  * @function #correctFloat
  * @memberOf Highcharts
  * @param {Number} num - A float number to fix.
- * @param {Number} prec - The precision, defaults to 14.
+ * @param {Number} [prec=14] - The precision.
  * @returns {Number} The corrected float number.
  */
 H.correctFloat = function (num, prec) {
@@ -1271,9 +1295,9 @@ H.timeUnits = {
  * @memberOf Highcharts
  * @param {Number} number - The input number to format.
  * @param {Number} decimals - The amount of decimals.
- * @param {String} decimalPoint - The decimal point, defaults to the one given
+ * @param {String} [decimalPoint] - The decimal point, defaults to the one given
  *        in the lang options.
- * @param {String} thousandsSep - The thousands separator, defaults to the one
+ * @param {String} [thousandsSep] - The thousands separator, defaults to the one
  *        given in the lang options.
  * @returns {String} The formatted number.
  */
@@ -1333,7 +1357,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 
 /**
  * Easing definition
- * @param   {Number} pos Current position, ranging from 0 to 1
+ * @ignore
+ * @param   {Number} pos Current position, ranging from 0 to 1.
  */
 Math.easeInOutSine = function (pos) {
 	return -0.5 * (Math.cos(Math.PI * pos) - 1);
@@ -1346,7 +1371,7 @@ Math.easeInOutSine = function (pos) {
  *
  * @function #getStyle
  * @memberOf Highcharts
- * @param {HTMLElement} el - A HTML element.
+ * @param {HTMLDOMElement} el - A HTML element.
  * @param {String} prop - The property name.
  * @returns {Number} - The numeric value.
  */
@@ -1425,7 +1450,7 @@ H.map = function (arr, fn) {
  *
  * @function #offset
  * @memberOf Highcharts
- * @param {HTMLElement} el - The HTML element.
+ * @param {HTMLDOMElement} el - The HTML element.
  * @returns {Object} An object containing `left` and `top` properties for the
  * position in the page.
  */
@@ -1476,7 +1501,7 @@ H.stop = function (el) {
  * @param {Function} fn - The iterator callback. It passes two arguments:
  * * item - The array item.
  * * index - The item's index in the array.
- * @param {Object} ctx The context.
+ * @param {Object} [ctx] The context.
  */
 H.each = function (arr, fn, ctx) { // modern browsers
 	return Array.prototype.forEach.call(arr, fn, ctx);
@@ -1488,7 +1513,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @function #addEvent
  * @memberOf Highcharts
  * @param {Object} el - The element or object to add a listener to. It can be a
- *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  * @param {String} type - The event type.
  * @param {Function} fn - The function callback to execute when the event is 
  *        fired.
@@ -1613,7 +1638,7 @@ H.removeEvent = function (el, type, fn) {
  * @function #fireEvent
  * @memberOf Highcharts
  * @param {Object} el - The object to fire the event on. It can be a
- *        {@link HTMLElement}, an {@link SVGElement} or any other object.
+ *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  * @param {String} type - The type of event.
  * @param {Object} [eventArguments] - Custom event arguments that are passed on
  *        as an argument to the event handler.
@@ -1707,7 +1732,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  *
  * @function #animate
  * @memberOf Highcharts
- * @param {HTMLElement|SVGElement} el - The element to animate.
+ * @param {HTMLDOMElement|SVGElement} el - The element to animate.
  * @param {Object} params - An object containing key-value pairs of the
  *        properties to animate. Supports numeric as pixel-based CSS properties
  *        for HTML objects and attributes for SVGElements.
@@ -1811,6 +1836,26 @@ H.seriesType = function (type, parent, options, props, pointProps) {
 
 	return seriesTypes[type];
 };
+
+/**
+ * Get a unique key for using in internal element id's and pointers. The key
+ * is composed of a random hash specific to this Highcharts instance, and a 
+ * counter.
+ * @function #uniqueKey
+ * @memberOf Highcharts
+ * @return {string} The key.
+ * @example
+ * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ */
+H.uniqueKey = (function () {
+	
+	var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
+		idCounter = 0;
+
+	return function () {
+		return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+	};
+}());
 
 /**
  * Register Highcharts as a plugin in jQuery

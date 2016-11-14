@@ -8,25 +8,15 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
-var defaultPlotOptions = H.defaultPlotOptions,
-	defaultSeriesOptions = H.defaultPlotOptions.line,
-	extendClass = H.extendClass,
-	merge = H.merge,
-	pick = H.pick,
-	Series = H.Series,
-	seriesTypes = H.seriesTypes;
+var pick = H.pick,
+	seriesType = H.seriesType;
 
 /**
- * Set the default options for spline
+ * Spline series type.
+ * @constructor seriesTypes.spline
+ * @extends {Series}
  */
-defaultPlotOptions.spline = merge(defaultSeriesOptions);
-
-/**
- * SplineSeries object
- */
-seriesTypes.spline  = extendClass(Series, {
-	type: 'spline',
-
+seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 	/**
 	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */

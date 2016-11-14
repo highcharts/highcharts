@@ -331,8 +331,11 @@ H.defaultOptions = {
 
 
 /**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
+ * Set the time methods globally based on the useUTC option. Time method can be
+ *   either local time or UTC (default). It is called internally on initiating
+ *   Highcharts and after running `Highcharts.setOptions`.
+ *
+ * @private
  */
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,

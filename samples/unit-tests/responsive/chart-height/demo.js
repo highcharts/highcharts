@@ -55,4 +55,45 @@ $(function () {
             'Height reset'
         );
     });
+
+    QUnit.test('Callback', function (assert) {
+
+        var condition = true;
+
+        var chart = Highcharts.chart('container', {
+            chart: {
+                width: 600,
+                height: 400,
+                animation: false
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            series: [{
+                data: [1, 3, 2, 5]
+            }],
+            responsive: {
+                rules: [{
+                    condition: {
+                        callback: function () {
+                            return condition;
+                        }
+                    },
+                    chartOptions: {
+                        chart: {
+                            width: 300
+                        }
+                    }
+                }]
+            }
+        });
+
+        assert.strictEqual(
+            chart.chartWidth,
+            300,
+            'Width updated'
+        );
+    });
 });
