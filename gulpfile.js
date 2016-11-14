@@ -97,6 +97,10 @@ const scripts = () => {
                 exclude: new RegExp(folders.parts),
                 umd: false
             },
+            'modules/current-date-indicator.src.js': {
+                exclude: new RegExp(folders.parts),
+                umd: false
+            },
             'modules/data.src.js': {
                 exclude: new RegExp(folders.parts),
                 umd: false
