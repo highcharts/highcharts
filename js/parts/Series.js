@@ -192,6 +192,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			eventType,
 			events,
 			chartSeries = chart.series,
+			lastSeries,
 			sortByIndex = function (a, b) {
 				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
 			};
@@ -238,9 +239,11 @@ H.Series = H.seriesType('line', null, { // base series options
 			chart.hasCartesianSeries = true;
 		}
 
-		// Register it in the chart
+		// Get the index and register the series in the chart. The index is one
+		// more than the current latest series index (5960).
+		lastSeries = chartSeries.length && chartSeries[chartSeries.length - 1];
+		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		chartSeries.push(series);
-		series._i = chartSeries.length - 1;
 
 		// Sort series according to index option (#248, #1123, #2456)
 		stableSort(chartSeries, sortByIndex);
