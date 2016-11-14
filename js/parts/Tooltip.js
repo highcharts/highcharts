@@ -74,6 +74,55 @@ H.Tooltip.prototype = {
 		});
 	},
 
+	/*= if (!build.classic) { =*/
+	/**
+	 * In styled mode, apply the default filter for the tooltip drop-shadow. It
+	 * needs to have an id specific to the chart, otherwise there will be issues
+	 * when one tooltip adopts the filter of a different chart, specifically one
+	 * where the container is hidden.
+	 */
+	applyFilter: function () {
+		
+		var chart = this.chart;
+		chart.renderer.definition({
+			tagName: 'filter',
+			id: 'drop-shadow-' + chart.index,
+			opacity: 0.5,
+			children: [{
+				tagName: 'feGaussianBlur',
+				in: 'SourceAlpha',
+				stdDeviation: 1
+			}, {
+				tagName: 'feOffset',
+				dx: 1,
+				dy: 1
+			}, {
+				tagName: 'feComponentTransfer',
+				children: [{
+					tagName: 'feFuncA',
+					type: 'linear',
+					slope: 0.3
+				}]
+			}, {
+				tagName: 'feMerge',
+				children: [{
+					tagName: 'feMergeNode'
+				}, {
+					tagName: 'feMergeNode',
+					in: 'SourceGraphic'
+				}]
+			}]
+		});
+		chart.renderer.definition({
+			tagName: 'style',
+			textContent: '.highcharts-tooltip-' + chart.index + '{' +
+				'filter:url(#drop-shadow-' + chart.index + ')' +
+			'}'
+		});
+	},
+	/*= } =*/
+	
+
 	/**
 	 * Create the Tooltip label element if it doesn't exist, then return the
 	 * label.
@@ -115,6 +164,13 @@ H.Tooltip.prototype = {
 					.shadow(options.shadow);
 				/*= } =*/
 			}
+			
+			/*= if (!build.classic) { =*/
+			// Apply the drop-shadow filter
+			this.applyFilter();
+			this.label.addClass('highcharts-tooltip-' + this.chart.index);
+			/*= } =*/
+
 			this.label
 				.attr({
 					zIndex: 8
