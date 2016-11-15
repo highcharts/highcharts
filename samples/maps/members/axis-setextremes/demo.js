@@ -38,9 +38,8 @@ $(function () {
     });
 
     $('#setextremes').click(function () {
-
-        chart.xAxis[0].setExtremes(740, 1180, false);
-        chart.yAxis[0].setExtremes(-1730, -1470, false);
+        chart.xAxis[0].setExtremes(4800, 4800, false);
+        chart.yAxis[0].setExtremes(-9300, -7500, false);
         chart.redraw();
     });
 });
