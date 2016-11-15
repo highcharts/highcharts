@@ -117,17 +117,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		formatter: function () {
 			return this.y === null ? '' : H.numberFormat(this.y, -1);
 		},
-		/*= if (!build.classic) { =*/
-		/*style: {
-			color: 'contrast',
-			textShadow: '0 0 6px contrast, 0 0 3px contrast'
-		},*/
-		/*= } else { =*/
+		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '11px',
 			fontWeight: 'bold',
 			color: 'contrast',
-			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+			textOutline: '1px contrast'
 		},
 		// backgroundColor: undefined,
 		// borderColor: undefined,

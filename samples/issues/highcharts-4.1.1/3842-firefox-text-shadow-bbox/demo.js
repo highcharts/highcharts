@@ -11,7 +11,7 @@ $(function () {
 
         var txt2 = ren.text('Firefox/IE shadow', 10, 60)
             .css({
-                textShadow: '0 0 6px green, 0 0 3px green'
+                textOutline: '6px silver'
             })
             .add();
         assert.equal(
