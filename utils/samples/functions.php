@@ -3,6 +3,7 @@
 require_once('../issue-by-commit/Git.php');
 require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
+define('JQUERY_VERSION_OLD_IE', isset($_SESSION['jQueryVersionOldIE']) ? $_SESSION['jQueryVersionOldIE'] : Settings::$jQueryVersionOldIE);
 
 
 function getBranch() {
@@ -164,14 +165,24 @@ function getFramework($framework) {
 
 	} else {
 		$file = '../../lib/jquery-' . JQUERY_VERSION . '.js';
-		if (file_exists($file)) {
-			copy($file, '../draft/jquery-' . JQUERY_VERSION . '.js');
+        if (file_exists($file)) {
+            copy($file, '../draft/jquery-' . JQUERY_VERSION . '.js');
 			return '
+                <!--[if lt IE 9]>
+                <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
+                <![endif]-->
+                <!--[if gte IE 8]> -->
 				<script src="../draft/jquery-' . JQUERY_VERSION . '.js"></script>
+                <!-- <![endif]-->
 			';
 		} else {
 			return '
+                <!--[if lt IE 9]>
+                <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
+                <![endif]-->
+                <!--[if gte IE 8]> -->
 				<script src="cache.php?file=http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
+                <!-- <![endif]-->
 			';
 		}
 	}

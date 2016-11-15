@@ -225,8 +225,8 @@ function getExportInnerHTML() {
 		<?php echo getResources(); ?>
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
-		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
-   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.css" />
+		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.js"></script>
+   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
    		<?php endif; ?>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
@@ -474,8 +474,8 @@ function getExportInnerHTML() {
 			window.isComparing = true;
 			window.alert = function () {};
 			window.onbeforeunload = function(){
-				$(document).unbind().die();    //remove listeners on document
-				$(document).find('*').unbind().die(); //remove listeners on all nodes
+				$(document).unbind();    //remove listeners on document
+				$(document).find('*').unbind(); //remove listeners on all nodes
 			}
 
 

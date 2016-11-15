@@ -1,5 +1,5 @@
 ---
  resources:
-   - http://code.jquery.com/qunit/qunit-1.19.0.js
-   - http://code.jquery.com/qunit/qunit-1.19.0.css
+   - http://code.jquery.com/qunit/qunit-2.0.1.js
+   - http://code.jquery.com/qunit/qunit-2.0.1.css
 ...

@@ -43,7 +43,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 
-		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="cache.php?file=http://code.jquery.com/jquery-<?php echo JQUERY_VERSION; ?>.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
