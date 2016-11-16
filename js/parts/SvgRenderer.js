@@ -1999,7 +1999,8 @@ SVGRenderer.prototype = {
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
 						fontSizeStyle,
-						tspan
+						// Get the computed size from parent if not explicit
+						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
 			unescapeAngleBrackets = function (inputStr) {
