@@ -405,8 +405,9 @@ function getResources() {
 					<?php endforeach ?>
 					</select>
 				</form>
-				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
+				<button id="next" disabled="disabled" title="Next (Arrow Right)">Next</button>
+				<button id="reload" style="margin-left: 1em" onclick="location.reload()"
+					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
 					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
