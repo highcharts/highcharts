@@ -1098,8 +1098,14 @@ SVGElement.prototype = {
 			}
 
 			// Properties that affect bounding box
-			cacheKey += ['', rotation || 0, fontSize, element.style.width]
-				.join(',');
+			cacheKey += [
+				'',
+				rotation || 0,
+				fontSize,
+				element.style.width,
+				element.style['text-overflow'] // #5968
+			]
+			.join(',');
 
 		}
 
