@@ -104,6 +104,7 @@ extend(defaultOptions, {
 			threshold: null
 		},
 		//top: undefined,
+		//opposite: undefined, // docs
 		xAxis: {
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,
@@ -331,7 +332,7 @@ Navigator.prototype = {
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			scroller.shades[index] = renderer.rect()
 				.addClass('highcharts-navigator-mask' + 
-					(index === 1 ? '-inside' : '-outside'))
+					(index === 1 ? '-inside' : '-outside')) // docs
 				/*= if (build.classic) { =*/
 				.attr({
 					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
