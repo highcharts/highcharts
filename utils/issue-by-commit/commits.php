@@ -47,7 +47,7 @@ if (@$_POST['branch']) {
 if (!$_SESSION['branch']) {
 	$_SESSION['branch'] = 'master';
 }
-if (!$_SESSION['after']) {
+if (!isset($_SESSION['after'])) {
 	$_SESSION['after'] = strftime('%Y-%m-%d', mktime() - 31 * 24 * 3600);
 }
 
