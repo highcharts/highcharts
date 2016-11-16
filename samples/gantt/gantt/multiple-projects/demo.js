@@ -8,7 +8,7 @@ $(function () {
             marginRight: 150
         },
         title: {
-            text: 'Gantt Chart'
+            text: 'Gantt Chart with Multiple Projects'
         },
         xAxis: [{
             grid: true,
@@ -22,7 +22,8 @@ $(function () {
                 }
             },
             min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30)
+            max: Date.UTC(2014, 10, 30),
+            currentDateIndicator: true
         }, {
             grid: true,
             type: 'datetime',
@@ -48,22 +49,12 @@ $(function () {
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
                 taskGroup: 0,
-                taskName: 'Start prototype',
-                partialFill: 0.25
+                taskName: 'Start prototype'
             }, {
                 start: Date.UTC(2014, 10, 20),
                 end: Date.UTC(2014, 10, 25),
                 taskGroup: 1,
-                taskName: 'Develop',
-                partialFill: {
-                    amount: 0.12,
-                    fill: '#fa0'
-                }
-            }, {
-                start: Date.UTC(2014, 10, 25, 12),
-                milestone: true,
-                taskName: 'Prototype done',
-                taskGroup: 0
+                taskName: 'Develop'
             }, {
                 start: Date.UTC(2014, 10, 27),
                 end: Date.UTC(2014, 10, 29),
@@ -78,7 +69,6 @@ $(function () {
         }, {
             name: 'Project 2',
             borderRadius: 10,
-            visible: false,
             data: [{
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 19),

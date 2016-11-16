@@ -8,7 +8,7 @@ $(function () {
             marginRight: 150
         },
         title: {
-            text: 'Gantt Chart'
+            text: 'Gantt Chart with Progress Indicators'
         },
         xAxis: [{
             grid: true,
@@ -22,7 +22,8 @@ $(function () {
                 }
             },
             min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30)
+            max: Date.UTC(2014, 10, 30),
+            currentDateIndicator: true
         }, {
             grid: true,
             type: 'datetime',
@@ -60,11 +61,6 @@ $(function () {
                     fill: '#fa0'
                 }
             }, {
-                start: Date.UTC(2014, 10, 25, 12),
-                milestone: true,
-                taskName: 'Prototype done',
-                taskGroup: 0
-            }, {
                 start: Date.UTC(2014, 10, 27),
                 end: Date.UTC(2014, 10, 29),
                 taskName: 'Test prototype',
@@ -74,31 +70,6 @@ $(function () {
                 end: Date.UTC(2014, 10, 26),
                 taskName: 'Run acceptance tests',
                 taskGroup: 2
-            }]
-        }, {
-            name: 'Project 2',
-            borderRadius: 10,
-            visible: false,
-            data: [{
-                start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 19),
-                taskName: 'Create protoype',
-                taskGroup: 0
-            }, {
-                start: Date.UTC(2014, 10, 19),
-                end: Date.UTC(2014, 10, 23),
-                taskName: 'Write unit tests',
-                taskGroup: 1
-            }, {
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 28),
-                taskName: 'Run user tests',
-                taskGroup: 2
-            }, {
-                start: Date.UTC(2014, 10, 24),
-                end: Date.UTC(2014, 10, 28),
-                taskName: 'Develop',
-                taskGroup: 1
             }]
         }]
     });
