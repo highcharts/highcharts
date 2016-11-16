@@ -769,7 +769,15 @@ H.Axis.prototype = {
 					)
 				);
 			} else {
-				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+				for (
+					pos = min + (tickPositions[0] - min) % minorTickInterval;
+					pos <= max;
+					pos += minorTickInterval
+				) {
+					// Very, very, tight grid lines (#5771)
+					if (pos === minorTickPositions[0]) {
+						break;
+					}
 					minorTickPositions.push(pos);
 				}
 			}
