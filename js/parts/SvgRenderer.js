@@ -3128,7 +3128,7 @@ SVGRenderer.prototype = {
 		} else if (/em/.test(fontSize)) {
 			// The em unit depends on parent items
 			fontSize = parseFloat(fontSize) *
-				this.fontMetrics(null, elem.parentNode).f;
+				(elem ? this.fontMetrics(null, elem.parentNode).f : 16);
 		} else {
 			fontSize = 12;
 		}
