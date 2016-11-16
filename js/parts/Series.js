@@ -240,8 +240,10 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		// Get the index and register the series in the chart. The index is one
-		// more than the current latest series index (5960).
-		lastSeries = chartSeries.length && chartSeries[chartSeries.length - 1];
+		// more than the current latest series index (#5960).
+		if (chartSeries.length) {
+			lastSeries = chartSeries[chartSeries.length - 1];
+		}
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		chartSeries.push(series);
 
