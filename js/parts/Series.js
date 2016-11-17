@@ -828,7 +828,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
@@ -900,11 +900,6 @@ H.Series = H.seriesType('line', null, { // base series options
 				stack = stacking && yAxis.stacks[(series.negStacks && yValue < (stackThreshold ? 0 : threshold) ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
-
-			// Discard disallowed y values for log axes (#3434)
-			if (yAxis.isLog && yValue !== null && yValue <= 0) {
-				point.isNull = true;
-			}
 
 			// Get the plotX translation
 			point.plotX = plotX = correctFloat( // #5236

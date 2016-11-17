@@ -1111,9 +1111,6 @@ H.Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
-			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,
 			// therefore use precision 15.
