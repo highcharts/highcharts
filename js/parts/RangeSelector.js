@@ -161,7 +161,7 @@ RangeSelector.prototype = {
 					});
 					redraw = false;
 				}
-				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin);
+				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC);
 				newMin = rangeMin = ytdExtremes.min;
 				newMax = ytdExtremes.max;
 
@@ -318,11 +318,15 @@ RangeSelector.prototype = {
 				count = rangeOptions.count || 1,
 				button = buttons[i],
 				state = 0,
+				disable,
+				select,
 				isSelected = i === selected,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
 				// Disable buttons where the range is smaller than the minimum range
 				isTooSmallRange = range < baseAxis.minRange,
+				// Do not select the YTD button if not explicitly told so
+				isYTDButNotSelected = false,
 				// Disable the All button if we're already showing all
 				isAllButAlreadyShowingAll = false,
 				isSameRange = range === actualRange;
@@ -335,14 +339,15 @@ RangeSelector.prototype = {
 				isSameRange = true;
 			} else if (type === 'ytd') {
 				isSameRange = (ytdMax - ytdMin) === actualRange;
+				isYTDButNotSelected = !isSelected;
 			} else if (type === 'all') {
 				isSameRange = baseAxis.max - baseAxis.min >= dataMax - dataMin;
-				isAllButAlreadyShowingAll = !isSelected && isSameRange;
+				isAllButAlreadyShowingAll = !selected && selectedExists && isSameRange;
 			}
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (
+			disable = (
 				!allButtonsEnabled &&
 				(
 					isTooGreatRange ||
@@ -350,9 +355,16 @@ RangeSelector.prototype = {
 					isAllButAlreadyShowingAll ||
 					hasNoData
 				)
-			) {
+			);
+			select = (
+				(isSelected && isSameRange) ||
+				(isSameRange && !selectedExists && !isYTDButNotSelected)
+			);
+
+			if (disable) {
 				state = 3;
-			} else if ((isSelected && isSameRange) || (isSameRange && !selectedExists)) {
+			} else if (select) {
+				selectedExists = true; // Only one button can be selected
 				state = 2;
 			}
 
