@@ -39,6 +39,7 @@ var addEvent = H.addEvent,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
 	wrap = H.wrap,
+	swapXY = H.swapXY,
 
 	units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
@@ -170,9 +171,7 @@ Navigator.prototype = {
 
 		// Place it
 		navigator.handles[index][verb](inverted ? {
-			translateX: Math.round(
-				navigator.left + navigator.height / 2 - 8
-			),
+			translateX: Math.round(navigator.left + navigator.height / 2 - 8),
 			translateY: Math.round(navigator.top + parseInt(x, 10) + 0.5)
 		} : {
 			translateX: Math.round(navigator.left + parseInt(x, 10)),
@@ -181,10 +180,37 @@ Navigator.prototype = {
 	},
 
 	/**
+	 * Draw one of the handles on the side of the zoomed range in the navigator
+	 * @param {Boolean} inverted flag for chart.inverted
+	 * @returns {Array} Path to be used in a handle
+	 */
+	getHandlePath: function (inverted) {
+		return swapXY([
+			'M',
+			-4.5, 0.5,
+			'L',
+			3.5, 0.5,
+			'L',
+			3.5, 15.5,
+			'L',
+			-4.5, 15.5,
+			'L',
+			-4.5, 0.5,
+			'M',
+			-1.5, 4,
+			'L',
+			-1.5, 12,
+			'M',
+			0.5, 4,
+			'L',
+			0.5, 12
+		], inverted);
+	},
+	/**
 	 * Render outline around the zoomed range
 	 * @param {Number} zoomedMin in pixels position where zoomed range starts
 	 * @param {Number} zoomedMax in pixels position where zoomed range ends
-	 * @param {Boolean} inverted flag in chart is inverted
+	 * @param {Boolean} inverted flag if chart is inverted
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawOutline: function (zoomedMin, zoomedMax, inverted, verb) {
@@ -212,6 +238,7 @@ Navigator.prototype = {
 				'L',
 				left + outlineHeight,
 				verticalMin, // top right of zoomed range
+				'L',
 				left,
 				verticalMin, // top left of z.r.
 				'L',
@@ -220,13 +247,16 @@ Navigator.prototype = {
 				'L',
 				left + outlineHeight,
 				zoomedMax, // bottom right of z.r.
+				'L',
 				left + outlineHeight,
 				navigatorTop + navigatorSize + scrollbarHeight // bottom edge
 			].concat(maskInside ? [
 				'M',
-				left + outlineHeight, verticalMin - halfOutline, // upper left of zoomed range
+				left + outlineHeight,
+				verticalMin - halfOutline, // upper left of zoomed range
 				'L',
-				left + outlineHeight, zoomedMax + halfOutline // upper right of z.r.
+				left + outlineHeight,
+				zoomedMax + halfOutline // upper right of z.r.
 			] : []);
 		} else {
 			zoomedMin += left + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
@@ -235,20 +265,30 @@ Navigator.prototype = {
 
 			path = [
 				'M',
-				left, navigatorTop, // left
+				left,
+				navigatorTop, // left
 				'L',
-				zoomedMin, navigatorTop, // upper left of zoomed range
-				zoomedMin, navigatorTop + outlineHeight, // lower left of z.r.
+				zoomedMin,
+				navigatorTop, // upper left of zoomed range
 				'L',
-				zoomedMax, navigatorTop + outlineHeight, // lower right of z.r.
+				zoomedMin,
+				navigatorTop + outlineHeight, // lower left of z.r.
 				'L',
-				zoomedMax, navigatorTop, // upper right of z.r.
-				left + navigatorSize + scrollbarHeight * 2, navigatorTop // right
+				zoomedMax,
+				navigatorTop + outlineHeight, // lower right of z.r.
+				'L',
+				zoomedMax,
+				navigatorTop, // upper right of z.r.
+				'L',
+				left + navigatorSize + scrollbarHeight * 2,
+				navigatorTop // right
 			].concat(maskInside ? [
 				'M',
-				zoomedMin - halfOutline, navigatorTop, // upper left of zoomed range
+				zoomedMin - halfOutline,
+				navigatorTop, // upper left of zoomed range
 				'L',
-				zoomedMax + halfOutline, navigatorTop // upper right of z.r.
+				zoomedMax + halfOutline,
+				navigatorTop // upper right of z.r.
 			] : []);
 		}
 		scroller.outline[verb]({
@@ -260,7 +300,7 @@ Navigator.prototype = {
 	 * Render outline around the zoomed range
 	 * @param {Number} zoomedMin in pixels position where zoomed range starts
 	 * @param {Number} zoomedMax in pixels position where zoomed range ends
-	 * @param {Boolean} inverted flag in chart is inverted
+	 * @param {Boolean} inverted flag if chart is inverted
 	 * @param {String} verb use 'animate' or 'attr'
 	 */
 	drawMasks: function (zoomedMin, zoomedMax, inverted, verb) {
@@ -328,6 +368,13 @@ Navigator.prototype = {
 			})
 			.add();
 
+
+		/*= if (build.classic) { =*/
+		var mouseCursor = {
+			cursor: inverted ? 'ns-resize' : 'ew-resize'
+		};
+		/*= } =*/
+
 		// Create masks, each mask will get events and fill:
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			scroller.shades[index] = renderer.rect()
@@ -337,9 +384,7 @@ Navigator.prototype = {
 				.attr({
 					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
 				})
-				.css(index === 1 && { 
-					cursor: inverted ? 'ns-resize' : 'ew-resize' 
-				})
+				.css(index === 1 && mouseCursor)
 				/*= } =*/
 				.add(navigatorGroup);
 		});
@@ -358,26 +403,7 @@ Navigator.prototype = {
 		// Create the handlers:
 		each([0, 1], function (index) {
 			scroller.handles[index] = renderer
-				.path(H.Scrollbar.prototype.swapXY.call(null, [
-					'M',
-					-4.5, 0.5,
-					'L',
-					3.5, 0.5,
-					'L',
-					3.5, 15.5,
-					'L',
-					-4.5, 15.5,
-					'L',
-					-4.5, 0.5,
-					'M',
-					-1.5, 4,
-					'L',
-					-1.5, 12,
-					'M',
-					0.5, 4,
-					'L',
-					0.5, 12
-				], inverted))
+				.path(scroller.getHandlePath(inverted))
 				// zIndex = 6 for right handle, 7 for left.
 				// Can't be 10, because of the tooltip in inverted chart #2908
 				.attr({ zIndex: 7 - index })
@@ -394,7 +420,7 @@ Navigator.prototype = {
 					stroke: handlesOptions.borderColor,
 					'stroke-width': 1
 				})
-				.css({ cursor: inverted ? 'ns-resize' : 'ew-resize' });
+				.css(mouseCursor);
 			/*= } =*/
 		});
 	},
@@ -451,24 +477,18 @@ Navigator.prototype = {
 				chart.plotHeight - 2 * scrollbarHeight
 			);
 			scrollerWidth = scrollbarHeight;
-			scrollbarTop = navigator.top - scrollbarHeight;
-			scrollbarLeft = navigator.left - scrollbarHeight +
-				(navigatorEnabled ? 0 : navigator.height);
-			scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
 		} else {
 			navigator.size = zoomedMax = navigatorSize = pick(
 				xAxis.len,
 				chart.plotWidth - 2 * scrollbarHeight
 			);
 			scrollerWidth = navigatorSize + 2 * scrollbarHeight;
-			scrollbarTop = navigator.top +
-				(navigatorEnabled ? navigator.height : -scrollbarHeight);
-			scrollbarLeft = navigator.left - scrollbarHeight;
 		}
 
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.toPixels(min, true));
 		pxMax = pick(pxMax, xAxis.toPixels(max, true));
+
 		if (!isNumber(pxMin) || Math.abs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
@@ -509,6 +529,16 @@ Navigator.prototype = {
 		}
 
 		if (navigator.scrollbar) {
+			if (inverted) {
+				scrollbarTop = navigator.top - scrollbarHeight;
+				scrollbarLeft = navigator.left - scrollbarHeight +
+					(navigatorEnabled ? 0 : navigator.height);
+				scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
+			} else {
+				scrollbarTop = navigator.top +
+					(navigatorEnabled ? navigator.height : -scrollbarHeight);
+				scrollbarLeft = navigator.left - scrollbarHeight;
+			}
 			// Reposition scrollbar
 			navigator.scrollbar.position(
 				scrollbarLeft,
@@ -534,8 +564,7 @@ Navigator.prototype = {
 			container = chart.container,
 			eventsToUnbind = [],
 			mouseMoveHandler,
-			mouseUpHandler,
-			_events;
+			mouseUpHandler;
 
 		/**
 		 * Create mouse events' handlers.
@@ -548,34 +577,30 @@ Navigator.prototype = {
 			navigator.onMouseUp(e);
 		};
 
-		// Store shades and handles mousedown events
-		_events = navigator.getPartsEvents('mousedown');
-		// Store mouse move and mouseup events. These are bind to doc/container,
+		// Add shades and handles mousedown events
+		eventsToUnbind = navigator.getPartsEvents('mousedown');
+		// Add mouse move and mouseup events. These are bind to doc/container,
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
-		_events.push(
-			[container, 'mousemove', mouseMoveHandler],
-			[doc, 'mouseup', mouseUpHandler]
+		eventsToUnbind.push(
+			addEvent(container, 'mousemove', mouseMoveHandler),
+			addEvent(doc, 'mouseup', mouseUpHandler)
 		);
 
 		// Touch events
 		if (hasTouch) {
-			_events.push(
-				[container, 'touchmove', mouseMoveHandler],
-				[doc, 'touchend', mouseUpHandler]
+			eventsToUnbind.push(
+				addEvent(container, 'touchmove', mouseMoveHandler),
+				addEvent(doc, 'touchend', mouseUpHandler)
 			);
-			_events.concat(navigator.getPartsEvents('touchstart'));
+			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 		}
 
-		// Add them all
-		each(_events, function (args) {
-			eventsToUnbind.push(addEvent.apply(null, args));
-		});
-		this.eventsToUnbind = eventsToUnbind;
+		navigator.eventsToUnbind = eventsToUnbind;
 
 		// Data events
-		if (this.series && this.series[0]) {
+		if (navigator.series && navigator.series[0]) {
 			eventsToUnbind.push(
-				addEvent(this.series[0].xAxis, 'foundExtremes', function () {
+				addEvent(navigator.series[0].xAxis, 'foundExtremes', function () {
 					chart.scroller.modifyNavigatorAxisExtremes();
 				})
 			);
@@ -607,13 +632,13 @@ Navigator.prototype = {
 			events = [];
 		each(['shades', 'handles'], function (name) {
 			each(navigator[name], function (navigatorItem, index) {
-				events.push([
+				addEvent(
 					navigatorItem.element,
 					eventName,
 					function (e) {
 						navigator[name + 'Mousedown'](e, index);
 					}
-				]);
+				);
 			});
 		});
 		return events;
@@ -759,7 +784,6 @@ Navigator.prototype = {
 				} else if (chartX > navigatorSize + dragOffset - range) { // outside right
 					chartX = navigatorSize + dragOffset - range;
 				}
-
 				navigator.render(
 					0,
 					0,
@@ -957,6 +981,11 @@ Navigator.prototype = {
 				});
 			}
 
+			// Render items, so we can bind events to them:
+			scroller.renderElements();
+			// Add mouse events
+			scroller.addMouseEvents();
+
 		// in case of scrollbar only, fake an x axis to get translation
 		} else {
 			scroller.xAxis = {
@@ -1011,12 +1040,8 @@ Navigator.prototype = {
 			});
 		}
 
-		// Render items, so we can bind events to them:
-		scroller.renderElements();
 		// Add data events
 		scroller.addBaseSeriesEvents();
-		// Add mouse events
-		scroller.addMouseEvents();
 	},
 
 	/**
@@ -1387,6 +1412,7 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 
 	var legend = this.legend,
 		scroller = this.scroller,
+		scrollbarHeight,
 		legendOptions,
 		xAxis,
 		yAxis;
@@ -1397,17 +1423,18 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 		legendOptions = legend.options;
 		xAxis = scroller.xAxis;
 		yAxis = scroller.yAxis;
+		scrollbarHeight = scroller.scrollbarHeight;
 
 		// Compute the top position
 		if (this.inverted) {
 			scroller.left = scroller.navigatorOptions.opposite ? 
-				this.chartWidth - scroller.scrollbarHeight - scroller.height : 
-				this.spacing[3] + scroller.scrollbarHeight;
-			scroller.top = this.plotTop + scroller.scrollbarHeight;
+				this.chartWidth - scrollbarHeight - scroller.height : 
+				this.spacing[3] + scrollbarHeight;
+			scroller.top = this.plotTop + scrollbarHeight;
 		} else {
-			scroller.left = this.plotLeft + scroller.scrollbarHeight;
+			scroller.left = this.plotLeft + scrollbarHeight;
 			scroller.top = scroller.navigatorOptions.top ||
-				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
+				this.chartHeight - scroller.height - scrollbarHeight - this.spacing[2] -
 					(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
 						legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 		}
