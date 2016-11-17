@@ -805,7 +805,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	getExtremes: function (yData) {
 		var xAxis = this.xAxis,
-			yAxis = this.yAxis,
 			xData = this.processedXData,
 			yDataLength,
 			activeYData = [],

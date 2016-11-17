@@ -114,7 +114,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	return positions;
 };
 
-Axis.prototype.log2lin = function(num) {
+Axis.prototype.log2lin = function (num) {
 	if (num > 0) {
 		return Math.log(num) / Math.LN10;
 	}
@@ -124,7 +124,7 @@ Axis.prototype.log2lin = function(num) {
 	return 0;
 };
 
-Axis.prototype.lin2log = function(num) {
+Axis.prototype.lin2log = function (num) {
 	if (num > 0) {
 		return Math.pow(10, num);
 	}
