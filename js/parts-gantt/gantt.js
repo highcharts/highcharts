@@ -6,6 +6,7 @@
 */
 'use strict';
 import H from '../parts/Globals.js';
+import 'current-date-indicator.js';
 import 'grid-axis.js';
 import 'xrange-series.js';
 

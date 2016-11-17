@@ -1,5 +1,15 @@
 $(function () {
 
+    var today = new Date(),
+        day = 1000 * 60 * 60 * 24;
+
+    // Set to 00:00:00:000 today
+    today.setUTCHours(0);
+    today.setUTCMinutes(0);
+    today.setUTCSeconds(0);
+    today.setUTCMilliseconds(0);
+
+
     // THE CHART
     Highcharts.chart('container', {
         chart: {
@@ -12,22 +22,23 @@ $(function () {
         },
         xAxis: [{
             grid: true,
+            currentDateIndicator: true,
             type: 'datetime',
             opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
+            tickInterval: day, // Day
             labels: {
                 format: '{value:%E}',
                 style: {
                     fontSize: '15px'
                 }
             },
-            min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30)
+            min: today.getTime() - (3 * day),
+            max: today.getTime() + (11 * day)
         }, {
             grid: true,
             type: 'datetime',
             opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+            tickInterval: day * 7, // Week
             labels: {
                 format: '{value:Week %W}',
                 style: {
@@ -45,14 +56,14 @@ $(function () {
             name: 'Project 1',
             borderRadius: 10,
             data: [{
-                start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 25),
+                start: today.getTime() - (2 * day),
+                end: today.getTime() + day,
                 taskGroup: 0,
                 taskName: 'Start prototype',
-                partialFill: 0.25
+                partialFill: 0.8
             }, {
-                start: Date.UTC(2014, 10, 20),
-                end: Date.UTC(2014, 10, 25),
+                start: today.getTime(),
+                end: today.getTime() + (8 * day),
                 taskGroup: 1,
                 taskName: 'Develop',
                 partialFill: {
@@ -60,18 +71,18 @@ $(function () {
                     fill: '#fa0'
                 }
             }, {
-                start: Date.UTC(2014, 10, 25, 12),
+                start: today.getTime() + (day * 1.5),
                 milestone: true,
                 taskName: 'Prototype done',
                 taskGroup: 0
             }, {
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 29),
+                start: today.getTime() + (2 * day),
+                end: today.getTime() + (6 * day),
                 taskName: 'Test prototype',
                 taskGroup: 0
             }, {
-                start: Date.UTC(2014, 10, 23),
-                end: Date.UTC(2014, 10, 26),
+                start: today.getTime() + (7 * day),
+                end: today.getTime() + (10 * day),
                 taskName: 'Run acceptance tests',
                 taskGroup: 2
             }]
@@ -80,25 +91,25 @@ $(function () {
             borderRadius: 10,
             visible: false,
             data: [{
-                start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 19),
+                start: today.getTime() - (2 * day),
+                end: today.getTime(),
                 taskName: 'Create protoype',
                 taskGroup: 0
             }, {
-                start: Date.UTC(2014, 10, 19),
-                end: Date.UTC(2014, 10, 23),
+                start: today.getTime() + day,
+                end: today.getTime() + (3 * day),
                 taskName: 'Write unit tests',
                 taskGroup: 1
             }, {
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 28),
-                taskName: 'Run user tests',
-                taskGroup: 2
-            }, {
-                start: Date.UTC(2014, 10, 24),
-                end: Date.UTC(2014, 10, 28),
+                start: today.getTime() + (4 * day),
+                end: today.getTime() + (9 * day),
                 taskName: 'Develop',
                 taskGroup: 1
+            }, {
+                start: today.getTime() + (9 * day),
+                end: today.getTime() + (10 * day),
+                taskName: 'Run user tests',
+                taskGroup: 2
             }]
         }]
     });
