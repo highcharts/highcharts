@@ -171,7 +171,9 @@ H.seriesType('solidgauge', 'gauge', {
 			axis.initDataClasses(axis.options);
 		}
 		axis.initStops(axis.options);
-		this.generatePoints();
+
+		// Generate points and inherit data label position
+		H.seriesTypes.gauge.prototype.translate.call(this);
 	},
 
 	/**

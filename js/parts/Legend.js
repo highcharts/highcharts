@@ -638,7 +638,7 @@ Legend.prototype = {
 					clipRect.attr({
 						height: height
 					});
-				} else { // Reset (#5912)
+				} else if (clipRect) { // Reset (#5912)
 					legend.clipRect = clipRect.destroy();
 					legend.contentGroup.clip();
 				}
