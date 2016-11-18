@@ -74,7 +74,7 @@ H.Pointer.prototype = {
 			zoomX,
 			zoomY;
 
-		// Look for the pinchType option // docs: Now even in Highcharts vanilla!
+		// Look for the pinchType option
 		if (/touch/.test(e.type)) {
 			zoomType = pick(options.pinchType, zoomType);
 		}

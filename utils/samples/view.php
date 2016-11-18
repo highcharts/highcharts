@@ -128,7 +128,8 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>';
+			path = '<?php echo $path ?>',
+			browser = <?php echo json_encode(getBrowser()); ?>;
 
 		(function () {
 
@@ -156,7 +157,8 @@ function getResources() {
 				}
 
 				if (typeof Highcharts !== 'undefined') {
-					$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
+						' / ' + browser.parent);
 				}
 
 				if (window.parent.frames[0]) {

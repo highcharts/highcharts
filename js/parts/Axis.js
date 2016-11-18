@@ -440,7 +440,6 @@ H.Axis.prototype = {
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			lang = defaultOptions.lang,
 			numericSymbols = lang.numericSymbols,
-			// docs: new option, added to API. Add it to the I18n article too.
 			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,

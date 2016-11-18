@@ -190,8 +190,6 @@ H.seriesType('solidgauge', 'gauge', {
 			thresholdAngleRad;
 
 		// Handle the threshold option
-		// docs: Threshold option. Added to the API since "next", but also
-		// remember to remove threshold from the "excluding" list.
 		if (isNumber(options.threshold)) {
 			thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
 				options.threshold,

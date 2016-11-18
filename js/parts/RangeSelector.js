@@ -745,7 +745,6 @@ RangeSelector.prototype = {
 			if (!defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
 				inputGroup[inputGroup.alignAttr.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
-				// docs: From the responsive docs and api, add links to the new stock responsive demo.
 			}
 
 			// Set or reset the input values
