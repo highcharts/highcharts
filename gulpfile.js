@@ -3,9 +3,9 @@
 /* eslint-disable func-style */
 
 'use strict';
-var colors = require('colors'),
-    gulp = require('gulp'),
-    argv = require('yargs').argv;
+const colors = require('colors');
+const gulp = require('gulp');
+const argv = require('yargs').argv;
 
 /**
  * Get the product version from build.properties.
@@ -188,7 +188,7 @@ gulp.task('ftp', function () {
         if (err) {
             throw err;
         }
-        var config = {};
+        let config = {};
         lines.split('\n').forEach(function (line) {
             line = line.split('=');
             if (line[0]) {
@@ -196,13 +196,13 @@ gulp.task('ftp', function () {
             }
         });
 
-        var conn = ftp.create({
+        let conn = ftp.create({
             host: config['ftp.host'],
             user: config['ftp.user'],
             password: config['ftp.password']
         });
 
-        var globs = paths.distributions.concat(paths.modules);
+        let globs = paths.distributions.concat(paths.modules);
 
         return gulp.src(globs, { base: './js', buffer: false })
             .pipe(conn.newer(config['ftp.dest']))
@@ -665,7 +665,7 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('webpack', function () {
-    var webpack = require('webpack');
+    const webpack = require('webpack');
     webpack({
         entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
         output: {
