@@ -52,164 +52,69 @@ const getProductVersion = () => {
 };
 
 /**
+ * Returns fileOptions for the build script
+ * @todo Move this functionality to the build script,
+ *   and reuse it on github.highcharts.com
+ * @return {Object} Object containing all fileOptions
+ */
+const getFileOptions = (base) => {
+    const B = require('./assembler/build.js');
+    const DS = '[\\\\\\\/][^\\\\\\\/]'; // Regex: Single directory seperator
+    const folders = {
+        'parts': 'parts' + DS + '+\.js$',
+        'parts-more': 'parts-more' + DS + '+\.js$'
+    };
+
+    // Modules should not be standalone, and they should exclude all parts files.
+    const fileOptions = B.getFilesInFolder(base, true, '')
+        .reduce((obj, file) => {
+            if (file.indexOf('modules') > -1) {
+                obj[file] = {
+                    exclude: new RegExp(folders.parts),
+                    umd: false
+                };
+            }
+            return obj;
+        }, {});
+
+    /**
+     * Special cases
+     * solid-gauge should also exclude gauge-series
+     * highcharts-more and highcharts-3d is also not standalone.
+     */
+    fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
+    Object.assign(fileOptions, {
+        'highcharts-more.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        },
+        'highcharts-3d.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        }
+    });
+    return fileOptions;
+};
+
+/**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
  * @param {string} --file Optional command line argument. Use to build a one or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
  * @return undefined
  */
 const scripts = () => {
-    let build = require('./assembler/build').build;
-    // let argv = require('yargs').argv; Already declared in the upper scope
-    let files = (argv.file) ? argv.file.split(',') : null,
-        type = (argv.type) ? argv.type : 'both',
-        debug = argv.d || false,
-        version = getProductVersion(),
-        DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
-        folders = {
-            'parts': 'parts' + DS + '+\.js$',
-            'parts-more': 'parts-more' + DS + '+\.js$'
-        };
+    const build = require('./assembler/build').build;
+    // const argv = require('yargs').argv; Already declared in the upper scope
+    const files = (argv.file) ? argv.file.split(',') : null;
+    const type = (argv.type) ? argv.type : 'both';
+    const debug = argv.d || false;
+    const version = getProductVersion();
+    const base = './js/masters/';
+    const fileOptions = getFileOptions(base);
 
     build({
-        base: './js/masters/',
+        base: base,
         debug: debug,
-        fileOptions: {
-            'modules/accessibility.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/annotations.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/boost.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/broken-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvasrenderer.experimental.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvgrenderer-extended.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/data.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/drilldown.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/funnel.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/gantt.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/heatmap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/map.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/map-parser.src.js': {
-                exclude: new RegExp([folders.parts, 'data\.src\.js$'].join('|')),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/no-data-to-display.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/offline-exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/overlapping-datalabels.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/series-label.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/solid-gauge.src.js': {
-                exclude: new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|')),
-                umd: false
-            },
-            'modules/treemap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/xrange-series.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-blue.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-green.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-unica.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/gray.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid-light.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/skies.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/sand-signika.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-more.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-3d.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highmaps.src.js': {
-                product: 'Highmaps'
-            },
-            'highstock.src.js': {
-                product: 'Highstock'
-            }
-        },
+        fileOptions: fileOptions,
         files: files,
         output: './code/',
         type: type,
