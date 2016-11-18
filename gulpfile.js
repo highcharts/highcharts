@@ -8,7 +8,6 @@ var colors = require('colors'),
     gulp = require('gulp'),
     argv = require('yargs').argv,
     fs = require('fs'),
-    sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
     spawn = require('child_process').spawn;
 var paths = {
@@ -135,6 +134,7 @@ const buildModules = () => {
 };
 
 const styles = () => {
+    const sass = require('gulp-sass');
     gulp.src('./css/*.scss')
         .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
