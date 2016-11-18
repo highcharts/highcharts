@@ -77,7 +77,7 @@ SVGElement.prototype = {
 	 */
 	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
 		'fontStyle', 'color', 'lineHeight', 'width', 'textDecoration',
-		'textOverflow', 'textShadow'],
+		'textOverflow', 'textOutline'],
 
 	/**
 	 * Initialize the SVG renderer. This function only exists to make the
@@ -286,91 +286,100 @@ SVGElement.prototype = {
 	},
 
 	/**
-	 * Apply a polyfill to the text-stroke CSS property, by copying the text
-	 * element and apply strokes to the copy. Used internally. Contrast checks
+	 * Apply a text outline through a custom CSS property, by copying the text
+	 * element and apply stroke to the copy. Used internally. Contrast checks
 	 * at http://jsfiddle.net/highcharts/43soe9m1/2/ .
 	 *
 	 * @private
-	 * @param {String} textShadow A CSS `text-shadow` setting.
+	 * @param {String} textOutline A custom CSS `text-outline` setting, defined
+	 *    by `width color`. 
+	 * @example
+	 * // Specific color
+	 * text.css({
+	 *    textOutline: '1px black'
+	 * });
+	 * // Automatic contrast
+	 * text.css({
+	 *    color: '#000000', // black text
+	 *    textOutline: '1px contrast' // => white outline
+	 * });
 	 */
-	applyTextShadow: function (textShadow) {
+	applyTextOutline: function (textOutline) {
 		var elem = this.element,
 			tspans,
-			hasContrast = textShadow.indexOf('contrast') !== -1,
+			hasContrast = textOutline.indexOf('contrast') !== -1,
 			styles = {},
-			forExport = this.renderer.forExport,
-			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
-			// this again with new IE release. In exports, the rendering is passed to PhantomJS.
-			supports = this.renderer.forExport || (elem.style.textShadow !== undefined && !isMS);
+			color,
+			strokeWidth;
 
-		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
+		// When the text shadow is set to contrast, use dark stroke for light
+		// text and vice versa.
 		if (hasContrast) {
-			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+			styles.textOutline = textOutline = textOutline.replace(
+				/contrast/g,
+				this.renderer.getContrast(elem.style.fill)
+			);
 		}
 
-		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
-		// it removes the text shadows.
-		if (isWebKit || forExport) {
-			styles.textRendering = 'geometricPrecision';
-		}
+		this.fakeTS = true; // Fake text shadow
 
-		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
-		if (elem.textContent.indexOf('2.') === 0) {
-			elem.style['text-shadow'] = 'none';
-			supports = false;
-		}
-		// */
+		// In order to get the right y position of the clone,
+		// copy over the y setter
+		this.ySetter = this.xSetter;
 
-		// No reason to polyfill, we've got native support
-		if (supports) {
-			this.css(styles); // Apply altered textShadow or textRendering workaround
-		} else {
+		tspans = [].slice.call(elem.getElementsByTagName('tspan'));
+		
+		// Extract the stroke width and color
+		textOutline = textOutline.split(' ');
+		color = textOutline[textOutline.length - 1];
+		strokeWidth = textOutline[0];
 
-			this.fakeTS = true; // Fake text shadow
+		if (strokeWidth && strokeWidth !== 'none') {
 
-			// In order to get the right y position of the clones,
-			// copy over the y setter
-			this.ySetter = this.xSetter;
-
-			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
-			each(textShadow.split(/\s?,\s?/g), function (textShadow) {
-				var firstChild = elem.firstChild,
-					color,
-					strokeWidth;
-
-				textShadow = textShadow.split(' ');
-				color = textShadow[textShadow.length - 1];
-
-				// Approximately tune the settings to the text-shadow behaviour
-				strokeWidth = textShadow[textShadow.length - 2];
-
-				if (strokeWidth) {
-					each(tspans, function (tspan, y) {
-						var clone;
-
-						// Let the first line start at the correct X position
-						if (y === 0) {
-							tspan.setAttribute('x', elem.getAttribute('x'));
-							y = elem.getAttribute('y');
-							tspan.setAttribute('y', y || 0);
-							if (y === null) {
-								elem.setAttribute('y', 0);
-							}
-						}
-
-						// Create the clone and apply shadow properties
-						clone = tspan.cloneNode(1);
-						attr(clone, {
-							'class': 'highcharts-text-shadow',
-							'fill': color,
-							'stroke': color,
-							'stroke-opacity': 1 / Math.max(pInt(strokeWidth), 3),
-							'stroke-width': strokeWidth,
-							'stroke-linejoin': 'round'
-						});
-						elem.insertBefore(clone, firstChild);
-					});
+			// Since the stroke is applied on center of the actual outline, we
+			// need to double it to get the correct stroke-width outside the 
+			// glyphs.
+			strokeWidth = strokeWidth.replace(
+				/(^[\d\.]+)(.*?)$/g,
+				function (match, digit, unit) {
+					return (2 * digit) + unit;
 				}
+			);
+			
+			// Remove shadows from previous runs
+			each(tspans, function (tspan) {
+				if (tspan.getAttribute('class') === 'highcharts-text-outline') {
+					// Remove then erase
+					erase(tspans, elem.removeChild(tspan));
+				}
+			});
+			
+			this.realBox = elem.getBBox();
+
+			// For each of the tspans, create a stroked copy behind it.
+			each(tspans, function (tspan, y) {
+				var clone;
+
+				// Let the first line start at the correct X position
+				if (y === 0) {
+					tspan.setAttribute('x', elem.getAttribute('x'));
+					y = elem.getAttribute('y');
+					tspan.setAttribute('y', y || 0);
+					if (y === null) {
+						elem.setAttribute('y', 0);
+					}
+				}
+
+				// Create the clone and apply outline properties
+				clone = tspan.cloneNode(1);
+				attr(clone, {
+					'class': 'highcharts-text-outline',
+					'fill': color,
+					'stroke': color,
+					'stroke-width': strokeWidth,
+					'stroke-linejoin': 'round'
+				});
+				elem.insertBefore(clone, elem.firstChild);
 			});
 		}
 	},
@@ -725,9 +734,16 @@ SVGElement.prototype = {
 			}
 
 
-			// Rebuild text after added
-			if (elemWrapper.added && textWidth) {
-				elemWrapper.renderer.buildText(elemWrapper);
+			if (elemWrapper.added) {
+				// Rebuild text after added
+				if (textWidth) {
+					elemWrapper.renderer.buildText(elemWrapper);
+				}
+
+				// Apply text outline after added
+				if (styles.textOutline) {
+					elemWrapper.applyTextOutline(styles.textOutline);
+				}
 			}
 		}
 
@@ -1069,8 +1085,6 @@ SVGElement.prototype = {
 			styles = wrapper.styles,
 			fontSize,
 			textStr = wrapper.textStr,
-			textShadow,
-			elemStyle = element.style,
 			toggleTextShadowShim,
 			cache = renderer.cache,
 			cacheKeys = renderer.cacheKeys,
@@ -1123,16 +1137,13 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.highcharts-text-shadow'), function (tspan) {
+						each(element.querySelectorAll('.highcharts-text-outline'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
 
 					// Workaround for #3842, Firefox reporting wrong bounding box for shadows
-					if (isFirefox && elemStyle.textShadow) {
-						textShadow = elemStyle.textShadow;
-						elemStyle.textShadow = '';
-					} else if (toggleTextShadowShim) {
+					if (toggleTextShadowShim) {
 						toggleTextShadowShim('none');
 					}
 
@@ -1147,9 +1158,7 @@ SVGElement.prototype = {
 						};
 
 					// #3842
-					if (textShadow) {
-						elemStyle.textShadow = textShadow;
-					} else if (toggleTextShadowShim) {
+					if (toggleTextShadowShim) {
 						toggleTextShadowShim('');
 					}
 				} catch (e) {}
@@ -1983,7 +1992,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
-			textShadow = textStyles && textStyles.textShadow,
+			textOutline = textStyles && textStyles.textOutline,
 			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
@@ -2014,7 +2023,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
-		if (!hasMarkup && !textShadow && !ellipsis && !width && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textOutline && !ellipsis && !width && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 
 		// Complex strings, add more logic
@@ -2204,9 +2213,9 @@ SVGRenderer.prototype = {
 				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
 			}
 
-			// Apply the text shadow
-			if (textShadow && wrapper.applyTextShadow) {
-				wrapper.applyTextShadow(textShadow);
+			// Apply the text outline
+			if (textOutline && wrapper.applyTextOutline) {
+				wrapper.applyTextOutline(textOutline);
 			}
 		}
 	},
