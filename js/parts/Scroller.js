@@ -495,7 +495,7 @@ Navigator.prototype = {
 		}
 
 		// Are we below the minRange? (#2618)
-		if (xAxis.toValue(pxMax, true) - xAxis.toValue(pxMin, true) < chart.xAxis[0].minRange) {
+		if (Math.abs(xAxis.toValue(pxMax, true) - xAxis.toValue(pxMin, true)) < chart.xAxis[0].minRange) {
 			return;
 		}
 
@@ -817,10 +817,11 @@ Navigator.prototype = {
 				fixedMin,
 				fixedMax
 			);
+
 			if (defined(ext.min)) {
 				chart.xAxis[0].setExtremes(
-					ext.min,
-					ext.max,
+					Math.min(ext.min, ext.max),
+					Math.max(ext.min, ext.max),
 					true,
 					navigator.hasDragged ? false : null, // Run animation when clicking buttons, scrollbar track etc, but not when dragging handles or scrollbar
 					{
