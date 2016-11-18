@@ -5,8 +5,7 @@
 'use strict';
 var colors = require('colors'),
     gulp = require('gulp'),
-    argv = require('yargs').argv,
-    fs = require('fs');
+    argv = require('yargs').argv;
 
 /**
  * Get the product version from build.properties.
@@ -14,7 +13,7 @@ var colors = require('colors'),
  * @return {string|null} Returns version number or null if not found.
  */
 const getProductVersion = () => {
-    // const fs = require('fs');
+    const fs = require('fs');
     const D = require('./assembler/dependencies.js');
     const properties = fs.readFileSync('./build.properties', 'utf8');
     return D.regexGetCapture(/product\.version=(.+)/, properties);
@@ -158,6 +157,7 @@ gulp.task('default', ['styles', 'scripts'], () => {
 
 gulp.task('ftp', function () {
     const ftp = require('vinyl-ftp');
+    const fs = require('fs');
     const paths = {
         buildsDir: './js/builds',
         distributions: [
@@ -350,6 +350,7 @@ const cleanDist = () => {
 };
 
 const copyToDist = () => {
+    const fs = require('fs');
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
@@ -652,7 +653,8 @@ gulp.task('dist', () => {
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {
-    var browserify = require('browserify');
+    const fs = require('fs');
+    const browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
             if (err) {
