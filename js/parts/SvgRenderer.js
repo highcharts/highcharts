@@ -741,7 +741,7 @@ SVGElement.prototype = {
 				}
 
 				// Apply text outline after added
-				if (styles.textOutline) {
+				if (styles && styles.textOutline) {
 					elemWrapper.applyTextOutline(styles.textOutline);
 				}
 			}
