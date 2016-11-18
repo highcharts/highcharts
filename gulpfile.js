@@ -4,7 +4,6 @@
 
 'use strict';
 var colors = require('colors'),
-    exec = require('child_process').exec,
     gulp = require('gulp'),
     argv = require('yargs').argv,
     fs = require('fs'),
@@ -515,7 +514,7 @@ const gulpify = (name, task) => {
  * @return {string} Returns all output to the terminal in the form of a string.
  */
 const commandLine = (command) => {
-    // const exec = require('child_process').exec;
+    const exec = require('child_process').exec;
     return new Promise((resolve, reject) => {
         const cli = exec(command, (error, stdout) => {
             if (error) {
