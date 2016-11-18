@@ -37,7 +37,7 @@ $(function () {
                 allowPointSelect: true,
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     },
                     select: {
                         color: 'black'

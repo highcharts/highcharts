@@ -13,7 +13,7 @@ $(function () {
             }
         }],
         legend: {
-            backgroundColor: '#bada55'
+            backgroundColor: '#a4edba'
         }
 
     });

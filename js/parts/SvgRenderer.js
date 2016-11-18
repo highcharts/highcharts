@@ -1112,8 +1112,14 @@ SVGElement.prototype = {
 			}
 
 			// Properties that affect bounding box
-			cacheKey += ['', rotation || 0, fontSize, element.style.width]
-				.join(',');
+			cacheKey += [
+				'',
+				rotation || 0,
+				fontSize,
+				element.style.width,
+				element.style['text-overflow'] // #5968
+			]
+			.join(',');
 
 		}
 
@@ -2002,7 +2008,8 @@ SVGRenderer.prototype = {
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
 						fontSizeStyle,
-						tspan
+						// Get the computed size from parent if not explicit
+						tspan.getAttribute('style') ? tspan : textNode
 					).h;
 			},
 			unescapeAngleBrackets = function (inputStr) {
@@ -3131,7 +3138,7 @@ SVGRenderer.prototype = {
 		} else if (/em/.test(fontSize)) {
 			// The em unit depends on parent items
 			fontSize = parseFloat(fontSize) *
-				this.fontMetrics(null, elem.parentNode).f;
+				(elem ? this.fontMetrics(null, elem.parentNode).f : 16);
 		} else {
 			fontSize = 12;
 		}

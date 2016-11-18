@@ -2,8 +2,5 @@
  name: Highcharts Demo
  authors:
    - Torstein Hønsi
- resources:
-   - https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.js
-   - https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css
  requiresManualTesting: true
 ...

@@ -7,7 +7,7 @@ $(function () {
             seriesTypes = H.seriesTypes,
             SVGElement = H.SVGElement;
 
-        if (!SVGElement.prototype.remvoeClass) {
+        if (!SVGElement.prototype.removeClass) {
             SVGElement.prototype.removeClass = function (className) {
                 this.element.setAttribute('class', this.element.getAttribute('class').replace(className, ''));
                 return this;
@@ -193,7 +193,7 @@ $(function () {
     });
 
 
-    Highcharts.chart('container', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps puzzle',

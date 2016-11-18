@@ -23,9 +23,14 @@ $(function () {
             }]
         }).highcharts();
 
+
         assert.strictEqual(
-            Highcharts.format('fill="{series.color}"', { series: chart.series[0] }),
-            'fill="url(#highcharts-1)"',
+            Highcharts.format(
+                'fill="{series.color}"',
+                { series: chart.series[0] }
+            ),
+            'fill="url(#' + document.querySelector(
+                '#container svg defs linearGradient').id + ')"',
             'Gradient is preserved in string handling'
         );
 

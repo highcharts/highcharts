@@ -235,8 +235,10 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		// Get the index and register the series in the chart. The index is one
-		// more than the current latest series index (5960).
-		lastSeries = chartSeries.length && chartSeries[chartSeries.length - 1];
+		// more than the current latest series index (#5960).
+		if (chartSeries.length) {
+			lastSeries = chartSeries[chartSeries.length - 1];
+		}
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		chartSeries.push(series);
 
@@ -762,18 +764,17 @@ H.Series = H.seriesType('line', null, { // base series options
 		for (i = 0; i < processedDataLength; i++) {
 			cursor = cropStart + i;
 			if (!hasGroupedData) {
-				if (data[cursor]) {
-					point = data[cursor];
-				} else if (dataOptions[cursor] !== undefined) { // #970
+				point = data[cursor];
+				if (!point && dataOptions[cursor] !== undefined) { // #970
 					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
-				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-				points[i].dataGroup = series.groupMap[i];
+				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				point.dataGroup = series.groupMap[i];
 			}
-			points[i].index = cursor; // For faster access in Point.update
+			point.index = cursor; // For faster access in Point.update
+			points[i] = point;
 		}
 
 		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when

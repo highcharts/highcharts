@@ -390,8 +390,9 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			Highcharts.downloadSVGLocal(svg, options, fallbackToExportServer);
 		};
 
-	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-	if ((isMSBrowser && options.imageType !== 'image/svg+xml' || options.imageType !== 'application/pdf') && chart.container.getElementsByTagName('image').length) {
+	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back.
+	// Also fall back for embedded images with PDF.
+	if ((isMSBrowser && options.type !== 'image/svg+xml' || options.type === 'application/pdf') && chart.container.getElementsByTagName('image').length) {
 		fallbackToExportServer();
 		return;
 	}
@@ -401,7 +402,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 
 // Extend the default options to use the local exporter logic
 merge(true, Highcharts.getOptions().exporting, {
-	libURL: 'https://code.highcharts.com/@product.version@/lib/', // docs: https
+	libURL: 'https://code.highcharts.com/@product.version@/lib/',
 	buttons: {
 		contextButton: {
 			menuItems: [{

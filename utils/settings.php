@@ -17,8 +17,14 @@ class Settings {
 	// testing on previous commits, not for candidate testing.
 	static $rightPath = "http://code.highcharts.%s";
 	
+
+	// When changing this, remember also to change the hard-coded versions in 
+	// all demo.html and demo.details files. Change jQuery UI versions to 
+	// a compatible one.
 	static $exportServer = "http://export.highcharts.com";
-	static $jQueryVersion = "1.8.3";
+	static $jQueryVersion = "2.2.4";
+	static $jQueryVersionOldIE = "1.9.1";
+	static $QUnitVersion = "2.0.1";
 
 	// Use this when default settings have changed, to rule out all difference related 
 	// to one or more specific changes. May be a call to setOptions or wrapping Highcharts

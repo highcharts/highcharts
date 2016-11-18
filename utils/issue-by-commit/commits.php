@@ -44,11 +44,11 @@ if (@$_POST['branch']) {
 	}
 }
 // Populate input fields
-if (!$_SESSION['branch']) {
+if (!isset($_SESSION['branch'])) {
 	$_SESSION['branch'] = 'master';
 }
-if (!$_SESSION['after']) {
-	$_SESSION['after'] = strftime('%Y-%m-%d', mktime() - 31 * 24 * 3600);
+if (!isset($_SESSION['after'])) {
+	$_SESSION['after'] = strftime('%Y-%m-%d', time() - 31 * 24 * 3600);
 }
 
 // Move the log file back from temp dir
