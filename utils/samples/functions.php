@@ -171,7 +171,7 @@ function getFramework($framework) {
                 <!--[if lt IE 9]>
                 <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
                 <![endif]-->
-                <!--[if gte IE 8]> -->
+                <!--[if gte IE 9]> -->
 				<script src="../draft/jquery-' . JQUERY_VERSION . '.js"></script>
                 <!-- <![endif]-->
 			';
@@ -180,7 +180,7 @@ function getFramework($framework) {
                 <!--[if lt IE 9]>
                 <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
                 <![endif]-->
-                <!--[if gte IE 8]> -->
+                <!--[if gte IE 9]> -->
 				<script src="cache.php?file=http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
                 <!-- <![endif]-->
 			';
