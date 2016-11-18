@@ -55,8 +55,8 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.navigator.navigatorGroup.attr('visibility'),
-            'hidden',
+            chart.navigator.navigatorGroup,
+            null,
             'Navigator element is missing'
         );
 

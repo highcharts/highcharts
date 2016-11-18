@@ -605,21 +605,6 @@ Navigator.prototype = {
 				})
 			);
 		}
-
-		addEvent(chart, 'redraw', function () {
-			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
-			var scroller = this.scroller,
-				xAxis = scroller && (
-					scroller.baseSeries &&
-					scroller.baseSeries[0] &&
-					scroller.baseSeries[0].xAxis ||
-					scroller.scrollbar && this.xAxis[0]
-				); // #5709
-
-			if (xAxis) {
-				scroller.render(xAxis.min, xAxis.max);
-			}
-		});
 	},
 
 	/**
@@ -632,12 +617,14 @@ Navigator.prototype = {
 			events = [];
 		each(['shades', 'handles'], function (name) {
 			each(navigator[name], function (navigatorItem, index) {
-				addEvent(
-					navigatorItem.element,
-					eventName,
-					function (e) {
-						navigator[name + 'Mousedown'](e, index);
-					}
+				events.push(
+					addEvent(
+						navigatorItem.element,
+						eventName,
+						function (e) {
+							navigator[name + 'Mousedown'](e, index);
+						}
+					)
 				);
 			});
 		});
@@ -1042,6 +1029,8 @@ Navigator.prototype = {
 
 		// Add data events
 		scroller.addBaseSeriesEvents();
+		// Add redraw events
+		scroller.addChartEvents();
 	},
 
 	/**
@@ -1304,6 +1293,26 @@ Navigator.prototype = {
 			navigatorSeries.options.pointStart = baseSeries.xData[0];
 			navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
 		}
+	},
+
+	/**
+	 * Add chart events, like redrawing navigator, when chart requires that.
+	 */
+	addChartEvents: function () {
+		addEvent(this.chart, 'redraw', function () {
+			// Move the scrollbar after redraw, like after data updata even if axes don't redraw
+			var scroller = this.scroller,
+				xAxis = scroller && (
+					scroller.baseSeries &&
+					scroller.baseSeries[0] &&
+					scroller.baseSeries[0].xAxis ||
+					scroller.scrollbar && this.xAxis[0]
+				); // #5709
+
+			if (xAxis) {
+				scroller.render(xAxis.min, xAxis.max);
+			}
+		});
 	},
 
 	/**
