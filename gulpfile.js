@@ -6,8 +6,7 @@
 var colors = require('colors'),
     gulp = require('gulp'),
     argv = require('yargs').argv,
-    fs = require('fs'),
-    spawn = require('child_process').spawn;
+    fs = require('fs');
 var paths = {
     buildsDir: './js/builds',
     distributions: [
@@ -219,6 +218,7 @@ gulp.task('ftp-watch', function () {
  * Run the test suite. The task spawns a child process running PhantomJS.
  */
 gulp.task('test', function () {
+    const spawn = require('child_process').spawn;
     spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
@@ -229,6 +229,7 @@ gulp.task('test', function () {
  * Run the nightly. The task spawns a child process running node.
  */
 gulp.task('nightly', function () {
+    const spawn = require('child_process').spawn;
     spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
