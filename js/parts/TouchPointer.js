@@ -207,10 +207,6 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 			pinchDown,
 			isInside;
 
-		if (H.hoverChartIndex !== chart.index) {
-			this.onContainerMouseLeave(e);
-		}
-
 		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
