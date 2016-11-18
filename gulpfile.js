@@ -6,7 +6,6 @@
 var colors = require('colors'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
-    gzipSize = require('gzip-size'),
     argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
@@ -281,79 +280,6 @@ gulp.task('jsdoc', function (cb) {
     }
 });
 
-gulp.task('filesize', function () {
-    const closureCompiler = require('closurecompiler');
-    var oldSize,
-        newSize,
-        filename = argv.file ? argv.file : 'highcharts.src.js';
-
-    /**
-     * Pad a string to a given length by adding spaces to the beginning
-     * @param {Number} number
-     * @param {Number} length
-     * @returns {String} Padded string
-     */
-    function pad(number, length) {
-        return new Array((length || 2) + 1 - String(number).length).join(' ') + number;
-    }
-
-    /**
-     * Log the results of the comparison
-     * @returns {undefined}
-     */
-    function report() {
-        var diff = newSize - oldSize,
-            sign = diff > 0 ? '+' : '',
-            color = diff > 0 ? 'yellow' : 'green';
-        console.log([
-            '',
-            colors.cyan(filename.replace('.src', '')) + colors.gray('(gzipped)'),
-            'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
-            'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
-            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
-            ''
-        ].join('\n'));
-    }
-
-    closureCompiler.compile(
-        ['code/' + filename],
-        null,
-        function (error, ccResult) {
-            if (ccResult) {
-
-                newSize = gzipSize.sync(ccResult);
-
-                exec('git stash', function (stashError) {
-                    if (stashError !== null) {
-                        console.log('Error in stash: ' + stashError);
-                    }
-
-                    closureCompiler.compile(
-                        ['code/' + filename],
-                        null,
-                        function (ccError, ccResultOld) {
-                            if (ccResultOld) {
-                                oldSize = gzipSize.sync(ccResultOld);
-                                report();
-                                exec('git stash apply && git stash drop', function (applyError) {
-                                    if (applyError) {
-                                        console.log(colors.red('Error in stash apply: ' + applyError));
-                                    }
-                                });
-                            } else {
-                                console.log('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                });
-
-            } else {
-                console.log('Compilation error: ' + error);
-            }
-        }
-    );
-});
-
 const compile = (files, sourceFolder) => {
     console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
     return new Promise((resolve) => {
@@ -604,6 +530,69 @@ const commandLine = (command) => {
     });
 };
 
+const filesize = () => {
+    console.log('@filesize');
+    const sourceFolder = './code/';
+    // @todo Correct type names to classic and styled
+    const types = argv.type ? [argv.type] : ['classic', 'css'];
+    const filenames = argv.file ? argv.file.split(',') : ['highcharts.src.js'];
+    const files = filenames.reduce((arr, name) => {
+        const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
+        return arr.concat(p);
+    }, []);
+    const getGzipSize = (folder, file) => {
+        const gzipSize = require('gzip-size');
+        const getFile = require('./assembler/utilities.js').getFile;
+        const content = getFile(folder + file);
+        return gzipSize.sync(content);
+    };
+    const pad = (str, x) => ' '.repeat(x) + str;
+    const report = (name, newSize, oldSize) => {
+        const diff = newSize - oldSize;
+        const sign = diff > 0 ? '+' : '';
+        const color = diff > 0 ? 'yellow' : 'green';
+        console.log([
+            '',
+            colors.cyan(name) + colors.gray('(gzipped)'),
+            'HEAD: ' + pad(newSize, 7) + ' B',
+            'New:  ' + pad(oldSize, 7) + ' B',
+            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
+            ''
+        ].join('\n'));
+    };
+
+    return Promise.resolve(scripts())
+    .then(() => compile([files], sourceFolder))
+    .then(() => {
+        return files.reduce((o, n) => {
+            o[n] = { new: getGzipSize(sourceFolder, n) };
+            return o;
+        }, {});
+    })
+    .then((obj) => {
+        return commandLine('git stash')
+        .then(() => obj);
+    })
+    .then((obj) => {
+        return files.reduce((o, n) => {
+            o[n].old = getGzipSize(sourceFolder, n);
+            return o;
+        }, obj);
+    })
+    .then((obj) => {
+        return commandLine('git stash apply && git stash drop')
+        .then(() => obj);
+    })
+    .then((obj) => {
+        const keys = Object.keys(obj);
+        keys.forEach((key) => {
+            const values = obj[key];
+            report(key, values.new, values.old);
+        });
+    })
+    .catch(console.log);
+};
+
 /**
  * Download a version of the API for Highstock, Highstock or Highmaps.
  * Executes a grunt task through command line.
@@ -638,6 +627,7 @@ gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
+gulp.task('filesize', filesize);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('build-modules', buildModules);
