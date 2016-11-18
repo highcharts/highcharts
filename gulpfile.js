@@ -8,7 +8,6 @@ var colors = require('colors'),
     gulp = require('gulp'),
     argv = require('yargs').argv,
     fs = require('fs'),
-    ftp = require('vinyl-ftp'),
     spawn = require('child_process').spawn;
 var paths = {
     buildsDir: './js/builds',
@@ -186,6 +185,7 @@ gulp.task('default', ['styles', 'scripts'], () => {
 });
 
 gulp.task('ftp', function () {
+    const ftp = require('vinyl-ftp');
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
         if (err) {
             throw err;
