@@ -7,32 +7,6 @@ var colors = require('colors'),
     gulp = require('gulp'),
     argv = require('yargs').argv,
     fs = require('fs');
-var paths = {
-    buildsDir: './js/builds',
-    distributions: [
-        './js/highcharts.src.js',
-        './js/highmaps.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js'
-    ],
-    assemblies: [
-        './js/highcharts.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js',
-        './js/highmaps.src.js',
-        './js/modules/map.src.js',
-        './js/modules/heatmap.src.js'
-    ],
-    modules: ['./js/modules/*.js'],
-    parts: ['./js/parts/*.js'],
-    parts3D: ['./js/parts-3d/*.js'],
-    partsMap: ['./js/parts-map/*.js'],
-    partsMore: ['./js/parts-more/*.js'],
-    partsGantt: ['./js/parts-gantt/*.js'],
-    themes: ['./js/themes/*.js']
-};
 
 /**
  * Get the product version from build.properties.
@@ -184,6 +158,32 @@ gulp.task('default', ['styles', 'scripts'], () => {
 
 gulp.task('ftp', function () {
     const ftp = require('vinyl-ftp');
+    const paths = {
+        buildsDir: './js/builds',
+        distributions: [
+            './js/highcharts.src.js',
+            './js/highmaps.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js'
+        ],
+        assemblies: [
+            './js/highcharts.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js',
+            './js/highmaps.src.js',
+            './js/modules/map.src.js',
+            './js/modules/heatmap.src.js'
+        ],
+        modules: ['./js/modules/*.js'],
+        parts: ['./js/parts/*.js'],
+        parts3D: ['./js/parts-3d/*.js'],
+        partsMap: ['./js/parts-map/*.js'],
+        partsMore: ['./js/parts-more/*.js'],
+        partsGantt: ['./js/parts-gantt/*.js'],
+        themes: ['./js/themes/*.js']
+    };
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
         if (err) {
             throw err;
