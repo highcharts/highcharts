@@ -420,8 +420,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
 				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
-				goingLeft = startPos > mousePos; // #3613
-			
+				goingLeft = startPos > mousePos, // #3613
+				tmp;
+
+			// Swap min/max for reversed axes (#5997)
+			if (axis.reversed) {
+				tmp = newMin;
+				newMin = newMax;
+				newMax = tmp;
+			}
+
 			if (axis.series.length &&
 					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
