@@ -253,12 +253,20 @@ H.Fx.prototype = {
 			reverse;
 		
 		/**
-		 * In splines make move points have six parameters like bezier curves
+		 * In splines make moveTo and lineTo points have six parameters like
+		 * bezier curves, to allow animation one-to-one.
 		 */
 		function sixify(arr) {
+			var isOperator,
+				nextIsOperator;
 			i = arr.length;
 			while (i--) {
-				if (arr[i] === 'M' || arr[i] === 'L') {
+
+				// Fill in dummy coordinates only if the next operator comes
+				// three places behind (#5788)
+				isOperator = arr[i] === 'M' || arr[i] === 'L';
+				nextIsOperator = /[a-zA-Z]/.test(arr[i + 3]);
+				if (isOperator && !nextIsOperator) {
 					arr.splice(
 						i + 1, 0,
 						arr[i + 1], arr[i + 2],
