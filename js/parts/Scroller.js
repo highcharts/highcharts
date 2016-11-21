@@ -701,18 +701,22 @@ Navigator.prototype = {
 
 		var scroller = this,
 			chart = scroller.chart,
-			baseXAxis = chart.xAxis[0];
+			baseXAxis = chart.xAxis[0],
+			// For reversed axes, min and max are chagned,
+			// so the other extreme should be stored
+			reverse = (chart.inverted && !baseXAxis.reversed) ||
+				(!chart.inverted && baseXAxis.reversed);
 
 		if (index === 0) {
 			// Grab the left handle
 			scroller.grabbedLeft = true;
 			scroller.otherHandlePos = scroller.zoomedMax;
-			scroller.fixedExtreme = baseXAxis.max;
+			scroller.fixedExtreme = reverse ? baseXAxis.min : baseXAxis.max;
 		} else {
 			// Grab the right handle
 			scroller.grabbedRight = true;
 			scroller.otherHandlePos = scroller.zoomedMin;
-			scroller.fixedExtreme = baseXAxis.min;
+			scroller.fixedExtreme = reverse ? baseXAxis.max : baseXAxis.min;
 		}
 
 		chart.fixedRange = null;
