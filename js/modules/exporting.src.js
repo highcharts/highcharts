@@ -268,9 +268,13 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Return an SVG representation of the chart
+	 * Return an SVG representation of the chart.
 	 *
-	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
+	 * @param additionalOptions {Object} Additional chart options for the
+	 *    generated SVG representation. For collections like `xAxis`, `yAxis` or
+	 *    `series`, the additional options is either merged in to the orininal
+	 *    item of the same `id`, or to the first item if a commin id is not
+	 *    found.
 	 */
 	getSVG: function (additionalOptions) {
 		var chart = this,
@@ -339,17 +343,19 @@ extend(Chart.prototype, {
 			}
 		});
 
-		// Axis options must be merged in one by one, since it may be an array or an object (#2022, #3900)
-		if (additionalOptions) {
-			each(['xAxis', 'yAxis'], function (axisType) {
-				each(splat(additionalOptions[axisType]), function (axisOptions, i) {
-					options[axisType][i] = merge(options[axisType][i], axisOptions);
-				});
-			});
-		}
-
 		// generate the chart copy
 		chartCopy = new H.Chart(options, chart.callback);
+
+		// Axis options and series options  (#2022, #3900, #5982)
+		if (additionalOptions) {
+			each(['xAxis', 'yAxis', 'series'], function (coll) {
+				var collOptions = {};
+				if (additionalOptions[coll]) {
+					collOptions[coll] = additionalOptions[coll];
+					chartCopy.update(collOptions);
+				}
+			});
+		}
 
 		// reflect axis extremes in the export
 		each(['xAxis', 'yAxis'], function (axisType) {
