@@ -22,7 +22,7 @@ class Settings {
 	// all demo.html and demo.details files. Change jQuery UI versions to 
 	// a compatible one.
 	static $exportServer = "http://export.highcharts.com";
-	static $jQueryVersion = "2.2.4";
+	static $jQueryVersion = "3.1.1";
 	static $jQueryVersionOldIE = "1.9.1";
 	static $QUnitVersion = "2.0.1";
 
