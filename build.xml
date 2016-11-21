@@ -239,9 +239,8 @@
             <file name="parts/CandlestickSeries.js"/>
             <file name="parts/FlagsSeries.js"/>
             <file name="parts/Scrollbar.js"/>
-            <file name="parts/Scroller.js"/>
+            <file name="parts/Navigator.js"/>
             <file name="parts/RangeSelector.js"/>
-            <file name="parts/StockNavigation.js"/>
             <file name="parts/StockChart.js"/>
             <file name="parts/Facade.js"/>
             <file name="parts/Outro.js"/>

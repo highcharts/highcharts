@@ -867,6 +867,45 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 });
 
+Chart.prototype.callbacks.push(function (chart) {
+	var extremes,
+		rangeSelector = chart.rangeSelector,
+		unbindRender,
+		unbindSetExtremes;
+
+	function renderRangeSelector() {
+		extremes = chart.xAxis[0].getExtremes();
+		if (isNumber(extremes.min)) {
+			rangeSelector.render(extremes.min, extremes.max);
+		}
+	}
+
+	if (rangeSelector) {
+		// redraw the scroller on setExtremes
+		unbindSetExtremes = addEvent(
+			chart.xAxis[0],
+			'afterSetExtremes',
+			function (e) {
+				rangeSelector.render(e.min, e.max);
+			}
+		);
+
+		// redraw the scroller chart resize
+		unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
+
+		// do it now
+		renderRangeSelector();
+	}
+
+	// Remove resize/afterSetExtremes at chart destroy
+	addEvent(chart, 'destroy', function destroyEvents() {
+		if (rangeSelector) {
+			unbindRender();
+			unbindSetExtremes();
+		}
+	});
+});
+
 
 H.RangeSelector = RangeSelector;
 
