@@ -21,7 +21,6 @@ var animObject = H.animObject,
 	pick = H.pick,
 	Series = H.Series,
 	seriesType = H.seriesType,
-	stop = H.stop,
 	svg = H.svg;
 /**
  * The column series type.
@@ -380,7 +379,6 @@ seriesType('column', 'line', {
 				shapeArgs = point.shapeArgs;
 
 				if (graphic) { // update
-					stop(graphic);
 					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
 						merge(shapeArgs)
 					);

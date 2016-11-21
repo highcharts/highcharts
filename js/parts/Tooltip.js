@@ -15,7 +15,6 @@ var dateFormat = H.dateFormat,
 	merge = H.merge,
 	pick = H.pick,
 	splat = H.splat,
-	stop = H.stop,
 	syncTimeout = H.syncTimeout,
 	timeUnits = H.timeUnits;
 /**
@@ -513,7 +512,6 @@ H.Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				stop(label);
 				label.attr({
 					opacity: 1
 				}).show();
