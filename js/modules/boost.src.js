@@ -35,6 +35,7 @@
  * - Point markers are not drawn on line-type series
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
+ * - Initial point colors aren't rendered
  * - Columns are always one pixel wide. Don't set the threshold too low.
  *
  * Optimizing tips for users
