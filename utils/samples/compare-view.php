@@ -84,7 +84,6 @@
 			}
 
 			function updateHash() {
-
 				if (window.parent && window.parent.frames[0] && window.parent.history.pushState) {
 					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
 					hash += '/' + path;
@@ -312,7 +311,7 @@
 					window.parent.batchRuns++;
 					// Clear memory build-up from time to time by reloading the whole thing
 					if (window.parent.batchRuns > 90) {
-						window.parent.location.hash = '#batch/' + window.parent.frames[0].samples[nextIndex];
+						window.parent.location.href = '/samples/#batch/' + window.parent.frames[0].samples[nextIndex];
 					} else {
 						window.location.href = href;
 					}
