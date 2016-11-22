@@ -34,6 +34,35 @@ $(function () {
             'Initial max'
         );
 
+        // Pan
+        chart.pointer.onContainerMouseDown({
+            type: 'mousedown',
+            pageX: 200,
+            pageY: 100,
+            target: chart.container,
+            shiftKey: true
+        });
+        chart.pointer.onContainerMouseMove({
+            type: 'mousemove',
+            pageX: 250,
+            pageY: 100,
+            target: chart.container,
+            shiftKey: true
+        });
+        chart.pointer.onDocumentMouseUp({
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].min,
+            0,
+            'Has not panned min'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            12,
+            'Has not panned max'
+        );
+
         // Zoom
         chart.pointer.onContainerMouseDown({
             type: 'mousedown',
