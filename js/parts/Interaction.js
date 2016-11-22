@@ -413,10 +413,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				horiz = axis.horiz,
+				reversed = axis.reversed,
 				mousePos = e[horiz ? 'chartX' : 'chartY'],
 				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
 				startPos = chart[mouseDown],
-				halfPointRange = (axis.pointRange || 0) / 2,
+				halfPointRange = (axis.pointRange || 0) / (reversed ? -2 : 2),
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
 				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
@@ -424,7 +425,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				tmp;
 
 			// Swap min/max for reversed axes (#5997)
-			if (axis.reversed) {
+			if (reversed) {
+				goingLeft = !goingLeft;
 				tmp = newMin;
 				newMin = newMax;
 				newMax = tmp;
