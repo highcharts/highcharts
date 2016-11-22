@@ -114,7 +114,8 @@ function getBrowser() {
         'version'   => $version,
         'platform'  => $platform,
         'pattern'   => $pattern,
-        'parent'    => $bname . ' ' . $version
+        //'parent'    => $bname . ' ' . $version
+        'parent'    => $ub
     );
 } 
 
