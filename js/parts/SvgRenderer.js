@@ -353,8 +353,6 @@ SVGElement.prototype = {
 				}
 			});
 			
-			this.realBox = elem.getBBox();
-
 			// For each of the tspans, create a stroked copy behind it.
 			each(tspans, function (tspan, y) {
 				var clone;
