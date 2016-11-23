@@ -10,7 +10,9 @@ import 'current-date-indicator.js';
 import 'grid-axis.js';
 import 'xrange-series.js';
 
-var isNumber = H.isNumber,
+var defined = H.defined,
+	isObject = H.isObject,
+	isNumber = H.isNumber,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
@@ -24,12 +26,25 @@ seriesType('gantt', parentName, {
 	// options - default options merged with parent
 	dataLabels: {
 		enabled: true,
-		verticalAlign: 'middle',
-		inside: true,
 		formatter: function () {
 			var point = this,
+				amount = point.point.partialFill,
 				str = pick(point.taskName, point.y);
-			return str === null ? '' : str;
+
+			if (isObject(amount)) {
+				amount = amount.amount;
+			}
+			if (!defined(amount)) {
+				amount = 0;
+			}
+
+			if (defined(str)) {
+				str += ': ';
+			} else {
+				str = '';
+			}
+
+			return str + (amount * 100) + '%';
 		}
 	},
 	tooltip: {
