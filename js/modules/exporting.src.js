@@ -27,7 +27,6 @@ var defaultOptions = H.defaultOptions,
 	pick = H.pick,
 	each = H.each,
 	extend = H.extend,
-	splat = H.splat,
 	isTouchDevice = H.isTouchDevice,
 	win = H.win,
 	SVGRenderer = H.SVGRenderer;
