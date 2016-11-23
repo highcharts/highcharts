@@ -31,7 +31,6 @@ var arrayMax = H.arrayMax,
 	Renderer = H.Renderer,
 	Series = H.Series,
 	splat = H.splat,
-	stop = H.stop,
 	SVGRenderer = H.SVGRenderer,
 	VMLRenderer = H.VMLRenderer,
 	wrap = H.wrap,
@@ -680,7 +679,6 @@ wrap(Series.prototype, 'render', function (proceed) {
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
-			stop(this.chart[this.sharedClipKey]); // #2998
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
 				height: this.yAxis.len

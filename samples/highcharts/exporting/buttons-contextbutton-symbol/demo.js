@@ -18,7 +18,7 @@ $(function () {
                 contextButton: {
                     symbol: 'circle',
                     symbolStrokeWidth: 1,
-                    symbolFill: '#bada55',
+                    symbolFill: '#a4edba',
                     symbolStroke: '#330033'
                 }
             }

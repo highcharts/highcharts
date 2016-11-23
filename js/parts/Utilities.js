@@ -91,7 +91,9 @@ H.Fx.prototype = {
 		} else {
 			ret = end;
 		}
+		this.elem.animProp = 'd';
 		this.elem.attr('d', ret);
+		this.elem.animProp = null;
 	},
 
 	/**
@@ -113,7 +115,9 @@ H.Fx.prototype = {
 		// Other animations on SVGElement
 		} else if (elem.attr) {
 			if (elem.element) {
+				elem.animProp = prop;
 				elem.attr(prop, now);
+				elem.animProp = null;
 			}
 
 		// HTML styles, raw HTML content like container size
@@ -152,6 +156,7 @@ H.Fx.prototype = {
 		this.pos = 0;
 
 		timer.elem = this.elem;
+		timer.prop = this.prop;
 
 		if (timer() && timers.push(timer) === 1) {
 			timer.timerId = setInterval(function () {
@@ -248,12 +253,20 @@ H.Fx.prototype = {
 			reverse;
 		
 		/**
-		 * In splines make move points have six parameters like bezier curves
+		 * In splines make moveTo and lineTo points have six parameters like
+		 * bezier curves, to allow animation one-to-one.
 		 */
 		function sixify(arr) {
+			var isOperator,
+				nextIsOperator;
 			i = arr.length;
 			while (i--) {
-				if (arr[i] === 'M' || arr[i] === 'L') {
+
+				// Fill in dummy coordinates only if the next operator comes
+				// three places behind (#5788)
+				isOperator = arr[i] === 'M' || arr[i] === 'L';
+				nextIsOperator = /[a-zA-Z]/.test(arr[i + 3]);
+				if (isOperator && !nextIsOperator) {
 					arr.splice(
 						i + 1, 0,
 						arr[i + 1], arr[i + 2],
@@ -1478,15 +1491,17 @@ H.offset = function (el) {
  * @function #stop
  * @memberOf Highcharts
  * @param {SVGElement} el - The SVGElement to stop animation on.
+ * @param {string} [prop] - The property to stop animating. If given, the stop
+ *    method will stop a single property from animating, while others continue.
  * @returns {void}
  */
-H.stop = function (el) {
+H.stop = function (el, prop) {
 
 	var i = timers.length;
 
 	// Remove timers related to this element (#4519)
 	while (i--) {
-		if (timers[i].elem === el) {
+		if (timers[i].elem === el && (!prop || prop === timers[i].prop)) {
 			timers[i].stopped = true; // #4667
 		}
 	}
@@ -1763,6 +1778,10 @@ H.animate = function (el, params, opt) {
 	opt.curAnim = H.merge(params);
 
 	for (prop in params) {
+
+		// Stop current running animation of this property
+		H.stop(el, prop);
+
 		fx = new H.Fx(el, opt, prop);
 		end = null;
 

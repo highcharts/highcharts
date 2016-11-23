@@ -3,41 +3,9 @@
 /* eslint-disable func-style */
 
 'use strict';
-var colors = require('colors'),
-    exec = require('child_process').exec,
-    gulp = require('gulp'),
-    gzipSize = require('gzip-size'),
-    argv = require('yargs').argv,
-    fs = require('fs'),
-    sass = require('gulp-sass'),
-    ftp = require('vinyl-ftp'),
-    spawn = require('child_process').spawn;
-var paths = {
-    buildsDir: './js/builds',
-    distributions: [
-        './js/highcharts.src.js',
-        './js/highmaps.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js'
-    ],
-    assemblies: [
-        './js/highcharts.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js',
-        './js/highmaps.src.js',
-        './js/modules/map.src.js',
-        './js/modules/heatmap.src.js'
-    ],
-    modules: ['./js/modules/*.js'],
-    parts: ['./js/parts/*.js'],
-    parts3D: ['./js/parts-3d/*.js'],
-    partsMap: ['./js/parts-map/*.js'],
-    partsMore: ['./js/parts-more/*.js'],
-    partsGantt: ['./js/parts-gantt/*.js'],
-    themes: ['./js/themes/*.js']
-};
+const colors = require('colors');
+const gulp = require('gulp');
+const argv = require('yargs').argv;
 
 /**
  * Get the product version from build.properties.
@@ -45,10 +13,55 @@ var paths = {
  * @return {string|null} Returns version number or null if not found.
  */
 const getProductVersion = () => {
-    // const fs = require('fs');
+    const fs = require('fs');
     const D = require('./assembler/dependencies.js');
     const properties = fs.readFileSync('./build.properties', 'utf8');
     return D.regexGetCapture(/product\.version=(.+)/, properties);
+};
+
+/**
+ * Returns fileOptions for the build script
+ * @todo Move this functionality to the build script,
+ *   and reuse it on github.highcharts.com
+ * @return {Object} Object containing all fileOptions
+ */
+const getFileOptions = (base) => {
+    const B = require('./assembler/build.js');
+    const DS = '[\\\\\\\/][^\\\\\\\/]'; // Regex: Single directory seperator
+    const folders = {
+        'parts': 'parts' + DS + '+\.js$',
+        'parts-more': 'parts-more' + DS + '+\.js$'
+    };
+
+    // Modules should not be standalone, and they should exclude all parts files.
+    const fileOptions = B.getFilesInFolder(base, true, '')
+        .reduce((obj, file) => {
+            if (file.indexOf('modules') > -1) {
+                obj[file] = {
+                    exclude: new RegExp(folders.parts),
+                    umd: false
+                };
+            }
+            return obj;
+        }, {});
+
+    /**
+     * Special cases
+     * solid-gauge should also exclude gauge-series
+     * highcharts-more and highcharts-3d is also not standalone.
+     */
+    fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
+    Object.assign(fileOptions, {
+        'highcharts-more.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        },
+        'highcharts-3d.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        }
+    });
+    return fileOptions;
 };
 
 /**
@@ -57,163 +70,19 @@ const getProductVersion = () => {
  * @return undefined
  */
 const scripts = () => {
-    let build = require('./assembler/build').build;
-    // let argv = require('yargs').argv; Already declared in the upper scope
-    let files = (argv.file) ? argv.file.split(',') : null,
-        type = (argv.type) ? argv.type : 'both',
-        debug = argv.d || false,
-        version = getProductVersion(),
-        DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
-        folders = {
-            'parts': 'parts' + DS + '+\.js$',
-            'parts-more': 'parts-more' + DS + '+\.js$'
-        };
+    const build = require('./assembler/build').build;
+    // const argv = require('yargs').argv; Already declared in the upper scope
+    const files = (argv.file) ? argv.file.split(',') : null;
+    const type = (argv.type) ? argv.type : 'both';
+    const debug = argv.d || false;
+    const version = getProductVersion();
+    const base = './js/masters/';
+    const fileOptions = getFileOptions(base);
 
     build({
-        base: './js/masters/',
+        base: base,
         debug: debug,
-        fileOptions: {
-            'modules/accessibility.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/annotations.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/boost.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/broken-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvasrenderer.experimental.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvgrenderer-extended.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/current-date-indicator.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/data.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/drilldown.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/funnel.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/gantt.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/heatmap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/map.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/map-parser.src.js': {
-                exclude: new RegExp([folders.parts, 'data\.src\.js$'].join('|')),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/no-data-to-display.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/offline-exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/overlapping-datalabels.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/series-label.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/solid-gauge.src.js': {
-                exclude: new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|')),
-                umd: false
-            },
-            'modules/treemap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/xrange-series.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-blue.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-green.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-unica.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/gray.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid-light.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/skies.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/sand-signika.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-more.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-3d.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highmaps.src.js': {
-                product: 'Highmaps'
-            },
-            'highstock.src.js': {
-                product: 'Highstock'
-            }
-        },
+        fileOptions: fileOptions,
         files: files,
         output: './code/',
         type: type,
@@ -235,6 +104,7 @@ const buildModules = () => {
 };
 
 const styles = () => {
+    const sass = require('gulp-sass');
     gulp.src('./css/*.scss')
         .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
@@ -286,11 +156,39 @@ gulp.task('default', ['styles', 'scripts'], () => {
 });
 
 gulp.task('ftp', function () {
+    const ftp = require('vinyl-ftp');
+    const fs = require('fs');
+    const paths = {
+        buildsDir: './js/builds',
+        distributions: [
+            './js/highcharts.src.js',
+            './js/highmaps.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js'
+        ],
+        assemblies: [
+            './js/highcharts.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js',
+            './js/highmaps.src.js',
+            './js/modules/map.src.js',
+            './js/modules/heatmap.src.js'
+        ],
+        modules: ['./js/modules/*.js'],
+        parts: ['./js/parts/*.js'],
+        parts3D: ['./js/parts-3d/*.js'],
+        partsMap: ['./js/parts-map/*.js'],
+        partsMore: ['./js/parts-more/*.js'],
+        partsGantt: ['./js/parts-gantt/*.js'],
+        themes: ['./js/themes/*.js']
+    };
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
         if (err) {
             throw err;
         }
-        var config = {};
+        let config = {};
         lines.split('\n').forEach(function (line) {
             line = line.split('=');
             if (line[0]) {
@@ -298,13 +196,13 @@ gulp.task('ftp', function () {
             }
         });
 
-        var conn = ftp.create({
+        let conn = ftp.create({
             host: config['ftp.host'],
             user: config['ftp.user'],
             password: config['ftp.password']
         });
 
-        var globs = paths.distributions.concat(paths.modules);
+        let globs = paths.distributions.concat(paths.modules);
 
         return gulp.src(globs, { base: './js', buffer: false })
             .pipe(conn.newer(config['ftp.dest']))
@@ -320,6 +218,7 @@ gulp.task('ftp-watch', function () {
  * Run the test suite. The task spawns a child process running PhantomJS.
  */
 gulp.task('test', function () {
+    const spawn = require('child_process').spawn;
     spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
@@ -330,6 +229,7 @@ gulp.task('test', function () {
  * Run the nightly. The task spawns a child process running node.
  */
 gulp.task('nightly', function () {
+    const spawn = require('child_process').spawn;
     spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
@@ -342,149 +242,42 @@ gulp.task('nightly', function () {
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
-    const ncp = require('ncp').ncp;
-    const del = require('del');
 
-    const templateDir = './tools/jsdoc/ink-docstrap';
+    const templateDir = './../highcharts-docstrap';
 
-    del.sync(['./tools/jsdoc/ink-docstrap']);
-
-    // 1. Copy the ink-docstrap theme into a temporary location
-    ncp(
-        './node_modules/gulp-jsdoc3/node_modules/ink-docstrap',
-        templateDir,
-        (cpErr1) => {
-            if (cpErr1) {
-                console.error(cpErr1);
+    gulp.src(['README.md', './js/parts/*.js'], { read: false })
+    // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
+        .pipe(jsdoc({
+            navOptions: {
+                theme: 'highsoft'
+            },
+            opts: {
+                destination: './internal-docs/',
+                private: false,
+                template: templateDir + '/template'
+            },
+            plugins: [
+                templateDir + '/plugins/markdown',
+                templateDir + '/plugins/optiontag',
+                templateDir + '/plugins/sampletag'
+            ],
+            templates: {
+                logoFile: 'img/highcharts-logo.svg',
+                systemName: 'Highcharts',
+                theme: 'highsoft'
             }
-            console.log('Copied ink-docstrap template to working dir...');
-
-            // 2. Add our own template overrides
-            ncp(
-                './tools/jsdoc/tmpl',
-                templateDir + '/template/tmpl',
-                (cpErr2) => {
-                    if (cpErr2) {
-                        console.error(cpErr2);
-                    }
-
-                    console.log('Copied template overrides to working dir...');
-
-                    gulp.src(['README.md', './js/parts/*.js'], { read: false })
-                        .pipe(jsdoc({
-                            navOptions: {
-                                theme: 'highsoft'
-                            },
-                            opts: {
-                                destination: './internal-docs/',
-                                private: false,
-                                template: './tools/jsdoc/ink-docstrap/template'
-                            },
-                            plugins: [
-                                'plugins/markdown',
-                                './tools/jsdoc/plugins/sampletag'
-                            ],
-                            templates: {
-                                default: {
-                                    staticFiles: {
-                                        include: [
-                                            './tools/jsdoc/static'
-                                        ]
-                                    }
-                                },
-                                logoFile: 'img/highcharts-logo.svg',
-                                systemName: 'Highcharts',
-                                theme: 'highsoft'
-                            }
-                        }, function (err) {
-                            cb(err); // eslint-disable-line
-                            if (!err) {
-                                console.log(
-                                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
-                                );
-                            }
-                        }));
-                }
-            );
-        }
-    );
+        }, function (err) {
+            cb(err); // eslint-disable-line
+            if (!err) {
+                console.log(
+                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                );
+            }
+        }));
 
     if (argv.watch) {
         gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
     }
-});
-
-gulp.task('filesize', function () {
-    const closureCompiler = require('closurecompiler');
-    var oldSize,
-        newSize,
-        filename = argv.file ? argv.file : 'highcharts.src.js';
-
-    /**
-     * Pad a string to a given length by adding spaces to the beginning
-     * @param {Number} number
-     * @param {Number} length
-     * @returns {String} Padded string
-     */
-    function pad(number, length) {
-        return new Array((length || 2) + 1 - String(number).length).join(' ') + number;
-    }
-
-    /**
-     * Log the results of the comparison
-     * @returns {undefined}
-     */
-    function report() {
-        var diff = newSize - oldSize,
-            sign = diff > 0 ? '+' : '',
-            color = diff > 0 ? 'yellow' : 'green';
-        console.log([
-            '',
-            colors.cyan(filename.replace('.src', '')) + colors.gray('(gzipped)'),
-            'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
-            'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
-            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
-            ''
-        ].join('\n'));
-    }
-
-    closureCompiler.compile(
-        ['code/' + filename],
-        null,
-        function (error, ccResult) {
-            if (ccResult) {
-
-                newSize = gzipSize.sync(ccResult);
-
-                exec('git stash', function (stashError) {
-                    if (stashError !== null) {
-                        console.log('Error in stash: ' + stashError);
-                    }
-
-                    closureCompiler.compile(
-                        ['code/' + filename],
-                        null,
-                        function (ccError, ccResultOld) {
-                            if (ccResultOld) {
-                                oldSize = gzipSize.sync(ccResultOld);
-                                report();
-                                exec('git stash apply && git stash drop', function (applyError) {
-                                    if (applyError) {
-                                        console.log(colors.red('Error in stash apply: ' + applyError));
-                                    }
-                                });
-                            } else {
-                                console.log('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                });
-
-            } else {
-                console.log('Compilation error: ' + error);
-            }
-        }
-    );
 });
 
 const compile = (files, sourceFolder) => {
@@ -557,6 +350,7 @@ const cleanDist = () => {
 };
 
 const copyToDist = () => {
+    const fs = require('fs');
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
@@ -722,7 +516,7 @@ const gulpify = (name, task) => {
  * @return {string} Returns all output to the terminal in the form of a string.
  */
 const commandLine = (command) => {
-    // const exec = require('child_process').exec;
+    const exec = require('child_process').exec;
     return new Promise((resolve, reject) => {
         const cli = exec(command, (error, stdout) => {
             if (error) {
@@ -735,6 +529,69 @@ const commandLine = (command) => {
         });
         cli.stdout.on('data', (data) => console.log(data.toString()));
     });
+};
+
+const filesize = () => {
+    console.log('@filesize');
+    const sourceFolder = './code/';
+    // @todo Correct type names to classic and styled
+    const types = argv.type ? [argv.type] : ['classic', 'css'];
+    const filenames = argv.file ? argv.file.split(',') : ['highcharts.src.js'];
+    const files = filenames.reduce((arr, name) => {
+        const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
+        return arr.concat(p);
+    }, []);
+    const getGzipSize = (folder, file) => {
+        const gzipSize = require('gzip-size');
+        const getFile = require('./assembler/utilities.js').getFile;
+        const content = getFile(folder + file);
+        return gzipSize.sync(content);
+    };
+    const pad = (str, x) => ' '.repeat(x) + str;
+    const report = (name, newSize, oldSize) => {
+        const diff = newSize - oldSize;
+        const sign = diff > 0 ? '+' : '';
+        const color = diff > 0 ? 'yellow' : 'green';
+        console.log([
+            '',
+            colors.cyan(name) + colors.gray('(gzipped)'),
+            'HEAD: ' + pad(newSize, 7) + ' B',
+            'New:  ' + pad(oldSize, 7) + ' B',
+            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
+            ''
+        ].join('\n'));
+    };
+
+    return Promise.resolve(scripts())
+    .then(() => compile([files], sourceFolder))
+    .then(() => {
+        return files.reduce((o, n) => {
+            o[n] = { new: getGzipSize(sourceFolder, n) };
+            return o;
+        }, {});
+    })
+    .then((obj) => {
+        return commandLine('git stash')
+        .then(() => obj);
+    })
+    .then((obj) => {
+        return files.reduce((o, n) => {
+            o[n].old = getGzipSize(sourceFolder, n);
+            return o;
+        }, obj);
+    })
+    .then((obj) => {
+        return commandLine('git stash apply && git stash drop')
+        .then(() => obj);
+    })
+    .then((obj) => {
+        const keys = Object.keys(obj);
+        keys.forEach((key) => {
+            const values = obj[key];
+            report(key, values.new, values.old);
+        });
+    })
+    .catch(console.log);
 };
 
 /**
@@ -771,6 +628,7 @@ gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
+gulp.task('filesize', filesize);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('build-modules', buildModules);
@@ -795,7 +653,8 @@ gulp.task('dist', () => {
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {
-    var browserify = require('browserify');
+    const fs = require('fs');
+    const browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
             if (err) {
@@ -806,7 +665,7 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('webpack', function () {
-    var webpack = require('webpack');
+    const webpack = require('webpack');
     webpack({
         entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
         output: {

@@ -20,8 +20,7 @@ var addEvent = H.addEvent,
 	relativeLength = H.relativeLength,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
-	stableSort = H.stableSort,
-	stop = H.stop;
+	stableSort = H.stableSort;
 
 
 /**
@@ -400,7 +399,6 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 	// Show or hide based on the final aligned position
 	if (!visible) {
-		stop(dataLabel);
 		dataLabel.attr({ y: -9999 });
 		dataLabel.placed = false; // don't animate back in
 	}

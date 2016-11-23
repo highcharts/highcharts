@@ -688,7 +688,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 					// #5818, #5903
 					.add(hasMarkers ? series.markerGroup : series.group);
 			}
-			H.stop(halo);
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});

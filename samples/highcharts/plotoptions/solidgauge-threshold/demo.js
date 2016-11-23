@@ -70,8 +70,7 @@ $(function () {
             solidgauge: {
                 dataLabels: {
                     y: 5,
-                    borderWidth: 0,
-                    useHTML: true
+                    borderWidth: 0
                 },
                 innerRadius: "80%"
             }
@@ -86,9 +85,11 @@ $(function () {
             data: [-0.5],
             threshold: 0,
             dataLabels: {
-                format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y} </span>' +
-                    '<span style="font-size:16px">%</span></div><div style="color:silver">Target: 2 %</div>'
+                format: '<span style="font-size:25px;color:' +
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) ||
+                        'black') + '">{y} </span>' +
+                    '<span style="font-size:16px">%</span><br>' +
+                    '<span style="color:silver">Target: 2 %</span>'
             },
             tooltip: {
                 valueSuffix: ' %'

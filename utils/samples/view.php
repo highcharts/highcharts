@@ -128,7 +128,8 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>';
+			path = '<?php echo $path ?>',
+			browser = <?php echo json_encode(getBrowser()); ?>;
 
 		(function () {
 
@@ -156,7 +157,8 @@ function getResources() {
 				}
 
 				if (typeof Highcharts !== 'undefined') {
-					$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
+						' / ' + browser.parent);
 				}
 
 				if (window.parent.frames[0]) {
@@ -405,8 +407,9 @@ function getResources() {
 					<?php endforeach ?>
 					</select>
 				</form>
-				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
+				<button id="next" disabled="disabled" title="Next (Arrow Right)">Next</button>
+				<button id="reload" style="margin-left: 1em" onclick="location.reload()"
+					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
 					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
@@ -421,7 +424,7 @@ function getResources() {
 				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;time=1">Time</a>
 				<a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">jsFiddle</a>
 
 				<a id="view-source" class="button" href="javascript:;">View source</a>

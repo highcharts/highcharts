@@ -195,10 +195,25 @@ H.post = function (url, data, formAttributes) {
 extend(Chart.prototype, {
 
 	/**
-	 * A collection of regex fixes on the produces SVG to account for expando properties,
+	 * A collection of fixes on the produced SVG to account for expando properties,
 	 * browser bugs, VML problems and other. Returns a cleaned SVG.
 	 */
-	sanitizeSVG: function (svg) {
+	sanitizeSVG: function (svg, options) {
+		// Move HTML into a foreignObject
+		if (options && options.exporting && options.exporting.allowHTML) {
+			var html = svg.match(/<\/svg>(.*?$)/);
+			if (html) {
+				html = '<foreignObject x="0" y="0" ' +
+							'width="' + options.chart.width + '" ' +
+							'height="' + options.chart.height + '">' +
+					'<body xmlns="http://www.w3.org/1999/xhtml">' +
+					html[1] +
+					'</body>' +
+					'</foreignObject>';
+				svg = svg.replace('</svg>', html + '</svg>');
+			}
+		}
+		
 		svg = svg
 			.replace(/zIndex="[^"]+"/g, '')
 			.replace(/isShadow="[^"]+"/g, '')
@@ -253,9 +268,13 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Return an SVG representation of the chart
+	 * Return an SVG representation of the chart.
 	 *
-	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
+	 * @param additionalOptions {Object} Additional chart options for the
+	 *    generated SVG representation. For collections like `xAxis`, `yAxis` or
+	 *    `series`, the additional options is either merged in to the orininal
+	 *    item of the same `id`, or to the first item if a commin id is not
+	 *    found.
 	 */
 	getSVG: function (additionalOptions) {
 		var chart = this,
@@ -267,9 +286,7 @@ extend(Chart.prototype, {
 			sourceHeight,
 			cssWidth,
 			cssHeight,
-			html,
-			options = merge(chart.options, additionalOptions), // copy the options and add extra options
-			allowHTML = options.exporting.allowHTML;
+			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -326,17 +343,19 @@ extend(Chart.prototype, {
 			}
 		});
 
-		// Axis options must be merged in one by one, since it may be an array or an object (#2022, #3900)
-		if (additionalOptions) {
-			each(['xAxis', 'yAxis'], function (axisType) {
-				each(splat(additionalOptions[axisType]), function (axisOptions, i) {
-					options[axisType][i] = merge(options[axisType][i], axisOptions);
-				});
-			});
-		}
-
 		// generate the chart copy
 		chartCopy = new H.Chart(options, chart.callback);
+
+		// Axis options and series options  (#2022, #3900, #5982)
+		if (additionalOptions) {
+			each(['xAxis', 'yAxis', 'series'], function (coll) {
+				var collOptions = {};
+				if (additionalOptions[coll]) {
+					collOptions[coll] = additionalOptions[coll];
+					chartCopy.update(collOptions);
+				}
+			});
+		}
 
 		// reflect axis extremes in the export
 		each(['xAxis', 'yAxis'], function (axisType) {
@@ -352,36 +371,16 @@ extend(Chart.prototype, {
 			});
 		});
 
-		// get the SVG from the container's innerHTML
+		// Get the SVG from the container's innerHTML
 		svg = chartCopy.getChartHTML();
+
+		svg = chart.sanitizeSVG(svg, options);
 
 		// free up memory
 		options = null;
 		chartCopy.destroy();
 		discardElement(sandbox);
-
-		// Move HTML into a foreignObject
-		if (allowHTML) {
-			html = svg.match(/<\/svg>(.*?$)/);
-			if (html) {
-				html = '<foreignObject x="0" y="0" ' +
-							'width="' + sourceWidth + '" ' +
-							'height="' + sourceHeight + '">' +
-					'<body xmlns="http://www.w3.org/1999/xhtml">' +
-					html[1] +
-					'</body>' +
-					'</foreignObject>';
-				svg = svg.replace('</svg>', html + '</svg>');
-			}
-		}
-
-		// sanitize
-		svg = this.sanitizeSVG(svg);
-
-		// IE9 beta bugs with innerHTML. Test again with final IE9.
-		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, '\'');
-
+		
 		return svg;
 	},
 

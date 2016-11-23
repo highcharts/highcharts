@@ -66,7 +66,7 @@ $(function () {
             },
             states: {
                 select: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             }
         }]

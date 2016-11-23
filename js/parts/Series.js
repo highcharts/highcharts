@@ -117,17 +117,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		formatter: function () {
 			return this.y === null ? '' : H.numberFormat(this.y, -1);
 		},
-		/*= if (!build.classic) { =*/
-		/*style: {
-			color: 'contrast',
-			textShadow: '0 0 6px contrast, 0 0 3px contrast'
-		},*/
-		/*= } else { =*/
+		/*= if (build.classic) { =*/
 		style: {
 			fontSize: '11px',
 			fontWeight: 'bold',
 			color: 'contrast',
-			textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+			textOutline: '1px contrast'
 		},
 		// backgroundColor: undefined,
 		// borderColor: undefined,
@@ -192,6 +187,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			eventType,
 			events,
 			chartSeries = chart.series,
+			lastSeries,
 			sortByIndex = function (a, b) {
 				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
 			};
@@ -238,9 +234,13 @@ H.Series = H.seriesType('line', null, { // base series options
 			chart.hasCartesianSeries = true;
 		}
 
-		// Register it in the chart
+		// Get the index and register the series in the chart. The index is one
+		// more than the current latest series index (#5960).
+		if (chartSeries.length) {
+			lastSeries = chartSeries[chartSeries.length - 1];
+		}
+		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		chartSeries.push(series);
-		series._i = chartSeries.length - 1;
 
 		// Sort series according to index option (#248, #1123, #2456)
 		stableSort(chartSeries, sortByIndex);
@@ -764,18 +764,17 @@ H.Series = H.seriesType('line', null, { // base series options
 		for (i = 0; i < processedDataLength; i++) {
 			cursor = cropStart + i;
 			if (!hasGroupedData) {
-				if (data[cursor]) {
-					point = data[cursor];
-				} else if (dataOptions[cursor] !== undefined) { // #970
+				point = data[cursor];
+				if (!point && dataOptions[cursor] !== undefined) { // #970
 					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
-				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
-				points[i].dataGroup = series.groupMap[i];
+				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				point.dataGroup = series.groupMap[i];
 			}
-			points[i].index = cursor; // For faster access in Point.update
+			point.index = cursor; // For faster access in Point.update
+			points[i] = point;
 		}
 
 		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when

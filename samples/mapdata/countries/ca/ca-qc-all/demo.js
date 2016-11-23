@@ -425,7 +425,7 @@ $(function () {
             name: 'Random data',
             states: {
                 hover: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             },
             dataLabels: {

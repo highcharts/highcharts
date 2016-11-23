@@ -171,7 +171,9 @@ H.seriesType('solidgauge', 'gauge', {
 			axis.initDataClasses(axis.options);
 		}
 		axis.initStops(axis.options);
-		this.generatePoints();
+
+		// Generate points and inherit data label position
+		H.seriesTypes.gauge.prototype.translate.call(this);
 	},
 
 	/**
@@ -188,8 +190,6 @@ H.seriesType('solidgauge', 'gauge', {
 			thresholdAngleRad;
 
 		// Handle the threshold option
-		// docs: Threshold option. Added to the API since "next", but also
-		// remember to remove threshold from the "excluding" list.
 		if (isNumber(options.threshold)) {
 			thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
 				options.threshold,

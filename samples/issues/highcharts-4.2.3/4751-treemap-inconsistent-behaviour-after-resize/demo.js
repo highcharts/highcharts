@@ -5,13 +5,6 @@ jQuery(function () {
                 spacing: 0
             },
             plotOptions: {
-                series: {
-                    dataLabels: {
-                        style: {
-                            textShadow: false
-                        }
-                    }
-                },
                 treemap: {
                     shadow: null,
                     layoutAlgorithm: 'squarified',

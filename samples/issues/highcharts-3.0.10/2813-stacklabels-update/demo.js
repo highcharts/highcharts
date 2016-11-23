@@ -48,8 +48,7 @@ $(function () {
                     align: 'center',
                     style: {
                         fontSize: '9px',
-                        fontFamily: 'Verdana, sans-serif',
-                        textShadow: '0 0 2px black'
+                        fontFamily: 'Verdana, sans-serif'
                     },
                     formatter: function () {
                         return this.y;

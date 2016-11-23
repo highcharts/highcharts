@@ -189,7 +189,7 @@ H.Axis.prototype = {
 				fontSize: '11px',
 				fontWeight: 'bold',
 				color: '${palette.neutralColor100}',
-				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+				textOutline: '1px contrast'
 			}
 			/*= } =*/
 		},
@@ -440,7 +440,6 @@ H.Axis.prototype = {
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			lang = defaultOptions.lang,
 			numericSymbols = lang.numericSymbols,
-			// docs: new option, added to API. Add it to the I18n article too.
 			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,
@@ -769,7 +768,15 @@ H.Axis.prototype = {
 					)
 				);
 			} else {
-				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+				for (
+					pos = min + (tickPositions[0] - min) % minorTickInterval;
+					pos <= max;
+					pos += minorTickInterval
+				) {
+					// Very, very, tight grid lines (#5771)
+					if (pos === minorTickPositions[0]) {
+						break;
+					}
 					minorTickPositions.push(pos);
 				}
 			}

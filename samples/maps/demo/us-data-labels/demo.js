@@ -79,7 +79,7 @@ $(function () {
             name: 'Unemployment rate per 2015',
             states: {
                 hover: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             },
             dataLabels: {
