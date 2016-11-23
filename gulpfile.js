@@ -30,7 +30,8 @@ const getFileOptions = (base) => {
     const DS = '[\\\\\\\/][^\\\\\\\/]'; // Regex: Single directory seperator
     const folders = {
         'parts': 'parts' + DS + '+\.js$',
-        'parts-more': 'parts-more' + DS + '+\.js$'
+        'parts-more': 'parts-more' + DS + '+\.js$',
+        'parts-gantt': 'parts-gantt' + DS + '+\.js$'
     };
 
     // Modules should not be standalone, and they should exclude all parts files.
