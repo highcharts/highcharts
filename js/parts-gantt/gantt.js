@@ -160,6 +160,7 @@ seriesType('gantt', parentName, {
 		}
 		retVal.y = pick(retVal.taskGroup, retVal.name, retVal.taskName, retVal.y);
 		retVal.name = pick(retVal.taskGroup, retVal.name);
+		retVal.partialFill = retVal.completed;
 
 		return retVal;
 	},

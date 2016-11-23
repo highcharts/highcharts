@@ -22,8 +22,7 @@ $(function () {
                 }
             },
             min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30),
-            currentDateIndicator: true
+            max: Date.UTC(2014, 10, 30)
         }, {
             grid: true,
             type: 'datetime',
@@ -50,13 +49,13 @@ $(function () {
                 end: Date.UTC(2014, 10, 25),
                 taskGroup: 0,
                 taskName: 'Start prototype',
-                partialFill: 0.25
+                completed: 0.25
             }, {
                 start: Date.UTC(2014, 10, 20),
                 end: Date.UTC(2014, 10, 25),
                 taskGroup: 1,
                 taskName: 'Develop',
-                partialFill: {
+                completed: {
                     amount: 0.12,
                     fill: '#fa0'
                 }
