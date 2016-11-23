@@ -18,6 +18,13 @@ $(function () {
             categories: ['Prototyping', 'Development', 'Testing'],
             reversed: true
         },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
         series: [{
             name: 'Project 1',
             // pointPadding: 0,

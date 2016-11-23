@@ -8,6 +8,7 @@
 import H from '../parts/Globals.js';
 
 var defaultPlotOptions = H.getOptions().plotOptions,
+	defined = H.defined,
 	color = H.Color,
 	columnType = H.seriesTypes.column,
 	each = H.each,
@@ -28,6 +29,21 @@ var defaultPlotOptions = H.getOptions().plotOptions,
 	xrange = 'xrange';
 
 defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
+	dataLabels: {
+		verticalAlign: 'middle',
+		inside: true,
+		formatter: function () {
+			var point = this.point,
+				amount = point.partialFill;
+			if (isObject(amount)) {
+				amount = amount.amount;
+			}
+			if (!defined(amount)) {
+				amount = 0;
+			}
+			return (amount * 100) + '%';
+		}
+	},
 	tooltip: {
 		pointFormat: pointFormat
 	}
