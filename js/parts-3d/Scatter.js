@@ -97,7 +97,7 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
  */
 wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
 	var pointOptions = proceed.apply(this, [].slice.call(arguments, 1));
-	if (point) {
+	if (this.chart.is3d() && point) {
 		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
 	}
 	return pointOptions;
