@@ -77,7 +77,6 @@ QUnit.test('Zoom out of container', function (assert) {
         options: {},
         allowZoomOutside: false,
         setExtremes: function (min, max) {
-            console.log(min, max)
             assert.ok(min <= max, 'Min is less than or equal to max');
             assert.ok(min <= 10 && min >= 0, 'Min is within container');
             assert.ok(max <= 10 && max >= 0, 'Max is within container');
