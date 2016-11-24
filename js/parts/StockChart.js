@@ -68,7 +68,8 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		columnOptions = {
 			shadow: false,
 			borderWidth: 0
-		};
+		},
+		titleFontSize = defaultOptions.title.style.fontSize;
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
@@ -133,7 +134,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			title: {
 				text: null,
 				style: {
-					fontSize: '16px'
+					fontSize: titleFontSize !== '18px' ? titleFontSize : '16px' // check if setOptions was called
 				}
 			},
 			tooltip: {
@@ -158,6 +159,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			}
 
 		},
+		
 		options, // user's options
 
 		{ // forced options
