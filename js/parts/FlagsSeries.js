@@ -74,9 +74,9 @@ seriesType('flags', 'column', {
 	pointAttribs: function (point, state) {
 		var options = this.options,
 			color = (point && point.color) || this.color,
-			lineColor =  options.lineColor,
+			lineColor = options.lineColor,
 			lineWidth = (point && point.lineWidth),
-			fill = options.fillColor;
+			fill = (point && point.fillColor) || options.fillColor; // docs
 
 		if (state) {
 			fill = options.states[state].fillColor;
