@@ -261,7 +261,7 @@ Axis.prototype.resetStacks = function () {
 				// Reset stacks
 				} else {
 					stacks[type][i].total = null;
-					stacks[type][i].cum = 0;
+					stacks[type][i].cum = null;
 				}
 			}
 		}
