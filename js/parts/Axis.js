@@ -977,15 +977,14 @@ H.Axis.prototype = {
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
 		if (isXAxis || hasCategories || pointRange) {
+
+			// Get the closest points
+			closestPointRange = axis.getClosest();
+
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
-
 			} else {
-				
-				// Get the closest points
-				closestPointRange = axis.getClosest();
-
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
 						1 : 
