@@ -91,9 +91,7 @@ H.Fx.prototype = {
 		} else {
 			ret = end;
 		}
-		this.elem.animProp = 'd';
-		this.elem.attr('d', ret);
-		this.elem.animProp = null;
+		this.elem.attr('d', ret, null, true);
 	},
 
 	/**
@@ -115,9 +113,7 @@ H.Fx.prototype = {
 		// Other animations on SVGElement
 		} else if (elem.attr) {
 			if (elem.element) {
-				elem.animProp = prop;
-				elem.attr(prop, now);
-				elem.animProp = null;
+				elem.attr(prop, now, null, true);
 			}
 
 		// HTML styles, raw HTML content like container size

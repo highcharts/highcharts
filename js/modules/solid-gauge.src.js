@@ -148,7 +148,16 @@ colorAxisMethods = {
  */
 each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, colorAxisMethods.tweenColors(H.color(this.start), H.color(this.end), this.pos));
+		this.elem.attr(
+			prop,
+			colorAxisMethods.tweenColors(
+				H.color(this.start),
+				H.color(this.end),
+				this.pos
+			),
+			null,
+			true
+		);
 	};
 });
 
