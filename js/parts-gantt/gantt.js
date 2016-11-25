@@ -10,6 +10,11 @@ import 'current-date-indicator.js';
 import 'grid-axis.js';
 import 'xrange-series.js';
 
+// TODO
+// - NOT HERE, but add option for timezone in Highcharts/stock
+//   maps directly to the getTimezoneOffset hook with momentjs etc.
+// - dataLabel alignment (verticalAlign, inside)
+
 var defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
@@ -52,6 +57,9 @@ seriesType('gantt', parentName, {
 		pointFormatter: function () {
 			var point = this,
 				taskName = point.taskName,
+				// TODO
+				// date formats: reuse logic for tooltip.getXDateFormat
+				// (use point.series.axis for param)
 				start = new Date(point.start),
 				end = new Date(point.end),
 				milestone = point.options.milestone,
@@ -124,6 +132,11 @@ seriesType('gantt', parentName, {
 					shapeArgs.width,
 					shapeArgs.height
 				);
+				
+				// TODO
+				// Replace point.graphic === point.milestone
+				// No group needed. Remove point.milestone
+				// Only point.graphic (this IS the diamond. Really)
 
 				if (graphic) {
 					stop(graphic);

@@ -8,17 +8,21 @@
 import H from '../parts/Globals.js';
 
 
-
 var merge = H.merge,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	now = new Date(),
 	nowText = H.dateFormat('%a, %b %d %Y<br/>%H:%M', now.getTime()),
+	// TODO
+	// update on redraw
 	defaultConfig = {
 		color: '#FF0000',
 		width: 2,
 		value: now.getTime(), // sets the value to the current date
 		label: {
+			// TODO:
+			// Format
+			// Formatter
 			text: nowText, // Automatic
 			rotation: 0 // display horizontally
 		}

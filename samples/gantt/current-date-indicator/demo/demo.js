@@ -27,7 +27,7 @@ $(function () {
         }],
         series: [{
             name: 'Project 1',
-            borderRadius: 10,
+            borderRadius: 3,
             xAxis: 0,
             data: [{
                 x: today.getTime() - (2 * day),

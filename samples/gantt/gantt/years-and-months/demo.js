@@ -45,6 +45,10 @@ $(function () {
         series: [{
             name: 'Project 1',
             borderRadius: 10,
+            dataLabels: {
+                verticalAlign: 'top',
+                inside: false
+            },
             data: [{
                 start: Date.UTC(2014, 4, 18),
                 end: Date.UTC(2014, 11, 25),

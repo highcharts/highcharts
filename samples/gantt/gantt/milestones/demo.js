@@ -22,7 +22,7 @@ $(function () {
                 }
             },
             min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30),
+            max: Date.UTC(2014, 10, 27),
             currentDateIndicator: true
         }, {
             grid: true,
@@ -58,6 +58,7 @@ $(function () {
             }, {
                 start: Date.UTC(2014, 10, 25, 12),
                 milestone: true,
+                color: '#fa0',
                 taskGroup: 1,
                 taskName: 'Development done'
             }, {

@@ -16,6 +16,9 @@ var dateFormat = H.dateFormat,
 	Chart = H.Chart,
 	Tick = H.Tick;
 
+// TODO
+// ta hensyn til startOfWeek
+
 
 // Enum for which side the axis is on.
 // Maps to axis.side
@@ -57,9 +60,8 @@ Axis.prototype.isOuterAxis = function () {
 				// not been found yet
 			} else if (thisIndex >= 0 && index > thisIndex) {
 				// There was an axis on the same side with a
-				// higher index. Exit the loop.
+				// higher index.
 				isOuter = false;
-				return;
 			}
 		}
 	});
@@ -94,6 +96,11 @@ Axis.prototype.getMaxLabelLength = function (force) {
 	return this.maxLabelLength;
 };
 
+
+// TODO
+// - Refactor up to Axis
+// - Override in grid-axis
+// - Instead of brute forcing title disabled, set disabled by default here
 /**
  * Adds the axis defined in axis.options.title
  */
@@ -220,6 +227,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		lblH,
 		axisCenter,
 		labelCenter;
+
+// TODO
+// Week label popped out bc no space
 
 	// Only center tick labels if axis has option grid: true
 	if (options.grid) {
