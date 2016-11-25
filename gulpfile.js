@@ -51,6 +51,8 @@ const getFileOptions = (base) => {
      * highcharts-more and highcharts-3d is also not standalone.
      */
     fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
+    fileOptions['modules/map.src.js'].product = 'Highmaps';
+    fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
     Object.assign(fileOptions, {
         'highcharts-more.src.js': {
             exclude: new RegExp(folders.parts),
@@ -59,6 +61,12 @@ const getFileOptions = (base) => {
         'highcharts-3d.src.js': {
             exclude: new RegExp(folders.parts),
             umd: false
+        },
+        'highmaps.src.js': {
+            product: 'Highmaps'
+        },
+        'highstock.src.js': {
+            product: 'Highstock'
         }
     });
     return fileOptions;
