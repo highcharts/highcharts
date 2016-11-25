@@ -1,11 +1,12 @@
 $(function () {
-	QUnit.test('Threshold should be applied when reflow is triggered', function (assert) {
-		var chart = Highcharts.Chart('container', {
+	QUnit.test('Threshold should be applied when setSize / reflow is triggered', function (assert) {
+		var chart = new Highcharts.Chart({
 					series: [{
 						data: [80, 100, 60]
 					}],
 					chart: {
 						type: "bar",
+						renderTo: 'container',
 						height: 175
 					},
 					yAxis: {
@@ -18,10 +19,8 @@ $(function () {
 						}
 					}
 				}, function(chart) {
-					setTimeout(function(){
-						chart.reflow();
-					},100);
-				}).highcharts();
+					//chart.setSize(400,300);
+				});
 
 		assert.strictEqual(
 			chart.yAxis[0].stacks.bar[0].cum,
