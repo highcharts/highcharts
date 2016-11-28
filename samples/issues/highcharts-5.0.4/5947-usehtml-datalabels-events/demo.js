@@ -1,6 +1,7 @@
 $(function () {
-	QUnit.test('Waterfall should render stacks.', function (assert) {
-		var chart = new Highcharts.Chart({
+	QUnit.test('Mouse events on dataLabels with useHTML set to true.', function (assert) {
+		var clicked = false,
+			chart = new Highcharts.Chart({
 				chart: {
 					type: 'pie',
 					renderTo: 'container'
@@ -8,6 +9,13 @@ $(function () {
 				series: [{
 					dataLabels: {
 						useHTML: true
+					},
+					point: {
+						events: {
+							click: function () {
+								clicked = true;
+							}
+						}
 					},
 					data: [
 						['Firefox', 44.2],
@@ -46,6 +54,18 @@ $(function () {
 			points[4] === chart.hoverPoint,
 			true,
 			'Last point hovered.'
+		);
+
+		chart.pointer.onContainerClick({
+			pageX: offset.left + points[4].labelPos[0],
+			pageY: offset.top + points[4].labelPos[1],
+			targer: points[4].dataLabel.div
+		});
+
+		assert.strictEqual(
+			clicked,
+			true,
+			'Click event on dataLabel works.'
 		);
 	});
 });
