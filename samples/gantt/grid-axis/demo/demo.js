@@ -75,8 +75,6 @@ $(function () {
             min: Date.UTC(2014, 10, 19),
             max: Date.UTC(2014, 10, 22)
         }, {
-            title: '',
-            id: 'thisGuy',
             grid: true,
             reversed: true,
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -84,7 +82,7 @@ $(function () {
             labels: {
                 format: '{value:%E}',
                 style: {
-                    fontSize: '1em'
+                    fontSize: '24px'
                 }
             },
             min: Date.UTC(2014, 10, 19),

@@ -221,6 +221,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		reversed = axis.reversed,
 		tickPixelInterval,
 		newX,
+		axisMin,
 		axisHeight,
 		fontSize,
 		labelMetrics,
@@ -235,10 +236,11 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	// Only center tick labels if axis has option grid: true
 	if (options.grid) {
 		fontSize = options.labels.style.fontSize;
-		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label);
+		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label.element);
 		labelBase = labelMetrics.b;
 		labelHeight = labelMetrics.h;
-		labelYCenter = Math.abs(labelHeight - labelBase) / 2;
+		fontSize = labelMetrics.f;
+		labelYCenter = (labelBase / 2) - ((labelHeight - fontSize) / 2);
 
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
@@ -248,7 +250,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 			axisHeight = axis.axisGroup.getBBox().height;
 			axisYCenter = (axisHeight / 2);
 
-			y = y + labelYCenter;
+			y += labelYCenter;
 
 			// Center y position
 			if (axis.side === axisSide.top) {
@@ -259,9 +261,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		} else {
 			// Center y position
 			if (options.categories === undefined) {
-				var startPoint = reversed ? axis.max : axis.min;
-				tickPixelInterval = axis.translate(startPoint + tickInterval);
-				retVal.y -= (tickPixelInterval / 2) + labelYCenter;
+				axisMin = reversed ? axis.max : axis.min;
+				tickPixelInterval = axis.translate(axisMin + tickInterval);
+				retVal.y = y - (tickPixelInterval / 2) + labelYCenter;
 			}
 
 			// Center x position
