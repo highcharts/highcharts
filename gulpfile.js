@@ -37,7 +37,7 @@ const getFileOptions = (base) => {
     // Modules should not be standalone, and they should exclude all parts files.
     const fileOptions = B.getFilesInFolder(base, true, '')
         .reduce((obj, file) => {
-            if (file.indexOf('modules') > -1) {
+            if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1) {
                 obj[file] = {
                     exclude: new RegExp(folders.parts),
                     umd: false
@@ -52,6 +52,8 @@ const getFileOptions = (base) => {
      * highcharts-more and highcharts-3d is also not standalone.
      */
     fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
+    fileOptions['modules/map.src.js'].product = 'Highmaps';
+    fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
     Object.assign(fileOptions, {
         'highcharts-more.src.js': {
             exclude: new RegExp(folders.parts),
@@ -60,6 +62,12 @@ const getFileOptions = (base) => {
         'highcharts-3d.src.js': {
             exclude: new RegExp(folders.parts),
             umd: false
+        },
+        'highmaps.src.js': {
+            product: 'Highmaps'
+        },
+        'highstock.src.js': {
+            product: 'Highstock'
         }
     });
     return fileOptions;

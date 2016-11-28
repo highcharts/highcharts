@@ -417,6 +417,9 @@ SVGElement.prototype = {
 	 * @param {Function} complete - A callback function to execute after setting
 	 *    the attributes. This makes the function compliant and interchangeable
 	 *    with the {@link SVGElement#animate} function.
+	 * @param {boolean} continueAnimation - Used internally when `.attr` is
+	 *    called as part of an animation step. Otherwise, calling `.attr` for an
+	 *    attribute will stop animation for that attribute.
 	 *    
 	 * @returns {SVGElement|string|number} If used as a setter, it returns the 
 	 *    current {@link SVGElement} so the calls can be chained. If used as a 
@@ -438,7 +441,7 @@ SVGElement.prototype = {
 	 * element.attr('stroke'); // => 'red'
 	 * 
 	 */
-	attr: function (hash, val, complete) {
+	attr: function (hash, val, complete, continueAnimation) {
 		var key,
 			value,
 			element = this.element,
@@ -467,7 +470,7 @@ SVGElement.prototype = {
 
 				// Unless .attr is from the animator update, stop current
 				// running animation of this property
-				if (key !== this.animProp) {
+				if (!continueAnimation) {
 					stop(this, key);
 				}
 

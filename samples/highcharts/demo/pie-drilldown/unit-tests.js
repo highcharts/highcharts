@@ -1,7 +1,11 @@
 QUnit.test('Pie drilldown', function (assert) {
     var chart = Highcharts.charts[0];
 
-    chart.options.drilldown.animation = false;
+    var done = assert.async();
+
+    chart.options.drilldown.animation = {
+        duration: 50
+    };
 
     assert.equal(
         chart.series.length,
@@ -10,17 +14,32 @@ QUnit.test('Pie drilldown', function (assert) {
     );
 
     chart.series[0].points[0].doDrilldown();
-    assert.equal(
-        chart.series[0].name,
-        'Microsoft Internet Explorer',
-        'Second level name'
-    );
 
-    chart.drillUp();
-    assert.equal(
-        chart.series[0].name,
-        'Brands',
-        'First level name'
-    );
+
+    setTimeout(function () {
+
+        assert.equal(
+            chart.series[0].name,
+            'Microsoft Internet Explorer',
+            'Second level name'
+        );
+
+        assert.strictEqual(
+            Highcharts.color(
+                chart.series[0].points[3].graphic.element.getAttribute('fill')
+            ).get(),
+            Highcharts.color(Highcharts.getOptions().colors[3]).get(),
+            'Point color animated'
+        );
+
+        chart.drillUp();
+        assert.equal(
+            chart.series[0].name,
+            'Brands',
+            'First level name'
+        );
+
+        done();
+    }, 100);
 
 });

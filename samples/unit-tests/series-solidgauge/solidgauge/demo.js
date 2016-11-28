@@ -103,3 +103,60 @@ QUnit.test('Solid gauge yAxis.update (#5895)', function (assert) {
 
 
 });
+
+
+QUnit.test('Solid gauge animated color', function (assert) {
+
+    var done = assert.async();
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge',
+            animation: {
+                duration: 50
+            }
+        },
+
+        title: null,
+
+        tooltip: {
+            enabled: false
+        },
+
+        yAxis: {
+            stops: [
+                [0, '#000000'],
+                [1, '#ffffff']
+            ],
+            min: 0,
+            max: 100
+        },
+
+        series: [{
+            name: 'Speed',
+            data: [10]
+        }]
+
+    });
+
+    var point = chart.series[0].points[0];
+    assert.strictEqual(
+        Highcharts.color(point.graphic.element.getAttribute('fill')).get(),
+        Highcharts.color('rgb(26,26,26)').get(),
+        'Initial color'
+    );
+
+    point.update(50);
+    setTimeout(function () {
+        assert.strictEqual(
+            Highcharts.color(point.graphic.element.getAttribute('fill')).get(),
+            Highcharts.color('rgb(128,128,128)').get(),
+            'Updated color'
+        );
+
+        done();
+    }, 200);
+
+
+
+});
