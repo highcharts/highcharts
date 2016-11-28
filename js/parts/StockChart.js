@@ -126,13 +126,13 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				pinchType: 'x'
 			},
 			navigator: {
-				enabled: navigatorEnabled === undefined ? true : navigatorEnabled // #4988 - check if setOptions was called
+				enabled: defined(navigatorEnabled) ? navigatorEnabled : true // #4988 - check if setOptions was called
 			},
 			scrollbar: {
-				enabled: scrollbarEnabled === undefined ? true : scrollbarEnabled // #4988 - check if setOptions was called
+				enabled: defined(scrollbarEnabled) ? scrollbarEnabled : true // #4988 - check if setOptions was called
 			},
 			rangeSelector: {
-				enabled: rangeSelectorEnabled === undefined ? true : rangeSelectorEnabled // #4988 - check if setOptions was called
+				enabled: defined(rangeSelectorEnabled) ? rangeSelectorEnabled : true // #4988 - check if setOptions was called
 			},
 			title: {
 				text: null
