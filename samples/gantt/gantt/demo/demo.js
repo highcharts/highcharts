@@ -54,7 +54,6 @@ $(function () {
         }],
         series: [{
             name: 'Project 1',
-            borderRadius: 3,
             data: [{
                 start: today.getTime() - (2 * day),
                 end: today.getTime() + day,
@@ -88,7 +87,6 @@ $(function () {
             }]
         }, {
             name: 'Project 2',
-            borderRadius: 3,
             visible: false,
             data: [{
                 start: today.getTime() - (2 * day),

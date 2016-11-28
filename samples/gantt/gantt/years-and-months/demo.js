@@ -44,7 +44,6 @@ $(function () {
         }],
         series: [{
             name: 'Project 1',
-            borderRadius: 10,
             dataLabels: {
                 verticalAlign: 'top',
                 inside: false

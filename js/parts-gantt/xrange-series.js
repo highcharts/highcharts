@@ -46,7 +46,8 @@ defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
 	},
 	tooltip: {
 		pointFormat: pointFormat
-	}
+	},
+	borderRadius: 3
 });
 seriesTypes.xrange = extendClass(columnType, {
 	pointClass: extendClass(Point, {

@@ -47,7 +47,6 @@ $(function () {
         }],
         series: [{
             name: 'Project 1',
-            borderRadius: 10,
             data: [{
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
@@ -81,7 +80,6 @@ $(function () {
             }]
         }, {
             name: 'Project 2',
-            borderRadius: 10,
             visible: false,
             data: [{
                 start: Date.UTC(2014, 10, 18),

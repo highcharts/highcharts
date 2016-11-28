@@ -27,9 +27,6 @@ $(function () {
         },
         series: [{
             name: 'Project 1',
-            // pointPadding: 0,
-            // groupPadding: 0,
-            borderRadius: 5,
             pointWidth: 10,
             data: [{
                 x: Date.UTC(2014, 11, 1),
