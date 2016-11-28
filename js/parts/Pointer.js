@@ -144,13 +144,72 @@ H.Pointer.prototype = {
 		});
 		return coordinates;
 	},
+	/**
+	 * Collects the points closest to a mouseEvent
+	 * @param  {Array} series Array of series to gather points from
+	 * @param  {Boolean} shared True if shared tooltip, otherwise false
+	 * @param  {Object} e Mouse event which possess a position to compare against
+	 * @return {Array} KDPoints sorted by distance
+	 */
+	getKDPoints: function (series, shared, e) {
+		var kdpoints = [],
+			noSharedTooltip,
+			directTouch,
+			kdpointT,
+			i;
 
+		// Find nearest points on all series
+		each(series, function (s) {
+			// Skip hidden series
+			noSharedTooltip = s.noSharedTooltip && shared;
+			directTouch = !shared && s.directTouch;
+			if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
+				kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
+				if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
+					kdpoints.push(kdpointT);
+				}
+			}
+		});
+
+		// Sort kdpoints by distance to mouse pointer
+		kdpoints.sort(function (p1, p2) {
+			var isCloserX = p1.distX - p2.distX,
+				isCloser = p1.dist - p2.dist,
+				isAbove = p2.series.group.zIndex - p1.series.group.zIndex,
+				result;
+
+			// We have two points which are not in the same place on xAxis and shared tooltip:
+			if (isCloserX !== 0 && shared) { // #5721
+				result = isCloserX;
+			// Points are not exactly in the same place on x/yAxis:
+			} else if (isCloser !== 0) {
+				result = isCloser;
+			// The same xAxis and yAxis position, sort by z-index:
+			} else if (isAbove !== 0) {
+				result = isAbove;
+			// The same zIndex, sort by array index:
+			} else {
+				result = p1.series.index > p2.series.index ? -1 : 1;
+			}
+			return result;
+		});
+
+		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
+		if (shared) {
+			i = kdpoints.length;
+			while (i--) {
+				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
+					kdpoints.splice(i, 1);
+				}
+			}
+		}
+		return kdpoints;
+	},
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
-
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
@@ -162,21 +221,8 @@ H.Pointer.prototype = {
 			hoverSeries = chart.hoverSeries,
 			i,
 			anchor,
-			noSharedTooltip,
 			stickToHoverSeries,
-			directTouch,
-			kdpoints = [],
-			kdpointT;
-
-		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
-		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
-		if (!shared && !hoverSeries) {
-			for (i = 0; i < series.length; i++) {
-				if (series[i].directTouch || !series[i].options.stickyTracking) {
-					series = [];
-				}
-			}
-		}
+			kdpoints;
 
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
@@ -187,57 +233,21 @@ H.Pointer.prototype = {
 
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
+			// For hovering over the empty parts of the plot area (hoverSeries is undefined).
+			// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
+			if (!shared && !hoverSeries) {
+				for (i = 0; i < series.length; i++) {
+					if (series[i].directTouch || !series[i].options.stickyTracking) {
+						series = [];
+					}
+				}
+			}
 			// When we have non-shared tooltip and sticky tracking is disabled,
 			// search for the closest point only on hovered series: #5533, #5476
 			if (!shared && hoverSeries && !hoverSeries.options.stickyTracking) {
 				series = [hoverSeries];
 			}
-			// Find nearest points on all series
-			each(series, function (s) {
-				// Skip hidden series
-				noSharedTooltip = s.noSharedTooltip && shared;
-				directTouch = !shared && s.directTouch;
-				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
-					if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
-						kdpoints.push(kdpointT);
-					}
-				}
-			});
-
-			// Sort kdpoints by distance to mouse pointer
-			kdpoints.sort(function (p1, p2) {
-				var isCloserX = p1.distX - p2.distX,
-					isCloser = p1.dist - p2.dist,
-					isAbove = (p2.series.group && p2.series.group.zIndex) - 
-						(p1.series.group && p1.series.group.zIndex);
-
-				// We have two points which are not in the same place on xAxis and shared tooltip:
-				if (isCloserX !== 0 && shared) { // #5721
-					return isCloserX;
-				}
-				// Points are not exactly in the same place on x/yAxis:
-				if (isCloser !== 0) {
-					return isCloser;
-				}
-				// The same xAxis and yAxis position, sort by z-index:
-				if (isAbove !== 0) {
-					return isAbove;
-				}
-
-				// The same zIndex, sort by array index:
-				return p1.series.index > p2.series.index ? -1 : 1;
-			});
-		}
-
-		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
-		if (shared) {
-			i = kdpoints.length;
-			while (i--) {
-				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
-					kdpoints.splice(i, 1);
-				}
-			}
+			kdpoints = this.getKDPoints(series, shared, e);
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
