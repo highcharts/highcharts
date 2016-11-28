@@ -222,14 +222,14 @@ H.Pointer.prototype = {
 			i,
 			anchor,
 			stickToHoverSeries,
-			kdpoints;
+			points;
 
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
 		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
 		if (stickToHoverSeries && hoverPoint) {
-			kdpoints = [hoverPoint];
+			points = [hoverPoint];
 
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
@@ -247,33 +247,33 @@ H.Pointer.prototype = {
 			if (!shared && hoverSeries && !hoverSeries.options.stickyTracking) {
 				series = [hoverSeries];
 			}
-			kdpoints = this.getKDPoints(series, shared, e);
+			points = this.getKDPoints(series, shared, e);
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoints[0] && (kdpoints[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+		if (points[0] && (points[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
-			if (shared && !kdpoints[0].series.noSharedTooltip) {
+			if (shared && !points[0].series.noSharedTooltip) {
 				// Do mouseover on all points (#3919, #3985, #4410, #5622)
-				for (i = 0; i < kdpoints.length; i++) {
-					kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
+				for (i = 0; i < points.length; i++) {
+					points[i].onMouseOver(e, points[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || points[0]));
 				}
 
-				if (kdpoints.length && tooltip) {
+				if (points.length && tooltip) {
 					// Keep the order of series in tooltip:
-					tooltip.refresh(kdpoints.sort(function (p1, p2) {
+					tooltip.refresh(points.sort(function (p1, p2) {
 						return p1.series.index - p2.series.index;
 					}), e);
 				}
 			} else {
 				if (tooltip) {
-					tooltip.refresh(kdpoints[0], e);
+					tooltip.refresh(points[0], e);
 				}
 				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					kdpoints[0].onMouseOver(e);
+					points[0].onMouseOver(e);
 				}
 			}
-			this.prevKDPoint = kdpoints[0];
+			this.prevKDPoint = points[0];
 			updatePosition = false;
 		}
 		// Update positions (regardless of kdpoint or hoverPoint)
@@ -296,7 +296,7 @@ H.Pointer.prototype = {
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
+		each(shared ? points : [pick(hoverPoint, points[0])], function drawPointCrosshair(point) { // #5269
 			each(chart.axes, function drawAxisCrosshair(axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series && point.series[axis.coll] === axis) { // #5658
