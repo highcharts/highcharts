@@ -216,7 +216,6 @@ H.Pointer.prototype = {
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
 			followPointer,
-			updatePosition = true,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
@@ -274,10 +273,8 @@ H.Pointer.prototype = {
 				}
 			}
 			this.prevKDPoint = points[0];
-			updatePosition = false;
-		}
 		// Update positions (regardless of kdpoint or hoverPoint)
-		if (updatePosition) {
+		} else {
 			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 			if (tooltip && followPointer && !tooltip.isHidden) {
 				anchor = tooltip.getAnchor([{}], e);
