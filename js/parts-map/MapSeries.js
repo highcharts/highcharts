@@ -812,8 +812,8 @@ seriesType('map', 'scatter', {
 					clearTimeout(point.colorInterval);
 				}
 			}, 13);
+			point.isFading = true;
 		}
-		point.isFading = true;
 		Point.prototype.onMouseOut.call(point);
 		point.isFading = null;
 	},
