@@ -443,6 +443,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		yEndIndex,
 		xStartIndex,
 		xEndIndex,
+		x,
+		y,
+		path,
+		attrs,
 		renderer = axis.chart.renderer,
 		horiz = axis.horiz,
 		axisGroupBox;
@@ -464,30 +468,39 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		axisGroupBox = axis.axisGroup.getBBox();
 
 		/*
-		 * Add right wall on horizontal axes:
+		 * Add right and left wall on horizontal axes:
 		 *               _________________________
- 		 * Make this:    |______|______|______|___
- 		 *                                       ^
+ 		 * Make this:    _______|______|______|___
+ 		 *               ^                       ^
  		 *               _________________________
  		 * Into this:    |______|______|______|__|
- 		 *                                       ^
+ 		 *               ^                       ^
 		 */
 		if (horiz) {
-			axis.rightWall = renderer.path([
-				'M',
-				axisGroupBox.x + axis.width + 1, // account for left wall
-				axisGroupBox.y,
-				'L',
-				axisGroupBox.x + axis.width + 1, // account for left wall
-				axisGroupBox.y + axisGroupBox.height
-			])
-			.attr({
+			x = axisGroupBox.x;
+			y = axisGroupBox.y;
+			// Make path or left wall
+			path = [
+				'M', x, y,
+				'L', x, y + axisGroupBox.height
+			];
+			attrs = {
 				stroke: options.tickColor || '#ccd6eb',
 				'stroke-width': options.tickWidth || 1,
 				zIndex: 7,
 				class: 'grid-wall'
-			})
-			.add(axis.axisGroup);
+			};
+			
+			axis.leftWall = renderer.path(path)
+				.attr(attrs)
+				.add(axis.axisGroup);
+			
+			// Change x positions for right wall
+			path[1] = path[4] = x + axis.width + 1; // +1 accounts for left wall
+			
+			axis.rightWall = renderer.path(path)
+				.attr(attrs)
+				.add(axis.axisGroup);
 		}
 
 		/*
