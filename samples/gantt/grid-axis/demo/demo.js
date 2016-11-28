@@ -72,8 +72,8 @@ $(function () {
                     fontSize: '2em'
                 }
             },
-            min: Date.UTC(2014, 10, 18),
-            max: Date.UTC(2014, 10, 21)
+            min: Date.UTC(2014, 10, 19),
+            max: Date.UTC(2014, 10, 22)
         }, {
             title: '',
             id: 'thisGuy',
@@ -87,8 +87,8 @@ $(function () {
                     fontSize: '1em'
                 }
             },
-            min: Date.UTC(2014, 10, 18),
-            max: Date.UTC(2014, 10, 21)
+            min: Date.UTC(2014, 10, 19),
+            max: Date.UTC(2014, 10, 22)
         }],
         series: [{
             name: 'Project 1',

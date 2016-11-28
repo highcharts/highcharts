@@ -218,15 +218,16 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		axis = tick.axis,
 		options = axis.options,
 		tickInterval = options.tickInterval || axis.tickInterval,
+		reversed = axis.reversed,
 		tickPixelInterval,
 		newX,
 		axisHeight,
 		fontSize,
 		labelMetrics,
-		lblB,
-		lblH,
-		axisCenter,
-		labelCenter;
+		labelBase,
+		labelHeight,
+		axisYCenter,
+		labelYCenter;
 
 // TODO
 // Week label popped out bc no space
@@ -235,8 +236,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	if (options.grid) {
 		fontSize = options.labels.style.fontSize;
 		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label);
-		lblB = labelMetrics.b;
-		lblH = labelMetrics.h;
+		labelBase = labelMetrics.b;
+		labelHeight = labelMetrics.h;
+		labelYCenter = Math.abs(labelHeight - labelBase) / 2;
 
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
@@ -244,22 +246,22 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 			retVal.x = x + axis.left;
 
 			axisHeight = axis.axisGroup.getBBox().height;
-			axisCenter = (axisHeight / 2);
+			axisYCenter = (axisHeight / 2);
 
-			labelCenter = (lblH / 2) - Math.abs(lblH - lblB);
-			y = y + labelCenter;
+			y = y + labelYCenter;
 
 			// Center y position
 			if (axis.side === axisSide.top) {
-				retVal.y = y - axisCenter;
+				retVal.y = y - axisYCenter;
 			} else {
-				retVal.y = y + axisCenter;
+				retVal.y = y + axisYCenter;
 			}
 		} else {
 			// Center y position
 			if (options.categories === undefined) {
-				tickPixelInterval = axis.translate(axis.min + tickInterval);
-				retVal.y = retVal.y - (tickPixelInterval / 2);
+				var startPoint = reversed ? axis.max : axis.min;
+				tickPixelInterval = axis.translate(startPoint + tickInterval);
+				retVal.y -= (tickPixelInterval / 2) + labelYCenter;
 			}
 
 			// Center x position
