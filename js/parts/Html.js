@@ -316,6 +316,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
 							extend(parentGroup, {
+								on: function () {
+									wrapper.on.apply({ element: parents[0].div }, arguments);
+									return parentGroup;
+								},
 								translateXSetter: function (value, key) {
 									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;

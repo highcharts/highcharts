@@ -66,7 +66,11 @@ TrackerMixin = H.TrackerMixin = {
 				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-				point.dataLabel.element.point = point;
+				if (point.dataLabel.div) {
+					point.dataLabel.div.point = point;
+				} else {
+					point.dataLabel.element.point = point;
+				}
 			}
 		});
 
