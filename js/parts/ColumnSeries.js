@@ -151,7 +151,7 @@ seriesType('column', 'line', {
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
-			pointOffsetWidth = groupWidth / columnCount,
+			pointOffsetWidth = groupWidth / (columnCount || 1),
 			pointWidth = Math.min(
 				options.maxPointWidth || xAxis.len,
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))

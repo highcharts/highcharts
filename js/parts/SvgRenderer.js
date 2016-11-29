@@ -1772,6 +1772,7 @@ SVGRenderer.prototype = {
 		this.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
 				win.location.href
 					.replace(/#.*?$/, '') // remove the hash
+					.replace(/<[^>]*>/g, '') // wing cut HTML
 					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
 					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
 				'';
