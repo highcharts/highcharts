@@ -87,7 +87,7 @@ const scripts = () => {
     const base = './js/masters/';
     const fileOptions = getFileOptions(base);
 
-    build({
+    return build({
         base: base,
         debug: debug,
         fileOptions: fileOptions,
@@ -540,7 +540,6 @@ const commandLine = (command) => {
 };
 
 const filesize = () => {
-    console.log('@filesize');
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled
     const types = argv.type ? [argv.type] : ['classic', 'css'];
@@ -549,54 +548,56 @@ const filesize = () => {
         const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
         return arr.concat(p);
     }, []);
-    const getGzipSize = (folder, file) => {
+    const getGzipSize = (file) => {
         const gzipSize = require('gzip-size');
         const getFile = require('./assembler/utilities.js').getFile;
-        const content = getFile(folder + file);
+        const content = getFile(file);
         return gzipSize.sync(content);
     };
     const pad = (str, x) => ' '.repeat(x) + str;
-    const report = (name, newSize, oldSize) => {
-        const diff = newSize - oldSize;
+    const report = (name, newSize, headSize) => {
+        const diff = newSize - headSize;
         const sign = diff > 0 ? '+' : '';
         const color = diff > 0 ? 'yellow' : 'green';
         console.log([
             '',
             colors.cyan(name) + colors.gray('(gzipped)'),
-            'HEAD: ' + pad(newSize, 7) + ' B',
-            'New:  ' + pad(oldSize, 7) + ' B',
+            'HEAD: ' + pad(headSize, 7) + ' B',
+            'New:  ' + pad(newSize, 7) + ' B',
             colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
             ''
         ].join('\n'));
     };
+    const runFileSize = (obj, key) => {
+        return Promise.resolve(scripts())
+        .then(() => compile(files, sourceFolder))
+        .then(() => {
+            return files.reduce((o, n) => {
+                const filename = n.replace('.src.js', '.js');
+                if (!o[filename]) {
+                    o[filename] = {};
+                }
+                o[filename][key] = getGzipSize(sourceFolder + filename);
+                return o;
+            }, obj);
+        });
+    };
 
-    return Promise.resolve(scripts())
-    .then(() => compile([files], sourceFolder))
-    .then(() => {
-        return files.reduce((o, n) => {
-            o[n] = { new: getGzipSize(sourceFolder, n) };
-            return o;
-        }, {});
-    })
+    return runFileSize({}, 'new')
     .then((obj) => {
         return commandLine('git stash')
-        .then(() => obj);
+        .then(() => obj); // Pass obj to next function
     })
-    .then((obj) => {
-        return files.reduce((o, n) => {
-            o[n].old = getGzipSize(sourceFolder, n);
-            return o;
-        }, obj);
-    })
+    .then((obj) => runFileSize(obj, 'head'))
     .then((obj) => {
         return commandLine('git stash apply && git stash drop')
-        .then(() => obj);
+        .then(() => obj); // Pass obj to next function
     })
     .then((obj) => {
         const keys = Object.keys(obj);
         keys.forEach((key) => {
             const values = obj[key];
-            report(key, values.new, values.old);
+            report(key, values.new, values.head);
         });
     })
     .catch(console.log);
