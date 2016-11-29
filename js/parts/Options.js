@@ -105,12 +105,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor80}',
-			fontSize: '18px'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 
 	},
@@ -121,11 +116,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor60}'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 	},
 

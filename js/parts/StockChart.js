@@ -68,8 +68,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		columnOptions = {
 			shadow: false,
 			borderWidth: 0
-		},
-		titleFontSize = defaultOptions.title.style.fontSize;
+		};
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
@@ -132,10 +131,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				enabled: true
 			},
 			title: {
-				text: null,
-				style: {
-					fontSize: titleFontSize !== '18px' ? titleFontSize : '16px' // check if setOptions was called
-				}
+				text: null
 			},
 			tooltip: {
 				shared: true,
@@ -163,7 +159,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		options, // user's options
 
 		{ // forced options
-			_stock: true, // internal flag
+			isStock: true, // internal flag
 			chart: {
 				inverted: false
 			}
@@ -185,7 +181,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 		panes = chart._labelPanes = chart._labelPanes || {},
 		key,
 		labelOptions = this.options.labels;
-	if (this.chart.options._stock && this.coll === 'yAxis') {
+	if (this.chart.options.isStock && this.coll === 'yAxis') {
 		key = options.top + ',' + options.height;
 		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
 			if (labelOptions.x === 15) { // default

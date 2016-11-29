@@ -463,8 +463,31 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor80}',
+					fontSize: options.isStock ? '16px' : '18px' // #2944
+				}	
+			},
+			/*= } =*/
+			options.title,
+			titleOptions
+		);
+		chartSubtitleOptions = options.subtitle = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor60}'
+				}	
+			},
+			/*= } =*/
+			options.subtitle,
+			subtitleOptions
+		);
 
 		// add title and subtitle
 		each([

@@ -299,7 +299,7 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options.dataGrouping,
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-			pick(dataGroupingOptions.enabled, chart.options._stock),
+			pick(dataGroupingOptions.enabled, chart.options.isStock),
 		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
 		skip;
@@ -517,7 +517,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		);
 	}
 
-	if (this.chart.options._stock) {
+	if (this.chart.options.isStock) {
 		this.requireSorting = true;
 	}
 
