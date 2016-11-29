@@ -124,7 +124,21 @@ function getHTML($which) {
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$path/demo.html");
+	if (is_file("$path/demo.html")) {
+		include("$path/demo.html");
+
+	} elseif ($which === 'right') {
+		echo "
+			<div style='padding: 2em; text-align: center'>
+				<span style='color:red'>Missing file:</span><br>
+				<code style='line-height: 3em'>$path/demo.html</code><br>
+				Probably the sample has been deleted but the folder structure 
+				remains. This happens when deleting files from Git. The
+				remaining folders can safely be removed.
+			</div>
+		";
+	}
+	
 	$s = ob_get_clean();
 
 	// Highchart 5 preview
