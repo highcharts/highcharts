@@ -50,8 +50,13 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		defaultOptions = H.getOptions(),
 		opposite,
 
-		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
-		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
+		// Always disable startOnTick:true on the main axis when the navigator
+		// is enabled (#1090)
+		navigatorEnabled = pick(
+			options.navigator && options.navigator.enabled,
+			defaultOptions.navigator.enabled,
+			true
+		),
 		disableStartOnTick = navigatorEnabled ? {
 			startOnTick: false,
 			endOnTick: false
@@ -68,11 +73,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		columnOptions = {
 			shadow: false,
 			borderWidth: 0
-		},
-		rangeSelectorEnabled = defaultOptions.rangeSelector.enabled,
-		scrollbarEnabled = defaultOptions.scrollbar.enabled;
-
-	navigatorEnabled = defaultOptions.navigator.enabled;
+		};
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
@@ -126,13 +127,15 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				pinchType: 'x'
 			},
 			navigator: {
-				enabled: defined(navigatorEnabled) ? navigatorEnabled : true // #4988 - check if setOptions was called
+				enabled: navigatorEnabled
 			},
 			scrollbar: {
-				enabled: defined(scrollbarEnabled) ? scrollbarEnabled : true // #4988 - check if setOptions was called
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.scrollbar.enabled, true)
 			},
 			rangeSelector: {
-				enabled: defined(rangeSelectorEnabled) ? rangeSelectorEnabled : true // #4988 - check if setOptions was called
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.rangeSelector.enabled, true)
 			},
 			title: {
 				text: null
