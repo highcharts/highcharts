@@ -215,9 +215,9 @@ H.Pointer.prototype = {
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
-			followPointer,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
+			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer,
 			stickToHoverSeries = (
 				hoverSeries &&
 				(shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch)
@@ -277,12 +277,9 @@ H.Pointer.prototype = {
 			}
 			this.prevKDPoint = hoverPoint;
 		// Update positions (regardless of kdpoint or hoverPoint)
-		} else {
-			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-			if (tooltip && followPointer && !tooltip.isHidden) {
-				anchor = tooltip.getAnchor([{}], e);
-				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
-			}
+		} else if (followPointer && tooltip && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 
 		// Start the event listener to pick up the tooltip and crosshairs
