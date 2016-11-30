@@ -218,15 +218,17 @@ H.Pointer.prototype = {
 			followPointer,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
+			stickToHoverSeries = (
+				hoverSeries &&
+				(shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch)
+			),
 			i,
 			anchor,
-			stickToHoverSeries,
 			points;
 
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
-		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
 		if (stickToHoverSeries && hoverPoint) {
 			points = [hoverPoint];
 
