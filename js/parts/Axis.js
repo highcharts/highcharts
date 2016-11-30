@@ -1573,11 +1573,22 @@ H.Axis.prototype = {
 			
 			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 			if (!this.allowZoomOutside) {
-				if (defined(dataMin) && newMin <= min) {
-					newMin = min;
+				// #6014, sometimes newMax will be smaller than min (or newMin will be larger than max).
+				if (defined(dataMin)) {
+					if (newMin < min) {
+						newMin = min;
+					}
+					if (newMin > max) {
+						newMin = max;
+					}
 				}
-				if (defined(dataMax) && newMax >= max) {
-					newMax = max;
+				if (defined(dataMax)) {
+					if (newMax < min) {
+						newMax = min;
+					}
+					if (newMax > max) {
+						newMax = max;
+					}
 				}
 			}
 

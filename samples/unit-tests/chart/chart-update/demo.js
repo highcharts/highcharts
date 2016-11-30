@@ -174,7 +174,7 @@ $(function () {
         });
         chart.showLoading();
         assert.strictEqual(
-            chart.loadingDiv.style.background,
+            chart.loadingDiv.style.background.substr(0, 5), // Firefox adds more
             'black',
             'Background OK'
         );
@@ -198,7 +198,7 @@ $(function () {
         chart.showLoading();
 
         assert.strictEqual(
-            chart.loadingDiv.style.background,
+            chart.loadingDiv.style.background.substr(0, 5), // Firefox adds more
             'white',
             'Background OK'
         );

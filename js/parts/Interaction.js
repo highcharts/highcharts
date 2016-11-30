@@ -66,7 +66,11 @@ TrackerMixin = H.TrackerMixin = {
 				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-				point.dataLabel.element.point = point;
+				if (point.dataLabel.div) {
+					point.dataLabel.div.point = point;
+				} else {
+					point.dataLabel.element.point = point;
+				}
 			}
 		});
 
@@ -409,15 +413,25 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				horiz = axis.horiz,
+				reversed = axis.reversed,
 				mousePos = e[horiz ? 'chartX' : 'chartY'],
 				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
 				startPos = chart[mouseDown],
-				halfPointRange = (axis.pointRange || 0) / 2,
+				halfPointRange = (axis.pointRange || 0) / (reversed ? -2 : 2),
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
 				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
-				goingLeft = startPos > mousePos; // #3613
-			
+				goingLeft = startPos > mousePos, // #3613
+				tmp;
+
+			// Swap min/max for reversed axes (#5997)
+			if (reversed) {
+				goingLeft = !goingLeft;
+				tmp = newMin;
+				newMin = newMax;
+				newMax = tmp;
+			}
+
 			if (axis.series.length &&
 					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) &&		
 					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {

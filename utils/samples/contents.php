@@ -371,6 +371,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								}
 
 								// Comments
+								$showCheckbox = ($compareClass == 'manual');
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
 
@@ -392,6 +393,16 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 										<i class='icon-pencil' title='Add comment'></i>
 									";
 								}
+
+								/*
+								if ($showCheckbox) {
+									$comment = "
+									<input type='checkbox' class='manual-checkbox' id='checkbox-$path' />
+									" . $comment;
+								}
+								*/
+									
+									
 
 								$html .= "
 								<li id='li$i' class='$compareClass'>$i. $suffix

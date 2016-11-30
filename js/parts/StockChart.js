@@ -50,8 +50,13 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		defaultOptions = H.getOptions(),
 		opposite,
 
-		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
-		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
+		// Always disable startOnTick:true on the main axis when the navigator
+		// is enabled (#1090)
+		navigatorEnabled = pick(
+			options.navigator && options.navigator.enabled,
+			defaultOptions.navigator.enabled,
+			true
+		),
 		disableStartOnTick = navigatorEnabled ? {
 			startOnTick: false,
 			endOnTick: false
@@ -122,19 +127,18 @@ H.StockChart = H.stockChart = function (a, b, c) {
 				pinchType: 'x'
 			},
 			navigator: {
-				enabled: true
+				enabled: navigatorEnabled
 			},
 			scrollbar: {
-				enabled: true
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.scrollbar.enabled, true)
 			},
 			rangeSelector: {
-				enabled: true
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.rangeSelector.enabled, true)
 			},
 			title: {
-				text: null,
-				style: {
-					fontSize: '16px'
-				}
+				text: null
 			},
 			tooltip: {
 				shared: true,
@@ -158,10 +162,11 @@ H.StockChart = H.stockChart = function (a, b, c) {
 			}
 
 		},
+		
 		options, // user's options
 
 		{ // forced options
-			_stock: true, // internal flag
+			isStock: true, // internal flag
 			chart: {
 				inverted: false
 			}
@@ -183,7 +188,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 		panes = chart._labelPanes = chart._labelPanes || {},
 		key,
 		labelOptions = this.options.labels;
-	if (this.chart.options._stock && this.coll === 'yAxis') {
+	if (this.chart.options.isStock && this.coll === 'yAxis') {
 		key = options.top + ',' + options.height;
 		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
 			if (labelOptions.x === 15) { // default
@@ -667,9 +672,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	// Only do this on stock charts (#2939), and only if the series type handles clipping
+	// Only do this on not 3d charts (#2939, #5904), and only if the series type handles clipping
 	// in the animate method (#2975).
-	if (this.chart.options._stock && this.xAxis) {
+	if (!(this.chart.is3d && this.chart.is3d()) && this.xAxis) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {

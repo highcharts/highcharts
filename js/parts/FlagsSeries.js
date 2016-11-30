@@ -76,7 +76,7 @@ seriesType('flags', 'column', {
 			color = (point && point.color) || this.color,
 			lineColor = options.lineColor,
 			lineWidth = (point && point.lineWidth),
-			fill = (point && point.fillColor) || options.fillColor; // docs
+			fill = (point && point.fillColor) || options.fillColor;
 
 		if (state) {
 			fill = options.states[state].fillColor;

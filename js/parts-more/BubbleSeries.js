@@ -78,7 +78,7 @@ seriesType('bubble', 'scatter', {
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
-	markerAttribs: null,
+	markerAttribs: noop,
 
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
@@ -222,7 +222,10 @@ seriesType('bubble', 'scatter', {
 	 */
 	drawLegendSymbol: function (legend, item) {
 		var renderer = this.chart.renderer,
-			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
+			radius = renderer.fontMetrics(
+				legend.itemStyle && legend.itemStyle.fontSize,
+				item.legendItem
+			).f / 2;
 
 		item.legendSymbol = renderer.circle(
 			radius,

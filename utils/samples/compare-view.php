@@ -309,9 +309,12 @@
 
 
 					window.parent.batchRuns++;
-					// Clear memory build-up from time to time by reloading the whole thing
-					if (window.parent.batchRuns > 90) {
-						window.parent.location.href = '/samples/#batch/' + window.parent.frames[0].samples[nextIndex];
+					// Clear memory build-up from time to time by reloading the
+					// whole thing. Firefox has problems redirecting.
+					if (window.parent.batchRuns > 90 &&
+							navigator.userAgent.indexOf('WebKit') !== -1) {
+						window.parent.location.href = '/samples/#batch/' +
+							window.parent.frames[0].samples[nextIndex];
 					} else {
 						window.location.href = href;
 					}

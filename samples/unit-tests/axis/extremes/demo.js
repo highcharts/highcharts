@@ -69,3 +69,22 @@ QUnit.test('getSeriesExtremes', function (assert) {
      * @todo Test the yAxis.getExtremes, but it is much work to mock the yAxis
      */
 });
+
+QUnit.test('Zoom out of container', function (assert) {
+    var fakeAxis = {
+        dataMin: 0,
+        dataMax: 10,
+        options: {},
+        allowZoomOutside: false,
+        setExtremes: function (min, max) {
+            assert.ok(min <= max, 'Min is less than or equal to max');
+            assert.ok(min <= 10 && min >= 0, 'Min is within container');
+            assert.ok(max <= 10 && max >= 0, 'Max is within container');
+        }
+    };
+    Highcharts.Axis.prototype.zoom.call(fakeAxis, -4, -5);
+    Highcharts.Axis.prototype.zoom.call(fakeAxis, -4, 5);
+    Highcharts.Axis.prototype.zoom.call(fakeAxis, 4, 5);
+    Highcharts.Axis.prototype.zoom.call(fakeAxis, 4, 15);
+    Highcharts.Axis.prototype.zoom.call(fakeAxis, 14, 15);
+});
