@@ -53,7 +53,11 @@ QUnit.test('Curve and line (#5892)', function (assert) {
 
     var out = Highcharts.Fx.prototype.initPath.call(
         null,
-        { isArea: true },
+        {
+            startX: [0],
+            endX: [0],
+            isArea: true
+        },
         fromD,
         toD
     );

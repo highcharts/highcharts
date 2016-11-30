@@ -247,7 +247,7 @@ H.Fx.prototype = {
 			isArea = elem.isArea,
 			positionFactor = isArea ? 2 : 1,
 			reverse;
-		
+
 		/**
 		 * In splines make moveTo and lineTo points have six parameters like
 		 * bezier curves, to allow animation one-to-one.
@@ -370,11 +370,11 @@ H.Fx.prototype = {
 			}
 		}
 
-		if (start.length) {
+		if (start.length && H.isNumber(shift)) {
 
 			// The common target length for the start and end array, where both 
 			// arrays are padded in opposite ends
-			fullLength = end.length + (shift || 0) * positionFactor * numParams;
+			fullLength = end.length + shift * positionFactor * numParams;
 			
 			if (!reverse) {
 				prepend(end, start);
