@@ -222,6 +222,7 @@ H.Pointer.prototype = {
 				hoverSeries &&
 				(shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch)
 			),
+			useSharedTooltip,
 			i,
 			anchor,
 			points;
@@ -229,10 +230,8 @@ H.Pointer.prototype = {
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
-		if (stickToHoverSeries && hoverPoint) {
-			points = [hoverPoint];
 		// Handle shared tooltip or cases where a series is not yet hovered
-		} else {
+		if (!(stickToHoverSeries && hoverPoint)) {
 			if (!shared) {
 				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
 				// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
@@ -256,25 +255,19 @@ H.Pointer.prototype = {
 				return p1.series.index - p2.series.index;
 			});
 		}
+		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
+		points = useSharedTooltip ? points : [hoverPoint];
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
 		if (hoverPoint && (hoverPoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
-			if (shared && !hoverPoint.series.noSharedTooltip) {
+			if (tooltip) {
+				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
+			}
+			if (!hoverSeries || !hoverSeries.directTouch) { // #4448
 				// Do mouseover on all points (#3919, #3985, #4410, #5622)
 				for (i = 0; i < points.length; i++) {
 					points[i].onMouseOver(e, points[i] !== hoverPoint);
-				}
-
-				if (points.length && tooltip) {
-					tooltip.refresh(points, e);
-				}
-			} else {
-				if (tooltip) {
-					tooltip.refresh(hoverPoint, e);
-				}
-				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					hoverPoint.onMouseOver(e);
 				}
 			}
 			this.prevKDPoint = hoverPoint;
@@ -295,7 +288,7 @@ H.Pointer.prototype = {
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? points : [hoverPoint], function drawPointCrosshair(point) { // #5269
+		each(points, function drawPointCrosshair(point) { // #5269
 			each(chart.axes, function drawAxisCrosshair(axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series && point.series[axis.coll] === axis) { // #5658
