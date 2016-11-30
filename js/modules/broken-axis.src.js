@@ -292,6 +292,10 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 		eventName,
 		y;
 
+	if (!axis) {
+		return; // #5950
+	}
+
 	each(keys, function (key) {
 		breaks = axis.breakArray || [];
 		threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
