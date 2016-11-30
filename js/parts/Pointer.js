@@ -231,7 +231,6 @@ H.Pointer.prototype = {
 		// search the k-d tree.
 		if (stickToHoverSeries && hoverPoint) {
 			points = [hoverPoint];
-
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
 			if (!shared) {
@@ -250,15 +249,16 @@ H.Pointer.prototype = {
 				}
 			}
 			points = this.getKDPoints(series, shared, e);
+			hoverPoint = points[0];
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (points[0] && (points[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
+		if (hoverPoint && (hoverPoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
-			if (shared && !points[0].series.noSharedTooltip) {
+			if (shared && !hoverPoint.series.noSharedTooltip) {
 				// Do mouseover on all points (#3919, #3985, #4410, #5622)
 				for (i = 0; i < points.length; i++) {
-					points[i].onMouseOver(e, points[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || points[0]));
+					points[i].onMouseOver(e, points[i] !== hoverPoint);
 				}
 
 				if (points.length && tooltip) {
@@ -269,13 +269,13 @@ H.Pointer.prototype = {
 				}
 			} else {
 				if (tooltip) {
-					tooltip.refresh(points[0], e);
+					tooltip.refresh(hoverPoint, e);
 				}
 				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					points[0].onMouseOver(e);
+					hoverPoint.onMouseOver(e);
 				}
 			}
-			this.prevKDPoint = points[0];
+			this.prevKDPoint = hoverPoint;
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
 			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
@@ -296,7 +296,7 @@ H.Pointer.prototype = {
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? points : [pick(hoverPoint, points[0])], function drawPointCrosshair(point) { // #5269
+		each(shared ? points : [hoverPoint], function drawPointCrosshair(point) { // #5269
 			each(chart.axes, function drawAxisCrosshair(axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series && point.series[axis.coll] === axis) { // #5658
