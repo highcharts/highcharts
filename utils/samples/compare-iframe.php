@@ -404,6 +404,10 @@ function getExportInnerHTML() {
 					compareHTML();
 				}
 
+				if (window.parent && window.parent.parent) {
+					$(window).bind('keydown', window.parent.parent.keyDown);
+				}
+
 				// Make sure getJSON content is not cached
 				$.ajaxSetup({
 					type: 'POST',
