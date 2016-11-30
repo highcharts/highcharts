@@ -78,7 +78,7 @@ seriesType('bubble', 'scatter', {
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
-	markerAttribs: noop,
+	markerAttribs: null,
 
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
