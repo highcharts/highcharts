@@ -250,6 +250,11 @@ H.Pointer.prototype = {
 			}
 			points = this.getKDPoints(series, shared, e);
 			hoverPoint = points[0];
+			// Keep the order of series in tooltip
+			// Must be done after assigning of hoverPoint
+			points.sort(function (p1, p2) {
+				return p1.series.index - p2.series.index;
+			});
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
@@ -262,10 +267,7 @@ H.Pointer.prototype = {
 				}
 
 				if (points.length && tooltip) {
-					// Keep the order of series in tooltip:
-					tooltip.refresh(points.sort(function (p1, p2) {
-						return p1.series.index - p2.series.index;
-					}), e);
+					tooltip.refresh(points, e);
 				}
 			} else {
 				if (tooltip) {
