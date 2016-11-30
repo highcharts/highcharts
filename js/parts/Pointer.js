@@ -225,7 +225,7 @@ H.Pointer.prototype = {
 			useSharedTooltip,
 			i,
 			anchor,
-			points;
+			points = [hoverPoint];
 
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
