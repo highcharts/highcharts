@@ -615,7 +615,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	/**
 	 * Process the data by cropping away unused data points if the series is longer
-	 * than the crop threshold. This saves computing time for lage series.
+	 * than the crop threshold. This saves computing time for large series.
 	 */
 	processData: function (force) {
 		var series = this,
