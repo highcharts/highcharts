@@ -12,7 +12,7 @@ var merge = H.merge,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	now = new Date(),
-	nowText = H.dateFormat('%a, %b %d %Y<br/>%H:%M', now.getTime()),
+	nowText = H.dateFormat('%a, %b %d %Y, %H:%M', now.getTime()),
 	// TODO
 	// update on redraw
 	defaultConfig = {
