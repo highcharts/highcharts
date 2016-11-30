@@ -92,26 +92,40 @@ function GLRenderer() {
 	var//Vertex shader source
 		vertShade = [
 			/* eslint-disable */
+			'#version 100',
 			'precision highp float;',
 			
-			'attribute vec2 aVertexPosition;',
+			'attribute vec3 aVertexPosition;',
 			//'attribute float aXAxis;',
 			//'attribute float aYAxis;',
 
 			'uniform mat4 uPMatrix;',
 			'uniform float pSize;',
 
+			'uniform float translatedThreshold;',
+			'uniform bool hasThreshold;',
+
 			'uniform float xAxisTrans;',
 			'uniform float xAxisMin;',
 			'uniform float xAxisMinPad;',
 			'uniform float xAxisPointRange;',
 			'uniform float xAxisLen;',
+			'uniform bool  xAxisPostTranslate;',
+			'uniform float xAxisOrdinalSlope;',
+			'uniform float xAxisOrdinalOffset;',			
+			'uniform float xAxisPos;',	
+			'uniform bool xAxisCVSCoord;',		
 
 			'uniform float yAxisTrans;',
 			'uniform float yAxisMin;',
 			'uniform float yAxisMinPad;',
 			'uniform float yAxisPointRange;',
-			'uniform float yAxisLen;',            
+			'uniform float yAxisLen;',          
+			'uniform bool  yAxisPostTranslate;', 
+			'uniform float yAxisOrdinalSlope;',
+			'uniform float yAxisOrdinalOffset;', 
+			'uniform float yAxisPos;',
+			'uniform bool  yAxisCVSCoord;',		
 
 			'float translate(float val,',
 							'float pointPlacement,',
@@ -119,27 +133,38 @@ function GLRenderer() {
 							'float localMin,',
 							'float minPixelPadding,',
 							'float pointRange,',
-							'float cvsOffset',
+							'float len,',
+							'bool  cvsCoord',
 							'){',
 
-				'float sign = -1.0;',
+				'float sign = 1.0;',
+				'float cvsOffset = 0.0;',
+
+				'if (cvsCoord) {',
+					'sign *= -1.0;',
+					'cvsOffset = len;',
+				'}',
 
 				'return sign * (val - localMin) * localA + cvsOffset + ',
 					'(sign * minPixelPadding);',//' + localA * pointPlacement * pointRange;',
 			'}',
 
 			'float xToPixels(float value){',
-				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen);',
+				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord);',
 			'}',
 
-			'float yToPixels(float value){',
-				'return translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen);',
+			'float yToPixels(float value, float checkTreshold){',
+				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);',
+				'if (checkTreshold > 0.0 && hasThreshold) {',
+					'v = min(v, translatedThreshold);',
+				'}',
+				'return v;',
 			'}',
 
 			'void main(void) {',
 				'gl_PointSize = pSize;',
 				//'gl_Position = uPMatrix * vec4(aVertexPosition, 0.0, 1.0);',
-				'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x), yToPixels(aVertexPosition.y), 0.0, 1.0);',
+				'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x), yToPixels(aVertexPosition.y, aVertexPosition.z), 0.0, 1.0);',
 			'}'
 			/* eslint-enable */
 		].join('\n'),
@@ -220,6 +245,11 @@ function GLRenderer() {
 			gl.enableVertexAttribArray(vertAttribute);
 		}
 
+		/* Set the draw mode */
+		function setDrawMode(m) {
+			drawMode = m;
+		}
+
 		/* Render the buffer */
 		function render() {
 			if (!buffer) {
@@ -241,6 +271,7 @@ function GLRenderer() {
 
 		////////////////////////////////////////////////////////////////////////
 		return {
+			setDrawMode: setDrawMode,
 			build: build,
 			render: render
 		};    	
@@ -300,8 +331,8 @@ function GLRenderer() {
 	function orthoMatrix(width, height) {        
 		return [
 			2 / width, 0, 0, 0,
-			0, -2 / height, 0, 0,
-			0, 0, 50, 0,
+			0, -(2 / height), 0, 0,
+			0, 0, 1, 0,
 			-1, 1, 0, 1
 		];
 	}
@@ -355,7 +386,7 @@ function GLRenderer() {
 		gl.uniform1f(psUniform, settings.pointSize);
 		gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
 
-		addVBuffer('aVertexPosition', data);
+		addVBuffer('aVertexPosition', data, 3);
 
 		if (uniforms) {
 			Object.keys(uniforms).forEach(function (uniform) {
@@ -367,10 +398,9 @@ function GLRenderer() {
 		Object.keys(vbuffers).forEach(function (attrib) {
 			var def = vbuffers[attrib],
 				//Prototype objects aren't the only things which constructs objects, eslint :'(
-				buffer = VertexBuffer() //eslint-disable-line 
-			;
+				buffer = VertexBuffer(); //eslint-disable-line 
 
-		buffer.build(def.data, attrib, def.components, def.drawMode, def.uniforms);
+			buffer.build(def.data, attrib, def.components, def.drawMode, def.uniforms);
 			buffer.render();
 		});
 
@@ -396,14 +426,22 @@ function GLRenderer() {
 	}
 
 	/* Add data to render */
-	function push(x, y, bottom) {
+	function push(x, y, bottom, checkTreshold) {
+		if (y !== bottom) {
+			data.push(x);
+			data.push(bottom);
+			data.push(checkTreshold ? 1.0 : 0.0);
+			settings.drawMode = 'line_strip';
+		}
+
 		data.push(x);
 		data.push(y);
+		data.push(checkTreshold ? 1.0 : 0.0);
 
-		if (bottom) {
+		if (y !== bottom) {
 			data.push(x);
-			data.push(y + bottom);
-			settings.drawMode = 'line_strip';
+			data.push(bottom);
+			data.push(checkTreshold ? 1.0 : 0.0);
 		}
 	}
 
@@ -420,6 +458,8 @@ function GLRenderer() {
 		uniforms.xAxisMinPad = axis.minPixelPadding;
 		uniforms.xAxisPointRange = axis.pointRange;
 		uniforms.xAxisLen = axis.len;    
+		uniforms.xAxisPos = axis.pos;
+		uniforms.xAxisCVSCoord = !axis.horiz;
 	}
 
 	function setYAxis(axis) {
@@ -430,10 +470,18 @@ function GLRenderer() {
 		uniforms.yAxisMinPad = axis.minPixelPadding;
 		uniforms.yAxisPointRange = axis.pointRange;
 		uniforms.yAxisLen = axis.len;
+		uniforms.yAxisPos = axis.pos;
+		uniforms.yAxisCVSCoord = !axis.horiz;
+	}
+
+	function setThreshold(has, translation) {
+		uniforms.hasThreshold = has;
+		uniforms.translatedThreshold = translation;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	exports = {
+		setThreshold: setThreshold,
 		init: init,
 		addVBuffer: addVBuffer,
 		push: push,
@@ -694,8 +742,8 @@ H.extend(Series.prototype, {
 		//	lastPoint,
 			threshold = options.threshold,
 			yBottom = yAxis.getThreshold(threshold),
-			//hasThreshold = isNumber(threshold),
-			//translatedThreshold = yBottom,
+			hasThreshold = isNumber(threshold),
+			translatedThreshold = yBottom,
 			doFill = this.fill,
 			isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
 			isStacked = !!options.stacking,
@@ -882,10 +930,10 @@ H.extend(Series.prototype, {
 						}
 						if (clientX !== lastClientX) { // Add points and reset
 							if (minI !== undefined) { // then maxI is also a number
-								plotY = 0;// yAxis.toPixels(maxVal, true);
-								yBottom = 0;//yAxis.toPixels(minVal, true);
+								plotY = yAxis.toPixels(maxVal, true);
+								yBottom = yAxis.toPixels(minVal, true);
 
-								//addKDPoint(clientX, plotY, maxI);
+								addKDPoint(clientX, plotY, maxI);
 								if (yBottom !== plotY) {
 									addKDPoint(clientX, yBottom, minI);
 								}
@@ -946,31 +994,167 @@ H.extend(Series.prototype, {
 			series.buildKDTree();
 		}
 
-		// Loop over the points to build the k-d tree
-		eachAsync(
-					isStacked ? series.data : (xData || rawData), 
-					processPoint, 
-					doneProcessing, 
-					chart.renderer.forExport ? Number.MAX_VALUE : undefined
-		);
+		
+
+		//minVal = 9999;
+
+		minVal = maxVal = undefined;
+		maxI = minI = wasNull = undefined;
 
 		if (gl.valid()) {
+			//minVal = series.yAxis.min;
 	
 			//var height = this.height;
 
 			//Need to transform the points. This is totally cache trashing
-			each(isStacked ? series.data : rawData, function (d) {
-				//gl.push(d[0], d[1]);
+			each(isStacked ? series.data : (rawData), function (d, i) {
+				var x,
+					y,
+					clientX,
+					plotY,
+					isNull,
+					low,
+					chartDestroyed = typeof chart.index === 'undefined',
+					isYInside = true;
+
+			// if (!chartDestroyed) {
+				if (useRaw) {
+					x = d[0];
+					y = d[1];
+				} else {
+					x = d;
+					y = yData[i];
+				}
+
+				// Resolve low and high for range series
+				if (isRange) {
+					if (useRaw) {
+						y = d.slice(1, 3);
+					}
+					low = y[0];
+					y = y[1];
+				} else if (isStacked) {
+					x = d.x;
+					y = d.stackY;
+					low = y - d.y;
+				}
+
+			// 	isNull = y === null;
+
+			// 	// Optimize for scatter zooming
+			// 	if (!requireSorting) {
+			// 		isYInside = y >= yMin && y <= yMax;
+			// 	}
+
+			// 	if (!isNull && x >= xMin && x <= xMax && isYInside) {
+
+			// 		//clientX = Math.round(xAxis.toPixels(x, true));
+
+			// 		if (sampling) {
+			// 			if (minI === undefined || x === lastClientX) {
+
+			// 				if (!isRange) {
+			// 					low = y;
+			// 				}
+
+			// 				if (maxI === undefined || y > maxVal) {
+			// 					maxVal = y;
+			// 					maxI = i;
+			// 				}
+
+			// 				if (minI === undefined || low < minVal) {
+			// 					minVal = low;
+			// 					minI = i;
+			// 				}
+			// 			}
+						
+
+			// 			if (x !== lastClientX) { // Add points and reset
+			// 				if (minI !== undefined) { // then maxI is also a number
+			// 					//plotY = yAxis.toPixels(maxVal, true);
+			// 					//yBottom = yAxis.toPixels(minVal, true);							
+			// 					gl.push(x, maxVal, minVal, 1.0);
+			// 				}
+
+			// 				minI = maxI = undefined;
+			// 				lastClientX = x;
+			// 			}
+			// 		} else {
+			// 			//plotY = Math.round(yAxis.toPixels(y, true));						
+			// 			//addKDPoint(clientX, plotY, i);
+			// 			gl.push(x, maxVal, minVal);
+			// 		}
+			// 	} 
 				
-				gl.data.push(d[0]);
-				gl.data.push(d[1]);
+			// 	wasNull = isNull && !connectNulls;
+			// }
+
+				// var low;
+
+				x = d[0];
+				y = d[1];
+
+				if (!requireSorting) {
+					isYInside = y >= yMin && y <= yMax;
+				}
+
+				if (!y || !isYInside || x < xMin || x > xMax) {
+					return;
+				}
+
+				// // if (isRange) {}
+
+				// //if (d[1] > maxVal) {
+				// maxVal = d[1];
+				// minVal = 0;
+					
+				// if (maxVal < minVal) {
+				// 	minVal = maxVal;
+				// 	maxVal = 0;
+				// }
+
+				// //}
+
+				
+				minVal = 0;
+				if (y < 0) {
+					minVal = y;
+				}
+
+				maxVal = 0;
+				if (y > 0) {
+					maxVal = y;
+				}
 				
 				if (series.type === 'column') {
 					//Need to add an extra point here
 					//gl.push(d[0], d[1] + series.yAxis.);
+					gl.data.push(x);
+					gl.data.push(minVal);
+					gl.data.push(0);
 				}
+				
+				gl.data.push(x);					
+				gl.data.push(maxVal);
+				gl.data.push(0);
+								
+				if (series.type === 'column') {
+					//Need to add an extra point here
+					//gl.push(d[0], d[1] + series.yAxis.);
+					gl.data.push(x);
+					gl.data.push(minVal);
+					gl.data.push(0);
+				}
+
 			});
+
+			if (series.type === 'column' || series.type === 'line') {
+				gl.settings.drawMode = 'line_strip';
+			}
+
+			console.log(series.type);
 			
+			gl.setThreshold(hasThreshold, translatedThreshold);
 			gl.setXAxis(series.xAxis, xData);
 			gl.setYAxis(series.yAxis, yData);
 
@@ -981,6 +1165,14 @@ H.extend(Series.prototype, {
 
 			//return true;
 		}	
+
+		// Loop over the points to build the k-d tree
+		eachAsync(
+					isStacked ? series.data : (xData || rawData), 
+					processPoint, 
+					doneProcessing, 
+					chart.renderer.forExport ? Number.MAX_VALUE : undefined
+		);
 	}
 });
 
@@ -1066,4 +1258,17 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
 	return this.getPoint(
 		proceed.apply(this, [].slice.call(arguments, 1))
 	);
+});
+
+/**
+ * Take care of the canvas blitting
+ */
+H.Chart.prototype.callbacks.push(function (chart) {
+
+	function canvasToSVG() {
+
+	}
+
+	addEvent(chart, 'load', canvasToSVG);
+	addEvent(chart, 'redraw', canvasToSVG);
 });
