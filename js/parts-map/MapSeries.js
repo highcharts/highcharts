@@ -421,10 +421,19 @@ seriesType('map', 'scatter', {
 	},
 
 	/**
-	 * Get presentational attributes
+	 * Get presentational attributes. In the maps series this runs in both 
+	 * styled and non-styled mode, because colors hold data when a colorAxis
+	 * is used.
 	 */
 	pointAttribs: function (point, state) {
-		var attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
+		var attr;
+		/*= if (build.classic) { =*/
+		attr = seriesTypes.column.prototype.pointAttribs.call(
+			this, point, state
+		);
+		/*= } else { =*/
+		attr = this.colorAttribs(point);
+		/*= } =*/
 
 		// Prevent flickering whan called from setState
 		if (point.isFading) {
@@ -507,6 +516,12 @@ seriesType('map', 'scatter', {
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
 					}
+					
+					/*= if (!build.classic) { =*/
+					point.graphic.css(
+						series.pointAttribs(point, point.selected && 'select')
+					);
+					/*= } =*/
 				}
 			});
 

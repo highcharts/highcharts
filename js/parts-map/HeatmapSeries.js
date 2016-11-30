@@ -109,7 +109,13 @@ seriesType('heatmap', 'scatter', {
 		seriesTypes.column.prototype.drawPoints.call(this);
 
 		each(this.points, function (point) {
-			point.graphic.attr(this.colorAttribs(point, point.state));
+			/*= if (build.classic) { =*/
+			point.graphic.attr(this.colorAttribs(point));
+			/*= } else { =*/
+			// In styled mode, use CSS, otherwise the fill used in the style
+			// sheet will take precesence over the fill attribute.
+			point.graphic.css(this.colorAttribs(point));
+			/*= } =*/
 		}, this);
 	},
 	animate: noop,
