@@ -234,19 +234,20 @@ H.Pointer.prototype = {
 
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
-			// For hovering over the empty parts of the plot area (hoverSeries is undefined).
-			// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
-			if (!shared && !hoverSeries) {
-				for (i = 0; i < series.length; i++) {
-					if (series[i].directTouch || !series[i].options.stickyTracking) {
-						series = [];
+			if (!shared) {
+				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
+				// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
+				if (!hoverSeries) {
+					for (i = 0; i < series.length; i++) {
+						if (series[i].directTouch || !series[i].options.stickyTracking) {
+							series = [];
+						}
 					}
+				// When we have non-shared tooltip and sticky tracking is disabled,
+				// search for the closest point only on hovered series: #5533, #5476
+				} else if (!hoverSeries.options.stickyTracking) {
+					series = [hoverSeries];
 				}
-			}
-			// When we have non-shared tooltip and sticky tracking is disabled,
-			// search for the closest point only on hovered series: #5533, #5476
-			if (!shared && hoverSeries && !hoverSeries.options.stickyTracking) {
-				series = [hoverSeries];
 			}
 			points = this.getKDPoints(series, shared, e);
 		}
