@@ -2001,8 +2001,7 @@ if (!Array.prototype.filter) {
 
 if (!Array.prototype.find) {
 	H.find = function (arr, fn) {
-		var ret = [],
-			i,
+		var i,
 			length = arr.length;
 
 		for (i = 0; i < length; i++) {
