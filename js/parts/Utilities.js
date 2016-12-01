@@ -1433,6 +1433,22 @@ H.grep = function (arr, callback) {
 };
 
 /**
+ * Return the value of the first element in the array that satisfies the 
+ * provided testing function.
+ *
+ * @function #find
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to test.
+ * @param {Function} callback - The callback function. The function receives the
+ *        item as the first argument. Return `true` if this item satisfies the
+ *        condition.
+ * @returns {Mixed} - The value of the element.
+ */
+H.find = function (arr, callback) {
+	return [].find.call(arr, callback);
+};
+
+/**
  * Map an array by a callback.
  *
  * @function #map
@@ -1980,6 +1996,20 @@ if (!Array.prototype.filter) {
 		}
 
 		return ret;
+	};
+}
+
+if (!Array.prototype.find) {
+	H.find = function (arr, fn) {
+		var ret = [],
+			i,
+			length = arr.length;
+
+		for (i = 0; i < length; i++) {
+			if (fn(arr[i], i)) {
+				return arr[i];
+			}
+		}
 	};
 }
 

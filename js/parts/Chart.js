@@ -25,6 +25,7 @@ var addEvent = H.addEvent,
 	each = H.each,
 	error = H.error,
 	extend = H.extend,
+	find = H.find,
 	fireEvent = H.fireEvent,
 	getStyle = H.getStyle,
 	grep = H.grep,
@@ -365,38 +366,28 @@ Chart.prototype = {
 	 * @param id {String} The id as given in the configuration options
 	 */
 	get: function (id) {
-		var chart = this,
-			axes = chart.axes,
-			series = chart.series;
 
-		var i,
-			j,
-			points;
+		var ret,
+			series = this.series,
+			i;
 
-		// search axes
-		for (i = 0; i < axes.length; i++) {
-			if (axes[i].options.id === id) {
-				return axes[i];
-			}
+		function itemById(item) {
+			return item.options.id === id;
 		}
 
-		// search series
-		for (i = 0; i < series.length; i++) {
-			if (series[i].options.id === id) {
-				return series[i];
-			}
+		ret = 
+			// Search axes
+			find(this.axes, itemById) ||
+
+			// Search series
+			find(this.series, itemById);
+
+		// Search points
+		for (i = 0; !ret && i < series.length; i++) {
+			ret = find(series[i].points || [], itemById);
 		}
 
-		// search points
-		for (i = 0; i < series.length; i++) {
-			points = series[i].points || [];
-			for (j = 0; j < points.length; j++) {
-				if (points[j].id === id) {
-					return points[j];
-				}
-			}
-		}
-		return null;
+		return ret;
 	},
 
 	/**
