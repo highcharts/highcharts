@@ -96,72 +96,6 @@ Axis.prototype.getMaxLabelLength = function (force) {
 	return this.maxLabelLength;
 };
 
-
-// TODO
-// - Refactor up to Axis
-// - Override in grid-axis
-// - Instead of brute forcing title disabled, set disabled by default here
-/**
- * Adds the axis defined in axis.options.title
- */
-Axis.prototype.addTitle = function () {
-	var axis = this,
-		renderer = axis.chart.renderer,
-		axisParent = axis.axisParent,
-		horiz = axis.horiz,
-		opposite = axis.opposite,
-		options = axis.options,
-		axisTitleOptions = options.title,
-		hasData,
-		showAxis,
-		textAlign;
-
-	// For reuse in Axis.render
-	hasData = axis.hasData();
-	axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
-
-	// Disregard title generation in original Axis.getOffset()
-	options.title = '';
-
-	if (!axis.axisTitle) {
-		textAlign = axisTitleOptions.textAlign;
-		if (!textAlign) {
-			textAlign = (horiz ? {
-				low: 'left',
-				middle: 'center',
-				high: 'right'
-			} : {
-				low: opposite ? 'right' : 'left',
-				middle: 'center',
-				high: opposite ? 'left' : 'right'
-			})[axisTitleOptions.align];
-		}
-		axis.axisTitle = renderer.text(
-			axisTitleOptions.text,
-			0,
-			0,
-			axisTitleOptions.useHTML
-		)
-		.attr({
-			zIndex: 7,
-			rotation: axisTitleOptions.rotation || 0,
-			align: textAlign
-		})
-		.addClass('highcharts-axis-title')
-		/*= if (build.classic) { =*/
-		.css(axisTitleOptions.style)
-		/*= } =*/
-		// Add to axisParent instead of axisGroup, to ignore the space
-		// it takes
-		.add(axisParent);
-		axis.axisTitle.isNew = true;
-	}
-
-
-	// hide or show the title depending on whether showEmpty is set
-	axis.axisTitle[showAxis ? 'show' : 'hide'](true);
-};
-
 /**
  * Add custom date formats
  */
@@ -305,6 +239,22 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 		retVal[0] = distance;
 	}
 	return retVal;
+});
+
+/**
+ * Sets the axis title to null unless otherwise specified by user.
+ * @param {Function} proceed - the original function
+ * @param {Object} chart - the chart which holds the axis
+ * @param {Object} userOptions - the user specified axis options
+ */
+wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+	var axis = this;
+	
+	if (userOptions.title && !userOptions.title.text) {
+		userOptions.title.text = null;
+	}
+	
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 });
 
 /**

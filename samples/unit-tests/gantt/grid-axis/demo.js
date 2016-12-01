@@ -7,25 +7,13 @@ QUnit.test('isOuterAxis()', function (assert) {
             type: 'bar'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             opposite: true
         }],
@@ -103,29 +91,17 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
             type: 'line'
         },
         yAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true,
             id: 'axis1'
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             grid: true,
             id: 'axis2'
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true,
             linkedTo: 0,
             id: 'axis3'
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             opposite: true,
             linkedTo: 1,
@@ -175,9 +151,6 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             type: 'scatter'
         },
         yAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true,
             id: 'axis1',
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -191,9 +164,6 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             min: Date.UTC(2014, 10, 18),
             max: Date.UTC(2014, 10, 21)
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             grid: true,
             id: 'axis2',
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -206,9 +176,6 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             id: 'axis3',
             opposite: true,
@@ -222,9 +189,6 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             id: 'axis4',
             opposite: true,
@@ -293,29 +257,17 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
             type: 'line'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true,
             id: 'axis1'
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             grid: true,
             id: 'axis2'
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true,
             linkedTo: 0,
             id: 'axis3'
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             opposite: true,
             linkedTo: 1,
@@ -365,9 +317,6 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true,
             id: 'axis1',
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -381,9 +330,6 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             min: Date.UTC(2014, 10, 18),
             max: Date.UTC(2014, 10, 21)
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             grid: true,
             id: 'axis2',
             tickInterval: 1000 * 60 * 60 * 24, // Day
@@ -396,9 +342,6 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             id: 'axis3',
             opposite: true,
@@ -412,9 +355,6 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
             },
             linkedTo: 0
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             id: 'axis4',
             opposite: true,
@@ -489,26 +429,14 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             type: 'column'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             type: 'datetime',
             grid: true
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             type: 'datetime',
             opposite: true
@@ -630,26 +558,14 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             type: 'datetime',
             grid: true
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             type: 'datetime',
             opposite: true
@@ -731,29 +647,17 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
             grid: true
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             type: 'datetime',
             min: Date.UTC(2016, 10, 12),
@@ -890,29 +794,17 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         yAxis: [{
-            title: {
-                text: 'First Axis'
-            },
             grid: true
         }, {
-            title: {
-                text: 'Second Axis'
-            },
             type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
             grid: true
         }, {
-            title: {
-                text: 'Third Axis'
-            },
             grid: true,
             opposite: true
         }, {
-            title: {
-                text: 'Fourth Axis'
-            },
             grid: true,
             type: 'datetime',
             min: Date.UTC(2016, 10, 12),
