@@ -197,9 +197,9 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
 		isCategoryAxis = axis.options.categories !== undefined,
 		tickPositions = axis.tickPositions,
 		lastTick = tickPositions[tickPositions.length - 1],
-		isLastTick = this.pos !== lastTick;
+		isLastTick = this.pos === lastTick;
 
-	if (!axis.options.grid || isCategoryAxis || isLastTick) {
+	if (!axis.options.grid || isCategoryAxis || !isLastTick) {
 		proceed.apply(this);
 	}
 });
@@ -219,6 +219,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		options = axis.options,
 		tickInterval = options.tickInterval || axis.tickInterval,
 		reversed = axis.reversed,
+		tickPositions = axis.tickPositions,
+		lastTick = tickPositions[tickPositions.length - 2],
+		isLastTick = tick.pos === lastTick,
 		tickPixelInterval,
 		newX,
 		axisMin,
@@ -230,10 +233,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		axisYCenter,
 		labelYCenter;
 
-// TODO
-// Week label popped out bc no space
-
-	// Only center tick labels if axis has option grid: true
+	// Only center tick labels in grid axes
 	if (options.grid) {
 		fontSize = options.labels.style.fontSize;
 		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label.element);
@@ -244,8 +244,12 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
-			x = axis.translate(tick.pos + (tickInterval / 2));
-			retVal.x = x + axis.left;
+			if (isLastTick) {
+				retVal.x = (axis.left + axis.len + x) / 2;
+			} else {
+				x = axis.translate(tick.pos + (tickInterval / 2));
+				retVal.x = x + axis.left;	
+			}
 
 			axisHeight = axis.axisGroup.getBBox().height;
 			axisYCenter = (axisHeight / 2);
@@ -277,7 +281,6 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 	}
 	return retVal;
 });
-
 
 /**
  * Draw vertical ticks extra long to create cell floors and roofs.
