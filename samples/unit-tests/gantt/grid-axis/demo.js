@@ -1004,3 +1004,65 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
         }
     });
 });
+
+/**
+ * Checks that the last tick label does not pop out of its grid if there was no
+ * room.
+ */
+QUnit.test('', function (assert) {
+    var labelBox,
+        axisBox,
+        axisRight,
+        axis,
+        tickPositions,
+        ticks,
+        tick,
+        chart = Highcharts.chart('container', {
+            chart: {
+                marginRight: 150
+            },
+            xAxis: [{
+                grid: true,
+                type: 'datetime',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '15px'
+                    }
+                },
+                min: Date.UTC(2016, 10, 21),
+                max: Date.UTC(2016, 10, 30),
+                currentDateIndicator: true
+            }, {
+                grid: true,
+                type: 'datetime',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                labels: {
+                    format: '{value:Week %W}',
+                    style: {
+                        fontSize: '15px'
+                    }
+                },
+                linkedTo: 0
+            }],
+            series: [{
+                data: [[Date.UTC(2016, 10, 22), 1]]
+            }]
+        });
+
+    axis = chart.xAxis[1];
+    tickPositions = axis.tickPositions;
+    ticks = axis.ticks;
+    // Second last tick is last tick with label
+    tick = ticks[tickPositions[tickPositions.length - 2]];
+    labelBox = tick.label.element.getBBox();
+    axisBox = axis.axisGroup.getBBox();
+    axisRight = axisBox.x + axisBox.width;
+    assert.ok(
+        labelBox.x < axisRight,
+        'Last tick label does not pop out'
+    );
+});
