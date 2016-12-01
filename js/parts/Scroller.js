@@ -26,7 +26,6 @@ var addEvent = H.addEvent,
 	doc = H.doc,
 	each = H.each,
 	erase = H.erase,
-	error = H.error,
 	extend = H.extend,
 	grep = H.grep,
 	hasTouch = H.hasTouch,
@@ -1184,7 +1183,7 @@ wrap(Chart.prototype, 'getMargins', function (proceed) {
 wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && isObject(options, true) && this.chart.scroller) {
-		error(20, true);
+		H.error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);
 });

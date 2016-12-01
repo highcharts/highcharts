@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	css = H.css,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	find = H.find,
 	fireEvent = H.fireEvent,
@@ -181,7 +180,7 @@ Chart.prototype = {
 
 		// No such series type
 		if (!Constr) {
-			error(17, true);
+			H.error(17, true);
 		}
 
 		series = new Constr();
@@ -667,7 +666,7 @@ Chart.prototype = {
 
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			H.error(13, true);
 		}
 
 		// If the container already holds a chart, destroy it. The check for hasRendered is there

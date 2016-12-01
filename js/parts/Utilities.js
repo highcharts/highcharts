@@ -31,7 +31,7 @@ var charts = H.charts,
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
  */
-H.error = function (code, stop) {
+H.error = function (code, stop) { // docs: Now API method, created in api.hc.com
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
 		code;
 	if (stop) {

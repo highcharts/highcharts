@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	deg2rad = H.deg2rad,
 	destroyObjectProperties = H.destroyObjectProperties,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
 	format = H.format,
@@ -1086,7 +1085,7 @@ H.Axis.prototype = {
 			axis.min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 			axis.max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
 			if (options.type !== axis.linkedParent.options.type) {
-				error(11, 1); // Can't link axes of different type
+				H.error(11, 1); // Can't link axes of different type
 			}
 
 		// Initial min and max from the extreme data values
@@ -1110,7 +1109,7 @@ H.Axis.prototype = {
 
 		if (isLog) {
 			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
+				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,
