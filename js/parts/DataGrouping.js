@@ -15,7 +15,6 @@ var arrayMax = H.arrayMax,
 	defaultPlotOptions = H.defaultPlotOptions,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	format = H.format,
 	isNumber = H.isNumber,
@@ -413,7 +412,7 @@ seriesProto.generatePoints = function () {
  */
 wrap(Point.prototype, 'update', function (proceed) {
 	if (this.dataGroup) {
-		error(24);
+		H.error(24);
 	} else {
 		proceed.apply(this, [].slice.call(arguments, 1));
 	}

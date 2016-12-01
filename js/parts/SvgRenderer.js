@@ -309,7 +309,8 @@ SVGElement.prototype = {
 			hasContrast = textOutline.indexOf('contrast') !== -1,
 			styles = {},
 			color,
-			strokeWidth;
+			strokeWidth,
+			firstRealChild;
 
 		// When the text shadow is set to contrast, use dark stroke for light
 		// text and vice versa.
@@ -354,6 +355,7 @@ SVGElement.prototype = {
 			});
 			
 			// For each of the tspans, create a stroked copy behind it.
+			firstRealChild = elem.firstChild;
 			each(tspans, function (tspan, y) {
 				var clone;
 
@@ -376,7 +378,7 @@ SVGElement.prototype = {
 					'stroke-width': strokeWidth,
 					'stroke-linejoin': 'round'
 				});
-				elem.insertBefore(clone, elem.firstChild);
+				elem.insertBefore(clone, firstRealChild);
 			});
 		}
 	},

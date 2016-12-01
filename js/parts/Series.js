@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
 	defined = H.defined,
 	each = H.each,
 	erase = H.erase,
-	error = H.error,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
 	grep = H.grep,
@@ -293,7 +292,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// The series needs an X and an Y axis
 			if (!series[AXIS] && series.optionalAxis !== AXIS) {
-				error(18, true);
+				H.error(18, true);
 			}
 
 		});
@@ -562,7 +561,7 @@ H.Series = H.seriesType('line', null, { // base series options
 						}
 					}
 				} else {
-					error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+					H.error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
@@ -576,7 +575,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
 			if (isString(yData[0])) {
-				error(14, true);
+				H.error(14, true);
 			}
 
 			series.data = [];
@@ -683,7 +682,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
 			// navigation in Stock charts (#725) and width calculation of columns (#1900)
 			} else if (distance < 0 && series.requireSorting) {
-				error(15);
+				H.error(15);
 			}
 		}
 

@@ -65,6 +65,7 @@ seriesType('waterfall', 'column', {
 			// Separate offsets for negative and positive columns:
 			positiveOffset = 0,
 			negativeOffset = 0,
+			stackIndicator,
 			tooltipY;
 
 		// run column series translate
@@ -81,8 +82,9 @@ seriesType('waterfall', 'column', {
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+			stackIndicator = series.getStackIndicator(stackIndicator, point.x);
 			range = stack ?
-				stack[point.x].points[series.index + ',' + i] :
+				stack[point.x].points[series.index + ',' + i + ',' + stackIndicator.index] :
 				[0, yValue];
 
 			// override point value for sums

@@ -643,7 +643,8 @@ H.Tooltip.prototype = {
 		// Distribute and put in place
 		H.distribute(boxes, chart.plotHeight + headerHeight);
 		each(boxes, function (box) {
-			var point = box.point;
+			var point = box.point,
+				series = point.series;
 
 			// Put the label in place
 			box.tt.attr({
@@ -652,10 +653,12 @@ H.Tooltip.prototype = {
 					box.x :
 					point.plotX + chart.plotLeft + pick(options.distance, 16)),
 				y: box.pos + chart.plotTop,
-				anchorX: point.plotX + chart.plotLeft,
+				anchorX: point.isHeader ?
+					point.plotX + chart.plotLeft :
+					point.plotX + series.xAxis.pos,
 				anchorY: point.isHeader ?
 					box.pos + chart.plotTop - 15 :
-					point.plotY + chart.plotTop
+					point.plotY + series.yAxis.pos
 			});
 		});
 	},

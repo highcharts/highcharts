@@ -505,4 +505,23 @@ $(function () {
         );
     });
 
+    QUnit.test('find', function (assert) {
+
+        assert.strictEqual(
+            Highcharts.find([1, 2, 3, 4, 5], function (item) {
+                return item >= 3;
+            }),
+            3,
+            'Returns first item'
+        );
+
+        assert.deepEqual(
+            Highcharts.find([1, 2, { id: 'findMe' }, 4, 5], function (item) {
+                return item && item.id === 'findMe';
+            }),
+            { id: 'findMe' },
+            'Returns first item'
+        );
+    });
+
 });
