@@ -706,8 +706,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 				d: point.haloPath(haloOptions.size)
 			});
 			halo.attr({
-				'class': 'highcharts-halo highcharts-color-' + pick(point.colorIndex, series.colorIndex) 
+				'class': 'highcharts-halo highcharts-color-' +
+					pick(point.colorIndex, series.colorIndex) 
 			});
+			halo.point = point; // #6055
 
 			/*= if (build.classic) { =*/
 			halo.attr(extend({
@@ -716,8 +718,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 				'zIndex': -1 // #4929, IE8 added halo above everything
 			}, haloOptions.attributes));
 			/*= } =*/
-		} else if (halo) {
-			halo.animate({ d: point.haloPath(0) }); // Hide
+
+		} else if (halo && halo.point) {
+			// Animate back to 0 on the current halo point (#6055)
+			halo.animate({ d: halo.point.haloPath(0) });
 		}
 
 		point.state = state;
