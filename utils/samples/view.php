@@ -254,7 +254,11 @@ function getResources() {
 			}
 		}
 
-
+		if (jQuery) {
+			jQuery.readyException = function (error) {
+				throw error;
+			};
+		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
 		$(function () {

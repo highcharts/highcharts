@@ -975,6 +975,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				lastPlotX = plotX;
 			}
 
+			// Find point zone
+			point.zone = this.zones.length && point.getZone();
 		}
 		series.closestPointRangePx = closestPointRangePx;
 	},
@@ -1252,17 +1254,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				pointMarkerOptions.lineWidth,
 				seriesMarkerOptions.lineWidth
 			),
-			zoneColor,
+			zoneColor = point && point.zone && point.zone.color,
 			fill,
-			stroke,
-			zone;
-
-		if (point && this.zones.length) {
-			zone = point.getZone();
-			if (zone && zone.color) {
-				zoneColor = zone.color;
-			}
-		}
+			stroke;
 
 		color = pointColorOption || zoneColor || pointColor || color;
 		fill = pointMarkerOptions.fillColor || seriesMarkerOptions.fillColor || color;
