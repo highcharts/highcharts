@@ -198,6 +198,11 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 
 				if (isComparing) {
 					document.body.className = 'compare';
+
+					$('#close').click(function () {
+						window.parent.parent.document.querySelector('frameset')
+							.setAttribute('cols', '400, *');
+					});
 				}
 
 				var colors = [
@@ -466,12 +471,25 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 				padding: 1em 1em 0 1em;
 			}
 
-			
+			#close {
+				display: none;
+			}
+			.compare #close {
+				display: inline-block;
+				float: right;
+				margin-right: 1em;
+				border-radius: 0;
+				color: white;
+				background: #34343e;
+				border: none;
+			}
 		</style>
 	</head>
 	
 	<body>
 		<div id="topnav">
+
+			<button id="close">X</button>
 			
 			<form method="post" action="commits.php">
 			<p style="padding: 0 10px; color: gray; font-style: italic">
