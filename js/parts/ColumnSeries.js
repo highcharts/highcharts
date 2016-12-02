@@ -319,6 +319,8 @@ seriesType('column', 'line', {
 			fill = (point && point.color) || this.color,
 			stroke = point[strokeOption] || options[strokeOption] ||
 				this.color || fill, // set to fill when borderColor null
+			strokeWidth = point[strokeWidthOption] || 
+				options[strokeWidthOption] || this[strokeWidthOption] || 0,
 			dashstyle = options.dashStyle,
 			zone,
 			brightness;
@@ -337,13 +339,14 @@ seriesType('column', 'line', {
 				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||
 				fill;
 			stroke = stateOptions[strokeOption] || stroke;
+			strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
 			dashstyle = stateOptions.dashStyle || dashstyle;
 		}
 
 		ret = {
 			'fill': fill,
 			'stroke': stroke,
-			'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
+			'stroke-width': strokeWidth
 		};
 		if (options.borderRadius) {
 			ret.r = options.borderRadius;
