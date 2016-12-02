@@ -153,6 +153,7 @@ merge(true, defaultOptions, {
 	}
 });
 
+/*= if (!build.classic) { =*/
 /**
  * Override the getContainer by adding the required CSS classes for column 
  * sides (#6018)
@@ -171,6 +172,7 @@ wrap(Chart.prototype, 'getContainer', function (proceed) {
 			'}\n'
 	});
 });
+/*= } =*/
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
