@@ -35,6 +35,12 @@ H.colorPointMixin = {
 				point[key][method]();
 			}
 		});
+	},
+	setState: function (state) {
+		H.Point.prototype.setState.call(this, state);
+		this.graphic.attr({
+			zIndex: state === 'hover' ? 1 : 0
+		});
 	}
 };
 
