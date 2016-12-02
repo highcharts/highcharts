@@ -150,20 +150,26 @@ merge(true, defaultOptions, {
 				}
 			}
 		}
-	},
-	/*= if (!build.classic) { =*/
-	defs: {
-		style: {
-			textContent: defaultOptions.defs.style.textContent +
-				'\n.highcharts-3d-top{' +
-					'filter: url(#highcharts-brighter)' +
-				'}' +
-				'\n.highcharts-3d-side{' +
-					'filter: url(#highcharts-darker)' +
-				'}'
-		}
 	}
-	/*= } =*/
+});
+
+/**
+ * Override the getContainer by adding the required CSS classes for column 
+ * sides (#6018)
+ */
+wrap(Chart.prototype, 'getContainer', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	this.renderer.definition({
+		tagName: 'style',
+		textContent: 
+			'.highcharts-3d-top{' +
+				'filter: url(#highcharts-brighter)' +
+			'}\n' +
+			'.highcharts-3d-side{' +
+				'filter: url(#highcharts-darker)' +
+			'}\n'
+	});
 });
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {

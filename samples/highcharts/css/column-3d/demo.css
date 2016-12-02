@@ -6,7 +6,3 @@
 	max-width: 800px;
 	margin: 0 auto;
 }
-
-.highcharts-column-series .highcharts-point {
-	stroke: black;
-}
