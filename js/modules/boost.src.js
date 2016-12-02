@@ -77,20 +77,8 @@ var win = H.win,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//Keep the GL renderer somewhat isolated
-/*
-	Notes to self:
-		- If we need varrying sizes for things (e.g. bubble charts) we can
-		  use a vec3 instead, and use z as the size.
-		- May be able to build a point map by rendering to a separate canvas
-		  and encoding values in the color data.
-		- If we need colors per. point/line we need a separate vertex buffer
-		- Need to figure out a way to transform the data quicker
-
-*/
-function GLRenderer() {
-	var//Vertex shader source
-		vertShade = [
+function GLShader(gl) {
+	var vertShade = [
 			/* eslint-disable */
 			'#version 100',
 			'precision highp float;',
@@ -150,11 +138,11 @@ function GLRenderer() {
 			'}',
 
 			'float xToPixels(float value){',
-				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord);',
+				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord) + xAxisPos;',
 			'}',
 
 			'float yToPixels(float value, float checkTreshold){',
-				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);',
+				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
 				'if (checkTreshold > 0.0 && hasThreshold) {',
 					'v = min(v, translatedThreshold);',
 				'}',
@@ -186,96 +174,7 @@ function GLRenderer() {
 		//Uniform for point size
 		psUniform,
 		//Uniform for fill color
-		fillColorUniform,
-
-		//Vertex buffers - keyed on shader attribute name
-		vbuffers = {},
-
-		//Opengl context
-		gl = false,
-		//Width of our viewport in pixels
-		width = 0,
-		//Height of our viewport in pixels
-		height = 0,
-		//The data to render - array of coordinates
-		data = [],
-		//Exports
-		exports = {},
-		//Shader uniforms
-		uniforms = {},
-		//Render settings
-		settings = {
-			pointSize: 2,
-			lineWidth: 1,
-			drawMode: 'points',
-			fillColor: '#AA00AA',
-			useAlpha: false	
-		};
-
-	////////////////////////////////////////////////////////////////////////////
-
-	/* Vertex Buffer abstraction */
-	function VertexBuffer() {
-		var buffer = false,
-			vertAttribute = false,
-			components,
-			drawMode,
-			data;
-
-		/* Build the buffer */
-		function build(dataIn, attrib, dataComponents, dMode) {
-			data = dataIn || [];
-
-			if (!data.length) {
-				return console.error(data);
-			}
-
-			components = dataComponents || 2;
-			drawMode = dMode || false;
-
-			buffer = gl.createBuffer();
-			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-			gl.bufferData(
-				gl.ARRAY_BUFFER, 
-				new Float32Array(data), 
-				gl.STATIC_DRAW
-			);
-
-			vertAttribute = gl.getAttribLocation(shaderProgram, attrib);
-			gl.enableVertexAttribArray(vertAttribute);
-		}
-
-		/* Set the draw mode */
-		function setDrawMode(m) {
-			drawMode = m;
-		}
-
-		/* Render the buffer */
-		function render() {
-			if (!buffer) {
-				return console.error('opengl: tried rendering buffer, but no buffer defined');
-			}
-
-			if (!data.length) {
-				return console.error('skipped vertex buffer rendering - data is empty');
-			}
-
-			drawMode = drawMode || settings.drawMode;
-
-			gl.enableVertexAttribArray(vertAttribute);
-			gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-			gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
-			gl.enableVertexAttribArray(vertAttribute);
-			gl.drawArrays(gl[drawMode.toUpperCase()], 0, data.length / components); 
-		}
-
-		////////////////////////////////////////////////////////////////////////
-		return {
-			setDrawMode: setDrawMode,
-			build: build,
-			render: render
-		};    	
-	}
+		fillColorUniform;
 
 	/* String to shader program
 	 * @param {string} str - the program source
@@ -324,6 +223,175 @@ function GLRenderer() {
 		return true;
 	}
 
+	function bind() {
+		gl.useProgram(shaderProgram);
+	}
+
+	function setUniform(name, val) {
+		//Need to cache locations
+		var u = pUniform = gl.getUniformLocation(shaderProgram, name);
+		gl.uniform1f(u, val);
+	}
+
+	function setColor(color) {
+		gl.uniform4f(
+			fillColorUniform, 
+			color[0] / 255.0, 
+			color[1] / 255.0, 
+			color[2] / 255.0, 
+			color[3]
+		);
+	}
+
+	function setPMatrix(m) {
+		gl.uniformMatrix4fv(pUniform, false, m);
+	}
+
+	function setPointSize(p) {
+		gl.uniform1f(psUniform, p);
+	}
+
+	function getProgram() {
+		return shaderProgram;
+	}
+
+	if (gl) {
+		createShader();		
+	}
+
+	return {
+		psUniform: function () { return psUniform; },
+		pUniform: function () { return pUniform; },
+		fillColorUniform: function() { return fillColorUniform; },
+		bind: bind,
+		program: getProgram,
+		create: createShader,
+		setUniform: setUniform,
+		setPMatrix: setPMatrix,
+		setColor: setColor,
+		setPointSize: setPointSize
+	};
+}
+
+/* Vertex Buffer abstraction */
+function GLVertexBuffer(gl, shader) {
+	var buffer = false,		
+		vertAttribute = false,
+		components,
+		drawMode,
+		data;	
+
+	/* Build the buffer */
+	function build(dataIn, attrib, dataComponents) {
+		data = dataIn || [];
+
+		if (!data.length) {
+			return console.error(data);
+		}
+
+		components = dataComponents || 2;
+
+		buffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		gl.bufferData(
+			gl.ARRAY_BUFFER, 
+			new Float32Array(data), 
+			gl.STATIC_DRAW
+		);
+
+		vertAttribute = gl.getAttribLocation(shader.program(), attrib);
+		gl.enableVertexAttribArray(vertAttribute);
+	}
+
+	/* Bind the buffer */
+	function bind() {		
+		gl.enableVertexAttribArray(vertAttribute);
+		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(vertAttribute);
+	}
+
+	/* Render the buffer */
+	function render(from, to, drawMode) {
+		if (!buffer) {
+			return console.error('opengl: tried rendering buffer, but no buffer defined');
+		}
+
+		if (!data.length) {
+			return console.error('skipped vertex buffer rendering - data is empty');
+		}
+
+		from = from || 0;
+		to = to || data.length;
+
+		if (from < 0) {
+			from = 0;
+		}
+
+		if (from > data.length) {
+			from = 0;
+		}
+
+		if (to > data.length) {
+			to = data.length;
+		}
+
+		drawMode = drawMode || 'points';
+
+		gl.drawArrays(gl[drawMode.toUpperCase()], from, (to - from) / components); 
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	return {
+		bind: bind,
+		data: data,
+		build: build,
+		render: render
+	};    	
+}
+
+//Keep the GL renderer somewhat isolated
+/*
+	Notes to self:
+		- If we need varrying sizes for things (e.g. bubble charts) we can
+		  use a vec3 instead, and use z as the size.
+		- May be able to build a point map by rendering to a separate canvas
+		  and encoding values in the color data.
+		- If we need colors per. point/line we need a separate vertex buffer
+		- Need to figure out a way to transform the data quicker
+
+*/
+function GLRenderer() {
+	var //Shader
+		shader = false,
+		//Vertex buffers - keyed on shader attribute name
+		vbuffer = false,
+		//Opengl context
+		gl = false,
+		//Width of our viewport in pixels
+		width = 0,
+		//Height of our viewport in pixels
+		height = 0,
+		//The data to render - array of coordinates
+		data = [],
+		//Exports
+		exports = {},
+		//Is it inited?
+		isInited = false,
+
+		series = [],
+	
+		//Render settings
+		settings = {
+			pointSize: 2,
+			lineWidth: 2,
+			drawMode: 'points',
+			fillColor: '#AA00AA',
+			useAlpha: true	
+		};
+
+	////////////////////////////////////////////////////////////////////////////
+
 	/*  Returns an orthographic perspective matrix
 	 *  @param {number} width - the width of the viewport in pixels
 	 *  @param {number} height - the height of the viewport in pixels
@@ -337,77 +405,127 @@ function GLRenderer() {
 		];
 	}
 
-	function addVBuffer(attribName, dataIn, components, drawMode, uniforms) {
-		vbuffers[attribName] = {
-			data: dataIn || [],
-			components: components,
-			drawMode: drawMode,
-			uniforms: uniforms
-		};
-
-		return vbuffers[attribName].data;
-	}
-
 	function clear() {
 		gl.clearColor(1.0, 1.0, 1.0, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
+	function pushSeries(s) {
+		if (series.length > 0) {
+			series[series.length - 1].to = data.length;
+		}
+
+		series.push({
+			from: data.length,
+			series: s 
+		});
+	}
+
 	function flush() {
+		series = [];
 		exports.data = data = [];
+	}
+
+	function setXAxis(axis) {
+		if (!shader) {
+			return;
+		}
+
+		shader.setUniform('xAxisTrans', axis.transA);
+		shader.setUniform('xAxisMin', axis.min);
+		shader.setUniform('xAxisMinPad', axis.minPixelPadding);
+		shader.setUniform('xAxisPointRange', axis.pointRange);
+		shader.setUniform('xAxisLen', axis.len);
+		shader.setUniform('xAxisPos', axis.pos);
+		shader.setUniform('xAxisCVSCoord', !axis.horiz);
+	}
+
+	function setYAxis(axis) {
+		if (!shader) {
+			return;
+		}
+
+		shader.setUniform('yAxisTrans', axis.transA);
+		shader.setUniform('yAxisMin', axis.min);
+		shader.setUniform('yAxisMinPad', axis.minPixelPadding);
+		shader.setUniform('yAxisPointRange', axis.pointRange);
+		shader.setUniform('yAxisLen', axis.len);
+		shader.setUniform('yAxisPos', axis.pos);
+		shader.setUniform('yAxisCVSCoord', !axis.horiz);
+	}
+
+	function setThreshold(has, translation) {
+		shader.setUniform('hasThreshold', has);
+		shader.setUniform('translatedThreshold', translation);
 	}
 
 	/* Render the data */
 	function render() {
 		if (!gl || !width || !height) {
-			console.error('no valid gl context: w =', width, 'h =', height, 'gl =', gl);
+			console.error(
+				'no valid gl context: w =', 
+				width, 'h =', 
+				height, 
+				'gl =', 
+				gl
+			);
 			return false;
-		}
+		}		
 
-		var color = H.color(settings.fillColor).rgba;
+		shader.bind();
 
-		if (!settings.useAlpha) {
-			color[3] = 1.0;
-		}
+		gl.lineWidth(settings.lineWidth);
+		shader.setPointSize(settings.pointSize);
 
-		console.time('gl rendering');
+		//Build a single buffer for all series
+		vbuffer.build(exports.data, 'aVertexPosition', 3);
+		vbuffer.bind();
 
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.enable(gl.BLEND);
-		//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.blendEquation(gl.FUNC_ADD);
-		gl.enable(gl.DEPTH_TEST);
+		//Render the series - this is a lot of draw calls
+		each(series, function (s) {
+			var options = s.series.options,
+				yBottom = s.series.yAxis.getThreshold(threshold),
+				threshold = options.threshold,
+				hasThreshold = isNumber(threshold),
+				translatedThreshold = yBottom,
+				drawMode = 'points',
+				fillColor = s.series.fillOpacity ?
+					new Color(s.series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
+					s.series.color,
+				color = H.color(fillColor).rgba;			
 
-		createShader();
+			if (!settings.useAlpha) {
+				color[3] = 1.0;
+			}
 
-		gl.lineWidth(2);
+			shader.setColor(color);
+			setXAxis(s.series.xAxis);
+			setYAxis(s.series.yAxis);
+			setThreshold(hasThreshold, translatedThreshold);
 
-		gl.uniformMatrix4fv(pUniform, false, orthoMatrix(width, height));
-		gl.uniform1f(psUniform, settings.pointSize);
-		gl.uniform4f(fillColorUniform, color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3]);
+			//Draw mode
+			if (s.series.type === 'column' || s.series.type === 'line') {
+				drawMode = 'line_strip';
+			}
 
-		addVBuffer('aVertexPosition', data, 3);
-
-		if (uniforms) {
-			Object.keys(uniforms).forEach(function (uniform) {
-				var u = pUniform = gl.getUniformLocation(shaderProgram, uniform);
-				gl.uniform1f(u, uniforms[uniform]);
-			});
-		}
-
-		Object.keys(vbuffers).forEach(function (attrib) {
-			var def = vbuffers[attrib],
-				//Prototype objects aren't the only things which constructs objects, eslint :'(
-				buffer = VertexBuffer(); //eslint-disable-line 
-
-			buffer.build(def.data, attrib, def.components, def.drawMode, def.uniforms);
-			buffer.render();
+			//Do the actual rendering
+			vbuffer.render(s.from, s.to, drawMode);
 		});
 
-		console.timeEnd('gl rendering');
+		// if (uniforms) {
+		// 	Object.keys(uniforms).forEach(function (uniform) {
+		// 		var u = pUniform = gl.getUniformLocation(shader.program(), uniform);
+		// 		gl.uniform1f(u, uniforms[uniform]);
+		// 	});
+		// }
+		
 	}
-
-	/* Add a vertex buffer */
+	
+	function setSize(w, h) {
+		width = w;
+		height = h;
+		shader.setPMatrix(orthoMatrix(width, height));
+	}
 	
 	/* Init OpenGL */
 	function init(canvas) {
@@ -415,34 +533,27 @@ function GLRenderer() {
 			return false;
 		}
 
+		console.time('gl setup');
+
 		gl = canvas.getContext('webgl');
-		width = canvas.width;
-		height = canvas.height;
 
 		if (gl) {        	
-			clear();
 			flush();
 		}
-	}
 
-	/* Add data to render */
-	function push(x, y, bottom, checkTreshold) {
-		if (y !== bottom) {
-			data.push(x);
-			data.push(bottom);
-			data.push(checkTreshold ? 1.0 : 0.0);
-			settings.drawMode = 'line_strip';
-		}
+		gl.enable(gl.BLEND);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		gl.blendEquation(gl.FUNC_ADD);
+		gl.enable(gl.DEPTH_TEST);
 
-		data.push(x);
-		data.push(y);
-		data.push(checkTreshold ? 1.0 : 0.0);
+		shader = GLShader(gl);		
+		vbuffer = GLVertexBuffer(gl, shader);
 
-		if (y !== bottom) {
-			data.push(x);
-			data.push(bottom);
-			data.push(checkTreshold ? 1.0 : 0.0);
-		}
+		setSize(canvas.width, canvas.height);
+
+		isInited = true;
+
+		console.timeEnd('gl setup');
 	}
 
 	/* Check if we have a valid OGL context */
@@ -450,41 +561,19 @@ function GLRenderer() {
 		return gl !== false;
 	}	
 
-	function setXAxis(axis) {
-		//addVBuffer('aXAxis', data, 1, settings.drawMode);
+	
 
-		uniforms.xAxisTrans = axis.transA;
-		uniforms.xAxisMin = axis.min;
-		uniforms.xAxisMinPad = axis.minPixelPadding;
-		uniforms.xAxisPointRange = axis.pointRange;
-		uniforms.xAxisLen = axis.len;    
-		uniforms.xAxisPos = axis.pos;
-		uniforms.xAxisCVSCoord = !axis.horiz;
-	}
-
-	function setYAxis(axis) {
-		//addVBuffer('aYAxis', data, 1, settings.drawMode);
-
-		uniforms.yAxisTrans = axis.transA;
-		uniforms.yAxisMin = axis.min;
-		uniforms.yAxisMinPad = axis.minPixelPadding;
-		uniforms.yAxisPointRange = axis.pointRange;
-		uniforms.yAxisLen = axis.len;
-		uniforms.yAxisPos = axis.pos;
-		uniforms.yAxisCVSCoord = !axis.horiz;
-	}
-
-	function setThreshold(has, translation) {
-		uniforms.hasThreshold = has;
-		uniforms.translatedThreshold = translation;
+	function inited() {
+		return isInited;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	exports = {
+		pushSeries: pushSeries,
+		setSize: setSize,
+		inited: inited,
 		setThreshold: setThreshold,
 		init: init,
-		addVBuffer: addVBuffer,
-		push: push,
 		render: render,
 		settings: settings,
 		valid: valid,
@@ -600,6 +689,17 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
+// wrap(Series.prototype, 'render', function (proceed) {
+// 	if (this.drawGraph) {
+// 		this.drawGraph();		
+// 	}
+
+// 	if (series.visible) {
+// 		series.drawPoints();
+// 	}
+// });
+
+
 H.extend(Series.prototype, {
 	//This is totally a constructor, eslint.
 	gl: GLRenderer(), //eslint-disable-line
@@ -645,65 +745,66 @@ H.extend(Series.prototype, {
 	 * Create a hidden canvas to draw the graph on. The contents is later copied over 
 	 * to an SVG image element.
 	 */
-	getContext: function () {
+	setUpContext: function () {
 		var chart = this.chart,
-			width = chart.plotWidth,
-			height = chart.plotHeight,
-			ctx = this.ctx,
+			width = chart.chartWidth,
+			height = chart.chartHeight,
 			swapXY = function (proceed, x, y, a, b, c, d) {
 				proceed.call(this, y, x, a, b, c, d);
 			};
 
-		if (!this.canvas) {
-			this.canvas = doc.createElement('canvas');
-			this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
-
-			//this.fobj = chart.renderer.createElement('foreignObject').add(this.group);			
-			//this.fobj.element.appendChild(this.canvas);
-
-			this.canvas.width = width;
-			this.canvas.height = height;
-
-			this.gl.init(this.canvas);
-			
-			if (!this.gl.valid()) {
-				this.ctx = ctx = this.canvas.getContext('2d');				
-			}
+		if (!chart.canvas) {
+			console.log('Setting up the canvas');
+			chart.canvas = doc.createElement('canvas');		
+			chart.image = chart.renderer.image('', 0, 0, width, height).add(chart.seriesGroup);
 
 			if (chart.inverted) {
 				each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
 					wrap(ctx, fn, swapXY);
 				});
 			}
-		} else {
-
-			//ctx.clearRect(0, 0, width, height);
-			if (!this.gl.valid()) {
-				ctx.rect(0, 0, width, height);				
-			} else {
-				this.gl.flush();
-			}
 		}
 
-		this.canvas.width = width;
-		this.canvas.height = height;
-	
-		(this.image || this.fobj).attr({
+
+		//if (chart.canvas.width !== width || chart.canvas.height !== height) {
+			chart.canvas.width = width;
+			chart.canvas.height = height;			
+		//}
+		
+		if (!chart.ogl) {
+			chart.ogl = GLRenderer();
+			chart.ogl.init(chart.canvas);
+			chart.ogl.clear();
+
+		}
+		// //Handle OGL
+		// if (!this.gl.inited()) {
+		// 	this.gl.init(chart.canvas);
+		// 	this.gl.clear();
+
+
+		// 	if (!this.gl.valid()) {
+		// 		//HANDLE WEBGL SUPPORT FAILURE HERE
+		// 		fireEvent(series, 'webglUnsupported');
+		// 		console.err('unable to create webgl context');	
+		// 	}
+		// }
+
+		chart.image.attr({
 			x: 0,
 			y: 0,
 			width: width,
 			height: height
 		});
-
-		return ctx;
 	},
 
 	/** 
 	 * Draw the canvas image inside an SVG image
 	 */
-	canvasToSVG: function () {
-		if (this.image) {
-			this.image.attr({ href: this.canvas.toDataURL('image/png') });			
+	canvasToSVG: function () {		
+		if (this.chart.image && this.chart.canvas) {
+			console.log('copying canvas to svg');
+			this.chart.image.attr({ href: this.chart.canvas.toDataURL('image/png') });			
 		}
 	},
 
@@ -713,7 +814,6 @@ H.extend(Series.prototype, {
 
 	renderCanvas: function () {
 		var series = this,
-			gl = this.gl,
 			options = series.options,
 			chart = series.chart,
 			xAxis = this.xAxis,
@@ -824,51 +924,45 @@ H.extend(Series.prototype, {
 			this.destroyGraphics();
 		}
 
-		// The group
-		series.plotGroup(
-			'group',
-			'series',
-			series.visible ? 'visible' : 'hidden',
-			options.zIndex,
-			chart.seriesGroup
-		);
+		this.setUpContext();
 
-		series.markerGroup = series.group;
-		addEvent(series, 'destroy', function () {
-			series.markerGroup = null;
-		});
+		//Add the series to the renderer
+		chart.ogl.pushSeries(series);
+
+		// The group
+		// series.plotGroup(
+		// 	'group',
+		// 	'series',
+		// 	series.visible ? 'visible' : 'hidden',
+		// 	options.zIndex,
+		// 	chart.seriesGroup
+		// );
+
+		// series.markerGroup = series.group;
+
+		// addEvent(series, 'destroy', function () {
+		// 	series.markerGroup = null;
+		// });
 
 		points = this.points = [];
-		ctx = this.getContext();
 		series.buildKDTree = noop; // Do not start building while drawing 
 
-		//We don't want to do state switches more often than needed,
-		//so do it once
-		if (!gl.valid()) {
-			if (doFill) {
-				ctx.fillStyle = fillColor;
-			} else {
-				ctx.strokeStyle = series.color;
-				ctx.lineWidth = options.lineWidth;
-			}			
-		} 
-		
-		gl.settings.fillColor = series.color;
-		if (!doFill) {
-			gl.settings.lineWidth = options.lineWidth + 1;
-			gl.settings.drawMode = 'line_strip';			
-		}
+		// gl.settings.fillColor = fillColor;
 
-		if (options.marker) {
-			gl.settings.pointSize = options.marker.radius || 1;			
-		}
+		// if (!doFill) {
+		// 	gl.settings.lineWidth = options.lineWidth + 1;
+		// 	gl.settings.drawMode = 'line_strip';			
+		// }
 
-		if (!gl.valid()) {
-			if (cvsLineTo) {
-				gl.settings.drawMode = 'line_strip';
-				ctx.lineJoin = 'round';
-			}			
-		}
+		// if (options.marker) {
+		// 	gl.settings.pointSize = options.marker.radius || 1;			
+		// }
+
+		// if (!gl.valid()) {
+		// 	if (cvsLineTo) {
+		// 		gl.settings.drawMode = 'line_strip';
+		// 	}			
+		// }
 
 		function processPoint(d, i) {
 			var x,
@@ -994,14 +1088,12 @@ H.extend(Series.prototype, {
 			series.buildKDTree();
 		}
 
-		
-
 		//minVal = 9999;
 
 		minVal = maxVal = undefined;
 		maxI = minI = wasNull = undefined;
 
-		if (gl.valid()) {
+		if (chart.ogl) {
 			//minVal = series.yAxis.min;
 	
 			//var height = this.height;
@@ -1129,50 +1221,48 @@ H.extend(Series.prototype, {
 				if (series.type === 'column') {
 					//Need to add an extra point here
 					//gl.push(d[0], d[1] + series.yAxis.);
-					gl.data.push(x);
-					gl.data.push(minVal);
-					gl.data.push(0);
+					chart.ogl.data.push(x);
+					chart.ogl.data.push(minVal);
+					chart.ogl.data.push(0);
 				}
 				
-				gl.data.push(x);					
-				gl.data.push(maxVal);
-				gl.data.push(0);
+				chart.ogl.data.push(x);					
+				chart.ogl.data.push(maxVal);			
+				chart.ogl.data.push(0);								
 								
 				if (series.type === 'column') {
 					//Need to add an extra point here
 					//gl.push(d[0], d[1] + series.yAxis.);
-					gl.data.push(x);
-					gl.data.push(minVal);
-					gl.data.push(0);
+					chart.ogl.data.push(x);
+					chart.ogl.data.push(minVal);
+					chart.ogl.data.push(0);
 				}
 
 			});
 
-			if (series.type === 'column' || series.type === 'line') {
-				gl.settings.drawMode = 'line_strip';
-			}
-
-			console.log(series.type);
+			// if (series.type === 'column' || series.type === 'line') {
+			// 	gl.settings.drawMode = 'line_strip';
+			// }
 			
-			gl.setThreshold(hasThreshold, translatedThreshold);
-			gl.setXAxis(series.xAxis, xData);
-			gl.setYAxis(series.yAxis, yData);
+			//gl.setThreshold(hasThreshold, translatedThreshold);
+			// gl.setXAxis(series.xAxis, xData);
+			// gl.setYAxis(series.yAxis, yData);
 
 			//Rendering is done in post proc for now
-			gl.render();
-			series.canvasToSVG();
+			//gl.render();
+			//series.canvasToSVG();
 			//fireEvent(series, 'renderedCanvas');
 
 			//return true;
 		}	
 
 		// Loop over the points to build the k-d tree
-		eachAsync(
-					isStacked ? series.data : (xData || rawData), 
-					processPoint, 
-					doneProcessing, 
-					chart.renderer.forExport ? Number.MAX_VALUE : undefined
-		);
+		// eachAsync(
+		// 	isStacked ? series.data : (xData || rawData), 
+		// 	processPoint, 
+		// 	doneProcessing, 
+		// 	chart.renderer.forExport ? Number.MAX_VALUE : undefined
+		// );
 	}
 });
 
@@ -1266,9 +1356,41 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
 H.Chart.prototype.callbacks.push(function (chart) {
 
 	function canvasToSVG() {
+		console.time('gl rendering');
+		if (chart.ogl) {
+			chart.ogl.render();
+		}
+		console.timeEnd('gl rendering');
 
+		console.log('copying canvas to svg');
+		if (chart.image && chart.canvas) {
+			chart.image.attr({ 
+				href: chart.canvas.toDataURL('image/png') 
+			});			
+		}
 	}
 
+	function preRender() {
+		var gl;
+
+		if (!chart.canvas) {
+			return;
+		}
+
+		console.log('clearing ogl');
+
+		if (chart.ogl) {
+			chart.ogl.flush();
+		}
+
+		//Clear ogl
+		gl = chart.canvas.getContext('webgl');
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	}
+
+	addEvent(chart, 'predraw', preRender);
+	//Blit to image when done redrawing
+	addEvent(chart, 'render', canvasToSVG);
+	//Handles the blitting on first render
 	addEvent(chart, 'load', canvasToSVG);
-	addEvent(chart, 'redraw', canvasToSVG);
 });

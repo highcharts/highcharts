@@ -328,6 +328,7 @@ Chart.prototype = {
 			chart.drawChartBox();
 		}
 
+		fireEvent(chart, 'predraw');
 
 		// redraw affected series
 		each(series, function (serie) {
@@ -341,11 +342,9 @@ Chart.prototype = {
 			pointer.reset(true);
 		}
 
-		// redraw if canvas
-		renderer.draw();
-
 		// fire the event
 		fireEvent(chart, 'redraw');
+		fireEvent(chart, 'render'); // docs: On first render + redraws
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -1516,9 +1515,8 @@ Chart.prototype = {
 		}
 
 		chart.render();
-
-		// add canvas
-		chart.renderer.draw();
+		
+		fireEvent(chart, 'render');
 		
 		// Fire the load event if there are no external images
 		if (!chart.renderer.imgCount && chart.onload) {
