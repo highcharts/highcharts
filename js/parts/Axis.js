@@ -1368,7 +1368,15 @@ H.Axis.prototype = {
 			hasOther,
 			options = this.options;
 
-		if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
+		if (
+			// Only if alignTicks is true
+			this.chart.options.chart.alignTicks !== false &&
+			options.alignTicks !== false &&
+
+			// Don't try to align ticks on a log axis, they are not evenly
+			// spaced (#6021)
+			!this.isLog
+		) {
 			each(this.chart[this.coll], function (axis) {
 				var otherOptions = axis.options,
 					horiz = axis.horiz,
