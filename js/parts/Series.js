@@ -33,7 +33,6 @@ var addEvent = H.addEvent,
 	Point = H.Point, // @todo  add as a requirement
 	removeEvent = H.removeEvent,
 	splat = H.splat,
-	stableSort = H.stableSort,
 	SVGElement = H.SVGElement,
 	syncTimeout = H.syncTimeout,
 	win = H.win;
@@ -186,10 +185,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			eventType,
 			events,
 			chartSeries = chart.series,
-			lastSeries,
-			sortByIndex = function (a, b) {
-				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
-			};
+			lastSeries;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -241,11 +237,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		chartSeries.push(series);
 
-		// Sort series according to index option (#248, #1123, #2456)
-		stableSort(chartSeries, sortByIndex);
-		if (this.yAxis) {
-			stableSort(this.yAxis.series, sortByIndex);
-		}
+		// Sort series based on index
+		chart.sortSeries(this);
 
 		each(chartSeries, function (series, i) {
 			series.index = i;
@@ -1278,7 +1271,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
 			stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
 		}
-		
+
 		return {
 			'stroke': stroke,
 			'stroke-width': strokeWidth,
