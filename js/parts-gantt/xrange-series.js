@@ -17,7 +17,6 @@ var defaultPlotOptions = H.getOptions().plotOptions,
 	merge = H.merge,
 	pick = H.pick,
 	seriesTypes = H.seriesTypes,
-	stop = H.stop,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Point = H.Point,
@@ -173,7 +172,6 @@ seriesTypes.xrange = extendClass(columnType, {
 
 			if (isNumber(plotY) && point.y !== null) {
 				if (graphic) { // update
-					stop(graphic);
 					point.graphicOriginal[verb](
 						merge(shapeArgs)
 					);

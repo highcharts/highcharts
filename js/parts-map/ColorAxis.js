@@ -505,7 +505,16 @@ extend(ColorAxis.prototype, {
  */
 each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, ColorAxis.prototype.tweenColors(color(this.start), color(this.end), this.pos));
+		this.elem.attr(
+			prop,
+			ColorAxis.prototype.tweenColors(
+				color(this.start),
+				color(this.end),
+				this.pos
+			),
+			null,
+			true
+		);
 	};
 });
 

@@ -43,7 +43,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 
-		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="cache.php?file=http://code.jquery.com/jquery-<?php echo JQUERY_VERSION; ?>.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
@@ -84,7 +84,6 @@
 			}
 
 			function updateHash() {
-
 				if (window.parent && window.parent.frames[0] && window.parent.history.pushState) {
 					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
 					hash += '/' + path;
@@ -310,9 +309,12 @@
 
 
 					window.parent.batchRuns++;
-					// Clear memory build-up from time to time by reloading the whole thing
-					if (window.parent.batchRuns > 90) {
-						window.parent.location.hash = '#batch/' + window.parent.frames[0].samples[nextIndex];
+					// Clear memory build-up from time to time by reloading the
+					// whole thing. Firefox has problems redirecting.
+					if (window.parent.batchRuns > 90 &&
+							navigator.userAgent.indexOf('WebKit') !== -1) {
+						window.parent.location.href = '/samples/#batch/' +
+							window.parent.frames[0].samples[nextIndex];
 					} else {
 						window.location.href = href;
 					}

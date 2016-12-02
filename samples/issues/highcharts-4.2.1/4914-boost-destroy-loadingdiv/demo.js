@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Check if loadingDiv is destroyed', function (assert) {
         var chart,
-            done = assert.async(2);
+            done = assert.async();
         function getData() {
             var data = [];
             for (var i = 0; i < 150000; i++) {

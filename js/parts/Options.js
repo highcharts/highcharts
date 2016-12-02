@@ -97,45 +97,6 @@ H.defaultOptions = {
 		//plotShadow: false,
 		/*= } =*/
 	},
-	/*= if (!build.classic) { =*/
-	defs: {
-		dropShadow: { // used by tooltip
-			tagName: 'filter',
-			id: 'drop-shadow',
-			opacity: 0.5,
-			children: [{
-				tagName: 'feGaussianBlur',
-				in: 'SourceAlpha',
-				stdDeviation: 1
-			}, {
-				tagName: 'feOffset',
-				dx: 1,
-				dy: 1
-			}, {
-				tagName: 'feComponentTransfer',
-				children: [{
-					tagName: 'feFuncA',
-					type: 'linear',
-					slope: 0.3
-				}]
-			}, {
-				tagName: 'feMerge',
-				children: [{
-					tagName: 'feMergeNode'
-				}, {
-					tagName: 'feMergeNode',
-					in: 'SourceGraphic'
-				}]
-			}]
-		},
-		style: {
-			tagName: 'style',
-			textContent: '.highcharts-tooltip{' +
-				'filter:url(#drop-shadow)' +
-			'}'
-		}
-	},
-	/*= } =*/
 	title: {
 		text: 'Chart title',
 		align: 'center',
@@ -144,12 +105,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor80}',
-			fontSize: '18px'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 
 	},
@@ -160,11 +116,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor60}'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 	},
 
@@ -331,8 +283,11 @@ H.defaultOptions = {
 
 
 /**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
+ * Set the time methods globally based on the useUTC option. Time method can be
+ *   either local time or UTC (default). It is called internally on initiating
+ *   Highcharts and after running `Highcharts.setOptions`.
+ *
+ * @private
  */
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,

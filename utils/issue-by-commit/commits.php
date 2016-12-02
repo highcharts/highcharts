@@ -13,14 +13,28 @@ try {
 }
 if (@$_POST['branch']) {
 	try {
+
+		// Post to session
 		$_SESSION['branch'] = @$_POST['branch'];
 		$_SESSION['after'] = @$_POST['after'];
 		$_SESSION['before'] = @$_POST['before'];
+		
+		// Prepare command
+		$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ';
+
+		// Date
+		if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {
+			$cmd .= '--after={' . $_SESSION['after'] . '} --before={' . @$_SESSION['before'] . '}';
+
+		// Tag or commit
+		} else {
+			$cmd .= '' . $_SESSION['after'] . '..' . (isset($_SESSION['before']) ? $_SESSION['before'] : 'HEAD');
+		}
+
+		// Repo
 		$activeBranch = $repo->active_branch();
 		$repo->checkout($_SESSION['branch']);
-		$repo->run('log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ' .
-			//'--first-parent --after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
-			'--after={' . $_SESSION['after'] . '} --before={' . $_SESSION['before'] . '}');
+		$repo->run($cmd);
 		$repo->checkout($activeBranch);
 
 
@@ -30,11 +44,11 @@ if (@$_POST['branch']) {
 	}
 }
 // Populate input fields
-if (!$_SESSION['branch']) {
+if (!isset($_SESSION['branch'])) {
 	$_SESSION['branch'] = 'master';
 }
-if (!$_SESSION['after']) {
-	$_SESSION['after'] = strftime('%Y-%m-%d', mktime() - 31 * 24 * 3600);
+if (!isset($_SESSION['after'])) {
+	$_SESSION['after'] = strftime('%Y-%m-%d', time() - 31 * 24 * 3600);
 }
 
 // Move the log file back from temp dir
@@ -184,6 +198,11 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 
 				if (isComparing) {
 					document.body.className = 'compare';
+
+					$('#close').click(function () {
+						window.parent.parent.document.querySelector('frameset')
+							.setAttribute('cols', '400, *');
+					});
 				}
 
 				var colors = [
@@ -452,14 +471,31 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 				padding: 1em 1em 0 1em;
 			}
 
-			
+			#close {
+				display: none;
+			}
+			.compare #close {
+				display: inline-block;
+				float: right;
+				margin-right: 1em;
+				border-radius: 0;
+				color: white;
+				background: #34343e;
+				border: none;
+			}
 		</style>
 	</head>
 	
 	<body>
 		<div id="topnav">
+
+			<button id="close">X</button>
 			
 			<form method="post" action="commits.php">
+			<p style="padding: 0 10px; color: gray; font-style: italic">
+			Tip: from and to inputs can be dates (YYYY-mm-dd), tags or commits.
+			Use tags to bisect between two known releases, like from <code>v4.2.6</code>
+			to <code>v4.2.7</code>.</p>
 			<div>
 			Branch
 
@@ -474,7 +510,7 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 			from
 			<input type="text" name="after" value="<?php echo $_SESSION['after'] ?>" />
 			to
-			<input type="text" name="before" value="<?php echo $_SESSION['before'] ?>" />
+			<input type="text" name="before" value="<?php echo @$_SESSION['before'] ?>" />
 			
 			<input type="submit" value="Submit"/>
 			<a id="setdata" href="main.php" target="main">Change test data</a>

@@ -95,7 +95,7 @@ $(function () {
                 borderWidth: 0.5,
                 states: {
                     hover: {
-                        color: '#bada55'
+                        color: '#a4edba'
                     }
                 }
             }, {

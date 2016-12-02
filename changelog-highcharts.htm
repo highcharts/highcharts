@@ -1,21 +1,27 @@
-<p>Highcharts 5.0.2 (2016-10-26)</p>
-<ul>
-    <li>Fixed two regressions.</li>
-</ul>
+<p>Highcharts 5.0.5 (2016-11-29)</p>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="heading-5-0-1-bug-fixes" class="panel-heading">
+        <div id="heading-5-0-5-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#5-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#5-0-5-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="5-0-1-bug-fixes" class="panel-collapse collapse">
+        <div id="5-0-5-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5887">#5887</a>, a regression causing bubbles to move on hover.</li>
-                    <li>Fixed regression in v5.0.1 where the halo would be mispositioned in inverted charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5997">#5997</a>, panning not working with reversed axes. Also closes <a href="https://github.com/highslide-software/highcharts.com/issues/3278">#3278</a>.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3398">#3398</a>, click event for dataLabels when useHTML was set to true didn't work.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4338">#4338</a>, incorrect minPointLength for negative values in waterfall series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5860">#5860</a>, bubble series in styled mode caused errors.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5892">#5892</a>, errors in console on animating in splines as they are added.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5947">#5947</a>, HTML dataLabels didn't show tooltip on mouseover.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6014">#6014</a>, issue with zooming out of bounds.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6033">#6033</a>, <code>threshold</code> ignored when <code>chart.reflow</code> was used.</li>
+                    <li>Fixed issue with build settings of Highcharts themes, and added a minimum of test.</li>
+                    <li>Fixed regression related to animation, where the complete step was not executed. This specifically affected drilldown, solid gauge and color axis updates. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/6017">#6017</a>, 6032, <a href="https://github.com/highslide-software/highcharts.com/issues/6023">#6023</a>.</li>
+                    <li>Fixed wrong product name in license headers.</li>
                 </ul>
             </div>
         </div>

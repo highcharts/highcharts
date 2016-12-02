@@ -26,8 +26,11 @@ var addEvent = H.addEvent,
 	win = H.win;
 
 /**
- * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
- * Subsequent methods should be named differently from what they are doing.
+ * The mouse tracker object. All methods starting with "on" are primary DOM
+ * event handlers. Subsequent methods should be named differently from what they
+ * are doing.
+ *
+ * @constructor Pointer
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
@@ -71,7 +74,7 @@ H.Pointer.prototype = {
 			zoomX,
 			zoomY;
 
-		// Look for the pinchType option // docs: Now even in Highcharts vanilla!
+		// Look for the pinchType option
 		if (/touch/.test(e.type)) {
 			zoomType = pick(options.pinchType, zoomType);
 		}
@@ -272,13 +275,12 @@ H.Pointer.prototype = {
 		}
 
 		// Start the event listener to pick up the tooltip and crosshairs
-		if (!pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
+		if (!pointer.unDocMouseMove) {
+			pointer.unDocMouseMove = addEvent(doc, 'mousemove', function (e) {
 				if (charts[H.hoverChartIndex]) {
 					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+			});
 		}
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
@@ -351,9 +353,8 @@ H.Pointer.prototype = {
 				tooltip.hide(delay);
 			}
 
-			if (pointer._onDocumentMouseMove) {
-				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-				pointer._onDocumentMouseMove = null;
+			if (pointer.unDocMouseMove) {
+				pointer.unDocMouseMove = pointer.unDocMouseMove();
 			}
 
 			// Remove crosshairs

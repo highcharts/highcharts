@@ -39,7 +39,7 @@ $(function () {
                 borderWidth: 0.5,
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 },
                 tooltip: {

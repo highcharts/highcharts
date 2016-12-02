@@ -18,8 +18,12 @@ var Axis = H.Axis,
 	format = H.format,
 	pick = H.pick,
 	Series = H.Series;
+
 /**
- * The class for stack items
+ * The class for stacks. Each stack, on a specific X value and either negative
+ * or positive, has its own stack item.
+ *
+ * @class
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
 
@@ -257,7 +261,7 @@ Axis.prototype.resetStacks = function () {
 				// Reset stacks
 				} else {
 					stacks[type][i].total = null;
-					stacks[type][i].cum = 0;
+					stacks[type][i].cum = null;
 				}
 			}
 		}

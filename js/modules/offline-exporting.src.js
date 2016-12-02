@@ -183,15 +183,22 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 	function downloadPDF() {
 		dummySVGContainer.innerHTML = svg;
 		var textElements = dummySVGContainer.getElementsByTagName('text'),
+			titleElements,
 			svgElementStyle = dummySVGContainer.getElementsByTagName('svg')[0].style;
 		// Workaround for the text styling. Making sure it does pick up the root element
 		each(textElements, function (el) {
+			// Workaround for the text styling. making sure it does pick up the root element
 			each(['font-family', 'font-size'], function (property) {
 				if (!el.style[property] && svgElementStyle[property]) {
 					el.style[property] = svgElementStyle[property];
 				}
 			});
 			el.style['font-family'] = el.style['font-family'] && el.style['font-family'].split(' ').splice(-1);
+			// Workaround for plotband with width, removing title from text nodes
+			titleElements = el.getElementsByTagName('title');
+			each(titleElements, function (titleElement) {
+				el.removeChild(titleElement);
+			});
 		});
 		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
 		Highcharts.downloadURL(svgData, filename);
@@ -310,9 +317,14 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 		images,
 		imagesEmbedded = 0,
 		chartCopyContainer,
+		chartCopyOptions,
 		el,
 		i,
 		l,
+		// After grabbing the SVG of the chart's copy container we need to do sanitation on the SVG
+		sanitize = function (svg) {
+			return chart.sanitizeSVG(svg, chartCopyOptions);
+		},
 		// Success handler, we converted image to base64!
 		embeddedSuccess = function (imageURL, imageType, callbackArgs) {
 			++imagesEmbedded;
@@ -322,15 +334,24 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 
 			// When done with last image we have our SVG
 			if (imagesEmbedded === images.length) {
-				successCallback(chart.sanitizeSVG(chartCopyContainer.innerHTML));
+				successCallback(sanitize(chartCopyContainer.innerHTML));
 			}
 		};
 
 	// Hook into getSVG to get a copy of the chart copy's container
-	Highcharts.wrap(Highcharts.Chart.prototype, 'getChartHTML', function (proceed) {
-		chartCopyContainer = this.container.cloneNode(true);
-		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	});
+	Highcharts.wrap(
+		Highcharts.Chart.prototype,
+		'getChartHTML',
+		function (proceed) {
+			var ret = proceed.apply(
+				this,
+				Array.prototype.slice.call(arguments, 1)
+			);
+			chartCopyOptions = this.options;
+			chartCopyContainer = this.container.cloneNode(true);
+			return ret;
+		}
+	);
 
 	// Trigger hook to get chart copy
 	chart.getSVGForExport(options, chartOptions);
@@ -339,7 +360,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (options, chartOption
 	try {
 		// If there are no images to embed, the SVG is okay now.
 		if (!images.length) {
-			successCallback(chart.sanitizeSVG(chartCopyContainer.innerHTML)); // Use SVG of chart copy
+			successCallback(sanitize(chartCopyContainer.innerHTML)); // Use SVG of chart copy
 			return;
 		}
 
@@ -379,11 +400,25 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 		},
 		svgSuccess = function (svg) {
-			Highcharts.downloadSVGLocal(svg, options, fallbackToExportServer);
+			// If SVG contains foreignObjects all exports except SVG will fail,
+			// as both CanVG and svg2pdf choke on this. Gracefully fall back.
+			if (
+				svg.indexOf('<foreignObject') > -1 && 
+				options.type !== 'image/svg+xml'
+			) {
+				fallbackToExportServer();
+			} else {
+				Highcharts.downloadSVGLocal(svg, options, fallbackToExportServer);
+			}
 		};
 
-	// If we have embedded images and are exporting to JPEG/PNG, Microsoft browsers won't handle it, so fall back
-	if ((isMSBrowser && options.imageType !== 'image/svg+xml' || options.imageType !== 'application/pdf') && chart.container.getElementsByTagName('image').length) {
+	// If we have embedded images and are exporting to JPEG/PNG, Microsoft 
+	// browsers won't handle it, so fall back.
+	if (
+		(isMSBrowser && options.type !== 'image/svg+xml' || 
+		options.type === 'application/pdf') && 
+		chart.container.getElementsByTagName('image').length
+	) {
 		fallbackToExportServer();
 		return;
 	}
@@ -393,7 +428,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 
 // Extend the default options to use the local exporter logic
 merge(true, Highcharts.getOptions().exporting, {
-	libURL: 'http://code.highcharts.com/@product.version@/lib/',
+	libURL: 'https://code.highcharts.com/@product.version@/lib/',
 	buttons: {
 		contextButton: {
 			menuItems: [{

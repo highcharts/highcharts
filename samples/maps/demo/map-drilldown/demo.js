@@ -126,11 +126,10 @@ $(function () {
         }],
 
         drilldown: {
-            //series: drilldownSeries,
             activeDataLabelStyle: {
                 color: '#FFFFFF',
                 textDecoration: 'none',
-                textShadow: '0 0 3px #000000'
+                textOutline: '1px #000000'
             },
             drillUpButton: {
                 relativeTo: 'spacingBox',

@@ -21,10 +21,12 @@ var animObject = H.animObject,
 	pick = H.pick,
 	Series = H.Series,
 	seriesType = H.seriesType,
-	stop = H.stop,
 	svg = H.svg;
 /**
- * The column series type
+ * The column series type.
+ *
+ * @constructor seriesTypes.column
+ * @augments Series
  */
 seriesType('column', 'line', {
 	borderRadius: 0,
@@ -70,8 +72,7 @@ seriesType('column', 'line', {
 	// borderWidth: 1
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.column.prototype */ {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -79,7 +80,12 @@ seriesType('column', 'line', {
 		// point is substracted from previous (#1910)
 
 	/**
-	 * Initialize the series
+	 * Initialize the series. Extends the basic Series.init method by
+	 * marking other series of the same type as dirty.
+	 *
+	 * @function #init
+	 * @memberOf seriesTypes.column
+	 * @returns {void}
 	 */
 	init: function () {
 		Series.prototype.init.apply(this, arguments);
@@ -313,6 +319,8 @@ seriesType('column', 'line', {
 			fill = (point && point.color) || this.color,
 			stroke = point[strokeOption] || options[strokeOption] ||
 				this.color || fill, // set to fill when borderColor null
+			strokeWidth = point[strokeWidthOption] || 
+				options[strokeWidthOption] || this[strokeWidthOption] || 0,
 			dashstyle = options.dashStyle,
 			zone,
 			brightness;
@@ -331,13 +339,14 @@ seriesType('column', 'line', {
 				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||
 				fill;
 			stroke = stateOptions[strokeOption] || stroke;
+			strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
 			dashstyle = stateOptions.dashStyle || dashstyle;
 		}
 
 		ret = {
 			'fill': fill,
 			'stroke': stroke,
-			'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
+			'stroke-width': strokeWidth
 		};
 		if (options.borderRadius) {
 			ret.r = options.borderRadius;
@@ -373,7 +382,6 @@ seriesType('column', 'line', {
 				shapeArgs = point.shapeArgs;
 
 				if (graphic) { // update
-					stop(graphic);
 					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
 						merge(shapeArgs)
 					);

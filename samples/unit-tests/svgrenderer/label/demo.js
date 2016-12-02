@@ -43,3 +43,26 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
         'Background image exists'
     );
 });
+
+QUnit.test('Box with nested ems (#5932)', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var label = ren.label('This is line 1<br><span style="font-size: 2em">This is line 2</span>', 10, 10)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            fontSize: '32px'
+        })
+        .add();
+
+    assert.ok(
+        label.getBBox().height > 100,
+        'Nested em is included'
+    );
+});

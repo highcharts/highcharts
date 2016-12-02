@@ -20,8 +20,7 @@ var addEvent = H.addEvent,
 	relativeLength = H.relativeLength,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
-	stableSort = H.stableSort,
-	stop = H.stop;
+	stableSort = H.stableSort;
 
 
 /**
@@ -278,7 +277,11 @@ Series.prototype.drawDataLabels = function () {
 					)
 					.attr(attr);
 
-					dataLabel.addClass('highcharts-data-label-color-' + point.colorIndex + ' ' + (options.className || ''));
+					dataLabel.addClass(
+						'highcharts-data-label-color-' + point.colorIndex +
+						' ' + (options.className || '') +
+						(options.useHTML ? 'highcharts-tracker' : '') // #3398
+					);
 
 					/*= if (build.classic) { =*/
 					// Styles must be applied before add in order to read text bounding box
@@ -400,7 +403,6 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 	// Show or hide based on the final aligned position
 	if (!visible) {
-		stop(dataLabel);
 		dataLabel.attr({ y: -9999 });
 		dataLabel.placed = false; // don't animate back in
 	}

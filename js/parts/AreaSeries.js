@@ -17,8 +17,11 @@ var color = H.color,
 	pick = H.pick,
 	Series = H.Series,
 	seriesType = H.seriesType;
+
 /**
- * Area series type
+ * Area series type.
+ * @constructor seriesTypes.area
+ * @extends {Series}
  */
 seriesType('area', 'line', {
 	softThreshold: false,
@@ -27,7 +30,7 @@ seriesType('area', 'line', {
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
 	// fillOpacity: 0.75,
 	// fillColor: null
-}, {
+}, /** @lends seriesTypes.area.prototype */ {
 	singleStacks: false,
 	/** 
 	 * Return an array of stacked points, where null and missing points are replaced by 
