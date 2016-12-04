@@ -143,9 +143,9 @@ function GLShader(gl) {
 
 			'float yToPixels(float value, float checkTreshold){',
 				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
-				'if (checkTreshold > 0.0 && hasThreshold) {',
-					'v = min(v, translatedThreshold);',
-				'}',
+				//'if (checkTreshold > 0.0 && hasThreshold) {',
+				//	'v = min(v, translatedThreshold);',
+				//'}',
 				'return v;',
 			'}',
 
@@ -320,25 +320,18 @@ function GLVertexBuffer(gl, shader) {
 		if (!data.length) {
 			return console.error('skipped vertex buffer rendering - data is empty');
 		}
-
-		from = from || 0;
-		to = to || data.length;
-
-		if (from < 0) {
+				
+		if (!from || from > data.length || from < 0) {
 			from = 0;
 		}
 
-		if (from > data.length) {
-			from = 0;
-		}
-
-		if (to > data.length) {
+		if (!to || to > data.length) {
 			to = data.length;
 		}
 
 		drawMode = drawMode || 'points';
 
-		gl.drawArrays(gl[drawMode.toUpperCase()], from, (to - from) / components); 
+		gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components); 
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -378,14 +371,17 @@ function GLRenderer() {
 		exports = {},
 		//Is it inited?
 		isInited = false,
-
-		series = [],
-	
+		//The series stack
+		series = [],	
+		//Things to draw as "rectangles"
+		asRect = {
+			'column': true,
+			'area': true
+		},
 		//Render settings
 		settings = {
 			pointSize: 2,
 			lineWidth: 2,
-			drawMode: 'points',
 			fillColor: '#AA00AA',
 			useAlpha: true	
 		};
@@ -410,6 +406,98 @@ function GLRenderer() {
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
+	function pushSeriesData(series) {
+		var isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+			chart = series.chart,
+			options = series.options,
+			isStacked = !!options.stacking,
+			rawData = options.data,
+			xExtremes = series.xAxis.getExtremes(),
+			xMin = xExtremes.min,
+			xMax = xExtremes.max,
+			yExtremes = series.yAxis.getExtremes(),
+			yMin = yExtremes.min,
+			yMax = yExtremes.max,
+			xData = options.xData || series.processedXData,
+			yData = options.yData || series.processedYData,
+			useRaw = !xData,
+			minVal,
+			maxVal;
+
+		each(isStacked ? series.data : (rawData), function (d, i) {
+			var x,
+				y,
+				clientX,
+				plotY,
+				isNull,
+				low,
+				chartDestroyed = typeof chart.index === 'undefined',
+				isYInside = true;
+
+			if (useRaw) {
+				x = d[0];
+				y = d[1];
+			} else {
+				x = d;
+				y = yData[i];
+			}
+
+			// Resolve low and high for range series
+			if (isRange) {
+				if (useRaw) {
+					y = d.slice(1, 3);
+				}
+				low = y[0];
+				y = y[1];
+			} else if (isStacked) {
+				x = d.x;
+				y = d.stackY;
+				low = y - d.y;
+			}
+			x = d[0];
+			y = d[1];
+
+			if (!series.requireSorting) {
+				isYInside = y >= yMin && y <= yMax;
+			}
+
+			if (!y || !isYInside || x < xMin || x > xMax) {
+				return;
+			}
+
+			minVal = 0;
+			if (y < 0) {
+				minVal = y;
+			}
+
+			maxVal = y;
+			if (maxVal < 0 && asRect[series.type]) {
+				maxVal = y;
+			}
+			
+			if (asRect[series.type]) {
+				//Need to add an extra point here
+				//gl.push(d[0], d[1] + series.yAxis.);
+				exports.data.push(x);
+				exports.data.push(minVal);
+				exports.data.push(0);
+			}
+			
+			data.push(x);					
+			data.push(maxVal);			
+			data.push(0);								
+							
+			if (asRect[series.type]) {
+				//Need to add an extra point here
+				//gl.push(d[0], d[1] + series.yAxis.);
+				data.push(x);
+				data.push(minVal);
+				data.push(0);
+			}
+
+		});		
+	}
+
 	function pushSeries(s) {
 		if (series.length > 0) {
 			series[series.length - 1].to = data.length;
@@ -419,6 +507,9 @@ function GLRenderer() {
 			from: data.length,
 			series: s 
 		});
+
+		//Add the series data
+		pushSeriesData(s);
 	}
 
 	function flush() {
@@ -482,13 +573,13 @@ function GLRenderer() {
 		vbuffer.bind();
 
 		//Render the series - this is a lot of draw calls
-		each(series, function (s) {
+		each(series, function (s, i) {
 			var options = s.series.options,
 				yBottom = s.series.yAxis.getThreshold(threshold),
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
 				translatedThreshold = yBottom,
-				drawMode = 'points',
+				drawMode = 'line_strip',
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 					s.series.color,
@@ -504,21 +595,13 @@ function GLRenderer() {
 			setThreshold(hasThreshold, translatedThreshold);
 
 			//Draw mode
-			if (s.series.type === 'column' || s.series.type === 'line') {
-				drawMode = 'line_strip';
+			if (s.series.type === 'scatter') {
+				drawMode = 'points';
 			}
 
 			//Do the actual rendering
 			vbuffer.render(s.from, s.to, drawMode);
 		});
-
-		// if (uniforms) {
-		// 	Object.keys(uniforms).forEach(function (uniform) {
-		// 		var u = pUniform = gl.getUniformLocation(shader.program(), uniform);
-		// 		gl.uniform1f(u, uniforms[uniform]);
-		// 	});
-		// }
-		
 	}
 	
 	function setSize(w, h) {
@@ -542,9 +625,9 @@ function GLRenderer() {
 		}
 
 		gl.enable(gl.BLEND);
-		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.blendEquation(gl.FUNC_ADD);
-		gl.enable(gl.DEPTH_TEST);
+		//gl.enable(gl.DEPTH_TEST);
 
 		shader = GLShader(gl);		
 		vbuffer = GLVertexBuffer(gl, shader);
@@ -559,9 +642,7 @@ function GLRenderer() {
 	/* Check if we have a valid OGL context */
 	function valid() {
 		return gl !== false;
-	}	
-
-	
+	}
 
 	function inited() {
 		return isInited;
@@ -764,12 +845,9 @@ H.extend(Series.prototype, {
 				});
 			}
 		}
-
-
-		//if (chart.canvas.width !== width || chart.canvas.height !== height) {
-			chart.canvas.width = width;
-			chart.canvas.height = height;			
-		//}
+		
+		chart.canvas.width = width;
+		chart.canvas.height = height;					
 		
 		if (!chart.ogl) {
 			chart.ogl = GLRenderer();
@@ -777,18 +855,6 @@ H.extend(Series.prototype, {
 			chart.ogl.clear();
 
 		}
-		// //Handle OGL
-		// if (!this.gl.inited()) {
-		// 	this.gl.init(chart.canvas);
-		// 	this.gl.clear();
-
-
-		// 	if (!this.gl.valid()) {
-		// 		//HANDLE WEBGL SUPPORT FAILURE HERE
-		// 		fireEvent(series, 'webglUnsupported');
-		// 		console.err('unable to create webgl context');	
-		// 	}
-		// }
 
 		chart.image.attr({
 			x: 0,
@@ -796,20 +862,6 @@ H.extend(Series.prototype, {
 			width: width,
 			height: height
 		});
-	},
-
-	/** 
-	 * Draw the canvas image inside an SVG image
-	 */
-	canvasToSVG: function () {		
-		if (this.chart.image && this.chart.canvas) {
-			console.log('copying canvas to svg');
-			this.chart.image.attr({ href: this.chart.canvas.toDataURL('image/png') });			
-		}
-	},
-
-	cvsLineTo: function (ctx, clientX, plotY) {
-		ctx.lineTo(clientX, plotY);
 	},
 
 	renderCanvas: function () {
@@ -860,40 +912,6 @@ H.extend(Series.prototype, {
 			fillColor = series.fillOpacity ?
 					new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 					series.color,
-			// stroke = function () {
-			// 	return (doFill ? ctx.fill() : ctx.stroke());
-			// },
-			// drawPoint = function (clientX, plotY, yBottom) {
-			// 	if (c === 0) {
-			// 		ctx.beginPath();
-			// 	}
-
-			// 	if (wasNull) {
-			// 		ctx.moveTo(clientX, plotY);
-			// 	} else {
-			// 		if (cvsDrawPoint) {
-			// 			cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
-			// 		} else if (cvsLineTo) {
-			// 			cvsLineTo(ctx, clientX, plotY);
-			// 		} else if (cvsMarker) {
-			// 			cvsMarker(ctx, clientX, plotY, r);
-			// 		}
-			// 	}
-
-			// 	// We need to stroke the line for every 1000 pixels. It will crash the browser
-			// 	// memory use if we stroke too infrequently.			
-			// 	if (++c === 1000) {
-			// 		stroke();
-			// 		c = 0;			
-			// 	}
-
-			// 	// Area charts need to keep track of the last point
-			// 	lastPoint = {
-			// 		clientX: clientX,
-			// 		plotY: plotY,
-			// 		yBottom: yBottom
-			// 	};
-			// },
 
 			addKDPoint = function (clientX, plotY, i) {
 				//Shaves off about 60ms in canvas-scatter test
@@ -924,46 +942,16 @@ H.extend(Series.prototype, {
 			this.destroyGraphics();
 		}
 
-		this.setUpContext();
-
-		//Add the series to the renderer
-		chart.ogl.pushSeries(series);
-
-		// The group
-		// series.plotGroup(
-		// 	'group',
-		// 	'series',
-		// 	series.visible ? 'visible' : 'hidden',
-		// 	options.zIndex,
-		// 	chart.seriesGroup
-		// );
-
-		// series.markerGroup = series.group;
-
-		// addEvent(series, 'destroy', function () {
-		// 	series.markerGroup = null;
-		// });
-
 		points = this.points = [];
-		series.buildKDTree = noop; // Do not start building while drawing 
 
-		// gl.settings.fillColor = fillColor;
+		//Make sure we have a valid OGL context
+		this.setUpContext();
+		chart.ogl.pushSeries(series);		
 
-		// if (!doFill) {
-		// 	gl.settings.lineWidth = options.lineWidth + 1;
-		// 	gl.settings.drawMode = 'line_strip';			
-		// }
+		// Do not start building while drawing 
+		series.buildKDTree = noop; 
 
-		// if (options.marker) {
-		// 	gl.settings.pointSize = options.marker.radius || 1;			
-		// }
-
-		// if (!gl.valid()) {
-		// 	if (cvsLineTo) {
-		// 		gl.settings.drawMode = 'line_strip';
-		// 	}			
-		// }
-
+		/* This builds the KD-tree */
 		function processPoint(d, i) {
 			var x,
 				y,
@@ -1048,36 +1036,7 @@ H.extend(Series.prototype, {
 		}
 
 		function doneProcessing() {
-			// var loadingDiv = chart.loadingDiv,
-			// 	loadingShown = chart.loadingShown;
-			
-			// if (gl.valid()) {			
-			// 	gl.render();
-			// } else {
-			// 	stroke();
-			// }
-
-			// series.canvasToSVG();
-
 			fireEvent(series, 'renderedCanvas');
-
-			// Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
-			// CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
-			// change hideLoading so we can skip this block.
-			// if (loadingShown) {
-			// 	extend(loadingDiv.style, {
-			// 		transition: 'opacity 250ms',
-			// 		opacity: 0
-			// 	});
-			// 	chart.loadingShown = false;
-			// 	destroyLoadingDiv = setTimeout(function () {
-			// 		if (loadingDiv.parentNode) { // In exporting it is falsy
-			// 			loadingDiv.parentNode.removeChild(loadingDiv);
-			// 		}
-			// 		chart.loadingDiv = chart.loadingSpan = null;
-			// 	}, 250);
-			// }
-
 			// Pass tests in Pointer. 
 			// Replace this with a single property, and replace when zooming in
 			// below boostThreshold.
@@ -1088,181 +1047,147 @@ H.extend(Series.prototype, {
 			series.buildKDTree();
 		}
 
-		//minVal = 9999;
+		// if (chart.ogl) {
+		// 	//Need to transform the points. This is totally cache trashing
+		// 	/*
+		// 		Notes:
+		// 			- The shader deals with translations
+		// 			- Values passed to the shader are data values; not coords
 
-		minVal = maxVal = undefined;
-		maxI = minI = wasNull = undefined;
+		// 	*/
+		// 	each(isStacked ? series.data : (rawData), function (d, i) {
+		// 		var x,
+		// 			y,
+		// 			clientX,
+		// 			plotY,
+		// 			isNull,
+		// 			low,
+		// 			chartDestroyed = typeof chart.index === 'undefined',
+		// 			isYInside = true;
 
-		if (chart.ogl) {
-			//minVal = series.yAxis.min;
-	
-			//var height = this.height;
+		// 	// if (!chartDestroyed) {
+		// 		if (useRaw) {
+		// 			x = d[0];
+		// 			y = d[1];
+		// 		} else {
+		// 			x = d;
+		// 			y = yData[i];
+		// 		}
 
-			//Need to transform the points. This is totally cache trashing
-			each(isStacked ? series.data : (rawData), function (d, i) {
-				var x,
-					y,
-					clientX,
-					plotY,
-					isNull,
-					low,
-					chartDestroyed = typeof chart.index === 'undefined',
-					isYInside = true;
+		// 		// Resolve low and high for range series
+		// 		if (isRange) {
+		// 			if (useRaw) {
+		// 				y = d.slice(1, 3);
+		// 			}
+		// 			low = y[0];
+		// 			y = y[1];
+		// 		} else if (isStacked) {
+		// 			x = d.x;
+		// 			y = d.stackY;
+		// 			low = y - d.y;
+		// 		}
 
-			// if (!chartDestroyed) {
-				if (useRaw) {
-					x = d[0];
-					y = d[1];
-				} else {
-					x = d;
-					y = yData[i];
-				}
+		// 	// 	isNull = y === null;
 
-				// Resolve low and high for range series
-				if (isRange) {
-					if (useRaw) {
-						y = d.slice(1, 3);
-					}
-					low = y[0];
-					y = y[1];
-				} else if (isStacked) {
-					x = d.x;
-					y = d.stackY;
-					low = y - d.y;
-				}
+		// 	// 	// Optimize for scatter zooming
+		// 	// 	if (!requireSorting) {
+		// 	// 		isYInside = y >= yMin && y <= yMax;
+		// 	// 	}
 
-			// 	isNull = y === null;
+		// 	// 	if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
-			// 	// Optimize for scatter zooming
-			// 	if (!requireSorting) {
-			// 		isYInside = y >= yMin && y <= yMax;
-			// 	}
+		// 	// 		//clientX = Math.round(xAxis.toPixels(x, true));
 
-			// 	if (!isNull && x >= xMin && x <= xMax && isYInside) {
+		// 	// 		if (sampling) {
+		// 	// 			if (minI === undefined || x === lastClientX) {
 
-			// 		//clientX = Math.round(xAxis.toPixels(x, true));
+		// 	// 				if (!isRange) {
+		// 	// 					low = y;
+		// 	// 				}
 
-			// 		if (sampling) {
-			// 			if (minI === undefined || x === lastClientX) {
+		// 	// 				if (maxI === undefined || y > maxVal) {
+		// 	// 					maxVal = y;
+		// 	// 					maxI = i;
+		// 	// 				}
 
-			// 				if (!isRange) {
-			// 					low = y;
-			// 				}
-
-			// 				if (maxI === undefined || y > maxVal) {
-			// 					maxVal = y;
-			// 					maxI = i;
-			// 				}
-
-			// 				if (minI === undefined || low < minVal) {
-			// 					minVal = low;
-			// 					minI = i;
-			// 				}
-			// 			}
+		// 	// 				if (minI === undefined || low < minVal) {
+		// 	// 					minVal = low;
+		// 	// 					minI = i;
+		// 	// 				}
+		// 	// 			}
 						
 
-			// 			if (x !== lastClientX) { // Add points and reset
-			// 				if (minI !== undefined) { // then maxI is also a number
-			// 					//plotY = yAxis.toPixels(maxVal, true);
-			// 					//yBottom = yAxis.toPixels(minVal, true);							
-			// 					gl.push(x, maxVal, minVal, 1.0);
-			// 				}
+		// 	// 			if (x !== lastClientX) { // Add points and reset
+		// 	// 				if (minI !== undefined) { // then maxI is also a number
+		// 	// 					//plotY = yAxis.toPixels(maxVal, true);
+		// 	// 					//yBottom = yAxis.toPixels(minVal, true);							
+		// 	// 					gl.push(x, maxVal, minVal, 1.0);
+		// 	// 				}
 
-			// 				minI = maxI = undefined;
-			// 				lastClientX = x;
-			// 			}
-			// 		} else {
-			// 			//plotY = Math.round(yAxis.toPixels(y, true));						
-			// 			//addKDPoint(clientX, plotY, i);
-			// 			gl.push(x, maxVal, minVal);
-			// 		}
-			// 	} 
+		// 	// 				minI = maxI = undefined;
+		// 	// 				lastClientX = x;
+		// 	// 			}
+		// 	// 		} else {
+		// 	// 			//plotY = Math.round(yAxis.toPixels(y, true));						
+		// 	// 			//addKDPoint(clientX, plotY, i);
+		// 	// 			gl.push(x, maxVal, minVal);
+		// 	// 		}
+		// 	// 	} 
 				
-			// 	wasNull = isNull && !connectNulls;
-			// }
+		// 	// 	wasNull = isNull && !connectNulls;
+		// 	// }
 
-				// var low;
+		// 		x = d[0];
+		// 		y = d[1];
 
-				x = d[0];
-				y = d[1];
+		// 		if (!requireSorting) {
+		// 			isYInside = y >= yMin && y <= yMax;
+		// 		}
 
-				if (!requireSorting) {
-					isYInside = y >= yMin && y <= yMax;
-				}
+		// 		if (!y || !isYInside || x < xMin || x > xMax) {
+		// 			return;
+		// 		}
 
-				if (!y || !isYInside || x < xMin || x > xMax) {
-					return;
-				}
+		// 		minVal = 0;
+		// 		if (y < 0) {
+		// 			minVal = y;
+		// 		}
 
-				// // if (isRange) {}
-
-				// //if (d[1] > maxVal) {
-				// maxVal = d[1];
-				// minVal = 0;
-					
-				// if (maxVal < minVal) {
-				// 	minVal = maxVal;
-				// 	maxVal = 0;
-				// }
-
-				// //}
-
+		// 		maxVal = 0;
+		// 		if (y > 0) {
+		// 			maxVal = y;
+		// 		}
 				
-				minVal = 0;
-				if (y < 0) {
-					minVal = y;
-				}
-
-				maxVal = 0;
-				if (y > 0) {
-					maxVal = y;
-				}
+		// 		if (series.type === 'column') {
+		// 			//Need to add an extra point here
+		// 			//gl.push(d[0], d[1] + series.yAxis.);
+		// 			chart.ogl.data.push(x);
+		// 			chart.ogl.data.push(minVal);
+		// 			chart.ogl.data.push(0);
+		// 		}
 				
-				if (series.type === 'column') {
-					//Need to add an extra point here
-					//gl.push(d[0], d[1] + series.yAxis.);
-					chart.ogl.data.push(x);
-					chart.ogl.data.push(minVal);
-					chart.ogl.data.push(0);
-				}
-				
-				chart.ogl.data.push(x);					
-				chart.ogl.data.push(maxVal);			
-				chart.ogl.data.push(0);								
+		// 		chart.ogl.data.push(x);					
+		// 		chart.ogl.data.push(maxVal);			
+		// 		chart.ogl.data.push(0);								
 								
-				if (series.type === 'column') {
-					//Need to add an extra point here
-					//gl.push(d[0], d[1] + series.yAxis.);
-					chart.ogl.data.push(x);
-					chart.ogl.data.push(minVal);
-					chart.ogl.data.push(0);
-				}
+		// 		if (series.type === 'column') {
+		// 			//Need to add an extra point here
+		// 			//gl.push(d[0], d[1] + series.yAxis.);
+		// 			chart.ogl.data.push(x);
+		// 			chart.ogl.data.push(minVal);
+		// 			chart.ogl.data.push(0);
+		// 		}
 
-			});
-
-			// if (series.type === 'column' || series.type === 'line') {
-			// 	gl.settings.drawMode = 'line_strip';
-			// }
-			
-			//gl.setThreshold(hasThreshold, translatedThreshold);
-			// gl.setXAxis(series.xAxis, xData);
-			// gl.setYAxis(series.yAxis, yData);
-
-			//Rendering is done in post proc for now
-			//gl.render();
-			//series.canvasToSVG();
-			//fireEvent(series, 'renderedCanvas');
-
-			//return true;
-		}	
+		// 	});
+		// }	
 
 		// Loop over the points to build the k-d tree
-		// eachAsync(
-		// 	isStacked ? series.data : (xData || rawData), 
-		// 	processPoint, 
-		// 	doneProcessing, 
-		// 	chart.renderer.forExport ? Number.MAX_VALUE : undefined
-		// );
+		eachAsync(
+			isStacked ? series.data : (xData || rawData), 
+			processPoint, 
+			doneProcessing, 
+			chart.renderer.forExport ? Number.MAX_VALUE : undefined
+		);
 	}
 });
 
@@ -1357,12 +1282,14 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 	function canvasToSVG() {
 		console.time('gl rendering');
+		
 		if (chart.ogl) {
 			chart.ogl.render();
 		}
+		
 		console.timeEnd('gl rendering');
 
-		console.log('copying canvas to svg');
+		
 		if (chart.image && chart.canvas) {
 			chart.image.attr({ 
 				href: chart.canvas.toDataURL('image/png') 
@@ -1373,19 +1300,17 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	function preRender() {
 		var gl;
 
-		if (!chart.canvas) {
+		if (!chart.canvas || !chart.ogl) {
 			return;
 		}
-
-		console.log('clearing ogl');
-
-		if (chart.ogl) {
-			chart.ogl.flush();
-		}
+		
+		chart.ogl.flush();
 
 		//Clear ogl
 		gl = chart.canvas.getContext('webgl');
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+		console.log('clearing ogl');		
 	}
 
 	addEvent(chart, 'predraw', preRender);
