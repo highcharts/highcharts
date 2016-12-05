@@ -12,9 +12,12 @@ var defaultPlotOptions = H.defaultPlotOptions,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-/* ****************************************************************************
- * Start Candlestick series code											  *
- *****************************************************************************/
+/**
+ * The candlestick series type.
+ *
+ * @constructor seriesTypes.candlestick
+ * @augments seriesTypes.ohlc
+ */
 seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	states: {
 		hover: {
@@ -30,8 +33,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	// upLineColor: null
 	/*= } =*/
 
-// Prototype members
-}), {
+}), /** @lends seriesTypes.candlestick */ {
 	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes

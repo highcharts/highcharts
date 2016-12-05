@@ -1,0 +1,135 @@
+@import 'site.simplex.css';
+
+body {
+	font-size: 16px;
+}
+
+a {
+	color: #8085e8;
+	font-weight: bold;
+}
+
+.page-title {
+	color: #6699A1;;
+}
+
+h3.subsection-title {
+	margin-top: 36px;
+}
+
+h4 {
+	font-size: 20px;
+	font-weight: bold;
+}
+h4.name {
+	font-family: "Courier New", Courier, monospace;
+}
+#toc a.list-group-item {
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.toc-h4 {
+	font-family: "Courier New", Courier, monospace;
+	display: inline-block;
+}
+.toc-h4 .params {
+	font-weight: normal;
+	font-size: 0.8em;
+	opacity: 0.6;
+	padding-left: 0.5em;
+}
+hr {
+	margin: 40px -100%; /* -100% to extend from side to side */
+	color: silver;
+}
+
+h5 {
+	color: #666;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+dt {
+	font-size: 13px;
+}
+
+p {
+  	margin: 0 0 2em;
+}
+td p {
+	margin: 0 0 9px;
+}
+th {
+	font-size: 0.8em;
+	font-style: italic;
+}
+
+code {
+	font-family: "Courier New", Courier, monospace;
+	color: #6699A1;
+}
+
+.navbar-default {
+	background-color: #252530;
+}
+
+img.branding-logo {
+	max-height: 44px;
+}
+.navbar-nav > li > a {
+	line-height: 38px;
+}
+.navbar-default .navbar-brand {
+    color: #eeeaea;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #eeeaea;
+}
+.navbar-form {
+	margin-top: 12px;
+}
+.list-group-item:first-child {
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+}
+.list-group-item:last-child {
+	margin-bottom: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+	background-color: #eefdec;
+	border-color: #6699A1;
+	color: black;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+	color: #8085e8;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+  	color: #8085e8;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  	color: #8085e8;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  	border-color: #8085e8;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+	background-color: #8085e8;
+}
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+	background-color: #8085e8;;
+}

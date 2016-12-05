@@ -13,9 +13,12 @@ var each = H.each,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
-/* ****************************************************************************
- * Start Box plot series code											      *
- *****************************************************************************/
+/**
+ * The boxplot series type.
+ *
+ * @constructor seriesTypes.boxplot
+ * @augments seriesTypes.column
+ */
 seriesType('boxplot', 'column', {
 	threshold: null,
 	tooltip: {
@@ -54,8 +57,7 @@ seriesType('boxplot', 'column', {
 	whiskerWidth: 2
 	/*= } =*/
 
-// Prototype members
-}, {
+}, /** @lends seriesTypes.boxplot */ {
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.low, point.q1, point.median, point.q3, point.high];

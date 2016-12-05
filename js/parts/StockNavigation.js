@@ -9,29 +9,19 @@ import './Utilities.js';
 import './Chart.js';
 var addEvent = H.addEvent,
 	Chart = H.Chart,
-	isNumber = H.isNumber,
-	removeEvent = H.removeEvent;
+	isNumber = H.isNumber;
 
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
 		scroller = chart.scroller,
-		rangeSelector = chart.rangeSelector;
+		rangeSelector = chart.rangeSelector,
+		unbindRender,
+		unbindSetExtremes;
 
 	function renderRangeSelector() {
 		extremes = chart.xAxis[0].getExtremes();
 		if (isNumber(extremes.min)) {
 			rangeSelector.render(extremes.min, extremes.max);
-		}
-	}
-
-	function afterSetExtremesHandlerRangeSelector(e) {
-		rangeSelector.render(e.min, e.max);
-	}
-
-	function destroyEvents() {
-		if (rangeSelector) {
-			removeEvent(chart, 'redraw', renderRangeSelector);
-			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
 		}
 	}
 
@@ -42,15 +32,26 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 	if (rangeSelector) {
 		// redraw the scroller on setExtremes
-		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerRangeSelector);
+		unbindSetExtremes = addEvent(
+			chart.xAxis[0],
+			'afterSetExtremes',
+			function (e) {
+				rangeSelector.render(e.min, e.max);
+			}
+		);
 
 		// redraw the scroller chart resize
-		addEvent(chart, 'redraw', renderRangeSelector);
+		unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
 
 		// do it now
 		renderRangeSelector();
 	}
 
 	// Remove resize/afterSetExtremes at chart destroy
-	addEvent(chart, 'destroy', destroyEvents);
+	addEvent(chart, 'destroy', function destroyEvents() {
+		if (rangeSelector) {
+			unbindRender();
+			unbindSetExtremes();
+		}
+	});
 });

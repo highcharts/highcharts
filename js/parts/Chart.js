@@ -23,8 +23,8 @@ var addEvent = H.addEvent,
 	css = H.css,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
+	find = H.find,
 	fireEvent = H.fireEvent,
 	getStyle = H.getStyle,
 	grep = H.grep,
@@ -45,10 +45,13 @@ var addEvent = H.addEvent,
 	win = H.win,
 	Renderer = H.Renderer;
 /**
- * The Chart class
- * @param {String|Object} renderTo The DOM element to render to, or its id
- * @param {Object} options
- * @param {Function} callback Function to run when the chart has loaded
+ * The Chart class.
+ * @class Highcharts.Chart
+ * @memberOf Highcharts
+ * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
+ * id.
+ * @param {ChartOptions} options - The chart options structure.
+ * @param {Function} callback - Function to run when the chart has loaded.
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
@@ -177,7 +180,7 @@ Chart.prototype = {
 
 		// No such series type
 		if (!Constr) {
-			error(17, true);
+			H.error(17, true);
 		}
 
 		series = new Constr();
@@ -361,38 +364,28 @@ Chart.prototype = {
 	 * @param id {String} The id as given in the configuration options
 	 */
 	get: function (id) {
-		var chart = this,
-			axes = chart.axes,
-			series = chart.series;
 
-		var i,
-			j,
-			points;
+		var ret,
+			series = this.series,
+			i;
 
-		// search axes
-		for (i = 0; i < axes.length; i++) {
-			if (axes[i].options.id === id) {
-				return axes[i];
-			}
+		function itemById(item) {
+			return item.options.id === id;
 		}
 
-		// search series
-		for (i = 0; i < series.length; i++) {
-			if (series[i].options.id === id) {
-				return series[i];
-			}
+		ret = 
+			// Search axes
+			find(this.axes, itemById) ||
+
+			// Search series
+			find(this.series, itemById);
+
+		// Search points
+		for (i = 0; !ret && i < series.length; i++) {
+			ret = find(series[i].points || [], itemById);
 		}
 
-		// search points
-		for (i = 0; i < series.length; i++) {
-			points = series[i].points || [];
-			for (j = 0; j < points.length; j++) {
-				if (points[j].id === id) {
-					return points[j];
-				}
-			}
-		}
-		return null;
+		return ret;
 	},
 
 	/**
@@ -459,8 +452,31 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor80}',
+					fontSize: options.isStock ? '16px' : '18px' // #2944
+				}	
+			},
+			/*= } =*/
+			options.title,
+			titleOptions
+		);
+		chartSubtitleOptions = options.subtitle = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor60}'
+				}	
+			},
+			/*= } =*/
+			options.subtitle,
+			subtitleOptions
+		);
 
 		// add title and subtitle
 		each([
@@ -635,7 +651,7 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId = 'highcharts-' + H.idCounter++,
+			containerId = H.uniqueKey(),
 			containerStyle,
 			key;
 
@@ -649,7 +665,7 @@ Chart.prototype = {
 
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			H.error(13, true);
 		}
 
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
@@ -828,15 +844,12 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
-			reflow = function (e) {
-				chart.reflow(e);
-			};
-			
+			unbind;
 		
-		addEvent(win, 'resize', reflow);
-		addEvent(chart, 'destroy', function () {
-			removeEvent(win, 'resize', reflow);
+		unbind = addEvent(win, 'resize', function (e) {
+			chart.reflow(e);
 		});
+		addEvent(chart, 'destroy', unbind);
 
 		// The following will add listeners to re-fit the chart before and after
 		// printing (#2284). However it only works in WebKit. Should have worked

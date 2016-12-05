@@ -15,7 +15,7 @@ var charts = H.charts,
 	Pointer = H.Pointer;
 
 /* Support for touch devices */
-extend(Pointer.prototype, {
+extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
 	/**
 	 * Run translation operations
@@ -207,6 +207,9 @@ extend(Pointer.prototype, {
 			pinchDown,
 			isInside;
 
+		if (chart.index !== H.hoverChartIndex) {
+			this.onContainerMouseLeave({ relatedTarget: true });
+		}
 		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {

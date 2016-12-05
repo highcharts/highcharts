@@ -179,7 +179,7 @@ H.Map = H.mapChart = function (a, b, c) {
 				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
 			},
 			tooltip: {
-				followTouchMove: false // docs: New default on maps
+				followTouchMove: false
 			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })

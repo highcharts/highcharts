@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	deg2rad = H.deg2rad,
 	destroyObjectProperties = H.destroyObjectProperties,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
 	format = H.format,
@@ -43,7 +42,8 @@ var addEvent = H.addEvent,
 	Tick = H.Tick;
 	
 /**
- * Create a new axis object
+ * Create a new axis object.
+ * @constructor Axis
  * @param {Object} chart
  * @param {Object} options
  */
@@ -188,7 +188,7 @@ H.Axis.prototype = {
 				fontSize: '11px',
 				fontWeight: 'bold',
 				color: '${palette.neutralColor100}',
-				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+				textOutline: '1px contrast'
 			}
 			/*= } =*/
 		},
@@ -439,7 +439,6 @@ H.Axis.prototype = {
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
 			lang = defaultOptions.lang,
 			numericSymbols = lang.numericSymbols,
-			// docs: new option, added to API. Add it to the I18n article too.
 			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,
@@ -768,7 +767,15 @@ H.Axis.prototype = {
 					)
 				);
 			} else {
-				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+				for (
+					pos = min + (tickPositions[0] - min) % minorTickInterval;
+					pos <= max;
+					pos += minorTickInterval
+				) {
+					// Very, very, tight grid lines (#5771)
+					if (pos === minorTickPositions[0]) {
+						break;
+					}
 					minorTickPositions.push(pos);
 				}
 			}
@@ -868,8 +875,15 @@ H.Axis.prototype = {
 			ret = 1;
 		} else {
 			each(this.series, function (series) {
-				var seriesClosest = series.closestPointRange;
-				if (!series.noSharedTooltip && defined(seriesClosest)) {
+				var seriesClosest = series.closestPointRange,
+					visible = series.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries;
+				
+				if (
+					!series.noSharedTooltip &&
+					defined(seriesClosest) &&
+					visible
+				) {
 					ret = defined(ret) ?
 						Math.min(ret, seriesClosest) :
 						seriesClosest;
@@ -921,6 +935,9 @@ H.Axis.prototype = {
 			this.minRange = undefined;
 			each(this.series || [], function (series) {
 			
+				// Reset incrementer (#5928)
+				series.xIncrement = null;
+
 				// When adding a series, points are not yet generated
 				if (!series.points || series.isDirtyData) {
 					series.processData();
@@ -959,15 +976,14 @@ H.Axis.prototype = {
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
 		if (isXAxis || hasCategories || pointRange) {
+
+			// Get the closest points
+			closestPointRange = axis.getClosest();
+
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
-
 			} else {
-				
-				// Get the closest points
-				closestPointRange = axis.getClosest();
-
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
 						1 : 
@@ -1069,7 +1085,7 @@ H.Axis.prototype = {
 			axis.min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 			axis.max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
 			if (options.type !== axis.linkedParent.options.type) {
-				error(11, 1); // Can't link axes of different type
+				H.error(11, 1); // Can't link axes of different type
 			}
 
 		// Initial min and max from the extreme data values
@@ -1093,7 +1109,7 @@ H.Axis.prototype = {
 
 		if (isLog) {
 			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
+				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,
@@ -1352,7 +1368,15 @@ H.Axis.prototype = {
 			hasOther,
 			options = this.options;
 
-		if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
+		if (
+			// Only if alignTicks is true
+			this.chart.options.chart.alignTicks !== false &&
+			options.alignTicks !== false &&
+
+			// Don't try to align ticks on a log axis, they are not evenly
+			// spaced (#6021)
+			!this.isLog
+		) {
 			each(this.chart[this.coll], function (axis) {
 				var otherOptions = axis.options,
 					horiz = axis.horiz,
@@ -1556,11 +1580,22 @@ H.Axis.prototype = {
 			
 			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 			if (!this.allowZoomOutside) {
-				if (defined(dataMin) && newMin <= min) {
-					newMin = min;
+				// #6014, sometimes newMax will be smaller than min (or newMin will be larger than max).
+				if (defined(dataMin)) {
+					if (newMin < min) {
+						newMin = min;
+					}
+					if (newMin > max) {
+						newMin = max;
+					}
 				}
-				if (defined(dataMax) && newMax >= max) {
-					newMax = max;
+				if (defined(dataMax)) {
+					if (newMax < min) {
+						newMax = min;
+					}
+					if (newMax > max) {
+						newMax = max;
+					}
 				}
 			}
 
@@ -2116,7 +2151,6 @@ H.Axis.prototype = {
 
 	/**
 	 * Render the axis line
-	 * @returns {[type]} [description]
 	 */
 	renderLine: function () {
 		if (!this.axisLine) {

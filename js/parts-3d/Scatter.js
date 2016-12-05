@@ -8,6 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var perspective = H.perspective,
 	pick = H.pick,
+	Point = H.Point,
 	seriesTypes = H.seriesTypes,
 	wrap = H.wrap;
 
@@ -60,11 +61,11 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 		rawPoint.plotX = projectedPoint.x;
 		rawPoint.plotY = projectedPoint.y;
 		rawPoint.plotZ = projectedPoint.z;
-
-
+	
 	}
 
 });
+
 
 wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 	if (chart.is3d()) {
@@ -90,4 +91,25 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 		}
 	}
 	return result;
+});
+
+/**
+ * Updating zIndex for every point - based on the distance from point to camera
+ */
+wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
+	var pointOptions = proceed.apply(this, [].slice.call(arguments, 1));
+	if (this.chart.is3d() && point) {
+		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
+	}
+	return pointOptions;
+});
+
+
+wrap(Point.prototype, 'applyOptions', function (proceed) {
+	var point = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.series.chart.is3d() && point.z === undefined) {
+		point.z = 0;
+	}
+	return point;
 });

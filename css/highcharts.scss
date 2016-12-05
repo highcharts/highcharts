@@ -152,13 +152,13 @@ $highlight-color-10: #e6ebf5; // Pressed button, color axis min color.
     stroke-linejoin: round;
 }
 .highcharts-state-hover .highcharts-graph {
-	stroke-width: 3;
+    stroke-width: 3;
 }
 .highcharts-state-hover path {
     transition: stroke-width 50; /* quick in */
 }
 .highcharts-state-normal path {
-	transition: stroke-width 250ms; /* slow out */
+    transition: stroke-width 250ms; /* slow out */
 }
 
 /* Legend hover affects points and series */

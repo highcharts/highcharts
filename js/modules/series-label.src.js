@@ -370,7 +370,8 @@ Chart.prototype.drawSeriesLabels = function () {
 			paneTop = inverted ? series.xAxis.pos : series.yAxis.pos,
 			paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
 			paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
-			points = series.interpolatedPoints;
+			points = series.interpolatedPoints,
+			label = series.labelBySeries;
 
 		function insidePane(x, y, bBox) {
 			return x > paneLeft && x <= paneLeft + paneWidth - bBox.width && 
@@ -378,8 +379,8 @@ Chart.prototype.drawSeriesLabels = function () {
 		}
 
 		if (series.visible && points) {
-			if (!series.labelBySeries) {
-				series.labelBySeries = chart.renderer
+			if (!label) {
+				series.labelBySeries = label = chart.renderer
 					.label(series.name, 0, -9999, 'connector')
 					.css(extend({
 						color: series.color
@@ -394,7 +395,7 @@ Chart.prototype.drawSeriesLabels = function () {
 					.animate({ opacity: 1 }, { duration: 200 });
 			}
 
-			bBox = series.labelBySeries.getBBox();
+			bBox = label.getBBox();
 			bBox.width = Math.round(bBox.width);
 
 			// Ideal positions are centered above or below a point on right side
@@ -487,20 +488,35 @@ Chart.prototype.drawSeriesLabels = function () {
 				});
 
 				// Move it if needed
-				if (Math.round(best.x) !== Math.round(series.labelBySeries.x) || Math.round(best.y) !== Math.round(series.labelBySeries.y)) {
+				if (Math.round(best.x) !== Math.round(label.x) ||
+						Math.round(best.y) !== Math.round(label.y)) {
 					series.labelBySeries
 						.attr({
+							opacity: 0,
 							x: best.x - paneLeft,
 							y: best.y - paneTop,
 							anchorX: best.connectorPoint && best.connectorPoint.plotX,
-							anchorY: best.connectorPoint && best.connectorPoint.plotY,
-							opacity: 0
+							anchorY: best.connectorPoint && best.connectorPoint.plotY
 						})
 						.animate({ opacity: 1 });
+
+					// Record closest point to stick to for sync redraw
+					series.options.kdNow = true;
+					series.buildKDTree();
+					var closest = series.searchPoint({
+						chartX: best.x,
+						chartY: best.y
+					}, true);
+					label.closest = [
+						closest,
+						best.x - paneLeft - closest.plotX,
+						best.y - paneTop - closest.plotY
+					];
+
 				}
 
-			} else if (series.labelBySeries) {
-				series.labelBySeries = series.labelBySeries.destroy();
+			} else if (label) {
+				series.labelBySeries = label.destroy();
 			}
 		}
 	});
@@ -512,7 +528,10 @@ Chart.prototype.drawSeriesLabels = function () {
 function drawLabels(proceed) {
 
 	var chart = this,
-		delay = 0,
+		delay = Math.max(
+			H.animObject(chart.renderer.globalAnimation).duration,
+			250
+		),
 		initial = !chart.hasRendered;
 
 	proceed.apply(chart, [].slice.call(arguments, 1));
@@ -523,21 +542,38 @@ function drawLabels(proceed) {
 
 	// Which series should have labels
 	each(chart.series, function (series) {
-		var options = series.options.label;
+		var options = series.options.label,
+			label = series.labelBySeries,
+			closest = label && label.closest;
+
 		if (options.enabled && series.visible && (series.graph || series.area)) {
 			chart.labelSeries.push(series);
 
 			// The labels are processing heavy, wait until the animation is done
-			delay = Math.max(
-				delay,
-				H.animObject(series.options.animation).duration
-			);
+			if (initial) {
+				delay = Math.max(
+					delay,
+					H.animObject(series.options.animation).duration
+				);
+			}
+
+			// Keep the position updated to the axis while redrawing
+			if (closest) {
+				if (closest[0].plotX !== undefined) {
+					label.animate({
+						x: closest[0].plotX + closest[1],
+						y: closest[0].plotY + closest[2]
+					});
+				} else {
+					label.attr({ opacity: 0 });
+				}
+			}
 		}
 	});
 
 	chart.seriesLabelTimer = setTimeout(function () {
 		chart.drawSeriesLabels();
-	}, initial ? delay : 250);
+	}, delay);
 
 }
 wrap(Chart.prototype, 'render', drawLabels);

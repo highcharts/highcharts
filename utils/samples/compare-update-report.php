@@ -26,5 +26,8 @@ if (isset($compare->$path->$key) && isset($difference)) {
 if (isset($diff)) {
 	@$compare->$path->$key = $diff;
 }
+if (!is_dir('temp')) {
+	mkdir('temp');
+}
 file_put_contents($reportFile, json_encode($compare, JSON_PRETTY_PRINT));
 ?>

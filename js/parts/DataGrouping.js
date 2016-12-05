@@ -15,7 +15,6 @@ var arrayMax = H.arrayMax,
 	defaultPlotOptions = H.defaultPlotOptions,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	format = H.format,
 	isNumber = H.isNumber,
@@ -299,7 +298,7 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options.dataGrouping,
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-			pick(dataGroupingOptions.enabled, chart.options._stock),
+			pick(dataGroupingOptions.enabled, chart.options.isStock),
 		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
 		skip;
@@ -413,7 +412,7 @@ seriesProto.generatePoints = function () {
  */
 wrap(Point.prototype, 'update', function (proceed) {
 	if (this.dataGroup) {
-		error(24);
+		H.error(24);
 	} else {
 		proceed.apply(this, [].slice.call(arguments, 1));
 	}
@@ -517,7 +516,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		);
 	}
 
-	if (this.chart.options._stock) {
+	if (this.chart.options.isStock) {
 		this.requireSorting = true;
 	}
 
