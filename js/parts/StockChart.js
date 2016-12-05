@@ -547,11 +547,16 @@ seriesProto.setCompare = function (compare) {
 		
 		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
-			// get the modified value
-			value = compare === 'value' ?
-				value - compareValue : // compare value
-				value = 100 * (value / compareValue) - 100; // compare percent
-
+			// Get the modified value
+			if (compare === 'value') {
+				value -= compareValue;
+			
+			// Compare percent
+			} else {
+				value = 100 * (value / compareValue) - 
+					(this.options.compareBase === 100 ? 0 : 100); // docs: added since "next"
+			}
+			
 			// record for tooltip etc.
 			if (point) {
 				point.change = value;
