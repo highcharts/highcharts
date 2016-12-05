@@ -144,25 +144,4 @@ $(function () {
 
     });
 
-
-    QUnit.test('Empty point config', function (assert) {
-
-        var chart = Highcharts.chart('container', {
-            chart: {
-                type: 'column'
-            },
-            series: [{
-                data: [{}, 31, 635, 203, 2],
-                dataLabels: {
-                    enabled: true
-                }
-            }]
-        });
-        assert.strictEqual(
-            chart.series[0].points[0].dataLabel.attr('y'),
-            -9999, // This test may be updated if we hide labels in other ways
-            'Label is hidden'
-        );
-    });
-
 });

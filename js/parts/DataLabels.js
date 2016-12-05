@@ -324,7 +324,6 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = 
-			!point.isNull &&
 			this.visible &&
 			(
 				point.series.forceDL ||
