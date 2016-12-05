@@ -248,7 +248,7 @@ seriesType('bubble', 'scatter', {
 	haloPath: function (size) {
 		return Point.prototype.haloPath.call(
 			this, 
-			this.shapeArgs.r + size
+			size === 0 ? 0 : this.shapeArgs.r + size // #6067
 		);
 	},
 	ttBelow: false
