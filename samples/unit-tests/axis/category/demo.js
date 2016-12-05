@@ -210,7 +210,7 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
 
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,Upda1,Upda2', // Note that xAxis.series order gets changed when series.update. It may be considered a bug.
+        'Upda1,Upda2,Addid1,Addid2',
         'Series.update'
     );
 
@@ -221,14 +221,14 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
 
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,UpdatPoint,Upda2',
+        'UpdatPoint,Upda2,Addid1,Addid2',
         'Point.update'
     );
 
     chart.series[0].points[0].remove();
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,Upda2',
+        'Upda2,Addid1,Addid2',
         'Point.remove'
     );
 });
