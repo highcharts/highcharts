@@ -9,16 +9,13 @@ import H from '../parts/Globals.js';
 
 var dateFormat = H.dateFormat,
 	each = H.each,
+	isNumber = H.isNumber,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	Chart = H.Chart,
 	Tick = H.Tick;
-
-// TODO
-// ta hensyn til startOfWeek
-
 
 // Enum for which side the axis is on.
 // Maps to axis.side
@@ -146,7 +143,7 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
  * @return {object} object - an object containing x and y positions
  *						 for the tick
  */
-wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
 	var tick = this,
 		retVal = proceed.apply(tick, Array.prototype.slice.call(arguments, 1)),
 		axis = tick.axis,
@@ -154,8 +151,10 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 		tickInterval = options.tickInterval || axis.tickInterval,
 		reversed = axis.reversed,
 		tickPositions = axis.tickPositions,
-		lastTick = tickPositions[tickPositions.length - 2],
-		isLastTick = tick.pos === lastTick,
+		isFirstTick = tick.pos === axis.min,
+		lastTickPos = tickPositions[tickPositions.length - 2],
+		isLastTick = tick.pos === lastTickPos,
+		nextTickPos = tickPositions[index + 1],
 		tickPixelInterval,
 		newX,
 		axisMin,
@@ -178,11 +177,16 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label) {
 
 		if (axis.horiz && options.categories === undefined) {
 			// Center x position
-			if (isLastTick) {
+			if (isFirstTick) {
+				if (nextTickPos) {
+					x = axis.translate((tick.pos + nextTickPos) / 2);
+				}
+				retVal.x = x + axis.left;
+			} else if (isLastTick) {
 				retVal.x = (axis.left + axis.len + x) / 2;
 			} else {
 				x = axis.translate(tick.pos + (tickInterval / 2));
-				retVal.x = x + axis.left;	
+				retVal.x = x + axis.left;
 			}
 
 			axisHeight = axis.axisGroup.getBBox().height;
@@ -244,16 +248,15 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 /**
  * Sets the axis title to null unless otherwise specified by user.
  * @param {Function} proceed - the original function
- * @param {Object} chart - the chart which holds the axis
  * @param {Object} userOptions - the user specified axis options
  */
-wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	var axis = this;
-	
+
 	if (userOptions.title && !userOptions.title.text) {
 		userOptions.title.text = null;
 	}
-	
+
 	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 });
 
@@ -382,6 +385,94 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 });
 
 /**
+ * Renders tick labels within range in linked axes.
+ * If a tick pos is less than axis.min, but the next tick is greater than
+ * axis.min, it is within range of the axis, so render it.
+ *
+ *                        _____________________________
+ *                        |   |       |       |       |
+ * Make this:             |   |   2   |   3   |   4   |
+ *                        |___|_______|_______|_______|
+ *                          ^
+ *                        _____________________________
+ *                        |   |       |       |       |
+ * Into this:             | 1 |   2   |   3   |   4   |
+ *                        |___|_______|_______|_______|
+ *                          ^
+ *
+ * @param {Function} proceed - the original function
+ * @param {Number} pos - the tick position (value, not px)
+ * @param {Integer} i - the tick index
+ */
+wrap(Axis.prototype, 'renderTick', function (proceed, pos, i) {
+	var axis = this,
+		chart = axis.chart,
+		gridAxis = axis.options.grid,
+		linked = axis.isLinked,
+		tickInterval = axis.tickInterval,
+		min = axis.min,
+		withinRange = pos < min && pos + tickInterval > min,
+		ticks = axis.ticks,
+		tick,
+		hasRendered = chart.hasRendered,
+		slideInTicks = hasRendered && isNumber(axis.oldMin);
+
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+
+	if (gridAxis && linked && withinRange) {
+		pos = axis.min;
+		tick = ticks[pos];
+		if (!tick) {
+			tick = new Tick(axis, pos);
+		}
+
+		// render new ticks in old position
+		if (slideInTicks && tick.isNew) {
+			tick.render(i, true, 0.1);
+		}
+
+		tick.render(i);
+		ticks[pos] = tick;
+		axis.tickPositions[i] = pos;
+	}
+});
+
+/**
+* Properly positions tick labels which are added due to the Axis.renderTick()-
+* override.
+*               _____________________________
+*               |   |       |       |       |
+* Make this:    |  1|   2   |   3   |   4   |
+*               |___|_______|_______|_______|
+*                  ^
+*               _____________________________
+*               |   |       |       |       |
+* Into this:    | 1 |   2   |   3   |   4   |
+*               |___|_______|_______|_______|
+*                 ^
+* @param {Function} proceed - the original function
+* @param {Number} pos - the tick position (value, not px)
+* @param {Integer} i - the tick index
+*/
+wrap(Axis.prototype, 'generateTick', function (proceed, pos, i) {
+	var axis = this,
+		gridAxis = axis.options.grid,
+		linked = axis.isLinked,
+		tickInterval = axis.tickInterval,
+		linkedParent = axis.linkedParent,
+		parentMin = linkedParent && linkedParent.min,
+		withinRange = pos < parentMin && pos + tickInterval > parentMin,
+		tickPositions = axis.tickPositions;
+
+	if (gridAxis && linked && withinRange) {
+		pos = axis.linkedParent.min;
+		tickPositions[i] = pos;
+	}
+
+	proceed.apply(axis, [pos, i]);
+});
+
+/**
  * Draw an extra line on the far side of the the axisLine,
  * creating cell roofs of a grid.
  *
@@ -445,14 +536,14 @@ wrap(Axis.prototype, 'render', function (proceed) {
 				zIndex: 7,
 				class: 'grid-wall'
 			};
-			
+
 			axis.leftWall = renderer.path(path)
 				.attr(attrs)
 				.add(axis.axisGroup);
-			
+
 			// Change x positions for right wall
 			path[1] = path[4] = x + axis.width + 1; // +1 accounts for left wall
-			
+
 			axis.rightWall = renderer.path(path)
 				.attr(attrs)
 				.add(axis.axisGroup);
