@@ -263,7 +263,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			i = collection.length;
 			while (i--) {
 				// Loop down until the interted element has higher index
-				if (indexOption >
+				if (indexOption >=
 						pick(collection[i].options.index, collection[i]._i)) {
 					collection.splice(i + 1, 0, this);
 					break;
