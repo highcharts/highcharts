@@ -1982,6 +1982,22 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Generates a tick for initial positioning
+	 * @param  {Number} pos - the tick position value (not px)
+	 * @param  {Integer} i - the index of the tick in axis.tickPositions
+	 */
+	generateTick: function (pos) {
+		var axis = this,
+			ticks = axis.ticks;
+
+		if (!ticks[pos]) {
+			ticks[pos] = new Tick(axis, pos);
+		} else {
+			ticks[pos].addLabel(); // update labels depending on tick interval
+		}
+	},
+
+	/**
 	 * Render the tick labels to a preliminary position to get their sizes
 	 */
 	getOffset: function () {
@@ -2039,12 +2055,9 @@ H.Axis.prototype = {
 		if (hasData || axis.isLinked) {
 
 			// Generate ticks
-			each(tickPositions, function (pos) {
-				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis, pos);
-				} else {
-					ticks[pos].addLabel(); // update labels depending on tick interval
-				}
+			each(tickPositions, function (pos, i) {
+				// i is not used here, but may be used in overrides
+				axis.generateTick(pos, i);
 			});
 
 			axis.renderUnsquish();
