@@ -627,8 +627,8 @@ H.Axis.prototype = {
 		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
-	/*
-	 * Utility method to translate a pixel position in to an axis value
+	/**
+	 * Utility method to translate a pixel position in to an axis value.
 	 * @param {Number} pixel The pixel value coordinate
 	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
 	 *        axis/pane itself.
@@ -1939,6 +1939,55 @@ H.Axis.prototype = {
 	hasData: function () {
 		return this.hasVisibleSeries || (defined(this.min) && defined(this.max) && !!this.tickPositions);
 	},
+	
+	/**
+	 * Adds the title defined in axis.options.title.
+	 * @param {Boolean} display - whether or not to display the title
+	 */
+	addTitle: function (display) {
+		var axis = this,
+			renderer = axis.chart.renderer,
+			horiz = axis.horiz,
+			opposite = axis.opposite,
+			options = axis.options,
+			axisTitleOptions = options.title,
+			textAlign;
+		
+		if (!axis.axisTitle) {
+			textAlign = axisTitleOptions.textAlign;
+			if (!textAlign) {
+				textAlign = (horiz ? { 
+					low: 'left',
+					middle: 'center',
+					high: 'right'
+				} : { 
+					low: opposite ? 'right' : 'left',
+					middle: 'center',
+					high: opposite ? 'left' : 'right'
+				})[axisTitleOptions.align];
+			}
+			axis.axisTitle = renderer.text(
+				axisTitleOptions.text,
+				0,
+				0,
+				axisTitleOptions.useHTML
+			)
+			.attr({
+				zIndex: 7,
+				rotation: axisTitleOptions.rotation || 0,
+				align: textAlign
+			})
+			.addClass('highcharts-axis-title')
+			/*= if (build.classic) { =*/
+			.css(axisTitleOptions.style)
+			/*= } =*/
+			.add(axis.axisGroup);
+			axis.axisTitle.isNew = true;
+		}
+		
+		// hide or show the title depending on whether showEmpty is set
+		axis.axisTitle[display ? 'show' : 'hide'](true);
+	},
 
 	/**
 	 * Render the tick labels to a preliminary position to get their sizes
@@ -1962,14 +2011,12 @@ H.Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			labelOffsetPadded,
-			opposite = axis.opposite,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
 			className = options.className,
-			textAlign,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
 			tickSize = this.tickSize('tick');
@@ -2038,46 +2085,13 @@ H.Axis.prototype = {
 		}
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
-			if (!axis.axisTitle) {
-				textAlign = axisTitleOptions.textAlign;
-				if (!textAlign) {
-					textAlign = (horiz ? { 
-						low: 'left',
-						middle: 'center',
-						high: 'right'
-					} : { 
-						low: opposite ? 'right' : 'left',
-						middle: 'center',
-						high: opposite ? 'left' : 'right'
-					})[axisTitleOptions.align];
-				}
-				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
-					0,
-					0,
-					axisTitleOptions.useHTML
-				)
-				.attr({
-					zIndex: 7,
-					rotation: axisTitleOptions.rotation || 0,
-					align: textAlign
-				})
-				.addClass('highcharts-axis-title')
-				/*= if (build.classic) { =*/
-				.css(axisTitleOptions.style)
-				/*= } =*/
-				.add(axis.axisGroup);
-				axis.axisTitle.isNew = true;
-			}
+			axis.addTitle(showAxis);
 
 			if (showAxis) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
 			}
-
-			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		// Render the axis line
