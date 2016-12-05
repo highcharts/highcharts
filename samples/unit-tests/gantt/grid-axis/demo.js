@@ -898,10 +898,10 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
 });
 
 /**
- * Checks that the last tick label does not pop out of its grid if there was no
+ * Checks that the last tick label does not pop out of its cell if there was no
  * room.
  */
-QUnit.test('', function (assert) {
+QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     var labelBox,
         axisBox,
         axisRight,
@@ -925,8 +925,7 @@ QUnit.test('', function (assert) {
                     }
                 },
                 min: Date.UTC(2016, 10, 21),
-                max: Date.UTC(2016, 10, 30),
-                currentDateIndicator: true
+                max: Date.UTC(2016, 10, 30)
             }, {
                 grid: true,
                 type: 'datetime',
@@ -956,5 +955,83 @@ QUnit.test('', function (assert) {
     assert.ok(
         labelBox.x < axisRight,
         'Last tick label does not pop out'
+    );
+});
+
+/**
+ * Leftmost tick label appears even if its start is less than axis.min.
+ */
+QUnit.test('Leftmost ticklabel appears', function (assert) {
+    var axis,
+        error = 0.01,
+        tickPositions,
+        firstTick,
+        tickLabelBox,
+        tickLabelCenter,
+        axisBox,
+        axisCenter,
+        chart = Highcharts.chart('container', {
+            chart: {
+                marginRight: 150
+            },
+            xAxis: [{
+                grid: true,
+                type: 'datetime',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24, // Day
+                labels: {
+                    format: '{value:%E}',
+                    style: {
+                        fontSize: '15px'
+                    }
+                },
+                min: Date.UTC(2016, 10, 23),
+                max: Date.UTC(2016, 10, 28)
+            }, {
+                grid: true,
+                type: 'datetime',
+                opposite: true,
+                tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+                labels: {
+                    format: '{value:Week %W}',
+                    style: {
+                        fontSize: '15px'
+                    }
+                },
+                linkedTo: 0
+            }],
+            series: [{
+                data: [[Date.UTC(2016, 10, 27), 1]]
+            }]
+        });
+
+    axis = chart.xAxis[1];
+    tickPositions = axis.tickPositions;
+    firstTick = axis.ticks[tickPositions[0]];
+
+    axisBox = axis.axisGroup.getBBox();
+    axisCenter = axisBox.x + (axisBox.width / 2);
+
+
+    // In a linked axis, a tick which normally would have been added even
+    // though its pos is lower than axis.min, is trimmed.
+    assert.ok(
+        firstTick !== undefined,
+        'First tick exists'
+    );
+
+    tickLabelBox = firstTick.label.element.getBBox();
+    tickLabelCenter = tickLabelBox.x + (tickLabelBox.width / 2);
+
+    assert.equal(
+        firstTick.pos,
+        axis.min,
+        'First tick gets pos from axis.min'
+    );
+    assert.close(
+        tickLabelCenter,
+        axisCenter,
+        error,
+        'First tick label is centered in its grid'
     );
 });
