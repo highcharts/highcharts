@@ -15,7 +15,8 @@ import 'xrange-series.js';
 //   Should map directly to the getTimezoneOffset hook with momentjs etc.
 // - dataLabel alignment (verticalAlign, inside)
 
-var defined = H.defined,
+var dateFormat = H.dateFormat,
+	defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
 	pick = H.pick,
@@ -23,6 +24,8 @@ var defined = H.defined,
 	seriesTypes = H.seriesTypes,
 	stop = H.stop,
 	Point = H.Point,
+	Tooltip = H.Tooltip,
+	getXDateFormat = Tooltip.prototype.getXDateFormat,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
 
@@ -57,11 +60,14 @@ seriesType('gantt', parentName, {
 		pointFormatter: function () {
 			var point = this,
 				taskName = point.taskName,
+				xAxis = point.series.xAxis,
+				options = xAxis.options,
+				format = getXDateFormat.apply(point, [point, options, xAxis]),
 				// TODO
 				// date formats: reuse logic for tooltip.getXDateFormat
 				// (use point.series.axis for param)
-				start = new Date(point.start),
-				end = new Date(point.end),
+				start = dateFormat(format, point.start),
+				end = dateFormat(format, point.end),
 				milestone = point.options.milestone,
 				dateRowStart = '<span style="font-size: 0.8em">',
 				dateRowEnd = '</span><br/>',
