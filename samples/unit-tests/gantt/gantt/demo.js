@@ -82,7 +82,7 @@ QUnit.test('Milestones', function (assert) {
         points = chart.series[0].points,
         taskPoint = points[0],
         milestonePoint = points[2],
-        milestone = milestonePoint.milestone,
+        milestone = milestonePoint.graphic,
         path,
         isDiamond,
         topX,
@@ -100,13 +100,13 @@ QUnit.test('Milestones', function (assert) {
     assert.equal(
         taskPoint.milestone,
         undefined,
-        'Task does not have a milestone property'
+        'Point with no miliestone:true is not a milestone'
     );
 
     assert.equal(
-        typeof milestonePoint.milestone,
-        'object',
-        'Milestone has a milestone object property'
+        milestonePoint.milestone,
+        true,
+        'Point with milestone:true is a milestone'
     );
 
     assert.equal(

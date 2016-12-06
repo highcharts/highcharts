@@ -11,8 +11,8 @@ import 'grid-axis.js';
 import 'xrange-series.js';
 
 // TODO
-// - NOT HERE, but add option for timezone in Highcharts/stock
-//   maps directly to the getTimezoneOffset hook with momentjs etc.
+// - NOT HERE, but add option for timezone in Highcharts/stock.
+//   Should map directly to the getTimezoneOffset hook with momentjs etc.
 // - dataLabel alignment (verticalAlign, inside)
 
 var defined = H.defined,
@@ -132,32 +132,20 @@ seriesType('gantt', parentName, {
 					shapeArgs.width,
 					shapeArgs.height
 				);
-				
-				// TODO
-				// Replace point.graphic === point.milestone
-				// No group needed. Remove point.milestone
-				// Only point.graphic (this IS the diamond. Really)
 
 				if (graphic) {
 					stop(graphic);
-					point.milestone[verb]({
+					graphic[verb]({
 						d: diamondShape
 					});
 				} else {
-					point.graphic = graphic = renderer.g('point')
-					.attr({
-						'class': point.getClassName()
-					})
-					.add(point.group || series.group);
-
-
-					point.milestone = renderer.path(diamondShape)
+					point.graphic = graphic = renderer.path(diamondShape)
 					.addClass(point.getClassName(), true)
-					.add(graphic);
+					.add(point.group || series.group);
 				}
 				/*= if (build.classic) { =*/
 				// Presentational
-				point.milestone
+				point.graphic
 					.attr(series.pointAttribs(point, state))
 					.shadow(seriesOpts.shadow, null, cutOff);
 				/*= } =*/
