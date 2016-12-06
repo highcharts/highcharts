@@ -719,7 +719,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			}, haloOptions.attributes));
 			/*= } =*/
 
-		} else if (halo && halo.point) {
+		} else if (halo && halo.point && halo.point.haloPath) {
 			// Animate back to 0 on the current halo point (#6055)
 			halo.animate({ d: halo.point.haloPath(0) });
 		}
