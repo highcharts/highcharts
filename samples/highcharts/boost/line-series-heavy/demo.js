@@ -46,7 +46,7 @@ $(function () {
         return r;
     }
 
-    var n = 200,
+    var n = 1000,
         s = 600,
         data = getData(n),
         series = getSeries(n, s);
@@ -67,10 +67,19 @@ $(function () {
             enabled: false
         },
 
-        // xAxis: {
-        //     min: 0,
-        //     max: 120
-        // },
+        xAxis: {
+            min: 0,
+            max: 120,
+            ordinal: false
+        },
+
+        navigator: {
+            xAxis: {
+                ordinal: false,
+                min: 0,
+                max: 10
+            }
+        },
 
         // yAxis: {
         //     min: 0,

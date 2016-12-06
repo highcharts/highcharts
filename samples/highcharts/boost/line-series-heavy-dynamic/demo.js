@@ -8,23 +8,10 @@ $(function () {
             c,
             spike;
         for (i = 0; i < n; i = i + 1) {
-            if (i % 100 === 0) {
-                a = 2 * Math.random();
-            }
-            if (i % 1000 === 0) {
-                b = 2 * Math.random();
-            }
-            if (i % 10000 === 0) {
-                c = 2 * Math.random();
-            }
-            if (i % 50000 === 0) {
-                spike = 0;
-            } else {
-                spike = 0;
-            }
+    
             arr.push([
                 i,
-                2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
+                2 * Math.sin(i / 100) + Math.random()
             ]);
         }
         return arr;
@@ -37,24 +24,32 @@ $(function () {
         for (; i < s; i++) {
             r.push({
                 data: getData(n),
+                animation: false,
                 lineWidth: 2,
                 boostThreshold: 1,
-                turboThreshold: 1 ,
-                showInNavigator: true               
+                turboThreshold: 1,
+                showInNavigator: true,                   
+                requireSorting: false
             });
         }
 
         return r;
     }
 
-    var n = 120,
-        s = 600,
+    var n = 200,
+        s = 1,
         data = getData(n),
-        series = getSeries(n, s);
+        series = getSeries(n, s),
+        chart;
 
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
 
     console.time('line');
-    Highcharts.stockChart('container', {
+    chart =  Highcharts.stockChart('container', {
 
         chart: {
             zoomType: 'x'
@@ -67,12 +62,12 @@ $(function () {
         navigator: {
             xAxis: {
                 ordinal: false,
-                min: 0,
-                max: 10
+                min: n / 2
+                //max: 10
             },
             yAxis: {
-                min: 0,
-                max: 10
+               // min: 0,
+               // max: 10
             }
         },
 
@@ -81,14 +76,14 @@ $(function () {
         },        
 
         xAxis: {
-            min: 0,
-            max: 120,
+            min: n / 2,
+           // max: 120,
             ordinal: false
         },
 
         yAxis: {
-            min: 0,
-            max: 8
+            //min: 0,
+            //max: 8
         },
 
         subtitle: {
@@ -104,5 +99,28 @@ $(function () {
 
     });
     console.timeEnd('line');
+
+    function addPoint() {                
+        ++n;
+
+        chart.series.forEach(function (s, i) {
+            var x = n,
+                y = 2 * Math.sin(x / 100) + Math.random();
+
+            s.addPoint([x, y], false, true, false);
+            // s.options.data.splice(s.options.data.length, 0, [x, y]);
+            // s.options.data.shift();
+            // s.isDirty = true;
+            // s.isDirtyData = true;
+        });
+
+        chart.redraw();
+    }
+
+    function addSeries() {
+
+    }
+
+    setInterval(addPoint, 1000);
 
 });

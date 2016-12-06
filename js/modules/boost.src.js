@@ -167,6 +167,7 @@ function GLShader(gl) {
 			'}'
 			/* eslint-enable */
 		].join('\n'),
+		uLocations = {},
 		//The shader program
 		shaderProgram,
 		//Uniform handle to the perspective matrix
@@ -228,8 +229,8 @@ function GLShader(gl) {
 	}
 
 	function setUniform(name, val) {
-		//Need to cache locations
-		var u = pUniform = gl.getUniformLocation(shaderProgram, name);
+		var u = uLocations[name] = 	uLocations[name] ||  
+							  	 	gl.getUniformLocation(shaderProgram, name);
 		gl.uniform1f(u, val);
 	}
 
@@ -422,9 +423,10 @@ function GLRenderer() {
 			yData = options.yData || series.processedYData,
 			useRaw = !xData,
 			minVal,
+			d = isStacked ? series.data : (rawData),
 			maxVal;
 
-		each(isStacked ? series.data : (rawData), function (d, i) {
+		each(d, function (d, i) {
 			var x,
 				y,
 				clientX,
@@ -756,19 +758,36 @@ each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], fun
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
 	if (!this.hasExtremes()) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
-wrap(Series.prototype, 'setData', function (proceed) {
-	if (!this.hasExtremes(true)) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	}
-});
+
+// wrap(Series.prototype, 'setData', function (proceed) {
+// 	if (!this.hasExtremes(true)) {
+// 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+// 	}
+// });
+
 wrap(Series.prototype, 'processData', function (proceed) {
 	if (!this.hasExtremes(true)) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
+
+// wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+// 	this.options.data.push(options);
+
+// 	if (shift) {
+// 		this.options.data.shift();		
+// 	}
+
+// 	this.isDirty = true;
+// 	this.isDirtyData = true;
+
+// 	if (redraw) {
+// 		chart.redraw(animation); // Animation is set anyway on redraw, #5665
+// 	}
+// });
 
 // wrap(Series.prototype, 'render', function (proceed) {
 // 	if (this.drawGraph) {
@@ -826,42 +845,52 @@ H.extend(Series.prototype, {
 	 * Create a hidden canvas to draw the graph on. The contents is later copied over 
 	 * to an SVG image element.
 	 */
-	setUpContext: function () {
+	setUpContext: function (level) {
 		var chart = this.chart,
+			target = level === 'series' ? this : chart,
 			width = chart.chartWidth,
 			height = chart.chartHeight,
 			swapXY = function (proceed, x, y, a, b, c, d) {
 				proceed.call(this, y, x, a, b, c, d);
 			};
 
-		if (!chart.canvas) {
+		if (!target.canvas) {
 			console.log('Setting up the canvas');
-			chart.canvas = doc.createElement('canvas');		
-			chart.image = chart.renderer.image('', 0, 0, width, height).add(chart.seriesGroup);
+			target.canvas = doc.createElement('canvas');		
+			target.image = target.renderer.image(
+								'', 
+								0, 
+								0, 
+								width, 
+								height
+							).add(target.seriesGroup || target.group);
 
-			if (chart.inverted) {
+			if (target.inverted) {
 				each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
 					wrap(ctx, fn, swapXY);
 				});
 			}
 		}
 		
-		chart.canvas.width = width;
-		chart.canvas.height = height;					
+		target.canvas.width = width;
+		target.canvas.height = height;					
 		
-		if (!chart.ogl) {
-			chart.ogl = GLRenderer();
-			chart.ogl.init(chart.canvas);
-			chart.ogl.clear();
+		if (!target.ogl) {
+			target.ogl = GLRenderer();
+			target.ogl.init(target.canvas);
+			target.ogl.clear();
 
 		}
 
-		chart.image.attr({
+		target.image.attr({
 			x: 0,
 			y: 0,
 			width: width,
-			height: height
+			height: height,
+			style: {'pointer-events': 'none'}
 		});
+
+
 	},
 
 	renderCanvas: function () {
@@ -1280,7 +1309,7 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
  */
 H.Chart.prototype.callbacks.push(function (chart) {
 
-	function canvasToSVG() {
+	function canvasToSVG() {		
 		console.time('gl rendering');
 		
 		if (chart.ogl) {
@@ -1289,6 +1318,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		
 		console.timeEnd('gl rendering');
 
+		//console.log('points', chart.series[0].options.data.length);
 		
 		if (chart.image && chart.canvas) {
 			chart.image.attr({ 
@@ -1303,7 +1333,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		if (!chart.canvas || !chart.ogl) {
 			return;
 		}
-		
+
 		chart.ogl.flush();
 
 		//Clear ogl
