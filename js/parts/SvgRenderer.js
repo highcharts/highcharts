@@ -114,8 +114,10 @@ SVGElement.prototype = {
 	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, this.renderer.globalAnimation, true);
-		if (animOptions) {
+		var animOptions = H.animObject(
+			pick(options, this.renderer.globalAnimation, true)
+		);
+		if (animOptions.duration) {
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
