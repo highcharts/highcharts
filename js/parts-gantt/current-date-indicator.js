@@ -12,17 +12,13 @@ var merge = H.merge,
 	wrap = H.wrap,
 	Axis = H.Axis,
 	PlotLineOrBand = H.PlotLineOrBand,
-	dateFormat = '%a, %b %d %Y, %H:%M:%S',
-	nowText = H.dateFormat(dateFormat, new Date()),
 	defaultConfig = {
 		color: '#FF0000',
 		width: 2,
 		label: {
-			// TODO:
-			// Format
-			// Formatter
-			text: nowText, // Automatic
-			rotation: 0 // display horizontally
+			format: '%a, %b %d %Y, %H:%M:%S',
+			formatter: undefined,
+			rotation: 0
 		}
 	};
 
@@ -32,6 +28,10 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 
 	if (cdiOptions) {
 		if (typeof cdiOptions === 'object') {
+			// Ignore formatter if custom format is defined
+			if (cdiOptions.label && cdiOptions.label.format) {
+				cdiOptions.label.formatter = undefined;
+			}
 			cdiOptions = merge(defaultConfig, cdiOptions);
 		} else {
 			cdiOptions = merge(defaultConfig);
@@ -53,11 +53,18 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 wrap(PlotLineOrBand.prototype, 'render', function (proceed) {
 	var plotLoB = this,
 		axis = plotLoB.axis,
+		options = plotLoB.options,
+		format = options.label.format,
+		formatter = options.label.formatter,
 		cdiOptions = axis.options.currentDateIndicator;
 
 	if (cdiOptions) {
-		plotLoB.options.value = new Date();
-		plotLoB.options.label.text = H.dateFormat(dateFormat, new Date());
+		options.value = new Date();
+		if (typeof formatter === 'function') {
+			options.label.text = formatter(plotLoB);
+		} else {
+			options.label.text = H.dateFormat(format, new Date());
+		}
 	}
 	return proceed.apply(plotLoB, Array.prototype.slice.call(arguments, 1));
 });
