@@ -37,7 +37,7 @@ $(function () {
     }
 
     var n = 200,
-        s = 1,
+        s = 600,
         data = getData(n),
         series = getSeries(n, s),
         chart;
