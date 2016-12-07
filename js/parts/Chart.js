@@ -371,7 +371,7 @@ Chart.prototype = {
 			i;
 
 		function itemById(item) {
-			return item.options.id === id;
+			return item.id === id || item.options.id === id;
 		}
 
 		ret = 
