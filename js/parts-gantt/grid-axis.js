@@ -7,7 +7,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var dateFormat = H.dateFormat,
+var argsToArray = function (args) {
+		return Array.prototype.slice.call(args, 1);
+	},
+	dateFormat = H.dateFormat,
 	each = H.each,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
@@ -145,7 +148,7 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
  */
 wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
 	var tick = this,
-		retVal = proceed.apply(tick, Array.prototype.slice.call(arguments, 1)),
+		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
 		options = axis.options,
 		tickInterval = options.tickInterval || axis.tickInterval,
@@ -229,7 +232,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
 	var axis = this,
-		retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
+		retVal = proceed.apply(axis, argsToArray(arguments)),
 		labelPadding,
 		distance;
 
@@ -257,7 +260,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 		userOptions.title.text = null;
 	}
 
-	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**
@@ -292,7 +295,7 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 			axis.addTitle();
 		}
 
-		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+		proceed.apply(axis, argsToArray(arguments));
 
 		axisOffset[side] = pick(axisHeight, axisOffset[side]);
 
@@ -301,7 +304,7 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 		options.title = axisTitleOptions;
 
 	} else {
-		proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+		proceed.apply(axis, argsToArray(arguments));
 	}
 });
 
@@ -356,7 +359,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 		 */
 		options.endOnTick = true;
 	}
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	proceed.apply(this, argsToArray(arguments));
 });
 
 /**
@@ -381,14 +384,12 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 			series.options.pointRange = 0;
 		});
 	}
-	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**
- * Renders tick labels within range in linked axes.
- * If a tick pos is less than axis.min, but the next tick is greater than
- * axis.min, it is within range of the axis, so render it.
- *
+ * Makes tick labels which are usually ignored in a linked axis displayed if
+ * they are within range of linkedParent.min.
  *                        _____________________________
  *                        |   |       |       |       |
  * Make this:             |   |   2   |   3   |   4   |
@@ -399,77 +400,22 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
  * Into this:             | 1 |   2   |   3   |   4   |
  *                        |___|_______|_______|_______|
  *                          ^
- *
- * @param {Function} proceed - the original function
- * @param {Number} pos - the tick position (value, not px)
- * @param {Integer} i - the tick index
+ * @param {function} proceed - the original function
  */
-wrap(Axis.prototype, 'renderTick', function (proceed, pos, i) {
+wrap(Axis.prototype, 'trimTicks', function (proceed) {
 	var axis = this,
-		chart = axis.chart,
-		gridAxis = axis.options.grid,
-		linked = axis.isLinked,
+		isGridAxis = axis.options.grid,
+		isLinked = axis.isLinked,
+		tickPositions = axis.tickPositions,
+		firstPos = tickPositions[0],
+		min = axis.linkedParent && axis.linkedParent.min,
 		tickInterval = axis.tickInterval,
-		min = axis.min,
-		withinRange = pos < min && pos + tickInterval > min,
-		ticks = axis.ticks,
-		tick,
-		hasRendered = chart.hasRendered,
-		slideInTicks = hasRendered && isNumber(axis.oldMin);
+		withinRange = firstPos < min && firstPos + tickInterval > min;
 
-	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
-
-	if (gridAxis && linked && withinRange) {
-		pos = axis.min;
-		tick = ticks[pos];
-		if (!tick) {
-			tick = new Tick(axis, pos);
-		}
-
-		// render new ticks in old position
-		if (slideInTicks && tick.isNew) {
-			tick.render(i, true, 0.1);
-		}
-
-		tick.render(i);
-		ticks[pos] = tick;
-		axis.tickPositions[i] = pos;
+	if (isGridAxis && isLinked && withinRange) {
+		tickPositions[0] = min;
 	}
-});
-
-/**
-* Properly positions tick labels which are added due to the Axis.renderTick()-
-* override.
-*               _____________________________
-*               |   |       |       |       |
-* Make this:    |  1|   2   |   3   |   4   |
-*               |___|_______|_______|_______|
-*                  ^
-*               _____________________________
-*               |   |       |       |       |
-* Into this:    | 1 |   2   |   3   |   4   |
-*               |___|_______|_______|_______|
-*                 ^
-* @param {Function} proceed - the original function
-* @param {Number} pos - the tick position (value, not px)
-* @param {Integer} i - the tick index
-*/
-wrap(Axis.prototype, 'generateTick', function (proceed, pos, i) {
-	var axis = this,
-		gridAxis = axis.options.grid,
-		linked = axis.isLinked,
-		tickInterval = axis.tickInterval,
-		linkedParent = axis.linkedParent,
-		parentMin = linkedParent && linkedParent.min,
-		withinRange = pos < parentMin && pos + tickInterval > parentMin,
-		tickPositions = axis.tickPositions;
-
-	if (gridAxis && linked && withinRange) {
-		pos = axis.linkedParent.min;
-		tickPositions[i] = pos;
-	}
-
-	proceed.apply(axis, [pos, i]);
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**

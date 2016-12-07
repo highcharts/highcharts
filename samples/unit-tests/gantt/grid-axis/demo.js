@@ -971,9 +971,6 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
         axisBox,
         axisCenter,
         chart = Highcharts.chart('container', {
-            chart: {
-                marginRight: 150
-            },
             xAxis: [{
                 grid: true,
                 type: 'datetime',
