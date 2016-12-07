@@ -281,8 +281,9 @@ H.Pointer.prototype = {
 		// Start the event listener to pick up the tooltip and crosshairs
 		if (!pointer.unDocMouseMove) {
 			pointer.unDocMouseMove = addEvent(doc, 'mousemove', function (e) {
-				if (charts[H.hoverChartIndex]) {
-					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
+				var chart = charts[H.hoverChartIndex];
+				if (chart) {
+					chart.pointer.onDocumentMouseMove(e);
 				}
 			});
 		}
