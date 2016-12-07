@@ -25,14 +25,16 @@ var charts = H.charts,
  *
  * @function #error
  * @memberOf Highcharts
- * @param {Number} code - The error code. See [errors.xml]{@link 
+ * @param {Number|String} code - The error code. See [errors.xml]{@link 
  *     https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
- *     for available codes.
+ *     for available codes. If it is a string, the error message is printed
+ *     directly in the console.
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
  */
-H.error = function (code, stop) { // docs: Now API method, created in api.hc.com
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
+H.error = function (code, stop) {
+	var msg = H.isNumber(code) ?
+		'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
 		code;
 	if (stop) {
 		throw new Error(msg);
