@@ -1,53 +1,10 @@
-var TestControl = function (chart) {
-
-    var offset,
-        ret;
-
-    function updateOffset() {
-        offset = $(chart.container).offset();
-    }
-
-    function trigger(type, x, y, extra) {
-        updateOffset();
-
-        var pageX = offset.left + (x || 0),
-            pageY = offset.top + (y || 0);
-
-        var evt = document.createEvent('Events');
-        evt.initEvent(type, true, true);
-        evt.pageX = pageX;
-        evt.pageY = pageY;
-
-        if (extra) {
-            Object.keys(extra).forEach(function (key) {
-                evt[key] = extra[key];
-            });
-        }
-
-        document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
-    }
-
-    ret = {
-        trigger: trigger
-    };
-
-    // Shortcuts
-    ['mousedown', 'mousemove', 'mouseup'].forEach(function (type) {
-        ret[type] = function (x, y, extra) {
-            trigger(type, x, y, extra);
-        };
-    });
-
-    return ret;
-};
-
-
+/* global TestController */
 QUnit.test('Zoom and pan key', function (assert) {
 
     var chart = Highcharts.charts[0],
         firstZoom = {};
 
-    var test = TestControl(chart);
+    var test = TestController(chart);
 
     chart.setSize(600, 300);
 
