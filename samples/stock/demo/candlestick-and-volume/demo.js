@@ -67,6 +67,10 @@ $(function () {
                 lineWidth: 2
             }],
 
+            tooltip: {
+                split: true
+            },
+
             series: [{
                 type: 'candlestick',
                 name: 'AAPL',
