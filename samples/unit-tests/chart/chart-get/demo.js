@@ -60,5 +60,13 @@ $(function () {
             'point-id',
             'Point found'
         );
+
+        // Point id not in options
+        chart.series[1].points[0].id = 'first';
+        assert.strictEqual(
+            chart.get('first').id,
+            'first',
+            'Point found'
+        );
     });
 });
