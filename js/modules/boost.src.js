@@ -906,7 +906,7 @@ H.extend(Series.prototype, {
 			y: 0,
 			width: width,
 			height: height,
-			style: {'pointer-events': 'none'}
+			style: 'pointer-events: none;'
 		});
 	},
 
