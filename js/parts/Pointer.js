@@ -249,6 +249,7 @@ H.Pointer.prototype = {
 			}
 			points = this.getKDPoints(series, shared, e);
 			hoverPoint = points[0];
+			hoverSeries = hoverPoint && hoverPoint.series;
 			// Keep the order of series in tooltip
 			// Must be done after assigning of hoverPoint
 			points.sort(function (p1, p2) {
