@@ -10,8 +10,8 @@ var TestControl = function (chart) {
     function trigger(type, x, y, extra) {
         updateOffset();
 
-        var pageX = offset.left + x,
-            pageY = offset.top + y;
+        var pageX = offset.left + (x || 0),
+            pageY = offset.top + (y || 0);
 
         var evt = document.createEvent('Events');
         evt.initEvent(type, true, true);
