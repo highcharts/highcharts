@@ -934,8 +934,8 @@ SVGElement.prototype = {
 
 		// flipping affects translate as adjustment for flipping around the group's axis
 		if (inverted) {
-			translateX += wrapper.attr('width');
-			translateY += wrapper.attr('height');
+			translateX += wrapper.width;
+			translateY += wrapper.height;
 		}
 
 		// Apply translate. Nearly all transformed elements have translation, so instead

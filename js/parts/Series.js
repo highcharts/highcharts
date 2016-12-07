@@ -1699,14 +1699,11 @@ H.Series = H.seriesType('line', null, { // base series options
 			remover;
 
 		function setInvert() {
-			var size = {
-				width: series.yAxis.len,
-				height: series.xAxis.len
-			};
-
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
-					series[groupName].attr(size).invert(inverted);
+					series[groupName].width = series.yAxis.len;
+					series[groupName].height = series.xAxis.len;
+					series[groupName].invert(inverted);
 				}
 			});
 		}
