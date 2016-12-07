@@ -1305,7 +1305,8 @@ H.timeUnits = {
  * @function #numberFormat
  * @memberOf Highcharts
  * @param {Number} number - The input number to format.
- * @param {Number} decimals - The amount of decimals.
+ * @param {Number} decimals - The amount of decimals. A value of -1 preserves
+ *        the amount in the input number.
  * @param {String} [decimalPoint] - The decimal point, defaults to the one given
  *        in the lang options.
  * @param {String} [thousandsSep] - The thousands separator, defaults to the one
