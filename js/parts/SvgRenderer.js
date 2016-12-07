@@ -117,7 +117,7 @@ SVGElement.prototype = {
 		var animOptions = H.animObject(
 			pick(options, this.renderer.globalAnimation, true)
 		);
-		if (animOptions.duration) {
+		if (animOptions.duration !== 0) {
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
