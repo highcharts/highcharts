@@ -554,7 +554,7 @@ seriesProto.setCompare = function (compare) {
 			// Compare percent
 			} else {
 				value = 100 * (value / compareValue) - 
-					(this.options.compareBase === 100 ? 0 : 100); // docs: added since "next"
+					(this.options.compareBase === 100 ? 0 : 100);
 			}
 			
 			// record for tooltip etc.
