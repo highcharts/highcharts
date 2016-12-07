@@ -240,8 +240,9 @@ function getExportInnerHTML() {
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
 		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.js"></script>
-   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
+		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
    		<?php endif; ?>
+   		<script src="test-controller.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
@@ -326,52 +327,6 @@ function getExportInnerHTML() {
 							window.parent.onDifferent(e.passed + '/' + e.total);
 						}
 					});
-
-					/**
-					 * The test controller makes it easy to emulate mouse stuff
-					 */
-					window.TestController = function (chart) {
-
-					    var offset,
-					        ret;
-
-					    function updateOffset() {
-					        offset = $(chart.container).offset();
-					    }
-
-					    function trigger(type, x, y, extra) {
-					        updateOffset();
-
-					        var pageX = offset.left + (x || 0),
-					            pageY = offset.top + (y || 0);
-
-					        var evt = document.createEvent('Events');
-					        evt.initEvent(type, true, true);
-					        evt.pageX = pageX;
-					        evt.pageY = pageY;
-
-					        if (extra) {
-					            Object.keys(extra).forEach(function (key) {
-					                evt[key] = extra[key];
-					            });
-					        }
-
-					        document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
-					    }
-
-					    ret = {
-					        trigger: trigger
-					    };
-
-					    // Shortcuts
-					    ['mousedown', 'mousemove', 'mouseup'].forEach(function (type) {
-					        ret[type] = function (x, y, extra) {
-					            trigger(type, x, y, extra);
-					        };
-					    });
-
-					    return ret;
-					};
 
 				// Else, prepare for async
 				} else {
