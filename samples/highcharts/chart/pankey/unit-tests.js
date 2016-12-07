@@ -1,11 +1,55 @@
+var TestControl = function (chart) {
+
+    var offset,
+        ret;
+
+    function updateOffset() {
+        offset = $(chart.container).offset();
+    }
+
+    function trigger(type, x, y, extra) {
+        updateOffset();
+
+        var pageX = offset.left + x,
+            pageY = offset.top + y;
+
+        var evt = document.createEvent('Events');
+        evt.initEvent(type, true, true);
+        evt.pageX = pageX;
+        evt.pageY = pageY;
+
+        if (extra) {
+            Object.keys(extra).forEach(function (key) {
+                evt[key] = extra[key];
+            });
+        }
+
+        document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
+    }
+
+    ret = {
+        trigger: trigger
+    };
+
+    // Shortcuts
+    ['mousedown', 'mousemove', 'mouseup'].forEach(function (type) {
+        ret[type] = function (x, y, extra) {
+            trigger(type, x, y, extra);
+        };
+    });
+
+    return ret;
+};
+
+
 QUnit.test('Zoom and pan key', function (assert) {
 
     var chart = Highcharts.charts[0],
-        offset,
         firstZoom = {};
 
+    var test = TestControl(chart);
+
     chart.setSize(600, 300);
-    offset = $(chart.container).offset();
 
 
     assert.strictEqual(
@@ -21,19 +65,9 @@ QUnit.test('Zoom and pan key', function (assert) {
 
 
     // Zoom
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: offset.left + 200,
-        pageY: offset.top + 150,
-        target: chart.container
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: offset.left + 250,
-        pageY: offset.top + 150,
-        target: chart.container
-    });
-    chart.pointer.onDocumentMouseUp({});
+    test.mousedown(200, 150);
+    test.mousemove(250, 150);
+    test.mouseup();
 
     assert.strictEqual(
         chart.xAxis[0].min > 0,
@@ -48,25 +82,10 @@ QUnit.test('Zoom and pan key', function (assert) {
 
     firstZoom = chart.xAxis[0].getExtremes();
 
-    offset = $(chart.container).offset();
-
     // Pan
-    chart.pointer.onContainerMouseDown({
-        type: 'mousedown',
-        pageX: offset.left + 200,
-        pageY: offset.top + 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onContainerMouseMove({
-        type: 'mousemove',
-        pageX: offset.left + 150,
-        pageY: offset.top + 100,
-        target: chart.container,
-        shiftKey: true
-    });
-    chart.pointer.onDocumentMouseUp({
-    });
+    test.mousedown(200, 100, { shiftKey: true });
+    test.mousemove(150, 100, { shiftKey: true });
+    test.mouseup();
 
     assert.strictEqual(
         chart.xAxis[0].min > firstZoom.min,
