@@ -1990,6 +1990,22 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Generates a tick for initial positioning
+	 * @param  {Number} pos - the tick position value (not px)
+	 * @param  {Integer} i - the index of the tick in axis.tickPositions
+	 */
+	generateTick: function (pos) {
+		var axis = this,
+			ticks = axis.ticks;
+
+		if (!ticks[pos]) {
+			ticks[pos] = new Tick(axis, pos);
+		} else {
+			ticks[pos].addLabel(); // update labels depending on tick interval
+		}
+	},
+
+	/**
 	 * Render the tick labels to a preliminary position to get their sizes
 	 */
 	getOffset: function () {
@@ -2047,12 +2063,9 @@ H.Axis.prototype = {
 		if (hasData || axis.isLinked) {
 
 			// Generate ticks
-			each(tickPositions, function (pos) {
-				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis, pos);
-				} else {
-					ticks[pos].addLabel(); // update labels depending on tick interval
-				}
+			each(tickPositions, function (pos, i) {
+				// i is not used here, but may be used in overrides
+				axis.generateTick(pos, i);
 			});
 
 			axis.renderUnsquish();
@@ -2223,6 +2236,47 @@ H.Axis.prototype = {
 		};
 	},
 
+	renderMinorTick: function (pos) {
+		var axis = this,
+			chart = axis.chart,
+			hasRendered = chart.hasRendered,
+			slideInTicks = hasRendered && isNumber(axis.oldMin),
+			minorTicks = axis.minorTicks;
+		if (!minorTicks[pos]) {
+			minorTicks[pos] = new Tick(axis, pos, 'minor');
+		}
+
+		// render new ticks in old position
+		if (slideInTicks && minorTicks[pos].isNew) {
+			minorTicks[pos].render(null, true);
+		}
+
+		minorTicks[pos].render(null, false, 1);
+	},
+
+	renderTick: function (pos, i) {
+		var axis = this,
+			chart = axis.chart,
+			isLinked = axis.isLinked,
+			ticks = axis.ticks,
+			hasRendered = chart.hasRendered,
+			slideInTicks = hasRendered && isNumber(axis.oldMin);
+		// linked axes need an extra check to find out if
+		if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
+
+			if (!ticks[pos]) {
+				ticks[pos] = new Tick(axis, pos);
+			}
+
+			// render new ticks in old position
+			if (slideInTicks && ticks[pos].isNew) {
+				ticks[pos].render(i, true, 0.1);
+			}
+
+			ticks[pos].render(i);
+		}
+	},
+
 	/**
 	 * Render the axis
 	 */
@@ -2243,8 +2297,6 @@ H.Axis.prototype = {
 			alternateGridColor = options.alternateGridColor,
 			tickmarkOffset = axis.tickmarkOffset,
 			axisLine = axis.axisLine,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
 			from,
@@ -2269,16 +2321,7 @@ H.Axis.prototype = {
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
-					if (!minorTicks[pos]) {
-						minorTicks[pos] = new Tick(axis, pos, 'minor');
-					}
-
-					// render new ticks in old position
-					if (slideInTicks && minorTicks[pos].isNew) {
-						minorTicks[pos].render(null, true);
-					}
-
-					minorTicks[pos].render(null, false, 1);
+					axis.renderMinorTick(pos);
 				});
 			}
 
@@ -2286,22 +2329,7 @@ H.Axis.prototype = {
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
 				each(tickPositions, function (pos, i) {
-
-					// linked axes need an extra check to find out if
-					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
-
-						if (!ticks[pos]) {
-							ticks[pos] = new Tick(axis, pos);
-						}
-
-						// render new ticks in old position
-						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true, 0.1);
-						}
-
-						ticks[pos].render(i);
-					}
-
+					axis.renderTick(pos, i);
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
