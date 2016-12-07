@@ -36,7 +36,7 @@ $(function () {
         return r;
     }
 
-    var n = 200,
+    var n = 20,
         s = 600,
         data = getData(n),
         series = getSeries(n, s),
@@ -61,8 +61,8 @@ $(function () {
 
         navigator: {
             xAxis: {
-                ordinal: false,
-                min: n / 2
+                ordinal: false//,
+               // min: n / 2
                 //max: 10
             },
             yAxis: {
@@ -76,7 +76,7 @@ $(function () {
         },        
 
         xAxis: {
-            min: n / 2,
+           // min: n / 2,
            // max: 120,
             ordinal: false
         },
@@ -101,17 +101,18 @@ $(function () {
     console.timeEnd('line');
 
     function addPoint() {                
-        ++n;
+        ++n;        
 
-        chart.series.forEach(function (s, i) {
+        chart.series.forEach(function (se, i) {
             var x = n,
                 y = 2 * Math.sin(x / 100) + Math.random();
 
-            s.addPoint([x, y], false, true, false);
-            // s.options.data.splice(s.options.data.length, 0, [x, y]);
-            // s.options.data.shift();
-            // s.isDirty = true;
-            // s.isDirtyData = true;
+            //Yeah...
+            if (se.options.className === "highcharts-navigator-series") {
+                return;
+            }
+
+            se.addPoint([x, y], false, true, false);
         });
 
         chart.redraw();

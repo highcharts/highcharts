@@ -53,12 +53,15 @@ import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
+import '../parts/Point.js';
+import '../parts/Interaction.js';
 
 var win = H.win,
 	doc = win.document,
 	noop = function () {},
 	Color = H.Color,
 	Series = H.Series,
+	Point = H.Point,
 	seriesTypes = H.seriesTypes,
 	each = H.each,
 	extend = H.extend,
@@ -381,7 +384,7 @@ function GLRenderer() {
 		},
 		//Render settings
 		settings = {
-			pointSize: 2,
+			pointSize: 1,
 			lineWidth: 2,
 			fillColor: '#AA00AA',
 			useAlpha: true	
@@ -583,7 +586,7 @@ function GLRenderer() {
 				translatedThreshold = yBottom,
 				drawMode = 'line_strip',
 				fillColor = s.series.fillOpacity ?
-					new Color(s.series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
+					new Color(s.series.color).setOpacity(pick(options.fillOpacity, 0.85)).get() :
 					s.series.color,
 				color = H.color(fillColor).rgba;			
 
@@ -628,7 +631,7 @@ function GLRenderer() {
 
 		gl.enable(gl.BLEND);
 		//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		gl.blendEquation(gl.FUNC_ADD);
+		gl.blendEquation(gl.FUNC_SUB);
 		//gl.enable(gl.DEPTH_TEST);
 
 		shader = GLShader(gl);		
@@ -774,6 +777,18 @@ wrap(Series.prototype, 'processData', function (proceed) {
 	}
 });
 
+// wrap(Point.prototype, 'haloPath', function (proceed, size) {
+// 	var series = this.series,
+// 		chart = series.chart;
+
+// 	return chart.renderer.symbols.circle(
+// 		series.xAxis.pos + Math.floor(this.plotX) - size,
+// 		series.yAxis.pos + this.plotY - size,
+// 		size * 2, 
+// 		size * 2
+// 	);
+// });
+
 // wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 // 	this.options.data.push(options);
 
@@ -854,8 +869,7 @@ H.extend(Series.prototype, {
 				proceed.call(this, y, x, a, b, c, d);
 			};
 
-		if (!target.canvas) {
-			console.log('Setting up the canvas');
+		if (!target.canvas) {		
 			target.canvas = doc.createElement('canvas');		
 			target.image = target.renderer.image(
 								'', 
@@ -879,6 +893,11 @@ H.extend(Series.prototype, {
 			target.ogl = GLRenderer();
 			target.ogl.init(target.canvas);
 			target.ogl.clear();
+		}
+
+		if (level !== 'series') {
+			//this.group = target.seriesGroup;
+			//this.group.toFront();
 
 		}
 
@@ -889,8 +908,6 @@ H.extend(Series.prototype, {
 			height: height,
 			style: {'pointer-events': 'none'}
 		});
-
-
 	},
 
 	renderCanvas: function () {
@@ -970,6 +987,14 @@ H.extend(Series.prototype, {
 		if (this.points || this.graph) {
 			this.destroyGraphics();
 		}
+
+		this.markerGroup = series.plotGroup(
+			'markerGroup',
+			'markers',
+			true,
+			1,
+			chart.seriesGroup
+		);
 
 		points = this.points = [];
 
@@ -1338,9 +1363,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 		//Clear ogl
 		gl = chart.canvas.getContext('webgl');
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-		console.log('clearing ogl');		
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);	
 	}
 
 	addEvent(chart, 'predraw', preRender);
