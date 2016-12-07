@@ -1990,16 +1990,15 @@ H.Axis.prototype = {
 	},
 
 	/**
-	 * Generates a tick for initial positioning
-	 * @param  {Number} pos - the tick position value (not px)
-	 * @param  {Integer} i - the index of the tick in axis.tickPositions
+	 * Generates a tick for initial positioning.
+	 * @param  {number} pos - The tick position in axis values.
+	 * @param  {number} i - The index of the tick in axis.tickPositions.
 	 */
 	generateTick: function (pos) {
-		var axis = this,
-			ticks = axis.ticks;
+		var ticks = this.ticks;
 
 		if (!ticks[pos]) {
-			ticks[pos] = new Tick(axis, pos);
+			ticks[pos] = new Tick(this, pos);
 		} else {
 			ticks[pos].addLabel(); // update labels depending on tick interval
 		}
@@ -2236,17 +2235,20 @@ H.Axis.prototype = {
 		};
 	},
 
+	/**
+	 * Render a minor tick into the given position. If a minor tick already 
+	 * exists in this position, move it.
+	 * @param  {number} pos - The position in axis values.
+	 */
 	renderMinorTick: function (pos) {
-		var axis = this,
-			chart = axis.chart,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin),
-			minorTicks = axis.minorTicks;
+		var slideInTicks = this.chart.hasRendered && isNumber(this.oldMin),
+			minorTicks = this.minorTicks;
+
 		if (!minorTicks[pos]) {
-			minorTicks[pos] = new Tick(axis, pos, 'minor');
+			minorTicks[pos] = new Tick(this, pos, 'minor');
 		}
 
-		// render new ticks in old position
+		// Render new ticks in old position
 		if (slideInTicks && minorTicks[pos].isNew) {
 			minorTicks[pos].render(null, true);
 		}
@@ -2254,18 +2256,22 @@ H.Axis.prototype = {
 		minorTicks[pos].render(null, false, 1);
 	},
 
+	/**
+	 * Render a major tick into the given position. If a tick already exists
+	 * in this position, move it.
+	 * @param  {number} pos - The position in axis values
+	 * @param  {number} i - The tick index
+	 */
 	renderTick: function (pos, i) {
-		var axis = this,
-			chart = axis.chart,
-			isLinked = axis.isLinked,
-			ticks = axis.ticks,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin);
-		// linked axes need an extra check to find out if
-		if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
+		var isLinked = this.isLinked,
+			ticks = this.ticks,
+			slideInTicks = this.chart.hasRendered && isNumber(this.oldMin);
+		
+		// Linked axes need an extra check to find out if
+		if (!isLinked || (pos >= this.min && pos <= this.max)) {
 
 			if (!ticks[pos]) {
-				ticks[pos] = new Tick(axis, pos);
+				ticks[pos] = new Tick(this, pos);
 			}
 
 			// render new ticks in old position
