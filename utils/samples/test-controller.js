@@ -8,9 +8,9 @@
  * var controller = TestController(chart);
  *
  * // Simulate a panning operation
- * test.mousedown(200, 150);
- * test.mousemove(250, 150);
- * test.mouseup();
+ * controller.mousedown(200, 100, { shiftKey: true });
+ * controller.mousemove(150, 100, { shiftKey: true });
+ * controller.mouseup();
  */
 window.TestController = function (chart) {
 
@@ -59,7 +59,7 @@ window.TestController = function (chart) {
         trigger: trigger
     };
 
-    // Shorthand functions.
+    // Shorthand functions. Calls trigger, except the type.
     [
         'click',
         'mousedown',
