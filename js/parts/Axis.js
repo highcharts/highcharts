@@ -1307,25 +1307,20 @@ H.Axis.prototype = {
 
 		}
 
-		if (!this.isLinked) {
-
-			// reset min/max or remove extremes based on start/end on tick
-			this.trimTicks(tickPositions, startOnTick, endOnTick);
-
-			// When there is only one point, or all points have the same value on this axis, then min
-			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
-			// in order to center the point, but leave it with one tick. #1337.
-			if (this.min === this.max && defined(this.min) && !this.tickAmount) {
-				// Substract half a unit (#2619, #2846, #2515, #3390)
-				single = true;
-				this.min -= 0.5;
-				this.max += 0.5;
-			}
-			this.single = single;
-
-			if (!tickPositionsOption && !tickPositioner) {
-				this.adjustTickAmount();
-			}
+		// reset min/max or remove extremes based on start/end on tick
+		this.trimTicks(tickPositions, startOnTick, endOnTick);
+		// When there is only one point, or all points have the same value on this axis, then min
+		// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
+		// in order to center the point, but leave it with one tick. #1337.
+		if (this.min === this.max && defined(this.min) && !this.tickAmount) {
+			// Substract half a unit (#2619, #2846, #2515, #3390)
+			single = true;
+			this.min -= 0.5;
+			this.max += 0.5;
+		}
+		this.single = single;
+		if (!tickPositionsOption && !tickPositioner) {
+			this.adjustTickAmount();
 		}
 	},
 
@@ -1337,25 +1332,27 @@ H.Axis.prototype = {
 			roundedMax = tickPositions[tickPositions.length - 1],
 			minPointOffset = this.minPointOffset || 0;
 
-		if (startOnTick) {
-			this.min = roundedMin;
-		} else {
-			while (this.min - minPointOffset > tickPositions[0]) {
-				tickPositions.shift();
+		if (!this.isLinked) {
+			if (startOnTick) {
+				this.min = roundedMin;
+			} else {
+				while (this.min - minPointOffset > tickPositions[0]) {
+					tickPositions.shift();
+				}
 			}
-		}
 
-		if (endOnTick) {
-			this.max = roundedMax;
-		} else {
-			while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
-				tickPositions.pop();
+			if (endOnTick) {
+				this.max = roundedMax;
+			} else {
+				while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+					tickPositions.pop();
+				}
 			}
-		}
 
-		// If no tick are left, set one tick in the middle (#3195)
-		if (tickPositions.length === 0 && defined(roundedMin)) {
-			tickPositions.push((roundedMax + roundedMin) / 2);
+			// If no tick are left, set one tick in the middle (#3195)
+			if (tickPositions.length === 0 && defined(roundedMin)) {
+				tickPositions.push((roundedMax + roundedMin) / 2);
+			}
 		}
 	},
 
