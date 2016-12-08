@@ -35,6 +35,7 @@ RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
 RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
 RewriteRule (.*?)series-label.js $1series-label.src.js
 RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
+RewriteRule (.*?)tree-grid.js $1tree-grid.src.js
 RewriteRule (.*?)xrange-series.js $1xrange-series.src.js
 
 # Map data
