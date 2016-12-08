@@ -52,6 +52,7 @@ $(function () {
     chart =  Highcharts.stockChart('container', {
 
         chart: {
+            animation: false,
             zoomType: 'x'
         },
 
@@ -103,7 +104,7 @@ $(function () {
     function addPoint() {                
         ++n;        
 
-        chart.series.forEach(function (se, i) {
+        chart.series.forEach(function dynAddPoint (se, i) {
             var x = n,
                 y = 2 * Math.sin(x / 100) + Math.random();
 
@@ -113,6 +114,10 @@ $(function () {
             }
 
             se.addPoint([x, y], false, true, false);
+            // se.options.data.push([x, y]);
+            // se.options.data.shift();
+            // se.isDirty = true;
+            // se.isDirtyData = true;
         });
 
         chart.redraw();
@@ -122,6 +127,13 @@ $(function () {
 
     }
 
-    setInterval(addPoint, 1000);
+   setInterval(addPoint, 1000);
+  //console.log(chart);
+
+  document.getElementById('profile-add').onclick = function () {
+        console.profile('addPoint');
+        addPoint();
+        console.profileEnd();
+    };
 
 });

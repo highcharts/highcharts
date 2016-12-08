@@ -46,7 +46,7 @@ $(function () {
         },
         series: [{
             type: 'scatter',
-            color: 'rgba(152,0,67,0.1)',
+            color: 'rgba(152,0,67,0.5)',
             data: data,
             marker: {
                 radius: 1
