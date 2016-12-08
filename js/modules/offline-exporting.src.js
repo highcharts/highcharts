@@ -55,6 +55,35 @@ Highcharts.downloadURL = function (dataURL, filename) {
 		return;
 	}
 
+	// Some browsers have limitations for data URL lengths. Try to convert to
+	// Blob or fall back.
+	if (dataURL.length > 2000000) {
+		
+		if (
+			win.atob && 
+			win.ArrayBuffer && 
+			win.Uint8Array && 
+			win.Blob && 
+			domurl.createObjectURL
+		) {
+			// Try to convert data URL to Blob
+			var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/),
+				binStr = win.atob(parts[3]), // Assume base64 encoding
+				buf = new win.ArrayBuffer(binStr.length),
+				binary = new win.Uint8Array(buf),
+				blob;
+			
+			for (var i = 0; i < binary.length; ++i) {
+				binary[i] = binStr.charCodeAt(i);
+			}
+
+			blob = new win.Blob([binary], { 'type': parts[1] });
+			dataURL = domurl.createObjectURL(blob);
+		} else {
+			throw 'Data URL length limit reached';
+		}
+	}
+
 	// Try HTML5 download attr if supported
 	if (a.download !== undefined) {
 		a.href = dataURL;
@@ -184,6 +213,7 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 		dummySVGContainer.innerHTML = svg;
 		var textElements = dummySVGContainer.getElementsByTagName('text'),
 			titleElements,
+			svgData,
 			svgElementStyle = dummySVGContainer.getElementsByTagName('svg')[0].style;
 		// Workaround for the text styling. Making sure it does pick up the root element
 		each(textElements, function (el) {
@@ -200,10 +230,14 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 				el.removeChild(titleElement);
 			});
 		});
-		var svgData = svgToPdf(dummySVGContainer.firstChild, 0);
-		Highcharts.downloadURL(svgData, filename);
-		if (successCallback) {
-			successCallback();
+		svgData = svgToPdf(dummySVGContainer.firstChild, 0);
+		try {
+			Highcharts.downloadURL(svgData, filename);
+			if (successCallback) {
+				successCallback();
+			}
+		} catch (e) {
+			failCallback();
 		}
 	}
 
