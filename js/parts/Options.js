@@ -3,6 +3,7 @@
  *
  * License: www.highcharts.com/license
  */
+/* global moment */ // Assume moment.js is loaded
 'use strict';
 import H from './Globals.js';
 import './Color.js';
@@ -282,6 +283,28 @@ H.defaultOptions = {
 
 
 
+function getTimezoneOffsetOption() {
+	var globalOptions = H.defaultOptions.global,
+		useUTC = globalOptions.useUTC,
+		getTimezoneOffsetFunction;
+	if (globalOptions.timezone) {
+		if (moment === undefined) {
+			H.error('Moment.js missing. globalOptions.timezone requires Moment.js to be loaded');
+			// getTimezoneOffset-function stays undefined because it depends on
+			// Moment.js
+		} else {
+			getTimezoneOffsetFunction = function (timestamp) {
+				var zone = globalOptions.timezone, // E.g 'Europe/Oslo'
+					timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
+				return timezoneOffset;
+			};
+		}
+	} else {
+		getTimezoneOffsetFunction = useUTC && globalOptions.getTimezoneOffset;
+	}
+	return getTimezoneOffsetFunction;
+}
+
 /**
  * Set the time methods globally based on the useUTC option. Time method can be
  *   either local time or UTC (default). It is called internally on initiating
@@ -298,7 +321,7 @@ function setTimeMethods() {
 
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
