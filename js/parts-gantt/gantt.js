@@ -24,8 +24,6 @@ var dateFormat = H.dateFormat,
 	seriesTypes = H.seriesTypes,
 	stop = H.stop,
 	Point = H.Point,
-	Tooltip = H.Tooltip,
-	getXDateFormat = Tooltip.prototype.getXDateFormat,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
 
@@ -59,19 +57,34 @@ seriesType('gantt', parentName, {
 		headerFormat: '<span style="color:{point.color}; text-align: right">{series.name}</span><br/>',
 		pointFormatter: function () {
 			var point = this,
+				series = point.series,
+				tooltip = series.chart.tooltip,
 				taskName = point.taskName,
-				xAxis = point.series.xAxis,
+				xAxis = series.xAxis,
 				options = xAxis.options,
-				format = getXDateFormat.apply(point, [point, options, xAxis]),
-				// TODO
-				// date formats: reuse logic for tooltip.getXDateFormat
-				// (use point.series.axis for param)
-				start = dateFormat(format, point.start),
-				end = dateFormat(format, point.end),
+				formats = options.dateTimeLabelFormats,
+				startOfWeek = xAxis.options.startOfWeek,
+				ttOptions = series.tooltipOptions,
+				format = ttOptions.dateTimeLabelFormat,
+				range = point.end ? point.end - point.start : 0,
+				start,
+				end,
 				milestone = point.options.milestone,
 				dateRowStart = '<span style="font-size: 0.8em">',
 				dateRowEnd = '</span><br/>',
 				retVal = '<b>' + taskName + '</b>';
+
+			if (!format) {
+				ttOptions.dateTimeLabelFormat = format = tooltip.getDateFormat(
+					range,
+					point.start,
+					startOfWeek,
+					formats
+				);
+			}
+
+			start = dateFormat(format, point.start);
+			end = dateFormat(format, point.end);
 
 			retVal += '<br/>';
 
