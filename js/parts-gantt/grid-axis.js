@@ -12,7 +12,6 @@ var argsToArray = function (args) {
 	},
 	dateFormat = H.dateFormat,
 	each = H.each,
-	isNumber = H.isNumber,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
