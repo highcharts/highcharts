@@ -25,14 +25,16 @@ var charts = H.charts,
  *
  * @function #error
  * @memberOf Highcharts
- * @param {Number} code - The error code. See [errors.xml]{@link 
+ * @param {Number|String} code - The error code. See [errors.xml]{@link 
  *     https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
- *     for available codes.
+ *     for available codes. If it is a string, the error message is printed
+ *     directly in the console.
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
  */
-H.error = function (code, stop) { // docs: Now API method, created in api.hc.com
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
+H.error = function (code, stop) {
+	var msg = H.isNumber(code) ?
+		'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
 		code;
 	if (stop) {
 		throw new Error(msg);
@@ -1303,7 +1305,8 @@ H.timeUnits = {
  * @function #numberFormat
  * @memberOf Highcharts
  * @param {Number} number - The input number to format.
- * @param {Number} decimals - The amount of decimals.
+ * @param {Number} decimals - The amount of decimals. A value of -1 preserves
+ *        the amount in the input number.
  * @param {String} [decimalPoint] - The decimal point, defaults to the one given
  *        in the lang options.
  * @param {String} [thousandsSep] - The thousands separator, defaults to the one

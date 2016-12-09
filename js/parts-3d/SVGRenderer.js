@@ -413,7 +413,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 	/**
 	 * Override attr to remove shape attributes and use those to set child paths
 	 */
-	wrap(wrapper, 'attr', function (proceed, params, val) {
+	wrap(wrapper, 'attr', function (proceed, params) {
 		var ca;
 		if (typeof params === 'object') {
 			ca = suckOutCustom(params);
@@ -422,7 +422,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 				wrapper.setPaths(wrapper.attribs);
 			}
 		}
-		return proceed.call(this, params, val);
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	});
 
 	/**

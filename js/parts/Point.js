@@ -187,7 +187,8 @@ Point.prototype = {
 			(this.negative ? ' highcharts-negative' : '') + 
 			(this.isNull ? ' highcharts-null-point' : '') + 
 			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
-			(this.options.className ? ' ' + this.options.className : '');
+			(this.options.className ? ' ' + this.options.className : '') +
+			(this.zone && this.zone.className ? ' ' + this.zone.className : '');
 	},
 
 	/**

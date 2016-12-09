@@ -23,7 +23,19 @@
 				results for PhantomJS" at the top left. Use the <code>--commit</code> argument to run the visual tests against a
 				specific commit, for example when you are testing an uncommitted bug fix against the latest commit.</li>
 			
-			
+			<li><strong>Mouse events</strong> are emulated using the <a href="https://github.com/highcharts/highcharts/blob/master/utils/samples/test-controller.js" target="_blank">TestController</a>
+			that is available in the test environment (through compare-iframe.php). To emulate
+			a mouse event on a specific target, its position can be found using <code>getBBox()</code>.
+			<pre>
+// Instanciate
+var controller = TestController(chart);
+ 
+// Simulate panning with the shift key pressed. X and Y are chart coordinates.
+test.mousedown(200, 100, { shiftKey: true });
+test.mousemove(150, 100, { shiftKey: true });
+test.mouseup();
+ </pre>
+			</li>
 		</ul>
 	</body>
 </html>

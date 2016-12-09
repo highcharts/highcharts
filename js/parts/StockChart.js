@@ -547,11 +547,16 @@ seriesProto.setCompare = function (compare) {
 		
 		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
-			// get the modified value
-			value = compare === 'value' ?
-				value - compareValue : // compare value
-				value = 100 * (value / compareValue) - 100; // compare percent
-
+			// Get the modified value
+			if (compare === 'value') {
+				value -= compareValue;
+			
+			// Compare percent
+			} else {
+				value = 100 * (value / compareValue) - 
+					(this.options.compareBase === 100 ? 0 : 100);
+			}
+			
 			// record for tooltip etc.
 			if (point) {
 				point.change = value;
@@ -672,9 +677,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	// Only do this on not 3d charts (#2939, #5904), and only if the series type handles clipping
+	// Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only if the series type handles clipping
 	// in the animate method (#2975).
-	if (!(this.chart.is3d && this.chart.is3d()) && this.xAxis) {
+	if (!(this.chart.is3d && this.chart.is3d()) && !this.chart.polar && this.xAxis) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {

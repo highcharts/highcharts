@@ -175,7 +175,9 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		lastTranslated = undefined;
 		while (i--) {
 			translated = translatedArr[i];
-			distance = lastTranslated - translated;
+			distance = Math.abs(lastTranslated - translated); 
+			// #4175 - when axis is reversed, the distance, is negative but 
+			// tickPixelIntervalOption positive, so we need to compare the same values
 
 			// Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
 			// but not if it is close to the median distance (#748).

@@ -70,7 +70,7 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 
 			var mainFrame = window.parent.document.querySelector('frame#main'),
 				mainLocation = mainFrame && mainFrame.contentWindow.location.href,
-				isComparing = mainLocation && mainLocation.indexOf('compare-view') > -1;
+				isComparing = mainLocation && mainLocation.indexOf('view.php') > -1;
 			
 			// Draw the lines connecting the dots
 			function drawGraph() {
@@ -198,6 +198,11 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 
 				if (isComparing) {
 					document.body.className = 'compare';
+
+					$('#close').click(function () {
+						window.parent.parent.document.querySelector('frameset')
+							.setAttribute('cols', '400, *');
+					});
 				}
 
 				var colors = [
@@ -466,15 +471,35 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 				padding: 1em 1em 0 1em;
 			}
 
-			
+			#close {
+				display: none;
+			}
+			.compare #close {
+				display: inline-block;
+				float: right;
+				margin: 2em 0.5em;
+				border-radius: 0;
+				color: white;
+				background: #34343e;
+				border: none;
+			}
+
+			.intro {
+				padding: 0 10px;
+				color: silver;
+				font-style: italic;
+				font-size: 0.9em;
+			}
 		</style>
 	</head>
 	
 	<body>
 		<div id="topnav">
+
+			<button id="close">X</button>
 			
 			<form method="post" action="commits.php">
-			<p style="padding: 0 10px; color: gray; font-style: italic">
+			<p class="intro">
 			Tip: from and to inputs can be dates (YYYY-mm-dd), tags or commits.
 			Use tags to bisect between two known releases, like from <code>v4.2.6</code>
 			to <code>v4.2.7</code>.</p>

@@ -13,9 +13,6 @@ QUnit.test('Series.pointAttribs().fill when state is hover', function (assert) {
     var pointAttribs = Highcharts.Series.prototype.pointAttribs,
         series = {
             color: '#000008',
-            zones: [{
-                color: '#000006'
-            }],
             options: {
                 marker: {
                     fillColor: '#000004',
@@ -40,8 +37,8 @@ QUnit.test('Series.pointAttribs().fill when state is hover', function (assert) {
                     }
                 }
             },
-            getZone: function () {
-                return series.zones[0];
+            zone: {
+                color: '#000006'
             }
         },
         state = 'hover';
@@ -87,7 +84,7 @@ QUnit.test('Series.pointAttribs().fill when state is hover', function (assert) {
         'series.zones[].color ranks as #6'
     );
 
-    series.zones[0].color = undefined;
+    point.zone = undefined;
     assert.strictEqual(
         pointAttribs.call(series, point, state).fill,
         '#000007',
@@ -117,9 +114,6 @@ QUnit.test('Series.pointAttribs().stroke when state is hover', function (assert)
     var pointAttribs = Highcharts.Series.prototype.pointAttribs,
         series = {
             color: '#000008',
-            zones: [{
-                color: '#000006'
-            }],
             options: {
                 marker: {
                     lineColor: '#000004',
@@ -144,8 +138,8 @@ QUnit.test('Series.pointAttribs().stroke when state is hover', function (assert)
                     }
                 }
             },
-            getZone: function () {
-                return series.zones[0];
+            zone: {
+                color: '#000006'
             }
         },
         state = 'hover';
@@ -191,7 +185,7 @@ QUnit.test('Series.pointAttribs().stroke when state is hover', function (assert)
         'series.zones[].color ranks as #6'
     );
 
-    series.zones[0].color = undefined;
+    point.zone = undefined;
     assert.strictEqual(
         pointAttribs.call(series, point, state).stroke,
         '#000007',

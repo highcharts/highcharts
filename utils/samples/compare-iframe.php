@@ -240,8 +240,9 @@ function getExportInnerHTML() {
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
 		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.js"></script>
-   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
+		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-<?php echo Settings::$QUnitVersion; ?>.css" />
    		<?php endif; ?>
+   		<script src="test-controller.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">

@@ -413,29 +413,31 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				horiz = axis.horiz,
-				reversed = axis.reversed,
 				mousePos = e[horiz ? 'chartX' : 'chartY'],
 				mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
 				startPos = chart[mouseDown],
-				halfPointRange = (axis.pointRange || 0) / (reversed ? -2 : 2),
+				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
-				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
-				goingLeft = startPos > mousePos, // #3613
-				tmp;
+				panMin = axis.toValue(startPos - mousePos, true) +
+					halfPointRange,
+				panMax = axis.toValue(startPos + axis.len - mousePos, true) -
+					halfPointRange,
+				flipped = panMax < panMin,
+				newMin = flipped ? panMax : panMin,
+				newMax = flipped ? panMin : panMax,
+				distMin = Math.min(extremes.dataMin, extremes.min) - newMin,
+				distMax = newMax - Math.max(extremes.dataMax, extremes.max);
 
-			// Swap min/max for reversed axes (#5997)
-			if (reversed) {
-				goingLeft = !goingLeft;
-				tmp = newMin;
-				newMin = newMax;
-				newMax = tmp;
-			}
-
-			if (axis.series.length &&
-					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) &&		
-					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
-				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+			// Negative distMin and distMax means that we're still inside the
+			// data range.
+			if (axis.series.length && distMin < 0 && distMax < 0) {
+				axis.setExtremes(
+					newMin,
+					newMax,
+					false,
+					false,
+					{ trigger: 'pan' }
+				);
 				doRedraw = true;
 			}
 
@@ -706,8 +708,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 				d: point.haloPath(haloOptions.size)
 			});
 			halo.attr({
-				'class': 'highcharts-halo highcharts-color-' + pick(point.colorIndex, series.colorIndex) 
+				'class': 'highcharts-halo highcharts-color-' +
+					pick(point.colorIndex, series.colorIndex) 
 			});
+			halo.point = point; // #6055
 
 			/*= if (build.classic) { =*/
 			halo.attr(extend({
@@ -716,8 +720,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 				'zIndex': -1 // #4929, IE8 added halo above everything
 			}, haloOptions.attributes));
 			/*= } =*/
-		} else if (halo) {
-			halo.animate({ d: point.haloPath(0) }); // Hide
+
+		} else if (halo && halo.point && halo.point.haloPath) {
+			// Animate back to 0 on the current halo point (#6055)
+			halo.animate({ d: halo.point.haloPath(0) });
 		}
 
 		point.state = state;

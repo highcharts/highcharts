@@ -9,15 +9,23 @@ $(function () {
             width = 0;
 
         Highcharts.each(charts, function (chart) {
-            var svg = chart.getSVG();
+            var svg = chart.getSVG(),
+                // Get width/height of SVG for export
+                svgWidth = +svg.match(
+                    /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
+                )[1],
+                svgHeight = +svg.match(
+                    /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+                )[1];
+
             svg = svg.replace(
                 '<svg',
                 '<g transform="translate(0,' + top + ')" '
             );
             svg = svg.replace('</svg>', '</g>');
 
-            top += chart.chartHeight;
-            width = Math.max(width, chart.chartWidth);
+            top += svgHeight;
+            width = Math.max(width, svgWidth);
 
             svgArr.push(svg);
         });

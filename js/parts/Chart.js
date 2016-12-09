@@ -371,7 +371,7 @@ Chart.prototype = {
 			i;
 
 		function itemById(item) {
-			return item.options.id === id;
+			return item.id === id || item.options.id === id;
 		}
 
 		ret = 
@@ -1557,8 +1557,8 @@ Chart.prototype = {
 
 		fireEvent(this, 'load');
 
-		// Set up auto resize
-		if (this.options.chart.reflow !== false) {
+		// Set up auto resize, check for not destroyed (#6068)
+		if (defined(this.index) && this.options.chart.reflow !== false) {
 			this.initReflow();
 		}
 

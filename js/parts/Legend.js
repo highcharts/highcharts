@@ -188,27 +188,19 @@ Legend.prototype = {
 	 * Destroys the legend.
 	 */
 	destroy: function () {
-		var legend = this,
-			legendGroup = legend.group,
-			box = legend.box;
-
-		if (box) {
-			legend.box = box.destroy();
+		function destroyItems(key) {
+			if (this[key]) {
+				this[key] = this[key].destroy();
+			}
 		}
 
 		// Destroy items
 		each(this.getAllItems(), function (item) {
-			each(['legendItem', 'legendGroup'], function (key) {
-				if (item[key]) {
-					item[key] = item[key].destroy();
-				}
-			});
+			each(['legendItem', 'legendGroup'], destroyItems, item);
 		});
 
-		if (legendGroup) {
-			legend.group = legendGroup.destroy();
-		}
-		legend.display = null; // Reset in .render on update.
+		each(['box', 'title', 'group'], destroyItems, this);
+		this.display = null; // Reset in .render on update.
 	},
 
 	/**
