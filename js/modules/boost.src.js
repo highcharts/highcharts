@@ -79,7 +79,12 @@ var win = H.win,
 	;
 
 ////////////////////////////////////////////////////////////////////////////////
+// START OF WEBGL ABSTRACTIONS
 
+/* 
+ * A static shader mimicing axis translation functions found in parts/Axis
+ * @param gl {WebGLContext} - the context in which the shader is active
+ */
 function GLShader(gl) {
 	var vertShade = [
 			/* eslint-disable */
@@ -194,14 +199,16 @@ function GLShader(gl) {
 		gl.compileShader(shader);
 
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			console.error('error compiling shaders:', gl.getShaderInfoLog(shader));
+			console.error('shader error:', gl.getShaderInfoLog(shader));
 			return false;
 		}
-
 		return shader;
 	}
 
-	/* Create the shader */
+	/*
+	 * Create the shader.
+	 * Loads the shader program statically defined above
+	 */
 	function createShader() {
 		var v = stringToProgram(vertShade, 'vertex'),
 			f = stringToProgram(fragShade, 'fragment')
@@ -227,16 +234,33 @@ function GLShader(gl) {
 		return true;
 	}
 
+	/*
+	 * Bind the shader.
+	 * This makes the shader the active one until another one is bound,
+	 * or until 0 is bound.
+	 */
 	function bind() {
 		gl.useProgram(shaderProgram);
 	}
 
+	/*
+	 * Set a uniform value.
+	 * This uses a hash map to cache uniform locations.
+	 * @param name {string} - the name of the uniform to set
+	 * @param val {float} - the value to set
+	 */
 	function setUniform(name, val) {
 		var u = uLocations[name] = 	uLocations[name] ||  
 							  	 	gl.getUniformLocation(shaderProgram, name);
 		gl.uniform1f(u, val);
 	}
 
+	////////////////////////////////////////////////////////////////////////////
+
+	/*
+	 * Set the Color uniform.
+	 * @param color {Array<float>} - an array with RGBA values
+	 */
 	function setColor(color) {
 		gl.uniform4f(
 			fillColorUniform, 
@@ -247,15 +271,27 @@ function GLShader(gl) {
 		);
 	}
 
+	/*
+	 * Set the perspective matrix
+	 * @param m {Matrix4x4} - the matrix 
+	 */
 	function setPMatrix(m) {
 		gl.uniformMatrix4fv(pUniform, false, m);
 	}
 
+	/*
+	 * Set the point size.
+	 * @param p {float} - point size
+	 */
 	function setPointSize(p) {
 		gl.uniform1f(psUniform, p);
 	}
 
-	function getProgram() {
+	/*
+	 * Get the shader program handle
+	 * @returns {GLInt} - the handle for the program
+	 */
+	function getProgram () {
 		return shaderProgram;
 	}
 
@@ -277,7 +313,13 @@ function GLShader(gl) {
 	};
 }
 
-/* Vertex Buffer abstraction */
+/* 
+ * Vertex Buffer abstraction 
+ * A vertex buffer is a set of vertices which are passed to the GPU
+ * in a single call.
+ * @param gl {WebGLContext} - the context in which to create the buffer
+ * @param shader {GLShader} - the shader to use
+ */
 function GLVertexBuffer(gl, shader) {
 	var buffer = false,		
 		vertAttribute = false,
@@ -285,7 +327,12 @@ function GLVertexBuffer(gl, shader) {
 		drawMode,
 		data;	
 
-	/* Build the buffer */
+	/* 
+	 * Build the buffer 
+ 	 * @param dataIn {Array<float>} - a 0 padded array of indices
+ 	 * @param attrib {String} - the name of the Attribute to bind the buffer to
+ 	 * @param dataComponents {Integer} - the number of components per. indice
+	 */
 	function build(dataIn, attrib, dataComponents) {
 		data = dataIn || [];
 
@@ -307,7 +354,9 @@ function GLVertexBuffer(gl, shader) {
 		gl.enableVertexAttribArray(vertAttribute);
 	}
 
-	/* Bind the buffer */
+	/* 
+	 * Bind the buffer
+	 */
 	function bind() {		
 		gl.enableVertexAttribArray(vertAttribute);
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -315,14 +364,19 @@ function GLVertexBuffer(gl, shader) {
 		gl.enableVertexAttribArray(vertAttribute);
 	}
 
-	/* Render the buffer */
+	/* 
+	 * Render the buffer 
+	 * @param from {Integer} - the start indice
+	 * @param to {Integer} - the end indice
+	 * @param drawMode {String} - the draw mode
+	 */
 	function render(from, to, drawMode) {
 		if (!buffer) {
-			return console.error('opengl: tried rendering buffer, but no buffer defined');
+			return console.error('webgl: no buffer defined');
 		}
 
 		if (!data.length) {
-			return console.error('skipped vertex buffer rendering - data is empty');
+			return false;
 		}
 				
 		if (!from || from > data.length || from < 0) {
@@ -335,7 +389,13 @@ function GLVertexBuffer(gl, shader) {
 
 		drawMode = drawMode || 'points';
 
-		gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components); 
+		gl.drawArrays(
+			gl[drawMode.toUpperCase()], 
+			from / components, 
+			(to - from) / components
+		); 
+
+		return true;
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -347,17 +407,16 @@ function GLVertexBuffer(gl, shader) {
 	};    	
 }
 
-//Keep the GL renderer somewhat isolated
-/*
-	Notes to self:
-		- If we need varrying sizes for things (e.g. bubble charts) we can
-		  use a vec3 instead, and use z as the size.
-		- May be able to build a point map by rendering to a separate canvas
-		  and encoding values in the color data.
-		- If we need colors per. point/line we need a separate vertex buffer
-		- Need to figure out a way to transform the data quicker
-
-*/
+/* Main renderer. Used to render series.
+ *	Notes to self:
+ *		- If we need varrying sizes for things (e.g. bubble charts) we can
+ *		  use a vec3 instead, and use z as the size.
+ *		- May be able to build a point map by rendering to a separate canvas
+ *		  and encoding values in the color data.
+ *		- If we need colors per. point/line we need a separate vertex buffer
+ *		- Need to figure out a way to transform the data quicker
+ *
+ */
 function GLRenderer() {
 	var //Shader
 		shader = false,
@@ -377,7 +436,7 @@ function GLRenderer() {
 		isInited = false,
 		//The series stack
 		series = [],	
-		//Things to draw as "rectangles"
+		//Things to draw as "rectangles" (i.e lines)
 		asRect = {
 			'column': true,
 			'area': true
@@ -392,9 +451,10 @@ function GLRenderer() {
 
 	////////////////////////////////////////////////////////////////////////////
 
-	/*  Returns an orthographic perspective matrix
-	 *  @param {number} width - the width of the viewport in pixels
-	 *  @param {number} height - the height of the viewport in pixels
+	/*  
+	 * Returns an orthographic perspective matrix
+	 * @param {number} width - the width of the viewport in pixels
+	 * @param {number} height - the height of the viewport in pixels
 	 */
 	function orthoMatrix(width, height) {        
 		return [
@@ -405,15 +465,27 @@ function GLRenderer() {
 		];
 	}
 
+	/*
+	 * Clear the depth and color buffer
+	 */
 	function clear() {
 		gl.clearColor(1.0, 1.0, 1.0, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
+	/*
+	 * Get the WebGL context
+	 * @returns {WebGLContext} - the context
+	 */
 	function getGL() {
 		return gl;
 	}
 
+	/*
+	 * Push data for a single series
+	 * This calculates additional vertices and transforms the data to be 
+	 * aligned correctly in memory
+	 */
 	function pushSeriesData(series) {
 		var isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
 			chart = series.chart,
@@ -443,6 +515,10 @@ function GLRenderer() {
 				chartDestroyed = typeof chart.index === 'undefined',
 				isYInside = true;
 
+			if (chartDestroyed) {
+				return false;
+			}
+
 			if (useRaw) {
 				x = d[0];
 				y = d[1];
@@ -463,8 +539,6 @@ function GLRenderer() {
 				y = d.stackY;
 				low = y - d.y;
 			}
-			x = d[0];
-			y = d[1];
 
 			if (!series.requireSorting) {
 				isYInside = y >= yMin && y <= yMax;
@@ -480,33 +554,33 @@ function GLRenderer() {
 			}
 
 			maxVal = y;
-			if (maxVal < 0 && asRect[series.type]) {
-				maxVal = y;
-			}
 			
 			if (asRect[series.type]) {
 				//Need to add an extra point here
-				//gl.push(d[0], d[1] + series.yAxis.);
 				exports.data.push(x);
 				exports.data.push(minVal);
 				exports.data.push(0);
 			}
 			
 			data.push(x);					
-			data.push(maxVal);			
+			data.push(y);			
 			data.push(0);								
 							
 			if (asRect[series.type]) {
 				//Need to add an extra point here
-				//gl.push(d[0], d[1] + series.yAxis.);
 				data.push(x);
 				data.push(minVal);
 				data.push(0);
 			}
 
+			return true;
 		});		
 	}
 
+	/*
+	 * Push a series to the renderer
+	 * @param s {Highchart.Series} - the series to push
+	 */
 	function pushSeries(s) {
 		if (series.length > 0) {
 			series[series.length - 1].to = data.length;
@@ -521,11 +595,20 @@ function GLRenderer() {
 		pushSeriesData(s);
 	}
 
+	/*
+	 * Flush the renderer.
+	 * This removes pushed series and vertices.
+	 * Should be called after clearing and before rendering
+	 */
 	function flush() {
 		series = [];
 		exports.data = data = [];
 	}
 
+	/*
+	 * Pass x-axis to shader
+	 * @param axis {Highcharts.Axis} - the x-axis
+	 */
 	function setXAxis(axis) {
 		if (!shader) {
 			return;
@@ -540,6 +623,10 @@ function GLRenderer() {
 		shader.setUniform('xAxisCVSCoord', !axis.horiz);
 	}
 
+	/*
+	 * Pass y-axis to shader
+	 * @param axis {Highcharts.Axis} - the y-axis
+	 */
 	function setYAxis(axis) {
 		if (!shader) {
 			return;
@@ -554,12 +641,20 @@ function GLRenderer() {
 		shader.setUniform('yAxisCVSCoord', !axis.horiz);
 	}
 
+	/* 
+	 * Set the translation threshold
+	 * @param has {boolean} - has threshold flag
+	 * @param translation {Float} - the threshold
+	 */
 	function setThreshold(has, translation) {
 		shader.setUniform('hasThreshold', has);
 		shader.setUniform('translatedThreshold', translation);
 	}
 
-	/* Render the data */
+	/* 
+	 * Render the data 
+	 * This renders all pushed series.
+	 */
 	function render() {
 		if (!gl || !width || !height) {
 			console.error(
@@ -590,7 +685,9 @@ function GLRenderer() {
 				translatedThreshold = yBottom,
 				drawMode = 'line_strip',
 				fillColor = s.series.fillOpacity ?
-					new Color(s.series.color).setOpacity(pick(options.fillOpacity, 0.85)).get() :
+					new Color(s.series.color).setOpacity(
+								pick(options.fillOpacity, 0.85)
+							 ).get() :
 					s.series.color,
 				color = H.color(fillColor).rgba;			
 
@@ -613,13 +710,22 @@ function GLRenderer() {
 		});
 	}
 	
+	/* 
+	 * Set the viewport size in pixels
+	 * Creates an orthographic perspective matrix and applies it.
+	 * @param w {Integer} - the width of the viewport
+	 * @param h {Integer} - the height of the viewport
+	 */
 	function setSize(w, h) {
 		width = w;
 		height = h;
 		shader.setPMatrix(orthoMatrix(width, height));
 	}
 	
-	/* Init OpenGL */
+	/* 
+	 * Init OpenGL 
+	 * @param canvas {HTMLCanvas} - the canvas to render to
+	 */
 	function init(canvas) {
 		if (!canvas) {
 			return false;
@@ -646,7 +752,6 @@ function GLRenderer() {
 		//gl.enable(gl.DEPTH_TEST);
 		gl.depthMask(gl.FALSE);
 
-
 		shader = GLShader(gl);		
 		vbuffer = GLVertexBuffer(gl, shader);
 
@@ -659,11 +764,18 @@ function GLRenderer() {
 		return true;
 	}
 
-	/* Check if we have a valid OGL context */
+	/* 
+	 * Check if we have a valid OGL context 
+	 * @returns {Boolean} - true if the context is valid
+	 */
 	function valid() {
 		return gl !== false;
 	}
 
+	/*
+	 * Check if the renderer has been initialized
+	 * @returns {Boolean} - true if it has, false if not
+	 */
 	function inited() {
 		return isInited;
 	}
@@ -689,8 +801,19 @@ function GLRenderer() {
 	return exports;
 }  
 
+// END OF WEBGL ABSTRACTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
+/*
+ * An "async" foreach loop.
+ * Uses a setTimeout to keep the loop from blocking the UI thread
+ * @param arr {Array} - the array to loop through
+ * @param fn {Function} - the callback to call for each item
+ * @param finalFunc {Function} - the callback to call when done
+ * @param chunkSize {Number} - the number of iterations per. timeout
+ * @param i {Number} - the current index
+ * @param noTimeout {Boolean} - set to true to skip timeouts 
+ */
 function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	i = i || 0;
 	chunkSize = chunkSize || CHUNK_SIZE;
@@ -875,6 +998,7 @@ H.extend(Series.prototype, {
 	/**
 	 * Create a hidden canvas to draw the graph on. The contents is later copied over 
 	 * to an SVG image element.
+	 * @param level {String} - the level on which to place the canvas: `chart` or `series`.
 	 */
 	setUpContext: function (level) {
 		var chart = this.chart,
@@ -934,8 +1058,6 @@ H.extend(Series.prototype, {
 		// 	chart.plotLeft + this.xAxis.pos,
 		// 	chart.plotTop + this.yAxis.pos
 		// );
-
-
 	},
 
 	renderCanvas: function () {
@@ -1134,140 +1256,6 @@ H.extend(Series.prototype, {
 			series.buildKDTree();
 		}
 
-		// if (chart.ogl) {
-		// 	//Need to transform the points. This is totally cache trashing
-		// 	/*
-		// 		Notes:
-		// 			- The shader deals with translations
-		// 			- Values passed to the shader are data values; not coords
-
-		// 	*/
-		// 	each(isStacked ? series.data : (rawData), function (d, i) {
-		// 		var x,
-		// 			y,
-		// 			clientX,
-		// 			plotY,
-		// 			isNull,
-		// 			low,
-		// 			chartDestroyed = typeof chart.index === 'undefined',
-		// 			isYInside = true;
-
-		// 	// if (!chartDestroyed) {
-		// 		if (useRaw) {
-		// 			x = d[0];
-		// 			y = d[1];
-		// 		} else {
-		// 			x = d;
-		// 			y = yData[i];
-		// 		}
-
-		// 		// Resolve low and high for range series
-		// 		if (isRange) {
-		// 			if (useRaw) {
-		// 				y = d.slice(1, 3);
-		// 			}
-		// 			low = y[0];
-		// 			y = y[1];
-		// 		} else if (isStacked) {
-		// 			x = d.x;
-		// 			y = d.stackY;
-		// 			low = y - d.y;
-		// 		}
-
-		// 	// 	isNull = y === null;
-
-		// 	// 	// Optimize for scatter zooming
-		// 	// 	if (!requireSorting) {
-		// 	// 		isYInside = y >= yMin && y <= yMax;
-		// 	// 	}
-
-		// 	// 	if (!isNull && x >= xMin && x <= xMax && isYInside) {
-
-		// 	// 		//clientX = Math.round(xAxis.toPixels(x, true));
-
-		// 	// 		if (sampling) {
-		// 	// 			if (minI === undefined || x === lastClientX) {
-
-		// 	// 				if (!isRange) {
-		// 	// 					low = y;
-		// 	// 				}
-
-		// 	// 				if (maxI === undefined || y > maxVal) {
-		// 	// 					maxVal = y;
-		// 	// 					maxI = i;
-		// 	// 				}
-
-		// 	// 				if (minI === undefined || low < minVal) {
-		// 	// 					minVal = low;
-		// 	// 					minI = i;
-		// 	// 				}
-		// 	// 			}
-						
-
-		// 	// 			if (x !== lastClientX) { // Add points and reset
-		// 	// 				if (minI !== undefined) { // then maxI is also a number
-		// 	// 					//plotY = yAxis.toPixels(maxVal, true);
-		// 	// 					//yBottom = yAxis.toPixels(minVal, true);							
-		// 	// 					gl.push(x, maxVal, minVal, 1.0);
-		// 	// 				}
-
-		// 	// 				minI = maxI = undefined;
-		// 	// 				lastClientX = x;
-		// 	// 			}
-		// 	// 		} else {
-		// 	// 			//plotY = Math.round(yAxis.toPixels(y, true));						
-		// 	// 			//addKDPoint(clientX, plotY, i);
-		// 	// 			gl.push(x, maxVal, minVal);
-		// 	// 		}
-		// 	// 	} 
-				
-		// 	// 	wasNull = isNull && !connectNulls;
-		// 	// }
-
-		// 		x = d[0];
-		// 		y = d[1];
-
-		// 		if (!requireSorting) {
-		// 			isYInside = y >= yMin && y <= yMax;
-		// 		}
-
-		// 		if (!y || !isYInside || x < xMin || x > xMax) {
-		// 			return;
-		// 		}
-
-		// 		minVal = 0;
-		// 		if (y < 0) {
-		// 			minVal = y;
-		// 		}
-
-		// 		maxVal = 0;
-		// 		if (y > 0) {
-		// 			maxVal = y;
-		// 		}
-				
-		// 		if (series.type === 'column') {
-		// 			//Need to add an extra point here
-		// 			//gl.push(d[0], d[1] + series.yAxis.);
-		// 			chart.ogl.data.push(x);
-		// 			chart.ogl.data.push(minVal);
-		// 			chart.ogl.data.push(0);
-		// 		}
-				
-		// 		chart.ogl.data.push(x);					
-		// 		chart.ogl.data.push(maxVal);			
-		// 		chart.ogl.data.push(0);								
-								
-		// 		if (series.type === 'column') {
-		// 			//Need to add an extra point here
-		// 			//gl.push(d[0], d[1] + series.yAxis.);
-		// 			chart.ogl.data.push(x);
-		// 			chart.ogl.data.push(minVal);
-		// 			chart.ogl.data.push(0);
-		// 		}
-
-		// 	});
-		// }	
-
 		// Loop over the points to build the k-d tree
 		eachAsync(
 			isStacked ? series.data : (xData || rawData), 
@@ -1376,8 +1364,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		
 		console.timeEnd('gl rendering');
 
-		//console.log('points', chart.series[0].options.data.length);
-		
 		if (chart.image && chart.canvas) {
 			chart.image.attr({ 
 				href: chart.canvas.toDataURL('image/png') 
@@ -1386,15 +1372,15 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function preRender() {
-		var gl = chart.ogl.gl();
+		var gl = chart.ogl ? chart.ogl.gl() : false;
 
 		if (!chart.canvas || !chart.ogl || !gl) {
 			return;
 		}
 
+		//Clear the series and vertice data
 		chart.ogl.flush();
-
-		//Clear ogl
+		//Clear ogl canvas
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);	
 	}
 
