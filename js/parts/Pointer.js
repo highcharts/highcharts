@@ -217,12 +217,12 @@ H.Pointer.prototype = {
 			shared = tooltip ? tooltip.shared : false,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
-			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer,
 			stickToHoverSeries = (
 				hoverSeries &&
 				(shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch)
 			),
 			useSharedTooltip,
+			followPointer,
 			i,
 			anchor,
 			points = [hoverPoint];
@@ -256,6 +256,7 @@ H.Pointer.prototype = {
 				return p1.series.index - p2.series.index;
 			});
 		}
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
 		points = useSharedTooltip ? points : [hoverPoint];
 
