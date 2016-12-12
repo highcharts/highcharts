@@ -262,15 +262,15 @@ H.Pointer.prototype = {
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
 		if (hoverPoint && (hoverPoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
-			// Draw tooltip if necessary
-			if (tooltip) {
-				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
-			}
 			if (!hoverSeries || !hoverSeries.directTouch) { // #4448
 				// Do mouseover on all points (#3919, #3985, #4410, #5622)
 				for (i = 0; i < points.length; i++) {
 					points[i].onMouseOver(e, points[i] !== hoverPoint);
 				}
+			}
+			// Draw tooltip if necessary
+			if (tooltip) {
+				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
 			}
 			this.prevKDPoint = hoverPoint;
 		// Update positions (regardless of kdpoint or hoverPoint)
