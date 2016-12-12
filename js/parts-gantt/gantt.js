@@ -11,8 +11,6 @@ import 'grid-axis.js';
 import 'xrange-series.js';
 
 // TODO
-// - NOT HERE, but add option for timezone in Highcharts/stock.
-//   Should map directly to the getTimezoneOffset hook with momentjs etc.
 // - dataLabel alignment (verticalAlign, inside)
 
 var dateFormat = H.dateFormat,
