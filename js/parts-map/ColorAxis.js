@@ -51,7 +51,8 @@ extend(ColorAxis.prototype, {
 			/*= } =*/
 		},
 		labels: {
-			overflow: 'justify'
+			overflow: 'justify',
+			rotation: 0
 		},
 		minColor: '${palette.highlightColor10}',
 		maxColor: '${palette.highlightColor100}',
