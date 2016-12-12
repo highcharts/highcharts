@@ -18,8 +18,7 @@
 				file.</li>
 			<li>See the <a href="https://github.com/highslide-software/highcharts.com/tree/master/utils#tests">GitHub readme file</a> 
 				for guidelines on setting up the tests.</li>
-			<li>Tests can also run in <strong>PhantomJS</strong>, which is faster than a visual browser. Navigate to the <code>/utils/samples</code> directory and
-				run <code>phantomjs phantomtest.js</code>. If there are errors, they can be inspected in a browser by clicking "View
+			<li>Tests can also run in <strong>PhantomJS</strong>, which is faster than a visual browser. Run <code>gulp test</code> from the root folder. If there are errors, they can be inspected in a browser by clicking "View
 				results for PhantomJS" at the top left. Use the <code>--commit</code> argument to run the visual tests against a
 				specific commit, for example when you are testing an uncommitted bug fix against the latest commit.</li>
 			

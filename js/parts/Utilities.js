@@ -1101,9 +1101,13 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
 		}
 	}
 
-	// multiply back to the correct magnitude
-	retInterval *= magnitude;
-
+	// Multiply back to the correct magnitude. Correct floats to appropriate 
+	// precision (#6085).
+	retInterval = H.correctFloat(
+		retInterval * magnitude,
+		-Math.round(Math.log(0.001) / Math.LN10)
+	);
+	
 	return retInterval;
 };
 
