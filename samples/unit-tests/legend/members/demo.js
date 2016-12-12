@@ -63,3 +63,36 @@ QUnit.test('Legend.update', function (assert) {
         'Legend is hidden'
     );
 });
+
+QUnit.test('Legend.title renders after update', function (assert) {
+    var config = {
+            legend: {
+                enabled: true,
+                title: {
+                    text: 'Hello World'
+                }
+            },
+            series: [{
+                data: [1, 2, 3, 4]
+            }]
+        },
+        chart = Highcharts.chart('container', config);
+    var called = false;
+    chart.legend.title.destroy = (function (fn) {
+        return function () {
+            called = true;
+            return fn.apply(this, arguments);
+        };
+    }(chart.legend.title.destroy));
+
+    chart.update(config);
+
+    assert.ok(
+        called
+    );
+
+    assert.ok(
+        chart.legend.title.text,
+        'Legend title exists after update.'
+    );
+});

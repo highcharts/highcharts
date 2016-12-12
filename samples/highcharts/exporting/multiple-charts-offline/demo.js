@@ -7,18 +7,25 @@ $(function () {
         var svgArr = [],
             top = 0,
             width = 0,
-            i,
             svgResult = function (svgres) {
-                var svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+                // Grab width/height from exported chart
+                var svgWidth = +svgres.match(
+                        /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
+                    )[1],
+                    svgHeight = +svgres.match(
+                        /^<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/
+                    )[1],
+                    // Offset the position of this chart in the final SVG
+                    svg = svgres.replace('<svg', '<g transform="translate(0,' + top + ')" ');
                 svg = svg.replace('</svg>', '</g>');
-                top += charts[i].chartHeight;
-                width = Math.max(width, charts[i].chartWidth);
+                top += svgHeight;
+                width = Math.max(width, svgWidth);
                 svgArr.push(svg);
                 if (svgArr.length === charts.length) {
                     return callback('<svg height="' + top + '" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
                 }
             };
-        for (i = 0; i < charts.length; ++i) {
+        for (var i = 0; i < charts.length; ++i) {
             charts[i].getSVGForLocalExport(options, {}, function () {
                 console.log("Failed to get SVG");
             }, svgResult);

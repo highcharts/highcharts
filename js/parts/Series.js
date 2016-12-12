@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
 	defined = H.defined,
 	each = H.each,
 	erase = H.erase,
-	error = H.error,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
 	grep = H.grep,
@@ -34,7 +33,6 @@ var addEvent = H.addEvent,
 	Point = H.Point, // @todo  add as a requirement
 	removeEvent = H.removeEvent,
 	splat = H.splat,
-	stableSort = H.stableSort,
 	SVGElement = H.SVGElement,
 	syncTimeout = H.syncTimeout,
 	win = H.win;
@@ -188,9 +186,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			events,
 			chartSeries = chart.series,
 			lastSeries,
-			sortByIndex = function (a, b) {
-				return pick(a.options.index, a._i) - pick(b.options.index, b._i);
-			};
+			i;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -240,19 +236,49 @@ H.Series = H.seriesType('line', null, { // base series options
 			lastSeries = chartSeries[chartSeries.length - 1];
 		}
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
-		chartSeries.push(series);
-
-		// Sort series according to index option (#248, #1123, #2456)
-		stableSort(chartSeries, sortByIndex);
-		if (this.yAxis) {
-			stableSort(this.yAxis.series, sortByIndex);
+		
+		// Insert the series and update the `index` property of all series
+		// above this. Unless the `index` option is set, the new series is
+		// inserted last. #248, #1123, #2456
+		for (i = this.insert(chartSeries); i < chartSeries.length; i++) {
+			chartSeries[i].index = i;
+			chartSeries[i].name = chartSeries[i].name ||
+				'Series ' + (chartSeries[i].index + 1);
 		}
+	},
 
-		each(chartSeries, function (series, i) {
-			series.index = i;
-			series.name = series.name || 'Series ' + (i + 1);
-		});
+	/**
+	 * Insert the series in a collection with other series, either the chart
+	 * series or yAxis series, in the correct order according to the index 
+	 * option.
+	 * @param  {Array} collection A collection of series.
+	 * @returns {Number} The index of the series in the collection.
+	 */
+	insert: function (collection) {
+		var indexOption = this.options.index,
+			i;
 
+		// Insert by index option
+		if (isNumber(indexOption)) {
+			i = collection.length;
+			while (i--) {
+				// Loop down until the interted element has higher index
+				if (indexOption >=
+						pick(collection[i].options.index, collection[i]._i)) {
+					collection.splice(i + 1, 0, this);
+					break;
+				}
+			}
+			if (i === -1) {
+				collection.unshift(this);
+			}
+			i = i + 1;
+
+		// Or just push it to the end
+		} else {
+			collection.push(this);
+		}
+		return pick(i, collection.length - 1);
 	},
 
 	/**
@@ -281,7 +307,7 @@ H.Series = H.seriesType('line', null, { // base series options
 						(seriesOptions[AXIS] === undefined && axisOptions.index === 0)) {
 
 					// register this series in the axis.series lookup
-					axis.series.push(series);
+					series.insert(axis.series);
 
 					// set this series.xAxis or series.yAxis reference
 					series[AXIS] = axis;
@@ -293,7 +319,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// The series needs an X and an Y axis
 			if (!series[AXIS] && series.optionalAxis !== AXIS) {
-				error(18, true);
+				H.error(18, true);
 			}
 
 		});
@@ -562,7 +588,7 @@ H.Series = H.seriesType('line', null, { // base series options
 						}
 					}
 				} else {
-					error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+					H.error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
@@ -576,7 +602,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
 			if (isString(yData[0])) {
-				error(14, true);
+				H.error(14, true);
 			}
 
 			series.data = [];
@@ -615,7 +641,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	/**
 	 * Process the data by cropping away unused data points if the series is longer
-	 * than the crop threshold. This saves computing time for lage series.
+	 * than the crop threshold. This saves computing time for large series.
 	 */
 	processData: function (force) {
 		var series = this,
@@ -683,7 +709,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
 			// navigation in Stock charts (#725) and width calculation of columns (#1900)
 			} else if (distance < 0 && series.requireSorting) {
-				error(15);
+				H.error(15);
 			}
 		}
 
@@ -976,6 +1002,8 @@ H.Series = H.seriesType('line', null, { // base series options
 				lastPlotX = plotX;
 			}
 
+			// Find point zone
+			point.zone = this.zones.length && point.getZone();
 		}
 		series.closestPointRangePx = closestPointRangePx;
 	},
@@ -1253,17 +1281,9 @@ H.Series = H.seriesType('line', null, { // base series options
 				pointMarkerOptions.lineWidth,
 				seriesMarkerOptions.lineWidth
 			),
-			zoneColor,
+			zoneColor = point && point.zone && point.zone.color,
 			fill,
-			stroke,
-			zone;
-
-		if (point && this.zones.length) {
-			zone = point.getZone();
-			if (zone && zone.color) {
-				zoneColor = zone.color;
-			}
-		}
+			stroke;
 
 		color = pointColorOption || zoneColor || pointColor || color;
 		fill = pointMarkerOptions.fillColor || seriesMarkerOptions.fillColor || color;
@@ -1285,7 +1305,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
 			stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
 		}
-		
+
 		return {
 			'stroke': stroke,
 			'stroke-width': strokeWidth,
@@ -1679,14 +1699,11 @@ H.Series = H.seriesType('line', null, { // base series options
 			remover;
 
 		function setInvert() {
-			var size = {
-				width: series.yAxis.len,
-				height: series.xAxis.len
-			};
-
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
-					series[groupName].attr(size).invert(inverted);
+					series[groupName].width = series.yAxis.len;
+					series[groupName].height = series.xAxis.len;
+					series[groupName].invert(inverted);
 				}
 			});
 		}

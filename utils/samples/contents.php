@@ -63,6 +63,23 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					}
 				});
 
+				$('.manual-checkbox').click(function () {
+					var path = this.id.replace(/^checkbox-/, ''),
+						$li = $(this).parent(),
+						diff = this.checked ? 0 : 1;
+
+					if (this.checked) {
+						$li.removeClass('different').addClass('identical');
+					} else {
+						$li.removeClass('identical').addClass('different');
+					}
+
+					$.get('compare-update-report.php', {
+						path: path,
+						diff: diff
+					});
+				});
+
 				
 				$("#batch-compare").click(runBatch);
 				$("#batch-stop").click(stopBatch);
@@ -317,6 +334,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$batchClass = 'batch';
 							$compareClass = '';
+							$isManual = false;
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
 								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
@@ -328,6 +346,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$compareClass = 'manual';
+									$isManual = true;
 								}
 
 								// Display diff from previous comparison
@@ -362,11 +381,11 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								}
 
 								// No symbol for manual tests
-								if ($compareClass == 'manual') {
+								if ($isManual) {
+									$checked = $diff == '0' ? 'checked' : '';
 									$dissIndex = "
-										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path' target='main'>
-											<i class='icon-hand-left'></i>
-										</a>
+										<input type='checkbox' class='dissimilarity-index manual-checkbox'
+											id='checkbox-$path' $checked />
 									";
 								}
 
@@ -380,7 +399,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 									} else if ($comment->symbol === 'exclamation-sign') {
 										$compareClass = 'different';
 									}
-									
+
 									// Make it string
 									$comment = "
 										<i class='icon-$comment->symbol' title='$comment->title'></i>

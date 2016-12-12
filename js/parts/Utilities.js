@@ -25,14 +25,16 @@ var charts = H.charts,
  *
  * @function #error
  * @memberOf Highcharts
- * @param {Number} code - The error code. See [errors.xml]{@link 
+ * @param {Number|String} code - The error code. See [errors.xml]{@link 
  *     https://github.com/highcharts/highcharts/blob/master/errors/errors.xml}
- *     for available codes.
+ *     for available codes. If it is a string, the error message is printed
+ *     directly in the console.
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
  */
 H.error = function (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' +
+	var msg = H.isNumber(code) ?
+		'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
 		code;
 	if (stop) {
 		throw new Error(msg);
@@ -247,7 +249,7 @@ H.Fx.prototype = {
 			isArea = elem.isArea,
 			positionFactor = isArea ? 2 : 1,
 			reverse;
-		
+
 		/**
 		 * In splines make moveTo and lineTo points have six parameters like
 		 * bezier curves, to allow animation one-to-one.
@@ -370,11 +372,11 @@ H.Fx.prototype = {
 			}
 		}
 
-		if (start.length) {
+		if (start.length && H.isNumber(shift)) {
 
 			// The common target length for the start and end array, where both 
 			// arrays are padded in opposite ends
-			fullLength = end.length + (shift || 0) * positionFactor * numParams;
+			fullLength = end.length + shift * positionFactor * numParams;
 			
 			if (!reverse) {
 				prepend(end, start);
@@ -1303,7 +1305,8 @@ H.timeUnits = {
  * @function #numberFormat
  * @memberOf Highcharts
  * @param {Number} number - The input number to format.
- * @param {Number} decimals - The amount of decimals.
+ * @param {Number} decimals - The amount of decimals. A value of -1 preserves
+ *        the amount in the input number.
  * @param {String} [decimalPoint] - The decimal point, defaults to the one given
  *        in the lang options.
  * @param {String} [thousandsSep] - The thousands separator, defaults to the one
@@ -1430,6 +1433,22 @@ H.inArray = function (item, arr) {
  */
 H.grep = function (arr, callback) {
 	return [].filter.call(arr, callback);
+};
+
+/**
+ * Return the value of the first element in the array that satisfies the 
+ * provided testing function.
+ *
+ * @function #find
+ * @memberOf Highcharts
+ * @param {Array} arr - The array to test.
+ * @param {Function} callback - The callback function. The function receives the
+ *        item as the first argument. Return `true` if this item satisfies the
+ *        condition.
+ * @returns {Mixed} - The value of the element.
+ */
+H.find = function (arr, callback) {
+	return [].find.call(arr, callback);
 };
 
 /**
@@ -1980,6 +1999,19 @@ if (!Array.prototype.filter) {
 		}
 
 		return ret;
+	};
+}
+
+if (!Array.prototype.find) {
+	H.find = function (arr, fn) {
+		var i,
+			length = arr.length;
+
+		for (i = 0; i < length; i++) {
+			if (fn(arr[i], i)) {
+				return arr[i];
+			}
+		}
 	};
 }
 

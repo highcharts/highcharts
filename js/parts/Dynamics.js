@@ -488,9 +488,6 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		series.isDirtyData = true;
 
 		if (redraw) {
-			/*= if (build.clasic) { =*/
-			series.getAttribs(); // #1937
-			/*= } =*/
 			chart.redraw(animation); // Animation is set anyway on redraw, #5665
 		}
 	},

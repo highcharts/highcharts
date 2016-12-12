@@ -26,7 +26,6 @@ var addEvent = H.addEvent,
 	doc = H.doc,
 	each = H.each,
 	erase = H.erase,
-	error = H.error,
 	extend = H.extend,
 	grep = H.grep,
 	hasTouch = H.hasTouch,
@@ -703,6 +702,8 @@ Navigator.prototype = {
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
+				offset: 0 // #2685
+			}, {
 				// inherit base xAxis' break and ordinal options
 				breaks: baseXaxis.options.breaks,
 				ordinal: baseXaxis.options.ordinal
@@ -713,7 +714,6 @@ Navigator.prototype = {
 				type: 'datetime',
 				index: xAxisIndex,
 				height: height,
-				offset: 0,
 				offsetLeft: scrollbarHeight,
 				offsetRight: -scrollbarHeight,
 				keepOrdinalPadding: true, // #2436
@@ -1184,7 +1184,7 @@ wrap(Chart.prototype, 'getMargins', function (proceed) {
 wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && isObject(options, true) && this.chart.scroller) {
-		error(20, true);
+		H.error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);
 });

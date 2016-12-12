@@ -23,8 +23,8 @@ var addEvent = H.addEvent,
 	css = H.css,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
+	find = H.find,
 	fireEvent = H.fireEvent,
 	getStyle = H.getStyle,
 	grep = H.grep,
@@ -180,7 +180,7 @@ Chart.prototype = {
 
 		// No such series type
 		if (!Constr) {
-			error(17, true);
+			H.error(17, true);
 		}
 
 		series = new Constr();
@@ -365,38 +365,28 @@ Chart.prototype = {
 	 * @param id {String} The id as given in the configuration options
 	 */
 	get: function (id) {
-		var chart = this,
-			axes = chart.axes,
-			series = chart.series;
 
-		var i,
-			j,
-			points;
+		var ret,
+			series = this.series,
+			i;
 
-		// search axes
-		for (i = 0; i < axes.length; i++) {
-			if (axes[i].options.id === id) {
-				return axes[i];
-			}
+		function itemById(item) {
+			return item.id === id || item.options.id === id;
 		}
 
-		// search series
-		for (i = 0; i < series.length; i++) {
-			if (series[i].options.id === id) {
-				return series[i];
-			}
+		ret = 
+			// Search axes
+			find(this.axes, itemById) ||
+
+			// Search series
+			find(this.series, itemById);
+
+		// Search points
+		for (i = 0; !ret && i < series.length; i++) {
+			ret = find(series[i].points || [], itemById);
 		}
 
-		// search points
-		for (i = 0; i < series.length; i++) {
-			points = series[i].points || [];
-			for (j = 0; j < points.length; j++) {
-				if (points[j].id === id) {
-					return points[j];
-				}
-			}
-		}
-		return null;
+		return ret;
 	},
 
 	/**
@@ -676,7 +666,7 @@ Chart.prototype = {
 
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			H.error(13, true);
 		}
 
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
@@ -1567,8 +1557,8 @@ Chart.prototype = {
 
 		fireEvent(this, 'load');
 
-		// Set up auto resize
-		if (this.options.chart.reflow !== false) {
+		// Set up auto resize, check for not destroyed (#6068)
+		if (defined(this.index) && this.options.chart.reflow !== false) {
 			this.initReflow();
 		}
 

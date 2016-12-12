@@ -1,24 +1,40 @@
-<p>Highcharts 5.0.4 (2016-11-22)</p>
+<p>Highcharts 5.0.6 (2016-12-07)</p>
 <ul>
-    <li>Refactored animation and attr logic to always stop the single property being set. This prevents an animation from continuing after the same property has been set either through .attr or .animate.</li>
+    <li>Added a common hook, <a href="http://api.highcharts.com/highcharts/Highcharts.error">Highcharts.error</a>, for user defined error handling.</li>
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="heading-5-0-4-bug-fixes" class="panel-heading">
+        <div id="heading-5-0-6-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#5-0-4-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#5-0-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="5-0-4-bug-fixes" class="panel-collapse collapse">
+        <div id="5-0-6-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5788">#5788</a>, artifacts when animating splines before previous animation was done.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5982">#5982</a>, additional series options were not set in exporting.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5985">#5985</a>, issue with allowHTML in offline exporting.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5989">#5989</a>, tooltip did not hide on touch.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6008">#6008</a>, regression causing rotated data labels to break chart in Firefox.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4175">#4175</a>, missed ticks when <code>xAxis.reversed</code> was used</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4507">#4507</a>, 3D scatter points were not rendered if z-value was not set.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5950">#5950</a>, broken axis module caused errors when rendering funnel series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6003">#6003</a>, regression with pie chart selection border width.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6016">#6016</a>, zones weren't applied for point elements in styled mode.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6018">#6018</a>, 3D column not rendered in styled mode.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6020">#6020</a>, stacked waterfall didn't render any points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6021">#6021</a>, <code>chart.alignTicks</code> on logarithmic axis should not be applied.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6045">#6045</a>, multiple charts exporting demos failed with other width/height settings.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6054">#6054</a>, regression which disabled selecting bubble points.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6055">#6055</a>, halo sometimes animated to another point when hiding.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6062">#6062</a>, <code>minPointLength</code> was applied for null points in a waterfall series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6065">#6065</a>, text outline was off with multiline text.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6067">#6067</a>, bubble halo stayed forever per series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6068">#6068</a>, JS error on destroying chart from its own callback.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6077">#6077</a>, legend title disappeared after legend update.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6080">#6080</a>, stray data labels for empty points in column and bar series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6094">#6094</a>, a regression causing <code>allowPointSelect</code> not to work with 3D pies.</li>
+                    <li>Fixed JS errors on path animations in pies. Related to <a href="https://github.com/highslide-software/highcharts.com/issues/6051">#6051</a>.</li>
+                    <li>Fixed border issue on hovered points in map and heatmap. Related to <a href="https://github.com/highslide-software/highcharts.com/issues/6064">#6064</a>.</li>
+                    <li>Fixed issue with split tooltip anchors and panes.</li>
                 </ul>
             </div>
         </div>
