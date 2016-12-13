@@ -13,8 +13,7 @@ import pathfinderAlgorithms from 'pathfinderAlgorithms.js';
 var extend = H.extend,
 	each = H.each,
 	addEvent = H.addEvent,
-	merge = H.merge,
-	pick = H.pick;
+	merge = H.merge;
 
 // TODO:
 // Check dynamics, including hiding/adding/removing/updating series/points etc.
@@ -52,40 +51,6 @@ function Pathfinder(chart) {
 Pathfinder.prototype = {
 
 	algorithms: pathfinderAlgorithms,
-
-	/**
-	 * Get chart obstacles from points. Does not include connecting lines from 
-	 * Pathfinder. Applies algorithmMargin to the obstacles.
-	 *
-	 * @param {Object} options Options for the calculation.
-	 *
-	 * @return {Object} result The calculated obstacles.
-	 */
-	getChartObstacles: function (options) {
-		var obstacles = [],
-			series = this.chart.series,
-			margin = options.algorithmMargin,
-			bb,
-			i,
-			j;
-		i = series.length;
-		while (i--) {
-			j = series[i].points.length;
-			while (j--) {
-				bb = series[i].points[j].graphic.getBBox();
-				obstacles.push({
-					xMin: bb.x - margin,
-					xMax: bb.x + bb.width + margin,
-					yMin: bb.y - margin,
-					yMax: bb.y + bb.height + margin
-				});
-			}
-		}
-		// Sort obstacles by xMin before returning, for optimization
-		return obstacles.sort(function (a, b) {
-			return a.xMin - b.xMin;
-		});
-	},
 
 	/**
 	 * Initialize the Pathfinder object.
@@ -158,10 +123,12 @@ Pathfinder.prototype = {
 				}
 			});
 		}
+
+		// Clear dirty flag for now
 		pathfinder.isDirty = false;
 
 		// Draw the pending connections
-		pathfinder.renderConnections();		
+		pathfinder.renderConnections();
 	},
 
 	/**
@@ -186,7 +153,42 @@ Pathfinder.prototype = {
 		each(this.connections, function (connection) {
 			connection[0].pathTo(connection[1], connection[2]);
 		});
+	},
+
+	/**
+	 * Get chart obstacles from points. Does not include connecting lines from 
+	 * Pathfinder. Applies algorithmMargin to the obstacles.
+	 *
+	 * @param {Object} options Options for the calculation.
+	 *
+	 * @return {Object} result The calculated obstacles.
+	 */
+	getChartObstacles: function (options) {
+		var obstacles = [],
+			series = this.chart.series,
+			margin = options.algorithmMargin,
+			bb,
+			i,
+			j;
+		i = series.length;
+		while (i--) {
+			j = series[i].points.length;
+			while (j--) {
+				bb = series[i].points[j].graphic.getBBox();
+				obstacles.push({
+					xMin: bb.x - margin,
+					xMax: bb.x + bb.width + margin,
+					yMin: bb.y - margin,
+					yMax: bb.y + bb.height + margin
+				});
+			}
+		}
+		// Sort obstacles by xMin before returning, for optimization
+		return obstacles.sort(function (a, b) {
+			return a.xMin - b.xMin;
+		});
 	}
+
 };
 
 
