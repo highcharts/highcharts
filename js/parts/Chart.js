@@ -248,6 +248,11 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
+
+		// Handle responsive rules, not only on resize (#6130)
+		if (chart.setResponsive) {
+			chart.setResponsive(false);
+		}
 			
 		H.setAnimation(animation, chart);
 		
@@ -935,9 +940,6 @@ Chart.prototype = {
 		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
-		if (chart.setResponsive) {
-			chart.setResponsive(false);
-		}
 		chart.redraw(animation);
 
 
