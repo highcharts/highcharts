@@ -8,22 +8,24 @@
 import H from '../parts/Globals.js';
 import '../parts/Point.js';
 import '../parts/Utilities.js';
+import pathfinderAlgorithms from 'pathfinderAlgorithms.js';
 
 var extend = H.extend,
 	each = H.each,
 	addEvent = H.addEvent,
-	merge = H.merge;
-
+	merge = H.merge,
+	pick = H.pick;
 
 // TODO:
 // Check dynamics, including hiding/adding/removing/updating series/points etc.
 // Symbols for markers
 
-
 // Set default Pathfinder options
 extend(H.defaultOptions, {
 	pathfinder: {
-		// enabled: true
+		// enabled: true,
+		// dashStyle: 'solid',
+		// color: point.color,
 		type: 'straight',
 		startMarker: {
 			align: 'center',
@@ -33,7 +35,8 @@ extend(H.defaultOptions, {
 			align: 'center',
 			verticalAlign: 'middle'
 		},
-		lineWidth: 1
+		lineWidth: 1,
+		algorithmMargin: 10
 	}
 });
 
@@ -48,70 +51,44 @@ function Pathfinder(chart) {
 }
 Pathfinder.prototype = {
 
-	// Define the available pathfinding algorithms.
-	// Algorithms take up to 4 arguments: starting point, ending point, an 
-	// array of obstacle objects, and a reference to the chart.
-	algorithms: {
+	algorithms: pathfinderAlgorithms,
 
-		/**
-		 * Get an SVG path from a starting coordinate to an ending coordinate.
-		 * Draws a straight line.		 
-		 *
-		 * @param {Object} start Starting coordinate, object with x/y props.
-		 * @param {Object} end Ending coordinate, object with x/y props.
-		 *
-		 * @return {Object} result An object with the SVG path in Array form as
-		 * 	accepted by the SVG renderer, as well as an array of new obstacles 
-		 *  making up this path.
-		 */
-		straight: function (start, end) {
-			return {
-				path: ['M', start.x, start.y, 'L', end.x, end.y],
-				obstacles: [{ start, end }]
-			};
-		},
-
-		/**
-		 * Find a path from a starting coordinate to an ending coordinate,
-		 * taking obstacles into consideration.
-		 *
-		 * @param {Object} start Starting coordinate, object with x/y props.
-		 * @param {Object} end Ending coordinate, object with x/y props.
-		 * @param {Array} obstacles Array of obstacle objects.
-		 *
-		 * @return {Object} result An object with the SVG path in Array form as
-		 * 	accepted by the SVG renderer, as well as an array of new obstacles 
-		 *  making up this path.
-		 */
-		avoid: extend(function (start, end, obstacles) {
-			var segments = [],
-				path = ['M', start.x, start.y, 'L', end.x, end.y];
-			segments.push({
-				start, 
-				end
-			});
-			return {
-				path: path,
-				obstacles: segments
-			};
-		}, {
-			requiresObstacles: true
-		})
-
-	},
-
-	// TODO
 	/**
-	 * Get chart obstacles from points. Does not include paths from Pathfinder.
+	 * Get chart obstacles from points. Does not include connecting lines from 
+	 * Pathfinder. Applies algorithmMargin to the obstacles.
+	 *
+	 * @param {Object} options Options for the calculation.
 	 *
 	 * @return {Object} result The calculated obstacles.
 	 */
-	getChartObstacles: function () {		
-		return [];
+	getChartObstacles: function (options) {
+		var obstacles = [],
+			series = this.chart.series,
+			margin = options.algorithmMargin,
+			bb,
+			i,
+			j;
+		i = series.length;
+		while (i--) {
+			j = series[i].points.length;
+			while (j--) {
+				bb = series[i].points[j].graphic.getBBox();
+				obstacles.push({
+					xMin: bb.x - margin,
+					xMax: bb.x + bb.width + margin,
+					yMin: bb.y - margin,
+					yMax: bb.y + bb.height + margin
+				});
+			}
+		}
+		// Sort obstacles by xMin before returning, for optimization
+		return obstacles.sort(function (a, b) {
+			return a.xMin - b.xMin;
+		});
 	},
 
 	/**
-	 * Initialize the Pathfinder object.	 
+	 * Initialize the Pathfinder object.
 	 *
 	 * @param {Object} chart The chart context.
 	 */
@@ -168,14 +145,13 @@ Pathfinder.prototype = {
 				var connect = point.options.connect,
 					to;
 				if (connect) {
-					to = chart.get(typeof connect === 'string' ? 
-						connect : 
-						connect.to
+					to = chart.get(typeof connect === 'string' ?
+						connect : connect.to
 					);
 					// We store start/end/options for each connection to be
 					// picked up in drawConnections
 					pathfinder.connections.push([
-						point, 
+						point,
 						to,
 						typeof connect === 'string' ? {} : connect
 					]);
@@ -192,16 +168,18 @@ Pathfinder.prototype = {
 	 * Draw the chart's connecting paths.
 	 */
 	renderConnections: function () {
-		// Clear obstacles to force recalculation. This must be done on every
-		// redraw in case positions have changed.
-		// This is handled in Point.pathTo on demand.
-		delete this.obstacles;
-
 		// Clear existing connections
-		each(this.paths, function (path) {
-			path.destroy();
-		});
+		var i = this.paths.length;
+		while (i--) {
+			this.paths[i].destroy();
+		}
 		this.paths = [];
+
+		// Clear obstacles to force recalculation. This must be done on every
+		// redraw in case positions have changed. This is handled in 
+		// Point.pathTo on demand.
+		delete this.chartObstacles;
+		delete this.lineObstacles;
 
 		// Draw connections. Arrays are faster than objects, thus the clumsy
 		// syntax. Mapping is [startPoint, endPoint, options].
@@ -271,7 +249,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		var chart = this.series.chart,
 			pathfinder = chart.pathfinder,
 			defaultOptions = chart.options.pathfinder,
-			obstacles = pathfinder.obstacles,
+			chartObstacles = pathfinder.chartObstacles,
+			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
 			pathResult,
 			attribs,
@@ -279,24 +258,28 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			algorithm = pathfinder.algorithms[options.type];
 
 		// This function calculates obstacles on demand if they don't exist
-		if (algorithm.requiresObstacles && !obstacles) {
-			obstacles = pathfinder.obstacles = pathfinder.getChartObstacles();
+		if (algorithm.requiresObstacles && !chartObstacles) {
+			chartObstacles = 
+				pathfinder.chartObstacles = 
+				pathfinder.getChartObstacles(options);
 		}
 
 		// Get the SVG path
 		pathResult = algorithm(
 			this.getPathfinderAnchorPoint(options),
 			toPoint.getPathfinderAnchorPoint(options, true),
-			obstacles,
-			chart
-		); // Pass in obstacles/chart always, doesn't matter
+			merge({
+				chartObstacles: chartObstacles,
+				lineObstacles: lineObstacles || []
+			}, options)
+		);
 
 		// Always update obstacle storage with obstacles from this path.
-		// We don't know if future pathTo calls will need this for their 
+		// We don't know if future pathTo calls will need this for their
 		// algorithm.
 		if (pathResult.obstacles) {
-			pathfinder.obstacles = obstacles || [];
-			pathfinder.obstacles.push(pathResult.obstacles);
+			pathfinder.lineObstacles = lineObstacles || [];
+			pathfinder.lineObstacles.push(pathResult.obstacles);
 		}
 
 		// Add the SVG element of the path
