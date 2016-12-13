@@ -11,18 +11,29 @@ import '../parts/Utilities.js';
 
 var extend = H.extend,
 	each = H.each,
-	addEvent = H.addEvent;
+	addEvent = H.addEvent,
+	merge = H.merge;
 
 
 // TODO:
 // Check dynamics, including hiding/adding/removing/updating series/points etc.
+// Symbols for markers
 
 
 // Set default Pathfinder options
 extend(H.defaultOptions, {
 	pathfinder: {
 		// enabled: true
-		type: 'straight'
+		type: 'straight',
+		startMarker: {
+			align: 'center',
+			verticalAlign: 'middle'
+		},
+		endMarker: {
+			align: 'center',
+			verticalAlign: 'middle'
+		},
+		lineWidth: 1
 	}
 });
 
@@ -91,10 +102,12 @@ Pathfinder.prototype = {
 
 	// TODO
 	/**
-	 * Set chart obstacles from points. Will wipe all existing obstacles.
+	 * Get chart obstacles from points. Does not include paths from Pathfinder.
+	 *
+	 * @return {Object} result The calculated obstacles.
 	 */
-	calculatePointObstacles: function () {
-		this.obstacles = [];
+	getChartObstacles: function () {		
+		return [];
 	},
 
 	/**
@@ -201,39 +214,82 @@ Pathfinder.prototype = {
 
 // Add pathfinding capabilities to Points
 extend(H.Point.prototype, /** @lends Point.prototype */ {
+
+	/**
+	 * Get coordinates of anchor point for pathfinder connection.
+	 *
+	 * @param {Object} options Connection options for position on point
+	 * @param {Boolean} endPoint Use options for end point instead of start
+	 *
+	 * @return {Object} result An object with x/y properties for the position.
+	 * 	Coordinates are in plot values, not relative to point.
+	 */
+	getPathfinderAnchorPoint: function (options, endPoint) {
+		var bb = this.graphic.getBBox(),
+			chart = this.series.chart,
+			marker = endPoint ? 'endMarker' : 'startMarker',
+			markerOptions = options[marker] || chart.options.pathfinder[marker],
+			xFactor, // Make Simon Cowell proud
+			yFactor;
+
+		switch (markerOptions.align) {
+		case 'right':
+			xFactor = 2;
+			break;
+		case 'left':
+			xFactor = 0;
+			break;
+		default:
+			xFactor = 1;
+		}
+
+		switch (markerOptions.verticalAlign) {
+		case 'top':
+			yFactor = 0;
+			break;
+		case 'bottom':
+			yFactor = 2;
+			break;
+		default:
+			yFactor = 1;
+		}
+
+		// Note: Should we cache this?
+		return {
+			x: bb.x + bb.width / 2 * xFactor,
+			y: bb.y + bb.height / 2 * yFactor
+		};
+	},
+
 	/**
 	 * Draw a path from this point to another, avoiding collisions.
 	 *
 	 * @param {Object} toPoint The destination point
 	 * @param {Object} options Path options, including position on point, style
 	 */
-	pathTo: function (toPoint, options) {
+	pathTo: function (toPoint, opts) {
 		var chart = this.series.chart,
 			pathfinder = chart.pathfinder,
+			defaultOptions = chart.options.pathfinder,
 			obstacles = pathfinder.obstacles,
-			graphic = this.graphic,
 			renderer = chart.renderer,
-			oldGraphic = graphic,
 			pathResult,
-			algorithm;
+			attribs,
+			options = merge(defaultOptions, opts),
+			algorithm = pathfinder.algorithms[options.type];
 
-		options = options || {};
-		algorithm = pathfinder.algorithms[
-			options.type || chart.options.pathfinder.type
-		];
-
+		// This function calculates obstacles on demand if they don't exist
 		if (algorithm.requiresObstacles && !obstacles) {
-			pathfinder.calculatePointObstacles();
+			obstacles = pathfinder.obstacles = pathfinder.getChartObstacles();
 		}
 
-		// Get the actual path
-		pathResult = algorithm({
-			x: this.plotX,
-			y: this.plotY
-		}, {
-			x: toPoint.plotX,
-			y: toPoint.plotY
-		}, obstacles, chart); // Pass in obstacles/chart always, doesn't matter
+		// Get the SVG path
+		pathResult = algorithm(
+			this.getPathfinderAnchorPoint(options),
+			toPoint.getPathfinderAnchorPoint(options, true),
+			obstacles,
+			chart
+		); // Pass in obstacles/chart always, doesn't matter
 
 		// Always update obstacle storage with obstacles from this path.
 		// We don't know if future pathTo calls will need this for their 
@@ -243,23 +299,25 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			pathfinder.obstacles.push(pathResult.obstacles);
 		}
 
-		// Add the actual SVG element of the path
-		// First, if the point graphic is not a group, make it into one
-		if (graphic.element.tagName.toLowerCase() !== 'g') {
-			graphic = renderer.g('point').add(oldGraphic.parentGroup);
-			oldGraphic.add(graphic);
+		// Add the SVG element of the path
+		if (!pathfinder.group) {
+			pathfinder.group = renderer.g()
+				.addClass('highcharts-pathfinder')
+				.add(this.series.group);
+		}
+		attribs = {
+			stroke: options.color || this.color,
+			'stroke-width': options.lineWidth
+		};
+		if (options.dashStyle) {
+			attribs.dashstyle = options.dashStyle;
 		}
 		this.connectingPathGraphic = renderer.path(pathResult.path)
-			// TODO
-			// Make sure this is a good class name
 			.addClass('highcharts-point-connecting-path')
-			// TODO
-			// Figure out options-structure
-			.attr({
-				'stroke': options.color || '#050505',
-				'stroke-width': options.strokeWidth || 1
-			})
-			.add(graphic);
+			.attr(attribs)
+			.add(pathfinder.group);
+
+		// Add to internal list of paths for later destroying/referencing
 		pathfinder.paths.push(this.connectingPathGraphic);
 	}
 });
