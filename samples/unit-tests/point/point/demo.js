@@ -62,4 +62,20 @@ $(function () {
             );
         });
     });
+
+    QUnit.test('Point with negative color has only one highcharts-negative class',
+        function (assert) {
+            var chart = Highcharts.chart('container', {
+                series: [{
+                    data: [-10, -7, 5, 16],
+                    negativeColor: '#123456'
+                }]
+            });
+            assert.strictEqual(
+                Highcharts.attr(chart.series[0].points[0].graphic.element,
+                    'class').match(/highcharts-negative/g).length,
+                1,
+                'One occurrence of class name'
+            );
+        });
 });
