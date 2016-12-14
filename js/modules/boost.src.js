@@ -61,7 +61,6 @@ var win = H.win,
 	noop = function () {},
 	Color = H.Color,
 	Series = H.Series,
-	Point = H.Point,
 	seriesTypes = H.seriesTypes,
 	each = H.each,
 	extend = H.extend,
@@ -284,7 +283,7 @@ function GLShader(gl) {
 		gl.compileShader(shader);
 
 		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			console.error('shader error:', gl.getShaderInfoLog(shader));
+			//console.error('shader error:', gl.getShaderInfoLog(shader));
 			return false;
 		}
 		return shader;
@@ -301,7 +300,7 @@ function GLShader(gl) {
 
 		if (!v || !f) {
 			shaderProgram = false;
-			console.error('error creating shader program');
+			//console.error('error creating shader program');
 			return false;
 		}
 
@@ -339,8 +338,8 @@ function GLShader(gl) {
 	 * @param val {float} - the value to set
 	 */
 	function setUniform(name, val) {
-		var u = uLocations[name] = 	uLocations[name] ||  
-							  	 	gl.getUniformLocation(shaderProgram, name);
+		var u = uLocations[name] =	uLocations[name] ||
+									gl.getUniformLocation(shaderProgram, name);
 		gl.uniform1f(u, val);
 	}
 
@@ -348,7 +347,7 @@ function GLShader(gl) {
 	 * Set the active texture
 	 * @param texture - the texture
 	 */
-	function setTexture(texture) {
+	function setTexture() {
 		gl.uniform1i(uSamplerUniform, 0);
 	}
 
@@ -427,7 +426,7 @@ function GLShader(gl) {
 	 * Get the shader program handle
 	 * @returns {GLInt} - the handle for the program
 	 */
-	function getProgram () {
+	function getProgram() {
 		return shaderProgram;
 	}
 
@@ -436,9 +435,15 @@ function GLShader(gl) {
 	}
 
 	return {
-		psUniform: function () { return psUniform; },
-		pUniform: function () { return pUniform; },
-		fillColorUniform: function() { return fillColorUniform; },
+		psUniform: function () {
+			return psUniform;
+		},
+		pUniform: function () {
+			return pUniform;
+		},
+		fillColorUniform: function () {
+			return fillColorUniform;
+		},
 		setBubbleUniforms: setBubbleUniforms,
 		bind: bind,
 		program: getProgram,
@@ -463,7 +468,6 @@ function GLVertexBuffer(gl, shader) {
 	var buffer = false,		
 		vertAttribute = false,
 		components,
-		drawMode,
 		data;	
 
 	/* 
@@ -476,7 +480,7 @@ function GLVertexBuffer(gl, shader) {
 		data = dataIn || [];
 
 		if (!data.length) {
-			console.error('trying to render empty vbuffer');
+			//console.error('trying to render empty vbuffer');
 			buffer = false;
 			return false;
 		}
@@ -519,7 +523,7 @@ function GLVertexBuffer(gl, shader) {
 	 */
 	function render(from, to, drawMode) {
 		if (!buffer) {
-			return console.error('webgl: no buffer defined');
+			return false;
 		}
 
 		if (!data.length) {
@@ -606,7 +610,7 @@ function GLRenderer() {
 	circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
 		'<?xml version="1.0" standalone="no"?>',
 		'<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
-			'<circle cx="16" cy="16" r="16" stroke="none" fill="#FFF"/>',
+		'<circle cx="16" cy="16" r="16" stroke="none" fill="#FFF"/>',
 		'</svg>'
 	].join(''));
 
@@ -649,7 +653,8 @@ function GLRenderer() {
 	 * aligned correctly in memory
 	 */
 	function pushSeriesData(series, inst) {
-		var isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+		var isRange = series.pointArrayMap && 
+						series.pointArrayMap.join(',') === 'low,high',
 			chart = series.chart,
 			options = series.options,
 			isStacked = !!options.stacking,
@@ -663,8 +668,7 @@ function GLRenderer() {
 			xData = series.xData || options.xData || series.processedXData,
 			yData = series.yData || options.yData || series.processedYData,
 			zData = series.zData || options.zData || series.processedZData,
-			useRaw = !xData || xData.length === 0,
-			useXY = false,//(xData && xData.length > 0) && (yData && yData.length > 0),
+			useRaw = !xData || xData.length === 0,			
 			points = series.points || false,
 			minVal,
 			caxis,
@@ -707,11 +711,13 @@ function GLRenderer() {
 		}
 
 		// Special case for point shapes
-		if (points && points.length > 0) {
+		if (points && points.length > 0) {			
 			
 			// If we're doing points, we assume that the points are already
 			// translated, so we skip the shader translation.
 			inst.skipTranslation = true;
+			// Force triangle draw mode
+			inst.drawMode = 'triangles';
 			
 			each(points, function (point) {
 				var plotY = point.plotY,
@@ -761,9 +767,9 @@ function GLRenderer() {
 			var x,
 				y,
 				z,
-				clientX,
-				plotY,
-				isNull,
+				//clientX,
+				//plotY,
+				//isNull,
 				low,
 				chartDestroyed = typeof chart.index === 'undefined',
 				isYInside = true;
@@ -967,13 +973,13 @@ function GLRenderer() {
 	 */
 	function render() {
 		if (!gl || !width || !height) {
-			console.error(
-				'no valid gl context: w =', 
-				width, 'h =', 
-				height, 
-				'gl =', 
-				gl
-			);
+			// console.error(
+			// 	'no valid gl context: w =', 
+			// 	width, 'h =', 
+			// 	height, 
+			// 	'gl =', 
+			// 	gl
+			// );
 			return false;
 		}		
 
@@ -992,18 +998,17 @@ function GLRenderer() {
 		shader.setTexture(circleTextureHandle);
 
 		// Render the series
-		each(series, function (s, i) {
+		each(series, function (s) {
 			var options = s.series.options,
-				yBottom = s.series.yAxis.getThreshold(threshold),
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
+				yBottom = s.series.yAxis.getThreshold(threshold),
 				translatedThreshold = yBottom,
 				cbuffer,
-				drawMode = 'line_strip',
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(
 								pick(options.fillOpacity, 0.85)
-							 ).get() :
+							).get() :
 					s.series.color,
 				color = H.color(fillColor).rgba;			
 
@@ -1027,7 +1032,7 @@ function GLRenderer() {
 
 			// If set to true, the toPixels translations in the shader
 			// is skipped, i.e it's assumed that the value is a pixel coord.
-			shader.setSkipTranslation(s.skipTranslation)			
+			shader.setSkipTranslation(s.skipTranslation);		
 			
 			if (s.series.type === 'bubble') {
 				shader.setBubbleUniforms(s.series, s.zMin, s.zMax);
@@ -1056,7 +1061,7 @@ function GLRenderer() {
 	 */
 	function init(canvas) {
 		if (!canvas) {
-			console.err('no valid canvas - unable to init webgl');
+			//console.err('no valid canvas - unable to init webgl');
 			return false;
 		}
 
@@ -1093,16 +1098,16 @@ function GLRenderer() {
 			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
 			gl.texImage2D(
-					gl.TEXTURE_2D, 
-				    0, 
-					gl.RGBA, 
-					gl.RGBA, 
-					gl.UNSIGNED_BYTE, 
-					circleTexture
+				gl.TEXTURE_2D, 
+				0, 
+				gl.RGBA, 
+				gl.RGBA, 
+				gl.UNSIGNED_BYTE, 
+				circleTexture
 			);
 			
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			gl.generateMipmap(gl.TEXTURE_2D);
 
 			gl.bindTexture(gl.TEXTURE_2D, null);
@@ -1179,11 +1184,11 @@ function createAndAttachRenderer(target, chart, series) {
 
 		if (target.inverted) {
 			each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
-				wrap(ctx, fn, swapXY);
+				wrap(false, fn, swapXY);
 			});
 		}
 
-		if (target instanceof Highcharts.Chart) {
+		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(
 					target.seriesGroup || target.group
 			);
@@ -1257,6 +1262,16 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	}
 }
 
+/*
+ * Returns true if the series is in boost mode
+ * @param series {Highchart.Series} - the series to check
+ * @returns {boolean} - true if the series is in boost mode
+ */
+function isSeriesBoosting(series) {
+	return 	(series.processedXData || series.options.data).length < 
+			(series.options.boostThreshold || Number.MAX_VALUE);			
+}
+
 // Set default options
 each([
 	'area', 
@@ -1267,11 +1282,13 @@ each([
 	'heatmap', 
 	'bubble',
 	'heatmap'
-	], function (type) {
-	if (plotOptions[type]) {
-		plotOptions[type].boostThreshold = 5000;
+], 
+	function (type) {
+		if (plotOptions[type]) {
+			plotOptions[type].boostThreshold = 5000;
+		}
 	}
-});
+);
 
 /**
  * Override a bunch of methods the same way. If the number of points is 
@@ -1291,9 +1308,7 @@ each([
 		var letItPass = this.options.stacking && 
 						(method === 'translate' || method === 'generatePoints');
 		
-		if ((this.processedXData || this.options.data).length < 
-			(this.options.boostThreshold || Number.MAX_VALUE) ||
-			letItPass || this.type === 'heatmap') {
+		if (isSeriesBoosting(this) || letItPass || this.type === 'heatmap') {
 
 			// Clear image
 			if (method === 'render' && this.image) {
@@ -1333,14 +1348,14 @@ each([
  * to hasExtremes to the methods directly.
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
-	if (!this.hasExtremes()) {
+	if (!isSeriesBoosting(this) || !this.hasExtremes()) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
 
 wrap(Series.prototype, 'processData', function (proceed) {
 	// If this is a heatmap, do default behaviour
-	if (this.type === 'heatmap') {
+	if (!isSeriesBoosting(this) || this.type === 'heatmap') {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
 	}
 
@@ -1418,7 +1433,7 @@ H.extend(Series.prototype, {
 			chart = series.chart,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
-			ctx,
+			//ctx,
 			//c = 0,
 			xData = options.xData || series.processedXData,
 			yData = options.yData || series.processedYData,
@@ -1436,7 +1451,7 @@ H.extend(Series.prototype, {
 			points,
 			//r = options.marker && options.marker.radius,
 			//cvsDrawPoint = this.cvsDrawPoint,
-			cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
+			//cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
 		//	cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
 			enableMouseTracking = options.enableMouseTracking !== false,
 		//	lastPoint,
@@ -1445,7 +1460,8 @@ H.extend(Series.prototype, {
 			hasThreshold = isNumber(threshold),
 			translatedThreshold = yBottom,
 			doFill = this.fill,
-			isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+			isRange = series.pointArrayMap && 
+					series.pointArrayMap.join(',') === 'low,high',
 			isStacked = !!options.stacking,
 			cropStart = series.cropStart || 0,
 			//loadingOptions = chart.options.loading,
@@ -1458,14 +1474,16 @@ H.extend(Series.prototype, {
 			minI,
 			maxI,			
 			fillColor = series.fillOpacity ?
-					new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
-					series.color,
+					new Color(series.color).setOpacity(
+							pick(options.fillOpacity, 0.75)
+						).get() : series.color,
 
 			addKDPoint = function (clientX, plotY, i) {
 				//Shaves off about 60ms in canvas-scatter test
 				index = clientX + ',' + plotY;
 
-				// The k-d tree requires series points. Reduce the amount of points, since the time to build the 
+				// The k-d tree requires series points. 
+				// Reduce the amount of points, since the time to build the 
 				// tree increases exponentially.
 				if (enableMouseTracking && !pointTaken[index]) {
 					pointTaken[index] = true;
@@ -1482,8 +1500,7 @@ H.extend(Series.prototype, {
 						i: cropStart + i
 					});
 				}
-			}
-			;			
+			};			
 			
 		// If we are zooming out from SVG mode, destroy the graphics
 		if (this.points || this.graph) {
@@ -1688,6 +1705,7 @@ Series.prototype.getPoint = function (boostPoint) {
 wrap(Series.prototype, 'destroy', function (proceed) {
 	var series = this,
 		chart = series.chart;
+
 	if (chart.hoverPoints) {
 		chart.hoverPoints = grep(chart.hoverPoints, function (point) {
 			return point.series === series;
@@ -1697,6 +1715,7 @@ wrap(Series.prototype, 'destroy', function (proceed) {
 	if (chart.hoverPoint && chart.hoverPoint.series === series) {
 		chart.hoverPoint = null;
 	}
+
 	proceed.call(this);
 });
 
