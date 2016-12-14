@@ -11,7 +11,6 @@
  * 
  * Development plan
  * - Column range.
- * - Heatmap. Modify the heatmap-canvas demo so that it uses this module.
  * - Treemap.
  * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
  *   is false. It is also recommended to set scrollbar.liveRedraw to false.
@@ -592,7 +591,7 @@ function GLRenderer() {
 		//Handle for the circle texture
 		circleTextureHandle,
 		//Things to draw as "rectangles" (i.e lines)
-		asRect = {
+		asBar = {
 			'column': true,
 			'area': true
 		},
@@ -676,9 +675,18 @@ function GLRenderer() {
 			d = isStacked ? series.data : (xData || rawData),
 			maxVal;
 
+		//Push a vertice to the data buffer
+		function vertice(x, y, checkTreshold, pointSize) {			
+			data.push(x);
+			data.push(y);
+			data.push(checkTreshold ? 1 : 0);
+			data.push(pointSize || 1);
+		}
+
 		// Push a rectangle to the data buffer
 		function pushRect(x, y, w, h, color) {
 
+			// Push color to color buffer - need to do this per. vertex
 			function pushColor() {
 				if (color) {
 					inst.colorData.push(color[0]);
@@ -688,25 +696,22 @@ function GLRenderer() {
 				}				
 			}
 
-			function vertice(x, y) {
-				pushColor();
-
-				data.push(x);
-				data.push(y);
-				data.push(0);
-				data.push(1);
-			}
-
 			// Normally we should use triangle_strip since it's faster,
 			// but this would require more complicated pre-processing,
 			// which would negate the performance increase.
 
+			pushColor();
 			vertice(x + w, y);
+			pushColor();
 			vertice(x, y);
+			pushColor();
 			vertice(x, y + h);
 
+			pushColor();
 			vertice(x, y + h);
+			pushColor();
 			vertice(x + w, y + h);	
+			pushColor();
 			vertice(x + w, y);
 		}
 
@@ -840,22 +845,12 @@ function GLRenderer() {
 
 			maxVal = y;
 			
-			if (asRect[series.type]) {
+			if (asBar[series.type]) {
 				// Need to add an extra point here
-				exports.data.push(x);
-				exports.data.push(minVal);
-				exports.data.push(0);
-				exports.data.push(0);
+				vertice(x, minVal, 0, 0);
 			}
-			
-			// X-coordinate
-			data.push(x);
-			// Y-coordinate					
-			data.push(y);
-			// Translation threshold check			
-			data.push(0);								
-			// Point size
-			data.push(series.type === 'bubble' ? (z || 1) : 2);
+
+			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2);
 
 			if (caxis) {				
 				color = H.color(caxis.toColor(y)).rgba;
@@ -866,12 +861,9 @@ function GLRenderer() {
 				inst.colorData.push(color[3]);
 			}
 							
-			if (asRect[series.type]) {
+			if (asBar[series.type]) {
 				// Need to add an extra point here
-				data.push(x);
-				data.push(minVal);
-				data.push(0);
-				data.push(0);
+				vertice(x, minVal, 0, 0);
 			}
 
 			return true;
@@ -903,6 +895,7 @@ function GLRenderer() {
 				'line': 'line_strip',
 				'scatter': 'points',
 				'heatmap': 'triangles',
+				'treemap': 'triangles',
 				'bubble': 'points'				
 			})[s.type] || 'line_strip'
 		});
@@ -1268,8 +1261,24 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
  * @returns {boolean} - true if the series is in boost mode
  */
 function isSeriesBoosting(series) {
-	return 	(series.processedXData || series.options.data).length < 
-			(series.options.boostThreshold || Number.MAX_VALUE);			
+	function patientMax() {
+		var args = Array.prototype.slice.call(arguments),
+			r = -Number.MAX_VALUE;
+
+		each(args, function (t) {
+			if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
+				r = r < t.length ? t.length : r;
+			}
+		});
+
+		return r;
+	}		
+
+	return  patientMax(
+				series.processedXData, 
+				series.options.data,
+				series.points
+			) >= (series.options.boostThreshold || Number.MAX_VALUE);				
 }
 
 // Set default options
@@ -1281,6 +1290,7 @@ each([
 	'scatter', 
 	'heatmap', 
 	'bubble',
+	'treemap',
 	'heatmap'
 ], 
 	function (type) {
@@ -1308,7 +1318,11 @@ each([
 		var letItPass = this.options.stacking && 
 						(method === 'translate' || method === 'generatePoints');
 		
-		if (isSeriesBoosting(this) || letItPass || this.type === 'heatmap') {
+		if (!isSeriesBoosting(this) || 
+			letItPass || 
+			this.type === 'heatmap' ||
+			this.type === 'treemap'
+		) {
 
 			// Clear image
 			if (method === 'render' && this.image) {
@@ -1334,11 +1348,11 @@ each([
 
 		if (seriesTypes.arearange) {
 			wrap(seriesTypes.arearange.prototype, method, branch);
-		}
+		}	
 
-		if (seriesTypes.heatmap) {
-			wrap(seriesTypes.heatmap.prototype, method, branch);
-		}		
+		if (seriesTypes.treemap) {
+			wrap(seriesTypes.treemap.prototype, method, branch);
+		}	
 	}
 });
 
@@ -1355,7 +1369,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 
 wrap(Series.prototype, 'processData', function (proceed) {
 	// If this is a heatmap, do default behaviour
-	if (!isSeriesBoosting(this) || this.type === 'heatmap') {
+	if (!isSeriesBoosting(this) || this.type === 'heatmap' || this.type === 'treemap') {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
 	}
 
@@ -1645,7 +1659,11 @@ H.extend(Series.prototype, {
  *
  */
 if (seriesTypes.heatmap) {	
-	wrap(seriesTypes.heatmap.prototype, 'drawPoints', function () {
+	wrap(seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
+		if (!isSeriesBoosting(this)) {
+			return proceed.call(this);
+		}
+
 		//Make sure we have a valid OGL context
 		var renderer = createAndAttachRenderer(this.chart, this.chart, this);
 		if (renderer) {
@@ -1654,6 +1672,19 @@ if (seriesTypes.heatmap) {
 	});
 
 	seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
+}
+
+if (seriesTypes.treemap) {
+	wrap(seriesTypes.treemap.prototype, 'drawPoints', function (proceed) {
+		if (!isSeriesBoosting(this)) {
+			return proceed.call(this);
+		}
+		//Make sure we have a valid OGL context
+		var renderer = createAndAttachRenderer(this.chart, this.chart, this);
+		if (renderer) {
+			renderer.pushSeries(this);				
+		}		
+	});
 }
 
 if (seriesTypes.bubble) {
