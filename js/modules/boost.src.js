@@ -1501,9 +1501,7 @@ H.extend(Series.prototype, {
 			);
 		} else {
 			this.markerGroup = chart.markerGroup;			
-		}	
-
-		console.log(this.points);
+		}			
 
 		points = this.points = [];			
 		
