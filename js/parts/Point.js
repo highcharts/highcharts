@@ -278,6 +278,7 @@ Point.prototype = {
 			x: this.category,
 			y: this.y,
 			color: this.color,
+			colorIndex: this.colorIndex,
 			key: this.name || this.category,
 			series: this.series,
 			point: this,
