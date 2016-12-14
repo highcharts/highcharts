@@ -490,13 +490,13 @@ H.Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
-			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip
 		} else {
 			textConfig = point.getLabelConfig();
 		}
+		this.len = pointConfig.length; // #6128
 		text = formatter.call(textConfig, tooltip);
 
 		// register the current series
