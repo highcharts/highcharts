@@ -48,11 +48,13 @@ $(function () {
         },
         series: [{
             type: 'bubble',
-            color: 'rgba(152,0,67,0.01)',
+            color: 'rgba(152, 0, 67, 0.8)',
+            boostThreshold: 1,
             data: data,
             minSize: 1,
             maxSize: 10,
             tooltip: {
+                enabled: true,
                 followPointer: false,
                 pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
             },

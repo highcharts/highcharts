@@ -91,7 +91,11 @@ function GLShader(gl) {
 			'#version 100',
 			'precision highp float;',
 			
-			'attribute vec3 aVertexPosition;',
+			'attribute vec4 aVertexPosition;',
+			'attribute vec4 aColor;',
+
+			'varying highp vec2 position;',
+			'varying highp vec4 vColor;',
 			//'attribute float aXAxis;',
 			//'attribute float aYAxis;',
 
@@ -100,6 +104,11 @@ function GLShader(gl) {
 
 			'uniform float translatedThreshold;',
 			'uniform bool hasThreshold;',
+
+			'uniform float width;',
+			'uniform float height;',
+
+			'uniform bool skipTranslation;',
 
 			'uniform float xAxisTrans;',
 			'uniform float xAxisMin;',
@@ -110,7 +119,7 @@ function GLShader(gl) {
 			'uniform float xAxisOrdinalSlope;',
 			'uniform float xAxisOrdinalOffset;',			
 			'uniform float xAxisPos;',	
-			'uniform bool xAxisCVSCoord;',		
+			'uniform bool  xAxisCVSCoord;',		
 
 			'uniform float yAxisTrans;',
 			'uniform float yAxisMin;',
@@ -121,7 +130,43 @@ function GLShader(gl) {
 			'uniform float yAxisOrdinalSlope;',
 			'uniform float yAxisOrdinalOffset;', 
 			'uniform float yAxisPos;',
-			'uniform bool  yAxisCVSCoord;',		
+			'uniform bool  yAxisCVSCoord;',
+
+			'uniform bool  isBubble;',
+			'uniform bool  bubbleSizeByArea;',
+			'uniform float bubbleZMin;',
+			'uniform float bubbleZMax;',
+			'uniform float bubbleZThreshold;',
+			'uniform float bubbleMinSize;',
+			'uniform float bubbleMaxSize;',
+			'uniform bool  bubbleSizeAbs;',
+
+			'float bubbleRadius(){',
+				'float value = aVertexPosition.w;',
+				'float zMax = bubbleZMax;',
+				'float zMin = bubbleZMin;',
+				'float radius = 0.0;',
+				'float pos = 0.0;',
+				'float zRange = zMax - zMin;',
+
+				'if (bubbleSizeAbs){',
+					'value = value - bubbleZThreshold;',
+					'zMax = max(zMax - bubbleZThreshold, zMin - bubbleZThreshold);',
+					'zMin = 0.0;',
+				'}',
+
+				'if (value < zMin){',
+					'radius = bubbleZMin / 2.0 - 1.0;',
+				'} else {',
+					'pos = zRange > 0.0 ? (value - zMin) / zRange : 0.5;',
+					'if (bubbleSizeByArea && pos > 0.0){',
+						'pos = sqrt(pos);',
+					'}',
+					'radius = ceil(bubbleMinSize + pos * (bubbleMaxSize - bubbleMinSize)) / 2.0;',
+				'}',
+
+				'return radius * 2.0;',
+			'}',		
 
 			'float translate(float val,',
 							'float pointPlacement,',
@@ -146,10 +191,18 @@ function GLShader(gl) {
 			'}',
 
 			'float xToPixels(float value){',
+				'if (skipTranslation){',
+					'return value + xAxisPos;',
+				'}',
+
 				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord) + xAxisPos;',
 			'}',
 
 			'float yToPixels(float value, float checkTreshold){',
+				'if (skipTranslation){',
+					'return value + yAxisPos;',
+				'}',
+
 				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
 				//'if (checkTreshold > 0.0 && hasThreshold) {',
 				//	'v = min(v, translatedThreshold);',
@@ -158,8 +211,12 @@ function GLShader(gl) {
 			'}',
 
 			'void main(void) {',
-				'gl_PointSize = pSize;',
-				//'gl_Position = uPMatrix * vec4(aVertexPosition, 0.0, 1.0);',
+				'if (isBubble){',
+					'gl_PointSize = bubbleRadius();',
+				'} else {',
+					'gl_PointSize = aVertexPosition.w;',
+				'}',
+				'vColor = aColor;',
 				'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x), yToPixels(aVertexPosition.y, aVertexPosition.z), 0.0, 1.0);',
 			'}'
 			/* eslint-enable */
@@ -169,9 +226,28 @@ function GLShader(gl) {
 			/* eslint-disable */
 			'precision highp float;',
 			'uniform vec4 fillColor;',
+			'varying highp vec2 position;',  
+			'varying highp vec4 vColor;',    
+  			'uniform sampler2D uSampler;',
+  			'uniform bool isBubble;',
+  			'uniform bool hasColor;',
 
-			'void main(void) {',
-				'gl_FragColor =  fillColor;',
+  			// 'vec4 toColor(float value, vec2 point) {',
+  			// 	'return vec4(0.0, 0.0, 0.0, 0.0);',
+  			// '}',
+
+			'void main(void) {',				
+				'vec4 col = fillColor;',
+
+				'if (hasColor) {',
+					'col = vColor;',
+				'}',
+
+				'if (isBubble) {',
+					'gl_FragColor = col * texture2D(uSampler, gl_PointCoord.st);',
+				'} else {',
+					'gl_FragColor = col;',
+				'}',
 			'}'
 			/* eslint-enable */
 		].join('\n'),
@@ -183,7 +259,16 @@ function GLShader(gl) {
 		//Uniform for point size
 		psUniform,
 		//Uniform for fill color
-		fillColorUniform;
+		fillColorUniform,
+		//Uniform for isBubble
+		isBubbleUniform,
+		//Uniform for bubble abs sizing
+		bubbleSizeAbsUniform,
+		bubbleSizeAreaUniform,
+		//Skip translation uniform
+		skipTranslationUniform,
+		//Texture uniform
+		uSamplerUniform;
 
 	/* String to shader program
 	 * @param {string} str - the program source
@@ -230,7 +315,11 @@ function GLShader(gl) {
 		pUniform = gl.getUniformLocation(shaderProgram, 'uPMatrix');
 		psUniform = gl.getUniformLocation(shaderProgram, 'pSize');
 		fillColorUniform = gl.getUniformLocation(shaderProgram, 'fillColor');
-
+		isBubbleUniform = gl.getUniformLocation(shaderProgram, 'isBubble');
+		bubbleSizeAbsUniform = gl.getUniformLocation(shaderProgram, 'bubbleSizeAbs');
+		bubbleSizeAreaUniform = gl.getUniformLocation(shaderProgram, 'bubbleSizeByArea');
+		uSamplerUniform = gl.getUniformLocation(shaderProgram, 'uSampler');
+		skipTranslationUniform = gl.getUniformLocation(shaderProgram, 'skipTranslation');
 		return true;
 	}
 
@@ -255,7 +344,47 @@ function GLShader(gl) {
 		gl.uniform1f(u, val);
 	}
 
+	/*
+	 * Set the active texture
+	 * @param texture - the texture
+	 */
+	function setTexture(texture) {
+		gl.uniform1i(uSamplerUniform, 0);
+	}
+
 	////////////////////////////////////////////////////////////////////////////
+
+	/* 
+	 * Set bubble uniforms
+	 * @param series {Highcharts.Series} - the series to use
+	 */
+	function setBubbleUniforms(series, zCalcMin, zCalcMax) {
+		var seriesOptions = series.options,
+			zMin = Number.MAX_VALUE,
+			zMax = -Number.MAX_VALUE;
+
+		if (series.type === 'bubble') {
+			zMin = pick(seriesOptions.zMin, Math.min(
+				zMin,
+				Math.max(
+					zCalcMin, 
+					seriesOptions.displayNegative === false ? 
+					seriesOptions.zThreshold : -Number.MAX_VALUE
+				)
+			));
+
+			zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));
+
+			gl.uniform1i(isBubbleUniform, 1);
+			gl.uniform1i(bubbleSizeAreaUniform, series.options.sizeBy !== 'width');
+			gl.uniform1i(bubbleSizeAbsUniform, series.options.sizeByAbsoluteValue);
+			setUniform('bubbleZMin', zMin);
+			setUniform('bubbleZMax', zMax);
+			setUniform('bubbleZThreshold', series.options.zThreshold);
+			setUniform('bubbleMinSize', series.minPxSize);
+			setUniform('bubbleMaxSize', series.maxPxSize);
+		}
+	}
 
 	/*
 	 * Set the Color uniform.
@@ -269,6 +398,13 @@ function GLShader(gl) {
 			color[2] / 255.0, 
 			color[3]
 		);
+	}
+
+	/*
+	 * Set skip translation
+	 */
+	function setSkipTranslation(flag) {
+		gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
 	}
 
 	/*
@@ -303,13 +439,16 @@ function GLShader(gl) {
 		psUniform: function () { return psUniform; },
 		pUniform: function () { return pUniform; },
 		fillColorUniform: function() { return fillColorUniform; },
+		setBubbleUniforms: setBubbleUniforms,
 		bind: bind,
 		program: getProgram,
 		create: createShader,
 		setUniform: setUniform,
 		setPMatrix: setPMatrix,
 		setColor: setColor,
-		setPointSize: setPointSize
+		setPointSize: setPointSize,
+		setSkipTranslation: setSkipTranslation,
+		setTexture: setTexture
 	};
 }
 
@@ -337,7 +476,9 @@ function GLVertexBuffer(gl, shader) {
 		data = dataIn || [];
 
 		if (!data.length) {
-			return console.error(data);
+			console.error('trying to render empty vbuffer');
+			buffer = false;
+			return false;
 		}
 
 		components = dataComponents || 2;
@@ -352,12 +493,18 @@ function GLVertexBuffer(gl, shader) {
 
 		vertAttribute = gl.getAttribLocation(shader.program(), attrib);
 		gl.enableVertexAttribArray(vertAttribute);
+
+		return true;
 	}
 
 	/* 
 	 * Bind the buffer
 	 */
 	function bind() {		
+		if (!buffer) {
+			return;
+		}
+
 		gl.enableVertexAttribArray(vertAttribute);
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
@@ -436,6 +583,10 @@ function GLRenderer() {
 		isInited = false,
 		//The series stack
 		series = [],	
+		//Texture for circles
+		circleTexture = new Image(),
+		//Handle for the circle texture
+		circleTextureHandle,
 		//Things to draw as "rectangles" (i.e lines)
 		asRect = {
 			'column': true,
@@ -450,6 +601,17 @@ function GLRenderer() {
 		};
 
 	////////////////////////////////////////////////////////////////////////////
+
+	//Create a white circle texture for use with bubbles
+	circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
+		'<?xml version="1.0" standalone="no"?>',
+		'<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
+			'<circle cx="16" cy="16" r="16" stroke="none" fill="#FFF"/>',
+		'</svg>'
+	].join(''));
+
+	circleTexture.width = 32;
+	circleTexture.height = 32;
 
 	/*  
 	 * Returns an orthographic perspective matrix
@@ -486,7 +648,7 @@ function GLRenderer() {
 	 * This calculates additional vertices and transforms the data to be 
 	 * aligned correctly in memory
 	 */
-	function pushSeriesData(series) {
+	function pushSeriesData(series, inst) {
 		var isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
 			chart = series.chart,
 			options = series.options,
@@ -498,16 +660,107 @@ function GLRenderer() {
 			yExtremes = series.yAxis.getExtremes(),
 			yMin = yExtremes.min,
 			yMax = yExtremes.max,
-			xData = options.xData || series.processedXData,
-			yData = options.yData || series.processedYData,
-			useRaw = !xData,
+			xData = series.xData || options.xData || series.processedXData,
+			yData = series.yData || options.yData || series.processedYData,
+			zData = series.zData || options.zData || series.processedZData,
+			useRaw = !xData || xData.length === 0,
+			useXY = false,//(xData && xData.length > 0) && (yData && yData.length > 0),
+			points = series.points || false,
 			minVal,
-			d = isStacked ? series.data : (rawData),
+			caxis,
+			color,
+			d = isStacked ? series.data : (xData || rawData),
 			maxVal;
+
+		// Push a rectangle to the data buffer
+		function pushRect(x, y, w, h, color) {
+
+			function pushColor() {
+				if (color) {
+					inst.colorData.push(color[0]);
+					inst.colorData.push(color[1]);
+					inst.colorData.push(color[2]);
+					inst.colorData.push(color[3]);
+				}				
+			}
+
+			function vertice(x, y) {
+				pushColor();
+
+				data.push(x);
+				data.push(y);
+				data.push(0);
+				data.push(1);
+			}
+
+			// Normally we should use triangle_strip since it's faster,
+			// but this would require more complicated pre-processing,
+			// which would negate the performance increase.
+
+			vertice(x + w, y);
+			vertice(x, y);
+			vertice(x, y + h);
+
+			vertice(x, y + h);
+			vertice(x + w, y + h);	
+			vertice(x + w, y);
+		}
+
+		// Special case for point shapes
+		if (points && points.length > 0) {
+			
+			// If we're doing points, we assume that the points are already
+			// translated, so we skip the shader translation.
+			inst.skipTranslation = true;
+			
+			each(points, function (point) {
+				var plotY = point.plotY,
+					shapeArgs,
+					pointAttr;
+
+				if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+					shapeArgs = point.shapeArgs;
+					pointAttr = (point.pointAttr && point.pointAttr['']) || 
+								point.series.pointAttribs(point);
+
+					//Handle point colors
+					color = H.color(pointAttr.fill).rgba;
+					color[0] /= 255.0;
+					color[1] /= 255.0;
+					color[2] /= 255.0;
+					
+
+					//So there are two ways of doing this. Either we can
+					//create a rectangle of two triangles, or we can do a 
+					//point and use point size. Latter is faster, but 
+					//only supports squares. So we're doing triangles.
+					//We could also use one color per. vertice to get 
+					//color interpolation.
+
+					pushRect(
+						shapeArgs.x, 
+						shapeArgs.y, 
+						shapeArgs.width, 
+						shapeArgs.height,
+						color
+					);
+				}
+			});
+
+			return;
+		}
+
+		// Extract color axis
+		each(chart.axes || [], function (a) {
+			if (H.ColorAxis && a instanceof H.ColorAxis) {
+				caxis = a;
+			}
+		});	
 
 		each(d, function (d, i) {
 			var x,
 				y,
+				z,
 				clientX,
 				plotY,
 				isNull,
@@ -522,12 +775,38 @@ function GLRenderer() {
 			if (useRaw) {
 				x = d[0];
 				y = d[1];
+
+				if (d.length >= 3) {
+					z = d[2];
+
+					if (d[2] > inst.zMax) {
+						inst.zMax = d[2];
+					}
+
+					if (d[2] < inst.zMin) {
+						inst.zMin = d[2];
+					}
+				}
+			
 			} else {
 				x = d;
 				y = yData[i];
+
+				if (zData && zData.length) {
+					z = zData[i];
+				
+					if (zData[i] > inst.zMax) {
+						inst.zMax = zData[i];
+					} 
+
+					if (zData[i] < inst.zMin) {
+						inst.zMin = zData[i];
+					}					
+				}
 			}
 
 			// Resolve low and high for range series
+
 			if (isRange) {
 				if (useRaw) {
 					y = d.slice(1, 3);
@@ -538,8 +817,8 @@ function GLRenderer() {
 				x = d.x;
 				y = d.stackY;
 				low = y - d.y;
-			}
-
+			}				
+			
 			if (!series.requireSorting) {
 				isYInside = y >= yMin && y <= yMax;
 			}
@@ -556,20 +835,36 @@ function GLRenderer() {
 			maxVal = y;
 			
 			if (asRect[series.type]) {
-				//Need to add an extra point here
+				// Need to add an extra point here
 				exports.data.push(x);
 				exports.data.push(minVal);
 				exports.data.push(0);
+				exports.data.push(0);
 			}
 			
-			data.push(x);					
-			data.push(y);			
+			// X-coordinate
+			data.push(x);
+			// Y-coordinate					
+			data.push(y);
+			// Translation threshold check			
 			data.push(0);								
+			// Point size
+			data.push(series.type === 'bubble' ? (z || 1) : 2);
+
+			if (caxis) {				
+				color = H.color(caxis.toColor(y)).rgba;
+
+				inst.colorData.push(color[0] / 255.0);
+				inst.colorData.push(color[1] / 255.0);
+				inst.colorData.push(color[2] / 255.0);
+				inst.colorData.push(color[3]);
+			}
 							
 			if (asRect[series.type]) {
-				//Need to add an extra point here
+				// Need to add an extra point here
 				data.push(x);
 				data.push(minVal);
+				data.push(0);
 				data.push(0);
 			}
 
@@ -588,11 +883,26 @@ function GLRenderer() {
 
 		series.push({
 			from: data.length,
-			series: s 
+			// Push RGBA values to this array to use per. point coloring.
+			// It should be 0-padded, so each component should be pushed in
+			// succession.
+			colorData: [],
+			series: s,
+			zMin: Number.MAX_VALUE,
+			zMax: -Number.MAX_VALUE,
+			drawMode: ({
+				'area': 'line_strip',
+				'arearange': 'line_strip',
+				'column': 'line_strip',
+				'line': 'line_strip',
+				'scatter': 'points',
+				'heatmap': 'triangles',
+				'bubble': 'points'				
+			})[s.type] || 'line_strip'
 		});
 
-		//Add the series data
-		pushSeriesData(s);
+		// Add the series data to our buffer(s)
+		pushSeriesData(s, series[series.length - 1]);
 	}
 
 	/*
@@ -669,20 +979,26 @@ function GLRenderer() {
 
 		shader.bind();
 
-		gl.lineWidth(settings.lineWidth);
-		shader.setPointSize(settings.pointSize);
+		shader.setUniform('width', width);
+		shader.setUniform('height', height);
 
-		//Build a single buffer for all series
-		vbuffer.build(exports.data, 'aVertexPosition', 3);
+		gl.lineWidth(settings.lineWidth);
+
+		// Build a single buffer for all series
+		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
 
-		//Render the series - this is a lot of draw calls
+		gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+		shader.setTexture(circleTextureHandle);
+
+		// Render the series
 		each(series, function (s, i) {
 			var options = s.series.options,
 				yBottom = s.series.yAxis.getThreshold(threshold),
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
 				translatedThreshold = yBottom,
+				cbuffer,
 				drawMode = 'line_strip',
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(
@@ -695,18 +1011,30 @@ function GLRenderer() {
 				color[3] = 1.0;
 			}
 
+			// If there are entries in the colorData buffer, build and bind it.
+			if (s.colorData.length > 0) {
+				shader.setUniform('hasColor', 1.0);
+				cbuffer = GLVertexBuffer(gl, shader);
+				cbuffer.build(s.colorData, 'aColor', 4);
+				cbuffer.bind();
+			}
+
+			// Set series specific uniforms
 			shader.setColor(color);
 			setXAxis(s.series.xAxis);
 			setYAxis(s.series.yAxis);
 			setThreshold(hasThreshold, translatedThreshold);
 
-			//Draw mode
-			if (s.series.type === 'scatter') {
-				drawMode = 'points';
+			// If set to true, the toPixels translations in the shader
+			// is skipped, i.e it's assumed that the value is a pixel coord.
+			shader.setSkipTranslation(s.skipTranslation)			
+			
+			if (s.series.type === 'bubble') {
+				shader.setBubbleUniforms(s.series, s.zMin, s.zMax);
 			}
 
-			//Do the actual rendering
-			vbuffer.render(s.from, s.to, drawMode);
+			// Do the actual rendering
+			vbuffer.render(s.from, s.to, s.drawMode);
 		});
 	}
 	
@@ -728,6 +1056,7 @@ function GLRenderer() {
 	 */
 	function init(canvas) {
 		if (!canvas) {
+			console.err('no valid canvas - unable to init webgl');
 			return false;
 		}
 
@@ -736,7 +1065,7 @@ function GLRenderer() {
 		gl = canvas.getContext('webgl');
 
 		if (!gl) {
-			//Try again with an experimental context
+			// Try again with an experimental context
 			gl = canvas.getContext('experimental-webgl');
 		}
 
@@ -747,8 +1076,8 @@ function GLRenderer() {
 		}
 
 		gl.enable(gl.BLEND);
+		//gl.blendFunc(gl.ONE, gl.ONE);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		//gl.blendEquation(gl.FUNC_ADD);
 		//gl.enable(gl.DEPTH_TEST);
 		gl.depthMask(gl.FALSE);
 
@@ -756,6 +1085,28 @@ function GLRenderer() {
 		vbuffer = GLVertexBuffer(gl, shader);
 
 		setSize(canvas.width, canvas.height);
+
+		// Set up the circle texture used for bubbles
+		circleTextureHandle = gl.createTexture();
+		
+		if (circleTextureHandle) {			
+			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+
+			gl.texImage2D(
+					gl.TEXTURE_2D, 
+				    0, 
+					gl.RGBA, 
+					gl.RGBA, 
+					gl.UNSIGNED_BYTE, 
+					circleTexture
+			);
+			
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+			gl.generateMipmap(gl.TEXTURE_2D);
+
+			gl.bindTexture(gl.TEXTURE_2D, null);
+		}
 
 		isInited = true;
 
@@ -804,6 +1155,65 @@ function GLRenderer() {
 // END OF WEBGL ABSTRACTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
+/* 
+ * Create a canvas + context and attach it to the target
+ * @param target {Highcharts.Chart|Highcharts.Series} - the canvas target
+ * @param chart {Highcharts.Chart} - the chart
+ */
+function createAndAttachRenderer(target, chart, series) {
+	var width = chart.chartWidth,
+		height = chart.chartHeight,
+		swapXY = function (proceed, x, y, a, b, c, d) {
+			proceed.call(series, y, x, a, b, c, d);
+		};
+
+	if (!target.canvas) {		
+		target.canvas = doc.createElement('canvas');		
+		target.image = target.renderer.image(
+							'', 
+							0, 
+							0, 
+							width, 
+							height
+						).add(target.seriesGroup || target.group);
+
+		if (target.inverted) {
+			each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+				wrap(ctx, fn, swapXY);
+			});
+		}
+
+		if (target instanceof Highcharts.Chart) {
+			target.markerGroup = target.renderer.g().add(
+					target.seriesGroup || target.group
+			);
+
+			target.markerGroup.translateX = series.xAxis.pos;
+			target.markerGroup.translateY = series.yAxis.pos;
+			target.markerGroup.updateTransform();				
+		}
+	}
+	
+	target.canvas.width = width;
+	target.canvas.height = height;					
+	
+	if (!target.ogl) {
+		target.ogl = GLRenderer();
+		target.ogl.init(target.canvas);
+		target.ogl.clear();
+	}
+
+	target.image.attr({
+		x: 0,
+		y: 0,
+		width: width,
+		height: height,
+		style: 'pointer-events: none;'
+	});
+
+	return target.ogl;
+}
+
 /*
  * An "async" foreach loop.
  * Uses a setTimeout to keep the loop from blocking the UI thread
@@ -848,21 +1258,42 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 }
 
 // Set default options
-each(['area', 'arearange', 'column', 'line', 'scatter', 'heatmap'], function (type) {
+each([
+	'area', 
+	'arearange', 
+	'column', 
+	'line', 
+	'scatter', 
+	'heatmap', 
+	'bubble',
+	'heatmap'
+	], function (type) {
 	if (plotOptions[type]) {
 		plotOptions[type].boostThreshold = 5000;
 	}
 });
 
 /**
- * Override a bunch of methods the same way. If the number of points is below the threshold,
- * run the original method. If not, check for a canvas version or do nothing.
+ * Override a bunch of methods the same way. If the number of points is 
+ * below the threshold, run the original method. If not, check for a 
+ * canvas version or do nothing.
+ *
+ * Note that we're not overriding any of these for heatmaps.
  */
-each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
+each([	
+	'translate',
+	'generatePoints',
+	'drawTracker',
+	'drawPoints',
+	'render'
+], function (method) {
 	function branch(proceed) {
-		var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
-		if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
-				letItPass) {
+		var letItPass = this.options.stacking && 
+						(method === 'translate' || method === 'generatePoints');
+		
+		if ((this.processedXData || this.options.data).length < 
+			(this.options.boostThreshold || Number.MAX_VALUE) ||
+			letItPass || this.type === 'heatmap') {
 
 			// Clear image
 			if (method === 'render' && this.image) {
@@ -874,29 +1305,32 @@ each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], fun
 
 		// If a canvas version of the method exists, like renderCanvas(), run
 		} else if (this[method + 'Canvas']) {
-
 			this[method + 'Canvas']();
 		}
 	}
+
 	wrap(Series.prototype, method, branch);
 
-	// A special case for some types - its translate method is already wrapped
+	// A special case for some types - their translate method is already wrapped
 	if (method === 'translate') {
 		if (seriesTypes.column) {
 			wrap(seriesTypes.column.prototype, method, branch);
 		}
+
 		if (seriesTypes.arearange) {
 			wrap(seriesTypes.arearange.prototype, method, branch);
 		}
+
 		if (seriesTypes.heatmap) {
 			wrap(seriesTypes.heatmap.prototype, method, branch);
-		}
+		}		
 	}
 });
 
 /**
  * Do not compute extremes when min and max are set.
- * If we use this in the core, we can add the hook to hasExtremes to the methods directly.
+ * If we use this in the core, we can add the hook 
+ * to hasExtremes to the methods directly.
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
 	if (!this.hasExtremes()) {
@@ -904,28 +1338,21 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 	}
 });
 
-// wrap(Series.prototype, 'setData', function (proceed) {
-// 	if (!this.hasExtremes(true)) {
-// 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-// 	}
-// });
-
 wrap(Series.prototype, 'processData', function (proceed) {
+	// If this is a heatmap, do default behaviour
+	if (this.type === 'heatmap') {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
+	}
+
 	if (!this.hasExtremes(true)) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
 
-// wrap(Point.prototype, 'haloPath', function (proceed, size) {
-// 	var series = this.series,
-// 		chart = series.chart;
-
-// 	return chart.renderer.symbols.circle(
-// 		series.xAxis.pos + Math.floor(this.plotX) - size,
-// 		series.yAxis.pos + this.plotY - size,
-// 		size * 2, 
-// 		size * 2
-// 	);
+// wrap(Series.prototype, 'setData', function (proceed) {
+// 	if (!this.hasExtremes(true)) {
+// 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+// 	}
 // });
 
 // wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
@@ -943,20 +1370,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 // 	}
 // });
 
-// wrap(Series.prototype, 'render', function (proceed) {
-// 	if (this.drawGraph) {
-// 		this.drawGraph();		
-// 	}
-
-// 	if (series.visible) {
-// 		series.drawPoints();
-// 	}
-// });
-
-
 H.extend(Series.prototype, {
-	//This is totally a constructor, eslint.
-	gl: GLRenderer(), //eslint-disable-line
 	pointRange: 0,
 	directTouch: false,
 	allowDG: false, // No data grouping, let boost handle large data 
@@ -965,13 +1379,15 @@ H.extend(Series.prototype, {
 			data = options.data,
 			xAxis = this.xAxis && this.xAxis.options,
 			yAxis = this.yAxis && this.yAxis.options;
-		return data.length > (options.boostThreshold || Number.MAX_VALUE) && isNumber(yAxis.min) && isNumber(yAxis.max) &&
-			(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
+		
+		return 	data.length > (options.boostThreshold || Number.MAX_VALUE) && 
+				isNumber(yAxis.min) && isNumber(yAxis.max) &&
+				(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
 	},
 
 	/**
-	 * If implemented in the core, parts of this can probably be shared with other similar
-	 * methods in Highcharts.
+	 * If implemented in the core, parts of this can probably be 
+	 * shared with other similar methods in Highcharts.
 	 */
 	destroyGraphics: function () {
 		var series = this,
@@ -995,74 +1411,10 @@ H.extend(Series.prototype, {
 		});
 	},
 
-	/**
-	 * Create a hidden canvas to draw the graph on. The contents is later copied over 
-	 * to an SVG image element.
-	 * @param level {String} - the level on which to place the canvas: `chart` or `series`.
-	 */
-	setUpContext: function (level) {
-		var chart = this.chart,
-			target = level === 'series' ? this : chart,
-			width = chart.chartWidth,
-			height = chart.chartHeight,
-			swapXY = function (proceed, x, y, a, b, c, d) {
-				proceed.call(this, y, x, a, b, c, d);
-			};
-
-		if (!target.canvas) {		
-			target.canvas = doc.createElement('canvas');		
-			target.image = target.renderer.image(
-								'', 
-								0, 
-								0, 
-								width, 
-								height
-							).add(target.seriesGroup || target.group);
-
-			if (target.inverted) {
-				each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
-					wrap(ctx, fn, swapXY);
-				});
-			}
-
-			target.markerGroup = target.renderer.g().add(target.seriesGroup || target.group);
-
-			target.markerGroup.translateX = this.xAxis.pos;
-			target.markerGroup.translateY = this.yAxis.pos;
-			target.markerGroup.updateTransform();
-		}
-		
-		target.canvas.width = width;
-		target.canvas.height = height;					
-		
-		if (!target.ogl) {
-			target.ogl = GLRenderer();
-			target.ogl.init(target.canvas);
-			target.ogl.clear();
-		}
-
-		if (level !== 'series') {
-			//this.group = target.seriesGroup;
-			//this.group.toFront();
-		}
-
-		target.image.attr({
-			x: 0,
-			y: 0,
-			width: width,
-			height: height,
-			style: 'pointer-events: none;'
-		});
-
-		// target.markerGroup.translate(
-		// 	chart.plotLeft + this.xAxis.pos,
-		// 	chart.plotTop + this.yAxis.pos
-		// );
-	},
-
 	renderCanvas: function () {
 		var series = this,
 			options = series.options,
+			renderer = false,
 			chart = series.chart,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
@@ -1151,11 +1503,15 @@ H.extend(Series.prototype, {
 			this.markerGroup = chart.markerGroup;			
 		}	
 
-		points = this.points = [];
+		console.log(this.points);
 
+		points = this.points = [];			
+		
 		//Make sure we have a valid OGL context
-		this.setUpContext();
-		chart.ogl.pushSeries(series);		
+		renderer = createAndAttachRenderer(chart, chart, series);
+		if (renderer) {
+			renderer.pushSeries(series);				
+		}
 
 		// Do not start building while drawing 
 		series.buildKDTree = noop; 
@@ -1266,35 +1622,40 @@ H.extend(Series.prototype, {
 	}
 });
 
-seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
-	ctx.moveTo(clientX, plotY);
-	ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
-};
+/*
+ * We need to handle heatmaps separatly, since we can't perform the size/color
+ * calculations in the shader easily.
+ *
+ * This likely needs future optimization.
+ *
+ */
+if (seriesTypes.heatmap) {	
+	wrap(seriesTypes.heatmap.prototype, 'drawPoints', function () {
+		//Make sure we have a valid OGL context
+		var renderer = createAndAttachRenderer(this.chart, this.chart, this);
+		if (renderer) {
+			renderer.pushSeries(this);				
+		}		
+	});
 
-// Rect is twice as fast as arc, should be used for small markers
-seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
-	ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
-};
+	seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
+}
+
+if (seriesTypes.bubble) {
+	// By default, the bubble series does not use the KD-tree, so force it to.
+	delete seriesTypes.bubble.prototype.buildKDTree;
+	seriesTypes.bubble.prototype.directTouch = false;
+}
+
 seriesTypes.scatter.prototype.fill = true;
 
-extend(seriesTypes.area.prototype, {
-	cvsDrawPoint: function (ctx, clientX, plotY, yBottom, lastPoint) {
-		if (lastPoint && clientX !== lastPoint.clientX) {
-			ctx.moveTo(lastPoint.clientX, lastPoint.yBottom);
-			ctx.lineTo(lastPoint.clientX, lastPoint.plotY);
-			ctx.lineTo(clientX, plotY);
-			ctx.lineTo(clientX, yBottom);
-		}
-	},
+extend(seriesTypes.area.prototype, {	
 	fill: true,
 	fillOpacity: true,
 	sampling: true
 });
 
 extend(seriesTypes.column.prototype, {
-	cvsDrawPoint: function (ctx, clientX, plotY, yBottom) {
-		ctx.rect(clientX - 1, plotY, 1, yBottom - plotY);
-	},
 	fill: true,
 	sampling: true
 });
