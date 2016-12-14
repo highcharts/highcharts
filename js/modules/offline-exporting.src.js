@@ -451,7 +451,8 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 	if (
 		(isMSBrowser && options.type !== 'image/svg+xml' || 
 		options.type === 'application/pdf') && 
-		chart.container.getElementsByTagName('image').length
+		chart.container.getElementsByTagName('image').length ||
+		isMSBrowser && options.type === 'application/pdf' 
 	) {
 		fallbackToExportServer();
 		return;
