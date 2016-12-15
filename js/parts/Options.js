@@ -283,6 +283,13 @@ H.defaultOptions = {
 
 
 
+/**
+ * Sets the getTimezoneOffset function. If the timezone option is set, a default
+ * getTimezoneOffset function with that timezone is returned. If not, the
+ * specified getTimezoneOffset function is returned. If neither are specified,
+ * undefined is returned.
+ * @return {function} a getTimezoneOffset function or undefined
+ */
 function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
