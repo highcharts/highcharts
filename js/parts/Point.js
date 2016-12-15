@@ -186,9 +186,11 @@ Point.prototype = {
 			(this.selected ? ' highcharts-point-select' : '') + 
 			(this.negative ? ' highcharts-negative' : '') + 
 			(this.isNull ? ' highcharts-null-point' : '') + 
-			(this.colorIndex !== undefined ? ' highcharts-color-' + this.colorIndex : '') +
+			(this.colorIndex !== undefined ? ' highcharts-color-' +
+				this.colorIndex : '') +
 			(this.options.className ? ' ' + this.options.className : '') +
-			(this.zone && this.zone.className ? ' ' + this.zone.className : '');
+			(this.zone && this.zone.className ? ' ' +
+				this.zone.className.replace('highcharts-negative', '') : '');
 	},
 
 	/**
@@ -278,6 +280,7 @@ Point.prototype = {
 			x: this.category,
 			y: this.y,
 			color: this.color,
+			colorIndex: this.colorIndex,
 			key: this.name || this.category,
 			series: this.series,
 			point: this,

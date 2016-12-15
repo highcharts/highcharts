@@ -185,8 +185,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			eventType,
 			events,
 			chartSeries = chart.series,
-			lastSeries,
-			i;
+			lastSeries;
 
 		series.chart = chart;
 		series.options = options = series.setOptions(options); // merge with plotOptions
@@ -237,14 +236,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
 		
-		// Insert the series and update the `index` property of all series
-		// above this. Unless the `index` option is set, the new series is
-		// inserted last. #248, #1123, #2456
-		for (i = this.insert(chartSeries); i < chartSeries.length; i++) {
-			chartSeries[i].index = i;
-			chartSeries[i].name = chartSeries[i].name ||
-				'Series ' + (chartSeries[i].index + 1);
-		}
+		// Insert the series and re-order all series above the insertion point.
+		chart.orderSeries(this.insert(chartSeries));
 	},
 
 	/**
@@ -1378,6 +1371,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			chart.hoverSeries = null;
 		}
 		erase(chart.series, series);
+		chart.orderSeries();
 
 		// clear all members
 		for (prop in series) {

@@ -37,6 +37,7 @@ $(function () {
             },
 
             colorAxis: {
+                tickPixelInterval: 100
             },
 
             series: [{

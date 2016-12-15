@@ -1813,9 +1813,17 @@ H.Axis.prototype = {
 			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
 			marginLeft = chart.margin[3];
 
-		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-			((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
-			(!horiz && ((marginLeft && (marginLeft - chart.spacing[3])) || chart.chartWidth * 0.33)); // #1580, #1931
+		return (
+			horiz &&
+			(labelOptions.step || 0) < 2 &&
+			!labelOptions.rotation && // #4415
+			((this.staggerLines || 1) * this.len) / slotCount
+		) || (
+			!horiz && (
+				(marginLeft && (marginLeft - chart.spacing[3])) ||
+				chart.chartWidth * 0.33
+			)
+		); // #1580, #1931
 
 	},
 

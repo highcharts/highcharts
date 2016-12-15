@@ -189,6 +189,26 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Order all series above a given index. When series are added and ordered
+	 * by configuration, only the last series is handled (#248, #1123, #2456,
+	 * #6112). This function is called on series initialization and destroy.
+	 *
+	 * @param {number} fromIndex - If this is given, only the series above this
+	 *    index are handled.
+	 */
+	orderSeries: function (fromIndex) {
+		var series = this.series,
+			i = fromIndex || 0;
+		for (; i < series.length; i++) {
+			if (series[i]) {
+				series[i].index = i;
+				series[i].name = series[i].name || 
+					'Series ' + (series[i].index + 1);
+			}
+		}
+	},
+
+	/**
 	 * Check whether a given point is within the plot area
 	 *
 	 * @param {Number} plotX Pixel x relative to the plot area
@@ -228,6 +248,11 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
+
+		// Handle responsive rules, not only on resize (#6130)
+		if (chart.setResponsive) {
+			chart.setResponsive(false);
+		}
 			
 		H.setAnimation(animation, chart);
 		
@@ -915,9 +940,6 @@ Chart.prototype = {
 		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
-		if (chart.setResponsive) {
-			chart.setResponsive(false);
-		}
 		chart.redraw(animation);
 
 
