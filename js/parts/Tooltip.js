@@ -563,8 +563,8 @@ H.Tooltip.prototype = {
 			headerHeight,
 			tooltipLabel = this.getLabel();
 
-		// Create the individual labels
-		each(labels.slice(0, labels.length - 1), function (str, i) {
+		// Create the individual labels for header and points, ignore footer
+		each(labels.slice(0, points.length + 1), function (str, i) {
 			var point = points[i - 1] ||
 					// Item 0 is the header. Instead of this, we could also use the crosshair label
 					{ isHeader: true, plotX: points[0].plotX },
