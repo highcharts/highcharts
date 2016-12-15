@@ -8,7 +8,7 @@ $(function () {
             marginRight: 150
         },
         title: {
-            text: 'Highcharts GridAxis'
+            text: 'Highcharts Grid axis'
         },
         xAxis: [{
             id: 'bottom-datetime-axis',
