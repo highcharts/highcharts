@@ -41,13 +41,16 @@ $(function () {
         title: {
             text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
         },
+        subtitle: {
+            text: '(and comparing lobsters with canaries)'
+        },
         legend: {
             enabled: false
         },
         series: [{
             boostThreshold: 1,
             type: 'scatter',
-            color: 'rgba(152,0,67,0.8)',
+            color: 'rgba(152,0,67,0.95)',
             data: data,
             marker: {
                 radius: 0.1
@@ -61,6 +64,14 @@ $(function () {
                     console.timeEnd('asyncRender');
                 }
             }
+        },
+        {
+            type: 'pie',
+            size: '30%',
+            data: [
+                ['Lobsters', 50],
+                ['Canaries', 50]                
+            ]
         }]
 
     });
