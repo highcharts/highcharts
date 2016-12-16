@@ -68,5 +68,35 @@ $(function () {
             'first',
             'Point found'
         );
+
+
+        // Chart.get between redraws (#6147)
+        // Changing number of points
+        chart.get('second-series').setData([1, 2, 3], false);
+        assert.strictEqual(
+            chart.get('third-series'),
+            undefined,
+            'No crash between redraws'
+        );
+        chart.redraw(false);
     });
+
+    /*QUnit.test('Chart.get between redraws (#6147)', function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                name: 'test',
+                id: 'test',
+                data: [
+                    [0, 1],
+                    [1, 2]
+                ]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.get('test').id,
+            'test',
+            'Series found'
+        );
+    });*/
 });

@@ -396,7 +396,7 @@ Chart.prototype = {
 			i;
 
 		function itemById(item) {
-			return item.id === id || item.options.id === id;
+			return item.id === id || (item.options && item.options.id === id);
 		}
 
 		ret = 
