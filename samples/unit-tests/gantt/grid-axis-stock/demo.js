@@ -31,9 +31,11 @@ QUnit.test('isOuterAxis()', function (assert) {
             type: 'bar'
         },
         xAxis: [{
-            grid: true
+            grid: true,
+            opposite: false
         }, {
-            grid: true
+            grid: true,
+            opposite: false
         }, {
             grid: true,
             opposite: true
@@ -116,10 +118,12 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
         },
         yAxis: [{
             grid: true,
-            id: 'axis1'
+            id: 'axis1',
+            opposite: false
         }, {
             grid: true,
-            id: 'axis2'
+            id: 'axis2',
+            opposite: false
         }, {
             grid: true,
             opposite: true,
@@ -177,6 +181,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         yAxis: [{
             grid: true,
             id: 'axis1',
+            opposite: false,
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
             labels: {
@@ -190,6 +195,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
         }, {
             grid: true,
             id: 'axis2',
+            opposite: false,
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
             labels: {
@@ -282,9 +288,11 @@ QUnit.test('Horizontal Linear axis vertical placement', function (assert) {
         },
         xAxis: [{
             grid: true,
+            opposite: false,
             id: 'axis1'
         }, {
             grid: true,
+            opposite: false,
             id: 'axis2'
         }, {
             grid: true,
@@ -343,6 +351,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         xAxis: [{
             grid: true,
             id: 'axis1',
+            opposite: false,
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
             labels: {
@@ -356,6 +365,7 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
         }, {
             grid: true,
             id: 'axis2',
+            opposite: false,
             tickInterval: 1000 * 60 * 60 * 24, // Day
             type: 'datetime',
             labels: {
@@ -434,8 +444,8 @@ QUnit.test('Horizontal Datetime axis vertical placement', function (assert) {
 });
 
 /**
- * Checks that datetime and linear axes for each series type (except 'pie')have
- * ticks placed at the start and end of the axis, creating a grid:
+ * Checks that horizontal axes for each series type (except 'pie') have ticks
+ * placed at the start and end of the axis, creating a grid:
  *   ___________________
  *   |__|__|__|__|__|__|
  *   ^                 ^
@@ -453,21 +463,27 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             type: 'column'
         },
         xAxis: [{
-            grid: true
+            grid: true,
+            opposite: false
         }, {
-            type: 'datetime',
+            opposite: false,
             grid: true
         }, {
             grid: true,
             opposite: true
         }, {
             grid: true,
-            type: 'datetime',
             opposite: true
         }],
         series: [{
             xAxis: 0,
-            data: [[129.9, -29.2], [306.4, 271.5], [544.0, 376.0]]
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
         }, {
             xAxis: 1,
             data: [{
@@ -479,7 +495,13 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             }]
         }, {
             xAxis: 2,
-            data: [[-144.0, -176.0], [-106.4, -129.2], [29.9, -71.5]]
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
         }, {
             xAxis: 3,
             data: [{
@@ -566,7 +588,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         i,
         axis,
         // There is often a 1px difference in spacing between ticks
-        error = 1.00000000000001,
+        error = 1.0000000000001,
         ticks,
         $axisGroup,
         axisGroupBox,
@@ -582,21 +604,31 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            grid: true
-        }, {
-            type: 'datetime',
-            grid: true
+            grid: true,
+            opposite: false,
+            tickInterval: 1000 * 60 * 60 * 24 // Day
         }, {
             grid: true,
-            opposite: true
+            opposite: false,
+            tickInterval: 1000 * 60 * 60 * 24 // Day
         }, {
             grid: true,
-            type: 'datetime',
-            opposite: true
+            opposite: true,
+            tickInterval: 1000 * 60 * 60 * 24 // Day
+        }, {
+            grid: true,
+            opposite: true,
+            tickInterval: 1000 * 60 * 60 * 24 // Day
         }],
         series: [{
             xAxis: 0,
-            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
         }, {
             xAxis: 1,
             data: [{
@@ -608,7 +640,13 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
             }]
         }, {
             xAxis: 2,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+            data: [{
+                x: Date.UTC(2016, 10, 12),
+                y: 1
+            }, {
+                x: Date.UTC(2016, 10, 14),
+                y: 2
+            }]
         }, {
             xAxis: 3,
             data: [{
@@ -623,7 +661,7 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
 
     axes = chart.xAxis;
 
-    for (i = 0; i < axes.length; i++) {
+    for (i = 0; i < 4; i++) {
         axis = axes[i];
         $axisGroup = $(axis.axisGroup.element);
         ticks = $axisGroup.find('.highcharts-tick');
@@ -671,19 +709,21 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         xAxis: [{
-            grid: true
+            grid: true,
+            tickInterval: 1000 * 60 * 60, // Hours
+            opposite: false
         }, {
-            type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: true
+            grid: true,
+            opposite: false
         }, {
             grid: true,
+            tickInterval: 1000 * 60, // Minutes
             opposite: true
         }, {
             grid: true,
-            type: 'datetime',
             min: Date.UTC(2016, 10, 12),
             max: Date.UTC(2016, 10, 16),
             tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
@@ -691,7 +731,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
         }],
         series: [{
             xAxis: 0,
-            data: [[1, 271.5], [2, -29.2], [3, 376.0]]
+            data: [[Date(2016, 10, 12), 271.5], [Date(2016, 10, 12, 12), -29.2], [Date(2016, 10, 13), 376.0]]
         }, {
             xAxis: 1,
             data: [{
@@ -703,7 +743,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
             }]
         }, {
             xAxis: 2,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+            data: [[1000 * 60, -71.5], [2000 * 60, -129.2], [3000 * 60, -176.0]]
         }, {
             xAxis: 3,
             data: [{
@@ -818,13 +858,15 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
             type: 'scatter'
         },
         yAxis: [{
-            grid: true
+            grid: true,
+            opposite: false
         }, {
             type: 'datetime',
             min: Date.UTC(2016, 10, 11),
             max: Date.UTC(2016, 10, 15),
             tickInterval: 1000 * 60 * 60 * 24, // Day
-            grid: true
+            grid: true,
+            opposite: false
         }, {
             grid: true,
             opposite: true
