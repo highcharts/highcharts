@@ -283,13 +283,20 @@ H.defaultOptions = {
 
 
 
+/**
+ * Sets the getTimezoneOffset function. If the timezone option is set, a default
+ * getTimezoneOffset function with that timezone is returned. If not, the
+ * specified getTimezoneOffset function is returned. If neither are specified,
+ * undefined is returned.
+ * @return {function} a getTimezoneOffset function or undefined
+ */
 function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
 		getTimezoneOffsetFunction;
-	if (globalOptions.timezone) {
-		if (moment === undefined) {
-			H.error('Moment.js missing. globalOptions.timezone requires Moment.js to be loaded');
+	if (globalOptions.timezone) { // docs
+		if (typeof moment === 'undefined') {
+			H.error(25);
 			// getTimezoneOffset-function stays undefined because it depends on
 			// Moment.js
 		} else {
