@@ -343,6 +343,7 @@ Legend.prototype = {
 			}
 
 			// Draw the legend symbol inside the group box
+			legend.symbolHeight = options.symbolHeight || legend.fontMetrics.f;
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
@@ -815,7 +816,7 @@ H.LegendSymbolMixin = {
 	 */
 	drawRectangle: function (legend, item) {
 		var options = legend.options,
-			symbolHeight = options.symbolHeight || legend.fontMetrics.f,
+			symbolHeight = legend.symbolHeight,
 			square = options.squareSymbol,
 			symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
@@ -875,7 +876,11 @@ H.LegendSymbolMixin = {
 		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
-			radius = this.symbol.indexOf('url') === 0 ? 0 : markerOptions.radius;
+			radius = this.symbol.indexOf('url') === 0 ?
+				0 :
+				// Bubble doesn't have a radius, base on symbolHeight
+				pick(markerOptions.radius, legend.symbolHeight / 2);
+			
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,
