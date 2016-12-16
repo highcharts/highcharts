@@ -11,6 +11,7 @@ var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	dateFormat = H.dateFormat,
+	defined = H.defined,
 	each = H.each,
 	isObject = H.isObject,
 	pick = H.pick,
@@ -138,12 +139,12 @@ H.dateFormats = {
  */
 wrap(Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
-		isCategoryAxis = axis.options.categories !== undefined,
+		categoryAxis = defined(axis.options.categories),
 		tickPositions = axis.tickPositions,
 		lastTick = tickPositions[tickPositions.length - 1],
 		isLastTick = this.pos === lastTick;
 
-	if (!axis.options.grid || isCategoryAxis || !isLastTick) {
+	if (!axis.options.grid || categoryAxis || !isLastTick) {
 		proceed.apply(this);
 	}
 });
@@ -178,6 +179,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
 		options = axis.options,
+		categoryAxis = defined(options.categories),
 		tickInterval = options.tickInterval || axis.tickInterval,
 		reversed = axis.reversed,
 		tickPositions = axis.tickPositions,
@@ -205,7 +207,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		fontSize = labelMetrics.f;
 		labelYCenter = (labelBase / 2) - ((labelHeight - fontSize) / 2);
 
-		if (axis.horiz && options.categories === undefined) {
+		if (axis.horiz && !categoryAxis) {
 			// Center x position
 			if (isFirstTick) {
 				if (nextTickPos) {
