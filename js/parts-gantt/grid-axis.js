@@ -56,11 +56,12 @@ Axis.prototype.isNavigatorAxis = function () {
  */
 Axis.prototype.isOuterAxis = function () {
 	var axis = this,
+		chart = axis.chart,
 		thisIndex = -1,
 		isOuter = true;
 
-	each(this.chart.axes, function (otherAxis, index) {
-		if (otherAxis.side === axis.side) {
+	each(chart.axes, function (otherAxis, index) {
+		if (otherAxis.side === axis.side && !otherAxis.isNavigatorAxis()) {
 			if (otherAxis === axis) {
 				// Get the index of the axis in question
 				thisIndex = index;
