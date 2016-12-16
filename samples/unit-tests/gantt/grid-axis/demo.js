@@ -34,17 +34,17 @@ QUnit.test('isOuterAxis()', function (assert) {
 
     assert.ok(
         chart.xAxis[1].isOuterAxis(),
-        'Lowermost bottom x-axis is outerAxis'
+        'Leftmost left x-axis is outerAxis'
     );
 
     assert.notOk(
         chart.xAxis[2].isOuterAxis(),
-        'Lowermost top x-axis is not outerAxis'
+        'Leftmost right x-axis is not outerAxis'
     );
 
     assert.ok(
         chart.xAxis[3].isOuterAxis(),
-        'Topmost top x-axis is outerAxis'
+        'Rightmost right x-axis is outerAxis'
     );
 });
 
