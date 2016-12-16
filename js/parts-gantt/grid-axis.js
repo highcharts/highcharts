@@ -234,7 +234,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 			}
 		} else {
 			// Center y position
-			if (options.categories === undefined) {
+			if (!defined(options.categories)) {
 				axisMin = reversed ? axis.max : axis.min;
 				tickPixelInterval = axis.translate(axisMin + tickInterval);
 				retVal.y = y - (tickPixelInterval / 2) + labelYCenter;
