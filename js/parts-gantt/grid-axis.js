@@ -149,6 +149,23 @@ wrap(Tick.prototype, 'addLabel', function (proceed) {
 });
 
 /**
+ * If chart is stockChart, always return 'left' to avoid first label being
+ * placed inside chart.
+ * @param {function} proceed - the original function
+ * @return {string} 'left' if stockChart, or auto calculated alignment
+ */
+wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	var axis = this,
+		retVal;
+	if (axis.chart.isStock) {
+		retVal = 'left';
+	} else {
+		retVal = proceed.apply(axis, argsToArray(arguments));
+	}
+	return retVal;
+});
+
+/**
  * Center tick labels vertically and horizontally between ticks
  *
  * @param {function} proceed - the original function
