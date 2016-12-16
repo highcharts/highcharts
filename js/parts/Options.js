@@ -3,7 +3,6 @@
  *
  * License: www.highcharts.com/license
  */
-/* global moment */ // Assume moment.js is loaded
 'use strict';
 import H from './Globals.js';
 import './Color.js';
@@ -293,7 +292,8 @@ H.defaultOptions = {
 function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
-		getTimezoneOffsetFunction;
+		getTimezoneOffsetFunction,
+		moment = win.moment;
 	if (globalOptions.timezone) { // docs
 		if (typeof moment === 'undefined') {
 			H.error(25);
