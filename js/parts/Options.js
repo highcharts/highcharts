@@ -294,9 +294,9 @@ function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
 		getTimezoneOffsetFunction;
-	if (globalOptions.timezone) {
-		if (moment === undefined) {
-			H.error('Moment.js missing. globalOptions.timezone requires Moment.js to be loaded');
+	if (globalOptions.timezone) { // docs
+		if (typeof moment === 'undefined') {
+			H.error(25);
 			// getTimezoneOffset-function stays undefined because it depends on
 			// Moment.js
 		} else {
