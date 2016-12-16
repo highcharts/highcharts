@@ -198,17 +198,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Get coordinates of anchor point for pathfinder connection.
 	 *
-	 * @param {Object} options Connection options for position on point
-	 * @param {Boolean} endPoint Use options for end point instead of start
+	 * @param {Object} markerOptions Connection options for position on point
 	 *
 	 * @return {Object} result An object with x/y properties for the position.
 	 * 	Coordinates are in plot values, not relative to point.
 	 */
-	getPathfinderAnchorPoint: function (options, endPoint) {
+	getPathfinderAnchorPoint: function (markerOptions) {
 		var bb = this.graphic.getBBox(),
-			chart = this.series.chart,
-			marker = endPoint ? 'endMarker' : 'startMarker',
-			markerOptions = options[marker] || chart.options.pathfinder[marker],
 			xFactor, // Make Simon Cowell proud
 			yFactor;
 
@@ -268,8 +264,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		// Get the SVG path
 		pathResult = algorithm(
-			this.getPathfinderAnchorPoint(options),
-			toPoint.getPathfinderAnchorPoint(options, true),
+			this.getPathfinderAnchorPoint(options.startMarker),
+			toPoint.getPathfinderAnchorPoint(options.endMarker),
 			merge({
 				chartObstacles: chartObstacles,
 				lineObstacles: lineObstacles || []

@@ -94,6 +94,9 @@ var algorithms = {
 			  before changing direction again.
 			- When changing directions, change them in the middle of the line.
 			- Obstacles that envelop destination are the end point
+
+			Soft min/max x = start/destination x +/- longest obstacle + margin
+			Soft min/max y = start/destination y +/- tallest obstacle + margin
 		*/
 
 		var segments = [],
