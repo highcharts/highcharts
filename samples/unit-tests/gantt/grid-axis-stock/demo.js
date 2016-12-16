@@ -1,4 +1,28 @@
 /**
+ * Tests the isNavigatorAxis() function
+ */
+QUnit.test('isNavigatorAxis()', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            type: 'bar'
+        },
+        series: [{
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5]
+        }]
+    });
+
+    assert.notOk(
+        chart.xAxis[0].isNavigatorAxis(),
+        'xAxis[0] is not a navigator axis'
+    );
+
+    assert.ok(
+        chart.xAxis[1].isNavigatorAxis(),
+        'xAxis[1] is a navigator axis'
+    );
+});
+
+/**
  * Tests the isOuterAxis() function
  */
 QUnit.test('isOuterAxis()', function (assert) {

@@ -33,6 +33,16 @@ var axisSide = {
 };
 
 /**
+ * Checks if an axis is a navigator axis.
+ * @return {Boolean} true if axis is found in axis.chart.navigator
+ */
+Axis.prototype.isNavigatorAxis = function () {
+	var axis = this,
+		navigator = axis.chart.navigator;
+	return navigator && (navigator.xAxis === axis || navigator.yAxis === axis);
+};
+
+/**
  * Checks if an axis is the outer axis in its dimension. Since
  * axes are placed outwards in order, the axis with the highest
  * index is the outermost axis.
