@@ -45,6 +45,31 @@ function getScript(scriptLocation, callback) {
 	head.appendChild(script);
 }
 
+// Convert dataURL to Blob if supported, otherwise returns undefined
+Highcharts.dataURLtoBlob = function (dataURL) {
+	if (
+		win.atob && 
+		win.ArrayBuffer && 
+		win.Uint8Array && 
+		win.Blob && 
+		domurl.createObjectURL
+	) {
+		// Try to convert data URL to Blob
+		var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/),
+			binStr = win.atob(parts[3]), // Assume base64 encoding
+			buf = new win.ArrayBuffer(binStr.length),
+			binary = new win.Uint8Array(buf),
+			blob;
+
+		for (var i = 0; i < binary.length; ++i) {
+			binary[i] = binStr.charCodeAt(i);
+		}
+
+		blob = new win.Blob([binary], { 'type': parts[1] });
+		return domurl.createObjectURL(blob);
+	}
+};
+
 // Download contents by dataURL/blob
 Highcharts.downloadURL = function (dataURL, filename) {
 	var a = doc.createElement('a'),
@@ -59,28 +84,8 @@ Highcharts.downloadURL = function (dataURL, filename) {
 	// Some browsers have limitations for data URL lengths. Try to convert to
 	// Blob or fall back.
 	if (dataURL.length > 2000000) {
-		
-		if (
-			win.atob && 
-			win.ArrayBuffer && 
-			win.Uint8Array && 
-			win.Blob && 
-			domurl.createObjectURL
-		) {
-			// Try to convert data URL to Blob
-			var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/),
-				binStr = win.atob(parts[3]), // Assume base64 encoding
-				buf = new win.ArrayBuffer(binStr.length),
-				binary = new win.Uint8Array(buf),
-				blob;
-			
-			for (var i = 0; i < binary.length; ++i) {
-				binary[i] = binStr.charCodeAt(i);
-			}
-
-			blob = new win.Blob([binary], { 'type': parts[1] });
-			dataURL = domurl.createObjectURL(blob);
-		} else {
+		dataURL = Highcharts.dataURLtoBlob(dataURL);
+		if (!dataURL) {
 			throw 'Data URL length limit reached';
 		}
 	}
@@ -426,7 +431,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 		fallbackToExportServer = function () {
 			if (options.fallbackToExportServer === false) {
 				if (options.error) {
-					options.error();
+					options.error(options);
 				} else {
 					throw 'Fallback to export server disabled';
 				}
