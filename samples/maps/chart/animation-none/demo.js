@@ -28,7 +28,8 @@ $(function () {
                     [0, '#f8faff'],
                     [0.3, '#2f7ed8'],
                     [1, '#000000']
-                ]
+                ],
+                tickPixelInterval: 100
             },
 
             series: [{

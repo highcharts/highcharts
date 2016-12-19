@@ -19,6 +19,7 @@ var merge = Highcharts.merge,
 	each = Highcharts.each,
 	domurl = win.URL || win.webkitURL || win,
 	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
+	isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
 	loadEventDeferDelay = isMSBrowser ? 150 : 0; // Milliseconds to defer image load event handlers to offset IE bug
 
 // Dummy object so we can reuse our canvas-tools.js without errors
@@ -446,12 +447,24 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 		};
 
-	// If we have embedded images and are exporting to JPEG/PNG, Microsoft 
-	// browsers won't handle it, so fall back.
+	// Always fall back on:
+	// - MS browsers: Embedded images JPEG/PNG, or any PDF
+	// - Edge: PNG/JPEG all cases
+	// - Embedded images and PDF
 	if (
-		(isMSBrowser && options.type !== 'image/svg+xml' || 
-		options.type === 'application/pdf') && 
-		chart.container.getElementsByTagName('image').length
+		(
+			isMSBrowser &&
+			(
+				options.type === 'application/pdf' ||
+				chart.container.getElementsByTagName('image').length &&
+				options.type !== 'image/svg+xml'
+			)
+		) || (
+			isEdgeBrowser && options.type !== 'image/svg+xml'
+		) || (
+			options.type === 'application/pdf' &&
+			chart.container.getElementsByTagName('image').length
+		)
 	) {
 		fallbackToExportServer();
 		return;

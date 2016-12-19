@@ -490,13 +490,13 @@ H.Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
-			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip
 		} else {
 			textConfig = point.getLabelConfig();
 		}
+		this.len = pointConfig.length; // #6128
 		text = formatter.call(textConfig, tooltip);
 
 		// register the current series
@@ -563,8 +563,8 @@ H.Tooltip.prototype = {
 			headerHeight,
 			tooltipLabel = this.getLabel();
 
-		// Create the individual labels
-		each(labels.slice(0, labels.length - 1), function (str, i) {
+		// Create the individual labels for header and points, ignore footer
+		each(labels.slice(0, points.length + 1), function (str, i) {
 			var point = points[i - 1] ||
 					// Item 0 is the header. Instead of this, we could also use the crosshair label
 					{ isHeader: true, plotX: points[0].plotX },
@@ -686,12 +686,17 @@ H.Tooltip.prototype = {
 	},
 
 	/**
-	 * Get the best X date format based on the closest point range on the axis.
+	 * Get the optimal date format for a point, based on a range.
+	 * @param  {number} range - The time range
+	 * @param  {number|Date} date - The date of the point in question
+	 * @param  {number} startOfWeek - An integer representing the first day of
+	 * the week, where 0 is Sunday
+	 * @param  {Object} dateTimeLabelFormats - A map of time units to formats
+	 * @return {string} - the optimal date format for a point
 	 */
-	getXDateFormat: function (point, options, xAxis) {
-		var xDateFormat,
-			dateTimeLabelFormats = options.dateTimeLabelFormats,
-			closestPointRange = xAxis && xAxis.closestPointRange,
+	getDateFormat: function (range, date, startOfWeek, dateTimeLabelFormats) {
+		var dateStr = dateFormat('%m-%d %H:%M:%S.%L', date),
+			format,
 			n,
 			blank = '01-01 00:00:00.000',
 			strpos = {
@@ -701,41 +706,56 @@ H.Tooltip.prototype = {
 				hour: 6,
 				day: 3
 			},
-			date,
 			lastN = 'millisecond'; // for sub-millisecond data, #4223
+		for (n in timeUnits) {
+
+			// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
+			if (range === timeUnits.week && +dateFormat('%w', date) === startOfWeek &&
+					dateStr.substr(6) === blank.substr(6)) {
+				n = 'week';
+				break;
+			}
+
+			// The first format that is too great for the range
+			if (timeUnits[n] > range) {
+				n = lastN;
+				break;
+			}
+
+			// If the point is placed every day at 23:59, we need to show
+			// the minutes as well. #2637.
+			if (strpos[n] && dateStr.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				break;
+			}
+
+			// Weeks are outside the hierarchy, only apply them on Mondays/Sundays like in the first condition
+			if (n !== 'week') {
+				lastN = n;
+			}
+		}
+
+		if (n) {
+			format = dateTimeLabelFormats[n];
+		}
+
+		return format;
+	},
+
+	/**
+	 * Get the best X date format based on the closest point range on the axis.
+	 */
+	getXDateFormat: function (point, options, xAxis) {
+		var xDateFormat,
+			dateTimeLabelFormats = options.dateTimeLabelFormats,
+			closestPointRange = xAxis && xAxis.closestPointRange;
 
 		if (closestPointRange) {
-			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);
-			for (n in timeUnits) {
-
-				// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
-				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek &&
-						date.substr(6) === blank.substr(6)) {
-					n = 'week';
-					break;
-				}
-
-				// The first format that is too great for the range
-				if (timeUnits[n] > closestPointRange) {
-					n = lastN;
-					break;
-				}
-
-				// If the point is placed every day at 23:59, we need to show
-				// the minutes as well. #2637.
-				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
-					break;
-				}
-
-				// Weeks are outside the hierarchy, only apply them on Mondays/Sundays like in the first condition
-				if (n !== 'week') {
-					lastN = n;
-				}
-			}
-
-			if (n) {
-				xDateFormat = dateTimeLabelFormats[n];
-			}
+			xDateFormat = this.getDateFormat(
+				closestPointRange,
+				point.x,
+				xAxis.options.startOfWeek,
+				dateTimeLabelFormats
+			);
 		} else {
 			xDateFormat = dateTimeLabelFormats.day;
 		}
