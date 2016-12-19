@@ -300,6 +300,13 @@ function getResources() {
 					}
 					return proceed.call(this, e);
 				});
+
+				Highcharts.setOptions({
+					exporting: {
+						// Avoid versioning
+						libURL: 'https://code.highcharts.com/lib'
+					}
+				});
 			}
 		});
 		
