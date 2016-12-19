@@ -95,12 +95,6 @@ function fakeClickEvent(element) {
 	}
 }
 
-// Utility function to strip HTML before it is injected to the DOM, to catch
-// DOM XSS scripting.
-function stripHTML(s) {
-	return (typeof s === 'string') ? s.replace(/<[^>]*>/g, '') : '';
-}
-
 // Whenever drawing series, put info on DOM elements
 H.wrap(H.Series.prototype, 'render', function (proceed) {
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -848,8 +842,8 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 		'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
 		(series.length > 1 ? ' and navigate between data series' : '') + 
-		'.</div><h3>Summary.</h3><div>' + stripHTML(options.title.text || 'Chart') +
-		(options.subtitle && options.subtitle.text ? '. ' + stripHTML(options.subtitle.text) : '') +
+		'.</div><h3>Summary.</h3><div>' + (options.title.text ? options.title.text.replace(/<[^>]*>/g, '') : 'Chart') +
+		(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text.replace(/<[^>]*>/g, '') : '') +
 		'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
 		'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 		(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
@@ -896,12 +890,12 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		textElements = chart.container.getElementsByTagName('text'),
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
-		chartTitle = stripHTML(options.title.text) || 'Chart',
+		chartTitle = options.title.text || 'Chart',
 		oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
 		topLevelColumns = [];
 
 	// Add SVG title/desc tags
-	titleElement.textContent = chartTitle;
+	titleElement.textContent = chartTitle.replace(/<[^>]*>/g, '');
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
