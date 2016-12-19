@@ -880,6 +880,7 @@ Navigator.prototype = {
 			chartNavigatorOptions = navigator.navigatorOptions.series,
 			baseNavigatorOptions,
 			navSeriesMixin = {
+				index: null, // #6162
 				enableMouseTracking: false,
 				group: 'nav', // for columns
 				padXAxis: false,
