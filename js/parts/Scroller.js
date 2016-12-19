@@ -270,7 +270,7 @@ Navigator.prototype = {
 		);
 		scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
 		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
-		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		scroller.scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
