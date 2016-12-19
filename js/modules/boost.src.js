@@ -56,6 +56,7 @@ var win = H.win,
 	noop = function () {},
 	Color = H.Color,
 	Series = H.Series,
+	Point = H.Point,
 	seriesTypes = H.seriesTypes,
 	each = H.each,
 	extend = H.extend,
@@ -302,6 +303,10 @@ function GLShader(gl) {
 			return false;
 		}
 
+		function uloc(n) {
+			return gl.getUniformLocation(shaderProgram, n);
+		}
+
 		shaderProgram = gl.createProgram();
 		gl.attachShader(shaderProgram, v);
 		gl.attachShader(shaderProgram, f);
@@ -309,15 +314,15 @@ function GLShader(gl) {
 
 		gl.useProgram(shaderProgram);
 
-		pUniform = gl.getUniformLocation(shaderProgram, 'uPMatrix');
-		psUniform = gl.getUniformLocation(shaderProgram, 'pSize');
-		fillColorUniform = gl.getUniformLocation(shaderProgram, 'fillColor');
-		isBubbleUniform = gl.getUniformLocation(shaderProgram, 'isBubble');
-		bubbleSizeAbsUniform = gl.getUniformLocation(shaderProgram, 'bubbleSizeAbs');
-		bubbleSizeAreaUniform = gl.getUniformLocation(shaderProgram, 'bubbleSizeByArea');
-		uSamplerUniform = gl.getUniformLocation(shaderProgram, 'uSampler');
-		skipTranslationUniform = gl.getUniformLocation(shaderProgram, 'skipTranslation');
-		isCircleUniform = gl.getUniformLocation(shaderProgram, 'isCircle');
+		pUniform = uloc('uPMatrix');
+		psUniform = uloc('pSize');
+		fillColorUniform = uloc('fillColor');
+		isBubbleUniform = uloc('isBubble');
+		bubbleSizeAbsUniform = uloc('bubbleSizeAbs');
+		bubbleSizeAreaUniform = uloc('bubbleSizeByArea');
+		uSamplerUniform = uloc('uSampler');
+		skipTranslationUniform = uloc('skipTranslation');
+		isCircleUniform = uloc('isCircle');
 		return true;
 	}
 
@@ -566,7 +571,7 @@ function GLVertexBuffer(gl, shader) {
 		return true;
 	}
 
-	////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 	return {
 		bind: bind,
 		data: data,
@@ -577,13 +582,9 @@ function GLVertexBuffer(gl, shader) {
 
 /* Main renderer. Used to render series.
  *	Notes to self:
- *		- If we need varrying sizes for things (e.g. bubble charts) we can
- *		  use a vec3 instead, and use z as the size.
  *		- May be able to build a point map by rendering to a separate canvas
  *		  and encoding values in the color data.
- *		- If we need colors per. point/line we need a separate vertex buffer
  *		- Need to figure out a way to transform the data quicker
- *
  */
 function GLRenderer() {
 	var //Shader
@@ -695,7 +696,7 @@ function GLRenderer() {
 			caxis,
 			color,
 			scolor,
-			d = isStacked ? series.data : (xData || rawData),
+			sdata = isStacked ? series.data : (xData || rawData),
 			maxVal;
 
 		//Push a vertice to the data buffer
@@ -824,15 +825,19 @@ function GLRenderer() {
 			}
 		});	
 
-		each(d, function (d, i) {
+		each(sdata, function (d, i) {
 			var x,
 				y,
 				z,
+				px = false,
+				nx = false,
 				//clientX,
 				//plotY,
 				//isNull,
 				low,
 				chartDestroyed = typeof chart.index === 'undefined',
+				nextInside = false,
+				prevInside = false,
 				isYInside = true;
 
 			if (chartDestroyed) {
@@ -842,6 +847,14 @@ function GLRenderer() {
 			if (useRaw) {
 				x = d[0];
 				y = d[1];
+
+				if (data[i + 1]) {
+					nx = data[i + 1][0];
+				}
+
+				if (data[i - 1]) {
+					px = data[i - 1][0];
+				}
 
 				if (d.length >= 3) {
 					z = d[2];
@@ -859,6 +872,14 @@ function GLRenderer() {
 				x = d;
 				y = yData[i];
 
+				if (data[i + 1]) {
+					nx = data[i + 1];
+				}
+
+				if (data[i - 1]) {
+					px = data[i - 1];
+				}
+
 				if (zData && zData.length) {
 					z = zData[i];
 				
@@ -873,6 +894,14 @@ function GLRenderer() {
 			}
 
 			// Resolve low and high for range series
+
+			if (nx && nx >= xMin && nx <= xMax) {
+				nextInside = true;
+			}
+
+			if (px && px >= xMin && px <= xMax) {
+				prevInside = true;
+			}
 
 			if (isRange) {
 				if (useRaw) {
@@ -890,7 +919,9 @@ function GLRenderer() {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
-			if (!y || !isYInside || x < xMin || x > xMax) {
+			if ((!y || !isYInside || x < xMin || x > xMax) &&
+				!nextInside && !prevInside
+			) {
 				return;
 			}
 
@@ -1267,6 +1298,12 @@ function createAndAttachRenderer(chart, series) {
 		height = chart.chartHeight,
 		target = chart,
 		targetGroup = chart.seriesGroup || series.group,
+		clipPath = 'inset(' + 
+						chart.plotTop + 'px ' + 
+						'0 ' +
+						'0 ' +
+						chart.plotLeft + 'px ' + 
+					')',
 		swapXY = function (proceed, x, y, a, b, c, d) {
 			proceed.call(series, y, x, a, b, c, d);
 		};
@@ -1317,7 +1354,12 @@ function createAndAttachRenderer(chart, series) {
 		y: 0,
 		width: width,
 		height: height,
-		style: 'pointer-events: none;'
+		style: 	[
+					'pointer-events: none',
+					'clip-path:' + clipPath,
+					'-webkit-clip-path:' + clipPath
+
+				].join(';')
 	});
 
 	return target.ogl;
@@ -1480,6 +1522,10 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 	}
 });
 
+/** If the series is a heatmap or treemap, or if the series is not boosting
+ *  do the default behaviour. Otherwise, process if the series has no 
+ *  extremes.
+ */
 wrap(Series.prototype, 'processData', function (proceed) {
 	// If this is a heatmap, do default behaviour
 	if (!isSeriesBoosting(this) || 
@@ -1492,27 +1538,6 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
-
-// wrap(Series.prototype, 'setData', function (proceed) {
-// 	if (!this.hasExtremes(true)) {
-// 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-// 	}
-// });
-
-// wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
-// 	this.options.data.push(options);
-
-// 	if (shift) {
-// 		this.options.data.shift();		
-// 	}
-
-// 	this.isDirty = true;
-// 	this.isDirtyData = true;
-
-// 	if (redraw) {
-// 		chart.redraw(animation); // Animation is set anyway on redraw, #5665
-// 	}
-// });
 
 H.extend(Series.prototype, {
 	pointRange: 0,
@@ -1608,7 +1633,7 @@ H.extend(Series.prototype, {
 						).get() : series.color,
 
 			addKDPoint = function (clientX, plotY, i) {
-				//Shaves off about 60ms in canvas-scatter test
+				//Shaves off about 60ms compared to repeated concatination
 				index = clientX + ',' + plotY;
 
 				// The k-d tree requires series points. 
@@ -1774,6 +1799,22 @@ H.extend(Series.prototype, {
 	}
 });
 
+/* Used for treemap|heatmap.drawPoints */
+function pointDrawHandler(proceed) {
+	if (!isSeriesBoosting(this)) {
+		return proceed.call(this);
+	}
+
+	//Make sure we have a valid OGL context
+	var renderer = createAndAttachRenderer(this.chart, this);
+	
+	if (renderer) {
+		renderer.pushSeries(this);				
+	}		
+	
+	renderIfNotSeriesBoosting(renderer, this);
+}
+
 /*
  * We need to handle heatmaps separatly, since we can't perform the size/color
  * calculations in the shader easily.
@@ -1782,41 +1823,27 @@ H.extend(Series.prototype, {
  *
  */
 if (seriesTypes.heatmap) {	
-	wrap(seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
-		if (!isSeriesBoosting(this)) {
-			return proceed.call(this);
-		}
-
-		//Make sure we have a valid OGL context
-		var renderer = createAndAttachRenderer(this.chart, this);
-		if (renderer) {
-			renderer.pushSeries(this);				
-		}		
-		renderIfNotSeriesBoosting(renderer, this);
-	});
-
+	wrap(seriesTypes.heatmap.prototype, 'drawPoints', pointDrawHandler);
 	seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
 }
 
 if (seriesTypes.treemap) {
-	wrap(seriesTypes.treemap.prototype, 'drawPoints', function (proceed) {
-		if (!isSeriesBoosting(this)) {
-			return proceed.call(this);
-		}
-		//Make sure we have a valid OGL context
-		var renderer = createAndAttachRenderer(this.chart, this);
-		if (renderer) {
-			renderer.pushSeries(this);				
-		}	
-
-		renderIfNotSeriesBoosting(renderer, this);	
-	});
+	wrap(seriesTypes.treemap.prototype, 'drawPoints', pointDrawHandler);
+	seriesTypes.treemap.prototype.directTouch = false; // Use k-d-tree
 }
 
 if (seriesTypes.bubble) {
 	// By default, the bubble series does not use the KD-tree, so force it to.
 	delete seriesTypes.bubble.prototype.buildKDTree;
 	seriesTypes.bubble.prototype.directTouch = false;
+	
+	// Needed for markers to work correctly
+	wrap(seriesTypes.bubble.prototype, 'markerAttribs', function (proceed) {
+		if (isSeriesBoosting(this)) {
+			return false;
+		}
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
 }
 
 seriesTypes.scatter.prototype.fill = true;
@@ -1832,11 +1859,12 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
+
 /**
- * Return a full Point object based on the index. The boost module uses stripped point objects
- * for performance reasons.
+ * Return a full Point object based on the index. 
+ * The boost module uses stripped point objects for performance reasons.
  * @param   {Number} boostPoint A stripped-down point object
- * @returns {Object}   A Point object as per http://api.highcharts.com/highcharts#Point
+ * @returns {Object} A Point object as per http://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (boostPoint) {
 	var point = boostPoint;
@@ -1855,9 +1883,9 @@ Series.prototype.getPoint = function (boostPoint) {
 };
 
 /**
- * Extend series.destroy to also remove the fake k-d-tree points (#5137). Normally
- * this is handled by Series.destroy that calls Point.destroy, but the fake
- * search points are not registered like that.
+ * Extend series.destroy to also remove the fake k-d-tree points (#5137). 
+ * Normally this is handled by Series.destroy that calls Point.destroy, 
+ * but the fake search points are not registered like that.
  */
 wrap(Series.prototype, 'destroy', function (proceed) {
 	var series = this,
@@ -1890,6 +1918,7 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
  */
 H.Chart.prototype.callbacks.push(function (chart) {
 
+	/* Convert chart-level canvas to image */
 	function canvasToSVG() {				
 		if (chart.ogl && isChartSeriesBoosting(chart)) {
 
@@ -1905,6 +1934,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		}
 	}
 
+	/* Clear chart-level canvas */
 	function preRender() {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
 			//Clear the series and vertice data
