@@ -291,25 +291,26 @@ H.defaultOptions = {
  */
 function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
-		useUTC = globalOptions.useUTC,
-		getTimezoneOffsetFunction,
 		moment = win.moment;
+
 	if (globalOptions.timezone) { // docs
-		if (typeof moment === 'undefined') {
-			H.error(25);
+		if (!moment) {
 			// getTimezoneOffset-function stays undefined because it depends on
 			// Moment.js
+			H.error(25);
+			
 		} else {
-			getTimezoneOffsetFunction = function (timestamp) {
-				var zone = globalOptions.timezone, // E.g 'Europe/Oslo'
-					timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
-				return timezoneOffset;
+			return function (timestamp) {
+				return -moment.tz(
+					timestamp,
+					globalOptions.timezone
+				).utcOffset();
 			};
 		}
-	} else {
-		getTimezoneOffsetFunction = useUTC && globalOptions.getTimezoneOffset;
 	}
-	return getTimezoneOffsetFunction;
+
+	// If not timezone is set, look for the getTimezoneOffset callback
+	return globalOptions.useUTC && globalOptions.getTimezoneOffset;
 }
 
 /**
