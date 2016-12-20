@@ -26,11 +26,15 @@ extend(H.defaultOptions, {
 		// dashStyle: 'solid',
 		// color: point.color,
 		type: 'straight',
+		// TODO
+		// start and end marker symbols should be disabled by default
 		startMarker: {
+			symbol: 'circle',
 			align: 'center',
 			verticalAlign: 'middle'
 		},
 		endMarker: {
+			symbol: 'diamond',
 			align: 'center',
 			verticalAlign: 'middle'
 		},
@@ -250,6 +254,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles = pathfinder.chartObstacles,
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
+			pathGraphic,
+			startMarker,
+			endMarker,
 			pathResult,
 			attribs,
 			options = merge(defaultOptions, opts),
@@ -293,13 +300,47 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		if (options.dashStyle) {
 			attribs.dashstyle = options.dashStyle;
 		}
-		this.connectingPathGraphic = renderer.path(pathResult.path)
+		pathGraphic = renderer.path(pathResult.path)
 			.addClass('highcharts-point-connecting-path')
 			.attr(attribs)
 			.add(pathfinder.group);
+			//symbol, x, y, width, height, options
+		startMarker = renderer.symbol(
+			options.startMarker.symbol,
+			pathResult.path[1] - 10,
+			pathResult.path[2] - 10,
+			20,
+			20
+		)
+			.addClass('highcharts-point-connecting-path-start-marker')
+			.attr(merge(options.startMarker, {
+				fill: options.color || this.color
+			}, attribs))
+			.add(pathfinder.group);
+		endMarker = renderer.symbol(
+			options.endMarker.symbol,
+			pathResult.path[pathResult.path.length - 2] - 10,
+			pathResult.path[pathResult.path.length - 1] - 10,
+			20,
+			20
+		)
+			.addClass('highcharts-point-connecting-path-end-marker')
+			.attr(merge(options.endMarker, {
+				fill: options.color || this.color
+			}, attribs))
+			.add(pathfinder.group);
+
+		if (!this.connectingPathGraphics) {
+			this.connectingPathGraphics = [];
+		}
+		this.connectingPathGraphics.push(pathGraphic);
+		this.connectingPathGraphics.push(startMarker);
+		this.connectingPathGraphics.push(endMarker);
 
 		// Add to internal list of paths for later destroying/referencing
-		pathfinder.paths.push(this.connectingPathGraphic);
+		pathfinder.paths.push(pathGraphic);
+		pathfinder.paths.push(startMarker);
+		pathfinder.paths.push(endMarker);
 	}
 });
 
