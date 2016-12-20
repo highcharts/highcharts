@@ -1285,7 +1285,7 @@ function isSeriesBoosting(series) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {
-	return chart.series.length > 20;
+	return chart.series.length > (chart.options.seriesBoostThreshold || 20);
 }
 
 /* 
