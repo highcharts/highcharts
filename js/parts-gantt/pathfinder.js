@@ -191,8 +191,40 @@ Pathfinder.prototype = {
 		return obstacles.sort(function (a, b) {
 			return a.xMin - b.xMin;
 		});
-	}
+	},
 
+	/**
+	 * Get metrics for obstacles.
+	 *	- Widest obstacle width
+	 *	- Tallest obstacle height
+	 *
+	 * @param {Object} obstacles Options for the calculation.
+	 *
+	 * @return {Object} result The calculated metrics.
+	 */
+	getObstacleMetrics: function (obstacles) {
+		var maxWidth = 0,
+			maxHeight = 0,
+			width,
+			height,
+			i = obstacles.length;
+		
+		while (i--) {
+			width = obstacles[i].xMax - obstacles[i].xMin;
+			height = obstacles[i].yMax - obstacles[i].yMin;
+			if (maxWidth < width) {
+				maxWidth = width;
+			}
+			if (maxHeight < height) {
+				maxHeight = height;
+			}
+		}
+
+		return {
+			maxHeight: maxHeight,
+			maxWidth: maxWidth
+		};
+	}
 };
 
 
@@ -267,6 +299,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles = 
 				pathfinder.chartObstacles = 
 				pathfinder.getChartObstacles(options);
+			
+			// Cache some metrics too
+			pathfinder.chartObstacleMetrics = 
+				pathfinder.getObstacleMetrics(chartObstacles);
 		}
 
 		// Get the SVG path
@@ -275,7 +311,14 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			toPoint.getPathfinderAnchorPoint(options.endMarker),
 			merge({
 				chartObstacles: chartObstacles,
-				lineObstacles: lineObstacles || []
+				lineObstacles: lineObstacles || [],
+				obstacleMetrics: pathfinder.chartObstacleMetrics,
+				hardBounds: {
+					// TODO
+				},
+				obstacleOptions: {
+					margin: options.algorithmMargin
+				}
 			}, options)
 		);
 
@@ -284,7 +327,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		// algorithm.
 		if (pathResult.obstacles) {
 			pathfinder.lineObstacles = lineObstacles || [];
-			pathfinder.lineObstacles.push(pathResult.obstacles);
+			pathfinder.lineObstacles = 
+				pathfinder.lineObstacles.concat(pathResult.obstacles);
 		}
 
 		// Add the SVG element of the path
@@ -300,6 +344,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		if (options.dashStyle) {
 			attribs.dashstyle = options.dashStyle;
 		}
+
 		pathGraphic = renderer.path(pathResult.path)
 			.addClass('highcharts-point-connecting-path')
 			.attr(attribs)
