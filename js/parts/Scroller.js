@@ -93,7 +93,6 @@ extend(defaultOptions, {
 				enabled: false,
 				zIndex: 2 // #1839
 			},
-			id: 'highcharts-navigator-series',
 			className: 'highcharts-navigator-series',
 			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
 			marker: {
