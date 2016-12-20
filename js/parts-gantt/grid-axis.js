@@ -363,31 +363,25 @@ wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
 wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 	var axis = this;
 
-	if (options.grid && !options.title) {
-		options.title = '';
+	if (options.grid) {
+
+		if (!options.title) {
+			options.title = '';
+		}
+
+		if (axis.horiz) {
+			/*               _________________________
+			* Make this:    ___|_____|_____|_____|__|
+			*               ^                     ^
+			*               _________________________
+			* Into this:    |_____|_____|_____|_____|
+			*                  ^                 ^
+			*/
+			options.minPadding = pick(options.minPadding, 0);
+			options.maxPadding = pick(options.minPadding, 0);
+		}
 	}
 
-	if (options.grid && axis.horiz) {
-
-		/*               _________________________
-		 * Make this:    ___|_____|_____|_____|__|
-		 *               ^
-		 *               _________________________
-		 * Into this:    |_____|_____|_____|_____|
-		 *               ^
-		 */
-		options.startOnTick = true;
-		options.minPadding = 0;
-
-		/*               _________________________
-		 * Make this:    |______|______|______|__|
-		 *                  ^                  ^
-		 *               _________________________
-		 * Into this:    |_____|_____|_____|_____|
-		 *                  ^                 ^
-		 */
-		options.endOnTick = true;
-	}
 	proceed.apply(this, argsToArray(arguments));
 });
 

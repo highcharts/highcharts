@@ -426,26 +426,25 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
 
     chart = Highcharts.chart('container', {
         chart: {
-            type: 'column'
+            type: 'line'
         },
         xAxis: [{
+            type: 'datetime',
             grid: true
         }, {
             type: 'datetime',
-            grid: true
+            grid: true,
+            linkedTo: 0
         }, {
             grid: true,
             opposite: true
         }, {
             grid: true,
-            type: 'datetime',
-            opposite: true
+            opposite: true,
+            linkedTo: 2
         }],
         series: [{
             xAxis: 0,
-            data: [[129.9, -29.2], [306.4, 271.5], [544.0, 376.0]]
-        }, {
-            xAxis: 1,
             data: [{
                 x: Date.UTC(2016, 10, 12),
                 y: 1
@@ -454,10 +453,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 y: 2
             }]
         }, {
-            xAxis: 2,
-            data: [[-144.0, -176.0], [-106.4, -129.2], [29.9, -71.5]]
-        }, {
-            xAxis: 3,
+            xAxis: 1,
             data: [{
                 x: Date.UTC(2016, 10, 13),
                 y: 1
@@ -465,10 +461,14 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
                 x: Date.UTC(2016, 10, 15),
                 y: 2
             }]
+        }, {
+            xAxis: 2,
+            data: [129.9, 306.4, 544.0]
+        }, {
+            xAxis: 3,
+            data: [-144.0, -106.4, 29.9]
         }]
     });
-
-
 
     function test(type) {
         var axes,
@@ -489,26 +489,22 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
             $axisGroup = $(axis.axisGroup.element);
             axisGroupBox = $axisGroup[0].getBBox();
             ticks = $axisGroup.find('.highcharts-tick');
-            leftTick = ticks[0];
-            rightTick = ticks.slice(-1)[0];
+            leftTick = ticks[0].getBBox();
+            rightTick = ticks.slice(-1)[0].getBBox();
 
             assert.equal(
-                leftTick.getBBox().x,
+                leftTick.x,
                 axisGroupBox.x,
                 type + ' chart leftmost tick is placed correctly'
             );
 
             assert.equal(
-                rightTick.getBBox().x,
+                type === 'bar' ? rightTick.x + rightTick.width : rightTick.x,
                 axisGroupBox.x + axisGroupBox.width,
                 type + ' chart rightmost tick is placed correctly'
             );
         }
     }
-
-    types = {
-        column: true
-    };
 
     for (type in types) {
         if (types.hasOwnProperty(type)) {
@@ -560,21 +556,26 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
         xAxis: [{
             grid: true
         }, {
-            type: 'datetime',
-            grid: true
-        }, {
             grid: true,
-            opposite: true
+            linkedTo: 0
         }, {
             grid: true,
             type: 'datetime',
             opposite: true
+        }, {
+            grid: true,
+            type: 'datetime',
+            opposite: true,
+            linkedTo: 2
         }],
         series: [{
             xAxis: 0,
             data: [[1, 271.5], [2, -29.2], [3, 376.0]]
         }, {
             xAxis: 1,
+            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
+        }, {
+            xAxis: 2,
             data: [{
                 x: Date.UTC(2016, 10, 12),
                 y: 1
@@ -582,9 +583,6 @@ QUnit.test('Horizontal axis ticks equally distributed', function (assert) {
                 x: Date.UTC(2016, 10, 14),
                 y: 2
             }]
-        }, {
-            xAxis: 2,
-            data: [[29.9, -71.5], [-106.4, -129.2], [-144.0, -176.0]]
         }, {
             xAxis: 3,
             data: [{
