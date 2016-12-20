@@ -692,6 +692,7 @@ function GLRenderer() {
 			zData = series.zData || options.zData || series.processedZData,
 			useRaw = !xData || xData.length === 0,			
 			points = series.points || false,
+			colorIndex = 0,
 			minVal,
 			caxis,
 			color,
@@ -699,8 +700,19 @@ function GLRenderer() {
 			sdata = isStacked ? series.data : (xData || rawData),
 			maxVal;
 
+		// Push color to color buffer - need to do this per. vertex
+		function pushColor(color) {
+			if (color) {
+				inst.colorData.push(color[0]);
+				inst.colorData.push(color[1]);
+				inst.colorData.push(color[2]);
+				inst.colorData.push(color[3]);
+			}				
+		}
+
 		//Push a vertice to the data buffer
-		function vertice(x, y, checkTreshold, pointSize) {			
+		function vertice(x, y, checkTreshold, pointSize, color) {
+			pushColor(color);			
 			data.push(x);
 			data.push(y);
 			data.push(checkTreshold ? 1 : 0);
@@ -710,32 +722,22 @@ function GLRenderer() {
 		// Push a rectangle to the data buffer
 		function pushRect(x, y, w, h, color) {
 
-			// Push color to color buffer - need to do this per. vertex
-			function pushColor() {
-				if (color) {
-					inst.colorData.push(color[0]);
-					inst.colorData.push(color[1]);
-					inst.colorData.push(color[2]);
-					inst.colorData.push(color[3]);
-				}				
-			}
-
 			// Normally we should use triangle_strip since it's faster,
 			// but this would require more complicated pre-processing,
 			// which would negate the performance increase.
 
-			pushColor();
+			pushColor(color);
 			vertice(x + w, y);
-			pushColor();
+			pushColor(color);
 			vertice(x, y);
-			pushColor();
+			pushColor(color);
 			vertice(x, y + h);
 
-			pushColor();
+			pushColor(color);
 			vertice(x, y + h);
-			pushColor();
+			pushColor(color);
 			vertice(x + w, y + h);	
-			pushColor();
+			pushColor(color);
 			vertice(x + w, y);
 		}
 
@@ -838,10 +840,19 @@ function GLRenderer() {
 				chartDestroyed = typeof chart.index === 'undefined',
 				nextInside = false,
 				prevInside = false,
+				pcolor = false,
 				isYInside = true;
 
 			if (chartDestroyed) {
 				return false;
+			}
+
+			if (series.options.colorByPoint) {
+				colorIndex = ++colorIndex % series.chart.options.colors.length;
+				pcolor = H.color(series.chart.options.colors[colorIndex]).rgba;
+				pcolor[0] /= 255.0;
+				pcolor[1] /= 255.0;
+				pcolor[2] /= 255.0;
 			}
 
 			if (useRaw) {
@@ -934,23 +945,23 @@ function GLRenderer() {
 			
 			if (asBar[series.type]) {
 				// Need to add an extra point here
-				vertice(x, minVal, 0, 0);
+				vertice(x, minVal, 0, 0, pcolor);
 			}
 
-			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2);
+			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2, pcolor);
 
-			if (caxis) {				
-				color = H.color(caxis.toColor(y)).rgba;
+			// if (caxis) {				
+			// 	color = H.color(caxis.toColor(y)).rgba;
 
-				inst.colorData.push(color[0] / 255.0);
-				inst.colorData.push(color[1] / 255.0);
-				inst.colorData.push(color[2] / 255.0);
-				inst.colorData.push(color[3]);
-			}
+			// 	inst.colorData.push(color[0] / 255.0);
+			// 	inst.colorData.push(color[1] / 255.0);
+			// 	inst.colorData.push(color[2] / 255.0);
+			// 	inst.colorData.push(color[3]);
+			// }
 							
 			if (asBar[series.type]) {
-				// Need to add an extra point here
-				vertice(x, minVal, 0, 0);
+				// Need to add an extra point here				
+				vertice(x, minVal, 0, 0, pcolor);
 			}
 
 			return true;
@@ -1434,8 +1445,6 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	}
 }
 
-
-
 // Set default options
 each([
 	'area', 
@@ -1655,7 +1664,17 @@ H.extend(Series.prototype, {
 					});
 				}
 			};			
-			
+
+		// Get or create the renderer
+		renderer = createAndAttachRenderer(chart, series);
+
+		if (!this.visible) {
+			if (!isChartSeriesBoosting(chart) && renderer) {
+				renderer.clear();
+			}
+			return;
+		}
+
 		// If we are zooming out from SVG mode, destroy the graphics
 		if (this.points || this.graph) {
 			this.destroyGraphics();
@@ -1681,15 +1700,11 @@ H.extend(Series.prototype, {
 		// Do not start building while drawing 
 		series.buildKDTree = noop; 
 		
-		// Get or create the renderer
-		renderer = createAndAttachRenderer(chart, series);
-
 		if (renderer) {
 			renderer.pushSeries(series);				
+			// Perform the actual renderer if we're on series level
+			renderIfNotSeriesBoosting(renderer, this);
 		}
-
-		// Perform the actual renderer if we're on series level
-		renderIfNotSeriesBoosting(renderer, this);
 
 		/* This builds the KD-tree */
 		function processPoint(d, i) {
@@ -1859,7 +1874,6 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-
 /**
  * Return a full Point object based on the index. 
  * The boost module uses stripped point objects for performance reasons.
@@ -1931,15 +1945,17 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					href: chart.canvas.toDataURL('image/png') 
 				});			
 			}
+
+			// Clear the series and vertice data.			
+			chart.ogl.flush();
 		}
 	}
 
 	/* Clear chart-level canvas */
 	function preRender() {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
-			//Clear the series and vertice data
-			chart.ogl.flush();
-			//Clear ogl canvas
+			
+			// Clear ogl canvas
 			chart.ogl.clear();				
 		}
 	}
