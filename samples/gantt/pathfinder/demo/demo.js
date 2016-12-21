@@ -5,6 +5,7 @@ $(function () {
                 y: 29.9,
                 connect: 'bob'
             }, {
+                id: 'bernard',
                 connect: {
                     to: 'johan',
                     type: 'fastAvoid',
@@ -34,6 +35,10 @@ $(function () {
         }, {
             data: [19.9, 11.5, 16.4, 19.2, 94.0, 12, 15, 16.0, {
                 id: 'johan',
+                connect: {
+                    to: 'bernard',
+                    type: 'fastAvoid'
+                },
                 y: 55.6
             }, 18.5, 26.4, 44.4],
             type: 'column'

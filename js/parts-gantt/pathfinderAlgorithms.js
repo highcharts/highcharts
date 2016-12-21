@@ -182,11 +182,69 @@ var algorithms = {
 			startObstacleIx = findLastObstacleBefore(chartObstacles, softMinX),
 			endObstacleIx = findLastObstacleBefore(chartObstacles, softMaxX);
 
-		// TODO
-		function pivotPoint(fromPoint, toPoint) {
+		// How far can you go between two points before hitting an obstacle?
+		// Does not work for diagonal lines (because it doesn't have to).
+		function pivotPoint(fromPoint, toPoint, directionIsX) {
+			var firstPoint,
+				lastPoint,
+				highestPoint,
+				lowestPoint,
+				i;
+
+			if (fromPoint.x < toPoint.x) {
+				firstPoint = fromPoint;
+				lastPoint = toPoint;
+			} else {
+				firstPoint = toPoint;
+				lastPoint = fromPoint;
+			}
+
+			if (fromPoint.y < toPoint.y) {
+				lowestPoint = fromPoint;
+				highestPoint = toPoint;
+			} else {
+				lowestPoint = toPoint;
+				highestPoint = fromPoint;
+			}
+
+			i = findLastObstacleBefore(chartObstacles, firstPoint.x);
+
+			// Go through obstacles in this X range
+			while (chartObstacles[i] && chartObstacles[i].xMin <= lastPoint.x) {
+				// If this obstacle is between from and to points in a straight
+				// line, pivot at the intersection.
+				if (
+					chartObstacles[i].xMax >= firstPoint.x &&
+					chartObstacles[i].yMin <= highestPoint.y &&
+					chartObstacles[i].yMax >= lowestPoint.y
+				) {
+					if (directionIsX) {
+						return {
+							y: fromPoint.y,
+							x: fromPoint.x < toPoint.x ? 
+								chartObstacles[i].xMin - 1 :
+								chartObstacles[i].xMax + 1,
+							obstacle: chartObstacles[i]
+						};
+					}
+					// else ...
+					return {
+						x: fromPoint.x,
+						y: fromPoint.y < toPoint.y ?
+							chartObstacles[i].yMin - 1 :
+							chartObstacles[i].yMax + 1,
+						obstacle: chartObstacles[i]
+					};
+				}
+
+				++i;
+			}
+			
 			return toPoint;
 		}
 
+		// Find a clear path between points, optionally with a start direction 
+		// parameter.
 		function clearPathTo(fromPoint, toPoint, directionIsX) {
 			// Don't waste time if we've hit goal
 			if (fromPoint.x === toPoint.x && fromPoint.y === toPoint.y) {
@@ -198,7 +256,7 @@ var algorithms = {
 				pivot = pivotPoint(fromPoint, {
 					x: dirIsX ? toPoint.x : fromPoint.x,
 					y: dirIsX ? fromPoint.y : toPoint.y
-				}),
+				}, dirIsX),
 				segments = [{
 					start: fromPoint,
 					end: {
@@ -232,10 +290,11 @@ var algorithms = {
 						pivot.obstacle[dirIsX ? 'yMax' : 'xMax'] -
 						pivot[dirIsX ? 'y' : 'x']
 					);
-				waypointUseMax = (!maxOutOfSoftBounds ||
-								minOutOfSoftBounds && waypointUseMax) &&
+				// TODO: Double check this logic
+				waypointUseMax = waypointUseMax && (!maxOutOfSoftBounds ||
+								minOutOfSoftBounds) &&
 								(!maxOutOfHardBounds ||
-								minOutOfHardBounds && waypointUseMax);
+								minOutOfHardBounds);
 
 				// Cut waypoint to hard bounds
 				if (dirIsX) {
@@ -253,9 +312,11 @@ var algorithms = {
 				waypoint = {
 					x: dirIsX ?
 						pivot.x :
-						pivot.obstacle[waypointUseMax ? 'xMax' : 'xMin'],
+						pivot.obstacle[waypointUseMax ? 'xMax' : 'xMin'] + 
+						(waypointUseMax ? 1 : -1),
 					y: dirIsX ?
-						pivot.obstacle[waypointUseMax ? 'yMax' : 'yMin'] :
+						pivot.obstacle[waypointUseMax ? 'yMax' : 'yMin'] + 
+						(waypointUseMax ? 1 : -1) :
 						pivot.y
 				};
 

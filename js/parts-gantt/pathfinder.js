@@ -314,7 +314,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				lineObstacles: lineObstacles || [],
 				obstacleMetrics: pathfinder.chartObstacleMetrics,
 				hardBounds: {
-					// TODO
+					xMin: chart.plotLeft,
+					xMax: chart.plotLeft + chart.plotWidth,
+					yMin: chart.plotTop,
+					yMax: chart.plotTop + chart.plotHeight
 				},
 				obstacleOptions: {
 					margin: options.algorithmMargin
