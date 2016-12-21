@@ -47,13 +47,7 @@ TrackerMixin = H.TrackerMixin = {
 			chart = series.chart,
 			pointer = chart.pointer,
 			onMouseOver = function (e) {
-				var target = e.target,
-					point;
-
-				while (target && !point) {
-					point = target.point;
-					target = target.parentNode;
-				}
+				var point = pointer.getPointFromEvent(e);
 
 				if (point !== undefined && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
@@ -502,53 +496,24 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to
 	 *        actually hovered points. True for other points in shared tooltip.
 	 */
-	onMouseOver: function (e, byProximity) {
+	onMouseOver: function (e) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			tooltip = chart.tooltip,
-			hoverPoint = chart.hoverPoint;
-
-		if (point.series) { // It may have been destroyed, #4130
-			// In shared tooltip, call mouse over when point/series is actually hovered: (#5766)
-			if (!byProximity) {
-				// set normal state to previous series
-				if (hoverPoint && hoverPoint !== point) {
-					hoverPoint.onMouseOut();
-				}
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-				chart.hoverPoint = point;
-			}
-
-			// update the tooltip
-			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-				// hover point only for non shared points: (#5766)
-				point.setState('hover');
-				tooltip.refresh(point, e);
-			} else if (!tooltip) {
-				point.setState('hover');
-			}
-
-			// trigger the event
-			point.firePointEvent('mouseOver');
-		}
+			pointer = chart.pointer;
+		e = pointer.normalize(e);
+		pointer.runPointActions(e, point);
 	},
 
 	/**
 	 * Runs on mouse out from the point
 	 */
 	onMouseOut: function () {
-		var chart = this.series.chart,
-			hoverPoints = chart.hoverPoints;
-
-		this.firePointEvent('mouseOut');
-
-		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
-			this.setState();
-			chart.hoverPoint = null;
-		}
+		var point = this,
+			chart = point.series.chart;
+		point.firePointEvent('mouseOut');
+		point.setState();
+		chart.hoverPoints = chart.hoverPoint = null;
 	},
 
 	/**

@@ -455,7 +455,6 @@ H.Tooltip.prototype = {
 			text,
 			pointConfig = [],
 			formatter = options.formatter || tooltip.defaultFormatter,
-			hoverPoints = chart.hoverPoints,
 			shared = tooltip.shared,
 			currentSeries;
 
@@ -469,16 +468,6 @@ H.Tooltip.prototype = {
 
 		// shared tooltip, array is sent over
 		if (shared && !(point.series && point.series.noSharedTooltip)) {
-
-			// hide previous hoverPoints and set new
-
-			chart.hoverPoints = point;
-			if (hoverPoints) {
-				each(hoverPoints, function (point) {
-					point.setState();
-				});
-			}
-
 			each(point, function (item) {
 				item.setState('hover');
 

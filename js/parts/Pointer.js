@@ -205,22 +205,30 @@ H.Pointer.prototype = {
 		}
 		return kdpoints;
 	},
+	getPointFromEvent: function (e) {
+		var target = e.target,
+			point;
+
+		while (target && !point) {
+			point = target.point;
+			target = target.parentNode;
+		}
+		return point;
+	},
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
-	runPointActions: function (e) {
+	runPointActions: function (e, p) {
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
-			hoverPoint = chart.hoverPoint,
-			hoverSeries = chart.hoverSeries,
-			stickToHoverSeries = (
-				hoverSeries &&
-				(shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch)
-			),
+			hoverPoint = p || chart.hoverPoint,
+			hoverSeries = hoverPoint && hoverPoint.series,
+			ePoint = pointer.getPointFromEvent(e),
+			isDirectTouch = !!p || (ePoint && ePoint === hoverPoint),
 			useSharedTooltip,
 			followPointer,
 			i,
@@ -231,8 +239,10 @@ H.Pointer.prototype = {
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
 		// Handle shared tooltip or cases where a series is not yet hovered
-		if (!(stickToHoverSeries && hoverPoint)) {
-			if (!shared) {
+		if (isDirectTouch) {
+			points = this.getKDPoints(series, shared, e);
+		} else {
+			if (!shared) { 
 				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
 				// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
 				if (!hoverSeries) {
@@ -250,29 +260,49 @@ H.Pointer.prototype = {
 			points = this.getKDPoints(series, shared, e);
 			hoverPoint = points[0];
 			hoverSeries = hoverPoint && hoverPoint.series;
-			// Keep the order of series in tooltip
-			// Must be done after assigning of hoverPoint
-			points.sort(function (p1, p2) {
-				return p1.series.index - p2.series.index;
-			});
 		}
+		// Keep the order of series in tooltip
+		// Must be done after assigning of hoverPoint
+		points.sort(function (p1, p2) {
+			return p1.series.index - p2.series.index;
+		});
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
 		points = useSharedTooltip ? points : [hoverPoint];
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (hoverPoint && (hoverPoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
-			if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-				// Do mouseover on all points (#3919, #3985, #4410, #5622)
-				for (i = 0; i < points.length; i++) {
-					points[i].onMouseOver(e, points[i] !== hoverPoint);
+		if (
+			hoverPoint &&
+			// !(hoverSeries && hoverSeries.directTouch) &&
+			(hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
+		) {
+			each(chart.hoverPoints || [], function (p) {
+				if (H.inArray(p, points) === -1) {
+					p.setState();
 				}
+			});
+			// Do mouseover on all points (#3919, #3985, #4410, #5622)
+			each(points || [], function (p) {
+				p.setState('hover');
+			});
+			if (chart.hoverPoint !== hoverPoint) {
+				if (chart.hoverPoint) {
+					chart.hoverPoint.setState();
+					chart.hoverPoint.firePointEvent('mouseOut');
+				}
+				hoverPoint.setState('hover');
+				hoverPoint.firePointEvent('mouseOver');
 			}
+			// set normal state to previous series
+			if (chart.hoverSeries !== hoverSeries) {
+				hoverSeries.onMouseOver();
+			}
+			chart.hoverPoints = points;
+			chart.hoverPoint = hoverPoint;
 			// Draw tooltip if necessary
 			if (tooltip) {
 				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
 			}
-			this.prevKDPoint = hoverPoint;
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else if (followPointer && tooltip && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
@@ -368,7 +398,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
+			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 
