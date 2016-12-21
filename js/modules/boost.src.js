@@ -971,6 +971,10 @@ function GLRenderer() {
 				vertice(x, minVal, 0, 0, pcolor);
 			}
 
+			inst.skipTranslation = true;
+			x = series.xAxis.toPixels(x, true);
+			y = series.yAxis.toPixels(y, true);
+
 			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2, pcolor);
 
 			// if (caxis) {				
