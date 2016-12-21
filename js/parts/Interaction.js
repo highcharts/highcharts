@@ -49,7 +49,8 @@ TrackerMixin = H.TrackerMixin = {
 			onMouseOver = function (e) {
 				var point = pointer.getPointFromEvent(e);
 
-				if (point !== undefined && point !== chart.hoverPoint) { // undefined on graph in scatterchart
+				// undefined on graph in scatterchart
+				if (point !== undefined) { 
 					point.onMouseOver(e);
 				}
 			};
@@ -501,6 +502,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			series = point.series,
 			chart = series.chart,
 			pointer = chart.pointer;
+		point.firePointEvent('mouseOver');
 		e = pointer.normalize(e);
 		pointer.runPointActions(e, point);
 	},

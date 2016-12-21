@@ -285,14 +285,6 @@ H.Pointer.prototype = {
 			each(points || [], function (p) {
 				p.setState('hover');
 			});
-			if (chart.hoverPoint !== hoverPoint) {
-				if (chart.hoverPoint) {
-					chart.hoverPoint.setState();
-					chart.hoverPoint.firePointEvent('mouseOut');
-				}
-				hoverPoint.setState('hover');
-				hoverPoint.firePointEvent('mouseOver');
-			}
 			// set normal state to previous series
 			if (chart.hoverSeries !== hoverSeries) {
 				hoverSeries.onMouseOver();
