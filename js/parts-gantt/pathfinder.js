@@ -61,7 +61,7 @@ Pathfinder.prototype = {
 	 *
 	 * @param {Object} chart The chart context.
 	 */
-	init: function (chart) {	
+	init: function (chart) {
 		// Initialize pathfinder with chart context
 		this.chart = chart;
 
@@ -147,7 +147,7 @@ Pathfinder.prototype = {
 		this.paths = [];
 
 		// Clear obstacles to force recalculation. This must be done on every
-		// redraw in case positions have changed. This is handled in 
+		// redraw in case positions have changed. This is handled in
 		// Point.pathTo on demand.
 		delete this.chartObstacles;
 		delete this.lineObstacles;
@@ -160,7 +160,7 @@ Pathfinder.prototype = {
 	},
 
 	/**
-	 * Get chart obstacles from points. Does not include connecting lines from 
+	 * Get chart obstacles from points. Does not include connecting lines from
 	 * Pathfinder. Applies algorithmMargin to the obstacles.
 	 *
 	 * @param {Object} options Options for the calculation.
@@ -273,6 +273,76 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		};
 	},
 
+	addPath: function (path, attribs) {
+		var chart = this.series.chart,
+			pathfinder = chart.pathfinder,
+			renderer = chart.renderer,
+			pathGraphic = renderer.path(path)
+				.addClass('highcharts-point-connecting-path')
+				.attr(attribs)
+				.add(pathfinder.group);
+
+		if (!this.connectingPathGraphics) {
+			this.connectingPathGraphics = [];
+		}
+
+		this.connectingPathGraphics.push(pathGraphic);
+		// Add to internal list of paths for later destroying/referencing
+		pathfinder.paths.push(pathGraphic);
+	},
+
+	addPathMarker: function (type, path, options) {
+		var chart = this.series.chart,
+			pathfinder = chart.pathfinder,
+			renderer = chart.renderer,
+			marker,
+			x,
+			y,
+			width,
+			height,
+			setVector = {
+				start: function () {
+					x = path[1];
+					y = path[2];
+				},
+				end: function () {
+					x = path[path.length - 2];
+					y = path[path.length - 1];
+				},
+				default: function () {
+					x = path[1];
+					y = path[2];
+				}
+			};
+		(setVector[type] || setVector.default)();
+
+
+
+		if (options.width && options.height) {
+			width = options.width;
+			height = options.height;
+		} else {
+			width = height = options.radius * 2;
+		}
+
+		marker = renderer.symbol(
+			options.symbol,
+			x - (width / 2),
+			y - (height / 2),
+			width,
+			height
+		)
+			.addClass('highcharts-point-connecting-path-' + type + '-marker')
+			.attr(merge(options, {
+				fill: options.color || this.color
+			}))
+			.add(pathfinder.group);
+		this.connectingPathGraphics.push(marker);
+
+		// Add to internal list of paths for later destroying/referencing
+		pathfinder.paths.push(marker);
+	},
+
 	/**
 	 * Draw a path from this point to another, avoiding collisions.
 	 *
@@ -286,18 +356,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles = pathfinder.chartObstacles,
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
-			pathGraphic,
-			startMarker,
-			endMarker,
 			pathResult,
+			path,
 			attribs,
 			options = merge(defaultOptions, opts),
 			algorithm = pathfinder.algorithms[options.type];
 
 		// This function calculates obstacles on demand if they don't exist
 		if (algorithm.requiresObstacles && !chartObstacles) {
-			chartObstacles = 
-				pathfinder.chartObstacles = 
+			chartObstacles =
+				pathfinder.chartObstacles =
 				pathfinder.getChartObstacles(options);
 			
 			// Cache some metrics too
@@ -348,47 +416,21 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			attribs.dashstyle = options.dashStyle;
 		}
 
-		pathGraphic = renderer.path(pathResult.path)
-			.addClass('highcharts-point-connecting-path')
-			.attr(attribs)
-			.add(pathfinder.group);
-			//symbol, x, y, width, height, options
-		startMarker = renderer.symbol(
-			options.startMarker.symbol,
-			pathResult.path[1] - 10,
-			pathResult.path[2] - 10,
-			20,
-			20
-		)
-			.addClass('highcharts-point-connecting-path-start-marker')
-			.attr(merge(options.startMarker, {
-				fill: options.color || this.color
-			}, attribs))
-			.add(pathfinder.group);
-		endMarker = renderer.symbol(
-			options.endMarker.symbol,
-			pathResult.path[pathResult.path.length - 2] - 10,
-			pathResult.path[pathResult.path.length - 1] - 10,
-			20,
-			20
-		)
-			.addClass('highcharts-point-connecting-path-end-marker')
-			.attr(merge(options.endMarker, {
-				fill: options.color || this.color
-			}, attribs))
-			.add(pathfinder.group);
 
-		if (!this.connectingPathGraphics) {
-			this.connectingPathGraphics = [];
-		}
-		this.connectingPathGraphics.push(pathGraphic);
-		this.connectingPathGraphics.push(startMarker);
-		this.connectingPathGraphics.push(endMarker);
+		path = pathResult.path;
 
-		// Add to internal list of paths for later destroying/referencing
-		pathfinder.paths.push(pathGraphic);
-		pathfinder.paths.push(startMarker);
-		pathfinder.paths.push(endMarker);
+		this.addPath(path, attribs);
+
+		// Set common marker options
+		options = merge(this.series.options.marker, attribs, options);
+		// Override common marker options
+		options.startMarker = merge(options, options.startMarker);
+		options.endMarker = merge(options, options.endMarker);
+		delete options.startMarker.startMarker;
+		delete options.startMarker.endMarker;
+		// Add markers
+		this.addPathMarker('start', path, options.startMarker);
+		this.addPathMarker('end', path, options.endMarker);
 	}
 });
 
