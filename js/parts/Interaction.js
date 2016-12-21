@@ -514,7 +514,9 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 		var point = this,
 			chart = point.series.chart;
 		point.firePointEvent('mouseOut');
-		point.setState();
+		each(chart.hoverPoints || [], function (p) {
+			p.setState();
+		});
 		chart.hoverPoints = chart.hoverPoint = null;
 	},
 
