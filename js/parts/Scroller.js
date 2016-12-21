@@ -93,7 +93,6 @@ extend(defaultOptions, {
 				enabled: false,
 				zIndex: 2 // #1839
 			},
-			id: 'highcharts-navigator-series',
 			className: 'highcharts-navigator-series',
 			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
 			marker: {
@@ -270,7 +269,7 @@ Navigator.prototype = {
 		);
 		scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
 		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
-		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		scroller.scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
 
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
@@ -881,6 +880,7 @@ Navigator.prototype = {
 			chartNavigatorOptions = navigator.navigatorOptions.series,
 			baseNavigatorOptions,
 			navSeriesMixin = {
+				index: null, // #6162
 				enableMouseTracking: false,
 				group: 'nav', // for columns
 				padXAxis: false,

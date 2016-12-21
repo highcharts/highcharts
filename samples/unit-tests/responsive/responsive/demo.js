@@ -96,4 +96,75 @@ $(function () {
             'Width updated'
         );
     });
+
+    QUnit.test('Responsive on chart.update', function (assert) {
+
+        var chart = Highcharts.chart('container', {
+
+            credits: {
+                text: 'Initial',
+                href: 'http://www.example.com'
+            },
+
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }],
+
+            responsive: {
+                rules: [{
+                    condition: {
+                        callback: function () {
+                            return this.options.credits.position.verticalAlign === 'top';
+                        }
+                    },
+                    chartOptions: {
+                        credits: {
+                            text: 'Updated'
+                        }
+                    }
+                }]
+            }
+
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-credits').textContent,
+            'Initial',
+            'Initial credits'
+        );
+
+        // Trigger a redraw and make the responsive condition true
+        chart.update({
+            credits: {
+                position: {
+                    verticalAlign: 'top'
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-credits').textContent,
+            'Updated',
+            'Updated credits'
+        );
+
+        // Trigger a redraw and make the responsive condition false
+        chart.update({
+            credits: {
+                position: {
+                    verticalAlign: 'bottom'
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.container.querySelector('.highcharts-credits').textContent,
+            'Initial',
+            'Back to initial credits'
+        );
+    });
 });

@@ -54,7 +54,9 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 		if (state) {
 			stateOptions = options.states[state];
 			attribs.fill = stateOptions.color || attribs.fill;
-			attribs.stroke = stateOptions.stroke || attribs.stroke;
+			attribs.stroke = stateOptions.lineColor || attribs.stroke;
+			attribs['stroke-width'] =
+				stateOptions.lineWidth || attribs['stroke-width'];
 		}
 
 
