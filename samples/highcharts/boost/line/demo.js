@@ -41,7 +41,7 @@ $(function () {
         },
 
         title: {
-            text: 'Trimmed Highcharts drawing ' + n + ' points'
+            text: 'Boosted Highcharts drawing ' + n + ' points'
         },
 
         subtitle: {

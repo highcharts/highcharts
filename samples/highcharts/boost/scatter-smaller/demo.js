@@ -36,6 +36,8 @@ $(function () {
         },
         plotOptions: {
             scatter: {
+                boostThreshold: 1,
+                boostBlending: 'add',
                 marker: {
                     radius: 5,
                     states: {
@@ -59,7 +61,6 @@ $(function () {
             }
         },
         series: [{
-            boostThreshold: 1,
             name: 'Female',
             color: 'rgba(223, 83, 83, 0.8)',
             data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6],
@@ -116,7 +117,6 @@ $(function () {
                 [176.5, 71.8], [164.4, 55.5], [160.7, 48.6], [174.0, 66.4], [163.8, 67.3]]
 
         }, {
-            boostThreshold: 1,
             name: 'Male',
             color: 'rgba(119, 152, 191, 0.8)',
             data: [[174.0, 65.6], [175.3, 71.8], [193.5, 80.7], [186.5, 72.6], [187.2, 78.8],

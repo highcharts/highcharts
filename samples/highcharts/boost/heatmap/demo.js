@@ -1,7 +1,8 @@
 $(function () {
 
-    var start,
-        chart = Highcharts.chart('container', {
+    var start;
+
+    Highcharts.chart('container', {
 
         data: {
             csv: document.getElementById('csv').innerHTML,
@@ -17,7 +18,7 @@ $(function () {
 
 
         title: {
-            text: 'Highcharts extended heat map',
+            text: 'Highcharts boosted heat map',
             align: 'left',
             x: 40
         },
@@ -85,7 +86,6 @@ $(function () {
                 headerFormat: 'Temperature<br/>',
                 pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
             },
-            boostThreshold: 40,
             turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
         }]
 

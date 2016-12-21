@@ -2,13 +2,8 @@ $(function () {
 
     function getData(n) {
         var arr = [],
-            i,
-            a,
-            b,
-            c,
-            spike;
+            i;
         for (i = 0; i < n; i = i + 1) {
-    
             arr.push([
                 i,
                 2 * Math.sin(i / 100) + Math.random()
@@ -28,7 +23,7 @@ $(function () {
                 lineWidth: 2,
                 boostThreshold: 1,
                 turboThreshold: 1,
-                showInNavigator: true,                   
+                showInNavigator: true,
                 requireSorting: false
             });
         }
@@ -38,7 +33,6 @@ $(function () {
 
     var n = 20,
         s = 600,
-        data = getData(n),
         series = getSeries(n, s),
         chart;
 
@@ -69,12 +63,15 @@ $(function () {
             yAxis: {
                // min: 0,
                // max: 10
+            },
+            series: {
+                color: null
             }
         },
 
         legend: {
             enabled: false
-        },        
+        },
 
         xAxis: {
            // min: n / 2,
@@ -101,10 +98,10 @@ $(function () {
     });
     console.timeEnd('line');
 
-    function addPoint() {                
-        ++n;        
+    function addPoint() {
+        ++n;
 
-        chart.series.forEach(function dynAddPoint (se, i) {
+        chart.series.forEach(function dynAddPoint(se) {
             var x = n,
                 y = 2 * Math.sin(x / 100) + Math.random();
 
@@ -123,14 +120,10 @@ $(function () {
         chart.redraw();
     }
 
-    function addSeries() {
+    setInterval(addPoint, 1000);
+    //console.log(chart);
 
-    }
-
-   setInterval(addPoint, 1000);
-  //console.log(chart);
-
-  document.getElementById('profile-add').onclick = function () {
+    document.getElementById('profile-add').onclick = function () {
         console.profile('addPoint');
         addPoint();
         console.profileEnd();

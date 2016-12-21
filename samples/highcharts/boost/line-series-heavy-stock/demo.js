@@ -1,5 +1,10 @@
 $(function () {
 
+    var n = 120,
+        s = 600,
+        pointStart = 0, //Date.UTC(2016, 0, 1),
+        pointInterval = 1000;
+
     function getData(n) {
         var arr = [],
             i,
@@ -23,7 +28,7 @@ $(function () {
                 spike = 0;
             }
             arr.push([
-                i,
+                pointStart + i * pointInterval,
                 2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
             ]);
         }
@@ -39,18 +44,15 @@ $(function () {
                 data: getData(n),
                 lineWidth: 2,
                 boostThreshold: 1,
-                turboThreshold: 1 ,
-                showInNavigator: true               
+                turboThreshold: 1,
+                showInNavigator: true
             });
         }
 
         return r;
     }
 
-    var n = 120,
-        s = 600,
-        data = getData(n),
-        series = getSeries(n, s);
+    var series = getSeries(n, s);
 
 
     console.time('line');
@@ -67,22 +69,29 @@ $(function () {
         navigator: {
             xAxis: {
                 ordinal: false,
-                min: 0,
-                max: 10
+                min: pointStart,
+                max: pointStart + n * pointInterval
             },
             yAxis: {
                 min: 0,
                 max: 10
+            },
+            series: {
+                color: null // Inherit from base
             }
+        },
+
+        scrollbar: {
+            liveRedraw: false
         },
 
         legend: {
             enabled: false
-        },        
+        },
 
         xAxis: {
-            min: 0,
-            max: 120,
+            min: pointStart,
+            max: pointStart + n * pointInterval,
             ordinal: false
         },
 
