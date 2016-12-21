@@ -8,6 +8,7 @@
 import H from '../parts/Globals.js';
 import 'current-date-indicator.js';
 import 'grid-axis.js';
+import 'pathfinder.js';
 import 'xrange-series.js';
 
 // TODO
@@ -17,6 +18,7 @@ var dateFormat = H.dateFormat,
 	defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
+	merge = H.merge,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
@@ -94,6 +96,19 @@ seriesType('gantt', parentName, {
 			}
 
 			return retVal;
+		}
+	},
+	pathfinder: {
+		type: 'straight', // TODO change to when done 'fastAvoid'
+		startMarker: {
+			enabled: true,
+			symbol: 'diamond',
+			fill: '#fa0'
+		},
+		endMarker: {
+			enabled: true,
+			symbol: 'circle',
+			fill: '#fa0'
 		}
 	}
 }, {
@@ -183,17 +198,25 @@ seriesType('gantt', parentName, {
 	 */
 	applyOptions: function (options, x) {
 		var point = this,
-			retVal = Point.prototype.applyOptions.call(point, options, x);
+			retVal = merge(options);
 
 		// Get value from aliases
-		retVal.x = pick(retVal.start, retVal.x);
-		retVal.x2 = pick(retVal.end, retVal.x2);
+		retVal.x = pick(options.start, options.x);
+		retVal.x2 = pick(options.end, options.x2);
 		if (options.milestone) {
-			retVal.x2 = retVal.x;
+			retVal.x2 = options.x;
 		}
-		retVal.y = pick(retVal.taskGroup, retVal.name, retVal.taskName, retVal.y);
-		retVal.name = pick(retVal.taskGroup, retVal.name);
-		retVal.partialFill = pick(retVal.completed, retVal.partialFill);
+		retVal.y = pick(
+			options.taskGroup,
+			options.name,
+			options.taskName,
+			options.y
+		);
+		retVal.name = pick(options.taskGroup, options.name);
+		retVal.partialFill = pick(options.completed, options.partialFill);
+		retVal.connect = pick(options.dependency, options.connect);
+
+		retVal = Point.prototype.applyOptions.call(point, retVal, x);
 
 		return retVal;
 	},
