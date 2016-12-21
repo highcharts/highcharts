@@ -956,6 +956,9 @@ function GLRenderer() {
 			}
 
 			// Resolve low and high for range series
+			inst.skipTranslation = true;
+			x = series.xAxis.toPixels(x, true);
+			y = series.yAxis.toPixels(y, true);
 
 			if (drawAsBar) {
 				
@@ -966,14 +969,13 @@ function GLRenderer() {
 					minVal = y;
 					y = 0;
 				}
-				
+			
+				minVal = series.yAxis.toPixels(minVal, true);
+
 				// Need to add an extra point here
 				vertice(x, minVal, 0, 0, pcolor);
 			}
 
-			inst.skipTranslation = true;
-			x = series.xAxis.toPixels(x, true);
-			y = series.yAxis.toPixels(y, true);
 
 			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2, pcolor);
 
