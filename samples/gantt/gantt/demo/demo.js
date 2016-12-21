@@ -55,16 +55,19 @@ $(function () {
         series: [{
             name: 'Project 1',
             data: [{
+                id: 'start_prototype',
                 start: today.getTime() - (2 * day),
                 end: today.getTime() + day,
                 taskGroup: 0,
                 taskName: 'Start prototype',
                 partialFill: 0.8
             }, {
+                id: 'development',
                 start: today.getTime(),
                 end: today.getTime() + (8 * day),
                 taskGroup: 1,
                 taskName: 'Develop',
+                dependency: 'start_prototype',
                 partialFill: {
                     amount: 0.12,
                     fill: '#fa0'
@@ -82,6 +85,7 @@ $(function () {
             }, {
                 start: today.getTime() + (7 * day),
                 end: today.getTime() + (10 * day),
+                dependency: 'development',
                 taskName: 'Run acceptance tests',
                 taskGroup: 2
             }]
