@@ -31,6 +31,7 @@
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
+ * - Disable animations 
  *
  * Optimizing tips for users
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
@@ -72,6 +73,23 @@ var win = H.win,
 	//destroyLoadingDiv,
 	index
 	;
+
+// Faster conversion to RGB for hex colors
+function toRGBAFast(col) {
+	if (col && col.length === 7 && col[0] === '#') {
+		col = parseInt(col.substr(1), 16);
+
+		return [
+			(col & 0xFF0000) >> 16,
+			(col & 0x00FF00) >> 8,
+			(col & 0x0000FF),
+			1.0 
+		];
+	}
+	
+	// Fall back to highcharts regex
+	return H.Color(col).rgba;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // START OF WEBGL ABSTRACTIONS
@@ -631,8 +649,8 @@ function GLRenderer() {
 	//Create a white circle texture for use with bubbles
 	circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
 		'<?xml version="1.0" standalone="no"?>',
-		'<svg width="64" height="64" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
-		'<circle cx="32" cy="32" r="32" stroke="none" fill="#FFF"/>',
+		'<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
+		'<circle cx="512" cy="512" r="512" stroke="none" fill="#FFF"/>',
 		'</svg>'
 	].join(''));
 
@@ -657,7 +675,7 @@ function GLRenderer() {
 	 * Clear the depth and color buffer
 	 */
 	function clear() {
-		//gl.clearColor(1, 1, 1, 1.0);
+		//gl.clearColor(0, 0, 1, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
@@ -693,6 +711,8 @@ function GLRenderer() {
 			useRaw = !xData || xData.length === 0,			
 			points = series.points || false,
 			colorIndex = 0,
+			lastX = false,
+			//colorByPoint = series.options.colorByPoint,
 			minVal,
 			caxis,
 			color,
@@ -841,19 +861,20 @@ function GLRenderer() {
 				nextInside = false,
 				prevInside = false,
 				pcolor = false,
+				drawAsBar = asBar[series.type],
 				isYInside = true;
 
 			if (chartDestroyed) {
 				return false;
 			}
 
-			if (series.options.colorByPoint) {
-				colorIndex = ++colorIndex % series.chart.options.colors.length;
-				pcolor = H.color(series.chart.options.colors[colorIndex]).rgba;
-				pcolor[0] /= 255.0;
-				pcolor[1] /= 255.0;
-				pcolor[2] /= 255.0;
-			}
+			// if (colorByPoint) {
+			// 	colorIndex = ++colorIndex % series.chart.options.colors.length;
+			// 	pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
+			// 	pcolor[0] /= 255.0;
+			// 	pcolor[1] /= 255.0;
+			// 	pcolor[2] /= 255.0;
+			// }
 
 			if (useRaw) {
 				x = d[0];
@@ -904,8 +925,6 @@ function GLRenderer() {
 				}
 			}
 
-			// Resolve low and high for range series
-
 			if (nx && nx >= xMin && nx <= xMax) {
 				nextInside = true;
 			}
@@ -936,14 +955,18 @@ function GLRenderer() {
 				return;
 			}
 
-			minVal = 0;
-			if (y < 0) {
-				minVal = y;
-			}
+			// Resolve low and high for range series
 
-			maxVal = y;
-			
-			if (asBar[series.type]) {
+			if (drawAsBar) {
+				
+				maxVal = y;
+				minVal = 0;
+
+				if (y < 0) {
+					minVal = y;
+					y = 0;
+				}
+				
 				// Need to add an extra point here
 				vertice(x, minVal, 0, 0, pcolor);
 			}
@@ -959,10 +982,16 @@ function GLRenderer() {
 			// 	inst.colorData.push(color[3]);
 			// }
 							
-			if (asBar[series.type]) {
-				// Need to add an extra point here				
-				vertice(x, minVal, 0, 0, pcolor);
-			}
+			// if (drawAsBar) {
+			// 	// Need to add an extra point here				
+			// //	vertice(x, minVal, 0, 0, pcolor);
+			// }
+
+			// if (lastX === x) {
+			// 	console.error('duplicate x data', x);
+			// }
+
+			// lastX = x;
 
 			return true;
 		});		
@@ -989,9 +1018,10 @@ function GLRenderer() {
 			zMin: Number.MAX_VALUE,
 			zMax: -Number.MAX_VALUE,
 			drawMode: ({
-				'area': 'line_strip',
-				'arearange': 'line_strip',
-				'column': 'line_strip',
+				'area': 'lines',
+				'arearange': 'lines',
+				'areaspline': 'line_strip',
+				'column': 'lines',
 				'line': 'line_strip',
 				'scatter': 'points',
 				'heatmap': 'triangles',
@@ -1086,7 +1116,7 @@ function GLRenderer() {
 		shader.setTexture(circleTextureHandle);
 
 		// Render the series
-		each(series, function (s) {
+		each(series, function (s, si) {
 			var options = s.series.options,
 				threshold = options.threshold,
 				hasThreshold = isNumber(threshold),
@@ -1098,10 +1128,33 @@ function GLRenderer() {
 								pick(options.fillOpacity, 0.85)
 							).get() :
 					s.series.color,
-				color = H.color(fillColor).rgba;			
+				color;			
+
+			if (options.colorByPoint) {
+				fillColor = s.series.chart.options.colors[si ];
+			}
+
+			color = toRGBAFast(fillColor);
 
 			if (!settings.useAlpha) {
 				color[3] = 1.0;
+			}
+
+			//Blending
+			if (options.boostBlending === 'add') {
+				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+				gl.blendEquation(gl.FUNC_ADD);
+
+			} else if (options.boostBlending === 'mult') {
+				gl.blendFunc(gl.DST_COLOR, gl.ZERO);
+			
+			} else if (options.boostBlending === 'darken') {
+				gl.blendFunc(gl.ONE, gl.ONE);
+				gl.blendEquation(gl.FUNC_MIN);
+			
+			} else {
+				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				gl.blendEquation(gl.FUNC_ADD);
 			}
 
 			shader.reset();
@@ -1181,9 +1234,9 @@ function GLRenderer() {
 		}
 
 		gl.enable(gl.BLEND);
-		//gl.blendFunc(gl.ONE, gl.ONE);
+		//gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		//gl.enable(gl.DEPTH_TEST);
+		gl.disable(gl.DEPTH_TEST);
 		gl.depthMask(gl.FALSE);
 
 		shader = GLShader(gl);		
@@ -1209,6 +1262,7 @@ function GLRenderer() {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			gl.generateMipmap(gl.TEXTURE_2D);
+
 
 			gl.bindTexture(gl.TEXTURE_2D, null);
 		}
@@ -1283,7 +1337,8 @@ function isSeriesBoosting(series) {
 		return r;
 	}		
 
-	return  patientMax(
+	return  isChartSeriesBoosting(series.chart) ||
+			patientMax(
 				series.processedXData, 
 				series.options.data,
 				series.points
@@ -1296,7 +1351,7 @@ function isSeriesBoosting(series) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {
-	return chart.series.length > (chart.options.seriesBoostThreshold || 20);
+	return chart.series.length >= (chart.options.seriesBoostThreshold || 1);
 }
 
 /* 
@@ -1946,8 +2001,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				});			
 			}
 
-			// Clear the series and vertice data.			
-			chart.ogl.flush();
 		}
 	}
 
@@ -1955,6 +2008,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	function preRender() {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
 			
+			// Clear the series and vertice data.			
+			chart.ogl.flush();
 			// Clear ogl canvas
 			chart.ogl.clear();				
 		}
