@@ -208,7 +208,7 @@ Pathfinder.prototype = {
 			width,
 			height,
 			i = obstacles.length;
-		
+
 		while (i--) {
 			width = obstacles[i].xMax - obstacles[i].xMin;
 			height = obstacles[i].yMax - obstacles[i].yMin;
@@ -367,9 +367,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles =
 				pathfinder.chartObstacles =
 				pathfinder.getChartObstacles(options);
-			
+
 			// Cache some metrics too
-			pathfinder.chartObstacleMetrics = 
+			pathfinder.chartObstacleMetrics =
 				pathfinder.getObstacleMetrics(chartObstacles);
 		}
 
@@ -398,7 +398,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		// algorithm.
 		if (pathResult.obstacles) {
 			pathfinder.lineObstacles = lineObstacles || [];
-			pathfinder.lineObstacles = 
+			pathfinder.lineObstacles =
 				pathfinder.lineObstacles.concat(pathResult.obstacles);
 		}
 
@@ -416,9 +416,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			attribs.dashstyle = options.dashStyle;
 		}
 
-
 		path = pathResult.path;
 
+		// Add path
 		this.addPath(path, attribs);
 
 		// Set common marker options
