@@ -16,8 +16,7 @@ $(function () {
     }
 
     function addURLView(title, url) {
-        var iframe = document.createElement('iframe'),
-            svg = /\.svg/.test(title); // SVG doesn't scale
+        var iframe = document.createElement('iframe');
         if (isMSBrowser && Highcharts.isObject(url)) {
             addText(title +
             ': Microsoft browsers do not support Blob iframe.src, test manually'
@@ -25,8 +24,8 @@ $(function () {
             return;
         }
         iframe.src = url;
-        iframe.width = svg ? 800 : 400;
-        iframe.height = svg ? 600 : 300;
+        iframe.width = 400;
+        iframe.height = 300;
         iframe.title = title;
         iframe.style.display = 'inline-block';
         parentEl.appendChild(iframe);
@@ -63,6 +62,9 @@ $(function () {
         }, {
             title: {
                 text: type
+            },
+            subtitle: {
+                text: false
             }
         });
     };
@@ -119,9 +121,9 @@ $(function () {
                     }
                 }
             },
-            sourceWidth: 800,
-            sourceHeight: 600,
-            scale: 0.5,
+            sourceWidth: 400,
+            sourceHeight: 300,
+            scale: 1,
             error: fallbackHandler,
             fallbackToExportServer: false
         },
