@@ -211,7 +211,8 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 		var width = svgElement.width.baseVal.value + 2 * margin,
 			height = svgElement.height.baseVal.value + 2 * margin,
 			pdf = new win.jsPDF('l', 'pt', [width, height]);	// eslint-disable-line new-cap
-		win.svgElementToPdf(svgElement, pdf, { removeInvalid: true });
+
+		win.svg2pdf(svgElement, pdf, { removeInvalid: true });
 		return pdf.output('datauristring');
 	}
 
@@ -266,16 +267,14 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
 			failCallback();
 		}
 	} else if (imageType === 'application/pdf') {
-		if (win.jsPDF && win.svgElementToPdf) {
+		if (win.jsPDF && win.svg2pdf) {
 			downloadPDF();
 		} else {
 			// Must load pdf libraries first
 			objectURLRevoke = true; // Don't destroy the object URL yet since we are doing things asynchronously. A cleaner solution would be nice, but this will do for now.
 			getScript(libURL + 'jspdf.js', function () {
-				getScript(libURL + 'rgbcolor.js', function () {
-					getScript(libURL + 'svg2pdf.js', function () {
-						downloadPDF();
-					});
+				getScript(libURL + 'svg2pdf.js', function () {
+					downloadPDF();
 				});
 			});
 		}

@@ -331,7 +331,7 @@ const compileScripts = () => {
  */
 const compileLib = () => {
     const sourceFolder = './vendor/';
-    const files = ['canvg.src.js', 'rgbcolor.src.js'];
+    const files = ['canvg.src.js'];
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
@@ -393,7 +393,7 @@ const copyToDist = () => {
     });
 
     // Copy lib files to the distribution packages. These files are used in the offline-export.
-    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
+    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
             U.writeFile(distFolder + lib + '/code/lib/' + path, content);
