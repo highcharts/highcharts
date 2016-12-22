@@ -1158,9 +1158,9 @@ SVGElement.prototype = {
 					bBox = element.getBBox ?
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
-						extend({}, element.getBBox()) :
-						// Legacy IE in export mode
-						{
+						extend({}, element.getBBox()) : {
+
+							// Legacy IE in export mode
 							width: element.offsetWidth,
 							height: element.offsetHeight
 						};

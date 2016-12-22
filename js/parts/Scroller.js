@@ -1072,8 +1072,11 @@ Navigator.prototype = {
 		});
 
 		// Destroy properties
-		each(['series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline', 'scrollbarTrack',
-				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
+		each([
+			'series', 'xAxis', 'yAxis', 'leftShade', 'rightShade', 'outline',
+			'scrollbarTrack', 'scrollbarRifles', 'scrollbarGroup', 'scrollbar',
+			'navigatorGroup', 'rendered'
+		], function (prop) {
 			if (this[prop] && this[prop].destroy) {
 				this[prop].destroy();
 			}

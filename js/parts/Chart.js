@@ -1457,9 +1457,12 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage',
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer',
-				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
+		each([
+			'title', 'subtitle', 'chartBackground', 'plotBackground',
+			'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
+			'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
+			'renderer'
+		], function (name) {
 			var prop = chart[name];
 
 			if (prop && prop.destroy) {
