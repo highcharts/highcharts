@@ -26,12 +26,12 @@ $(function () {
             rightPoint = chart.series[0].points[1];
 
         assert.strictEqual(
-             parseFloat(topPoint.graphic.attr("cy")) > parseFloat(topPoint.graphic.attr("r")),
+            topPoint.graphic.y > 0,
             true,
             'Proper padding for yAxis.max'
         );
         assert.strictEqual(
-            chart.plotWidth > parseFloat(rightPoint.graphic.attr("cx")) + parseFloat(rightPoint.graphic.attr("r")),
+            chart.plotWidth > rightPoint.graphic.x + rightPoint.graphic.width,
             true,
             'Proper padding for xAxis.max'
         );

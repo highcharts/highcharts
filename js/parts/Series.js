@@ -1218,8 +1218,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	markerAttribs: function (point, state) {
 		var seriesMarkerOptions = this.options.marker,
 			seriesStateOptions,
-			pointOptions = point && point.options,
-			pointMarkerOptions = (pointOptions && pointOptions.marker) || {},
+			pointMarkerOptions = point.marker || {},
 			pointStateOptions,
 			radius = pick(
 				pointMarkerOptions.radius,

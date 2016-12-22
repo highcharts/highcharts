@@ -77,6 +77,21 @@ H.setOptions({
 	}
 });
 
+/**
+ * HTML encode some characters vulnerable for XSS.
+ * @param  {string} html The input string
+ * @return {string} The excaped string
+ */
+function htmlencode(html) {
+	return html
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#x27;')
+		.replace(/\//g, '&#x2F;');
+}
+
 // Utility function. Reverses child nodes of a DOM element
 function reverseChildNodes(node) {
 	var i = node.childNodes.length;
@@ -841,8 +856,9 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 		'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
-		(series.length > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + (options.title.text || 'Chart') +
-		(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
+		(series.length > 1 ? ' and navigate between data series' : '') + 
+		'.</div><h3>Summary.</h3><div>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
+		(options.subtitle && options.subtitle.text ? '. ' + htmlencode(options.subtitle.text) : '') +
 		'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
 		'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 		(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
@@ -894,7 +910,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		topLevelColumns = [];
 
 	// Add SVG title/desc tags
-	titleElement.textContent = chartTitle;
+	titleElement.textContent = htmlencode(chartTitle);
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
