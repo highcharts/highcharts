@@ -87,7 +87,7 @@ const scripts = () => {
     const base = './js/masters/';
     const fileOptions = getFileOptions(base);
 
-    return build({
+    build({
         base: base,
         debug: debug,
         fileOptions: fileOptions,
@@ -96,6 +96,8 @@ const scripts = () => {
         type: type,
         version: version
     });
+
+    // return commandLine('./node_modules/.bin/babel ./code/highcharts.src.js -d .');
 };
 
 /**
