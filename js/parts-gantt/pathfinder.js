@@ -31,11 +31,15 @@ extend(H.defaultOptions, {
 		startMarker: {
 			symbol: 'circle',
 			align: 'center',
+			radius: 4,
+			inside: false,
 			verticalAlign: 'middle'
 		},
 		endMarker: {
 			symbol: 'diamond',
 			align: 'center',
+			radius: 4,
+			inside: false,
 			verticalAlign: 'middle'
 		},
 		lineWidth: 1,
@@ -291,32 +295,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		pathfinder.paths.push(pathGraphic);
 	},
 
-	addPathMarker: function (type, path, options) {
+	addMarker: function (type, vector, options) {
 		var chart = this.series.chart,
 			pathfinder = chart.pathfinder,
 			renderer = chart.renderer,
 			marker,
-			x,
-			y,
 			width,
-			height,
-			setVector = {
-				start: function () {
-					x = path[1];
-					y = path[2];
-				},
-				end: function () {
-					x = path[path.length - 2];
-					y = path[path.length - 1];
-				},
-				default: function () {
-					x = path[1];
-					y = path[2];
-				}
-			};
-		(setVector[type] || setVector.default)();
-
-
+			height;
 
 		if (options.width && options.height) {
 			width = options.width;
@@ -327,8 +312,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		marker = renderer.symbol(
 			options.symbol,
-			x - (width / 2),
-			y - (height / 2),
+			vector.x - (width / 2),
+			vector.y - (height / 2),
 			width,
 			height
 		)
@@ -341,6 +326,74 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		// Add to internal list of paths for later destroying/referencing
 		pathfinder.paths.push(marker);
+	},
+
+	/**
+	 * Get the angle from one point to another.
+	 * @param  {Object} v1 - the first vector
+	 * @param  {Object} v1.x - the first vector x position
+	 * @param  {Object} v1.y - the first vector y position
+	 * @param  {Object} v2 - the second vector
+	 * @param  {Object} v2.x - the second vector x position
+	 * @param  {Object} v2.y - the second vector y position
+	 * @return {number}    - the angle in degrees
+	 */
+	getRadiansToVector: function (x, y) {
+		return Math.atan2(this.plotY - y, x - this.plotX);
+	},
+
+	/**
+	 * Get the edge of the point graphic, based on an angle.
+	 * @param  {number} deg the angle in degrees from the point center to
+	 *                      another vector
+	 * @return {Object}       a vector (x, y) of the point graphic edge
+	 */
+	getMarkerVector: function (radians, markerRadius) {
+		var twoPI = Math.PI * 2,
+			theta = radians,
+			rect = this.graphic.getBBox(),
+			rectAtan = Math.atan2(rect.height, rect.width),
+			tanTheta = 1,
+			leftOrRightRegion = false,
+			edgePoint = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 },
+			markerPoint = {},
+			xFactor = 1,
+			yFactor = 1;
+
+		while (theta < -Math.PI) {
+			theta += twoPI;
+		}
+
+		while (theta > Math.PI) {
+			theta -= twoPI;
+		}
+
+		tanTheta = Math.tan(theta);
+
+		if ((theta > -rectAtan) && (theta <= rectAtan)) {
+			yFactor = -1;
+			leftOrRightRegion = true;
+		} else if ((theta > rectAtan) && (theta <= (Math.PI - rectAtan))) {
+			yFactor = -1;
+		} else if ((theta > (Math.PI - rectAtan)) || (theta <= -(Math.PI - rectAtan))) {
+			xFactor = -1;
+			leftOrRightRegion = true;
+		} else {
+			xFactor = -1;
+		}
+
+		if (leftOrRightRegion) {
+			edgePoint.x += xFactor * (rect.width / 2.0);
+			edgePoint.y += yFactor * (rect.width / 2.0) * tanTheta;
+		} else {
+			edgePoint.x += xFactor * (rect.height / (2.0 * tanTheta));
+			edgePoint.y += yFactor * (rect.height /  2.0);
+		}
+
+		markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
+		markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
+
+		return markerPoint;
 	},
 
 	/**
@@ -357,6 +410,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
 			pathResult,
+			radians,
 			path,
 			attribs,
 			options = merge(defaultOptions, opts),
@@ -428,9 +482,30 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		options.endMarker = merge(options, options.endMarker);
 		delete options.startMarker.startMarker;
 		delete options.startMarker.endMarker;
-		// Add markers
-		this.addPathMarker('start', path, options.startMarker);
-		this.addPathMarker('end', path, options.endMarker);
+		delete options.endMarker.startMarker;
+		delete options.endMarker.endMarker;
+
+		// Add start marker
+		radians = this.getRadiansToVector(
+			path[4], // Second x in path
+			path[5]  // Second y in path
+		);
+		this.addMarker(
+			'start',
+			this.getMarkerVector(radians, options.startMarker.radius),
+			options.startMarker
+		);
+
+		// Add end marker
+		radians = toPoint.getRadiansToVector(
+			path[path.length - 5], // Second last x in path
+			path[path.length - 4]  // Second last y in path
+		);
+		this.addMarker(
+			'end',
+			toPoint.getMarkerVector(radians, options.endMarker.radius),
+			options.endMarker
+		);
 	}
 });
 
