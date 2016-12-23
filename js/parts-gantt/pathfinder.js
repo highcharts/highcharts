@@ -10,7 +10,8 @@ import '../parts/Point.js';
 import '../parts/Utilities.js';
 import pathfinderAlgorithms from 'pathfinderAlgorithms.js';
 
-var extend = H.extend,
+var deg2rad = H.deg2rad,
+	extend = H.extend,
 	each = H.each,
 	addEvent = H.addEvent,
 	merge = H.merge;
@@ -295,10 +296,11 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		pathfinder.paths.push(pathGraphic);
 	},
 
-	addMarker: function (type, vector, options) {
+	addMarker: function (type, vector, options, radians) {
 		var chart = this.series.chart,
 			pathfinder = chart.pathfinder,
 			renderer = chart.renderer,
+			degrees = radians / deg2rad,
 			marker,
 			width,
 			height;
@@ -319,7 +321,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		)
 			.addClass('highcharts-point-connecting-path-' + type + '-marker')
 			.attr(merge(options, {
-				fill: options.color || this.color
+				fill: options.color || this.color,
+				transform: 'rotate(' + degrees + ')'
 			}))
 			.add(pathfinder.group);
 		this.connectingPathGraphics.push(marker);
@@ -352,7 +355,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		var twoPI = Math.PI * 2,
 			theta = radians,
 			rect = this.graphic.getBBox(),
-			rectAtan = Math.atan2(rect.height, rect.width),
+			rAtan = Math.atan2(rect.height, rect.width),
 			tanTheta = 1,
 			leftOrRightRegion = false,
 			edgePoint = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 },
@@ -370,15 +373,19 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		tanTheta = Math.tan(theta);
 
-		if ((theta > -rectAtan) && (theta <= rectAtan)) {
+		if ((theta > -rAtan) && (theta <= rAtan)) {
+			// Right side
 			yFactor = -1;
 			leftOrRightRegion = true;
-		} else if ((theta > rectAtan) && (theta <= (Math.PI - rectAtan))) {
+		} else if (theta > rAtan && theta <= (Math.PI - rAtan)) {
+			// Top side
 			yFactor = -1;
-		} else if ((theta > (Math.PI - rectAtan)) || (theta <= -(Math.PI - rectAtan))) {
+		} else if (theta > (Math.PI - rAtan) || theta <= -(Math.PI - rAtan)) {
+			// Left side
 			xFactor = -1;
 			leftOrRightRegion = true;
 		} else {
+			// Bottom side
 			xFactor = -1;
 		}
 
@@ -493,7 +500,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		this.addMarker(
 			'start',
 			this.getMarkerVector(radians, options.startMarker.radius),
-			options.startMarker
+			options.startMarker,
+			radians
 		);
 
 		// Add end marker
@@ -504,7 +512,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		this.addMarker(
 			'end',
 			toPoint.getMarkerVector(radians, options.endMarker.radius),
-			options.endMarker
+			options.endMarker,
+			radians
 		);
 	}
 });
