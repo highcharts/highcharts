@@ -137,38 +137,14 @@ seriesType('treemap', 'scatter', {
 	* Creates a tree structured object from the series points
 	*/
 	getTree: function () {
-		var tree,
-			series = this,
+		var series = this,
 			allIds = map(this.data, function (d) {
 				return d.id;
 			}),
 			parentList = series.getListOfParents(this.data, allIds);
 
 		series.nodeMap = [];
-		tree = series.buildNode('', -1, 0, parentList, null);
-		// Parents of the root node is by default visible
-		recursive(this.nodeMap[this.rootNode], function (node) {
-			var next = false,
-				p = node.parent;
-			node.visible = true;
-			if (p || p === '') {
-				next = series.nodeMap[p];
-			}
-			return next;
-		});
-		// Children of the root node is by default visible
-		recursive(this.nodeMap[this.rootNode].children, function (children) {
-			var next = false;
-			each(children, function (child) {
-				child.visible = true;
-				if (child.children.length) {
-					next = (next || []).concat(child.children);
-				}
-			});
-			return next;
-		});
-		this.setTreeValues(tree);
-		return tree;
+		return series.buildNode('', -1, 0, parentList, null);
 	},
 	init: function (chart, options) {
 		var series = this;
@@ -210,6 +186,27 @@ seriesType('treemap', 'scatter', {
 			children = [],
 			val,
 			point = series.points[tree.i];
+		// Parents of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode], function (node) {
+			var next = false,
+				p = node.parent;
+			node.visible = true;
+			if (p || p === '') {
+				next = series.nodeMap[p];
+			}
+			return next;
+		});
+		// Children of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode].children, function (children) {
+			var next = false;
+			each(children, function (child) {
+				child.visible = true;
+				if (child.children.length) {
+					next = (next || []).concat(child.children);
+				}
+			});
+			return next;
+		});
 
 		// First give the children some values
 		each(tree.children, function (child) {
@@ -568,6 +565,7 @@ seriesType('treemap', 'scatter', {
 			return arr;
 		}, {});
 		tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
+		this.setTreeValues(tree);
 
 		// Calculate plotting values.
 		this.axisRatio = (this.xAxis.len / this.yAxis.len);
