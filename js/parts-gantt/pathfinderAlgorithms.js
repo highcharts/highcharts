@@ -189,8 +189,6 @@ var algorithms = {
 				lastPoint,
 				highestPoint,
 				lowestPoint,
-				obstacleMinIx,
-				obstacleMaxIx = chartObstacles.length - 1,
 				i,
 				searchDirection = fromPoint.x < toPoint.x ? 1 : -1;
 
@@ -212,8 +210,14 @@ var algorithms = {
 
 			// Go through obstacle range in reverse if toPoint is before 
 			// fromPoint in the X-dimension.
-			obstacleMinIx = findLastObstacleBefore(chartObstacles, firstPoint.x);
-			i = searchDirection > 0 ? obstacleMinIx : obstacleMaxIx;
+			if (searchDirection > 0) {
+				i = findLastObstacleBefore(chartObstacles, firstPoint.x);
+			} else {
+				// findLastObstacleBefore is not precise and might return an
+				// index or two earlier than it should, so add some margin here.
+				i = min(findLastObstacleBefore(chartObstacles, lastPoint.x) + 3, 
+						chartObstacles.length - 1);
+			}
 
 			// Go through obstacles in this X range
 			while (chartObstacles[i] && (
@@ -364,7 +368,6 @@ var algorithms = {
 		}
 
 		// Find the path
-		debugger;
 		segments = clearPathTo(start, end);
 
 		return {
