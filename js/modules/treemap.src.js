@@ -549,52 +549,53 @@ seriesType('treemap', 'scatter', {
 		return this.algorithmFill(false, parent, children);
 	},
 	translate: function () {
-		var pointValues,
+		var series = this,
+			pointValues,
 			seriesArea,
 			tree,
 			val;
 
 		// Call prototype function
-		Series.prototype.translate.call(this);
+		Series.prototype.translate.call(series);
 
 		// Assign variables
-		this.rootNode = pick(this.options.rootId, '');
+		series.rootNode = pick(series.options.rootId, '');
 		// Create a object map from level to options
-		this.levelMap = reduce(this.options.levels, function (arr, item) {
+		series.levelMap = reduce(series.options.levels, function (arr, item) {
 			arr[item.level] = item;
 			return arr;
 		}, {});
-		tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
-		this.setTreeValues(tree);
+		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
+		series.setTreeValues(tree);
 
 		// Calculate plotting values.
-		this.axisRatio = (this.xAxis.len / this.yAxis.len);
-		this.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
-		this.nodeMap[''].values = seriesArea = merge(pointValues, {
-			width: (pointValues.width * this.axisRatio),
-			direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+		series.axisRatio = (series.xAxis.len / series.yAxis.len);
+		series.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
+		series.nodeMap[''].values = seriesArea = merge(pointValues, {
+			width: (pointValues.width * series.axisRatio),
+			direction: (series.options.layoutStartingDirection === 'vertical' ? 0 : 1),
 			val: tree.val
 		});
-		this.calculateChildrenAreas(tree, seriesArea);
+		series.calculateChildrenAreas(tree, seriesArea);
 
 		// Logic for point colors
-		if (this.colorAxis) {
-			this.translateColors();
-		} else if (!this.options.colorByPoint) {
-			this.setColorRecursive(this.tree);
+		if (series.colorAxis) {
+			series.translateColors();
+		} else if (!series.options.colorByPoint) {
+			series.setColorRecursive(series.tree);
 		}
 
 		// Update axis extremes according to the root node.
-		if (this.options.allowDrillToNode) {
-			val = this.nodeMap[this.rootNode].pointValues;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
-			this.xAxis.setScale();
-			this.yAxis.setScale();
+		if (series.options.allowDrillToNode) {
+			val = series.nodeMap[series.rootNode].pointValues;
+			series.xAxis.setExtremes(val.x, val.x + val.width, false);
+			series.yAxis.setExtremes(val.y, val.y + val.height, false);
+			series.xAxis.setScale();
+			series.yAxis.setScale();
 		}
 
 		// Assign values to points.
-		this.setPointValues();
+		series.setPointValues();
 	},
 	/**
 	 * Extend drawDataLabels with logic to handle custom options related to the treemap series:
