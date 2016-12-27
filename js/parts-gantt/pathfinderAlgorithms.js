@@ -189,7 +189,10 @@ var algorithms = {
 				lastPoint,
 				highestPoint,
 				lowestPoint,
-				i;
+				obstacleMinIx,
+				obstacleMaxIx = chartObstacles.length - 1,
+				i,
+				searchDirection = fromPoint.x < toPoint.x ? 1 : -1;
 
 			if (fromPoint.x < toPoint.x) {
 				firstPoint = fromPoint;
@@ -207,13 +210,20 @@ var algorithms = {
 				highestPoint = fromPoint;
 			}
 
-			i = findLastObstacleBefore(chartObstacles, firstPoint.x);
+			// Go through obstacle range in reverse if toPoint is before 
+			// fromPoint in the X-dimension.
+			obstacleMinIx = findLastObstacleBefore(chartObstacles, firstPoint.x);
+			i = searchDirection > 0 ? obstacleMinIx : obstacleMaxIx;
 
 			// Go through obstacles in this X range
-			while (chartObstacles[i] && chartObstacles[i].xMin <= lastPoint.x) {
+			while (chartObstacles[i] && (
+				searchDirection > 0 && chartObstacles[i].xMin <= lastPoint.x ||
+				searchDirection < 0 && chartObstacles[i].xMax >= firstPoint.x
+			)) {
 				// If this obstacle is between from and to points in a straight
 				// line, pivot at the intersection.
 				if (
+					chartObstacles[i].xMin <= lastPoint.x &&
 					chartObstacles[i].xMax >= firstPoint.x &&
 					chartObstacles[i].yMin <= highestPoint.y &&
 					chartObstacles[i].yMax >= lowestPoint.y
@@ -237,7 +247,7 @@ var algorithms = {
 					};
 				}
 
-				++i;
+				i += searchDirection;
 			}
 			
 			return toPoint;
@@ -354,6 +364,7 @@ var algorithms = {
 		}
 
 		// Find the path
+		debugger;
 		segments = clearPathTo(start, end);
 
 		return {
