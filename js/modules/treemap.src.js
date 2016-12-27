@@ -803,10 +803,12 @@ seriesType('treemap', 'scatter', {
 			}
 		} 
 	},
-	drillToNode: function (id) {
+	drillToNode: function (id, redraw) {
 		this.options.rootId = id;
 		this.isDirty = true; // Force redraw
-		this.chart.redraw();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
 	},
 	showDrillUpButton: function (name) {
 		var series = this,
