@@ -108,6 +108,7 @@ H.PlotLineOrBand.prototype = {
 					.path()
 					.attr(attribs).add(group);
 		}
+
 		
 
 		// Set the path or return
@@ -118,6 +119,8 @@ H.PlotLineOrBand.prototype = {
 		} else {
 			return;
 		}
+
+		console.log('b', value, from, to, path);
 
 		// common for lines and bands
 		if (isNew && path && path.length) {
