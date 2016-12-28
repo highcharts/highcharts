@@ -107,7 +107,7 @@ seriesType('gantt', parentName, {
 		},
 		endMarker: {
 			enabled: true,
-			symbol: 'circle',
+			symbol: 'arrow',
 			fill: '#fa0'
 		}
 	}
