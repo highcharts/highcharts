@@ -288,10 +288,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				.add(pathfinder.group);
 
 		if (!this.connectingPathGraphics) {
-			this.connectingPathGraphics = [];
+			this.connectingPathGraphics = {};
 		}
 
-		this.connectingPathGraphics.push(pathGraphic);
+		this.connectingPathGraphics.path = pathGraphic;
 		// Add to internal list of paths for later destroying/referencing
 		pathfinder.paths.push(pathGraphic);
 	},
@@ -321,11 +321,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		)
 			.addClass('highcharts-point-connecting-path-' + type + '-marker')
 			.attr(merge(options, {
-				fill: options.color || this.color,
-				transform: 'rotate(' + degrees + ')'
+				fill: options.color || this.color
 			}))
 			.add(pathfinder.group);
-		this.connectingPathGraphics.push(marker);
+		// Rotate marker according to degrees
+		marker.attr(
+			'transform',
+			'rotate(' + -degrees + ',' + vector.x + ',' + vector.y + ')'
+		);
+
+		this.connectingPathGraphics[type] = marker;
 
 		// Add to internal list of paths for later destroying/referencing
 		pathfinder.paths.push(marker);
