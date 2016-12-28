@@ -733,14 +733,11 @@ seriesType('treemap', 'scatter', {
 		var series = this;
 		H.addEvent(series, 'click', function (event) {
 			var point = event.point,
-				drillId = point.drillId,
-				drillName;
+				drillId = point.drillId;
 			// If a drill id is returned, add click event and cursor. 
 			if (drillId) {
-				drillName = series.nodeMap[series.rootNode].name || series.rootNode;
 				point.setState(''); // Remove hover
 				series.drillToNode(drillId);
-				series.showDrillUpButton(drillName);
 			}
 		});
 	},
@@ -780,30 +777,22 @@ seriesType('treemap', 'scatter', {
 		return drillId;
 	},
 	drillUp: function () {
-		var drillPoint = null,
-			node,
-			parent;
-		if (this.rootNode) {
-			node = this.nodeMap[this.rootNode];
-			if (node.parent !== null) {
-				drillPoint = this.nodeMap[node.parent];
-			} else {
-				drillPoint = this.nodeMap[''];
-			}
+		var series = this,
+			node = series.nodeMap[series.rootNode];
+		if (H.defined(node.parent)) {
+			series.drillToNode(node.parent);
 		}
-
-		if (drillPoint !== null) {
-			this.drillToNode(drillPoint.id);
-			if (drillPoint.id === '') {
-				this.drillUpButton = this.drillUpButton.destroy();
-			} else {
-				parent = this.nodeMap[drillPoint.parent];
-				this.showDrillUpButton((parent.name || parent.id));
-			}
-		} 
 	},
 	drillToNode: function (id, redraw) {
-		this.options.rootId = id;
+		var series = this,
+			nodeMap = series.nodeMap,
+			node = nodeMap[id];
+		series.options.rootId = id;
+		if (id === '') {
+			series.drillUpButton = series.drillUpButton.destroy();
+		} else {
+			series.showDrillUpButton((node && node.name || id));
+		}
 		this.isDirty = true; // Force redraw
 		if (pick(redraw, true)) {
 			this.chart.redraw();
