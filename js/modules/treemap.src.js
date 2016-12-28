@@ -20,6 +20,7 @@ var seriesType = H.seriesType,
 	each = H.each,
 	grep = H.grep,
 	isNumber = H.isNumber,
+	isString = H.isString,
 	pick = H.pick,
 	Series = H.Series,
 	stableSort = H.stableSort,
@@ -150,7 +151,7 @@ seriesType('treemap', 'scatter', {
 		var series = this;
 		Series.prototype.init.call(series, chart, options);
 		if (series.options.allowDrillToNode) {
-			series.drillTo();
+			H.addEvent(series, 'click', series.onClickDrillToNode);
 		}
 	},
 	buildNode: function (id, i, level, list, parent) {
@@ -737,17 +738,15 @@ seriesType('treemap', 'scatter', {
 	/**
 	* Add drilling on the suitable points
 	*/
-	drillTo: function () {
-		var series = this;
-		H.addEvent(series, 'click', function (event) {
-			var point = event.point,
-				drillId = point.drillId;
-			// If a drill id is returned, add click event and cursor. 
-			if (drillId) {
-				point.setState(''); // Remove hover
-				series.drillToNode(drillId);
-			}
-		});
+	onClickDrillToNode: function (event) {
+		var series = this,
+			point = event.point,
+			drillId = point && point.drillId;
+		// If a drill id is returned, add click event and cursor. 
+		if (isString(drillId)) {
+			point.setState(''); // Remove hover
+			series.drillToNode(drillId);
+		}
 	},
 	/**
 	* Finds the drill id for a parent node.
@@ -787,7 +786,7 @@ seriesType('treemap', 'scatter', {
 	drillUp: function () {
 		var series = this,
 			node = series.nodeMap[series.rootNode];
-		if (node && H.defined(node.parent)) {
+		if (node && isString(node.parent)) {
 			series.drillToNode(node.parent);
 		}
 	},
