@@ -348,7 +348,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * @return {number}    - the angle in degrees
 	 */
 	getRadiansToVector: function (x, y) {
-		return Math.atan2(this.plotY - y, x - this.plotX);
+		var box = this.graphic.getBBox(),
+			centerX = box.x + box.width / 2,
+			centerY = box.y + box.height / 2;
+		return Math.atan2(centerY - y, x - centerX);
 	},
 
 	/**

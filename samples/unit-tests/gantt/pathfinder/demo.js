@@ -198,7 +198,7 @@ QUnit.test('Marker rotation', function (assert) {
         endAngles = {
             5: {
                 5: 135,
-                10: -180,
+                10: 180,
                 15: -135
             },
             10: {
