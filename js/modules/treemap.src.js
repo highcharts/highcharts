@@ -550,6 +550,8 @@ seriesType('treemap', 'scatter', {
 	},
 	translate: function () {
 		var series = this,
+			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
+			rootNode,
 			pointValues,
 			seriesArea,
 			tree,
@@ -557,14 +559,21 @@ seriesType('treemap', 'scatter', {
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
-		// Assign variables
-		series.rootNode = pick(series.rootNode, series.options.rootId, '');
 		// Create a object map from level to options
 		series.levelMap = reduce(series.options.levels, function (arr, item) {
 			arr[item.level] = item;
 			return arr;
 		}, {});
 		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
+		rootNode = series.nodeMap[rootId];
+		if (
+			rootId !== '' &&
+			(!rootNode || !rootNode.children.length)
+		) {
+			series.drillToNode('', false);
+			rootId = series.rootNode;
+			rootNode = series.nodeMap[rootId];
+		}
 		series.setTreeValues(tree);
 
 		// Calculate plotting values.
@@ -586,7 +595,7 @@ seriesType('treemap', 'scatter', {
 
 		// Update axis extremes according to the root node.
 		if (series.options.allowDrillToNode) {
-			val = series.nodeMap[series.rootNode].pointValues;
+			val = rootNode.pointValues;
 			series.xAxis.setExtremes(val.x, val.x + val.width, false);
 			series.yAxis.setExtremes(val.y, val.y + val.height, false);
 			series.xAxis.setScale();
