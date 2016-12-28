@@ -65,6 +65,7 @@ seriesTypes.xrange = extendClass(columnType, {
 	parallelArrays: ['x', 'x2', 'y'],
 	requireSorting: false,
 	animate: seriesTypes.line.prototype.animate,
+	cropShoulder: 1,
 
 	/**
 	 * Borrow the column series metrics, but with swapped axes. This gives free access
@@ -93,8 +94,8 @@ seriesTypes.xrange = extendClass(columnType, {
 	},
 
 	/**
-	 * Override cropData to show a point where x is outside visible range
-	 * but x2 is outside.
+	 * Override cropData to show a point where x or x2 is outside visible range,
+	 * but one of them is inside.
 	 */
 	cropData: function (xData, yData, min, max) {
 
