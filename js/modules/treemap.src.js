@@ -787,7 +787,7 @@ seriesType('treemap', 'scatter', {
 	drillUp: function () {
 		var series = this,
 			node = series.nodeMap[series.rootNode];
-		if (H.defined(node.parent)) {
+		if (node && H.defined(node.parent)) {
 			series.drillToNode(node.parent);
 		}
 	},

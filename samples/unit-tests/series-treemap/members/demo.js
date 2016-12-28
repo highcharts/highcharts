@@ -52,3 +52,39 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
         'When state:select zIndex is 0'
     );
 });
+
+QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
+    var drillUp = Highcharts.seriesTypes.treemap.prototype.drillUp,
+        series = {
+            rootNode: '',
+            drillToNode: function (id) {
+                this.rootNode = id;
+            },
+            nodeMap: {
+                '': {},
+                'A': { parent: '' }
+            }
+        };
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'Do not drill up when root node does not have a parent'
+    );
+
+    series.rootNode = 'B';
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        'B',
+        'Do not drill when root node does not exist'
+    );
+
+    series.rootNode = 'A';
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'Drill to parent'
+    );
+});
