@@ -31,6 +31,7 @@ extend(H.defaultOptions, {
 		// - start and end marker symbols should be disabled by default
 		// - common options for start and endMarker
 		startMarker: {
+			enabled: false,
 			symbol: 'diamond',
 			align: 'center',
 			radius: 4,
@@ -38,6 +39,7 @@ extend(H.defaultOptions, {
 			verticalAlign: 'middle'
 		},
 		endMarker: {
+			enabled: false,
 			symbol: 'arrow-filled',
 			align: 'center',
 			radius: 4,
@@ -504,28 +506,32 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		delete options.endMarker.endMarker;
 
 		// Add start marker
-		radians = this.getRadiansToVector(
-			path[4], // Second x in path
-			path[5]  // Second y in path
-		);
-		this.addMarker(
-			'start',
-			this.getMarkerVector(radians, options.startMarker.radius),
-			options.startMarker,
-			radians
-		);
+		if (options.startMarker.enabled) {
+			radians = this.getRadiansToVector(
+				path[4], // Second x in path
+				path[5]  // Second y in path
+			);
+			this.addMarker(
+				'start',
+				this.getMarkerVector(radians, options.startMarker.radius),
+				options.startMarker,
+				radians
+			);
+		}
 
 		// Add end marker
-		radians = toPoint.getRadiansToVector(
-			path[path.length - 5], // Second last x in path
-			path[path.length - 4]  // Second last y in path
-		);
-		this.addMarker(
-			'end',
-			toPoint.getMarkerVector(radians, options.endMarker.radius),
-			options.endMarker,
-			radians
-		);
+		if (options.endMarker.enabled) {
+			radians = toPoint.getRadiansToVector(
+				path[path.length - 5], // Second last x in path
+				path[path.length - 4]  // Second last y in path
+			);
+			this.addMarker(
+				'end',
+				toPoint.getMarkerVector(radians, options.endMarker.radius),
+				options.endMarker,
+				radians
+			);
+		}
 	}
 });
 

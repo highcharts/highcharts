@@ -48,6 +48,14 @@ QUnit.testStart(function () {
         // bottom, left, right and all cordners, and connect them to the
         // center
         series: [{
+            pathfinder: {
+                startMarker: {
+                    enabled: true
+                },
+                endMarker: {
+                    enabled: true
+                }
+            },
             showInLegend: false,
             data: [{
                 x: 10,

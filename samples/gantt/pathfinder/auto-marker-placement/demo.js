@@ -1,6 +1,14 @@
 $(function () {
     Highcharts.chart('container', {
         series: [{
+            pathfinder: {
+                startMarker: {
+                    enabled: true
+                },
+                endMarker: {
+                    enabled: true
+                }
+            },
             data: [{
                 x: 10,
                 y: 10,

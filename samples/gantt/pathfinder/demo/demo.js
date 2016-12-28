@@ -1,6 +1,14 @@
 $(function () {
     Highcharts.chart('container', {
         series: [{
+            pathfinder: {
+                startMarker: {
+                    enabled: true
+                },
+                endMarker: {
+                    enabled: true
+                }
+            },
             data: [{
                 y: 29.9,
                 connect: 'bob'
