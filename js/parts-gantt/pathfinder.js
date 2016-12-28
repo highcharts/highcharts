@@ -419,9 +419,11 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * @param {Object} options Path options, including position on point, style
 	 */
 	pathTo: function (toPoint, opts) {
-		var chart = this.series.chart,
+		var series = this.series,
+			chart = series.chart,
 			pathfinder = chart.pathfinder,
 			defaultOptions = chart.options.pathfinder,
+			seriesOptions = series.options.pathfinder,
 			chartObstacles = pathfinder.chartObstacles,
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
@@ -429,7 +431,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			radians,
 			path,
 			attribs,
-			options = merge(defaultOptions, opts),
+			options = merge(defaultOptions, seriesOptions, opts),
 			algorithm = pathfinder.algorithms[options.type];
 
 		// This function calculates obstacles on demand if they don't exist
@@ -476,7 +478,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		if (!pathfinder.group) {
 			pathfinder.group = renderer.g()
 				.addClass('highcharts-pathfinder')
-				.add(this.series.group);
+				.add(series.group);
 		}
 		attribs = {
 			stroke: options.color || this.color,
@@ -492,7 +494,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		this.addPath(path, attribs);
 
 		// Set common marker options
-		options = merge(this.series.options.marker, attribs, options);
+		options = merge(attribs, options);
 		// Override common marker options
 		options.startMarker = merge(options, options.startMarker);
 		options.endMarker = merge(options, options.endMarker);
