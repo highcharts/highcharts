@@ -557,9 +557,8 @@ seriesType('treemap', 'scatter', {
 
 		// Call prototype function
 		Series.prototype.translate.call(series);
-
 		// Assign variables
-		series.rootNode = pick(series.options.rootId, '');
+		series.rootNode = pick(series.rootNode, series.options.rootId, '');
 		// Create a object map from level to options
 		series.levelMap = reduce(series.options.levels, function (arr, item) {
 			arr[item.level] = item;
@@ -787,7 +786,7 @@ seriesType('treemap', 'scatter', {
 		var series = this,
 			nodeMap = series.nodeMap,
 			node = nodeMap[id];
-		series.options.rootId = id;
+		series.rootNode = id;
 		if (id === '') {
 			series.drillUpButton = series.drillUpButton.destroy();
 		} else {
