@@ -99,16 +99,14 @@ seriesType('gantt', parentName, {
 		}
 	},
 	pathfinder: {
-		type: 'straight', // TODO change to when done 'fastAvoid'
+		type: 'straight', // TODO change to 'fastAvoid' when done
 		startMarker: {
-			enabled: true,
-			symbol: 'diamond',
-			fill: '#fa0'
-		},
-		endMarker: {
 			enabled: true,
 			symbol: 'arrow',
 			fill: '#fa0'
+		},
+		endMarker: {
+			enabled: false // Only show arrow on the dependent task
 		}
 	}
 }, {
