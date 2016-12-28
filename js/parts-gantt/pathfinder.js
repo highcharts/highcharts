@@ -28,16 +28,17 @@ extend(H.defaultOptions, {
 		// color: point.color,
 		type: 'straight',
 		// TODO
-		// start and end marker symbols should be disabled by default
+		// - start and end marker symbols should be disabled by default
+		// - common options for start and endMarker
 		startMarker: {
-			symbol: 'circle',
+			symbol: 'diamond',
 			align: 'center',
 			radius: 4,
 			inside: false,
 			verticalAlign: 'middle'
 		},
 		endMarker: {
-			symbol: 'diamond',
+			symbol: 'arrow-filled',
 			align: 'center',
 			radius: 4,
 			inside: false,
