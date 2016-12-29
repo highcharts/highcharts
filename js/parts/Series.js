@@ -1215,7 +1215,6 @@ H.Series = H.seriesType('line', null, { // base series options
 		var series = this,
 			points = series.points,
 			i,
-			point,
 			options = series.options,
 			seriesMarkerOptions = options.marker;
 
@@ -1223,8 +1222,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			i = points.length;
 			while (i--) {
-				point = points[i];
-				series.drawPoint(point);
+				series.drawPoint(points[i]);
 			}
 		}
 
