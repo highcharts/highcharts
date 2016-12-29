@@ -1123,6 +1123,11 @@ H.Series = H.seriesType('line', null, { // base series options
 		fireEvent(this, 'afterAnimate');
 	},
 
+	/**
+	 * Draws a single point in the series.
+	 * @param  {Object} point an instance of Point in the series.
+	 * @returns {void}
+	 */
 	drawPoint: function (point) {
 		var series = this,
 			chart = series.chart,
@@ -1139,7 +1144,12 @@ H.Series = H.seriesType('line', null, { // base series options
 				xAxis.isRadial ? true : null,
 				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			),
-			enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled,
+			enabled =
+				(
+					globallyEnabled &&
+					pointMarkerOptions.enabled === undefined
+				) ||
+				pointMarkerOptions.enabled,
 			isInside = point.isInside,
 			symbol,
 			markerAttribs;
@@ -1157,9 +1167,13 @@ H.Series = H.seriesType('line', null, { // base series options
 			);
 
 			if (graphic) { // update
-				graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
+				// Since the marker group isn't clipped, each individual marker
+				// must be toggled
+				graphic[isInside ? 'show' : 'hide'](true)
 					.animate(markerAttribs);
-			} else if (isInside && (markerAttribs.width > 0 || point.hasImage)) {
+			} else if (
+					isInside &&
+					(markerAttribs.width > 0 || point.hasImage)) {
 				point.graphic = graphic = chart.renderer.symbol(
 					symbol,
 					markerAttribs.x,
@@ -1174,7 +1188,10 @@ H.Series = H.seriesType('line', null, { // base series options
 			/*= if (build.classic) { =*/
 			// Presentational attributes
 			if (graphic) {
-				graphic.attr(series.pointAttribs(point, point.selected && 'select'));
+				graphic.attr(series.pointAttribs(
+					point,
+					point.selected && 'select'
+				));
 			}
 			/*= } =*/
 
