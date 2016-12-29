@@ -142,6 +142,17 @@ seriesType('gantt', parentName, {
 		}
 	},
 
+	/**
+	 * Draws a single point in the series.
+	 *
+	 * This override draws the point as a diamond if point.options.milestone is
+	 * true, and uses the parent drawPoint() if it is false or not set.
+	 *
+	 * @param  {Object} point an instance of Point in the series
+	 * @param  {string} verb 'animate' (animates changes) or 'attr' (sets
+	 *                       options)
+	 * @returns {void}
+	 */
 	drawPoint: function (point, verb) {
 		var series = this,
 			seriesOpts = series.options,

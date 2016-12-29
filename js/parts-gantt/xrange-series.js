@@ -183,6 +183,17 @@ seriesTypes.xrange = extendClass(columnType, {
 		});
 	},
 
+	/**
+	 * Draws a single point in the series.
+	 *
+	 * This override turns point.graphic into a group containing the original
+	 * graphic and an overlay displaying the partial fill.
+	 *
+	 * @param  {Object} point an instance of Point in the series
+	 * @param  {string} verb 'animate' (animates changes) or 'attr' (sets
+	 *                       options)
+	 * @returns {void}
+	 */
 	drawPoint: function (point, verb) {
 		var series = this,
 			plotY = point.plotY,
