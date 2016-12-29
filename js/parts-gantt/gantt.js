@@ -54,7 +54,9 @@ seriesType('gantt', parentName, {
 		}
 	},
 	tooltip: {
-		headerFormat: '<span style="color:{point.color}; text-align: right">{series.name}</span><br/>',
+		headerFormat:	'<span style="color:{point.color};text-align:right">' +
+							'{series.name}' +
+						'</span><br/>',
 		pointFormatter: function () {
 			var point = this,
 				series = point.series,
