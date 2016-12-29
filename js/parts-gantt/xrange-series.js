@@ -184,6 +184,76 @@ seriesTypes.xrange = extendClass(columnType, {
 	},
 
 	/**
+	 * Aligns an individual dataLabel.
+	 *
+	 * This override moves the
+	 *
+	 * @param  {Object} point     the point belonging to the dataLabel
+	 * @param  {Object} dataLabel the dataLabel configuration object
+	 * @param  {Object} options   dataLabel options for the series
+	 * @return {void}
+	 */
+	alignDataLabel: function (point, dataLabel, options) {
+		var chart = this.chart,
+			align = options.align,
+			inverted = chart.inverted,
+			plotX = pick(point.plotX, -9999),
+			plotY = pick(point.plotY, -9999),
+			verticalAlign = options.verticalAlign,
+			inside = options.inside,
+			pointBox = point.shapeArgs,
+			labelBox = dataLabel.getBBox(),
+			labelTextBox = dataLabel.text.getBBox(),
+			attr = {},
+			visible =
+				this.visible &&
+				(
+					labelTextBox.width <= pointBox.width &&
+					labelTextBox.height <= pointBox.height
+				) &&
+				(
+					this.forceDL ||
+					chart.isInsidePlot(plotX, Math.round(plotY), inverted)
+				);
+
+		if (visible) {
+			if (align === 'right') {
+				if (inside) {
+					attr.x = pointBox.x + pointBox.width - labelBox.width;
+				} else {
+					attr.x = pointBox.x - labelBox.width;
+				}
+			} else if (align === 'left') {
+				if (inside) {
+					attr.x = pointBox.x;
+				} else {
+					attr.x = pointBox.x + pointBox.width + labelBox.x;
+				}
+			} else { // Center
+				attr.x = pointBox.x + pointBox.width / 2 - labelBox.width / 2;
+			}
+
+			if (verticalAlign === 'bottom') {
+				if (inside) {
+					attr.y = pointBox.y + pointBox.height - labelBox.height;
+				} else {
+					attr.y = pointBox.y - labelBox.height;
+				}
+			} else if (verticalAlign === 'top') {
+				if (inside) {
+					attr.y = pointBox.y;
+				} else {
+					attr.y = pointBox.y + pointBox.height;
+				}
+			} else { // Middle
+				attr.y = pointBox.y + pointBox.height / 2 - labelBox.height / 2;
+			}
+
+			dataLabel.attr(attr);
+		}
+	},
+
+	/**
 	 * Draws a single point in the series.
 	 *
 	 * This override turns point.graphic into a group containing the original

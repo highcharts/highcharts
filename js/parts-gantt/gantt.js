@@ -11,9 +11,6 @@ import 'grid-axis.js';
 import 'pathfinder.js';
 import 'xrange-series.js';
 
-// TODO
-// - dataLabel alignment (verticalAlign, inside)
-
 var dateFormat = H.dateFormat,
 	defined = H.defined,
 	isObject = H.isObject,
@@ -112,7 +109,7 @@ seriesType('gantt', parentName, {
 		}
 	}
 }, {
-	// props - member overrides
+	// props - series member overrides
 
 	translatePoint: function (point) {
 		var series = this,
