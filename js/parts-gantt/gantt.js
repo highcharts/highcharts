@@ -189,10 +189,12 @@ seriesType('gantt', parentName, {
 }, {
 	// pointProps - point member overrides
 	/**
-	 * Apply the options containing the x and y data and possible some extra properties.
-	 * This is called on point init or from point.update.
+	 * Applies the options containing the x and y data and possible some extra
+	 * properties. This is called on point init or from point.update.
 	 *
-	 * @param {Object} options
+	 * @param {Object} options the point options
+	 * @param {number} x the x value
+	 * @return {Object} the Point instance
 	 */
 	applyOptions: function (options, x) {
 		var point = this,
@@ -219,7 +221,14 @@ seriesType('gantt', parentName, {
 		return retVal;
 	},
 
-	// Add x2 and yCategory to the available properties for tooltip formats
+	/**
+	 * Get an information object used for the data label and tooltip formatters.
+	 *
+	 * This override adds point.taskName to the configuration, which makes it
+	 * available in data label and tooltip formatters.
+	 *
+	 * @return {Object} an object with point information
+	 */
 	getLabelConfig: function () {
 		var point = this,
 			cfg = Point.prototype.getLabelConfig.call(point);
