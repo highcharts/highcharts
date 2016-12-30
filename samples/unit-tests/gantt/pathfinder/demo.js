@@ -1,4 +1,6 @@
-var squareChartConfig;
+var squareChartConfig,
+    startPositions,
+    endPositions;
 
 QUnit.testStart(function () {
     squareChartConfig = {
@@ -49,10 +51,7 @@ QUnit.testStart(function () {
         // center
         series: [{
             pathfinder: {
-                startMarker: {
-                    enabled: true
-                },
-                endMarker: {
+                markers: {
                     enabled: true
                 }
             },
@@ -97,42 +96,42 @@ QUnit.testStart(function () {
             type: 'scatter'
         }]
     };
+    startPositions = {
+        5: {
+            5: { x: 2.82, y: 359.17 },
+            10: { x: 4, y: 181 },
+            15: { x: 2.82, y: 2.82 }
+        },
+        10: {
+            5: { x: 181, y: 358 },
+            15: { x: 181, y: 4 }
+        },
+        15: {
+            5: { x: 359.17, y: 359.17 },
+            10: { x: 358, y: 181 },
+            15: { x: 359.17, y: 2.82 }
+        }
+    };
+    endPositions = {
+        5: {
+            5: { x: 174.17, y: 187.82 },
+            10: { x: 173, y: 181 },
+            15: { x: 174.17, y: 174.17 }
+        },
+        10: {
+            5: { x: 181, y: 189 },
+            15: { x: 181, y: 173 }
+        },
+        15: {
+            5: { x: 187.82, y: 187.82 },
+            10: { x: 189, y: 181 },
+            15: { x: 187.82, y: 174.17 }
+        }
+    };
 });
 
 QUnit.test('Marker placement', function (assert) {
     var error = 0.01,
-        startPositions = {
-            5: {
-                5: { x: 2.82, y: 359.17 },
-                10: { x: 4, y: 181 },
-                15: { x: 2.82, y: 2.82 }
-            },
-            10: {
-                5: { x: 181, y: 358 },
-                15: { x: 181, y: 4 }
-            },
-            15: {
-                5: { x: 359.17, y: 359.17 },
-                10: { x: 358, y: 181 },
-                15: { x: 359.17, y: 2.82 }
-            }
-        },
-        endPositions = {
-            5: {
-                5: { x: 174.17, y: 187.82 },
-                10: { x: 173, y: 181 },
-                15: { x: 174.17, y: 174.17 }
-            },
-            10: {
-                5: { x: 181, y: 189 },
-                15: { x: 181, y: 173 }
-            },
-            15: {
-                5: { x: 187.82, y: 187.82 },
-                10: { x: 189, y: 181 },
-                15: { x: 187.82, y: 174.17 }
-            }
-        },
         chart = Highcharts.chart('container', squareChartConfig),
         points = chart.series[0].points,
         graphic,
@@ -247,5 +246,87 @@ QUnit.test('Marker rotation', function (assert) {
                 'End marker from ' + x + ',' + y + ' rotates correctly'
             );
         }
+    });
+});
+
+/**
+ * Checks that markers align correctly when paths are given a specific
+ * alignment.
+ */
+QUnit.test('Marker alignment', function (assert) {
+    var error = 0.01,
+        chart,
+        series = squareChartConfig.series[0],
+        opts = series.pathfinder,
+        aligns = ['left', 'center', 'right'],
+        verticalAligns = ['top', 'middle', 'bottom'];
+
+    series.data = [{
+        x: 15,
+        y: 10,
+        connect: 'left'
+    }, {
+        x: 5,
+        y: 10,
+        id: 'left'
+    }];
+
+    // This test is run for each combination of align and verticalAlign
+    function test(chart, align, verticalAlign) {
+        var xMod = 0, // Defaults to 'center'
+            yMod = 0, // Defaults to 'middle'
+            point = chart.series[0].points[0],
+            graphic = point.connectingPathGraphics,
+
+            // Check only the start marker, because both start and end markers
+            // should be placed using the same logic. If end marker starts
+            // acting up, add another pair of asserts for that as well
+            marker = graphic.start;
+
+        // Horizontal alignment modifies marker x, so expect an x modification
+        if (align === 'left') {
+            xMod = -2;
+        } else if (align === 'right') {
+            xMod = 2;
+        }
+
+        // Vertical alignment modifies marker y, so expect a y modification
+        if (verticalAlign === 'top') {
+            yMod = -2;
+        } else if (verticalAlign === 'bottom') {
+            yMod = 2;
+        }
+
+        // Check x position
+        assert.close(
+            marker.x,
+            startPositions[point.x][point.y].x + xMod,
+            error,
+            align + ' ' + verticalAlign + ' aligned start marker x correct'
+        );
+
+        // Check y position
+        assert.close(
+            marker.y,
+            startPositions[point.x][point.y].y + yMod,
+            error,
+            align + ' ' + verticalAlign + ' aligned start marker y correct'
+        );
+    }
+
+    // Combine all verticalAligns...
+    Highcharts.each(verticalAligns, function (verticalAlign) {
+        // ... with all (horizontal) aligns
+        Highcharts.each(aligns, function (align) {
+            // Set them on the config...
+            opts.markers.verticalAlign = verticalAlign;
+            opts.markers.align = align;
+
+            // ... create the chart...
+            chart = Highcharts.chart('container', squareChartConfig);
+
+            // ... and test them.
+            test(chart, align, verticalAlign);
+        });
     });
 });
