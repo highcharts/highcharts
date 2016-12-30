@@ -464,6 +464,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				pathfinder.getObstacleMetrics(chartObstacles);
 		}
 
+		attribs = {
+			stroke: options.color || this.color,
+			'stroke-width': options.lineWidth
+		};
+		if (options.dashStyle) {
+			attribs.dashstyle = options.dashStyle;
+		}
 		// Set common marker options
 		options = merge(attribs, options);
 		options.startMarker = merge(options.markers, options.startMarker);
@@ -506,13 +513,6 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			pathfinder.group = renderer.g()
 				.addClass('highcharts-pathfinder')
 				.add(series.group);
-		}
-		attribs = {
-			stroke: options.color || this.color,
-			'stroke-width': options.lineWidth
-		};
-		if (options.dashStyle) {
-			attribs.dashstyle = options.dashStyle;
 		}
 
 		path = pathResult.path;
