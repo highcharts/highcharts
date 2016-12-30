@@ -18,7 +18,6 @@ var deg2rad = H.deg2rad,
 
 // TODO:
 // Check dynamics, including hiding/adding/removing/updating series/points etc.
-// Symbols for markers
 
 // Set default Pathfinder options
 extend(H.defaultOptions, {
@@ -27,24 +26,18 @@ extend(H.defaultOptions, {
 		// dashStyle: 'solid',
 		// color: point.color,
 		type: 'straight',
-		// TODO
-		// - start and end marker symbols should be disabled by default
-		// - common options for start and endMarker
-		startMarker: {
+		markers: {
 			enabled: false,
-			symbol: 'diamond',
 			align: 'center',
+			verticalAlign: 'middle',
 			radius: 4,
-			inside: false,
-			verticalAlign: 'middle'
+			inside: false
+		},
+		startMarker: {
+			symbol: 'diamond'
 		},
 		endMarker: {
-			enabled: false,
-			symbol: 'arrow-filled',
-			align: 'center',
-			radius: 4,
-			inside: false,
-			verticalAlign: 'middle'
+			symbol: 'arrow-filled'
 		},
 		lineWidth: 1,
 		algorithmMargin: 10
@@ -497,6 +490,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		// Set common marker options
 		options = merge(attribs, options);
+		options.startMarker = merge(options.markers, options.startMarker);
+		options.endMarker = merge(options.markers, options.endMarker);
+
 		// Override common marker options
 		options.startMarker = merge(options, options.startMarker);
 		options.endMarker = merge(options, options.endMarker);
