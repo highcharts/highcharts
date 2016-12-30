@@ -53,10 +53,12 @@ seriesTypes.xrange = extendClass(columnType, {
 	pointClass: extendClass(Point, {
 		// Add x2 and yCategory to the available properties for tooltip formats
 		getLabelConfig: function () {
-			var cfg = Point.prototype.getLabelConfig.call(this);
+			var point = this,
+				cfg = Point.prototype.getLabelConfig.call(point),
+				yCats = point.series.yAxis.categories;
 
-			cfg.x2 = this.x2;
-			cfg.yCategory = this.yCategory = this.series.yAxis.categories && this.series.yAxis.categories[this.y];
+			cfg.x2 = point.x2;
+			cfg.yCategory = point.yCategory = yCats && yCats[point.y];
 			return cfg;
 		}
 	}),
@@ -68,8 +70,8 @@ seriesTypes.xrange = extendClass(columnType, {
 	cropShoulder: 1,
 
 	/**
-	 * Borrow the column series metrics, but with swapped axes. This gives free access
-	 * to features like groupPadding, grouping, pointWidth etc.
+	 * Borrow the column series metrics, but with swapped axes. This gives free
+	 * access to features like groupPadding, grouping, pointWidth etc.
 	 */
 	getColumnMetrics: function () {
 		var metrics,
