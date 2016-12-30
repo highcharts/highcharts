@@ -350,19 +350,33 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	},
 
 	/**
-	 * Get the edge of the point graphic, based on an angle.
-	 * @param  {number} deg the angle in degrees from the point center to
-	 *                      another vector
-	 * @return {Object}       a vector (x, y) of the point graphic edge
+	 * Get the position of the marker, based on the path angle and the marker's
+	 * radius.
+	 * @param {number} radians      the angle in radians from the point center
+	 *                              to another vector
+	 * @param {number} markerRadius the radius of the marker, to calculate the
+	 *                              additional distance to the center of the
+	 *                              marker
+	 * @param {Object} anchor       the anchor point of the path and marker
+	 * @param {number} anchor.x     the x position of the anchor
+	 * @param {number} anchor.y     the x position of the anchor
+	 * @return {Object}             a vector (x, y) of the marker position
 	 */
-	getMarkerVector: function (radians, markerRadius) {
+	getMarkerVector: function (radians, markerRadius, anchor) {
 		var twoPI = Math.PI * 2,
 			theta = radians,
 			rect = this.graphic.getBBox(),
 			rAtan = Math.atan2(rect.height, rect.width),
 			tanTheta = 1,
 			leftOrRightRegion = false,
-			edgePoint = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 },
+			rectHalfWidth = rect.width / 2.0,
+			rectHalfHeight = rect.height / 2.0,
+			rectHorizontalCenter = rect.x + rectHalfWidth,
+			rectVerticalCenter = rect.y + rectHalfHeight,
+			edgePoint = {
+				x: rectHorizontalCenter,
+				y: rectVerticalCenter
+			},
 			markerPoint = {},
 			xFactor = 1,
 			yFactor = 1;
@@ -393,16 +407,24 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			xFactor = -1;
 		}
 
+		// Correct the edgePoint according to the placement of the marker
 		if (leftOrRightRegion) {
-			edgePoint.x += xFactor * (rect.width / 2.0);
-			edgePoint.y += yFactor * (rect.width / 2.0) * tanTheta;
+			edgePoint.x += xFactor * (rectHalfWidth);
+			edgePoint.y += yFactor * (rectHalfWidth) * tanTheta;
 		} else {
 			edgePoint.x += xFactor * (rect.height / (2.0 * tanTheta));
-			edgePoint.y += yFactor * (rect.height /  2.0);
+			edgePoint.y += yFactor * (rectHalfHeight);
 		}
 
 		markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
 		markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
+
+		if (anchor.x !== rectHorizontalCenter) {
+			markerPoint.x = anchor.x;
+		}
+		if (anchor.y !== rectVerticalCenter) {
+			markerPoint.y = anchor.y;
+		}
 
 		return markerPoint;
 	},
@@ -422,6 +444,8 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles = pathfinder.chartObstacles,
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
+			fromAnchorPoint,
+			toAnchorPoint,
 			pathResult,
 			radians,
 			path,
@@ -440,10 +464,18 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				pathfinder.getObstacleMetrics(chartObstacles);
 		}
 
+		// Set common marker options
+		options = merge(attribs, options);
+		options.startMarker = merge(options.markers, options.startMarker);
+		options.endMarker = merge(options.markers, options.endMarker);
+
+		fromAnchorPoint = this.getPathfinderAnchorPoint(options.startMarker);
+		toAnchorPoint = toPoint.getPathfinderAnchorPoint(options.endMarker);
+
 		// Get the SVG path
 		pathResult = algorithm(
-			this.getPathfinderAnchorPoint(options.startMarker),
-			toPoint.getPathfinderAnchorPoint(options.endMarker),
+			fromAnchorPoint,
+			toAnchorPoint,
 			merge({
 				chartObstacles: chartObstacles,
 				lineObstacles: lineObstacles || [],
@@ -488,11 +520,6 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		// Add path
 		this.addPath(path, attribs);
 
-		// Set common marker options
-		options = merge(attribs, options);
-		options.startMarker = merge(options.markers, options.startMarker);
-		options.endMarker = merge(options.markers, options.endMarker);
-
 		// Override common marker options
 		options.startMarker = merge(options, options.startMarker);
 		options.endMarker = merge(options, options.endMarker);
@@ -509,7 +536,11 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			);
 			this.addMarker(
 				'start',
-				this.getMarkerVector(radians, options.startMarker.radius),
+				this.getMarkerVector(
+					radians,
+					options.startMarker.radius,
+					fromAnchorPoint
+				),
 				options.startMarker,
 				radians
 			);
@@ -523,7 +554,11 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			);
 			this.addMarker(
 				'end',
-				toPoint.getMarkerVector(radians, options.endMarker.radius),
+				toPoint.getMarkerVector(
+					radians,
+					options.endMarker.radius,
+					toAnchorPoint
+				),
 				options.endMarker,
 				radians
 			);

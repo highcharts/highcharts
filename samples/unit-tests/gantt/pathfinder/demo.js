@@ -1,45 +1,29 @@
-var squareChartConfig,
-    startPositions,
-    endPositions;
+var squareChartConfig;
 
 QUnit.testStart(function () {
+    var axisConfig = {
+        min: 5,
+        max: 15,
+        startOnTick: true,
+        endOnTick: true,
+        minPadding: 0,
+        maxPadding: 0,
+        tickLength: 0,
+        tickInterval: 5,
+        title: {
+            text: null
+        },
+        labels: {
+            enabled: false
+        }
+    };
     squareChartConfig = {
         // Create a chart with a perfectly square plot grid
         title: {
             text: null
         },
-        yAxis: [{
-            min: 5,
-            max: 15,
-            startOnTick: true,
-            endOnTick: true,
-            minPadding: 0,
-            maxPadding: 0,
-            tickLength: 0,
-            tickInterval: 5,
-            title: {
-                text: null
-            },
-            labels: {
-                enabled: false
-            }
-        }],
-        xAxis: [{
-            min: 5,
-            max: 15,
-            startOnTick: true,
-            endOnTick: true,
-            minPadding: 0,
-            maxPadding: 0,
-            tickLength: 0,
-            tickInterval: 5,
-            title: {
-                text: null
-            },
-            labels: {
-                enabled: false
-            }
-        }],
+        yAxis: [Highcharts.merge(axisConfig)],
+        xAxis: [Highcharts.merge(axisConfig)],
         chart: {
             width: 400,
             height: 400,
@@ -96,42 +80,42 @@ QUnit.testStart(function () {
             type: 'scatter'
         }]
     };
-    startPositions = {
-        5: {
-            5: { x: 2.82, y: 359.17 },
-            10: { x: 4, y: 181 },
-            15: { x: 2.82, y: 2.82 }
-        },
-        10: {
-            5: { x: 181, y: 358 },
-            15: { x: 181, y: 4 }
-        },
-        15: {
-            5: { x: 359.17, y: 359.17 },
-            10: { x: 358, y: 181 },
-            15: { x: 359.17, y: 2.82 }
-        }
-    };
-    endPositions = {
-        5: {
-            5: { x: 174.17, y: 187.82 },
-            10: { x: 173, y: 181 },
-            15: { x: 174.17, y: 174.17 }
-        },
-        10: {
-            5: { x: 181, y: 189 },
-            15: { x: 181, y: 173 }
-        },
-        15: {
-            5: { x: 187.82, y: 187.82 },
-            10: { x: 189, y: 181 },
-            15: { x: 187.82, y: 174.17 }
-        }
-    };
 });
 
 QUnit.test('Marker placement', function (assert) {
     var error = 0.01,
+        startPositions = {
+            5: {
+                5: { x: 2.82, y: 359.17 },
+                10: { x: 4, y: 181 },
+                15: { x: 2.82, y: 2.82 }
+            },
+            10: {
+                5: { x: 181, y: 358 },
+                15: { x: 181, y: 4 }
+            },
+            15: {
+                5: { x: 359.17, y: 359.17 },
+                10: { x: 358, y: 181 },
+                15: { x: 359.17, y: 2.82 }
+            }
+        },
+        endPositions = {
+            5: {
+                5: { x: 174.17, y: 187.82 },
+                10: { x: 173, y: 181 },
+                15: { x: 174.17, y: 174.17 }
+            },
+            10: {
+                5: { x: 181, y: 189 },
+                15: { x: 181, y: 173 }
+            },
+            15: {
+                5: { x: 187.82, y: 187.82 },
+                10: { x: 189, y: 181 },
+                15: { x: 187.82, y: 174.17 }
+            }
+        },
         chart = Highcharts.chart('container', squareChartConfig),
         points = chart.series[0].points,
         graphic,
@@ -147,8 +131,6 @@ QUnit.test('Marker placement', function (assert) {
             end = graphic.end.element.getBBox();
             x = point.x;
             y = point.y;
-
-            console.log(x, y, start, end);
 
             // Start marker
             assert.close(
@@ -262,56 +244,82 @@ QUnit.test('Marker alignment', function (assert) {
         verticalAligns = ['top', 'middle', 'bottom'];
 
     series.data = [{
-        x: 15,
+        x: 14,
         y: 10,
         connect: 'left'
     }, {
-        x: 5,
+        x: 6,
         y: 10,
         id: 'left'
+    }, {
+        x: 10,
+        y: 14,
+        connect: 'top'
+    }, {
+        x: 10,
+        y: 6,
+        id: 'top'
     }];
 
     // This test is run for each combination of align and verticalAlign
     function test(chart, align, verticalAlign) {
-        var xMod = 0, // Defaults to 'center'
+        var mod = 4, // The modification on x or y axis
+            xMod = 0, // Defaults to 'center'
             yMod = 0, // Defaults to 'middle'
-            point = chart.series[0].points[0],
-            graphic = point.connectingPathGraphics,
+            allPoints = chart.series[0].points,
+            connectorPoints = [allPoints[0], allPoints[2]];
 
-            // Check only the start marker, because both start and end markers
-            // should be placed using the same logic. If end marker starts
-            // acting up, add another pair of asserts for that as well
-            marker = graphic.start;
+        Highcharts.each(connectorPoints, function (point) {
+            var pointBox = point.graphic.getBBox(),
+                graphic = point.connectingPathGraphics,
+                // Check only the start marker, because both start and end
+                // markers should be placed using the same logic. If end marker
+                // starts acting up, add another pair of asserts for that as
+                // well
+                markerBox = graphic.start.getBBox(),
+                markerCenter = {
+                    x: markerBox.x + markerBox.width / 2,
+                    y: markerBox.y + markerBox.height / 2
+                },
+                pointCenter = {
+                    x: pointBox.x + pointBox.width / 2,
+                    y: pointBox.y + pointBox.height / 2
+                };
 
-        // Horizontal alignment modifies marker x, so expect an x modification
-        if (align === 'left') {
-            xMod = -2;
-        } else if (align === 'right') {
-            xMod = 2;
-        }
+            // Horizontal alignment modifies marker x, so expect an x modification
+            if (align === 'left') {
+                xMod = -mod;
+            } else if (align === 'right') {
+                xMod = mod;
+            } else if (align === 'center') {
+                xMod = markerCenter.x - pointCenter.x;
+            }
 
-        // Vertical alignment modifies marker y, so expect a y modification
-        if (verticalAlign === 'top') {
-            yMod = -2;
-        } else if (verticalAlign === 'bottom') {
-            yMod = 2;
-        }
+            // Vertical alignment modifies marker y, so expect a y modification
+            if (verticalAlign === 'top') {
+                yMod = -mod;
+            } else if (verticalAlign === 'bottom') {
+                yMod = mod;
+            } else if (verticalAlign === 'middle') {
+                yMod = markerCenter.y - pointCenter.y;
+            }
+            console.log(markerBox, pointBox);
+            // Check x position
+            assert.close(
+                markerCenter.x,
+                pointCenter.x + xMod,
+                error,
+                align + ' ' + verticalAlign + ' aligned start marker x correct'
+            );
 
-        // Check x position
-        assert.close(
-            marker.x,
-            startPositions[point.x][point.y].x + xMod,
-            error,
-            align + ' ' + verticalAlign + ' aligned start marker x correct'
-        );
-
-        // Check y position
-        assert.close(
-            marker.y,
-            startPositions[point.x][point.y].y + yMod,
-            error,
-            align + ' ' + verticalAlign + ' aligned start marker y correct'
-        );
+            // Check y position
+            assert.close(
+                markerCenter.y,
+                pointCenter.y + yMod,
+                error,
+                align + ' ' + verticalAlign + ' aligned start marker y correct'
+            );
+        });
     }
 
     // Combine all verticalAligns...
