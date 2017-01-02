@@ -199,7 +199,8 @@ Navigator.prototype = {
 				.attr({
 					fill: handlesOptions.backgroundColor,
 					stroke: handlesOptions.borderColor,
-					'stroke-width': 1
+					'stroke-width': 1,
+					'shape-rendering': 'crispEdges'
 				})
 				.css({ cursor: 'ew-resize' });
 			/*= } =*/
