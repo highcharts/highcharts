@@ -86,34 +86,34 @@ QUnit.test('Marker placement', function (assert) {
     var error = 0.01,
         startPositions = {
             5: {
-                5: { x: 2.82, y: 359.17 },
+                5: { x: 3, y: 359 },
                 10: { x: 4, y: 181 },
-                15: { x: 2.82, y: 2.82 }
+                15: { x: 3, y: 3 }
             },
             10: {
                 5: { x: 181, y: 358 },
                 15: { x: 181, y: 4 }
             },
             15: {
-                5: { x: 359.17, y: 359.17 },
+                5: { x: 359, y: 359 },
                 10: { x: 358, y: 181 },
-                15: { x: 359.17, y: 2.82 }
+                15: { x: 359, y: 3 }
             }
         },
         endPositions = {
             5: {
-                5: { x: 174.17, y: 187.82 },
+                5: { x: 174, y: 188 },
                 10: { x: 173, y: 181 },
-                15: { x: 174.17, y: 174.17 }
+                15: { x: 174, y: 174 }
             },
             10: {
                 5: { x: 181, y: 189 },
                 15: { x: 181, y: 173 }
             },
             15: {
-                5: { x: 187.82, y: 187.82 },
+                5: { x: 188, y: 188 },
                 10: { x: 189, y: 181 },
-                15: { x: 187.82, y: 174.17 }
+                15: { x: 188, y: 174 }
             }
         },
         chart = Highcharts.chart('container', squareChartConfig),
@@ -253,11 +253,11 @@ QUnit.test('Marker alignment', function (assert) {
         id: 'left'
     }, {
         x: 10,
-        y: 14,
+        y: 6,
         connect: 'top'
     }, {
         x: 10,
-        y: 6,
+        y: 14,
         id: 'top'
     }];
 
@@ -267,7 +267,7 @@ QUnit.test('Marker alignment', function (assert) {
             xMod = 0, // Defaults to 'center'
             yMod = 0, // Defaults to 'middle'
             allPoints = chart.series[0].points,
-            connectorPoints = [allPoints[0], allPoints[2]];
+            connectorPoints = [allPoints[2]];
 
         Highcharts.each(connectorPoints, function (point) {
             var pointBox = point.graphic.getBBox(),
@@ -286,6 +286,11 @@ QUnit.test('Marker alignment', function (assert) {
                     y: pointBox.y + pointBox.height / 2
                 };
 
+            if (point.options.connect === 'left') {
+                markerCenter.x += 4;
+            } else if (point.options.connect === 'top') {
+                markerCenter.y += 4;
+            }
             // Horizontal alignment modifies marker x, so expect an x modification
             if (align === 'left') {
                 xMod = -mod;
@@ -303,7 +308,8 @@ QUnit.test('Marker alignment', function (assert) {
             } else if (verticalAlign === 'middle') {
                 yMod = markerCenter.y - pointCenter.y;
             }
-            console.log(markerBox, pointBox);
+
+
             // Check x position
             assert.close(
                 markerCenter.x,
