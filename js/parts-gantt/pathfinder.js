@@ -10,7 +10,8 @@ import '../parts/Point.js';
 import '../parts/Utilities.js';
 import pathfinderAlgorithms from 'pathfinderAlgorithms.js';
 
-var deg2rad = H.deg2rad,
+var defined = H.defined,
+	deg2rad = H.deg2rad,
 	extend = H.extend,
 	each = H.each,
 	addEvent = H.addEvent,
@@ -241,7 +242,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * 	Coordinates are in plot values, not relative to point.
 	 */
 	getPathfinderAnchorPoint: function (markerOptions) {
-		var bb = this.graphic.getBBox(),
+		var bb = merge(this.graphic.getBBox()),
 			xFactor, // Make Simon Cowell proud
 			yFactor;
 
@@ -292,14 +293,40 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		pathfinder.paths.push(pathGraphic);
 	},
 
-	addMarker: function (type, vector, options, radians) {
+	addMarker: function (type, options, path, point, anchor) {
 		var chart = this.series.chart,
 			pathfinder = chart.pathfinder,
 			renderer = chart.renderer,
-			degrees = radians / deg2rad,
+			vector,
+			radians,
+			rotation,
 			marker,
 			width,
-			height;
+			height,
+			pathVector;
+
+		if (type === 'start') {
+			pathVector = {
+				x: path[4],
+				y: path[5]
+			};
+		} else { // 'end'
+			pathVector = {
+				x: path[path.length - 5],
+				y: path[path.length - 4]
+			};
+		}
+
+		if (options.enabled) {
+			radians = point.getRadiansToVector(pathVector, anchor);
+			vector = point.getMarkerVector(
+				radians,
+				options.radius,
+				anchor
+			);
+			radians = point.getRadiansToVector(pathVector, vector);
+			rotation = radians / deg2rad;
+		}
 
 		if (options.width && options.height) {
 			width = options.width;
@@ -316,14 +343,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			height
 		)
 			.addClass('highcharts-point-connecting-path-' + type + '-marker')
-			.attr(merge(options, {
-				fill: options.color || this.color
-			}))
+			.attr({
+				fill: options.color || this.color,
+				stroke: options.stroke,
+				'stroke-width': options['stroke-width']
+			})
 			.add(pathfinder.group);
 		// Rotate marker according to degrees
 		marker.attr(
 			'transform',
-			'rotate(' + -degrees + ',' + vector.x + ',' + vector.y + ')'
+			'rotate(' + -rotation + ',' + vector.x + ',' + vector.y + ')'
 		);
 
 		this.connectingPathGraphics[type] = marker;
@@ -342,11 +371,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * @param  {Object} v2.y - the second vector y position
 	 * @return {number}    - the angle in degrees
 	 */
-	getRadiansToVector: function (x, y) {
-		var box = this.graphic.getBBox(),
-			centerX = box.x + box.width / 2,
-			centerY = box.y + box.height / 2;
-		return Math.atan2(centerY - y, x - centerX);
+	getRadiansToVector: function (v1, v2) {
+		var box;
+		if (!defined(v2)) {
+			box = this.graphic.getBBox();
+			v2 = {
+				x: box.x + box.width / 2,
+				y: box.y + box.height / 2
+			};
+		}
+		return Math.atan2(v2.y - v1.y, v1.x - v2.x);
 	},
 
 	/**
@@ -363,7 +397,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * @return {Object}             a vector (x, y) of the marker position
 	 */
 	getMarkerVector: function (radians, markerRadius, anchor) {
-		var twoPI = Math.PI * 2,
+		var twoPI = Math.PI * 2.0,
 			theta = radians,
 			rect = this.graphic.getBBox(),
 			rAtan = Math.atan2(rect.height, rect.width),
@@ -416,15 +450,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			edgePoint.y += yFactor * (rectHalfHeight);
 		}
 
+		if (anchor.x !== rectHorizontalCenter) {
+			edgePoint.x = anchor.x;
+		}
+		if (anchor.y !== rectVerticalCenter) {
+			edgePoint.y = anchor.y;
+		}
+
 		markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
 		markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
 
-		if (anchor.x !== rectHorizontalCenter) {
-			markerPoint.x = anchor.x;
-		}
-		if (anchor.y !== rectVerticalCenter) {
-			markerPoint.y = anchor.y;
-		}
 
 		return markerPoint;
 	},
@@ -444,10 +479,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			chartObstacles = pathfinder.chartObstacles,
 			lineObstacles = pathfinder.lineObstacles,
 			renderer = chart.renderer,
-			fromAnchorPoint,
-			toAnchorPoint,
+			fromAnchor,
+			toAnchor,
 			pathResult,
-			radians,
 			path,
 			attribs,
 			options = merge(defaultOptions, seriesOptions, opts),
@@ -476,13 +510,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		options.startMarker = merge(options.markers, options.startMarker);
 		options.endMarker = merge(options.markers, options.endMarker);
 
-		fromAnchorPoint = this.getPathfinderAnchorPoint(options.startMarker);
-		toAnchorPoint = toPoint.getPathfinderAnchorPoint(options.endMarker);
+		fromAnchor = this.getPathfinderAnchorPoint(options.startMarker);
+		toAnchor = toPoint.getPathfinderAnchorPoint(options.endMarker);
 
 		// Get the SVG path
 		pathResult = algorithm(
-			fromAnchorPoint,
-			toAnchorPoint,
+			fromAnchor,
+			toAnchor,
 			merge({
 				chartObstacles: chartObstacles,
 				lineObstacles: lineObstacles || [],
@@ -528,41 +562,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		delete options.endMarker.startMarker;
 		delete options.endMarker.endMarker;
 
-		// Add start marker
-		if (options.startMarker.enabled) {
-			radians = this.getRadiansToVector(
-				path[4], // Second x in path
-				path[5]  // Second y in path
-			);
-			this.addMarker(
-				'start',
-				this.getMarkerVector(
-					radians,
-					options.startMarker.radius,
-					fromAnchorPoint
-				),
-				options.startMarker,
-				radians
-			);
-		}
 
-		// Add end marker
-		if (options.endMarker.enabled) {
-			radians = toPoint.getRadiansToVector(
-				path[path.length - 5], // Second last x in path
-				path[path.length - 4]  // Second last y in path
-			);
-			this.addMarker(
-				'end',
-				toPoint.getMarkerVector(
-					radians,
-					options.endMarker.radius,
-					toAnchorPoint
-				),
-				options.endMarker,
-				radians
-			);
-		}
+		// TODO
+		// - refactor
+
+		// Add start marker
+		this.addMarker('start', options.startMarker, path, this, fromAnchor);
+		this.addMarker('end', options.endMarker, path, toPoint, toAnchor);
 	}
 });
 
