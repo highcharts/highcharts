@@ -61,13 +61,22 @@ var getListOfParents = function (data, ids) {
 	});
 	return listOfParents;
 };
-var getTree = function (tree) {
-	var allIds = map(tree, function (d) {
+var getNode = function (id, parent, level, mapOfIdToChildren, data) {
+	return {
+		children: map((mapOfIdToChildren[id] || []), function (child) {
+			return getNode(child.id, id, (level + 1), mapOfIdToChildren, data);
+		}),
+		id: id,
+		level: level,
+		parent: parent
+	};
+};
+var getTree = function (data) {
+	var ids = map(data, function (d) {
 			return d.id;
 		}),
-		parentList = getListOfParents(tree, allIds);
-	console.log('allIds', allIds);
-	console.log('parentList', parentList);
+		mapOfIdToChildren = getListOfParents(data, ids);
+	return getNode('', 0, null, mapOfIdToChildren, data);
 };
 var override = function (obj, methods) {
 	var method,
