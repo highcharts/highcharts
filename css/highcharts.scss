@@ -388,9 +388,8 @@ g.highcharts-series, .highcharts-point {
 }
 
 /* Highstock */
-.highcharts-navigator-mask {
-    fill: $highlight-color-60; /* navigator.maskFill option */
-    fill-opacity: 0.25;
+.highcharts-navigator-mask-outside {
+    fill-opacity: 0;
 }
 .highcharts-navigator-mask-inside {
     fill: $highlight-color-60; /* navigator.maskFill option */

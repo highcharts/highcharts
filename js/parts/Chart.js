@@ -799,8 +799,8 @@ Chart.prototype = {
 		}
 
 		// adjust for scroller
-		if (chart.extraBottomMargin) {
-			chart.marginBottom += chart.extraBottomMargin;
+		if (chart.extraMargin) {
+			chart[chart.extraMargin.type] = (chart[chart.extraMargin.type] || 0) + chart.extraMargin.value;
 		}
 		if (chart.extraTopMargin) {
 			chart.plotTop += chart.extraTopMargin;
