@@ -36,7 +36,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
-		minHours,
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
@@ -59,7 +58,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		if (interval >= timeUnits.hour) { // hour
 			minDate[Date.hcSetHours](interval >= timeUnits.day ? 0 :
 				count * Math.floor(minDate[Date.hcGetHours]() / count));
-			minHours = minDate[Date.hcGetHours]();
 		}
 
 		if (interval >= timeUnits.day) { // day
@@ -85,8 +83,13 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 				pick(startOfWeek, 1));
 		}
 
-		// get tick positions
-		i = 1;
+
+		// Get basics for variable time spans
+		minYear = minDate[Date.hcGetFullYear]();
+		var minMonth = minDate[Date.hcGetMonth](),
+			minDateDate = minDate[Date.hcGetDate](),
+			minHours = minDate[Date.hcGetHours]();
+		
 
 		// Handle local timezone offset
 		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
@@ -112,12 +115,9 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 		
 
-		minYear = minDate[Date.hcGetFullYear]();
-		var time = minDate.getTime(),
-			minMonth = minDate[Date.hcGetMonth](),
-			minDateDate = minDate[Date.hcGetDate]();
-
-		// iterate and add tick positions at appropriate values
+		// Iterate and add tick positions at appropriate values
+		var time = minDate.getTime();
+		i = 1;
 		while (time < max) {
 			tickPositions.push(time);
 
@@ -151,10 +151,17 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// Handle higher ranks. Mark new days if the time is on midnight
-		// (#950, #1649, #1760, #3349)
-		if (interval <= timeUnits.hour) {
+		// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold to 
+		// prevent looping over dense data grouping (#6156).
+		if (interval <= timeUnits.hour && tickPositions.length < 10000) {
 			each(tickPositions, function (time) {
-				if (dateFormat('%H%M%S%L', time) === '000000000') {
+				if (
+					// Speed optimization, no need to run dateFormat unless
+					// we're on a full or half hour
+					time % 1800000 === 0 &&
+					// Check for local or global midnight
+					dateFormat('%H%M%S%L', time) === '000000000'
+				) {
 					higherRanks[time] = 'day';	
 				}
 			});

@@ -25,7 +25,7 @@ $(function () {
 
 
             // Initiate the chart
-            $('#container').highcharts('Map', {
+            Highcharts.mapChart('container', {
                 title: {
                     text: 'Named data classes'
                 },

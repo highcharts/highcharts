@@ -34,7 +34,7 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 	var respRules = this.respRules,
 		condition = rule.condition,
 		matches,
-		fn = rule.callback || function () {
+		fn = condition.callback || function () {
 			return this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
 				this.chartHeight <= pick(condition.maxHeight, Number.MAX_VALUE) &&
 				this.chartWidth >= pick(condition.minWidth, 0) &&
@@ -43,7 +43,7 @@ Chart.prototype.matchResponsiveRule = function (rule, redraw) {
 		
 
 	if (rule._id === undefined) {
-		rule._id = H.idCounter++;
+		rule._id = H.uniqueKey();
 	}
 	matches = fn.call(this);
 

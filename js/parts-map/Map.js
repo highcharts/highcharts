@@ -105,25 +105,34 @@ H.maps = {};
 
 // Create symbols for the zoom buttons
 function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
-	return ['M', x + rTopLeft, y,
-        // top side
-        'L', x + w - rTopRight, y,
-        // top right corner
-        'C', x + w - rTopRight / 2, y, x + w, y + rTopRight / 2, x + w, y + rTopRight,
-        // right side
-        'L', x + w, y + h - rBottomRight,
-        // bottom right corner
-        'C', x + w, y + h - rBottomRight / 2, x + w - rBottomRight / 2, y + h, x + w - rBottomRight, y + h,
-        // bottom side
-        'L', x + rBottomLeft, y + h,
-        // bottom left corner
-        'C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft,
-        // left side
-        'L', x, y + rTopLeft,
-        // top left corner
-        'C', x, y + rTopLeft / 2, x + rTopLeft / 2, y, x + rTopLeft, y,
-        'Z'
-    ];
+	return [
+		'M', x + rTopLeft, y,
+		// top side
+		'L', x + w - rTopRight, y,
+		// top right corner
+		'C', x + w - rTopRight / 2,
+		y, x + w,
+		y + rTopRight / 2, x + w, y + rTopRight,
+		// right side
+		'L', x + w, y + h - rBottomRight,
+		// bottom right corner
+		'C', x + w, y + h - rBottomRight / 2,
+		x + w - rBottomRight / 2, y + h,
+		x + w - rBottomRight, y + h,
+		// bottom side
+		'L', x + rBottomLeft, y + h,
+		// bottom left corner
+		'C', x + rBottomLeft / 2, y + h, 
+		x, y + h - rBottomLeft / 2,
+		x, y + h - rBottomLeft,
+		// left side
+		'L', x, y + rTopLeft,
+		// top left corner
+		'C', x, y + rTopLeft / 2,
+		x + rTopLeft / 2, y,
+		x + rTopLeft, y,
+		'Z'
+	];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
@@ -177,6 +186,9 @@ H.Map = H.mapChart = function (a, b, c) {
 			credits: {
 				mapText: pick(defaultCreditsOptions.mapText, ' \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>'),
 				mapTextFull: pick(defaultCreditsOptions.mapTextFull, '{geojson.copyright}')
+			},
+			tooltip: {
+				followTouchMove: false
 			},
 			xAxis: hiddenAxis,
 			yAxis: merge(hiddenAxis, { reversed: true })

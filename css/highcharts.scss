@@ -152,13 +152,13 @@ $highlight-color-10: #e6ebf5; // Pressed button, color axis min color.
     stroke-linejoin: round;
 }
 .highcharts-state-hover .highcharts-graph {
-	stroke-width: 3;
+    stroke-width: 3;
 }
 .highcharts-state-hover path {
     transition: stroke-width 50; /* quick in */
 }
 .highcharts-state-normal path {
-	transition: stroke-width 250ms; /* slow out */
+    transition: stroke-width 250ms; /* slow out */
 }
 
 /* Legend hover affects points and series */
@@ -218,8 +218,11 @@ g.highcharts-series, .highcharts-point {
     fill: $neutral-color-20;
     stroke: $neutral-color-100;
 }
-.highcharts-column-series .highcharts-point {
+.highcharts-column-series rect.highcharts-point {
+    // rect to prevent stroke on 3D columns
     stroke: $background-color;
+}
+.highcharts-column-series .highcharts-point {
     transition: fill-opacity 250ms;
 }
 .highcharts-column-series .highcharts-point-hover {
@@ -561,9 +564,6 @@ input.highcharts-range-selector {
 /* 3d charts */
 .highcharts-3d-frame {
     fill: transparent;
-}
-.highcharts-column-series .highcharts-point  {
-    stroke: inherit; /* use point color */
 }
 
 /* Exporting module */

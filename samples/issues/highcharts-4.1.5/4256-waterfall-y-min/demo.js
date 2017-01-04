@@ -60,12 +60,7 @@ $(function () {
                     "color": "#555555"
                 }],
                 "dataLabels": {
-                    "enabled": true,
-                    "style": {
-                        "color": "#FFFFFF",
-                        "fontWeight": "bold",
-                        "textShadow": "0px 0px 3px black"
-                    }
+                    "enabled": true
                 },
                 "pointPadding": 0
             }]

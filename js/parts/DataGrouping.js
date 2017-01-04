@@ -15,7 +15,6 @@ var arrayMax = H.arrayMax,
 	defaultPlotOptions = H.defaultPlotOptions,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	format = H.format,
 	isNumber = H.isNumber,
@@ -298,7 +297,9 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options.dataGrouping,
-		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
+			pick(dataGroupingOptions.enabled, chart.options.isStock),
+		visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
 		hasGroupedData,
 		skip;
 
@@ -308,7 +309,8 @@ seriesProto.processData = function () {
 	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order) or #5493
-	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled || !series.visible;
+	skip = baseProcessData.apply(series, arguments) === false ||
+		!groupingEnabled || !visible;
 	if (!skip) {
 		series.destroyGroupedData();
 
@@ -374,8 +376,6 @@ seriesProto.processData = function () {
 			series.currentDataGrouping = series.groupMap = null;
 		}
 		series.hasGroupedData = hasGroupedData;
-	} else if (!series.visible) {
-		series.closestPointRange = null; // #5823
 	}
 };
 
@@ -412,7 +412,7 @@ seriesProto.generatePoints = function () {
  */
 wrap(Point.prototype, 'update', function (proceed) {
 	if (this.dataGroup) {
-		error(24);
+		H.error(24);
 	} else {
 		proceed.apply(this, [].slice.call(arguments, 1));
 	}
@@ -516,7 +516,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 		);
 	}
 
-	if (this.chart.options._stock) {
+	if (this.chart.options.isStock) {
 		this.requireSorting = true;
 	}
 

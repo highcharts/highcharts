@@ -12,7 +12,6 @@ var correctFloat = H.correctFloat,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
-	stop = H.stop,
 	deg2rad = H.deg2rad;
 
 /**
@@ -392,7 +391,6 @@ H.Tick.prototype = {
 				xy.opacity = opacity;
 				label[tick.isNew ? 'attr' : 'animate'](xy);
 			} else {
-				stop(label); // #5332
 				label.attr('y', -9999); // #1338
 			}
 			tick.isNew = false;

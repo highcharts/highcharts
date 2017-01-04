@@ -33,7 +33,7 @@ var addEvent = H.addEvent,
 	splat = H.splat;
 		
 // Extend the Chart prototype for dynamic methods
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Add a series dynamically after  time
@@ -187,9 +187,11 @@ extend(Chart.prototype, {
 		'plotShadow', 'shadow'],
 
 	/** 
-	 * These properties cause all series to be updated when updating. Can be extended from plugins.
+	 * These properties cause all series to be updated when updating. Can be
+	 * extended from plugins.
 	 */
-	propsRequireUpdateSeries: ['chart.polar', 'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
+		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
 
 	/**
 	 * Chart.update function that takes the whole options stucture.
@@ -274,13 +276,20 @@ extend(Chart.prototype, {
 			merge(true, this.options.plotOptions, options.plotOptions);
 		}
 
-		// Setters for collections. For axes and series, each item is referred by an id. If the 
-		// id is not found, it defaults to the first item in the collection, so setting series
-		// without an id, will update the first series in the chart.
+		// Setters for collections. For axes and series, each item is referred
+		// by an id. If the id is not found, it defaults to the corresponding
+		// item in the collection, so setting one series without an id, will
+		// update the first series in the chart. Setting two series without
+		// an id will update the first and the second respectively (#6019)
+		// // docs: New behaviour for unidentified items, add it to docs for 
+		// chart.update and responsive.
 		each(['xAxis', 'yAxis', 'series'], function (coll) {
 			if (options[coll]) {
-				each(splat(options[coll]), function (newOptions) {
-					var item = (defined(newOptions.id) && this.get(newOptions.id)) || this[coll][0];
+				each(splat(options[coll]), function (newOptions, i) {
+					var item = (
+						defined(newOptions.id) &&
+						this.get(newOptions.id)
+					) || this[coll][i];
 					if (item && item.coll === coll) {
 						item.update(newOptions, false);
 					}
@@ -329,7 +338,7 @@ extend(Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-extend(Point.prototype, {
+extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Point.update with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -410,14 +419,14 @@ extend(Point.prototype, {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start
 	 *    of the series as one is appended to the end.
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
+	 * @param {Boolean|AnimationOptions} animation Whether to apply animation, and optionally animation
 	 *    configuration
 	 */
 	addPoint: function (options, redraw, shift, animation) {
@@ -425,7 +434,8 @@ extend(Series.prototype, {
 			seriesOptions = series.options,
 			data = series.data,
 			chart = series.chart,
-			names = series.xAxis && series.xAxis.names,
+			xAxis = series.xAxis,
+			names = xAxis && xAxis.hasNames && xAxis.names,
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
@@ -486,9 +496,6 @@ extend(Series.prototype, {
 		series.isDirtyData = true;
 
 		if (redraw) {
-			/*= if (build.clasic) { =*/
-			series.getAttribs(); // #1937
-			/*= } =*/
 			chart.redraw(animation); // Animation is set anyway on redraw, #5665
 		}
 	},
@@ -623,7 +630,7 @@ extend(Series.prototype, {
 });
 
 // Extend the Axis.prototype for dynamic methods
-extend(Axis.prototype, {
+extend(Axis.prototype, /** @lends Axis.prototype */ {
 
 	/**
 	 * Axis.update with a new options structure

@@ -210,7 +210,7 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
 
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,Upda1,Upda2', // Note that xAxis.series order gets changed when series.update. It may be considered a bug.
+        'Upda1,Upda2,Addid1,Addid2',
         'Series.update'
     );
 
@@ -221,14 +221,14 @@ QUnit.test('Keeping names updated with dynamic data', function (assert) {
 
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,UpdatPoint,Upda2',
+        'UpdatPoint,Upda2,Addid1,Addid2',
         'Point.update'
     );
 
     chart.series[0].points[0].remove();
     assert.strictEqual(
         names.toString(),
-        'Addid1,Addid2,Upda2',
+        'Upda2,Addid1,Addid2',
         'Point.remove'
     );
 });
@@ -401,4 +401,71 @@ QUnit.test('Set crosshair width (#5819)', function (assert) {
     chart.xAxis[0].drawCrosshair({}, chart.series[0].points[1]);
 
     assert.strictEqual(chart.xAxis[0].cross['stroke-width'], 1, 'Stroke width is set to 1');
+});
+
+QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            width: 400,
+            animation: false
+        },
+
+        xAxis: {
+            type: 'category',
+            uniqueNames: false
+        },
+
+        "series": [{
+            animation: false,
+            "data": [
+                ["2014", 1.1],
+                ["2013", 11.6],
+                ["2012", 8.4]
+            ]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Initial min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        2,
+        'Initial max'
+    );
+
+    chart.setSize(390);
+
+
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Unaltered min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        2,
+        'Unaltered max'
+    );
+
+
+    chart.series[0].addPoint(['2016', 3]);
+
+    assert.strictEqual(
+        chart.xAxis[0].min,
+        0,
+        'Unaltered min'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        3,
+        'Increased max'
+    );
 });

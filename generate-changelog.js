@@ -6,6 +6,7 @@
  * generates a draft for a changelog.
  *
  * Parameters
+ * --since String The tag to start from
  * --after String The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
  */
@@ -44,9 +45,16 @@
             callback(stdout);
         }
 
-        command = 'git log --after={' + params.after + '} --format="%s<br>" ';
-        if (params.before) {
-            command += '--before={' + params.before + '} ';
+        command = 'git log --format="%s<br>" ';
+        if (params.since) {
+            command += ' ' + params.since + '..HEAD ';
+        } else {
+            if (params.after) {
+                command += '--after={' + params.after + '} ';
+            }
+            if (params.before) {
+                command += '--before={' + params.before + '} ';
+            }
         }
 
         cmd.exec(command, null, puts);
@@ -63,7 +71,8 @@
         log.forEach(function (item) {
 
             // Keep only the commits after the last release
-            if (proceed && (new RegExp('official release ---$')).test(item)) {
+            if (proceed && (new RegExp('official release ---$')).test(item) &&
+                    !params.since) {
                 proceed = false;
             }
 
@@ -83,7 +92,7 @@
         });
 
         // Last release not found, abort
-        if (proceed === true) {
+        if (proceed === true && !params.since) {
             throw 'Last release not located, try setting an older start date.';
         }
 
@@ -136,11 +145,18 @@
 
         log.forEach((li, i) => {
 
-            // Hyperlinked issue numbers
-            li = li.replace(
-                /#([0-9]+)/g,
-                '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
-            );
+            li = li
+
+                // Hyperlinked issue numbers
+                .replace(
+                    /#([0-9]+)/g,
+                    '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
+                )
+                // Code tags
+                .replace(
+                    /`([^`]+)`/g,
+                    '<code>$1</code>'
+                );
 
             // Start fixes
             if (i === log.startFixes) {

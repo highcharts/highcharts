@@ -195,7 +195,7 @@ $(function () {
         chart.rangeSelector.clickButton(1);
         assert.strictEqual(
             getStates(),
-            '0,2,3,0',
+            '0,2,3,3',
             'Selected 2h'
         );
     });

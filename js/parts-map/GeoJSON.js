@@ -11,7 +11,6 @@ import '../parts/Chart.js';
 var Chart = H.Chart,
 	each = H.each,
 	extend = H.extend,
-	error = H.error,
 	format = H.format,
 	merge = H.merge,
 	win = H.win,
@@ -44,7 +43,7 @@ function pointInPolygon(point, polygon) {
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (win.proj4 === undefined) {
-		error(21);
+		H.error(21);
 		return {
 			x: 0,
 			y: null
@@ -67,7 +66,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
 	if (win.proj4 === undefined) {
-		error(21);
+		H.error(21);
 		return;
 	}
 
@@ -91,7 +90,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 		transform;
 
 	if (!transforms) {
-		error(22);
+		H.error(22);
 		return;
 	}
 
@@ -111,7 +110,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		coords;
 
 	if (!transforms) {
-		error(22);
+		H.error(22);
 		return {
 			x: 0,
 			y: null

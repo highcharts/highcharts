@@ -256,7 +256,8 @@ H.AxisPlotLineOrBandExtension = {
 				toPath[4],
 				toPath[5],
 				toPath[1],
-				toPath[2]
+				toPath[2],
+				'z' // #5909
 			);
 		} else { // outside the axis area
 			path = null;

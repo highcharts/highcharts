@@ -101,3 +101,22 @@ H.perspective = function (points, chart, insidePlotArea) {
 		};
 	});
 };
+
+/**
+ * Calculate a distance from camera to points - made for calculating zIndex of scatter points.
+ * Parameters:
+ *		- coordinates: The coordinates of the specific point
+ *		- chart: the chart
+ * Returns:
+ *		- a distance from camera to point
+ */
+H.pointCameraDistance = function (coordinates, chart) {
+	var options3d = chart.options.chart.options3d,
+		cameraPosition = {
+			x: chart.plotWidth / 2, 
+			y: chart.plotHeight / 2,
+			z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) + options3d.depth
+		},
+		distance = Math.sqrt(Math.pow(cameraPosition.x - coordinates.plotX, 2) + Math.pow(cameraPosition.y - coordinates.plotY, 2) + Math.pow(cameraPosition.z - coordinates.plotZ, 2));
+	return distance;
+};

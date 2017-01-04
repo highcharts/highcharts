@@ -66,9 +66,6 @@ $(function () {
                 }
             }]
         });
-
-        console.log('--- exporting ---');
-        $('#container').append($('#container').highcharts().getSVG());
     });
 
 });

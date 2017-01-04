@@ -210,6 +210,12 @@ $(function () {
             'X axis on left'
         );
 
+        assert.strictEqual(
+            chart.series[0].group.inverted,
+            true,
+            'Series is inverted (#5938)'
+        );
+
         chart.update({
             chart: {
                 inverted: false
@@ -348,7 +354,6 @@ $(function () {
             chart.plotBackground.getBBox().height <= chart.chartHeight - 100,
             'Plot area height ok'
         );
-return;
 
         // Test for array
         chart.update({

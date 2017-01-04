@@ -9,7 +9,7 @@ $updateContents = false;
 
 
 if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
-	if (!$compare->$path) {
+	if (!isset($compare->$path)) {
 		$compare->$path = new StdClass;
 	}
 	$compare->$path->comment = (object) $_POST;

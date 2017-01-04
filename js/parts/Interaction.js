@@ -31,11 +31,17 @@ var addEvent = H.addEvent,
 	seriesTypes = H.seriesTypes,
 	svg = H.svg,
 	TrackerMixin;
+
 /**
- * TrackerMixin for points and graphs
+ * TrackerMixin for points and graphs.
+ *
+ * @mixin
  */
 TrackerMixin = H.TrackerMixin = {
 
+	/**
+	 * Draw the tracker for a point.
+	 */
 	drawTrackerPoint: function () {
 		var series = this,
 			chart = series.chart,
@@ -60,7 +66,11 @@ TrackerMixin = H.TrackerMixin = {
 				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-				point.dataLabel.element.point = point;
+				if (point.dataLabel.div) {
+					point.dataLabel.div.point = point;
+				} else {
+					point.dataLabel.element.point = point;
+				}
 			}
 		});
 
@@ -297,7 +307,7 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Chart.prototype */ {
 	/**
 	 * Display the zoom button
 	 */
@@ -356,7 +366,7 @@ extend(Chart.prototype, {
 					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -408,14 +418,26 @@ extend(Chart.prototype, {
 				startPos = chart[mouseDown],
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
-				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
-				goingLeft = startPos > mousePos; // #3613
-			
-			if (axis.series.length &&
-					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) &&		
-					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
-				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+				panMin = axis.toValue(startPos - mousePos, true) +
+					halfPointRange,
+				panMax = axis.toValue(startPos + axis.len - mousePos, true) -
+					halfPointRange,
+				flipped = panMax < panMin,
+				newMin = flipped ? panMax : panMin,
+				newMax = flipped ? panMin : panMax,
+				distMin = Math.min(extremes.dataMin, extremes.min) - newMin,
+				distMax = newMax - Math.max(extremes.dataMax, extremes.max);
+
+			// Negative distMin and distMax means that we're still inside the
+			// data range.
+			if (axis.series.length && distMin < 0 && distMax < 0) {
+				axis.setExtremes(
+					newMin,
+					newMax,
+					false,
+					false,
+					{ trigger: 'pan' }
+				);
 				doRedraw = true;
 			}
 
@@ -432,7 +454,7 @@ extend(Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, {
+extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -566,6 +588,7 @@ extend(Point.prototype, {
 			halo = series.halo,
 			haloOptions,
 			markerAttribs,
+			hasMarkers = markerOptions && series.markerAttribs,
 			newSymbol;
 
 		state = state || ''; // empty string
@@ -586,7 +609,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		if (markerOptions) {
+		if (hasMarkers) {
 			markerAttribs = series.markerAttribs(point, state);
 		}
 
@@ -615,7 +638,11 @@ extend(Point.prototype, {
 			if (markerAttribs) {
 				point.graphic.animate(
 					markerAttribs,
-					pick(markerStateOptions.animation, markerOptions.animation)
+					pick(
+						chart.options.chart.animation, // Turn off globally
+						markerStateOptions.animation,
+						markerOptions.animation
+					)
 				);
 			}
 
@@ -674,25 +701,29 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.markerGroup || series.group);
+					// #5818, #5903
+					.add(hasMarkers ? series.markerGroup : series.group);
 			}
-			H.stop(halo);
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 			halo.attr({
-				'class': 'highcharts-halo highcharts-color-' + pick(point.colorIndex, series.colorIndex) 
+				'class': 'highcharts-halo highcharts-color-' +
+					pick(point.colorIndex, series.colorIndex) 
 			});
+			halo.point = point; // #6055
 
 			/*= if (build.classic) { =*/
-			halo.attr({
+			halo.attr(extend({
 				'fill': point.color || series.color,
 				'fill-opacity': haloOptions.opacity,
 				'zIndex': -1 // #4929, IE8 added halo above everything
-			});
+			}, haloOptions.attributes));
 			/*= } =*/
-		} else if (halo) {
-			halo.animate({ d: point.haloPath(0) }); // Hide
+
+		} else if (halo && halo.point && halo.point.haloPath) {
+			// Animate back to 0 on the current halo point (#6055)
+			halo.animate({ d: halo.point.haloPath(0) });
 		}
 
 		point.state = state;
@@ -700,18 +731,16 @@ extend(Point.prototype, {
 
 	/**
 	 * Get the circular path definition for the halo
-	 * @param  {Number} size The radius of the circular halo
+	 * @param  {Number} size The radius of the circular halo.
 	 * @returns {Array} The path definition
 	 */
 	haloPath: function (size) {
 		var series = this.series,
-			chart = series.chart,
-			inverted = chart.inverted,
-			plotX = Math.floor(this.plotX);
+			chart = series.chart;
 
 		return chart.renderer.symbols.circle(
-			(inverted ? series.yAxis.len - this.plotY : plotX) - size,
-			(inverted ? series.xAxis.len - plotX : this.plotY) - size,
+			Math.floor(this.plotX) - size,
+			this.plotY - size,
 			size * 2, 
 			size * 2
 		);
@@ -722,7 +751,7 @@ extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Series mouse over handler
 	 */

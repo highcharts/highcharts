@@ -3,7 +3,5 @@
  authors:
    - Torstein Hønsi
  resources: 
-   - https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js
-   - https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css
    - https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css
 ...

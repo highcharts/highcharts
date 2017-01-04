@@ -107,7 +107,7 @@ QUnit.test('Symbol tests', function (assert) {
             'Label box translate ok, centered in label'
         );
         ifDone();
-        console.log(Highcharts.symbolSizes)
+        console.log(Highcharts.symbolSizes);
     }, 100);
 
 });

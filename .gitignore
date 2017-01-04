@@ -12,6 +12,8 @@
 /js/modules/exporting.js
 /build
 /code
+/internal-docs
+/tools/jsdoc/ink-docstrap
 /.project
 /git-ignore-me.properties
 /.pydevproject

@@ -41,7 +41,7 @@ $(function () {
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 }
             }]

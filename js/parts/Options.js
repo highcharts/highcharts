@@ -26,10 +26,18 @@ H.defaultOptions = {
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
-		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-				'August', 'September', 'October', 'November', 'December'],
-		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+		months: [
+			'January', 'February', 'March', 'April', 'May', 'June', 'July',
+			'August', 'September', 'October', 'November', 'December'
+		],
+		shortMonths: [
+			'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+			'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+		],
+		weekdays: [
+			'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+			'Thursday', 'Friday', 'Saturday'
+		],
 		// invalidDate: '',
 		decimalPoint: '.',
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
@@ -97,45 +105,6 @@ H.defaultOptions = {
 		//plotShadow: false,
 		/*= } =*/
 	},
-	/*= if (!build.classic) { =*/
-	defs: {
-		dropShadow: { // used by tooltip
-			tagName: 'filter',
-			id: 'drop-shadow',
-			opacity: 0.5,
-			children: [{
-				tagName: 'feGaussianBlur',
-				in: 'SourceAlpha',
-				stdDeviation: 1
-			}, {
-				tagName: 'feOffset',
-				dx: 1,
-				dy: 1
-			}, {
-				tagName: 'feComponentTransfer',
-				children: [{
-					tagName: 'feFuncA',
-					type: 'linear',
-					slope: 0.3
-				}]
-			}, {
-				tagName: 'feMerge',
-				children: [{
-					tagName: 'feMergeNode'
-				}, {
-					tagName: 'feMergeNode',
-					in: 'SourceGraphic'
-				}]
-			}]
-		},
-		style: {
-			tagName: 'style',
-			textContent: '.highcharts-tooltip{' +
-				'filter:url(#drop-shadow)' +
-			'}'
-		}
-	},
-	/*= } =*/
 	title: {
 		text: 'Chart title',
 		align: 'center',
@@ -144,12 +113,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor80}',
-			fontSize: '18px'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 
 	},
@@ -160,11 +124,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		/*= if (build.classic) { =*/
-		style: {
-			color: '${palette.neutralColor60}'
-		},
-		/*= } =*/
+		// style: {}, // defined inline
 		widthAdjust: -44
 	},
 
@@ -331,8 +291,42 @@ H.defaultOptions = {
 
 
 /**
- * Set the time methods globally based on the useUTC option. Time method can be either
- * local time or UTC (default).
+ * Sets the getTimezoneOffset function. If the timezone option is set, a default
+ * getTimezoneOffset function with that timezone is returned. If not, the
+ * specified getTimezoneOffset function is returned. If neither are specified,
+ * undefined is returned.
+ * @return {function} a getTimezoneOffset function or undefined
+ */
+function getTimezoneOffsetOption() {
+	var globalOptions = H.defaultOptions.global,
+		moment = win.moment;
+
+	if (globalOptions.timezone) { // docs
+		if (!moment) {
+			// getTimezoneOffset-function stays undefined because it depends on
+			// Moment.js
+			H.error(25);
+			
+		} else {
+			return function (timestamp) {
+				return -moment.tz(
+					timestamp,
+					globalOptions.timezone
+				).utcOffset();
+			};
+		}
+	}
+
+	// If not timezone is set, look for the getTimezoneOffset callback
+	return globalOptions.useUTC && globalOptions.getTimezoneOffset;
+}
+
+/**
+ * Set the time methods globally based on the useUTC option. Time method can be
+ *   either local time or UTC (default). It is called internally on initiating
+ *   Highcharts and after running `Highcharts.setOptions`.
+ *
+ * @private
  */
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,
@@ -343,7 +337,7 @@ function setTimeMethods() {
 
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {

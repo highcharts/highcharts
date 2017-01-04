@@ -9,7 +9,7 @@ $(function () {
                 cursor: 'pointer',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     },
                     select: {
                         color: "#ff00ff"

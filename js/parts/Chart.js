@@ -23,8 +23,8 @@ var addEvent = H.addEvent,
 	css = H.css,
 	defined = H.defined,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
+	find = H.find,
 	fireEvent = H.fireEvent,
 	getStyle = H.getStyle,
 	grep = H.grep,
@@ -45,10 +45,13 @@ var addEvent = H.addEvent,
 	win = H.win,
 	Renderer = H.Renderer;
 /**
- * The Chart class
- * @param {String|Object} renderTo The DOM element to render to, or its id
- * @param {Object} options
- * @param {Function} callback Function to run when the chart has loaded
+ * The Chart class.
+ * @class Highcharts.Chart
+ * @memberOf Highcharts
+ * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
+ * id.
+ * @param {ChartOptions} options - The chart options structure.
+ * @param {Function} callback - Function to run when the chart has loaded.
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
@@ -177,12 +180,32 @@ Chart.prototype = {
 
 		// No such series type
 		if (!Constr) {
-			error(17, true);
+			H.error(17, true);
 		}
 
 		series = new Constr();
 		series.init(this, options);
 		return series;
+	},
+
+	/**
+	 * Order all series above a given index. When series are added and ordered
+	 * by configuration, only the last series is handled (#248, #1123, #2456,
+	 * #6112). This function is called on series initialization and destroy.
+	 *
+	 * @param {number} fromIndex - If this is given, only the series above this
+	 *    index are handled.
+	 */
+	orderSeries: function (fromIndex) {
+		var series = this.series,
+			i = fromIndex || 0;
+		for (; i < series.length; i++) {
+			if (series[i]) {
+				series[i].index = i;
+				series[i].name = series[i].name || 
+					'Series ' + (series[i].index + 1);
+			}
+		}
 	},
 
 	/**
@@ -225,6 +248,11 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
+
+		// Handle responsive rules, not only on resize (#6130)
+		if (chart.setResponsive) {
+			chart.setResponsive(false);
+		}
 			
 		H.setAnimation(animation, chart);
 		
@@ -362,38 +390,28 @@ Chart.prototype = {
 	 * @param id {String} The id as given in the configuration options
 	 */
 	get: function (id) {
-		var chart = this,
-			axes = chart.axes,
-			series = chart.series;
 
-		var i,
-			j,
-			points;
+		var ret,
+			series = this.series,
+			i;
 
-		// search axes
-		for (i = 0; i < axes.length; i++) {
-			if (axes[i].options.id === id) {
-				return axes[i];
-			}
+		function itemById(item) {
+			return item.id === id || (item.options && item.options.id === id);
 		}
 
-		// search series
-		for (i = 0; i < series.length; i++) {
-			if (series[i].options.id === id) {
-				return series[i];
-			}
+		ret = 
+			// Search axes
+			find(this.axes, itemById) ||
+
+			// Search series
+			find(this.series, itemById);
+
+		// Search points
+		for (i = 0; !ret && i < series.length; i++) {
+			ret = find(series[i].points || [], itemById);
 		}
 
-		// search points
-		for (i = 0; i < series.length; i++) {
-			points = series[i].points || [];
-			for (j = 0; j < points.length; j++) {
-				if (points[j].id === id) {
-					return points[j];
-				}
-			}
-		}
-		return null;
+		return ret;
 	},
 
 	/**
@@ -460,8 +478,31 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor80}',
+					fontSize: options.isStock ? '16px' : '18px' // #2944
+				}	
+			},
+			/*= } =*/
+			options.title,
+			titleOptions
+		);
+		chartSubtitleOptions = options.subtitle = merge(
+			/*= if (build.classic) { =*/
+			// Default styles
+			{
+				style: {
+					color: '${palette.neutralColor60}'
+				}	
+			},
+			/*= } =*/
+			options.subtitle,
+			subtitleOptions
+		);
 
 		// add title and subtitle
 		each([
@@ -636,7 +677,7 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId = 'highcharts-' + H.idCounter++,
+			containerId = H.uniqueKey(),
 			containerStyle,
 			key;
 
@@ -650,7 +691,7 @@ Chart.prototype = {
 
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			H.error(13, true);
 		}
 
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
@@ -668,11 +709,11 @@ Chart.prototype = {
 		// remove previous chart
 		renderTo.innerHTML = '';
 
-		// If the container doesn't have an offsetWidth, it has or is a child of a node
-		// that has display:none. We need to temporarily move it out to a visible
-		// state to determine the size, else the legend and tooltips won't render
-		// properly. The allowClone option is used in sparklines as a micro optimization,
-		// saving about 1-2 ms each chart.
+		// If the container doesn't have an offsetWidth, it has or is a child of
+		// a node that has display:none. We need to temporarily move it out to a
+		// visible state to determine the size, else the legend and tooltips
+		// won't render properly. The skipClone option is used in sparklines as
+		// a micro optimization, saving about 1-2 ms each chart.
 		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
@@ -899,9 +940,6 @@ Chart.prototype = {
 		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
-		if (chart.setResponsive) {
-			chart.setResponsive(false);
-		}
 		chart.redraw(animation);
 
 
@@ -1419,9 +1457,12 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage',
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer',
-				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
+		each([
+			'title', 'subtitle', 'chartBackground', 'plotBackground',
+			'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
+			'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
+			'renderer'
+		], function (name) {
 			var prop = chart[name];
 
 			if (prop && prop.destroy) {
@@ -1541,8 +1582,8 @@ Chart.prototype = {
 
 		fireEvent(this, 'load');
 
-		// Set up auto resize
-		if (this.options.chart.reflow !== false) {
+		// Set up auto resize, check for not destroyed (#6068)
+		if (defined(this.index) && this.options.chart.reflow !== false) {
 			this.initReflow();
 		}
 

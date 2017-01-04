@@ -96,6 +96,9 @@ seriesType('arearange', 'area', {
 					0,
 					1
 				);
+				if (hasModifyValue) {
+					point.yBottom = point.plotHigh;
+				}
 			}
 		});
 
@@ -148,7 +151,6 @@ seriesType('arearange', 'area', {
 				polarPlotY: point.polarPlotY,
 				rectPlotX: point.rectPlotX,
 				yBottom: point.yBottom,
-				plotHigh: point.plotHigh,
 				plotX: pick(point.plotHighX, point.plotX), // plotHighX is for polar charts
 				plotY: point.plotHigh,
 				isNull: point.isNull

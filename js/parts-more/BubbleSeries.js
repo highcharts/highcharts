@@ -50,7 +50,8 @@ seriesType('bubble', 'scatter', {
 			hover: {
 				radiusPlus: 0
 			}
-		}
+		},
+		symbol: 'circle' // docs: new option
 	},
 	minSize: 8,
 	maxSize: '20%',
@@ -75,7 +76,7 @@ seriesType('bubble', 'scatter', {
 }, {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
-	trackerGroups: ['group', 'dataLabelsGroup'],
+	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
 
@@ -152,16 +153,26 @@ seriesType('bubble', 'scatter', {
 		if (!init) { // run the animation
 			each(this.points, function (point) {
 				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs;
+					animationTarget;
 
-				if (graphic && shapeArgs) {
-					// start values
-					graphic.attr('r', 1);
+				if (graphic && graphic.width) { // URL symbols don't have width
+					animationTarget = {
+						x: graphic.x,
+						y: graphic.y,
+						width: graphic.width,
+						height: graphic.height
+					};
 
-					// animate
-					graphic.animate({
-						r: shapeArgs.r
-					}, animation);
+					// Start values
+					graphic.attr({
+						x: point.plotX,
+						y: point.plotY,
+						width: 1,
+						height: 1
+					});
+
+					// Run animation
+					graphic.animate(animationTarget, animation);
 				}
 			});
 
@@ -193,11 +204,10 @@ seriesType('bubble', 'scatter', {
 
 			if (isNumber(radius) && radius >= this.minPxSize / 2) {
 				// Shape arguments
-				point.shapeType = 'circle';
-				point.shapeArgs = {
-					x: point.plotX,
-					y: point.plotY,
-					r: radius
+				point.marker = {
+					radius: radius,
+					width: 2 * radius,
+					height: 2 * radius
 				};
 
 				// Alignment box for the data label
@@ -213,36 +223,17 @@ seriesType('bubble', 'scatter', {
 		}
 	},
 
-	/**
-	 * Get the series' symbol in the legend
-	 *
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
-	 */
-	drawLegendSymbol: function (legend, item) {
-		var renderer = this.chart.renderer,
-			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
-
-		item.legendSymbol = renderer.circle(
-			radius,
-			legend.baseline - radius,
-			radius
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);
-		item.legendSymbol.isMarker = true;
-
-	},
-
-	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
 	applyZones: noop
 
 // Point class
 }, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	haloPath: function (size) {
+		return Point.prototype.haloPath.call(
+			this, 
+			size === 0 ? 0 : this.marker.radius + size // #6067
+		);
 	},
 	ttBelow: false
 });
@@ -296,7 +287,9 @@ Axis.prototype.beforePadding = function () {
 
 				});
 				series.minPxSize = extremes.minSize;
-				series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize); // Prioritize min size if conflict to make sure bubbles are always visible. #5873
+				// Prioritize min size if conflict to make sure bubbles are
+				// always visible. #5873
+				series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
 				// Find the min and max Z
 				zData = series.zData;

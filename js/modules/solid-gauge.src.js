@@ -148,7 +148,16 @@ colorAxisMethods = {
  */
 each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, colorAxisMethods.tweenColors(H.color(this.start), H.color(this.end), this.pos));
+		this.elem.attr(
+			prop,
+			colorAxisMethods.tweenColors(
+				H.color(this.start),
+				H.color(this.end),
+				this.pos
+			),
+			null,
+			true
+		);
 	};
 });
 
@@ -157,18 +166,23 @@ H.seriesType('solidgauge', 'gauge', {
 	colorByPoint: true
 
 }, {
-	bindAxes: function () {
-		var axis;
-		H.seriesTypes.gauge.prototype.bindAxes.call(this);
 
-		axis = this.yAxis;
+	/**
+	 * Extend the translate function to extend the Y axis with the necessary
+	 * decoration (#5895).
+	 */
+	translate: function () {
+		var axis = this.yAxis;
 		H.extend(axis, colorAxisMethods);
 
 		// Prepare data classes
-		if (axis.options.dataClasses) {
+		if (!axis.dataClasses && axis.options.dataClasses) {
 			axis.initDataClasses(axis.options);
 		}
 		axis.initStops(axis.options);
+
+		// Generate points and inherit data label position
+		H.seriesTypes.gauge.prototype.translate.call(this);
 	},
 
 	/**
@@ -181,7 +195,21 @@ H.seriesType('solidgauge', 'gauge', {
 			options = series.options,
 			renderer = series.chart.renderer,
 			overshoot = options.overshoot,
-			overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0;
+			overshootVal = isNumber(overshoot) ? overshoot / 180 * Math.PI : 0,
+			thresholdAngleRad;
+
+		// Handle the threshold option
+		if (isNumber(options.threshold)) {
+			thresholdAngleRad = yAxis.startAngleRad + yAxis.translate(
+				options.threshold,
+				null,
+				null,
+				null,
+				true
+			);
+		}
+		this.thresholdAngleRad = pick(thresholdAngleRad, yAxis.startAngleRad);
+
 
 		each(series.points, function (point) {
 			var graphic = point.graphic,
@@ -211,8 +239,8 @@ H.seriesType('solidgauge', 'gauge', {
 				rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
 			}
 
-			minAngle = Math.min(rotation, yAxis.startAngleRad);
-			maxAngle = Math.max(rotation, yAxis.startAngleRad);
+			minAngle = Math.min(rotation, series.thresholdAngleRad);
+			maxAngle = Math.max(rotation, series.thresholdAngleRad);
 
 			if (maxAngle - minAngle > 2 * Math.PI) {
 				maxAngle = minAngle + 2 * Math.PI;
@@ -266,7 +294,7 @@ H.seriesType('solidgauge', 'gauge', {
 	animate: function (init) {
 
 		if (!init) {
-			this.startAngleRad = this.yAxis.startAngleRad;
+			this.startAngleRad = this.thresholdAngleRad;
 			H.seriesTypes.pie.prototype.animate.call(this, init);
 		}
 	}

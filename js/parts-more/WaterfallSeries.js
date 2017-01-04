@@ -62,11 +62,14 @@ seriesType('waterfall', 'column', {
 			minPointLength = pick(options.minPointLength, 5),
 			threshold = options.threshold,
 			stacking = options.stacking,
+			// Separate offsets for negative and positive columns:
+			positiveOffset = 0,
+			negativeOffset = 0,
+			stackIndicator,
 			tooltipY;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
-		series.minPointLengthOffset = 0;
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -79,8 +82,9 @@ seriesType('waterfall', 'column', {
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+			stackIndicator = series.getStackIndicator(stackIndicator, point.x);
 			range = stack ?
-				stack[point.x].points[series.index + ',' + i] :
+				stack[point.x].points[series.index + ',' + i + ',' + stackIndicator.index] :
 				[0, yValue];
 
 			// override point value for sums
@@ -98,11 +102,13 @@ seriesType('waterfall', 'column', {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
+				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) -
+					shapeArgs.y + positiveOffset + negativeOffset; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
+				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) -
+					shapeArgs.y + positiveOffset + negativeOffset;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get
@@ -123,21 +129,30 @@ seriesType('waterfall', 'column', {
 			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
-			if (shapeArgs.height <= minPointLength) {
+			// Before minPointLength, apply negative offset:
+			shapeArgs.y -= negativeOffset;
+
+
+			if (shapeArgs.height <= minPointLength && !point.isNull) {
 				shapeArgs.height = minPointLength;
-				series.minPointLengthOffset += minPointLength;
+				if (point.y < 0) {
+					negativeOffset -= minPointLength;
+				} else {
+					positiveOffset += minPointLength;
+				}
 			}
 
-			shapeArgs.y -= series.minPointLengthOffset;
+			// After minPointLength is updated, apply positive offset:
+			shapeArgs.y -= positiveOffset;
 
 			// Correct tooltip placement (#3014)
-			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
+			tooltipY = point.plotY - negativeOffset - positiveOffset +
+				(point.negative && negativeOffset >= 0 ? shapeArgs.height : 0);
 			if (series.chart.inverted) {
 				point.tooltipPos[0] = yAxis.len - tooltipY;
 			} else {
 				point.tooltipPos[1] = tooltipY;
 			}
-
 		}
 	},
 

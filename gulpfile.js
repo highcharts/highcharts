@@ -3,41 +3,9 @@
 /* eslint-disable func-style */
 
 'use strict';
-var colors = require('colors'),
-    exec = require('child_process').exec,
-    gulp = require('gulp'),
-    gzipSize = require('gzip-size'),
-    argv = require('yargs').argv,
-    fs = require('fs'),
-    sass = require('gulp-sass'),
-    ftp = require('vinyl-ftp'),
-    spawn = require('child_process').spawn;
-var paths = {
-    buildsDir: './js/builds',
-    distributions: [
-        './js/highcharts.src.js',
-        './js/highmaps.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js'
-    ],
-    assemblies: [
-        './js/highcharts.src.js',
-        './js/highstock.src.js',
-        './js/highcharts-3d.src.js',
-        './js/highcharts-more.src.js',
-        './js/highmaps.src.js',
-        './js/modules/map.src.js',
-        './js/modules/heatmap.src.js'
-    ],
-    modules: ['./js/modules/*.js'],
-    parts: ['./js/parts/*.js'],
-    parts3D: ['./js/parts-3d/*.js'],
-    partsMap: ['./js/parts-map/*.js'],
-    partsMore: ['./js/parts-more/*.js'],
-    partsGantt: ['./js/parts-gantt/*.js'],
-    themes: ['./js/themes/*.js']
-};
+const colors = require('colors');
+const gulp = require('gulp');
+const argv = require('yargs').argv;
 
 /**
  * Get the product version from build.properties.
@@ -45,176 +13,91 @@ var paths = {
  * @return {string|null} Returns version number or null if not found.
  */
 const getProductVersion = () => {
-    // const fs = require('fs');
+    const fs = require('fs');
     const D = require('./assembler/dependencies.js');
     const properties = fs.readFileSync('./build.properties', 'utf8');
     return D.regexGetCapture(/product\.version=(.+)/, properties);
 };
 
 /**
+ * Returns fileOptions for the build script
+ * @todo Move this functionality to the build script,
+ *   and reuse it on github.highcharts.com
+ * @return {Object} Object containing all fileOptions
+ */
+const getFileOptions = (base) => {
+    const B = require('./assembler/build.js');
+    const DS = '[\\\\\\\/][^\\\\\\\/]'; // Regex: Single directory seperator
+    const folders = {
+        'parts': 'parts' + DS + '+\.js$',
+        'parts-more': 'parts-more' + DS + '+\.js$'
+    };
+
+    // Modules should not be standalone, and they should exclude all parts files.
+    const fileOptions = B.getFilesInFolder(base, true, '')
+        .reduce((obj, file) => {
+            if (file.indexOf('modules') > -1 || file.indexOf('themes') > -1) {
+                obj[file] = {
+                    exclude: new RegExp(folders.parts),
+                    umd: false
+                };
+            }
+            return obj;
+        }, {});
+
+    /**
+     * Special cases
+     * solid-gauge should also exclude gauge-series
+     * highcharts-more and highcharts-3d is also not standalone.
+     */
+    fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
+    fileOptions['modules/map.src.js'].product = 'Highmaps';
+    fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
+    Object.assign(fileOptions, {
+        'highcharts-more.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        },
+        'highcharts-3d.src.js': {
+            exclude: new RegExp(folders.parts),
+            umd: false
+        },
+        'highmaps.src.js': {
+            product: 'Highmaps'
+        },
+        'highstock.src.js': {
+            product: 'Highstock'
+        }
+    });
+    return fileOptions;
+};
+
+/**
  * Gulp task to run the building process of distribution files. By default it builds all the distribution files. Usage: "gulp build".
- * @param {string} --file Optional command line argument. Use to build a single file. Usage: "gulp build --file highcharts.js"
+ * @param {string} --file Optional command line argument. Use to build a one or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
  * @return undefined
  */
 const scripts = () => {
-    let build = require('./assembler/build').build;
-    // let argv = require('yargs').argv; Already declared in the upper scope
-    let files = (argv.file) ? [argv.file] : null,
-        type = (argv.type) ? argv.type : 'both',
-        debug = argv.d || false,
-        version = getProductVersion(),
-        DS = '[\\\\\\\/][^\\\\\\\/]', // Regex: Single directory seperator
-        folders = {
-            'parts': 'parts' + DS + '+\.js$',
-            'parts-more': 'parts-more' + DS + '+\.js$'
-        };
+    const build = require('./assembler/build').build;
+    // const argv = require('yargs').argv; Already declared in the upper scope
+    const files = (argv.file) ? argv.file.split(',') : null;
+    const type = (argv.type) ? argv.type : 'both';
+    const debug = argv.d || false;
+    const version = getProductVersion();
+    const base = './js/masters/';
+    const fileOptions = getFileOptions(base);
 
     build({
-        base: './js/masters/',
+        base: base,
         debug: debug,
-        fileOptions: {
-            'modules/accessibility.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/annotations.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/boost.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/broken-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvasrenderer.experimental.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/canvgrenderer-extended.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/data.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/drilldown.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/funnel.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/gantt.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/grid-axis.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/heatmap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/map.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/map-parser.src.js': {
-                exclude: new RegExp([folders.parts, 'data\.src\.js$'].join('|')),
-                umd: false,
-                product: 'Highmaps'
-            },
-            'modules/no-data-to-display.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/offline-exporting.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/overlapping-datalabels.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/series-label.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/solid-gauge.src.js': {
-                exclude: new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|')),
-                umd: false
-            },
-            'modules/treemap.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'modules/xrange-series.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-blue.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-green.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/dark-unica.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/gray.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid-light.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/grid.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/skies.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'themes/sand-signika.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-more.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highcharts-3d.src.js': {
-                exclude: new RegExp(folders.parts),
-                umd: false
-            },
-            'highmaps.src.js': {
-                product: 'Highmaps'
-            },
-            'highstock.src.js': {
-                product: 'Highstock'
-            }
-        },
+        fileOptions: fileOptions,
         files: files,
         output: './code/',
         type: type,
         version: version
     });
+
+    // return commandLine('./node_modules/.bin/babel ./code/highcharts.src.js -d .');
 };
 
 /**
@@ -231,6 +114,7 @@ const buildModules = () => {
 };
 
 const styles = () => {
+    const sass = require('gulp-sass');
     gulp.src('./css/*.scss')
         .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
         .pipe(gulp.dest('./code/css/'));
@@ -238,7 +122,8 @@ const styles = () => {
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
- * @parameter {string} -p Command line parameter to set pattern. Example usage gulp lint -p './samples/**'
+ * @parameter {string} -p Command line parameter to set pattern. To lint sample
+ *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
 const lint = () => {
@@ -247,6 +132,26 @@ const lint = () => {
     const formatter = cli.getFormatter();
     let pattern = (typeof argv.p === 'string') ? [argv.p] : ['./js/**/*.js'];
     let report = cli.executeOnFiles(pattern);
+    console.log(formatter(report.results));
+};
+
+/**
+ * Gulp task to execute ESLint on samples.
+ * @parameter {string} -p Command line parameter to set pattern. Example usage
+ *     gulp lint -p './samples/**'
+ * @return undefined Returns nothing
+ */
+const lintSamples = () => {
+    const CLIEngine = require('eslint').CLIEngine;
+    const cli = new CLIEngine({
+        ignorePattern: ['./samples/highcharts/common-js/*/demo.js']
+    });
+    const formatter = cli.getFormatter();
+    let report = cli.executeOnFiles([
+        './samples/*/*/*/demo.js',
+        './samples/*/*/*/test.js',
+        './samples/*/*/*/unit-tests.js'
+    ]);
     console.log(formatter(report.results));
 };
 
@@ -261,11 +166,39 @@ gulp.task('default', ['styles', 'scripts'], () => {
 });
 
 gulp.task('ftp', function () {
+    const ftp = require('vinyl-ftp');
+    const fs = require('fs');
+    const paths = {
+        buildsDir: './js/builds',
+        distributions: [
+            './js/highcharts.src.js',
+            './js/highmaps.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js'
+        ],
+        assemblies: [
+            './js/highcharts.src.js',
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js',
+            './js/highcharts-more.src.js',
+            './js/highmaps.src.js',
+            './js/modules/map.src.js',
+            './js/modules/heatmap.src.js'
+        ],
+        modules: ['./js/modules/*.js'],
+        parts: ['./js/parts/*.js'],
+        parts3D: ['./js/parts-3d/*.js'],
+        partsMap: ['./js/parts-map/*.js'],
+        partsMore: ['./js/parts-more/*.js'],
+        partsGantt: ['./js/parts-gantt/*.js'],
+        themes: ['./js/themes/*.js']
+    };
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
         if (err) {
             throw err;
         }
-        var config = {};
+        let config = {};
         lines.split('\n').forEach(function (line) {
             line = line.split('=');
             if (line[0]) {
@@ -273,13 +206,13 @@ gulp.task('ftp', function () {
             }
         });
 
-        var conn = ftp.create({
+        let conn = ftp.create({
             host: config['ftp.host'],
             user: config['ftp.user'],
             password: config['ftp.password']
         });
 
-        var globs = paths.distributions.concat(paths.modules);
+        let globs = paths.distributions.concat(paths.modules);
 
         return gulp.src(globs, { base: './js', buffer: false })
             .pipe(conn.newer(config['ftp.dest']))
@@ -295,6 +228,7 @@ gulp.task('ftp-watch', function () {
  * Run the test suite. The task spawns a child process running PhantomJS.
  */
 gulp.task('test', function () {
+    const spawn = require('child_process').spawn;
     spawn('phantomjs', ['phantomtest.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
@@ -305,87 +239,59 @@ gulp.task('test', function () {
  * Run the nightly. The task spawns a child process running node.
  */
 gulp.task('nightly', function () {
+    const spawn = require('child_process').spawn;
     spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
         stdio: 'inherit'
     });
 });
 
-gulp.task('filesize', function () {
-    const closureCompiler = require('closurecompiler');
-    var oldSize,
-        newSize,
-        filename = argv.file ? argv.file : 'highcharts.src.js';
+/**
+ * Automated generation for internal API docs.
+ * Run with --watch argument to watch for changes in the JS files.
+ */
+gulp.task('jsdoc', function (cb) {
+    const jsdoc = require('gulp-jsdoc3');
 
-    /**
-     * Pad a string to a given length by adding spaces to the beginning
-     * @param {Number} number
-     * @param {Number} length
-     * @returns {String} Padded string
-     */
-    function pad(number, length) {
-        return new Array((length || 2) + 1 - String(number).length).join(' ') + number;
-    }
+    const templateDir = './../highcharts-docstrap';
 
-    /**
-     * Log the results of the comparison
-     * @returns {undefined}
-     */
-    function report() {
-        var diff = newSize - oldSize,
-            sign = diff > 0 ? '+' : '',
-            color = diff > 0 ? 'yellow' : 'green';
-        console.log([
-            '',
-            colors.cyan(filename.replace('.src', '')) + colors.gray('(gzipped)'),
-            'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
-            'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
-            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
-            ''
-        ].join('\n'));
-    }
-
-    closureCompiler.compile(
-        ['code/' + filename],
-        null,
-        function (error, ccResult) {
-            if (ccResult) {
-
-                newSize = gzipSize.sync(ccResult);
-
-                exec('git stash', function (stashError) {
-                    if (stashError !== null) {
-                        console.log('Error in stash: ' + stashError);
-                    }
-
-                    closureCompiler.compile(
-                        ['code/' + filename],
-                        null,
-                        function (ccError, ccResultOld) {
-                            if (ccResultOld) {
-                                oldSize = gzipSize.sync(ccResultOld);
-                                report();
-                                exec('git stash apply && git stash drop', function (applyError) {
-                                    if (applyError) {
-                                        console.log(colors.red('Error in stash apply: ' + applyError));
-                                    }
-                                });
-                            } else {
-                                console.log('Compilation error: ' + error);
-                            }
-                        }
-                    );
-                });
-
-            } else {
-                console.log('Compilation error: ' + error);
+    gulp.src(['README.md', './js/parts/*.js'], { read: false })
+    // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
+        .pipe(jsdoc({
+            navOptions: {
+                theme: 'highsoft'
+            },
+            opts: {
+                destination: './internal-docs/',
+                private: false,
+                template: templateDir + '/template'
+            },
+            plugins: [
+                templateDir + '/plugins/markdown',
+                templateDir + '/plugins/optiontag',
+                templateDir + '/plugins/sampletag'
+            ],
+            templates: {
+                logoFile: 'img/highcharts-logo.svg',
+                systemName: 'Highcharts',
+                theme: 'highsoft'
             }
-        }
-    );
+        }, function (err) {
+            cb(err); // eslint-disable-line
+            if (!err) {
+                console.log(
+                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                );
+            }
+        }));
+
+    if (argv.watch) {
+        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
+    }
 });
 
 const compile = (files, sourceFolder) => {
-    console.log(colors.red('WARNING!: This task may take a few minutes on Mac, and even longer on Windows.'));
+    console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
     return new Promise((resolve) => {
         files.forEach(path => {
             const closureCompiler = require('google-closure-compiler-js');
@@ -427,17 +333,23 @@ const compileScripts = () => {
  */
 const compileLib = () => {
     const sourceFolder = './vendor/';
-    const files = ['canvg.src.js', 'rgbcolor.src.js'];
+    const files = ['canvg.src.js'];
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
 };
 
 const cleanCode = () => {
+    const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
-    return U.removeDirectory('./code').then(() => {
-        console.log('Successfully removed code directory.');
-    }).catch(console.log);
+    const codeFolder = './code/';
+    const files = B.getFilesInFolder(codeFolder, true, '');
+    const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
+    const promises = files
+        .filter(file => keep.indexOf(file) === -1)
+        .map(file => U.removeFile(codeFolder + file));
+    return Promise.all(promises)
+        .then(() => console.log('Successfully removed code directory.'));
 };
 
 const cleanDist = () => {
@@ -448,6 +360,7 @@ const cleanDist = () => {
 };
 
 const copyToDist = () => {
+    const fs = require('fs');
     const B = require('./assembler/build.js');
     const U = require('./assembler/utilities.js');
     const sourceFolder = './code/';
@@ -468,16 +381,24 @@ const copyToDist = () => {
             const filename = path.replace('.src.js', '.js').replace('js/', '');
             ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
                 if (filter[lib].indexOf(filename) === -1) {
-                    U.writeFile(distFolder + lib + '/js/' + path, content);
+                    U.writeFile(distFolder + lib + '/code/' + path, content);
                 }
             });
         });
 
+    // Copy readme to distribution packages
+    ['readme.txt'].forEach((path) => {
+        const content = fs.readFileSync(sourceFolder + path);
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            U.writeFile(distFolder + lib + '/code/' + path, content);
+        });
+    });
+
     // Copy lib files to the distribution packages. These files are used in the offline-export.
-    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
+    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
-            U.writeFile(distFolder + lib + '/js/lib/' + path, content);
+            U.writeFile(distFolder + lib + '/code/lib/' + path, content);
         });
     });
     // Copy radial gradient to dist.
@@ -487,6 +408,37 @@ const copyToDist = () => {
             U.writeFile(distFolder + lib + '/gfx/' + path, content);
         });
     });
+};
+
+const createProductJS = () => {
+    const U = require('./assembler/utilities.js');
+    const D = require('./assembler/dependencies.js');
+    const path = './build/dist/products.js';
+
+    // @todo Get rid of build.properties and perhaps use package.json in stead.
+    const buildProperties = U.getFile('./build.properties');
+    let date = D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties);
+    let version = D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties);
+
+    // @todo Add reasonable defaults
+    date = date === null ? '' : date;
+    version = version === null ? '' : version;
+
+    const content = `var products = {
+    "Highcharts": {
+    "date": "${date}", 
+    "nr": "${version}"
+    },
+    "Highstock": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    }
+}`;
+    U.writeFile(path, content);
 };
 
 /**
@@ -574,7 +526,7 @@ const gulpify = (name, task) => {
  * @return {string} Returns all output to the terminal in the form of a string.
  */
 const commandLine = (command) => {
-    // const exec = require('child_process').exec;
+    const exec = require('child_process').exec;
     return new Promise((resolve, reject) => {
         const cli = exec(command, (error, stdout) => {
             if (error) {
@@ -587,6 +539,83 @@ const commandLine = (command) => {
         });
         cli.stdout.on('data', (data) => console.log(data.toString()));
     });
+};
+
+const filesize = () => {
+    const sourceFolder = './code/';
+    // @todo Correct type names to classic and styled
+    const types = argv.type ? [argv.type] : ['classic', 'css'];
+    const filenames = argv.file ? argv.file.split(',') : ['highcharts.src.js'];
+    const files = filenames.reduce((arr, name) => {
+        const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
+        return arr.concat(p);
+    }, []);
+    const getGzipSize = (content) => {
+        const gzipSize = require('gzip-size');
+        return gzipSize.sync(content);
+    };
+    // const pad = (str, x) => ' '.repeat(x) + str;
+    const padRight = (str, x) => str + ' '.repeat(x - str.length);
+    const printRow = (sizes, content) => content.map((c, i) => padRight(c.toString(), sizes[i])).join('');
+    const report = (name, current, head) => {
+        const colsizes = [10, 10, 10, 10];
+        const diff = (a, b) => {
+            const d = a - b;
+            const sign = d > 0 ? '+' : '';
+            // const color = diff > 0 ? 'yellow' : 'green';
+            return sign + d;
+        };
+        console.log([
+            '',
+            colors.cyan(name),
+            printRow(colsizes, ['', 'gzipped', 'compiled', 'size']),
+            printRow(colsizes, ['New:', current.gzip, current.compiled, current.size]),
+            printRow(colsizes, ['HEAD:', head.gzip, head.compiled, head.size]),
+            printRow(colsizes, ['Diff:', diff(current.gzip, head.gzip) + 'B', diff(current.compiled, head.compiled) + 'B', diff(current.size, head.size) + 'B']),
+            ''
+        ].join('\n'));
+    };
+
+    const runFileSize = (obj, key) => {
+        return Promise.resolve(scripts())
+        .then(() => compile(files, sourceFolder))
+        .then(() => {
+            return files.reduce((o, n) => {
+                const getFile = require('./assembler/utilities.js').getFile;
+                const filename = n.replace('.src.js', '.js');
+                const compiled = getFile(sourceFolder + filename);
+                const content = getFile(sourceFolder + n);
+                if (!o[filename]) {
+                    o[filename] = {};
+                }
+                o[filename][key] = {
+                    gzip: getGzipSize(compiled),
+                    size: content.length,
+                    compiled: compiled.length
+                };
+                return o;
+            }, obj);
+        });
+    };
+
+    return runFileSize({}, 'new')
+    .then((obj) => {
+        return commandLine('git stash')
+        .then(() => obj); // Pass obj to next function
+    })
+    .then((obj) => runFileSize(obj, 'head'))
+    .then((obj) => {
+        return commandLine('git stash apply && git stash drop')
+        .then(() => obj); // Pass obj to next function
+    })
+    .then((obj) => {
+        const keys = Object.keys(obj);
+        keys.forEach((key) => {
+            const values = obj[key];
+            report(key, values.new, values.head);
+        });
+    })
+    .catch(console.log);
 };
 
 /**
@@ -619,11 +648,16 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+gulp.task('create-productjs', createProductJS);
+gulp.task('clean-dist', cleanDist);
+gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
+gulp.task('filesize', filesize);
 gulp.task('styles', styles);
 gulp.task('scripts', scripts);
 gulp.task('build-modules', buildModules);
 gulp.task('lint', lint);
+gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);
@@ -639,10 +673,12 @@ gulp.task('dist', () => {
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
+        .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {
-    var browserify = require('browserify');
+    const fs = require('fs');
+    const browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
             if (err) {
@@ -653,7 +689,7 @@ gulp.task('browserify', function () {
 });
 
 gulp.task('webpack', function () {
-    var webpack = require('webpack');
+    const webpack = require('webpack');
     webpack({
         entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
         output: {

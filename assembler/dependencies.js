@@ -32,14 +32,32 @@ const getFileImports = content => {
 };
 
 const cleanPath = path => {
-    let p = path;
-    while (p.indexOf('/./') > -1) {
-        p = p.replace('/./', '/');
-    }
-    while (p.indexOf('/../') > -1) {
-        p = p.replace(/\/([^\/]+\/\.\.\/)/g, '/');
-    }
-    return p;
+    let parts = path.split('/')
+    .reduce((arr, piece) => {
+        if (piece !== '.' || arr.length === 0) {
+            arr.push(piece);
+        }
+        return arr;
+    }, [])
+    .reduce((arr, piece) => {
+        if (piece === '..') {
+            if (arr.length === 0) {
+                arr.push(piece);
+            } else {
+                let popped = arr.pop();
+                if (popped === '.') {
+                    arr.push(piece);
+                } else if (popped === '..') {
+                    arr.push(popped);
+                    arr.push(piece);
+                }
+            }
+        } else {
+            arr.push(piece);
+        }
+        return arr;
+    }, []);
+    return parts.join('/');
 };
 
 const folder = path => {

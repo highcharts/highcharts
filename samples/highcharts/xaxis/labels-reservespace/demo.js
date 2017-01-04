@@ -28,7 +28,7 @@ $(function () {
                     color: '#FFFFFF',
                     fontSize: '12pt',
                     fontWeight: 'bold',
-                    textShadow: '0 0 2px contrast, 0 0 2px contrast'
+                    textOutline: '1px contrast'
                 }
             },
             tickWidth: 0

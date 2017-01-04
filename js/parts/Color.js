@@ -11,6 +11,15 @@ var each = H.each,
 	map = H.map,
 	merge = H.merge,
 	pInt = H.pInt;
+
+/**
+ * @typedef {string} ColorString
+ * A valid color to be parsed and handled by Highcharts. Highcharts internally 
+ * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
+ * rgba colors like `rgba(255,255,255,1)`. Other colors may be supported by the
+ * browsers and displayed correctly, but Highcharts is not able to process them
+ * and apply concepts like opacity and brightening.
+ */
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format

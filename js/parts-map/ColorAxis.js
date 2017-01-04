@@ -51,13 +51,22 @@ extend(ColorAxis.prototype, {
 			/*= } =*/
 		},
 		labels: {
-			overflow: 'justify'
+			overflow: 'justify',
+			rotation: 0
 		},
 		minColor: '${palette.highlightColor10}',
 		maxColor: '${palette.highlightColor100}',
 		tickLength: 5,
 		showInLegend: true
 	},
+
+	// Properties to preserve after destroy, for Axis.update (#5881)
+	keepProps: ['legendGroup', 'legendItem', 'legendSymbol']
+		.concat(Axis.prototype.keepProps),
+
+	/**
+	 * Initialize the color axis
+	 */
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
 			options;
@@ -497,7 +506,16 @@ extend(ColorAxis.prototype, {
  */
 each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, ColorAxis.prototype.tweenColors(color(this.start), color(this.end), this.pos));
+		this.elem.attr(
+			prop,
+			ColorAxis.prototype.tweenColors(
+				color(this.start),
+				color(this.end),
+				this.pos
+			),
+			null,
+			true
+		);
 	};
 });
 

@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	deg2rad = H.deg2rad,
 	destroyObjectProperties = H.destroyObjectProperties,
 	each = H.each,
-	error = H.error,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
 	format = H.format,
@@ -43,7 +42,8 @@ var addEvent = H.addEvent,
 	Tick = H.Tick;
 	
 /**
- * Create a new axis object
+ * Create a new axis object.
+ * @constructor Axis
  * @param {Object} chart
  * @param {Object} options
  */
@@ -188,7 +188,7 @@ H.Axis.prototype = {
 				fontSize: '11px',
 				fontWeight: 'bold',
 				color: '${palette.neutralColor100}',
-				textShadow: '1px 1px contrast, -1px -1px contrast, -1px 1px contrast, 1px -1px contrast'
+				textOutline: '1px contrast'
 			}
 			/*= } =*/
 		},
@@ -437,7 +437,9 @@ H.Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = defaultOptions.lang.numericSymbols,
+			lang = defaultOptions.lang,
+			numericSymbols = lang.numericSymbols,
+			numSymMagnitude = lang.numericSymbolMagnitude || 1000,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
@@ -460,7 +462,7 @@ H.Axis.prototype = {
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === undefined) {
-				multi = Math.pow(1000, i + 1);
+				multi = Math.pow(numSymMagnitude, i + 1);
 				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
 					ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
@@ -607,11 +609,9 @@ H.Axis.prototype = {
 			if (doPostTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
-			if (pointPlacement === 'between') {
-				pointPlacement = 0.5;
-			}
-			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
+			returnValue = sign * (val - localMin) * localA + cvsOffset +
+				(sign * minPixelPadding) +
+				(isNumber(pointPlacement) ? localA * pointPlacement : 0);
 		}
 
 		return returnValue;
@@ -627,8 +627,8 @@ H.Axis.prototype = {
 		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
 	},
 
-	/*
-	 * Utility method to translate a pixel position in to an axis value
+	/**
+	 * Utility method to translate a pixel position in to an axis value.
 	 * @param {Number} pixel The pixel value coordinate
 	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
 	 *        axis/pane itself.
@@ -767,7 +767,15 @@ H.Axis.prototype = {
 					)
 				);
 			} else {
-				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+				for (
+					pos = min + (tickPositions[0] - min) % minorTickInterval;
+					pos <= max;
+					pos += minorTickInterval
+				) {
+					// Very, very, tight grid lines (#5771)
+					if (pos === minorTickPositions[0]) {
+						break;
+					}
 					minorTickPositions.push(pos);
 				}
 			}
@@ -867,8 +875,15 @@ H.Axis.prototype = {
 			ret = 1;
 		} else {
 			each(this.series, function (series) {
-				var seriesClosest = series.closestPointRange;
-				if (!series.noSharedTooltip && defined(seriesClosest)) {
+				var seriesClosest = series.closestPointRange,
+					visible = series.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries;
+				
+				if (
+					!series.noSharedTooltip &&
+					defined(seriesClosest) &&
+					visible
+				) {
 					ret = defined(ret) ?
 						Math.min(ret, seriesClosest) :
 						seriesClosest;
@@ -891,7 +906,7 @@ H.Axis.prototype = {
 		point.series.requireSorting = false;
 
 		if (!defined(nameX)) {
-			nameX = this.options.uniqueNames === false ? // docs: renamed nameToX
+			nameX = this.options.uniqueNames === false ?
 				point.series.autoIncrement() : 
 				inArray(point.name, names);
 		}
@@ -920,6 +935,9 @@ H.Axis.prototype = {
 			this.minRange = undefined;
 			each(this.series || [], function (series) {
 			
+				// Reset incrementer (#5928)
+				series.xIncrement = null;
+
 				// When adding a series, points are not yet generated
 				if (!series.points || series.isDirtyData) {
 					series.processData();
@@ -958,15 +976,14 @@ H.Axis.prototype = {
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
 		if (isXAxis || hasCategories || pointRange) {
+
+			// Get the closest points
+			closestPointRange = axis.getClosest();
+
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
-
 			} else {
-				
-				// Get the closest points
-				closestPointRange = axis.getClosest();
-
 				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 
 						1 : 
@@ -1068,7 +1085,7 @@ H.Axis.prototype = {
 			axis.min = pick(linkedParentExtremes.min, linkedParentExtremes.dataMin);
 			axis.max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
 			if (options.type !== axis.linkedParent.options.type) {
-				error(11, 1); // Can't link axes of different type
+				H.error(11, 1); // Can't link axes of different type
 			}
 
 		// Initial min and max from the extreme data values
@@ -1092,7 +1109,7 @@ H.Axis.prototype = {
 
 		if (isLog) {
 			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
-				error(10, 1); // Can't plot negative values on log axis
+				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
 			// was too aggressive for #4360 because of conversion back to lin,
@@ -1137,12 +1154,12 @@ H.Axis.prototype = {
 		// Handle options for floor, ceiling, softMin and softMax
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) { // docs. API added as next
+		} else if (isNumber(options.softMin)) {
 			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) { // docs. API added as next
+		} else if (isNumber(options.softMax)) {
 			axis.max = Math.max(axis.max, options.softMax);
 		}
 
@@ -1290,11 +1307,9 @@ H.Axis.prototype = {
 
 		}
 
+		// reset min/max or remove extremes based on start/end on tick
+		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
-
-			// reset min/max or remove extremes based on start/end on tick
-			this.trimTicks(tickPositions, startOnTick, endOnTick);
-
 			// When there is only one point, or all points have the same value on this axis, then min
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
@@ -1305,7 +1320,6 @@ H.Axis.prototype = {
 				this.max += 0.5;
 			}
 			this.single = single;
-
 			if (!tickPositionsOption && !tickPositioner) {
 				this.adjustTickAmount();
 			}
@@ -1320,25 +1334,27 @@ H.Axis.prototype = {
 			roundedMax = tickPositions[tickPositions.length - 1],
 			minPointOffset = this.minPointOffset || 0;
 
-		if (startOnTick) {
-			this.min = roundedMin;
-		} else {
-			while (this.min - minPointOffset > tickPositions[0]) {
-				tickPositions.shift();
+		if (!this.isLinked) {
+			if (startOnTick) {
+				this.min = roundedMin;
+			} else {
+				while (this.min - minPointOffset > tickPositions[0]) {
+					tickPositions.shift();
+				}
 			}
-		}
 
-		if (endOnTick) {
-			this.max = roundedMax;
-		} else {
-			while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
-				tickPositions.pop();
+			if (endOnTick) {
+				this.max = roundedMax;
+			} else {
+				while (this.max + minPointOffset < tickPositions[tickPositions.length - 1]) {
+					tickPositions.pop();
+				}
 			}
-		}
 
-		// If no tick are left, set one tick in the middle (#3195)
-		if (tickPositions.length === 0 && defined(roundedMin)) {
-			tickPositions.push((roundedMax + roundedMin) / 2);
+			// If no tick are left, set one tick in the middle (#3195)
+			if (tickPositions.length === 0 && defined(roundedMin)) {
+				tickPositions.push((roundedMax + roundedMin) / 2);
+			}
 		}
 	},
 
@@ -1351,7 +1367,15 @@ H.Axis.prototype = {
 			hasOther,
 			options = this.options;
 
-		if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
+		if (
+			// Only if alignTicks is true
+			this.chart.options.chart.alignTicks !== false &&
+			options.alignTicks !== false &&
+
+			// Don't try to align ticks on a log axis, they are not evenly
+			// spaced (#6021)
+			!this.isLog
+		) {
 			each(this.chart[this.coll], function (axis) {
 				var otherOptions = axis.options,
 					horiz = axis.horiz,
@@ -1555,11 +1579,22 @@ H.Axis.prototype = {
 			
 			// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 			if (!this.allowZoomOutside) {
-				if (defined(dataMin) && newMin <= min) {
-					newMin = min;
+				// #6014, sometimes newMax will be smaller than min (or newMin will be larger than max).
+				if (defined(dataMin)) {
+					if (newMin < min) {
+						newMin = min;
+					}
+					if (newMin > max) {
+						newMin = max;
+					}
 				}
-				if (defined(dataMax) && newMax >= max) {
-					newMax = max;
+				if (defined(dataMax)) {
+					if (newMax < min) {
+						newMax = min;
+					}
+					if (newMax > max) {
+						newMax = max;
+					}
 				}
 			}
 
@@ -1777,9 +1812,17 @@ H.Axis.prototype = {
 			slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1),
 			marginLeft = chart.margin[3];
 
-		return (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
-			((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
-			(!horiz && ((marginLeft && (marginLeft - chart.spacing[3])) || chart.chartWidth * 0.33)); // #1580, #1931
+		return (
+			horiz &&
+			(labelOptions.step || 0) < 2 &&
+			!labelOptions.rotation && // #4415
+			((this.staggerLines || 1) * this.len) / slotCount
+		) || (
+			!horiz && (
+				(marginLeft && (marginLeft - chart.spacing[3])) ||
+				chart.chartWidth * 0.33
+			)
+		); // #1580, #1931
 
 	},
 
@@ -1902,6 +1945,70 @@ H.Axis.prototype = {
 	hasData: function () {
 		return this.hasVisibleSeries || (defined(this.min) && defined(this.max) && !!this.tickPositions);
 	},
+	
+	/**
+	 * Adds the title defined in axis.options.title.
+	 * @param {Boolean} display - whether or not to display the title
+	 */
+	addTitle: function (display) {
+		var axis = this,
+			renderer = axis.chart.renderer,
+			horiz = axis.horiz,
+			opposite = axis.opposite,
+			options = axis.options,
+			axisTitleOptions = options.title,
+			textAlign;
+		
+		if (!axis.axisTitle) {
+			textAlign = axisTitleOptions.textAlign;
+			if (!textAlign) {
+				textAlign = (horiz ? { 
+					low: 'left',
+					middle: 'center',
+					high: 'right'
+				} : { 
+					low: opposite ? 'right' : 'left',
+					middle: 'center',
+					high: opposite ? 'left' : 'right'
+				})[axisTitleOptions.align];
+			}
+			axis.axisTitle = renderer.text(
+				axisTitleOptions.text,
+				0,
+				0,
+				axisTitleOptions.useHTML
+			)
+			.attr({
+				zIndex: 7,
+				rotation: axisTitleOptions.rotation || 0,
+				align: textAlign
+			})
+			.addClass('highcharts-axis-title')
+			/*= if (build.classic) { =*/
+			.css(axisTitleOptions.style)
+			/*= } =*/
+			.add(axis.axisGroup);
+			axis.axisTitle.isNew = true;
+		}
+		
+		// hide or show the title depending on whether showEmpty is set
+		axis.axisTitle[display ? 'show' : 'hide'](true);
+	},
+
+	/**
+	 * Generates a tick for initial positioning.
+	 * @param  {number} pos - The tick position in axis values.
+	 * @param  {number} i - The index of the tick in axis.tickPositions.
+	 */
+	generateTick: function (pos) {
+		var ticks = this.ticks;
+
+		if (!ticks[pos]) {
+			ticks[pos] = new Tick(this, pos);
+		} else {
+			ticks[pos].addLabel(); // update labels depending on tick interval
+		}
+	},
 
 	/**
 	 * Render the tick labels to a preliminary position to get their sizes
@@ -1925,14 +2032,12 @@ H.Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			labelOffsetPadded,
-			opposite = axis.opposite,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
 			className = options.className,
-			textAlign,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
 			tickSize = this.tickSize('tick');
@@ -1963,12 +2068,9 @@ H.Axis.prototype = {
 		if (hasData || axis.isLinked) {
 
 			// Generate ticks
-			each(tickPositions, function (pos) {
-				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis, pos);
-				} else {
-					ticks[pos].addLabel(); // update labels depending on tick interval
-				}
+			each(tickPositions, function (pos, i) {
+				// i is not used here, but may be used in overrides
+				axis.generateTick(pos, i);
 			});
 
 			axis.renderUnsquish();
@@ -2001,46 +2103,13 @@ H.Axis.prototype = {
 		}
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
-			if (!axis.axisTitle) {
-				textAlign = axisTitleOptions.textAlign;
-				if (!textAlign) {
-					textAlign = (horiz ? { 
-						low: 'left',
-						middle: 'center',
-						high: 'right'
-					} : { 
-						low: opposite ? 'right' : 'left',
-						middle: 'center',
-						high: opposite ? 'left' : 'right'
-					})[axisTitleOptions.align];
-				}
-				axis.axisTitle = renderer.text(
-					axisTitleOptions.text,
-					0,
-					0,
-					axisTitleOptions.useHTML
-				)
-				.attr({
-					zIndex: 7,
-					rotation: axisTitleOptions.rotation || 0,
-					align: textAlign
-				})
-				.addClass('highcharts-axis-title')
-				/*= if (build.classic) { =*/
-				.css(axisTitleOptions.style)
-				/*= } =*/
-				.add(axis.axisGroup);
-				axis.axisTitle.isNew = true;
-			}
+			axis.addTitle(showAxis);
 
 			if (showAxis) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
 			}
-
-			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		// Render the axis line
@@ -2114,7 +2183,6 @@ H.Axis.prototype = {
 
 	/**
 	 * Render the axis line
-	 * @returns {[type]} [description]
 	 */
 	renderLine: function () {
 		if (!this.axisLine) {
@@ -2174,6 +2242,54 @@ H.Axis.prototype = {
 	},
 
 	/**
+	 * Render a minor tick into the given position. If a minor tick already 
+	 * exists in this position, move it.
+	 * @param  {number} pos - The position in axis values.
+	 */
+	renderMinorTick: function (pos) {
+		var slideInTicks = this.chart.hasRendered && isNumber(this.oldMin),
+			minorTicks = this.minorTicks;
+
+		if (!minorTicks[pos]) {
+			minorTicks[pos] = new Tick(this, pos, 'minor');
+		}
+
+		// Render new ticks in old position
+		if (slideInTicks && minorTicks[pos].isNew) {
+			minorTicks[pos].render(null, true);
+		}
+
+		minorTicks[pos].render(null, false, 1);
+	},
+
+	/**
+	 * Render a major tick into the given position. If a tick already exists
+	 * in this position, move it.
+	 * @param  {number} pos - The position in axis values
+	 * @param  {number} i - The tick index
+	 */
+	renderTick: function (pos, i) {
+		var isLinked = this.isLinked,
+			ticks = this.ticks,
+			slideInTicks = this.chart.hasRendered && isNumber(this.oldMin);
+		
+		// Linked axes need an extra check to find out if
+		if (!isLinked || (pos >= this.min && pos <= this.max)) {
+
+			if (!ticks[pos]) {
+				ticks[pos] = new Tick(this, pos);
+			}
+
+			// render new ticks in old position
+			if (slideInTicks && ticks[pos].isNew) {
+				ticks[pos].render(i, true, 0.1);
+			}
+
+			ticks[pos].render(i);
+		}
+	},
+
+	/**
 	 * Render the axis
 	 */
 	render: function () {
@@ -2193,8 +2309,6 @@ H.Axis.prototype = {
 			alternateGridColor = options.alternateGridColor,
 			tickmarkOffset = axis.tickmarkOffset,
 			axisLine = axis.axisLine,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin),
 			showAxis = axis.showAxis,
 			animation = animObject(renderer.globalAnimation),
 			from,
@@ -2219,16 +2333,7 @@ H.Axis.prototype = {
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
 				each(axis.getMinorTickPositions(), function (pos) {
-					if (!minorTicks[pos]) {
-						minorTicks[pos] = new Tick(axis, pos, 'minor');
-					}
-
-					// render new ticks in old position
-					if (slideInTicks && minorTicks[pos].isNew) {
-						minorTicks[pos].render(null, true);
-					}
-
-					minorTicks[pos].render(null, false, 1);
+					axis.renderMinorTick(pos);
 				});
 			}
 
@@ -2236,22 +2341,7 @@ H.Axis.prototype = {
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
 				each(tickPositions, function (pos, i) {
-
-					// linked axes need an extra check to find out if
-					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
-
-						if (!ticks[pos]) {
-							ticks[pos] = new Tick(axis, pos);
-						}
-
-						// render new ticks in old position
-						if (slideInTicks && ticks[pos].isNew) {
-							ticks[pos].render(i, true, 0.1);
-						}
-
-						ticks[pos].render(i);
-					}
-
+					axis.renderTick(pos, i);
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
@@ -2380,6 +2470,10 @@ H.Axis.prototype = {
 
 	},
 
+	// Properties to survive after destroy, needed for Axis.update (#4317,
+	// #5773, #5881).
+	keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'],
+	
 	/**
 	 * Destroys an Axis instance.
 	 */
@@ -2389,8 +2483,7 @@ H.Axis.prototype = {
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
 			i,
-			n,
-			keepProps;
+			n;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2422,12 +2515,9 @@ H.Axis.prototype = {
 			}
 		});
 
-
 		// Delete all properties and fall back to the prototype.
-		// Preserve some properties, needed for Axis.update (#4317, #5773).
-		keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 		for (n in axis) {
-			if (axis.hasOwnProperty(n) && inArray(n, keepProps) === -1) {
+			if (axis.hasOwnProperty(n) && inArray(n, axis.keepProps) === -1) {
 				delete axis[n];
 			}
 		}
@@ -2473,7 +2563,7 @@ H.Axis.prototype = {
 			if (defined(pos)) {
 				path = this.getPlotLinePath(
 					// First argument, value, only used on radial
-					this.isXAxis ? point.x : pick(point.stackY, point.y),
+					point && (this.isXAxis ? point.x : pick(point.stackY, point.y)),
 					null,
 					null,
 					null,

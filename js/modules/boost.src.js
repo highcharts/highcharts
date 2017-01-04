@@ -35,6 +35,7 @@
  * - Point markers are not drawn on line-type series
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
+ * - Initial point colors aren't rendered
  * - Columns are always one pixel wide. Don't set the threshold too low.
  *
  * Optimizing tips for users
@@ -96,11 +97,14 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i) {
 }
 
 // Set default options
-each(['area', 'arearange', 'column', 'line', 'scatter'], function (type) {
-	if (plotOptions[type]) {
-		plotOptions[type].boostThreshold = 5000;
+each(
+	['area', 'arearange', 'bubble', 'column', 'line', 'scatter'],
+	function (type) {
+		if (plotOptions[type]) {
+			plotOptions[type].boostThreshold = 5000;
+		}
 	}
-});
+);
 
 /**
  * Override a bunch of methods the same way. If the number of points is below the threshold,
@@ -130,12 +134,11 @@ each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], fun
 
 	// A special case for some types - its translate method is already wrapped
 	if (method === 'translate') {
-		if (seriesTypes.column) {
-			wrap(seriesTypes.column.prototype, method, branch);
-		}
-		if (seriesTypes.arearange) {
-			wrap(seriesTypes.arearange.prototype, method, branch);
-		}
+		each(['arearange', 'bubble', 'column'], function (type) {
+			if (seriesTypes[type]) {
+				wrap(seriesTypes[type].prototype, method, branch);
+			}
+		});
 	}
 });
 
@@ -269,7 +272,10 @@ H.extend(Series.prototype, {
 			r = options.marker && options.marker.radius,
 			cvsDrawPoint = this.cvsDrawPoint,
 			cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
-			cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
+			cvsMarker = r && r <= 1 ?
+				this.cvsMarkerSquare :
+				this.cvsMarkerCircle,
+			strokeBatch = this.cvsStrokeBatch || 1000,
 			enableMouseTracking = options.enableMouseTracking !== false,
 			lastPoint,
 			threshold = options.threshold,
@@ -302,7 +308,7 @@ H.extend(Series.prototype, {
 					ctx.stroke();
 				}
 			},
-			drawPoint = function (clientX, plotY, yBottom) {
+			drawPoint = function (clientX, plotY, yBottom, i) {
 				if (c === 0) {
 					ctx.beginPath();
 
@@ -319,14 +325,14 @@ H.extend(Series.prototype, {
 					} else if (cvsLineTo) {
 						cvsLineTo(ctx, clientX, plotY);
 					} else if (cvsMarker) {
-						cvsMarker(ctx, clientX, plotY, r);
+						cvsMarker.call(series, ctx, clientX, plotY, r, i);
 					}
 				}
 
 				// We need to stroke the line for every 1000 pixels. It will crash the browser
 				// memory use if we stroke too infrequently.
 				c = c + 1;
-				if (c === 1000) {
+				if (c === strokeBatch) {
 					stroke();
 					c = 0;
 				}
@@ -467,7 +473,8 @@ H.extend(Series.prototype, {
 								drawPoint(
 									clientX,
 									hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
-									hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
+									hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom,
+									i
 								);
 								addKDPoint(clientX, plotY, maxI);
 								if (yBottom !== plotY) {
@@ -481,7 +488,7 @@ H.extend(Series.prototype, {
 						}
 					} else {
 						plotY = Math.round(yAxis.toPixels(y, true));
-						drawPoint(clientX, plotY, yBottom);
+						drawPoint(clientX, plotY, yBottom, i);
 						addKDPoint(clientX, plotY, i);
 					}
 				}
@@ -542,6 +549,15 @@ seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r
 	ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
 };
 seriesTypes.scatter.prototype.fill = true;
+
+if (seriesTypes.bubble) {
+	seriesTypes.bubble.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r, i) {
+		ctx.moveTo(clientX, plotY);
+		ctx.arc(clientX, plotY, this.radii && this.radii[i], 0, 2 * Math.PI, false);
+	};
+	seriesTypes.bubble.prototype.cvsStrokeBatch = 1;
+}
+
 
 extend(seriesTypes.area.prototype, {
 	cvsDrawPoint: function (ctx, clientX, plotY, yBottom, lastPoint) {

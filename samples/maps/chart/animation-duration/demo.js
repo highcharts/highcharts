@@ -30,7 +30,8 @@ $(function () {
                     [0, '#f8faff'],
                     [0.3, '#2f7ed8'],
                     [1, '#000000']
-                ]
+                ],
+                tickPixelInterval: 100
             },
 
             series: [{
@@ -40,7 +41,7 @@ $(function () {
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 },
                 tooltip: {

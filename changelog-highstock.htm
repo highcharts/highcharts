@@ -1,7 +1,27 @@
-<p>Highstock 5.0.0 (2016-09-29)</p>
-<ul>
-	<li>Most changes listed under Highcharts 5.0.0 above also apply to Highstock 5.0.0.</li>
-	<li>Added support for multiple series in the navigator, see <a href="http://api.highcharts.com/highstock/plotOptions.series.showInNavigator">series.showInNavigator</a> and <a href="http://api.highcharts.com/highstock/plotOptions.series.navigatorOptions">series.navigatorOptions</a>.
-	<li>Added new option, <a href="http://api.highcharts.com/highcharts/plotOptions.flags.textAlign">plotOptions.flags.textAlign</a>.</li>
-	<li>Deprecated the <a href="http://api.highcharts.com/highstock/navigator.baseSeries">baseSeries</a> option, now replaced by <code>showInNavigator</code>.</li>
+<p>Highstock 5.0.6 (2016-12-07)</p>
+<ul>    <li>Most changes listed under Highcharts 5.0.6 above also apply to Highstock 5.0.6.</li>
+
+    <li>Added new option, <code>series.compareBase</code>, to allow percentage comparison to start at 100%.</li>
 </ul>
+<div id="accordion" class="panel-group">
+    <div class="panel panel-default">
+        <div id="hs-heading-5-0-6-bug-fixes" class="panel-heading">
+            <h4 class="panel-title">
+                <a href="#hs-5-0-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                    Bug fixes
+                </a>
+            </h4>
+        </div>
+        <div id="hs-5-0-6-bug-fixes" class="panel-collapse collapse">
+            <div class="panel-body">
+                <ul>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2685">#2685</a>, <code>xAxis.offset</code> didn't work for navigator's xAxis.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5924">#5924</a>, wrong extremes on dynamically added axes.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6057">#6057</a>, setting correct series clip-path for polar charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4988">#4988</a>, <code>navigator.enabled</code>, <code>rangeSelector.enabled</code>, <code>scrollbar.enabled</code> ignored when <code>setOptions</code> was used.</li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

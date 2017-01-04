@@ -23,7 +23,8 @@ var Legend,
 	win = H.win,
 	wrap = H.wrap;
 /**
- * The overview of the chart's series
+ * The overview of the chart's series.
+ * @class
  */
 Legend = H.Legend = function (chart, options) {
 	this.init(chart, options);
@@ -187,33 +188,26 @@ Legend.prototype = {
 	 * Destroys the legend.
 	 */
 	destroy: function () {
-		var legend = this,
-			legendGroup = legend.group,
-			box = legend.box;
-
-		if (box) {
-			legend.box = box.destroy();
+		function destroyItems(key) {
+			if (this[key]) {
+				this[key] = this[key].destroy();
+			}
 		}
 
 		// Destroy items
 		each(this.getAllItems(), function (item) {
-			each(['legendItem', 'legendGroup'], function (key) {
-				if (item[key]) {
-					item[key] = item[key].destroy();
-				}
-			});
+			each(['legendItem', 'legendGroup'], destroyItems, item);
 		});
 
-		if (legendGroup) {
-			legend.group = legendGroup.destroy();
-		}
+		each(['box', 'title', 'group'], destroyItems, this);
+		this.display = null; // Reset in .render on update.
 	},
 
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
 	positionCheckboxes: function (scrollOffset) {
-		var alignAttr = this.group.alignAttr,
+		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
 			titleHeight = this.titleHeight;
@@ -312,9 +306,9 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + 
-					(item.options.className || '') +
-					(isSeries ? 'highcharts-series-' + item.index : '')
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex +
+					(item.options.className ? ' ' + item.options.className : '') +
+					(isSeries ? ' highcharts-series-' + item.index : '')
 				)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
@@ -349,6 +343,7 @@ Legend.prototype = {
 			}
 
 			// Draw the legend symbol inside the group box
+			legend.symbolHeight = options.symbolHeight || legend.fontMetrics.f;
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
@@ -632,19 +627,27 @@ Legend.prototype = {
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
-				clipRect.attr({
-					height: height
-				});
+				if (height) {
+					clipRect.attr({
+						height: height
+					});
+				} else if (clipRect) { // Reset (#5912)
+					legend.clipRect = clipRect.destroy();
+					legend.contentGroup.clip();
+				}
 
 				// useHTML
 				if (legend.contentGroup.div) {
-					legend.contentGroup.div.style.clip = 'rect(' + padding + 'px,9999px,' + (padding + height) + 'px,0)';
+					legend.contentGroup.div.style.clip = height ? 
+						'rect(' + padding + 'px,9999px,' +
+							(padding + height) + 'px,0)' :
+						'auto';
 				}
 			};
 
 
 		// Adjust the height
-		if (options.layout === 'horizontal') {
+		if (options.layout === 'horizontal' && options.verticalAlign !== 'middle' && !options.floating) {
 			spaceHeight /= 2;
 		}
 		if (maxHeight) {
@@ -713,8 +716,9 @@ Legend.prototype = {
 
 			legendHeight = spaceHeight;
 
+		// Reset
 		} else if (nav) {
-			clipToHeight(chart.chartHeight);
+			clipToHeight();
 			nav.hide();
 			this.scrollGroup.attr({
 				translateY: 1
@@ -812,16 +816,16 @@ H.LegendSymbolMixin = {
 	 */
 	drawRectangle: function (legend, item) {
 		var options = legend.options,
-			symbolHeight = options.symbolHeight || legend.fontMetrics.f,
+			symbolHeight = legend.symbolHeight,
 			square = options.squareSymbol,
-			symbolWidth = square ? symbolHeight : legend.symbolWidth; // docs: square
+			symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
 			legend.baseline - symbolHeight + 1, // #3988
 			symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, symbolHeight / 2) // docs: new default
+			pick(legend.options.symbolRadius, symbolHeight / 2)
 		)
 		.addClass('highcharts-point')
 		.attr({
@@ -872,7 +876,11 @@ H.LegendSymbolMixin = {
 		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
-			radius = this.symbol.indexOf('url') === 0 ? 0 : markerOptions.radius;
+			radius = this.symbol.indexOf('url') === 0 ?
+				0 :
+				// Bubble doesn't have a radius, base on symbolHeight
+				pick(markerOptions.radius, legend.symbolHeight / 2);
+			
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,

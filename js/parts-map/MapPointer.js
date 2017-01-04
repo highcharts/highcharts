@@ -61,17 +61,19 @@ extend(Pointer.prototype, {
 	}
 });
 
-// Implement the pinchType option
+// The pinchType is inferred from mapNavigation options.
 wrap(Pointer.prototype, 'zoomOption', function (proceed) {
 
+
 	var mapNavigation = this.chart.options.mapNavigation;
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-
+	
 	// Pinch status
 	if (pick(mapNavigation.enableTouchZoom, mapNavigation.enabled)) {
-		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
+		this.chart.options.chart.pinchType = 'xy';
 	}
+	
+	proceed.apply(this, [].slice.call(arguments, 1));
+
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
