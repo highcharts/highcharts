@@ -52,7 +52,25 @@ window.TestController = function (chart) {
             });
         }
 
-        document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
+        var element = document.elementFromPoint(pageX, pageY);
+
+        // Leave marks for debugging
+        if (typeof x === 'number' && typeof y === 'number') {
+            chart.renderer.circle(x, y, 3).attr({
+                'fill': 'none',
+                'stroke': {
+                    mousedown: 'green',
+                    mousemove: 'blue'
+                }[type] || 'red',
+                'stroke-width': 2,
+                'zIndex': 100
+            }).css({
+                'pointer-events': 'none'
+            }).add();
+        }
+
+        (element || document.body).dispatchEvent(evt);
+
     }
 
     ret = {
