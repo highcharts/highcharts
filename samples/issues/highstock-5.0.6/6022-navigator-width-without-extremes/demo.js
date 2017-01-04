@@ -18,7 +18,7 @@ $(function () {
 		chart.series[0].hide();
 
 		assert.deepEqual(
-			chart.scroller.navigatorWidth,
+			chart.scroller.size,
 			chart.scroller.xAxis.len,
 			'Correct width'
 		);
