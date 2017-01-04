@@ -1073,6 +1073,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
 				if (chart[sharedClipKey + 'm']) {
+					this.markerGroup.clip();
 					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 				}
 			}
