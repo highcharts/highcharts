@@ -251,7 +251,7 @@ Scrollbar.prototype = {
 		});
 
 		// Move right/bottom button ot it's place:
-		scroller.scrollbarButtons[1].attr({
+		scroller.scrollbarButtons[1][method]({
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
