@@ -298,7 +298,7 @@ seriesType('waterfall', 'column', {
 	getExtremes: noop
 
 // Point members
-}, {
+}, H.merge(seriesTypes.column.prototype.pointClass.prototype, {
 	getClassName: function () {
 		var className = Point.prototype.getClassName.call(this);
 
@@ -315,8 +315,8 @@ seriesType('waterfall', 'column', {
 	isValid: function () {
 		return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
 	}
-	
-});
+
+}));
 
 /* ****************************************************************************
  * End Waterfall series code                                                  *

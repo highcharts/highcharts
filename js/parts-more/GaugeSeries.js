@@ -146,33 +146,7 @@ seriesType('gauge', 'line', {
 			renderer = series.chart.renderer;
 
 		each(series.points, function (point) {
-
-			var graphic = point.graphic,
-				shapeArgs = point.shapeArgs,
-				d = shapeArgs.d,
-				dialOptions = merge(options.dial, point.dial); // #1233
-
-			if (graphic) {
-				graphic.animate(shapeArgs);
-				shapeArgs.d = d; // animate alters it
-			} else {
-				point.graphic = renderer[point.shapeType](shapeArgs)
-					.attr({
-						rotation: shapeArgs.rotation, // required by VML when animation is false
-						zIndex: 1
-					})
-					.addClass('highcharts-dial')
-					.add(series.group);
-
-				/*= if (build.classic) { =*/
-				// Presentational attributes
-				point.graphic.attr({
-					stroke: dialOptions.borderColor || 'none',
-					'stroke-width': dialOptions.borderWidth || 0,
-					fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
-				});
-				/*= } =*/
-			}
+			point.render();
 		});
 
 		// Add or move the pivot
@@ -266,5 +240,38 @@ seriesType('gauge', 'line', {
 	 */
 	setState: function (state) {
 		this.state = state;
+	},
+
+	render: function () {
+		var point = this,
+			series = point.series,
+			options = series.options,
+			renderer = series.chart.renderer,
+			graphic = point.graphic,
+			shapeArgs = point.shapeArgs,
+			d = shapeArgs.d,
+			dialOptions = merge(options.dial, point.dial); // #1233
+
+		if (graphic) {
+			graphic.animate(shapeArgs);
+			shapeArgs.d = d; // animate alters it
+		} else {
+			point.graphic = renderer[point.shapeType](shapeArgs)
+				.attr({
+					rotation: shapeArgs.rotation, // required by VML when animation is false
+					zIndex: 1
+				})
+				.addClass('highcharts-dial')
+				.add(series.group);
+
+			/*= if (build.classic) { =*/
+			// Presentational attributes
+			point.graphic.attr({
+				stroke: dialOptions.borderColor || 'none',
+				'stroke-width': dialOptions.borderWidth || 0,
+				fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
+			});
+			/*= } =*/
+		}
 	}
 });

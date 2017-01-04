@@ -1124,87 +1124,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Draws a single point in the series.
-	 * @param  {Object} point an instance of Point in the series.
-	 * @returns {void}
-	 */
-	drawPoint: function (point) {
-		var series = this,
-			chart = series.chart,
-			options = series.options,
-			seriesMarkerOptions = options.marker,
-			plotY = point.plotY,
-			graphic = point.graphic,
-			markerGroup = series.markerGroup,
-			pointMarkerOptions = point.marker || {},
-			hasPointMarker = !!point.marker,
-			xAxis = series.xAxis,
-			globallyEnabled = pick(
-				seriesMarkerOptions.enabled,
-				xAxis.isRadial ? true : null,
-				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
-			),
-			enabled =
-				(
-					globallyEnabled &&
-					pointMarkerOptions.enabled === undefined
-				) ||
-				pointMarkerOptions.enabled,
-			isInside = point.isInside,
-			symbol,
-			markerAttribs;
-
-		// only draw the point if y is defined
-		if (enabled && isNumber(plotY) && point.y !== null) {
-
-			// Shortcuts
-			symbol = pick(pointMarkerOptions.symbol, series.symbol);
-			point.hasImage = symbol.indexOf('url') === 0;
-
-			markerAttribs = series.markerAttribs(
-				point,
-				point.selected && 'select'
-			);
-
-			if (graphic) { // update
-				// Since the marker group isn't clipped, each individual marker
-				// must be toggled
-				graphic[isInside ? 'show' : 'hide'](true)
-					.animate(markerAttribs);
-			} else if (
-					isInside &&
-					(markerAttribs.width > 0 || point.hasImage)) {
-				point.graphic = graphic = chart.renderer.symbol(
-					symbol,
-					markerAttribs.x,
-					markerAttribs.y,
-					markerAttribs.width,
-					markerAttribs.height,
-					hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
-				)
-				.add(markerGroup);
-			}
-
-			/*= if (build.classic) { =*/
-			// Presentational attributes
-			if (graphic) {
-				graphic.attr(series.pointAttribs(
-					point,
-					point.selected && 'select'
-				));
-			}
-			/*= } =*/
-
-			if (graphic) {
-				graphic.addClass(point.getClassName(), true);
-			}
-
-		} else if (graphic) {
-			point.graphic = graphic.destroy(); // #1269
-		}
-	},
-
-	/**
 	 * Draw the markers.
 	 *
 	 * @function #drawPoints
@@ -1214,15 +1133,22 @@ H.Series = H.seriesType('line', null, { // base series options
 	drawPoints: function () {
 		var series = this,
 			points = series.points,
+			xAxis = series.xAxis,
 			i,
 			options = series.options,
 			seriesMarkerOptions = options.marker;
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
 
+			series.globallyEnabled = pick(
+				seriesMarkerOptions.enabled,
+				xAxis.isRadial ? true : null,
+				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
+			);
+
 			i = points.length;
 			while (i--) {
-				series.drawPoint(points[i]);
+				points[i].render();
 			}
 		}
 

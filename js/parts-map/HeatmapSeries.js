@@ -20,7 +20,8 @@ var colorPointMixin = H.colorPointMixin,
 	pick = H.pick,
 	Series = H.Series,
 	seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes;
+	seriesTypes = H.seriesTypes,
+	colProto = seriesTypes.column.prototype;
 
 // The Heatmap series type
 seriesType('heatmap', 'scatter', {
@@ -106,22 +107,24 @@ seriesType('heatmap', 'scatter', {
 		series.translateColors();
 	},
 	drawPoints: function () {
-		seriesTypes.column.prototype.drawPoints.call(this);
+		var series = this;
 
-		each(this.points, function (point) {
+		// console.log(seriesTypes.heatmap.prototype.pointClass.prototype.hallais);
+		colProto.drawPoints.apply(series);
+		each(series.points, function (point) {
 			/*= if (build.classic) { =*/
-			point.graphic.attr(this.colorAttribs(point));
+			point.graphic.attr(series.colorAttribs(point));
 			/*= } else { =*/
 			// In styled mode, use CSS, otherwise the fill used in the style
 			// sheet will take precesence over the fill attribute.
-			point.graphic.css(this.colorAttribs(point));
+			point.graphic.css(series.colorAttribs(point));
 			/*= } =*/
-		}, this);
+		}, series);
 	},
 	animate: noop,
 	getBox: noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	alignDataLabel: colProto.alignDataLabel,
 	getExtremes: function () {
 		// Get the extremes from the value data
 		Series.prototype.getExtremes.call(this, this.valueData);
@@ -132,4 +135,4 @@ seriesType('heatmap', 'scatter', {
 		Series.prototype.getExtremes.call(this);
 	}
 
-}), colorPointMixin);
+}), merge(colProto.pointClass.prototype, colorPointMixin));

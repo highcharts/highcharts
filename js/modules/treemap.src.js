@@ -879,7 +879,7 @@ seriesType('treemap', 'scatter', {
 	}
 
 // Point class
-}, {
+}, merge(seriesTypes.column.prototype.pointClass.prototype, {
 	getClassName: function () {
 		var className = H.Point.prototype.getClassName.call(this),
 			series = this.series,
@@ -907,4 +907,4 @@ seriesType('treemap', 'scatter', {
 		});
 	},
 	setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
-});
+}));

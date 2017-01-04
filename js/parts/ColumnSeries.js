@@ -366,44 +366,10 @@ seriesType('column', 'line', {
 	 *
 	 */
 	drawPoints: function () {
-		var series = this,
-			chart = this.chart,
-			options = series.options,
-			renderer = chart.renderer,
-			animationLimit = options.animationLimit || 250,
-			shapeArgs;
-
+		var series = this;
 		// draw the columns
 		each(series.points, function (point) {
-			var plotY = point.plotY,
-				graphic = point.graphic;
-
-			if (isNumber(plotY) && point.y !== null) {
-				shapeArgs = point.shapeArgs;
-
-				if (graphic) { // update
-					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
-						merge(shapeArgs)
-					);
-
-				} else {
-					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr({
-							'class': point.getClassName()
-						})
-						.add(point.group || series.group);
-				}
-
-				/*= if (build.classic) { =*/
-				// Presentational
-				graphic
-					.attr(series.pointAttribs(point, point.selected && 'select'))
-					.shadow(options.shadow, null, options.stacking && !options.borderRadius);
-				/*= } =*/
-
-			} else if (graphic) {
-				point.graphic = graphic.destroy(); // #1269
-			}
+			point.render();
 		});
 	},
 
@@ -466,5 +432,44 @@ seriesType('column', 'line', {
 		}
 
 		Series.prototype.remove.apply(series, arguments);
+	}
+}, {
+	render: function () {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			opts = series.options,
+			renderer = chart.renderer,
+			animationLimit = opts.animationLimit || 250,
+			shapeArgs,
+			plotY = point.plotY,
+			graphic = point.graphic;
+
+		if (isNumber(plotY) && point.y !== null) {
+			shapeArgs = point.shapeArgs;
+
+			if (graphic) { // update
+				graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
+					merge(shapeArgs)
+				);
+
+			} else {
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+					.attr({
+						'class': point.getClassName()
+					})
+					.add(point.group || series.group);
+			}
+
+			/*= if (build.classic) { =*/
+			// Presentational
+			graphic
+				.attr(series.pointAttribs(point, point.selected && 'select'))
+				.shadow(opts.shadow, null, opts.stacking && !opts.borderRadius);
+			/*= } =*/
+
+		} else if (graphic) {
+			point.graphic = graphic.destroy(); // #1269
+		}
 	}
 });
