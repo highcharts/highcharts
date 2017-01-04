@@ -459,11 +459,21 @@ Navigator.prototype = {
 			inverted = chart.inverted,
 			verb;
 
-		// Don't render the navigator until we have data (#486, #4202, #5172).
 		// Don't redraw while moving the handles (#4703).
-		if (!defined(min) || isNaN(min) || !defined(max) || isNaN(max) ||
-				(navigator.hasDragged && !defined(pxMin))) {
+		if (this.hasDragged && !defined(pxMin)) {
 			return;
+		}
+
+		// Don't render the navigator until we have data (#486, #4202, #5172).
+		if (!isNumber(min) || !isNumber(max)) {
+			// However, if navigator was already rendered, we may need to resize
+			// it. For example hidden series, but visible navigator (#6022).
+			if (rendered) {
+				pxMin = 0;
+				pxMax = xAxis.width;
+			} else {
+				return;
+			}
 		}
 
 		navigator.left = pick(
@@ -1042,7 +1052,7 @@ Navigator.prototype = {
 	 * Get the union data extremes of the chart - the outer data extremes of the base
 	 * X axis and the navigator axis.
 	 * @param {boolean} returnFalseOnNoBaseSeries - as the param says.
- 	 */
+	 */
 	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
 		var baseAxis = this.chart.xAxis[0],
 			navAxis = this.xAxis,
