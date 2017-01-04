@@ -717,7 +717,10 @@ function GLRenderer() {
 			caxis,
 			color,
 			scolor,
+			//Set to true to perform translations in the shader
+			useGPUTranslations = false,
 			sdata = isStacked ? series.data : (xData || rawData),
+			connectNulls = options.connectNulls,
 			maxVal;
 
 		// Push color to color buffer - need to do this per. vertex
@@ -937,8 +940,10 @@ function GLRenderer() {
 				if (useRaw) {
 					y = d.slice(1, 3);
 				}
+
 				low = y[0];
 				y = y[1];
+			
 			} else if (isStacked) {
 				x = d.x;
 				y = d.stackY;
@@ -955,10 +960,12 @@ function GLRenderer() {
 				return;
 			}
 
-			// Resolve low and high for range series
-			inst.skipTranslation = true;
-			x = series.xAxis.toPixels(x, true);
-			y = series.yAxis.toPixels(y, true);
+			// Skip translations - temporary floating point fix
+			if (!useGPUTranslations) {
+				inst.skipTranslation = true;
+				x = series.xAxis.toPixels(x, true);
+				y = series.yAxis.toPixels(y, true);				
+			}
 
 			if (drawAsBar) {
 				
@@ -970,12 +977,13 @@ function GLRenderer() {
 					y = 0;
 				}
 			
-				minVal = series.yAxis.toPixels(minVal, true);
+				if (!useGPUTranslations) {
+					minVal = series.yAxis.toPixels(minVal, true);					
+				}
 
 				// Need to add an extra point here
 				vertice(x, minVal, 0, 0, pcolor);
 			}
-
 
 			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2, pcolor);
 
@@ -987,7 +995,7 @@ function GLRenderer() {
 			// 	inst.colorData.push(color[2] / 255.0);
 			// 	inst.colorData.push(color[3]);
 			// }
-							
+
 			// if (drawAsBar) {
 			// 	// Need to add an extra point here				
 			// //	vertice(x, minVal, 0, 0, pcolor);
@@ -1370,12 +1378,6 @@ function createAndAttachRenderer(chart, series) {
 		height = chart.chartHeight,
 		target = chart,
 		targetGroup = chart.seriesGroup || series.group,
-		clipPath = 'inset(' + 
-						chart.plotTop + 'px ' + 
-						'0 ' +
-						'0 ' +
-						chart.plotLeft + 'px ' + 
-					')',
 		swapXY = function (proceed, x, y, a, b, c, d) {
 			proceed.call(series, y, x, a, b, c, d);
 		};
@@ -1426,13 +1428,17 @@ function createAndAttachRenderer(chart, series) {
 		y: 0,
 		width: width,
 		height: height,
-		style: 	[
-					'pointer-events: none',
-					'clip-path:' + clipPath,
-					'-webkit-clip-path:' + clipPath
-
-				].join(';')
+		style: 'pointer-events: none'
 	});
+
+	target.boostClipRect = target.renderer.clipRect(
+		chart.plotLeft,
+		chart.plotTop,
+		chart.plotWidth,
+		chart.plotHeight
+	);
+
+	target.image.clip(target.boostClipRect);
 
 	return target.ogl;
 }
@@ -1537,7 +1543,8 @@ each([
 	'generatePoints',
 	'drawTracker',
 	'drawPoints',
-	'render'
+	'render',
+	'hide'
 ], function (method) {
 	function branch(proceed) {
 		var letItPass = this.options.stacking && 
@@ -1649,6 +1656,10 @@ H.extend(Series.prototype, {
 			}
 		});
 	},
+
+	// hideCanvas: function () {
+	// 	console.log('hiding');
+	// },
 
 	renderCanvas: function () {
 		var series = this,
