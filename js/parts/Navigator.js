@@ -457,7 +457,10 @@ Navigator.prototype = {
 			zoomedMax,
 			rendered = navigator.rendered,
 			inverted = chart.inverted,
-			verb;
+			verb,
+			newMin,
+			newMax,
+			minRange = chart.xAxis[0].minRange;
 
 		// Don't redraw while moving the handles (#4703).
 		if (this.hasDragged && !defined(pxMin)) {
@@ -504,9 +507,17 @@ Navigator.prototype = {
 			pxMax = navigatorWidth;
 		}
 
-		// Are we below the minRange? (#2618)
-		if (Math.abs(xAxis.toValue(pxMax, true) - xAxis.toValue(pxMin, true)) < chart.xAxis[0].minRange) {
-			return;
+		// Are we below the minRange? (#2618, #6191)
+		newMin = xAxis.toValue(pxMin, true);
+		newMax = xAxis.toValue(pxMax, true);
+		if (Math.abs(newMax - newMin) < minRange) {
+			if (this.grabbedLeft) {
+				pxMin = xAxis.toPixels(newMax - minRange, true);
+			} else if (this.grabbedRight) {
+				pxMax = xAxis.toPixels(newMin + minRange, true);
+			} else {
+				return;
+			}
 		}
 
 		// Handles are allowed to cross, but never exceed the plot area
