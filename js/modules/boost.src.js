@@ -954,7 +954,11 @@ function GLRenderer() {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
-			if ((!y || !isYInside || x < xMin || x > xMax) &&
+			if (!y) {
+				return;
+			}
+
+			if ((!isYInside || x < xMin || x > xMax) &&
 				!nextInside && !prevInside
 			) {
 				return;
@@ -1277,7 +1281,6 @@ function GLRenderer() {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 			gl.generateMipmap(gl.TEXTURE_2D);
 
-
 			gl.bindTexture(gl.TEXTURE_2D, null);
 		}
 
@@ -1365,7 +1368,7 @@ function isSeriesBoosting(series) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {
-	return chart.series.length >= (chart.options.seriesBoostThreshold || 1);
+	return chart.series.length >= (chart.options.seriesBoostThreshold || 10);
 }
 
 /* 
@@ -1431,7 +1434,7 @@ function createAndAttachRenderer(chart, series) {
 		style: 'pointer-events: none'
 	});
 
-	target.boostClipRect = target.renderer.clipRect(
+	target.boostClipRect = chart.renderer.clipRect(
 		chart.plotLeft,
 		chart.plotTop,
 		chart.plotWidth,
@@ -1543,8 +1546,7 @@ each([
 	'generatePoints',
 	'drawTracker',
 	'drawPoints',
-	'render',
-	'hide'
+	'render'	
 ], function (method) {
 	function branch(proceed) {
 		var letItPass = this.options.stacking && 
@@ -1656,10 +1658,6 @@ H.extend(Series.prototype, {
 			}
 		});
 	},
-
-	// hideCanvas: function () {
-	// 	console.log('hiding');
-	// },
 
 	renderCanvas: function () {
 		var series = this,
@@ -1967,6 +1965,23 @@ Series.prototype.getPoint = function (boostPoint) {
 
 	return point;
 };
+
+wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
+	if (isSeriesBoosting(this)) {
+		// We always redraw when boosting
+		proceed.call(this, vis, true);
+
+		if (!this.visible && this.ogl) {
+			this.ogl.clear();
+
+			this.image.attr({
+				href: this.canvas.toDataURL('image/png')
+			});
+		}		
+	} else {		
+		proceed.call(this, vis, redraw);
+	}
+});
 
 /**
  * Extend series.destroy to also remove the fake k-d-tree points (#5137). 
