@@ -362,6 +362,9 @@ Chart.prototype = {
 			if ((isDirtyBox || serie.isDirty) && serie.visible) {
 				serie.redraw();
 			}
+			// Set it here, otherwise we will have unlimited 'updatedData' calls
+			// for a hidden series after setData(). Fixes #6012
+			serie.isDirtyData = false;
 		});
 
 		// move tooltip or reset
