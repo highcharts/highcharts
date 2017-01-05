@@ -2838,9 +2838,8 @@ SVGRenderer.prototype = {
 	 */
 	symbols: {
 		'circle': function (x, y, w, h) {
-			var r = w / 2;
 			// Return a full arc
-			return this.arc(x + r, y + r, r, h / 2, {
+			return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
 				start: 0,
 				end: Math.PI * 2,
 				open: false
