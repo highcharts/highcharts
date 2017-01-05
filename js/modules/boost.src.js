@@ -239,7 +239,13 @@ function toRGBAFast(col) {
 	// We may need to look it up
 	col = col.toLowerCase();
 	if (colorMap[col]) {
-		return colorMap[col];
+		col = colorMap[col];
+		return [
+			col[0],
+			col[1],
+			col[2],
+			1
+		];
 	}
 
 	// Fall back to highcharts regex
