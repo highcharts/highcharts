@@ -7,6 +7,7 @@
 /* eslint no-console: 0 */
 'use strict';
 import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
 import './grid-axis.js';
 var wrap = H.wrap,
 	each = H.each,
@@ -61,11 +62,12 @@ var getListOfParents = function (data, ids) {
 	});
 	return listOfParents;
 };
-var getNode = function (id, parent, level, mapOfIdToChildren, data) {
+var getNode = function (id, parent, level, data, mapOfIdToChildren) {
 	return {
 		children: map((mapOfIdToChildren[id] || []), function (child) {
-			return getNode(child.id, id, (level + 1), mapOfIdToChildren, data);
+			return getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
 		}),
+		data: data,
 		id: id,
 		level: level,
 		parent: parent
@@ -76,7 +78,7 @@ var getTree = function (data) {
 			return d.id;
 		}),
 		mapOfIdToChildren = getListOfParents(data, ids);
-	return getNode('', 0, null, mapOfIdToChildren, data);
+	return getNode('', null, 0, null, mapOfIdToChildren);
 };
 var override = function (obj, methods) {
 	var method,
@@ -87,6 +89,23 @@ var override = function (obj, methods) {
 			wrap(obj, method, func);
 		}
 	}
+};
+
+/**
+ * getCategoriesFromTree - getCategories bases on a tree
+ *  
+ * @param  {object} tree Root of tree to collect categories from 
+ * @return {Array}      Array of categories
+ */ 
+var getCategoriesFromTree = function (tree) {
+	var categories = [];
+	if (tree.data) {
+		categories.push(tree.data.text);
+	}
+	each(tree.children, function (child) {
+		categories = categories.concat(getCategoriesFromTree(child));
+	});
+	return categories;
 };
 override(GridAxis.prototype, {
 	init: function (proceed) {
@@ -99,7 +118,8 @@ override(GridAxis.prototype, {
 		options = axis.options;
 		if (options.type === 'tree-grid') {
 			tree = getTree(options.tree);
-			console.log(tree);
+			axis.categories = getCategoriesFromTree(tree).reverse();
+			axis.hasNames = true;
 		}
 	}
 });
