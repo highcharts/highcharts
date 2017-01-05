@@ -445,10 +445,14 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	getCyclic: function (prop, value, defaults) {
 		var i,
+			chart = this.chart,
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
 			counterName = prop + 'Counter',
-			len = defaults ? defaults.length : pick(this.chart.options.chart[prop + 'Count'], this.chart[prop + 'Count']),
+			len = defaults ? defaults.length : pick(
+				chart.options.chart[prop + 'Count'], 
+				chart[prop + 'Count']
+			),
 			setting;
 
 		if (!value) {
@@ -457,8 +461,12 @@ H.Series = H.seriesType('line', null, { // base series options
 			if (defined(setting)) { // after Series.update()
 				i = setting;
 			} else {
-				userOptions['_' + indexName] = i = this.chart[counterName] % len;
-				this.chart[counterName] += 1;
+				// #6138
+				if (!chart.series.length) {
+					chart[counterName] = 0;
+				}
+				userOptions['_' + indexName] = i = chart[counterName] % len;
+				chart[counterName] += 1;
 			}
 			if (defaults) {
 				value = defaults[i];
