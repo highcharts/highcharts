@@ -26,6 +26,7 @@ var SVGElement,
 	erase = H.erase,
 	grep = H.grep,
 	hasTouch = H.hasTouch,
+	inArray = H.inArray,
 	isArray = H.isArray,
 	isFirefox = H.isFirefox,
 	isMS = H.isMS,
@@ -692,7 +693,12 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate,
-			hasNew = !oldStyles;
+			hasNew = !oldStyles,
+			// These CSS properties are interpreted internally by the SVG
+			// renderer, but are not supported by SVG and should not be added to
+			// the DOM. In styled mode, no CSS should find its way to the DOM
+			// whatsoever (#6173).
+			svgPseudoProps = ['textOverflow', 'width'];
 
 		// convert legacy
 		if (styles && styles.color) {
@@ -736,9 +742,15 @@ SVGElement.prototype = {
 					return '-' + b.toLowerCase();
 				};
 				for (n in styles) {
-					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+					if (inArray(n, svgPseudoProps) === -1) {
+						serializedCss +=
+							n.replace(/([A-Z])/g, hyphenate) + ':' +
+							styles[n] + ';';
+					}
 				}
-				attr(elem, 'style', serializedCss); // #1881
+				if (serializedCss) {
+					attr(elem, 'style', serializedCss); // #1881
+				}
 			}
 
 
