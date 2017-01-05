@@ -1,8 +1,0 @@
-{
-  "compact": false,
-  "plugins": [
-  	// Devs, include the plugins you want from https://babeljs.io/docs/plugins/preset-es2015/,
-  	// but watch out for global variables, polyfills and increased file size.
-    "transform-es2015-arrow-functions"
-  ]
-}
