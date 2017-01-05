@@ -28,6 +28,6 @@ $(function () {
 
     var toggle = false;
     $('#point-update').click(function () {
-        chart.series[0].points[11].update((toggle=(!toggle))?120:54);
+        chart.series[0].points[11].update((toggle = (!toggle)) ? 120 : 54);
     });
 });
