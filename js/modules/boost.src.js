@@ -225,6 +225,7 @@ var win = H.win,
 // Faster conversion to RGB for hex colors
 function toRGBAFast(col) {
 
+	// Parse as a hex color
 	if (col && col.length === 7 && col[0] === '#') {
 		col = parseInt(col.substr(1), 16);
 
@@ -1115,13 +1116,11 @@ function GLRenderer() {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
-			if (!y) {
+			if (!y || !isYInside) {
 				return;
 			}
 
-			if ((!isYInside || x < xMin || x > xMax) &&
-				!nextInside && !prevInside
-			) {
+			if ((x < xMin || x > xMax) && !nextInside && !prevInside) {
 				return;
 			}
 
@@ -1599,7 +1598,7 @@ function createAndAttachRenderer(chart, series) {
 		chart.plotLeft,
 		chart.plotTop,
 		chart.plotWidth,
-		chart.plotHeight
+		chart.chartHeight
 	);
 
 	target.image.clip(target.boostClipRect);
@@ -1900,6 +1899,7 @@ H.extend(Series.prototype, {
 		renderer = createAndAttachRenderer(chart, series);
 
 		if (!this.visible) {
+			console.log('series invisible, skipping');
 			if (!isChartSeriesBoosting(chart) && renderer) {
 				renderer.clear();
 			}
@@ -2128,20 +2128,32 @@ Series.prototype.getPoint = function (boostPoint) {
 };
 
 wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
-	if (isSeriesBoosting(this)) {
-		// We always redraw when boosting
-		proceed.call(this, vis, true);
+	//if (isSeriesBoosting(this) || isChartSeriesBoosting(this.chart)) {
+		
+		proceed.call(this, vis, false);
 
-		if (!this.visible && this.ogl) {
+		if (this.ogl) {
 			this.ogl.clear();
+			this.ogl.flush();
 
 			this.image.attr({
-				href: this.canvas.toDataURL('image/png')
+				href: ''
 			});
-		}		
-	} else {		
-		proceed.call(this, vis, redraw);
-	}
+		} else if (this.chart.ogl) {
+			this.chart.ogl.flush();
+			this.chart.ogl.clear();
+
+			this.chart.image.attr({
+				href: ''
+			});
+
+		}
+		
+		this.chart.redraw();
+
+	// } else {		
+	// 	proceed.call(this, vis, redraw);
+	// }
 });
 
 /**
@@ -2200,6 +2212,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	/* Clear chart-level canvas */
 	function preRender() {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
+
+			chart.image.attr({
+				href: ''
+			});
 			
 			// Clear the series and vertice data.			
 			chart.ogl.flush();
