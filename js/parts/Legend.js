@@ -847,6 +847,8 @@ H.LegendSymbolMixin = {
 			radius,
 			legendSymbol,
 			symbolWidth = legend.symbolWidth,
+			symbolHeight = legend.symbolHeight,
+			generalRadius = symbolHeight / 2,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
@@ -876,10 +878,21 @@ H.LegendSymbolMixin = {
 		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
-			radius = this.symbol.indexOf('url') === 0 ?
-				0 :
-				// Bubble doesn't have a radius, base on symbolHeight
-				pick(markerOptions.radius, legend.symbolHeight / 2);
+
+			// Do not allow the marker to be larger than the symbolHeight
+			radius = Math.min(
+				pick(markerOptions.radius, generalRadius),
+				generalRadius
+			);
+
+			// Restrict symbol markers size
+			if (this.symbol.indexOf('url') === 0) {
+				markerOptions = merge(markerOptions, {
+					width: symbolHeight,
+					height: symbolHeight
+				});
+				radius = 0;
+			}
 			
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,

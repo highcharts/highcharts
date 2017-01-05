@@ -22,11 +22,11 @@ $(function () {
             },
             name: 'Diamond'
         }, {
-            data: [[47, 47, 21], [20, 12, 4], [6, 76, 91], [38, 30, 60], [57, 98, 64], [61, 17, 80], [83, 60, 13], [67, 78, 75], [64, 12, 10], [30, 77, 82]],
+            data: [[47, 47, 21], [20, 12, 4], [6, 76, 91], [38, 30, 40], [57, 98, 64], [61, 17, 10], [83, 60, 13], [67, 78, 75], [64, 12, 10], [30, 77, 82]],
             marker: {
-                symbol: 'url(https://www.highcharts.com/samples/graphics/sun.png)'
+                symbol: 'url(https://www.highcharts.com/samples/graphics/earth.svg)'
             },
-            name: 'Sun'
+            name: 'Earth'
         }]
 
     });
