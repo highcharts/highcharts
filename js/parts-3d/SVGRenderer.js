@@ -149,6 +149,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
+		destroy = result.destroy,
 		paths = this.cuboidPath(shapeArgs);
 
 	/*= if (build.classic) { =*/
@@ -234,7 +235,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.destroy();
 		this.side.destroy();
 
-		return null;
+		return destroy.call(this);
 	};
 
 	// Apply the Z index to the cuboid group
