@@ -55,8 +55,8 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-navigator'),
-            null,
+            chart.navigator.navigatorGroup.attr('visibility'),
+            'hidden',
             'Navigator element is missing'
         );
 
