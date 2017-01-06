@@ -287,14 +287,16 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 				// Register
 				axis.ordinalPositions = ordinalPositions;
 
-				// This relies on the ordinalPositions being set. Use Math.max and Math.min to prevent
-				// padding on either sides of the data.
-				minIndex = axis.val2lin(Math.max(min, ordinalPositions[0]), true);
-				maxIndex = Math.max(axis.val2lin(Math.min(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
+				if (!hasBreaks) {
+					// This relies on the ordinalPositions being set. Use Math.max and Math.min to prevent
+					// padding on either sides of the data.
+					minIndex = axis.val2lin(Math.max(min, ordinalPositions[0]), true);
+					maxIndex = Math.max(axis.val2lin(Math.min(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
-				// Set the slope and offset of the values compared to the indices in the ordinal positions
-				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
-				axis.ordinalOffset = min - (minIndex * slope);
+					// Set the slope and offset of the values compared to the indices in the ordinal positions
+					axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
+					axis.ordinalOffset = min - (minIndex * slope);
+				}
 
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = undefined;
