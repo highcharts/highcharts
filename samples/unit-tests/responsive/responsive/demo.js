@@ -167,4 +167,74 @@ $(function () {
             'Back to initial credits'
         );
     });
+
+    QUnit.test(
+        'Nested property names like series or xAxis (#6208)',
+        function (assert) {
+            var chart = Highcharts.chart('container', {
+
+                chart: {
+                    animation: false
+                },
+
+                series: [{
+                    data: [1, 4, 3],
+                    animation: false,
+                    yAxis: 0
+                }],
+
+                yAxis: [{
+                    min: 0,
+                    max: 10
+                }, {
+                    opposite: true,
+                    min: -10,
+                    max: 10
+                }],
+
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            plotOptions: {
+                                series: {
+                                    color: 'red'
+                                }
+                            },
+                            series: [{
+                                yAxis: 1
+                            }]
+                        }
+                    }]
+                }
+            });
+
+            assert.notEqual(
+                chart.series[0].graph.attr('stroke'),
+                'red',
+                'Initial color'
+            );
+            assert.strictEqual(
+                chart.series[0].yAxis,
+                chart.yAxis[0],
+                'Initial axis'
+            );
+
+            chart.setSize(400);
+
+            assert.strictEqual(
+                chart.series[0].graph.attr('stroke'),
+                'red',
+                'Responsive color'
+            );
+            assert.strictEqual(
+                chart.series[0].yAxis,
+                chart.yAxis[1],
+                'Responsive axis'
+            );
+
+        }
+    );
 });
