@@ -946,7 +946,7 @@ H.Axis.prototype = {
 
 				each(series.points, function (point, i) {
 					var x;
-					if (point.options && point.options.x === undefined) {
+					if (point.options) {
 						x = axis.nameToX(point);
 						if (x !== point.x) {
 							point.x = x;
