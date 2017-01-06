@@ -2112,10 +2112,17 @@ extend(seriesTypes.column.prototype, {
  * @returns {Object} A Point object as per http://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (boostPoint) {
-	var point = boostPoint;
+	var point = boostPoint,
+		xData = this.processedXData || false
+	;
 
 	if (boostPoint && !(boostPoint instanceof this.pointClass)) {
-		point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]); // eslint-disable-line new-cap
+		point = (new this.pointClass()).init( // eslint-disable-line new-cap
+					this, 
+					this.options.data[boostPoint.i], 
+					xData ? xData[boostPoint.i] : undefined
+				); 
+
 		point.category = point.x;
 
 		point.dist = boostPoint.dist;
@@ -2123,6 +2130,8 @@ Series.prototype.getPoint = function (boostPoint) {
 		point.plotX = boostPoint.plotX;
 		point.plotY = boostPoint.plotY;
 	}
+
+	console.log('point', this.options.data[boostPoint.i], this.processedXData);
 
 	return point;
 };
