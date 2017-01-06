@@ -2015,6 +2015,9 @@ SVGRenderer.prototype = {
 			textLineHeight = textStyles && textStyles.lineHeight,
 			textOutline = textStyles && textStyles.textOutline,
 			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
+			noWrap = textStyles && textStyles.whiteSpace === 'nowrap',
+			fontSize = textStyles && textStyles.fontSize,
+			textCache,
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
@@ -2022,7 +2025,7 @@ SVGRenderer.prototype = {
 				/*= if (build.classic) { =*/
 				fontSizeStyle = /(px|em)$/.test(tspan && tspan.style.fontSize) ?
 					tspan.style.fontSize :
-					((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12);
+					(fontSize || renderer.style.fontSize || 12);
 				/*= } =*/
 
 				return textLineHeight ? 
@@ -2036,6 +2039,22 @@ SVGRenderer.prototype = {
 			unescapeAngleBrackets = function (inputStr) {
 				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 			};
+
+		// The buildText code is quite heavy, so if we're not changing something
+		// that affects the text, skip it (#6113).
+		textCache = [
+			textStr,
+			ellipsis,
+			noWrap,
+			textLineHeight,
+			textOutline,
+			fontSize,
+			width
+		].join(',');
+		if (textCache === wrapper.textCache) {
+			return;
+		}
+		wrapper.textCache = textCache;
 
 		/// remove old text
 		while (i--) {
@@ -2152,7 +2171,6 @@ SVGRenderer.prototype = {
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									noWrap = textStyles.whiteSpace === 'nowrap',
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
 									tooLong,
 									actualWidth,
