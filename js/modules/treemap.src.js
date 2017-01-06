@@ -306,7 +306,8 @@ seriesType('treemap', 'scatter', {
 				x2,
 				y1,
 				y2,
-				crispCorr = 0.5; // Assume 1px borderWidth for simplicity
+				strokeWidth =  series.pointAttribs(point)['stroke-width'] || 0,
+				crispCorr = (strokeWidth % 2) / 2;
 
 			// Points which is ignored, have no values.
 			if (values && node.visible) {
