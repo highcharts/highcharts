@@ -344,3 +344,55 @@ QUnit.test('Marker alignment', function (assert) {
         });
     });
 });
+
+/**
+ * Checks that options are applied correctly
+ */
+QUnit.test('Options applied correctly', function (assert) {
+    var pathWithoutMarkers,
+        pathWithMarkers,
+        chart = Highcharts.chart('container', {
+            series: [{
+                // Default pathfinder settings
+                data: [{
+                    y: 1,
+                    id: 'one-one',
+                    connect: 'one-two'
+                }, {
+                    y: 2,
+                    id: 'one-two',
+                    connect: 'one-one'
+                }]
+            }, {
+                pathfinder: {
+                    markers: {
+                        enabled: true
+                    }
+                },
+                data: [{
+                    y: 1,
+                    id: 'two-one',
+                    connect: 'two-two'
+                }, {
+                    y: 2,
+                    id: 'two-two',
+                    connect: 'two-one'
+                }]
+            }]
+        });
+
+    pathWithoutMarkers = chart.series[0].points[0].connectingPathGraphics;
+    pathWithMarkers = chart.series[1].points[0].connectingPathGraphics;
+
+    assert.ok(
+        typeof pathWithoutMarkers.start === 'undefined' &&
+            typeof pathWithoutMarkers.end === 'undefined',
+        'Start and End markers are disabled by default'
+    );
+
+    assert.ok(
+        typeof pathWithMarkers.start === 'object' &&
+            typeof pathWithMarkers.end === 'object',
+        'Start and End markers are appplied when enabled'
+    );
+});

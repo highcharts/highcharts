@@ -305,6 +305,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			height,
 			pathVector;
 
+		if (!options.enabled) {
+			return;
+		}
+
 		if (type === 'start') {
 			pathVector = {
 				x: path[4],
@@ -317,16 +321,14 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			};
 		}
 
-		if (options.enabled) {
-			radians = point.getRadiansToVector(pathVector, anchor);
-			vector = point.getMarkerVector(
-				radians,
-				options.radius,
-				anchor
-			);
-			radians = point.getRadiansToVector(pathVector, vector);
-			rotation = radians / deg2rad;
-		}
+		radians = point.getRadiansToVector(pathVector, anchor);
+		vector = point.getMarkerVector(
+			radians,
+			options.radius,
+			anchor
+		);
+		radians = point.getRadiansToVector(pathVector, vector);
+		rotation = radians / deg2rad;
 
 		if (options.width && options.height) {
 			width = options.width;
