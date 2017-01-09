@@ -525,10 +525,7 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
-			renderTo = chart.renderToClone || chart.renderTo,
-			IE7 = navigator.appVersion.indexOf('MSIE 7.') != -1,
-			defaultHeight = 400,
-			defaultWidth = 600;
+			renderTo = chart.renderToClone || chart.renderTo;
 
 		// Get inner width and height
 		if (!defined(widthOption)) {
@@ -538,15 +535,10 @@ Chart.prototype = {
 			chart.containerHeight = getStyle(renderTo, 'height');
 		}
 
-		var chartHeight = chart.containerHeight;
-
-		// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-		if (IE7 && chartHeight.containerHeight < 19) {
-			chartHeight = 0;
-		}
-
-		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || defaultWidth); // #1393, 1460
-		chart.chartHeight = mathMax(0, heightOption || chartHeight || defaultHeight);
+		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = mathMax(0, pick(heightOption,
+			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
+			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
 
 	/**
