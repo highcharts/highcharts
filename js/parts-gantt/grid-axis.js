@@ -139,7 +139,7 @@ H.dateFormats = {
  */
 wrap(Tick.prototype, 'addLabel', function (proceed) {
 	var axis = this.axis,
-		categoryAxis = defined(axis.categories),
+		categoryAxis = axis.categories,
 		tickPositions = axis.tickPositions,
 		lastTick = tickPositions[tickPositions.length - 1],
 		isLastTick = this.pos === lastTick;
@@ -179,7 +179,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
 		options = axis.options,
-		categoryAxis = defined(axis.categories),
+		categoryAxis = axis.categories,
 		tickInterval = options.tickInterval || axis.tickInterval,
 		reversed = axis.reversed,
 		tickPositions = axis.tickPositions,
