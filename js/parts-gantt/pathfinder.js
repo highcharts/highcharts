@@ -178,15 +178,17 @@ Pathfinder.prototype = {
 			j;
 		i = series.length;
 		while (i--) {
-			j = series[i].points.length;
-			while (j--) {
-				bb = series[i].points[j].graphic.getBBox();
-				obstacles.push({
-					xMin: bb.x - margin,
-					xMax: bb.x + bb.width + margin,
-					yMin: bb.y - margin,
-					yMax: bb.y + bb.height + margin
-				});
+			if (series[i].visible) {
+				j = series[i].points.length;
+				while (j--) {
+					bb = series[i].points[j].graphic.getBBox();
+					obstacles.push({
+						xMin: bb.x - margin,
+						xMax: bb.x + bb.width + margin,
+						yMin: bb.y - margin,
+						yMax: bb.y + bb.height + margin
+					});
+				}
 			}
 		}
 		// Sort obstacles by xMin before returning, for optimization
