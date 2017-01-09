@@ -920,8 +920,6 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
             expected,
             i;
 
-        console.log(axis.side);
-
         if (!axisType) {
             if (axis.options.categories) {
                 axisType = 'categories';
