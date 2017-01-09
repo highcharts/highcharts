@@ -175,14 +175,10 @@ Pathfinder.prototype = {
 		var obstacles = [],
 			series = this.chart.series,
 			margin = options.algorithmMargin,
-			bb,
-			i,
-			j;
-		i = series.length;
-		while (i--) {
+			bb;
+		for (var i = 0, sLen = series.length; i < sLen; ++i) {
 			if (series[i].visible) {
-				j = series[i].points.length;
-				while (j--) {
+				for (var j = 0, pLen = series[i].points.length; j < pLen; ++j) {
 					bb = series[i].points[j].graphic.getBBox();
 					obstacles.push({
 						xMin: bb.x - margin,
