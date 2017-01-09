@@ -1203,8 +1203,18 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				// Workaround for wrong bounding box in IE, Edge and Chrome on
+				// Windows. With Highcharts' default font, IE and Edge report
+				// a box height of 16.899 and Chrome rounds it to 17. If this 
+				// stands uncorrected, it results in more padding added below
+				// the text than above when adding a label border or background.
+				// Also vertical positioning is affected.
+				// (#1101, #1505, #1669, #2568, #6213).
+				if (
+					styles &&
+					styles.fontSize === '11px' &&
+					Math.round(height) === 17
+				) {
 					bBox.height = height = 14;
 				}
 
