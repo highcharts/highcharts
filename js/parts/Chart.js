@@ -616,7 +616,7 @@ Chart.prototype = {
 		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
 		chart.chartHeight = Math.max(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			chart.containerHeight > 19 && navigator.appVersion.indexOf('MSIE 7.')!=-1 ? chart.containerHeight : 400));
+			chart.containerHeight > 19 && navigator.appVersion.indexOf('MSIE 7.') != -1 ? chart.containerHeight : 400));
 	},
 
 	/**
