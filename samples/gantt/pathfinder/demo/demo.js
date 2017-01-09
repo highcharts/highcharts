@@ -12,7 +12,7 @@ $(function () {
             }, {
                 id: 'bernard',
                 connect: {
-                    to: 'johan',
+                //    to: 'johan',
                     type: 'fastAvoid',
                     dashStyle: 'shortdash',
                     lineWidth: 2,

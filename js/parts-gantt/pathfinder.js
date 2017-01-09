@@ -119,13 +119,15 @@ Pathfinder.prototype = {
 					to = chart.get(typeof connect === 'string' ?
 						connect : connect.to
 					);
-					// We store start/end/options for each connection to be
-					// picked up in drawConnections
-					pathfinder.connections.push([
-						point,
-						to,
-						typeof connect === 'string' ? {} : connect
-					]);
+					if (to instanceof H.Point) {
+						// We store start/end/options for each connection to be
+						// picked up in drawConnections
+						pathfinder.connections.push([
+							point,
+							to,
+							typeof connect === 'string' ? {} : connect
+						]);
+					}
 				}
 			});
 		}
