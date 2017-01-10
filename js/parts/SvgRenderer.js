@@ -1209,6 +1209,7 @@ SVGElement.prototype = {
 				// stands uncorrected, it results in more padding added below
 				// the text than above when adding a label border or background.
 				// Also vertical positioning is affected.
+				// http://jsfiddle.net/highcharts/em37nvuj/
 				// (#1101, #1505, #1669, #2568, #6213).
 				if (
 					styles &&
