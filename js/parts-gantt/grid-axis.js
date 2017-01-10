@@ -17,7 +17,6 @@ var argsToArray = function (args) {
 	pick = H.pick,
 	wrap = H.wrap,
 	Axis = H.Axis,
-	Chart = H.Chart,
 	Tick = H.Tick;
 
 // Enum for which side the axis is on.
@@ -581,54 +580,52 @@ wrap(Axis.prototype, 'render', function (proceed) {
 });
 
 /**
- * Wraps chart rendering with the following customizations:
+ * Wraps axis init with the following customizations:
  * 1. Prohibit timespans of multitudes of a time unit
  * 2. Draw cell walls on vertical axes
  *
  * @param {function} proceed - the original function
  */
-wrap(Chart.prototype, 'render', function (proceed) {
-	// 25 is optimal height for default fontSize (11px)
-	// 25 / 11 ≈ 2.28
-	var fontSizeToCellHeightRatio = 25 / 11,
+wrap(Axis.prototype, 'init', function (proceed) {
+	var axis = this,
+		options,
+		// 25 is optimal height for default fontSize (11px)
+		// 25 / 11 ≈ 2.28
+		fontSizeToCellHeightRatio = 25 / 11,
 		fontMetrics,
-		fontSize;
+		fontSize;	
+	// Call original Axis.init()
+	proceed.apply(axis, argsToArray(arguments));
+	options = axis.options;
+	if (options.grid) {
+		fontSize = options.labels.style.fontSize;
+		fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
 
-	each(this.axes, function (axis) {
-		var options = axis.options;
-		if (options.grid) {
-			fontSize = options.labels.style.fontSize;
-			fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
+		// Prohibit timespans of multitudes of a time unit,
+		// e.g. two days, three weeks, etc.
+		if (options.type === 'datetime') {
+			options.units = [
+				['millisecond', [1]],
+				['second', [1]],
+				['minute', [1]],
+				['hour', [1]],
+				['day', [1]],
+				['week', [1]],
+				['month', [1]],
+				['year', null]
+			];
+		}
 
-			// Prohibit timespans of multitudes of a time unit,
-			// e.g. two days, three weeks, etc.
-			if (options.type === 'datetime') {
-				options.units = [
-					['millisecond', [1]],
-					['second', [1]],
-					['minute', [1]],
-					['hour', [1]],
-					['day', [1]],
-					['week', [1]],
-					['month', [1]],
-					['year', null]
-				];
-			}
-
-			// Make tick marks taller, creating cell walls of a grid.
-			// Use cellHeight axis option if set
-			if (axis.horiz) {
-				options.tickLength = options.cellHeight ||
-						fontMetrics.h * fontSizeToCellHeightRatio;
-			} else {
-				options.tickWidth = 1;
-				if (!options.lineWidth) {
-					options.lineWidth = 1;
-				}
+		// Make tick marks taller, creating cell walls of a grid.
+		// Use cellHeight axis option if set
+		if (axis.horiz) {
+			options.tickLength = options.cellHeight ||
+					fontMetrics.h * fontSizeToCellHeightRatio;
+		} else {
+			options.tickWidth = 1;
+			if (!options.lineWidth) {
+				options.lineWidth = 1;
 			}
 		}
-	});
-
-	// Call original Chart.render()
-	proceed.apply(this);
+	}
 });
