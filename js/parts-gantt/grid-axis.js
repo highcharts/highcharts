@@ -11,7 +11,6 @@ var arrayFromObject = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	dateFormat = H.dateFormat,
-	defined = H.defined,
 	each = H.each,
 	isObject = H.isObject,
 	pick = H.pick,
