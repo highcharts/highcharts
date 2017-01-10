@@ -946,7 +946,7 @@ H.Axis.prototype = {
 
 				each(series.points, function (point, i) {
 					var x;
-					if (point.options && point.options.x === undefined) {
+					if (point.options) {
 						x = axis.nameToX(point);
 						if (x !== point.x) {
 							point.x = x;
@@ -1620,13 +1620,12 @@ H.Axis.prototype = {
 	setAxisSize: function () {
 		var chart = this.chart,
 			options = this.options,
-			offsetLeft = options.offsetLeft || 0,
-			offsetRight = options.offsetRight || 0,
+			offsets = options.offsets || [0, 0, 0, 0], // top / right / bottom / left
 			horiz = this.horiz,
-			width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight),
-			height = pick(options.height, chart.plotHeight),
-			top = pick(options.top, chart.plotTop),
-			left = pick(options.left, chart.plotLeft + offsetLeft),
+			width = pick(options.width, chart.plotWidth - offsets[3] + offsets[1]),
+			height = pick(options.height, chart.plotHeight - offsets[0] + offsets[2]),
+			top = pick(options.top, chart.plotTop + offsets[0]),
+			left = pick(options.left, chart.plotLeft + offsets[3]),
 			percentRegex = /%$/;
 
 		// Check for percentage based input values. Rounding fixes problems with

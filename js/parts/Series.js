@@ -445,10 +445,14 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	getCyclic: function (prop, value, defaults) {
 		var i,
+			chart = this.chart,
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
 			counterName = prop + 'Counter',
-			len = defaults ? defaults.length : pick(this.chart.options.chart[prop + 'Count'], this.chart[prop + 'Count']),
+			len = defaults ? defaults.length : pick(
+				chart.options.chart[prop + 'Count'], 
+				chart[prop + 'Count']
+			),
 			setting;
 
 		if (!value) {
@@ -457,8 +461,12 @@ H.Series = H.seriesType('line', null, { // base series options
 			if (defined(setting)) { // after Series.update()
 				i = setting;
 			} else {
-				userOptions['_' + indexName] = i = this.chart[counterName] % len;
-				this.chart[counterName] += 1;
+				// #6138
+				if (!chart.series.length) {
+					chart[counterName] = 0;
+				}
+				userOptions['_' + indexName] = i = chart[counterName] % len;
+				chart[counterName] += 1;
 			}
 			if (defaults) {
 				value = defaults[i];
@@ -1073,6 +1081,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
 				if (chart[sharedClipKey + 'm']) {
+					this.markerGroup.clip();
 					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 				}
 			}
@@ -1854,7 +1863,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			}, animDuration);
 		}
 
-		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		series.isDirty = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
 	},

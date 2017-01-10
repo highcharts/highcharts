@@ -119,6 +119,7 @@ H.PlotLineOrBand.prototype = {
 			return;
 		}
 
+
 		// common for lines and bands
 		if (isNew && path && path.length) {
 			svgElem.attr({ d: path });

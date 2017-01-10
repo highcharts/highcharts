@@ -281,6 +281,15 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
 	proceed.apply(this, [].slice.call(args, 1));
 });
 
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	each(['backFrame', 'bottomFrame', 'sideFrame'], function (prop) {
+		if (this[prop]) {
+			this[prop] = this[prop].destroy();
+		}
+	}, this);
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
 /***
     Z-AXIS
 ***/

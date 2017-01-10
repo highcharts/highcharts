@@ -166,10 +166,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
 		options, // user's options
 
 		{ // forced options
-			isStock: true, // internal flag
-			chart: {
-				inverted: false
-			}
+			isStock: true // internal flag
 		}
 	);
 
@@ -331,16 +328,22 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 		result = [],
 		i;
 
-	if (path && toPath && path.toString() !== toPath.toString()) {
-		// Go over each subpath
-		for (i = 0; i < path.length; i += 6) {
-			result.push(
-				'M', path[i + 1], path[i + 2],
-				'L', path[i + 4], path[i + 5],
-				toPath[i + 4], toPath[i + 5],
-				toPath[i + 1], toPath[i + 2],
-				'z'
-			);
+	if (path && toPath) {
+		if (path.toString() === toPath.toString()) {
+			// #6166
+			result = path;
+			result.flat = true;
+		} else {
+			// Go over each subpath
+			for (i = 0; i < path.length; i += 6) {
+				result.push(
+					'M', path[i + 1], path[i + 2],
+					'L', path[i + 4], path[i + 5],
+					toPath[i + 4], toPath[i + 5],
+					toPath[i + 1], toPath[i + 2],
+					'z'
+				);
+			}
 		}
 	} else { // outside the axis area
 		result = null;
@@ -673,13 +676,19 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 
 /**
- * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
+ * Extend the Series prototype to create a separate series clip box. This is
+ * related to using multiple panes, and a future pane logic should incorporate
+ * this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	// Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only if the series type handles clipping
-	// in the animate method (#2975).
-	if (!(this.chart.is3d && this.chart.is3d()) && !this.chart.polar && this.xAxis) {
+	// Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
+	// if the series type handles clipping in the animate method (#2975).
+	if (
+		!(this.chart.is3d && this.chart.is3d()) &&
+		!this.chart.polar &&
+		this.xAxis &&
+		!this.xAxis.isRadial // Gauge, #6192
+	) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {

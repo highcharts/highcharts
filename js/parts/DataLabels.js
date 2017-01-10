@@ -125,7 +125,6 @@ H.distribute = function (boxes, len) {
  * Draw the data labels
  */
 Series.prototype.drawDataLabels = function () {
-
 	var series = this,
 		seriesOptions = series.options,
 		options = seriesOptions.dataLabels,
@@ -168,7 +167,6 @@ Series.prototype.drawDataLabels = function () {
 		// Make the labels for each point
 		generalOptions = options;
 		each(points, function (point) {
-
 			var enabled,
 				dataLabel = point.dataLabel,
 				labelConfig,
@@ -176,94 +174,68 @@ Series.prototype.drawDataLabels = function () {
 				name,
 				rotation,
 				connector = point.connector,
-				isNew = true,
-				style,
-				moreStyle = {};
-
+				isNew = !dataLabel,
+				style;
 			// Determine if each data label is enabled
+			// @note dataLabelAttribs (like pointAttribs) would eradicate
+			// the need for dlOptions, and simplify the section below.
 			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
 			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled) && point.y !== null; // #2282, #4641
-
-
-			// If the point is outside the plot area, destroy it. #678, #820
-			if (dataLabel && !enabled) {
-				point.dataLabel = dataLabel.destroy();
-
-			// Individual labels are disabled if the are explicitly disabled
-			// in the point options, or if they fall outside the plot area.
-			} else if (enabled) {
-
+			if (enabled) {
 				// Create individual options structure that can be extended without
 				// affecting others
 				options = merge(generalOptions, pointOptions);
-				style = options.style;
-
-				rotation = options.rotation;
-
-				// Get the string
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
 					format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
-
+				style = options.style;
+				rotation = options.rotation;
 				/*= if (build.classic) { =*/
 				// Determine the color
 				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
+				// Get automated contrast color
+				if (style.color === 'contrast') {
+					style.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
+						renderer.getContrast(point.color || series.color) :
+						'${palette.neutralColor100}';
+				}
+				if (seriesOptions.cursor) {
+					style.cursor = seriesOptions.cursor;
+				}
 				/*= } =*/
-
-				// update existing label
-				if (dataLabel) {
-
-					if (defined(str)) {
-						dataLabel
-							.attr({
-								text: str
-							});
-						isNew = false;
-
-					} else { // #1437 - the label is shown conditionally
-						point.dataLabel = dataLabel = dataLabel.destroy();
-						if (connector) {
-							point.connector = connector.destroy();
-						}
-					}
-
-				// create new label
-				} else if (defined(str)) {
-					attr = {
-						//align: align,
-						/*= if (build.classic) { =*/
-						fill: options.backgroundColor,
-						stroke: options.borderColor,
-						'stroke-width': options.borderWidth,
-						/*= } =*/
-						r: options.borderRadius || 0,
-						rotation: rotation,
-						padding: options.padding,
-						zIndex: 1
-					};
-					
+				
+				attr = {
+					//align: align,
 					/*= if (build.classic) { =*/
-					// Get automated contrast color
-					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
-							renderer.getContrast(point.color || series.color) :
-							'${palette.neutralColor100}';
-					}
-
-					if (seriesOptions.cursor) {
-						moreStyle.cursor = seriesOptions.cursor;
-					}
+					fill: options.backgroundColor,
+					stroke: options.borderColor,
+					'stroke-width': options.borderWidth,
 					/*= } =*/
+					r: options.borderRadius || 0,
+					rotation: rotation,
+					padding: options.padding,
+					zIndex: 1
+				};
 
-
-					// Remove unused attributes (#947)
-					for (name in attr) {
-						if (attr[name] === undefined) {
-							delete attr[name];
-						}
+				// Remove unused attributes (#947)
+				for (name in attr) {
+					if (attr[name] === undefined) {
+						delete attr[name];
 					}
-
+				}
+			}
+			// If the point is outside the plot area, destroy it. #678, #820
+			if (dataLabel && (!enabled || !defined(str))) {
+				point.dataLabel = dataLabel = dataLabel.destroy();
+				if (connector) {
+					point.connector = connector.destroy();
+				}
+			// Individual labels are disabled if the are explicitly disabled
+			// in the point options, or if they fall outside the plot area.
+			} else if (enabled && defined(str)) {
+				// create new label
+				if (!dataLabel) {
 					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
@@ -274,33 +246,26 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML,
 						null, 
 						'data-label'
-					)
-					.attr(attr);
-
+					);
 					dataLabel.addClass(
 						'highcharts-data-label-color-' + point.colorIndex +
 						' ' + (options.className || '') +
 						(options.useHTML ? 'highcharts-tracker' : '') // #3398
 					);
+				} else {
+					attr.text = str;
+				}
+				dataLabel.attr(attr);
+				/*= if (build.classic) { =*/
+				// Styles must be applied before add in order to read text bounding box
+				dataLabel.css(style).shadow(options.shadow);
+				/*= } =*/
 
-					/*= if (build.classic) { =*/
-					// Styles must be applied before add in order to read text bounding box
-					dataLabel.css(extend(style, moreStyle));
-					/*= } =*/
-
+				if (!dataLabel.added) {
 					dataLabel.add(dataLabelsGroup);
-
-					/*= if (build.classic) { =*/
-					dataLabel.shadow(options.shadow);
-					/*= } =*/
-					
-
 				}
-
-				if (dataLabel) {
-					// Now the data label is created and placed at 0,0, so we need to align it
-					series.alignDataLabel(point, dataLabel, options, null, isNew);
-				}
+				// Now the data label is created and placed at 0,0, so we need to align it
+				series.alignDataLabel(point, dataLabel, options, null, isNew);
 			}
 		});
 	}

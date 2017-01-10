@@ -304,7 +304,8 @@ function getResources() {
 				Highcharts.setOptions({
 					exporting: {
 						// Avoid versioning
-						libURL: 'https://code.highcharts.com/lib'
+						// libURL: 'https://code.highcharts.com/lib'
+						libURL: 'http://rawgithub.local/highcharts/vendor'
 					}
 				});
 			}

@@ -23,7 +23,8 @@ var addEvent = H.addEvent,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
 	svg = H.svg,
-	wrap = H.wrap;
+	wrap = H.wrap,
+	swapXY;
 
 var defaultScrollbarOptions =  {
 	//enabled: true
@@ -54,6 +55,28 @@ var defaultScrollbarOptions =  {
 };
 
 defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
+
+/**
+* When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
+* The same method is used in Navigator's handles, to rotate them.
+* @param {Array} path - path to be rotated
+* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
+*/
+H.swapXY = swapXY = function (path, vertical) {
+	var i,
+		len = path.length,
+		temp;
+
+	if (vertical) {
+		for (i = 0; i < len; i += 3) {
+			temp = path[i + 1];
+			path[i + 1] = path[i + 2];
+			path[i + 2] = temp;
+		}
+	}
+
+	return path;
+};
 
 /**
  * A reusable scrollbar, internally used in Highstock's navigator and optionally
@@ -141,8 +164,8 @@ Scrollbar.prototype = {
 				r: options.barBorderRadius || 0
 			}).add(scroller.scrollbarGroup);
 
-		scroller.scrollbarRifles = renderer.path(scroller.swapXY(
-			[
+		scroller.scrollbarRifles = renderer.path(
+			swapXY([
 				'M',
 				-3, size / 4,
 				'L',
@@ -228,7 +251,7 @@ Scrollbar.prototype = {
 		});
 
 		// Move right/bottom button ot it's place:
-		scroller.scrollbarButtons[1].attr({
+		scroller.scrollbarButtons[1][method]({
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
@@ -275,7 +298,7 @@ Scrollbar.prototype = {
 
 		// Button arrow
 		tempElem = renderer
-			.path(scroller.swapXY([
+			.path(swapXY([
 				'M',
 				size / 2 + (index ? -1 : 1), 
 				size / 2 - 3,
@@ -294,27 +317,6 @@ Scrollbar.prototype = {
 			fill: options.buttonArrowColor
 		});
 		/*= } =*/
-	},
-
-	/**
-	* When we have vertical scrollbar, rifles are rotated, the same for arrow in buttons:
-	* @param {Array} path - path to be rotated
-	* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
-	*/
-	swapXY: function (path, vertical) {
-		var i,
-			len = path.length,
-			temp;
-
-		if (vertical) {
-			for (i = 0; i < len; i += 3) {
-				temp = path[i + 1];
-				path[i + 1] = path[i + 2];
-				path[i + 2] = temp;
-			}
-		}
-
-		return path;
 	},
 
 	/**

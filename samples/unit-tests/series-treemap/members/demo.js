@@ -52,3 +52,139 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
         'When state:select zIndex is 0'
     );
 });
+
+QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
+    var drillUp = Highcharts.seriesTypes.treemap.prototype.drillUp,
+        series = {
+            rootNode: '',
+            drillToNode: function (id) {
+                this.rootNode = id;
+            },
+            nodeMap: {
+                '': {},
+                'A': { parent: '' }
+            }
+        };
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'Do not drill up when root node does not have a parent'
+    );
+
+    series.rootNode = 'B';
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        'B',
+        'Do not drill when root node does not exist'
+    );
+
+    series.rootNode = 'A';
+    drillUp.call(series);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'Drill to parent'
+    );
+});
+
+QUnit.test('seriesTypes.treemap.drillToNode', function (assert) {
+    var drillToNode = Highcharts.seriesTypes.treemap.prototype.drillToNode,
+        series = {
+            chart: {
+                redraw: function () {
+                    this.redrawed = true;
+                }
+            },
+            nodeMap: {
+                '': {},
+                'A': { parent: '' }
+            },
+            drillUpButton: {
+                name: undefined,
+                destroy: function () {
+                    this.name = undefined;
+                    return this;
+                }
+            },
+            showDrillUpButton: function (name) {
+                this.drillUpButton.name = name;
+            }
+        };
+    drillToNode.call(series, 'A');
+    assert.strictEqual(
+        series.rootNode,
+        'A',
+        'Drill to A: Root node updated'
+    );
+    assert.strictEqual(
+        series.drillUpButton.name,
+        'A',
+        'Drill to A: drill up button displayed'
+    );
+    assert.strictEqual(
+        series.chart.redrawed,
+        true,
+        'Drill to A: do redraw by default'
+    );
+
+    series.chart.redrawed = undefined;
+    drillToNode.call(series, '', false);
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'Drill to \'\': Root node updated'
+    );
+    assert.strictEqual(
+        series.drillUpButton.name,
+        undefined,
+        'Drill to \'\': drill up button destroyed'
+    );
+    assert.strictEqual(
+        series.chart.redrawed,
+        undefined,
+        'Drill to \'\': Redraw false'
+    );
+});
+
+QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
+    var onClickDrillToNode = Highcharts.seriesTypes.treemap.prototype.onClickDrillToNode,
+        series = {
+            drillToNode: function (id) {
+                this.rootNode = id;
+            }
+        },
+        point = {
+            setState: function (state) {
+                this.state = state;
+            }
+        };
+
+    onClickDrillToNode(series, {});
+    assert.strictEqual(
+        series.rootNode,
+        undefined,
+        'Do not drill if point is undefined.'
+    );
+
+    onClickDrillToNode(series, { point: point });
+    assert.strictEqual(
+        series.rootNode,
+        undefined,
+        'Do not drill if point.drillId is undefined.'
+    );
+
+    point.drillId = '';
+    onClickDrillToNode.call(series, { point: point });
+    assert.strictEqual(
+        series.rootNode,
+        '',
+        'On click drill to \'\': rootNode is updated.'
+    );
+    assert.strictEqual(
+        point.state,
+        '',
+        'On click drill to \'\': point.state is updated.'
+    );
+});

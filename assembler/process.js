@@ -125,9 +125,17 @@ const preProcess = (content, build) => {
     return tpl;
 };
 
+const transpile = (content) => {
+    const babel = require('babel-core');
+    return babel.transform(content, {
+        extends: './assembler/.babelrc'
+    }).code;
+};
+
 module.exports = {
-    getFunction: getFunction,
-    getPalette: getPalette,
-    preProcess: preProcess,
-    printPalette: printPalette
+    getFunction,
+    getPalette,
+    preProcess,
+    printPalette,
+    transpile
 };

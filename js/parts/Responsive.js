@@ -77,26 +77,36 @@ Chart.prototype.currentOptions = function (options) {
 	 * Recurse over a set of options and its current values,
 	 * and store the current values in the ret object.
 	 */
-	function getCurrent(options, curr, ret) {
+	function getCurrent(options, curr, ret, depth) {
 		var key, i;
 		for (key in options) {
-			if (inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+			if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
 				options[key] = splat(options[key]);
 			
 				ret[key] = [];
 				for (i = 0; i < options[key].length; i++) {
 					ret[key][i] = {};
-					getCurrent(options[key][i], curr[key][i], ret[key][i]);
+					getCurrent(
+						options[key][i],
+						curr[key][i],
+						ret[key][i],
+						depth + 1
+					);
 				}
 			} else if (isObject(options[key])) {
 				ret[key] = {};
-				getCurrent(options[key], curr[key] || {}, ret[key]);
+				getCurrent(
+					options[key],
+					curr[key] || {},
+					ret[key],
+					depth + 1
+				);
 			} else {
 				ret[key] = curr[key] || null;
 			}
 		}
 	}
 
-	getCurrent(options, this.options, ret);
+	getCurrent(options, this.options, ret, 0);
 	return ret;
 };
