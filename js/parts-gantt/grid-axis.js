@@ -7,7 +7,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-var arrayFromObject = function (args) {
+var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	dateFormat = H.dateFormat,
@@ -160,7 +160,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	if (axis.chart.isStock) {
 		retVal = 'left';
 	} else {
-		retVal = proceed.apply(axis, arrayFromObject(arguments));
+		retVal = proceed.apply(axis, argsToArray(arguments));
 	}
 	return retVal;
 });
@@ -175,7 +175,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
  */
 wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
 	var tick = this,
-		retVal = proceed.apply(tick, arrayFromObject(arguments)),
+		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
 		options = axis.options,
 		categoryAxis = axis.categories,
@@ -260,7 +260,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
 	var axis = this,
-		retVal = proceed.apply(axis, arrayFromObject(arguments)),
+		retVal = proceed.apply(axis, argsToArray(arguments)),
 		labelPadding,
 		distance;
 
@@ -288,7 +288,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 		userOptions.title.text = null;
 	}
 
-	proceed.apply(axis, arrayFromObject(arguments));
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**
@@ -323,7 +323,7 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 			axis.addTitle();
 		}
 
-		proceed.apply(axis, arrayFromObject(arguments));
+		proceed.apply(axis, argsToArray(arguments));
 
 		axisOffset[side] = pick(axisHeight, axisOffset[side]);
 
@@ -332,7 +332,7 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 		options.title = axisTitleOptions;
 
 	} else {
-		proceed.apply(axis, arrayFromObject(arguments));
+		proceed.apply(axis, argsToArray(arguments));
 	}
 });
 
@@ -381,7 +381,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 		}
 	}
 
-	proceed.apply(this, arrayFromObject(arguments));
+	proceed.apply(this, argsToArray(arguments));
 });
 
 /**
@@ -406,7 +406,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 			series.options.pointRange = 0;
 		});
 	}
-	proceed.apply(axis, arrayFromObject(arguments));
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**
@@ -437,7 +437,7 @@ wrap(Axis.prototype, 'trimTicks', function (proceed) {
 	if (isGridAxis && isLinked && withinRange) {
 		tickPositions[0] = min;
 	}
-	proceed.apply(axis, arrayFromObject(arguments));
+	proceed.apply(axis, argsToArray(arguments));
 });
 
 /**
