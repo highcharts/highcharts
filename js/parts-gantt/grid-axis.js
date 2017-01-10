@@ -128,27 +128,6 @@ H.dateFormats = {
 };
 
 /**
- * Prevents adding the last tick label if the axis is not a category axis.
- *
- * Since numeric labels are normally placed at starts and ends of a range of
- * value, and this module makes the label point at the value, an "extra" label
- * would appear.
- *
- * @param {function} proceed - the original function
- */
-wrap(Tick.prototype, 'addLabel', function (proceed) {
-	var axis = this.axis,
-		categoryAxis = axis.categories,
-		tickPositions = axis.tickPositions,
-		lastTick = tickPositions[tickPositions.length - 1],
-		isLastTick = this.pos === lastTick;
-
-	if (!axis.options.grid || categoryAxis || !isLastTick) {
-		proceed.apply(this);
-	}
-});
-
-/**
  * If chart is stockChart, always return 'left' to avoid first label being
  * placed inside chart.
  * @param {function} proceed - the original function
@@ -616,6 +595,16 @@ wrap(Axis.prototype, 'init', function (proceed) {
 			];
 		}
 
+		/**
+		* Prevents adding the last tick label if the axis is not a category axis.
+	    *
+	    * Since numeric labels are normally placed at starts and ends of a range of
+	    * value, and this module makes the label point at the value, an "extra" label
+	    * would appear.
+		*/
+		if (!axis.categories) {
+			options.showLastLabel = false;
+		}
 		// Make tick marks taller, creating cell walls of a grid.
 		// Use cellHeight axis option if set
 		if (axis.horiz) {

@@ -118,8 +118,10 @@ override(GridAxis.prototype, {
 		options = axis.options;
 		if (options.type === 'tree-grid') {
 			tree = getTree(options.tree);
+			// @todo Do this before proceed to avoid resetting hasNames and showLastLabel
 			axis.categories = getCategoriesFromTree(tree).reverse();
 			axis.hasNames = true;
+			axis.options.showLastLabel = true;
 		}
 	}
 });
