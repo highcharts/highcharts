@@ -12,6 +12,7 @@ var argsToArray = function (args) {
 	},
 	dateFormat = H.dateFormat,
 	each = H.each,
+	isArray = H.isArray,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
@@ -271,7 +272,9 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 		}
 		distance = axis.maxLabelLength + labelPadding;
 
-		retVal[0] = distance;
+		if (isArray(retVal)) {
+			retVal[0] = distance;
+		}
 	}
 	return retVal;
 });
