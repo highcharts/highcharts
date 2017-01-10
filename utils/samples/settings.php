@@ -44,7 +44,7 @@ if (isset($_POST) && isset($_POST['leftPath'])) {
 			<label for="leftPath">Compare against (leftPath). Defaults to 
 			<code>http://code.highcharts.com</code>. Use <code>master</code> to compare to latest
 			commit.</label>
-			<input type="text" name="leftPath" value="<?php echo $_SESSION['leftPath'] ?>" />
+			<input type="text" name="leftPath" value="<?php echo @$_SESSION['leftPath'] ?>" />
 		</div>
 
 		<div>
