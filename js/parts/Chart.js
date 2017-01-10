@@ -613,10 +613,14 @@ Chart.prototype = {
 			chart.containerHeight = getStyle(renderTo, 'height');
 		}
 		
-		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = Math.max(0, pick(heightOption,
-			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
-			chart.containerHeight > 19 ? chart.containerHeight : 400));
+		chart.chartWidth = Math.max( // #1393
+			0,
+			widthOption || chart.containerWidth || 600 // #1460
+		);
+		chart.chartHeight = Math.max(
+			0,
+			heightOption || chart.containerHeight || 400
+		);
 	},
 
 	/**
