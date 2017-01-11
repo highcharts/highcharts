@@ -363,8 +363,10 @@ extend(ColorAxis.prototype, {
 		this.dataMin = Infinity;
 		this.dataMax = -Infinity;
 		while (i--) {
-			this.dataMin = Math.min(this.dataMin, series[i].valueMin);
-			this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+			if (series[i].valueMin !== undefined) {
+				this.dataMin = Math.min(this.dataMin, series[i].valueMin);
+				this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+			}
 		}
 	},
 	drawCrosshair: function (e, point) {
