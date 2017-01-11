@@ -20,8 +20,9 @@ if (@$_POST['branch']) {
 		$_SESSION['before'] = @$_POST['before'];
 		
 		// Prepare command
-		$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ';
-		//$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --graph ';
+		//$cmd = 'log > ' . sys_get_temp_dir() . '/log.txt --format="%h|%ci|%s|%p" ';
+		$cmd = 'log > ' . sys_get_temp_dir() .
+			'/log.txt --graph --format="<br>%h<br>%ci<br>%s<br>%p" ';
 
 		// Date
 		if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $_SESSION['after'])) {

@@ -81,50 +81,6 @@ function drawGraph() {
 	});
 };
 
-/**
- * Indent the text to reveal the graph
- */
-function indent() {
-	var $rightMost,
-		marginLeft;
-	$('div.parents').each(function (i, item) {
-		var $dot = $(item),
-			doffset = $dot && $dot.offset(),
-			parents = $(item).data('parents');
-
-		$.each(parents, function (i, parent) {
-			var $parentDot = $('#dot-' + parent),
-				poffset = $parentDot && $parentDot.offset(),
-				dLeft,
-				pLeft;
-
-			if ($rightMost === undefined) {
-				$rightMost = $dot;
-			}
-					
-				
-			if (doffset && poffset) {
-				dLeft = Math.round($rightMost.data('left'));
-				pLeft = Math.round($parentDot.data('left'));
-				
-				if (pLeft >= dLeft)  {
-					$rightMost = $parentDot;
-				}
-			}
-
-			marginLeft = $rightMost.data('left');
-			$dot.parent().find('a').css('marginLeft', marginLeft + 20);
-			$dot.parent().find('span.date').css('marginLeft', marginLeft + 20);
-
-
-			if ($rightMost[0] === $dot[0]) {
-				$rightMost = undefined;
-			}
-		});
-	});
-
-}
-
 $(function() {
 	var $active,
 		month,
@@ -167,29 +123,64 @@ $(function() {
 	
 
 	$.get('../samples/temp/log.txt?d' + (new Date()).getTime(), function(log) {
+
+		/*var items = [],
+			item = [];
 		log = log.split('\n');
-		$.each(log, function(i, line) {
+
+		// On each commit, start new item
+		log.forEach(function (line) {
+
+			if (/commit [a-f0-9]{40}/.test(line)) {
+				if (item.length) {
+					items.push(item.join('\n'));
+				}
+				item.length = 0;
+			}
+			item.push(line);
+		});
+		items.push(item.join('\n'));*/
+
+		$.each(log.split('\n'), function(i, line) {
 			
-			if (line.length) {
+			/*var commit = item.match(/commit ([a-f0-9]{40})/)[1],
+				$li = $('<li>').appendTo('#ul').data({ commit: commit }),
+				date = item.match(/Date:   ([^\n]+)/)[1],
+				message = item.match(/     ([^\n]+)/)[1],
+				dateObj = new Date(date),
+				branchI = parseInt(item.indexOf('*'), 10) / 2;
+				*/
 
-				line = line.split('|');
-
-				var commit = line[0],
+			if (line.indexOf('<br>') > -1) {
+				line = line.split('<br>');
+				
+				var graph = line[0],
+					commit = line[1],
 					$li = $('<li>').appendTo('#ul').data({ commit: commit }),
-					date = line[1],
-					dateObj = new Date(date.substr(0, 4), date.substr(5, 2) - 1, +date.substr(8, 2), +date.substr(11, 2), date.substr(14, 2)),
-					parents = line[3].split(' '),
-					branchI;
+					date = line[2],
+					dateObj = new Date(
+						date.substr(0, 4),
+						date.substr(5, 2) - 1,
+						+date.substr(8, 2),
+						+date.substr(11, 2),
+						date.substr(14, 2)
+					),
+					message = line[3],
+					parents = line[4].split(' '),
+					branchI = graph.indexOf('*') / 2,
+					indentLevel = graph.length / 2;
 				
 				if (dateObj.getMonth() !== month) {
-					$('<h3>' + ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][dateObj.getMonth()] +
+					$('<h3>' + ['January', 'February', 'March', 'April', 'May',
+							'June', 'July', 'August', 'September', 'October',
+							'November', 'December'][dateObj.getMonth()] +
 						 ' ' + dateObj.getFullYear() + '</h3>')
 						.appendTo($li);
 					month = dateObj.getMonth();
 				}
 
 				// Parents
-				if (parentHierarchy[commit] !== undefined) {
+				/*if (parentHierarchy[commit] !== undefined) {
 					branchI = parentHierarchy[commit];
 				} else {
 					branchI = branchCounter++;
@@ -201,23 +192,24 @@ $(function() {
 				}
 				if (parents[1]) {
 					parentHierarchy[parents[1]] = branchCounter++;
-				}
-				var marginLeft = branchI * 10;
-
+				}*/
+				
 				var par = $('<div>')
 					.attr({
 						'class': 'parents',
-						title: 'hash: '+ commit + ', parent: ' + parents.join(', '),
+						title: 'hash: '+ commit + ', parent: ' +
+							parents.join(', '),
 						id: 'dot-' + commit
 					})
 					.data({
 						hash: commit,
 						parents: parents,
-						left: marginLeft,
+						left: branchI * 10,
 						color: colors[branchI]
 					})
-					.html('<div class="disc" style="background-color: '+ colors[branchI] + 
-						';margin-left:' + marginLeft + 'px"></div>')
+					.html('<div class="disc" style="background-color: ' +
+						colors[branchI] + 
+						';margin-left:' + (branchI * 10) + 'px"></div>')
 					.appendTo($li);
 
 				$('<a>')
@@ -228,12 +220,15 @@ $(function() {
 						target: 'main',
 						'class': 'message'
 					})
+					.css({
+						marginLeft: 20 + 10 * indentLevel
+					})
 					.click(function() {
 						$active && $active.removeClass('active').addClass('visited');
 						$(this).addClass('active');
 						$active = $(this);
 					})
-					.html(line[2])
+					.html(message)
 					.appendTo($li);
 
 				var statusTexts = {
@@ -271,13 +266,13 @@ $(function() {
 					.appendTo($li);
 
 				$('<span class="date">' + date + '</span>')
+					.css({
+						marginLeft: 20 + 10 * indentLevel
+					})
 					.appendTo($li);
 			}
-				
 		});
 
-
-		indent();
 		drawGraph();
 	});
 
