@@ -71,7 +71,11 @@ const folder = path => {
 const getOrderedDependencies = (file, parent, dependencies) => {
     let filePath = cleanPath(folder(parent) + file),
         content = U.getFile(filePath),
-        imports = getFileImports(content);
+        imports;
+    if (content === null) {
+        throw 'File ' + filePath + ' does not exist. Listed dependency in ' + parent;
+    }
+    imports = getFileImports(content);
     if (parent === '') {
         dependencies.unshift(filePath);
     } else {
