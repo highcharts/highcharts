@@ -36,6 +36,7 @@ $(function () {
         yAxis: [{
             title: '',
             opposite: false,
+            showLastLabel: true,
             categories: ['Prototyping', 'Development', 'Testing'],
             grid: true
         }],

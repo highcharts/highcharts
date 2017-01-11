@@ -258,21 +258,6 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 });
 
 /**
- * Sets the axis title to null unless otherwise specified by user.
- * @param {Function} proceed - the original function
- * @param {Object} userOptions - the user specified axis options
- */
-wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
-	var axis = this;
-
-	if (userOptions.title && !userOptions.title.text) {
-		userOptions.title.text = null;
-	}
-
-	proceed.apply(axis, argsToArray(arguments));
-});
-
-/**
  * Disregards space required by axisTitle, by adding axisTitle to axisParent
  * instead of axisGroup, and disregarding margins and offsets related to
  * axisTitle.
@@ -408,16 +393,30 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 wrap(Axis.prototype, 'trimTicks', function (proceed) {
 	var axis = this,
 		isGridAxis = axis.options.grid,
-		isLinked = axis.isLinked,
+		categoryAxis = axis.categories,
 		tickPositions = axis.tickPositions,
 		firstPos = tickPositions[0],
-		min = axis.linkedParent && axis.linkedParent.min,
+		lastPos = tickPositions[tickPositions.length - 1],
+		linkedMin = axis.linkedParent && axis.linkedParent.min,
+		linkedMax = axis.linkedParent && axis.linkedParent.max,
+		min = linkedMin || axis.min,
+		max = linkedMax || axis.max,
 		tickInterval = axis.tickInterval,
-		withinRange = firstPos < min && firstPos + tickInterval > min;
+		moreThanMin = firstPos > min,
+		lessThanMax = lastPos < max,
+		endMoreThanMin = firstPos < min && firstPos + tickInterval > min,
+		startLessThanMax = lastPos > max && lastPos - tickInterval < max;
 
-	if (isGridAxis && isLinked && withinRange) {
-		tickPositions[0] = min;
+	if (isGridAxis && !categoryAxis && (axis.horiz || axis.isLinked)) {
+		if (moreThanMin || endMoreThanMin) {
+			tickPositions[0] = min;
+		}
+
+		if (lessThanMax || startLessThanMax) {
+			tickPositions[tickPositions.length - 1] = max;
+		}
 	}
+
 	proceed.apply(axis, argsToArray(arguments));
 });
 
@@ -572,7 +571,7 @@ wrap(Axis.prototype, 'init', function (proceed) {
 		// 25 / 11 ≈ 2.28
 		fontSizeToCellHeightRatio = 25 / 11,
 		fontMetrics,
-		fontSize;	
+		fontSize;
 	// Call original Axis.init()
 	proceed.apply(axis, argsToArray(arguments));
 	options = axis.options;
@@ -605,8 +604,11 @@ wrap(Axis.prototype, 'init', function (proceed) {
 		if (!axis.categories) {
 			options.showLastLabel = false;
 		}
-		// Make tick marks taller, creating cell walls of a grid.
-		// Use cellHeight axis option if set
+
+		/**
+		 * Make tick marks taller, creating cell walls of a grid.
+		 * Use cellHeight axis option if set
+		 */
 		if (axis.horiz) {
 			options.tickLength = options.cellHeight ||
 					fontMetrics.h * fontSizeToCellHeightRatio;
@@ -615,6 +617,13 @@ wrap(Axis.prototype, 'init', function (proceed) {
 			if (!options.lineWidth) {
 				options.lineWidth = 1;
 			}
+		}
+
+		/**
+		* Sets the axis title to null unless otherwise specified by user.
+		*/
+		if (options.title && !options.title.text) {
+			options.title.text = null;
 		}
 	}
 });

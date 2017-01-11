@@ -21,8 +21,8 @@ $(function () {
                     fontSize: '10px'
                 }
             },
-            min: Date.UTC(2014, 0, 17),
-            max: Date.UTC(2015, 10, 30),
+            min: Date.UTC(2014, 3, 17),
+            max: Date.UTC(2015, 11, 0),
             currentDateIndicator: true
         }, {
             grid: true,
