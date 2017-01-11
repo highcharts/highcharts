@@ -74,9 +74,10 @@ function pointWithinObstacle(obstacle, point, options) {
  * @return {Number} result Ix of the obstacle in the array, or -1 if not found.
  */
 function findObstacleFromPoint(obstacles, point, options) {
-	for (var i = findLastObstacleBefore(obstacles, point.x); 
-			i < obstacles.length && obstacles[i].xMin <= point.x; ++i) {
-		if (pointWithinObstacle(obstacles[i], point, options)) {
+	var i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
+	while (i--) {
+		if (obstacles[i].xMax >= point.x && // optimization using lazy evaluation
+			pointWithinObstacle(obstacles[i], point, options)) {
 			return i;
 		}
 	}
@@ -213,9 +214,7 @@ var algorithms = {
 			if (searchDirection > 0) {
 				i = findLastObstacleBefore(chartObstacles, firstPoint.x);
 			} else {
-				// findLastObstacleBefore is not precise and might return an
-				// index or two earlier than it should, so add some margin here.
-				i = min(findLastObstacleBefore(chartObstacles, lastPoint.x) + 3, 
+				i = min(findLastObstacleBefore(chartObstacles, lastPoint.x), 
 						chartObstacles.length - 1);
 			}
 

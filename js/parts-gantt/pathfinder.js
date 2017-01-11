@@ -41,7 +41,7 @@ extend(H.defaultOptions, {
 			symbol: 'arrow-filled'
 		},
 		lineWidth: 1,
-		algorithmMargin: 10
+		algorithmMargin: 10 // TODO: Should be computed from chart size
 	}
 });
 
@@ -524,10 +524,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				lineObstacles: lineObstacles || [],
 				obstacleMetrics: pathfinder.chartObstacleMetrics,
 				hardBounds: {
-					xMin: chart.plotLeft,
-					xMax: chart.plotLeft + chart.plotWidth,
-					yMin: chart.plotTop,
-					yMax: chart.plotTop + chart.plotHeight
+					xMin: 0,
+					xMax: chart.plotWidth,
+					yMin: 0,
+					yMax: chart.plotHeight
 				},
 				obstacleOptions: {
 					margin: options.algorithmMargin
