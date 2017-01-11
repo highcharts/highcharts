@@ -125,7 +125,7 @@ seriesType('arearange', 'area', {
 			linePath,
 			lowerPath,
 			options = this.options,
-			connectEnds = options.connectEnds !== false,
+			connectEnds = this.chart.polar && options.connectEnds !== false,
 			step = options.step,
 			higherPath,
 			higherAreaPath;
