@@ -1165,8 +1165,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
 
-			i = points.length;
-			while (i--) {
+			for (i = 0; i < points.length; i++) {
 				point = points[i];
 				plotY = point.plotY;
 				graphic = point.graphic;
