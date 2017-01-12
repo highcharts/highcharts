@@ -1920,7 +1920,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		}, compareX);
 	},
 
+	/**
+	 * Build the k-d-tree that is used by mouse and touch interaction to get the
+	 * closest point. Line-like series typically have a one-dimensional tree 
+	 * where points are searched along the X axis, while scatter-like series
+	 * typically search in two dimensions, X and Y.
+	 */
 	buildKDTree: function () {
+
+		// Prevent multiple k-d-trees from being built simultaneously (#6235)
 		this.buildingKdTree = true;
 
 		var series = this,
