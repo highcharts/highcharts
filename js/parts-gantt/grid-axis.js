@@ -307,20 +307,25 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 
 	if (options.grid) {
 
+		/**
+		 * Sets the axis title to null unless otherwise specified by user.
+		 */
 		if (!options.title) {
 			options.title = '';
+		} else if (options.title && !options.title.text) {
+			options.title.text = null;
 		}
 
 		if (axis.horiz) {
-			/*               _________________________
-			* Make this:    ___|_____|_____|_____|__|
-			*               ^                     ^
-			*               _________________________
-			* Into this:    |_____|_____|_____|_____|
-			*                  ^                 ^
-			*/
+			/**              _________________________
+			 * Make this:    ___|_____|_____|_____|__|
+			 *               ^                     ^
+			 *               _________________________
+			 * Into this:    |_____|_____|_____|_____|
+			 *                  ^                 ^
+			 */
 			options.minPadding = pick(options.minPadding, 0);
-			options.maxPadding = pick(options.minPadding, 0);
+			options.maxPadding = pick(options.maxPadding, 0);
 		}
 	}
 
@@ -572,12 +577,12 @@ wrap(Axis.prototype, 'init', function (proceed) {
 		}
 
 		/**
-		* Prevents adding the last tick label if the axis is not a category axis.
-	    *
-	    * Since numeric labels are normally placed at starts and ends of a range of
-	    * value, and this module makes the label point at the value, an "extra" label
-	    * would appear.
-		*/
+		 * Prevents adding the last tick label if the axis is not a category axis.
+		 *
+		 * Since numeric labels are normally placed at starts and ends of a range of
+		 * value, and this module makes the label point at the value, an "extra" label
+		 * would appear.
+		 */
 		if (!axis.categories) {
 			options.showLastLabel = false;
 		}
@@ -594,13 +599,6 @@ wrap(Axis.prototype, 'init', function (proceed) {
 			if (!options.lineWidth) {
 				options.lineWidth = 1;
 			}
-		}
-
-		/**
-		* Sets the axis title to null unless otherwise specified by user.
-		*/
-		if (options.title && !options.title.text) {
-			options.title.text = null;
 		}
 
 		/**
