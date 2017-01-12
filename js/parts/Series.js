@@ -1921,6 +1921,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	buildKDTree: function () {
+		this.buildingKdTree = true;
+
 		var series = this,
 			dimensions = series.kdDimensions;
 
@@ -1962,6 +1964,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				dimensions,
 				dimensions
 			);
+			series.buildingKdTree = false;
 		}
 		delete series.kdTree;
 
@@ -2018,7 +2021,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			return ret;
 		}
 
-		if (!this.kdTree) {
+		if (!this.kdTree && !this.buildingKdTree) {
 			this.buildKDTree();
 		}
 
