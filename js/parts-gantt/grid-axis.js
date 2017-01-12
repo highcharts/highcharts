@@ -152,55 +152,46 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
  * @return {object} object - an object containing x and y positions
  *						 for the tick
  */
-wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOpts, tmo, index) {
 	var tick = this,
 		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
 		options = axis.options,
 		categoryAxis = axis.categories,
 		tickInterval = options.tickInterval || axis.tickInterval,
-		reversed = axis.reversed,
 		tickPositions = axis.tickPositions,
-		isFirstTick = tick.pos === axis.min,
 		lastTickPos = tickPositions[tickPositions.length - 2],
-		isLastTick = tick.pos === lastTickPos,
 		nextTickPos = tickPositions[index + 1],
 		tickPixelInterval,
 		newX,
 		axisMin,
-		axisHeight,
-		fontSize,
-		labelMetrics,
-		labelBase,
-		labelHeight,
+		lblMetrics,
 		axisYCenter,
 		labelYCenter;
 
 	// Only center tick labels in grid axes
 	if (options.grid) {
-		fontSize = options.labels.style.fontSize;
-		labelMetrics = axis.chart.renderer.fontMetrics(fontSize, label.element);
-		labelBase = labelMetrics.b;
-		labelHeight = labelMetrics.h;
-		fontSize = labelMetrics.f;
-		labelYCenter = (labelBase / 2) - ((labelHeight - fontSize) / 2);
+		lblMetrics = axis.chart.renderer.fontMetrics(
+			labelOpts.style.fontSize,
+			label.element
+		);
+		labelYCenter = (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
 
-		if (axis.horiz && !categoryAxis) {
+		if (horiz && !categoryAxis) {
 			// Center x position
-			if (isFirstTick) {
+			if (tick.pos === axis.min) { // First tick
 				if (nextTickPos) {
 					x = axis.translate((tick.pos + nextTickPos) / 2);
 				}
 				retVal.x = x + axis.left;
-			} else if (isLastTick) {
+			} else if (tick.pos === lastTickPos) { // Last tick
 				retVal.x = (axis.left + axis.len + x) / 2;
 			} else {
 				x = axis.translate(tick.pos + (tickInterval / 2));
 				retVal.x = x + axis.left;
 			}
 
-			axisHeight = axis.axisGroup.getBBox().height;
-			axisYCenter = (axisHeight / 2);
+			axisYCenter = (axis.axisGroup.getBBox().height / 2);
 
 			y += labelYCenter;
 
@@ -213,13 +204,13 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		} else {
 			// Center y position
 			if (!categoryAxis) {
-				axisMin = reversed ? axis.max : axis.min;
+				axisMin = axis.reversed ? axis.max : axis.min;
 				tickPixelInterval = axis.translate(axisMin + tickInterval);
 				retVal.y = y - (tickPixelInterval / 2) + labelYCenter;
 			}
 
 			// Center x position
-			newX = (tick.label.getBBox().width / 2) - (axis.maxLabelLength / 2);
+			newX = (label.getBBox().width / 2) - (axis.maxLabelLength / 2);
 			if (axis.side === axisSide.left) {
 				retVal.x += newX;
 			} else {
@@ -300,20 +291,6 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 	} else {
 		proceed.apply(axis, argsToArray(arguments));
 	}
-});
-
-/**
- * Prevents rotation of labels when squished, as rotating them would not
- * help.
- *
- * @param {function} proceed - the original function
- */
-wrap(Axis.prototype, 'renderUnsquish', function (proceed) {
-	if (this.options.grid) {
-		this.labelRotation = 0;
-		this.options.labels.rotation = 0;
-	}
-	proceed.apply(this);
 });
 
 /**
@@ -625,5 +602,12 @@ wrap(Axis.prototype, 'init', function (proceed) {
 		if (options.title && !options.title.text) {
 			options.title.text = null;
 		}
+
+		/**
+		 * Prevents rotation of labels when squished, as rotating them would not
+		 * help.
+		 */
+		axis.labelRotation = 0;
+		options.labels.rotation = 0;
 	}
 });
