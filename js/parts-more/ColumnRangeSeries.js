@@ -106,5 +106,6 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 	polarArc: function () {
 		return colProto.polarArc.apply(this, arguments);
 	},
-	pointAttribs: colProto.pointAttribs
+	pointAttribs: colProto.pointAttribs,
+	pointClass: colProto.pointClass
 });

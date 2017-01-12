@@ -273,13 +273,7 @@ seriesType('pie', 'line', {
 	drawPoints: function () {
 		var series = this,
 			chart = series.chart,
-			renderer = chart.renderer,
-			groupTranslation,
-			//center,
-			graphic,
-			//group,
-			pointAttr,
-			shapeArgs;
+			renderer = chart.renderer;
 
 		/*= if (build.classic) { =*/
 		var shadow = series.options.shadow;
@@ -291,56 +285,7 @@ seriesType('pie', 'line', {
 
 		// draw the slices
 		each(series.points, function (point) {
-			if (point.y !== null) {
-				graphic = point.graphic;
-				shapeArgs = point.shapeArgs;
-
-
-				// if the point is sliced, use special translation, else use plot area traslation
-				groupTranslation = point.sliced ? point.slicedTranslation : {};
-
-				/*= if (build.classic) { =*/
-				// Put the shadow behind all points
-				var shadowGroup = point.shadowGroup;
-				if (shadow && !shadowGroup) {
-					shadowGroup = point.shadowGroup = renderer.g('shadow')
-						.add(series.shadowGroup);
-				}
-
-				if (shadowGroup) {
-					shadowGroup.attr(groupTranslation);
-				}
-				pointAttr = series.pointAttribs(point, point.selected && 'select');
-				/*= } =*/
-
-				// Draw the slice
-				if (graphic) {
-					graphic
-						.setRadialReference(series.center)
-						/*= if (build.classic) { =*/
-						.attr(pointAttr)
-						/*= } =*/
-						.animate(extend(shapeArgs, groupTranslation));
-				} else {
-
-					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass(point.getClassName())
-						.setRadialReference(series.center)
-						.attr(groupTranslation)
-						.add(series.group);
-
-					if (!point.visible) {
-						graphic.attr({ visibility: 'hidden' });
-					}
-
-					/*= if (build.classic) { =*/
-					graphic
-						.attr(pointAttr)
-						.attr({ 'stroke-linejoin': 'round' })
-						.shadow(shadow, shadowGroup);
-					/*= } =*/
-				}
-			}
+			point.render();
 		});
 
 	},
@@ -496,5 +441,68 @@ seriesType('pie', 'line', {
 					end: shapeArgs.end
 				}
 			);
+	},
+
+	render: function () {
+		var point = this,
+			series = point.series,
+			renderer = series.chart.renderer,
+			graphic = point.graphic,
+			shapeArgs = point.shapeArgs,
+			groupTranslation,
+			pointAttr;
+
+		/*= if (build.classic) { =*/
+		var shadow = series.options.shadow;
+		/*= } =*/
+
+		if (point.y !== null) {
+
+
+			// if the point is sliced, use special translation, else use plot area traslation
+			groupTranslation = point.sliced ? point.slicedTranslation : {};
+
+			/*= if (build.classic) { =*/
+			// Put the shadow behind all points
+			var shadowGroup = point.shadowGroup;
+			if (shadow && !shadowGroup) {
+				shadowGroup = point.shadowGroup = renderer.g('shadow')
+					.add(series.shadowGroup);
+			}
+
+			if (shadowGroup) {
+				shadowGroup.attr(groupTranslation);
+			}
+			pointAttr = series.pointAttribs(point, point.selected && 'select');
+			/*= } =*/
+
+			// Draw the slice
+			if (graphic) {
+				graphic
+					.setRadialReference(series.center)
+					/*= if (build.classic) { =*/
+					.attr(pointAttr)
+					/*= } =*/
+					.animate(extend(shapeArgs, groupTranslation));
+			} else {
+
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+					.addClass(point.getClassName())
+					.setRadialReference(series.center)
+					.attr(groupTranslation)
+					.add(series.group);
+
+				if (!point.visible) {
+					graphic.attr({ visibility: 'hidden' });
+				}
+
+				/*= if (build.classic) { =*/
+				graphic
+					.attr(pointAttr)
+					.attr({ 'stroke-linejoin': 'round' })
+					.shadow(shadow, shadowGroup);
+				/*= } =*/
+			}
+		}
 	}
 });

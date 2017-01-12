@@ -99,86 +99,6 @@ seriesType('ohlc', 'column', {
 		});
 	},
 
-	/**
-	 * Draw the data points
-	 */
-	drawPoints: function () {
-		var series = this,
-			points = series.points,
-			chart = series.chart;
-
-
-		each(points, function (point) {
-			var plotOpen,
-				plotClose,
-				crispCorr,
-				halfWidth,
-				path,
-				graphic = point.graphic,
-				crispX,
-				isNew = !graphic;
-
-			if (point.plotY !== undefined) {
-
-				// Create and/or update the graphic
-				if (!graphic) {
-					point.graphic = graphic = chart.renderer.path()
-						.add(series.group);
-				}
-
-				/*= if (build.classic) { =*/
-				graphic.attr(series.pointAttribs(point, point.selected && 'select')); // #3897
-				/*= } =*/
-
-				// crisp vector coordinates
-				crispCorr = (graphic.strokeWidth() % 2) / 2;
-				crispX = Math.round(point.plotX) - crispCorr;  // #2596
-				halfWidth = Math.round(point.shapeArgs.width / 2);
-
-				// the vertical stem
-				path = [
-					'M',
-					crispX, Math.round(point.yBottom),
-					'L',
-					crispX, Math.round(point.plotY)
-				];
-
-				// open
-				if (point.open !== null) {
-					plotOpen = Math.round(point.plotOpen) + crispCorr;
-					path.push(
-						'M',
-						crispX,
-						plotOpen,
-						'L',
-						crispX - halfWidth,
-						plotOpen
-					);
-				}
-
-				// close
-				if (point.close !== null) {
-					plotClose = Math.round(point.plotClose) + crispCorr;
-					path.push(
-						'M',
-						crispX,
-						plotClose,
-						'L',
-						crispX + halfWidth,
-						plotClose
-					);
-				}
-
-				graphic[isNew ? 'attr' : 'animate']({ d: path })
-					.addClass(point.getClassName(), true);
-
-			}
-
-
-		});
-
-	},
-
 	animate: null // Disable animation
 
 /**
@@ -192,6 +112,76 @@ seriesType('ohlc', 'column', {
 	getClassName: function () {
 		return Point.prototype.getClassName.call(this) +
 			(this.open < this.close ? ' highcharts-point-up' : ' highcharts-point-down');
+	}
+}, {
+	render: function () {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			plotOpen,
+			plotClose,
+			crispCorr,
+			halfWidth,
+			path,
+			graphic = point.graphic,
+			crispX,
+			isNew = !graphic;
+
+		if (point.plotY !== undefined) {
+
+			// Create and/or update the graphic
+			if (!graphic) {
+				point.graphic = graphic = chart.renderer.path()
+					.add(series.group);
+			}
+
+			/*= if (build.classic) { =*/
+			graphic.attr(series.pointAttribs(point, point.selected && 'select')); // #3897
+			/*= } =*/
+
+			// crisp vector coordinates
+			crispCorr = (graphic.strokeWidth() % 2) / 2;
+			crispX = Math.round(point.plotX) - crispCorr;  // #2596
+			halfWidth = Math.round(point.shapeArgs.width / 2);
+
+			// the vertical stem
+			path = [
+				'M',
+				crispX, Math.round(point.yBottom),
+				'L',
+				crispX, Math.round(point.plotY)
+			];
+
+			// open
+			if (point.open !== null) {
+				plotOpen = Math.round(point.plotOpen) + crispCorr;
+				path.push(
+					'M',
+					crispX,
+					plotOpen,
+					'L',
+					crispX - halfWidth,
+					plotOpen
+				);
+			}
+
+			// close
+			if (point.close !== null) {
+				plotClose = Math.round(point.plotClose) + crispCorr;
+				path.push(
+					'M',
+					crispX,
+					plotClose,
+					'L',
+					crispX + halfWidth,
+					plotClose
+				);
+			}
+
+			graphic[isNew ? 'attr' : 'animate']({ d: path })
+				.addClass(point.getClassName(), true);
+
+		}
 	}
 });
 /* ****************************************************************************

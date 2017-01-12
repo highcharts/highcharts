@@ -1142,80 +1142,22 @@ H.Series = H.seriesType('line', null, { // base series options
 	drawPoints: function () {
 		var series = this,
 			points = series.points,
-			chart = series.chart,
-			plotY,
-			i,
-			point,
-			symbol,
-			graphic,
-			options = series.options,
-			seriesMarkerOptions = options.marker,
-			pointMarkerOptions,
-			hasPointMarker,
-			enabled,
-			isInside,
-			markerGroup = series.markerGroup,
 			xAxis = series.xAxis,
-			markerAttribs,
-			globallyEnabled = pick(
+			i,
+			options = series.options,
+			seriesMarkerOptions = options.marker;
+
+		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
+
+			series.globallyEnabled = pick(
 				seriesMarkerOptions.enabled,
 				xAxis.isRadial ? true : null,
 				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
 
-		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
-
 			i = points.length;
 			while (i--) {
-				point = points[i];
-				plotY = point.plotY;
-				graphic = point.graphic;
-				pointMarkerOptions = point.marker || {};
-				hasPointMarker = !!point.marker;
-				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
-				isInside = point.isInside;
-
-				// only draw the point if y is defined
-				if (enabled && isNumber(plotY) && point.y !== null) {
-
-					// Shortcuts
-					symbol = pick(pointMarkerOptions.symbol, series.symbol);
-					point.hasImage = symbol.indexOf('url') === 0;
-
-					markerAttribs = series.markerAttribs(
-						point,
-						point.selected && 'select'
-					);
-
-					if (graphic) { // update
-						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
-							.animate(markerAttribs);
-					} else if (isInside && (markerAttribs.width > 0 || point.hasImage)) {
-						point.graphic = graphic = chart.renderer.symbol(
-							symbol,
-							markerAttribs.x,
-							markerAttribs.y,
-							markerAttribs.width,
-							markerAttribs.height,
-							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
-						)
-						.add(markerGroup);
-					}
-
-					/*= if (build.classic) { =*/
-					// Presentational attributes
-					if (graphic) {
-						graphic.attr(series.pointAttribs(point, point.selected && 'select'));
-					}
-					/*= } =*/
-
-					if (graphic) {
-						graphic.addClass(point.getClassName(), true);
-					}
-
-				} else if (graphic) {
-					point.graphic = graphic.destroy(); // #1269
-				}
+				points[i].render();
 			}
 		}
 

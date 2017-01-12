@@ -216,6 +216,82 @@ Point.prototype = {
 	},
 
 	/**
+	 * Renders the point if enabled.
+	 * @return {[type]} [description]
+	 */
+	render: function () {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			options = series.options,
+			seriesMarkerOptions = options.marker,
+			plotY = point.plotY,
+			graphic = point.graphic,
+			markerGroup = series.markerGroup,
+			pointMarkerOptions = point.marker || {},
+			hasPointMarker = !!point.marker,
+			globallyEnabled = series.globallyEnabled,
+			enabled =
+				(
+					globallyEnabled &&
+					pointMarkerOptions.enabled === undefined
+				) ||
+				pointMarkerOptions.enabled,
+			isInside = point.isInside,
+			symbol,
+			markerAttribs;
+
+		// only draw the point if y is defined
+		if (enabled && isNumber(plotY) && point.y !== null) {
+
+			// Shortcuts
+			symbol = pick(pointMarkerOptions.symbol, series.symbol);
+			point.hasImage = symbol.indexOf('url') === 0;
+
+			markerAttribs = series.markerAttribs(
+				point,
+				point.selected && 'select'
+			);
+
+			if (graphic) { // update
+				// Since the marker group isn't clipped, each individual marker
+				// must be toggled
+				graphic[isInside ? 'show' : 'hide'](true)
+					.animate(markerAttribs);
+			} else if (
+					isInside &&
+					(markerAttribs.width > 0 || point.hasImage)) {
+				point.graphic = graphic = chart.renderer.symbol(
+					symbol,
+					markerAttribs.x,
+					markerAttribs.y,
+					markerAttribs.width,
+					markerAttribs.height,
+					hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
+				)
+				.add(markerGroup);
+			}
+
+			/*= if (build.classic) { =*/
+			// Presentational attributes
+			if (graphic) {
+				graphic.attr(series.pointAttribs(
+					point,
+					point.selected && 'select'
+				));
+			}
+			/*= } =*/
+
+			if (graphic) {
+				graphic.addClass(point.getClassName(), true);
+			}
+
+		} else if (graphic) {
+			point.graphic = graphic.destroy(); // #1269
+		}
+	},
+
+	/**
 	 * Destroy a point to clear memory. Its reference still stays in series.data.
 	 */
 	destroy: function () {
