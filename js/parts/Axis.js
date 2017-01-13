@@ -2139,7 +2139,9 @@ H.Axis.prototype = {
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded, // #3027
-			hasData && tickPositions.length && tickSize ? tickSize[0] : 0 // #4866
+			hasData && tickPositions.length && tickSize ?
+				tickSize[0] + directionFactor * axis.offset :
+				0 // #4866
 		);
 
 		// Decide the clipping needed to keep the graph inside the plot area and axis lines
