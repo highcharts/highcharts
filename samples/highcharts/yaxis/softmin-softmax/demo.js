@@ -26,9 +26,8 @@ $(function () {
     });
 
 
-    $('#point-update').toggle(function () {
-        chart.series[0].points[11].update(120);
-    }, function () {
-        chart.series[0].points[11].update(54);
+    var toggle = false;
+    $('#point-update').click(function () {
+        chart.series[0].points[11].update((toggle = (!toggle)) ? 120 : 54);
     });
 });

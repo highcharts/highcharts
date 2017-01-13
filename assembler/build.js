@@ -95,6 +95,13 @@ let defaultOptions = {
     product: 'Highcharts', // Which product we're building.
     umd: true, // Wether to use UMD pattern or a module pattern
     version: 'x.x.x', // Version number of Highcharts
+    /**
+     * Transpile ES6 to ES5.
+     * Do not activate without seriously considering performance first.
+     * Once activated in one system, it will have to be activated in all.
+     * Requires babel-core@^6.21.0 and additional presets.
+     */
+    transpile: false,
     type: 'classic' // Type of Highcharts version. Classic or css.
 };
 
@@ -118,6 +125,9 @@ const build = userOptions=> {
             .forEach((o, i, arr) => {
                 let file = d.compileFile(o);
                 file = p.preProcess(file, o.build);
+                if (o.transpile) {
+                    file = p.transpile(file);
+                }
                 if (o.pretty) {
                     file = beautify(file);
                 }

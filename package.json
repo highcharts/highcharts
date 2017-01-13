@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -25,12 +25,11 @@
     "lib"
   ],
   "devDependencies": {
-    "babel-core": "^6.6.0",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.8.0",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
     "browserify": "^12.0.1",
     "closurecompiler": "^1.5.2",
     "colors": "~1.1.2",
+    "eslint": "3.12.2",
     "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",
@@ -45,5 +44,8 @@
     "xml2js": "^0.4.13",
     "yargs": "^3.25.0"
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "babel-runtime": "^6.20.0"
+  }
 }

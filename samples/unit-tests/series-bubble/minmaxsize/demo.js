@@ -25,12 +25,12 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.series[0].points[0].graphic.attr('r'),
+            chart.series[0].points[0].marker.radius,
             15,
             'Bubble size is minSize for lowest value, despite maxSize being computed smaller'
         );
         assert.strictEqual(
-            chart.series[0].points[5].graphic.attr('r'),
+            chart.series[0].points[5].marker.radius,
             15,
             'Bubble size is minSize for highest value, despite maxSize being computed smaller'
         );

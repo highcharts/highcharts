@@ -2129,7 +2129,7 @@ Series.prototype.getPoint = function (boostPoint) {
 		point.distX = boostPoint.distX;
 		point.plotX = boostPoint.plotX;
 		point.plotY = boostPoint.plotY;
-	}
+	}	
 
 	console.log('point', this.options.data[boostPoint.i], this.processedXData);
 

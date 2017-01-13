@@ -149,6 +149,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
+		destroy = result.destroy,
 		paths = this.cuboidPath(shapeArgs);
 
 	/*= if (build.classic) { =*/
@@ -234,7 +235,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.destroy();
 		this.side.destroy();
 
-		return null;
+		return destroy.call(this);
 	};
 
 	// Apply the Z index to the cuboid group
@@ -413,7 +414,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 	/**
 	 * Override attr to remove shape attributes and use those to set child paths
 	 */
-	wrap(wrapper, 'attr', function (proceed, params, val) {
+	wrap(wrapper, 'attr', function (proceed, params) {
 		var ca;
 		if (typeof params === 'object') {
 			ca = suckOutCustom(params);
@@ -422,7 +423,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 				wrapper.setPaths(wrapper.attribs);
 			}
 		}
-		return proceed.call(this, params, val);
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	});
 
 	/**

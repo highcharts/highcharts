@@ -183,7 +183,7 @@ $(function () {
                 }]
             });
 
-            showDataLabels = $("#chkDataLabels").attr('checked');
+            showDataLabels = $("#chkDataLabels").prop('checked');
 
         }
 
@@ -198,7 +198,7 @@ $(function () {
 
     // Toggle data labels - Note: Reloads map with new random data
     $("#chkDataLabels").change(function () {
-        showDataLabels = $("#chkDataLabels").attr('checked');
+        showDataLabels = $("#chkDataLabels").prop('checked');
         $("#mapDropdown").change();
     });
 

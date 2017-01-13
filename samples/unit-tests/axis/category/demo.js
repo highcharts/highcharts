@@ -469,3 +469,50 @@ QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
         'Increased max'
     );
 });
+
+QUnit.test(
+    'Keep names after redraw when point.options.x is set (#6207)',
+    function (assert) {
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container',
+                type: 'column',
+
+            },
+            xAxis: {
+                type: 'category'
+            },
+
+            series: [{
+                data: [{
+                    x: 0,
+                    y: 3750,
+                    name: "Zero"
+                }, {
+                    x: 1,
+                    y: 3000,
+                    name: "One"
+                }, {
+                    x: 3,
+                    y: 2500,
+                    name: "Three"
+                }]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].names.toString(),
+            'Zero,One,,Three',
+            'Initial names'
+        );
+
+        chart.series[0].hide();
+        chart.series[0].show();
+        assert.strictEqual(
+            chart.xAxis[0].names.toString(),
+            'Zero,One,,Three',
+            'Preserved names'
+        );
+
+    }
+);

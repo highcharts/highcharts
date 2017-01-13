@@ -9,21 +9,21 @@ $(function () {
 
         xAxis: [{
             labels: {
-                format: 'ThisIsALongText',
+                format: '0{value}ThisIsALongText',
                 align: 'left',
                 autoRotationLimit: 10
             }
         }, { // Top X axis
             linkedTo: 0,
             labels: {
-                format: 'ThisIsALongText',
+                format: '1{value}ThisIsALongText',
                 align: 'center',
                 autoRotationLimit: 10
             }
         }, { // Top X axis
             linkedTo: 0,
             labels: {
-                format: 'ThisIsALongText',
+                format: '2{value}ThisIsALongText',
                 align: 'right',
                 autoRotationLimit: 10
             }

@@ -129,7 +129,8 @@ function getResources() {
 		/* eslint-disable */
 		var sampleIndex,
 			path = '<?php echo $path ?>',
-			browser = <?php echo json_encode(getBrowser()); ?>;
+			browser = <?php echo json_encode(getBrowser()); ?>,
+			controller = window.parent && window.parent.controller;
 
 		(function () {
 
@@ -155,6 +156,8 @@ function getResources() {
 					};
 					return;
 				}
+
+				$('#bisect').click(controller.toggleBisect);
 
 				if (typeof Highcharts !== 'undefined') {
 					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
@@ -297,6 +300,14 @@ function getResources() {
 					}
 					return proceed.call(this, e);
 				});
+
+				Highcharts.setOptions({
+					exporting: {
+						// Avoid versioning
+						// libURL: 'https://code.highcharts.com/lib'
+						libURL: 'http://rawgithub.local/highcharts/vendor'
+					}
+				});
 			}
 		});
 		
@@ -412,7 +423,8 @@ function getResources() {
 					</select>
 				</form>
 				<button id="next" disabled="disabled" title="Next (Arrow Right)">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()"
+
+				<button id="reload" onclick="location.reload()"
 					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
@@ -421,17 +433,29 @@ function getResources() {
 				<a class="button active" title="View this sample with CSS and no inline styling"
 					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
 				<?php } ?>
+				
 				<a class="button"
-					href="compare-view.php?path=<?php echo $path ?>">Compare</a>
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0"
+					href="compare-view.php?path=<?php echo $path ?>">Compare
+				</a><a class="button" id="bisect" 
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray">Bisect</a>
+				
+
 				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;profile=1">Profile</a>
-				<a class="button"
+					href="view.php?path=<?php echo $path ?>&amp;profile=1"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">Profile
+				</a><a class="button"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					href="view.php?path=<?php echo $path ?>&amp;time=1">Time</a>
-				<a class="button"
+				
+
+				<a id="view-source" class="button" href="javascript:;"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
+				</a><a class="button"
 					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
-				<a id="view-source" class="button" href="javascript:;">View source</a>
 				
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>

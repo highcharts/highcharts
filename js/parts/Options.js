@@ -26,10 +26,18 @@ H.defaultOptions = {
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
-		months: ['January', 'February', 'March', 'April', 'May', 'June', 'July',
-				'August', 'September', 'October', 'November', 'December'],
-		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+		months: [
+			'January', 'February', 'March', 'April', 'May', 'June', 'July',
+			'August', 'September', 'October', 'November', 'December'
+		],
+		shortMonths: [
+			'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+			'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+		],
+		weekdays: [
+			'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+			'Thursday', 'Friday', 'Saturday'
+		],
 		// invalidDate: '',
 		decimalPoint: '.',
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
@@ -283,6 +291,37 @@ H.defaultOptions = {
 
 
 /**
+ * Sets the getTimezoneOffset function. If the timezone option is set, a default
+ * getTimezoneOffset function with that timezone is returned. If not, the
+ * specified getTimezoneOffset function is returned. If neither are specified,
+ * undefined is returned.
+ * @return {function} a getTimezoneOffset function or undefined
+ */
+function getTimezoneOffsetOption() {
+	var globalOptions = H.defaultOptions.global,
+		moment = win.moment;
+
+	if (globalOptions.timezone) { // docs
+		if (!moment) {
+			// getTimezoneOffset-function stays undefined because it depends on
+			// Moment.js
+			H.error(25);
+			
+		} else {
+			return function (timestamp) {
+				return -moment.tz(
+					timestamp,
+					globalOptions.timezone
+				).utcOffset();
+			};
+		}
+	}
+
+	// If not timezone is set, look for the getTimezoneOffset callback
+	return globalOptions.useUTC && globalOptions.getTimezoneOffset;
+}
+
+/**
  * Set the time methods globally based on the useUTC option. Time method can be
  *   either local time or UTC (default). It is called internally on initiating
  *   Highcharts and after running `Highcharts.setOptions`.
@@ -298,7 +337,7 @@ function setTimeMethods() {
 
 	H.Date = Date = globalOptions.Date || win.Date; // Allow using a different Date class
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcGetTimezoneOffset = getTimezoneOffsetOption();
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {

@@ -27,10 +27,47 @@ const getProductVersion = () => {
  */
 const getFileOptions = (base) => {
     const B = require('./assembler/build.js');
-    const DS = '[\\\\\\\/][^\\\\\\\/]'; // Regex: Single directory seperator
+    const DS = '[\\\\\\\/]';
+    const NOTDS = '[^\\\\\\\/]';
+    const SINGLEDS = DS + NOTDS; // Regex: Single directory seperator
     const folders = {
-        'parts': 'parts' + DS + '+\.js$',
-        'parts-more': 'parts-more' + DS + '+\.js$'
+        'parts': 'parts' + SINGLEDS + '+\.js$',
+        'parts-more': 'parts-more' + SINGLEDS + '+\.js$',
+        'highchartsFiles': [
+            'parts' + DS + 'Globals\.js$',
+            'parts' + DS + 'SvgRenderer\.js$',
+            'parts' + DS + 'Html\.js$',
+            'parts' + DS + 'VmlRenderer\.js$',
+            'parts' + DS + 'Axis\.js$',
+            'parts' + DS + 'DateTimeAxis\.js$',
+            'parts' + DS + 'LogarithmicAxis\.js$',
+            'parts' + DS + 'Tooltip\.js$',
+            'parts' + DS + 'Pointer\.js$',
+            'parts' + DS + 'TouchPointer\.js$',
+            'parts' + DS + 'MSPointer\.js$',
+            'parts' + DS + 'Legend\.js$',
+            'parts' + DS + 'Chart\.js$',
+            'parts' + DS + 'Stacking\.js$',
+            'parts' + DS + 'Dynamics\.js$',
+            'parts' + DS + 'AreaSeries\.js$',
+            'parts' + DS + 'SplineSeries\.js$',
+            'parts' + DS + 'AreaSplineSeries\.js$',
+            'parts' + DS + 'ColumnSeries\.js$',
+            'parts' + DS + 'BarSeries\.js$',
+            'parts' + DS + 'ScatterSeries\.js$',
+            'parts' + DS + 'PieSeries\.js$',
+            'parts' + DS + 'DataLabels\.js$',
+            'modules' + DS + 'overlapping-datalabels.src\.js$',
+            'parts' + DS + 'Interaction\.js$',
+            'parts' + DS + 'Responsive\.js$',
+            'parts' + DS + 'Color\.js$',
+            'parts' + DS + 'Options\.js$',
+            'parts' + DS + 'PlotLineOrBand\.js$',
+            'parts' + DS + 'Tick\.js$',
+            'parts' + DS + 'Point\.js$',
+            'parts' + DS + 'Series\.js$',
+            'parts' + DS + 'Utilities\.js$'
+        ]
     };
 
     // Modules should not be standalone, and they should exclude all parts files.
@@ -53,6 +90,7 @@ const getFileOptions = (base) => {
     fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([folders.parts, 'GaugeSeries\.js$'].join('|'));
     fileOptions['modules/map.src.js'].product = 'Highmaps';
     fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
+    fileOptions['modules/stock.src.js'].exclude = new RegExp(folders.highchartsFiles.join('|'));
     Object.assign(fileOptions, {
         'highcharts-more.src.js': {
             exclude: new RegExp(folders.parts),
@@ -331,7 +369,7 @@ const compileScripts = () => {
  */
 const compileLib = () => {
     const sourceFolder = './vendor/';
-    const files = ['canvg.src.js', 'rgbcolor.src.js'];
+    const files = ['canvg.src.js'];
     return compile(files, sourceFolder)
         .then(console.log)
         .catch(console.log);
@@ -393,7 +431,7 @@ const copyToDist = () => {
     });
 
     // Copy lib files to the distribution packages. These files are used in the offline-export.
-    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js', 'rgbcolor.js', 'rgbcolor.src.js'].forEach((path) => {
+    ['jspdf.js', 'jspdf.src.js', 'svg2pdf.js', 'svg2pdf.src.js', 'canvg.js', 'canvg.src.js'].forEach((path) => {
         const content = fs.readFileSync(libFolder + path);
         ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
             U.writeFile(distFolder + lib + '/code/lib/' + path, content);
@@ -548,36 +586,49 @@ const filesize = () => {
         const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
         return arr.concat(p);
     }, []);
-    const getGzipSize = (file) => {
+    const getGzipSize = (content) => {
         const gzipSize = require('gzip-size');
-        const getFile = require('./assembler/utilities.js').getFile;
-        const content = getFile(file);
         return gzipSize.sync(content);
     };
-    const pad = (str, x) => ' '.repeat(x) + str;
-    const report = (name, newSize, headSize) => {
-        const diff = newSize - headSize;
-        const sign = diff > 0 ? '+' : '';
-        const color = diff > 0 ? 'yellow' : 'green';
+    // const pad = (str, x) => ' '.repeat(x) + str;
+    const padRight = (str, x) => str + ' '.repeat(x - str.length);
+    const printRow = (sizes, content) => content.map((c, i) => padRight(c.toString(), sizes[i])).join('');
+    const report = (name, current, head) => {
+        const colsizes = [10, 10, 10, 10];
+        const diff = (a, b) => {
+            const d = a - b;
+            const sign = d > 0 ? '+' : '';
+            // const color = diff > 0 ? 'yellow' : 'green';
+            return sign + d;
+        };
         console.log([
             '',
-            colors.cyan(name) + colors.gray('(gzipped)'),
-            'HEAD: ' + pad(headSize, 7) + ' B',
-            'New:  ' + pad(newSize, 7) + ' B',
-            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
+            colors.cyan(name),
+            printRow(colsizes, ['', 'gzipped', 'compiled', 'size']),
+            printRow(colsizes, ['New:', current.gzip, current.compiled, current.size]),
+            printRow(colsizes, ['HEAD:', head.gzip, head.compiled, head.size]),
+            printRow(colsizes, ['Diff:', diff(current.gzip, head.gzip) + 'B', diff(current.compiled, head.compiled) + 'B', diff(current.size, head.size) + 'B']),
             ''
         ].join('\n'));
     };
+
     const runFileSize = (obj, key) => {
         return Promise.resolve(scripts())
         .then(() => compile(files, sourceFolder))
         .then(() => {
             return files.reduce((o, n) => {
+                const getFile = require('./assembler/utilities.js').getFile;
                 const filename = n.replace('.src.js', '.js');
+                const compiled = getFile(sourceFolder + filename);
+                const content = getFile(sourceFolder + n);
                 if (!o[filename]) {
                     o[filename] = {};
                 }
-                o[filename][key] = getGzipSize(sourceFolder + filename);
+                o[filename][key] = {
+                    gzip: getGzipSize(compiled),
+                    size: content.length,
+                    compiled: compiled.length
+                };
                 return o;
             }, obj);
         });

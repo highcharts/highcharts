@@ -60,5 +60,43 @@ $(function () {
             'point-id',
             'Point found'
         );
+
+        // Point id not in options
+        chart.series[1].points[0].id = 'first';
+        assert.strictEqual(
+            chart.get('first').id,
+            'first',
+            'Point found'
+        );
+
+
+        // Chart.get between redraws (#6147)
+        // Changing number of points
+        chart.get('second-series').setData([1, 2, 3], false);
+        assert.strictEqual(
+            chart.get('third-series'),
+            undefined,
+            'No crash between redraws'
+        );
+        chart.redraw(false);
     });
+
+    /*QUnit.test('Chart.get between redraws (#6147)', function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                name: 'test',
+                id: 'test',
+                data: [
+                    [0, 1],
+                    [1, 2]
+                ]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.get('test').id,
+            'test',
+            'Series found'
+        );
+    });*/
 });

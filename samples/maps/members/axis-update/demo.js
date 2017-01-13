@@ -14,7 +14,8 @@ $(function () {
                 max: 1000,
                 type: 'logarithmic',
                 minColor: '#FFFFFF',
-                maxColor: '#000000'
+                maxColor: '#000000',
+                tickPixelInterval: 100
             },
 
             series: [{

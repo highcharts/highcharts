@@ -26,6 +26,7 @@ var SVGElement,
 	erase = H.erase,
 	grep = H.grep,
 	hasTouch = H.hasTouch,
+	inArray = H.inArray,
 	isArray = H.isArray,
 	isFirefox = H.isFirefox,
 	isMS = H.isMS,
@@ -114,8 +115,10 @@ SVGElement.prototype = {
 	 * @returns {SVGElement} Returns the SVGElement for chaining.
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, this.renderer.globalAnimation, true);
-		if (animOptions) {
+		var animOptions = H.animObject(
+			pick(options, this.renderer.globalAnimation, true)
+		);
+		if (animOptions.duration !== 0) {
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -690,7 +693,12 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate,
-			hasNew = !oldStyles;
+			hasNew = !oldStyles,
+			// These CSS properties are interpreted internally by the SVG
+			// renderer, but are not supported by SVG and should not be added to
+			// the DOM. In styled mode, no CSS should find its way to the DOM
+			// whatsoever (#6173).
+			svgPseudoProps = ['textOverflow', 'width'];
 
 		// convert legacy
 		if (styles && styles.color) {
@@ -734,9 +742,15 @@ SVGElement.prototype = {
 					return '-' + b.toLowerCase();
 				};
 				for (n in styles) {
-					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
+					if (inArray(n, svgPseudoProps) === -1) {
+						serializedCss +=
+							n.replace(/([A-Z])/g, hyphenate) + ':' +
+							styles[n] + ';';
+					}
 				}
-				attr(elem, 'style', serializedCss); // #1881
+				if (serializedCss) {
+					attr(elem, 'style', serializedCss); // #1881
+				}
 			}
 
 
@@ -932,8 +946,8 @@ SVGElement.prototype = {
 
 		// flipping affects translate as adjustment for flipping around the group's axis
 		if (inverted) {
-			translateX += wrapper.attr('width');
-			translateY += wrapper.attr('height');
+			translateX += wrapper.width;
+			translateY += wrapper.height;
 		}
 
 		// Apply translate. Nearly all transformed elements have translation, so instead
@@ -1122,8 +1136,8 @@ SVGElement.prototype = {
 				'',
 				rotation || 0,
 				fontSize,
-				element.style.width,
-				element.style['text-overflow'] // #5968
+				styles && styles.width,
+				styles && styles.textOverflow // #5968
 			]
 			.join(',');
 
@@ -1156,9 +1170,9 @@ SVGElement.prototype = {
 					bBox = element.getBBox ?
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
-						extend({}, element.getBBox()) :
-						// Legacy IE in export mode
-						{
+						extend({}, element.getBBox()) : {
+
+							// Legacy IE in export mode
 							width: element.offsetWidth,
 							height: element.offsetHeight
 						};
@@ -1189,8 +1203,19 @@ SVGElement.prototype = {
 				width = bBox.width;
 				height = bBox.height;
 
-				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				// Workaround for wrong bounding box in IE, Edge and Chrome on
+				// Windows. With Highcharts' default font, IE and Edge report
+				// a box height of 16.899 and Chrome rounds it to 17. If this 
+				// stands uncorrected, it results in more padding added below
+				// the text than above when adding a label border or background.
+				// Also vertical positioning is affected.
+				// http://jsfiddle.net/highcharts/em37nvuj/
+				// (#1101, #1505, #1669, #2568, #6213).
+				if (
+					styles &&
+					styles.fontSize === '11px' &&
+					Math.round(height) === 17
+				) {
 					bBox.height = height = 14;
 				}
 
@@ -1774,6 +1799,7 @@ SVGRenderer.prototype = {
 		this.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
 				win.location.href
 					.replace(/#.*?$/, '') // remove the hash
+					.replace(/<[^>]*>/g, '') // wing cut HTML
 					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
 					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
 				'';
@@ -2000,6 +2026,9 @@ SVGRenderer.prototype = {
 			textLineHeight = textStyles && textStyles.lineHeight,
 			textOutline = textStyles && textStyles.textOutline,
 			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
+			noWrap = textStyles && textStyles.whiteSpace === 'nowrap',
+			fontSize = textStyles && textStyles.fontSize,
+			textCache,
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
@@ -2007,7 +2036,7 @@ SVGRenderer.prototype = {
 				/*= if (build.classic) { =*/
 				fontSizeStyle = /(px|em)$/.test(tspan && tspan.style.fontSize) ?
 					tspan.style.fontSize :
-					((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12);
+					(fontSize || renderer.style.fontSize || 12);
 				/*= } =*/
 
 				return textLineHeight ? 
@@ -2021,6 +2050,22 @@ SVGRenderer.prototype = {
 			unescapeAngleBrackets = function (inputStr) {
 				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 			};
+
+		// The buildText code is quite heavy, so if we're not changing something
+		// that affects the text, skip it (#6113).
+		textCache = [
+			textStr,
+			ellipsis,
+			noWrap,
+			textLineHeight,
+			textOutline,
+			fontSize,
+			width
+		].join(',');
+		if (textCache === wrapper.textCache) {
+			return;
+		}
+		wrapper.textCache = textCache;
 
 		/// remove old text
 		while (i--) {
@@ -2137,7 +2182,6 @@ SVGRenderer.prototype = {
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									noWrap = textStyles.whiteSpace === 'nowrap',
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
 									tooLong,
 									actualWidth,
@@ -2269,6 +2313,15 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (rgba) {
 		rgba = color(rgba).rgba;
+
+		// The threshold may be discussed. Here's a proposal for adding
+		// different weight to the color channels (#6216)
+		/*
+        rgba[0] *= 1; // red
+        rgba[1] *= 1.2; // green
+        rgba[2] *= 0.7; // blue
+        */
+
 		return rgba[0] + rgba[1] + rgba[2] > 2 * 255 ? '#000000' : '#FFFFFF';
 	},
 
@@ -2674,7 +2727,7 @@ SVGRenderer.prototype = {
 			symbolFn = this.symbols[symbol],
 
 			// check if there's a path defined for this symbol
-			path = defined(x) && symbolFn && symbolFn(
+			path = defined(x) && symbolFn && this.symbols[symbol](
 				Math.round(x),
 				Math.round(y),
 				width,
@@ -2835,13 +2888,12 @@ SVGRenderer.prototype = {
 	 */
 	symbols: {
 		'circle': function (x, y, w, h) {
-			var cpw = 0.166 * w;
-			return [
-				'M', x + w / 2, y,
-				'C', x + w + cpw, y, x + w + cpw, y + h, x + w / 2, y + h,
-				'C', x - cpw, y + h, x - cpw, y, x + w / 2, y,
-				'Z'
-			];
+			// Return a full arc
+			return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
+				start: 0,
+				end: Math.PI * 2,
+				open: false
+			});
 		},
 
 		'square': function (x, y, w, h) {
@@ -2882,7 +2934,8 @@ SVGRenderer.prototype = {
 		},
 		'arc': function (x, y, w, h, options) {
 			var start = options.start,
-				radius = options.r || w || h,
+				rx = options.r || w,
+				ry = options.r || h || w,
 				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
@@ -2890,34 +2943,41 @@ SVGRenderer.prototype = {
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
 				sinEnd = Math.sin(end),
-				longArc = options.end - start < Math.PI ? 0 : 1;
+				longArc = options.end - start < Math.PI ? 0 : 1,
+				arc;
 
-			return [
+			arc = [
 				'M',
-				x + radius * cosStart,
-				y + radius * sinStart,
+				x + rx * cosStart,
+				y + ry * sinStart,
 				'A', // arcTo
-				radius, // x radius
-				radius, // y radius
+				rx, // x radius
+				ry, // y radius
 				0, // slanting
 				longArc, // long or short arc
 				1, // clockwise
-				x + radius * cosEnd,
-				y + radius * sinEnd,
-				open ? 'M' : 'L',
-				x + innerRadius * cosEnd,
-				y + innerRadius * sinEnd,
-				'A', // arcTo
-				innerRadius, // x radius
-				innerRadius, // y radius
-				0, // slanting
-				longArc, // long or short arc
-				0, // clockwise
-				x + innerRadius * cosStart,
-				y + innerRadius * sinStart,
-
-				open ? '' : 'Z' // close
+				x + rx * cosEnd,
+				y + ry * sinEnd
 			];
+
+			if (defined(innerRadius)) {
+				arc.push(
+					open ? 'M' : 'L',
+					x + innerRadius * cosEnd,
+					y + innerRadius * sinEnd,
+					'A', // arcTo
+					innerRadius, // x radius
+					innerRadius, // y radius
+					0, // slanting
+					longArc, // long or short arc
+					0, // clockwise
+					x + innerRadius * cosStart,
+					y + innerRadius * sinStart
+				);
+			}
+
+			arc.push(open ? '' : 'Z'); // close
+			return arc;
 		},
 
 		/**

@@ -68,8 +68,8 @@
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
-				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
-
+				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>,
+				controller = window.parent && window.parent.controller;
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
@@ -108,32 +108,7 @@
 					location.href = commentHref;
 				});
 
-				$('#commits').click(function () {
-					var frameset = window.parent.document.querySelector('frameset'),
-						frame = window.parent.document.getElementById('commits-frame'),
-						checked;
-
-					$(this).toggleClass('active');
-					checked = $(this).hasClass('active');
-
-					if (checked) {
-						window.parent.commits = {};
-
-						if (!frame) {
-							frame = window.parent.document.createElement('frame');
-							frame.setAttribute('id', 'commits-frame');
-							frame.setAttribute('src', '/issue-by-commit/commits.php');
-						} else {
-							frame.contentWindow.location.reload();
-						}
-
-						frameset.setAttribute('cols', '400, *, 400');
-						frameset.appendChild(frame);
-					} else {
-						frameset.setAttribute('cols', '400, *');
-					}
-
-				});
+				$('#bisect').click(controller.toggleBisect);
 
 				$(window).bind('keydown', parent.keyDown);
 
@@ -407,8 +382,14 @@
 								})
 								.animate({
 									left: 0
+								}, {
+									complete: function () {
+										$leftImage.hide();
+									}
 								});
+
 							$leftImage.css('position', 'absolute');
+							
 
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
@@ -416,10 +397,12 @@
 						// Show left
 						} else if (showingRight) {
 							$rightImage.hide();
+							$leftImage.show();
 							$button.html('Showing left. Click to show right');
 							showingRight = false;
 						} else {
 							$rightImage.show();
+							$leftImage.hide();
 							$button.html('Showing right. Click to show left.');
 							showingRight = true;
 						}
@@ -739,7 +722,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: right">
-				<a class="button" id="commits" style="margin-left: 1em" >Bisect</a>
+				<a class="button" id="bisect" style="margin-left: 1em" >Bisect</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>

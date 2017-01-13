@@ -132,7 +132,8 @@ seriesType('waterfall', 'column', {
 			// Before minPointLength, apply negative offset:
 			shapeArgs.y -= negativeOffset;
 
-			if (shapeArgs.height <= minPointLength) {
+
+			if (shapeArgs.height <= minPointLength && !point.isNull) {
 				shapeArgs.height = minPointLength;
 				if (point.y < 0) {
 					negativeOffset -= minPointLength;

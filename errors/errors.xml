@@ -136,7 +136,13 @@
 	<error id="24">
 		<title>Cannot run Point.update on a grouped point</title>
 		<description>
-			<p>This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.</p> 
+			<p>This happens in Highstock when a point is grouped by data grouping, so there is no reference to the raw points.</p>
+		</description>
+	</error>
+	<error id="25">
+		<title>Can't find Moment.js library</title>
+		<description>
+			<p>Using the global.timezone option requires the <a href="http://momentjs.com/">Moment.js</a> library to be loaded.</p>
 		</description>
 	</error>
 </errors>

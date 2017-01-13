@@ -16,7 +16,6 @@ $(function () {
         },
 
         series: [{
-            connectEnds: true,
             data: [
                 [1, 2],
                 [1, 2],

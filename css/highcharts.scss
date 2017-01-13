@@ -218,8 +218,11 @@ g.highcharts-series, .highcharts-point {
     fill: $neutral-color-20;
     stroke: $neutral-color-100;
 }
-.highcharts-column-series .highcharts-point {
+.highcharts-column-series rect.highcharts-point {
+    // rect to prevent stroke on 3D columns
     stroke: $background-color;
+}
+.highcharts-column-series .highcharts-point {
     transition: fill-opacity 250ms;
 }
 .highcharts-column-series .highcharts-point-hover {
@@ -385,9 +388,8 @@ g.highcharts-series, .highcharts-point {
 }
 
 /* Highstock */
-.highcharts-navigator-mask {
-    fill: $highlight-color-60; /* navigator.maskFill option */
-    fill-opacity: 0.25;
+.highcharts-navigator-mask-outside {
+    fill-opacity: 0;
 }
 .highcharts-navigator-mask-inside {
     fill: $highlight-color-60; /* navigator.maskFill option */
@@ -562,9 +564,6 @@ input.highcharts-range-selector {
 /* 3d charts */
 .highcharts-3d-frame {
     fill: transparent;
-}
-.highcharts-column-series .highcharts-point  {
-    stroke: inherit; /* use point color */
 }
 
 /* Exporting module */
