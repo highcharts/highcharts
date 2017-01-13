@@ -177,18 +177,20 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		);
 		labelYCenter = (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
 
-		if (horiz && !categoryAxis) {
-			// Center x position
-			if (tick.pos === axis.min) { // First tick
-				if (nextTickPos) {
-					x = axis.translate((tick.pos + nextTickPos) / 2);
+		if (horiz) {
+			if (!categoryAxis) {
+				// Center x position
+				if (tick.pos === axis.min) { // First tick
+					if (nextTickPos) {
+						x = axis.translate((tick.pos + nextTickPos) / 2);
+					}
+					retVal.x = x + axis.left;
+				} else if (tick.pos === lastTickPos) { // Last tick
+					retVal.x = (axis.left + axis.len + x) / 2;
+				} else {
+					x = axis.translate(tick.pos + (tickInterval / 2));
+					retVal.x = x + axis.left;
 				}
-				retVal.x = x + axis.left;
-			} else if (tick.pos === lastTickPos) { // Last tick
-				retVal.x = (axis.left + axis.len + x) / 2;
-			} else {
-				x = axis.translate(tick.pos + (tickInterval / 2));
-				retVal.x = x + axis.left;
 			}
 
 			axisYCenter = (axis.axisGroup.getBBox().height / 2);
