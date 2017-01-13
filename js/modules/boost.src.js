@@ -807,6 +807,10 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 		}
 	}
 
+	/*
+	 * Note about pre-allocated buffers:
+	 * 	- This is slower for charts with many series
+	 */
 	function allocate(size) {
 		size *= 4;
 		console.log('resetting iterator');
@@ -873,8 +877,8 @@ function GLRenderer(options) {
 			lineWidth: 2,
 			fillColor: '#AA00AA',
 			useAlpha: true,
-			usePreallocated: true,
-			useGPUTranslations: true
+			usePreallocated: false,
+			useGPUTranslations: false
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -918,6 +922,10 @@ function GLRenderer(options) {
 	function allocateBuffer(chart) {
 		var s = 0;
 
+		if (!settings.usePreallocated) {
+			return;
+		}
+
 		each(chart.series, function (series) {
 			if (isSeriesBoosting(series)) {				
 				s += seriesPointCount(series);
@@ -930,8 +938,12 @@ function GLRenderer(options) {
 	function allocateBufferForSingleSeries(series) {
 		var s = 0;
 
+		if (!settings.usePreallocated) {
+			return;
+		}
+
 		if (isSeriesBoosting(series)) {
-			s += seriesPointCount(series);			
+			s = seriesPointCount(series);			
 		}
 
 		vbuffer.allocate(s);
@@ -1000,8 +1012,6 @@ function GLRenderer(options) {
 			sdata = isStacked ? series.data : (xData || rawData),
 			connectNulls = options.connectNulls,			
 			maxVal;
-
-		console.log('pushing series data');
 
 		if (options.boostData && options.boostData.length > 0) {
 			console.log('using padded data');
@@ -1667,7 +1677,9 @@ function createAndAttachRenderer(chart, series) {
 
 			target.markerGroup.translateX = series.xAxis.pos;
 			target.markerGroup.translateY = series.yAxis.pos;
-			target.markerGroup.updateTransform();				
+			target.markerGroup.updateTransform();	
+
+
 		}
 	}
 	
@@ -1678,6 +1690,10 @@ function createAndAttachRenderer(chart, series) {
 		target.ogl = GLRenderer();
 		target.ogl.init(target.canvas);
 		target.ogl.clear();
+
+		if (target instanceof H.Chart) {
+			target.ogl.allocateBuffer(chart);
+		}
 	}
 
 	target.image.attr({
@@ -2319,7 +2335,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 					href: chart.canvas.toDataURL('image/png') 
 				});			
 			}
-
 		}
 	}
 
