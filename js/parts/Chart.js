@@ -356,6 +356,9 @@ Chart.prototype = {
 			chart.drawChartBox();
 		}
 
+		// Fire an event before redrawing series, used by the boost module to
+		// clear previous series renderings.
+		fireEvent(chart, 'predraw');
 
 		// redraw affected series
 		each(series, function (serie) {
@@ -375,8 +378,9 @@ Chart.prototype = {
 		// redraw if canvas
 		renderer.draw();
 
-		// fire the event
+		// Fire the events
 		fireEvent(chart, 'redraw');
+		fireEvent(chart, 'render'); // docs: On first render + redraws
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -1562,8 +1566,8 @@ Chart.prototype = {
 
 		chart.render();
 
-		// add canvas
-		chart.renderer.draw();
+		// The render event fires after first render and after every redraw
+		fireEvent(chart, 'render');
 		
 		// Fire the load event if there are no external images
 		if (!chart.renderer.imgCount && chart.onload) {
