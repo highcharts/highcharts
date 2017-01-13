@@ -26,6 +26,20 @@ function drawGraph() {
 		});
 		paths.length = 0;
 	}
+
+	/*
+	var items = [];
+	$('div.parents').each(function (i, item) {
+		items.push($(item));
+	});
+	items.reverse();
+	items.forEach(function ($item, i) {
+		var graphs = $item.data('graphs');
+		console.log(graphs);
+	});
+	*/
+
+	//return;
 	$('div.parents').each(function (i, item) {
 		var $dot = $(item),
 			doffset = $dot && $dot.offset(),
@@ -140,6 +154,7 @@ $(function() {
 			item.push(line);
 		});
 		items.push(item.join('\n'));*/
+		var graphs;
 
 		$.each(log.split('\n'), function(i, line) {
 			
@@ -150,8 +165,11 @@ $(function() {
 				dateObj = new Date(date),
 				branchI = parseInt(item.indexOf('*'), 10) / 2;
 				*/
-
-			if (line.indexOf('<br>') > -1) {
+			
+			if (line.indexOf('<br>') === -1) {
+				graphs.unshift(line);
+			
+			} else {
 				line = line.split('<br>');
 				
 				var graph = line[0],
@@ -169,6 +187,11 @@ $(function() {
 					parents = line[4].split(' '),
 					branchI = graph.indexOf('*') / 2,
 					indentLevel = graph.length / 2;
+
+				// Chronoligical graph elements leading up to this commit from
+				// the previous one
+				graphs = [];
+				graphs.unshift(graph);
 				
 				if (dateObj.getMonth() !== month) {
 					$('<h3>' + ['January', 'February', 'March', 'April', 'May',
@@ -204,6 +227,7 @@ $(function() {
 					.data({
 						hash: commit,
 						parents: parents,
+						graphs: graphs,
 						left: branchI * 10,
 						color: colors[branchI]
 					})
