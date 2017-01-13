@@ -253,6 +253,46 @@ function toRGBAFast(col) {
 	return H.Color(col).rgba;
 }
 
+/*
+ * Returns true if the series is in boost mode
+ * @param series {Highchart.Series} - the series to check
+ * @returns {boolean} - true if the series is in boost mode
+ */
+function isSeriesBoosting(series) {
+	function patientMax() {
+		var args = Array.prototype.slice.call(arguments),
+			r = -Number.MAX_VALUE;
+
+		each(args, function (t) {
+			if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
+				//r = r < t.length ? t.length : r;
+				if (t.length > 0) {
+					r = t.length;
+					return true;
+				}
+			}
+		});
+
+		return r;
+	}		
+
+	return  isChartSeriesBoosting(series.chart) ||
+			patientMax(
+				series.processedXData, 
+				series.options.data,
+				series.points
+			) >= (series.options.boostThreshold || Number.MAX_VALUE);				
+}
+
+/*
+ * Returns true if the chart is in series boost mode
+ * @param chart {Highchart.Chart} - the chart to check
+ * @returns {Boolean} - true if the chart is in series boost mode
+ */
+function isChartSeriesBoosting(chart) {
+	return chart.series.length >= (chart.options.seriesBoostThreshold || 10);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // START OF WEBGL ABSTRACTIONS
 
@@ -666,11 +706,15 @@ function GLShader(gl) {
  * @param gl {WebGLContext} - the context in which to create the buffer
  * @param shader {GLShader} - the shader to use
  */
-function GLVertexBuffer(gl, shader) {
-	var buffer = false,		
+function GLVertexBuffer(gl, shader, dataComponents, type) {
+	var buffer = false,
 		vertAttribute = false,
-		components,
-		data;	
+		components = dataComponents || 2,
+		preAllocated = false,
+		iterator = 0,
+		data;
+
+	type = type || 'float';
 
 	/* 
 	 * Build the buffer 
@@ -679,21 +723,22 @@ function GLVertexBuffer(gl, shader) {
  	 * @param dataComponents {Integer} - the number of components per. indice
 	 */
 	function build(dataIn, attrib, dataComponents) {
+
 		data = dataIn || [];
 
-		if (!data.length) {
+		if ((!data || data.length === 0) && !preAllocated) {
 			//console.error('trying to render empty vbuffer');
 			buffer = false;
 			return false;
 		}
 
-		components = dataComponents || 2;
+		components = dataComponents || components;
 
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.bufferData(
 			gl.ARRAY_BUFFER, 
-			new Float32Array(data), 
+			preAllocated || new Float32Array(data), 
 			gl.STATIC_DRAW
 		);
 
@@ -724,20 +769,22 @@ function GLVertexBuffer(gl, shader) {
 	 * @param drawMode {String} - the draw mode
 	 */
 	function render(from, to, drawMode) {
+		var length = preAllocated ? preAllocated.length : data.length;
+
 		if (!buffer) {
 			return false;
 		}
 
-		if (!data.length) {
+		if (!length) {
 			return false;
 		}
 				
-		if (!from || from > data.length || from < 0) {
+		if (!from || from > length || from < 0) {
 			from = 0;
 		}
 
-		if (!to || to > data.length) {
-			to = data.length;
+		if (!to || to > length) {
+			to = length;
 		}
 
 		drawMode = drawMode || 'points';
@@ -751,12 +798,34 @@ function GLVertexBuffer(gl, shader) {
 		return true;
 	}
 
+	function push(x, y, a, b) {
+		if (preAllocated) {// && iterator <= preAllocated.length - 4) {			
+			preAllocated[++iterator] = x;
+			preAllocated[++iterator] = y;			
+			preAllocated[++iterator] = a;
+			preAllocated[++iterator] = b;			
+		}
+	}
+
+	function allocate(size) {
+		size *= 4;
+		console.log('resetting iterator');
+		iterator = -1;
+
+		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
+			console.log('allocating vbuffer of size', size);
+			preAllocated = new Float32Array(size);
+		//}
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	return {
 		bind: bind,
 		data: data,
 		build: build,
-		render: render
+		render: render,
+		allocate: allocate,
+		push: push
 	};    	
 }
 
@@ -766,7 +835,7 @@ function GLVertexBuffer(gl, shader) {
  *		  and encoding values in the color data.
  *		- Need to figure out a way to transform the data quicker
  */
-function GLRenderer() {
+function GLRenderer(options) {
 	var //Shader
 		shader = false,
 		//Vertex buffers - keyed on shader attribute name
@@ -778,7 +847,7 @@ function GLRenderer() {
 		//Height of our viewport in pixels
 		height = 0,
 		//The data to render - array of coordinates
-		data = [],
+		data = false,		
 		//Exports
 		exports = {},
 		//Is it inited?
@@ -803,7 +872,9 @@ function GLRenderer() {
 			pointSize: 1,
 			lineWidth: 2,
 			fillColor: '#AA00AA',
-			useAlpha: true	
+			useAlpha: true,
+			usePreallocated: true,
+			useGPUTranslations: true
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -818,6 +889,53 @@ function GLRenderer() {
 
 	circleTexture.width = 32;
 	circleTexture.height = 32;
+
+	function seriesPointCount(series) {
+		var isStacked,
+			xData,
+			s;
+	
+		if (isSeriesBoosting(series)) {
+			isStacked = !!series.options.stacking;
+			xData = series.xData || series.options.xData || series.processedXData;
+			s = (isStacked ? series.data : (xData || series.options.data)).length;
+
+			if (series.type === 'treemap') {
+				s *= 12;
+			} else if (series.type === 'heatmap') {
+				s *= 6;				
+			} else if (asBar[series.type]) {
+				s *= 2;
+			}
+
+			return s;
+		}
+
+		return 0;
+	}
+
+	/* Allocate a float buffer to fit all series */
+	function allocateBuffer(chart) {
+		var s = 0;
+
+		each(chart.series, function (series) {
+			if (isSeriesBoosting(series)) {				
+				s += seriesPointCount(series);
+			}
+		});
+		
+		vbuffer.allocate(s);		
+	}
+
+	function allocateBufferForSingleSeries(series) {
+		var s = 0;
+
+		if (isSeriesBoosting(series)) {
+			s += seriesPointCount(series);			
+		}
+
+		vbuffer.allocate(s);
+	}
 
 	/*  
 	 * Returns an orthographic perspective matrix
@@ -879,11 +997,16 @@ function GLRenderer() {
 			caxis,
 			color,
 			scolor,
-			//Set to true to perform translations in the shader
-			useGPUTranslations = false,
 			sdata = isStacked ? series.data : (xData || rawData),
-			connectNulls = options.connectNulls,
+			connectNulls = options.connectNulls,			
 			maxVal;
+
+		console.log('pushing series data');
+
+		if (options.boostData && options.boostData.length > 0) {
+			console.log('using padded data');
+			return;
+		}
 
 		// Push color to color buffer - need to do this per. vertex
 		function pushColor(color) {
@@ -897,20 +1020,19 @@ function GLRenderer() {
 
 		//Push a vertice to the data buffer
 		function vertice(x, y, checkTreshold, pointSize, color) {
-			pushColor(color);			
-			data.push(x);
-			data.push(y);
-			data.push(checkTreshold ? 1 : 0);
-			data.push(pointSize || 1);
+			pushColor(color);	
+			if (settings.usePreallocated) {
+				vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);						
+			} else {
+				data.push(x);
+				data.push(y);
+				data.push(checkTreshold ? 1 : 0);
+				data.push(pointSize || 1);				
+			}
 		}
 
 		// Push a rectangle to the data buffer
 		function pushRect(x, y, w, h, color) {
-
-			// Normally we should use triangle_strip since it's faster,
-			// but this would require more complicated pre-processing,
-			// which would negate the performance increase.
-
 			pushColor(color);
 			vertice(x + w, y);
 			pushColor(color);
@@ -939,7 +1061,11 @@ function GLRenderer() {
 			if (points[0].node && points[0].node.levelDynamic) {				
 				points.sort(function (a, b) {
 					if (a.node) {
-						return a.node.levelDynamic > b.node.levelDynamic;
+						if (a.node.levelDynamic > b.node.levelDynamic) {
+							return 1;
+						} else if (a.node.levelDynamic < b.node.levelDynamic) {
+							return -1;
+						}
 					}
 					return 0;
 				});
@@ -972,7 +1098,9 @@ function GLRenderer() {
 					// color interpolation.
 			
 					// If there's stroking, we do an additional rect
-					if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
+					//if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
+					if (series.type === 'treemap') {
+						swidth = swidth || 1;
 						scolor = toRGBAFast(pointAttr.stroke); 
 
 						scolor[0] /= 255.0;
@@ -988,9 +1116,10 @@ function GLRenderer() {
 						);
 					
 						swidth /= 2;
-					} else {
-						swidth = 0;
 					}
+					// } else {
+					// 	swidth = 0;
+					// }
 
 					pushRect(
 						shapeArgs.x + swidth, 
@@ -1125,7 +1254,7 @@ function GLRenderer() {
 			}
 
 			// Skip translations - temporary floating point fix
-			if (!useGPUTranslations) {
+			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
 				x = series.xAxis.toPixels(x, true);
 				y = series.yAxis.toPixels(y, true);				
@@ -1141,7 +1270,7 @@ function GLRenderer() {
 					y = 0;
 				}
 			
-				if (!useGPUTranslations) {
+				if (!settings.useGPUTranslations) {
 					minVal = series.yAxis.toPixels(minVal, true);					
 				}
 
@@ -1177,6 +1306,7 @@ function GLRenderer() {
 
 	/*
 	 * Push a series to the renderer
+	 * If we render the series immediatly, we don't have to loop later
 	 * @param s {Highchart.Series} - the series to push
 	 */
 	function pushSeries(s) {
@@ -1469,6 +1599,7 @@ function GLRenderer() {
 
 	////////////////////////////////////////////////////////////////////////////
 	exports = {
+		allocateBufferForSingleSeries: allocateBufferForSingleSeries,
 		pushSeries: pushSeries,
 		setSize: setSize,
 		inited: inited,
@@ -1482,7 +1613,8 @@ function GLRenderer() {
 		setXAxis: setXAxis,
 		setYAxis: setYAxis,
 		data: data,
-		gl: getGL
+		gl: getGL,
+		allocateBuffer: allocateBuffer
 	};
 
 	return exports;
@@ -1491,45 +1623,7 @@ function GLRenderer() {
 // END OF WEBGL ABSTRACTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-/*
- * Returns true if the series is in boost mode
- * @param series {Highchart.Series} - the series to check
- * @returns {boolean} - true if the series is in boost mode
- */
-function isSeriesBoosting(series) {
-	function patientMax() {
-		var args = Array.prototype.slice.call(arguments),
-			r = -Number.MAX_VALUE;
 
-		each(args, function (t) {
-			if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
-				//r = r < t.length ? t.length : r;
-				if (t.length > 0) {
-					r = t.length;
-					return true;
-				}
-			}
-		});
-
-		return r;
-	}		
-
-	return  isChartSeriesBoosting(series.chart) ||
-			patientMax(
-				series.processedXData, 
-				series.options.data,
-				series.points
-			) >= (series.options.boostThreshold || Number.MAX_VALUE);				
-}
-
-/*
- * Returns true if the chart is in series boost mode
- * @param chart {Highchart.Chart} - the chart to check
- * @returns {Boolean} - true if the chart is in series boost mode
- */
-function isChartSeriesBoosting(chart) {
-	return chart.series.length >= (chart.options.seriesBoostThreshold || 10);
-}
 
 /* 
  * Create a canvas + context and attach it to the target
@@ -1618,7 +1712,7 @@ function renderIfNotSeriesBoosting(renderer, series) {
 		series.canvas && 
 		!isChartSeriesBoosting(series.chart)
 	) {
-		renderer.clear();
+		renderer.clear();		
 		console.time('gl rendering');
 		renderer.render();
 		console.timeEnd('gl rendering');
@@ -1629,6 +1723,16 @@ function renderIfNotSeriesBoosting(renderer, series) {
 		});
 
 		renderer.clear();
+	}
+}
+
+function allocateIfNotSeriesBoosting(renderer, series) {
+	if (renderer && 
+		series.image && 
+		series.canvas && 
+		!isChartSeriesBoosting(series.chart)
+	) {
+		renderer.allocateBufferForSingleSeries(series);
 	}
 }
 
@@ -1690,6 +1794,7 @@ each([
 	function (type) {
 		if (plotOptions[type]) {
 			plotOptions[type].boostThreshold = 5000;
+			plotOptions[type].boostData = [];
 		}
 	}
 );
@@ -1932,6 +2037,7 @@ H.extend(Series.prototype, {
 		series.buildKDTree = noop; 
 		
 		if (renderer) {
+			allocateIfNotSeriesBoosting(renderer, this);
 			renderer.pushSeries(series);				
 			// Perform the actual renderer if we're on series level
 			renderIfNotSeriesBoosting(renderer, this);
@@ -2055,6 +2161,7 @@ function pointDrawHandler(proceed) {
 	var renderer = createAndAttachRenderer(this.chart, this);
 	
 	if (renderer) {
+		allocateIfNotSeriesBoosting(renderer, this);
 		renderer.pushSeries(this);				
 	}		
 	
@@ -2113,7 +2220,7 @@ extend(seriesTypes.column.prototype, {
  */
 Series.prototype.getPoint = function (boostPoint) {
 	var point = boostPoint,
-		xData = this.processedXData || false
+		xData = this.xData || this.options.xData || this.processedXData || false
 	;
 
 	if (boostPoint && !(boostPoint instanceof this.pointClass)) {
@@ -2129,9 +2236,7 @@ Series.prototype.getPoint = function (boostPoint) {
 		point.distX = boostPoint.distX;
 		point.plotX = boostPoint.plotX;
 		point.plotY = boostPoint.plotY;
-	}
-
-	console.log('point', this.options.data[boostPoint.i], this.processedXData);
+	}	
 
 	return point;
 };
@@ -2229,7 +2334,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			// Clear the series and vertice data.			
 			chart.ogl.flush();
 			// Clear ogl canvas
-			chart.ogl.clear();				
+			chart.ogl.clear();	
+			// Allocate
+			chart.ogl.allocateBuffer(chart);			
 		}
 	}
 
