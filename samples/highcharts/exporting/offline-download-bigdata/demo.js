@@ -42,7 +42,7 @@ $(function () {
 
     Highcharts.downloadURL = function (dataURL, filename) {
         // Emulate toBlob behavior for long URLs
-        if (dataURL.length > 2000000) {
+        if (dataURL.length > 50000) {
             dataURL = Highcharts.dataURLtoBlob(dataURL);
             if (!dataURL) {
                 throw 'Data URL length limit reached';
@@ -94,7 +94,7 @@ $(function () {
     // NOTE: dataURL length limits in certain browsers. #6108
 
     var arr = [];
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < 15000; i++) {
         arr.push(i);
     }
 
