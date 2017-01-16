@@ -1145,6 +1145,7 @@ Navigator.prototype = {
 			baseNavigatorOptions,
 			navSeriesMixin = {
 				enableMouseTracking: false,
+				index: null, // #6162
 				group: 'nav', // for columns
 				padXAxis: false,
 				xAxis: 'navigator-x-axis',
