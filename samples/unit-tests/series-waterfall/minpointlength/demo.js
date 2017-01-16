@@ -11,18 +11,23 @@ QUnit.test('Null points with minPointLength (#6062)', function (assert) {
         points = chart.series[0].points,
         pointLength = points.length,
         point,
+        prev,
+        prevY,
+        pointY,
         i = 1;
 
     for (; i < pointLength; i++) {
         point = points[i];
         prev = points[i - 1];
-        assert.strictEqual(
-            Math.floor(prev.shapeArgs.y + prev.shapeArgs.height *
-                (prev.y < 0 ? 1 : 0)),
-            Math.floor(point.shapeArgs.y + point.shapeArgs.height *
-                (point.y < 0 ? 0 : 1)),
+
+        prevY = prev.shapeArgs.y + prev.shapeArgs.height *
+                (prev.y < 0 ? 1 : 0);
+        pointY = point.shapeArgs.y + point.shapeArgs.height *
+                (point.y < 0 ? 0 : 1);
+        assert.ok(
+            Math.abs(pointY - prevY) < 1.5,
             'Points: ' + (i - 1) + ' and ' + i +
                 ' are connected at the correct height'
         );
-    };
+    }
 });
