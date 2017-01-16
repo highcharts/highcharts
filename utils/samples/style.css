@@ -132,6 +132,18 @@ body.manual #comment-placeholder {
 	vertical-align: top;
 }
 
+.test-notes {
+	margin: 1em;
+	max-width: 600px;
+}
+.test-notes header {
+	font-weight: bold;
+	margin: 0.5em 0;
+}
+.test-notes div {
+	font-size: 0.9em;
+}
+
 .nightly {
 	font-size: 0.8em;
 	padding: 0.5em 0;

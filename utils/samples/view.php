@@ -469,6 +469,14 @@ function getResources() {
 			<?php echo $html ?>
 			</div>
 			<hr/>
+			<?php if (is_file("$fullpath/test-notes.html")) { ?>
+			<section class="test-notes">
+				<header>Test notes</header>
+				<div class="test-notes-content">
+					<?php include("$fullpath/test-notes.html"); ?>
+				</div>
+			</section>
+			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
 			</ul>
