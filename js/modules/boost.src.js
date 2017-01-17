@@ -254,6 +254,15 @@ function toRGBAFast(col) {
 }
 
 /*
+ * Returns true if the chart is in series boost mode
+ * @param chart {Highchart.Chart} - the chart to check
+ * @returns {Boolean} - true if the chart is in series boost mode
+ */
+function isChartSeriesBoosting(chart) {	
+	return chart.series.length >= (chart.options.chart.seriesBoostThreshold || 10);
+}
+
+/*
  * Returns true if the series is in boost mode
  * @param series {Highchart.Series} - the series to check
  * @returns {boolean} - true if the series is in boost mode
@@ -282,15 +291,6 @@ function isSeriesBoosting(series) {
 				series.options.data,
 				series.points
 			) >= (series.options.boostThreshold || Number.MAX_VALUE);				
-}
-
-/*
- * Returns true if the chart is in series boost mode
- * @param chart {Highchart.Chart} - the chart to check
- * @returns {Boolean} - true if the chart is in series boost mode
- */
-function isChartSeriesBoosting(chart) {
-	return chart.series.length >= (chart.options.seriesBoostThreshold || 10);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1677,9 +1677,7 @@ function createAndAttachRenderer(chart, series) {
 
 			target.markerGroup.translateX = series.xAxis.pos;
 			target.markerGroup.translateY = series.yAxis.pos;
-			target.markerGroup.updateTransform();	
-
-
+			target.markerGroup.updateTransform();
 		}
 	}
 	
@@ -2020,7 +2018,6 @@ H.extend(Series.prototype, {
 		renderer = createAndAttachRenderer(chart, series);
 
 		if (!this.visible) {
-			console.log('series invisible, skipping');
 			if (!isChartSeriesBoosting(chart) && renderer) {
 				renderer.clear();
 			}
@@ -2323,7 +2320,7 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
 H.Chart.prototype.callbacks.push(function (chart) {
 
 	/* Convert chart-level canvas to image */
-	function canvasToSVG() {				
+	function canvasToSVG() {			
 		if (chart.ogl && isChartSeriesBoosting(chart)) {
 
 			console.time('gl rendering');			
@@ -2349,9 +2346,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			// Clear the series and vertice data.			
 			chart.ogl.flush();
 			// Clear ogl canvas
-			chart.ogl.clear();	
+			chart.ogl.clear();
 			// Allocate
-			chart.ogl.allocateBuffer(chart);			
+			chart.ogl.allocateBuffer(chart);
 		}
 	}
 
