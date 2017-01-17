@@ -382,8 +382,14 @@
 								})
 								.animate({
 									left: 0
+								}, {
+									complete: function () {
+										$leftImage.hide();
+									}
 								});
+
 							$leftImage.css('position', 'absolute');
+							
 
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
@@ -391,10 +397,12 @@
 						// Show left
 						} else if (showingRight) {
 							$rightImage.hide();
+							$leftImage.show();
 							$button.html('Showing left. Click to show right');
 							showingRight = false;
 						} else {
 							$rightImage.show();
+							$leftImage.hide();
 							$button.html('Showing right. Click to show left.');
 							showingRight = true;
 						}

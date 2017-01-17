@@ -60,6 +60,11 @@ function getBrowser() {
         $bname = 'Mozilla Firefox'; 
         $ub = "Firefox"; 
     } 
+    elseif(preg_match('/Edge/i',$u_agent)) 
+    { 
+        $bname = 'Edge'; 
+        $ub = "Edge"; 
+    } 
     elseif(preg_match('/Chrome/i',$u_agent)) 
     { 
         $bname = 'Google Chrome'; 

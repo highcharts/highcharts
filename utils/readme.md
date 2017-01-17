@@ -57,7 +57,8 @@ before the comparison runs.
 Auto-visual tests are less performant than unit tests, and unit tests should be favoured for regression tests.
 
 2. **Manual tests**. Some tests, like some dealing with animation or complicated user input, are still manual. They are marked with
-a hand next to the name. We are gradually replacing these with automatic tests.
+a hand next to the name. We are gradually replacing these with automatic tests. For each manual test, there should be a file, 
+`test-notes.html` that instructs the tester on what to look for.
 
 3. **Unit tests**. These samples are designed to run both in our sample viewer and in jsFiddle. They load QUnit. Unit tests are recognized
 by a jigsaw puzzle piece next to the name. QUnit is loaded in the `demo.details` files and the required HTML must be present in `demo.html`.

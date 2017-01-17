@@ -13,14 +13,14 @@ $(function () {
                         load: function () {
 
                             assert.strictEqual(
-                                chart.series[0].legendSymbol.getBBox().height,
-                                chart.legend.symbolHeight,
+                                Math.round(chart.series[0].legendSymbol.getBBox().height),
+                                Math.round(chart.legend.symbolHeight),
                                 'Legend symbol is reduced to symbolHeight'
                             );
 
                             assert.strictEqual(
-                                chart.series[1].legendSymbol.getBBox().height,
-                                chart.legend.symbolHeight,
+                                Math.round(chart.series[1].legendSymbol.getBBox().height),
+                                Math.round(chart.legend.symbolHeight),
                                 'Legend image is reduced to symbolHeight'
                             );
 

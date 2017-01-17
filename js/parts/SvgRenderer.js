@@ -1136,8 +1136,8 @@ SVGElement.prototype = {
 				'',
 				rotation || 0,
 				fontSize,
-				element.style.width,
-				element.style['text-overflow'] // #5968
+				styles && styles.width,
+				styles && styles.textOverflow // #5968
 			]
 			.join(',');
 

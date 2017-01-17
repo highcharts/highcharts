@@ -37,7 +37,8 @@ QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
     });
 
     assert.strictEqual(
-        document.getElementById('container').innerHTML.indexOf('style='),
+        document.getElementById('container')
+            .firstChild.innerHTML.indexOf('style='),
         -1,
         'No inline styles found'
     );
