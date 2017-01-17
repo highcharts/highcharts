@@ -878,7 +878,9 @@ function GLRenderer(options) {
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,
-			useGPUTranslations: false
+			useGPUTranslations: false,
+			timeRendering: true,
+			timeSeriesProcessing: true
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -1324,7 +1326,9 @@ function GLRenderer(options) {
 			series[series.length - 1].to = data.length;
 		}
 
-		//console.time('building ' + s.type + ' series');
+		if (settings.timeSeriesProcessing) {
+			console.time('building ' + s.type + ' series');			
+		}
 
 		series.push({
 			from: data.length,
@@ -1351,7 +1355,9 @@ function GLRenderer(options) {
 		// Add the series data to our buffer(s)
 		pushSeriesData(s, series[series.length - 1]);
 
-		//console.timeEnd('building ' + s.type + ' series');
+		if (settings.timeSeriesProcessing) {
+			console.timeEnd('building ' + s.type + ' series');			
+		}
 	}
 
 	/*
@@ -1521,8 +1527,15 @@ function GLRenderer(options) {
 	 * @param h {Integer} - the height of the viewport
 	 */
 	function setSize(w, h) {
+		// Skip if there's no change
+		if (width === w && h === h) {
+			return;
+		}
+
+		console.log('setting size', w, h);
 		width = w;
 		height = h;
+		shader.bind();
 		shader.setPMatrix(orthoMatrix(width, height));
 	}
 	
@@ -1659,12 +1672,21 @@ function createAndAttachRenderer(chart, series) {
 		target.canvas = doc.createElement('canvas');
 
 		target.image = chart.renderer.image(
-							'', 
-							0, 
-							0, 
-							width, 
-							height
-						).add(targetGroup);
+			'', 
+			0, 
+			0, 
+			width, 
+			height
+		).add(targetGroup);
+
+		// target.boostClipRect = chart.renderer.clipRect(
+		// 	chart.plotLeft,
+		// 	chart.plotTop,
+		// 	chart.plotWidth,
+		// 	chart.chartHeight
+		// );
+
+		//target.image.clip(target.boostClipRect);
 
 		if (target.inverted) {
 			each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
@@ -1702,14 +1724,17 @@ function createAndAttachRenderer(chart, series) {
 		style: 'pointer-events: none'
 	});
 
-	target.boostClipRect = chart.renderer.clipRect(
-		chart.plotLeft,
-		chart.plotTop,
-		chart.plotWidth,
-		chart.chartHeight
-	);
+	// target.boostClipRect.attr({
+	// 	x: chart.plotLeft,
+	// 	y: chart.plotTop,
+	// 	width: chart.plotWidth,
+	// 	height: chart.chartHeight
+	// });
 
-	target.image.clip(target.boostClipRect);
+	//target.image.clip(target.boostClipRect);
+
+	//console.log('renderer initied', width, height);
+	target.ogl.setSize(width, height);
 
 	return target.ogl;
 }
@@ -1892,7 +1917,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
 	}
 
-	if (!this.hasExtremes(true)) {
+	if (!this.hasExtremes || !this.hasExtremes(true)) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
@@ -2342,7 +2367,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			chart.image.attr({
 				href: ''
 			});
-			
+
 			// Clear the series and vertice data.			
 			chart.ogl.flush();
 			// Clear ogl canvas
