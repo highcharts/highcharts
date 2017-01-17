@@ -301,7 +301,7 @@ function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		moment = win.moment;
 
-	if (globalOptions.timezone) { // docs
+	if (globalOptions.timezone) {
 		if (!moment) {
 			// getTimezoneOffset-function stays undefined because it depends on
 			// Moment.js

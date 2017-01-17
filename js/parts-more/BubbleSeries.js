@@ -51,7 +51,7 @@ seriesType('bubble', 'scatter', {
 				radiusPlus: 0
 			}
 		},
-		symbol: 'circle' // docs: new option
+		symbol: 'circle'
 	},
 	minSize: 8,
 	maxSize: '20%',
