@@ -1,7 +1,32 @@
 /**
- * The overview of the chart's series
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-var Legend = Highcharts.Legend = function (chart, options) {
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var Legend,
+		
+	addEvent = H.addEvent,
+	css = H.css,
+	discardElement = H.discardElement,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	isFirefox = H.isFirefox,
+	marginNames = H.marginNames,
+	merge = H.merge,
+	pick = H.pick,
+	setAnimation = H.setAnimation,
+	stableSort = H.stableSort,
+	win = H.win,
+	wrap = H.wrap;
+/**
+ * The overview of the chart's series.
+ * @class
+ */
+Legend = H.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
@@ -12,38 +37,58 @@ Legend.prototype = {
 	 */
 	init: function (chart, options) {
 
-		var legend = this,
-			itemStyle = options.itemStyle,
-			padding,
-			itemMarginTop = options.itemMarginTop || 0;
+		this.chart = chart;
+		
+		this.setOptions(options);
+		
+		if (options.enabled) {
+		
+			// Render it
+			this.render();
+
+			// move checkboxes
+			addEvent(this.chart, 'endResize', function () {
+				this.legend.positionCheckboxes();
+			});
+		}
+	},
+
+	setOptions: function (options) {
+
+		var padding = pick(options.padding, 8);
 
 		this.options = options;
+	
+		/*= if (build.classic) { =*/
+		this.itemStyle = options.itemStyle;
+		this.itemHiddenStyle = merge(this.itemStyle, options.itemHiddenStyle);
+		/*= } =*/
+		this.itemMarginTop = options.itemMarginTop || 0;
+		this.padding = padding;
+		this.initialItemX = padding;
+		this.initialItemY = padding - 5; // 5 is the number of pixels above the text
+		this.maxItemWidth = 0;
+		this.itemHeight = 0;
+		this.symbolWidth = pick(options.symbolWidth, 16);
+		this.pages = [];
 
-		if (!options.enabled) {
-			return;
+	},
+
+	/**
+	 * Update the legend with new options. Equivalent to running chart.update with a legend
+	 * configuration option.
+	 * @param {Object} options Legend options
+	 * @param {Boolean} redraw Whether to redraw the chart, defaults to true.
+	 */
+	update: function (options, redraw) {
+		var chart = this.chart;
+
+		this.setOptions(merge(true, this.options, options));
+		this.destroy();
+		chart.isDirtyLegend = chart.isDirtyBox = true;
+		if (pick(redraw, true)) {
+			chart.redraw();
 		}
-
-		legend.itemStyle = itemStyle;
-		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
-		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding = pick(options.padding, 8);
-		legend.initialItemX = padding;
-		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
-		legend.maxItemWidth = 0;
-		legend.chart = chart;
-		legend.itemHeight = 0;
-		legend.symbolWidth = pick(options.symbolWidth, 16);
-		legend.pages = [];
-
-
-		// Render it
-		legend.render();
-
-		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () {
-			legend.positionCheckboxes();
-		});
-
 	},
 
 	/**
@@ -52,6 +97,9 @@ Legend.prototype = {
 	 * @param {Object} visible Dimmed or colored
 	 */
 	colorizeItem: function (item, visible) {
+		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
+
+		/*= if (build.classic) { =*/
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -59,11 +107,10 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
+			symbolColor = visible ? (item.color || hiddenColor) : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = { fill: symbolColor },
-			key,
-			val;
+			key;
 
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
@@ -76,18 +123,18 @@ Legend.prototype = {
 
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
-				symbolAttr.stroke = symbolColor;
-				markerOptions = item.convertAttribs(markerOptions);
-				for (key in markerOptions) {
-					val = markerOptions[key];
-					if (val !== UNDEFINED) {
-						symbolAttr[key] = val;
+				//symbolAttr.stroke = symbolColor;
+				symbolAttr = item.pointAttribs();
+				if (!visible) {
+					for (key in symbolAttr) {
+						symbolAttr[key] = hiddenColor;
 					}
 				}
 			}
 
 			legendSymbol.attr(symbolAttr);
 		}
+		/*= } =*/
 	},
 
 	/**
@@ -141,24 +188,26 @@ Legend.prototype = {
 	 * Destroys the legend.
 	 */
 	destroy: function () {
-		var legend = this,
-			legendGroup = legend.group,
-			box = legend.box;
-
-		if (box) {
-			legend.box = box.destroy();
+		function destroyItems(key) {
+			if (this[key]) {
+				this[key] = this[key].destroy();
+			}
 		}
 
-		if (legendGroup) {
-			legend.group = legendGroup.destroy();
-		}
+		// Destroy items
+		each(this.getAllItems(), function (item) {
+			each(['legendItem', 'legendGroup'], destroyItems, item);
+		});
+
+		each(['box', 'title', 'group'], destroyItems, this);
+		this.display = null; // Reset in .render on update.
 	},
 
 	/**
 	 * Position the checkboxes after the width is determined
 	 */
 	positionCheckboxes: function (scrollOffset) {
-		var alignAttr = this.group.alignAttr,
+		var alignAttr = this.group && this.group.alignAttr,
 			translateY,
 			clipHeight = this.clipHeight || this.legendHeight,
 			titleHeight = this.titleHeight;
@@ -172,9 +221,9 @@ Legend.prototype = {
 				if (checkbox) {
 					top = translateY + titleHeight + checkbox.y + (scrollOffset || 0) + 3;
 					css(checkbox, {
-						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
-						top: top + PX,
-						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
+						top: top + 'px',
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
 					});
 				}
 			});
@@ -195,7 +244,9 @@ Legend.prototype = {
 			if (!this.title) {
 				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
 					.attr({ zIndex: 1 })
+					/*= if (build.classic) { =*/
 					.css(titleOptions.style)
+					/*= } =*/
 					.add(this.group);
 			}
 			bBox = this.title.getBBox();
@@ -212,7 +263,7 @@ Legend.prototype = {
 	setText: function (item) {
 		var options = this.options;
 		item.legendItem.attr({
-			text: options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item)
+			text: options.labelFormat ? H.format(options.labelFormat, item) : options.labelFormatter.call(item)
 		});
 	},
 
@@ -228,8 +279,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
+			/*= } =*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -241,16 +294,22 @@ Legend.prototype = {
 			bBox,
 			itemWidth,
 			li = item.legendItem,
-			series = item.series && item.series.drawLegendSymbol ? item.series : item,
+			isSeries = !item.series,
+			series = !isSeries && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
-			useHTML = options.useHTML;
+			useHTML = options.useHTML,
+			fontSize = 12;
 
 		if (!li) { // generate it once, later move it
 
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex +
+					(item.options.className ? ' ' + item.options.className : '') +
+					(isSeries ? ' highcharts-series-' + item.index : '')
+				)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -261,7 +320,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
+				/*= if (build.classic) { =*/
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				/*= } =*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -270,17 +331,24 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				/*= if (build.classic) { =*/
+				fontSize = itemStyle.fontSize;
+				/*= } =*/
+				legend.fontMetrics = renderer.fontMetrics(
+					fontSize,
+					li
+				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
 			// Draw the legend symbol inside the group box
+			legend.symbolHeight = options.symbolHeight || legend.fontMetrics.f;
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
-				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
-			}
+				legend.setItemEvents(item, li, useHTML);
+			}			
 
 			// add the HTML checkbox on top
 			if (showCheckbox) {
@@ -301,7 +369,7 @@ Legend.prototype = {
 			options.itemWidth ||
 			item.legendItemWidth ||
 			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
+		legend.itemHeight = itemHeight = Math.round(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -319,9 +387,9 @@ Legend.prototype = {
 		}*/
 
 		// Set the edge positions
-		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
+		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
 		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
-		legend.lastLineHeight = mathMax(itemHeight, legend.lastLineHeight); // #915
+		legend.lastLineHeight = Math.max(itemHeight, legend.lastLineHeight); // #915
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -336,7 +404,7 @@ Legend.prototype = {
 		}
 
 		// the width of the widest item
-		legend.offsetWidth = widthOption || mathMax(
+		legend.offsetWidth = widthOption || Math.max(
 			(horizontal ? legend.itemX - initialItemX - itemDistance : itemWidth) + padding,
 			legend.offsetWidth
 		);
@@ -349,20 +417,19 @@ Legend.prototype = {
 	getAllItems: function () {
 		var allItems = [];
 		each(this.chart.series, function (series) {
-			var seriesOptions = series.options;
+			var seriesOptions = series && series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? UNDEFINED : false, true)) {
-				return;
+			if (series && pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+				
+				// Use points or series for the legend item depending on legendType
+				allItems = allItems.concat(
+						series.legendItems ||
+						(seriesOptions.legendType === 'point' ?
+								series.data :
+								series)
+				);
 			}
-
-			// use points or series for the legend item depending on legendType
-			allItems = allItems.concat(
-					series.legendItems ||
-					(seriesOptions.legendType === 'point' ?
-							series.data :
-							series)
-			);
 		});
 		return allItems;
 	},
@@ -388,7 +455,7 @@ Legend.prototype = {
 			], function (alignments, side) {
 				if (alignments.test(alignment) && !defined(margin[side])) {
 					// Now we have detected on which side of the chart we should reserve space for the legend
-					chart[marginNames[side]] = mathMax(
+					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] +
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] +
@@ -416,9 +483,7 @@ Legend.prototype = {
 			legendHeight,
 			box = legend.box,
 			options = legend.options,
-			padding = legend.padding,
-			legendBorderWidth = options.borderWidth,
-			legendBackgroundColor = options.backgroundColor;
+			padding = legend.padding;
 
 		legend.itemX = legend.initialItemX;
 		legend.itemY = legend.initialItemY;
@@ -467,35 +532,43 @@ Legend.prototype = {
 		legendHeight += padding;
 
 		// Draw the border and/or background
-		if (legendBorderWidth || legendBackgroundColor) {
-
-			if (!box) {
-				legend.box = box = renderer.rect(
-					0,
-					0,
-					legendWidth,
-					legendHeight,
-					options.borderRadius,
-					legendBorderWidth || 0
-				).attr({
-					stroke: options.borderColor,
-					'stroke-width': legendBorderWidth || 0,
-					fill: legendBackgroundColor || NONE
+		if (!box) {
+			legend.box = box = renderer.rect()
+				.addClass('highcharts-legend-box')
+				.attr({
+					r: options.borderRadius
 				})
-				.add(legendGroup)
-				.shadow(options.shadow);
-				box.isNew = true;
+				.add(legendGroup);
+			box.isNew = true;
+		} 
 
-			} else if (legendWidth > 0 && legendHeight > 0) {
-				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp({ width: legendWidth, height: legendHeight })
-				);
-				box.isNew = false;
-			}
+		/*= if (build.classic) { =*/
+		// Presentational
+		box
+			.attr({
+				stroke: options.borderColor,
+				'stroke-width': options.borderWidth || 0,
+				fill: options.backgroundColor || 'none'
+			})
+			.shadow(options.shadow);
+		/*= } =*/
 
-			// hide the border if no items
-			box[display ? 'show' : 'hide']();
+		if (legendWidth > 0 && legendHeight > 0) {
+			box[box.isNew ? 'attr' : 'animate'](
+				box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, box.strokeWidth())
+			);
+			box.isNew = false;
 		}
+
+		// hide the border if no items
+		box[display ? 'show' : 'hide']();
+
+		/*= if (!build.classic) { =*/
+		// Open for responsiveness
+		if (legendGroup.getStyle('display') === 'none') {
+			legendWidth = legendHeight = 0;
+		}
+		/*= } =*/
 
 		legend.legendWidth = legendWidth;
 		legend.legendHeight = legendHeight;
@@ -554,30 +627,38 @@ Legend.prototype = {
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
-				clipRect.attr({
-					height: height
-				});
+				if (height) {
+					clipRect.attr({
+						height: height
+					});
+				} else if (clipRect) { // Reset (#5912)
+					legend.clipRect = clipRect.destroy();
+					legend.contentGroup.clip();
+				}
 
 				// useHTML
 				if (legend.contentGroup.div) {
-					legend.contentGroup.div.style.clip = 'rect(' + padding + 'px,9999px,' + (padding + height) + 'px,0)';
+					legend.contentGroup.div.style.clip = height ? 
+						'rect(' + padding + 'px,9999px,' +
+							(padding + height) + 'px,0)' :
+						'auto';
 				}
 			};
 
 
 		// Adjust the height
-		if (options.layout === 'horizontal') {
+		if (options.layout === 'horizontal' && options.verticalAlign !== 'middle' && !options.floating) {
 			spaceHeight /= 2;
 		}
 		if (maxHeight) {
-			spaceHeight = mathMin(spaceHeight, maxHeight);
+			spaceHeight = Math.min(spaceHeight, maxHeight);
 		}
 
 		// Reset the legend height and adjust the clipping rectangle
 		pages.length = 0;
 		if (legendHeight > spaceHeight && navOptions.enabled !== false) {
 
-			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
+			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 
@@ -585,7 +666,7 @@ Legend.prototype = {
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
-					h = mathRound(item.legendItem.getBBox().height),
+					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
 
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
@@ -618,7 +699,10 @@ Legend.prototype = {
 					})
 					.add(nav);
 				this.pager = renderer.text('', 15, 10)
+					.addClass('highcharts-legend-navigation')
+					/*= if (build.classic) { =*/
 					.css(navOptions.style)
+					/*= } =*/
 					.add(nav);
 				this.down = renderer.symbol('triangle-down', 0, 0, arrowSize, arrowSize)
 					.on('click', function () {
@@ -632,8 +716,9 @@ Legend.prototype = {
 
 			legendHeight = spaceHeight;
 
+		// Reset
 		} else if (nav) {
-			clipToHeight(chart.chartHeight);
+			clipToHeight();
 			nav.hide();
 			this.scrollGroup.attr({
 				translateY: 1
@@ -655,8 +740,6 @@ Legend.prototype = {
 			currentPage = this.currentPage + scrollBy,
 			clipHeight = this.clipHeight,
 			navOptions = this.options.navigation,
-			activeColor = navOptions.activeColor,
-			inactiveColor = navOptions.inactiveColor,
 			pager = this.pager,
 			padding = this.padding,
 			scrollOffset;
@@ -667,33 +750,44 @@ Legend.prototype = {
 		}
 
 		if (currentPage > 0) {
-
-			if (animation !== UNDEFINED) {
+			
+			if (animation !== undefined) {
 				setAnimation(animation, this.chart);
 			}
 
 			this.nav.attr({
 				translateX: padding,
 				translateY: clipHeight + this.padding + 7 + this.titleHeight,
-				visibility: VISIBLE
+				visibility: 'visible'
 			});
 			this.up.attr({
-					fill: currentPage === 1 ? inactiveColor : activeColor
-				})
-				.css({
-					cursor: currentPage === 1 ? 'default' : 'pointer'
-				});
+				'class': currentPage === 1 ? 'highcharts-legend-nav-inactive' : 'highcharts-legend-nav-active'
+			});
 			pager.attr({
 				text: currentPage + '/' + pageCount
 			});
 			this.down.attr({
-					x: 18 + this.pager.getBBox().width, // adjust to text width
-					fill: currentPage === pageCount ? inactiveColor : activeColor
+				'x': 18 + this.pager.getBBox().width, // adjust to text width
+				'class': currentPage === pageCount ? 'highcharts-legend-nav-inactive' : 'highcharts-legend-nav-active'
+			});
+
+			/*= if (build.classic) { =*/
+			this.up
+				.attr({
+					fill: currentPage === 1 ? navOptions.inactiveColor : navOptions.activeColor
+				})
+				.css({
+					cursor: currentPage === 1 ? 'default' : 'pointer'
+				});
+			this.down
+				.attr({
+					fill: currentPage === pageCount ? navOptions.inactiveColor : navOptions.activeColor
 				})
 				.css({
 					cursor: currentPage === pageCount ? 'default' : 'pointer'
 				});
-
+			/*= } =*/
+			
 			scrollOffset = -pages[currentPage - 1] + this.initialItemY;
 
 			this.scrollGroup.animate({
@@ -712,7 +806,7 @@ Legend.prototype = {
  * LegendSymbolMixin
  */
 
-var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
+H.LegendSymbolMixin = {
 
 	/**
 	 * Get the series' symbol in the legend
@@ -721,15 +815,20 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
+		var options = legend.options,
+			symbolHeight = legend.symbolHeight,
+			square = options.squareSymbol,
+			symbolWidth = square ? symbolHeight : legend.symbolWidth;
 
 		item.legendSymbol = this.chart.renderer.rect(
-			0,
+			square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
 			legend.baseline - symbolHeight + 1, // #3988
-			legend.symbolWidth,
+			symbolWidth,
 			symbolHeight,
-			legend.options.symbolRadius || 0
-		).attr({
+			pick(legend.options.symbolRadius, symbolHeight / 2)
+		)
+		.addClass('highcharts-point')
+		.attr({
 			zIndex: 3
 		}).add(item.legendGroup);
 
@@ -748,34 +847,53 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			radius,
 			legendSymbol,
 			symbolWidth = legend.symbolWidth,
+			symbolHeight = legend.symbolHeight,
+			generalRadius = symbolHeight / 2,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(legend.fontMetrics.b * 0.3),
-			attr;
+			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
+			attr = {};
 
 		// Draw the line
-		if (options.lineWidth) {
-			attr = {
-				'stroke-width': options.lineWidth
-			};
-			if (options.dashStyle) {
-				attr.dashstyle = options.dashStyle;
-			}
-			this.legendLine = renderer.path([
-				M,
-				0,
-				verticalCenter,
-				L,
-				symbolWidth,
-				verticalCenter
-			])
-			.attr(attr)
-			.add(legendItemGroup);
+		/*= if (build.classic) { =*/
+		attr = {
+			'stroke-width': options.lineWidth || 0
+		};
+		if (options.dashStyle) {
+			attr.dashstyle = options.dashStyle;
 		}
-
+		/*= } =*/
+		
+		this.legendLine = renderer.path([
+			'M',
+			0,
+			verticalCenter,
+			'L',
+			symbolWidth,
+			verticalCenter
+		])
+		.addClass('highcharts-graph')
+		.attr(attr)
+		.add(legendItemGroup);
+		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
-			radius = markerOptions.radius;
+
+			// Do not allow the marker to be larger than the symbolHeight
+			radius = Math.min(
+				pick(markerOptions.radius, generalRadius),
+				generalRadius
+			);
+
+			// Restrict symbol markers size
+			if (this.symbol.indexOf('url') === 0) {
+				markerOptions = merge(markerOptions, {
+					width: symbolHeight,
+					height: symbolHeight
+				});
+				radius = 0;
+			}
+			
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
 				(symbolWidth / 2) - radius,
@@ -784,6 +902,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				2 * radius,
 				markerOptions
 			)
+			.addClass('highcharts-point')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}
@@ -794,7 +913,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // Explore if there's a general cause for this. The problem may be related
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
+if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)

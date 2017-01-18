@@ -4,18 +4,18 @@
 	require_once('functions.php');
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
-	$i = $_GET['i'];
 	$rightcommit = @$_GET['rightcommit'];
 	$commit = @$_GET['commit']; // Used from Phantom test
+	$compareJSON = compareJSON();
 
-	if (file_exists('temp/compare.json')) {
-		$compare = json_decode(file_get_contents('temp/compare.json'));
+	if (file_exists($compareJSON)) {
+		$compare = json_decode(file_get_contents($compareJSON));
 		$comment = @$compare->$path->comment;
 	}
 
 	$nightly = json_decode(@file_get_contents('nightly/nightly.json'));
 	if ($nightly) {
-		$nightly = $nightly->results->$path;
+		$nightly = @$nightly->results->$path;
 	}
 
 	$details = @file_get_contents("../../samples/$path/demo.details");
@@ -43,7 +43,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 
-		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="cache.php?file=http://code.jquery.com/jquery-<?php echo JQUERY_VERSION; ?>.js"></script>
 		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
 		<script src="cache.php?file=https://rawgit.com/gabelerner/canvg/v1.4/rgbcolor.js"></script>
@@ -54,7 +54,7 @@
 		<script type="text/javascript">
 			var diff,
 				path = '<?php echo $path ?>',
-				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
+				commentHref = 'compare-comment.php?path=<?php echo $path ?>&diff=',
 				commentFrame,
 				leftSVG,
 				rightSVG,
@@ -64,12 +64,12 @@
 				chartHeight,
 				error,
 				mode = '<?php echo $mode ?>',
-				i = '<?php echo $i ?>',
+				sampleIndex = window.parent.frames[0] && window.parent.frames[0].samples.indexOf(path),
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
-				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
-
+				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>,
+				controller = window.parent && window.parent.controller;
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
@@ -83,8 +83,22 @@
 				}
 			}
 
+			function updateHash() {
+				if (window.parent && window.parent.frames[0] && window.parent.history.pushState) {
+					var hash = window.parent.frames[0].continueBatch ? '#batch' : '#test';
+					hash += '/' + path;
+					if (hash !== window.parent.location.hash) {
+						window.parent.history.pushState(null, null, hash);
+					}
+				}
+
+			}
+
 
 			$(function() {
+
+				updateHash();
+
 				// the reload button
 				$('#reload').click(function() {
 					location.reload();
@@ -94,32 +108,7 @@
 					location.href = commentHref;
 				});
 
-				$('#commits').click(function () {
-					var frameset = window.parent.document.querySelector('frameset'),
-						frame = window.parent.document.getElementById('commits-frame'),
-						checked;
-
-					$(this).toggleClass('active');
-					checked = $(this).hasClass('active');
-
-					if (checked) {
-						window.parent.commits = {};
-
-						if (!frame) {
-							frame = window.parent.document.createElement('frame');
-							frame.setAttribute('id', 'commits-frame');
-							frame.setAttribute('src', '/issue-by-commit/commits.php');
-						} else {
-							frame.contentWindow.location.reload();
-						}
-
-						frameset.setAttribute('cols', '400, *, 400');
-						frameset.appendChild(frame);
-					} else {
-						frameset.setAttribute('cols', '400, *');
-					}
-
-				});
+				$('#bisect').click(controller.toggleBisect);
 
 				$(window).bind('keydown', parent.keyDown);
 
@@ -158,7 +147,7 @@
 
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
-						li = contentDoc.getElementById('li<?php echo $i ?>'),
+						li = contentDoc.getElementById('li' + sampleIndex),
 						background = 'none';
 
 					if (li) {
@@ -222,10 +211,10 @@
 
 						}
 
-						if (window.parent.frames[0] && window.parent.frames[0].continueBatch) {
-							$(contentDoc.body).animate({
+						if (window.parent.frames[0]) {
+							$('html,body', contentDoc).animate({
 								scrollTop: $(li).offset().top - 300
-							}, 0);
+							}, window.parent.frames[0].continueBatch ? 0 : 'slow');
 						}
 					}
 
@@ -235,7 +224,7 @@
 			function hilightCurrent() {
 
 				var contentDoc = window.parent.frames[0].document,
-					li = contentDoc.getElementById('li<?php echo $i ?>');
+					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// previous
 				if (contentDoc.currentLi) {
@@ -266,20 +255,19 @@
 
 
 			function proceed() {
-				var i = '<?php echo $i ?>';
-				if (window.parent.frames[0] && i !== '' && window.parent.frames[0].continueBatch) {
+				updateHash(); // Batch may be stopped
+				if (window.parent.frames[0] && sampleIndex !== -1 && window.parent.frames[0].continueBatch) {
 					var contentDoc = window.parent.frames[0].document,
 						href,
-						next;
+						next,
+						nextIndex = sampleIndex;
 
-					i = parseInt(i);
-
-					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
+					if (!contentDoc || !contentDoc.getElementById('i' + sampleIndex)) {
 						return;
 					}
 
-					while (i++) {
-						next = contentDoc.getElementById('i' + i);
+					while (nextIndex++) {
+						next = contentDoc.getElementById('i' + nextIndex);
 						if (next) {
 							href = next.href;
 						} else {
@@ -287,14 +275,24 @@
 							return;
 						}
 
-						if (!contentDoc.getElementById('i' + i) || /batch/.test(contentDoc.getElementById('i' + i).className)) {
+						if (!contentDoc.getElementById('i' + nextIndex) || /batch/.test(contentDoc.getElementById('i' + nextIndex).className)) {
 							break;
 						}
 					}
 
 					href = href.replace("view.php", "compare-view.php");
 
-					window.location.href = href;
+
+					window.parent.batchRuns++;
+					// Clear memory build-up from time to time by reloading the
+					// whole thing. Firefox has problems redirecting.
+					if (window.parent.batchRuns > 90 &&
+							navigator.userAgent.indexOf('WebKit') !== -1) {
+						window.parent.location.href = '/samples/#batch/' +
+							window.parent.frames[0].samples[nextIndex];
+					} else {
+						window.location.href = href;
+					}
 
 				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
 				} else {
@@ -384,8 +382,14 @@
 								})
 								.animate({
 									left: 0
+								}, {
+									complete: function () {
+										$leftImage.hide();
+									}
 								});
+
 							$leftImage.css('position', 'absolute');
+							
 
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
@@ -393,10 +397,12 @@
 						// Show left
 						} else if (showingRight) {
 							$rightImage.hide();
+							$leftImage.show();
 							$button.html('Showing left. Click to show right');
 							showingRight = false;
 						} else {
 							$rightImage.show();
+							$leftImage.hide();
 							$button.html('Showing right. Click to show left.');
 							showingRight = true;
 						}
@@ -716,7 +722,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: right">
-				<a class="button" id="commits" style="margin-left: 1em" >Test by commit</a>
+				<a class="button" id="bisect" style="margin-left: 1em" >Bisect</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>

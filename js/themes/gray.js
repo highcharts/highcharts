@@ -1,11 +1,17 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Gray theme for Highcharts JS
  * @author Torstein Honsi
  */
 
+'use strict';
+import Highcharts from '../parts/Globals.js';
 Highcharts.theme = {
-	colors: ["#DDDF0D", "#7798BF", "#55BF3B", "#DF5353", "#aaeeee", "#ff0066", "#eeaaee",
-		"#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+	colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee', '#ff0066', '#eeaaee',
+		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
 	chart: {
 		backgroundColor: {
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
@@ -218,21 +224,21 @@ Highcharts.theme = {
 
 	scrollbar: {
 		barBackgroundColor: {
-				linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-				stops: [
-					[0.4, '#888'],
-					[0.6, '#555']
-				]
-			},
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
+				[0.4, '#888'],
+				[0.6, '#555']
+			]
+		},
 		barBorderColor: '#CCC',
 		buttonArrowColor: '#CCC',
 		buttonBackgroundColor: {
-				linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-				stops: [
-					[0.4, '#888'],
-					[0.6, '#555']
-				]
-			},
+			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+			stops: [
+				[0.4, '#888'],
+				[0.6, '#555']
+			]
+		},
 		buttonBorderColor: '#CCC',
 		rifleColor: '#FFF',
 		trackBackgroundColor: {
@@ -254,4 +260,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+Highcharts.setOptions(Highcharts.theme);

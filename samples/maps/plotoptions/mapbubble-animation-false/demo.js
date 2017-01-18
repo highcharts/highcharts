@@ -2,9 +2,10 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
             chart: {
-                borderWidth: 1
+                borderWidth: 1,
+                map: 'custom/world'
             },
 
             title: {
@@ -28,13 +29,11 @@ $(function () {
 
             series: [{
                 name: 'Countries',
-                mapData: Highcharts.maps['custom/world'],
                 color: '#E0E0E0',
                 enableMouseTracking: false
             }, {
                 type: 'mapbubble',
                 animation: false,
-                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 data: data,
                 name: 'Population 2010',

@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -13,8 +13,7 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            extremes = chart.yAxis[0].getExtremes();
+        var extremes = chart.yAxis[0].getExtremes();
 
         chart.renderer.label(
             'dataMax: ' + extremes.dataMax + '<br/>' +

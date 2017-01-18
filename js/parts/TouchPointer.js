@@ -1,14 +1,30 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var charts = H.charts,
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	noop = H.noop,
+	pick = H.pick,
+	Pointer = H.Pointer;
+
 /* Support for touch devices */
-extend(Highcharts.Pointer.prototype, {
+extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
 	/**
 	 * Run translation operations
 	 */
 	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (this.zoomHor || this.pinchHor) {
+		if (this.zoomHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (this.zoomVert || this.pinchVert) {
+		if (this.zoomVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -16,7 +32,8 @@ extend(Highcharts.Pointer.prototype, {
 	/**
 	 * Run translation operations for each direction (horizontal and vertical) independently
 	 */
-	pinchTranslateDirection: function (horiz, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch, forcedScale) {
+	pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
+			selectionMarker, clip, lastValidTouch, forcedScale) {
 		var chart = this.chart,
 			xy = horiz ? 'x' : 'y',
 			XY = horiz ? 'X' : 'Y',
@@ -38,8 +55,9 @@ extend(Highcharts.Pointer.prototype, {
 			transformScale,
 			scaleKey,
 			setScale = function () {
-				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start);
+				// Don't zoom if fingers are too close on this axis
+				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) {
+					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
 
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
@@ -105,7 +123,7 @@ extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') &&
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
@@ -140,15 +158,19 @@ extend(Highcharts.Pointer.prototype, {
 						minPixelPadding = axis.minPixelPadding,
 						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
 						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
-						absMin = mathMin(min, max),
-						absMax = mathMax(min, max);
+						absMin = Math.min(min, max),
+						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
-					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
+					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
 			self.res = true; // reset on next move
+
+		// Optionally move the tooltip on touchmove
+		} else if (self.followTouchMove && touchesLength === 1) {
+			this.runPointActions(self.normalize(e));
 
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
@@ -169,10 +191,7 @@ extend(Highcharts.Pointer.prototype, {
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
 
-			// Optionally move the tooltip on touchmove
-			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
-				this.runPointActions(self.normalize(e));
-			} else if (self.res) {
+			if (self.res) {
 				self.res = false;
 				this.reset(false, 0);
 			}
@@ -185,15 +204,23 @@ extend(Highcharts.Pointer.prototype, {
 	touch: function (e, start) {
 		var chart = this.chart,
 			hasMoved,
-			pinchDown;
+			pinchDown,
+			isInside;
 
-		hoverChartIndex = chart.index;
+		if (chart.index !== H.hoverChartIndex) {
+			this.onContainerMouseLeave({ relatedTarget: true });
+		}
+		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
+			isInside = chart.isInsidePlot(
+				e.chartX - chart.plotLeft,
+				e.chartY - chart.plotTop
+			);
+			if (isInside && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
 				if (start) {
@@ -228,6 +255,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onContainerTouchStart: function (e) {
+		this.zoomOption(e);
 		this.touch(e, true);
 	},
 
@@ -236,8 +264,8 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	}
 

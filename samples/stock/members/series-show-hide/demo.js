@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    var chart = Highcharts.stockChart('container', {
 
         rangeSelector: {
             selected: 1
@@ -12,8 +12,7 @@ $(function () {
     });
 
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            series = chart.series[0];
+        var series = chart.series[0];
         if (series.visible) {
             series.hide();
         } else {

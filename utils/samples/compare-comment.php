@@ -1,19 +1,19 @@
 <?php
-
-$compare = json_decode(file_get_contents('temp/compare.json'));
+require_once('functions.php');
+$compareJSON = compareJSON();
+$compare = json_decode(@file_get_contents($compareJSON));
 $path = $_GET['path'];
 $diff = $_GET['diff'];
 $focus = @$_GET['focus'] === 'false' ? false : true;
-$i = $_GET['i'];
 $updateContents = false;
 
 
 if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
-	if (!$compare->$path) {
+	if (!isset($compare->$path)) {
 		$compare->$path = new StdClass;
 	}
 	$compare->$path->comment = (object) $_POST;
-	file_put_contents('temp/compare.json', json_encode($compare, JSON_PRETTY_PRINT));
+	file_put_contents($compareJSON, json_encode($compare, JSON_PRETTY_PRINT));
 	$updateContents = true;
 }
 
@@ -89,7 +89,8 @@ $symbols = array('check', 'exclamation-sign');
 			if (window.parent.frames[0]) {
 				var contentWin = (window.parent.parent || window.parent).frames[0],
 					contentDoc = contentWin.document,
-					li = contentDoc.getElementById('li<?php echo $i ?>');
+					sampleIndex = contentWin.samples.indexOf('<?php echo $path ?>'),
+					li = contentDoc.getElementById('li' + sampleIndex);
 
 				// Sample is different but approved
 				<?php if ($comment->symbol === 'check' && $comment->diff == $diff): ?>

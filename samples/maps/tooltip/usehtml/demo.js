@@ -8,7 +8,7 @@ $(function () {
         });
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        Highcharts.mapChart('container', {
 
             title: {
                 text: 'Full HTML tooltip'
@@ -49,7 +49,7 @@ $(function () {
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 }
             }]

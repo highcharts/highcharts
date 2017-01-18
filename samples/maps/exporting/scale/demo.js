@@ -1,9 +1,9 @@
 $(function () {
-
+    var chart;
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Exporting scale demonstrated'
@@ -39,7 +39,7 @@ $(function () {
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 },
                 tooltip: {
@@ -51,9 +51,8 @@ $(function () {
 
 
     $('button.export').click(function () {
-        $('#container').highcharts()
-            .exportChart({
-                scale: $(this).data().scale
-            });
+        chart.exportChart({
+            scale: $(this).data().scale
+        });
     });
 });

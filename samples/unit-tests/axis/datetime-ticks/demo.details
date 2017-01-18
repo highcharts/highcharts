@@ -1,0 +1,7 @@
+---
+ resources:
+   - https://code.jquery.com/qunit/qunit-2.0.1.js
+   - https://code.jquery.com/qunit/qunit-2.0.1.css
+   - http://momentjs.com/downloads/moment.min.js
+   - http://momentjs.com/downloads/moment-timezone-with-data-2010-2020.min.js
+...

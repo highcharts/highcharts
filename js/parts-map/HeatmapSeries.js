@@ -1,11 +1,34 @@
-
 /**
- * Extend the default options with map options
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Point.js';
+import '../parts/Series.js';
+import '../parts/Legend.js';
+import './ColorSeriesMixin.js';
+var colorPointMixin = H.colorPointMixin,
+	colorSeriesMixin = H.colorSeriesMixin,
+	each = H.each,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	merge = H.merge,
+	noop = H.noop,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
+
+// The Heatmap series type
+seriesType('heatmap', 'scatter', {
 	animation: false,
 	borderWidth: 0,
-	nullColor: '#F8F8F8',
+	/*= if (build.classic) { =*/
+	nullColor: '${palette.neutralColor3}',
+	/*= } =*/
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.value;
@@ -30,14 +53,9 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			brightness: 0.2
 		}
 	}
-});
-
-// The Heatmap series type
-seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
-	type: 'heatmap',
+}, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
@@ -86,15 +104,20 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		});
 
 		series.translateColors();
-
-		// Make sure colors are updated on colorAxis update (#2893)
-		if (this.chart.hasRendered) {
-			each(series.points, function (point) {
-				point.shapeArgs.fill = point.options.color || point.color; // #3311
-			});
-		}
 	},
-	drawPoints: seriesTypes.column.prototype.drawPoints,
+	drawPoints: function () {
+		seriesTypes.column.prototype.drawPoints.call(this);
+
+		each(this.points, function (point) {
+			/*= if (build.classic) { =*/
+			point.graphic.attr(this.colorAttribs(point));
+			/*= } else { =*/
+			// In styled mode, use CSS, otherwise the fill used in the style
+			// sheet will take precesence over the fill attribute.
+			point.graphic.css(this.colorAttribs(point));
+			/*= } =*/
+		}, this);
+	},
 	animate: noop,
 	getBox: noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -109,5 +132,4 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		Series.prototype.getExtremes.call(this);
 	}
 
-}));
-
+}), colorPointMixin);

@@ -27,7 +27,7 @@ $(function () {
         return converters.ar(ret);
     });
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'column'

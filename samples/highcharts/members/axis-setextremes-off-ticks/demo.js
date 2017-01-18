@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             plotBorderWidth: 1
         },
@@ -15,8 +15,7 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            yAxis = chart.yAxis[0];
+        var yAxis = chart.yAxis[0];
 
         yAxis.options.startOnTick = false;
         yAxis.options.endOnTick = false;

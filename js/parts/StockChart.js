@@ -1,14 +1,62 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Chart.js';
+import './Axis.js';
+import './Point.js';
+import './Pointer.js';
+import './Series.js';
+import './SvgRenderer.js';
+import './VmlRenderer.js';
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	inArray = H.inArray,
+	isNumber = H.isNumber,
+	isString = H.isString,
+	map = H.map,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	splat = H.splat,
+	SVGRenderer = H.SVGRenderer,
+	VMLRenderer = H.VMLRenderer,
+	wrap = H.wrap,
+
+
+	seriesProto = Series.prototype,
+	seriesInit = seriesProto.init, 
+	seriesProcessData = seriesProto.processData,
+	pointTooltipFormatter = Point.prototype.tooltipFormatter;
+/**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
+H.StockChart = H.stockChart = function (a, b, c) {
 	var hasRenderToArg = isString(a) || a.nodeName,
 		options = arguments[hasRenderToArg ? 1 : 0],
 		seriesOptions = options.series, // to increase performance, don't merge the data
+		defaultOptions = H.getOptions(),
 		opposite,
 
-		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
-		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
+		// Always disable startOnTick:true on the main axis when the navigator
+		// is enabled (#1090)
+		navigatorEnabled = pick(
+			options.navigator && options.navigator.enabled,
+			defaultOptions.navigator.enabled,
+			true
+		),
 		disableStartOnTick = navigatorEnabled ? {
 			startOnTick: false,
 			endOnTick: false
@@ -41,7 +89,9 @@ Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 					overflow: 'justify'
 				},
 				showLastLabel: true
-			}, xAxisOptions, // user options
+			}, 
+			defaultOptions.xAxis, // #3802
+			xAxisOptions, // user options
 			{ // forced options
 				type: 'datetime',
 				categories: null
@@ -62,7 +112,9 @@ Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 			title: {
 				text: null
 			}
-		}, yAxisOptions // user options
+		}, 
+		defaultOptions.yAxis, // #3802
+		yAxisOptions // user options
 		);
 	});
 
@@ -75,19 +127,18 @@ Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 				pinchType: 'x'
 			},
 			navigator: {
-				enabled: true
+				enabled: navigatorEnabled
 			},
 			scrollbar: {
-				enabled: true
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.scrollbar.enabled, true)
 			},
 			rangeSelector: {
-				enabled: true
+				// #4988 - check if setOptions was called
+				enabled: pick(defaultOptions.rangeSelector.enabled, true)
 			},
 			title: {
-				text: null,
-				style: {
-					fontSize: '16px'
-				}
+				text: null
 			},
 			tooltip: {
 				shared: true,
@@ -111,13 +162,11 @@ Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 			}
 
 		},
+		
 		options, // user's options
 
 		{ // forced options
-			_stock: true, // internal flag
-			chart: {
-				inverted: false
-			}
+			isStock: true // internal flag
 		}
 	);
 
@@ -128,19 +177,6 @@ Highcharts.StockChart = Highcharts.stockChart = function (a, b, c) {
 		new Chart(options, b);
 };
 
-// Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-
-	var pinchType = options.chart.pinchType || '';
-
-	proceed.call(this, chart, options);
-
-	// Pinch status
-	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
-	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
-	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
-});
-
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
@@ -149,7 +185,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 		panes = chart._labelPanes = chart._labelPanes || {},
 		key,
 		labelOptions = this.options.labels;
-	if (this.chart.options._stock && this.coll === 'yAxis') {
+	if (this.chart.options.isStock && this.coll === 'yAxis') {
 		key = options.top + ',' + options.height;
 		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
 			if (labelOptions.x === 15) { // default
@@ -183,26 +219,36 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		uniqueAxes,
 		transVal;
 
+	/**
+	 * Return the other axis based on either the axis option or on related series.
+	 */
+	function getAxis(coll) {
+		var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
+			opt = axis.options[otherColl];
+
+		// Other axis indexed by number
+		if (isNumber(opt)) {
+			return [chart[otherColl][opt]];
+		}
+
+		// Other axis indexed by id (like navigator)
+		if (isString(opt)) {
+			return [chart.get(opt)];
+		}
+		
+		// Auto detect based on existing series
+		return map(series, function (s) {
+			return s[otherColl];
+		});
+	}
+
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ?
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] :
-			map(series, function (s) {
-				return s.yAxis;
-			})
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] :
-			map(series, function (s) {
-				return s.xAxis;
-			})
-		)
-	);
+	axes = getAxis(axis.coll);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -236,11 +282,11 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = mathRound(transVal + axis.transB);
+				x1 = x2 = Math.round(transVal + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
-						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+						x1 = x2 = Math.min(Math.max(axisLeft, x1), axisLeft + axis.width);
 					} else {
 						skip = true;
 					}
@@ -255,11 +301,11 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = mathRound(axisTop + axis.height - transVal);
+				y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
-						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+						y1 = y2 = Math.min(Math.max(axisTop, y1), axis.top + axis.height);
 					} else {
 						skip = true;
 					}
@@ -282,10 +328,22 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 		result = [],
 		i;
 
-	if (path && toPath && path.toString() !== toPath.toString()) {
-		// Go over each subpath
-		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
+	if (path && toPath) {
+		if (path.toString() === toPath.toString()) {
+			// #6166
+			result = path;
+			result.flat = true;
+		} else {
+			// Go over each subpath
+			for (i = 0; i < path.length; i += 6) {
+				result.push(
+					'M', path[i + 1], path[i + 2],
+					'L', path[i + 4], path[i + 5],
+					toPath[i + 4], toPath[i + 5],
+					toPath[i + 1], toPath[i + 2],
+					'z'
+				);
+			}
 		}
 	} else { // outside the axis area
 		result = null;
@@ -296,27 +354,29 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-	// points format: [M, 0, 0, L, 100, 0]
+	// points format: ['M', 0, 0, 'L', 100, 0]		
 	// normalize to a crisp line
 	var i;
 	for (i = 0; i < points.length; i = i + 6) {
 		if (points[i + 1] === points[i + 4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+			points[i + 1] = points[i + 4] = Math.round(points[i + 1]) - (width % 2 / 2);
 		}
 		if (points[i + 2] === points[i + 5]) {
-			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+			points[i + 2] = points[i + 5] = Math.round(points[i + 2]) + (width % 2 / 2);
 		}
 	}
 	return points;
 };
-if (Renderer === Highcharts.VMLRenderer) {
+/*= if (build.classic) { =*/
+if (Renderer === VMLRenderer) {
 	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
-
+/*= } =*/
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	
 	proceed.call(this, i);
 
 	if (this.crossLabel) {
@@ -326,6 +386,7 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 
 // Wrapper to draw the label
 wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	
 	// Draw the crosshair
 	proceed.call(this, e, point);
 
@@ -358,27 +419,39 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		e = this.cross && this.cross.e;
 	}
 
-	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
+	align = (horiz ? 'center' : opposite ?
+		(this.labelAlign === 'right' ? 'right' : 'left') :
+		(this.labelAlign === 'left' ? 'left' : 'center'));
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
-		.attr({
-			align: options.align || align,
-			zIndex: 12,
-			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 8),
-			stroke: options.borderColor || '',
-			'stroke-width': options.borderWidth || 0,
-			r: pick(options.borderRadius, 3)
-		})
-		.css(extend({
-			color: 'white',
-			fontWeight: 'normal',
-			fontSize: '11px',
-			textAlign: 'center'
-		}, options.style))
-		.add();
+			.addClass('highcharts-crosshair-label' +
+				(this.series[0] && ' highcharts-color-' + this.series[0].colorIndex))
+			.attr({
+				align: options.align || align,
+				padding: pick(options.padding, 8),
+				r: pick(options.borderRadius, 3),
+				zIndex: 2
+			})
+			.add(this.labelGroup);
+
+		/*= if (build.classic) { =*/
+		// Presentational
+		crossLabel
+			.attr({
+				fill: options.backgroundColor ||
+					(this.series[0] && this.series[0].color) || '${palette.neutralColor60}',
+				stroke: options.borderColor || '',
+				'stroke-width': options.borderWidth || 0
+			})
+			.css(extend({
+				color: '${palette.backgroundColor}',
+				fontWeight: 'normal',
+				fontSize: '11px',
+				textAlign: 'center'
+			}, options.style));
+		/*= } =*/
 	}
 
 	if (horiz) {
@@ -451,11 +524,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 /* ****************************************************************************
  * Start value compare logic                                                  *
  *****************************************************************************/
-
-var seriesInit = seriesProto.init,
-	seriesProcessData = seriesProto.processData,
-	pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
+	
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
@@ -478,22 +547,26 @@ seriesProto.setCompare = function (compare) {
 	// Set or unset the modifyValue method
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
+		
+		if (value !== undefined && compareValue !== undefined) { // #2601, #5814
 
-		if (value !== UNDEFINED) { // #2601
-
-			// get the modified value
-			value = compare === 'value' ?
-				value - compareValue : // compare value
-				value = 100 * (value / compareValue) - 100; // compare percent
-
+			// Get the modified value
+			if (compare === 'value') {
+				value -= compareValue;
+			
+			// Compare percent
+			} else {
+				value = 100 * (value / compareValue) - 
+					(this.options.compareBase === 100 ? 0 : 100);
+			}
+			
 			// record for tooltip etc.
 			if (point) {
 				point.change = value;
 			}
 
+			return value;
 		}
-
-		return value;
 	} : null;
 
 	// Survive to export, #5485
@@ -590,9 +663,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
-	);
-
+		(point.change > 0 ? '+' : '') +
+			H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+	); 
+	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 
@@ -602,13 +676,19 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 
 /**
- * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
+ * Extend the Series prototype to create a separate series clip box. This is
+ * related to using multiple panes, and a future pane logic should incorporate
+ * this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	// Only do this on stock charts (#2939), and only if the series type handles clipping
-	// in the animate method (#2975).
-	if (this.chart.options._stock && this.xAxis) {
+	// Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
+	// if the series type handles clipping in the animate method (#2975).
+	if (
+		!(this.chart.is3d && this.chart.is3d()) &&
+		!this.chart.polar &&
+		this.xAxis &&
+		!this.xAxis.isRadial // Gauge, #6192
+	) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {
@@ -618,7 +698,6 @@ wrap(Series.prototype, 'render', function (proceed) {
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
-			stop(this.chart[this.sharedClipKey]); // #2998
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
 				height: this.yAxis.len

@@ -16,7 +16,7 @@ Math.easeOutBounce = function (pos) {
 
 
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
 
         chart: {
             animation: {
@@ -37,7 +37,6 @@ $(function () {
 
     var i = 1;
     $('#update').click(function () {
-        var chart = $('#container').highcharts();
         chart.series[0].data[0].update(i % 2 ? 200 : 0);
         i += 1;
     });

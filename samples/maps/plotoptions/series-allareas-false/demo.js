@@ -14,7 +14,7 @@ $(function () {
 
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Showing only non-null areas'
@@ -43,7 +43,7 @@ $(function () {
             name: 'Random data',
             states: {
                 hover: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             },
             dataLabels: {

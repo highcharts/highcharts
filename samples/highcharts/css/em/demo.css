@@ -1,0 +1,33 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#main {
+	width: 600px;
+	margin: 0 auto;
+}
+#container {
+	height: 400px;
+}
+input#em {
+	width: 100%;
+}
+
+.highcharts-container {
+	font-size: 1em;
+}
+
+
+/* Apply relative sizes to visible elements */
+.highcharts-yaxis-grid .highcharts-grid-line {
+    stroke-width: 0.0625em;
+}
+
+.highcharts-xaxis .highcharts-tick {
+    stroke-width: 0.0625em;
+}
+
+.highcharts-graph {
+	stroke-width: 0.125em;
+}
+.highcharts-point {
+	stroke-width: 0.125em;
+}

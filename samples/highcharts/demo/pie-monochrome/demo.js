@@ -15,7 +15,7 @@ $(function () {
     }());
 
     // Build the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,

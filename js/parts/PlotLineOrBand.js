@@ -1,8 +1,24 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	each = H.each,
+	erase = H.erase,
+	merge = H.merge,
+	pick = H.pick;
+/*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-Highcharts.PlotLineOrBand = function (axis, options) {
+H.PlotLineOrBand = function (axis, options) {
 	this.axis = axis;
 
 	if (options) {
@@ -11,8 +27,8 @@ Highcharts.PlotLineOrBand = function (axis, options) {
 	}
 };
 
-Highcharts.PlotLineOrBand.prototype = {
-
+H.PlotLineOrBand.prototype = {
+	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
 	 * move it.
@@ -24,21 +40,26 @@ Highcharts.PlotLineOrBand.prototype = {
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
-			width = options.width,
 			to = options.to,
 			from = options.from,
-			isBand = defined(from) && defined(to),
 			value = options.value,
-			dashStyle = options.dashStyle,
+			isBand = defined(from) && defined(to),
+			isLine = defined(value),
 			svgElem = plotLine.svgElem,
+			isNew = !svgElem,
 			path = [],
 			addEvent,
 			eventType,
 			color = options.color,
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,
-			attribs = {},
+			attribs = {
+				'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '')
+			},
+			groupAttribs = {},
 			renderer = axis.chart.renderer,
+			groupName = isBand ? 'bands' : 'lines',
+			group,
 			log2lin = axis.log2lin;
 
 		// logarithmic conversion
@@ -48,19 +69,18 @@ Highcharts.PlotLineOrBand.prototype = {
 			value = log2lin(value);
 		}
 
-		// plot line
-		if (width) {
-			path = axis.getPlotLinePath(value, width);
+		/*= if (build.classic) { =*/
+		// Set the presentational attributes
+		if (isLine) {
 			attribs = {
 				stroke: color,
-				'stroke-width': width
+				'stroke-width': options.width
 			};
-			if (dashStyle) {
-				attribs.dashstyle = dashStyle;
+			if (options.dashStyle) {
+				attribs.dashstyle = options.dashStyle;
 			}
+			
 		} else if (isBand) { // plot band
-
-			path = axis.getPlotBandPath(from, to, options);
 			if (color) {
 				attribs.fill = color;
 			}
@@ -68,26 +88,41 @@ Highcharts.PlotLineOrBand.prototype = {
 				attribs.stroke = options.borderColor;
 				attribs['stroke-width'] = options.borderWidth;
 			}
+		}
+		/*= } =*/
+
+		// Grouping and zIndex
+		groupAttribs.zIndex = zIndex;
+		groupName += '-' + zIndex;
+
+		group = axis[groupName];
+		if (!group) {
+			axis[groupName] = group = renderer.g('plot-' + groupName)
+				.attr(groupAttribs).add();
+		}
+
+		// Create the path
+		if (isNew) {
+			plotLine.svgElem = svgElem = 
+				renderer
+					.path()
+					.attr(attribs).add(group);
+		}
+		
+
+		// Set the path or return
+		if (isLine) {
+			path = axis.getPlotLinePath(value, svgElem.strokeWidth());
+		} else if (isBand) { // plot band
+			path = axis.getPlotBandPath(from, to, options);
 		} else {
 			return;
 		}
-		// zIndex
-		attribs.zIndex = zIndex;
+
 
 		// common for lines and bands
-		if (svgElem) {
-			if (path) {
-				svgElem.show();
-				svgElem.animate({ d: path });
-			} else {
-				svgElem.hide();
-				if (label) {
-					plotLine.label = label = label.destroy();
-				}
-			}
-		} else if (path && path.length) {
-			plotLine.svgElem = svgElem = renderer.path(path)
-				.attr(attribs).add();
+		if (isNew && path && path.length) {
+			svgElem.attr({ d: path });
 
 			// events
 			if (events) {
@@ -98,6 +133,16 @@ Highcharts.PlotLineOrBand.prototype = {
 				};
 				for (eventType in events) {
 					addEvent(eventType);
+				}
+			}
+		} else if (svgElem) {
+			if (path) {
+				svgElem.show();
+				svgElem.animate({ d: path });
+			} else {
+				svgElem.hide();
+				if (label) {
+					plotLine.label = label = label.destroy();
 				}
 			}
 		}
@@ -141,7 +186,8 @@ Highcharts.PlotLineOrBand.prototype = {
 		if (!label) {
 			attribs = {
 				align: optionsLabel.textAlign || optionsLabel.align,
-				rotation: optionsLabel.rotation
+				rotation: optionsLabel.rotation,
+				'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') + '-label ' + (optionsLabel.className || '')
 			};
 			
 			attribs.zIndex = zIndex;
@@ -153,8 +199,11 @@ Highcharts.PlotLineOrBand.prototype = {
 					optionsLabel.useHTML
 				)
 				.attr(attribs)
-				.css(optionsLabel.style)
 				.add();
+
+			/*= if (build.classic) { =*/
+			label.css(optionsLabel.style);
+			/*= } =*/
 		}
 
 		// get the bounding box and align the label
@@ -187,9 +236,10 @@ Highcharts.PlotLineOrBand.prototype = {
 
 /**
  * Object with members for extending the Axis prototype
+ * @todo Extend directly instead of adding object to Highcharts first
  */
 
-AxisPlotLineOrBandExtension = {
+H.AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band
@@ -207,7 +257,8 @@ AxisPlotLineOrBandExtension = {
 				toPath[4],
 				toPath[5],
 				toPath[1],
-				toPath[2]
+				toPath[2],
+				'z' // #5909
 			);
 		} else { // outside the axis area
 			path = null;
@@ -230,7 +281,7 @@ AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new Highcharts.PlotLineOrBand(this, options).render(),
+		var obj = new H.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
@@ -269,4 +320,3 @@ AxisPlotLineOrBandExtension = {
 		});
 	}
 };
-

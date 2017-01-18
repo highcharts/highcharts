@@ -1,9 +1,16 @@
-@import 'https://code.highcharts.com/5/css/highcharts.css';
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+.highcharts-point {
+	stroke: white;
+}
 
 .highcharts-graph.zone-0 {
 	stroke: #f7a35c;
 }
 .highcharts-area.zone-0 {
+	fill: #f7a35c;
+}
+.highcharts-point.zone-0 {
 	fill: #f7a35c;
 }
 .highcharts-graph.zone-1 {
@@ -12,9 +19,15 @@
 .highcharts-area.zone-1 {
 	fill: #7cb5ec;
 }
+.highcharts-point.zone-1 {
+	fill: #7cb5ec;
+}
 .highcharts-graph.zone-2 {
 	stroke: #90ed7d;
 }
 .highcharts-area.zone-2 {
+	fill: #90ed7d;
+}
+.highcharts-point.zone-2 {
 	fill: #90ed7d;
 }

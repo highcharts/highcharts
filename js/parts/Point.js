@@ -1,40 +1,84 @@
 /**
- * The Point object and prototype. Inheritable and used as base for PiePoint
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-var Point = function () {};
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var Point,
+
+	each = H.each,
+	extend = H.extend,
+	erase = H.erase,
+	fireEvent = H.fireEvent,
+	format = H.format,
+	isArray = H.isArray,
+	isNumber = H.isNumber,
+	pick = H.pick,
+	removeEvent = H.removeEvent;
+
+/**
+ * The Point object. The point objects are generated from the series.data 
+ * configuration objects or raw numbers. They can be accessed from the
+ * Series.points array.
+ * @constructor Point
+ */
+Point = H.Point = function () {};
 Point.prototype = {
 
 	/**
-	 * Initialize the point
-	 * @param {Object} series The series object containing this point
-	 * @param {Object} options The data in either number, array or object format
+	 * Initialize the point. Called internally based on the series.data option.
+	 * @function #init
+	 * @memberOf Point
+	 * @param {Object} series The series object containing this point.
+	 * @param {Object} options The data in either number, array or object
+	 *        format.
+	 * @param {Number} x Optionally, the X value of the.
+	 * @returns {Object} The Point instance.
 	 */
 	init: function (series, options, x) {
 
 		var point = this,
-			colors;
+			colors,
+			colorCount = series.chart.options.chart.colorCount,
+			colorIndex;
+
 		point.series = series;
+		/*= if (build.classic) { =*/
 		point.color = series.color; // #3445
+		/*= } =*/
 		point.applyOptions(options, x);
-		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
+			/*= if (build.classic) { =*/
 			colors = series.options.colors || series.chart.options.colors;
-			point.color = point.color || colors[series.colorCounter++];
+			point.color = point.color || colors[series.colorCounter];
+			colorCount = colors.length;
+			/*= } =*/
+			colorIndex = series.colorCounter;
+			series.colorCounter++;
 			// loop back to zero
-			if (series.colorCounter === colors.length) {
+			if (series.colorCounter === colorCount) {
 				series.colorCounter = 0;
 			}
+		} else {
+			colorIndex = series.colorIndex;
 		}
+		point.colorIndex = pick(point.colorIndex, colorIndex);
 
 		series.chart.pointCount++;
 		return point;
 	},
 	/**
-	 * Apply the options containing the x and y data and possible some extra properties.
-	 * This is called on point init or from point.update.
+	 * Apply the options containing the x and y data and possible some extra
+	 * properties. Called on point init or from point.update.
 	 *
-	 * @param {Object} options
+	 * @function #applyOptions
+	 * @memberOf Point
+	 * @param {Object} options The point options as defined in series.data.
+	 * @param {Number} x Optionally, the X value.
+	 * @returns {Object} The Point instance.
 	 */
 	applyOptions: function (options, x) {
 		var point = this,
@@ -60,6 +104,11 @@ Point.prototype = {
 			point.isValid && !point.isValid(),
 			point.x === null || !isNumber(point.y, true)
 		); // #3571, check for NaN
+
+		// The point is initially selected by options (#5777)
+		if (point.selected) {
+			point.state = 'select';
+		}
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -129,6 +178,44 @@ Point.prototype = {
 	},
 
 	/**
+	 * Get the CSS class names for individual points
+	 * @returns {String} The class name
+	 */
+	getClassName: function () {
+		return 'highcharts-point' + 
+			(this.selected ? ' highcharts-point-select' : '') + 
+			(this.negative ? ' highcharts-negative' : '') + 
+			(this.isNull ? ' highcharts-null-point' : '') + 
+			(this.colorIndex !== undefined ? ' highcharts-color-' +
+				this.colorIndex : '') +
+			(this.options.className ? ' ' + this.options.className : '') +
+			(this.zone && this.zone.className ? ' ' +
+				this.zone.className.replace('highcharts-negative', '') : '');
+	},
+
+	/**
+	 * Return the zone that the point belongs to
+	 */
+	getZone: function () {
+		var series = this.series,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
+			i = 0,
+			zone;
+
+		zone = zones[i];
+		while (this[zoneAxis] >= zone.value) {				
+			zone = zones[++i];
+		}
+
+		if (zone && zone.color && !this.options.color) {
+			this.color = zone.color;
+		}
+
+		return zone;
+	},
+
+	/**
 	 * Destroy a point to clear memory. Its reference still stays in series.data.
 	 */
 	destroy: function () {
@@ -193,6 +280,7 @@ Point.prototype = {
 			x: this.category,
 			y: this.y,
 			color: this.color,
+			colorIndex: this.colorIndex,
 			key: this.name || this.category,
 			series: this.series,
 			point: this,

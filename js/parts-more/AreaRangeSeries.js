@@ -1,17 +1,34 @@
-/*
- * The AreaRangeSeries class
- *
- */
-
 /**
- * Extend the default options with map options
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Series.js';
+var each = H.each,
+	noop = H.noop,
+	pick = H.pick,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
+/* 
+ * The arearangeseries series type
+ */
+seriesType('arearange', 'area', {
+	/*= if (build.classic) { =*/
 	lineWidth: 1,
+	/*= } =*/
 	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+		/*= if (!build.classic) { =*/
+		pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
+		/*= } else { =*/
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
+		/*= } =*/
 	},
 	trackByArea: true,
 	dataLabels: {
@@ -27,13 +44,9 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 			halo: false
 		}
 	}
-});
 
-/**
- * Add the series type
- */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
-	type: 'arearange',
+// Prototype members
+}, {
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {
@@ -60,7 +73,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	 */
 	translate: function () {
 		var series = this,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			hasModifyValue = !!series.modifyValue;
 
 		seriesTypes.area.prototype.translate.apply(series);
 
@@ -75,7 +89,16 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.isNull = true;
 			} else {
 				point.plotLow = plotY;
-				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
+				point.plotHigh = yAxis.translate(
+					hasModifyValue ? series.modifyValue(high, point) : high,
+					0,
+					1,
+					0,
+					1
+				);
+				if (hasModifyValue) {
+					point.yBottom = point.plotHigh;
+				}
 			}
 		});
 
@@ -102,6 +125,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			linePath,
 			lowerPath,
 			options = this.options,
+			connectEnds = this.chart.polar && options.connectEnds !== false,
 			step = options.step,
 			higherPath,
 			higherAreaPath;
@@ -116,7 +140,11 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		while (i--) {
 			point = points[i];
 		
-			if (!point.isNull && !options.connectEnds && (!points[i + 1] || points[i + 1].isNull)) {
+			if (
+				!point.isNull &&
+				!connectEnds &&
+				(!points[i + 1] || points[i + 1].isNull)
+			) {
 				highAreaPoints.push({
 					plotX: point.plotX,
 					plotY: point.plotY,
@@ -134,7 +162,12 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			};
 			highAreaPoints.push(pointShim);
 			highPoints.push(pointShim);
-			if (!point.isNull && !options.connectEnds && (!points[i - 1] || points[i - 1].isNull)) {
+			
+			if (
+				!point.isNull &&
+				!connectEnds &&
+				(!points[i - 1] || points[i - 1].isNull)
+			) {
 				highAreaPoints.push({
 					plotX: point.plotX,
 					plotY: point.plotY,

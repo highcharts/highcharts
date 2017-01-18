@@ -1,0 +1,37 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#container {
+	height: 400px;
+	max-width: 800px;
+	min-width: 320px;
+	margin: 0 auto;
+}
+
+/* Define the stop colors */
+#gradient-0 stop {
+	stop-color: #7cb5ec;
+}
+#gradient-0 stop[offset="0"] {
+	stop-opacity: 0.75;
+}
+#gradient-0 stop[offset="1"] {
+	stop-opacity: 0;
+}
+#gradient-1 stop {
+	stop-color: #cccccc;
+}
+#gradient-1 stop[offset="0"] {
+	stop-opacity: 0;
+}
+#gradient-1 stop[offset="1"] {
+	stop-opacity: 0.25;
+}
+
+/* Apply the gradients */
+.highcharts-plot-background {
+	fill: url(#gradient-1);
+}
+.highcharts-color-0 .highcharts-area {
+	fill-opacity: 1;
+	fill: url(#gradient-0);
+}

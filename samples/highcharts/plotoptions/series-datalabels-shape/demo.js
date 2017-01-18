@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         chart: {
             type: 'column'
@@ -24,7 +24,7 @@ $(function () {
                     backgroundColor: 'rgba(0, 0, 0, 0.75)',
                     style: {
                         color: '#FFFFFF',
-                        textShadow: 'none'
+                        textOutline: 'none'
                     }
                 }
             }

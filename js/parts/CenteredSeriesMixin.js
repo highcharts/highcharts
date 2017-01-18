@@ -1,5 +1,15 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var pick = H.pick,
+	relativeLength = H.relativeLength;
 
-var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
+H.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the
 	 * plot area. Borrowed by the polar and gauge series types.
@@ -14,7 +24,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
-			smallestSize = mathMin(plotWidth, plotHeight),
+			smallestSize = Math.min(plotWidth, plotHeight),
 			i,
 			value;
 
@@ -37,4 +47,3 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 		return positions;
 	}
 };
-

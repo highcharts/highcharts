@@ -1,6 +1,6 @@
 $(function () {
     var n = 1;
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

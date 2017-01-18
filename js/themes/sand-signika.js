@@ -1,8 +1,15 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Sand-Signika theme for Highcharts JS
  * @author Torstein Honsi
  */
 
+'use strict';
+import Highcharts from '../parts/Globals.js';
+/* global document */
 // Load the fonts
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
@@ -18,12 +25,12 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
 
 
 Highcharts.theme = {
-	colors: ["#f45b5b", "#8085e9", "#8d4654", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
-		"#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+	colors: ['#f45b5b', '#8085e9', '#8d4654', '#7798BF', '#aaeeee', '#ff0066', '#eeaaee',
+		'#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],
 	chart: {
 		backgroundColor: null,
 		style: {
-			fontFamily: "Signika, serif"
+			fontFamily: 'Signika, serif'
 		}
 	},
 	title: {

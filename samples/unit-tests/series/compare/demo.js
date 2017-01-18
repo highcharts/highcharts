@@ -40,4 +40,34 @@ $(function () {
             'Plot close'
         );
     });
+
+    QUnit.test('Compare with one invalid series (#5814)', function (assert) {
+        var chart = Highcharts.stockChart('container', {
+
+            plotOptions: {
+                series: {
+                    compare: 'value'
+                }
+            },
+
+            series: [{
+                data: [1, 2, 3, 4]
+            }, {
+                data: [1, 0, -1, -2]
+            }, {
+                data: [0, 0, 0, 0]
+            }]
+        });
+
+        assert.strictEqual(
+            typeof chart.series[0].points[0].plotY,
+            'number',
+            'First point has position'
+        );
+        assert.strictEqual(
+            chart.series[0].points[0].plotY,
+            chart.series[1].points[0].plotY,
+            'First points overlap'
+        );
+    });
 });

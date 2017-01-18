@@ -1,5 +1,25 @@
-if (win.PointerEvent || win.MSPointerEvent) {
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Pointer.js';
+var addEvent = H.addEvent,
+	charts = H.charts,
+	css = H.css,
+	doc = H.doc,
+	extend = H.extend,
+	noop = H.noop,
+	Pointer = H.Pointer,
+	removeEvent = H.removeEvent,
+	win = H.win,
+	wrap = H.wrap;
 
+if (win.PointerEvent || win.MSPointerEvent) {
+	
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
@@ -22,9 +42,9 @@ if (win.PointerEvent || win.MSPointerEvent) {
 		},
 		translateMSPointer = function (e, method, wktype, func) {
 			var p;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
 				func(e);
-				p = charts[hoverChartIndex].pointer;
+				p = charts[H.hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
@@ -37,7 +57,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	extend(Pointer.prototype, {
+	extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -72,8 +92,8 @@ if (win.PointerEvent || win.MSPointerEvent) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom) { // #4014
 			css(chart.container, {
-				'-ms-touch-action': NONE,
-				'touch-action': NONE
+				'-ms-touch-action': 'none',
+				'touch-action': 'none'
 			});
 		}
 	});

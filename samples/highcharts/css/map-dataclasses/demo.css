@@ -1,4 +1,4 @@
-@import 'https://code.highcharts.com/5/css/highcharts.css';
+@import 'https://code.highcharts.com/css/highcharts.css';
 
 #container {
     height: 500px; 
@@ -12,13 +12,20 @@
     color: gray;
 }
 
+.highcharts-legend .highcharts-point {
+    stroke-width: 0;
+}
+
 /* Data class colors */
 .highcharts-color-0 {
 	fill: rgb(239, 239, 255);
+    stroke: rgb(239, 239, 255);
 }
 .highcharts-color-1 {
-	fill: rgb(120, 148, 186);
+    fill: rgb(120, 148, 186);
+    stroke: rgb(120, 148, 186);
 }
 .highcharts-color-2 {
-	fill: rgb(0, 56, 117);
+    fill: rgb(0, 56, 117);
+    stroke: rgb(0, 56, 117);
 }

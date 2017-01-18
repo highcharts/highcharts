@@ -1,7 +1,27 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+var defined = H.defined,
+	each = H.each,
+	noop = H.noop,
+	seriesTypes = H.seriesTypes;
+
+/**
  * Mixin for maps and heatmaps
  */
-var colorPointMixin = {
+H.colorPointMixin = {
+	/**
+	 * Color points have a value option that determines whether or not it is a null point
+	 */
+	isValid: function () {
+		return this.value !== null;
+	},
+
 	/**
 	 * Set the visibility of a single point
 	 */
@@ -15,16 +35,18 @@ var colorPointMixin = {
 				point[key][method]();
 			}
 		});
+	},
+	setState: function (state) {
+		H.Point.prototype.setState.call(this, state);
+		if (this.graphic) {
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		}
 	}
 };
-var colorSeriesMixin = {
 
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
-	},
+H.colorSeriesMixin = {
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
@@ -33,6 +55,10 @@ var colorSeriesMixin = {
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 
+	/*= if (build.classic) { =*/
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
+	/*= } =*/
+	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
 	 */
@@ -47,11 +73,22 @@ var colorSeriesMixin = {
 				color;
 
 			color = point.options.color ||
-				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
+				(point.isNull ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {
 				point.color = color;
 			}
 		});
+	},
+
+	/**
+	 * Get the color attibutes to apply on the graphic
+	 */
+	colorAttribs: function (point) {
+		var ret = {};
+		if (defined(point.color)) {
+			ret[this.colorProp || 'fill'] = point.color;
+		}
+		return ret;
 	}
 };

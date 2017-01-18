@@ -8,24 +8,28 @@ require_once('functions.php');
 
 @$path = $_GET['path'];
 
+if (isset($_GET['styled'])) {
+	$_SESSION['styled'] = $_GET['styled'] == 'true' ? true : false;
+}
+$styled = @$_SESSION['styled'];
+
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	header('Location: start.php');
 	exit;
 }
 
-$i = (int)$_GET['i'];
-$next = $i + 1;
-$previous = $i - 1;
 
 $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
+
+
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
 
 
 // Get HTML and use dev server
 ob_start();
 @include("$fullpath/demo.html");
-$httpHost = $_SERVER['HTTP_HOST'];
-$httpHost = explode('.', $httpHost);
-$topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
@@ -36,6 +40,23 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
 
+// Highchart 5 preview
+$html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $html);
+
+
+// Get CSS and use dev server
+ob_start();
+@include("$fullpath/demo.css");
+$css = ob_get_clean();
+$css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
+
+// Highchart 5 preview
+$css = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain/", $css);
+if ($styled) {
+	$html = str_replace("code.highcharts.$topDomain/js/", "code.highcharts.$topDomain/", $html); // some to classic
+	$html = str_replace("code.highcharts.$topDomain/", "code.highcharts.$topDomain/js/", $html); // all to styled
+	$css = "@import 'http://code.highcharts.$topDomain/css/highcharts.css';";
+}
 
 
 // Handle themes
@@ -55,7 +76,7 @@ $themes = array(
 
 
 function getResources() {
-	global $fullpath, $topDomain;
+	global $fullpath, $styled, $topDomain;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
@@ -78,7 +99,7 @@ function getResources() {
 				if (preg_match('/\.js$/', $url)) {
 					$html .= "<script src='$url'></script>\n";
 				} elseif (preg_match('/\.css$/', $url)) {
-					$html .= "<link rel='stylesheet' href='$url'></script>\n";
+					$html .= "<link type='text/css' rel='stylesheet' href='$url' />\n";
 				}
 			}
 
@@ -105,8 +126,15 @@ function getResources() {
 
 
 		<script type="text/javascript">
+		/* eslint-disable */
+		var sampleIndex,
+			path = '<?php echo $path ?>',
+			browser = <?php echo json_encode(getBrowser()); ?>,
+			controller = window.parent && window.parent.controller;
 
 		(function () {
+
+
 			if (typeof $ === 'undefined') {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
@@ -129,15 +157,26 @@ function getResources() {
 					return;
 				}
 
+				$('#bisect').click(controller.toggleBisect);
+
 				if (typeof Highcharts !== 'undefined') {
-					$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
+						' / ' + browser.parent);
 				}
 
 				if (window.parent.frames[0]) {
+
+					if (window.parent.history.pushState) {
+						window.parent.history.pushState(null, null, '#view/' + path);
+					}
+					
 					var contentDoc = window.parent.frames[0].document;
 
+					sampleIndex = window.parent.frames[0].samples.indexOf &&
+						window.parent.frames[0].samples.indexOf(path);
+
 					// Highlight the current sample in the left
-					var li = contentDoc.getElementById('li<?php echo $i ?>');
+					var li = contentDoc.getElementById('li' + sampleIndex);
 					if (li) {
 						// previous
 						if (contentDoc.currentLi) {
@@ -154,7 +193,7 @@ function getResources() {
 					}
 
 					// add the next button
-					if (contentDoc.getElementById('i<?php echo $next ?>')) {
+					if (contentDoc.getElementById('i' + (sampleIndex + 1))) {
 						
 						$('#next').click(function() {
 							next();
@@ -204,17 +243,25 @@ function getResources() {
 		}());
 		</script>
 		<script>
-
+		console.clear();
 		function next() {
-			window.location.href =
-				window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
+			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
+			if (a) {
+				window.location.href = a.href;
+			}
 		}
 		function previous() {
-			window.location.href =
-				window.parent.frames[0].document.getElementById('i<?php echo $previous ?>').href;
+			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex - 1));
+			if (a) {
+				window.location.href = a.href;
+			}
 		}
 
-
+		if (jQuery) {
+			jQuery.readyException = function (error) {
+				throw error;
+			};
+		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
 		$(function () {
@@ -227,9 +274,9 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
-							"    type: 'mousedown',\n" +
-							"    pageX: " + e.pageX + ",\n" + 
-							"    pageY: " + e.pageY + "\n" + 
+							"	type: 'mousedown',\n" +
+							"	pageX: " + e.pageX + ",\n" + 
+							"	pageY: " + e.pageY + "\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);
@@ -237,10 +284,10 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-							"    type: 'mousemove',\n" +
-							"    pageX: " + e.pageX + ",\n" + 
-							"    pageY: " + e.pageY + ",\n" +  
-							"    target: chart.container\n" + 
+							"	type: 'mousemove',\n" +
+							"	pageX: " + e.pageX + ",\n" + 
+							"	pageY: " + e.pageY + ",\n" +  
+							"	target: chart.container\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);
@@ -248,10 +295,18 @@ function getResources() {
 				Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
 					if (checkbox.checked) {
 						pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
-							"    type: 'mouseup'\n" + 
+							"	type: 'mouseup'\n" + 
 							"});\n\n";
 					}
 					return proceed.call(this, e);
+				});
+
+				Highcharts.setOptions({
+					exporting: {
+						// Avoid versioning
+						// libURL: 'https://code.highcharts.com/lib'
+						libURL: 'http://rawgithub.local/highcharts/vendor'
+					}
 				});
 			}
 		});
@@ -311,12 +366,41 @@ function getResources() {
 		});
 		<?php endif ?>
 
+		<?php if ($styled) { ?>
+		$(function () {
+			var warnedAboutColors = false;
+			function warnAboutColors () {
+				if (!warnedAboutColors) {
+					console.info('This sample uses getOtions.colors, which is ignored in Styled mode.');
+					warnedAboutColors = true;
+				}
+
+				return undefined;
+			}
+			Highcharts.wrap(Highcharts, 'getOptions', function (proceed) {
+				var options = proceed.call(Highcharts);
+				if (!options.colors) {
+					options.colors = [];
+					for (var i = 0; i < 10; i++) {
+						options.colors = {
+							get 0 () { warnAboutColors(); },
+							get 1 () { warnAboutColors(); },
+							get 2 () { warnAboutColors(); },
+							get 3 () { warnAboutColors(); }
+						};
+					}
+				}
+				return options;
+			});
+		});
+		<?php } ?>
+		
 
 		<?php @include("$fullpath/demo.js"); ?>
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>
@@ -326,7 +410,7 @@ function getResources() {
 
 			<div id="version" style="float:right; color: white"></div>
 
-			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2>
+			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: center">
 				<form method="post" action="" style="display:inline">
@@ -338,20 +422,40 @@ function getResources() {
 					<?php endforeach ?>
 					</select>
 				</form>
-				<a class="button" id="next" disabled="disabled">Next</a>
-				<a class="button" id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</a>
+				<button id="next" disabled="disabled" title="Next (Arrow Right)">Next</button>
+
+				<button id="reload" onclick="location.reload()"
+					title="Reload (Ctrl + Enter)">Reload</button>
+				<?php if (!$styled) { ?>
+				<a class="button" title="View this sample with CSS and no inline styling"
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
+				<?php } else { ?>
+				<a class="button active" title="View this sample with CSS and no inline styling"
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
+				<?php } ?>
 				
 				<a class="button"
-					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0"
+					href="compare-view.php?path=<?php echo $path ?>">Compare
+				</a><a class="button" id="bisect" 
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray">Bisect</a>
+				
+
 				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
-				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
-				<a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					href="view.php?path=<?php echo $path ?>&amp;profile=1"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">Profile
+				</a><a class="button"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
+					href="view.php?path=<?php echo $path ?>&amp;time=1">Time</a>
+				
+
+				<a id="view-source" class="button" href="javascript:;"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
+				</a><a class="button"
+					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
-				<a id="view-source" class="button" href="javascript:;">View source</a>
 				
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
@@ -365,6 +469,14 @@ function getResources() {
 			<?php echo $html ?>
 			</div>
 			<hr/>
+			<?php if (is_file("$fullpath/test-notes.html")) { ?>
+			<section class="test-notes">
+				<header>Test notes</header>
+				<div class="test-notes-content">
+					<?php include("$fullpath/test-notes.html"); ?>
+				</div>
+			</section>
+			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
 			</ul>
@@ -388,7 +500,7 @@ ob_start();
 		</script>
 
 		<style type="text/css">
-			<?php @include("$fullpath/demo.css"); ?>
+			<?php echo $css; ?>
 		</style>
 
 	</head>

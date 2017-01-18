@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: 0,
@@ -21,8 +21,7 @@ $(function () {
                     distance: -50,
                     style: {
                         fontWeight: 'bold',
-                        color: 'white',
-                        textShadow: '0px 1px 2px black'
+                        color: 'white'
                     }
                 },
                 startAngle: -90,

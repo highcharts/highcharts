@@ -1,3 +1,34 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Axis.js';
+import './Chart.js';
+var addEvent = H.addEvent,
+	Axis = H.Axis,
+	Chart = H.Chart,
+	css = H.css,
+	createElement = H.createElement,
+	dateFormat = H.dateFormat,
+	defaultOptions = H.defaultOptions,
+	useUTC = defaultOptions.global.useUTC,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
+	discardElement = H.discardElement,
+	each = H.each,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	HCDate = H.Date,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	pick = H.pick,
+	pInt = H.pInt,
+	splat = H.splat,
+	wrap = H.wrap;
+		
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
@@ -8,30 +39,11 @@ extend(defaultOptions, {
 		// buttons: {Object}
 		// buttonSpacing: 0,
 		buttonTheme: {
+			'stroke-width': 0,
 			width: 28,
 			height: 18,
-			fill: '#f7f7f7',
 			padding: 2,
-			r: 0,
-			'stroke-width': 0,
-			style: {
-				color: '#444',
-				cursor: 'pointer',
-				fontWeight: 'normal'
-			},
-			zIndex: 7, // #484, #852
-			states: {
-				hover: {
-					fill: '#e7e7e7'
-				},
-				select: {
-					fill: '#e7f0f9',
-					style: {
-						color: 'black',
-						fontWeight: 'bold'
-					}
-				}
-			}
+			zIndex: 7 // #484, #852
 		},
 		height: 35, // reserved space for buttons and input
 		inputPosition: {
@@ -40,11 +52,13 @@ extend(defaultOptions, {
 		// inputDateFormat: '%b %e, %Y',
 		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
+		// selected: undefined,
+		/*= if (build.classic) { =*/
 		// inputStyle: {},
 		labelStyle: {
-			color: '#666'
+			color: '${palette.neutralColor60}'
 		}
-		// selected: undefined
+		/*= } =*/
 	}
 });
 defaultOptions.lang = merge(defaultOptions.lang, {
@@ -54,7 +68,8 @@ defaultOptions.lang = merge(defaultOptions.lang, {
 });
 
 /**
- * The object constructor for the range selector
+ * The range selector.
+ * @class
  * @param {Object} chart
  */
 function RangeSelector(chart) {
@@ -72,35 +87,31 @@ RangeSelector.prototype = {
 	 */
 	clickButton: function (i, redraw) {
 		var rangeSelector = this,
-			selected = rangeSelector.selected,
 			chart = rangeSelector.chart,
-			buttons = rangeSelector.buttons,
 			rangeOptions = rangeSelector.buttonOptions[i],
 			baseAxis = chart.xAxis[0],
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis || {},
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
-			now,
+			newMax = baseAxis && Math.round(Math.min(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			type = rangeOptions.type,
 			baseXAxisOptions,
 			range = rangeOptions._range,
 			rangeMin,
-			year,
 			minSetting,
 			rangeSetting,
 			ctx,
+			ytdExtremes,
 			dataGrouping = rangeOptions.dataGrouping;
 
-		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
-				i === rangeSelector.selected) { // same button is clicked twice
+		if (dataMin === null || dataMax === null) { // chart has no data, base series is removed
 			return;
 		}
 
 		// Set the fixed range before range is altered
 		chart.fixedRange = range;
-
+		
 		// Apply dataGrouping associated to button
 		if (dataGrouping) {
 			this.forcedDataGrouping = true;
@@ -128,34 +139,31 @@ RangeSelector.prototype = {
 
 		// Fixed times like minutes, hours, days
 		} else if (range) {
-			newMin = mathMax(newMax - range, dataMin);
-			newMax = mathMin(newMin + range, dataMax);
-
+			newMin = Math.max(newMax - range, dataMin);
+			newMax = Math.min(newMin + range, dataMax);
+		
 		} else if (type === 'ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender
 			// event (below), the baseAxis is defined.
 			if (baseAxis) {
-
 				// When "ytd" is the pre-selected button for the initial view, its calculation
 				// is delayed and rerun in the beforeRender event (below). When the series
 				// are initialized, but before the chart is rendered, we have access to the xData
 				// array (#942).
-				if (dataMax === UNDEFINED) {
+				if (dataMax === undefined) {
 					dataMin = Number.MAX_VALUE;
 					dataMax = Number.MIN_VALUE;
 					each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
-						dataMin = mathMin(xData[0], dataMin);
-						dataMax = mathMax(xData[xData.length - 1], dataMax);
+						dataMin = Math.min(xData[0], dataMin);
+						dataMax = Math.max(xData[xData.length - 1], dataMax);
 					});
 					redraw = false;
 				}
-				now = new Date(dataMax);
-				year = now.getFullYear();
-				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
-				now = now.getTime();
-				newMax = mathMin(dataMax || now, now);
+				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC);
+				newMin = rangeMin = ytdExtremes.min;
+				newMax = ytdExtremes.max;
 
 			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
@@ -169,16 +177,7 @@ RangeSelector.prototype = {
 			newMin = dataMin;
 			newMax = dataMax;
 		}
-
-		// Deselect previous button
-		if (buttons[selected]) {
-			buttons[selected].setState(0);
-		}
-		// Select this button
-		if (buttons[i]) {
-			buttons[i].setState(2);
-			rangeSelector.lastSelected = i;
-		}
+		rangeSelector.setSelected(i);
 
 		// Update the chart
 		if (!baseAxis) {
@@ -189,7 +188,6 @@ RangeSelector.prototype = {
 			baseXAxisOptions.range = range;
 			minSetting = baseXAxisOptions.min;
 			baseXAxisOptions.min = rangeMin;
-			rangeSelector.setSelected(i);
 			addEvent(chart, 'load', function resetMinAndRange() {
 				baseXAxisOptions.range = rangeSetting;
 				baseXAxisOptions.min = minSetting;
@@ -206,7 +204,6 @@ RangeSelector.prototype = {
 					rangeSelectorButton: rangeOptions
 				}
 			);
-			rangeSelector.setSelected(i);
 		}
 	},
 
@@ -249,12 +246,11 @@ RangeSelector.prototype = {
 	 * Initialize the range selector
 	 */
 	init: function (chart) {
-
 		var rangeSelector = this,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
-			blurInputs = rangeSelector.blurInputs = function () {
+			blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
 				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
@@ -272,14 +268,14 @@ RangeSelector.prototype = {
 		chart.extraTopMargin = options.height;
 		rangeSelector.buttonOptions = buttonOptions;
 
-		addEvent(chart.container, 'mousedown', blurInputs);
-		addEvent(chart, 'resize', blurInputs);
+		this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
+		this.unResize = addEvent(chart, 'resize', blurInputs);
 
 		// Extend the buttonOptions with actual range
 		each(buttonOptions, rangeSelector.computeButtonRange);
 
 		// zoomed range based on a pre-selected button index
-		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
+		if (selectedOption !== undefined && buttonOptions[selectedOption]) {
 			this.clickButton(selectedOption, false);
 		}
 
@@ -292,70 +288,89 @@ RangeSelector.prototype = {
 					this.setDataGrouping(false, false);
 				}
 			});
-			// Normalize the pressed button whenever a new range is selected
-			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
-				rangeSelector.updateButtonStates(true);
-			});
 		});
 	},
 
 	/**
 	 * Dynamically update the range selector buttons after a new range has been set
 	 */
-	updateButtonStates: function (updating) {
+	updateButtonStates: function () {
 		var rangeSelector = this,
 			chart = this.chart,
 			baseAxis = chart.xAxis[0],
+			actualRange = Math.round(baseAxis.max - baseAxis.min),
+			hasNoData = !baseAxis.hasVisibleSeries,
+			day = 24 * 36e5, // A single day in milliseconds
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
+			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC),
+			ytdMin = ytdExtremes.min,
+			ytdMax = ytdExtremes.max,
 			selected = rangeSelector.selected,
+			selectedExists = isNumber(selected),
 			allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
 			buttons = rangeSelector.buttons;
 
-		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
-			if (buttons[selected]) {
-				buttons[selected].setState(0);
-			}
-			rangeSelector.setSelected(null);
-		}
-
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			var actualRange = mathRound(baseAxis.max - baseAxis.min),
-				range = rangeOptions._range,
+			var range = rangeOptions._range,
 				type = rangeOptions.type,
 				count = rangeOptions.count || 1,
+				button = buttons[i],
+				state = 0,
+				disable,
+				select,
+				isSelected = i === selected,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
 				// Disable buttons where the range is smaller than the minimum range
 				isTooSmallRange = range < baseAxis.minRange,
+				// Do not select the YTD button if not explicitly told so
+				isYTDButNotSelected = false,
 				// Disable the All button if we're already showing all
-				isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin &&
-					buttons[i].state !== 2,
-				// Set a button on export
-				isSelectedForExport = chart.renderer.forExport && i === selected,
-
-				isSameRange = range === actualRange,
-
-				hasNoData = !baseAxis.hasVisibleSeries;
-
+				isAllButAlreadyShowingAll = false,
+				isSameRange = range === actualRange;
 			// Months and years have a variable range so we check the extremes
-			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) &&
-					(actualRange <= { month: 31, year: 366 }[type] * 24 * 36e5 * count)) {
+			if (
+				(type === 'month' || type === 'year') &&
+				(actualRange >= { month: 28, year: 365 }[type] * day * count) &&
+				(actualRange <= { month: 31, year: 366 }[type] * day * count)
+			) {
 				isSameRange = true;
+			} else if (type === 'ytd') {
+				isSameRange = (ytdMax - ytdMin) === actualRange;
+				isYTDButNotSelected = !isSelected;
+			} else if (type === 'all') {
+				isSameRange = baseAxis.max - baseAxis.min >= dataMax - dataMin;
+				isAllButAlreadyShowingAll = !isSelected && selectedExists && isSameRange;
 			}
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (isSelectedForExport || (isSameRange && i !== selected) && i === rangeSelector.lastSelected) {
-				rangeSelector.setSelected(i);
-				buttons[i].setState(2);
+			disable = (
+				!allButtonsEnabled &&
+				(
+					isTooGreatRange ||
+					isTooSmallRange ||
+					isAllButAlreadyShowingAll ||
+					hasNoData
+				)
+			);
+			select = (
+				(isSelected && isSameRange) ||
+				(isSameRange && !selectedExists && !isYTDButNotSelected)
+			);
 
-			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || hasNoData)) {
-				buttons[i].setState(3);
+			if (disable) {
+				state = 3;
+			} else if (select) {
+				selectedExists = true; // Only one button can be selected
+				state = 2;
+			}
 
-			} else if (buttons[i].state === 3) {
-				buttons[i].setState(0);
+			// If state has changed, update the button
+			if (button.state !== state) {
+				button.setState(state);
 			}
 		});
 	},
@@ -392,18 +407,20 @@ RangeSelector.prototype = {
 	 * @param {Number} time
 	 */
 	setInputValue: function (name, time) {
-		var options = this.chart.options.rangeSelector;
+		var options = this.chart.options.rangeSelector,
+			input = this[name + 'Input'];
 
 		if (defined(time)) {
-			this[name + 'Input'].HCTime = time;
+			input.previousValue = input.HCTime;
+			input.HCTime = time;
 		}
 
-		this[name + 'Input'].value = dateFormat(
+		input.value = dateFormat(
 			options.inputEditDateFormat || '%Y-%m-%d',
-			this[name + 'Input'].HCTime
+			input.HCTime
 		);
 		this[name + 'DateBox'].attr({
-			text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+			text: dateFormat(options.inputDateFormat || '%b %e, %Y', input.HCTime)
 		});
 	},
 
@@ -412,10 +429,10 @@ RangeSelector.prototype = {
 			dateBox = this[name + 'DateBox'];
 
 		css(this[name + 'Input'], {
-			left: (inputGroup.translateX + dateBox.x) + PX,
-			top: inputGroup.translateY + PX,
-			width: (dateBox.width - 2) + PX,
-			height: (dateBox.height - 2) + PX,
+			left: (inputGroup.translateX + dateBox.x) + 'px',
+			top: inputGroup.translateY + 'px',
+			width: (dateBox.width - 2) + 'px',
+			height: (dateBox.height - 2) + 'px',
 			border: '2px solid silver'
 		});
 	},
@@ -436,7 +453,7 @@ RangeSelector.prototype = {
 	drawInput: function (name) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			chartStyle = chart.renderer.style,
+			chartStyle = chart.renderer.style || {},
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
 			lang = defaultOptions.lang,
@@ -450,9 +467,10 @@ RangeSelector.prototype = {
 		function updateExtremes() {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
-				xAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chart.xAxis[0],
-				dataMin = xAxis.dataMin,
-				dataMax = xAxis.dataMax;
+				chartAxis = chart.xAxis[0],
+				dataAxis = chart.scroller && chart.scroller.xAxis ? chart.scroller.xAxis : chartAxis,
+				dataMin = dataAxis.dataMin,
+				dataMax = dataAxis.dataMax;
 			if (value !== input.previousValue) {
 				input.previousValue = value;
 				// If the value isn't parsed directly to a value by the browser's Date.parse method,
@@ -465,7 +483,7 @@ RangeSelector.prototype = {
 				if (isNumber(value)) {
 
 					// Correct for timezone offset (#433)
-					if (!defaultOptions.global.useUTC) {
+					if (!useUTC) {
 						value = value + new Date().getTimezoneOffset() * 60 * 1000;
 					}
 
@@ -473,25 +491,25 @@ RangeSelector.prototype = {
 					// actual data extreme (#2438).
 					if (isMin) {
 						if (value > rangeSelector.maxInput.HCTime) {
-							value = UNDEFINED;
+							value = undefined;
 						} else if (value < dataMin) {
 							value = dataMin;
 						}
 					} else {
 						if (value < rangeSelector.minInput.HCTime) {
-							value = UNDEFINED;
+							value = undefined;
 						} else if (value > dataMax) {
 							value = dataMax;
 						}
 					}
 
 					// Set the extremes
-					if (value !== UNDEFINED) {
-						chart.xAxis[0].setExtremes(
-							isMin ? value : xAxis.min,
-							isMin ? xAxis.max : value,
-							UNDEFINED,
-							UNDEFINED,
+					if (value !== undefined) {
+						chartAxis.setExtremes(
+							isMin ? value : chartAxis.min,
+							isMin ? chartAxis.max : value,
+							undefined,
+							undefined,
 							{ trigger: 'rangeSelectorInput' }
 						);
 					}
@@ -501,27 +519,25 @@ RangeSelector.prototype = {
 
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
+			.addClass('highcharts-range-label')
 			.attr({
 				padding: 2
 			})
-			.css(merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
 		inputGroup.offset += label.width + 5;
 
 		// Create an SVG label that shows updated date ranges and and records click events that
 		// bring in the HTML input.
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
+			.addClass('highcharts-range-input')
 			.attr({
 				padding: 2,
 				width: options.inputBoxWidth || 90,
 				height: options.inputBoxHeight || 17,
-				stroke: options.inputBoxBorderColor || 'silver',
-				'stroke-width': 1
+				stroke: options.inputBoxBorderColor || '${palette.neutralColor20}',
+				'stroke-width': 1,
+				'text-align': 'center'
 			})
-			.css(merge({
-				textAlign: 'center',
-				color: '#444'
-			}, chartStyle, options.inputStyle))
 			.on('click', function () {
 				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
@@ -534,10 +550,22 @@ RangeSelector.prototype = {
 		// when focused.
 		this[name + 'Input'] = input = createElement('input', {
 			name: name,
-			className: PREFIX + 'range-selector',
+			className: 'highcharts-range-selector',
 			type: 'text'
-		}, extend({
-			position: ABSOLUTE,
+		}, {
+			top: chart.plotTop + 'px' // prevent jump on focus in Firefox
+		}, div);
+
+		/*= if (build.classic) { =*/
+		// Styles
+		label.css(merge(chartStyle, options.labelStyle));
+
+		dateBox.css(merge({
+			color: '${palette.neutralColor80}'
+		}, chartStyle, options.inputStyle));
+
+		css(input, extend({
+			position: 'absolute',
 			border: 0,
 			width: '1px', // Chrome needs a pixel to see it
 			height: '1px',
@@ -545,9 +573,9 @@ RangeSelector.prototype = {
 			textAlign: 'center',
 			fontSize: chartStyle.fontSize,
 			fontFamily: chartStyle.fontFamily,
-			left: '-9em', // #4798
-			top: chart.plotTop + PX // prevent jump on focus in Firefox
-		}, options.inputStyle), div);
+			left: '-9em' // #4798
+		}, options.inputStyle));
+		/*= } =*/
 
 		// Blow up the input box
 		input.onfocus = function () {
@@ -580,6 +608,27 @@ RangeSelector.prototype = {
 		return {
 			buttonTop: buttonTop,
 			inputTop: buttonTop - 10
+		};
+	},
+	/**
+	 * Get the extremes of YTD. 
+	 * Will choose dataMax if its value is lower than the current timestamp.
+	 * Will choose dataMin if its value is higher than the timestamp for
+	 * 	the start of current year.
+	 * @param  {number} dataMax
+	 * @param  {number} dataMin
+	 * @return {object} Returns min and max for the YTD
+	 */
+	getYTDExtremes: function (dataMax, dataMin, useUTC) {
+		var min,
+			now = new HCDate(dataMax),
+			year = now[HCDate.hcGetFullYear](),
+			startOfYear = useUTC ? HCDate.UTC(year, 0, 1) : +new HCDate(year, 0, 1); // eslint-disable-line new-cap
+		min = Math.max(dataMin || 0, startOfYear);
+		now = now.getTime();
+		return {
+			max: Math.min(dataMax || now, now),
+			min: min
 		};
 	},
 
@@ -615,6 +664,9 @@ RangeSelector.prototype = {
 			buttonBBox,
 			rendered = rangeSelector.rendered;
 
+		if (options.enabled === false) {
+			return;
+		}
 
 		// create the elements
 		if (!rendered) {
@@ -642,20 +694,14 @@ RangeSelector.prototype = {
 						states && states.select,
 						states && states.disabled
 					)
-					.css({
-						textAlign: 'center'
+					.attr({
+						'text-align': 'center'
 					})
 					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
-
-				if (rangeSelector.selected === i) {
-					buttons[i].setState(2);
-				}
 			});
-
-			rangeSelector.updateButtonStates();
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
@@ -677,6 +723,7 @@ RangeSelector.prototype = {
 				rangeSelector.drawInput('max');
 			}
 		}
+		rangeSelector.updateButtonStates();
 
 		// Set or update the group position
 		buttonGroup[rendered ? 'animate' : 'attr']({
@@ -697,7 +744,7 @@ RangeSelector.prototype = {
 			// Hide if overlapping - inputEnabled is null or undefined
 			if (!defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
-				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+				inputGroup[inputGroup.alignAttr.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
 			}
 
 			// Set or reset the input values
@@ -709,17 +756,25 @@ RangeSelector.prototype = {
 	},
 
 	/**
+	 * Update the range selector with new options
+	 */
+	update: function (options) {
+		var chart = this.chart;
+		merge(true, chart.options.rangeSelector, options);
+		this.destroy();
+		this.init(chart);
+	},
+
+	/**
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
 		var minInput = this.minInput,
 			maxInput = this.maxInput,
-			chart = this.chart,
-			blurInputs = this.blurInputs,
 			key;
 
-		removeEvent(chart.container, 'mousedown', blurInputs);
-		removeEvent(chart, 'resize', blurInputs);
+		this.unMouseDown();
+		this.unResize();
 
 		// Destroy elements in collections
 		destroyObjectProperties(this.buttons);
@@ -741,7 +796,9 @@ RangeSelector.prototype = {
 					discardElement(this[key]);
 				}
 			}
-			this[key] = null;
+			if (this[key] !== RangeSelector.prototype[key]) {
+				this[key] = null;
+			}
 		}
 	}
 };
@@ -751,8 +808,8 @@ RangeSelector.prototype = {
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
-		newMin = pick(fixedMin, this.translate(pxMin, true)),
-		newMax = pick(fixedMax, this.translate(pxMax, true)),
+		newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)),
+		newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)),
 		changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
 	// If the difference between the fixed range and the actual requested range is
@@ -775,6 +832,14 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	};
 };
 
+/**
+ * Get the axis min value based on the range option and the current max. For
+ * stock charts this is extended via the {@link RangeSelector} so that if the
+ * selected range is a multiple of months or years, it is compensated for
+ * various month lengths.
+ * 
+ * @return {number} The new minimum value.
+ */
 Axis.prototype.minFromRange = function () {
 	var rangeOptions = this.range,
 		type = rangeOptions.type,
@@ -791,10 +856,15 @@ Axis.prototype.minFromRange = function () {
 		};
 
 	if (isNumber(rangeOptions)) {
-		min = this.max - rangeOptions;
+		min = max - rangeOptions;
 		range = rangeOptions;
 	} else {
 		min = max + getTrueRange(max, -rangeOptions.count);
+
+		// Let the fixedRange reflect initial settings (#5930)
+		if (this.chart) {
+			this.chart.fixedRange = max - min;
+		}
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
@@ -806,7 +876,7 @@ Axis.prototype.minFromRange = function () {
 		if (range === undefined) { // #4501
 			range = getTrueRange(min, rangeOptions.count);
 		}
-		this.newMax = mathMin(min + range, this.dataMax);
+		this.newMax = Math.min(min + range, this.dataMax);
 	}
 	if (!isNumber(max)) {
 		min = undefined;
@@ -828,8 +898,47 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 });
 
+Chart.prototype.callbacks.push(function (chart) {
+	var extremes,
+		rangeSelector = chart.rangeSelector,
+		unbindRender,
+		unbindSetExtremes;
 
-Highcharts.RangeSelector = RangeSelector;
+	function renderRangeSelector() {
+		extremes = chart.xAxis[0].getExtremes();
+		if (isNumber(extremes.min)) {
+			rangeSelector.render(extremes.min, extremes.max);
+		}
+	}
+
+	if (rangeSelector) {
+		// redraw the scroller on setExtremes
+		unbindSetExtremes = addEvent(
+			chart.xAxis[0],
+			'afterSetExtremes',
+			function (e) {
+				rangeSelector.render(e.min, e.max);
+			}
+		);
+
+		// redraw the scroller chart resize
+		unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
+
+		// do it now
+		renderRangeSelector();
+	}
+
+	// Remove resize/afterSetExtremes at chart destroy
+	addEvent(chart, 'destroy', function destroyEvents() {
+		if (rangeSelector) {
+			unbindRender();
+			unbindSetExtremes();
+		}
+	});
+});
+
+
+H.RangeSelector = RangeSelector;
 
 /* ****************************************************************************
  * End Range Selector code													*

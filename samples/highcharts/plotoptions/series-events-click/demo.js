@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -9,10 +9,13 @@ $(function () {
                 cursor: 'pointer',
                 events: {
                     click: function (event) {
-                        alert(this.name + ' clicked\n' +
-                              'Alt: ' + event.altKey + '\n' +
-                              'Control: ' + event.ctrlKey + '\n' +
-                              'Shift: ' + event.shiftKey + '\n');
+                        alert(
+                            this.name + ' clicked\n' +
+                            'Alt: ' + event.altKey + '\n' +
+                            'Control: ' + event.ctrlKey + '\n' +
+                            'Meta: ' + event.metaKey + '\n' +
+                            'Shift: ' + event.shiftKey
+                        );
                     }
                 }
             }

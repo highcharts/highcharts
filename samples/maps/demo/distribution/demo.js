@@ -955,7 +955,7 @@ $(function () {
     }];
 
     // Instanciate the map
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
         title: {
             text: 'Habitat of the Rusty Blackbird'
         },

@@ -1,17 +1,40 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Chart.js';
+import '../parts/Tick.js';
+var ZAxis,
+
+	Axis = H.Axis,
+	Chart = H.Chart,
+	each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	splat = H.splat,
+	Tick = H.Tick,
+	wrap = H.wrap;
 /***
 	EXTENSION TO THE AXIS
 ***/
-Highcharts.wrap(Highcharts.Axis.prototype, 'setOptions', function (proceed, userOptions) {
+wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	var options;
 	proceed.call(this, userOptions);
 	if (this.chart.is3d()) {
 		options = this.options;
-		options.tickWidth = Highcharts.pick(options.tickWidth, 0);
-		options.gridLineWidth = Highcharts.pick(options.gridLineWidth, 1);
+		options.tickWidth = pick(options.tickWidth, 0);
+		options.gridLineWidth = pick(options.gridLineWidth, 1);
 	}
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -47,12 +70,16 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.bottomFrame) {
 			this.bottomFrame = renderer.cuboid(bottomShape).attr({
-				fill: fbottom.color,
-				zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
-			})
-			.css({
-				stroke: fbottom.color
+				'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
+				'zIndex': (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.bottomFrame.attr({
+				fill: fbottom.color || 'none',
+				stroke: fbottom.color || 'none'
+			});
+			/*= } =*/
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -69,11 +96,16 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({
-				fill: fback.color,
+				'class': 'highcharts-3d-frame highcharts-3d-frame-back',
 				zIndex: -3
-			}).css({
-				stroke: fback.color
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.backFrame.attr({
+				fill: fback.color || 'none',
+				stroke: fback.color || 'none'
+			});
+			/*= } =*/
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -88,18 +120,24 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({
-				fill: fside.color,
+				'class': 'highcharts-3d-frame highcharts-3d-frame-side',
 				zIndex: -2
-			}).css({
-				stroke: fside.color
 			}).add();
+
+			/*= if (build.classic) { =*/
+			this.sideFrame.attr({
+				fill: fside.color || 'none',
+				stroke: fside.color || 'none'
+			});
+			/*= } =*/
+
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
 	}
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed) {
+wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -132,11 +170,11 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 });
 
 // Do not draw axislines in 3D
-Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed) {
+wrap(Axis.prototype, 'getLinePath', function (proceed) {
 	return this.chart.is3d() ? [] : proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed) {
+wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
@@ -174,8 +212,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	EXTENSION TO THE TICKS
 ***/
 
-Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));
+wrap(Tick.prototype, 'getMarkPath', function (proceed) {
+	var path = proceed.apply(this, [].slice.call(arguments, 1));	
 
 	// Do not do this if the chart is not 3D
 	if (!this.axis.chart.is3d()) {
@@ -195,7 +233,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	return path;
 });
 
-Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -205,7 +243,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	return pos;
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
+H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 	var is3d = this.chart.is3d(),
 		pos,
 		axisTitleMargin;
@@ -230,7 +268,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed
 	return pos;
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
+wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
 	var args = arguments;
 	if (this.chart.is3d()) {
 		if (args[2]) {
@@ -243,11 +281,20 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
 	proceed.apply(this, [].slice.call(args, 1));
 });
 
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	each(['backFrame', 'bottomFrame', 'sideFrame'], function (prop) {
+		if (this[prop]) {
+			this[prop] = this[prop].destroy();
+		}
+	}, this);
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
 /***
     Z-AXIS
 ***/
 
-Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
+Axis.prototype.swapZ = function (p, insidePlotArea) {
 	if (this.isZAxis) {
 		var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
 		var chart = this.chart;
@@ -260,22 +307,22 @@ Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
 	return p;
 };
 
-var ZAxis = Highcharts.ZAxis = function () {
+ZAxis = H.ZAxis = function () {
 	this.isZAxis = true;
 	this.init.apply(this, arguments);
 };
-Highcharts.extend(ZAxis.prototype, Highcharts.Axis.prototype);
-Highcharts.extend(ZAxis.prototype, {
+extend(ZAxis.prototype, Axis.prototype);
+extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
-		userOptions = Highcharts.merge({
+		userOptions = merge({
 			offset: 0,
 			lineWidth: 0
 		}, userOptions);
-		Highcharts.Axis.prototype.setOptions.call(this, userOptions);
+		Axis.prototype.setOptions.call(this, userOptions);
 		this.coll = 'zAxis';
 	},
 	setAxisSize: function () {
-		Highcharts.Axis.prototype.setAxisSize.call(this);
+		Axis.prototype.setAxisSize.call(this);
 		this.width = this.len = this.chart.options.chart.options3d.depth;
 		this.right = this.chart.chartWidth - this.width - this.left;
 	},
@@ -293,7 +340,7 @@ Highcharts.extend(ZAxis.prototype, {
 		}
 
 		// loop through this axis' series
-		Highcharts.each(axis.series, function (series) {
+		each(axis.series, function (series) {
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -322,10 +369,10 @@ Highcharts.extend(ZAxis.prototype, {
 /**
 * Extend the chart getAxes method to also get the color axis
 */
-Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
+wrap(Chart.prototype, 'getAxes', function (proceed) {
 	var chart = this,
 		options = this.options,
-		zAxisOptions = options.zAxis = Highcharts.splat(options.zAxis || {});
+		zAxisOptions = options.zAxis = splat(options.zAxis || {});
 
 	proceed.call(this);
 
@@ -333,7 +380,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
 		return;
 	}
 	this.zAxis = [];
-	Highcharts.each(zAxisOptions, function (axisOptions, i) {
+	each(zAxisOptions, function (axisOptions, i) {
 		axisOptions.index = i;
 		axisOptions.isX = true; //Z-Axis is shown horizontally, so it's kind of a X-Axis
 		var zAxis = new ZAxis(chart, axisOptions);

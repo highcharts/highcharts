@@ -1,8 +1,22 @@
-/***
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+var perspective = H.perspective,
+	pick = H.pick,
+	Point = H.Point,
+	seriesTypes = H.seriesTypes,
+	wrap = H.wrap;
+
+/*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
+wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -12,7 +26,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]),
+		zAxis = pick(series.zAxis, chart.options.zAxis[0]),
 		rawPoints = [],
 		rawPoint,
 		projectedPoints,
@@ -47,13 +61,13 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		rawPoint.plotX = projectedPoint.x;
 		rawPoint.plotY = projectedPoint.y;
 		rawPoint.plotZ = projectedPoint.z;
-
-
+	
 	}
 
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+
+wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 	if (chart.is3d()) {
 		// add a third coordinate
 		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
@@ -77,4 +91,25 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 		}
 	}
 	return result;
+});
+
+/**
+ * Updating zIndex for every point - based on the distance from point to camera
+ */
+wrap(seriesTypes.scatter.prototype, 'pointAttribs', function (proceed, point) {
+	var pointOptions = proceed.apply(this, [].slice.call(arguments, 1));
+	if (this.chart.is3d() && point) {
+		pointOptions.zIndex = H.pointCameraDistance(point, this.chart);
+	}
+	return pointOptions;
+});
+
+
+wrap(Point.prototype, 'applyOptions', function (proceed) {
+	var point = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.series.chart.is3d() && point.z === undefined) {
+		point.z = 0;
+	}
+	return point;
 });

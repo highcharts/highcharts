@@ -1,10 +1,16 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ * 
  * Skies theme for Highcharts JS
  * @author Torstein Honsi
  */
 
+'use strict';
+import Highcharts from '../parts/Globals.js';
 Highcharts.theme = {
-	colors: ["#514F78", "#42A07B", "#9B5E4A", "#72727F", "#1F949A", "#82914E", "#86777F", "#42A07B"],
+	colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A', '#82914E', '#86777F', '#42A07B'],
 	chart: {
 		className: 'skies',
 		borderWidth: 0,
@@ -86,4 +92,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-var highchartsOptions = Highcharts.setOptions(Highcharts.theme);
+Highcharts.setOptions(Highcharts.theme);

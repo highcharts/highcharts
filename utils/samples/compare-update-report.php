@@ -6,7 +6,7 @@ $diff = isset($_GET['diff']) ? $_GET['diff'] : @$difference['dissimilarityIndex'
 $rightcommit = @$_GET['rightcommit'];
 $commit = @$_GET['commit'];
 
-$reportFile = 'temp/compare.json';
+$reportFile = compareJSON();
 // Commit-specific reports go in a separate file
 if ($rightcommit) {
 	$reportFile = 'temp/compare-' . $rightcommit . '.json';
@@ -25,6 +25,9 @@ if (isset($compare->$path->$key) && isset($difference)) {
 */
 if (isset($diff)) {
 	@$compare->$path->$key = $diff;
+}
+if (!is_dir('temp')) {
+	mkdir('temp');
 }
 file_put_contents($reportFile, json_encode($compare, JSON_PRETTY_PRINT));
 ?>

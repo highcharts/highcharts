@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'area'
         },
@@ -27,7 +27,7 @@ $(function () {
             }
         },
         tooltip: {
-            shared: true,
+            split: true,
             valueSuffix: ' millions'
         },
         plotOptions: {

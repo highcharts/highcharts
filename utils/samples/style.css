@@ -24,7 +24,6 @@ body.page h1 {
 	box-shadow: 0px 0px 8px #888;
 }
 .top-bar h2 {
-	height: 0;
 	overflow: visible;
 }
 #source-box {
@@ -131,6 +130,18 @@ body.single-col #report, body.single-col #svg, body.single-col #preview {
 }
 body.manual #comment-placeholder {
 	vertical-align: top;
+}
+
+.test-notes {
+	margin: 1em;
+	max-width: 600px;
+}
+.test-notes header {
+	font-weight: bold;
+	margin: 0.5em 0;
+}
+.test-notes div {
+	font-size: 0.9em;
 }
 
 .nightly {

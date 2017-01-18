@@ -7,7 +7,7 @@ $(function () {
     });
 
     // Create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
@@ -61,11 +61,11 @@ $(function () {
                     r: 0,
                     states: {
                         hover: {
-                            fill: '#bada55'
+                            fill: '#a4edba'
                         },
                         select: {
                             stroke: '#039',
-                            fill: '#bada55'
+                            fill: '#a4edba'
                         }
                     }
                 }

@@ -1,0 +1,33 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#container {
+	height: 400px;
+	max-width: 800px;
+	min-width: 320px;
+	margin: 0 auto;
+}
+
+.highcharts-legend .highcharts-point {
+    stroke-width: 0;
+}
+
+
+/* Pattern presentational properties */
+#hatch-left path {
+	stroke: #7cb5ec;
+	stroke-width: 1px;
+}
+#grid rect {
+	fill: #ffffff;
+}
+#grid path {
+	stroke: #434348;
+	stroke-width: 1px;
+}
+
+.highcharts-series-0 .highcharts-area, .highcharts-legend .highcharts-series-0 .highcharts-point {
+	fill: url(#hatch-left);
+}
+.highcharts-series-1 .highcharts-point {
+	fill: url(#grid);
+}

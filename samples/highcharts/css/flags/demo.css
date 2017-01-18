@@ -1,4 +1,4 @@
-@import 'https://code.highcharts.com/5/css/highcharts.css';
+@import 'https://code.highcharts.com/css/highcharts.css';
 
 .highcharts-flags-series .highcharts-point {
 	transition: fill 250ms;
@@ -6,13 +6,13 @@
 .highcharts-flags-series .highcharts-point text {
 	transition: fill 250ms;
 }
-.darker-flags .highcharts-point {
+.darker-flags .highcharts-point path {
 	fill: #395C84;
 }
 .darker-flags .highcharts-point text {
 	fill: white;
 }
-.circle-flags .highcharts-point-hover {
+.circle-flags .highcharts-point-hover path {
 	fill: #395C84;
 }
 .circle-flags .highcharts-point-hover text {

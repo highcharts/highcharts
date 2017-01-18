@@ -1,14 +1,22 @@
 /**
- * Set the default options for spline
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.spline = merge(defaultSeriesOptions);
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Options.js';
+import './Series.js';
+var pick = H.pick,
+	seriesType = H.seriesType;
 
 /**
- * SplineSeries object
+ * Spline series type.
+ * @constructor seriesTypes.spline
+ * @extends {Series}
  */
-var SplineSeries = extendClass(Series, {
-	type: 'spline',
-
+seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 	/**
 	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */
@@ -54,17 +62,17 @@ var SplineSeries = extendClass(Series, {
 			// to prevent false extremes, check that control points are between
 			// neighbouring points' y values
 			if (leftContY > lastY && leftContY > plotY) {
-				leftContY = mathMax(lastY, plotY);
+				leftContY = Math.max(lastY, plotY);
 				rightContY = 2 * plotY - leftContY; // mirror of left control point
 			} else if (leftContY < lastY && leftContY < plotY) {
-				leftContY = mathMin(lastY, plotY);
+				leftContY = Math.min(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
 			}
 			if (rightContY > nextY && rightContY > plotY) {
-				rightContY = mathMax(nextY, plotY);
+				rightContY = Math.max(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			} else if (rightContY < nextY && rightContY < plotY) {
-				rightContY = mathMin(nextY, plotY);
+				rightContY = Math.min(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			}
 
@@ -127,5 +135,3 @@ var SplineSeries = extendClass(Series, {
 		return ret;
 	}
 });
-seriesTypes.spline = SplineSeries;
-

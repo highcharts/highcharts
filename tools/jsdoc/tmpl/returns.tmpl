@@ -1,0 +1,12 @@
+<?js
+var data = obj;
+if (data && data.description) {
+?>
+<div class="param-desc method-returns">
+
+	<?js if (data && data.type && data.type.names) {?>
+	        <?js= this.partial('type.tmpl', data.type.names) ?>.
+	<?js } ?>
+    <?js= description ?>
+</div>
+<?js } ?>

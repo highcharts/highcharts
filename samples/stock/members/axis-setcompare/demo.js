@@ -1,14 +1,15 @@
 $(function () {
     var seriesOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'];
+        names = ['MSFT', 'AAPL', 'GOOG'],
+        chart;
 
     /**
      * Create the chart
      */
     function createChart() {
 
-        $('#container').highcharts('StockChart', {
+        chart = Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 4
@@ -17,7 +18,9 @@ $(function () {
             yAxis: {
                 labels: {
                     formatter: function () {
-                        return (this.value > 0 ? ' + ' : '') + this.value;
+                        var compare = this.axis.series[0].userOptions.compare || 'none';
+                        return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
+                            { 'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
                     }
                 }
             },
@@ -60,8 +63,7 @@ $(function () {
 
     // buttons behaviour
     $('button.compare').click(function () {
-        var chart = $('#container').highcharts(),
-            compare = $(this).data().compare;
+        var compare = $(this).data().compare;
         chart.yAxis[0].setCompare(compare);
 
     });

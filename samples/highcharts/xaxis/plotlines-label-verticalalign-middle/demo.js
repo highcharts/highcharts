@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         xAxis: {
             tickInterval: 24 * 3600 * 1000, // one day
             type: 'datetime',

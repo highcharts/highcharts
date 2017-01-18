@@ -1,5 +1,21 @@
-
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
+var Chart = H.Chart,
+	each = H.each,
+	extend = H.extend,
+	format = H.format,
+	merge = H.merge,
+	win = H.win,
+	wrap = H.wrap;
+/** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
 function pointInPolygon(point, polygon) {
@@ -27,7 +43,7 @@ function pointInPolygon(point, polygon) {
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (win.proj4 === undefined) {
-		error(21);
+		H.error(21);
 		return {
 			x: 0,
 			y: null
@@ -50,7 +66,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
 	if (win.proj4 === undefined) {
-		error(21);
+		H.error(21);
 		return;
 	}
 
@@ -74,7 +90,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 		transform;
 
 	if (!transforms) {
-		error(22);
+		H.error(22);
 		return;
 	}
 
@@ -94,7 +110,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		coords;
 
 	if (!transforms) {
-		error(22);
+		H.error(22);
 		return {
 			x: 0,
 			y: null
@@ -116,7 +132,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType, series) {
+H.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
@@ -187,7 +203,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 
 	});
 
-	// Create a credits text that includes map source, to be picked up in Chart.showCredits
+	// Create a credits text that includes map source, to be picked up in Chart.addCredits
 	if (series && geojson.copyrightShort) {
 		series.chart.mapCredits = format(series.chart.options.credits.mapText, { geojson: geojson });
 		series.chart.mapCreditsFull = format(series.chart.options.credits.mapTextFull, { geojson: geojson });
@@ -197,18 +213,18 @@ Highcharts.geojson = function (geojson, hType, series) {
 };
 
 /**
- * Override showCredits to include map source by default
+ * Override addCredits to include map source by default
  */
-wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+wrap(Chart.prototype, 'addCredits', function (proceed, credits) {
+
+	credits = merge(true, this.options.credits, credits);
 
 	// Disable credits link if map credits enabled. This to allow for in-text anchors.
 	if (this.mapCredits) {
 		credits.href = null;
 	}
 
-	proceed.call(this, Highcharts.merge(credits, {
-		text: credits.text + (this.mapCredits || '') // Add map credits to credits text
-	}));
+	proceed.call(this, credits);
 
 	// Add full map credits to hover
 	if (this.credits && this.mapCreditsFull) {

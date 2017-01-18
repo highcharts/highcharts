@@ -1,7 +1,7 @@
 $(function () {
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    var chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Select point by id'
@@ -66,13 +66,13 @@ $(function () {
             },
             states: {
                 select: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             }
         }]
     });
 
     $('#select').click(function () {
-        $('#container').highcharts().get('nt').select();
+        chart.get('nt').select();
     });
 });

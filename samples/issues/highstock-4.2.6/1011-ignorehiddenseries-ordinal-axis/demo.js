@@ -1,34 +1,34 @@
 $(function () {
-  QUnit.test('Artifacts in top left corner when usign ordinal axis and ignoreHiddenSeries.', function (assert) {
-    var chart = new Highcharts.StockChart({
-        chart: {
-          renderTo: 'container',
-          ignoreHiddenSeries: false
-        },
-        rangeSelector: {
-          selected: 1
-        },
-        legend: {
-          enabled: true
-        },
-        series: [{
-          data: GOOGL
-        }, {
-          data: MSFT
-        }]
-      }),
-      initialTicks = chart.xAxis[0].tickPositions.slice(),
-      hiddenTicks;
+    QUnit.test('Artifacts in top left corner when usign ordinal axis and ignoreHiddenSeries.', function (assert) {
+        var chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'container',
+                    ignoreHiddenSeries: false
+                },
+                rangeSelector: {
+                    selected: 1
+                },
+                legend: {
+                    enabled: true
+                },
+                series: [{
+                    data: GOOGL
+                }, {
+                    data: MSFT
+                }]
+            }),
+            initialTicks = chart.xAxis[0].tickPositions.slice(),
+            hiddenTicks;
 
-    chart.series[0].hide();
-    chart.series[1].hide();
+        chart.series[0].hide();
+        chart.series[1].hide();
 
-    hiddenTicks = chart.xAxis[0].tickPositions;
+        hiddenTicks = chart.xAxis[0].tickPositions;
 
-    assert.deepEqual(
+        assert.deepEqual(
       initialTicks,
       hiddenTicks,
       'The same tick positions.'
     );
-  });
+    });
 });

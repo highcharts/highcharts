@@ -6,7 +6,7 @@ $(function () {
         chartWidth = origChartWidth,
         chartHeight = origChartHeight;
 
-    $container.highcharts({
+    chart = Highcharts.chart('container', {
 
         chart: {
             width: 400,
@@ -23,7 +23,6 @@ $(function () {
     });
 
     // create some buttons to test the resize logic
-    chart = $container.highcharts();
 
     $('<button>+</button>').insertBefore($container).click(function () {
         chartWidth *= 1.1;

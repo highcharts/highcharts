@@ -26,7 +26,7 @@ $(function () {
 
 
         // Initiate the chart
-        $('#container').highcharts('Map', {
+        var chart = Highcharts.mapChart('container', {
 
             title: {
                 text: 'Add point'
@@ -50,7 +50,7 @@ $(function () {
                 name: 'Population density',
                 states: {
                     hover: {
-                        color: '#BADA55'
+                        color: '#a4edba'
                     }
                 },
                 tooltip: {
@@ -61,7 +61,7 @@ $(function () {
 
         // Activate the button
         $('#addpoint').click(function () {
-            $('#container').highcharts().series[0].addPoint(greenland);
+            chart.series[0].addPoint(greenland);
             $(this).attr('disabled', true);
         });
     });

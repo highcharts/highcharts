@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -17,11 +17,11 @@ $(function () {
                     r: 0,
                     states: {
                         hover: {
-                            fill: '#bada55'
+                            fill: '#a4edba'
                         },
                         select: {
                             stroke: '#039',
-                            fill: '#bada55'
+                            fill: '#a4edba'
                         }
                     }
                 }

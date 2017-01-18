@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'waterfall'
         },
@@ -59,9 +59,7 @@ $(function () {
                     return Highcharts.numberFormat(this.y / 1000, 0, ',') + 'k';
                 },
                 style: {
-                    color: '#FFFFFF',
-                    fontWeight: 'bold',
-                    textShadow: '0px 0px 3px black'
+                    fontWeight: 'bold'
                 }
             },
             pointPadding: 0

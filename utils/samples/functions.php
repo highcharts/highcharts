@@ -1,8 +1,27 @@
 <?php
 
+require_once('../issue-by-commit/Git.php');
 require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
+define('JQUERY_VERSION_OLD_IE', isset($_SESSION['jQueryVersionOldIE']) ? $_SESSION['jQueryVersionOldIE'] : Settings::$jQueryVersionOldIE);
 
+
+function getBranch() {
+
+    try {
+        Git::set_bin(Settings::$git);
+        $repo = Git::open(dirname(__FILE__) . '/../../');
+
+        return $repo->active_branch();
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+        
+}
+
+function compareJSON() {
+    return 'temp/compare.' . getBranch() . '.json';
+}
 
 /**
  * getBrowser function from http://php.net/manual/en/function.get-browser.php#101125
@@ -29,12 +48,22 @@ function getBrowser() {
     if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent)) 
     { 
         $bname = 'Internet Explorer'; 
+        $ub = "MSIE";
+    } 
+    elseif(preg_match('/Trident/i',$u_agent)) 
+    { 
+        $bname = 'Internet Explorer'; 
         $ub = "MSIE"; 
     } 
     elseif(preg_match('/Firefox/i',$u_agent)) 
     { 
         $bname = 'Mozilla Firefox'; 
         $ub = "Firefox"; 
+    } 
+    elseif(preg_match('/Edge/i',$u_agent)) 
+    { 
+        $bname = 'Edge'; 
+        $ub = "Edge"; 
     } 
     elseif(preg_match('/Chrome/i',$u_agent)) 
     { 
@@ -79,7 +108,7 @@ function getBrowser() {
             $version= $matches['version'][0];
         }
         else {
-            $version= $matches['version'][1];
+            @$version= $matches['version'][1];
         }
     }
     else {
@@ -95,7 +124,8 @@ function getBrowser() {
         'version'   => $version,
         'platform'  => $platform,
         'pattern'   => $pattern,
-        'parent'    => $bname . ' ' . $version
+        //'parent'    => $bname . ' ' . $version
+        'parent'    => $ub
     );
 } 
 
@@ -146,14 +176,24 @@ function getFramework($framework) {
 
 	} else {
 		$file = '../../lib/jquery-' . JQUERY_VERSION . '.js';
-		if (file_exists($file)) {
-			copy($file, '../draft/jquery-' . JQUERY_VERSION . '.js');
+        if (file_exists($file)) {
+            copy($file, '../draft/jquery-' . JQUERY_VERSION . '.js');
 			return '
+                <!--[if lt IE 9]>
+                <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
+                <![endif]-->
+                <!--[if gte IE 9]> -->
 				<script src="../draft/jquery-' . JQUERY_VERSION . '.js"></script>
+                <!-- <![endif]-->
 			';
 		} else {
 			return '
+                <!--[if lt IE 9]>
+                <script src="http://code.jquery.com/jquery-' . JQUERY_VERSION_OLD_IE . '.js"></script>
+                <![endif]-->
+                <!--[if gte IE 9]> -->
 				<script src="cache.php?file=http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
+                <!-- <![endif]-->
 			';
 		}
 	}

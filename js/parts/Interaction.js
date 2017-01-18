@@ -1,15 +1,51 @@
 /**
- * TrackerMixin for points and graphs
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Chart.js';
+import './Options.js';
+import './Legend.js';
+import './Point.js';
+import './Series.js';
+var addEvent = H.addEvent,
+	Chart = H.Chart,
+	createElement = H.createElement,
+	css = H.css,
+	defaultOptions = H.defaultOptions,
+	defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	extend = H.extend,
+	fireEvent = H.fireEvent,
+	hasTouch = H.hasTouch,
+	inArray = H.inArray,
+	isObject = H.isObject,
+	Legend = H.Legend,
+	merge = H.merge,
+	pick = H.pick,
+	Point = H.Point,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	TrackerMixin;
 
-var TrackerMixin = Highcharts.TrackerMixin = {
+/**
+ * TrackerMixin for points and graphs.
+ *
+ * @mixin
+ */
+TrackerMixin = H.TrackerMixin = {
 
+	/**
+	 * Draw the tracker for a point.
+	 */
 	drawTrackerPoint: function () {
 		var series = this,
 			chart = series.chart,
 			pointer = chart.pointer,
-			cursor = series.options.cursor,
-			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
 					point;
@@ -19,7 +55,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					target = target.parentNode;
 				}
 
-				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
+				if (point !== undefined && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
 				}
 			};
@@ -30,7 +66,11 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-				point.dataLabel.element.point = point;
+				if (point.dataLabel.div) {
+					point.dataLabel.div.point = point;
+				} else {
+					point.dataLabel.element.point = point;
+				}
 			}
 		});
 
@@ -39,15 +79,22 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.addClass(PREFIX + 'tracker')
+						.addClass('highcharts-tracker')
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) {
 							pointer.onTrackerMouseOut(e);
-						})
-						.css(css);
+						});
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
+
+					/*= if (build.classic) { =*/
+					if (series.options.cursor) {
+						series[key]
+							.css(css)
+							.css({ cursor: series.options.cursor });
+					}
+					/*= } =*/
 				}
 			});
 			series._hasTracking = true;
@@ -71,8 +118,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
-			cursor = options.cursor,
-			css = cursor && { cursor: cursor },
 			i,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
@@ -91,18 +136,18 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			 * Safari: 0.000001
 			 * Opera: 0.00000000001 (unlimited)
 			 */
-			TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.0001 : 0.002) + ')';
+			TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
 		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
-				if (trackerPath[i] === M) { // extend left side
-					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+				if (trackerPath[i] === 'M') { // extend left side
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], 'L');
 				}
-				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
-					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+				if ((i && trackerPath[i] === 'M') || i === trackerPathLength) { // extend right side
+					trackerPath.splice(i, 0, 'L', trackerPath[i - 2] + snap, trackerPath[i - 1]);
 				}
 			}
 		}
@@ -117,15 +162,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// draw the tracker
 		if (tracker) {
 			tracker.attr({ d: trackerPath });
-		} else { // create
+		} else if (series.graph) { // create
 
 			series.tracker = renderer.path(trackerPath)
 			.attr({
 				'stroke-linejoin': 'round', // #1225
-				visibility: series.visible ? VISIBLE : HIDDEN,
+				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
-				fill: trackByArea ? TRACKER_FILL : NONE,
-				'stroke-width': options.lineWidth + (trackByArea ? 0 : 2 * snap),
+				fill: trackByArea ? TRACKER_FILL : 'none',
+				'stroke-width': series.graph.strokeWidth() + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);
@@ -133,12 +178,17 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
 			each([series.tracker, series.markerGroup], function (tracker) {
-				tracker.addClass(PREFIX + 'tracker')
+				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) {
 						pointer.onTrackerMouseOut(e);
-					})
-					.css(css);
+					});
+
+				/*= if (build.classic) { =*/
+				if (options.cursor) {
+					tracker.css({ cursor: options.cursor });
+				}
+				/*= } =*/
 
 				if (hasTouch) {
 					tracker.on('touchstart', onMouseOver);
@@ -156,7 +206,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  */
 
 if (seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
 if (seriesTypes.pie) {
@@ -164,7 +214,7 @@ if (seriesTypes.pie) {
 }
 
 if (seriesTypes.scatter) {
-	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /*
@@ -172,15 +222,30 @@ if (seriesTypes.scatter) {
  */
 extend(Legend.prototype, {
 
-	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-		var legend = this;
+	setItemEvents: function (item, legendItem, useHTML) {
+		var legend = this,
+			chart = legend.chart,
+			activeClass = 'highcharts-legend-' + (item.series ? 'point' : 'series') + '-active';
+
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
-			item.setState(HOVER_STATE);
+			item.setState('hover');
+			
+			// A CSS class to dim or hide other than the hovered series
+			chart.seriesGroup.addClass(activeClass);
+			
+			/*= if (build.classic) { =*/
 			legendItem.css(legend.options.itemHoverStyle);
+			/*= } =*/
 		})
 		.on('mouseout', function () {
-			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
+			/*= if (build.classic) { =*/
+			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
+			/*= } =*/
+
+			// A CSS class to dim or hide other than the hovered series
+			chart.seriesGroup.removeClass(activeClass);
+			
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -231,17 +296,18 @@ extend(Legend.prototype, {
 	}
 });
 
-/*
- * Add pointer cursor to legend itemstyle in defaultOptions
- */
+
+/*= if (build.classic) { =*/
+// Add pointer cursor to legend itemstyle in defaultOptions
 defaultOptions.legend.itemStyle.cursor = 'pointer';
+/*= } =*/
 
 
 /*
  * Extend the Chart object with interaction
  */
 
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Chart.prototype */ {
 	/**
 	 * Display the zoom button
 	 */
@@ -262,6 +328,7 @@ extend(Chart.prototype, {
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
 			})
+			.addClass('highcharts-reset-zoom')
 			.add()
 			.align(btnOptions.position, false, alignTo);
 
@@ -299,7 +366,7 @@ extend(Chart.prototype, {
 					isXAxis = axis.isXAxis;
 
 				// don't zoom more than minRange
-				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
+				if (pointer[isXAxis ? 'zoomX' : 'zoomY']) {
 					hasZoomed = axis.zoom(axisData.min, axisData.max);
 					if (axis.displayBtn) {
 						displayButton = true;
@@ -351,14 +418,26 @@ extend(Chart.prototype, {
 				startPos = chart[mouseDown],
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
-				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + axis.len - mousePos, true) - halfPointRange,
-				goingLeft = startPos > mousePos; // #3613
-			
-			if (axis.series.length &&
-					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&		
-					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
-				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+				panMin = axis.toValue(startPos - mousePos, true) +
+					halfPointRange,
+				panMax = axis.toValue(startPos + axis.len - mousePos, true) -
+					halfPointRange,
+				flipped = panMax < panMin,
+				newMin = flipped ? panMax : panMin,
+				newMax = flipped ? panMin : panMax,
+				distMin = Math.min(extremes.dataMin, extremes.min) - newMin,
+				distMax = newMax - Math.max(extremes.dataMax, extremes.max);
+
+			// Negative distMin and distMax means that we're still inside the
+			// data range.
+			if (axis.series.length && distMin < 0 && distMax < 0) {
+				axis.setExtremes(
+					newMin,
+					newMax,
+					false,
+					false,
+					{ trigger: 'pan' }
+				);
 				doRedraw = true;
 			}
 
@@ -375,7 +454,7 @@ extend(Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, {
+extend(Point.prototype, /** @lends Point.prototype */ {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -394,7 +473,7 @@ extend(Point.prototype, {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
 
-			point.setState(selected && SELECT_STATE);
+			point.setState(selected && 'select');
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
@@ -402,7 +481,7 @@ extend(Point.prototype, {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
-						loopPoint.setState(NORMAL_STATE);
+						loopPoint.setState('');
 						loopPoint.firePointEvent('unselect');
 					}
 				});
@@ -424,30 +503,30 @@ extend(Point.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
-		if (chart.hoverSeries !== series) {
-			series.onMouseOver();
-		}
-
-		// set normal state to previous series
-		if (hoverPoint && hoverPoint !== point) {
-			hoverPoint.onMouseOut();
-		}
-
 		if (point.series) { // It may have been destroyed, #4130
-
-			// trigger the event
-			point.firePointEvent('mouseOver');
+			// In shared tooltip, call mouse over when point/series is actually hovered: (#5766)
+			if (!byProximity) {
+				// set normal state to previous series
+				if (hoverPoint && hoverPoint !== point) {
+					hoverPoint.onMouseOut();
+				}
+				if (chart.hoverSeries !== series) {
+					series.onMouseOver();
+				}
+				chart.hoverPoint = point;
+			}
 
 			// update the tooltip
 			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				// hover point only for non shared points: (#5766)
+				point.setState('hover');
 				tooltip.refresh(point, e);
+			} else if (!tooltip) {
+				point.setState('hover');
 			}
 
-			// hover this
-			point.setState(HOVER_STATE);
-			if (!byProximity) {
-				chart.hoverPoint = point;
-			}
+			// trigger the event
+			point.firePointEvent('mouseOver');
 		}
 	},
 
@@ -493,33 +572,34 @@ extend(Point.prototype, {
 	 */
 	setState: function (state, move) {
 		var point = this,
-			plotX = mathFloor(point.plotX), // #4586
+			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
-			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
-			normalDisabled = markerOptions && !markerOptions.enabled,
-			markerStateOptions = markerOptions && markerOptions.states[state],
-			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
+			stateOptions = series.options.states[state] || {},
+			markerOptions = defaultPlotOptions[series.type].marker &&
+				series.options.marker,
+			normalDisabled = markerOptions && markerOptions.enabled === false,
+			markerStateOptions = (markerOptions && markerOptions.states &&
+				markerOptions.states[state]) || {},
+			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
-			radius,
 			halo = series.halo,
 			haloOptions,
-			newSymbol,
-			pointAttr;
+			markerAttribs,
+			hasMarkers = markerOptions && series.markerAttribs,
+			newSymbol;
 
-		state = state || NORMAL_STATE; // empty string
-		pointAttr = point.pointAttr[state] || series.pointAttr[state];
+		state = state || ''; // empty string
 
 		if (
 				// already has this state
 				(state === point.state && !move) ||
 				// selected points don't respond to hover
-				(point.selected && state !== SELECT_STATE) ||
+				(point.selected && state !== 'select') ||
 				// series' state options is disabled
-				(stateOptions[state] && stateOptions[state].enabled === false) ||
+				(stateOptions.enabled === false) ||
 				// general point marker's state options is disabled
 				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
@@ -529,18 +609,42 @@ extend(Point.prototype, {
 			return;
 		}
 
-		// apply hover styles to the existing point
+		if (hasMarkers) {
+			markerAttribs = series.markerAttribs(point, state);
+		}
+
+		// Apply hover styles to the existing point
 		if (point.graphic) {
-			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
-			point.graphic.attr(merge(
-				pointAttr,
-				radius ? { // new symbol attributes (#507, #612)
-					x: plotX - radius,
-					y: plotY - radius,
-					width: 2 * radius,
-					height: 2 * radius
-				} : {}
-			));
+
+			if (point.state) {
+				point.graphic.removeClass('highcharts-point-' + point.state);
+			}
+			if (state) {
+				point.graphic.addClass('highcharts-point-' + state);
+			}
+
+			/*attribs = radius ? { // new symbol attributes (#507, #612)
+				x: plotX - radius,
+				y: plotY - radius,
+				width: 2 * radius,
+				height: 2 * radius
+			} : {};*/
+
+			/*= if (build.classic) { =*/
+			//attribs = merge(series.pointAttribs(point, state), attribs);
+			point.graphic.attr(series.pointAttribs(point, state));
+			/*= } =*/
+
+			if (markerAttribs) {
+				point.graphic.animate(
+					markerAttribs,
+					pick(
+						chart.options.chart.animation, // Turn off globally
+						markerStateOptions.animation,
+						markerOptions.animation
+					)
+				);
+			}
 
 			// Zooming in from a range with no markers to a range with markers
 			if (stateMarkerGraphic) {
@@ -550,7 +654,6 @@ extend(Point.prototype, {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
 			if (state && markerStateOptions) {
-				radius = markerStateOptions.radius;
 				newSymbol = pointMarker.symbol || series.symbol;
 
 				// If the point has another symbol than the previous one, throw away the
@@ -564,12 +667,11 @@ extend(Point.prototype, {
 					if (newSymbol) {
 						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
 							newSymbol,
-							plotX - radius,
-							plotY - radius,
-							2 * radius,
-							2 * radius
+							markerAttribs.x,
+							markerAttribs.y,
+							markerAttribs.width,
+							markerAttribs.height
 						)
-						.attr(pointAttr)
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
 					}
@@ -577,10 +679,15 @@ extend(Point.prototype, {
 				// Move the existing graphic
 				} else {
 					stateMarkerGraphic[move ? 'animate' : 'attr']({ // #1054
-						x: plotX - radius,
-						y: plotY - radius
+						x: markerAttribs.x,
+						y: markerAttribs.y
 					});
 				}
+				/*= if (build.classic) { =*/
+				if (stateMarkerGraphic) {
+					stateMarkerGraphic.attr(series.pointAttribs(point, state));
+				}
+				/*= } =*/
 			}
 
 			if (stateMarkerGraphic) {
@@ -590,22 +697,33 @@ extend(Point.prototype, {
 		}
 
 		// Show me your halo
-		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		haloOptions = stateOptions.halo;
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(chart.seriesGroup);
+					// #5818, #5903
+					.add(hasMarkers ? series.markerGroup : series.group);
 			}
+			halo[move ? 'animate' : 'attr']({
+				d: point.haloPath(haloOptions.size)
+			});
+			halo.attr({
+				'class': 'highcharts-halo highcharts-color-' +
+					pick(point.colorIndex, series.colorIndex) 
+			});
+			halo.point = point; // #6055
+
+			/*= if (build.classic) { =*/
 			halo.attr(extend({
 				'fill': point.color || series.color,
 				'fill-opacity': haloOptions.opacity,
 				'zIndex': -1 // #4929, IE8 added halo above everything
-			},
-			haloOptions.attributes))[move ? 'animate' : 'attr']({
-				d: point.haloPath(haloOptions.size)
-			});
-		} else if (halo) {
-			halo.attr({ d: [] });
+			}, haloOptions.attributes));
+			/*= } =*/
+
+		} else if (halo && halo.point && halo.point.haloPath) {
+			// Animate back to 0 on the current halo point (#6055)
+			halo.animate({ d: halo.point.haloPath(0) });
 		}
 
 		point.state = state;
@@ -613,19 +731,16 @@ extend(Point.prototype, {
 
 	/**
 	 * Get the circular path definition for the halo
-	 * @param  {Number} size The radius of the circular halo
+	 * @param  {Number} size The radius of the circular halo.
 	 * @returns {Array} The path definition
 	 */
 	haloPath: function (size) {
 		var series = this.series,
-			chart = series.chart,
-			plotBox = series.getPlotBox(),
-			inverted = chart.inverted,
-			plotX = Math.floor(this.plotX);
+			chart = series.chart;
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+			Math.floor(this.plotX) - size,
+			this.plotY - size,
 			size * 2, 
 			size * 2
 		);
@@ -636,7 +751,7 @@ extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Series mouse over handler
 	 */
@@ -657,7 +772,7 @@ extend(Series.prototype, {
 		}
 
 		// hover this
-		series.setState(HOVER_STATE);
+		series.setState('hover');
 		chart.hoverSeries = series;
 	},
 
@@ -706,10 +821,27 @@ extend(Series.prototype, {
 			attribs,
 			i = 0;
 
-		state = state || NORMAL_STATE;
+		state = state || '';
 
 		if (series.state !== state) {
+
+			// Toggle class names
+			each([series.group, series.markerGroup], function (group) {
+				if (group) {
+					// Old state
+					if (series.state) {
+						group.removeClass('highcharts-series-' + series.state);	
+					}
+					// New state
+					if (state) {
+						group.addClass('highcharts-series-' + state);
+					}
+				}
+			});
+
 			series.state = state;
+
+			/*= if (build.classic) { =*/
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -725,18 +857,19 @@ extend(Series.prototype, {
 				};
 				// use attr because animate will cause any other animation on the graph to stop
 				graph.attr(attribs);
-				while (series['zoneGraph' + i]) {
-					series['zoneGraph' + i].attr(attribs);
+				while (series['zone-graph-' + i]) {
+					series['zone-graph-' + i].attr(attribs);
 					i = i + 1;
 				}
 			}
+			/*= } =*/
 		}
 	},
 
 	/**
 	 * Set the visibility of the graph
 	 *
-	 * @param vis {Boolean} True to show the series, false to hide. If UNDEFINED,
+	 * @param vis {Boolean} True to show the series, false to hide. If undefined,
 	 *				the visibility is toggled.
 	 */
 	setVisible: function (vis, redraw) {
@@ -752,9 +885,9 @@ extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker', 'tt'], function (key) {
 			if (series[key]) {
-				series[key][showOrHide]();
+				series[key][showOrHide]();				
 			}
 		});
 
@@ -815,12 +948,12 @@ extend(Series.prototype, {
 	 * Set the selected state of the graph
 	 *
 	 * @param selected {Boolean} True to select the series, false to unselect. If
-	 *				UNDEFINED, the selection state is toggled.
+	 *				undefined, the selection state is toggled.
 	 */
 	select: function (selected) {
 		var series = this;
 		// if called without an argument, toggle
-		series.selected = selected = (selected === UNDEFINED) ? !series.selected : selected;
+		series.selected = selected = (selected === undefined) ? !series.selected : selected;
 
 		if (series.checkbox) {
 			series.checkbox.checked = selected;

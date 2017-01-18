@@ -1,66 +1,70 @@
-/*
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Point.js';
+import '../parts/Series.js';
+import '../parts/Interaction.js';
+var each = H.each,
+	isNumber = H.isNumber,
+	merge = H.merge,
+	noop = H.noop,		
+	pick = H.pick,
+	pInt = H.pInt,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	TrackerMixin = H.TrackerMixin;
+/* 
  * The GaugeSeries class
  */
-
-
-
-/**
- * Extend the default options
- */
-defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
+seriesType('gauge', 'line', {
 	dataLabels: {
 		enabled: true,
 		defer: false,
 		y: 15,
-		borderWidth: 1,
-		borderColor: 'silver',
 		borderRadius: 3,
 		crop: false,
 		verticalAlign: 'top',
-		zIndex: 2
+		zIndex: 2,
+		/*= if (build.classic) { =*/
+		// Presentational
+		borderWidth: 1,
+		borderColor: '${palette.neutralColor20}'
+		/*= } =*/
 	},
 	dial: {
 		// radius: '80%',
-		// backgroundColor: 'black',
-		// borderColor: 'silver',
-		// borderWidth: 0,
 		// baseWidth: 3,
 		// topWidth: 1,
 		// baseLength: '70%' // of radius
 		// rearLength: '10%'
+		/*= if (build.classic) { =*/
+		// backgroundColor: '${palette.neutralColor100}',
+		// borderColor: '${palette.neutralColor20}',
+		// borderWidth: 0,
+		/*= } =*/
+		
 	},
 	pivot: {
 		//radius: 5,
+		/*= if (build.classic) { =*/
 		//borderWidth: 0
-		//borderColor: 'silver',
-		//backgroundColor: 'black'
+		//borderColor: '${palette.neutralColor20}',
+		//backgroundColor: '${palette.neutralColor100}'
+		/*= } =*/
 	},
 	tooltip: {
 		headerFormat: ''
 	},
 	showInLegend: false
-});
 
-/**
- * Extend the point object
- */
-var GaugePoint = extendClass(Point, {
-	/**
-	 * Don't do any hover colors or anything
-	 */
-	setState: function (state) {
-		this.state = state;
-	}
-});
-
-
-/**
- * Add the series type
- */
-var GaugeSeries = {
-	type: 'gauge',
-	pointClass: GaugePoint,
-
+// Prototype members
+}, {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true,
@@ -154,13 +158,20 @@ var GaugeSeries = {
 			} else {
 				point.graphic = renderer[point.shapeType](shapeArgs)
 					.attr({
-						stroke: dialOptions.borderColor || 'none',
-						'stroke-width': dialOptions.borderWidth || 0,
-						fill: dialOptions.backgroundColor || 'black',
 						rotation: shapeArgs.rotation, // required by VML when animation is false
 						zIndex: 1
 					})
+					.addClass('highcharts-dial')
 					.add(series.group);
+
+				/*= if (build.classic) { =*/
+				// Presentational attributes
+				point.graphic.attr({
+					stroke: dialOptions.borderColor || 'none',
+					'stroke-width': dialOptions.borderWidth || 0,
+					fill: dialOptions.backgroundColor || '${palette.neutralColor100}'
+				});
+				/*= } =*/
 			}
 		});
 
@@ -173,13 +184,20 @@ var GaugeSeries = {
 		} else {
 			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
-					'stroke-width': pivotOptions.borderWidth || 0,
-					stroke: pivotOptions.borderColor || 'silver',
-					fill: pivotOptions.backgroundColor || 'black',
 					zIndex: 2
 				})
+				.addClass('highcharts-pivot')
 				.translate(center[0], center[1])
 				.add(series.group);
+
+			/*= if (build.classic) { =*/
+			// Presentational attributes
+			series.pivot.attr({
+				'stroke-width': pivotOptions.borderWidth || 0,
+				stroke: pivotOptions.borderColor || '${palette.neutralColor20}',
+				fill: pivotOptions.backgroundColor || '${palette.neutralColor100}'
+			});
+			/*= } =*/
 		}
 	},
 
@@ -240,6 +258,13 @@ var GaugeSeries = {
 	 * If the tracking module is loaded, add the point tracker
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
-};
-seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 
+// Point members
+}, {
+	/**
+	 * Don't do any hover colors or anything
+	 */
+	setState: function (state) {
+		this.state = state;
+	}
+});

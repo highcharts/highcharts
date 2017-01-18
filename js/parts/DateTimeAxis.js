@@ -1,4 +1,23 @@
-
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var Axis = H.Axis,
+	Date = H.Date,
+	dateFormat = H.dateFormat,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	getMagnitude = H.getMagnitude,
+	getTZOffset = H.getTZOffset,
+	normalizeTickInterval = H.normalizeTickInterval,
+	pick = H.pick,
+	timeUnits = H.timeUnits;
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array
@@ -17,68 +36,88 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
+		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
-		count = normalizedInterval.count;
+		count = normalizedInterval.count,
+		variableDayLength;
 
 	if (defined(min)) { // #1300
-		minDate[setMilliseconds](interval >= timeUnits.second ? 0 : // #3935
-			count * mathFloor(minDate.getMilliseconds() / count)); // #3652, #3654
+		minDate[Date.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
+			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate[setSeconds](interval >= timeUnits.minute ? 0 : // #3935
-				count * mathFloor(minDate.getSeconds() / count));
+			minDate[Date.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
+				count * Math.floor(minDate.getSeconds() / count));
 		}
 
 		if (interval >= timeUnits.minute) { // minute
-			minDate[setMinutes](interval >= timeUnits.hour ? 0 :
-				count * mathFloor(minDate[getMinutes]() / count));
+			minDate[Date.hcSetMinutes](interval >= timeUnits.hour ? 0 :
+				count * Math.floor(minDate[Date.hcGetMinutes]() / count));
 		}
 
 		if (interval >= timeUnits.hour) { // hour
-			minDate[setHours](interval >= timeUnits.day ? 0 :
-				count * mathFloor(minDate[getHours]() / count));
+			minDate[Date.hcSetHours](interval >= timeUnits.day ? 0 :
+				count * Math.floor(minDate[Date.hcGetHours]() / count));
 		}
 
 		if (interval >= timeUnits.day) { // day
-			minDate[setDate](interval >= timeUnits.month ? 1 :
-				count * mathFloor(minDate[getDate]() / count));
+			minDate[Date.hcSetDate](interval >= timeUnits.month ? 1 :
+				count * Math.floor(minDate[Date.hcGetDate]() / count));
 		}
 
 		if (interval >= timeUnits.month) { // month
-			minDate[setMonth](interval >= timeUnits.year ? 0 :
-				count * mathFloor(minDate[getMonth]() / count));
-			minYear = minDate[getFullYear]();
+			minDate[Date.hcSetMonth](interval >= timeUnits.year ? 0 :
+				count * Math.floor(minDate[Date.hcGetMonth]() / count));
+			minYear = minDate[Date.hcGetFullYear]();
 		}
 
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
-			minDate[setFullYear](minYear);
+			minDate[Date.hcSetFullYear](minYear);
 		}
 
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[setDate](minDate[getDate]() - minDate[getDay]() +
+			minDate[Date.hcSetDate](minDate[Date.hcGetDate]() - minDate[Date.hcGetDay]() +
 				pick(startOfWeek, 1));
 		}
 
 
-		// get tick positions
-		i = 1;
-		if (timezoneOffset || getTimezoneOffset) {
+		// Get basics for variable time spans
+		minYear = minDate[Date.hcGetFullYear]();
+		var minMonth = minDate[Date.hcGetMonth](),
+			minDateDate = minDate[Date.hcGetDate](),
+			minHours = minDate[Date.hcGetHours]();
+		
+
+		// Handle local timezone offset
+		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
+
+			// Detect whether we need to take the DST crossover into
+			// consideration. If we're crossing over DST, the day length may be
+			// 23h or 25h and we need to compute the exact clock time for each
+			// tick instead of just adding hours. This comes at a cost, so first
+			// we found out if it is needed. #4951.
+			variableDayLength =
+				(!useUTC || !!Date.hcGetTimezoneOffset) &&
+				(
+					// Long range, assume we're crossing over.
+					max - min > 4 * timeUnits.month ||
+					// Short range, check if min and max are in different time 
+					// zones.
+					getTZOffset(min) !== getTZOffset(max)
+				);
+
+			// Adjust minDate to the offset date
 			minDate = minDate.getTime();
 			minDate = new Date(minDate + getTZOffset(minDate));
 		}
-		minYear = minDate[getFullYear]();
-		var time = minDate.getTime(),
-			minMonth = minDate[getMonth](),
-			minDateDate = minDate[getDate](),
-			variableDayLength = !useUTC || !!getTimezoneOffset, // #4951
-			localTimezoneOffset = (timeUnits.day +
-					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
-				) % timeUnits.day; // #950, #3359
+		
 
-		// iterate and add tick positions at appropriate values
+		// Iterate and add tick positions at appropriate values
+		var time = minDate.getTime();
+		i = 1;
 		while (time < max) {
 			tickPositions.push(time);
 
@@ -96,6 +135,9 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 				time = makeTime(minYear, minMonth, minDateDate +
 					i * count * (interval === timeUnits.day ? 1 : 7));
 
+			} else if (variableDayLength && interval === timeUnits.hour) {
+				time = makeTime(minYear, minMonth, minDateDate, minHours + i * count);
+
 			// else, the interval is fixed and we use simple addition
 			} else {
 				time += interval * count;
@@ -108,12 +150,22 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		tickPositions.push(time);
 
 
-		// mark new days if the time is dividible by day (#1649, #1760)
-		each(grep(tickPositions, function (time) {
-			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
-		}), function (time) {
-			higherRanks[time] = 'day';
-		});
+		// Handle higher ranks. Mark new days if the time is on midnight
+		// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold to 
+		// prevent looping over dense data grouping (#6156).
+		if (interval <= timeUnits.hour && tickPositions.length < 10000) {
+			each(tickPositions, function (time) {
+				if (
+					// Speed optimization, no need to run dateFormat unless
+					// we're on a full or half hour
+					time % 1800000 === 0 &&
+					// Check for local or global midnight
+					dateFormat('%H%M%S%L', time) === '000000000'
+				) {
+					higherRanks[time] = 'day';	
+				}
+			});
+		}
 	}
 
 
@@ -194,7 +246,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	count = normalizeTickInterval(
 		tickInterval / interval,
 		multiples,
-		unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 
 	return {

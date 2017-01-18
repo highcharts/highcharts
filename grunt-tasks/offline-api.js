@@ -106,7 +106,7 @@
              * Modify HTML
              */
             function modifyHtml(html) {
-                return html.replace('<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900" rel="stylesheet" type="text/css">', '')
+                return html.replace('<link href="/resources/css/source-sans-pro.css" rel="stylesheet" type="text/css">', '')
                 .replace('runDB = true', 'runDB = false')
                 .replace('<h1>Options Reference</h1>', '<h1>Options Reference v' + version + '</h1>');
             }
@@ -172,9 +172,10 @@
 
                 // some extra thing to download, mainly used by internal links in css files
                 assets.images.push(apiUrl + 'resources/images/sprite.png');
-                assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png');
-                assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png');
-                assets.fonts.push('http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/fonts/fontawesome-webfont.woff');
+                // assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_flat_75_ffffff_40x100.png');
+                // assets['css/images'].push('http://code.jquery.com/ui/1.10.3/themes/smoothness/images/ui-bg_glass_75_dadada_1x400.png');
+                assets.fonts.push('http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff');
+                assets.fonts.push('http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.woff2');
 
                 // create the directories and start downloading
                 for (type in assets) {

@@ -1,4 +1,16 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+var each = H.each,
+	extend = H.extend,
+	merge = H.merge,
+	splat = H.splat;
+/**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
  * In the future, this can be extended to basic Highcharts and Highstock.
@@ -29,17 +41,21 @@ extend(Pane.prototype, {
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
 			each([].concat(splat(backgroundOption)).reverse(), function (config) {
-				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
+				var mConfig,
 					axisUserOptions = firstAxis.userOptions;
-				config = merge(pane.defaultBackgroundOptions, config);
-				if (backgroundColor) {
-					config.backgroundColor = backgroundColor;
+				mConfig = merge(pane.defaultBackgroundOptions, config);
+
+				/*= if (build.classic) { =*/
+				if (config.backgroundColor) {
+					mConfig.backgroundColor = config.backgroundColor;
 				}
-				config.color = config.backgroundColor; // due to naming in plotBands
-				firstAxis.options.plotBands.unshift(config);
+				mConfig.color = mConfig.backgroundColor; // due to naming in plotBands
+				/*= } =*/
+
+				firstAxis.options.plotBands.unshift(mConfig);
 				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
 				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
-					axisUserOptions.plotBands.unshift(config);
+					axisUserOptions.plotBands.unshift(mConfig);
 				}
 			});
 		}
@@ -60,19 +76,25 @@ extend(Pane.prototype, {
 	 * The default background options
 	 */
 	defaultBackgroundOptions: {
+		className: 'highcharts-pane',
 		shape: 'circle',
+		/*= if (build.classic) { =*/
 		borderWidth: 1,
-		borderColor: 'silver',
+		borderColor: '${palette.neutralColor20}',
 		backgroundColor: {
 			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
 			stops: [
-				[0, '#FFF'],
-				[1, '#DDD']
+				[0, '${palette.backgroundColor}'],
+				[1, '${palette.neutralColor10}']
 			]
 		},
+		/*= } =*/
 		from: -Number.MAX_VALUE, // corrected to axis min
 		innerRadius: 0,
 		to: Number.MAX_VALUE, // corrected to axis max
 		outerRadius: '105%'
 	}
+	
 });
+
+H.Pane = Pane;

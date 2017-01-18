@@ -1,9 +1,8 @@
+@import 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
+
 #resizer {
     border: 1px solid silver;   
 }
 #inner-resizer { /* make room for the resize handle */
     padding: 10px;
 }
-</style>
-<link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css"/>
-<style type="text/css">

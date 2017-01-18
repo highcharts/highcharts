@@ -1,20 +1,41 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var each = H.each,
+	isNumber = H.isNumber,
+	map = H.map,
+	merge = H.merge,
+	pInt = H.pInt;
 
+/**
+ * @typedef {string} ColorString
+ * A valid color to be parsed and handled by Highcharts. Highcharts internally 
+ * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
+ * rgba colors like `rgba(255,255,255,1)`. Other colors may be supported by the
+ * browsers and displayed correctly, but Highcharts is not able to process them
+ * and apply concepts like opacity and brightening.
+ */
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
-function Color(input) {
+H.Color = function (input) {
 	// Backwards compatibility, allow instanciation without new
-	if (!(this instanceof Color)) {
-		return new Color(input);
+	if (!(this instanceof H.Color)) {
+		return new H.Color(input);
 	}
     // Initialize
 	this.init(input);
-}
-Color.prototype = {
+};
+H.Color.prototype = {
 
 	// Collection of parsers. This can be extended from the outside by pushing parsers
-	// to Highcharts.Colors.prototype.parsers.
+	// to Highcharts.Color.prototype.parsers.
 	parsers: [{
 		// RGBA color
 		regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
@@ -35,6 +56,13 @@ Color.prototype = {
 		}
 	}],
 
+	// Collection of named colors. Can be extended from the outside by adding colors
+	// to Highcharts.Color.prototype.names.
+	names: {
+		white: '#ffffff',
+		black: '#000000'
+	},
+
 	/**
 	 * Parse the input color to rgba array
 	 * @param {String} input
@@ -45,12 +73,12 @@ Color.prototype = {
 			i,
 			parser;
 
-		this.input = input;
+		this.input = input = this.names[input] || input;
 
 		// Gradients
 		if (input && input.stops) {
 			this.stops = map(input.stops, function (stop) {
-				return new Color(stop[1]);
+				return new H.Color(stop[1]);
 			});
 
 		// Solid colors
@@ -135,4 +163,6 @@ Color.prototype = {
 		return this;
 	}
 };
-
+H.color = function (input) {
+	return new H.Color(input);
+};

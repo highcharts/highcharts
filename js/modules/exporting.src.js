@@ -1,5 +1,4 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
  * Exporting module
  *
  * (c) 2010-2016 Torstein Honsi
@@ -8,43 +7,31 @@
  */
 
 /* eslint indent:0 */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (Highcharts) {
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Chart.js';
 
 // create shortcuts
-var win = Highcharts.win,
-	doc = win.document,
-	Chart = Highcharts.Chart,
-	addEvent = Highcharts.addEvent,
-	removeEvent = Highcharts.removeEvent,
-	fireEvent = Highcharts.fireEvent,
-	createElement = Highcharts.createElement,
-	discardElement = Highcharts.discardElement,
-	css = Highcharts.css,
-	merge = Highcharts.merge,
-	each = Highcharts.each,
-	extend = Highcharts.extend,
-	splat = Highcharts.splat,
-	math = Math,
-	mathMax = math.max,
-	isTouchDevice = Highcharts.isTouchDevice,
-	M = 'M',
-	L = 'L',
-	DIV = 'div',
-	HIDDEN = 'hidden',
-	NONE = 'none',
-	PREFIX = 'highcharts-',
-	ABSOLUTE = 'absolute',
-	PX = 'px',
-	UNDEFINED,
-	symbols = Highcharts.Renderer.prototype.symbols,
-	defaultOptions = Highcharts.getOptions(),
-	buttonOffset;
+var defaultOptions = H.defaultOptions,
+	doc = H.doc,
+	Chart = H.Chart,
+	addEvent = H.addEvent,
+	removeEvent = H.removeEvent,
+	fireEvent = H.fireEvent,
+	createElement = H.createElement,
+	discardElement = H.discardElement,
+	css = H.css,
+	merge = H.merge,
+	pick = H.pick,
+	each = H.each,
+	extend = H.extend,
+	isTouchDevice = H.isTouchDevice,
+	win = H.win,
+	SVGRenderer = H.SVGRenderer;
+
+var symbols = H.Renderer.prototype.symbols;
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -59,42 +46,51 @@ var win = Highcharts.win,
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
 defaultOptions.navigation = {
-	menuStyle: {
-		border: '1px solid #A0A0A0',
-		background: '#FFFFFF',
-		padding: '5px 0'
-	},
-	menuItemStyle: {
-		padding: '0 10px',
-		background: NONE,
-		color: '#303030',
-		fontSize: isTouchDevice ? '14px' : '11px'
-	},
-	menuItemHoverStyle: {
-		background: '#4572A5',
-		color: '#FFFFFF'
-	},
-
 	buttonOptions: {
-		symbolFill: '#E0E0E0',
+		theme: {},
 		symbolSize: 14,
-		symbolStroke: '#666',
-		symbolStrokeWidth: 3,
 		symbolX: 12.5,
 		symbolY: 10.5,
 		align: 'right',
 		buttonSpacing: 3,
 		height: 22,
 		// text: null,
-		theme: {
-			fill: 'white', // capture hover
-			stroke: 'none'
-		},
 		verticalAlign: 'top',
 		width: 24
 	}
 };
 
+/*= if (build.classic) { =*/
+// Presentational attributes
+merge(true, defaultOptions.navigation, {
+	menuStyle: {
+		border: '1px solid ${palette.neutralColor40}',
+		background: '${palette.backgroundColor}',
+		padding: '5px 0'
+	},
+	menuItemStyle: {
+		padding: '0.5em 1em',
+		background: 'none',
+		color: '${palette.neutralColor80}',
+		fontSize: isTouchDevice ? '14px' : '11px',
+		transition: 'background 250ms, color 250ms'
+	},
+	menuItemHoverStyle: {
+		background: '${palette.highlightColor80}',
+		color: '${palette.backgroundColor}'
+	},
+	buttonOptions: {
+		symbolFill: '${palette.neutralColor60}',
+		symbolStroke: '${palette.neutralColor60}',
+		symbolStrokeWidth: 3,
+		theme: {
+			fill: '${palette.backgroundColor}', // capture hover
+			stroke: 'none',
+			padding: 5
+		}
+	}
+});
+/*= } =*/
 
 
 // Add the export related options
@@ -108,7 +104,8 @@ defaultOptions.exporting = {
 	scale: 2,
 	buttons: {
 		contextButton: {
-			menuClassName: PREFIX + 'contextmenu',
+			className: 'highcharts-contextbutton',
+			menuClassName: 'highcharts-contextmenu',
 			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
@@ -164,8 +161,8 @@ defaultOptions.exporting = {
 	}
 };
 
-// Add the Highcharts.post utility
-Highcharts.post = function (url, data, formAttributes) {
+// Add the H.post utility
+H.post = function (url, data, formAttributes) {
 	var name,
 		form;
 
@@ -175,13 +172,13 @@ Highcharts.post = function (url, data, formAttributes) {
 		action: url,
 		enctype: 'multipart/form-data'
 	}, formAttributes), {
-		display: NONE
+		display: 'none'
 	}, doc.body);
 
 	// add the data
 	for (name in data) {
 		createElement('input', {
-			type: HIDDEN,
+			type: 'hidden',
 			name: name,
 			value: data[name]
 		}, null, form);
@@ -197,16 +194,31 @@ Highcharts.post = function (url, data, formAttributes) {
 extend(Chart.prototype, {
 
 	/**
-	 * A collection of regex fixes on the produces SVG to account for expando properties,
+	 * A collection of fixes on the produced SVG to account for expando properties,
 	 * browser bugs, VML problems and other. Returns a cleaned SVG.
 	 */
-	sanitizeSVG: function (svg) {
-		return svg
+	sanitizeSVG: function (svg, options) {
+		// Move HTML into a foreignObject
+		if (options && options.exporting && options.exporting.allowHTML) {
+			var html = svg.match(/<\/svg>(.*?$)/);
+			if (html) {
+				html = '<foreignObject x="0" y="0" ' +
+							'width="' + options.chart.width + '" ' +
+							'height="' + options.chart.height + '">' +
+					'<body xmlns="http://www.w3.org/1999/xhtml">' +
+					html[1] +
+					'</body>' +
+					'</foreignObject>';
+				svg = svg.replace('</svg>', html + '</svg>');
+			}
+		}
+		
+		svg = svg
 			.replace(/zIndex="[^"]+"/g, '')
 			.replace(/isShadow="[^"]+"/g, '')
 			.replace(/symbolName="[^"]+"/g, '')
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
-            .replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
+			.replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
 			.replace(/ (NS[0-9]+\:)?href=/g, ' xlink:href=') // #3567
@@ -222,9 +234,11 @@ extend(Chart.prototype, {
 
 			// Replace HTML entities, issue #347
 			.replace(/&nbsp;/g, '\u00A0') // no-break space
-			.replace(/&shy;/g,  '\u00AD') // soft hyphen
+			.replace(/&shy;/g,  '\u00AD'); // soft hyphen
 
+			/*= if (build.classic) { =*/
 			// IE specific
+		svg = svg
 			.replace(/<IMG /g, '<image ')
 			.replace(/<(\/?)TITLE>/g, '<$1title>')
 			.replace(/height=([^" ]+)/g, 'height="$1"')
@@ -237,19 +251,29 @@ extend(Chart.prototype, {
 			.replace(/style="([^"]+)"/g, function (s) {
 				return s.toLowerCase();
 			});
+			/*= } =*/
+		
+		return svg;
 	},
 
 	/**
 	 * Return innerHTML of chart. Used as hook for plugins.
 	 */
 	getChartHTML: function () {
+		/*= if (!build.classic) { =*/
+		this.inlineStyles();
+		/*= } =*/
 		return this.container.innerHTML;
 	},
 
 	/**
-	 * Return an SVG representation of the chart
+	 * Return an SVG representation of the chart.
 	 *
-	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
+	 * @param additionalOptions {Object} Additional chart options for the
+	 *    generated SVG representation. For collections like `xAxis`, `yAxis` or
+	 *    `series`, the additional options is either merged in to the orininal
+	 *    item of the same `id`, or to the first item if a commin id is not
+	 *    found.
 	 */
 	getSVG: function (additionalOptions) {
 		var chart = this,
@@ -261,9 +285,7 @@ extend(Chart.prototype, {
 			sourceHeight,
 			cssWidth,
 			cssHeight,
-			html,
-			options = merge(chart.options, additionalOptions), // copy the options and add extra options
-			allowHTML = options.exporting.allowHTML;
+			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -274,11 +296,11 @@ extend(Chart.prototype, {
 		}
 
 		// create a sandbox where a new chart will be generated
-		sandbox = createElement(DIV, null, {
-			position: ABSOLUTE,
+		sandbox = createElement('div', null, {
+			position: 'absolute',
 			top: '-9999em',
-			width: chart.chartWidth + PX,
-			height: chart.chartHeight + PX
+			width: chart.chartWidth + 'px',
+			height: chart.chartHeight + 'px'
 		}, doc.body);
 
 		// get the source size
@@ -320,60 +342,50 @@ extend(Chart.prototype, {
 			}
 		});
 
-		// Axis options must be merged in one by one, since it may be an array or an object (#2022, #3900)
+		// Assign an internal key to ensure a one-to-one mapping (#5924)
+		each(chart.axes, function (axis) {
+			axis.userOptions.internalKey = H.uniqueKey();
+		});
+
+		// generate the chart copy
+		chartCopy = new H.Chart(options, chart.callback);
+
+		// Axis options and series options  (#2022, #3900, #5982)
 		if (additionalOptions) {
-			each(['xAxis', 'yAxis'], function (axisType) {
-				each(splat(additionalOptions[axisType]), function (axisOptions, i) {
-					options[axisType][i] = merge(options[axisType][i], axisOptions);
-				});
+			each(['xAxis', 'yAxis', 'series'], function (coll) {
+				var collOptions = {};
+				if (additionalOptions[coll]) {
+					collOptions[coll] = additionalOptions[coll];
+					chartCopy.update(collOptions);
+				}
 			});
 		}
 
-		// generate the chart copy
-		chartCopy = new Highcharts.Chart(options, chart.callback);
+		// Reflect axis extremes in the export (#5924)
+		each(chart.axes, function (axis) {
+			var axisCopy = H.find(chartCopy.axes, function (copy) {
+					return copy.options.internalKey === 
+						axis.userOptions.internalKey;
+				}),
+				extremes = axis.getExtremes(),
+				userMin = extremes.userMin,
+				userMax = extremes.userMax;
 
-		// reflect axis extremes in the export
-		each(['xAxis', 'yAxis'], function (axisType) {
-			each(chart[axisType], function (axis, i) {
-				var axisCopy = chartCopy[axisType][i],
-					extremes = axis.getExtremes(),
-					userMin = extremes.userMin,
-					userMax = extremes.userMax;
-
-				if (axisCopy && (userMin !== UNDEFINED || userMax !== UNDEFINED)) {
-					axisCopy.setExtremes(userMin, userMax, true, false);
-				}
-			});
+			if (axisCopy && (userMin !== undefined || userMax !== undefined)) {
+				axisCopy.setExtremes(userMin, userMax, true, false);
+			}
 		});
 
-		// get the SVG from the container's innerHTML
+		// Get the SVG from the container's innerHTML
 		svg = chartCopy.getChartHTML();
+
+		svg = chart.sanitizeSVG(svg, options);
 
 		// free up memory
 		options = null;
 		chartCopy.destroy();
 		discardElement(sandbox);
-
-		// Move HTML into a foreignObject
-		if (allowHTML) {
-			html = svg.match(/<\/svg>(.*?$)/);
-			if (html) {
-				html = '<foreignObject x="0" y="0" width="200" height="200">' +
-					'<body xmlns="http://www.w3.org/1999/xhtml">' +
-					html[1] +
-					'</body>' +
-					'</foreignObject>';
-				svg = svg.replace('</svg>', html + '</svg>');
-			}
-		}
-
-		// sanitize
-		svg = this.sanitizeSVG(svg);
-
-		// IE9 beta bugs with innerHTML. Test again with final IE9.
-		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, '\'');
-
+		
 		return svg;
 	},
 
@@ -406,7 +418,7 @@ extend(Chart.prototype, {
 		options = merge(this.options.exporting, options);
 
 		// do the post
-		Highcharts.post(options.url, {
+		H.post(options.url, {
 			filename: options.filename || 'chart',
 			type: options.type,
 			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
@@ -451,7 +463,7 @@ extend(Chart.prototype, {
 		each(childNodes, function (node, i) {
 			if (node.nodeType === 1) {
 				origDisplay[i] = node.style.display;
-				node.style.display = NONE;
+				node.style.display = 'none';
 			}
 		});
 
@@ -501,45 +513,42 @@ extend(Chart.prototype, {
 	contextMenu: function (className, items, x, y, width, height, button) {
 		var chart = this,
 			navOptions = chart.options.navigation,
-			menuItemStyle = navOptions.menuItemStyle,
 			chartWidth = chart.chartWidth,
 			chartHeight = chart.chartHeight,
 			cacheName = 'cache-' + className,
 			menu = chart[cacheName],
-			menuPadding = mathMax(width, height), // for mouse leave detection
-			boxShadow = '3px 3px 10px #888',
+			menuPadding = Math.max(width, height), // for mouse leave detection
 			innerMenu,
 			hide,
-			hideTimer,
 			menuStyle,
-			docMouseUpHandler = function (e) {
-				if (!chart.pointer.inClass(e.target, className)) {
-					hide();
-				}
-			};
+			removeMouseUp;
 
 		// create the menu only the first time
 		if (!menu) {
 
 			// create a HTML element above the SVG
-			chart[cacheName] = menu = createElement(DIV, {
+			chart[cacheName] = menu = createElement('div', {
 				className: className
 			}, {
-				position: ABSOLUTE,
+				position: 'absolute',
 				zIndex: 1000,
-				padding: menuPadding + PX
+				padding: menuPadding + 'px'
 			}, chart.container);
 
-			innerMenu = createElement(DIV, null,
-				extend({
-					MozBoxShadow: boxShadow,
-					WebkitBoxShadow: boxShadow,
-					boxShadow: boxShadow
-				}, navOptions.menuStyle), menu);
+			innerMenu = createElement('div', { className: 'highcharts-menu' }, null, menu);
+
+			/*= if (build.classic) { =*/
+			// Presentational CSS
+			css(innerMenu, extend({
+					MozBoxShadow: '3px 3px 10px #888',
+					WebkitBoxShadow: '3px 3px 10px #888',
+					boxShadow: '3px 3px 10px #888'
+				}, navOptions.menuStyle));
+			/*= } =*/
 
 			// hide on mouse out
 			hide = function () {
-				css(menu, { display: NONE });
+				css(menu, { display: 'none' });
 				if (button) {
 					button.setState(0);
 				}
@@ -548,32 +557,34 @@ extend(Chart.prototype, {
 
 			// Hide the menu some time after mouse leave (#1357)
 			addEvent(menu, 'mouseleave', function () {
-				hideTimer = setTimeout(hide, 500);
+				menu.hideTimer = setTimeout(hide, 500);
 			});
 			addEvent(menu, 'mouseenter', function () {
-				clearTimeout(hideTimer);
+				clearTimeout(menu.hideTimer);
 			});
 
 
-			// Hide it on clicking or touching outside the menu (#2258, #2335, #2407)
-			addEvent(doc, 'mouseup', docMouseUpHandler);
-			addEvent(chart, 'destroy', function () {
-				removeEvent(doc, 'mouseup', docMouseUpHandler);
+			// Hide it on clicking or touching outside the menu (#2258, #2335,
+			// #2407)
+			removeMouseUp = addEvent(doc, 'mouseup', function (e) {
+				if (!chart.pointer.inClass(e.target, className)) {
+					hide();
+				}
 			});
+			addEvent(chart, 'destroy', removeMouseUp);
 
 
 			// create the items
 			each(items, function (item) {
 				if (item) {
-					var element = item.separator ?
-						createElement('hr', null, null, innerMenu) :
-						createElement(DIV, {
-							onmouseover: function () {
-								css(this, navOptions.menuItemHoverStyle);
-							},
-							onmouseout: function () {
-								css(this, menuItemStyle);
-							},
+					var element;
+
+					if (item.separator) {
+						element = createElement('hr', null, null, innerMenu);
+
+					} else {
+						element = createElement('div', {
+							className: 'highcharts-menu-item',
 							onclick: function (e) {
 								if (e) { // IE7
 									e.stopPropagation();
@@ -584,10 +595,20 @@ extend(Chart.prototype, {
 								}
 							},
 							innerHTML: item.text || chart.options.lang[item.textKey]
-						}, extend({
-							cursor: 'pointer'
-						}, menuItemStyle), innerMenu);
+						}, null, innerMenu);
 
+						/*= if (build.classic) { =*/
+						element.onmouseover = function () {
+							css(this, navOptions.menuItemHoverStyle);
+						};
+						element.onmouseout = function () {
+							css(this, navOptions.menuItemStyle);
+						};
+						css(element, extend({
+							cursor: 'pointer'
+						}, navOptions.menuItemStyle));
+						/*= } =*/
+					}
 
 					// Keep references to menu divs to be able to destroy them
 					chart.exportDivElements.push(element);
@@ -605,15 +626,15 @@ extend(Chart.prototype, {
 
 		// if outside right, right align it
 		if (x + chart.exportMenuWidth > chartWidth) {
-			menuStyle.right = (chartWidth - x - width - menuPadding) + PX;
+			menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
 		} else {
-			menuStyle.left = (x - menuPadding) + PX;
+			menuStyle.left = (x - menuPadding) + 'px';
 		}
 		// if outside bottom, bottom align it
 		if (y + height + chart.exportMenuHeight > chartHeight && button.alignOptions.verticalAlign !== 'top') {
-			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
+			menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
 		} else {
-			menuStyle.top = (y + height - menuPadding) + PX;
+			menuStyle.top = (y + height - menuPadding) + 'px';
 		}
 
 		css(menu, menuStyle);
@@ -631,10 +652,6 @@ extend(Chart.prototype, {
 			menuItems = btnOptions.menuItems,
 			symbol,
 			button,
-			symbolAttr = {
-				stroke: btnOptions.symbolStroke,
-				fill: btnOptions.symbolFill
-			},
 			symbolSize = btnOptions.symbolSize || 12;
 		if (!chart.btnCount) {
 			chart.btnCount = 0;
@@ -682,7 +699,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = Highcharts.pick(attr.paddingLeft, 25);
+			attr.paddingLeft = pick(attr.paddingLeft, 25);
 
 		} else if (!btnOptions.text) {
 			extend(attr, {
@@ -693,12 +710,15 @@ extend(Chart.prototype, {
 		}
 
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
+			.addClass(options.className)
 			.attr({
-				title: chart.options.lang[btnOptions._titleKey],
+				/*= if (build.classic) { =*/
 				'stroke-linecap': 'round',
+				/*= } =*/
+				title: chart.options.lang[btnOptions._titleKey],
 				zIndex: 3 // #4955
 			});
-		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
+		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
 
 		if (btnOptions.symbol) {
 			symbol = renderer.symbol(
@@ -708,19 +728,27 @@ extend(Chart.prototype, {
 					symbolSize,
 					symbolSize
 				)
-				.attr(extend(symbolAttr, {
-					'stroke-width': btnOptions.symbolStrokeWidth || 1,
+				.addClass('highcharts-button-symbol')
+				.attr({
 					zIndex: 1
-				})).add(button);
+				}).add(button);
+
+			/*= if (build.classic) { =*/
+			symbol.attr({
+				stroke: btnOptions.symbolStroke,
+				fill: btnOptions.symbolFill,
+				'stroke-width': btnOptions.symbolStrokeWidth || 1
+			});
+			/*= } =*/
 		}
 
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: Highcharts.pick(btnOptions.x, buttonOffset) // #1654
+				x: pick(btnOptions.x, chart.buttonOffset) // #1654
 			}), true, 'spacingBox');
 
-		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
+		chart.buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
 
 		chart.exportSVGElements.push(button, symbol);
 
@@ -730,69 +758,243 @@ extend(Chart.prototype, {
 	 * Destroy the buttons.
 	 */
 	destroyExport: function (e) {
-		var chart = e.target,
-			i,
-			elem;
+		var chart = e ? e.target : this,
+			exportSVGElements = chart.exportSVGElements,
+			exportDivElements = chart.exportDivElements;
 
 		// Destroy the extra buttons added
-		for (i = 0; i < chart.exportSVGElements.length; i++) {
-			elem = chart.exportSVGElements[i];
+		if (exportSVGElements) {
+			each(exportSVGElements, function (elem, i) {
 
-			// Destroy and null the svg/vml elements
-			if (elem) { // #1822
-				elem.onclick = elem.ontouchstart = null;
-				chart.exportSVGElements[i] = elem.destroy();
-			}
+				// Destroy and null the svg/vml elements
+				if (elem) { // #1822
+					elem.onclick = elem.ontouchstart = null;
+					chart.exportSVGElements[i] = elem.destroy();
+				}
+			});
+			exportSVGElements.length = 0;
 		}
 
 		// Destroy the divs for the menu
-		for (i = 0; i < chart.exportDivElements.length; i++) {
-			elem = chart.exportDivElements[i];
+		if (exportDivElements) {
+			each(exportDivElements, function (elem, i) {
 
-			// Remove the event handler
-			removeEvent(elem, 'mouseleave');
+				// Remove the event handler
+				clearTimeout(elem.hideTimer); // #5427
+				removeEvent(elem, 'mouseleave');
 
-			// Remove inline events
-			chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
+				// Remove inline events
+				chart.exportDivElements[i] = elem.onmouseout = elem.onmouseover = elem.ontouchstart = elem.onclick = null;
 
-			// Destroy the div by moving to garbage bin
-			discardElement(elem);
+				// Destroy the div by moving to garbage bin
+				discardElement(elem);
+			});
+			exportDivElements.length = 0;
 		}
 	}
 });
 
+/*= if (!build.classic) { =*/
+// These ones are translated to attributes rather than styles
+SVGRenderer.prototype.inlineToAttributes = [
+	'fill',
+	'stroke',
+	'strokeLinecap',
+	'strokeLinejoin',
+	'strokeWidth',
+	'textAnchor',
+	'x',
+	'y'
+];
+// These CSS properties are not inlined. Remember camelCase.
+SVGRenderer.prototype.inlineBlacklist = [
+	/-/, // In Firefox, both hyphened and camelCased names are listed
+	/^(clipPath|cssText|d|height|width)$/, // Full words
+	/^font$/, // more specific props are set
+	/[lL]ogical(Width|Height)$/,
+	/perspective/,
+	/TapHighlightColor/,
+	/^transition/
+	// /^text (border|color|cursor|height|webkitBorder)/
+];
+SVGRenderer.prototype.unstyledElements = [
+	'clipPath',
+	'defs',
+	'desc'
+];
+
+/**
+ * Analyze inherited styles from stylesheets and add them inline
+ *
+ * @todo: What are the border styles for text about? In general, text has a lot of properties.
+ * @todo: Make it work with IE9 and IE10.
+ */
+Chart.prototype.inlineStyles = function () {
+	var renderer = this.renderer,
+		inlineToAttributes = renderer.inlineToAttributes,
+		blacklist = renderer.inlineBlacklist,
+		unstyledElements = renderer.unstyledElements,
+		defaultStyles = {},
+		dummySVG;
+	
+	/**
+	 * Make hyphenated property names out of camelCase
+	 */
+	function hyphenate(prop) {
+		return prop.replace(
+			/([A-Z])/g, 
+			function (a, b) { 
+				return '-' + b.toLowerCase();
+			}
+		);
+	}
+
+	/**
+	 * Call this on all elements and recurse to children
+	 */
+	function recurse(node) {
+		var prop,
+			styles,
+			parentStyles,
+			cssText = '',
+			dummy,
+			styleAttr,
+			blacklisted,
+			i;
+		
+		if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
+			styles = win.getComputedStyle(node, null);
+			parentStyles = node.nodeName === 'svg' ? {} : win.getComputedStyle(node.parentNode, null);
+
+			// Get default styles from the browser so that we don't have to add these
+			if (!defaultStyles[node.nodeName]) {
+				if (!dummySVG) {
+					dummySVG = doc.createElementNS(H.SVG_NS, 'svg');
+					dummySVG.setAttribute('version', '1.1');
+					doc.body.appendChild(dummySVG);
+				}
+				dummy = doc.createElementNS(node.namespaceURI, node.nodeName);
+				dummySVG.appendChild(dummy);
+				defaultStyles[node.nodeName] = merge(win.getComputedStyle(dummy, null)); // Copy, so we can remove the node
+				dummySVG.removeChild(dummy);
+			}
+
+			// Loop over all the computed styles and check whether they are in the 
+			// white list for styles or atttributes.
+			for (prop in styles) {
+
+				// Check against blacklist
+				blacklisted = false;
+				i = blacklist.length;
+				while (i-- && !blacklisted) {
+					blacklisted = blacklist[i].test(prop) || typeof styles[prop] === 'function';
+				}
+
+				if (!blacklisted) {
+					
+					// If parent node has the same style, it gets inherited, no need to inline it
+					if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
+
+						// Attributes
+						if (inlineToAttributes.indexOf(prop) !== -1) {
+							node.setAttribute(hyphenate(prop), styles[prop]);
+
+						// Styles
+						} else {
+							cssText += hyphenate(prop) + ':' + styles[prop] + ';';
+						}
+					}
+				}
+			}
+
+			// Apply styles
+			if (cssText) {
+				styleAttr = node.getAttribute('style');
+				node.setAttribute('style', (styleAttr ? styleAttr + ';' : '') + cssText);
+			}
+
+			if (node.nodeName === 'text') {
+				return;
+			}
+			
+			// Recurse
+			each(node.children || node.childNodes, recurse);
+		}
+	}
+
+	/**
+	 * Remove the dummy objects used to get defaults
+	 */
+	function tearDown() {
+		dummySVG.parentNode.removeChild(dummySVG);
+	}
+
+	recurse(this.container.querySelector('svg'));
+	tearDown();
+
+};
+/*= } =*/
+
 
 symbols.menu = function (x, y, width, height) {
 	var arr = [
-		M, x, y + 2.5,
-		L, x + width, y + 2.5,
-		M, x, y + height / 2 + 0.5,
-		L, x + width, y + height / 2 + 0.5,
-		M, x, y + height - 1.5,
-		L, x + width, y + height - 1.5
+		'M', x, y + 2.5,
+		'L', x + width, y + 2.5,
+		'M', x, y + height / 2 + 0.5,
+		'L', x + width, y + height / 2 + 0.5,
+		'M', x, y + height - 1.5,
+		'L', x + width, y + height - 1.5
 	];
 	return arr;
 };
 
 // Add the buttons on chart load
-Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.renderExporting = function () {
 	var n,
-		exportingOptions = chart.options.exporting,
-		buttons = exportingOptions.buttons;
-
-	buttonOffset = 0;
-
-	if (exportingOptions.enabled !== false) {
+		exportingOptions = this.options.exporting,
+		buttons = exportingOptions.buttons,
+		isDirty = this.isDirtyExporting || !this.exportSVGElements;
+	
+	this.buttonOffset = 0;
+	if (this.isDirtyExporting) {
+		this.destroyExport();
+	}
+	
+	if (isDirty && exportingOptions.enabled !== false) {
 
 		for (n in buttons) {
-			chart.addButton(buttons[n]);
+			this.addButton(buttons[n]);
 		}
 
-		// Destroy the export elements at chart destroy
-		addEvent(chart, 'destroy', chart.destroyExport);
+		this.isDirtyExporting = false;
 	}
 
+	// Destroy the export elements at chart destroy
+	addEvent(this, 'destroy', this.destroyExport);		
+};
+
+Chart.prototype.callbacks.push(function (chart) {
+
+	function update(prop, options, redraw) {
+		chart.isDirtyExporting = true;
+		merge(true, chart.options[prop], options);
+		if (pick(redraw, true)) {
+			chart.redraw();
+		}
+
+	}
+
+	chart.renderExporting();
+
+	addEvent(chart, 'redraw', chart.renderExporting);
+
+	// Add update methods to handle chart.update and chart.exporting.update
+	// and chart.navigation.update.
+	each(['exporting', 'navigation'], function (prop) {
+		chart[prop] = {
+			update: function (options, redraw) {
+				update(prop, options, redraw);
+			}
+		};
+	});
 });
-
-
-}));

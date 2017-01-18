@@ -1,7 +1,5 @@
-QUnit.test('alignThreshold', function (assert) {
-    var chart;
-
-    $('#container').highcharts({
+QUnit.test('alignThreshold, positive-negative', function (assert) {
+    var chart = Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
             type: 'area'
@@ -26,15 +24,17 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),
         'Same threshold position'
     );
 
+    chart.series[1].hide();
+});
 
-    $('#container').highcharts({
+QUnit.test('alignThreshold, negative-positive', function (assert) {
+    var chart = Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
             type: 'area'
@@ -60,18 +60,20 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),
         'Same threshold position'
     );
 
+});
 
-    /*$('#container').highcharts({
+/* Failing test
+QUnit.test('alignThreshold, nowhere near the threshold', function (assert) {
+    var chart = Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
-            type: 'column'
+            type: 'area'
         },
         yAxis: [{
             title: {
@@ -85,19 +87,54 @@ QUnit.test('alignThreshold', function (assert) {
             opposite: true
         }],
         series: [{
-            data: [29.9, 71.5],
+            data: [1001, 1002, 1003],
             yAxis: 0
         }, {
-            data: [-129, -271],
+            data: [-1001, -1002, -1003],
             yAxis: 1
         }]
     });
 
-    chart = $('#container').highcharts();
     assert.equal(
         chart.yAxis[0].tickPositions.indexOf(0),
         chart.yAxis[1].tickPositions.indexOf(0),
         'Same threshold position'
-    );*/
+    );
+});
+*/
+
+QUnit.test('alignThreshold, bar', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            alignThresholds: true,
+            type: 'bar'
+        },
+        yAxis: [{
+            title: {
+                text: 'Primary Axis'
+            },
+            gridLineWidth: 0
+        }, {
+            title: {
+                text: 'Secondary Axis'
+            },
+            opposite: true
+        }],
+        series: [{
+            data: [129.9, 271.5, 306.4, -29.2, 544.0, 376.0, 435.6, 348.5, 216.4, 294.1, 35.6, 354.4],
+            yAxis: 0
+        }, {
+            yAxis: 1,
+            data: [29.9, -71.5, -106.4, -129.2, -144.0, -176.0, -135.6, -148.5, -216.4, -194.1, -95.6, -54.4]
+
+        }]
+    });
+
+    assert.equal(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Same threshold position'
+    );
+
 
 });

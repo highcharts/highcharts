@@ -130,6 +130,7 @@ $(function () {
                 stroke: 'lineColor',
                 'stroke-width': 'lineWidth'
             },
+
             toYData: function (point) { // return a plain array for speedy calculation
                 return [point.open, point.high, point.low, point.close];
             },
@@ -177,7 +178,9 @@ $(function () {
                     graphic = point.graphic;
                     if (point.plotY !== UNDEFINED) {
 
-                        pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+                        pointAttr = point.pointAttr ?
+                            point.pointAttr[point.selected ? 'select' : ''] :
+                            series.pointAttribs(point, point.selected && 'select');
 
                         // crisp vector coordinates
                         crispCorr = (pointAttr['stroke-width'] % 2) / 2;

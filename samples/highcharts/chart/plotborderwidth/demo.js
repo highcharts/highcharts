@@ -1,12 +1,12 @@
 $(function () {
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             type: 'line',
             plotBorderColor: '#346691',
             plotBorderWidth: 2
         },
         title: {
-            text: 'plotBorderWidth is set to one pixel'
+            text: 'plotBorderWidth is set to 2px'
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

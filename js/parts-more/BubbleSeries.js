@@ -1,9 +1,35 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Color.js';
+import '../parts/Point.js';
+import '../parts/Series.js';
+import '../parts/ScatterSeries.js';
+var arrayMax = H.arrayMax,
+	arrayMin = H.arrayMin,
+	Axis = H.Axis,
+	color = H.color,
+	each = H.each,
+	isNumber = H.isNumber,
+	noop = H.noop,
+	pick = H.pick,
+	pInt = H.pInt,
+	Point = H.Point,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
 
-// 1 - set default options
-defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
+seriesType('bubble', 'scatter', {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -13,9 +39,19 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	},
 	// displayNegative: true,
 	marker: {
+		/*= if (build.classic) { =*/
 		// fillOpacity: 0.5,
 		lineColor: null, // inherit from series.color
-		lineWidth: 1
+		lineWidth: 1,
+		/*= } =*/
+		// Avoid offset in Point.setState
+		radius: null,
+		states: {
+			hover: {
+				radiusPlus: 0
+			}
+		},
+		symbol: 'circle'
 	},
 	minSize: 8,
 	maxSize: '20%',
@@ -35,60 +71,28 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	turboThreshold: 0,
 	zThreshold: 0,
 	zoneAxis: 'z'
-});
 
-var BubblePoint = extendClass(Point, {
-	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	},
-	ttBelow: false
-});
-
-// 2 - Create the series object
-seriesTypes.bubble = extendClass(seriesTypes.scatter, {
-	type: 'bubble',
-	pointClass: BubblePoint,
+// Prototype members
+}, {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
-	trackerGroups: ['group', 'dataLabelsGroup'],
+	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
 
-	/**
-	 * Mapping between SVG attributes and the corresponding options
-	 */
-	pointAttrToOptions: {
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
-	},
-
-	/**
-	 * Apply the fillOpacity to all fill positions
-	 */
-	applyOpacity: function (fill) {
+	/*= if (build.classic) { =*/
+	pointAttribs: function (point, state) {
 		var markerOptions = this.options.marker,
-			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
-
-		// When called from Legend.colorizeItem, the fill isn't predefined
-		fill = fill || markerOptions.fillColor || this.color;
+			fillOpacity = pick(markerOptions.fillOpacity, 0.5),
+			attr = Series.prototype.pointAttribs.call(this, point, state);
 
 		if (fillOpacity !== 1) {
-			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
+			attr.fill = color(attr.fill).setOpacity(fillOpacity).get('rgba');
 		}
-		return fill;
+
+		return attr;
 	},
-
-	/**
-	 * Extend the convertAttribs method by applying opacity to the fill
-	 */
-	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments);
-
-		obj.fill = this.applyOpacity(obj.fill);
-
-		return obj;
-	},
+	/*= } =*/
 
 	/**
 	 * Get the radius for each point based on the minSize, maxSize and each point's Z value. This
@@ -133,7 +137,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 				if (sizeByArea && pos >= 0) {
 					pos = Math.sqrt(pos);
 				}
-				radius = math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+				radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
 			}
 			radii.push(radius);
 		}
@@ -149,16 +153,26 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		if (!init) { // run the animation
 			each(this.points, function (point) {
 				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs;
+					animationTarget;
 
-				if (graphic && shapeArgs) {
-					// start values
-					graphic.attr('r', 1);
+				if (graphic && graphic.width) { // URL symbols don't have width
+					animationTarget = {
+						x: graphic.x,
+						y: graphic.y,
+						width: graphic.width,
+						height: graphic.height
+					};
 
-					// animate
-					graphic.animate({
-						r: shapeArgs.r
-					}, animation);
+					// Start values
+					graphic.attr({
+						x: point.plotX,
+						y: point.plotY,
+						width: 1,
+						height: 1
+					});
+
+					// Run animation
+					graphic.animate(animationTarget, animation);
 				}
 			});
 
@@ -190,11 +204,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 
 			if (isNumber(radius) && radius >= this.minPxSize / 2) {
 				// Shape arguments
-				point.shapeType = 'circle';
-				point.shapeArgs = {
-					x: point.plotX,
-					y: point.plotY,
-					r: radius
+				point.marker = {
+					radius: radius,
+					width: 2 * radius,
+					height: 2 * radius
 				};
 
 				// Alignment box for the data label
@@ -204,37 +217,25 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					width: 2 * radius,
 					height: 2 * radius
 				};
-			} else { // below zThreshold or z = null
-				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
+			} else { // below zThreshold
+				point.shapeArgs = point.plotY = point.dlBox = undefined; // #1691
 			}
 		}
 	},
 
-	/**
-	 * Get the series' symbol in the legend
-	 *
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
-	 */
-	drawLegendSymbol: function (legend, item) {
-		var renderer = this.chart.renderer,
-			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
-
-		item.legendSymbol = renderer.circle(
-			radius,
-			legend.baseline - radius,
-			radius
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);
-		item.legendSymbol.isMarker = true;
-
-	},
-
-	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
 	applyZones: noop
+
+// Point class
+}, {
+	haloPath: function (size) {
+		return Point.prototype.haloPath.call(
+			this, 
+			size === 0 ? 0 : this.marker.radius + size // #6067
+		);
+	},
+	ttBelow: false
 });
 
 /**
@@ -251,7 +252,7 @@ Axis.prototype.beforePadding = function () {
 		dataKey = isXAxis ? 'xData' : 'yData',
 		min = this.min,
 		extremes = {},
-		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
+		smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
 		range = this.max - min,
@@ -286,19 +287,21 @@ Axis.prototype.beforePadding = function () {
 
 				});
 				series.minPxSize = extremes.minSize;
-				series.maxPxSize = extremes.maxSize;
+				// Prioritize min size if conflict to make sure bubbles are
+				// always visible. #5873
+				series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
 				// Find the min and max Z
 				zData = series.zData;
 				if (zData.length) { // #1735
-					zMin = pick(seriesOptions.zMin, math.min(
+					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
-						math.max(
-							arrayMin(zData),
+						Math.max(
+							arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
 				}
 			}
 		}
@@ -325,13 +328,12 @@ Axis.prototype.beforePadding = function () {
 		}
 	});
 
-
 	if (activeSeries.length && range > 0 && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
 		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
-			if (pick(axis.options[keys[0]], axis[keys[1]]) === UNDEFINED) {
-				axis[keys[0]] += keys[2] / transA;
+			if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
+				axis[keys[0]] += keys[2] / transA; 
 			}
 		});
 	}

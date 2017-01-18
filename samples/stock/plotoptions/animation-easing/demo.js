@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         plotOptions: {
             series: {
@@ -11,12 +11,13 @@ $(function () {
         },
 
         rangeSelector: {
-            selected: 1
+            selected: 4
         },
 
         series: [{
             name: 'USD to EUR',
-            data: usdeur
+            data: usdeur,
+            type: 'area'
         }]
     });
 });

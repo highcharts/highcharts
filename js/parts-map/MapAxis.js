@@ -1,4 +1,17 @@
 /**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+var Axis = H.Axis,
+	each = H.each,
+	pick = H.pick,
+	wrap = H.wrap;
+/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
@@ -60,7 +73,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	proceed.call(this);
 
 	// Check for map-like series
-	if (this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
 		each(this.series, function (series) {
 			if (series.preserveAspectRatio) {
 				preserveAspectRatio = true;

@@ -1,13 +1,18 @@
 /**
- * Set the default options for bar
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.bar = merge(defaultPlotOptions.column);
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './ColumnSeries.js';
+
+var seriesType = H.seriesType;
+
 /**
  * The Bar series class
  */
-var BarSeries = extendClass(ColumnSeries, {
-	type: 'bar',
+seriesType('bar', 'column', null, {
 	inverted: true
 });
-seriesTypes.bar = BarSeries;
-

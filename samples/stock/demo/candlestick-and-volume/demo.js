@@ -33,7 +33,7 @@ $(function () {
 
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
 
             rangeSelector: {
                 selected: 1
@@ -66,6 +66,10 @@ $(function () {
                 offset: 0,
                 lineWidth: 2
             }],
+
+            tooltip: {
+                split: true
+            },
 
             series: [{
                 type: 'candlestick',

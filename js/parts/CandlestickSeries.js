@@ -1,11 +1,24 @@
-/* ****************************************************************************
- * Start Candlestick series code											  *
- *****************************************************************************/
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+var defaultPlotOptions = H.defaultPlotOptions,
+	each = H.each,
+	merge = H.merge,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes;
 
-// 1 - set default options
-defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
-	lineColor: 'black',
-	lineWidth: 1,
+/**
+ * The candlestick series type.
+ *
+ * @constructor seriesTypes.candlestick
+ * @augments seriesTypes.ohlc
+ */
+seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	states: {
 		hover: {
 			lineWidth: 2
@@ -13,97 +26,92 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	},
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
-	upColor: 'white'
+	/*= if (build.classic) { =*/
+	lineColor: '${palette.neutralColor100}',
+	lineWidth: 1,
+	upColor: '${palette.backgroundColor}'
 	// upLineColor: null
-});
+	/*= } =*/
 
-// 2 - Create the CandlestickSeries object
-var CandlestickSeries = extendClass(OHLCSeries, {
-	type: 'candlestick',
-
-	/**
-	 * One-to-one mapping from options to SVG attributes
-	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'color',
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth'
-	},
-	upColorProp: 'fill',
-
+}), /** @lends seriesTypes.candlestick */ {
+	/*= if (build.classic) { =*/
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upLineColor = options.upLineColor || options.lineColor,
-			hoverStroke = stateOptions.hover.upLineColor || upLineColor,
-			selectStroke = stateOptions.select.upLineColor || upLineColor;
+	pointAttribs: function (point, state) {
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+			options = this.options,
+			isUp = point.open < point.close,
+			stroke = options.lineColor || this.color,
+			stateOptions;
 
-		// Add custom line color for points going up (close > open).
-		// Fill is handled by OHLCSeries' getAttribs.
-		each(series.points, function (point) {
-			if (point.open < point.close) {
+		attribs['stroke-width'] = options.lineWidth;
 
-				// If an individual line color is set, we need to merge the
-				// point attributes, because they are shared between all up
-				// points by inheritance from OHCLSeries.
-				if (point.lineColor) {
-					point.pointAttr = merge(point.pointAttr);
-					upLineColor = point.lineColor;
-				}
+		attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
+		attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
 
-				point.pointAttr[''].stroke = upLineColor;
-				point.pointAttr.hover.stroke = hoverStroke;
-				point.pointAttr.select.stroke = selectStroke;
-			}
-		});
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			attribs.fill = stateOptions.color || attribs.fill;
+			attribs.stroke = stateOptions.lineColor || attribs.stroke;
+			attribs['stroke-width'] =
+				stateOptions.lineWidth || attribs['stroke-width'];
+		}
+
+
+		return attribs;
 	},
-
+	/*= } =*/
 	/**
 	 * Draw the data points
 	 */
 	drawPoints: function () {
 		var series = this,  //state = series.state,
 			points = series.points,
-			chart = series.chart,
-			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
-			plotOpen,
-			plotClose,
-			topBox,
-			bottomBox,
-			hasTopWhisker,
-			hasBottomWhisker,
-			crispCorr,
-			crispX,
-			graphic,
-			path,
-			halfWidth;
+			chart = series.chart;
 
 
 		each(points, function (point) {
 
-			graphic = point.graphic;
-			if (point.plotY !== UNDEFINED) {
+			var graphic = point.graphic,
+				plotOpen,
+				plotClose,
+				topBox,
+				bottomBox,
+				hasTopWhisker,
+				hasBottomWhisker,
+				crispCorr,
+				crispX,
+				path,
+				halfWidth,
+				isNew = !graphic;
 
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
+			if (point.plotY !== undefined) {
 
-				// crisp vector coordinates
-				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) - crispCorr; // #2596
+				if (!graphic) {
+					point.graphic = graphic = chart.renderer.path()
+						.add(series.group);
+				}
+
+				/*= if (build.classic) { =*/
+				graphic
+					.attr(series.pointAttribs(point, point.selected && 'select')) // #3897
+					.shadow(series.options.shadow);
+				/*= } =*/
+
+				// Crisp vector coordinates
+				crispCorr = (graphic.strokeWidth() % 2) / 2;
+				crispX = Math.round(point.plotX) - crispCorr; // #2596
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
-				topBox = math.min(plotOpen, plotClose);
-				bottomBox = math.max(plotOpen, plotClose);
-				halfWidth = mathRound(point.shapeArgs.width / 2);
-				hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
+				topBox = Math.min(plotOpen, plotClose);
+				bottomBox = Math.max(plotOpen, plotClose);
+				halfWidth = Math.round(point.shapeArgs.width / 2);
+				hasTopWhisker = Math.round(topBox) !== Math.round(point.plotY);
 				hasBottomWhisker = bottomBox !== point.yBottom;
-				topBox = mathRound(topBox) + crispCorr;
-				bottomBox = mathRound(bottomBox) + crispCorr;
+				topBox = Math.round(topBox) + crispCorr;
+				bottomBox = Math.round(bottomBox) + crispCorr;
 
 				// Create the path. Due to a bug in Chrome 49, the path is first instanciated
 				// with no values, then the values pushed. For unknown reasons, instanciated
@@ -123,23 +131,15 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					'M',
 					crispX, topBox,
 					'L',
-					crispX, hasTopWhisker ? mathRound(point.plotY) : topBox, // #460, #2094
+					crispX, hasTopWhisker ? Math.round(point.plotY) : topBox, // #460, #2094
 					'M',
 					crispX, bottomBox,
 					'L',
-					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
+					crispX, hasBottomWhisker ? Math.round(point.yBottom) : bottomBox // #460, #2094
 				);
 
-				if (graphic) {
-					graphic
-						.attr(pointAttr) // #3897
-						.animate({ d: path });
-				} else {
-					point.graphic = chart.renderer.path(path)
-						.attr(pointAttr)
-						.add(series.group)
-						.shadow(series.options.shadow);
-				}
+				graphic[isNew ? 'attr' : 'animate']({ d: path })
+					.addClass(point.getClassName(), true);
 
 			}
 		});
@@ -148,8 +148,6 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 
 
 });
-
-seriesTypes.candlestick = CandlestickSeries;
 
 /* ****************************************************************************
  * End Candlestick series code												*

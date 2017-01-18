@@ -1,6 +1,8 @@
 <?php 
 
-$compare = json_decode(file_get_contents('temp/compare.json'));
+require_once('functions.php');
+
+$compare = json_decode(file_get_contents(compareJSON()));
 
 $browsers = array();
 $comments = array();

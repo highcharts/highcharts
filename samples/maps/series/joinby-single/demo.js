@@ -22,7 +22,7 @@ $(function () {
 
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Data joined by "name"'
@@ -44,7 +44,7 @@ $(function () {
             name: 'Random data',
             states: {
                 hover: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             }
         }]

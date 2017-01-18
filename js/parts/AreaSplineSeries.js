@@ -1,20 +1,25 @@
 /**
- * Set the default options for areaspline
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
  */
-defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
-
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Legend.js';
+import './AreaSeries.js';
+import './SplineSeries.js';
+var areaProto = H.seriesTypes.area.prototype,
+	defaultPlotOptions = H.defaultPlotOptions,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	seriesType = H.seriesType;
 /**
  * AreaSplineSeries object
  */
-var areaProto = AreaSeries.prototype,
-	AreaSplineSeries = extendClass(SplineSeries, {
-		type: 'areaspline',
-		getStackPoints: areaProto.getStackPoints,
-		getGraphPath: areaProto.getGraphPath,
-		setStackCliffs: areaProto.setStackCliffs,
-		drawGraph: areaProto.drawGraph,
-		drawLegendSymbol: LegendSymbolMixin.drawRectangle
-	});
-
-seriesTypes.areaspline = AreaSplineSeries;
-
+seriesType('areaspline', 'spline', defaultPlotOptions.area, {
+	getStackPoints: areaProto.getStackPoints,
+	getGraphPath: areaProto.getGraphPath,
+	setStackCliffs: areaProto.setStackCliffs,
+	drawGraph: areaProto.drawGraph,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
+});

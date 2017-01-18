@@ -1,0 +1,41 @@
+# For testing purposes, redirect .js to higcharts.js.php
+RewriteEngine On
+
+# Stock directory
+RewriteRule ^stock/(.*?) /$1
+
+# Maps directory
+RewriteRule ^maps/(.*?) /$1
+
+# Github branches
+RewriteRule ^master/(.*?) /$1
+
+# Source files
+RewriteRule (.*?)highcharts.js $1highcharts.src.js
+RewriteRule (.*?)highcharts-more.js $1highcharts-more.src.js
+RewriteRule (.*?)highcharts-3d.js $1highcharts-3d.src.js
+RewriteRule (.*?)highmaps.js $1highmaps.src.js
+RewriteRule (.*?)highmaps.unstyled.src.js $1highmaps.unstyled.src.js
+# RewriteRule (.*?)highstock.js $1highstock.src.js
+
+RewriteRule (.*?)accessibility.js $1accessibility.src.js
+RewriteRule (.*?)boost.js $1boost.src.js
+RewriteRule (.*?)broken-axis.js $1broken-axis.src.js
+RewriteRule (.*?)data.js $1data.src.js
+RewriteRule (.*?)drilldown.js $1drilldown.src.js
+RewriteRule (.*?)exporting.js $1exporting.src.js
+RewriteRule (.*?)funnel.js $1funnel.src.js
+RewriteRule (.*?)gantt.js $1gantt.src.js;
+RewriteRule (.*?)grid-axis.js $1grid-axis.src.js
+RewriteRule (.*?)heatmap.js $1heatmap.src.js
+RewriteRule (.*?)map.js $1map.src.js
+RewriteRule (.*?)no-data-to-display.js $1no-data-to-display.src.js
+RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
+RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
+RewriteRule (.*?)series-label.js $1series-label.src.js
+RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
+RewriteRule (.*?)stock.js $1stock.src.js
+RewriteRule (.*?)xrange-series.js $1xrange-series.src.js
+
+# Map data
+# ErrorDocument 404 /error.js

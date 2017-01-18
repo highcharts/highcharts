@@ -1,5 +1,5 @@
 $(function () {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         chart: {
             type: 'line'
         },
@@ -18,8 +18,7 @@ $(function () {
 
     // button handler
     $('#button').click(function () {
-        var chart = $('#container').highcharts(),
-            highest = chart.get('highest');
+        var highest = chart.get('highest');
         if (highest) {
             highest.remove();
         }

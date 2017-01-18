@@ -4,7 +4,7 @@ $(function () {
      * Experimental Highcharts plugin to implement chart.alignThreshold option. This primary axis
      * will be computed first, then all following axes will be aligned to the threshold.
      * Author: Torstein Hønsi
-     * Last revision: 2015-05-18
+     * Last revision: 2016-11-02
      */
     (function (H) {
         var Axis = H.Axis,
@@ -32,23 +32,25 @@ $(function () {
 
                 primaryIndex = primaryAxis.tickPositions && inArray(primaryThreshold, primaryAxis.tickPositions);
 
-                if (this.tickPositions && primaryIndex > 0 && primaryIndex < primaryAxis.tickPositions.length - 1) {
+                if (this.tickPositions && this.tickPositions.length &&
+                        primaryIndex > 0 &&
+                        primaryIndex < primaryAxis.tickPositions.length - 1 &&
+                        this.tickAmount) {
+
                     // Add tick positions to the top or bottom in order to align the threshold
                     // to the primary axis threshold
-                    if (this.tickAmount) {
-                        while (!isAligned(this)) {
+                    while (!isAligned(this)) {
 
-                            if (index < primaryIndex) {
-                                newTickPos = this.tickPositions[0] - this.tickInterval;
-                                this.tickPositions.unshift(newTickPos);
-                                this.min = newTickPos;
-                            } else {
-                                newTickPos = this.tickPositions[this.tickPositions.length - 1] + this.tickInterval;
-                                this.tickPositions.push(newTickPos);
-                                this.max = newTickPos;
-                            }
-                            proceed.call(this);
+                        if (index < primaryIndex) {
+                            newTickPos = this.tickPositions[0] - this.tickInterval;
+                            this.tickPositions.unshift(newTickPos);
+                            this.min = newTickPos;
+                        } else {
+                            newTickPos = this.tickPositions[this.tickPositions.length - 1] + this.tickInterval;
+                            this.tickPositions.push(newTickPos);
+                            this.max = newTickPos;
                         }
+                        proceed.call(this);
                     }
                 }
 
@@ -58,7 +60,7 @@ $(function () {
         });
     }(Highcharts));
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             alignThresholds: true,
             type: 'area'

@@ -1,3 +1,0 @@
-rules:
-    indent: [2, "tab"]
-    no-undef: 0

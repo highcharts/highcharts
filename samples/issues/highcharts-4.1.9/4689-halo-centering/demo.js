@@ -37,10 +37,10 @@ $(function () {
                 }
             };
 
-        function getCenter(box, plotBox) {
+        function getCenter(box) {
             return [
-                (box.x + box.width / 2 + (plotBox ? plotBox.x : 0)).toFixed(2),
-                (box.y + box.height / 2 + (plotBox ? plotBox.y : 0)).toFixed(2)
+                (box.x + box.width / 2).toFixed(1),
+                (box.y + box.height / 2).toFixed(1)
             ].join(',');
         }
 
@@ -50,7 +50,7 @@ $(function () {
         for (var i = 0; i < chart.series[0].points.length; i++) {
             chart.series[0].points[i].onMouseOver();
             assert.strictEqual(
-                getCenter(chart.series[0].points[i].graphic.getBBox(), chart.plotBox),
+                getCenter(chart.series[0].points[i].graphic.getBBox()),
                 getCenter(chart.series[0].halo.getBBox()),
                 'Point ' + i + ' and halo has the same center'
             );

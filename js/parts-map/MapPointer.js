@@ -1,5 +1,17 @@
-
-
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Pointer.js';
+var extend = H.extend,
+	pick = H.pick,
+	Pointer = H.Pointer,
+	wrap = H.wrap;
+		
 // Extend the Pointer
 extend(Pointer.prototype, {
 
@@ -49,15 +61,19 @@ extend(Pointer.prototype, {
 	}
 });
 
-// Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+// The pinchType is inferred from mapNavigation options.
+wrap(Pointer.prototype, 'zoomOption', function (proceed) {
 
-	proceed.call(this, chart, options);
 
+	var mapNavigation = this.chart.options.mapNavigation;
+	
 	// Pinch status
-	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
-		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
+	if (pick(mapNavigation.enableTouchZoom, mapNavigation.enabled)) {
+		this.chart.options.chart.pinchType = 'xy';
 	}
+	
+	proceed.apply(this, [].slice.call(arguments, 1));
+
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
@@ -80,4 +96,3 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 		);
 	}
 });
-

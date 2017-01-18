@@ -8,7 +8,7 @@ $(function () {
      */
     function createChart() {
 
-        $('#container').highcharts('StockChart', {
+        Highcharts.stockChart('container', {
             title: {
                 text: 'Series compare by <em>percent</em>'
             },

@@ -91,15 +91,15 @@
         console.log('Copying ' + name + ' files...');
 
         // Copy the files over to shim repo
-        fs.readdir('build/dist/' + product + '/js/', function (err, files) {
+        fs.readdir('build/dist/' + product + '/code/', function (err, files) {
             if (err) {
                 throw err;
             }
 
             files.forEach(function (src) {
-                if (src.indexOf('.') !== 0) {
+                if ((src.indexOf('.') !== 0) && (src.indexOf('readme') === -1)){
                     fs.copy(
-                        'build/dist/' + product + '/js/' + src,
+                        'build/dist/' + product + '/code/' + src,
                         '../' + releaseRepo(product) + '/' + src,
                         function (copyerr) {
                             if (copyerr) {
@@ -120,15 +120,18 @@
         }
 
         extras.forEach(function (src) {
-            fs.copy(
-                'build/dist/' + product + '/js/' + src,
-                '../highcharts-dist/' + src,
-                function (err) {
-                    if (err) {
-                        throw err;
+            ['', 'js/'].forEach(function (folder) {
+                var path = folder + src;
+                fs.copy(
+                    'build/dist/' + product + '/code/' + path,
+                    '../' + releaseRepo('highcharts') + '/' + path,
+                    function (err) {
+                        if (err) {
+                            throw err;
+                        }
                     }
-                }
-            );
+                );
+            });
         });
     }
 

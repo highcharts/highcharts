@@ -1,10 +1,29 @@
-/***
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Chart.js';
+var Chart = H.Chart,
+	each = H.each,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	wrap = H.wrap;
+
+/*** 
 	EXTENSION FOR 3D CHARTS
 ***/
 // Shorthand to check the is3d flag
-Highcharts.Chart.prototype.is3d = function () {
+Chart.prototype.is3d = function () {
 	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
+
+Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
+Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
 
 /**
  * Calculate scale of the 3D view. That is required to
@@ -105,44 +124,65 @@ function getScale(chart, depth) {
 
 
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-var defaultChartOptions = Highcharts.getOptions();
-defaultChartOptions.chart.options3d = {
-	enabled: false,
-	alpha: 0,
-	beta: 0,
-	depth: 100,
-	fitToPlot: true,
-	viewDistance: 25,
-	frame: {
-		bottom: { size: 1, color: 'rgba(255,255,255,0)' },
-		side: { size: 1, color: 'rgba(255,255,255,0)' },
-		back: { size: 1, color: 'rgba(255,255,255,0)' }
+var defaultOptions = H.getOptions();
+merge(true, defaultOptions, {
+	chart: {
+		options3d: {
+			enabled: false,
+			alpha: 0,
+			beta: 0,
+			depth: 100,
+			fitToPlot: true,
+			viewDistance: 25,
+			frame: {
+				bottom: {
+					size: 1
+				},
+				side: {
+					size: 1
+				},
+				back: {
+					size: 1
+				}
+			}
+		}
 	}
-};
-
-Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
-	var args = [].slice.call(arguments, 1),
-		plotOptions,
-		pieOptions;
-
-	if (args[0].chart && args[0].chart.options3d && args[0].chart.options3d.enabled) {
-		// Normalize alpha and beta to (-360, 360) range
-		args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
-		args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
-
-		plotOptions = args[0].plotOptions || {};
-		pieOptions = plotOptions.pie || {};
-
-		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined);
-	}
-	proceed.apply(this, args);
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
+/*= if (!build.classic) { =*/
+/**
+ * Override the getContainer by adding the required CSS classes for column 
+ * sides (#6018)
+ */
+wrap(Chart.prototype, 'getContainer', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	this.renderer.definition({
+		tagName: 'style',
+		textContent: 
+			'.highcharts-3d-top{' +
+				'filter: url(#highcharts-brighter)' +
+			'}\n' +
+			'.highcharts-3d-side{' +
+				'filter: url(#highcharts-darker)' +
+			'}\n'
+	});
+});
+/*= } =*/
+
+wrap(Chart.prototype, 'setClassName', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.is3d()) {
+		this.container.className += ' highcharts-3d-chart';
+	}
+});
+
+H.wrap(H.Chart.prototype, 'setChartSize', function (proceed) {
 	var chart = this,
 		options3d = chart.options.chart.options3d;
 
@@ -170,7 +210,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
+wrap(Chart.prototype, 'redraw', function (proceed) {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
@@ -179,7 +219,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 });
 
 // Draw the series in the reverse order (#3803, #3917)
-Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
+wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	var series,
 		i = this.series.length;
 
@@ -194,13 +234,13 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
 	}
 });
 
-Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
+Chart.prototype.retrieveStacks = function (stacking) {
 	var series = this.series,
 		stacks = {},
 		stackNumber,
 		i = 1;
 
-	Highcharts.each(this.series, function (s) {
+	each(this.series, function (s) {
 		stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [s], position: i };
@@ -213,4 +253,3 @@ Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 	stacks.totalStacks = i + 1;
 	return stacks;
 };
-

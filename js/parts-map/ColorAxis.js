@@ -1,10 +1,33 @@
-
-
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Axis.js';
+import '../parts/Chart.js';
+import '../parts/Color.js';
+import '../parts/Legend.js';
+var Axis = H.Axis,
+	Chart = H.Chart,
+	color = H.color,
+	ColorAxis,
+	each = H.each,
+	extend = H.extend,
+	isNumber = H.isNumber,
+	Legend = H.Legend,
+	LegendSymbolMixin = H.LegendSymbolMixin,
+	noop = H.noop,
+	merge = H.merge,
+	pick = H.pick,
+	wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
  */
-var ColorAxis = Highcharts.ColorAxis = function () {
+ColorAxis = H.ColorAxis = function () {
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -22,17 +45,28 @@ extend(ColorAxis.prototype, {
 			animation: {
 				duration: 50
 			},
-			color: 'gray',
-			width: 0.01
+			width: 0.01,
+			/*= if (build.classic) { =*/
+			color: '${palette.neutralColor40}'
+			/*= } =*/
 		},
 		labels: {
-			overflow: 'justify'
+			overflow: 'justify',
+			rotation: 0
 		},
-		minColor: '#EFEFFF',
-		maxColor: '#003875',
+		minColor: '${palette.highlightColor10}',
+		maxColor: '${palette.highlightColor100}',
 		tickLength: 5,
 		showInLegend: true
 	},
+
+	// Properties to preserve after destroy, for Axis.update (#5881)
+	keepProps: ['legendGroup', 'legendItem', 'legendSymbol']
+		.concat(Axis.prototype.keepProps),
+
+	/**
+	 * Initialize the color axis
+	 */
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
 			options;
@@ -103,6 +137,7 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
+			colorCount = chart.options.chart.colorCount,
 			options = this.options,
 			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];
@@ -115,16 +150,22 @@ extend(ColorAxis.prototype, {
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
+					/*= if (build.classic) { =*/
 					colors = chart.options.colors;
-					dataClass.color = colors[colorCounter++];
-					// loop back to zero
-					if (colorCounter === colors.length) {
+					colorCount = colors.length;
+					dataClass.color = colors[colorCounter];
+					/*= } =*/
+					dataClass.colorIndex = colorCounter;
+
+					// increase and loop back to zero
+					colorCounter++;
+					if (colorCounter === colorCount) {
 						colorCounter = 0;
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Color(options.minColor),
-						Color(options.maxColor),
+						color(options.minColor),
+						color(options.maxColor),
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -138,7 +179,7 @@ extend(ColorAxis.prototype, {
 			[1, this.options.maxColor]
 		];
 		each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
+			stop.color = color(stop[1]);
 		});
 	},
 
@@ -196,10 +237,11 @@ extend(ColorAxis.prototype, {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
+						point.colorIndex = dataClass.colorIndex;
 					}
 					break;
 				}
@@ -316,11 +358,15 @@ extend(ColorAxis.prototype, {
 	visible: true,
 	setVisible: noop,
 	getSeriesExtremes: function () {
-		var series;
-		if (this.series.length) {
-			series = this.series[0];
-			this.dataMin = series.valueMin;
-			this.dataMax = series.valueMax;
+		var series = this.series,
+			i = series.length;
+		this.dataMin = Infinity;
+		this.dataMax = -Infinity;
+		while (i--) {
+			if (series[i].valueMin !== undefined) {
+				this.dataMin = Math.min(this.dataMin, series[i].valueMin);
+				this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+			}
 		}
 	},
 	drawCrosshair: function (e, point) {
@@ -346,10 +392,15 @@ extend(ColorAxis.prototype, {
 
 			if (this.cross) {
 				this.cross
-					.attr({
-						fill: this.crosshair.color
-					})
+					.addClass('highcharts-coloraxis-marker')
 					.add(this.legendGroup);
+
+				/*= if (build.classic) { =*/
+				this.cross.attr({
+					fill: this.crosshair.color
+				});
+				/*= } =*/
+					
 			}
 		}
 	},
@@ -411,21 +462,20 @@ extend(ColorAxis.prototype, {
 
 				// Assemble the default name. This can be overridden by legend.options.labelFormatter
 				name = '';
-				if (from === UNDEFINED) {
+				if (from === undefined) {
 					name = '< ';
-				} else if (to === UNDEFINED) {
+				} else if (to === undefined) {
 					name = '> ';
 				}
-				if (from !== UNDEFINED) {
-					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+				if (from !== undefined) {
+					name += H.numberFormat(from, valueDecimals) + valueSuffix;
 				}
-				if (from !== UNDEFINED && to !== UNDEFINED) {
+				if (from !== undefined && to !== undefined) {
 					name += ' - ';
 				}
-				if (to !== UNDEFINED) {
-					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+				if (to !== undefined) {
+					name += H.numberFormat(to, valueDecimals) + valueSuffix;
 				}
-
 				// Add a mock object to the legend items
 				legendItems.push(extend({
 					chart: chart,
@@ -459,8 +509,17 @@ extend(ColorAxis.prototype, {
  * Handle animation of the color attributes directly
  */
 each(['fill', 'stroke'], function (prop) {
-	Highcharts.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+	H.Fx.prototype[prop + 'Setter'] = function () {
+		this.elem.attr(
+			prop,
+			ColorAxis.prototype.tweenColors(
+				color(this.start),
+				color(this.end),
+				this.pos
+			),
+			null,
+			true
+		);
 	};
 });
 
@@ -489,7 +548,7 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
-	if (colorAxis) {
+	if (colorAxis && colorAxis.options) {
 		if (colorAxis.options.showInLegend) {
 			// Data classes
 			if (colorAxis.options.dataClasses) {
@@ -508,4 +567,13 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	}
 
 	return allItems.concat(proceed.call(this));
+});
+
+wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
+	proceed.call(this, item, visible);
+	if (visible && item.legendColor) {
+		item.legendSymbol.attr({
+			fill: item.legendColor
+		});
+	}
 });

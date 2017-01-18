@@ -1,4 +1,4 @@
-@import 'https://code.highcharts.com/5/css/highcharts.css';
+@import 'https://code.highcharts.com/css/highcharts.css';
 
 .outer-pane {
 	fill: #EFEFEF;
@@ -12,12 +12,15 @@
 }
 .green-band {
 	fill: #55BF3B;
+	fill-opacity: 1;
 }
 .yellow-band {
 	fill: #DDDF0D;
+	fill-opacity: 1;
 }
 .red-band {
 	fill: #DF5353;
+	fill-opacity: 1;
 }
 .highcharts-gauge-series .highcharts-pivot {
 	stroke-width: 1px;
@@ -30,6 +33,10 @@
 .highcharts-yaxis .highcharts-tick {
 	stroke-width: 2px;
 	stroke: #666666;
+}
+.highcharts-yaxis-grid .highcharts-grid-line,
+.highcharts-yaxis-grid .highcharts-minor-grid-line {
+	display: none;
 }
 
 .highcharts-yaxis .highcharts-minor-tick {

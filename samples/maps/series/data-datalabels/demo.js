@@ -1,7 +1,7 @@
 $(function () {
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    Highcharts.mapChart('container', {
 
         title: {
             text: 'Individually disabled data labels'
@@ -68,7 +68,7 @@ $(function () {
             },
             states: {
                 hover: {
-                    color: '#BADA55'
+                    color: '#a4edba'
                 }
             }
         }]

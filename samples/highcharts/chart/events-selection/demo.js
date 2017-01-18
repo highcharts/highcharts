@@ -1,7 +1,7 @@
 $(function () {
 
     // create the chart
-    $('#container').highcharts({
+    Highcharts.chart('container', {
         chart: {
             events: {
                 selection: function (event) {

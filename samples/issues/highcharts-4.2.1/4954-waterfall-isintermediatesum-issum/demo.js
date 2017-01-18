@@ -26,7 +26,7 @@ jQuery(function () {
                 'min': 17.5
             }
         });
-        console.log(chart);
+
         assert.strictEqual(
             chart.series[0].data[2].y,
             18.5,

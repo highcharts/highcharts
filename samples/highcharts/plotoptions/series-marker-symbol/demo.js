@@ -9,7 +9,7 @@ $(function () {
     }
 
 
-    $('#container').highcharts({
+    Highcharts.chart('container', {
 
         title: {
             text: 'Demo of predefined, image and custom marker symbols'

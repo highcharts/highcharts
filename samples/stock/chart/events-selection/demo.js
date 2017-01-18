@@ -1,7 +1,7 @@
 $(function () {
     var $report = $('#report');
 
-    $('#container').highcharts('StockChart', {
+    Highcharts.stockChart('container', {
 
         chart: {
             zoomType: 'x',

@@ -1,13 +1,40 @@
-/***
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Color.js';
+import '../parts/SvgRenderer.js';
+var cos = Math.cos,
+	PI = Math.PI,
+	sin = Math.sin;
+		
+
+var animObject = H.animObject,
+	charts = H.charts,
+	color = H.color,
+	defined = H.defined,
+	deg2rad = H.deg2rad,
+	each = H.each,
+	extend = H.extend,
+	inArray = H.inArray,
+	map = H.map,
+	merge = H.merge,
+	perspective = H.perspective,
+	pick = H.pick,
+	SVGElement = H.SVGElement,
+	SVGRenderer = H.SVGRenderer,
+	wrap = H.wrap;
+/*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-function defined(obj) {
-	return obj !== undefined && obj !== null;
-}
 
 //Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
 function shapeArea(vertexes) {
@@ -34,34 +61,74 @@ function averageZ(vertexes) {
   * Can 'wrap' around more then 180 degrees
   */
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
-	var result = [];
-	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
-	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
-	} else {
-		var arcAngle = end - start;
-		result = [
-			'C',
-			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
-			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
-			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
-			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
-
-			cx + (rx * cos(end)) + dx,
-			cy + (ry * sin(end)) + dy
-		];
+	var result = [], 
+		arcAngle = end - start;
+	if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy));
+		return result;
 	}
-	return result;
+	if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {			
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
+		return result;
+	} 
+	return [
+		'C', 
+		cx + (rx * Math.cos(start)) - ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+		cy + (ry * Math.sin(start)) + ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+		cx + (rx * Math.cos(end)) + ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+		cy + (ry * Math.sin(end)) - ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
+
+		cx + (rx * Math.cos(end)) + dx,
+		cy + (ry * Math.sin(end)) + dy
+	];
 }
 
-Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
+/*= if (!build.classic) { =*/
+/**
+ * Override the SVGRenderer initiator to add definitions used by brighter and
+ * darker faces of the cuboids.
+ */
+wrap(SVGRenderer.prototype, 'init', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	each([{
+		name: 'darker',
+		slope: 0.6
+	}, {
+		name: 'brighter',
+		slope: 1.4
+	}], function (cfg) {
+		this.definition({
+			tagName: 'filter',
+			id: 'highcharts-' + cfg.name,
+			children: [{
+				tagName: 'feComponentTransfer',
+				children: [{
+					tagName: 'feFuncR',
+					type: 'linear',
+					slope: cfg.slope
+				}, {
+					tagName: 'feFuncG',
+					type: 'linear',
+					slope: cfg.slope
+				}, {
+					tagName: 'feFuncB',
+					type: 'linear',
+					slope: cfg.slope
+				}]
+			}]
+		});
+	}, this);
+});
+/*= } =*/
+
+SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
 	// Put "L x y" for each point
-	Highcharts.each(points, function (point) {
+	each(points, function (point) {
 		result.push('L', point.x, point.y);
 	});
 
@@ -79,27 +146,45 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 };
 
 ////// CUBOIDS //////
-Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
+SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
+		destroy = result.destroy,
 		paths = this.cuboidPath(shapeArgs);
 
+	/*= if (build.classic) { =*/
+	result.attr({
+		'stroke-linejoin': 'round'
+	});
+	/*= } =*/
+
 	// create the 3 sides
-	result.front = this.path(paths[0]).attr({ zIndex: paths[3], 'stroke-linejoin': 'round' }).add(result);
-	result.top = this.path(paths[1]).attr({ zIndex: paths[4], 'stroke-linejoin': 'round' }).add(result);
-	result.side = this.path(paths[2]).attr({ zIndex: paths[5], 'stroke-linejoin': 'round' }).add(result);
+	result.front = this.path(paths[0]).attr({
+		'class': 'highcharts-3d-front',
+		zIndex: paths[3]
+	}).add(result);
+	result.top = this.path(paths[1]).attr({
+		'class': 'highcharts-3d-top',
+		zIndex: paths[4]
+	}).add(result);
+	result.side = this.path(paths[2]).attr({
+		'class': 'highcharts-3d-side',
+		zIndex: paths[5]
+	}).add(result);
 
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
-	result.fillSetter = function (color) {
-		var c0 = color,
-			c1 = Highcharts.Color(color).brighten(0.1).get(),
-			c2 = Highcharts.Color(color).brighten(-0.1).get();
+	result.fillSetter = function (fill) {
+		this.front.attr({
+			fill: fill
+		});
+		this.top.attr({
+			fill: color(fill).brighten(0.1).get()
+		});
+		this.side.attr({
+			fill: color(fill).brighten(-0.1).get()
+		});
 
-		this.front.attr({ fill: c0 });
-		this.top.attr({ fill: c1 });
-		this.side.attr({ fill: c2 });
-
-		this.color = color;
+		this.color = fill;
 		return this;
 	};
 
@@ -119,7 +204,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ d: paths[1], zIndex: paths[4] });
 			this.side.attr({ d: paths[2], zIndex: paths[5] });
 		} else {
-			return Highcharts.SVGElement.prototype.attr.call(this, args); // getter returns value
+			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
 		}
 
 		return this;
@@ -139,7 +224,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.animate(args, duration, complete);
 			this.side.animate(args, duration, complete);
 		} else {
-			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+			SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
 		return this;
 	};
@@ -150,7 +235,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.destroy();
 		this.side.destroy();
 
-		return null;
+		return destroy.call(this);
 	};
 
 	// Apply the Z index to the cuboid group
@@ -162,15 +247,14 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 /**
  *	Generates a cuboid
  */
-Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var x = shapeArgs.x,
 		y = shapeArgs.y,
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,
-		chart = Highcharts.charts[this.chartIndex],
-		map = Highcharts.map;
+		d = shapeArgs.depth,		
+		chart = charts[this.chartIndex];
 
 	// The 8 corners of the cube
 	var pArr = [
@@ -222,7 +306,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 
 ////// SECTORS //////
-Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
+H.SVGRenderer.prototype.arc3d = function (attribs) {
 
 	var wrapper = this.g(),
 		renderer = wrapper.renderer,
@@ -260,12 +344,17 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 	 * Add all faces
 	 */
 	wrapper.onAdd = function () {
-		var parent = wrapper.parentGroup;
+		var parent = wrapper.parentGroup, 
+			className = wrapper.attr('class');
 		wrapper.top.add(wrapper);
-		wrapper.out.add(parent);
-		wrapper.inn.add(parent);
-		wrapper.side1.add(parent);
-		wrapper.side2.add(parent);
+
+		// These faces are added outside the wrapper group because the z index
+		// relates to neighbour elements as well
+		each(['out', 'inn', 'side1', 'side2'], function (face) {
+			wrapper[face]
+				.addClass(className + ' highcharts-3d-side')
+				.add(parent);
+		});
 	};
 
 	/**
@@ -299,7 +388,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 
 	// Apply the fill to the top and a darker shade to the sides
 	wrapper.fillSetter = function (value) {
-		var darker = Highcharts.Color(value).brighten(-0.1).get();
+		var darker = color(value).brighten(-0.1).get();
 		
 		this.fill = value;
 
@@ -325,7 +414,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 	/**
 	 * Override attr to remove shape attributes and use those to set child paths
 	 */
-	wrap(wrapper, 'attr', function (proceed, params, val) {
+	wrap(wrapper, 'attr', function (proceed, params) {
 		var ca;
 		if (typeof params === 'object') {
 			ca = suckOutCustom(params);
@@ -334,7 +423,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 				wrapper.setPaths(wrapper.attribs);
 			}
 		}
-		return proceed.call(this, params, val);
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	});
 
 	/**
@@ -360,21 +449,25 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		if (anim.duration) {
 			params = merge(params); // Don't mutate the original object
 			ca = suckOutCustom(params);
-			
+			params.dummy = 1; // Params need to have a property in order for the step to run (#5765)
+
 			if (ca) {
 				to = ca;
 				anim.step = function (a, fx) {
 					function interpolate(key) {
 						return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
 					}
-					fx.elem.setPaths(merge(from, {
-						x: interpolate('x'),
-						y: interpolate('y'),
-						r: interpolate('r'),
-						innerR: interpolate('innerR'),
-						start: interpolate('start'),
-						end: interpolate('end')
-					}));
+						
+					if (fx.prop === 'dummy') {
+						fx.elem.setPaths(merge(from, {
+							x: interpolate('x'),
+							y: interpolate('y'),
+							r: interpolate('r'),
+							innerR: interpolate('innerR'),
+							start: interpolate('start'),
+							end: interpolate('end')
+						}));
+					}
 				};
 			}
 			animation = anim; // Only when duration (#5572)
@@ -390,7 +483,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		this.side1.destroy();
 		this.side2.destroy();
 
-		Highcharts.SVGElement.prototype.destroy.call(this);
+		SVGElement.prototype.destroy.call(this);
 	};
 	// hide all children
 	wrapper.hide = function () {
@@ -413,7 +506,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 /**
  * Generate the paths required to draw a 3D arc
  */
-Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
+SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var cx = shapeArgs.x, // x coordinate of the center
 		cy = shapeArgs.y, // y coordinate of the center
 		start = shapeArgs.start, // start angle
@@ -425,16 +518,16 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		beta = shapeArgs.beta; // beta rotation of the chart
 
 	// Derived Variables
-	var cs = cos(start),		// cosinus of the start angle
-		ss = sin(start),		// sinus of the start angle
-		ce = cos(end),			// cosinus of the end angle
-		se = sin(end),			// sinus of the end angle
-		rx = r * cos(beta),		// x-radius
-		ry = r * cos(alpha),	// y-radius
-		irx = ir * cos(beta),	// x-radius (inner)
-		iry = ir * cos(alpha),	// y-radius (inner)
-		dx = d * sin(beta),		// distance between top and bottom in x
-		dy = d * sin(alpha);	// distance between top and bottom in y
+	var cs = Math.cos(start),		// cosinus of the start angle
+		ss = Math.sin(start),		// sinus of the start angle
+		ce = Math.cos(end),			// cosinus of the end angle
+		se = Math.sin(end),			// sinus of the end angle
+		rx = r * Math.cos(beta),		// x-radius 
+		ry = r * Math.cos(alpha),	// y-radius
+		irx = ir * Math.cos(beta),	// x-radius (inner)
+		iry = ir * Math.cos(alpha),	// y-radius (inner)
+		dx = d * Math.sin(beta),		// distance between top and bottom in x
+		dy = d * Math.sin(alpha);	// distance between top and bottom in y
 
 	// TOP
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
@@ -445,8 +538,8 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
 	top = top.concat(['Z']);
 	// OUTSIDE
-	var b = (beta > 0 ? PI / 2 : 0),
-		a = (alpha > 0 ? 0 : PI / 2);
+	var b = (beta > 0 ? Math.PI / 2 : 0),
+		a = (alpha > 0 ? 0 : Math.PI / 2);
 
 	var start2 = start > -b ? start : (end > -b ? -b : start),
 		end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
@@ -503,20 +596,20 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	} else if (end > PI - a && start < PI - a) { // But shape can cross also only (c) edge:
 		// Go to outer side
 		out = out.concat([
-			'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+			'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 		]);
 		// Curve to the true end of the slice
 		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
 		// Go to the inner side
 		out = out.concat([
-			'L', cx + (rx * cos(end)), cy + (ry * sin(end))
+			'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
 		]);
 		// Go back to the artifical end2
 		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
 	}
 
 	out = out.concat([
-		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 	]);
 	out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
 	out = out.concat(['Z']);
@@ -525,7 +618,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
 	inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
 	inn = inn.concat([
-		'L', cx + (irx * cos(end)) + dx, cy + (iry * sin(end)) + dy
+		'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
 	]);
 	inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
 	inn = inn.concat(['Z']);
@@ -554,9 +647,9 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
 	// set to 0-PI range
 	function toZeroPIRange(angle) {
-		angle = angle % (2 * PI);
-		if (angle > PI) {
-			angle = 2 * PI - angle;
+		angle = angle % (2 * Math.PI);
+		if (angle > Math.PI) {
+			angle = 2 * Math.PI - angle; 
 		}
 		return angle;
 	}
@@ -572,7 +665,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
 	return {
 		top: top,
-		zTop: PI * incPrecision + 1, // max angle is PI, so this is allways higher
+		zTop: Math.PI * incPrecision + 1, // max angle is PI, so this is allways higher
 		out: out,
 		zOut: Math.max(a1, a2, a3),
 		inn: inn,

@@ -1,7 +1,23 @@
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Series.js';
+var each = H.each,
+	perspective = H.perspective,
+	pick = H.pick,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	wrap = H.wrap;
 /***
 	EXTENSION FOR 3D COLUMNS
 ***/
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
+wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -23,7 +39,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	z += (seriesOptions.groupZPadding || 1);
 
-	Highcharts.each(series.data, function (point) {
+	each(series.data, function (point) {
 		if (point.y !== null) {
 			var shapeArgs = point.shapeArgs,
 				tooltipPos = point.tooltipPos;
@@ -42,7 +58,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	series.z = z;
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
+wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 	if (!this.chart.is3d()) {
 		proceed.apply(this, [].slice.call(arguments, 1));
 	} else {
@@ -52,9 +68,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 			series = this,
 			reversed = this.yAxis.reversed;
 
-		if (Highcharts.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 			if (init) {
-				Highcharts.each(series.data, function (point) {
+				each(series.data, function (point) {
 					if (point.y !== null) {
 						point.height = point.shapeArgs.height;
 						point.shapey = point.shapeArgs.y;	//#2968
@@ -69,8 +85,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 					}
 				});
 
-			} else { // run the animation
-				Highcharts.each(series.data, function (point) {
+			} else { // run the animation				
+				each(series.data, function (point) {					
 					if (point.y !== null) {
 						point.shapeArgs.height = point.height;
 						point.shapeArgs.y = point.shapey;	//#2968
@@ -91,7 +107,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 	}
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
+wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
@@ -121,6 +137,26 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		seriesOptions.zIndex = z;
 	}
 });
+
+/*= if (build.classic) { =*/
+function pointAttribs(proceed) {
+	var attr = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {
+		// Set the fill color to the fill color to provide a smooth edge
+		attr.stroke = this.options.edgeColor || attr.fill;
+		attr['stroke-width'] = pick(this.options.edgeWidth, 1); // #4055
+	}
+
+	return attr;
+}
+
+wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
+if (seriesTypes.columnrange) {
+	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+}
+/*= } =*/
+
 function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
@@ -129,31 +165,13 @@ function draw3DPoints(proceed) {
 			this.group.attr({ zIndex: this.group.zIndex * 10 });
 			this.zIndexSet = true; // #4062 set zindex only once
 		}
-
-		var options = this.options,
-			states = this.options.states;
-
-		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
-
-		Highcharts.each(this.data, function (point) {
-			if (point.y !== null) {
-				var pointAttr = point.pointAttr;
-
-				// Set the border color to the fill color to provide a smooth edge
-				this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
-
-				pointAttr[''].stroke = this.borderColor;
-				pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
-				pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
-			}
-		});
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 }
 
-Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed) {
-
+wrap(Series.prototype, 'alignDataLabel', function (proceed) {
+	
 	// Only do this for 3D columns and columnranges
 	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
 		var series = this,
@@ -171,25 +189,25 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-if (Highcharts.seriesTypes.columnrange) {
-	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
+if (seriesTypes.columnrange) {
+	wrap(seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
 }
 
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
+wrap(seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
 /***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
 /*
-var defaultOptions = Highcharts.getOptions();
-defaultOptions.plotOptions.cylinder = Highcharts.merge(defaultOptions.plotOptions.column);
-var CylinderSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
+var defaultOptions = H.getOptions();
+defaultOptions.plotOptions.cylinder = H.merge(defaultOptions.plotOptions.column);
+var CylinderSeries = H.extendClass(seriesTypes.column, {
 	type: 'cylinder'
 });
-Highcharts.seriesTypes.cylinder = CylinderSeries;
+seriesTypes.cylinder = CylinderSeries;
 
-Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function (proceed) {
+wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -203,15 +221,16 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
 		depth = cylOptions.depth || 0,
-		alpha = options3d.alpha;
+		alpha = chart.alpha3d;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
 	if (cylOptions.grouping !== false) { z = 0; }
 
-	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
+	each(series.data, function (point) {
+		var shapeArgs = point.shapeArgs,
+			deg2rad = H.deg2rad;
 		point.shapeType = 'arc3d';
 		shapeArgs.x += depth / 2;
 		shapeArgs.z = z;

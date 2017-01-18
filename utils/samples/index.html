@@ -2,30 +2,62 @@
 <html>
 	<head>
 		<title>Sample viewer - Highcharts</title>
+		<script src="cache.php?file=http://code.jquery.com/jquery-3.1.1.js"></script>
+		<script src="controller.js"></script>
 		<script>
+		/* eslint-disable */
 		function keyDown(e) {
 			if (e.keyCode === 39) {
-				window.frames['main'].next();
+				document.getElementById('main').contentWindow.next();
 			}
 			if (e.keyCode === 37) {
-				window.frames['main'].previous();
+				document.getElementById('main').contentWindow.previous();
 			}
 			if (e.ctrlKey && e.keyCode === 13) {
-				window.frames['main'].location.reload();
+				document.getElementById('main').contentWindow.location.reload();
 				return false;
 			}
 		}
 		window.onload = function () {
+			var hash = window.location.hash,
+				match
+				main = 'view.php';
+
 			window.onkeydown = keyDown;
+
+			if (hash) {
+				// View
+				match = hash.match(/^#view\//);
+				if (match) {
+					main = 'view.php?path=' + hash.replace(match[0], '');
+				}
+
+				// Test
+				match = hash.match(/^#test\//);
+				if (match) {
+					main = 'compare-view.php?path=' + hash.replace(match[0], '');
+				}
+				
+				// Batch test
+				match = hash.match(/^#batch\//);
+				if (match) {
+					document.getElementById('contents').contentWindow.batchMode();
+					main = 'compare-view.php?path=' + hash.replace(match[0], '');
+				}
+				
+				document.getElementById('main').contentWindow.location.href = main;
+
+			}
 		}
 
+		var batchRuns = 0;
 		var commits = [];
 		</script>
 	</head>	
 
 	<frameset cols="400, *">
-		<frame src="contents.php" name="contents">
-		<frame src="view.php" name="main" id="main">
+		<frame src="contents.php" name="contents" id="contents">
+		<frame name="main" id="main">
 	</frameset>
 
 </html>

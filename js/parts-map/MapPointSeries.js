@@ -1,7 +1,20 @@
-
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from '../parts/Globals.js';
+import '../parts/Utilities.js';
+import '../parts/Options.js';
+import '../parts/Point.js';
+import '../parts/ScatterSeries.js';
+var merge = H.merge,
+	Point = H.Point,
+	seriesType = H.seriesType;
 
 // The mappoint series type
-defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
+seriesType('mappoint', 'scatter', {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -11,17 +24,19 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			color: '#000000'
+			color: '${palette.neutralColor100}'
 		}
 	}
-});
-seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
+
+// Prototype members
+}, {
 	type: 'mappoint',
-	forceDL: true,
-	pointClass: extendClass(Point, {
-		applyOptions: function (options, x) {
-			var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
-			return Point.prototype.applyOptions.call(this, mergedOptions, x);
-		}
-	})
+	forceDL: true
+
+// Point class
+}, {
+	applyOptions: function (options, x) {
+		var mergedOptions = options.lat !== undefined && options.lon !== undefined ? merge(options, this.series.chart.fromLatLonToPoint(options)) : options;
+		return Point.prototype.applyOptions.call(this, mergedOptions, x);
+	}
 });

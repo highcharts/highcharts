@@ -959,8 +959,10 @@ QUnit.test('Hide dataLabels for points which is not visible', function (assert) 
     });
     series = chart.series[0];
     series.drillToNode('id_2');
-    point = series.points.find(function (p) {
-        return (p.name === 'Eastern Mediterranean');
+    series.points.forEach(function (p) {
+        if (p.name === 'Eastern Mediterranean') {
+            point = p;
+        }
     });
     assert.strictEqual(
         point.dataLabel.y,

@@ -1,7 +1,7 @@
 $(function () {
 
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    var chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Highmaps flight routes demo'
@@ -109,8 +109,7 @@ $(function () {
         return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + to.y;
     }
 
-    var chart = $('#container').highcharts(),
-        londonPoint = chart.get('London'),
+    var londonPoint = chart.get('London'),
         lerwickPoint = chart.get('Lerwick');
 
     // Add the flight routes series for London and Lerwick using the already defined points

@@ -6,12 +6,5 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint indent: [2, 4] */
-(function (factory) {
-    if (typeof module === 'object' && module.exports) {
-        module.exports = factory;
-    } else {
-        factory(Highcharts);
-    }
-}(function (Highcharts) {
+/* eslint indent: 0 */
 

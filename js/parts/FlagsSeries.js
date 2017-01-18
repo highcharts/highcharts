@@ -1,38 +1,61 @@
-/* ****************************************************************************
- * Start Flags series code													*
- *****************************************************************************/
+/**
+ * (c) 2010-2016 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+'use strict';
+import H from './Globals.js';
+import './Utilities.js';
+import './Series.js';
+import './SvgRenderer.js';
+import './VmlRenderer.js';
+var addEvent = H.addEvent,
+	each = H.each,
+	merge = H.merge,
+	noop = H.noop,
+	Renderer = H.Renderer,
+	Series = H.Series,
+	seriesType = H.seriesType,
+	seriesTypes = H.seriesTypes,
+	SVGRenderer = H.SVGRenderer,
+	TrackerMixin = H.TrackerMixin,
+	VMLRenderer = H.VMLRenderer,
+	symbols = SVGRenderer.prototype.symbols;
 
-var symbols = SVGRenderer.prototype.symbols;
-
-// 1 - set default options
-defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
-	fillColor: 'white',
-	lineWidth: 1,
+/**
+ * The flags series type.
+ *
+ * @constructor seriesTypes.flags
+ * @augments seriesTypes.column
+ */
+seriesType('flags', 'column', {
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',
 	stackDistance: 12,
-	states: {
-		hover: {
-			lineColor: 'black',
-			fillColor: '#FCFFC5'
-		}
-	},
-	style: {
-		fontSize: '11px',
-		fontWeight: 'bold',
-		textAlign: 'center'
-	},
+	textAlign: 'center',
 	tooltip: {
 		pointFormat: '{point.text}<br/>'
 	},
 	threshold: null,
-	y: -30
-});
+	y: -30,
+	/*= if (build.classic) { =*/
+	fillColor: '${palette.backgroundColor}',
+	// lineColor: color,
+	lineWidth: 1,
+	states: {
+		hover: {
+			lineColor: '${palette.neutralColor100}',
+			fillColor: '${palette.highlightColor20}'
+		}
+	},
+	style: {
+		fontSize: '11px',
+		fontWeight: 'bold'
+	}
+	/*= } =*/
 
-// 2 - Create the CandlestickSeries object
-seriesTypes.flags = extendClass(seriesTypes.column, {
-	type: 'flags',
+}, /** @lends seriesTypes.flags.prototype */ {
 	sorted: false,
 	noSharedTooltip: true,
 	allowDG: false,
@@ -40,19 +63,34 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	trackerGroups: ['markerGroup'],
 	forceCrop: true,
 	/**
-	 * Inherit the initialization from base Series
+	 * Inherit the initialization from base Series.
 	 */
 	init: Series.prototype.init,
 
+	/*= if (build.classic) { =*/
 	/**
-	 * One-to-one mapping from options to SVG attributes
+	 * Get presentational attributes
 	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'fillColor',
-		stroke: 'color',
-		'stroke-width': 'lineWidth',
-		r: 'radius'
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			color = (point && point.color) || this.color,
+			lineColor = options.lineColor,
+			lineWidth = (point && point.lineWidth),
+			fill = (point && point.fillColor) || options.fillColor;
+
+		if (state) {
+			fill = options.states[state].fillColor;
+			lineColor = options.states[state].lineColor;
+			lineWidth = options.states[state].lineWidth;
+		}
+
+		return {
+			'fill': fill || color,
+			'stroke': lineColor || color,
+			'stroke-width': lineWidth || options.lineWidth || 0
+		};
 	},
+	/*= } =*/
 
 	/**
 	 * Extend the translate method by placing the point on the related series
@@ -105,7 +143,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						// interpolate between points, #666
 						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
-							if (rightPoint && rightPoint[onKey] !== UNDEFINED) {
+							if (rightPoint && rightPoint[onKey] !== undefined) {
 								point.plotY +=
 									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
 									(rightPoint[onKey] - leftPoint[onKey]); // the y distance
@@ -129,7 +167,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
 			// If the series is outside the range of the x axis it should fall through with
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
-			if (point.plotY === UNDEFINED) {
+			if (point.plotY === undefined) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
 					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
 				} else {
@@ -140,7 +178,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
 			if (lastPoint && lastPoint.plotX === point.plotX) {
-				if (lastPoint.stackIndex === UNDEFINED) {
+				if (lastPoint.stackIndex === undefined) {
 					lastPoint.stackIndex = 0;
 				}
 				stackIndex = lastPoint.stackIndex + 1;
@@ -156,8 +194,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 */
 	drawPoints: function () {
 		var series = this,
-			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -173,65 +209,69 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			anchorX,
 			anchorY,
 			outsideRight,
-			yAxis = series.yAxis,
-			text;
+			yAxis = series.yAxis;
 
 		i = points.length;
 		while (i--) {
 			point = points[i];
 			outsideRight = point.plotX > series.xAxis.len;
 			plotX = point.plotX;
-			if (plotX > 0) { // #3119
-				plotX -= pick(point.lineWidth, options.lineWidth) % 2; // #4285
-			}
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
-			if (plotY !== UNDEFINED) {
-				plotY = point.plotY + optionsY - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
+
+			if (plotY !== undefined) {
+				plotY = point.plotY + optionsY - (stackIndex !== undefined && stackIndex * options.stackDistance);
 			}
-			anchorX = stackIndex ? UNDEFINED : point.plotX; // skip connectors for higher level stacked points
-			anchorY = stackIndex ? UNDEFINED : point.plotY;
+			anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
+			anchorY = stackIndex ? undefined : point.plotY;
 
 			graphic = point.graphic;
 
-					
-			// only draw the point if y is defined and the flag is within the visible area
-			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
-				// shortcuts
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
-				text = pick(point.options.title, options.title, 'A');
-				if (graphic) { // update
-					graphic.attr({
-						text: text // first apply text, so text will be centered later
-					}).attr({
-						x: plotX,
-						y: plotY,
-						r: pointAttr.r,
-						anchorX: anchorX,
-						anchorY: anchorY
-					});
-				} else {
+			// Only draw the point if y is defined and the flag is within the visible area
+			if (plotY !== undefined && plotX >= 0 && !outsideRight) {
+				
+				// Create the flag
+				if (!graphic) {
 					graphic = point.graphic = renderer.label(
-						text, 
-						plotX,
-						plotY,
+						'',
+						null,
+						null,
 						shape,
-						anchorX,
-						anchorY,
+						null,
+						null,
 						options.useHTML
 					)
+					/*= if (build.classic) { =*/
+					.attr(series.pointAttribs(point))
 					.css(merge(options.style, point.style))
-					.attr(pointAttr)
+					/*= } =*/
 					.attr({
 						align: shape === 'flag' ? 'left' : 'center',
 						width: options.width,
-						height: options.height
+						height: options.height,
+						'text-align': options.textAlign
 					})
-					.add(series.markerGroup)
-					.shadow(options.shadow);
+					.addClass('highcharts-point')
+					.add(series.markerGroup);
 
+					/*= if (build.classic) { =*/
+					graphic.shadow(options.shadow);
+					/*= } =*/
 				}
+
+				if (plotX > 0) { // #3119
+					plotX -= graphic.strokeWidth() % 2; // #4285
+				}
+
+				// Plant the flag
+				graphic.attr({
+					text: point.options.title || options.title || 'A',
+					x: plotX,
+					y: plotY,
+					anchorX: anchorX,
+					anchorY: anchorY
+				});
 
 				// Set the tooltip anchor position
 				point.tooltipPos = chart.inverted ? [yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - plotX] : [plotX, plotY];
@@ -283,10 +323,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		});
 	},
 
-	/**
-	 * Disable animation
-	 */
-	animate: noop,
+	animate: noop, // Disable animation
 	buildKDTree: noop,
 	setClip: noop
 
@@ -319,7 +356,7 @@ each(['circle', 'square'], function (shape) {
 
 		// For single-letter flags, make sure circular flags are not taller than their width
 		if (shape === 'circle' && h > w) {
-			x -= mathRound((h - w) / 2);
+			x -= Math.round((h - w) / 2);
 			w = h;
 		}
 
@@ -336,15 +373,16 @@ each(['circle', 'square'], function (shape) {
 	};
 });
 
+/*= if (build.classic) { =*/
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Renderer === Highcharts.VMLRenderer) {
+if (Renderer === VMLRenderer) {
 	each(['flag', 'circlepin', 'squarepin'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
 }
-
+/*= } =*/
 /* ****************************************************************************
  * End Flags series code													  *
  *****************************************************************************/
