@@ -63,6 +63,40 @@ $(function () {
         });
     });
 
+    QUnit.test('Update className with Point.update (#6454)', function (assert) {
+
+        ['line', 'column', 'pie'].forEach(function (type) {
+            var chart = Highcharts.chart('container', {
+
+                chart: {
+                    type: type,
+                    animation: false
+                },
+
+                series: [{
+                    data: [10, 20, 30],
+                    animation: false
+                }]
+
+            });
+
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass('updated'),
+                false,
+                'Ready...'
+            );
+
+            chart.series[0].points[0].update({
+                className: 'updated'
+            });
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.hasClass('updated'),
+                true,
+                'Point.update successfully applied class name (' + type + ')'
+            );
+        });
+    });
+
     QUnit.test('Point with negative color has only one highcharts-negative class',
         function (assert) {
             var chart = Highcharts.chart('container', {
