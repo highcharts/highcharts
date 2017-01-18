@@ -27,7 +27,7 @@ var ZAxis,
 wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	var options;
 	proceed.call(this, userOptions);
-	if (this.chart.is3d()) {
+	if (this.chart.is3d() && this.coll !== 'colorAxis') {
 		options = this.options;
 		options.tickWidth = pick(options.tickWidth, 0);
 		options.gridLineWidth = pick(options.gridLineWidth, 1);
@@ -38,7 +38,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
+	if (!this.chart.is3d() || this.coll === 'colorAxis') {
 		return;
 	}
 
@@ -141,7 +141,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
+	if (!this.chart.is3d() || this.coll === 'colorAxis') {
 		return path;
 	}
 
@@ -176,7 +176,7 @@ wrap(Axis.prototype, 'getLinePath', function (proceed) {
 
 wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
+	if (!this.chart.is3d() || this.coll === 'colorAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
@@ -216,7 +216,7 @@ wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));	
 
 	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.is3d()) {
+	if (!this.axis.chart.is3d() || this.coll === 'colorAxis') {
 		return path;
 	}
 
@@ -237,14 +237,14 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (this.axis.chart.is3d()) {
+	if (this.axis.chart.is3d() && this.coll !== 'colorAxis') {
 		pos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
 	}
 	return pos;
 });
 
 H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
-	var is3d = this.chart.is3d(),
+	var is3d = this.chart.is3d() && this.coll !== 'colorAxis',
 		pos,
 		axisTitleMargin;
 
