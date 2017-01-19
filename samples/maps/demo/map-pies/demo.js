@@ -154,11 +154,8 @@ $(function () {
             enabled: true
         },
         // Limit zoom range
-        xAxis: {
-            minRange: 2700
-        },
         yAxis: {
-            minRange: 2700
+            minRange: 2300
         },
 
         tooltip: {
@@ -266,9 +263,12 @@ $(function () {
             name: state.id,
             zIndex: 6, // Keep pies above connector lines
             sizeFormatter: function () {
+                var yAxis = this.chart.yAxis[0],
+                    zoomFactor = (yAxis.dataMax - yAxis.dataMin) /
+                        (Math.max(yAxis.minRange, yAxis.max - yAxis.min));
                 return Math.max(
-                    this.chart.chartWidth / 45, // Min size
-                    this.chart.chartWidth / 11 * state.sumVotes / maxVotes
+                    this.chart.chartWidth / 45 * zoomFactor, // Min size
+                    this.chart.chartWidth / 11 * zoomFactor * state.sumVotes / maxVotes
                 );
             },
             data: [{
