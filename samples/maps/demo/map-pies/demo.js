@@ -265,7 +265,7 @@ $(function () {
             sizeFormatter: function () {
                 var yAxis = this.chart.yAxis[0],
                     zoomFactor = (yAxis.dataMax - yAxis.dataMin) /
-                        (Math.max(yAxis.minRange, yAxis.max - yAxis.min));
+                        (yAxis.max - yAxis.min);
                 return Math.max(
                     this.chart.chartWidth / 45 * zoomFactor, // Min size
                     this.chart.chartWidth / 11 * zoomFactor * state.sumVotes / maxVotes
