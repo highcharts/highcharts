@@ -1,7 +1,10 @@
 $(function () {
-    // New map-pie series type that also allows lat/lon as center option
+    // New map-pie series type that also allows lat/lon as center option.
+    // Also adds a sizeFormatter option to the series, to allow dynamic sizing
+    // of the pies.
     Highcharts.seriesType('mappie', 'pie', {
         center: null, // Can't be array by default anymore
+        clip: true, // For map navigation
         states: {
             hover: {
                 halo: {
@@ -20,6 +23,7 @@ $(function () {
             if (!options.center) {
                 options.center = [null, null]; // Do the default here instead
             }
+            // Handle lat/lon support
             if (options.center.lat !== undefined) {
                 var point = chart.fromLatLonToPoint(options.center);
                 options.center = [
@@ -27,11 +31,21 @@ $(function () {
                     chart.yAxis[0].toPixels(point.y, true)
                 ];
             }
+            // Handle dynamic size
+            if (options.sizeFormatter) {
+                options.size = options.sizeFormatter.call(this);
+            }
+            // Call parent function
             var result = Highcharts.seriesTypes.pie.prototype.getCenter.call(this);
             // Must correct for slicing room to get exact pixel pos
             result[0] -= slicingRoom;
             result[1] -= slicingRoom;
             return result;
+        },
+        translate: function (p) {
+            this.options.center = this.userOptions.center;
+            this.center = this.getCenter();
+            return Highcharts.seriesTypes.pie.prototype.translate.call(this, p);
         }
     });
 
@@ -58,7 +72,7 @@ $(function () {
             ['Kentucky', 628854, 1202971, 53752, 13913, 1899490, -1],
             ['Louisiana', 780154, 1178638, 37978, 14031, 2010801, -1],
             ['Maine', 352156, 332418, 37578, 13995, 736147, 1],
-            ['Maryland', 1502820, 878615, 78225, 33380, 2493040, 1],
+            ['Maryland', 1502820, 878615, 78225, 33380, 2493040, 1, { lon: 0.6, drawConnector: false }],
             ['Massachusetts', 1995196, 1090893, 138018, 47661, 3271768, 1, { lon: 3 }],
             ['Michigan', 2268839, 2279543, 172136, 51463, 4771981, -1],
             ['Minnesota', 1367716, 1322951, 112972, 36985, 2840624, 1, { lon: -1, drawConnector: false }],
@@ -108,6 +122,10 @@ $(function () {
             text: 'USA 2016 Presidential Election Results'
         },
 
+        chart: {
+            animation: false // Disable animation, especially for zooming
+        },
+
         colorAxis: {
             dataClasses: [{
                 from: -1,
@@ -132,25 +150,19 @@ $(function () {
             }]
         },
 
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            floating: true,
-            y: 90,
-            x: -20
+        mapNavigation: {
+            enabled: true
+        },
+        // Limit zoom range
+        xAxis: {
+            minRange: 2700
+        },
+        yAxis: {
+            minRange: 2700
         },
 
         tooltip: {
             useHTML: true
-        },
-
-        exporting: {
-            chartOptions: {
-                legend: {
-                    x: 0 // Keep the legend to the right when exporting
-                }
-            }
         },
 
         // Default options for the pies
@@ -169,7 +181,7 @@ $(function () {
             mapData: Highcharts.maps['countries/us/us-all'],
             data: data,
             name: 'States',
-            borderColor: '#FFFFFF',
+            borderColor: '#FFF',
             showInLegend: false,
             joinBy: ['name', 'id'],
             keys: ['id', 'demVotes', 'repVotes', 'libVotes', 'grnVotes',
@@ -253,7 +265,12 @@ $(function () {
             type: 'mappie',
             name: state.id,
             zIndex: 6, // Keep pies above connector lines
-            size: Math.max(20, 80 * state.sumVotes / maxVotes),
+            sizeFormatter: function () {
+                return Math.max(
+                    this.chart.chartWidth / 45, // Min size
+                    this.chart.chartWidth / 11 * state.sumVotes / maxVotes
+                );
+            },
             data: [{
                 name: 'Democrats',
                 y: state.demVotes,
