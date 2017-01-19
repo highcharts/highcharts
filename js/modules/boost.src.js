@@ -311,17 +311,12 @@ function GLShader(gl) {
 
 			'varying highp vec2 position;',
 			'varying highp vec4 vColor;',
-			//'attribute float aXAxis;',
-			//'attribute float aYAxis;',
 
 			'uniform mat4 uPMatrix;',
 			'uniform float pSize;',
 
 			'uniform float translatedThreshold;',
 			'uniform bool hasThreshold;',
-
-			'uniform float width;',
-			'uniform float height;',
 
 			'uniform bool skipTranslation;',
 
@@ -414,14 +409,15 @@ function GLShader(gl) {
 			'}',
 
 			'float yToPixels(float value, float checkTreshold){',
+				'float v;',
 				'if (skipTranslation){',
-					'return value + yAxisPos;',
+					'v = value + yAxisPos;',
+				'} else {',
+					'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
 				'}',
-
-				'float v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
-				//'if (checkTreshold > 0.0 && hasThreshold) {',
-				//	'v = min(v, translatedThreshold);',
-				//'}',
+				'if (checkTreshold > 0.0 && hasThreshold) {',
+					'v = min(v, translatedThreshold);',
+				'}',
 				'return v;',
 			'}',
 
@@ -433,6 +429,7 @@ function GLShader(gl) {
 				'}',
 				//'gl_PointSize = 10.0;',
 				'vColor = aColor;',
+				//'gl_Position = uPMatrix * vec4(aVertexPosition.x, aVertexPosition.y, 0.0, 1.0);',
 				'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x), yToPixels(aVertexPosition.y, aVertexPosition.z), 0.0, 1.0);',
 			'}'
 			/* eslint-enable */
@@ -650,7 +647,7 @@ function GLShader(gl) {
 	 * Set the perspective matrix
 	 * @param m {Matrix4x4} - the matrix 
 	 */
-	function setPMatrix(m) {
+	function setPMatrix(m) {		
 		gl.uniformMatrix4fv(pUniform, false, m);
 	}
 
@@ -716,6 +713,12 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 
 	type = type || 'float';
 
+	function destroy() {
+		if (buffer) {
+			gl.deleteBuffer(buffer);
+		}
+	}
+
 	/* 
 	 * Build the buffer 
  	 * @param dataIn {Array<float>} - a 0 padded array of indices
@@ -732,7 +735,11 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 			return false;
 		}
 
-		components = dataComponents || components;
+		components = dataComponents || components;		
+
+		if (buffer) {
+			gl.deleteBuffer(buffer);
+		}
 
 		buffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -753,7 +760,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 	 */
 	function bind() {		
 		if (!buffer) {
-			return;
+			return console.err('no buffer to bind');
 		}
 
 		gl.enableVertexAttribArray(vertAttribute);
@@ -772,7 +779,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 		var length = preAllocated ? preAllocated.length : data.length;
 
 		if (!buffer) {
-			return false;
+			return console.err('no buffer to bind');
 		}
 
 		if (!length) {
@@ -813,17 +820,16 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 	 */
 	function allocate(size) {
 		size *= 4;
-		console.log('resetting iterator');
 		iterator = -1;
 
-		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {
-			console.log('allocating vbuffer of size', size);
+		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {			
 			preAllocated = new Float32Array(size);
 		//}
 	}
 
 	////////////////////////////////////////////////////////////////////////////
 	return {
+		destroy: destroy,
 		bind: bind,
 		data: data,
 		build: build,
@@ -874,13 +880,14 @@ function GLRenderer(options) {
 		//Render settings
 		settings = {
 			pointSize: 1,
-			lineWidth: 2,
+			lineWidth: 4,
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,
 			useGPUTranslations: false,
 			timeRendering: true,
-			timeSeriesProcessing: true
+			timeSeriesProcessing: false,
+			timeSetup: false
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -956,12 +963,14 @@ function GLRenderer(options) {
 	 * @param {number} width - the width of the viewport in pixels
 	 * @param {number} height - the height of the viewport in pixels
 	 */
-	function orthoMatrix(width, height) {        
+	function orthoMatrix(width, height) {     
+		var near = 0, far = 1;
+		
 		return [
 			2 / width, 0, 0, 0,
 			0, -(2 / height), 0, 0,
-			0, 0, 1, 0,
-			-1, 1, 0, 1
+			0, 0, -2 / (far - near), 0,
+			-1, 1, -(far + near) / (far - near), 1
 		];
 	}
 
@@ -1002,7 +1011,12 @@ function GLRenderer(options) {
 			xData = series.xData || options.xData || series.processedXData,
 			yData = series.yData || options.yData || series.processedYData,
 			zData = series.zData || options.zData || series.processedZData,
+			yAxis = series.yAxis,
+			xAxis = series.xAxis,
 			useRaw = !xData || xData.length === 0,			
+			threshold = options.threshold,
+			yBottom = chart.yAxis[0].getThreshold(threshold),
+			hasThreshold = isNumber(threshold),
 			points = series.points || false,
 			colorIndex = 0,
 			lastX = false,
@@ -1268,8 +1282,12 @@ function GLRenderer(options) {
 			// Skip translations - temporary floating point fix
 			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
-				x = series.xAxis.toPixels(x, true);
-				y = series.yAxis.toPixels(y, true);				
+				x = xAxis.toPixels(x, true);
+				y = yAxis.toPixels(y, true);		
+
+				if (hasThreshold) {
+					y = Math.min(y, yBottom);
+				}		
 			}
 
 			if (drawAsBar) {
@@ -1283,14 +1301,20 @@ function GLRenderer(options) {
 				}
 			
 				if (!settings.useGPUTranslations) {
-					minVal = series.yAxis.toPixels(minVal, true);					
+					minVal = yAxis.toPixels(minVal, true);					
 				}
 
 				// Need to add an extra point here
 				vertice(x, minVal, 0, 0, pcolor);
 			}
 
-			vertice(x, y, 0, series.type === 'bubble' ? (z || 1) : 2, pcolor);
+			vertice(
+				x, 
+				y, 
+				0, 
+				series.type === 'bubble' ? (z || 1) : 2, 
+				pcolor
+			);
 
 			// if (caxis) {				
 			// 	color = H.color(caxis.toColor(y)).rgba;
@@ -1420,15 +1444,24 @@ function GLRenderer(options) {
 	 * Render the data 
 	 * This renders all pushed series.
 	 */
-	function render() {
+	function render(chart) {
+		if (chart) {
+			width = chart.chartWidth;
+			height = chart.chartHeight;
+		}
+
 		if (!gl || !width || !height) {
 			return false;
 		}		
 
+		if (settings.timeRendering) {
+			console.time('gl rendering');
+		}
+	
 		shader.bind();
 
-		shader.setUniform('width', width);
-		shader.setUniform('height', height);
+		gl.viewport(0, 0, width, height);
+		shader.setPMatrix(orthoMatrix(width, height));
 
 		gl.lineWidth(settings.lineWidth);
 
@@ -1481,7 +1514,7 @@ function GLRenderer(options) {
 				gl.blendEquation(gl.FUNC_ADD);
 			}
 
-			shader.reset();
+			shader.reset();		
 
 			// If there are entries in the colorData buffer, build and bind it.
 			if (s.colorData.length > 0) {
@@ -1518,6 +1551,10 @@ function GLRenderer(options) {
 			// Do the actual rendering
 			vbuffer.render(s.from, s.to, s.drawMode);
 		});
+
+		if (settings.timeRendering) {
+			console.timeEnd('gl rendering');
+		}
 	}
 	
 	/* 
@@ -1532,9 +1569,9 @@ function GLRenderer(options) {
 			return;
 		}
 
-		console.log('setting size', w, h);
 		width = w;
 		height = h;
+
 		shader.bind();
 		shader.setPMatrix(orthoMatrix(width, height));
 	}
@@ -1543,13 +1580,15 @@ function GLRenderer(options) {
 	 * Init OpenGL 
 	 * @param canvas {HTMLCanvas} - the canvas to render to
 	 */
-	function init(canvas) {
+	function init(canvas, noFlush) {
 		if (!canvas) {
 			//console.err('no valid canvas - unable to init webgl');
 			return false;
 		}
 
-		console.time('gl setup');
+		if (settings.timeSetup) {
+			console.time('gl setup');			
+		}
 
 		gl = canvas.getContext('webgl');
 
@@ -1558,8 +1597,10 @@ function GLRenderer(options) {
 			gl = canvas.getContext('experimental-webgl');
 		}
 
-		if (gl) {        	
-			flush();
+		if (gl) {   
+			if (!noFlush) {
+				flush();				
+			}     	
 		} else {
 			return false;
 		}
@@ -1573,7 +1614,7 @@ function GLRenderer(options) {
 		shader = GLShader(gl);		
 		vbuffer = GLVertexBuffer(gl, shader);
 
-		setSize(canvas.width, canvas.height);
+		//setSize(canvas.clientWidth, canvas.clientHeight);
 
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
@@ -1582,11 +1623,11 @@ function GLRenderer(options) {
 			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
 			gl.texImage2D(
-				gl.TEXTURE_2D, 
-				0, 
-				gl.RGBA, 
-				gl.RGBA, 
-				gl.UNSIGNED_BYTE, 
+				gl.TEXTURE_2D,
+				0,
+				gl.RGBA,
+				gl.RGBA,
+				gl.UNSIGNED_BYTE,
 				circleTexture
 			);
 			
@@ -1599,7 +1640,9 @@ function GLRenderer(options) {
 
 		isInited = true;
 
-		console.timeEnd('gl setup');
+		if (settings.timeSetup) {
+			console.timeEnd('gl setup');
+		}
 
 		return true;
 	}
@@ -1620,6 +1663,10 @@ function GLRenderer(options) {
 		return isInited;
 	}
 
+	function destroy() {
+		vbuffer.destroy();
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	exports = {
 		allocateBufferForSingleSeries: allocateBufferForSingleSeries,
@@ -1637,7 +1684,8 @@ function GLRenderer(options) {
 		setYAxis: setYAxis,
 		data: data,
 		gl: getGL,
-		allocateBuffer: allocateBuffer
+		allocateBuffer: allocateBuffer,
+		destroy: destroy
 	};
 
 	return exports;
@@ -1668,7 +1716,11 @@ function createAndAttachRenderer(chart, series) {
 		target = series;		
 	}
 
-	if (!target.canvas) {		
+	if (target.ogl) {
+		target.ogl.destroy();
+	}
+
+	if (!target.image) {		
 		target.canvas = doc.createElement('canvas');
 
 		target.image = chart.renderer.image(
@@ -1679,14 +1731,14 @@ function createAndAttachRenderer(chart, series) {
 			height
 		).add(targetGroup);
 
-		// target.boostClipRect = chart.renderer.clipRect(
-		// 	chart.plotLeft,
-		// 	chart.plotTop,
-		// 	chart.plotWidth,
-		// 	chart.chartHeight
-		// );
+		target.boostClipRect = chart.renderer.clipRect(
+			chart.plotLeft,
+			chart.plotTop,
+			chart.plotWidth,
+			chart.chartHeight
+		);
 
-		//target.image.clip(target.boostClipRect);
+		target.image.clip(target.boostClipRect);
 
 		if (target.inverted) {
 			each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
@@ -1724,16 +1776,13 @@ function createAndAttachRenderer(chart, series) {
 		style: 'pointer-events: none'
 	});
 
-	// target.boostClipRect.attr({
-	// 	x: chart.plotLeft,
-	// 	y: chart.plotTop,
-	// 	width: chart.plotWidth,
-	// 	height: chart.chartHeight
-	// });
+	target.boostClipRect.attr({
+		x: chart.plotLeft,
+		y: chart.plotTop,
+		width: chart.plotWidth,
+		height: chart.chartHeight
+	});
 
-	//target.image.clip(target.boostClipRect);
-
-	//console.log('renderer initied', width, height);
 	target.ogl.setSize(width, height);
 
 	return target.ogl;
@@ -1752,9 +1801,7 @@ function renderIfNotSeriesBoosting(renderer, series) {
 		!isChartSeriesBoosting(series.chart)
 	) {
 		renderer.clear();		
-		console.time('gl rendering');
-		renderer.render();
-		console.timeEnd('gl rendering');
+		renderer.render(series.chart);
 		renderer.flush();
 
 		series.image.attr({
@@ -2078,7 +2125,7 @@ H.extend(Series.prototype, {
 			allocateIfNotSeriesBoosting(renderer, this);
 			renderer.pushSeries(series);				
 			// Perform the actual renderer if we're on series level
-			renderIfNotSeriesBoosting(renderer, this);
+			renderIfNotSeriesBoosting(renderer, this);			
 		}
 
 		/* This builds the KD-tree */
@@ -2348,9 +2395,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	function canvasToSVG() {			
 		if (chart.ogl && isChartSeriesBoosting(chart)) {
 
-			console.time('gl rendering');			
-			chart.ogl.render();		
-			console.timeEnd('gl rendering');
+			chart.ogl.render(chart);
 
 			if (chart.image && chart.canvas) {
 				chart.image.attr({ 
@@ -2380,6 +2425,10 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	addEvent(chart, 'predraw', preRender);
 	//Blit to image when done redrawing
 	addEvent(chart, 'render', canvasToSVG);
-	//Handles the blitting on first render
-	addEvent(chart, 'load', canvasToSVG);
+
+	addEvent(chart, 'endResize', function () {
+		
+
+		
+	});
 });
