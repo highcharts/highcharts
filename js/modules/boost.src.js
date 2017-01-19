@@ -1285,9 +1285,9 @@ function GLRenderer(options) {
 				x = xAxis.toPixels(x, true);
 				y = yAxis.toPixels(y, true);		
 
-				if (hasThreshold) {
-					y = Math.min(y, yBottom);
-				}		
+				//if (hasThreshold) {
+					//y = Math.min(y, yBottom);
+				//}		
 			}
 
 			if (drawAsBar) {
