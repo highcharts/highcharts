@@ -51,7 +51,7 @@ seriesType('bubble', 'scatter', {
 				radiusPlus: 0
 			}
 		},
-		symbol: 'circle' // docs: new option
+		symbol: 'circle'
 	},
 	minSize: 8,
 	maxSize: '20%',
@@ -204,11 +204,11 @@ seriesType('bubble', 'scatter', {
 
 			if (isNumber(radius) && radius >= this.minPxSize / 2) {
 				// Shape arguments
-				point.marker = {
+				point.marker = H.extend(point.marker, {
 					radius: radius,
 					width: 2 * radius,
 					height: 2 * radius
-				};
+				});
 
 				// Alignment box for the data label
 				point.dlBox = {

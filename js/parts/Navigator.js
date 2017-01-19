@@ -379,7 +379,7 @@ Navigator.prototype = {
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			navigator.shades[index] = renderer.rect()
 				.addClass('highcharts-navigator-mask' + 
-					(index === 1 ? '-inside' : '-outside')) // docs
+					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
 					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
@@ -1366,8 +1366,11 @@ Navigator.prototype = {
 		});
 
 		// Destroy properties
-		each(['series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
-				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
+		each([
+			'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
+			'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
+			'rendered'
+		], function (prop) {
 			if (this[prop] && this[prop].destroy) {
 				this[prop].destroy();
 			}

@@ -380,7 +380,7 @@ Chart.prototype = {
 
 		// Fire the events
 		fireEvent(chart, 'redraw');
-		fireEvent(chart, 'render'); // docs: On first render + redraws
+		fireEvent(chart, 'render');
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -1566,9 +1566,6 @@ Chart.prototype = {
 
 		chart.render();
 
-		// The render event fires after first render and after every redraw
-		fireEvent(chart, 'render');
-		
 		// Fire the load event if there are no external images
 		if (!chart.renderer.imgCount && chart.onload) {
 			chart.onload();
@@ -1592,6 +1589,8 @@ Chart.prototype = {
 		}, this);
 
 		fireEvent(this, 'load');
+		fireEvent(this, 'render');
+		
 
 		// Set up auto resize, check for not destroyed (#6068)
 		if (defined(this.index) && this.options.chart.reflow !== false) {
