@@ -10,6 +10,7 @@ import './Utilities.js';
 var Chart = H.Chart,
 	each = H.each,
 	inArray = H.inArray,
+	isArray = H.isArray,
 	isObject = H.isObject,
 	pick = H.pick,
 	splat = H.splat;
@@ -94,7 +95,7 @@ Chart.prototype.currentOptions = function (options) {
 					);
 				}
 			} else if (isObject(options[key])) {
-				ret[key] = {};
+				ret[key] = isArray(options[key]) ? [] : {};
 				getCurrent(
 					options[key],
 					curr[key] || {},
