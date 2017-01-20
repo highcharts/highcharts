@@ -1619,7 +1619,7 @@ function GLRenderer(options) {
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
 		
-		if (circleTextureHandle) {			
+		if (circleTextureHandle && typeof circleTexture !== 'undefined') {			
 			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
 			gl.texImage2D(
