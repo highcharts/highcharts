@@ -93,14 +93,14 @@ var override = function (obj, methods) {
 
 /**
  * getCategoriesFromTree - getCategories bases on a tree
- *  
- * @param  {object} tree Root of tree to collect categories from 
+ *
+ * @param  {object} tree Root of tree to collect categories from
  * @return {Array}      Array of categories
- */ 
+ */
 var getCategoriesFromTree = function (tree) {
 	var categories = [];
 	if (tree.data) {
-		categories.push(tree.data.text);
+		categories.push(tree.data.name);
 	}
 	each(tree.children, function (child) {
 		categories = categories.concat(getCategoriesFromTree(child));
@@ -108,21 +108,34 @@ var getCategoriesFromTree = function (tree) {
 	return categories;
 };
 override(GridAxis.prototype, {
-	init: function (proceed) {
+	init: function (proceed, chart) {
 		var axis = this,
+			axisData = [],
 			tree,
 			options;
-		// Now apply the original function with the original arguments, 
+		// Now apply the original function with the original arguments,
 		// which are sliced off this function's arguments
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		options = axis.options;
 		if (options.type === 'tree-grid') {
-			tree = getTree(options.tree);
-			// @todo Do this before proceed to avoid resetting hasNames and showLastLabel
+
+			// Gather data from all series with same treeGrid axis
+			each(chart.options.series, function (series) {
+				// Get the series which use this axis
+				if (
+					// Series yAxis is the same as this axis
+					(series.yAxis && chart.yAxis[series.yAxis] === axis) ||
+					// Series yAxis is not set, check if this is first yAxis
+					!series.yAxis && chart.yAxis[0] === axis
+				) {
+					axisData = axisData.concat(series.data);
+				}
+			});
+			tree = getTree(axisData);
+			// TODO Do this before proceed to avoid resetting hasNames and showLastLabel
 			axis.categories = getCategoriesFromTree(tree).reverse();
 			axis.hasNames = true;
 			axis.options.showLastLabel = true;
 		}
 	}
 });
-
