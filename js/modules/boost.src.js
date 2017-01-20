@@ -895,13 +895,13 @@ function GLRenderer(options) {
 	//Create a white circle texture for use with bubbles
 	circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
 		'<?xml version="1.0" standalone="no"?>',
-		'<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
-		'<circle cx="512" cy="512" r="512" stroke="none" fill="#FFF"/>',
+		'<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
+		'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
 		'</svg>'
 	].join(''));
 
-	circleTexture.width = 1024;
-	circleTexture.height = 1024;
+	circleTexture.width = 512;
+	circleTexture.height = 512;
 
 	function seriesPointCount(series) {
 		var isStacked,
@@ -1621,6 +1621,7 @@ function GLRenderer(options) {
 		
 		if (circleTextureHandle && typeof circleTexture !== 'undefined') {
 			try {
+
 
 				gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
