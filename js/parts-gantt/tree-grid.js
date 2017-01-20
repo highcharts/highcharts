@@ -12,8 +12,10 @@ import './grid-axis.js';
 var wrap = H.wrap,
 	each = H.each,
 	map = H.map,
+	merge = H.merge,
 	pick = H.pick,
-	GridAxis = H.Axis;
+	GridAxis = H.Axis,
+	GridAxisTick = H.Tick;
 var reduce = function (arr, func, previous, context) {
 	context = context || this;
 	arr = arr || []; // @note should each be able to handle empty values automatically?
@@ -92,33 +94,42 @@ var override = function (obj, methods) {
 };
 
 /**
- * getCategoriesFromTree - getCategories bases on a tree
- *
+ * GetCategories based on a tree
  * @param  {object} tree Root of tree to collect categories from
- * @return {Array}      Array of categories
+ * @return {Array}       Array of categories
  */
 var getCategoriesFromTree = function (tree) {
-	var categories = [];
+	var categories = [],
+		map = {},
+		grandChildren;
 	if (tree.data) {
 		categories.push(tree.data.name);
+		map[tree.data.y] = tree;
 	}
 	each(tree.children, function (child) {
-		categories = categories.concat(getCategoriesFromTree(child));
+		grandChildren = getCategoriesFromTree(child);
+		categories = categories.concat(grandChildren.categories);
+		map = merge(map, grandChildren.map);
 	});
-	return categories;
+	return {
+		categories: categories,
+		map: map
+	};
 };
 override(GridAxis.prototype, {
-	init: function (proceed, chart) {
+	init: function (proceed, chart, userOptions) {
 		var axis = this,
 			axisData = [],
 			tree,
+			nodeInfo,
 			options;
+		userOptions.reversed = true;
+
 		// Now apply the original function with the original arguments,
 		// which are sliced off this function's arguments
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		options = axis.options;
 		if (options.type === 'tree-grid') {
-
 			// Gather data from all series with same treeGrid axis
 			each(chart.options.series, function (series) {
 				// Get the series which use this axis
@@ -133,9 +144,26 @@ override(GridAxis.prototype, {
 			});
 			tree = getTree(axisData);
 			// TODO Do this before proceed to avoid resetting hasNames and showLastLabel
-			axis.categories = getCategoriesFromTree(tree).reverse();
+			nodeInfo = getCategoriesFromTree(tree);
+			axis.categories = nodeInfo.categories;
+			axis.treeGridMap = nodeInfo.map;
 			axis.hasNames = true;
-			axis.options.showLastLabel = true;
+			options.showLastLabel = true;
 		}
+	}
+});
+override(GridAxisTick.prototype, {
+	renderLabel: function (proceed, xy, old, opacity, index) {
+		var tick = this,
+			pos = tick.pos,
+			axis = tick.axis,
+			treeGridMap = axis.treeGridMap,
+			options = axis.options;
+		if (options.type === 'tree-grid' && index >= 0) {
+			if (treeGridMap[pos] && treeGridMap[pos].level) {
+				xy.x += (treeGridMap[pos].level - 1) * 10;
+			}
+		}
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });

@@ -44,9 +44,9 @@ QUnit.test('Indentation', function (assert) {
         treeGrid = chart.yAxis[0],
         ticks = treeGrid.ticks,
         tickPositions = treeGrid.tickPositions,
-        tick1 = ticks[tickPositions[0]].label.getBBox(),
-        tick2 = ticks[tickPositions[1]].label.getBBox(),
-        tick3 = ticks[tickPositions[2]].label.getBBox();
+        tick1 = ticks[tickPositions[0]].label.element.getBBox(),
+        tick2 = ticks[tickPositions[1]].label.element.getBBox(),
+        tick3 = ticks[tickPositions[2]].label.element.getBBox();
 
     assert.ok(
         tick2.x > tick1.x,
