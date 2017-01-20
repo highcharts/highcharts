@@ -900,8 +900,8 @@ function GLRenderer(options) {
 		'</svg>'
 	].join(''));
 
-	circleTexture.width = 32;
-	circleTexture.height = 32;
+	circleTexture.width = 1024;
+	circleTexture.height = 1024;
 
 	function seriesPointCount(series) {
 		var isStacked,
