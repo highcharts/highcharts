@@ -142,7 +142,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	states: { // states for the entire series
 		hover: {
 			//enabled: false,
-			animation: {
+			animation: { // docs
 				duration: 50
 			},
 			lineWidthPlus: 1,
