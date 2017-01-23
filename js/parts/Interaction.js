@@ -855,8 +855,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				attribs = {
 					'stroke-width': lineWidth
 				};
-				// use attr because animate will cause any other animation on the graph to stop
-				graph.attr(attribs);
+				
+				// Animate the graph stroke-width. By default a quick animation
+				// to hover, slower to un-hover.
+				graph.animate(
+					attribs,
+					pick(
+						series.chart.options.chart.animation,
+						stateOptions[state] && stateOptions[state].animation
+					)
+				);
 				while (series['zone-graph-' + i]) {
 					series['zone-graph-' + i].attr(attribs);
 					i = i + 1;
