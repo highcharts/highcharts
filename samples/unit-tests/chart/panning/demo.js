@@ -79,3 +79,82 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
 });
+
+
+QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 600
+        },
+        title: {
+            text: 'AAPL stock price by minute'
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'day',
+                count: 7,
+                text: '7D'
+            }, {
+                type: 'month',
+                count: 1,
+                text: '1M'
+            }, {
+                type: 'all',
+                count: 1,
+                text: 'All'
+            }],
+            selected: 1,
+            inputEnabled: false
+        },
+        series: [{
+            data: (function () {
+                var arr = [];
+                var y = 1;
+                for (
+                    var x = Date.UTC(2017, 0, 1);
+                    x < Date.UTC(2017, 11, 31);
+                    x += 24 * 36e5
+                ) {
+                    if (y % 7 !== 0) {
+                        arr.push([x, y]);
+                    }
+                    y++;
+                }
+                return arr;
+            }())
+        }]
+    });
+
+    var controller = TestController(chart);
+
+    var initialMin = chart.xAxis[0].min,
+        initialRange = chart.xAxis[0].max - chart.xAxis[0].min;
+
+    assert.strictEqual(
+        initialMin,
+        1511913600000,
+        'Initial min'
+    );
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        1514505600000,
+        'Initial max'
+    );
+
+    // Pan
+    controller.mousedown(100, 200);
+    controller.mousemove(300, 200);
+    controller.mouseup();
+
+    assert.ok(
+        chart.xAxis[0].min < initialMin,
+        'Has panned'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        initialRange,
+        'Has preserved range'
+    );
+
+});
