@@ -77,8 +77,8 @@ SVGElement.prototype = {
 	 * @type {Array.<string>}
 	 */
 	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
-		'fontStyle', 'color', 'lineHeight', 'width', 'textDecoration',
-		'textOverflow', 'textOutline'],
+		'fontStyle', 'color', 'lineHeight', 'width', 'textAlign',
+		'textDecoration', 'textOverflow', 'textOutline'],
 
 	/**
 	 * Initialize the SVG renderer. This function only exists to make the
