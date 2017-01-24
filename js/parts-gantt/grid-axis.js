@@ -430,6 +430,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		axisGroupBox;
 
 	if (options.grid) {
+		// TODO acutual label padding (top, bottom, left, right)
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
 		distance = axis.maxLabelLength + labelPadding;
 		lineWidth = options.lineWidth;

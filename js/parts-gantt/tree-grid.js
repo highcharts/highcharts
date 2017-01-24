@@ -9,7 +9,11 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './grid-axis.js';
-var wrap = H.wrap,
+var argsToArray = function (args) {
+		return Array.prototype.slice.call(args, 1);
+	},
+	indentPx = 10,
+	wrap = H.wrap,
 	each = H.each,
 	map = H.map,
 	merge = H.merge,
@@ -39,7 +43,7 @@ var objectKeys = function (obj) {
  * @param {Array} data List of points set in options.
  * @param {string} data[].parent Parent id of point.
  * @param {Array} ids List of all point ids.
- * @return {Object} Map from parent id to children index in data.
+ * @returns {Object} Map from parent id to children index in data.
  */
 var getListOfParents = function (data, ids) {
 	var listOfParents = reduce(data, function (prev, curr) {
@@ -96,7 +100,7 @@ var override = function (obj, methods) {
 /**
  * GetCategories based on a tree
  * @param  {object} tree Root of tree to collect categories from
- * @return {Array}       Array of categories
+ * @returns {Array}       Array of categories
  */
 var getCategoriesFromTree = function (tree) {
 	var categories = [],
@@ -116,6 +120,36 @@ var getCategoriesFromTree = function (tree) {
 		map: map
 	};
 };
+/**
+ * Gets data from all series using the axis.
+ * @param  {object}  axis          the axis to check for
+ * @param  {boolean} axis.isXAxis  whether or not the axis is an X-axis (truthy)
+ * @param  {object}  chart         the chart containing the options series
+ * @param  {object}  chart.options the chart options
+ * @returns {Array}                 an array containing all data from all series
+ *                                 using the axis
+ */
+var getAxisData = function (axis, chart) {
+	var axisData = [],
+		axisDir = axis.isXAxis ? 'xAxis' : 'yAxis',
+		seriesAxis,
+		chartAxis;
+
+	each(chart.options.series, function (series) {
+		seriesAxis = series[axisDir];
+		chartAxis = chart[axisDir];
+		// Get the series which use this axis
+		if (
+			// Series yAxis is the same as this axis
+			(seriesAxis && chartAxis[seriesAxis] === axis) ||
+			// Series yAxis is not set, check if this is first yAxis
+			!seriesAxis && chartAxis[0] === axis
+		) {
+			axisData = axisData.concat(series.data);
+		}
+	});
+	return axisData;
+};
 override(GridAxis.prototype, {
 	init: function (proceed, chart, userOptions) {
 		var axis = this,
@@ -127,21 +161,11 @@ override(GridAxis.prototype, {
 
 		// Now apply the original function with the original arguments,
 		// which are sliced off this function's arguments
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		proceed.apply(axis, argsToArray(arguments));
 		options = axis.options;
 		if (options.type === 'tree-grid') {
 			// Gather data from all series with same treeGrid axis
-			each(chart.options.series, function (series) {
-				// Get the series which use this axis
-				if (
-					// Series yAxis is the same as this axis
-					(series.yAxis && chart.yAxis[series.yAxis] === axis) ||
-					// Series yAxis is not set, check if this is first yAxis
-					!series.yAxis && chart.yAxis[0] === axis
-				) {
-					axisData = axisData.concat(series.data);
-				}
-			});
+			axisData = getAxisData(axis, chart);
 			tree = getTree(axisData);
 			// TODO Do this before proceed to avoid resetting hasNames and showLastLabel
 			nodeInfo = getCategoriesFromTree(tree);
@@ -150,6 +174,21 @@ override(GridAxis.prototype, {
 			axis.hasNames = true;
 			options.showLastLabel = true;
 		}
+	},
+	/**
+	 * Override to add indentation to axis.maxLabelLength.
+	 * @param  {Function} proceed the original function
+	 * @returns {undefined}
+	 */
+	render: function (proceed) {
+		var axis = this,
+			treeDepth = 2;
+
+		if (axis.options.type === 'tree-grid') {
+			axis.maxLabelLength += indentPx * 2 * treeDepth;
+		}
+
+		proceed.apply(axis, argsToArray(arguments));
 	}
 });
 override(GridAxisTick.prototype, {
@@ -161,9 +200,9 @@ override(GridAxisTick.prototype, {
 			options = axis.options;
 		if (options.type === 'tree-grid' && index >= 0) {
 			if (treeGridMap[pos] && treeGridMap[pos].level) {
-				xy.x += (treeGridMap[pos].level - 1) * 10;
+				xy.x += (treeGridMap[pos].level - 1) * indentPx;
 			}
 		}
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		proceed.apply(tick, argsToArray(arguments));
 	}
 });
