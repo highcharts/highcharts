@@ -176,7 +176,10 @@ H.Point.prototype.buildPointInfoString = function () {
 			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
 
 	each(specialKeys, function (key) {
-		if (point[key] !== undefined) {
+		if (
+			point[key] !== undefined &&
+			!(key === 'z' && series.type === 'pie')
+		) {
 			hasSpecialKey = true;
 		}
 	});
@@ -188,7 +191,7 @@ H.Point.prototype.buildPointInfoString = function () {
 		}
 		each(commonKeys.concat(specialKeys), function (key) {				
 			if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
-				infoString += (infoString ? '. ' : '') + key + ', ' + this[key];
+				infoString += (infoString ? '. ' : '') + key + ', ' + point[key];
 			}
 		});
 	} else {
