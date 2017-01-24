@@ -850,6 +850,8 @@ function GLRenderer(options) {
 		shader = false,
 		//Vertex buffers - keyed on shader attribute name
 		vbuffer = false,
+		//Vertex buffers for markers
+		mvbuffer = false,
 		//Opengl context
 		gl = false,
 		//Width of our viewport in pixels
@@ -858,6 +860,8 @@ function GLRenderer(options) {
 		height = 0,
 		//The data to render - array of coordinates
 		data = false,		
+		// The marker data
+		markerData = false,
 		//Exports
 		exports = {},
 		//Is it inited?
@@ -887,7 +891,7 @@ function GLRenderer(options) {
 			useGPUTranslations: false,
 			timeRendering: true,
 			timeSeriesProcessing: false,
-			timeSetup: false
+			timeSetup: true
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -1027,12 +1031,15 @@ function GLRenderer(options) {
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
 			connectNulls = options.connectNulls,			
-			maxVal;
+			maxVal
+			;
 
 		if (options.boostData && options.boostData.length > 0) {
 			console.log('using padded data');
 			return;
 		}
+
+		series.closestPointRangePx = Number.MAX_VALUE;
 
 		// Push color to color buffer - need to do this per. vertex
 		function pushColor(color) {
@@ -1182,6 +1189,7 @@ function GLRenderer(options) {
 				prevInside = false,
 				pcolor = false,
 				drawAsBar = asBar[series.type],
+				isXInside = false,
 				isYInside = true;
 
 			if (chartDestroyed) {
@@ -1275,7 +1283,11 @@ function GLRenderer(options) {
 				return;
 			}
 
-			if ((x < xMin || x > xMax) && !nextInside && !prevInside) {
+			if (x >= xMin && x <= xMax) {
+				isXInside = true;
+			}
+
+			if (!isXInside && !nextInside && !prevInside) {
 				return;
 			}
 
@@ -1306,8 +1318,38 @@ function GLRenderer(options) {
 
 				// Need to add an extra point here
 				vertice(x, minVal, 0, 0, pcolor);
-			}
+			}			
 
+			// No markers on out of bounds things.
+			// Out of bound things are shown if and only if the next
+			// or previous point is inside the rect.
+			if (inst.hasMarkers && isXInside) {
+				markerData.push(x);
+				markerData.push(y);
+				markerData.push(0);
+				markerData.push(options.marker.radius || 2);
+
+				// x = H.correctFloat(
+				// 	Math.min(Math.max(-1e5, xAxis.translate(
+				// 		x,
+				// 		0,
+				// 		0,
+				// 		0,
+				// 		1,
+				// 		0.5,
+				// 		false
+				// 	)), 1e5)
+				// );
+
+				if (lastX !== false) {
+					series.closestPointRangePx = Math.min(
+						series.closestPointRangePx,
+						Math.abs(x - lastX)
+					);					
+				}
+			//	console.log('prep', x, lastX, Math.abs(x - lastX));
+			}
+			
 			vertice(
 				x, 
 				y, 
@@ -1334,7 +1376,7 @@ function GLRenderer(options) {
 			// 	console.error('duplicate x data', x);
 			// }
 
-			// lastX = x;
+			lastX = x;
 
 			return true;
 		});		
@@ -1348,14 +1390,18 @@ function GLRenderer(options) {
 	function pushSeries(s) {
 		if (series.length > 0) {
 			series[series.length - 1].to = data.length;
+			if (series[series.length - 1].hasMarkers) {
+				series[series.length - 1].markerTo = markerData.length;
+			}
 		}
 
 		if (settings.timeSeriesProcessing) {
 			console.time('building ' + s.type + ' series');			
-		}
+		}		
 
 		series.push({
 			from: data.length,
+			markerFrom: markerData.length,
 			// Push RGBA values to this array to use per. point coloring.
 			// It should be 0-padded, so each component should be pushed in
 			// succession.
@@ -1363,6 +1409,8 @@ function GLRenderer(options) {
 			series: s,
 			zMin: Number.MAX_VALUE,
 			zMax: -Number.MAX_VALUE,
+			hasMarkers: s.options.marker ? s.options.marker.enabled !== false : false,
+			showMarksers: true,
 			drawMode: ({
 				'area': 'lines',
 				'arearange': 'lines',
@@ -1392,6 +1440,7 @@ function GLRenderer(options) {
 	function flush() {
 		series = [];
 		exports.data = data = [];
+		markerData = [];
 	}
 
 	/*
@@ -1466,6 +1515,8 @@ function GLRenderer(options) {
 		gl.lineWidth(settings.lineWidth);
 
 		// Build a single buffer for all series
+		mvbuffer.build(markerData, 'aVertexPosition', 4);
+		
 		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
 
@@ -1480,12 +1531,19 @@ function GLRenderer(options) {
 				yBottom = s.series.yAxis.getThreshold(threshold),
 				translatedThreshold = yBottom,
 				cbuffer,
+				showMarkers = pick(
+					options.marker.enabled,
+					s.series.xAxis.isRadial ? true : null,
+					s.series.closestPointRangePx > 2 * (options.marker.radius || 10)
+				),
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(
 								pick(options.fillOpacity, 0.85)
 							).get() :
 					s.series.color,
 				color;			
+
+			vbuffer.bind();
 
 			if (options.colorByPoint) {
 				fillColor = s.series.chart.options.colors[si ];
@@ -1550,7 +1608,31 @@ function GLRenderer(options) {
 
 			// Do the actual rendering
 			vbuffer.render(s.from, s.to, s.drawMode);
+
+			if (markerData && markerData.length && s.hasMarkers && showMarkers) {
+				if (options.marker && options.marker.radius) {
+					shader.setPointSize(options.marker.radius * 2.0);
+				} else {
+					shader.setPointSize(10);
+				}
+				shader.setDrawAsCircle(true);
+				mvbuffer.render(s.markerFrom, s.markerTo, 'POINTS');
+			}
+			
 		});
+
+		// if (markerData && markerData.length > 0) {
+		// 	mvbuffer.build(markerData, 'aVertexPosition', 4);
+		// 	mvbuffer.bind();
+			
+		// 	each(series, function (s, si) {
+		// 		if (s.hasMarkers) {
+		// 			shader.setDrawAsCircle(true);
+		// 			mvbuffer.render(s.markerFrom, s.markerTo, 'POINTS');
+
+		// 		}
+		// 	});			
+		// }
 
 		if (settings.timeRendering) {
 			console.timeEnd('gl rendering');
@@ -1613,6 +1695,7 @@ function GLRenderer(options) {
 
 		shader = GLShader(gl);		
 		vbuffer = GLVertexBuffer(gl, shader);
+		mvbuffer = GLVertexBuffer(gl, shader);
 
 		//setSize(canvas.clientWidth, canvas.clientHeight);
 
@@ -1621,7 +1704,6 @@ function GLRenderer(options) {
 		
 		if (circleTextureHandle && typeof circleTexture !== 'undefined') {
 			try {
-
 
 				gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
@@ -2433,10 +2515,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	addEvent(chart, 'predraw', preRender);
 	//Blit to image when done redrawing
 	addEvent(chart, 'render', canvasToSVG);
+	addEvent(chart, 'load', canvasToSVG);
 
-	addEvent(chart, 'endResize', function () {
-		
-
-		
-	});
 });
