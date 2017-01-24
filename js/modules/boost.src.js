@@ -1322,7 +1322,7 @@ function GLRenderer(options) {
 			// No markers on out of bounds things.
 			// Out of bound things are shown if and only if the next
 			// or previous point is inside the rect.
-			if (inst.hasMarkers && isXInside) {
+			if (inst.hasMarkers) {// && isXInside) {
 				markerData.push(x);
 				markerData.push(y);
 				markerData.push(0);
