@@ -27,7 +27,6 @@
  *
  * Notes for boost mode
  * - Area lines are not drawn
- * - Point markers are not drawn on line-type series
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
@@ -1208,12 +1207,12 @@ function GLRenderer(options) {
 				x = d[0];
 				y = d[1];
 
-				if (data[i + 1]) {
-					nx = data[i + 1][0];
+				if (sdata[i + 1]) {
+					nx = sdata[i + 1][0];
 				}
 
-				if (data[i - 1]) {
-					px = data[i - 1][0];
+				if (sdata[i - 1]) {
+					px = sdata[i - 1][0];
 				}
 
 				if (d.length >= 3) {
@@ -1232,12 +1231,12 @@ function GLRenderer(options) {
 				x = d;
 				y = yData[i];
 
-				if (data[i + 1]) {
-					nx = data[i + 1];
+				if (sdata[i + 1]) {
+					nx = sdata[i + 1];
 				}
 
-				if (data[i - 1]) {
-					px = data[i - 1];
+				if (sdata[i - 1]) {
+					px = sdata[i - 1];
 				}
 
 				if (zData && zData.length) {
@@ -1279,7 +1278,7 @@ function GLRenderer(options) {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
-			if (!y || !isYInside) {
+			if ((!y || !isYInside)) {
 				return;
 			}
 
@@ -1378,7 +1377,7 @@ function GLRenderer(options) {
 
 			lastX = x;
 
-			return true;
+			//return true;
 		});		
 	}
 
