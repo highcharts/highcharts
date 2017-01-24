@@ -702,8 +702,9 @@ H.Axis.prototype = {
 			roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
-		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max && isNumber(min)) {
+		// For single points, add a tick regardless of the relative position
+		// (#2662, #6274)
+		if (this.single) {
 			return [min];
 		}
 
@@ -1258,8 +1259,7 @@ H.Axis.prototype = {
 			tickPositionsOption = options.tickPositions,
 			tickPositioner = options.tickPositioner,
 			startOnTick = options.startOnTick,
-			endOnTick = options.endOnTick,
-			single;
+			endOnTick = options.endOnTick;
 
 		// Set the tickmarkOffset
 		this.tickmarkOffset = (this.categories && options.tickmarkPlacement === 'between' &&
@@ -1269,6 +1269,13 @@ H.Axis.prototype = {
 		// get minorTickInterval
 		this.minorTickInterval = options.minorTickInterval === 'auto' && this.tickInterval ?
 			this.tickInterval / 5 : options.minorTickInterval;
+
+		// When there is only one point, or all points have the same value on
+		// this axis, then min and max are equal and tickPositions.length is 0
+		// or 1. In this case, add some padding in order to center the point,
+		// but leave it with one tick. #1337.
+		this.single = this.min === this.max && defined(this.min) &&
+			!this.tickAmount && options.allowDecimals !== false;
 
 		// Find the tick positions
 		this.tickPositions = tickPositions = tickPositionsOption && tickPositionsOption.slice(); // Work on a copy (#1565)
@@ -1310,16 +1317,12 @@ H.Axis.prototype = {
 		// reset min/max or remove extremes based on start/end on tick
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
-			// When there is only one point, or all points have the same value on this axis, then min
-			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
-			// in order to center the point, but leave it with one tick. #1337.
-			if (this.min === this.max && defined(this.min) && !this.tickAmount) {
-				// Substract half a unit (#2619, #2846, #2515, #3390)
-				single = true;
+			
+			// Substract half a unit (#2619, #2846, #2515, #3390)
+			if (this.single) {
 				this.min -= 0.5;
 				this.max += 0.5;
 			}
-			this.single = single;
 			if (!tickPositionsOption && !tickPositioner) {
 				this.adjustTickAmount();
 			}
