@@ -7,7 +7,7 @@ $(function () {
         var svgArr = [],
             top = 0,
             width = 0,
-            svgResult = function (svgres) {
+            addSVG = function (svgres) {
                 // Grab width/height from exported chart
                 var svgWidth = +svgres.match(
                         /^<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/
@@ -21,15 +21,20 @@ $(function () {
                 top += svgHeight;
                 width = Math.max(width, svgWidth);
                 svgArr.push(svg);
-                if (svgArr.length === charts.length) {
-                    return callback('<svg height="' + top + '" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
+            },
+            exportChart = function (i) {
+                if (i === charts.length) {
+                    return callback('<svg height="' + top + '" width="' + width +
+                      '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>');
                 }
+                charts[i].getSVGForLocalExport(options, {}, function () {
+                    console.log("Failed to get SVG");
+                }, function (svg) {
+                    addSVG(svg);
+                    return exportChart(i + 1); // Export next only when this SVG is received
+                });
             };
-        for (var i = 0; i < charts.length; ++i) {
-            charts[i].getSVGForLocalExport(options, {}, function () {
-                console.log("Failed to get SVG");
-            }, svgResult);
-        }
+        exportChart(0);
     };
 
     /**
