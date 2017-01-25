@@ -60,9 +60,19 @@ var win = H.win,
 		funnel: ' Funnel charts are used to display reduction of data in stages. ',
 		pyramid: ' Pyramid charts consist of a single pyramid with item heights corresponding to each point value. ',
 		waterfall: ' A waterfall chart is a column chart where each column contributes towards a total end value. '
-	},
-	commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
-	specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close']; // Tell user about all properties if points have one of these defined
+	};
+
+// If a point has one of the special keys defined, we expose all keys to the
+// screen reader.
+H.Series.prototype.commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'];
+H.Series.prototype.specialKeys = [
+	'z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'
+]; 
+
+// A pie is always simple. Don't quote me on that.
+H.seriesTypes.pie.prototype.specialKeys = [];
+
+
 
 // Default a11y options
 H.setOptions({
@@ -170,26 +180,19 @@ H.Point.prototype.buildPointInfoString = function () {
 		series = point.series,
 		a11yOptions = series.chart.options.accessibility,
 		infoString = '',
-		hasSpecialKey = false,
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 		timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat ||
-			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
-
-	each(specialKeys, function (key) {
-		if (
-			point[key] !== undefined &&
-			!(key === 'z' && series.type === 'pie')
-		) {
-			hasSpecialKey = true;
-		}
-	});
+			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x),
+		hasSpecialKey = H.find(series.specialKeys, function (key) {
+			return point[key] !== undefined;
+		});
 
 	// If the point has one of the less common properties defined, display all that are defined
 	if (hasSpecialKey) {
 		if (dateTimePoint) {
 			infoString = timeDesc;
 		}
-		each(commonKeys.concat(specialKeys), function (key) {				
+		each(series.commonKeys.concat(series.specialKeys), function (key) {
 			if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
 				infoString += (infoString ? '. ' : '') + key + ', ' + point[key];
 			}
