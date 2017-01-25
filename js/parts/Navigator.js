@@ -482,20 +482,18 @@ Navigator.prototype = {
 
 		navigator.left = pick(
 			xAxis.left,
-			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
+			// in case of scrollbar only, without navigator
+			chart.plotLeft + scrollbarHeight + (inverted ? chart.plotWidth : 0)
+		);
+
+		navigator.size = zoomedMax = navigatorSize = pick(
+			xAxis.len,
+			(inverted ? chart.plotHeight : chart.plotWidth) - 2 * scrollbarHeight
 		);
 
 		if (inverted) {
-			navigator.size = zoomedMax = navigatorSize = pick(
-				xAxis.len,
-				chart.plotHeight - 2 * scrollbarHeight
-			);
 			navigatorWidth = scrollbarHeight;
 		} else {
-			navigator.size = zoomedMax = navigatorSize = pick(
-				xAxis.len,
-				chart.plotWidth - 2 * scrollbarHeight
-			);
 			navigatorWidth = navigatorSize + 2 * scrollbarHeight;
 		}
 
@@ -923,6 +921,8 @@ Navigator.prototype = {
 		this.scrollbarOptions = scrollbarOptions;
 		this.outlineHeight = height + scrollbarHeight;
 
+		this.opposite = pick(navigatorOptions.opposite, !navigatorEnabled && chart.inverted); // #6262
+
 		var navigator = this,
 			baseSeries = navigator.baseSeries,
 			xAxisIndex = chart.xAxis.length,
@@ -931,11 +931,11 @@ Navigator.prototype = {
 
 		// Make room for the navigator, can be placed around the chart:
 		chart.extraMargin = {
-			type: navigatorOptions.opposite ? 'plotTop' : 'marginBottom',
-			value: navigator.outlineHeight + navigatorOptions.margin
+			type: navigator.opposite ? 'plotTop' : 'marginBottom',
+			value: (navigatorEnabled || !chart.inverted ? navigator.outlineHeight : 0) + navigatorOptions.margin
 		};
 		if (chart.inverted) {
-			chart.extraMargin.type = navigatorOptions.opposite ? 'marginRight' : 'plotLeft';
+			chart.extraMargin.type = navigator.opposite ? 'marginRight' : 'plotLeft';
 		}
 		chart.isDirtyBox = true;
 
@@ -1006,7 +1006,7 @@ Navigator.prototype = {
 				translate: function (value, reverse) {
 					var axis = chart.xAxis[0],
 						ext = axis.getExtremes(),
-						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
+						scrollTrackWidth = axis.len - 2 * scrollbarHeight,
 						min = numExt('min', axis.options.min, ext.dataMin),
 						valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
 
@@ -1467,7 +1467,7 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 
 		// Compute the top position
 		if (this.inverted) {
-			navigator.left = navigator.navigatorOptions.opposite ? 
+			navigator.left = navigator.opposite ?
 				this.chartWidth - scrollbarHeight - navigator.height : 
 				this.spacing[3] + scrollbarHeight;
 			navigator.top = this.plotTop + scrollbarHeight;
