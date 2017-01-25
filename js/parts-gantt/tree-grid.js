@@ -33,11 +33,11 @@ var reduce = function (arr, func, previous, context) {
 
 /**
  * some - Equivalent of Array.prototype.some
- *  
- * @param  {Array} arr       Array to look for matching elements in.
- * @param  {function} condition The condition to check against. 
- * @return {boolean}            Wether some elements pass the condition. 
- */ 
+ *
+ * @param  {Array}    arr       Array to look for matching elements in.
+ * @param  {function} condition The condition to check against.
+ * @return {boolean}            Whether some elements pass the condition.
+ */
 var some = function (arr, condition) {
 	var result = false;
 	each(arr, function (element, index, array) {
@@ -59,10 +59,10 @@ var objectKeys = function (obj) {
 };
 /**
  * Creates an object map from parent id to childrens index.
- * @param {Array} data List of points set in options.
- * @param {string} data[].parent Parent id of point.
- * @param {Array} ids List of all point ids.
- * @returns {Object} Map from parent id to children index in data.
+ * @param   {Array}  data          List of points set in options.
+ * @param   {string} data[].parent Parent id of point.
+ * @param   {Array}  ids           List of all point ids.
+ * @returns {Object}               Map from parent id to children index in data
  */
 var getListOfParents = function (data, ids) {
 	var listOfParents = reduce(data, function (prev, curr) {
@@ -126,10 +126,10 @@ var override = function (obj, methods) {
 
 /**
  * getCategoriesFromTree - getCategories based on a tree
- *  
- * @param  {object} tree Root of tree to collect categories from 
- * @return {Array}      Array of categories
- */ 
+ *
+ * @param  {object} tree Root of tree to collect categories from
+ * @return {Array}       Array of categories
+ */
 var getCategoriesFromTree = function (tree) {
 	var categories = [];
 	if (tree.data) {
@@ -163,12 +163,13 @@ var getBreakFromNode = function (node, pos) {
 };
 /**
  * Gets data from all series using the axis.
- * @param  {object}  axis          the axis to check for
- * @param  {boolean} axis.isXAxis  whether or not the axis is an X-axis (truthy)
- * @param  {object}  chart         the chart containing the options series
- * @param  {object}  chart.options the chart options
+ * @param   {object}  axis          the axis to check for
+ * @param   {boolean} axis.isXAxis  whether or not the axis is an X-axis
+ *                                  (truthy)
+ * @param   {object}  chart         the chart containing the options series
+ * @param   {object}  chart.options the chart options
  * @returns {Array}                 an array containing all data from all series
- *                                 using the axis
+ *                                  using the axis
  */
 var getAxisData = function (axis, chart) {
 	var axisData = [],
@@ -258,7 +259,7 @@ override(GridAxis.prototype, {
 	},
 	/**
 	 * Override to add indentation to axis.maxLabelLength.
-	 * @param  {Function} proceed the original function
+	 * @param  {Function}   proceed the original function
 	 * @returns {undefined}
 	 */
 	getMaxLabelLength: function (proceed) {
