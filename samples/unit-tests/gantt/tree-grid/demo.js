@@ -36,8 +36,50 @@ QUnit.test('Indentation', function (assert) {
                     name: 'Node 3',
                     id: '3',
                     parent: '2',
-                    x: Date.UTC(2014, 10, 23),
+                    x: Date.UTC(2014, 10, 22),
                     y: 2
+                }, {
+                    name: 'Node 4',
+                    id: '4',
+                    parent: '3',
+                    x: Date.UTC(2014, 10, 24),
+                    y: 3
+                }, {
+                    name: 'Node 5',
+                    id: '5',
+                    parent: '4',
+                    x: Date.UTC(2014, 10, 26),
+                    y: 4
+                }, {
+                    name: 'Node 6',
+                    id: '6',
+                    parent: '5',
+                    x: Date.UTC(2014, 10, 28),
+                    y: 5
+                }, {
+                    name: 'Node 7',
+                    id: '7',
+                    parent: '6',
+                    x: Date.UTC(2014, 10, 30),
+                    y: 6
+                }, {
+                    name: 'Node 8',
+                    id: '8',
+                    parent: '7',
+                    x: Date.UTC(2014, 11, 2),
+                    y: 7
+                }, {
+                    name: 'Node 9',
+                    id: '9',
+                    parent: '8',
+                    x: Date.UTC(2014, 11, 4),
+                    y: 8
+                }, {
+                    name: 'Node 10',
+                    id: '10',
+                    parent: '9',
+                    x: Date.UTC(2014, 11, 6),
+                    y: 9
                 }]
             }]
         }),

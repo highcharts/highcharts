@@ -260,10 +260,12 @@ override(GridAxis.prototype, {
 	getMaxLabelLength: function (proceed) {
 		var axis = this,
 			retVal = proceed.apply(axis, argsToArray(arguments)),
-			treeDepth = 2;
+			treeDepth = axis.tree && axis.tree.height;
+
+		console.log(axis);
 
 		if (axis.options.type === 'tree-grid') {
-			retVal += indentPx * 2 * treeDepth;
+			retVal += indentPx * 2 * (treeDepth - 1);
 		}
 
 		return retVal;
