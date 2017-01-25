@@ -26,7 +26,7 @@ RewriteRule (.*?)data.js $1data.src.js
 RewriteRule (.*?)drilldown.js $1drilldown.src.js
 RewriteRule (.*?)exporting.js $1exporting.src.js
 RewriteRule (.*?)funnel.js $1funnel.src.js
-RewriteRule (.*?)gantt.js $1gantt.src.js;
+RewriteRule (.*?)gantt.js $1gantt.src.js
 RewriteRule (.*?)grid-axis.js $1grid-axis.src.js
 RewriteRule (.*?)heatmap.js $1heatmap.src.js
 RewriteRule (.*?)map.js $1map.src.js
