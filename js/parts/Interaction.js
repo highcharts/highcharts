@@ -425,8 +425,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				flipped = panMax < panMin,
 				newMin = flipped ? panMax : panMin,
 				newMax = flipped ? panMin : panMax,
-				distMin = Math.min(extremes.dataMin, extremes.min) - newMin,
-				distMax = newMax - Math.max(extremes.dataMax, extremes.max);
+				paddedMin = axis.toValue(
+					axis.toPixels(extremes.min) - axis.minPixelPadding
+				),
+				paddedMax = axis.toValue(
+					axis.toPixels(extremes.max) + axis.minPixelPadding
+				),
+				distMin = Math.min(extremes.dataMin, paddedMin) - newMin,
+				distMax = newMax - Math.max(extremes.dataMax, paddedMax);
 
 			// Negative distMin and distMax means that we're still inside the
 			// data range.

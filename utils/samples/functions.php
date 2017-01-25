@@ -5,8 +5,8 @@ require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
 define('JQUERY_VERSION_OLD_IE', isset($_SESSION['jQueryVersionOldIE']) ? $_SESSION['jQueryVersionOldIE'] : Settings::$jQueryVersionOldIE);
 
-$path = $_GET['path'];
-if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
+$path = @$_GET['path'];
+if (!@$noPath && !preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
     die ('Invalid sample path input: ' . $path);
 }
 
