@@ -5,7 +5,7 @@
  */
 'use strict';
 import Highcharts from '../parts/Globals.js';
-import '../parts/SVGRenderer.js';
+import '../parts/SvgRenderer.js';
 Highcharts.extend(Highcharts.SVGElement.prototype, {
 	init: function (renderer, nodeName) {
 		this.element = {
