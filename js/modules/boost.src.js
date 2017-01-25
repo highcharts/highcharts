@@ -2410,6 +2410,7 @@ Series.prototype.getPoint = function (boostPoint) {
 		point.distX = boostPoint.distX;
 		point.plotX = boostPoint.plotX;
 		point.plotY = boostPoint.plotY;
+		point.index = boostPoint.i;
 	}	
 
 	return point;
