@@ -90,20 +90,21 @@ Axis.prototype.isOuterAxis = function () {
  * @return {number} maxLabelLength - the maximum label length of the axis
  */
 Axis.prototype.getMaxLabelLength = function (force) {
-	var tickPositions = this.tickPositions,
-		ticks = this.ticks,
+	var axis = this,
+		tickPositions = axis.tickPositions,
+		ticks = axis.ticks,
 		maxLabelLength = 0;
 
-	if (!this.maxLabelLength || force) {
+	if (!axis.maxLabelLength || force) {
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
 			if (tick && tick.labelLength > maxLabelLength) {
 				maxLabelLength = tick.labelLength;
 			}
 		});
-		this.maxLabelLength = maxLabelLength;
+		axis.maxLabelLength = maxLabelLength;
 	}
-	return this.maxLabelLength;
+	return axis.maxLabelLength;
 };
 
 /**
@@ -212,7 +213,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 			}
 
 			// Center x position
-			newX = (label.getBBox().width / 2) - (axis.maxLabelLength / 2);
+			newX = (label.getBBox().width / 2) - (axis.getMaxLabelLength() / 2);
 			if (axis.side === axisSide.left) {
 				retVal.x += newX;
 			} else {
@@ -238,10 +239,7 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 
 	if (axis.options.grid && !axis.horiz) {
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-		if (!axis.maxLabelLength) {
-			axis.maxLabelLength = axis.getMaxLabelLength();
-		}
-		distance = axis.maxLabelLength + labelPadding;
+		distance = axis.getMaxLabelLength() + labelPadding;
 
 		if (isArray(retVal)) {
 			retVal[0] = distance;
@@ -432,7 +430,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 	if (options.grid) {
 		// TODO acutual label padding (top, bottom, left, right)
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-		distance = axis.maxLabelLength + labelPadding;
+		distance = axis.getMaxLabelLength() + labelPadding;
 		lineWidth = options.lineWidth;
 
 		// Remove right wall before rendering

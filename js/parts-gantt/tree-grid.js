@@ -180,15 +180,16 @@ override(GridAxis.prototype, {
 	 * @param  {Function} proceed the original function
 	 * @returns {undefined}
 	 */
-	render: function (proceed) {
+	getMaxLabelLength: function (proceed) {
 		var axis = this,
+			retVal = proceed.apply(axis, argsToArray(arguments)),
 			treeDepth = 2;
 
 		if (axis.options.type === 'tree-grid') {
-			axis.maxLabelLength += indentPx * 2 * treeDepth;
+			retVal += indentPx * 2 * treeDepth;
 		}
 
-		proceed.apply(axis, argsToArray(arguments));
+		return retVal;
 	}
 });
 override(GridAxisTick.prototype, {
