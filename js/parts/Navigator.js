@@ -218,6 +218,7 @@ Navigator.prototype = {
 			maskInside = navigator.navigatorOptions.maskInside,
 			outlineWidth = navigator.outline.strokeWidth(),
 			halfOutline = outlineWidth / 2,
+			outlineCorrection = (outlineWidth % 2) / 2, // #5800
 			outlineHeight = navigator.outlineHeight,
 			scrollbarHeight = navigator.scrollbarHeight,
 			navigatorSize = navigator.size,
@@ -228,13 +229,13 @@ Navigator.prototype = {
 
 		if (inverted) {
 			left -= halfOutline;
-			verticalMin = navigatorTop + zoomedMax + halfOutline;
-			zoomedMax = navigatorTop + zoomedMin + halfOutline;
+			verticalMin = navigatorTop + zoomedMax + outlineCorrection;
+			zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
 			path = [
 				'M',
 				left + outlineHeight,
-				navigatorTop - scrollbarHeight - halfOutline, // top edge
+				navigatorTop - scrollbarHeight - outlineCorrection, // top edge
 				'L',
 				left + outlineHeight,
 				verticalMin, // top right of zoomed range
@@ -259,8 +260,8 @@ Navigator.prototype = {
 				zoomedMax + halfOutline // upper right of z.r.
 			] : []);
 		} else {
-			zoomedMin += left + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
-			zoomedMax += left + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
+			zoomedMin += left + scrollbarHeight - outlineCorrection;
+			zoomedMax += left + scrollbarHeight - outlineCorrection;
 			navigatorTop += halfOutline;
 
 			path = [
