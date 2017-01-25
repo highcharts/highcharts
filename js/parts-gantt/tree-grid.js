@@ -267,8 +267,6 @@ override(GridAxis.prototype, {
 			retVal = proceed.apply(axis, argsToArray(arguments)),
 			treeDepth = axis.tree && axis.tree.height;
 
-		console.log(axis);
-
 		if (axis.options.type === 'tree-grid') {
 			retVal += indentPx * 2 * (treeDepth - 1);
 		}

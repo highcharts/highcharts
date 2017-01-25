@@ -8,6 +8,7 @@
 import H from '../parts/Globals.js';
 import 'current-date-indicator.js';
 import 'grid-axis.js';
+import 'tree-grid.js';
 import 'pathfinder.js';
 import 'xrange-series.js';
 
@@ -248,4 +249,31 @@ seriesType('gantt', parentName, {
 		cfg.taskName = point.taskName;
 		return cfg;
 	}
+});
+
+/**
+ * Override to set yAxis.type: 'tree-grid' as default.
+ */
+H.wrap(H.Chart.prototype, 'init', function (proceed, options) {
+	var yAxisIndex = 0,
+		yAxes = options.yAxis,
+		allSeriesAreGantt = options.chart && options.chart.type === 'gantt',
+		yAxisOptions;
+	H.each(options.series, function (series) {
+
+		if (series.type === 'gantt' || allSeriesAreGantt) {
+			if (isNumber(series.yAxis)) {
+				yAxisIndex = series.yAxis;
+			}
+			if (!yAxes) {
+				yAxes = [{}];
+			}
+			yAxisOptions = yAxes[yAxisIndex];
+			if (yAxisOptions) {
+				yAxisOptions.type = pick(yAxisOptions.type, 'tree-grid');
+			}
+		}
+	});
+
+	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
