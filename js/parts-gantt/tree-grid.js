@@ -9,14 +9,15 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './grid-axis.js';
+import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	indentPx = 10,
 	wrap = H.wrap,
 	each = H.each,
+	extend = H.extend,
 	map = H.map,
-	merge = H.merge,
 	pick = H.pick,
 	GridAxis = H.Axis,
 	GridAxisTick = H.Tick;
@@ -27,6 +28,24 @@ var reduce = function (arr, func, previous, context) {
 		previous = func.call(context, previous, current, i, arr);
 	});
 	return previous;
+};
+
+
+/**
+ * some - Equivalent of Array.prototype.some
+ *  
+ * @param  {Array} arr       Array to look for matching elements in.
+ * @param  {function} condition The condition to check against. 
+ * @return {boolean}            Wether some elements pass the condition. 
+ */ 
+var some = function (arr, condition) {
+	var result = false;
+	each(arr, function (element, index, array) {
+		if (!result) {
+			result = condition(element, index, array);
+		}
+	});
+	return result;
 };
 var objectKeys = function (obj) {
 	var result = [],
@@ -69,11 +88,15 @@ var getListOfParents = function (data, ids) {
 	return listOfParents;
 };
 var getNode = function (id, parent, level, data, mapOfIdToChildren) {
+	var descendants = 0;
 	return {
 		children: map((mapOfIdToChildren[id] || []), function (child) {
-			return getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
+			var node = getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
+			descendants = descendants + 1 + node.descendants;
+			return node;
 		}),
 		data: data,
+		descendants: descendants,
 		id: id,
 		level: level,
 		parent: parent
@@ -98,26 +121,40 @@ var override = function (obj, methods) {
 };
 
 /**
- * GetCategories based on a tree
- * @param  {object} tree Root of tree to collect categories from
- * @returns {Array}       Array of categories
- */
+ * getCategoriesFromTree - getCategories based on a tree
+ *  
+ * @param  {object} tree Root of tree to collect categories from 
+ * @return {Array}      Array of categories
+ */ 
 var getCategoriesFromTree = function (tree) {
-	var categories = [],
-		map = {},
-		grandChildren;
+	var categories = [];
 	if (tree.data) {
 		categories.push(tree.data.name);
-		map[tree.data.y] = tree;
 	}
 	each(tree.children, function (child) {
-		grandChildren = getCategoriesFromTree(child);
-		categories = categories.concat(grandChildren.categories);
-		map = merge(map, grandChildren.map);
+		categories = categories.concat(getCategoriesFromTree(child));
 	});
+	return categories;
+};
+var mapTickPosToNode = function (node, key) {
+	var map = {},
+		value;
+	if (node.data) {
+		value = node.data[key];
+		map[value] = node;
+	}
+	each(node.children, function (child) {
+		extend(map, mapTickPosToNode(child, key));
+	});
+	return map;
+};
+
+var getBreakFromNode = function (node, pos) {
+	var from = pos + 0.5,
+		to = from + node.descendants;
 	return {
-		categories: categories,
-		map: map
+		from: from,
+		to: to
 	};
 };
 /**
@@ -150,12 +187,48 @@ var getAxisData = function (axis, chart) {
 	});
 	return axisData;
 };
+
+var isCollapsed = function (axis, node, pos) {
+	var breaks = (axis.options.breaks || []),
+		obj = getBreakFromNode(node, pos);
+	return some(breaks, function (b) {
+		return b.from === obj.from && b.to === obj.to;
+	});
+};
+var collapse = function (axis, node, pos) {
+	var breaks = (axis.options.breaks || []),
+		obj = getBreakFromNode(node, pos);
+	breaks.push(obj);
+	axis.update({
+		breaks: breaks
+	});
+};
+var expand = function (axis, node, pos) {
+	var breaks = (axis.options.breaks || []),
+		obj = getBreakFromNode(node, pos);
+	// Remove the break from the axis breaks array.
+	breaks = reduce(breaks, function (arr, b) {
+		if (b.to !== obj.to || b.from !== obj.from) {
+			arr.push(b);
+		}
+		return arr;
+	}, []);
+	axis.update({
+		breaks: breaks
+	});
+};
+var toggleCollapse = function (axis, node, pos) {
+	if (isCollapsed(axis, node, pos)) {
+		expand(axis, node, pos);
+	} else {
+		collapse(axis, node, pos);
+	}
+};
 override(GridAxis.prototype, {
 	init: function (proceed, chart, userOptions) {
 		var axis = this,
 			axisData = [],
 			tree,
-			nodeInfo,
 			options;
 		userOptions.reversed = true;
 
@@ -166,13 +239,13 @@ override(GridAxis.prototype, {
 		if (options.type === 'tree-grid') {
 			// Gather data from all series with same treeGrid axis
 			axisData = getAxisData(axis, chart);
-			tree = getTree(axisData);
+			// NOTE Axis is destroyed in update, so usually the tree has to be rebuilt.
+			axis.tree = tree = pick(axis.tree, getTree(axisData));
 			// TODO Do this before proceed to avoid resetting hasNames and showLastLabel
-			nodeInfo = getCategoriesFromTree(tree);
-			axis.categories = nodeInfo.categories;
-			axis.treeGridMap = nodeInfo.map;
+			axis.categories = getCategoriesFromTree(tree);
 			axis.hasNames = true;
 			options.showLastLabel = true;
+			axis.treeGridMap = mapTickPosToNode(tree, (axis.isXAxis ? 'x' : 'y'));
 		}
 	},
 	/**
@@ -197,11 +270,20 @@ override(GridAxisTick.prototype, {
 		var tick = this,
 			pos = tick.pos,
 			axis = tick.axis,
+			label = tick.label,
 			treeGridMap = axis.treeGridMap,
 			options = axis.options;
 		if (options.type === 'tree-grid' && index >= 0) {
 			if (treeGridMap[pos] && treeGridMap[pos].level) {
 				xy.x += (treeGridMap[pos].level - 1) * indentPx;
+			}
+			if (label && label.element) {
+				H.addEvent(label.element, 'click', function () {
+					var axis = tick.axis,
+						pos = tick.pos,
+						node = axis.treeGridMap[pos];
+					toggleCollapse(axis, node, pos);
+				});
 			}
 		}
 		proceed.apply(tick, argsToArray(arguments));
