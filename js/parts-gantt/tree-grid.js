@@ -88,15 +88,19 @@ var getListOfParents = function (data, ids) {
 	return listOfParents;
 };
 var getNode = function (id, parent, level, data, mapOfIdToChildren) {
-	var descendants = 0;
+	var descendants = 0,
+		height = 0;
 	return {
 		children: map((mapOfIdToChildren[id] || []), function (child) {
 			var node = getNode(child.id, id, (level + 1), child, mapOfIdToChildren);
 			descendants = descendants + 1 + node.descendants;
+			height = Math.max(node.height + 1, height);
 			return node;
 		}),
 		data: data,
+		depth: level - 1,
 		descendants: descendants,
+		height: height,
 		id: id,
 		level: level,
 		parent: parent
@@ -107,7 +111,7 @@ var getTree = function (data) {
 			return d.id;
 		}),
 		mapOfIdToChildren = getListOfParents(data, ids);
-	return getNode('', null, 0, null, mapOfIdToChildren);
+	return getNode('', null, 1, null, mapOfIdToChildren);
 };
 var override = function (obj, methods) {
 	var method,
@@ -272,10 +276,12 @@ override(GridAxisTick.prototype, {
 			axis = tick.axis,
 			label = tick.label,
 			treeGridMap = axis.treeGridMap,
-			options = axis.options;
+			options = axis.options,
+			node;
 		if (options.type === 'tree-grid' && index >= 0) {
-			if (treeGridMap[pos] && treeGridMap[pos].level) {
-				xy.x += (treeGridMap[pos].level - 1) * indentPx;
+			node = treeGridMap[pos];
+			if (node && node.depth) {
+				xy.x += (node.depth - 1) * indentPx;
 			}
 			if (label && label.element) {
 				H.addEvent(label.element, 'click', function () {
