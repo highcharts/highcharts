@@ -231,16 +231,20 @@ var toggleCollapse = function (axis, node, pos) {
 override(GridAxis.prototype, {
 	init: function (proceed, chart, userOptions) {
 		var axis = this,
+			isTreeGrid = userOptions.type === 'tree-grid',
 			axisData = [],
 			tree,
 			options;
-		userOptions.reversed = true;
+
+		if (isTreeGrid) {
+			userOptions.reversed = true;
+		}
 
 		// Now apply the original function with the original arguments,
 		// which are sliced off this function's arguments
 		proceed.apply(axis, argsToArray(arguments));
 		options = axis.options;
-		if (options.type === 'tree-grid') {
+		if (isTreeGrid) {
 			// Gather data from all series with same treeGrid axis
 			axisData = getAxisData(axis, chart);
 			// NOTE Axis is destroyed in update, so usually the tree has to be rebuilt.
