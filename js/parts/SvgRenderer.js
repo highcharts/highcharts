@@ -2538,24 +2538,28 @@ SVGRenderer.prototype = {
 	 * @returns {SVGElement} The generated wrapper element.
 	 */
 	arc: function (x, y, r, innerR, start, end) {
-		var arc;
+		var arc,
+			options;
 
 		if (isObject(x)) {
-			y = x.y;
-			r = x.r;
-			innerR = x.innerR;
-			start = x.start;
-			end = x.end;
-			x = x.x;
+			options = x;
+			y = options.y;
+			r = options.r;
+			innerR = options.innerR;
+			start = options.start;
+			end = options.end;
+			x = options.x;
+		} else {
+			options = {
+				innerR: innerR,
+				start: start,
+				end: end
+			};
 		}
 
 		// Arcs are defined as symbols for the ability to set
 		// attributes in attr and animate
-		arc = this.symbol('arc', x || 0, y || 0, r || 0, r || 0, {
-			innerR: innerR || 0,
-			start: start || 0,
-			end: end || 0
-		});
+		arc = this.symbol('arc', x, y, r, r, options);
 		arc.r = r; // #959
 		return arc;
 	},
