@@ -14,8 +14,7 @@ $(function () {
     Highcharts.chart('container', {
         chart: {
             type: 'gantt',
-            marginLeft: 150,
-            marginRight: 150
+            marginLeft: 200
         },
         title: {
             text: 'Gantt Chart'
@@ -47,46 +46,67 @@ $(function () {
             },
             linkedTo: 0
         }],
-        yAxis: [{
-            reversed: true,
-            grid: true
-        }],
         series: [{
             name: 'Project 1',
             data: [{
                 id: 'start_prototype',
                 start: today.getTime() - (2 * day),
                 end: today.getTime() + day,
-                taskGroup: 0,
+                y: 0,
+                taskGroup: 'Start prototype',
                 taskName: 'Start prototype',
                 partialFill: 0.8
+            }, {
+                start: today.getTime() + (day * 1.5),
+                milestone: true,
+                taskGroup: 'Prototype done',
+                taskName: 'Prototype done',
+                y: 1
+            }, {
+                start: today.getTime() + (2 * day),
+                end: today.getTime() + (6 * day),
+                taskGroup: 'Test prototype',
+                taskName: 'Test prototype',
+                y: 2
             }, {
                 id: 'development',
                 start: today.getTime(),
                 end: today.getTime() + (8 * day),
-                taskGroup: 1,
+                y: 3,
                 taskName: 'Develop',
+                taskGroup: 'Develop',
                 dependency: 'start_prototype',
                 partialFill: {
                     amount: 0.12,
                     fill: '#fa0'
                 }
             }, {
-                start: today.getTime() + (day * 1.5),
-                milestone: true,
-                taskName: 'Prototype done',
-                taskGroup: 0
+                id: 'unit_tests',
+                start: today.getTime(),
+                end: today.getTime() + (3 * day),
+                y: 4,
+                parent: 'development',
+                taskGroup: 'Create unit tests',
+                taskName: 'Create unit tests',
+                partialFill: {
+                    amount: 0.5,
+                    fill: '#fa0'
+                }
             }, {
-                start: today.getTime() + (2 * day),
-                end: today.getTime() + (6 * day),
-                taskName: 'Test prototype',
-                taskGroup: 0
+                id: 'implement',
+                start: today.getTime() + (3 * day),
+                end: today.getTime() + (8 * day),
+                y: 5,
+                taskGroup: 'Implement',
+                parent: 'development',
+                taskName: 'Implement'
             }, {
                 start: today.getTime() + (7 * day),
                 end: today.getTime() + (10 * day),
                 dependency: 'development',
+                taskGroup: 'Run acceptance tests',
                 taskName: 'Run acceptance tests',
-                taskGroup: 2
+                y: 6
             }]
         }, {
             name: 'Project 2',
@@ -95,22 +115,22 @@ $(function () {
                 start: today.getTime() - (2 * day),
                 end: today.getTime(),
                 taskName: 'Create protoype',
-                taskGroup: 0
+                y: 7
             }, {
                 start: today.getTime() + day,
                 end: today.getTime() + (3 * day),
                 taskName: 'Write unit tests',
-                taskGroup: 1
+                y: 8
             }, {
                 start: today.getTime() + (4 * day),
                 end: today.getTime() + (9 * day),
                 taskName: 'Develop',
-                taskGroup: 1
+                y: 9
             }, {
                 start: today.getTime() + (9 * day),
                 end: today.getTime() + (10 * day),
                 taskName: 'Run user tests',
-                taskGroup: 2
+                y: 10
             }]
         }]
     });
