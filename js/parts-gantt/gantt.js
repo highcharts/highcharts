@@ -256,7 +256,6 @@ seriesType('gantt', parentName, {
  */
 H.wrap(H.Chart.prototype, 'init', function (proceed, options) {
 	var yAxisIndex = 0,
-		yAxes = options.yAxis,
 		allSeriesAreGantt = options.chart && options.chart.type === 'gantt',
 		yAxisOptions;
 	H.each(options.series, function (series) {
@@ -265,10 +264,10 @@ H.wrap(H.Chart.prototype, 'init', function (proceed, options) {
 			if (isNumber(series.yAxis)) {
 				yAxisIndex = series.yAxis;
 			}
-			if (!yAxes) {
-				yAxes = [{}];
+			if (!options.yAxis) {
+				options.yAxis = [{}];
 			}
-			yAxisOptions = yAxes[yAxisIndex];
+			yAxisOptions = options.yAxis[yAxisIndex];
 			if (yAxisOptions) {
 				yAxisOptions.type = pick(yAxisOptions.type, 'tree-grid');
 			}
