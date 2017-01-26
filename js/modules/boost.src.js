@@ -1323,10 +1323,10 @@ function GLRenderer(options) {
 			// Out of bound things are shown if and only if the next
 			// or previous point is inside the rect.
 			if (inst.hasMarkers) {// && isXInside) {
-				markerData.push(x);
-				markerData.push(y);
-				markerData.push(0);
-				markerData.push(options.marker.radius || 2);
+				// markerData.push(x);
+				// markerData.push(y);
+				// markerData.push(0);
+				// markerData.push(options.marker.radius || 2);
 
 				// x = H.correctFloat(
 				// 	Math.min(Math.max(-1e5, xAxis.translate(
@@ -1514,7 +1514,7 @@ function GLRenderer(options) {
 		gl.lineWidth(settings.lineWidth);
 
 		// Build a single buffer for all series
-		mvbuffer.build(markerData, 'aVertexPosition', 4);
+		//mvbuffer.build(markerData, 'aVertexPosition', 4);
 		
 		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
@@ -1531,9 +1531,14 @@ function GLRenderer(options) {
 				translatedThreshold = yBottom,
 				cbuffer,
 				showMarkers = pick(
-					options.marker.enabled,
+					options.marker ? options.marker.enabled : null,
 					s.series.xAxis.isRadial ? true : null,
-					s.series.closestPointRangePx > 2 * (options.marker.radius || 10)
+					s.series.closestPointRangePx > 
+						2 * ((
+								options.marker ? 
+								options.marker.radius : 
+								10
+							) || 10)
 				),
 				fillColor = s.series.fillOpacity ?
 					new Color(s.series.color).setOpacity(
@@ -1608,30 +1613,17 @@ function GLRenderer(options) {
 			// Do the actual rendering
 			vbuffer.render(s.from, s.to, s.drawMode);
 
-			if (markerData && markerData.length && s.hasMarkers && showMarkers) {
+			if (s.hasMarkers && showMarkers) {
 				if (options.marker && options.marker.radius) {
 					shader.setPointSize(options.marker.radius * 2.0);
 				} else {
 					shader.setPointSize(10);
 				}
 				shader.setDrawAsCircle(true);
-				mvbuffer.render(s.markerFrom, s.markerTo, 'POINTS');
+				console.log('rendering markers');
+				vbuffer.render(s.from, s.to, 'POINTS');
 			}
-			
 		});
-
-		// if (markerData && markerData.length > 0) {
-		// 	mvbuffer.build(markerData, 'aVertexPosition', 4);
-		// 	mvbuffer.bind();
-			
-		// 	each(series, function (s, si) {
-		// 		if (s.hasMarkers) {
-		// 			shader.setDrawAsCircle(true);
-		// 			mvbuffer.render(s.markerFrom, s.markerTo, 'POINTS');
-
-		// 		}
-		// 	});			
-		// }
 
 		if (settings.timeRendering) {
 			console.timeEnd('gl rendering');
@@ -1662,6 +1654,14 @@ function GLRenderer(options) {
 	 * @param canvas {HTMLCanvas} - the canvas to render to
 	 */
 	function init(canvas, noFlush) {
+		var i = 0,
+			contexts = [
+				'webgl', 
+				'experimental-webgl', 
+				'moz-webgl', 
+				'webkit-3d'
+			];
+		
 		if (!canvas) {
 			//console.err('no valid canvas - unable to init webgl');
 			return false;
@@ -1671,11 +1671,11 @@ function GLRenderer(options) {
 			console.time('gl setup');			
 		}
 
-		gl = canvas.getContext('webgl');
-
-		if (!gl) {
-			// Try again with an experimental context
-			gl = canvas.getContext('experimental-webgl');
+		for (; i < contexts.length; i++) {
+			gl = canvas.getContext(contexts[i]);
+			if (gl) {
+				break;
+			}
 		}
 
 		if (gl) {   
@@ -1694,7 +1694,7 @@ function GLRenderer(options) {
 
 		shader = GLShader(gl);		
 		vbuffer = GLVertexBuffer(gl, shader);
-		mvbuffer = GLVertexBuffer(gl, shader);
+		//mvbuffer = GLVertexBuffer(gl, shader);
 
 		//setSize(canvas.clientWidth, canvas.clientHeight);
 
@@ -1954,6 +1954,101 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	}
 }
 
+function hasWebGLSupport() {
+	var i = 0,
+		canvas,
+		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
+		context = false;
+
+	if (!!window.WebGLRenderingContext) {
+		canvas = document.createElement('canvas');
+
+		for (; i < contexts.length; i++) {
+			try {
+				context = canvas.getContext(contexts[i]);
+				return typeof context !== 'undefined' && context !== null;
+			} catch(e){}
+		};
+	}
+
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Following is the parts of the boost that's common between OGL/Legacy
+
+/**
+ * Return a full Point object based on the index. 
+ * The boost module uses stripped point objects for performance reasons.
+ * @param   {Number} boostPoint A stripped-down point object
+ * @returns {Object} A Point object as per http://api.highcharts.com/highcharts#Point
+ */
+Series.prototype.getPoint = function (boostPoint) {
+	var point = boostPoint,
+		xData = this.xData || this.options.xData || this.processedXData || false
+	;
+
+	if (boostPoint && !(boostPoint instanceof this.pointClass)) {
+		point = (new this.pointClass()).init( // eslint-disable-line new-cap
+					this, 
+					this.options.data[boostPoint.i], 
+					xData ? xData[boostPoint.i] : undefined
+				); 
+
+		point.category = point.x;
+
+		point.dist = boostPoint.dist;
+		point.distX = boostPoint.distX;
+		point.plotX = boostPoint.plotX;
+		point.plotY = boostPoint.plotY;
+		point.index = boostPoint.i;
+	}	
+
+	return point;
+};
+
+/**
+ * Return a point instance from the k-d-tree
+ */
+wrap(Series.prototype, 'searchPoint', function (proceed) {
+	return this.getPoint(
+		proceed.apply(this, [].slice.call(arguments, 1))
+	);
+});
+
+/**
+ * Extend series.destroy to also remove the fake k-d-tree points (#5137). 
+ * Normally this is handled by Series.destroy that calls Point.destroy, 
+ * but the fake search points are not registered like that.
+ */
+wrap(Series.prototype, 'destroy', function (proceed) {
+	var series = this,
+		chart = series.chart;
+
+	if (chart.hoverPoints) {
+		chart.hoverPoints = grep(chart.hoverPoints, function (point) {
+			return point.series === series;
+		});
+	}
+
+	if (chart.hoverPoint && chart.hoverPoint.series === series) {
+		chart.hoverPoint = null;
+	}
+
+	proceed.call(this);
+});
+
+/**
+ * Do not compute extremes when min and max are set.
+ * If we use this in the core, we can add the hook 
+ * to hasExtremes to the methods directly.
+ */
+wrap(Series.prototype, 'getExtremes', function (proceed) {
+	if (!isSeriesBoosting(this) || !this.hasExtremes()) {
+		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	}
+});
+
 // Set default options
 each([
 	'area', 
@@ -1973,6 +2068,19 @@ each([
 		}
 	}
 );
+
+
+////////////////////////////////////////////////////////////////////////////////
+// We're wrapped in a closure, so just return if there's no webgl support
+
+if (!hasWebGLSupport()) {
+	//This should be a cue to fall back to the legacy canvas boost
+	console.log('no ogl support');
+	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GL-SPECIFIC WRAPPINGS FOLLOWS
 
 /**
  * Override a bunch of methods the same way. If the number of points is 
@@ -2027,17 +2135,6 @@ each([
 		if (seriesTypes.treemap) {
 			wrap(seriesTypes.treemap.prototype, method, branch);
 		}	
-	}
-});
-
-/**
- * Do not compute extremes when min and max are set.
- * If we use this in the core, we can add the hook 
- * to hasExtremes to the methods directly.
- */
-wrap(Series.prototype, 'getExtremes', function (proceed) {
-	if (!isSeriesBoosting(this) || !this.hasExtremes()) {
-		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
 
@@ -2349,15 +2446,15 @@ function pointDrawHandler(proceed) {
  * This likely needs future optimization.
  *
  */
-if (seriesTypes.heatmap) {	
-	wrap(seriesTypes.heatmap.prototype, 'drawPoints', pointDrawHandler);
-	seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
-}
-
-if (seriesTypes.treemap) {
-	wrap(seriesTypes.treemap.prototype, 'drawPoints', pointDrawHandler);
-	seriesTypes.treemap.prototype.directTouch = false; // Use k-d-tree
-}
+ each([
+ 	'heatmap',
+ 	'treemap'
+ ], function (t) {
+	if (seriesTypes[t]) {	
+		wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
+		seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
+	}
+ });
 
 if (seriesTypes.bubble) {
 	// By default, the bubble series does not use the KD-tree, so force it to.
@@ -2386,36 +2483,6 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-/**
- * Return a full Point object based on the index. 
- * The boost module uses stripped point objects for performance reasons.
- * @param   {Number} boostPoint A stripped-down point object
- * @returns {Object} A Point object as per http://api.highcharts.com/highcharts#Point
- */
-Series.prototype.getPoint = function (boostPoint) {
-	var point = boostPoint,
-		xData = this.xData || this.options.xData || this.processedXData || false
-	;
-
-	if (boostPoint && !(boostPoint instanceof this.pointClass)) {
-		point = (new this.pointClass()).init( // eslint-disable-line new-cap
-					this, 
-					this.options.data[boostPoint.i], 
-					xData ? xData[boostPoint.i] : undefined
-				); 
-
-		point.category = point.x;
-
-		point.dist = boostPoint.dist;
-		point.distX = boostPoint.distX;
-		point.plotX = boostPoint.plotX;
-		point.plotY = boostPoint.plotY;
-		point.index = boostPoint.i;
-	}	
-
-	return point;
-};
-
 wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
 	//if (isSeriesBoosting(this) || isChartSeriesBoosting(this.chart)) {
 		
@@ -2443,37 +2510,6 @@ wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
 	// } else {		
 	// 	proceed.call(this, vis, redraw);
 	// }
-});
-
-/**
- * Extend series.destroy to also remove the fake k-d-tree points (#5137). 
- * Normally this is handled by Series.destroy that calls Point.destroy, 
- * but the fake search points are not registered like that.
- */
-wrap(Series.prototype, 'destroy', function (proceed) {
-	var series = this,
-		chart = series.chart;
-
-	if (chart.hoverPoints) {
-		chart.hoverPoints = grep(chart.hoverPoints, function (point) {
-			return point.series === series;
-		});
-	}
-
-	if (chart.hoverPoint && chart.hoverPoint.series === series) {
-		chart.hoverPoint = null;
-	}
-
-	proceed.call(this);
-});
-
-/**
- * Return a point instance from the k-d-tree
- */
-wrap(Series.prototype, 'searchPoint', function (proceed) {
-	return this.getPoint(
-		proceed.apply(this, [].slice.call(arguments, 1))
-	);
 });
 
 /**
