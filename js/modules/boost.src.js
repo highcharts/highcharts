@@ -613,6 +613,7 @@ function GLShader(gl) {
 			gl.uniform1i(isCircleUniform, 1);
 			gl.uniform1i(bubbleSizeAreaUniform, series.options.sizeBy !== 'width');
 			gl.uniform1i(bubbleSizeAbsUniform, series.options.sizeByAbsoluteValue);
+
 			setUniform('bubbleZMin', zMin);
 			setUniform('bubbleZMax', zMax);
 			setUniform('bubbleZThreshold', series.options.zThreshold);
@@ -883,7 +884,7 @@ function GLRenderer(options) {
 		//Render settings
 		settings = {
 			pointSize: 1,
-			lineWidth: 4,
+			lineWidth: 10,
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,
@@ -1127,7 +1128,7 @@ function GLRenderer(options) {
 					// point and use point size. Latter is faster, but 
 					// only supports squares. So we're doing triangles.
 					// We could also use one color per. vertice to get 
-					// color interpolation.
+					// better color interpolation.
 			
 					// If there's stroking, we do an additional rect
 					//if (pointAttr.stroke !== 'none' && swidth && swidth > 0) {
@@ -1195,6 +1196,10 @@ function GLRenderer(options) {
 				return false;
 			}
 
+			// Uncomment this to enable color by point.
+			// This currently left disabled as the charts look really ugly
+			// when enabled and there's a lot of points.
+			// Leaving in for the future (tm).
 			// if (colorByPoint) {
 			// 	colorIndex = ++colorIndex % series.chart.options.colors.length;
 			// 	pcolor = toRGBAFast(series.chart.options.colors[colorIndex]);
@@ -1294,11 +1299,7 @@ function GLRenderer(options) {
 			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
 				x = xAxis.toPixels(x, true);
-				y = yAxis.toPixels(y, true);		
-
-				//if (hasThreshold) {
-					//y = Math.min(y, yBottom);
-				//}		
+				y = yAxis.toPixels(y, true);
 			}
 
 			if (drawAsBar) {
@@ -1357,6 +1358,7 @@ function GLRenderer(options) {
 				pcolor
 			);
 
+			// Uncomment this to support color axis.
 			// if (caxis) {				
 			// 	color = H.color(caxis.toColor(y)).rgba;
 
@@ -1364,15 +1366,6 @@ function GLRenderer(options) {
 			// 	inst.colorData.push(color[1] / 255.0);
 			// 	inst.colorData.push(color[2] / 255.0);
 			// 	inst.colorData.push(color[3]);
-			// }
-
-			// if (drawAsBar) {
-			// 	// Need to add an extra point here				
-			// //	vertice(x, minVal, 0, 0, pcolor);
-			// }
-
-			// if (lastX === x) {
-			// 	console.error('duplicate x data', x);
 			// }
 
 			lastX = x;
@@ -1620,7 +1613,6 @@ function GLRenderer(options) {
 					shader.setPointSize(10);
 				}
 				shader.setDrawAsCircle(true);
-				console.log('rendering markers');
 				vbuffer.render(s.from, s.to, 'POINTS');
 			}
 		});
@@ -1782,8 +1774,6 @@ function GLRenderer(options) {
 
 // END OF WEBGL ABSTRACTIONS
 ////////////////////////////////////////////////////////////////////////////////
-
-
 
 /* 
  * Create a canvas + context and attach it to the target
@@ -1954,26 +1944,6 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i, noTimeout) {
 	}
 }
 
-function hasWebGLSupport() {
-	var i = 0,
-		canvas,
-		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
-		context = false;
-
-	if (!!window.WebGLRenderingContext) {
-		canvas = document.createElement('canvas');
-
-		for (; i < contexts.length; i++) {
-			try {
-				context = canvas.getContext(contexts[i]);
-				return typeof context !== 'undefined' && context !== null;
-			} catch(e){}
-		};
-	}
-
-	return false;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Following is the parts of the boost that's common between OGL/Legacy
 
@@ -2044,7 +2014,7 @@ wrap(Series.prototype, 'destroy', function (proceed) {
  * to hasExtremes to the methods directly.
  */
 wrap(Series.prototype, 'getExtremes', function (proceed) {
-	if (!isSeriesBoosting(this) || !this.hasExtremes()) {
+	if (!isSeriesBoosting(this) || (!this.hasExtremes || !this.hasExtremes())) {
 		return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
@@ -2063,19 +2033,46 @@ each([
 ], 
 	function (type) {
 		if (plotOptions[type]) {
-			plotOptions[type].boostThreshold = 5000;
+			plotOptions[type].boostThreshold = 50;
 			plotOptions[type].boostData = [];
 		}
 	}
 );
 
+/*
+ * Returns true if the current browser supports webgl
+ */
+function hasWebGLSupport() {
+	var i = 0,
+		canvas,
+		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
+		context = false;		
+		
+	if (!!window.WebGLRenderingContext) {
+		canvas = document.createElement('canvas');
+
+		for (; i < contexts.length; i++) {
+			try {
+				context = canvas.getContext(contexts[i]);
+				return typeof context !== 'undefined' && context !== null;
+			} catch(e){}
+		};
+	}
+
+	return false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
-if (!hasWebGLSupport()) {
-	//This should be a cue to fall back to the legacy canvas boost
+if (!hasWebGLSupport()) {	
 	console.log('no ogl support');
+
+	if (H.initCanvasBoost) {
+		// Fallback to canvas boost
+		console.log('fallback to canvas');
+		H.initCanvasBoost();
+	}
 	return;
 }
 
