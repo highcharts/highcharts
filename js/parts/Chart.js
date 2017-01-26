@@ -805,7 +805,7 @@ Chart.prototype = {
 		}
 
 		// Adjust for legend
-		if (chart.legend.display) {
+		if (chart.legend && chart.legend.display) {
 			chart.legend.adjustMargins(margin, spacing);
 		}
 
