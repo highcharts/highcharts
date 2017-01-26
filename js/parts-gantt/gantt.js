@@ -25,6 +25,27 @@ var dateFormat = H.dateFormat,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
 
+/**
+ * Sets aliases on a point options object
+ * @param {Object} options a poit options object
+ */
+var setPointAliases = function (options) {
+	// Get value from aliases
+	options.x = pick(options.start, options.x);
+	options.x2 = pick(options.end, options.x2);
+	if (options.milestone) {
+		options.x2 = options.x;
+	}
+	options.y = pick(
+		// If taskGroup is a number, it's a reference to the category index
+		isNumber(options.taskGroup) ? options.taskGroup : undefined,
+		options.y
+	);
+	options.name = pick(options.taskGroup, options.name);
+	options.partialFill = pick(options.completed, options.partialFill);
+	options.connect = pick(options.dependency, options.connect);
+};
+
 // type, parent, options, props, pointProps
 seriesType('gantt', parentName, {
 	// options - default options merged with parent
@@ -213,24 +234,9 @@ seriesType('gantt', parentName, {
 		var point = this,
 			retVal = merge(options);
 
-		// Get value from aliases
-		retVal.x = pick(options.start, options.x);
-		retVal.x2 = pick(options.end, options.x2);
-		if (options.milestone) {
-			retVal.x2 = options.x;
-		}
-		retVal.y = pick(
-			options.taskGroup,
-			options.name,
-			options.taskName,
-			options.y
-		);
-		retVal.name = pick(options.taskGroup, options.name);
-		retVal.partialFill = pick(options.completed, options.partialFill);
-		retVal.connect = pick(options.dependency, options.connect);
+		setPointAliases(retVal);
 
 		retVal = Point.prototype.applyOptions.call(point, retVal, x);
-
 		return retVal;
 	},
 
@@ -271,6 +277,10 @@ H.wrap(H.Chart.prototype, 'init', function (proceed, options) {
 			if (yAxisOptions) {
 				yAxisOptions.type = pick(yAxisOptions.type, 'tree-grid');
 			}
+
+			H.each(series.data, function (point) {
+				setPointAliases(point);
+			});
 		}
 	});
 
