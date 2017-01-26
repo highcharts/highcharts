@@ -242,8 +242,7 @@ Chart.prototype = {
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
 			isDirtyBox = chart.isDirtyBox,
-			seriesLength = series.length,
-			i = seriesLength,
+			i,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
@@ -264,6 +263,7 @@ Chart.prototype = {
 		chart.layOutTitles();
 
 		// link stacked series
+		i = series.length;
 		while (i--) {
 			serie = series[i];
 
@@ -277,7 +277,7 @@ Chart.prototype = {
 			}
 		}
 		if (hasDirtyStacks) { // mark others as dirty
-			i = seriesLength;
+			i = series.length;
 			while (i--) {
 				serie = series[i];
 				if (serie.options.stacking) {
