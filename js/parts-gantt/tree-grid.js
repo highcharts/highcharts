@@ -239,6 +239,7 @@ override(GridAxis.prototype, {
 
 		if (isTreeGrid) {
 			userOptions.reversed = true;
+			userOptions.grid = pick(userOptions.grid, true);
 		}
 
 		// Now apply the original function with the original arguments,
