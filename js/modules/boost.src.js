@@ -2033,7 +2033,7 @@ each([
 ], 
 	function (type) {
 		if (plotOptions[type]) {
-			plotOptions[type].boostThreshold = 50;
+			plotOptions[type].boostThreshold = 5000;
 			plotOptions[type].boostData = [];
 		}
 	}
