@@ -113,6 +113,7 @@ defaultOptions.exporting = {
 				textKey: 'printChart',
 				onclick: function () {
 					this.print();
+					event.stopPropagation();
 				}
 			}, {
 				separator: true
@@ -120,6 +121,7 @@ defaultOptions.exporting = {
 				textKey: 'downloadPNG',
 				onclick: function () {
 					this.exportChart();
+					event.stopPropagation();
 				}
 			}, {
 				textKey: 'downloadJPEG',
@@ -127,6 +129,7 @@ defaultOptions.exporting = {
 					this.exportChart({
 						type: 'image/jpeg'
 					});
+					event.stopPropagation();
 				}
 			}, {
 				textKey: 'downloadPDF',
@@ -134,6 +137,7 @@ defaultOptions.exporting = {
 					this.exportChart({
 						type: 'application/pdf'
 					});
+					event.stopPropagation();
 				}
 			}, {
 				textKey: 'downloadSVG',
@@ -141,6 +145,7 @@ defaultOptions.exporting = {
 					this.exportChart({
 						type: 'image/svg+xml'
 					});
+					event.stopPropagation();
 				}
 			}
 			// Enable this block to add "View SVG" to the dropdown menu
