@@ -125,6 +125,9 @@ SVGElement.prototype = {
 			animate(this, params, animOptions);
 		} else {
 			this.attr(params, null, complete);
+			if (animOptions.step) {
+				animOptions.step.call(this);
+			}
 		}
 		return this;
 	},
