@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/tree-grid.js';
+import '../../parts-gantt/TreeGrid.js';

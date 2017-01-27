@@ -8,7 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Point.js';
 import '../parts/Utilities.js';
-import pathfinderAlgorithms from 'pathfinderAlgorithms.js';
+import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
 
 var defined = H.defined,
 	deg2rad = H.deg2rad,
