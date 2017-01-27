@@ -12,15 +12,19 @@ import 'tree-grid.js';
 import 'pathfinder.js';
 import 'xrange-series.js';
 
-var dateFormat = H.dateFormat,
+var each = H.each,
+	dateFormat = H.dateFormat,
 	defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
+	map = H.map,
 	merge = H.merge,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
+	splat = H.splat,
 	stop = H.stop,
+	Chart = H.Chart,
 	Point = H.Point,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
@@ -44,6 +48,80 @@ var setPointAliases = function (options) {
 	options.name = pick(options.taskGroup, options.name);
 	options.partialFill = pick(options.completed, options.partialFill);
 	options.connect = pick(options.dependency, options.connect);
+};
+
+/**
+ * The GanttChart class.
+ * @class Highcharts.GanttChart
+ * @memberOf Highcharts
+ * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
+ *                                         its id.
+ * @param {ChartOptions}          options  The chart options structure.
+ * @param {Function}              callback Function to run when the chart has
+ *                                         loaded.
+ */
+H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
+	var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
+		seriesOptions = options.series,
+		defaultOptions = H.getOptions();
+	options = arguments[hasRenderToArg ? 1 : 0];
+
+	// apply X axis options to both single and multi y axes
+	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
+		return merge(
+			defaultOptions.xAxis,
+			{ // defaults
+				grid: true,
+				tickInterval: 1000 * 60 * 60 * 24, // Day
+				opposite: true
+			},
+			xAxisOptions, // user options
+			{ // forced options
+				type: 'datetime'
+			}
+		);
+	});
+
+	// apply Y axis options to both single and multi y axes
+	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+		return merge(
+			defaultOptions.yAxis, // #3802
+			{ // defaults
+				grid: true,
+
+				// Set default type tree-grid, but onlf categories is undefined
+				type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
+			},
+			yAxisOptions // user options
+		);
+	});
+
+	options.series = null;
+
+	options = merge(
+		{
+			chart: {
+				type: 'gantt'
+			},
+			title: {
+				text: null
+			}
+		},
+
+		options // user's options
+	);
+
+	options.series = seriesOptions;
+
+	each(options.series, function (series) {
+		each(series.data, function (point) {
+			setPointAliases(point);
+		});
+	});
+
+	return hasRenderToArg ?
+		new Chart(renderTo, options, callback) :
+		new Chart(options, options);
 };
 
 // type, parent, options, props, pointProps
@@ -255,34 +333,4 @@ seriesType('gantt', parentName, {
 		cfg.taskName = point.taskName;
 		return cfg;
 	}
-});
-
-/**
- * Override to set yAxis.type: 'tree-grid' as default.
- */
-H.wrap(H.Chart.prototype, 'init', function (proceed, options) {
-	var yAxisIndex = 0,
-		allSeriesAreGantt = options.chart && options.chart.type === 'gantt',
-		yAxisOptions;
-	H.each(options.series, function (series) {
-
-		if (series.type === 'gantt' || allSeriesAreGantt) {
-			if (isNumber(series.yAxis)) {
-				yAxisIndex = series.yAxis;
-			}
-			if (!options.yAxis) {
-				options.yAxis = [{}];
-			}
-			yAxisOptions = options.yAxis[yAxisIndex];
-			if (yAxisOptions) {
-				yAxisOptions.type = pick(yAxisOptions.type, 'tree-grid');
-			}
-
-			H.each(series.data, function (point) {
-				setPointAliases(point);
-			});
-		}
-	});
-
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });

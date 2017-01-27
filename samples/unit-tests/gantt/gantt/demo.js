@@ -2,73 +2,85 @@ var defaultChartConfig;
 
 QUnit.testStart(function () {
     defaultChartConfig = {
-        chart: {
-            type: 'gantt'
-        },
         title: {
             text: 'Projects'
         },
         xAxis: [{
-            grid: true,
-            type: 'datetime',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
             labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '1.5em'
-                }
+                format: '{value:%E}'
             },
             min: Date.UTC(2014, 10, 17),
             max: Date.UTC(2014, 10, 30)
         }, {
-            grid: true,
-            type: 'datetime',
-            opposite: true,
             tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
             labels: {
-                format: '{value:Week %W}',
-                style: {
-                    fontSize: '1.5em'
-                }
+                format: '{value:Week %W}'
             },
             linkedTo: 0
         }],
         yAxis: [{
-            categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true,
             grid: true
         }],
         series: [{
             name: 'Project 1',
             borderRadius: 10,
             data: [{
+                id: 'start_prototype',
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
-                taskGroup: 0,
+                taskGroup: 'Start prototype',
                 taskName: 'Start prototype',
+                y: 0,
                 partialFill: 0.25
             }, {
-                start: Date.UTC(2014, 10, 20),
-                end: Date.UTC(2014, 10, 25),
-                taskGroup: 1,
-                taskName: 'Develop',
-                partialFill: 0.12
-            }, {
+                id: 'prototype_done',
                 start: Date.UTC(2014, 10, 25, 12),
                 milestone: true,
                 taskName: 'Prototype done',
-                taskGroup: 0
+                taskGroup: 'Prototype done',
+                y: 1
             }, {
+                id: 'test_prototype',
                 start: Date.UTC(2014, 10, 27),
                 end: Date.UTC(2014, 10, 28),
                 taskName: 'Test prototype',
-                taskGroup: 0
+                taskGroup: 'Test prototype',
+                y: 2
             }, {
+                id: 'development',
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                taskGroup: 'Develop',
+                taskName: 'Develop',
+                y: 3,
+                partialFill: 0.12
+            }, {
+                id: 'unit_tests',
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 22),
+                y: 4,
+                parent: 'development',
+                taskGroup: 'Create unit tests',
+                taskName: 'Create unit tests',
+                partialFill: {
+                    amount: 0.5,
+                    fill: '#fa0'
+                }
+            }, {
+                id: 'implement',
+                start: Date.UTC(2014, 10, 22),
+                end: Date.UTC(2014, 10, 25),
+                y: 5,
+                taskGroup: 'Implement',
+                parent: 'development',
+                taskName: 'Implement'
+            }, {
+                id: 'acceptance_tests',
                 start: Date.UTC(2014, 10, 23),
                 end: Date.UTC(2014, 10, 26),
                 taskName: 'Run acceptance tests',
-                taskGroup: 2
+                taskGroup: 'Run acceptance tests',
+                y: 6
             }]
         }]
     };
@@ -78,10 +90,10 @@ QUnit.testStart(function () {
  * Checks that milestones are drawn differently than tasks
  */
 QUnit.test('Milestones', function (assert) {
-    var chart = Highcharts.chart('container', defaultChartConfig),
+    var chart = Highcharts.ganttChart('container', defaultChartConfig),
         points = chart.series[0].points,
         taskPoint = points[0],
-        milestonePoint = points[2],
+        milestonePoint = points[1],
         milestone = milestonePoint.graphic,
         path,
         isDiamond,
