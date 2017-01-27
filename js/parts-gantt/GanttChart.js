@@ -6,8 +6,8 @@
 */
 'use strict';
 import H from '../parts/Globals.js';
-import 'current-date-indicator.js';
-import 'grid-axis.js';
+import 'CurrentDateIndicator.js';
+import 'GridAxis.js';
 import 'tree-grid.js';
 import 'pathfinder.js';
 import 'XRangeSeries.js';

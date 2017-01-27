@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import './grid-axis.js';
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
