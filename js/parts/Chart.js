@@ -623,7 +623,10 @@ Chart.prototype = {
 		);
 		chart.chartHeight = Math.max(
 			0,
-			heightOption || chart.containerHeight || 400
+			H.relativeLength( // docs: percent height. Demo added as height-percent
+				heightOption,
+				chart.chartWidth
+			) || chart.containerHeight || 400
 		);
 	},
 
