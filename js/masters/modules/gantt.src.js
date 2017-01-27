@@ -9,4 +9,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/gantt.js';
+import '../../parts-gantt/GanttSeries.js';
+import '../../parts-gantt/GanttChart.js';

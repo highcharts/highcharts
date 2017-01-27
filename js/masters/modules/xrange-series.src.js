@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../parts-gantt/xrange-series.js';
+import '../../parts-gantt/XRangeSeries.js';

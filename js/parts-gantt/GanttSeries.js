@@ -10,119 +10,20 @@ import 'current-date-indicator.js';
 import 'grid-axis.js';
 import 'tree-grid.js';
 import 'pathfinder.js';
-import 'xrange-series.js';
+import 'XRangeSeries.js';
 
-var each = H.each,
-	dateFormat = H.dateFormat,
+var dateFormat = H.dateFormat,
 	defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
-	map = H.map,
 	merge = H.merge,
 	pick = H.pick,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
-	splat = H.splat,
 	stop = H.stop,
-	Chart = H.Chart,
 	Point = H.Point,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
-
-/**
- * Sets aliases on a point options object
- * @param {Object} options a poit options object
- */
-var setPointAliases = function (options) {
-	// Get value from aliases
-	options.x = pick(options.start, options.x);
-	options.x2 = pick(options.end, options.x2);
-	if (options.milestone) {
-		options.x2 = options.x;
-	}
-	options.y = pick(
-		// If taskGroup is a number, it's a reference to the category index
-		isNumber(options.taskGroup) ? options.taskGroup : undefined,
-		options.y
-	);
-	options.name = pick(options.taskGroup, options.name);
-	options.partialFill = pick(options.completed, options.partialFill);
-	options.connect = pick(options.dependency, options.connect);
-};
-
-/**
- * The GanttChart class.
- * @class Highcharts.GanttChart
- * @memberOf Highcharts
- * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
- *                                         its id.
- * @param {ChartOptions}          options  The chart options structure.
- * @param {Function}              callback Function to run when the chart has
- *                                         loaded.
- */
-H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
-	var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
-		seriesOptions = options.series,
-		defaultOptions = H.getOptions();
-	options = arguments[hasRenderToArg ? 1 : 0];
-
-	// apply X axis options to both single and multi y axes
-	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge(
-			defaultOptions.xAxis,
-			{ // defaults
-				grid: true,
-				tickInterval: 1000 * 60 * 60 * 24, // Day
-				opposite: true
-			},
-			xAxisOptions, // user options
-			{ // forced options
-				type: 'datetime'
-			}
-		);
-	});
-
-	// apply Y axis options to both single and multi y axes
-	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		return merge(
-			defaultOptions.yAxis, // #3802
-			{ // defaults
-				grid: true,
-
-				// Set default type tree-grid, but onlf categories is undefined
-				type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
-			},
-			yAxisOptions // user options
-		);
-	});
-
-	options.series = null;
-
-	options = merge(
-		{
-			chart: {
-				type: 'gantt'
-			},
-			title: {
-				text: null
-			}
-		},
-
-		options // user's options
-	);
-
-	options.series = seriesOptions;
-
-	each(options.series, function (series) {
-		each(series.data, function (point) {
-			setPointAliases(point);
-		});
-	});
-
-	return hasRenderToArg ?
-		new Chart(renderTo, options, callback) :
-		new Chart(options, options);
-};
 
 // type, parent, options, props, pointProps
 seriesType('gantt', parentName, {
@@ -297,6 +198,23 @@ seriesType('gantt', parentName, {
 		} else {
 			parent.prototype.drawPoint.call(series, point, verb);
 		}
+	},
+
+	setGanttPointAliases: function (options) {
+		// Get value from aliases
+		options.x = pick(options.start, options.x);
+		options.x2 = pick(options.end, options.x2);
+		if (options.milestone) {
+			options.x2 = options.x;
+		}
+		options.y = pick(
+			// If taskGroup is a number, it's a reference to the category index
+			isNumber(options.taskGroup) ? options.taskGroup : undefined,
+			options.y
+		);
+		options.name = pick(options.taskGroup, options.name);
+		options.partialFill = pick(options.completed, options.partialFill);
+		options.connect = pick(options.dependency, options.connect);
 	}
 }, {
 	// pointProps - point member overrides
@@ -310,9 +228,10 @@ seriesType('gantt', parentName, {
 	 */
 	applyOptions: function (options, x) {
 		var point = this,
+			series = point.series,
 			retVal = merge(options);
 
-		setPointAliases(retVal);
+		series.setGanttPointAliases(retVal);
 
 		retVal = Point.prototype.applyOptions.call(point, retVal, x);
 		return retVal;
@@ -334,3 +253,25 @@ seriesType('gantt', parentName, {
 		return cfg;
 	}
 });
+
+/**
+ * Sets aliases on a point options object
+ * @param   {Object}    options a point options object
+ * @returns {undefined}
+ */
+seriesTypes.gantt.sadf = function (options) {
+	// Get value from aliases
+	options.x = pick(options.start, options.x);
+	options.x2 = pick(options.end, options.x2);
+	if (options.milestone) {
+		options.x2 = options.x;
+	}
+	options.y = pick(
+		// If taskGroup is a number, it's a reference to the category index
+		isNumber(options.taskGroup) ? options.taskGroup : undefined,
+		options.y
+	);
+	options.name = pick(options.taskGroup, options.name);
+	options.partialFill = pick(options.completed, options.partialFill);
+	options.connect = pick(options.dependency, options.connect);
+};
