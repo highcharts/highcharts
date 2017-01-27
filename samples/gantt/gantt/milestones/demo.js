@@ -1,9 +1,8 @@
 $(function () {
 
     // THE CHART
-    Highcharts.chart('container', {
+    Highcharts.ganttChart('container', {
         chart: {
-            type: 'gantt',
             marginLeft: 150,
             marginRight: 150
         },
@@ -11,10 +10,6 @@ $(function () {
             text: 'Gantt Chart'
         },
         xAxis: [{
-            grid: true,
-            type: 'datetime',
-            opposite: true,
-            tickInterval: 1000 * 60 * 60 * 24, // Day
             labels: {
                 format: '{value:%E}',
                 style: {
@@ -25,9 +20,6 @@ $(function () {
             max: Date.UTC(2014, 10, 27),
             currentDateIndicator: true
         }, {
-            grid: true,
-            type: 'datetime',
-            opposite: true,
             tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
             labels: {
                 format: '{value:Week %W}',
@@ -39,8 +31,7 @@ $(function () {
         }],
         yAxis: [{
             categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true,
-            grid: true
+            reversed: true
         }],
         series: [{
             name: 'Project 1',

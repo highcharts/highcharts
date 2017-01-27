@@ -1,9 +1,8 @@
 $(function () {
 
     // THE CHART
-    Highcharts.chart('container', {
+    Highcharts.ganttChart('container', {
         chart: {
-            type: 'gantt',
             marginLeft: 150,
             marginRight: 150
         },
@@ -11,9 +10,6 @@ $(function () {
             text: 'Gantt Chart with Years and Months'
         },
         xAxis: [{
-            grid: true,
-            type: 'datetime',
-            opposite: true,
             tickInterval: 1000 * 60 * 60 * 24 * 30, // Month
             labels: {
                 format: '{value:%b}',
@@ -25,9 +21,6 @@ $(function () {
             max: Date.UTC(2015, 11, 0),
             currentDateIndicator: true
         }, {
-            grid: true,
-            type: 'datetime',
-            opposite: true,
             tickInterval: 1000 * 60 * 60 * 24 * 365, // Year
             labels: {
                 format: '{value:%Y}',
@@ -39,8 +32,7 @@ $(function () {
         }],
         yAxis: [{
             categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true,
-            grid: true
+            reversed: true
         }],
         series: [{
             name: 'Project 1',

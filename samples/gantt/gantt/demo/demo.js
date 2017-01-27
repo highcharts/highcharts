@@ -11,20 +11,15 @@ $(function () {
 
 
     // THE CHART
-    Highcharts.chart('container', {
+    Highcharts.ganttChart('container', {
         chart: {
-            type: 'gantt',
             marginLeft: 200
         },
         title: {
             text: 'Gantt Chart'
         },
         xAxis: [{
-            grid: true,
             currentDateIndicator: true,
-            type: 'datetime',
-            opposite: true,
-            tickInterval: day, // Day
             labels: {
                 format: '{value:%E}',
                 style: {
@@ -34,9 +29,6 @@ $(function () {
             min: today.getTime() - (3 * day),
             max: today.getTime() + (11 * day)
         }, {
-            grid: true,
-            type: 'datetime',
-            opposite: true,
             tickInterval: day * 7, // Week
             labels: {
                 format: '{value:Week %W}',
