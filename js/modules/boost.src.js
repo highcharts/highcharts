@@ -2064,44 +2064,6 @@ each([
 	}
 );
 
-/*
- * Returns true if the current browser supports webgl
- */
-function hasWebGLSupport() {
-	var i = 0,
-		canvas,
-		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
-		context = false;		
-
-	if (!!window.WebGLRenderingContext) {
-		canvas = document.createElement('canvas');
-
-		for (; i < contexts.length; i++) {
-			try {
-				context = canvas.getContext(contexts[i]);
-				return typeof context !== 'undefined' && context !== null;
-			} catch(e){}
-		};
-	}
-
-	return false;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// We're wrapped in a closure, so just return if there's no webgl support
-
-if (!hasWebGLSupport()) {	
-	if (H.initCanvasBoost) {
-		// Fallback to canvas boost
-		//console.log('fallback to canvas');
-		H.initCanvasBoost();
-	}
-	return;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// GL-SPECIFIC WRAPPINGS FOLLOWS
-
 /**
  * Override a bunch of methods the same way. If the number of points is 
  * below the threshold, run the original method. If not, check for a 
@@ -2157,6 +2119,48 @@ each([
 		}	
 	}
 });
+
+/*
+ * Returns true if the current browser supports webgl
+ */
+function hasWebGLSupport() {
+	var i = 0,
+		canvas,
+		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
+		context = false;		
+
+	return false;
+
+	if (!!window.WebGLRenderingContext) {
+		canvas = document.createElement('canvas');
+
+		for (; i < contexts.length; i++) {
+			try {
+				context = canvas.getContext(contexts[i]);
+				return typeof context !== 'undefined' && context !== null;
+			} catch(e){}
+		};
+	}
+
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// We're wrapped in a closure, so just return if there's no webgl support
+
+if (!hasWebGLSupport()) {	
+	if (H.initCanvasBoost) {
+		// Fallback to canvas boost
+		console.log('fallback to canvas');
+		H.initCanvasBoost();
+	}
+	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GL-SPECIFIC WRAPPINGS FOLLOWS
+
+
 
 /** If the series is a heatmap or treemap, or if the series is not boosting
  *  do the default behaviour. Otherwise, process if the series has no 
