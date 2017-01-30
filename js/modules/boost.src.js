@@ -2129,8 +2129,6 @@ function hasWebGLSupport() {
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
 		context = false;		
 
-	return false;
-
 	if (!!window.WebGLRenderingContext) {
 		canvas = document.createElement('canvas');
 
