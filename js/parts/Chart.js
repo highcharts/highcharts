@@ -96,7 +96,6 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
-		this.respRules = [];
 
 		var optionsChart = options.chart;
 

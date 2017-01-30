@@ -236,3 +236,92 @@ QUnit.test(
 
     }
 );
+
+
+QUnit.test('Multiple rules order (#6291)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    title: {
+                        text: 'Max width 400'
+                    }
+                }
+            }, {
+                condition: {
+                    maxWidth: 300
+                },
+                chartOptions: {
+                    title: {
+                        text: 'Max width 300'
+                    }
+                }
+            }, {
+                condition: {
+                    maxWidth: 200
+                },
+                chartOptions: {
+                    title: {
+                        text: 'Max width 200'
+                    }
+                }
+            }]
+        },
+        chart: {
+            width: 450,
+            animation: false
+        },
+        title: {
+            text: 'No restrictions'
+        },
+        series: [{
+            name: 'USD to EUR',
+            data: [1, 2, 3],
+            animation: false
+        }]
+    });
+
+    assert.strictEqual(
+        chart.title.textStr,
+        'No restrictions',
+        'No restrictions'
+    );
+
+    chart.setSize(350);
+    assert.strictEqual(
+        chart.title.textStr,
+        'Max width 400',
+        'Max width 400'
+    );
+
+    chart.setSize(250);
+    assert.strictEqual(
+        chart.title.textStr,
+        'Max width 300',
+        'Max width 300'
+    );
+
+    chart.setSize(150);
+    assert.strictEqual(
+        chart.title.textStr,
+        'Max width 200',
+        'Max width 200'
+    );
+
+    chart.setSize(250);
+    assert.strictEqual(
+        chart.title.textStr,
+        'Max width 300',
+        'Max width 300'
+    );
+
+    chart.setSize(null);
+    assert.strictEqual(
+        chart.title.textStr,
+        'No restrictions',
+        'No restrictions'
+    );
+});
