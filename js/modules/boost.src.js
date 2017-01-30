@@ -270,7 +270,7 @@ function toRGBAFast(col) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {	
-	var threshold = chart.options.boost.seriesThreshold || 
+	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || 
 					chart.options.chart.seriesBoostThreshold ||
 					10;
 
@@ -1792,7 +1792,8 @@ function GLRenderer(options) {
 		data: data,
 		gl: getGL,
 		allocateBuffer: allocateBuffer,
-		destroy: destroy
+		destroy: destroy,
+		setOptions: setOptions
 	};
 
 	return exports;
