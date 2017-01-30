@@ -96,43 +96,56 @@ function eachAsync(arr, fn, finalFunc, chunkSize, i) {
 	}
 }
 
+/*
+ * Returns true if the chart is in series boost mode
+ * @param chart {Highchart.Chart} - the chart to check
+ * @returns {Boolean} - true if the chart is in series boost mode
+ */
+function isChartSeriesBoosting(chart) {	
+	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || 
+					chart.options.chart.seriesBoostThreshold ||
+					10;
+
+	return chart.series.length >= threshold;
+}
+
 H.initCanvasBoost = function() {
 
 	/**
 	 * Override a bunch of methods the same way. If the number of points is below the threshold,
 	 * run the original method. If not, check for a canvas version or do nothing.
 	 */
-	each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-		function branch(proceed) {
-			var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
-			if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
-					letItPass) {
+	// each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
+	// 	function branch(proceed) {
+	// 		var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
+	// 		if (((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
+	// 				letItPass) || !isChartSeriesBoosting(this.chart)) {
 
-				// Clear image
-				if (method === 'render' && this.image) {
-					this.image.attr({ href: '' });
-					this.animate = null; // We're zooming in, don't run animation
-				}
+	// 			// Clear image
+	// 			if (method === 'render' && this.image) {
+	// 				this.image.attr({ href: '' });
+	// 				this.animate = null; // We're zooming in, don't run animation
+	// 			}
 
-				proceed.call(this);
+	// 			proceed.call(this);
 
-			// If a canvas version of the method exists, like renderCanvas(), run
-			} else if (this[method + 'Canvas']) {
+	// 		// If a canvas version of the method exists, like renderCanvas(), run
+	// 		} else if (this[method + 'Canvas']) {
 
-				this[method + 'Canvas']();
-			}
-		}
-		wrap(Series.prototype, method, branch);
+	// 			this[method + 'Canvas']();
+	// 		}
+	// 	}
+	// 	wrap(Series.prototype, method, branch);
 
-		// A special case for some types - its translate method is already wrapped
-		if (method === 'translate') {
-			each(['arearange', 'bubble', 'column'], function (type) {
-				if (seriesTypes[type]) {
-					wrap(seriesTypes[type].prototype, method, branch);
-				}
-			});
-		}
-	});
+	// 	// A special case for some types - its translate method is already wrapped
+	// 	if (method === 'translate') {
+	// 		each(['arearange', 'bubble', 'column'], function (type) {
+	// 			if (seriesTypes[type]) {
+	// 				wrap(seriesTypes[type].prototype, method, branch);
+	// 			}
+	// 		});
+	// 	}
+	// });
 
 	H.extend(Series.prototype, {
 		pointRange: 0,
@@ -178,31 +191,75 @@ H.initCanvasBoost = function() {
 		 */
 		getContext: function () {
 			var chart = this.chart,
-				width = chart.plotWidth,
-				height = chart.plotHeight,
-				ctx = this.ctx,
+				width = chart.chartWidth,
+				height = chart.chartHeight,
+				targetGroup = this.group,
+				target = this,
+				ctx,
 				swapXY = function (proceed, x, y, a, b, c, d) {
 					proceed.call(this, y, x, a, b, c, d);
 				};
 
-			if (!this.canvas) {
-				this.canvas = doc.createElement('canvas');
-				this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
-				this.ctx = ctx = this.canvas.getContext('2d');
+			if (isChartSeriesBoosting(chart)) {
+				target = chart;
+				targetGroup = chart.seriesGroup;
+			}
+
+			ctx = target.ctx;
+
+			if (!target.canvas) {
+				target.canvas = doc.createElement('canvas');
+				
+				target.image = chart.renderer.image(
+					'', 
+					0, 
+					0, 
+					width, 
+					height
+				).add(targetGroup);
+				
+				target.ctx = ctx = target.canvas.getContext('2d');
+				
 				if (chart.inverted) {
 					each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
 						wrap(ctx, fn, swapXY);
 					});
 				}
-			} else {
-				ctx.clearRect(0, 0, width, height);
+
+				target.boostClipRect = chart.renderer.clipRect(
+					chart.plotLeft,
+					chart.plotTop,
+					chart.plotWidth,
+					chart.chartHeight
+				);
+
+				target.image.clip(target.boostClipRect);
+
+			} else if (!(target instanceof H.Chart)) {
+				//ctx.clearRect(0, 0, width, height);
 			}
 
-			this.canvas.width = width;
-			this.canvas.height = height;
-			this.image.attr({
+			if (target.canvas.width !== width) {
+				target.canvas.width = width;				
+			}		
+
+			if (target.canvas.height !== height) {
+				target.canvas.height = height;				
+			}
+
+			target.image.attr({
+				x: chart.plotLeft,
+				y: chart.plotTop,
 				width: width,
-				height: height
+				height: height,
+				style: 'pointer-events: none'
+			});
+
+			target.boostClipRect.attr({
+				x: chart.plotLeft,
+				y: chart.plotTop,
+				width: chart.plotWidth,
+				height: chart.chartHeight
 			});
 
 			return ctx;
@@ -212,7 +269,11 @@ H.initCanvasBoost = function() {
 		 * Draw the canvas image inside an SVG image
 		 */
 		canvasToSVG: function () {
-			this.image.attr({ href: this.canvas.toDataURL('image/png') });
+			if (!isChartSeriesBoosting(this.chart)) {
+				this.image.attr({ href: this.canvas.toDataURL('image/png') });
+			} else if (this.image) {
+				this.image.attr({href: ''});
+			}
 		},
 
 		cvsLineTo: function (ctx, clientX, plotY) {
@@ -225,6 +286,12 @@ H.initCanvasBoost = function() {
 				chart = series.chart,
 				xAxis = this.xAxis,
 				yAxis = this.yAxis,
+				activeBoostSettings = chart.options.boost || {},
+				boostSettings = {
+					timeRendering: activeBoostSettings.timeRendering || false,
+					timeSeriesProcessing: activeBoostSettings.timeSeriesProcessing || false,
+					timeSetup: activeBoostSettings.timeSetup || false
+				},
 				ctx,
 				c = 0,
 				xData = series.processedXData,
@@ -266,9 +333,12 @@ H.initCanvasBoost = function() {
 				maxVal,
 				minI,
 				maxI,
+				kdIndex,
+				boostingOnChartLevel = isChartSeriesBoosting(chart),
 				fillColor = series.fillOpacity ?
 						new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 						series.color,
+				
 				stroke = function () {
 					if (doFill) {
 						ctx.fillStyle = fillColor;
@@ -279,6 +349,7 @@ H.initCanvasBoost = function() {
 						ctx.stroke();
 					}
 				},
+
 				drawPoint = function (clientX, plotY, yBottom, i) {
 					if (c === 0) {
 						ctx.beginPath();
@@ -317,11 +388,13 @@ H.initCanvasBoost = function() {
 				},
 
 				addKDPoint = function (clientX, plotY, i) {
+					// Avoid more string concatination than required
+					kdIndex = clientX + ',' + plotY;
 
 					// The k-d tree requires series points. Reduce the amount of points, since the time to build the 
 					// tree increases exponentially.
-					if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
-						pointTaken[clientX + ',' + plotY] = true;
+					if (enableMouseTracking && !pointTaken[kdIndex]) {
+						pointTaken[kdIndex] = true;
 
 						if (chart.inverted) {
 							clientX = xAxis.len - clientX;
@@ -376,6 +449,10 @@ H.initCanvasBoost = function() {
 				clearTimeout(destroyLoadingDiv);
 				chart.showLoading('Drawing...');
 				chart.options.loading = loadingOptions; // reset
+			}
+
+			if (boostSettings.timeRendering) {
+				console.time('canvas rendering');
 			}
 
 			// Loop over the points
@@ -453,7 +530,6 @@ H.initCanvasBoost = function() {
 									}
 								}
 
-
 								minI = maxI = undefined;
 								lastClientX = clientX;
 							}
@@ -476,6 +552,10 @@ H.initCanvasBoost = function() {
 					loadingShown = chart.loadingShown;
 				stroke();
 				series.canvasToSVG();
+
+				if (boostSettings.timeRendering) {
+					console.timeEnd('canvas rendering');
+				}
 
 				fireEvent(series, 'renderedCanvas');
 
@@ -562,5 +642,34 @@ H.initCanvasBoost = function() {
 		},
 		fill: true,
 		sampling: true
+	});
+
+	H.Chart.prototype.callbacks.push(function (chart) {
+		function canvasToSVG() {			
+			if (chart.image && chart.canvas) {
+				chart.image.attr({ 
+					href: chart.canvas.toDataURL('image/png') 
+				});			
+			}
+		}
+
+		function clear() {
+			console.log('clearing');
+			if (chart.image) {
+				chart.image.attr({href: ''});
+			}
+
+			if (chart.canvas) {
+				chart.canvas.getContext('2d').clearRect(
+					0, 
+					0, 
+					chart.canvas.width,
+					chart.canvas.height
+				);
+			}
+		}
+
+		addEvent(chart, 'predraw', clear);	
+		addEvent(chart, 'render', canvasToSVG);
 	});
 };
