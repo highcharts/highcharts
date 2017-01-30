@@ -905,9 +905,9 @@ function GLRenderer(options) {
 			useAlpha: true,
 			usePreallocated: false,
 			useGPUTranslations: false,
-			timeRendering: true,
+			timeRendering: false,
 			timeSeriesProcessing: false,
-			timeSetup: true
+			timeSetup: false
 		};
 
 	////////////////////////////////////////////////////////////////////////////
@@ -919,9 +919,6 @@ function GLRenderer(options) {
 		'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
 		'</svg>'
 	].join(''));
-
-	circleTexture.width = 512;
-	circleTexture.height = 512;
 
 	function setOptions(options) {
 		options = options || {};
