@@ -17,8 +17,8 @@
 	 that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
  *   needs to be built.
- * - Stacking is not perhaps not correct since it doesn't use the translation given in 
- *   the translate method. If this gets to complicated, a possible way out would be to 
+ * - Stacking is perhaps not correct since it doesn't use the translation given in 
+ *   the translate method. If this gets too complicated, a possible way out would be to 
  *   have a simplified renderCanvas method that simply draws the areaPath on a canvas.
  *
  * If this module is taken in as part of the core
@@ -30,7 +30,8 @@
  * - Lines are not drawn on scatter charts
  * - Zones and negativeColor don't work
  * - Columns are always one pixel wide. Don't set the threshold too low.
- * - Disable animations 
+ * - Disable animations
+ * - Marker shapes are not supported: markers will always be circles
  *
  * Optimizing tips for users
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
@@ -40,6 +41,17 @@
  *   use optimizations.
  * - If drawing large scatter charts, it's beneficial to set the marker radius to a value
  *   less than 1. This is to add additional spacing to make the chart more readable.
+ * - If the value increments on both the X and Y axis aren't small, consider setting
+ *	 useGPUTranslations to true on the boost settings object. If you do this and
+ *	 the increments are small (e.g. datetime axis with small time increments)
+ *	 it may cause rendering issues due to floating point rounding errors,
+ *	 so your millage may vary.
+ *
+ * Settings
+ *	There are two ways of setting the boost threshold:
+ *    - Per. series: boost based on number of points in individual series
+ *    - Per. chart: boost based on the number of series 
+ *
  */
 
 'use strict';
@@ -258,7 +270,11 @@ function toRGBAFast(col) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {	
-	return chart.series.length >= (chart.options.chart.seriesBoostThreshold || 10);
+	var threshold = chart.options.boost.seriesThreshold || 
+					chart.options.chart.seriesBoostThreshold ||
+					10;
+
+	return chart.series.length >= threshold;
 }
 
 /*
@@ -906,6 +922,16 @@ function GLRenderer(options) {
 
 	circleTexture.width = 512;
 	circleTexture.height = 512;
+
+	function setOptions(options) {
+		options = options || {};
+		settings.useAlpha = options.useAlpha || true;
+		settings.useGPUTranslations = options.useGPUTranslations || false;
+		settings.usePreallocated = options.usePreallocated || false;
+		settings.timeRendering = options.timeRendering || false;
+		settings.timeSeriesProcessing = options.timeSeriesProcessing || false;
+		settings.timeSetup = options.timeSetup || false;
+	}
 
 	function seriesPointCount(series) {
 		var isStacked,
@@ -1841,6 +1867,7 @@ function createAndAttachRenderer(chart, series) {
 		target.ogl = GLRenderer();
 		target.ogl.init(target.canvas);
 		target.ogl.clear();
+		target.ogl.setOptions(chart.options.boost || {});
 
 		if (target instanceof H.Chart) {
 			target.ogl.allocateBuffer(chart);
@@ -2047,7 +2074,7 @@ function hasWebGLSupport() {
 		canvas,
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
 		context = false;		
-		
+
 	if (!!window.WebGLRenderingContext) {
 		canvas = document.createElement('canvas');
 
@@ -2066,11 +2093,9 @@ function hasWebGLSupport() {
 // We're wrapped in a closure, so just return if there's no webgl support
 
 if (!hasWebGLSupport()) {	
-	console.log('no ogl support');
-
 	if (H.initCanvasBoost) {
 		// Fallback to canvas boost
-		console.log('fallback to canvas');
+		//console.log('fallback to canvas');
 		H.initCanvasBoost();
 	}
 	return;
