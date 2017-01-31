@@ -248,8 +248,8 @@ H.initCanvasBoost = function() {
 			}
 
 			target.image.attr({
-				x: chart.plotLeft,
-				y: chart.plotTop,
+				x: 0,
+				y: 0,
 				width: width,
 				height: height,
 				style: 'pointer-events: none'
@@ -359,6 +359,17 @@ H.initCanvasBoost = function() {
 							ctx.lineJoin = 'round';
 						}
 					}
+
+					if (chart.scroller && series.options.className === 'highcharts-navigator-series') {
+						plotY += chart.scroller.top;
+						if (yBottom) {
+							yBottom += chart.scroller.top;							
+						}
+					} else {
+						plotY += chart.plotTop;
+					}
+
+					clientX += chart.plotLeft;
 
 					if (wasNull) {
 						ctx.moveTo(clientX, plotY);
@@ -530,6 +541,7 @@ H.initCanvasBoost = function() {
 							(isNextInside || isPrevInside)
 						)) {
 
+
 						clientX = Math.round(xAxis.toPixels(x, true));
 
 						if (sampling) {
@@ -687,7 +699,6 @@ H.initCanvasBoost = function() {
 		}
 
 		function clear() {
-			console.log('clearing');
 			if (chart.image) {
 				chart.image.attr({href: ''});
 			}
