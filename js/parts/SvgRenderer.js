@@ -2093,8 +2093,13 @@ SVGRenderer.prototype = {
 
 			if (hasMarkup) {
 				lines = textStr
+					/*= if (build.classic) { =*/
 					.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
 					.replace(/<(i|em)>/g, '<span style="font-style:italic">')
+					/*= } else { =*/
+					.replace(/<(b|strong)>/g, '<span class="highcharts-strong">')
+					.replace(/<(i|em)>/g, '<span class="highcharts-emphasized">')
+					/*= } =*/
 					.replace(/<a/g, '<span')
 					.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
 					.split(/<br.*?>/g);
