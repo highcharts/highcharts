@@ -290,6 +290,23 @@ override(GridAxisTick.prototype, {
 				xy.x += (node.depth - 1) * indentPx;
 			}
 			if (label && label.element) {
+				if (node.children.length > 0) {
+
+					// On hover
+					H.addEvent(label.element, 'mouseover', function () {
+						label.addClass('highcharts-treegrid-node-active');
+						/*= if (build.classic) { =*/
+						label.css({
+							cursor: 'pointer'
+						});
+						/*= } =*/
+					});
+
+					// On hover out
+					H.addEvent(label.element, 'mouseout', function () {
+						label.removeClass('highcharts-treegrid-node-active');
+					});
+				}
 				H.addEvent(label.element, 'click', function () {
 					var axis = tick.axis,
 						pos = tick.pos,
