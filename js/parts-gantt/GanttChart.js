@@ -13,7 +13,8 @@ import 'Pathfinder.js';
 import 'XRangeSeries.js';
 import 'GanttSeries.js';
 
-var each = H.each,
+var defined = H.defined,
+	each = H.each,
 	map = H.map,
 	merge = H.merge,
 	splat = H.splat,
@@ -32,17 +33,34 @@ var each = H.each,
 H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
 	var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
 		seriesOptions = options.series,
-		defaultOptions = H.getOptions();
+		defaultOptions = H.getOptions(),
+		defaultTickInterval = 1000 * 60 * 60 * 24, // Day
+		defaultLabelFormat = '{value:%E}',
+		defaultLinkedTo;
 	options = arguments[hasRenderToArg ? 1 : 0];
 
+	options.xAxis = splat(options.xAxis || {});
+	if (!defined(options.xAxis[1])) { // Include second xAxis by default
+		options.xAxis[1] = {};
+	}
+
 	// apply X axis options to both single and multi y axes
-	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
+	options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
+		if (i === 1) { // Second xAxis
+			defaultTickInterval = defaultTickInterval * 7; // Week
+			defaultLabelFormat = '{value:Week %W}';
+			defaultLinkedTo = 0;
+		}
 		return merge(
 			defaultOptions.xAxis,
 			{ // defaults
 				grid: true,
-				tickInterval: 1000 * 60 * 60 * 24, // Day
-				opposite: true
+				tickInterval: defaultTickInterval,
+				labels: {
+					format: defaultLabelFormat
+				},
+				opposite: true,
+				linkedTo: defaultLinkedTo
 			},
 			xAxisOptions, // user options
 			{ // forced options

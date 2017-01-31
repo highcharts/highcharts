@@ -2,31 +2,13 @@ $(function () {
 
     // THE CHART
     Highcharts.ganttChart('container', {
-        chart: {
-            marginLeft: 300
-        },
         title: {
             text: 'Gantt Chart'
         },
-        xAxis: [{
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '15px'
-                }
-            },
+        xAxis: {
             min: Date.UTC(2014, 10, 17),
             max: Date.UTC(2014, 10, 30)
-        }, {
-            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-            labels: {
-                format: '{value:Week %W}',
-                style: {
-                    fontSize: '15px'
-                }
-            },
-            linkedTo: 0
-        }],
+        },
         yAxis: [{
             categories: ['Prototyping', 'Development', 'Testing'],
             reversed: true

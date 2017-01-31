@@ -12,32 +12,14 @@ $(function () {
 
     // THE CHART
     Highcharts.ganttChart('container', {
-        chart: {
-            marginLeft: 200
-        },
         title: {
             text: 'Gantt Chart'
         },
-        xAxis: [{
+        xAxis: {
             currentDateIndicator: true,
-            labels: {
-                format: '{value:%E}',
-                style: {
-                    fontSize: '15px'
-                }
-            },
             min: today.getTime() - (3 * day),
             max: today.getTime() + (11 * day)
-        }, {
-            tickInterval: day * 7, // Week
-            labels: {
-                format: '{value:Week %W}',
-                style: {
-                    fontSize: '15px'
-                }
-            },
-            linkedTo: 0
-        }],
+        },
         series: [{
             name: 'Project 1',
             data: [{

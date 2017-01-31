@@ -5,22 +5,6 @@ QUnit.testStart(function () {
         title: {
             text: 'Projects'
         },
-        xAxis: [{
-            labels: {
-                format: '{value:%E}'
-            },
-            min: Date.UTC(2014, 10, 17),
-            max: Date.UTC(2014, 10, 30)
-        }, {
-            tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
-            labels: {
-                format: '{value:Week %W}'
-            },
-            linkedTo: 0
-        }],
-        yAxis: [{
-            grid: true
-        }],
         series: [{
             name: 'Project 1',
             borderRadius: 10,

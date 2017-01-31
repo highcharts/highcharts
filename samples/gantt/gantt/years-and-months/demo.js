@@ -2,10 +2,6 @@ $(function () {
 
     // THE CHART
     Highcharts.ganttChart('container', {
-        chart: {
-            marginLeft: 150,
-            marginRight: 150
-        },
         title: {
             text: 'Gantt Chart with Years and Months'
         },
@@ -14,7 +10,7 @@ $(function () {
             labels: {
                 format: '{value:%b}',
                 style: {
-                    fontSize: '10px'
+                    fontSize: '8px'
                 }
             },
             min: Date.UTC(2014, 3, 17),
