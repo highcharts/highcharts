@@ -241,7 +241,7 @@ H.initCanvasBoost = function() {
 
 			if (target.canvas.width !== width) {
 				target.canvas.width = width;				
-			}		
+			}
 
 			if (target.canvas.height !== height) {
 				target.canvas.height = height;				
@@ -334,6 +334,7 @@ H.initCanvasBoost = function() {
 				minI,
 				maxI,
 				kdIndex,
+				sdata = isStacked ? series.data : (xData || rawData),
 				boostingOnChartLevel = isChartSeriesBoosting(chart),
 				fillColor = series.fillOpacity ?
 						new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
@@ -456,13 +457,17 @@ H.initCanvasBoost = function() {
 			}
 
 			// Loop over the points
-			eachAsync(isStacked ? series.data : (xData || rawData), function (d, i) {
+			eachAsync(sdata, function (d, i) {
 				var x,
 					y,
 					clientX,
 					plotY,
 					isNull,
 					low,
+					isNextInside = false,
+					isPrevInside = false,
+					nx = false,
+					px = false,
 					chartDestroyed = typeof chart.index === 'undefined',
 					isYInside = true;
 
@@ -470,9 +475,33 @@ H.initCanvasBoost = function() {
 					if (useRaw) {
 						x = d[0];
 						y = d[1];
+
+						if (sdata[i + 1]) {
+							nx = sdata[i + 1][0];
+						}
+
+						if (sdata[i - 1]) {
+							px = sdata[i - 1][0];
+						}
 					} else {
 						x = d;
 						y = yData[i];
+
+						if (sdata[i + 1]) {
+							nx = sdata[i + 1];
+						}
+
+						if (sdata[i - 1]) {
+							px = sdata[i - 1];
+						}
+					}
+
+					if (nx && nx >= xMin && nx <= xMax) {
+						isNextInside = true;
+					}
+
+					if (px && px >= xMin && px <= xMax) {
+						isPrevInside = true;
 					}
 
 					// Resolve low and high for range series
@@ -495,7 +524,11 @@ H.initCanvasBoost = function() {
 						isYInside = y >= yMin && y <= yMax;
 					}
 
-					if (!isNull && x >= xMin && x <= xMax && isYInside) {
+					if (!isNull && 
+						(
+							(x >= xMin && x <= xMax && isYInside) || 
+							(isNextInside || isPrevInside)
+						)) {
 
 						clientX = Math.round(xAxis.toPixels(x, true));
 
