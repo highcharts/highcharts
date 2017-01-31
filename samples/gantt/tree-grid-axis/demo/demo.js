@@ -14,7 +14,6 @@ $(function () {
         }],
         yAxis: [{
             title: '',
-            grid: true,
             type: 'tree-grid'
         }],
         series: [{
