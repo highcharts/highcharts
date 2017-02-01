@@ -335,10 +335,10 @@ override(GridAxisTick.prototype, {
 			treeGridMap = axis.treeGridMap,
 			options = axis.options,
 			node,
-			isTreeGridTick = options.type === 'tree-grid' && index >= 0,
+			isTreeGrid = options.type === 'tree-grid' && index >= 0,
 			hasLabel = label && label.element;
 
-		if (isTreeGridTick) {
+		if (isTreeGrid) {
 			node = treeGridMap[pos];
 			xy.x += (node.depth - 1) * indentPx;
 
@@ -354,22 +354,20 @@ override(GridAxisTick.prototype, {
 					H.addEvent(label.element, 'mouseout', function () {
 						onTickHoverExit(label);
 					});
+
+					H.addEvent(label.element, 'click', function () {
+						var axis = tick.axis,
+							pos = tick.pos,
+							node = axis.treeGridMap[pos];
+						toggleCollapse(axis, node, pos);
+					});
 				}
-				H.addEvent(label.element, 'click', function () {
-					var axis = tick.axis,
-						pos = tick.pos,
-						node = axis.treeGridMap[pos];
-					toggleCollapse(axis, node, pos);
-				});
 			}
 		}
 		proceed.apply(tick, argsToArray(arguments));
 
-		if (isTreeGridTick && hasLabel) {
-			node = treeGridMap[pos];
-			if (node.children.length > 0) {
-				renderLabelIcon(label, 7, 5, isCollapsed(axis, node, pos));
-			}
+		if (isTreeGrid && hasLabel && treeGridMap[pos].children.length > 0) {
+			renderLabelIcon(label, 7, 5, isCollapsed(axis, node, pos));
 		}
 	}
 });
