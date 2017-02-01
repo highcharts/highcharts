@@ -100,58 +100,6 @@ function pathFromSegments(segments) {
 }
 
 /**
- * Decide in which direction to dodge or get out of an obstacle. Considers 
- * desired direction, which way is shortest, soft and hard bounds.
- *
- * Returns a string, either xMin, xMax, yMin or yMax.
- *
- * @param {Object} obstacle Obstacle to dodge/escape.
- * @param {Object} fromPoint Point with x/y props that's dodging/escaping.
- * @param {Object} toPoint Goal point.
- * @param {Boolean} dirIsX Dodge in X dimension.
- * @param {Object} bounds Hard and soft boundaries.
- *
- * @return {Boolean} result Use max or not.
- */
-function getDodgeDirection(obstacle, fromPoint, toPoint, dirIsX, bounds) {
-	var softBounds = bounds.soft,
-		hardBounds = bounds.hard,
-		dir = dirIsX ? 'x' : 'y',
-		maxOutOfSoftBounds = obstacle[dir + 'Max'] >
-							softBounds[dir + 'Max'],
-		minOutOfSoftBounds = obstacle[dir + 'Min'] <
-							softBounds[dir + 'Min'],
-		maxOutOfHardBounds = obstacle[dir + 'Max'] >
-							hardBounds[dir + 'Max'],
-		minOutOfHardBounds = obstacle[dir + 'Min'] <
-							hardBounds[dir + 'Min'],
-		// Find out if we should prefer one direction over the other if we can
-		// choose freely
-		minDistance = abs(obstacle[dir + 'Min'] - fromPoint[dir]),
-		maxDistance = abs(obstacle[dir + 'Max'] - fromPoint[dir]),
-		// If it's a small difference, pick the one leading towards dest point.
-		// Otherwise pick the shortest distance
-		useMax = abs(minDistance - maxDistance) < 10 ?
-				fromPoint[dir] < toPoint[dir] :
-				maxDistance < minDistance;
-
-	// useMax now contains our preferred choice, bounds not taken into account.
-	// If both or neither direction is out of bounds we want to use this.
-
-	// Deal with soft bounds
-	useMax = minOutOfSoftBounds ?
-		(maxOutOfSoftBounds ? useMax : true) : // Out on min
-		(maxOutOfSoftBounds ? false : useMax); // Not out on min
-
-	// Deal with hard bounds
-	useMax = minOutOfHardBounds ?
-		(maxOutOfHardBounds ? useMax : true) : // Out on min
-		(maxOutOfHardBounds ? false : useMax); // Not out on min
-
-	return useMax;
-}
-
-/**
  * Limits obstacle max/mins in all directions to bounds. Modifies input obstacle. 
  *
  * @param {Object} obstacle Obstacle to limit.
@@ -228,13 +176,16 @@ var algorithms = {
 				  corners
 		*/
 		var segments,
+			forceObstacleBreak = false, // Used in clearPathTo to keep track of
+									// when to force break through an obstacle.
+
 			// Boundaries to stay within. If beyond soft boundary, prefer to
 			// change direction ASAP. If at hard max, always change immediately.
 			metrics = options.obstacleMetrics,
-			softMinX = min(start.x, end.x) - metrics.maxWidth - 30,
-			softMaxX = max(start.x, end.x) + metrics.maxWidth + 30,
-			softMinY = min(start.y, end.y) - metrics.maxHeight - 30,
-			softMaxY = max(start.y, end.y) + metrics.maxHeight + 30,
+			softMinX = min(start.x, end.x) - metrics.maxWidth - 10,
+			softMaxX = max(start.x, end.x) + metrics.maxWidth + 10,
+			softMinY = min(start.y, end.y) - metrics.maxHeight - 10,
+			softMaxY = max(start.y, end.y) + metrics.maxHeight + 10,
 
 			// Obstacles
 			chartObstacles = options.chartObstacles,
@@ -314,6 +265,76 @@ var algorithms = {
 			return toPoint;
 		}
 
+		/**
+		 * Decide in which direction to dodge or get out of an obstacle.
+		 * Considers desired direction, which way is shortest, soft and hard
+		 * bounds.
+		 *
+		 * Returns a string, either xMin, xMax, yMin or yMax.
+		 *
+		 * @param {Object} obstacle Obstacle to dodge/escape.
+		 * @param {Object} fromPoint Point with x/y props that's dodging/escaping.
+		 * @param {Object} toPoint Goal point.
+		 * @param {Boolean} dirIsX Dodge in X dimension.
+		 * @param {Object} bounds Hard and soft boundaries.
+		 *
+		 * @return {Boolean} result Use max or not.
+		 */
+		function getDodgeDirection(obstacle, fromPoint, toPoint, dirIsX, bounds) {
+			var softBounds = bounds.soft,
+				hardBounds = bounds.hard,
+				dir = dirIsX ? 'x' : 'y',
+				toPointMax = { x: fromPoint.x, y: fromPoint.y },
+				toPointMin = { x: fromPoint.x, y: fromPoint.y },
+				minPivot,
+				maxPivot,
+				maxOutOfSoftBounds = obstacle[dir + 'Max'] >=
+									softBounds[dir + 'Max'],
+				minOutOfSoftBounds = obstacle[dir + 'Min'] <=
+									softBounds[dir + 'Min'],
+				maxOutOfHardBounds = obstacle[dir + 'Max'] >=
+									hardBounds[dir + 'Max'],
+				minOutOfHardBounds = obstacle[dir + 'Min'] <=
+									hardBounds[dir + 'Min'],
+				// Find out if we should prefer one direction over the other if 
+				// we can choose freely
+				minDistance = abs(obstacle[dir + 'Min'] - fromPoint[dir]),
+				maxDistance = abs(obstacle[dir + 'Max'] - fromPoint[dir]),
+				// If it's a small difference, pick the one leading towards dest 
+				// point. Otherwise pick the shortest distance
+				useMax = abs(minDistance - maxDistance) < 10 ?
+						fromPoint[dir] < toPoint[dir] :
+						maxDistance < minDistance;
+
+			// Check if we hit any obstacles trying to go around in either
+			// direction.
+			toPointMin[dir] = obstacle[dir + 'Min'];
+			toPointMax[dir] = obstacle[dir + 'Max'];
+			minPivot = pivotPoint(fromPoint, toPointMin, dirIsX)[dir] !==
+						toPointMin[dir];
+			maxPivot = pivotPoint(fromPoint, toPointMax, dirIsX)[dir] !==
+						toPointMax[dir];
+			useMax = minPivot ?
+				(maxPivot ? useMax : true) :
+				(maxPivot ? false : useMax);
+
+			// useMax now contains our preferred choice, bounds not taken into 
+			// account. If both or neither direction is out of bounds we want to 
+			// use this.
+
+			// Deal with soft bounds
+			useMax = minOutOfSoftBounds ?
+				(maxOutOfSoftBounds ? useMax : true) : // Out on min
+				(maxOutOfSoftBounds ? false : useMax); // Not out on min
+
+			// Deal with hard bounds
+			useMax = minOutOfHardBounds ?
+				(maxOutOfHardBounds ? useMax : true) : // Out on min
+				(maxOutOfHardBounds ? false : useMax); // Not out on min
+
+			return useMax;
+		}
+
 		// Find a clear path between points, optionally with a start direction 
 		// parameter.
 		function clearPathTo(fromPoint, toPoint, directionIsX) {
@@ -324,6 +345,7 @@ var algorithms = {
 
 			var dirIsX = pick(directionIsX, Math.abs(toPoint.x - fromPoint.x) >
 							Math.abs(toPoint.y - fromPoint.y)),
+				dir = dirIsX ? 'x' : 'y',
 				pivot,
 				segments,
 				waypoint,
@@ -377,27 +399,45 @@ var algorithms = {
 					// Cut obstacle to hard bounds
 					limitObstacleToBounds(secondEnvelopingObstacle, options.hardBounds);
 
-					envelopWaypoint = dirIsX ? {
-						y: fromPoint.y,
-						x: waypointUseMax ?	max(
-							envelopingObstacle.xMax - obstacleMargin + 1,
-							(secondEnvelopingObstacle.xMin + envelopingObstacle.xMax) / 2
-						) :
-						min(
-							envelopingObstacle.xMin + obstacleMargin - 1,
-							(secondEnvelopingObstacle.xMax + envelopingObstacle.xMin) / 2
-						)
-					} : {
-						x: fromPoint.x,
-						y: waypointUseMax ?	max(
-							envelopingObstacle.yMax - obstacleMargin + 1,
-							(secondEnvelopingObstacle.yMin + envelopingObstacle.yMax) / 2
-						) :
-						min(
-							envelopingObstacle.yMin + obstacleMargin - 1,
-							(secondEnvelopingObstacle.yMax + envelopingObstacle.yMin) / 2
-						)
-					};
+					// Modify waypoint to lay between obstacles
+					envelopWaypoint[dir] = waypointUseMax ?	max(
+						envelopingObstacle[dir + 'Max'] - obstacleMargin + 1,
+						(
+							secondEnvelopingObstacle[dir + 'Min'] + 
+							envelopingObstacle[dir + 'Max']
+						) / 2
+					) :
+					min(
+						envelopingObstacle[dir + 'Min'] + obstacleMargin - 1,
+						(
+							secondEnvelopingObstacle[dir + 'Max'] + 
+							envelopingObstacle[dir + 'Min']
+						) / 2
+					);
+
+					// We are not going anywhere. If this happens for the first
+					// time, do nothing. Otherwise, try to go to the extreme of 
+					// the obstacle pair in the current direction.
+					if (fromPoint.x === envelopWaypoint.x &&
+						fromPoint.y === envelopWaypoint.y) {
+						if (forceObstacleBreak) {
+							envelopWaypoint[dir] = waypointUseMax ? 
+								max(
+									envelopingObstacle[dir + 'Max'],
+									secondEnvelopingObstacle[dir + 'Max']
+								) + 1 :
+								min(
+									envelopingObstacle[dir + 'Min'],
+									secondEnvelopingObstacle[dir + 'Min']
+								) - 1;
+						}
+						// Toggle on if off, and the opposite
+						forceObstacleBreak = !forceObstacleBreak;
+					} else {
+						// This point is not identical to previous.
+						// Clear break trigger.
+						forceObstacleBreak = false;
+					}
 				}
 
 				segments = [{
