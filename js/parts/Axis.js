@@ -656,21 +656,7 @@ H.Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB,
-			/**
-			 * Check if x is between a and b. If not, either move to a/b or skip,
-			 * depending on the force parameter.
-			 */
-			between = function (x, a, b) {
-				if (x < a || x > b) {
-					if (force) {
-						x = Math.min(Math.max(a, x), b);
-					} else {
-						skip = true;
-					}
-				}
-				return x;
-			};
+			transB = axis.transB;
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
@@ -681,11 +667,11 @@ H.Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+			x1 = x2;
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+			y1 = y2;
 		}
 		return skip && !force ?
 			null :
@@ -2043,6 +2029,7 @@ H.Axis.prototype = {
 			className = options.className,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
+			plotLinesClip = axis.getPlotLinesAndBandsClip(),
 			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
@@ -2066,6 +2053,10 @@ H.Axis.prototype = {
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
 				.add(axisParent);
+
+			axis.plotLinesAndBandsClip = renderer.clipRect(plotLinesClip);
+		} else {
+			axis.plotLinesAndBandsClip.animate(plotLinesClip);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -2514,11 +2505,14 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
-			if (axis[prop]) {
-				axis[prop] = axis[prop].destroy();
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+			'gridGroup', 'labelGroup', 'plotLinesAndBandsClip', 'cross'],
+			function (prop) {
+				if (axis[prop]) {
+					axis[prop] = axis[prop].destroy();
+				}
 			}
-		});
+		);
 
 		// Delete all properties and fall back to the prototype.
 		for (n in axis) {
