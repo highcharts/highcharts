@@ -176,6 +176,10 @@ var algorithms = {
 				  corners
 		*/
 		var segments,
+			dir = abs(end.x - start.x) > abs(end.y - start.y) ? 'x' : 'y',
+			useMax,
+			extractedEndPoint,
+			endSegments = [],
 			forceObstacleBreak = false, // Used in clearPathTo to keep track of
 									// when to force break through an obstacle.
 
@@ -220,12 +224,13 @@ var algorithms = {
 
 			// Go through obstacle range in reverse if toPoint is before 
 			// fromPoint in the X-dimension.
-			if (searchDirection > 0) {
-				i = findLastObstacleBefore(chartObstacles, firstPoint.x);
-			} else {
-				i = min(findLastObstacleBefore(chartObstacles, lastPoint.x), 
-						chartObstacles.length - 1);
-			}
+			i = searchDirection < 0 ?
+				// Searching backwards, start at last obstacle before last point
+				min(findLastObstacleBefore(chartObstacles, lastPoint.x),
+					chartObstacles.length - 1) :
+				// Forwards. Since we're not sorted by xMax, we have to look 
+				// at all obstacles.
+				0;
 
 			// Go through obstacles in this X range
 			while (chartObstacles[i] && (
@@ -501,24 +506,72 @@ var algorithms = {
 
 			return segments;
 		}
+		
+		// Extract point to outside of obstacle in whichever direction is 
+		// closest. Returns new point outside obstacle.
+		function extractFromObstacle(obstacle, point, goalPoint) {
+			var dirIsX = min(obstacle.xMax - point.x, point.x - obstacle.xMin) <
+						min(obstacle.yMax - point.y, point.y - obstacle.yMin),
+				bounds = {
+					soft: options.hardBounds,
+					hard: options.hardBounds
+				},
+				useMax = getDodgeDirection(
+					obstacle, point, goalPoint, dirIsX, bounds
+				);
 
-		// Cut the obstacle array for optimization in large datasets
+			return dirIsX ? {
+				y: point.y,
+				x: obstacle[useMax ? 'xMax' : 'xMin'] + (useMax ? 1 : -1)
+			} : {
+				x: point.x,
+				y: obstacle[useMax ? 'yMax' : 'yMin'] + (useMax ? 1 : -1)
+			};
+		}
+
+		// Cut the obstacle array to soft bounds for optimization in large 
+		// datasets.
 		chartObstacles = chartObstacles.slice(startObstacleIx, endObstacleIx + 1);
 
-		// Remove obstacles that envelop the start/end points
-/*		while ((startObstacleIx = findObstacleFromPoint(chartObstacles, start,
-			options.obstacleOptions)) > -1) {
-			chartObstacles.splice(startObstacleIx, 1);
-		}		
-*/		
-		// TODO: this one as well
+		// If an obstacle envelops the end point, move it out of there and add
+		// a little segment to where it was.
+		if ((endObstacleIx = findObstacleFromPoint(chartObstacles, end, 
+				options, options.obstacleOptions)) > -1) {
+			extractedEndPoint = extractFromObstacle(
+				chartObstacles[endObstacleIx],
+				end,
+				start
+			);
+			endSegments.push({
+				start: end,
+				end: extractedEndPoint
+			});
+			end = extractedEndPoint;
+		}
+		// If it's still inside one or more obstacles, get out of there by
+		// force-moving towards the start point.
 		while ((endObstacleIx = findObstacleFromPoint(chartObstacles, end, 
-			options, options.obstacleOptions)) > -1) {
-			chartObstacles.splice(endObstacleIx, 1);
+				options, options.obstacleOptions)) > -1) {
+			useMax = end[dir] - start[dir] < 0;
+			extractedEndPoint = {
+				x: end.x,
+				y: end.y
+			};
+			extractedEndPoint[dir] = chartObstacles[endObstacleIx][
+				useMax ? dir + 'Max' : dir + 'Min'
+			] + (useMax ? 1 : -1);
+			endSegments.push({
+				start: end,
+				end: extractedEndPoint
+			});
+			end = extractedEndPoint;
 		}
 
 		// Find the path
 		segments = clearPathTo(start, end);
+
+		// Add the end-point segments
+		segments = segments.concat(endSegments.reverse());
 
 		return {
 			path: pathFromSegments(segments),
