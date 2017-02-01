@@ -163,8 +163,9 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		tickPositions = axis.tickPositions,
 		lastTickPos = tickPositions[tickPositions.length - 2],
 		nextTickPos = tickPositions[index + 1],
+		align = labelOpts.align,
 		tickPixelInterval,
-		newX,
+		xChange,
 		axisMin,
 		lblMetrics,
 		axisYCenter,
@@ -213,11 +214,27 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 			}
 
 			// Center x position
-			newX = (label.getBBox().width / 2) - (axis.getMaxLabelLength() / 2);
+			xChange = 10;
+			if (align === 'left') {
+				if (!categoryAxis || axis.side === axisSide.left) {
+					retVal.x -= axis.getMaxLabelLength();
+				} else {
+					xChange = -10;
+				}
+			} else if (align === 'right') {
+				if (!categoryAxis || axis.side === axisSide.right) {
+					retVal.x += axis.getMaxLabelLength();
+				} else {
+					xChange = -10;
+				}
+			} else { // Default: 'center'
+				xChange = axis.getMaxLabelLength() / 2;
+			}
+
 			if (axis.side === axisSide.left) {
-				retVal.x += newX;
+				retVal.x -= xChange;
 			} else {
-				retVal.x -= newX;
+				retVal.x += xChange;
 			}
 		}
 	}

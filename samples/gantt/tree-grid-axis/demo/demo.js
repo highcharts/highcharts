@@ -14,7 +14,10 @@ $(function () {
         }],
         yAxis: [{
             title: '',
-            type: 'tree-grid'
+            type: 'tree-grid',
+            labels: {
+                align: 'left'
+            }
         }],
         series: [{
             name: 'Project 1',

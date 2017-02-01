@@ -14,6 +14,8 @@ var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	indentPx = 10,
+	iconSize = 7,
+	iconSpacing = 5,
 	wrap = H.wrap,
 	each = H.each,
 	extend = H.extend,
@@ -340,7 +342,7 @@ override(GridAxisTick.prototype, {
 
 		if (isTreeGrid) {
 			node = treeGridMap[pos];
-			xy.x += (node.depth - 1) * indentPx;
+			xy.x += iconSize + iconSpacing + ((node.depth - 1) * indentPx);
 
 			if (hasLabel) {
 				if (node.children.length > 0) {
@@ -367,7 +369,7 @@ override(GridAxisTick.prototype, {
 		proceed.apply(tick, argsToArray(arguments));
 
 		if (isTreeGrid && hasLabel && treeGridMap[pos].children.length > 0) {
-			renderLabelIcon(label, 7, 5, isCollapsed(axis, node, pos));
+			renderLabelIcon(label, iconSize, iconSpacing, isCollapsed(axis, node, pos));
 		}
 	}
 });
