@@ -719,7 +719,7 @@ Legend.prototype = {
 		// Reset
 		} else if (nav) {
 			clipToHeight();
-			nav.hide();
+			this.nav = nav.destroy(); // #6322
 			this.scrollGroup.attr({
 				translateY: 1
 			});
