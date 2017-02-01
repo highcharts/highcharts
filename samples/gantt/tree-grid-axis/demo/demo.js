@@ -7,7 +7,7 @@ $(function () {
             marginRight: 150
         },
         title: {
-            text: 'Highcharts GridAxis'
+            text: 'Highcharts TreeGrid'
         },
         xAxis: [{
             type: 'datetime'
