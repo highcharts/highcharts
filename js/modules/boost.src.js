@@ -54,6 +54,8 @@
  *
  */
 
+ /* global Float32Array, window, document, Image */
+
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -68,7 +70,6 @@ var win = H.win,
 	noop = function () {},
 	Color = H.Color,
 	Series = H.Series,
-	Point = H.Point,
 	seriesTypes = H.seriesTypes,
 	each = H.each,
 	extend = H.extend,
@@ -261,7 +262,7 @@ function toRGBAFast(col) {
 	}
 
 	// Fall back to highcharts regex
-	return H.Color(col).rgba;
+	return H.Color(col).rgba; //eslint-disable-line new-cap
 }
 
 /*
@@ -719,7 +720,7 @@ function GLShader(gl) {
  * @param gl {WebGLContext} - the context in which to create the buffer
  * @param shader {GLShader} - the shader to use
  */
-function GLVertexBuffer(gl, shader, dataComponents, type) {
+function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 	var buffer = false,
 		vertAttribute = false,
 		components = dataComponents || 2,
@@ -727,7 +728,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 		iterator = 0,
 		data;
 
-	type = type || 'float';
+	// type = type || 'float';
 
 	function destroy() {
 		if (buffer) {
@@ -776,7 +777,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 	 */
 	function bind() {		
 		if (!buffer) {
-			return console.err('no buffer to bind');
+			return false;
 		}
 
 		gl.enableVertexAttribArray(vertAttribute);
@@ -795,7 +796,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 		var length = preAllocated ? preAllocated.length : data.length;
 
 		if (!buffer) {
-			return console.err('no buffer to bind');
+			return false;
 		}
 
 		if (!length) {
@@ -822,7 +823,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 	}
 
 	function push(x, y, a, b) {
-		if (preAllocated) {// && iterator <= preAllocated.length - 4) {			
+		if (preAllocated) { // && iterator <= preAllocated.length - 4) {			
 			preAllocated[++iterator] = x;
 			preAllocated[++iterator] = y;			
 			preAllocated[++iterator] = a;
@@ -839,7 +840,7 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
 		iterator = -1;
 
 		//if (!preAllocated || (preAllocated && preAllocated.length !== size)) {			
-			preAllocated = new Float32Array(size);
+		preAllocated = new Float32Array(size);
 		//}
 	}
 
@@ -861,34 +862,32 @@ function GLVertexBuffer(gl, shader, dataComponents, type) {
  *		  and encoding values in the color data.
  *		- Need to figure out a way to transform the data quicker
  */
-function GLRenderer(options) {
-	var //Shader
+function GLRenderer() {
+	var // Shader
 		shader = false,
-		//Vertex buffers - keyed on shader attribute name
+		// Vertex buffers - keyed on shader attribute name
 		vbuffer = false,
-		//Vertex buffers for markers
-		mvbuffer = false,
-		//Opengl context
+		// Opengl context
 		gl = false,
-		//Width of our viewport in pixels
+		// Width of our viewport in pixels
 		width = 0,
-		//Height of our viewport in pixels
+		// Height of our viewport in pixels
 		height = 0,
-		//The data to render - array of coordinates
+		// The data to render - array of coordinates
 		data = false,		
 		// The marker data
 		markerData = false,
-		//Exports
+		// Exports
 		exports = {},
-		//Is it inited?
+		// Is it inited?
 		isInited = false,
-		//The series stack
+		// The series stack
 		series = [],	
-		//Texture for circles
+		// Texture for circles
 		circleTexture = new Image(),
-		//Handle for the circle texture
+		// Handle for the circle texture
 		circleTextureHandle,
-		//Things to draw as "rectangles" (i.e lines)
+		// Things to draw as "rectangles" (i.e lines)
 		asBar = {
 			'column': true,
 			'area': true
@@ -991,7 +990,8 @@ function GLRenderer(options) {
 	 * @param {number} height - the height of the viewport in pixels
 	 */
 	function orthoMatrix(width, height) {     
-		var near = 0, far = 1;
+		var near = 0, 
+			far = 1;
 		
 		return [
 			2 / width, 0, 0, 0,
@@ -1005,7 +1005,6 @@ function GLRenderer(options) {
 	 * Clear the depth and color buffer
 	 */
 	function clear() {
-		//gl.clearColor(0, 0, 1, 0.0);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
@@ -1041,24 +1040,27 @@ function GLRenderer(options) {
 			yAxis = series.yAxis,
 			xAxis = series.xAxis,
 			useRaw = !xData || xData.length === 0,			
-			threshold = options.threshold,
-			yBottom = chart.yAxis[0].getThreshold(threshold),
-			hasThreshold = isNumber(threshold),
+			// threshold = options.threshold,
+			// yBottom = chart.yAxis[0].getThreshold(threshold),
+			// hasThreshold = isNumber(threshold),
+			// colorByPoint = series.options.colorByPoint,
+			// This is required for color by point, so make sure this is 
+			// uncommented if enabling that
+			// colorIndex = 0,
+			// Required for color axis support
+			// caxis,			
+			// connectNulls = options.connectNulls,			
+			// For some reason eslint doesn't pick up that this is actually used
+			maxVal, //eslint-disable-line no-unused-vars
 			points = series.points || false,
-			colorIndex = 0,
 			lastX = false,
-			//colorByPoint = series.options.colorByPoint,
 			minVal,
-			caxis,
 			color,
 			scolor,
-			sdata = isStacked ? series.data : (xData || rawData),
-			connectNulls = options.connectNulls,			
-			maxVal
+			sdata = isStacked ? series.data : (xData || rawData)
 			;
 
-		if (options.boostData && options.boostData.length > 0) {
-			console.log('using padded data');
+		if (options.boostData && options.boostData.length > 0) {			
 			return;
 		}
 
@@ -1130,14 +1132,13 @@ function GLRenderer(options) {
 			each(points, function (point) {
 				var plotY = point.plotY,
 					shapeArgs,
-					swidth,
-					dstyle,
+					swidth,					
 					pointAttr;
 
 				if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 					shapeArgs = point.shapeArgs;
 					pointAttr = (point.pointAttr && point.pointAttr['']) || 
-								point.series.pointAttribs(point),
+								point.series.pointAttribs(point);
 					swidth = pointAttr['stroke-width'];
 
 					// Handle point colors
@@ -1191,11 +1192,11 @@ function GLRenderer(options) {
 		}
 
 		// Extract color axis
-		each(chart.axes || [], function (a) {
-			if (H.ColorAxis && a instanceof H.ColorAxis) {
-				caxis = a;
-			}
-		});	
+		// each(chart.axes || [], function (a) {
+		// 	if (H.ColorAxis && a instanceof H.ColorAxis) {
+		// 		caxis = a;
+		// 	}
+		// });	
 
 		each(sdata, function (d, i) {
 			var x,
@@ -1203,10 +1204,8 @@ function GLRenderer(options) {
 				z,
 				px = false,
 				nx = false,
-				//clientX,
-				//plotY,
-				//isNull,
-				low,
+				// This is in fact used.
+				low, //eslint-disable-line no-unused-vars
 				chartDestroyed = typeof chart.index === 'undefined',
 				nextInside = false,
 				prevInside = false,
@@ -1346,12 +1345,7 @@ function GLRenderer(options) {
 			// No markers on out of bounds things.
 			// Out of bound things are shown if and only if the next
 			// or previous point is inside the rect.
-			if (inst.hasMarkers) {// && isXInside) {
-				// markerData.push(x);
-				// markerData.push(y);
-				// markerData.push(0);
-				// markerData.push(options.marker.radius || 2);
-
+			if (inst.hasMarkers) { // && isXInside) {
 				// x = H.correctFloat(
 				// 	Math.min(Math.max(-1e5, xAxis.translate(
 				// 		x,
@@ -1410,8 +1404,8 @@ function GLRenderer(options) {
 			}
 		}
 
-		if (settings.timeSeriesProcessing) {
-			console.time('building ' + s.type + ' series');			
+		if (settings.timeSeriesProcessing) {			
+			console.time('building ' + s.type + ' series'); //eslint-disable-line no-console		 	
 		}		
 
 		series.push({
@@ -1442,8 +1436,8 @@ function GLRenderer(options) {
 		// Add the series data to our buffer(s)
 		pushSeriesData(s, series[series.length - 1]);
 
-		if (settings.timeSeriesProcessing) {
-			console.timeEnd('building ' + s.type + ' series');			
+		if (settings.timeSeriesProcessing) {			
+			console.timeEnd('building ' + s.type + ' series'); //eslint-disable-line no-console		
 		}
 	}
 
@@ -1518,8 +1512,8 @@ function GLRenderer(options) {
 			return false;
 		}		
 
-		if (settings.timeRendering) {
-			console.time('gl rendering');
+		if (settings.timeRendering) {			
+			console.time('gl rendering'); //eslint-disable-line no-console
 		}
 	
 		shader.bind();
@@ -1597,7 +1591,7 @@ function GLRenderer(options) {
 			// If there are entries in the colorData buffer, build and bind it.
 			if (s.colorData.length > 0) {
 				shader.setUniform('hasColor', 1.0);
-				cbuffer = GLVertexBuffer(gl, shader);
+				cbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
 				cbuffer.build(s.colorData, 'aColor', 4);
 				cbuffer.bind();
 			}
@@ -1640,8 +1634,8 @@ function GLRenderer(options) {
 			}
 		});
 
-		if (settings.timeRendering) {
-			console.timeEnd('gl rendering');
+		if (settings.timeRendering) {			
+			console.timeEnd('gl rendering'); //eslint-disable-line no-console
 		}
 	}
 	
@@ -1678,12 +1672,11 @@ function GLRenderer(options) {
 			];
 		
 		if (!canvas) {
-			//console.err('no valid canvas - unable to init webgl');
 			return false;
 		}
 
-		if (settings.timeSetup) {
-			console.time('gl setup');			
+		if (settings.timeSetup) {			
+			console.time('gl setup'); //eslint-disable-line no-console	
 		}
 
 		for (; i < contexts.length; i++) {
@@ -1702,16 +1695,13 @@ function GLRenderer(options) {
 		}
 
 		gl.enable(gl.BLEND);
-		//gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+		// gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		gl.disable(gl.DEPTH_TEST);
 		gl.depthMask(gl.FALSE);
 
-		shader = GLShader(gl);		
-		vbuffer = GLVertexBuffer(gl, shader);
-		//mvbuffer = GLVertexBuffer(gl, shader);
-
-		//setSize(canvas.clientWidth, canvas.clientHeight);
+		shader = GLShader(gl); //eslint-disable-line new-cap	
+		vbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
 
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
@@ -1738,14 +1728,14 @@ function GLRenderer(options) {
 
 				gl.bindTexture(gl.TEXTURE_2D, null);
 			} catch (e) {
-				console.log(e);
+				// return false;
 			}		
 		}
 
 		isInited = true;
 
-		if (settings.timeSetup) {
-			console.timeEnd('gl setup');
+		if (settings.timeSetup) {			
+			console.timeEnd('gl setup'); //eslint-disable-line no-console
 		}
 
 		return true;
@@ -1862,7 +1852,7 @@ function createAndAttachRenderer(chart, series) {
 	target.canvas.height = height;					
 	
 	if (!target.ogl) {
-		target.ogl = GLRenderer();
+		target.ogl = GLRenderer(); //eslint-disable-line new-cap
 		target.ogl.init(target.canvas);
 		target.ogl.clear();
 		target.ogl.setOptions(chart.options.boost || {});
@@ -2127,17 +2117,19 @@ function hasWebGLSupport() {
 	var i = 0,
 		canvas,
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
-		context = false;		
+		context = false;
 
-	if (!!window.WebGLRenderingContext) {
+	if (typeof window.WebGLRenderingContext !== 'undefined') {
 		canvas = document.createElement('canvas');
 
 		for (; i < contexts.length; i++) {
 			try {
 				context = canvas.getContext(contexts[i]);
 				return typeof context !== 'undefined' && context !== null;
-			} catch(e){}
-		};
+			} catch (e) {
+
+			}
+		}
 	}
 
 	return false;
@@ -2152,13 +2144,13 @@ if (!hasWebGLSupport()) {
 		console.log('fallback to canvas');
 		H.initCanvasBoost();
 	}
-	return;
+	//eslint-disable
+	//return; 
+	//eslint-enable
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // GL-SPECIFIC WRAPPINGS FOLLOWS
-
-
 
 /** If the series is a heatmap or treemap, or if the series is not boosting
  *  do the default behaviour. Otherwise, process if the series has no 
@@ -2241,34 +2233,34 @@ H.extend(Series.prototype, {
 			lastClientX,
 			sampling = !!series.sampling,
 			points,
-			//r = options.marker && options.marker.radius,
-			//cvsDrawPoint = this.cvsDrawPoint,
-			//cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
-		//	cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
+			// r = options.marker && options.marker.radius,
+			// cvsDrawPoint = this.cvsDrawPoint,
+			// cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
+			// cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
 			enableMouseTracking = options.enableMouseTracking !== false,
-		//	lastPoint,
+			// lastPoint,
 			threshold = options.threshold,
 			yBottom = yAxis.getThreshold(threshold),
-			hasThreshold = isNumber(threshold),
-			translatedThreshold = yBottom,
-			doFill = this.fill,
+			hasThreshold = isNumber(threshold), //eslint-disable-line no-unused-vars
+			// translatedThreshold = yBottom,
+			// doFill = this.fill,
 			isRange = series.pointArrayMap && 
 					series.pointArrayMap.join(',') === 'low,high',
 			isStacked = !!options.stacking,
 			cropStart = series.cropStart || 0,
-			//loadingOptions = chart.options.loading,
+			// loadingOptions = chart.options.loading,
 			requireSorting = series.requireSorting,
-			wasNull,
+			wasNull, //eslint-disable-line no-unused-vars
 			connectNulls = options.connectNulls,
 			useRaw = !xData,
 			minVal,
 			maxVal,
 			minI,
 			maxI,			
-			fillColor = series.fillOpacity ?
-					new Color(series.color).setOpacity(
-							pick(options.fillOpacity, 0.75)
-						).get() : series.color,
+			// fillColor = series.fillOpacity ?
+			// 		new Color(series.color).setOpacity(
+			// 				pick(options.fillOpacity, 0.75)
+			// 			).get() : series.color,
 
 			addKDPoint = function (clientX, plotY, i) {
 				//Shaves off about 60ms compared to repeated concatination
@@ -2468,15 +2460,14 @@ function pointDrawHandler(proceed) {
  * This likely needs future optimization.
  *
  */
- each([
- 	'heatmap',
- 	'treemap'
- ], function (t) {
-	if (seriesTypes[t]) {	
-		wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-		seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
+each(['heatmap', 'treemap'],
+	function (t) {
+		if (seriesTypes[t]) {	
+			wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
+			seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
+		}
 	}
- });
+);
 
 if (seriesTypes.bubble) {
 	// By default, the bubble series does not use the KD-tree, so force it to.
@@ -2505,29 +2496,29 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis, redraw) {
+wrap(Series.prototype, 'setVisible', function (proceed, vis) {
 	//if (isSeriesBoosting(this) || isChartSeriesBoosting(this.chart)) {
 		
-		proceed.call(this, vis, false);
+	proceed.call(this, vis, false);
 
-		if (this.ogl) {
-			this.ogl.clear();
-			this.ogl.flush();
+	if (this.ogl) {
+		this.ogl.clear();
+		this.ogl.flush();
 
-			this.image.attr({
-				href: ''
-			});
-		} else if (this.chart.ogl) {
-			this.chart.ogl.flush();
-			this.chart.ogl.clear();
+		this.image.attr({
+			href: ''
+		});
+	} else if (this.chart.ogl) {
+		this.chart.ogl.flush();
+		this.chart.ogl.clear();
 
-			this.chart.image.attr({
-				href: ''
-			});
+		this.chart.image.attr({
+			href: ''
+		});
 
-		}
-		
-		this.chart.redraw();
+	}
+	
+	this.chart.redraw();
 
 	// } else {		
 	// 	proceed.call(this, vis, redraw);
