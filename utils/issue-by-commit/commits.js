@@ -44,7 +44,9 @@ function drawGraph() {
 	// Update
 	} else { 
 		$.each(paths, function (i, path) {
-			paths[i] = path.destroy();
+			if (path.destroy) {
+				paths[i] = path.destroy();
+			}
 		});
 		paths.length = 0;
 	}

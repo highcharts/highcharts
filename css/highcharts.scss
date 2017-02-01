@@ -45,6 +45,12 @@ $highlight-color-10: #e6ebf5; // Pressed button, color axis min color.
 .highcharts-root text {
     stroke-width: 0;
 }
+.highcharts-strong {
+    font-weight: bold;
+}
+.highcharts-emphasized {
+    font-style: italic;
+}
 .highcharts-background {
     fill: $background-color;
 }

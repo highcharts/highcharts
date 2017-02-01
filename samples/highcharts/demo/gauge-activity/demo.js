@@ -82,12 +82,12 @@ $(function () {
 
         plotOptions: {
             solidgauge: {
-                borderWidth: '34px',
                 dataLabels: {
                     enabled: false
                 },
                 linecap: 'round',
-                stickyTracking: false
+                stickyTracking: false,
+                rounded: true
             }
         },
 
@@ -96,8 +96,8 @@ $(function () {
             borderColor: Highcharts.getOptions().colors[0],
             data: [{
                 color: Highcharts.getOptions().colors[0],
-                radius: '100%',
-                innerRadius: '100%',
+                radius: '112%',
+                innerRadius: '88%',
                 y: 80
             }]
         }, {
@@ -105,8 +105,8 @@ $(function () {
             borderColor: Highcharts.getOptions().colors[1],
             data: [{
                 color: Highcharts.getOptions().colors[1],
-                radius: '75%',
-                innerRadius: '75%',
+                radius: '87%',
+                innerRadius: '63%',
                 y: 65
             }]
         }, {
@@ -114,8 +114,8 @@ $(function () {
             borderColor: Highcharts.getOptions().colors[2],
             data: [{
                 color: Highcharts.getOptions().colors[2],
-                radius: '50%',
-                innerRadius: '50%',
+                radius: '62%',
+                innerRadius: '38%',
                 y: 50
             }]
         }]

@@ -76,7 +76,7 @@ H.Tick.prototype = {
 
 		// prepare CSS
 		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
-		
+
 		// first call
 		if (!defined(label)) {
 
@@ -259,7 +259,7 @@ H.Tick.prototype = {
 	},
 
 	/**
-	 * [renderGridLine description]
+	 * Renders the gridLine.
 	 * @param  {Boolean} old         Whether or not the tick is old
 	 * @param  {number} opacity      The opacity of the grid line
 	 * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
@@ -324,7 +324,7 @@ H.Tick.prototype = {
 	},
 
 	/**
-	 * [renderMark description]
+	 * Renders the tick mark.
 	 * @param  {Object} xy           The position vector of the mark
 	 * @param  {number} xy.x         The x position of the mark
 	 * @param  {number} xy.y         The y position of the mark

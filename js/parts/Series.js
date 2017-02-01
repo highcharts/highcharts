@@ -142,6 +142,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	states: { // states for the entire series
 		hover: {
 			//enabled: false,
+			animation: { // docs
+				duration: 50
+			},
 			lineWidthPlus: 1,
 			marker: {
 				// lineWidth: base + 1,
@@ -1160,7 +1163,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled,
 				xAxis.isRadial ? true : null,
-				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
+				// Use larger or equal as radius is null in bubbles (#6321)
+				series.closestPointRangePx >= 2 * seriesMarkerOptions.radius
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {

@@ -96,7 +96,6 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
-		this.respRules = [];
 
 		var optionsChart = options.chart;
 
@@ -242,8 +241,7 @@ Chart.prototype = {
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
 			isDirtyBox = chart.isDirtyBox,
-			seriesLength = series.length,
-			i = seriesLength,
+			i,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
@@ -264,6 +262,7 @@ Chart.prototype = {
 		chart.layOutTitles();
 
 		// link stacked series
+		i = series.length;
 		while (i--) {
 			serie = series[i];
 
@@ -277,7 +276,7 @@ Chart.prototype = {
 			}
 		}
 		if (hasDirtyStacks) { // mark others as dirty
-			i = seriesLength;
+			i = series.length;
 			while (i--) {
 				serie = series[i];
 				if (serie.options.stacking) {
@@ -623,7 +622,10 @@ Chart.prototype = {
 		);
 		chart.chartHeight = Math.max(
 			0,
-			heightOption || chart.containerHeight || 400
+			H.relativeLength( // docs: percent height. Demo added as height-percent
+				heightOption,
+				chart.chartWidth
+			) || chart.containerHeight || 400
 		);
 	},
 

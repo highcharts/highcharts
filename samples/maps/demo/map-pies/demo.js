@@ -168,8 +168,7 @@ $(function () {
                 borderColor: 'rgba(255,255,255,0.4)',
                 borderWidth: 1,
                 tooltip: {
-                    headerFormat: '<b>{series.name} votes</b><br/>',
-                    pointFormat: '<span style="color:{point.color}">\u25CF</span> {point.name}: {point.y}'
+                    headerFormat: ''
                 }
             }
         },
@@ -186,6 +185,7 @@ $(function () {
             tooltip: {
                 headerFormat: '',
                 pointFormatter: function () {
+                    var hoverVotes = this.hoverVotes; // Used by pie only
                     return '<b>' + this.id + ' votes</b><br/>' +
                         Highcharts.map([
                             ['Democrats', this.demVotes, demColor],
@@ -199,8 +199,11 @@ $(function () {
                                 // Colorized bullet
                                 '">\u25CF</span> ' +
                                 // Party and votes
+                                (line[0] === hoverVotes ? '<b>' : '') +
                                 line[0] + ': ' +
-                                Highcharts.numberFormat(line[1], 0) + '<br/>';
+                                Highcharts.numberFormat(line[1], 0) +
+                                (line[0] === hoverVotes ? '</b>' : '') +
+                                '<br/>';
                         }).join('') +
                         '<hr/>Total: ' + Highcharts.numberFormat(this.sumVotes, 0);
                 }
@@ -271,6 +274,20 @@ $(function () {
                     this.chart.chartWidth / 11 * zoomFactor * state.sumVotes / maxVotes
                 );
             },
+            tooltip: {
+                // Use the state tooltip for the pies as well
+                pointFormatter: function () {
+                    return state.series.tooltipOptions.pointFormatter.call({
+                        id: state.id,
+                        hoverVotes: this.name,
+                        demVotes: state.demVotes,
+                        repVotes: state.repVotes,
+                        libVotes: state.libVotes,
+                        grnVotes: state.grnVotes,
+                        sumVotes: state.sumVotes
+                    });
+                }
+            },
             data: [{
                 name: 'Democrats',
                 y: state.demVotes,
@@ -280,7 +297,7 @@ $(function () {
                 y: state.repVotes,
                 color: repColor
             }, {
-                name: 'Libertarian',
+                name: 'Libertarians',
                 y: state.libVotes,
                 color: libColor
             }, {
