@@ -229,6 +229,57 @@ var toggleCollapse = function (axis, node, pos) {
 		collapse(axis, node, pos);
 	}
 };
+var renderLabelIcon = function (label, radius, spacing, collapsed) {
+	var labelBox = label.element.getBBox(),
+		labelCenter = {
+			x: labelBox.x + (labelBox.width / 2),
+			y: labelBox.y + (labelBox.height / 2)
+		},
+		iconPosition = {
+			x: labelCenter.x - radius - (labelBox.width / 2) - spacing,
+			y: labelCenter.y - (radius / 2)
+		},
+		iconCenter = {
+			x: iconPosition.x + (radius / 2),
+			y: iconPosition.y + (radius / 2)
+		},
+		rotation = collapsed ? 90 : 180;
+	label.treeIcon = label.renderer.symbol(
+		'triangle',
+		iconPosition.x,
+		iconPosition.y,
+		radius,
+		radius
+	)
+	.add(label.parentGroup)
+	.attr({
+		'stroke-width': 1,
+		'fill': pick(label.styles.color, '#666'),
+		'transform': 'rotate(' +
+			rotation + ', ' +
+			iconCenter.x + ', ' +
+			iconCenter.y +
+		')'
+	});
+};
+var onTickHover = function (label) {
+	label.addClass('highcharts-treegrid-node-active');
+	/*= if (build.classic) { =*/
+	label.css({
+		cursor: 'pointer',
+		textDecoration: 'underline'
+	});
+	/*= } =*/
+};
+var onTickHoverExit = function (label) {
+	label.removeClass('highcharts-treegrid-node-active');
+	/*= if (build.classic) { =*/
+	label.css({
+		cursor: 'default',
+		textDecoration: 'none'
+	});
+	/*= } =*/
+};
 override(GridAxis.prototype, {
 	init: function (proceed, chart, userOptions) {
 		var axis = this,
@@ -283,28 +334,25 @@ override(GridAxisTick.prototype, {
 			label = tick.label,
 			treeGridMap = axis.treeGridMap,
 			options = axis.options,
-			node;
-		if (options.type === 'tree-grid' && index >= 0) {
+			node,
+			isTreeGridTick = options.type === 'tree-grid' && index >= 0,
+			hasLabel = label && label.element;
+
+		if (isTreeGridTick) {
 			node = treeGridMap[pos];
-			if (node && node.depth) {
-				xy.x += (node.depth - 1) * indentPx;
-			}
-			if (label && label.element) {
+			xy.x += (node.depth - 1) * indentPx;
+
+			if (hasLabel) {
 				if (node.children.length > 0) {
 
 					// On hover
 					H.addEvent(label.element, 'mouseover', function () {
-						label.addClass('highcharts-treegrid-node-active');
-						/*= if (build.classic) { =*/
-						label.css({
-							cursor: 'pointer'
-						});
-						/*= } =*/
+						onTickHover(label);
 					});
 
 					// On hover out
 					H.addEvent(label.element, 'mouseout', function () {
-						label.removeClass('highcharts-treegrid-node-active');
+						onTickHoverExit(label);
 					});
 				}
 				H.addEvent(label.element, 'click', function () {
@@ -316,5 +364,12 @@ override(GridAxisTick.prototype, {
 			}
 		}
 		proceed.apply(tick, argsToArray(arguments));
+
+		if (isTreeGridTick && hasLabel) {
+			node = treeGridMap[pos];
+			if (node.children.length > 0) {
+				renderLabelIcon(label, 7, 5, isCollapsed(axis, node, pos));
+			}
+		}
 	}
 });
