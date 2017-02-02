@@ -547,6 +547,8 @@ function GLShader(gl) {
 
 		gl.useProgram(shaderProgram);
 
+		gl.bindAttribLocation(shaderProgram, 0, 'aVertexPosition');
+
 		pUniform = uloc('uPMatrix');
 		psUniform = uloc('pSize');
 		fillColorUniform = uloc('fillColor');
@@ -556,7 +558,17 @@ function GLShader(gl) {
 		uSamplerUniform = uloc('uSampler');
 		skipTranslationUniform = uloc('skipTranslation');
 		isCircleUniform = uloc('isCircle');
+
 		return true;
+	}
+
+	/*
+	 * Destroy the shader
+	 */
+	function destroy() {
+		if (gl && shaderProgram) {
+			gl.deleteProgram(shaderProgram);
+		}
 	}
 
 	/*
@@ -709,7 +721,8 @@ function GLShader(gl) {
 		setSkipTranslation: setSkipTranslation,
 		setTexture: setTexture,
 		setDrawAsCircle: setDrawAsCircle,
-		reset: reset
+		reset: reset,
+		destroy: destroy
 	};
 }
 
@@ -766,6 +779,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 			gl.STATIC_DRAW
 		);
 
+		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
 		vertAttribute = gl.getAttribLocation(shader.program(), attrib);
 		gl.enableVertexAttribArray(vertAttribute);
 
@@ -780,10 +794,11 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 			return false;
 		}
 
-		gl.enableVertexAttribArray(vertAttribute);
-		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		// gl.bindAttribLocation(shader.program(), 0, 'aVertexPosition');
+		//gl.enableVertexAttribArray(vertAttribute);
+		//gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 		gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
-		gl.enableVertexAttribArray(vertAttribute);
+		//gl.enableVertexAttribArray(vertAttribute);
 	}
 
 	/* 
@@ -862,7 +877,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
  *		  and encoding values in the color data.
  *		- Need to figure out a way to transform the data quicker
  */
-function GLRenderer() {
+function GLRenderer(postRenderCallback) {
 	var // Shader
 		shader = false,
 		// Vertex buffers - keyed on shader attribute name
@@ -899,7 +914,7 @@ function GLRenderer() {
 		//Render settings
 		settings = {
 			pointSize: 1,
-			lineWidth: 10,
+			lineWidth: 3,
 			fillColor: '#AA00AA',
 			useAlpha: true,
 			usePreallocated: false,
@@ -910,14 +925,6 @@ function GLRenderer() {
 		};
 
 	////////////////////////////////////////////////////////////////////////////
-
-	//Create a white circle texture for use with bubbles
-	circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
-		'<?xml version="1.0" standalone="no"?>',
-		'<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
-		'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
-		'</svg>'
-	].join(''));
 
 	function setOptions(options) {
 		options = options || {};
@@ -1634,8 +1641,31 @@ function GLRenderer() {
 			}
 		});
 
+		vbuffer.destroy();
+
 		if (settings.timeRendering) {			
 			console.timeEnd('gl rendering'); //eslint-disable-line no-console
+		}
+
+		flush();
+
+		if (postRenderCallback) {
+			postRenderCallback();
+		}
+	}
+
+	/* 
+	 * Render the data when ready
+	 */
+	function renderWhenReady(chart) {
+		clear();
+		
+		if (isInited) {
+			render(chart);
+		} else {
+			setTimeout(function () {
+				renderWhenReady(chart);
+			}, 1);
 		}
 	}
 	
@@ -1662,7 +1692,7 @@ function GLRenderer() {
 	 * Init OpenGL 
 	 * @param canvas {HTMLCanvas} - the canvas to render to
 	 */
-	function init(canvas, noFlush) {
+	function init(canvas, noFlush, callback) {
 		var i = 0,
 			contexts = [
 				'webgl', 
@@ -1670,6 +1700,8 @@ function GLRenderer() {
 				'moz-webgl', 
 				'webkit-3d'
 			];
+
+		isInited = false;
 		
 		if (!canvas) {
 			return false;
@@ -1705,34 +1737,56 @@ function GLRenderer() {
 
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
-		
-		if (circleTextureHandle && typeof circleTexture !== 'undefined') {
-			try {
 
-				gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+		/* 
+		 * In Firefox, the image isn't loaded immediatly when setting the source
+		 * to a data URL, so we need to listen to onload.
+		 *
+		 * This has the fun side effect of the texture being blank when
+		 * rendering for the first time in most cases, as the render is fired
+		 * before the event.
+		 *
+		 * We therefore poll on isInited when rendering if it's not true.
+		 */
+		circleTexture.onload = function () {
 
-				gl.texImage2D(
-					gl.TEXTURE_2D,
-					0,
-					gl.RGBA,
-					gl.RGBA,
-					gl.UNSIGNED_BYTE,
-					circleTexture
-				);
-				
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-				gl.generateMipmap(gl.TEXTURE_2D);
+			if (circleTextureHandle && typeof circleTexture !== 'undefined') {
+				try {
 
-				gl.bindTexture(gl.TEXTURE_2D, null);
-			} catch (e) {
-				// return false;
-			}		
-		}
+					gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
-		isInited = true;
+					gl.texImage2D(
+						gl.TEXTURE_2D,
+						0,
+						gl.RGBA,
+						gl.RGBA,
+						gl.UNSIGNED_BYTE,
+						circleTexture
+					);
+					
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+					gl.generateMipmap(gl.TEXTURE_2D);
+
+					gl.bindTexture(gl.TEXTURE_2D, null);			
+				} catch (e) {
+					// return false;
+				}
+
+				isInited = true;
+			}
+		};
+
+		//Create a white circle texture for use with bubbles
+		circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
+			'<?xml version="1.0" standalone="no"?>',
+			'<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
+			'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
+			'</svg>'
+		].join(''));		
 
 		if (settings.timeSetup) {			
 			console.timeEnd('gl setup'); //eslint-disable-line no-console
@@ -1759,6 +1813,10 @@ function GLRenderer() {
 
 	function destroy() {
 		vbuffer.destroy();
+		shader.destroy();
+		if (gl) {
+			//gl.deleteTexture(circleTextureHandle);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -1769,7 +1827,7 @@ function GLRenderer() {
 		inited: inited,
 		setThreshold: setThreshold,
 		init: init,
-		render: render,
+		render: renderWhenReady,
 		settings: settings,
 		valid: valid,
 		clear: clear,
@@ -1810,7 +1868,7 @@ function createAndAttachRenderer(chart, series) {
 	}
 
 	if (target.ogl) {
-		target.ogl.destroy();
+		//target.ogl.destroy();
 	}
 
 	if (!target.image) {		
@@ -1851,17 +1909,6 @@ function createAndAttachRenderer(chart, series) {
 	target.canvas.width = width;
 	target.canvas.height = height;					
 	
-	if (!target.ogl) {
-		target.ogl = GLRenderer(); //eslint-disable-line new-cap
-		target.ogl.init(target.canvas);
-		target.ogl.clear();
-		target.ogl.setOptions(chart.options.boost || {});
-
-		if (target instanceof H.Chart) {
-			target.ogl.allocateBuffer(chart);
-		}
-	}
-
 	target.image.attr({
 		x: 0,
 		y: 0,
@@ -1869,13 +1916,32 @@ function createAndAttachRenderer(chart, series) {
 		height: height,
 		style: 'pointer-events: none'
 	});
-
+	
 	target.boostClipRect.attr({
 		x: chart.plotLeft,
 		y: chart.plotTop,
 		width: chart.plotWidth,
 		height: chart.chartHeight
 	});
+	
+	if (!target.ogl) {
+		
+		
+		target.ogl = GLRenderer(function () {
+			
+			target.image.attr({ 
+				href: target.canvas.toDataURL('image/png')
+			});	
+		}); //eslint-disable-line new-cap
+		
+		target.ogl.init(target.canvas);
+		// target.ogl.clear();
+		target.ogl.setOptions(chart.options.boost || {});
+
+		if (target instanceof H.Chart) {
+			target.ogl.allocateBuffer(chart);
+		}
+	}
 
 	target.ogl.setSize(width, height);
 
@@ -1893,16 +1959,8 @@ function renderIfNotSeriesBoosting(renderer, series) {
 		series.image && 
 		series.canvas && 
 		!isChartSeriesBoosting(series.chart)
-	) {
-		renderer.clear();		
+	) {		
 		renderer.render(series.chart);
-		renderer.flush();
-
-		series.image.attr({
-			href: series.canvas.toDataURL('image/png')
-		});
-
-		renderer.clear();
 	}
 }
 
@@ -2080,7 +2138,7 @@ each([
 
 			// Clear image
 			if (method === 'render' && this.image) {
-				this.image.attr({ href: '' });
+			//	this.image.attr({ href: '' });
 				this.animate = null; // We're zooming in, don't run animation
 			}
 
@@ -2145,7 +2203,7 @@ if (!hasWebGLSupport()) {
 		H.initCanvasBoost();
 	}
 	//eslint-disable
-	//return; 
+	return; 
 	//eslint-enable
 }
 
@@ -2496,33 +2554,9 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis) {
-	//if (isSeriesBoosting(this) || isChartSeriesBoosting(this.chart)) {
-		
+wrap(Series.prototype, 'setVisible', function (proceed, vis) {	
 	proceed.call(this, vis, false);
-
-	if (this.ogl) {
-		this.ogl.clear();
-		this.ogl.flush();
-
-		this.image.attr({
-			href: ''
-		});
-	} else if (this.chart.ogl) {
-		this.chart.ogl.flush();
-		this.chart.ogl.clear();
-
-		this.chart.image.attr({
-			href: ''
-		});
-
-	}
-	
 	this.chart.redraw();
-
-	// } else {		
-	// 	proceed.call(this, vis, redraw);
-	// }
 });
 
 /**
@@ -2533,29 +2567,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	/* Convert chart-level canvas to image */
 	function canvasToSVG() {			
 		if (chart.ogl && isChartSeriesBoosting(chart)) {
-
 			chart.ogl.render(chart);
-
-			if (chart.image && chart.canvas) {
-				chart.image.attr({ 
-					href: chart.canvas.toDataURL('image/png') 
-				});			
-			}
 		}
 	}
 
 	/* Clear chart-level canvas */
 	function preRender() {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
-
-			chart.image.attr({
-				href: ''
-			});
-
-			// Clear the series and vertice data.			
-			chart.ogl.flush();
-			// Clear ogl canvas
-			chart.ogl.clear();
 			// Allocate
 			chart.ogl.allocateBuffer(chart);
 		}
@@ -2564,6 +2582,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	addEvent(chart, 'predraw', preRender);
 	//Blit to image when done redrawing
 	addEvent(chart, 'render', canvasToSVG);
-	addEvent(chart, 'load', canvasToSVG);
+	//addEvent(chart, 'load', canvasToSVG);
 
 });
