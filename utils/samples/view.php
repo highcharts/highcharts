@@ -125,7 +125,7 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>',
+			path = '<?php echo $path ?>'.replace('../../samples/', ''),
 			browser = <?php echo json_encode(getBrowser()); ?>,
 			controller = window.parent && window.parent.controller;
 
@@ -218,11 +218,11 @@ function getResources() {
 							this.reflow();
 						});
 					}
-
+console.log(path)
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
-								src: 'view-source.php?path=<?php echo $path ?>'
+								src: 'view-source.php?path=' + path
 							})
 							.css({
 								width: '100%',
