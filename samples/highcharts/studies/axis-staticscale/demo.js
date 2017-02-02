@@ -5,8 +5,7 @@
  * data through the staticScale option.
  *
  * Known issues:
- * - First render needs to set chart height to draw points at the correct spot,
- *   without drawing gridLines anew.
+ * - (none)
  */
 (function (H) {
     var isNumber = H.isNumber;
@@ -23,12 +22,22 @@
             height = (axis.max - axis.min) * staticScale;
             diff = height - chart.plotHeight;
             chart.plotHeight = height;
-            if (Math.abs(diff) >= 1 && hasRendered) {
-                chart.setSize(
-                    null,
-                    chart.chartHeight + diff,
-                    hasRendered
-                );
+            if (Math.abs(diff) >= 1) {
+
+                // Before chart has rendered, wait for series to be rendered
+                // before setting chart size.
+                H.wrap(chart, 'renderSeries', function (chartProceed) {
+                    chartProceed.call(chart);
+                    if (!hasRendered) {
+                        chart.setSize(null, chart.chartHeight + diff, hasRendered);
+                    }
+                });
+
+                // After the chart has rendered, set chart size immediately.
+                if (hasRendered) {
+                    chart.setSize(null, chart.chartHeight + diff, hasRendered);
+                }
+
             }
         }
         proceed.call(axis);
@@ -41,12 +50,12 @@
 
 function getPoint(i) {
     return {
-        name: new Date(Date.now() + i),
+        name: new Date(Date.now() + i * 1000),
         y: Math.random()
     };
 }
 var data = [];
-var dataPoints = 3;
+var dataPoints = 20;
 for (var i = 0; i < dataPoints; i++) {
     data.push(getPoint(i));
 }
@@ -69,5 +78,5 @@ $('#add').click(function () {
     chart.series[0].addPoint(getPoint(i++));
 });
 $('#remove').click(function () {
-    chart.series[0].removePoint();
+    chart.series[0].removePoint(0);
 });
