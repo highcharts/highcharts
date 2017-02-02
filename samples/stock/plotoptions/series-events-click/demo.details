@@ -3,5 +3,5 @@
  authors:
    - Torstein Hønsi
  requiresManualTesting: true
-  js_wrap: b
+ js_wrap: b
 ...
