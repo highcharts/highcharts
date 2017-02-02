@@ -392,8 +392,6 @@ console.log(path)
 		});
 		<?php } ?>
 		
-
-		<?php @include("$path/demo.js"); ?>
 		</script>
 
 		<style type="text/css">
@@ -465,6 +463,9 @@ console.log(path)
 
 			<?php echo $html ?>
 			</div>
+			<script>
+			<?php @include("$path/demo.js"); ?>
+			</script>
 			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
@@ -492,9 +493,6 @@ ob_start();
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
-		<?php @include("$path/demo.js"); ?>
-		</script>
 
 		<style type="text/css">
 			<?php echo $css; ?>
@@ -507,6 +505,9 @@ ob_start();
 
 		<?php echo $html ?>
 		</div>
+		<script type="text/javascript">
+		<?php @include("$path/demo.js"); ?>
+		</script>
 
 	</body>
 </html>
