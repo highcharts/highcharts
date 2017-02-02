@@ -1,46 +1,45 @@
-$(function () {
-    Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
 
-        title: {
-            text: 'Stacked column with labels'
-        },
+Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
 
-        subtitle: {
-            text: 'Overlapping labels should be hidden'
-        },
+    title: {
+        text: 'Stacked column with labels'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+    subtitle: {
+        text: 'Overlapping labels should be hidden'
+    },
 
-        yAxis: {
-            stackLabels: {
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+
+    yAxis: {
+        stackLabels: {
+            enabled: true
+        }
+    },
+
+    plotOptions: {
+        series: {
+            stacking: 'normal',
+            dataLabels: {
                 enabled: true
             }
-        },
-
-        plotOptions: {
-            series: {
-                stacking: 'normal',
-                dataLabels: {
-                    enabled: true
-                }
-            }
-        },
-
-        series: [{
-            data: [1, 5, 2, 4]
-        }, {
-            data: [6, 5, -1, 1]
-        }, {
-            data: [-6, 5, -1, 1.1]
-        }],
-
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>'
         }
-    });
+    },
+
+    series: [{
+        data: [1, 5, 2, 4]
+    }, {
+        data: [6, 5, -1, 1]
+    }, {
+        data: [-6, 5, -1, 1.1]
+    }],
+
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>'
+    }
 });

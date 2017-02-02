@@ -1,19 +1,18 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        subtitle: {
-            text: '* Footnote',
-            align: 'right',
-            x: -10
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    subtitle: {
+        text: '* Footnote',
+        align: 'right',
+        x: -10
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

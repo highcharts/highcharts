@@ -1,20 +1,19 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        xAxis: {
-            tickColor: 'green',
-            tickLength: 10,
-            tickWidth: 3,
-            tickPosition: 'inside'
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    xAxis: {
+        tickColor: 'green',
+        tickLength: 10,
+        tickWidth: 3,
+        tickPosition: 'inside'
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

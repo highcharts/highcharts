@@ -1,51 +1,50 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-        // Initiate the chart
-        Highcharts.mapChart('container', {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-            chart: {
-                width: 500,
-                height: 300
-            },
+    // Initiate the chart
+    Highcharts.mapChart('container', {
 
-            title: {
-                text: 'Chart with explicit width and height'
-            },
+        chart: {
+            width: 500,
+            height: 300
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
+        title: {
+            text: 'Chart with explicit width and height'
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        colorAxis: {
+            min: 1,
+            max: 1000,
+            type: 'logarithmic'
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        series: [{
+            data: data,
+            mapData: Highcharts.maps['custom/world'],
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            borderWidth: 0.5,
+            states: {
+                hover: {
+                    color: '#a4edba'
                 }
             },
-
-            colorAxis: {
-                min: 1,
-                max: 1000,
-                type: 'logarithmic'
-            },
-
-            legend: {
-                enabled: false
-            },
-
-            series: [{
-                data: data,
-                mapData: Highcharts.maps['custom/world'],
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                borderWidth: 0.5,
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    }
-                },
-                tooltip: {
-                    valueSuffix: '/km²'
-                }
-            }]
-        });
+            tooltip: {
+                valueSuffix: '/km²'
+            }
+        }]
     });
 });

@@ -1,17 +1,16 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+Highcharts.chart('container', {
 
-        yAxis: {
-            type: 'logarithmic'
-        },
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
 
-        series: [{
-            data: [0.1, 2, 45, 1001, 200, 0.33, 10000]
-        }]
+    yAxis: {
+        type: 'logarithmic'
+    },
 
-    });
+    series: [{
+        data: [0.1, 2, 45, 1001, 200, 0.33, 10000]
+    }]
+
 });

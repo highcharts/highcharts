@@ -1,66 +1,65 @@
-$(function () {
-    var chart = Highcharts.chart('container', {
 
-        title: {
-            text: 'Credits update'
-        },
+var chart = Highcharts.chart('container', {
 
-        credits: {
-            enabled: false
-        },
+    title: {
+        text: 'Credits update'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+    credits: {
+        enabled: false
+    },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
+
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    }]
+});
+
+$('#credits-enable').click(function () {
+    chart.addCredits({
+        enabled: true
     });
+});
 
-    $('#credits-enable').click(function () {
-        chart.addCredits({
-            enabled: true
-        });
+$('#credits-disable').click(function () {
+    chart.credits.update({
+        enabled: false
     });
+});
 
-    $('#credits-disable').click(function () {
+$('#credits-custom').click(function () {
+    if (chart.credits) {
         chart.credits.update({
-            enabled: false
+            text: 'MyFancyCompany',
+            href: 'http://www.example.com',
+            position: {
+                align: 'left',
+                x: 10
+            },
+            style: {
+                fontSize: '2em',
+                color: 'blue'
+            }
         });
-    });
+    }
+});
 
-    $('#credits-custom').click(function () {
-        if (chart.credits) {
-            chart.credits.update({
-                text: 'MyFancyCompany',
-                href: 'http://www.example.com',
-                position: {
-                    align: 'left',
-                    x: 10
-                },
-                style: {
-                    fontSize: '2em',
-                    color: 'blue'
-                }
-            });
-        }
-    });
-
-    $('#credits-default').click(function () {
-        if (chart.credits) {
-            chart.credits.update({
-                text: 'Highcharts.com',
-                href: 'http://www.highcharts.com',
-                position: {
-                    align: 'right',
-                    x: -10
-                },
-                style: {
-                    color: '#909090',
-                    fontSize: '9px'
-                }
-            });
-        }
-    });
+$('#credits-default').click(function () {
+    if (chart.credits) {
+        chart.credits.update({
+            text: 'Highcharts.com',
+            href: 'http://www.highcharts.com',
+            position: {
+                align: 'right',
+                x: -10
+            },
+            style: {
+                color: '#909090',
+                fontSize: '9px'
+            }
+        });
+    }
 });

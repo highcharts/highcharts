@@ -1,49 +1,48 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'bubble',
-            plotBorderWidth: 1,
-            zoomType: 'xy'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts Bubbles Sizing'
-        },
-        subtitle: {
-            text: 'Smallest and largest bubbles are equal, intermediate bubbles different.'
-        },
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1,
+        zoomType: 'xy'
+    },
 
-        xAxis: {
-            gridLineWidth: 1
-        },
+    title: {
+        text: 'Highcharts Bubbles Sizing'
+    },
+    subtitle: {
+        text: 'Smallest and largest bubbles are equal, intermediate bubbles different.'
+    },
 
-        yAxis: {
-            startOnTick: false,
-            endOnTick: false
-        },
+    xAxis: {
+        gridLineWidth: 1
+    },
 
-        series: [{
-            data: [
-                [1, 1, 1],
-                [2, 2, 2],
-                [3, 3, 3],
-                [4, 4, 4],
-                [5, 5, 5]
-            ],
-            sizeBy: 'area',
-            name: 'Size by area'
-        }, {
-            data: [
-                [1, 1, 1],
-                [2, 2, 2],
-                [3, 3, 3],
-                [4, 4, 4],
-                [5, 5, 5]
-            ],
-            sizeBy: 'width',
-            name: 'Size by width'
-        }]
+    yAxis: {
+        startOnTick: false,
+        endOnTick: false
+    },
 
-    });
+    series: [{
+        data: [
+            [1, 1, 1],
+            [2, 2, 2],
+            [3, 3, 3],
+            [4, 4, 4],
+            [5, 5, 5]
+        ],
+        sizeBy: 'area',
+        name: 'Size by area'
+    }, {
+        data: [
+            [1, 1, 1],
+            [2, 2, 2],
+            [3, 3, 3],
+            [4, 4, 4],
+            [5, 5, 5]
+        ],
+        sizeBy: 'width',
+        name: 'Size by width'
+    }]
+
 });

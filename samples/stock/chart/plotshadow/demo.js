@@ -1,18 +1,17 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            plotBackgroundColor: '#ECF1F6',
-            plotShadow: true
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    chart: {
+        plotBackgroundColor: '#ECF1F6',
+        plotShadow: true
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

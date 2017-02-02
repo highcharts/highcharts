@@ -1,41 +1,40 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Custom tick positions'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'through axis.tickPositions and axis.tickPositioner'
-        },
+    title: {
+        text: 'Custom tick positions'
+    },
 
-        xAxis: {
-            tickPositions: [0, 1, 2, 4, 8]
-        },
+    subtitle: {
+        text: 'through axis.tickPositions and axis.tickPositioner'
+    },
 
-        yAxis: {
-            tickPositioner: function () {
-                var positions = [],
-                    tick = Math.floor(this.dataMin),
-                    increment = Math.ceil((this.dataMax - this.dataMin) / 6);
+    xAxis: {
+        tickPositions: [0, 1, 2, 4, 8]
+    },
 
-                if (this.dataMax !== null && this.dataMin !== null) {
-                    for (tick; tick - increment <= this.dataMax; tick += increment) {
-                        positions.push(tick);
-                    }
+    yAxis: {
+        tickPositioner: function () {
+            var positions = [],
+                tick = Math.floor(this.dataMin),
+                increment = Math.ceil((this.dataMax - this.dataMin) / 6);
+
+            if (this.dataMax !== null && this.dataMin !== null) {
+                for (tick; tick - increment <= this.dataMax; tick += increment) {
+                    positions.push(tick);
                 }
-                return positions;
             }
-        },
+            return positions;
+        }
+    },
 
-        series: [{
-            data: [
-                [0, 1],
-                [1, 3],
-                [2, 2],
-                [4, 4],
-                [8, 3]
-            ]
-        }]
-    });
+    series: [{
+        data: [
+            [0, 1],
+            [1, 3],
+            [2, 2],
+            [4, 4],
+            [8, 3]
+        ]
+    }]
 });

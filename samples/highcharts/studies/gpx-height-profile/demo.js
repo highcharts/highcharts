@@ -45,126 +45,125 @@ function getDistance(pt1, pt2) {
     return d;
 }
 
-$(function () {
-    // Internationalization
-    Highcharts.setOptions({
-        lang: {
-            thousandsSep: ' '
+
+// Internationalization
+Highcharts.setOptions({
+    lang: {
+        thousandsSep: ' '
+    }
+});
+
+
+
+var xml = document.getElementById('data'),
+    data = [],
+    lastPoint,
+    totalDistance = 0,
+    trackPoints = xml.getElementsByTagName('trkpt');
+
+// For this particular gpx, we want to reverse the points
+trackPoints = Array.prototype.slice.call(trackPoints, 0);
+trackPoints.reverse();
+
+// Iterate over the track points, get cumulative distance and elevation
+$.each(trackPoints, function (i, trkpt) {
+
+    var ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
+        lat = parseFloat(trkpt.getAttribute('lat')),
+        lon = parseFloat(trkpt.getAttribute('lon')),
+        point = {
+            lat: lat,
+            lon: lon
+        },
+        distance = lastPoint ? getDistance(lastPoint, point) : 0;
+
+    totalDistance += distance;
+
+    /*console.log(
+        'time', time,
+        'elevation', ele,
+        'lat', lat,
+        'lon', lon,
+        'distance', distance,
+        'totalDistance', totalDistance
+    );*/
+    data.push({
+        x: Math.round(totalDistance * 100) / 100,
+        y: ele - 15,
+        dataLabels: dl[i]
+    });
+
+    lastPoint = point;
+
+});
+
+
+// Now create the chart
+Highcharts.chart('container', {
+
+    chart: {
+        type: 'area'
+    },
+
+    xAxis: {
+        title: {
+            text: 'Distance ( km )'
+        },
+        minPadding: 0.05
+    },
+
+    yAxis: {
+        startOnTick: true,
+        endOnTick: false,
+        minPadding: 0,
+        title: {
+            text: 'Elevation ( m )'
+        },
+        labels: {
+            align: 'left',
+            x: 0,
+            y: -2
         }
-    });
+    },
 
+    title: {
+        text: 'Height profile for Vidasete Opp'
+    },
 
+    subtitle: {
+        text: 'Display GPX data in Highcharts'
+    },
 
-    var xml = document.getElementById('data'),
-        data = [],
-        lastPoint,
-        totalDistance = 0,
-        trackPoints = xml.getElementsByTagName('trkpt');
+    tooltip: {
+        headerFormat: '',
+        pointFormat: 'Distance: {point.x} km<br/>{point.y} m a. s. l.',
+        shared: true
+    },
 
-    // For this particular gpx, we want to reverse the points
-    trackPoints = Array.prototype.slice.call(trackPoints, 0);
-    trackPoints.reverse();
+    legend: {
+        enabled: false
+    },
 
-    // Iterate over the track points, get cumulative distance and elevation
-    $.each(trackPoints, function (i, trkpt) {
-
-        var ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
-            lat = parseFloat(trkpt.getAttribute('lat')),
-            lon = parseFloat(trkpt.getAttribute('lon')),
-            point = {
-                lat: lat,
-                lon: lon
-            },
-            distance = lastPoint ? getDistance(lastPoint, point) : 0;
-
-        totalDistance += distance;
-
-        /*console.log(
-            'time', time,
-            'elevation', ele,
-            'lat', lat,
-            'lon', lon,
-            'distance', distance,
-            'totalDistance', totalDistance
-        );*/
-        data.push({
-            x: Math.round(totalDistance * 100) / 100,
-            y: ele - 15,
-            dataLabels: dl[i]
-        });
-
-        lastPoint = point;
-
-    });
-
-
-    // Now create the chart
-    Highcharts.chart('container', {
-
-        chart: {
-            type: 'area'
-        },
-
-        xAxis: {
-            title: {
-                text: 'Distance ( km )'
-            },
-            minPadding: 0.05
-        },
-
-        yAxis: {
-            startOnTick: true,
-            endOnTick: false,
-            minPadding: 0,
-            title: {
-                text: 'Elevation ( m )'
-            },
-            labels: {
-                align: 'left',
-                x: 0,
-                y: -2
+    series: [{
+        data: data,
+        name: 'Elevation',
+        marker: {
+            enabled: false,
+            states: {
+                hover: {
+                    enabled: true
+                }
             }
         },
-
-        title: {
-            text: 'Height profile for Vidasete Opp'
+        fillColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+            stops: [
+                [0, 'rgba(65, 116, 158, 0.7)'],
+                [1, 'rgba(255, 255, 255, 0.7)']
+            ]
         },
+        threshold: null,
+        turboThreshold: 0
+    }]
 
-        subtitle: {
-            text: 'Display GPX data in Highcharts'
-        },
-
-        tooltip: {
-            headerFormat: '',
-            pointFormat: 'Distance: {point.x} km<br/>{point.y} m a. s. l.',
-            shared: true
-        },
-
-        legend: {
-            enabled: false
-        },
-
-        series: [{
-            data: data,
-            name: 'Elevation',
-            marker: {
-                enabled: false,
-                states: {
-                    hover: {
-                        enabled: true
-                    }
-                }
-            },
-            fillColor: {
-                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                stops: [
-                    [0, 'rgba(65, 116, 158, 0.7)'],
-                    [1, 'rgba(255, 255, 255, 0.7)']
-                ]
-            },
-            threshold: null,
-            turboThreshold: 0
-        }]
-
-    });
 });

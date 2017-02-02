@@ -1,34 +1,33 @@
-$(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-v.json&callback=?', function (data) {
 
-        // create the chart
-        Highcharts.stockChart('container', {
-            chart: {
-                alignTicks: false
-            },
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-v.json&callback=?', function (data) {
 
-            rangeSelector: {
-                selected: 1
-            },
+    // create the chart
+    Highcharts.stockChart('container', {
+        chart: {
+            alignTicks: false
+        },
 
-            title: {
-                text: 'AAPL Stock Volume'
-            },
+        rangeSelector: {
+            selected: 1
+        },
 
-            series: [{
-                type: 'column',
-                name: 'AAPL Stock Volume',
-                data: data,
-                dataGrouping: {
-                    units: [[
-                        'week', // unit name
-                        [1] // allowed multiples
-                    ], [
-                        'month',
-                        [1, 2, 3, 4, 6]
-                    ]]
-                }
-            }]
-        });
+        title: {
+            text: 'AAPL Stock Volume'
+        },
+
+        series: [{
+            type: 'column',
+            name: 'AAPL Stock Volume',
+            data: data,
+            dataGrouping: {
+                units: [[
+                    'week', // unit name
+                    [1] // allowed multiples
+                ], [
+                    'month',
+                    [1, 2, 3, 4, 6]
+                ]]
+            }
+        }]
     });
 });

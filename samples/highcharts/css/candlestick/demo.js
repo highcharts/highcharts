@@ -1,14 +1,13 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+Highcharts.stockChart('container', {
 
-        series: [{
-            type: 'candlestick',
-            name: 'USD to EUR',
-            data: ohlcdata
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        type: 'candlestick',
+        name: 'USD to EUR',
+        data: ohlcdata
+    }]
 });

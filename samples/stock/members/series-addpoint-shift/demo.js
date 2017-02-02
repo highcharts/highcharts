@@ -1,30 +1,29 @@
-$(function () {
-    var data = usdeur.splice(0, 500);
 
-    var chart = Highcharts.stockChart('container', {
+var data = usdeur.splice(0, 500);
 
-        rangeSelector: {
-            selected: 1
-        },
+var chart = Highcharts.stockChart('container', {
 
-        series: [{
-            name: 'USD to EUR',
-            data: data
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
 
-    $('#button').click(function () {
-        var i = 0,
-            series = chart.series[0];
-        data = usdeur.splice(0, 100);
+    series: [{
+        name: 'USD to EUR',
+        data: data
+    }]
+});
 
-        for (i; i < data.length; i += 1) {
-            series.addPoint(data[i], false, true);
-        }
-        chart.redraw();
+$('#button').click(function () {
+    var i = 0,
+        series = chart.series[0];
+    data = usdeur.splice(0, 100);
 
-        if (!usdeur.length) {
-            this.disabled = true;
-        }
-    });
+    for (i; i < data.length; i += 1) {
+        series.addPoint(data[i], false, true);
+    }
+    chart.redraw();
+
+    if (!usdeur.length) {
+        this.disabled = true;
+    }
 });

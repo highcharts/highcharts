@@ -731,27 +731,25 @@ Meteogram.prototype.parseYrData = function () {
 
 
 
-$(function () { // On DOM ready...
+ // On DOM ready...
 
-    // Set the hash to the yr.no URL we want to parse
-    if (!location.hash) {
-        var place = 'United_Kingdom/England/London';
-        //place = 'France/Rhône-Alpes/Val_d\'Isère~2971074';
-        //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
-        //place = 'United_States/California/San_Francisco';
-        //place = 'United_States/Minnesota/Minneapolis';
-        location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
+// Set the hash to the yr.no URL we want to parse
+if (!location.hash) {
+    var place = 'United_Kingdom/England/London';
+    //place = 'France/Rhône-Alpes/Val_d\'Isère~2971074';
+    //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
+    //place = 'United_States/California/San_Francisco';
+    //place = 'United_States/Minnesota/Minneapolis';
+    location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 
+}
+
+// Then get the XML file through Highcharts' jsonp provider, see
+// https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
+// for source code.
+$.getJSON(
+    'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
+    function (xml) {
+        window.meteogram = new Meteogram(xml, 'container');
     }
-
-    // Then get the XML file through Highcharts' jsonp provider, see
-    // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
-    // for source code.
-    $.getJSON(
-        'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
-        function (xml) {
-            window.meteogram = new Meteogram(xml, 'container');
-        }
-    );
-
-});
+);
