@@ -5,9 +5,12 @@
  * data through the staticScale option.
  *
  * Known issues:
- * - (none)
+ * - First render needs to set chart height to draw points at the correct spot,
+ *   without drawing gridLines anew.
  */
 (function (H) {
+    var isNumber = H.isNumber;
+
     H.wrap(H.Axis.prototype, 'setAxisSize', function (proceed) {
 
         var axis = this,
@@ -16,7 +19,7 @@
             staticScale = axis.options.staticScale,
             height,
             diff;
-        if (!axis.horiz && staticScale && H.defined(axis.min)) {
+        if (!axis.horiz && isNumber(staticScale) && H.defined(axis.min)) {
             height = (axis.max - axis.min) * staticScale;
             diff = height - chart.plotHeight;
             chart.plotHeight = height;
@@ -42,7 +45,11 @@ function getPoint(i) {
         y: Math.random()
     };
 }
-var i = 0;
+var data = [];
+var dataPoints = 3;
+for (var i = 0; i < dataPoints; i++) {
+    data.push(getPoint(i));
+}
 var chart = Highcharts.chart('container', {
 
     xAxis: {
@@ -52,7 +59,7 @@ var chart = Highcharts.chart('container', {
     },
 
     series: [{
-        data: [getPoint(i++), getPoint(i++), getPoint(i++)],
+        data: data,
         type: 'bar'
     }]
 
@@ -62,5 +69,5 @@ $('#add').click(function () {
     chart.series[0].addPoint(getPoint(i++));
 });
 $('#remove').click(function () {
-    chart.series[0].removePoint(0);
+    chart.series[0].removePoint();
 });
