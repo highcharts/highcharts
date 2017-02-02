@@ -70,8 +70,9 @@ H.Series.prototype.specialKeys = [
 ]; 
 
 // A pie is always simple. Don't quote me on that.
-H.seriesTypes.pie.prototype.specialKeys = [];
-
+if (H.seriesTypes.pie) {
+	H.seriesTypes.pie.prototype.specialKeys = [];
+}
 
 
 // Default a11y options
