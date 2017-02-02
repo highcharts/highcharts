@@ -437,9 +437,9 @@ H.initCanvasBoost = function() {
 			);
 
 			series.markerGroup = series.group;
-			addEvent(series, 'destroy', function () {
-				series.markerGroup = null;
-			});
+			// addEvent(series, 'destroy', function () {
+			// 	series.markerGroup = null;
+			// });
 
 			points = this.points = [];
 			ctx = this.getContext();
@@ -665,7 +665,6 @@ H.initCanvasBoost = function() {
 		};
 		seriesTypes.bubble.prototype.cvsStrokeBatch = 1;
 	}
-
 
 	extend(seriesTypes.area.prototype, {
 		cvsDrawPoint: function (ctx, clientX, plotY, yBottom, lastPoint) {
