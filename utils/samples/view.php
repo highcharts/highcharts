@@ -447,7 +447,7 @@ console.log(path)
 				<a id="view-source" class="button" href="javascript:;"
 					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
 				</a><a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
