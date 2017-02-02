@@ -16,10 +16,11 @@ var argsToArray = function (args) {
 	indentPx = 10,
 	iconSize = 7,
 	iconSpacing = 5,
-	wrap = H.wrap,
 	each = H.each,
 	extend = H.extend,
 	map = H.map,
+	merge = H.merge,
+	wrap = H.wrap,
 	pick = H.pick,
 	GridAxis = H.Axis,
 	GridAxisTick = H.Tick;
@@ -290,9 +291,18 @@ override(GridAxis.prototype, {
 			tree,
 			options;
 
+		// Set default and forced options for TreeGrid
 		if (isTreeGrid) {
-			userOptions.reversed = true;
-			userOptions.grid = pick(userOptions.grid, true);
+			merge(true, userOptions, {
+				// Default options
+				grid: true,
+				labels: {
+					align: 'left'
+				}
+			}, userOptions, { // User options
+				// Forced options
+				reversed: true
+			});
 		}
 
 		// Now apply the original function with the original arguments,
