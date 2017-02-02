@@ -5,31 +5,30 @@
  * data through the staticScale option.
  *
  * Known issues:
- * - Series are drawn behind grid lines. Probably the chart.setSize call
- *   triggers a redraw that draws the series prematurely. The setSize
- *   function should not be called the first time, try resizing only
- *   renderer.
+ * - (none)
  */
 (function (H) {
     H.wrap(H.Axis.prototype, 'setAxisSize', function (proceed) {
 
-        var chart = this.chart,
-            staticScale = this.options.staticScale,
+        var axis = this,
+            chart = axis.chart,
+            hasRendered = !!chart.hasRendered,
+            staticScale = axis.options.staticScale,
             height,
             diff;
-        if (!this.horiz && staticScale && H.defined(this.min)) {
-            height = (this.max - this.min) * staticScale;
+        if (!axis.horiz && staticScale && H.defined(axis.min)) {
+            height = (axis.max - axis.min) * staticScale;
             diff = height - chart.plotHeight;
             chart.plotHeight = height;
-            if (Math.abs(diff) >= 1) {
+            if (Math.abs(diff) >= 1 && hasRendered) {
                 chart.setSize(
                     null,
                     chart.chartHeight + diff,
-                    !!chart.hasRendered
+                    hasRendered
                 );
             }
         }
-        proceed.call(this);
+        proceed.call(axis);
 
     });
 
