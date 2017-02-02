@@ -1517,7 +1517,7 @@ function GLRenderer(postRenderCallback) {
 
 		if (!gl || !width || !height) {
 			return false;
-		}		
+		}
 
 		if (settings.timeRendering) {			
 			console.time('gl rendering'); //eslint-disable-line no-console
@@ -1529,9 +1529,6 @@ function GLRenderer(postRenderCallback) {
 		shader.setPMatrix(orthoMatrix(width, height));
 
 		gl.lineWidth(settings.lineWidth);
-
-		// Build a single buffer for all series
-		//mvbuffer.build(markerData, 'aVertexPosition', 4);
 		
 		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
@@ -1694,6 +1691,7 @@ function GLRenderer(postRenderCallback) {
 	 */
 	function init(canvas, noFlush, callback) {
 		var i = 0,
+			activeContext,
 			contexts = [
 				'webgl', 
 				'experimental-webgl', 
@@ -1714,6 +1712,7 @@ function GLRenderer(postRenderCallback) {
 		for (; i < contexts.length; i++) {
 			gl = canvas.getContext(contexts[i]);
 			if (gl) {
+				activeContext= contexts[i];
 				break;
 			}
 		}
@@ -1749,7 +1748,6 @@ function GLRenderer(postRenderCallback) {
 		 * We therefore poll on isInited when rendering if it's not true.
 		 */
 		circleTexture.onload = function () {
-
 			if (circleTextureHandle && typeof circleTexture !== 'undefined') {
 				try {
 
@@ -1771,7 +1769,7 @@ function GLRenderer(postRenderCallback) {
 
 					gl.generateMipmap(gl.TEXTURE_2D);
 
-					gl.bindTexture(gl.TEXTURE_2D, null);			
+					gl.bindTexture(gl.TEXTURE_2D, null);
 				} catch (e) {
 					// return false;
 				}
@@ -1781,16 +1779,22 @@ function GLRenderer(postRenderCallback) {
 		};
 
 		//Create a white circle texture for use with bubbles
-		circleTexture.src = 'data:image/svg+xml;utf8,' + encodeURIComponent([
+		circleTexture.setAttribute('src', 'data:image/svg+xml;utf8,' + encodeURIComponent([
 			'<?xml version="1.0" standalone="no"?>',
 			'<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
 			'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
 			'</svg>'
-		].join(''));		
+		].join('')));
 
-		if (settings.timeSetup) {			
-			console.timeEnd('gl setup'); //eslint-disable-line no-console
+		// IE11 will not call onload as it will cache the image.
+		// It will however load sync, so we just call onload here.		
+		if (activeContext === 'experimental-webgl') {
+			circleTexture.onload();							
 		}
+
+		if (settings.timeSetup) {
+			console.timeEnd('gl setup'); //eslint-disable-line no-console
+		}		
 
 		return true;
 	}
@@ -2182,8 +2186,11 @@ function hasWebGLSupport() {
 
 		for (; i < contexts.length; i++) {
 			try {
+				console.log('checking', contexts[i]);
 				context = canvas.getContext(contexts[i]);
-				return typeof context !== 'undefined' && context !== null;
+				if (typeof context !== 'undefined' && context !== null) {
+					return true;
+				}				
 			} catch (e) {
 
 			}
@@ -2197,6 +2204,7 @@ function hasWebGLSupport() {
 // We're wrapped in a closure, so just return if there's no webgl support
 
 if (!hasWebGLSupport()) {	
+	console.log('no ogl support');
 	if (H.initCanvasBoost) {
 		// Fallback to canvas boost
 		console.log('fallback to canvas');
