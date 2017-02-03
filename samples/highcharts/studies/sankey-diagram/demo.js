@@ -10,7 +10,6 @@
             enabled: true,
             backgroundColor: 'none', // enable padding
             crop: false,
-            defer: false,
             formatter: function () {
                 return this.point.isNode && this.point.id;
             },
@@ -294,7 +293,7 @@
 
             }, this);
         },
-        animate: function () {}
+        animate: H.Series.prototype.animate
     });
 }(Highcharts));
 
