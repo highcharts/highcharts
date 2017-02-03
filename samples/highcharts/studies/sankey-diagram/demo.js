@@ -1,16 +1,46 @@
 (function (H) {
     var defined = H.defined,
-        each = H.each;
-    H.seriesType('sankey', 'pie', {
+        each = H.each,
+        Point = H.Point;
+
+
+    H.seriesType('sankey', 'column', {
+        colorByPoint: true,
+        dataLabels: {
+            enabled: true,
+            backgroundColor: 'none', // enable padding
+            crop: false,
+            defer: false,
+            formatter: function () {
+                return this.point.isNode && this.point.id;
+            },
+            inside: true
+        },
+        linkOpacity: 0.5,
         nodeWidth: 20,
         nodePadding: 10,
+        showInLegend: false,
+        states: {
+            hover: {
+                linkOpacity: 1
+            }
+        },
         tooltip: {
+            followPointer: true,
             headerFormat:
                 '<span style="font-size: 0.85em">{series.name}</span><br/>',
-            pointFormat: '{point.from} => {point.to}: <b>{point.weight}</b>'
+            pointFormatter: function () {
+                if (this.isNode) {
+                    return this.id + ': ' + this.node.sum();
+                }
+                return this.from + ' \u2192 ' + this.to +
+                    ': <b>' + this.weight + '</b>';
+            }
         }
 
     }, {
+        isCartesian: false,
+        forceDL: true,
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
@@ -47,6 +77,10 @@
                 }
             };
 
+            node.point = (new Point()).init(this, { isNode: true, id: id });
+            node.point.node = node;
+            this.points.push(node.point);
+
             return node;
         },
 
@@ -54,7 +88,8 @@
          * Create a node column.
          */
         createNodeColumn: function () {
-            var column = [],
+            var chart = this.chart,
+                column = [],
                 nodePadding = this.options.nodePadding;
 
             column.sum = function () {
@@ -77,6 +112,20 @@
                 }
             };
 
+            /**
+             * Get the column height in pixels.
+             */
+            column.top = function (factor) {
+                var height = 0;
+                for (var i = 0; i < column.length; i++) {
+                    if (i > 0) {
+                        height += nodePadding;
+                    }
+                    height += column[i].sum() * factor;
+                }
+                return (chart.plotHeight - height) / 2;
+            };
+
             return column;
         },
 
@@ -89,7 +138,9 @@
             for (var id in nodes) {
                 if (nodes.hasOwnProperty(id)) {
                     var node = nodes[id],
-                        fromColumn = 0;
+                        fromColumn = 0,
+                        i,
+                        point;
 
                     // No links to this node, place it left
                     if (node.linksTo.length === 0) {
@@ -98,11 +149,12 @@
                     // There are incoming links, place it to the right of the
                     // highest order column that links to this one.
                     } else {
-                        each(node.linksTo, function (point) {
+                        for (i = 0; i < node.linksTo.length; i++) {
+                            point = node.linksTo[0];
                             if (point.fromNode.column > fromColumn) {
                                 fromColumn = point.fromNode.column;
                             }
-                        });
+                        }
                         node.column = fromColumn + 1;
                     }
 
@@ -118,10 +170,29 @@
         },
 
         /**
+         * Return the presentational attributes.
+         */
+        pointAttribs: function (point, state) {
+
+            var opacity = this.options.linkOpacity;
+
+            if (state) {
+                opacity = this.options.states[state].linkOpacity || opacity;
+            }
+
+            return {
+                fill: point.isNode ?
+                    point.color :
+                    H.color(point.color).setOpacity(opacity).get()
+            };
+        },
+
+        /**
          * Run pre-translation by generating the nodeColumns.
          */
         translate: function () {
             this.generatePoints();
+            this.colorCounter = 0;
 
             var nodes = {};
 
@@ -145,51 +216,44 @@
 
             this.nodeColumns = this.createNodeColumns(nodes);
 
-        },
-
-        /**
-         * Draw the points (links) and the nodes.
-         */
-        drawPoints: function () {
-
             var chart = this.chart,
-                series = this,
                 options = this.options,
                 left = 0,
-                columnLength = 0,
-                columnSum = 0,
-                colors = chart.options.colors,
                 nodeWidth = options.nodeWidth,
                 nodeColumns = this.nodeColumns,
                 colDistance = (chart.plotWidth - nodeWidth) /
                     (nodeColumns.length - 1),
-                curvy = colDistance / 3;
+                curvy = colDistance / 3,
+                factor = Infinity;
 
-            // Find out how much space is needed
+            // Find out how much space is needed. Base it on the translation
+            // factor of the most spaceous column.
             each(this.nodeColumns, function (column) {
-                columnLength = Math.max(column.length, columnLength);
-                columnSum = Math.max(column.sum(), columnSum);
-            });
+                var height = chart.plotHeight -
+                    (column.length - 1) * options.nodePadding;
 
-            // And translate that
-            var totalHeight = chart.plotHeight -
-                    (columnLength - 1) * options.nodePadding,
-                factor = totalHeight / columnSum;
+                factor = Math.min(factor, height / column.sum());
+            });
 
             each(this.nodeColumns, function (column) {
                 each(column, function (node) {
                     var height = node.sum() * factor,
-                        fromNodeTop = column.offset(node, factor),
-                        color = colors[
-                            ++series.colorCounter % colors.length
-                        ];
+                        fromNodeTop = column.top(factor) +
+                            column.offset(node, factor),
+                        nodePoint = node.point;
 
                     // Draw the node
-                    chart.renderer.rect(left, fromNodeTop, nodeWidth, height)
-                        .attr({
-                            fill: color
-                        })
-                        .add(series.group);
+                    if (!nodePoint.graphic) {
+                        nodePoint.shapeType = 'rect';
+                        nodePoint.shapeArgs = {
+                            x: left,
+                            y: fromNodeTop,
+                            width: nodeWidth,
+                            height: height
+                        };
+                        // Pass test in drawPoints
+                        nodePoint.y = nodePoint.plotY = 1;
+                    }
 
                     // Draw the links from this node
                     each(node.linksFrom, function (point) {
@@ -198,20 +262,16 @@
                                 factor,
                             fromY = fromNodeTop + fromLinkTop,
                             toNode = point.toNode,
-                            toY = toNode.offset(point, 'linksTo') * factor +
-                                nodeColumns[toNode.column].offset(
+                            toColTop = nodeColumns[toNode.column].top(factor),
+                            toY = toColTop + toNode.offset(point, 'linksTo') *
+                                factor + nodeColumns[toNode.column].offset(
                                     toNode,
                                     factor
                                 ),
                             right = toNode.column * colDistance;
 
-
-                        if (!point.graphic) {
-                            point.graphic = chart.renderer
-                                .path()
-                                .add(series.group);
-                        }
-                        point.graphic.attr({
+                        point.shapeType = 'path';
+                        point.shapeArgs = {
                             d: [
                                 'M', left + nodeWidth, fromY,
                                 'C', left + nodeWidth + curvy, fromY,
@@ -222,24 +282,19 @@
                                 left + nodeWidth + curvy, fromY + linkHeight,
                                 left + nodeWidth, fromY + linkHeight,
                                 'z'
-                            ],
-                            fill: Highcharts.color(color).setOpacity(0.5).get()
-                        });
+                            ]
+                        };
+                        // Pass test in drawPoints
+                        point.y = point.plotY = 1;
+
+                        point.color = nodePoint.color;
                     });
                 });
                 left += colDistance;
 
             }, this);
         },
-        drawDataLabels: function () {
-
-        },
-        animate: function () {},
-        pointAttribs: function () {}
-    }, {
-        haloPath: function () {
-            return ['M', 0, 0];
-        }
+        animate: function () {}
     });
 }(Highcharts));
 
@@ -251,32 +306,57 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: [{
-            from: 'A',
-            to: 'X',
-            weight: 5
-        }, {
-            from: 'A',
-            to: 'Y',
-            weight: 7
-        }, {
-            from: 'A',
-            to: 'Z',
-            weight: 6
-        }, {
-            from: 'B',
-            to: 'X',
-            weight: 2
-        }, {
-            from: 'B',
-            to: 'Y',
-            weight: 9
-        }, {
-            from: 'B',
-            to: 'Z',
-            weight: 4
-        }],
-        type: 'sankey'
+        keys: ['from', 'to', 'weight'],
+        data: [
+            ['Brazil', 'Portugal', 5 ],
+            ['Brazil', 'France', 1 ],
+            ['Brazil', 'Spain', 1 ],
+            ['Brazil', 'England', 1 ],
+            ['Canada', 'Portugal', 1 ],
+            ['Canada', 'France', 5 ],
+            ['Canada', 'England', 1 ],
+            ['Mexico', 'Portugal', 1 ],
+            ['Mexico', 'France', 1 ],
+            ['Mexico', 'Spain', 5 ],
+            ['Mexico', 'England', 1 ],
+            ['USA', 'Portugal', 1 ],
+            ['USA', 'France', 1 ],
+            ['USA', 'Spain', 1 ],
+            ['USA', 'England', 5 ],
+            ['Portugal', 'Angola', 2 ],
+            ['Portugal', 'Senegal', 1 ],
+            ['Portugal', 'Morocco', 1 ],
+            ['Portugal', 'South Africa', 3 ],
+            ['France', 'Angola', 1 ],
+            ['France', 'Senegal', 3 ],
+            ['France', 'Mali', 3 ],
+            ['France', 'Morocco', 3 ],
+            ['France', 'South Africa', 1 ],
+            ['Spain', 'Senegal', 1 ],
+            ['Spain', 'Morocco', 3 ],
+            ['Spain', 'South Africa', 1 ],
+            ['England', 'Angola', 1 ],
+            ['England', 'Senegal', 1 ],
+            ['England', 'Morocco', 2 ],
+            ['England', 'South Africa', 7 ],
+            ['South Africa', 'China', 5 ],
+            ['South Africa', 'India', 1 ],
+            ['South Africa', 'Japan', 3 ],
+            ['Angola', 'China', 5 ],
+            ['Angola', 'India', 1 ],
+            ['Angola', 'Japan', 3 ],
+            ['Senegal', 'China', 5 ],
+            ['Senegal', 'India', 1 ],
+            ['Senegal', 'Japan', 3 ],
+            ['Mali', 'China', 5 ],
+            ['Mali', 'India', 1 ],
+            ['Mali', 'Japan', 3 ],
+            ['Morocco', 'China', 5 ],
+            ['Morocco', 'India', 1 ],
+            ['Morocco', 'Japan', 3 ]
+        ],
+        type: 'sankey',
+        name: 'Sankey demo series'
     }]
 
 });
