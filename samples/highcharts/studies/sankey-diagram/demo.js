@@ -4,8 +4,8 @@
      * @todo
      * - Handle options for nodes. This can be added as special point items that
      *   have a flag, isNode, or type: 'node'. It would allow setting specific
-     *   color, className etc.
-     * - Resizing
+     *   color, className etc. Then these options must be linked by id and used
+     *   when generating the node items.
      * - Dynamics (Point.update, setData, addPoint etc)
      */
 
@@ -54,36 +54,43 @@
          * links.
          */
         createNode: function (id) {
-            var node = (new H.Point()).init(this, { isNode: true, id: id });
-            node.linksTo = [];
-            node.linksFrom = [];
-            /**
-             * Return the largest sum of either the incoming or outgoing links.
-             */
-            node.sum = function () {
-                var sumTo = 0,
-                    sumFrom = 0;
-                each(node.linksTo, function (link) {
-                    sumTo += link.weight;
-                });
-                each(node.linksFrom, function (link) {
-                    sumFrom += link.weight;
-                });
-                return Math.max(sumTo, sumFrom);
-            };
-            /**
-             * Get the offset in weight values of a point/link.
-             */
-            node.offset = function (point, coll) {
-                var offset = 0;
-                for (var i = 0; i < node[coll].length; i++) {
-                    if (node[coll][i] === point) {
-                        return offset;
-                    }
-                    offset += node[coll][i].weight;
-                }
-            };
+            var node = H.find(this.nodes, function (node) {
+                return node.id === id;
+            });
 
+            if (!node) {
+                node = (new H.Point()).init(this, { isNode: true, id: id });
+                node.linksTo = [];
+                node.linksFrom = [];
+                /**
+                 * Return the largest sum of either the incoming or outgoing links.
+                 */
+                node.sum = function () {
+                    var sumTo = 0,
+                        sumFrom = 0;
+                    each(node.linksTo, function (link) {
+                        sumTo += link.weight;
+                    });
+                    each(node.linksFrom, function (link) {
+                        sumFrom += link.weight;
+                    });
+                    return Math.max(sumTo, sumFrom);
+                };
+                /**
+                 * Get the offset in weight values of a point/link.
+                 */
+                node.offset = function (point, coll) {
+                    var offset = 0;
+                    for (var i = 0; i < node[coll].length; i++) {
+                        if (node[coll][i] === point) {
+                            return offset;
+                        }
+                        offset += node[coll][i].weight;
+                    }
+                };
+
+                this.nodes.push(node);
+            }
             return node;
         },
 
@@ -188,14 +195,25 @@
         },
 
         /**
-         * Run pre-translation by generating the nodeColumns.
+         * Extend generatePoints by adding the nodes, which are Point objects
+         * but pushed to the this.nodes array.
          */
-        translate: function () {
-            this.generatePoints();
-            this.nodes = []; // List of Point-like node items
-            this.colorCounter = 0;
+        generatePoints: function () {
 
             var nodeLookup = {};
+
+            H.Series.prototype.generatePoints.call(this);
+
+            if (!this.nodes) {
+                this.nodes = []; // List of Point-like node items
+            }
+            this.colorCounter = 0;
+
+            // Reset links from previous run
+            each(this.nodes, function (node) {
+                node.linksFrom.length = 0;
+                node.linksTo.length = 0;
+            });
 
             // Create the node list
             each(this.points, function (point) {
@@ -215,12 +233,13 @@
                 }
 
             }, this);
+        },
 
-            for (var n in nodeLookup) {
-                if (nodeLookup.hasOwnProperty(n)) {
-                    this.nodes.push(nodeLookup[n]);
-                }
-            }
+        /**
+         * Run pre-translation by generating the nodeColumns.
+         */
+        translate: function () {
+            this.generatePoints();
 
             this.nodeColumns = this.createNodeColumns();
 
@@ -250,17 +269,15 @@
                             column.offset(node, factor);
 
                     // Draw the node
-                    if (!node.graphic) {
-                        node.shapeType = 'rect';
-                        node.shapeArgs = {
-                            x: left,
-                            y: fromNodeTop,
-                            width: nodeWidth,
-                            height: height
-                        };
-                        // Pass test in drawPoints
-                        node.y = node.plotY = 1;
-                    }
+                    node.shapeType = 'rect';
+                    node.shapeArgs = {
+                        x: left,
+                        y: fromNodeTop,
+                        width: nodeWidth,
+                        height: height
+                    };
+                    // Pass test in drawPoints
+                    node.y = node.plotY = 1;
 
                     // Draw the links from this node
                     each(node.linksFrom, function (point) {
