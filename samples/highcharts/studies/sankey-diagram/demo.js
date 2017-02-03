@@ -1,7 +1,16 @@
 (function (H) {
+
+    /**
+     * @todo
+     * - Handle options for nodes. This can be added as special point items that
+     *   have a flag, isNode, or type: 'node'. It would allow setting specific
+     *   color, className etc.
+     * - Resizing
+     * - Dynamics (Point.update, setData, addPoint etc)
+     */
+
     var defined = H.defined,
-        each = H.each,
-        Point = H.Point;
+        each = H.each;
 
 
     H.seriesType('sankey', 'column', {
@@ -30,7 +39,7 @@
                 '<span style="font-size: 0.85em">{series.name}</span><br/>',
             pointFormatter: function () {
                 if (this.isNode) {
-                    return this.id + ': ' + this.node.sum();
+                    return this.id + ': ' + this.sum();
                 }
                 return this.from + ' \u2192 ' + this.to +
                     ': <b>' + this.weight + '</b>';
@@ -45,8 +54,7 @@
          * links.
          */
         createNode: function (id) {
-            var node = [];
-            node.id = id;
+            var node = (new H.Point()).init(this, { isNode: true, id: id });
             node.linksTo = [];
             node.linksFrom = [];
             /**
@@ -75,10 +83,6 @@
                     offset += node[coll][i].weight;
                 }
             };
-
-            node.point = (new Point()).init(this, { isNode: true, id: id });
-            node.point.node = node;
-            this.points.push(node.point);
 
             return node;
         },
@@ -132,39 +136,36 @@
          * Create node columns by analyzing the nodes and the relations between
          * incoming and outgoing links.
          */
-        createNodeColumns: function (nodes) {
+        createNodeColumns: function () {
             var columns = [];
-            for (var id in nodes) {
-                if (nodes.hasOwnProperty(id)) {
-                    var node = nodes[id],
-                        fromColumn = 0,
-                        i,
-                        point;
+            each(this.nodes, function (node) {
+                var fromColumn = 0,
+                    i,
+                    point;
 
-                    // No links to this node, place it left
-                    if (node.linksTo.length === 0) {
-                        node.column = 0;
+                // No links to this node, place it left
+                if (node.linksTo.length === 0) {
+                    node.column = 0;
 
-                    // There are incoming links, place it to the right of the
-                    // highest order column that links to this one.
-                    } else {
-                        for (i = 0; i < node.linksTo.length; i++) {
-                            point = node.linksTo[0];
-                            if (point.fromNode.column > fromColumn) {
-                                fromColumn = point.fromNode.column;
-                            }
+                // There are incoming links, place it to the right of the
+                // highest order column that links to this one.
+                } else {
+                    for (i = 0; i < node.linksTo.length; i++) {
+                        point = node.linksTo[0];
+                        if (point.fromNode.column > fromColumn) {
+                            fromColumn = point.fromNode.column;
                         }
-                        node.column = fromColumn + 1;
                     }
-
-                    if (!columns[node.column]) {
-                        columns[node.column] = this.createNodeColumn();
-                    }
-
-                    columns[node.column].push(node);
-
+                    node.column = fromColumn + 1;
                 }
-            }
+
+                if (!columns[node.column]) {
+                    columns[node.column] = this.createNodeColumn();
+                }
+
+                columns[node.column].push(node);
+
+            }, this);
             return columns;
         },
 
@@ -191,29 +192,37 @@
          */
         translate: function () {
             this.generatePoints();
+            this.nodes = []; // List of Point-like node items
             this.colorCounter = 0;
 
-            var nodes = {};
+            var nodeLookup = {};
 
+            // Create the node list
             each(this.points, function (point) {
                 if (defined(point.from)) {
-                    if (!nodes[point.from]) {
-                        nodes[point.from] = this.createNode(point.from);
+                    if (!nodeLookup[point.from]) {
+                        nodeLookup[point.from] = this.createNode(point.from);
                     }
-                    nodes[point.from].linksFrom.push(point);
-                    point.fromNode = nodes[point.from];
+                    nodeLookup[point.from].linksFrom.push(point);
+                    point.fromNode = nodeLookup[point.from];
                 }
                 if (defined(point.to)) {
-                    if (!nodes[point.to]) {
-                        nodes[point.to] = this.createNode(point.to);
+                    if (!nodeLookup[point.to]) {
+                        nodeLookup[point.to] = this.createNode(point.to);
                     }
-                    nodes[point.to].linksTo.push(point);
-                    point.toNode = nodes[point.to];
+                    nodeLookup[point.to].linksTo.push(point);
+                    point.toNode = nodeLookup[point.to];
                 }
 
             }, this);
 
-            this.nodeColumns = this.createNodeColumns(nodes);
+            for (var n in nodeLookup) {
+                if (nodeLookup.hasOwnProperty(n)) {
+                    this.nodes.push(nodeLookup[n]);
+                }
+            }
+
+            this.nodeColumns = this.createNodeColumns();
 
             var chart = this.chart,
                 options = this.options,
@@ -238,20 +247,19 @@
                 each(column, function (node) {
                     var height = node.sum() * factor,
                         fromNodeTop = column.top(factor) +
-                            column.offset(node, factor),
-                        nodePoint = node.point;
+                            column.offset(node, factor);
 
                     // Draw the node
-                    if (!nodePoint.graphic) {
-                        nodePoint.shapeType = 'rect';
-                        nodePoint.shapeArgs = {
+                    if (!node.graphic) {
+                        node.shapeType = 'rect';
+                        node.shapeArgs = {
                             x: left,
                             y: fromNodeTop,
                             width: nodeWidth,
                             height: height
                         };
                         // Pass test in drawPoints
-                        nodePoint.y = nodePoint.plotY = 1;
+                        node.y = node.plotY = 1;
                     }
 
                     // Draw the links from this node
@@ -286,12 +294,22 @@
                         // Pass test in drawPoints
                         point.y = point.plotY = 1;
 
-                        point.color = nodePoint.color;
+                        point.color = node.color;
                     });
                 });
                 left += colDistance;
 
             }, this);
+        },
+        /**
+         * Extend the render function to also render this.nodes together with
+         * the points.
+         */
+        render: function () {
+            var points = this.points;
+            this.points = this.points.concat(this.nodes);
+            H.seriesTypes.column.prototype.render.call(this);
+            this.points = points;
         },
         animate: H.Series.prototype.animate
     });
