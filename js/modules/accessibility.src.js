@@ -336,9 +336,14 @@ H.Point.prototype.highlight = function () {
 	}
 	if (!this.isNull) {
 		this.onMouseOver(); // Show the hover marker
-		chart.tooltip.refresh(chart.tooltip.shared ? [this] : this); // Show the tooltip
+		// Show the tooltip
+		if (chart.tooltip) {
+			chart.tooltip.refresh(chart.tooltip.shared ? [this] : this);
+		}
 	} else {
-		chart.tooltip.hide(0);
+		if (chart.tooltip) {
+			chart.tooltip.hide(0);
+		}
 		// Don't call blur on the element, as it messes up the chart div's focus
 	}
 	chart.highlightedPoint = this;
