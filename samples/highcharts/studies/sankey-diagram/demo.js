@@ -6,7 +6,13 @@
      *   have a flag, isNode, or type: 'node'. It would allow setting specific
      *   color, className etc. Then these options must be linked by id and used
      *   when generating the node items.
-     * - Dynamics (Point.update, setData, addPoint etc)
+     * - Dynamics (Point.update, setData, addPoint etc).
+     * - From and to can be null when links enter or exit the diagram.
+     * - Separate data label and tooltip point formatters for nodes vs links? A
+     *   possible pattern would be to add a point.type, and automate the
+     *   implementation of formatters through the type, for example nodeFormat
+     *   or tooltip.linkFormat. This could be reused for other series types,
+     *   even generic like point.format = 'null' => tooltip.nullFormat.
      */
 
     var defined = H.defined,
@@ -21,6 +27,8 @@
             crop: false,
             formatter: function () {
                 return this.point.isNode && this.point.id;
+                // Include data labels for the links like this:
+                // return this.point.isNode ? this.point.id : this.point.weight;
             },
             inside: true
         },
@@ -307,6 +315,14 @@
                                 left + nodeWidth, fromY + linkHeight,
                                 'z'
                             ]
+                        };
+
+                        // Place data labels in the middle
+                        point.dlBox = {
+                            x: left + (right - left + nodeWidth) / 2,
+                            y: fromY + (toY - fromY) / 2,
+                            height: linkHeight,
+                            width: 0
                         };
                         // Pass test in drawPoints
                         point.y = point.plotY = 1;
