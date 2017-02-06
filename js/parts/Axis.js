@@ -727,23 +727,31 @@ H.Axis.prototype = {
 			minorTickInterval = axis.minorTickInterval,
 			minorTickPositions = [],
 			pos,
-			i,
 			pointRangePadding = axis.pointRangePadding || 0,
 			min = axis.min - pointRangePadding, // #1498
 			max = axis.max + pointRangePadding, // #1498
-			range = max - min,
-			len;
+			range = max - min;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
 		if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
 			if (axis.isLog) {
-				len = tickPositions.length;
-				for (i = 1; i < len; i++) {
-					minorTickPositions = minorTickPositions.concat(
-						axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
-					);
-				}
+				// For each interval in the major ticks, compute the minor ticks
+				// separately.
+				each(this.paddedTicks, function (pos, i, paddedTicks) {
+					if (i) {
+						minorTickPositions.push.apply(
+							minorTickPositions, 
+							axis.getLogTickPositions(
+								minorTickInterval,
+								paddedTicks[i - 1],
+								paddedTicks[i],
+								true
+							)
+						);
+					}
+				});
+
 			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
 				minorTickPositions = minorTickPositions.concat(
 					axis.getTimeTicks(
@@ -1300,7 +1308,8 @@ H.Axis.prototype = {
 
 		}
 
-		// reset min/max or remove extremes based on start/end on tick
+		// Reset min/max or remove extremes based on start/end on tick
+		this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
 			

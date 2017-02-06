@@ -46,3 +46,43 @@ QUnit.test('Minor ticks should not affect extremes (#6330)', function (assert) {
     );
 
 });
+
+QUnit.test(
+    'Minor ticks should extend past major ticks (#6330)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                width: 600,
+                height: 300
+            },
+
+            xAxis: {
+                type: 'logarithmic',
+                minorTickInterval: 'auto'
+            },
+
+            series: [{
+                data: [
+                    [0.42, 1],
+                    [1.7, 2]
+                ]
+            }]
+        });
+
+        var gridLines = chart.container.querySelectorAll(
+            '.highcharts-grid-line'
+        );
+        var minorGridLines = chart.container.querySelectorAll(
+            '.highcharts-minor-grid-line'
+        );
+        assert.ok(
+            minorGridLines[0].getBBox().x < gridLines[0].getBBox().x,
+            'Minor grid lines outside major grid lines'
+        );
+        assert.ok(
+            minorGridLines[minorGridLines.length - 1].getBBox().x >
+                gridLines[gridLines.length - 1].getBBox().x,
+            'Minor grid lines outside major grid lines'
+        );
+    }
+);

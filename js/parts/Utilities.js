@@ -1533,9 +1533,10 @@ H.stop = function (el, prop) {
  * @function #each
  * @memberOf Highcharts
  * @param {Array} arr - The array to iterate over.
- * @param {Function} fn - The iterator callback. It passes two arguments:
+ * @param {Function} fn - The iterator callback. It passes three arguments:
  * * item - The array item.
  * * index - The item's index in the array.
+ * * arr - The array that each is being applied to.
  * @param {Object} [ctx] The context.
  */
 H.each = function (arr, fn, ctx) { // modern browsers
