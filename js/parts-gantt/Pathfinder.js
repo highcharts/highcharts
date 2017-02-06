@@ -226,6 +226,27 @@ Pathfinder.prototype = {
 			maxHeight: maxHeight,
 			maxWidth: maxWidth
 		};
+	},
+
+	/**
+	 * Get which direction to start the pathfinding algorithm, calculated from
+	 * marker options.
+	 *
+	 * @param {Object} markerOptions Marker options to calculate from.
+	 *
+	 * @return {Boolean} result Returns true for X, false for Y, and undefined 
+	 *							for autocalculate.
+	 */
+	getAlgorithmStartDirection: function (markerOptions) {
+		var xCenter = markerOptions.align !== 'left' && 
+						markerOptions.align !== 'right',
+			yCenter = markerOptions.verticalAlign !== 'top' &&
+						markerOptions.verticalAlign !== 'bottom',
+			undef;
+
+		return xCenter ?
+			(yCenter ? undef : false) : // x is centered
+			(yCenter ? true : undef); 	// x is off-center
 	}
 };
 
@@ -531,7 +552,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				},
 				obstacleOptions: {
 					margin: options.algorithmMargin
-				}
+				},
+				startDirectionX: pathfinder.getAlgorithmStartDirection(
+					options.startMarker
+				)
 			}, options)
 		);
 

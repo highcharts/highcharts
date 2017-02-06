@@ -148,6 +148,9 @@ var algorithms = {
 	 *		- obstacleMetrics:  Object with metrics of chartObstacles cached
 	 *		- hardBounds:		Hard boundaries to not cross
 	 *		- obstacleOptions:	Options for the obstacles, including margin
+	 *		- startDirectionX:	Optional. True if starting in the X direction.
+	 *							If not provided, the algorithm starts in the 
+	 *							direction that is the furthest between start/end.
 	 *
 	 * @param {Object} start Starting coordinate, object with x/y props.
 	 * @param {Object} end Ending coordinate, object with x/y props.
@@ -171,12 +174,15 @@ var algorithms = {
 			Soft min/max y = start/destination y +/- tallest obstacle + margin
 
 			TODO:
-				- Make avoid the start/end obstacles in an intelligent way
 				- Make retrospective, try changing prev segment to reduce 
 				  corners
 		*/
-		var segments,
-			dir = abs(end.x - start.x) > abs(end.y - start.y) ? 'x' : 'y',
+		var dirIsX = pick(
+				options.startDirectionX,
+				abs(end.x - start.x) > abs(end.y - start.y)
+			),
+			dir = dirIsX ? 'x' : 'y',
+			segments,
 			useMax,
 			extractedEndPoint,
 			endSegments = [],
@@ -340,17 +346,14 @@ var algorithms = {
 			return useMax;
 		}
 
-		// Find a clear path between points, optionally with a start direction 
-		// parameter.
-		function clearPathTo(fromPoint, toPoint, directionIsX) {
+		// Find a clear path between point
+		function clearPathTo(fromPoint, toPoint, dirIsX) {
 			// Don't waste time if we've hit goal
 			if (fromPoint.x === toPoint.x && fromPoint.y === toPoint.y) {
 				return [];
 			}
 
-			var dirIsX = pick(directionIsX, Math.abs(toPoint.x - fromPoint.x) >
-							Math.abs(toPoint.y - fromPoint.y)),
-				dir = dirIsX ? 'x' : 'y',
+			var dir = dirIsX ? 'x' : 'y',
 				pivot,
 				segments,
 				waypoint,
@@ -568,7 +571,7 @@ var algorithms = {
 		}
 
 		// Find the path
-		segments = clearPathTo(start, end);
+		segments = clearPathTo(start, end, dirIsX);
 
 		// Add the end-point segments
 		segments = segments.concat(endSegments.reverse());
