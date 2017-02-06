@@ -133,7 +133,7 @@ var algorithms = {
 	straight: function (start, end) {
 		return {
 			path: ['M', start.x, start.y, 'L', end.x, end.y],
-			obstacles: [{ start, end }]
+			obstacles: [{ start: start, end: end }]
 		};
 	},
 
@@ -176,6 +176,10 @@ var algorithms = {
 			TODO:
 				- Make retrospective, try changing prev segment to reduce 
 				  corners
+				- Fix logic for breaking out of end-points - not always picking 
+				  the best direction currently
+				- When going around the end obstacle we should not always go the
+				  shortest route, rather pick the one closer to the end point
 		*/
 		var dirIsX = pick(
 				options.startDirectionX,
