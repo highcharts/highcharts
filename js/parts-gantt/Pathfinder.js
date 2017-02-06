@@ -572,7 +572,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		if (!pathfinder.group) {
 			pathfinder.group = renderer.g()
 				.addClass('highcharts-pathfinder')
-				.add(series.group);
+				.attr({ zIndex: -1 })
+				.translate(chart.plotLeft, chart.plotTop)
+				.add(chart.seriesGroup);
 		}
 
 		path = pathResult.path;
