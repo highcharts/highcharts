@@ -8,8 +8,6 @@
  * - (none)
  */
 (function (H) {
-    var isNumber = H.isNumber;
-
     H.wrap(H.Axis.prototype, 'setAxisSize', function (proceed) {
 
         var axis = this,
@@ -18,7 +16,7 @@
             staticScale = axis.options.staticScale,
             height,
             diff;
-        if (!axis.horiz && isNumber(staticScale) && H.defined(axis.min)) {
+        if (H.isNumber(staticScale) && !axis.horiz &&  H.defined(axis.min)) {
             height = (axis.max - axis.min) * staticScale;
             diff = height - chart.plotHeight;
             chart.plotHeight = height;
