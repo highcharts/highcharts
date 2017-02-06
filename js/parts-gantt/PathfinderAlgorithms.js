@@ -543,8 +543,8 @@ var algorithms = {
 				start
 			);
 			endSegments.push({
-				start: end,
-				end: extractedEndPoint
+				end: end,
+				start: extractedEndPoint
 			});
 			end = extractedEndPoint;
 		}
@@ -561,8 +561,8 @@ var algorithms = {
 				useMax ? dir + 'Max' : dir + 'Min'
 			] + (useMax ? 1 : -1);
 			endSegments.push({
-				start: end,
-				end: extractedEndPoint
+				end: end,
+				start: extractedEndPoint
 			});
 			end = extractedEndPoint;
 		}
