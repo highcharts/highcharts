@@ -369,9 +369,10 @@ override(GridAxisTick.prototype, {
 
 					H.addEvent(label.element, 'click', function () {
 						var axis = tick.axis,
-							pos = tick.pos,
-							node = axis.treeGridMap[pos];
-						toggleCollapse(axis, node, pos);
+							pos = tick.pos;
+						if (axis) {
+							toggleCollapse(axis, axis.treeGridMap[pos], pos);
+						}
 					});
 				}
 			}
