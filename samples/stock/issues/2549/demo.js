@@ -1,23 +1,22 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        plotOptions: {
-            candlestick: {
-                lineColor: '#2f7ed8',
-                upLineColor: 'silver', // docs
-                upColor: 'silver'
-            }
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    plotOptions: {
+        candlestick: {
+            lineColor: '#2f7ed8',
+            upLineColor: 'silver', // docs
+            upColor: 'silver'
+        }
+    },
 
-        series: [{
-            type: 'candlestick',
-            name: 'USD to EUR',
-            data: ohlcdata,
-            turboThreshold: 1
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        type: 'candlestick',
+        name: 'USD to EUR',
+        data: ohlcdata,
+        turboThreshold: 1
+    }]
 });

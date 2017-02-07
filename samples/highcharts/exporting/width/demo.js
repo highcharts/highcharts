@@ -1,25 +1,24 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts export width test'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'Exported chart should be 200px wide'
-        },
+    title: {
+        text: 'Highcharts export width test'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+    subtitle: {
+        text: 'Exported chart should be 200px wide'
+    },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }],
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
 
-        exporting: {
-            width: 200
-        }
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    }],
 
-    });
+    exporting: {
+        width: 200
+    }
+
 });

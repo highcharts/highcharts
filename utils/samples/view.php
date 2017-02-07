@@ -125,7 +125,7 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>',
+			path = '<?php echo $path ?>'.replace('../../samples/', ''),
 			browser = <?php echo json_encode(getBrowser()); ?>,
 			controller = window.parent && window.parent.controller;
 
@@ -218,11 +218,11 @@ function getResources() {
 							this.reflow();
 						});
 					}
-
+console.log(path)
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
-								src: 'view-source.php?path=<?php echo $path ?>'
+								src: 'view-source.php?path=' + path
 							})
 							.css({
 								width: '100%',
@@ -392,8 +392,6 @@ function getResources() {
 		});
 		<?php } ?>
 		
-
-		<?php @include("$path/demo.js"); ?>
 		</script>
 
 		<style type="text/css">
@@ -449,7 +447,7 @@ function getResources() {
 				<a id="view-source" class="button" href="javascript:;"
 					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
 				</a><a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
@@ -465,6 +463,9 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+			<script>
+			<?php @include("$path/demo.js"); ?>
+			</script>
 			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
@@ -492,9 +493,6 @@ ob_start();
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
-		<?php @include("$path/demo.js"); ?>
-		</script>
 
 		<style type="text/css">
 			<?php echo $css; ?>
@@ -507,6 +505,9 @@ ob_start();
 
 		<?php echo $html ?>
 		</div>
+		<script type="text/javascript">
+		<?php @include("$path/demo.js"); ?>
+		</script>
 
 	</body>
 </html>

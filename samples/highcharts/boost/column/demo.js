@@ -1,61 +1,59 @@
-$(function () {
 
-    function getData(n) {
-        var arr = [],
-            i,
-            a,
-            b,
-            c,
-            spike;
-        for (i = 0; i < n; i = i + 1) {
-            if (i % 100 === 0) {
-                a = 2 * Math.random();
-            }
-            if (i % 1000 === 0) {
-                b = 2 * Math.random();
-            }
-            if (i % 10000 === 0) {
-                c = 2 * Math.random();
-            }
-            if (i % 50000 === 0) {
-                spike = 10;
-            } else {
-                spike = 0;
-            }
-            arr.push([
-                i,
-                2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
-            ]);
+
+function getData(n) {
+    var arr = [],
+        i,
+        a,
+        b,
+        c,
+        spike;
+    for (i = 0; i < n; i = i + 1) {
+        if (i % 100 === 0) {
+            a = 2 * Math.random();
         }
-        return arr;
+        if (i % 1000 === 0) {
+            b = 2 * Math.random();
+        }
+        if (i % 10000 === 0) {
+            c = 2 * Math.random();
+        }
+        if (i % 50000 === 0) {
+            spike = 10;
+        } else {
+            spike = 0;
+        }
+        arr.push([
+            i,
+            2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
+        ]);
     }
-    var data = getData(500000);
+    return arr;
+}
+var data = getData(500000);
 
-    console.time('column');
-    Highcharts.chart('container', {
+console.time('column');
+Highcharts.chart('container', {
 
-        chart: {
-            type: 'column',
-            zoomType: 'x'
-        },
+    chart: {
+        type: 'column',
+        zoomType: 'x'
+    },
 
-        title: {
-            text: 'Trimmed Highcharts drawing ' + data.length + ' points'
-        },
+    title: {
+        text: 'Trimmed Highcharts drawing ' + data.length + ' points'
+    },
 
-        subtitle: {
-            text: 'Using the experimental Highcharts Boost module'
-        },
+    subtitle: {
+        text: 'Using the experimental Highcharts Boost module'
+    },
 
-        tooltip: {
-            valueDecimals: 2
-        },
+    tooltip: {
+        valueDecimals: 2
+    },
 
-        series: [{
-            data: data
-        }]
-
-    });
-    console.timeEnd('column');
+    series: [{
+        data: data
+    }]
 
 });
+console.timeEnd('column');

@@ -3,4 +3,5 @@
  authors:
    - Torstein Hønsi
  compareTooltips: true
+ js_wrap: b
 ...

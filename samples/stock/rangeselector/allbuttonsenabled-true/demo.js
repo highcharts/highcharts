@@ -1,35 +1,33 @@
-$(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-        Highcharts.stockChart('container', {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-            chart: {
-                type: 'arearange'
-            },
+    Highcharts.stockChart('container', {
 
-            rangeSelector: {
-                allButtonsEnabled: true,
-                selected: 2
-            },
+        chart: {
+            type: 'arearange'
+        },
 
-            title: {
-                text: 'Temperature variation by day'
-            },
+        rangeSelector: {
+            allButtonsEnabled: true,
+            selected: 2
+        },
 
-            subtitle: {
-                text: 'Demo of all buttons enabled. Even though "YTD" and "1y" don\'t apply since we\'re <br>only showing values within one year, they are enabled to allow dynamic interaction'
-            },
+        title: {
+            text: 'Temperature variation by day'
+        },
 
-            tooltip: {
-                valueSuffix: '°C'
-            },
+        subtitle: {
+            text: 'Demo of all buttons enabled. Even though "YTD" and "1y" don\'t apply since we\'re <br>only showing values within one year, they are enabled to allow dynamic interaction'
+        },
 
-            series: [{
-                name: 'Temperatures',
-                data: data
-            }]
+        tooltip: {
+            valueSuffix: '°C'
+        },
 
-        });
+        series: [{
+            name: 'Temperatures',
+            data: data
+        }]
+
     });
-
 });

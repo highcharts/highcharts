@@ -1,68 +1,66 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
 
-        // Create the chart
-        var chart = Highcharts.stockChart('container', {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
 
-            chart: {
-                height: 400
-            },
+    // Create the chart
+    var chart = Highcharts.stockChart('container', {
 
-            title: {
-                text: 'Highstock Responsive Chart'
-            },
+        chart: {
+            height: 400
+        },
 
-            subtitle: {
-                text: 'Click small/large buttons or change window size to test responsiveness'
-            },
+        title: {
+            text: 'Highstock Responsive Chart'
+        },
 
-            rangeSelector: {
-                selected: 1
-            },
+        subtitle: {
+            text: 'Click small/large buttons or change window size to test responsiveness'
+        },
 
-            series: [{
-                name: 'AAPL Stock Price',
-                data: data,
-                type: 'area',
-                threshold: null,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            }],
+        rangeSelector: {
+            selected: 1
+        },
 
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        chart: {
-                            height: 300
-                        },
-                        subtitle: {
-                            text: null
-                        },
-                        navigator: {
-                            enabled: false
-                        }
-                    }
-                }]
+        series: [{
+            name: 'AAPL Stock Price',
+            data: data,
+            type: 'area',
+            threshold: null,
+            tooltip: {
+                valueDecimals: 2
             }
-        });
+        }],
 
-
-        $('#small').click(function () {
-            chart.setSize(400);
-        });
-
-        $('#large').click(function () {
-            chart.setSize(800);
-        });
-
-        $('#auto').click(function () {
-            chart.setSize(null);
-        });
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    chart: {
+                        height: 300
+                    },
+                    subtitle: {
+                        text: null
+                    },
+                    navigator: {
+                        enabled: false
+                    }
+                }
+            }]
+        }
     });
 
+
+    $('#small').click(function () {
+        chart.setSize(400);
+    });
+
+    $('#large').click(function () {
+        chart.setSize(800);
+    });
+
+    $('#auto').click(function () {
+        chart.setSize(null);
+    });
 });

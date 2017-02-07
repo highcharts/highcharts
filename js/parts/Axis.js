@@ -656,21 +656,7 @@ H.Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB,
-			/**
-			 * Check if x is between a and b. If not, either move to a/b or skip,
-			 * depending on the force parameter.
-			 */
-			between = function (x, a, b) {
-				if (x < a || x > b) {
-					if (force) {
-						x = Math.min(Math.max(a, x), b);
-					} else {
-						skip = true;
-					}
-				}
-				return x;
-			};
+			transB = axis.transB;
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
@@ -681,11 +667,11 @@ H.Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+			x1 = x2;
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+			y1 = y2;
 		}
 		return skip && !force ?
 			null :
@@ -741,23 +727,31 @@ H.Axis.prototype = {
 			minorTickInterval = axis.minorTickInterval,
 			minorTickPositions = [],
 			pos,
-			i,
 			pointRangePadding = axis.pointRangePadding || 0,
 			min = axis.min - pointRangePadding, // #1498
 			max = axis.max + pointRangePadding, // #1498
-			range = max - min,
-			len;
+			range = max - min;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
 		if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
 			if (axis.isLog) {
-				len = tickPositions.length;
-				for (i = 1; i < len; i++) {
-					minorTickPositions = minorTickPositions.concat(
-						axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
-					);
-				}
+				// For each interval in the major ticks, compute the minor ticks
+				// separately.
+				each(this.paddedTicks, function (pos, i, paddedTicks) {
+					if (i) {
+						minorTickPositions.push.apply(
+							minorTickPositions, 
+							axis.getLogTickPositions(
+								minorTickInterval,
+								paddedTicks[i - 1],
+								paddedTicks[i],
+								true
+							)
+						);
+					}
+				});
+
 			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
 				minorTickPositions = minorTickPositions.concat(
 					axis.getTimeTicks(
@@ -782,8 +776,8 @@ H.Axis.prototype = {
 			}
 		}
 
-		if (minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
-			axis.trimTicks(minorTickPositions, options.startOnTick, options.endOnTick); // #3652 #3743 #1498
+		if (minorTickPositions.length !== 0) {
+			axis.trimTicks(minorTickPositions); // #3652 #3743 #1498 #6330
 		}
 		return minorTickPositions;
 	},
@@ -1314,7 +1308,8 @@ H.Axis.prototype = {
 
 		}
 
-		// reset min/max or remove extremes based on start/end on tick
+		// Reset min/max or remove extremes based on start/end on tick
+		this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
 			
@@ -2044,6 +2039,7 @@ H.Axis.prototype = {
 			className = options.className,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
+			plotLinesClip = axis.getPlotLinesAndBandsClip(),
 			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
@@ -2067,6 +2063,10 @@ H.Axis.prototype = {
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
 				.add(axisParent);
+
+			axis.plotLinesAndBandsClip = renderer.clipRect(plotLinesClip);
+		} else {
+			axis.plotLinesAndBandsClip.animate(plotLinesClip);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -2556,11 +2556,14 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
-			if (axis[prop]) {
-				axis[prop] = axis[prop].destroy();
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+			'gridGroup', 'labelGroup', 'plotLinesAndBandsClip', 'cross'],
+			function (prop) {
+				if (axis[prop]) {
+					axis[prop] = axis[prop].destroy();
+				}
 			}
-		});
+		);
 
 		// Delete all properties and fall back to the prototype.
 		for (n in axis) {

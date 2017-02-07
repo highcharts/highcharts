@@ -1,23 +1,22 @@
-$(function () {
-    Highcharts.stockChart('container', {
-        title: {
-            text: 'legend is horizontal by default'
-        },
 
-        legend: {
-            enabled: true
-        },
+Highcharts.stockChart('container', {
+    title: {
+        text: 'legend is horizontal by default'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    legend: {
+        enabled: true
+    },
 
-        series: [{
-            name: 'ADBE',
-            data: ADBE
-        }, {
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'ADBE',
+        data: ADBE
+    }, {
+        name: 'MSFT',
+        data: MSFT
+    }]
 });

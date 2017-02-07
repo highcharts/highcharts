@@ -1,33 +1,32 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Global temperature change'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'Data input from CSV'
-        },
+    title: {
+        text: 'Global temperature change'
+    },
 
-        data: {
-            csv: document.getElementById('csv').innerHTML
-        },
+    subtitle: {
+        text: 'Data input from CSV'
+    },
 
-        plotOptions: {
-            series: {
-                marker: {
-                    enabled: false
-                }
+    data: {
+        csv: document.getElementById('csv').innerHTML
+    },
+
+    plotOptions: {
+        series: {
+            marker: {
+                enabled: false
             }
-        },
+        }
+    },
 
-        series: [{
-            lineWidth: 1
-        }, {
-            type: 'areaspline',
-            color: '#c4392d',
-            negativeColor: '#5679c4',
-            fillOpacity: 0.5
-        }]
-    });
+    series: [{
+        lineWidth: 1
+    }, {
+        type: 'areaspline',
+        color: '#c4392d',
+        negativeColor: '#5679c4',
+        fillOpacity: 0.5
+    }]
 });

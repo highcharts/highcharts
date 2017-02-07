@@ -1,17 +1,16 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+Highcharts.stockChart('container', {
 
-        yAxis: {
-            gridLineColor: 'green'
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    yAxis: {
+        gridLineColor: 'green'
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

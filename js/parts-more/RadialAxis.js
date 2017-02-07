@@ -295,7 +295,6 @@ radialAxisMixin = {
 
 		// Circular grid bands
 		} else {
-
 			// Keep within bounds
 			from = Math.max(from, this.min);
 			to = Math.min(to, this.max);
@@ -492,6 +491,26 @@ wrap(axisProto, 'autoLabelAlign', function (proceed) {
 	if (!this.isRadial) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	} // else return undefined
+});
+
+/**
+ * Wrap clipping box for plotLines and plotBands
+ * @param   {Function} proceed
+ */
+wrap(axisProto, 'getPlotLinesAndBandsClip', function (proceed) {
+	var center = this.center,
+		clip = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.isRadial) {
+		clip = {
+			x: this.left + center[0] - center[2],
+			y: this.top + center[1] - center[2],
+			width: center[2] * 2,
+			height: center[2] * 2
+		};
+	}
+
+	return clip;
 });
 
 /**

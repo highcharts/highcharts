@@ -1,32 +1,31 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Data grouping on plotOptions.series. Should group to weeks'
-        },
+Highcharts.stockChart('container', {
 
-        tooltip: {
-            valueDecimals: 4
-        },
+    title: {
+        text: 'Data grouping on plotOptions.series. Should group to weeks'
+    },
 
-        rangeSelector: {
-            selected: 4
-        },
+    tooltip: {
+        valueDecimals: 4
+    },
 
-        plotOptions: {
-            series: {
-                marker: {
-                    enabled: true
-                },
-                dataGrouping: {
-                    groupPixelWidth: 10
-                }
+    rangeSelector: {
+        selected: 4
+    },
+
+    plotOptions: {
+        series: {
+            marker: {
+                enabled: true
+            },
+            dataGrouping: {
+                groupPixelWidth: 10
             }
-        },
+        }
+    },
 
-        series: [{
-            name: 'ADBE',
-            data: ADBE
-        }]
-    });
+    series: [{
+        name: 'ADBE',
+        data: ADBE
+    }]
 });

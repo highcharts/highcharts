@@ -1,18 +1,17 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        yAxis: {
-            minPadding: 0.5,
-            maxPadding: 0.5
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        minPadding: 0.5,
+        maxPadding: 0.5
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

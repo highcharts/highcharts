@@ -53,13 +53,13 @@ $(function () {
         );
 
         assert.strictEqual(
-            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[3].y) + 2 * len), // two minPointLength points
+            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[3].y)),
             parseInt(points[3].graphic.attr("height"), 10),
             "isIntermediateSum point has proper height"
         );
 
         assert.strictEqual(
-            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[6].y) + 2 * len), // two minPointLength points
+            Math.round(yAxis.toPixels(0) - yAxis.toPixels(points[6].y)),
             parseInt(points[6].graphic.attr("height"), 10),
             "isSum point has proper height"
         );

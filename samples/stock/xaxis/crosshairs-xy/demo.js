@@ -1,17 +1,16 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        yAxis: {
-            crosshair: true
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        crosshair: true
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

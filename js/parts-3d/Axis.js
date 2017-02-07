@@ -34,6 +34,20 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	}
 });
 
+/**
+ * Wrap clipping box for plotLines and plotBands
+ * @param   {Function} proceed
+ */
+wrap(Axis.prototype, 'getPlotLinesAndBandsClip', function (proceed) {
+	return this.chart.is3d() ? {
+		x: 0,
+		y: 0,
+		width: 9e9,
+		height: 9e9
+	} : proceed.apply(this, [].slice.call(arguments, 1));
+});
+
+
 wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 

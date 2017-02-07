@@ -1,19 +1,18 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        navigator: {
-            series: {
-                data: ADBE
-            }
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    navigator: {
+        series: {
+            data: ADBE
+        }
+    },
 
-        series: [{
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'MSFT',
+        data: MSFT
+    }]
 });

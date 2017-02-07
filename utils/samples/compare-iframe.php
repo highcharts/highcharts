@@ -502,14 +502,7 @@ function getExportInnerHTML() {
 		if (jQuery) {
 			jQuery.readyException = error;
 		}
-		try {
-
-		<?php echo getJS(); ?>
-
-		} catch (e) {
-			console.error(e.message);
-			parent.window.onDifferent('Error');
-		}
+		
 
 		$(function () {
 		<?php
@@ -525,5 +518,15 @@ function getExportInnerHTML() {
 		<div id="qunit-fixture"></div>
 <?php echo getHTML($_GET['which']); ?>
 
+		<script>
+		try {
+
+		<?php echo getJS(); ?>
+
+		} catch (e) {
+			console.error(e.message);
+			parent.window.onDifferent('Error');
+		}
+		</script>
 	</body>
 </html>

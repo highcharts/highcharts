@@ -1,20 +1,19 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        navigator: {
-            handles: {
-                backgroundColor: 'yellow',
-                borderColor: 'red'
-            }
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    navigator: {
+        handles: {
+            backgroundColor: 'yellow',
+            borderColor: 'red'
+        }
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

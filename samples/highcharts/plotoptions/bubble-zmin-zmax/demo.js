@@ -1,48 +1,47 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'bubble',
-            plotBorderWidth: 1
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts Bubbles'
-        },
+    chart: {
+        type: 'bubble',
+        plotBorderWidth: 1
+    },
 
-        subtitle: {
-            text: 'The <em>zMin</em> and <em>zMax</em> options are set to 0 and 100, bubbles should not become near the <em>maxSize</em>'
-        },
+    title: {
+        text: 'Highcharts Bubbles'
+    },
 
-        xAxis: {
-            gridLineWidth: 1
-        },
+    subtitle: {
+        text: 'The <em>zMin</em> and <em>zMax</em> options are set to 0 and 100, bubbles should not become near the <em>maxSize</em>'
+    },
 
-        yAxis: {
-            startOnTick: false,
-            endOnTick: false
-        },
+    xAxis: {
+        gridLineWidth: 1
+    },
 
-        plotOptions: {
-            bubble: {
-                minSize: 3,
-                maxSize: 50,
-                zMin: 0,
-                zMax: 100
-            }
-        },
+    yAxis: {
+        startOnTick: false,
+        endOnTick: false
+    },
 
-        series: [{
-            data: [
-                [9, 81, 6],
-                [98, 5, 19],
-                [51, 50, 13],
-                [41, 22, 14],
-                [58, 24, 20],
-                [78, 37, 4],
-                [55, 56, 13]
-            ]
-        }]
+    plotOptions: {
+        bubble: {
+            minSize: 3,
+            maxSize: 50,
+            zMin: 0,
+            zMax: 100
+        }
+    },
 
-    });
+    series: [{
+        data: [
+            [9, 81, 6],
+            [98, 5, 19],
+            [51, 50, 13],
+            [41, 22, 14],
+            [58, 24, 20],
+            [78, 37, 4],
+            [55, 56, 13]
+        ]
+    }]
+
 });

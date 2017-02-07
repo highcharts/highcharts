@@ -1,19 +1,18 @@
-$(function () {
-    Highcharts.setOptions({
-        colors: ['green', 'blue']
-    });
-    Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+Highcharts.setOptions({
+    colors: ['green', 'blue']
+});
+Highcharts.stockChart('container', {
 
-        series: [{
-            name: 'ADBE',
-            data: ADBE
-        }, {
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'ADBE',
+        data: ADBE
+    }, {
+        name: 'MSFT',
+        data: MSFT
+    }]
 });
