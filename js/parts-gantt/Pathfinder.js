@@ -15,7 +15,10 @@ var defined = H.defined,
 	extend = H.extend,
 	each = H.each,
 	addEvent = H.addEvent,
-	merge = H.merge;
+	merge = H.merge,
+	pick = H.pick,
+	max = Math.max,
+	min = Math.min;
 
 // TODO:
 // Check dynamics, including hiding/adding/removing/updating series/points etc.
@@ -26,12 +29,13 @@ extend(H.defaultOptions, {
 		// enabled: true,
 		// dashStyle: 'solid',
 		// color: point.color,
+		// algorithmMargin: null, // Autocomputed
 		type: 'straight',
 		markers: {
+			// radius: null, // Autocomputed
 			enabled: false,
 			align: 'center',
 			verticalAlign: 'middle',
-			radius: 4,
 			inside: false
 		},
 		startMarker: {
@@ -40,10 +44,76 @@ extend(H.defaultOptions, {
 		endMarker: {
 			symbol: 'arrow-filled'
 		},
-		lineWidth: 1,
-		algorithmMargin: 10 // TODO: Should be computed from chart size
+		lineWidth: 1		
 	}
 });
+
+
+/**
+ * Calculate margin to place around obstacles for the pathfinder in pixels.
+ * Returns a minimum of 1 pixel margin.
+ *
+ * @param {Array} obstacles Obstacles to calculate margin from.
+ *
+ * @return {Number} result The calculated margin in pixels.
+ */
+function calculateObstacleMargin(obstacles) {
+	var len = obstacles.length,
+		i = 0,
+		j,
+		obstacleDistance,
+		distances = [],
+		// Compute smallest distance between two rectangles
+		distance = function (a, b, bbMargin) {
+			var margin = pick(bbMargin, 10), // Count the distance even if we are slightly off
+				yOverlap = a.yMax + margin > b.yMin - margin &&
+							a.yMin - margin < b.yMax + margin,
+				xOverlap = a.xMax + margin > b.xMin - margin &&
+							a.xMin - margin < b.xMax + margin,
+				xDistance = yOverlap ? (
+					a.xMin > b.xMax ? a.xMin - b.xMax : b.xMin - a.xMax
+				) : Infinity,
+				yDistance = xOverlap ? (
+					a.yMin > b.yMax ? a.yMin - b.yMax : b.yMin - a.yMax
+				) : Infinity;
+
+			// If the rectangles collide, try recomputing with smaller margin.
+			// If they collide anyway, discard the obstacle.
+			if (xOverlap && yOverlap) {
+				return margin ? distance(a, b, Math.floor(margin / 2)) : Infinity;
+			}
+
+			return min(xDistance, yDistance);
+		};
+
+	// Go over all obstacles and compare them to the others.
+	for (; i < len; ++i) {
+		// Compare to all obstacles ahead. We will already have compared this
+		// obstacle to the ones before.
+		for (j = i + 1; j < len; ++j) {
+			obstacleDistance = distance(obstacles[i], obstacles[j]);
+			if (obstacleDistance < 80) { // Ignore large distances
+				distances.push(obstacleDistance);
+			}
+		}
+	}
+	// Ensure we always have at least one value, even in very spaceous charts
+	distances.push(80);
+
+	return max(
+		Math.floor(
+			distances.sort(function (a, b) {
+				return a - b;
+			})[
+				// Discard first 10% of the relevant distances, and then grab the
+				// smallest one.
+				Math.floor(distances.length / 10)
+			] / 2 - 1 // Divide the distance by 2 and subtract 1.
+		),
+		1 // 1 is the minimum margin
+	);
+}
+
 
 /**
  * The Pathfinder class.
@@ -174,8 +244,9 @@ Pathfinder.prototype = {
 	getChartObstacles: function (options) {
 		var obstacles = [],
 			series = this.chart.series,
-			margin = options.algorithmMargin,
-			bb;
+			margin = pick(options.algorithmMargin, 0),
+			bb,
+			calculatedMargin;
 		for (var i = 0, sLen = series.length; i < sLen; ++i) {
 			if (series[i].visible) {
 				for (var j = 0, pLen = series[i].points.length; j < pLen; ++j) {
@@ -189,10 +260,24 @@ Pathfinder.prototype = {
 				}
 			}
 		}
-		// Sort obstacles by xMin before returning, for optimization
-		return obstacles.sort(function (a, b) {
+
+		// Sort obstacles by xMin for optimization
+		obstacles = obstacles.sort(function (a, b) {
 			return a.xMin - b.xMin;
 		});
+
+		// Add auto-calculated margin if the option is not defined
+		if (!defined(options.algorithmMargin)) {
+			calculatedMargin = options.algorithmMargin = calculateObstacleMargin(obstacles);
+			each(obstacles, function (obstacle) {
+				obstacle.xMin -= calculatedMargin;
+				obstacle.xMax += calculatedMargin;
+				obstacle.yMin -= calculatedMargin;
+				obstacle.yMax += calculatedMargin;
+			});
+		}
+
+		return obstacles;
 	},
 
 	/**
@@ -516,6 +601,10 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 				pathfinder.chartObstacles =
 				pathfinder.getChartObstacles(options);
 
+			// If the algorithmMargin was computed, store the result in default
+			// options.
+			defaultOptions.algorithmMargin = options.algorithmMargin;
+
 			// Cache some metrics too
 			pathfinder.chartObstacleMetrics =
 				pathfinder.getObstacleMetrics(chartObstacles);
@@ -528,8 +617,14 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		if (options.dashStyle) {
 			attribs.dashstyle = options.dashStyle;
 		}
+
 		// Set common marker options
 		options = merge(attribs, options);
+		if (!defined(options.markers.radius)) {
+			options.markers.radius = min(max(
+				Math.ceil((options.algorithmMargin || 8) / 2) - 1, 1
+			), 5);
+		}
 		options.startMarker = merge(options.markers, options.startMarker);
 		options.endMarker = merge(options.markers, options.endMarker);
 
