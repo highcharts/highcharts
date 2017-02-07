@@ -6,6 +6,7 @@
 */
 'use strict';
 import H from '../parts/Globals.js';
+import '../modules/static-scale.src.js';
 import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
 import 'TreeGrid.js';
@@ -76,7 +77,10 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
 			{ // defaults
 				grid: true,
 
-				// Set default type tree-grid, but onlf categories is undefined
+				staticScale: 50,
+
+				// Set default type tree-grid, but only if 'categories' is
+				// undefined
 				type: yAxisOptions.categories ? yAxisOptions.type : 'tree-grid'
 			},
 			yAxisOptions // user options
