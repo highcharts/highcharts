@@ -138,7 +138,6 @@ H.Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear', // linear, logarithmic or datetime
-		allowNegativeLog: false,
 		//visible: true
 		/*= if (build.classic) { =*/
 		minorGridLineColor: '${palette.neutralColor5}',
@@ -310,7 +309,9 @@ H.Axis.prototype = {
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
-		axis.positiveValuesOnly = axis.isLog && !options.allowNegativeLog;
+		// docs: Add sample of negative log axis to API:
+		// highcharts/yaxis/type-log-negative
+		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
@@ -409,7 +410,6 @@ H.Axis.prototype = {
 		}
 
 		// extend logarithmic axis
-		axis.log2lin = options.logToLinearConverter || axis.log2lin;
 		axis.lin2log = options.linearToLogConverter || axis.lin2log;
 		if (axis.isLog) {
 			axis.val2lin = axis.log2lin;
@@ -1050,7 +1050,6 @@ H.Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isLog = axis.isLog,
-			positiveValuesOnly = axis.positiveValuesOnly,
 			log2lin = axis.log2lin,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -1108,7 +1107,11 @@ H.Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (positiveValuesOnly && !secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+			if (
+				axis.positiveValuesOnly &&
+				!secondPass &&
+				Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0
+			) { // #978
 				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
