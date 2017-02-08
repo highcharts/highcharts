@@ -592,10 +592,10 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(extend({
+			legendGroup.align(merge(options, {
 				width: legendWidth,
 				height: legendHeight
-			}, options), true, 'spacingBox');
+			}), true, 'spacingBox');
 		}
 
 		if (!chart.isResizing) {
