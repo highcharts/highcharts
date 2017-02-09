@@ -14,7 +14,6 @@ import 'pathfinder.js';
 import 'XRangeSeries.js';
 
 var dateFormat = H.dateFormat,
-	defined = H.defined,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
 	merge = H.merge,

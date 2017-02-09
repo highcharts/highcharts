@@ -233,6 +233,7 @@ var toggleCollapse = function (axis, node, pos) {
 	}
 };
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
+	console.log('@renderLabelIcon');
 	var labelBox = label.element.getBBox(),
 		icon = label.treeIcon,
 		labelCenter = {
@@ -249,23 +250,24 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 		},
 		rotation = collapsed ? 90 : 180;
 
-	if (!icon) {
-		label.treeIcon = icon = label.renderer.symbol(
-			'triangle',
-			iconPosition.x,
-			iconPosition.y,
-			radius,
-			radius
-		)
-		.add(label.parentGroup);
+	if (icon) {
+		icon.destroy();
 	}
-	icon.attr({
+	label.treeIcon = label.renderer.symbol(
+		'triangle',
+		iconPosition.x,
+		iconPosition.y,
+		radius,
+		radius
+	)
+	.add(label.parentGroup)
+	.attr({
 		'stroke-width': 1,
 		'fill': pick(label.styles.color, '#666'),
 		'transform': 'rotate(' +
-			rotation + ', ' +
-			iconCenter.x + ', ' +
-			iconCenter.y +
+		rotation + ', ' +
+		iconCenter.x + ', ' +
+		iconCenter.y +
 		')'
 	});
 };
