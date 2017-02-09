@@ -325,3 +325,61 @@ QUnit.test('Multiple rules order (#6291)', function (assert) {
         'No restrictions'
     );
 });
+
+QUnit.test('Mismatch of collection length (#6347)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        responsive: {
+            rules: [{
+                condition: {
+                    maxHeight: 180
+                },
+                chartOptions: {
+                    yAxis: [{
+                        labels: {
+                            style: {
+                                color: 'lightgreen',
+                                fontSize: '12px'
+                            }
+                        }
+                    }, {
+                        labels: {
+                            style: {
+                                color: 'lightgreen',
+                                fontSize: '12px'
+                            }
+                        }
+                    }]
+                }
+            }]
+        },
+        chart: {
+            height: 250
+        },
+        series: [{
+            name: 'Sales',
+            data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
+        }],
+        yAxis: [{
+            labels: {
+                style: {
+                    fontSize: '22px'
+                }
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]]
+            .label.styles.fontSize,
+        '22px',
+        'Initial font size'
+    );
+
+    chart.setSize(500, 170, false);
+    assert.strictEqual(
+        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]]
+            .label.styles.fontSize,
+        '12px',
+        'Responsive font size'
+    );
+});

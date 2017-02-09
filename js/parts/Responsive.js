@@ -110,14 +110,19 @@ Chart.prototype.currentOptions = function (options) {
 				options[key] = splat(options[key]);
 			
 				ret[key] = [];
+
+				// Iterate over collections like series, xAxis or yAxis and map
+				// the items by index.
 				for (i = 0; i < options[key].length; i++) {
-					ret[key][i] = {};
-					getCurrent(
-						options[key][i],
-						curr[key][i],
-						ret[key][i],
-						depth + 1
-					);
+					if (curr[key][i]) { // Item exists in current data (#6347)
+						ret[key][i] = {};
+						getCurrent(
+							options[key][i],
+							curr[key][i],
+							ret[key][i],
+							depth + 1
+						);
+					}
 				}
 			} else if (isObject(options[key])) {
 				ret[key] = isArray(options[key]) ? [] : {};

@@ -236,6 +236,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 			axis.breakArray = breakArray;
 
+			// Used with staticScale
+			axis.unitLength = max - min - length;
+
 			fireEvent(axis, 'afterBreaks');
 			
 			axis.transA *= ((max - axis.min) / (max - min - length));

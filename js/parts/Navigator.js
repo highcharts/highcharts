@@ -584,7 +584,11 @@ Navigator.prototype = {
 			container = chart.container,
 			eventsToUnbind = [],
 			mouseMoveHandler,
-			mouseUpHandler;
+			mouseUpHandler,
+			// iOS calls both events: mousedown+touchstart and mouseup+touchend
+			// So we add them just once, #6187
+			eventNames = hasTouch ? ['touchstart', 'touchmove', 'touchend'] :
+				['mousedown', 'mousemove', 'mouseup'];
 
 		/**
 		 * Create mouse events' handlers.
@@ -598,22 +602,13 @@ Navigator.prototype = {
 		};
 
 		// Add shades and handles mousedown events
-		eventsToUnbind = navigator.getPartsEvents('mousedown');
+		eventsToUnbind = navigator.getPartsEvents(eventNames[0]);
 		// Add mouse move and mouseup events. These are bind to doc/container,
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
-			addEvent(container, 'mousemove', mouseMoveHandler),
-			addEvent(doc, 'mouseup', mouseUpHandler)
+			addEvent(container, eventNames[1], mouseMoveHandler),
+			addEvent(doc, eventNames[2], mouseUpHandler)
 		);
-
-		// Touch events
-		if (hasTouch) {
-			eventsToUnbind.push(
-				addEvent(container, 'touchmove', mouseMoveHandler),
-				addEvent(doc, 'touchend', mouseUpHandler)
-			);
-			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
-		}
 
 		navigator.eventsToUnbind = eventsToUnbind;
 

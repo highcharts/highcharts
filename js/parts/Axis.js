@@ -309,6 +309,9 @@ H.Axis.prototype = {
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
+		// docs: Add sample of negative log axis to API:
+		// highcharts/yaxis/type-log-negative
+		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
@@ -407,6 +410,7 @@ H.Axis.prototype = {
 		}
 
 		// extend logarithmic axis
+		axis.lin2log = options.linearToLogConverter || axis.lin2log;
 		if (axis.isLog) {
 			axis.val2lin = axis.log2lin;
 			axis.lin2val = axis.lin2log;
@@ -446,7 +450,7 @@ H.Axis.prototype = {
 			formatOption = axis.options.labels.format,
 
 			// make sure the same symbol is added for all labels on a linear axis
-			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
+			numericSymbolDetector = axis.isLog ? Math.abs(value) : axis.tickInterval;
 
 		if (formatOption) {
 			ret = format(formatOption, this);
@@ -510,7 +514,7 @@ H.Axis.prototype = {
 				axis.hasVisibleSeries = true;
 
 				// Validate threshold in logarithmic axes
-				if (axis.isLog && threshold <= 0) {
+				if (axis.positiveValuesOnly && threshold <= 0) {
 					threshold = null;
 				}
 
@@ -555,7 +559,7 @@ H.Axis.prototype = {
 						axis.threshold = threshold;
 					}
 					// If any series has a hard threshold, it takes precedence
-					if (!seriesOptions.softThreshold || axis.isLog) {
+					if (!seriesOptions.softThreshold || axis.positiveValuesOnly) {
 						axis.softThreshold = false;
 					}
 				}
@@ -1103,7 +1107,11 @@ H.Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+			if (
+				axis.positiveValuesOnly &&
+				!secondPass &&
+				Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0
+			) { // #978
 				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
