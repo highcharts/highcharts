@@ -31,7 +31,7 @@ extend(H.defaultOptions, {
 		// color: point.color,
 		// algorithmMargin: null, // Autocomputed
 		type: 'straight',
-		markers: {
+		marker: {
 			// radius: null, // Autocomputed
 			enabled: false,
 			align: 'center',
@@ -592,7 +592,9 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			pathResult,
 			path,
 			attribs,
-			options = merge(defaultOptions, seriesOptions, opts),
+			options = merge(
+				defaultOptions, seriesOptions, this.options.pathfinder, opts
+			),
 			algorithm = pathfinder.algorithms[options.type];
 
 		// This function calculates obstacles on demand if they don't exist
@@ -620,13 +622,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
 		// Set common marker options
 		options = merge(attribs, options);
-		if (!defined(options.markers.radius)) {
-			options.markers.radius = min(max(
+		if (!defined(options.marker.radius)) {
+			options.marker.radius = min(max(
 				Math.ceil((options.algorithmMargin || 8) / 2) - 1, 1
 			), 5);
 		}
-		options.startMarker = merge(options.markers, options.startMarker);
-		options.endMarker = merge(options.markers, options.endMarker);
+		options.startMarker = merge(options.marker, options.startMarker);
+		options.endMarker = merge(options.marker, options.endMarker);
 
 		fromAnchor = this.getPathfinderAnchorPoint(options.startMarker);
 		toAnchor = toPoint.getPathfinderAnchorPoint(options.endMarker);

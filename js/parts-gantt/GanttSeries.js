@@ -208,12 +208,7 @@ seriesType('gantt', parentName, {
 		if (options.milestone) {
 			options.x2 = options.x;
 		}
-		options.y = pick(
-			// If taskGroup is a number, it's a reference to the category index
-			isNumber(options.taskGroup) ? options.taskGroup : undefined,
-			options.y
-		);
-		options.name = pick(options.taskGroup, options.name);
+		options.name = pick(options.taskName, options.name);
 		options.partialFill = pick(options.completed, options.partialFill);
 		options.connect = pick(options.dependency, options.connect);
 	}
