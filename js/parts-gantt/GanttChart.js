@@ -6,12 +6,6 @@
 */
 'use strict';
 import H from '../parts/Globals.js';
-import '../modules/static-scale.src.js';
-import 'CurrentDateIndicator.js';
-import 'GridAxis.js';
-import 'TreeGrid.js';
-import 'Pathfinder.js';
-import 'XRangeSeries.js';
 import 'GanttSeries.js';
 
 var defined = H.defined,

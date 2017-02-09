@@ -8,6 +8,7 @@
 import H from '../parts/Globals.js';
 import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
+import '../modules/static-scale.src.js';
 import 'TreeGrid.js';
 import 'pathfinder.js';
 import 'XRangeSeries.js';
