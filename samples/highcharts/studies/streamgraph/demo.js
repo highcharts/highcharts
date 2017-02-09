@@ -111,6 +111,12 @@ Highcharts.chart('container', {
         }
     },
 
+    plotOptions: {
+        series: {
+            pointStart: 1987
+        }
+    },
+
     series: getRandomData()
 
 });
