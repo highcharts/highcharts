@@ -13,6 +13,7 @@ var argsToArray = function (args) {
 	dateFormat = H.dateFormat,
 	each = H.each,
 	isArray = H.isArray,
+	isNumber = H.isNumber,
 	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
@@ -182,15 +183,12 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 		if (horiz) {
 			if (!categoryAxis) {
 				// Center x position
-				if (tick.pos === axis.min) { // First tick
-					if (nextTickPos) {
+				if (tick.pos === lastTickPos) { // Last tick
+					retVal.x = (axis.left + axis.len + x) / 2;
+				} else { // First and subsequent ticks
+					if (isNumber(nextTickPos)) {
 						x = axis.translate((tick.pos + nextTickPos) / 2);
 					}
-					retVal.x = x + axis.left;
-				} else if (tick.pos === lastTickPos) { // Last tick
-					retVal.x = (axis.left + axis.len + x) / 2;
-				} else {
-					x = axis.translate(tick.pos + (tickInterval / 2));
 					retVal.x = x + axis.left;
 				}
 			}
@@ -553,6 +551,12 @@ wrap(Axis.prototype, 'init', function (proceed) {
 				['year', null]
 			];
 		}
+
+		// Center-align by default
+		if (!options.labels) {
+			options.labels = {};
+		}
+		options.labels.align = pick(options.labels.align, 'center');
 
 		/**
 		 * Prevents adding the last tick label if the axis is not a category axis.
