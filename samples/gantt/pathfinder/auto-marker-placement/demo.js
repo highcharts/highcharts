@@ -2,10 +2,7 @@ $(function () {
     Highcharts.chart('container', {
         series: [{
             pathfinder: {
-                startMarker: {
-                    enabled: true
-                },
-                endMarker: {
+                marker: {
                     enabled: true
                 }
             },

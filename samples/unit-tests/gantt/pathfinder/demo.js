@@ -35,7 +35,7 @@ QUnit.testStart(function () {
         // center
         series: [{
             pathfinder: {
-                markers: {
+                marker: {
                     enabled: true
                 }
             },
@@ -365,7 +365,7 @@ QUnit.test('Options applied correctly', function (assert) {
                 }]
             }, {
                 pathfinder: {
-                    markers: {
+                    marker: {
                         enabled: true
                     }
                 },

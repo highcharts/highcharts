@@ -1,7 +1,7 @@
 $(function () {
     Highcharts.chart('container', {
         pathfinder: {
-            markers: {
+            marker: {
                 enabled: true
             }
         },
