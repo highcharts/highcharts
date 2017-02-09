@@ -83,37 +83,37 @@ QUnit.testStart(function () {
 });
 
 QUnit.test('Marker placement', function (assert) {
-    var error = 0.01,
+    var error = 0,
         startPositions = {
             5: {
-                5: { x: 3, y: 359 },
-                10: { x: 4, y: 181 },
+                5: { x: 3, y: 361 },
+                10: { x: 4, y: 182 },
                 15: { x: 3, y: 3 }
             },
             10: {
-                5: { x: 181, y: 358 },
-                15: { x: 181, y: 4 }
+                5: { x: 182, y: 360 },
+                15: { x: 182, y: 4 }
             },
             15: {
-                5: { x: 359, y: 359 },
-                10: { x: 358, y: 181 },
-                15: { x: 359, y: 3 }
+                5: { x: 361, y: 361 },
+                10: { x: 360, y: 182 },
+                15: { x: 361, y: 3 }
             }
         },
         endPositions = {
             5: {
-                5: { x: 174, y: 188 },
-                10: { x: 173, y: 181 },
-                15: { x: 174, y: 174 }
+                5: { x: 176, y: 188 },
+                10: { x: 175, y: 182 },
+                15: { x: 176, y: 176 }
             },
             10: {
-                5: { x: 181, y: 189 },
-                15: { x: 181, y: 173 }
+                5: { x: 182, y: 189 },
+                15: { x: 182, y: 175 }
             },
             15: {
                 5: { x: 188, y: 188 },
-                10: { x: 189, y: 181 },
-                15: { x: 188, y: 174 }
+                10: { x: 189, y: 182 },
+                15: { x: 188, y: 176 }
             }
         },
         chart = Highcharts.chart('container', squareChartConfig),
@@ -302,9 +302,9 @@ QUnit.test('Marker alignment', function (assert) {
 
             // Vertical alignment modifies marker y, so expect a y modification
             if (verticalAlign === 'top') {
-                yMod = -mod;
+                yMod = -mod + 1;
             } else if (verticalAlign === 'bottom') {
-                yMod = mod;
+                yMod = mod + 1;
             } else if (verticalAlign === 'middle') {
                 yMod = markerCenter.y - pointCenter.y;
             }
@@ -333,8 +333,8 @@ QUnit.test('Marker alignment', function (assert) {
         // ... with all (horizontal) aligns
         Highcharts.each(aligns, function (align) {
             // Set them on the config...
-            opts.markers.verticalAlign = verticalAlign;
-            opts.markers.align = align;
+            opts.marker.verticalAlign = verticalAlign;
+            opts.marker.align = align;
 
             // ... create the chart...
             chart = Highcharts.chart('container', squareChartConfig);
