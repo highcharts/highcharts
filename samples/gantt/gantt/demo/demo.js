@@ -8,103 +8,124 @@ $(function () {
     today.setUTCMinutes(0);
     today.setUTCSeconds(0);
     today.setUTCMilliseconds(0);
-
+    today = today.getTime();
 
     // THE CHART
     Highcharts.ganttChart('container', {
         title: {
-            text: 'Gantt Chart'
+            text: 'Gantt Chart Test'
         },
         xAxis: {
             currentDateIndicator: true,
-            min: today.getTime() - (3 * day),
-            max: today.getTime() + (11 * day)
+            min: today - 3 * day,
+            max: today + 18 * day
         },
         series: [{
-            name: 'Project 1',
+            name: 'Offices',
             data: [{
-                id: 'start_prototype',
-                start: today.getTime() - (2 * day),
-                end: today.getTime() + day,
-                y: 0,
-                taskGroup: 'Start prototype',
-                taskName: 'Start prototype',
-                partialFill: 0.8
+                taskName: 'New offices',
+                id: 'new_offices',
+                start: today - 2 * day,
+                end: today + 14 * day,
+                y: 0
             }, {
-                start: today.getTime() + (day * 1.5),
-                milestone: true,
-                taskGroup: 'Prototype done',
-                taskName: 'Prototype done',
-                y: 1
+                taskName: 'Prepare office building',
+                id: 'prepare_building',
+                parent: 'new_offices',
+                start: today - (2 * day),
+                end: today + (6 * day),
+                y: 1,
+                partialFill: {
+                    amount: 0.2
+                }
             }, {
-                start: today.getTime() + (2 * day),
-                end: today.getTime() + (6 * day),
-                taskGroup: 'Test prototype',
-                taskName: 'Test prototype',
+                taskName: 'Inspect building',
+                id: 'inspect_building',
+                dependency: 'prepare_building',
+                parent: 'new_offices',
+                start: today + 6 * day,
+                end: today + 8 * day,
                 y: 2
             }, {
-                id: 'development',
-                start: today.getTime(),
-                end: today.getTime() + (8 * day),
-                y: 3,
-                taskName: 'Develop',
-                taskGroup: 'Develop',
-                dependency: 'start_prototype',
-                partialFill: {
-                    amount: 0.12,
-                    fill: '#fa0'
-                }
+                taskName: 'Passed inspection',
+                id: 'passed_inspection',
+                dependency: 'inspect_building',
+                parent: 'new_offices',
+                start: today + 9.5 * day,
+                milestone: true,
+                y: 3
             }, {
-                id: 'unit_tests',
-                start: today.getTime(),
-                end: today.getTime() + (3 * day),
-                y: 4,
-                parent: 'development',
-                taskGroup: 'Create unit tests',
-                taskName: 'Create unit tests',
-                partialFill: {
-                    amount: 0.5,
-                    fill: '#fa0'
-                }
+                taskName: 'Relocate',
+                id: 'relocate',
+                dependency: 'passed_inspection',
+                parent: 'new_offices',
+                start: today + 10 * day,
+                end: today + 14 * day,
+                y: 4
             }, {
-                id: 'implement',
-                start: today.getTime() + (3 * day),
-                end: today.getTime() + (8 * day),
-                y: 5,
-                taskGroup: 'Implement',
-                parent: 'development',
-                taskName: 'Implement'
+                taskName: 'Relocate staff',
+                id: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 10 * day,
+                end: today + 11 * day,
+                y: 5
             }, {
-                start: today.getTime() + (7 * day),
-                end: today.getTime() + (10 * day),
-                dependency: 'development',
-                taskGroup: 'Run acceptance tests',
-                taskName: 'Run acceptance tests',
+                taskName: 'Relocate test facility',
+                dependency: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 11 * day,
+                end: today + 13 * day,
                 y: 6
+            }, {
+                taskName: 'Relocate cantina',
+                dependency: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 11 * day,
+                end: today + 14 * day,
+                y: 7
             }]
         }, {
-            name: 'Project 2',
-            visible: false,
+            name: 'Product',
             data: [{
-                start: today.getTime() - (2 * day),
-                end: today.getTime(),
-                taskName: 'Create protoype',
-                y: 7
-            }, {
-                start: today.getTime() + day,
-                end: today.getTime() + (3 * day),
-                taskName: 'Write unit tests',
+                taskName: 'New product launch',
+                id: 'new_product',
+                start: today - day,
+                end: today + 18 * day,
                 y: 8
             }, {
-                start: today.getTime() + (4 * day),
-                end: today.getTime() + (9 * day),
-                taskName: 'Develop',
-                y: 9
+                taskName: 'Development',
+                id: 'development',
+                parent: 'new_product',
+                start: today - day,
+                end: today + (11 * day),
+                y: 9,
+                partialFill: {
+                    amount: 0.6,
+                    fill: '#e80'
+                }
             }, {
-                start: today.getTime() + (9 * day),
-                end: today.getTime() + (10 * day),
-                taskName: 'Run user tests',
+                taskName: 'Beta',
+                id: 'beta',
+                dependency: 'development',
+                parent: 'new_product',
+                start: today + 12.5 * day,
+                milestone: true,
                 y: 10
+            }, {
+                taskName: 'Final development',
+                id: 'finalize',
+                dependency: 'beta',
+                parent: 'new_product',
+                start: today + 13 * day,
+                end: today + 17 * day,
+                y: 11
+            }, {
+                taskName: 'Launch',
+                dependency: 'finalize',
+                parent: 'new_product',
+                start: today + 17.5 * day,
+                milestone: true,
+                y: 12
             }]
         }]
     });
