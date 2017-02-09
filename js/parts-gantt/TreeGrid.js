@@ -234,6 +234,7 @@ var toggleCollapse = function (axis, node, pos) {
 };
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
 	var labelBox = label.element.getBBox(),
+		icon = label.treeIcon,
 		labelCenter = {
 			x: labelBox.x + (labelBox.width / 2),
 			y: labelBox.y + (labelBox.height / 2)
@@ -247,15 +248,18 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 			y: iconPosition.y + (radius / 2)
 		},
 		rotation = collapsed ? 90 : 180;
-	label.treeIcon = label.renderer.symbol(
-		'triangle',
-		iconPosition.x,
-		iconPosition.y,
-		radius,
-		radius
-	)
-	.add(label.parentGroup)
-	.attr({
+
+	if (!icon) {
+		label.treeIcon = icon = label.renderer.symbol(
+			'triangle',
+			iconPosition.x,
+			iconPosition.y,
+			radius,
+			radius
+		)
+		.add(label.parentGroup);
+	}
+	icon.attr({
 		'stroke-width': 1,
 		'fill': pick(label.styles.color, '#666'),
 		'transform': 'rotate(' +
