@@ -33,23 +33,14 @@ seriesType('gantt', parentName, {
 		enabled: true,
 		formatter: function () {
 			var point = this,
-				amount = point.point.partialFill,
-				str = pick(point.taskName, point.y);
+				amount = point.point.partialFill;
 
 			if (isObject(amount)) {
 				amount = amount.amount;
 			}
-			if (!defined(amount)) {
-				amount = 0;
+			if (isNumber(amount) && amount > 0) {
+				return (amount * 100) + '%';
 			}
-
-			if (defined(str)) {
-				str += ': ';
-			} else {
-				str = '';
-			}
-
-			return str + (amount * 100) + '%';
 		}
 	},
 	tooltip: {
