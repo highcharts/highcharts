@@ -5,32 +5,34 @@ $(function () {
         title: {
             text: 'Simple Gantt Chart'
         },
-        yAxis: [{
-            categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true
+
+        xAxis: [{
+            min: Date.UTC(2014, 10, 17),
+            max: Date.UTC(2014, 10, 30)
         }],
+
         series: [{
             name: 'Project 1',
             data: [{
+                taskName: 'Start prototype',
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
-                taskGroup: 0,
-                taskName: 'Start prototype'
+                y: 0
             }, {
+                taskName: 'Develop',
                 start: Date.UTC(2014, 10, 20),
                 end: Date.UTC(2014, 10, 25),
-                taskGroup: 1,
-                taskName: 'Develop'
+                y: 1
             }, {
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 29),
-                taskName: 'Test prototype',
-                taskGroup: 0
-            }, {
+                taskName: 'Run acceptance tests',
                 start: Date.UTC(2014, 10, 23),
                 end: Date.UTC(2014, 10, 26),
-                taskName: 'Run acceptance tests',
-                taskGroup: 2
+                y: 2
+            }, {
+                taskName: 'Test prototype',
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 29),
+                y: 3
             }]
         }]
     });

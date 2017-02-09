@@ -10,32 +10,29 @@ $(function () {
             max: Date.UTC(2014, 10, 30),
             currentDateIndicator: true
         },
-        yAxis: [{
-            categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true
-        }],
+
         series: [{
             name: 'Project 1',
             data: [{
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
-                taskGroup: 0,
+                y: 0,
                 taskName: 'Start prototype'
-            }, {
-                start: Date.UTC(2014, 10, 20),
-                end: Date.UTC(2014, 10, 25),
-                taskGroup: 1,
-                taskName: 'Develop'
             }, {
                 start: Date.UTC(2014, 10, 27),
                 end: Date.UTC(2014, 10, 29),
                 taskName: 'Test prototype',
-                taskGroup: 0
+                y: 1
+            }, {
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                y: 2,
+                taskName: 'Develop'
             }, {
                 start: Date.UTC(2014, 10, 23),
                 end: Date.UTC(2014, 10, 26),
                 taskName: 'Run acceptance tests',
-                taskGroup: 2
+                y: 3
             }]
         }, {
             name: 'Project 2',
@@ -43,22 +40,22 @@ $(function () {
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 19),
                 taskName: 'Create protoype',
-                taskGroup: 0
+                y: 4
             }, {
                 start: Date.UTC(2014, 10, 19),
                 end: Date.UTC(2014, 10, 23),
                 taskName: 'Write unit tests',
-                taskGroup: 1
-            }, {
-                start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 28),
-                taskName: 'Run user tests',
-                taskGroup: 2
+                y: 5
             }, {
                 start: Date.UTC(2014, 10, 24),
                 end: Date.UTC(2014, 10, 28),
                 taskName: 'Develop',
-                taskGroup: 1
+                y: 6
+            }, {
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 28),
+                taskName: 'Run user tests',
+                y: 7
             }]
         }]
     });

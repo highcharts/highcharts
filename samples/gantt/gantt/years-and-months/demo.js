@@ -26,10 +26,7 @@ $(function () {
             },
             linkedTo: 0
         }],
-        yAxis: [{
-            categories: ['Prototyping', 'Development', 'Testing'],
-            reversed: true
-        }],
+
         series: [{
             name: 'Project 1',
             dataLabels: {
@@ -39,23 +36,23 @@ $(function () {
             data: [{
                 start: Date.UTC(2014, 4, 18),
                 end: Date.UTC(2014, 11, 25),
-                taskGroup: 0,
+                y: 0,
                 taskName: 'Start prototype'
             }, {
                 start: Date.UTC(2015, 0, 0),
                 end: Date.UTC(2015, 10, 25),
-                taskGroup: 1,
+                y: 1,
                 taskName: 'Develop'
             }, {
                 start: Date.UTC(2015, 0, 0),
                 end: Date.UTC(2015, 3, 0),
                 taskName: 'Test prototype',
-                taskGroup: 0
+                y: 0
             }, {
                 start: Date.UTC(2015, 9, 23),
                 end: Date.UTC(2015, 10, 26),
                 taskName: 'Run acceptance tests',
-                taskGroup: 2
+                y: 2
             }]
         }]
     });
