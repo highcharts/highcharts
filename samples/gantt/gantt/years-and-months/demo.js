@@ -34,25 +34,25 @@ $(function () {
                 inside: false
             },
             data: [{
+                taskName: 'Start prototype',
                 start: Date.UTC(2014, 4, 18),
                 end: Date.UTC(2014, 11, 25),
-                y: 0,
-                taskName: 'Start prototype'
-            }, {
-                start: Date.UTC(2015, 0, 0),
-                end: Date.UTC(2015, 10, 25),
-                y: 1,
-                taskName: 'Develop'
-            }, {
-                start: Date.UTC(2015, 0, 0),
-                end: Date.UTC(2015, 3, 0),
-                taskName: 'Test prototype',
                 y: 0
             }, {
+                taskName: 'Test prototype',
+                start: Date.UTC(2015, 0, 0),
+                end: Date.UTC(2015, 3, 0),
+                y: 1
+            }, {
+                taskName: 'Develop',
+                start: Date.UTC(2015, 0, 0),
+                end: Date.UTC(2015, 10, 25),
+                y: 2
+            }, {
+                taskName: 'Run acceptance tests',
                 start: Date.UTC(2015, 9, 23),
                 end: Date.UTC(2015, 10, 26),
-                taskName: 'Run acceptance tests',
-                y: 2
+                y: 3
             }]
         }]
     });
