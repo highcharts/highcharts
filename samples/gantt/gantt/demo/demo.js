@@ -20,6 +20,17 @@ $(function () {
             min: today - 3 * day,
             max: today + 18 * day
         },
+
+        /*
+        plotOptions: {
+            gantt: {
+                pathfinder: {
+                    type: 'simpleConnect'
+                }
+            }
+        },
+        */
+
         series: [{
             name: 'Offices',
             data: [{
