@@ -138,6 +138,143 @@ var algorithms = {
 	},
 
 	/**
+	 * Find a path from a starting coordinate to an ending coordinate, using
+	 * right angles only, and taking only starting/ending obstacle into 
+	 * consideration.
+	 *
+	 *  Options
+	 *      - chartObstacles:   Array of chart obstacles to avoid
+	 *		- startDirectionX:	Optional. True if starting in the X direction.
+	 *							If not provided, the algorithm starts in the 
+	 *							direction that is the furthest between start/end.
+	 *
+	 * @param {Object} start Starting coordinate, object with x/y props.
+	 * @param {Object} end Ending coordinate, object with x/y props.
+	 * @param {Object} options Options for the algorithm.
+	 *
+	 * @return {Object} result An object with the SVG path in Array form as
+	 * 	accepted by the SVG renderer, as well as an array of new obstacles 
+	 *  making up this path.
+	 */
+	simpleConnect: H.extend(function (start, end, options) {
+		var segments = [],
+			endSegment,
+			dir = pick(
+				options.startDirectionX,
+				abs(end.x - start.x) > abs(end.y - start.y)
+			) ? 'x' : 'y',
+			chartObstacles = options.chartObstacles,
+			startObstacleIx = findObstacleFromPoint(chartObstacles, start),
+			endObstacleIx = findObstacleFromPoint(chartObstacles, end),
+			startObstacle,
+			endObstacle,
+			prevWaypoint,
+			waypoint,
+			waypoint2,
+			useMax,
+			endPoint;
+
+		// Return a clone of a point with a property set from a target object,
+		// optionally with an offset
+		function copyFromPoint(from, fromKey, to, toKey, offset) {
+			var point = {
+				x: from.x,
+				y: from.y
+			};
+			point[fromKey] = to[toKey || fromKey] + (offset || 0);
+			return point;
+		}
+
+		// Return waypoint outside obstacle
+		function getMeOut(obstacle, point, direction) {
+			var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
+						abs(point[direction] - obstacle[direction + 'Max']);
+			return copyFromPoint(
+				point, 
+				direction,
+				obstacle, 
+				direction + (useMax ? 'Max' : 'Min'),
+				useMax ? 1 : -1
+			);
+		}
+
+		// Pull out end point
+		if (endObstacleIx > -1) {
+			endObstacle = chartObstacles[endObstacleIx];
+			waypoint = getMeOut(endObstacle, end, dir);
+			endSegment = {
+				start: waypoint,
+				end: end
+			};
+			endPoint = waypoint;
+		} else {
+			endPoint = end;
+		}
+
+		// If an obstacle envelops the start point, add a segment to get out,
+		// and around it.
+		if (startObstacleIx > -1) {
+			startObstacle = chartObstacles[startObstacleIx];
+			waypoint = getMeOut(startObstacle, start, dir);
+			segments.push({
+				start: start,
+				end: waypoint
+			});
+
+			// If we are going back again, switch direction to get around start
+			// obstacle.
+			if (
+				waypoint[dir] > start[dir] === 	// Going towards max from start
+				waypoint[dir] > endPoint[dir] 	// Going towards min to end
+			) {
+				dir = dir === 'y' ? 'x' : 'y';
+				useMax = start[dir] < end[dir];
+				segments.push({
+					start: waypoint,
+					end: copyFromPoint(
+						waypoint,
+						dir,
+						startObstacle,
+						dir + (useMax ? 'Max' : 'Min'),
+						useMax ? 1 : -1
+					)
+				});
+
+				// Switch direction again
+				dir = dir === 'y' ? 'x' : 'y';
+			}
+		}
+
+		// We are around the start obstacle. Go towards the end in one direction.
+		prevWaypoint = segments.length ?
+			segments[segments.length - 1].end :
+			start;
+		waypoint = copyFromPoint(prevWaypoint, dir, endPoint);
+		segments.push({
+			start: prevWaypoint,
+			end: waypoint
+		});
+
+		// Final run to end point in the other direction
+		dir = dir === 'y' ? 'x' : 'y';
+		waypoint2 = copyFromPoint(waypoint, dir, endPoint);
+		segments.push({
+			start: waypoint,
+			end: waypoint2
+		});
+
+		// Finally add the endSegment
+		segments.push(endSegment);
+
+		return {
+			path: pathFromSegments(segments),
+			obstacles: segments
+		};
+	}, {
+		requiresObstacles: true
+	}),
+
+	/**
 	 * Find a path from a starting coordinate to an ending coordinate, taking 
 	 * obstacles into consideration. Might not always find the optimal path, 
 	 * but is fast, and usually good enough.
@@ -542,8 +679,7 @@ var algorithms = {
 
 		// If an obstacle envelops the end point, move it out of there and add
 		// a little segment to where it was.
-		if ((endObstacleIx = findObstacleFromPoint(chartObstacles, end, 
-				options, options.obstacleOptions)) > -1) {
+		if ((endObstacleIx = findObstacleFromPoint(chartObstacles, end)) > -1) {
 			extractedEndPoint = extractFromObstacle(
 				chartObstacles[endObstacleIx],
 				end,
@@ -557,8 +693,7 @@ var algorithms = {
 		}
 		// If it's still inside one or more obstacles, get out of there by
 		// force-moving towards the start point.
-		while ((endObstacleIx = findObstacleFromPoint(chartObstacles, end, 
-				options, options.obstacleOptions)) > -1) {
+		while ((endObstacleIx = findObstacleFromPoint(chartObstacles, end)) > -1) {
 			useMax = end[dir] - start[dir] < 0;
 			extractedEndPoint = {
 				x: end.x,
