@@ -9,6 +9,7 @@ import H from '../parts/Globals.js';
 import '../parts/Point.js';
 import '../parts/Utilities.js';
 import pathfinderAlgorithms from 'PathfinderAlgorithms.js';
+import 'ArrowSymbols.js';
 
 var defined = H.defined,
 	deg2rad = H.deg2rad,
@@ -44,7 +45,7 @@ extend(H.defaultOptions, {
 		endMarker: {
 			symbol: 'arrow-filled'
 		},
-		lineWidth: 1		
+		lineWidth: 1
 	}
 });
 
@@ -319,11 +320,11 @@ Pathfinder.prototype = {
 	 *
 	 * @param {Object} markerOptions Marker options to calculate from.
 	 *
-	 * @return {Boolean} result Returns true for X, false for Y, and undefined 
+	 * @return {Boolean} result Returns true for X, false for Y, and undefined
 	 *							for autocalculate.
 	 */
 	getAlgorithmStartDirection: function (markerOptions) {
-		var xCenter = markerOptions.align !== 'left' && 
+		var xCenter = markerOptions.align !== 'left' &&
 						markerOptions.align !== 'right',
 			yCenter = markerOptions.verticalAlign !== 'top' &&
 						markerOptions.verticalAlign !== 'bottom',
@@ -696,109 +697,6 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 		this.addMarker('end', options.endMarker, path, toPoint, toAnchor);
 	}
 });
-
-/**
- * Creates an arrow symbol. Like a triangle, except not filled.
- *                   o
- *             o
- *       o
- * o
- *       o
- *             o
- *                   o
- * @param  {number} x x position of the arrow
- * @param  {number} y y position of the arrow
- * @param  {number} w width of the arrow
- * @param  {number} h height of the arrow
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
-	return [
-		'M', x, y + h / 2,
-		'L', x + w, y,
-		'L', x, y + h / 2,
-		'L', x + w, y + h
-	];
-};
-
-/**
- * Creates a half-width arrow symbol. Like a triangle, except not filled.
- *       o
- *    o
- * o
- *    o
- *       o
- * @param  {number} x x position of the arrow
- * @param  {number} y y position of the arrow
- * @param  {number} w width of the arrow
- * @param  {number} h height of the arrow
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
-	return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
-};
-
-/**
- * Creates a left-oriented triangle.
- *             o
- *       ooooooo
- * ooooooooooooo
- *       ooooooo
- *             o
- * @param  {number} x x position of the triangle
- * @param  {number} y y position of the triangle
- * @param  {number} w width of the triangle
- * @param  {number} h height of the triangle
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
-	return [
-		'M', x + w, y,
-		'L', x, y + h / 2,
-		'L', x + w, y + h,
-		'Z'
-	];
-};
-
-/**
- * Alias function for triangle-left.
- * @param  {number} x x position of the arrow
- * @param  {number} y y position of the arrow
- * @param  {number} w width of the arrow
- * @param  {number} h height of the arrow
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols['arrow-filled'] =
-		H.SVGRenderer.prototype.symbols['triangle-left'];
-
-/**
- * Creates a half-width, left-oriented triangle.
- *       o
- *    oooo
- * ooooooo
- *    oooo
- *       o
- * @param  {number} x x position of the triangle
- * @param  {number} y y position of the triangle
- * @param  {number} w width of the triangle
- * @param  {number} h height of the triangle
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
-	return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
-};
-
-/**
- * Alias function for triangle-left-half.
- * @param  {number} x x position of the arrow
- * @param  {number} y y position of the arrow
- * @param  {number} w width of the arrow
- * @param  {number} h height of the arrow
- * @return {Array}   Path array
- */
-H.SVGRenderer.prototype.symbols['arrow-filled-half'] =
-		H.SVGRenderer.prototype.symbols['triangle-left-half'];
-
 
 // Initialize Pathfinder for charts
 H.Chart.prototype.callbacks.push(function (chart) {
