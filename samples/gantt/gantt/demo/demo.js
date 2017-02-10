@@ -46,7 +46,7 @@ $(function () {
                 start: today - (2 * day),
                 end: today + (6 * day),
                 y: 1,
-                partialFill: {
+                completed: {
                     amount: 0.2
                 }
             }, {
@@ -110,7 +110,7 @@ $(function () {
                 start: today - day,
                 end: today + (11 * day),
                 y: 9,
-                partialFill: {
+                completed: {
                     amount: 0.6,
                     fill: '#e80'
                 }
