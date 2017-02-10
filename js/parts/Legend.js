@@ -199,7 +199,17 @@ Legend.prototype = {
 			each(['legendItem', 'legendGroup'], destroyItems, item);
 		});
 
-		each(['box', 'title', 'group'], destroyItems, this);
+		// Destroy legend elements
+		each([
+			'clipRect',
+			'up',
+			'down',
+			'pager',
+			'nav',
+			'box',
+			'title',
+			'group'
+		], destroyItems, this);
 		this.display = null; // Reset in .render on update.
 	},
 
