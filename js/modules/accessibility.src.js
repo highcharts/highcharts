@@ -849,6 +849,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
 		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
+		chartHeading = doc.createElement('h4'),
 		hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
 			position: 'absolute',
 			left: '-9999px',
@@ -890,9 +891,15 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		tableShortcut.appendChild(tableShortcutAnchor);
 		hiddenSection.appendChild(tableShortcut);
 	}
-
-	// Insert and hide the information section
+	
+	// Note: JAWS seems to refuse to read aria-label on the container, so add an
+	// h4 element as title for the chart.
+	chartHeading.innerHTML = 'Chart graphic.';
+	chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
 	chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
+
+	// Hide the section and the chart heading
+	merge(true, chartHeading.style, hiddenStyle);
 	merge(true, hiddenSection.style, hiddenStyle);
 };
 
@@ -900,7 +907,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 // Make chart container accessible, and wrap table functionality
 H.Chart.prototype.callbacks.push(function (chart) {
 	var options = chart.options,
-		a11yOptions = options.accessibility;			
+		a11yOptions = options.accessibility;
 
 	if (!a11yOptions.enabled) {
 		return;
@@ -923,7 +930,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
 	chart.container.setAttribute('aria-details', hiddenSectionId);
-	chart.container.setAttribute('aria-label', 'Chart graphic');
 	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
 		'. Use up and down arrows to navigate with most screen readers.');
 
