@@ -847,9 +847,8 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		options = chart.options,
 		a11yOptions = options.accessibility,
 		hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
-		tableShortcut = doc.createElement('h3'),
+		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
-		chartHeading = doc.createElement('h3'),
 		hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
 			position: 'absolute',
 			left: '-9999px',
@@ -869,11 +868,11 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 		'<div>Use regions/landmarks to skip ahead to chart' +
-		(series.length > 1 ? ' and navigate between data series' : '') + 
-		'.</div><h3>Summary.</h3><div>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
+		(series.length > 1 ? ' and navigate between data series' : '') +
+		'.</div><h3>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
 		(options.subtitle && options.subtitle.text ? '. ' + htmlencode(options.subtitle.text) : '') +
-		'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
-		'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
+		'</h3><h4>Long description.</h4><div>' + (options.chart.description || 'No description available.') +
+		'</div><h4>Structure.</h4><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 		(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
 			(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
@@ -889,16 +888,11 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 			doc.getElementById(tableId).focus();
 		};
 		tableShortcut.appendChild(tableShortcutAnchor);
-
 		hiddenSection.appendChild(tableShortcut);
 	}
-	
-	chartHeading.innerHTML = 'Chart graphic.';
-	chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
-	chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
 
-	// Hide the section and the chart heading
-	merge(true, chartHeading.style, hiddenStyle);
+	// Insert and hide the information section
+	chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
 	merge(true, hiddenSection.style, hiddenStyle);
 };
 
@@ -928,7 +922,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.renderTo.setAttribute('aria-details', hiddenSectionId);
+	chart.container.setAttribute('aria-details', hiddenSectionId);
+	chart.container.setAttribute('aria-label', 'Chart graphic');
 	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
 		'. Use up and down arrows to navigate with most screen readers.');
 
