@@ -272,35 +272,16 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 	var axis = this,
 		axisOffset = axis.chart.axisOffset,
 		side = axis.side,
-		axisHeight,
-		tickSize,
-		options = axis.options,
-		axisTitleOptions = options.title,
-		addTitle = axisTitleOptions &&
-				axisTitleOptions.text &&
-				axisTitleOptions.enabled !== false;
+		tickSize;
 
-	if (axis.options.grid && isObject(axis.options.title)) {
-
-		tickSize = axis.tickSize('tick')[0];
-		if (axisOffset[side] && tickSize) {
-			axisHeight = axisOffset[side] + tickSize;
-		}
-
-		if (addTitle) {
-			// Use the custom addTitle() to add it, while preventing making room
-			// for it
-			axis.addTitle();
-		}
+	if (axis.options.grid) {
 
 		proceed.apply(axis, argsToArray(arguments));
 
-		axisOffset[side] = pick(axisHeight, axisOffset[side]);
-
-
-		// Put axis options back after original Axis.getOffset() has been called
-		options.title = axisTitleOptions;
-
+		// Calculate tick size and see if it's larger than the calculated axis
+		// offset.
+		tickSize = axis.tickSize('tick')[0];
+		axisOffset[side] = Math.max(axisOffset[side], tickSize);
 	} else {
 		proceed.apply(axis, argsToArray(arguments));
 	}
