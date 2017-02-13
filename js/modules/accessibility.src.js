@@ -357,8 +357,13 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	var series = this.series,
 		curPoint = this.highlightedPoint,
 		curPointIndex = curPoint && curPoint.index || 0,
+		curPoints = curPoint && curPoint.series.points,
 		newSeries,
-		newPoint;
+		newPoint,
+		// Handle connecting ends - where the points array has an extra last
+		// point that is a reference to the first one. We skip this.
+		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
+							curPointIndex > curPoints.length - 3 ? 2 : 1;
 
 	// If no points, return false
 	if (!series[0] || !series[0].points) {
@@ -371,18 +376,23 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	}
 
 	// Find index of current point in series.points array. Necessary for dataGrouping (and maybe zoom?)
-	if (curPoint.series.points[curPointIndex] !== curPoint) {
-		for (var i = 0; i < curPoint.series.points.length; ++i) {
-			if (curPoint.series.points[i] === curPoint) {
+	if (curPoints[curPointIndex] !== curPoint) {
+		for (var i = 0; i < curPoints.length; ++i) {
+			if (curPoints[i] === curPoint) {
 				curPointIndex = i;
 				break;
 			}
 		}
 	}
 
-	// Try to grab next/prev point
+	// Grab next/prev point & series
 	newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-	newPoint = curPoint.series.points[curPointIndex + (next ? 1 : -1)] || newSeries && newSeries.points[next ? 0 : newSeries.points.length - 1];
+	newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
+				// Done with this series, try next one
+				newSeries &&
+				newSeries.points[next ? 0 : newSeries.points.length - (
+					newSeries.connectEnds ? 2 : 1
+				)];
 
 	// If there is no adjacent point, we return false
 	if (newPoint === undefined) {
@@ -828,10 +838,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	chart.keyboardNavigationModuleIndex = 0;
 
 	// Make chart reachable by tab
-	if (!chart.renderTo.tabIndex) {
-		chart.renderTo.setAttribute('tabindex', '0');
+	if (
+		chart.container.hasAttribute &&
+		!chart.container.hasAttribute('tabIndex')
+	) {
+		chart.container.setAttribute('tabindex', '0');
 	}
-	
+
 	// Handle keyboard events
 	addEvent(chart.renderTo, 'keydown', keydownHandler);
 	addEvent(chart, 'destroy', function () {
