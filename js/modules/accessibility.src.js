@@ -164,7 +164,7 @@ H.Series.prototype.setA11yDescription = function () {
 
 // Return string with information about series
 H.Series.prototype.buildSeriesInfoString = function () {
-	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap.default,
+	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap['default'], // eslint-disable-line dot-notation
 		description = this.description || this.options.description;
 	return (this.name ? this.name + ', ' : '') +
 		(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
@@ -861,7 +861,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		chartTypes = chart.types || [],
 		// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
 		axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),
-		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
+		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap['default']; // eslint-disable-line dot-notation
 
 	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
