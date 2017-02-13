@@ -865,7 +865,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 
 	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
-	hiddenSection.setAttribute('aria-label', 'Interactive chart screen reader information.');
+	hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
 		'<div>Use regions/landmarks to skip ahead to chart' +
@@ -929,7 +929,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
 	chart.renderTo.setAttribute('aria-details', hiddenSectionId);
-	chart.renderTo.setAttribute('aria-label', chartTitle + '. Use up and down arrows to navigate.');
+	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
+		'. Use up and down arrows to navigate with most screen readers.');
 
 	// Set screen reader properties on export menu
 	if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
