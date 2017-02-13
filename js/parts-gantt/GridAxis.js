@@ -14,7 +14,6 @@ var argsToArray = function (args) {
 	each = H.each,
 	isArray = H.isArray,
 	isNumber = H.isNumber,
-	isObject = H.isObject,
 	pick = H.pick,
 	wrap = H.wrap,
 	Axis = H.Axis,
