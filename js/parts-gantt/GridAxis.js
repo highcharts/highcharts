@@ -38,9 +38,7 @@ var axisSide = {
  * @return {Boolean} true if axis is found in axis.chart.navigator
  */
 Axis.prototype.isNavigatorAxis = function () {
-	var axis = this,
-		navigator = axis.chart.navigator;
-	return navigator && (navigator.xAxis === axis || navigator.yAxis === axis);
+	return /highcharts-navigator-[xy]axis/.test(this.options.className);
 };
 
 /**
