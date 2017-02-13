@@ -114,7 +114,7 @@ function reverseChildNodes(node) {
 // Utility function to attempt to fake a click event on an element
 function fakeClickEvent(element) {
 	var fakeEvent;
-	if (element && element.onclick) {
+	if (element && element.onclick && doc.createEvent) {
 		fakeEvent = doc.createEvent('Events');
 		fakeEvent.initEvent('click', true, false);
 		element.onclick(fakeEvent);
