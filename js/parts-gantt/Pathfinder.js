@@ -143,32 +143,17 @@ Pathfinder.prototype = {
 
 		// Recalculate paths/obstacles on chart redraw
 		addEvent(chart, 'redraw', function () {
-			if (this.pathfinder.isDirty) {
-				this.pathfinder.update(); // Go through options structure
-			} else {
-				this.pathfinder.renderConnections(); // Just render
-			}
-		});
+			var pathfinder = this.pathfinder,
+				animDuration = this.renderer.globalAnimation &&
+					H.animObject(this.renderer.globalAnimation).duration;
 
-		// Set pathfinder to dirty for dynamic events
-		each([
-			'update',
-			'addSeries',
-			'removeSeries'
-		], function (e) {
-			addEvent(chart, e, function () {
-				this.pathfinder.isDirty = true;
-			});
-		});
-		each(chart.series, function (series) {
-			each([
-				'update',
-				'updatedData'
-			], function (e) {
-				addEvent(series, e, function () {
-					this.chart.pathfinder.isDirty = true;
-				});
-			});
+			// Clear immediately
+			pathfinder.clear();
+
+			// Update after animation
+			this.pathfinder.updateTimeout = H.syncTimeout(function () {
+				pathfinder.update();
+			}, animDuration);
 		});
 	},
 
@@ -183,37 +168,39 @@ Pathfinder.prototype = {
 		// Find the points and their mate and cache this information
 		pathfinder.connections = [];
 		while (i--) {
-			each(chart.series[i].points, function (point) {
-				var connect = point.options.connect,
-					to;
-				if (connect) {
-					to = chart.get(typeof connect === 'string' ?
-						connect : connect.to
-					);
-					if (to instanceof H.Point) {
-						// We store start/end/options for each connection to be
-						// picked up in drawConnections
-						pathfinder.connections.push([
-							point,
-							to,
-							typeof connect === 'string' ? {} : connect
-						]);
+			if (chart.series[i].visible) {
+				each(chart.series[i].points, function (point) {
+					var connect = point.options.connect,
+						to;
+					if (point.visible && connect) {
+						to = chart.get(typeof connect === 'string' ?
+							connect : connect.to
+						);
+						if (to instanceof H.Point && to.series.visible && to.visible) {
+							// We store start/end/options for each connection to
+							// be picked up in drawConnections
+							pathfinder.connections.push([
+								point,
+								to,
+								typeof connect === 'string' ? {} : connect
+							]);
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 
-		// Clear dirty flag for now
-		pathfinder.isDirty = false;
+		// Clear connections
+		pathfinder.clear();
 
 		// Draw the pending connections
 		pathfinder.renderConnections();
 	},
 
 	/**
-	 * Draw the chart's connecting paths.
+	 * Clear the pathfinder - destroy connecting paths and obstacles.
 	 */
-	renderConnections: function () {
+	clear: function () {
 		// Clear existing connections
 		var i = this.paths.length;
 		while (i--) {
@@ -222,11 +209,16 @@ Pathfinder.prototype = {
 		this.paths = [];
 
 		// Clear obstacles to force recalculation. This must be done on every
-		// redraw in case positions have changed. This is handled in
+		// redraw in case positions have changed. Recalculation is handled in
 		// Point.pathTo on demand.
 		delete this.chartObstacles;
 		delete this.lineObstacles;
+	},
 
+	/**
+	 * Draw the chart's connecting paths.
+	 */
+	renderConnections: function () {
 		// Draw connections. Arrays are faster than objects, thus the clumsy
 		// syntax. Mapping is [startPoint, endPoint, options].
 		each(this.connections, function (connection) {
