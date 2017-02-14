@@ -766,7 +766,7 @@ SVGElement.prototype = {
 
 			if (elemWrapper.added) {
 
-				rebuildKey = [textWidth, styles.textOverflow].join(',');
+				rebuildKey = [textWidth, styles && styles.textOverflow].join(',');
 
 				// Rebuild text after added
 				if (rebuildKey !== elemWrapper.rebuildKey) {
