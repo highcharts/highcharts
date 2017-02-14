@@ -70,6 +70,7 @@ H.Axis.prototype = {
 			month: '%b \'%y',
 			year: '%Y'
 		},
+		endOfMonth: false,
 		endOnTick: false,
 		// reversed: false,
 

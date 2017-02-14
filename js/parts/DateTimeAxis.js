@@ -34,6 +34,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		i,
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
+		endOfMonth = this.options.endOfMonth,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
 		makeTime = Date.hcMakeTime,
@@ -127,7 +128,8 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 			// if the interval is months, use Date.UTC to increase months
 			} else if (interval === timeUnits.month) {
-				time = makeTime(minYear, minMonth + i * count);
+				var minDay = endOfMonth ? 0 : 1;
+				time = makeTime(minYear, minMonth + i * count, minDay);
 
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
