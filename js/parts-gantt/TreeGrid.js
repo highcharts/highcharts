@@ -352,12 +352,11 @@ override(GridAxisTick.prototype, {
 			label = tick.label,
 			treeGridMap = axis.treeGridMap,
 			options = axis.options,
-			node,
-			isTreeGrid = options.type === 'tree-grid' && index >= 0,
+			node = treeGridMap && treeGridMap[pos],
+			isTreeGrid = options.type === 'tree-grid' && node && index >= 0,
 			hasLabel = label && label.element;
 
 		if (isTreeGrid) {
-			node = treeGridMap[pos];
 			xy.x += iconSize + iconSpacing + ((node.depth - 1) * indentPx);
 
 			if (hasLabel) {
