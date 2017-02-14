@@ -90,7 +90,7 @@ seriesType('gantt', parentName, {
 		}
 	},
 	pathfinder: {
-		type: 'fastAvoid', // TODO change to 'fastAvoid' when done
+		type: 'simpleConnect', // TODO: Set to 'fastAvoid' when not crashing
 		startMarker: {
 			enabled: true,
 			symbol: 'arrow',
