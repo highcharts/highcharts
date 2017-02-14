@@ -590,6 +590,13 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			),
 			algorithm = pathfinder.algorithms[options.type];
 
+		if (typeof algorithm !== 'function') {
+			H.error(
+				'"' + options.type + '" is not a Pathfinder algorithm.'
+			);
+			return;
+		}
+
 		// This function calculates obstacles on demand if they don't exist
 		if (algorithm.requiresObstacles && !chartObstacles) {
 			chartObstacles =
