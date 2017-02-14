@@ -13,6 +13,7 @@ var merge = H.merge,
 	Axis = H.Axis,
 	PlotLineOrBand = H.PlotLineOrBand,
 	defaultConfig = {
+		currentDateIndicator: true,
 		color: '#FF0000',
 		width: 2,
 		label: {
@@ -52,13 +53,12 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 
 wrap(PlotLineOrBand.prototype, 'render', function (proceed) {
 	var plotLoB = this,
-		axis = plotLoB.axis,
 		options = plotLoB.options,
 		format = options.label.format,
 		formatter = options.label.formatter,
-		cdiOptions = axis.options.currentDateIndicator;
+		currentDateIndicator = options.currentDateIndicator;
 
-	if (cdiOptions) {
+	if (currentDateIndicator) {
 		options.value = new Date();
 		if (typeof formatter === 'function') {
 			options.label.text = formatter(plotLoB);
@@ -66,6 +66,7 @@ wrap(PlotLineOrBand.prototype, 'render', function (proceed) {
 			options.label.text = H.dateFormat(format, new Date());
 		}
 	}
+
 	return proceed.apply(plotLoB, Array.prototype.slice.call(arguments, 1));
 });
 
