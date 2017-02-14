@@ -233,16 +233,15 @@ var toggleCollapse = function (axis, node, pos) {
 	}
 };
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
-	console.log('@renderLabelIcon');
 	var labelBox = label.element.getBBox(),
 		icon = label.treeIcon,
 		labelCenter = {
-			x: labelBox.x + (labelBox.width / 2),
-			y: labelBox.y + (labelBox.height / 2)
+			x: label.xy.x + (labelBox.width / 2),
+			y: label.xy.y
 		},
 		iconPosition = {
 			x: labelCenter.x - radius - (labelBox.width / 2) - spacing,
-			y: labelCenter.y - (radius / 2)
+			y: labelCenter.y - (radius)
 		},
 		iconCenter = {
 			x: iconPosition.x + (radius / 2),
@@ -265,9 +264,9 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 		'stroke-width': 1,
 		'fill': pick(label.styles.color, '#666'),
 		'transform': 'rotate(' +
-		rotation + ', ' +
-		iconCenter.x + ', ' +
-		iconCenter.y +
+			rotation + ', ' +
+			iconCenter.x + ', ' +
+			iconCenter.y +
 		')'
 	});
 };
