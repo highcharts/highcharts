@@ -697,7 +697,6 @@ SVGElement.prototype = {
 			serializedCss = '',
 			hyphenate,
 			hasNew = !oldStyles,
-			rebuildKey,
 			// These CSS properties are interpreted internally by the SVG
 			// renderer, but are not supported by SVG and should not be added to
 			// the DOM. In styled mode, no CSS should find its way to the DOM
@@ -766,12 +765,9 @@ SVGElement.prototype = {
 
 			if (elemWrapper.added) {
 
-				rebuildKey = [textWidth, styles && styles.textOverflow].join(',');
-
-				// Rebuild text after added
-				if (rebuildKey !== elemWrapper.rebuildKey) {
-					elemWrapper.renderer.buildText(elemWrapper);
-				}
+				// Rebuild text after added. Cache mechanisms in the buildText
+				// will prevent building if there are no significant changes.
+				elemWrapper.renderer.buildText(elemWrapper);
 
 				// Apply text outline after added
 				if (styles && styles.textOutline) {
@@ -779,8 +775,6 @@ SVGElement.prototype = {
 				}
 			}
 		}
-
-		elemWrapper.rebuildKey = rebuildKey;
 
 		return elemWrapper;
 	},
