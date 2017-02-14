@@ -10,7 +10,7 @@ import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
 import '../modules/static-scale.src.js';
 import 'TreeGrid.js';
-import 'pathfinder.js';
+import 'Pathfinder.js';
 import 'XRangeSeries.js';
 
 var dateFormat = H.dateFormat,
