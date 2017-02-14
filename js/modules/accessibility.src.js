@@ -114,7 +114,7 @@ function reverseChildNodes(node) {
 // Utility function to attempt to fake a click event on an element
 function fakeClickEvent(element) {
 	var fakeEvent;
-	if (element && element.onclick) {
+	if (element && element.onclick && doc.createEvent) {
 		fakeEvent = doc.createEvent('Events');
 		fakeEvent.initEvent('click', true, false);
 		element.onclick(fakeEvent);
@@ -164,7 +164,7 @@ H.Series.prototype.setA11yDescription = function () {
 
 // Return string with information about series
 H.Series.prototype.buildSeriesInfoString = function () {
-	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap.default,
+	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap['default'], // eslint-disable-line dot-notation
 		description = this.description || this.options.description;
 	return (this.name ? this.name + ', ' : '') +
 		(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
@@ -841,7 +841,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 
 // Add screen reader region to chart.
 // tableId is the HTML id of the table to focus when clicking the table anchor in the screen reader region.
-H.Chart.prototype.addScreenReaderRegion = function (tableId) {
+H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	var	chart = this,
 		series = chart.series,
 		options = chart.options,
@@ -861,13 +861,14 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 		chartTypes = chart.types || [],
 		// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
 		axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),
-		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
+		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap['default']; // eslint-disable-line dot-notation
 
+	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
 	hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
-		'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
+		'<div>Use regions/landmarks to skip ahead to chart' +
 		(series.length > 1 ? ' and navigate between data series' : '') + 
 		'.</div><h3>Summary.</h3><div>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
 		(options.subtitle && options.subtitle.text ? '. ' + htmlencode(options.subtitle.text) : '') +
@@ -917,6 +918,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		textElements = chart.container.getElementsByTagName('text'),
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
+		hiddenSectionId = 'highcharts-information-region-' + chart.index,
 		chartTitle = options.title.text || 'Chart',
 		oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
 		topLevelColumns = [];
@@ -926,7 +928,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.renderTo.setAttribute('aria-label', chartTitle + '. Use up and down arrows to navigate.');
+	chart.renderTo.setAttribute('aria-details', hiddenSectionId);
+	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
+		'. Use up and down arrows to navigate with most screen readers.');
 
 	// Set screen reader properties on export menu
 	if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
@@ -963,7 +967,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	});
 
 	// Add top-secret screen reader region
-	chart.addScreenReaderRegion(tableId);
+	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
 	// Enable keyboard navigation
 	if (a11yOptions.keyboardNavigation) {

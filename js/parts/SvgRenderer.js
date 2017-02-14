@@ -697,6 +697,7 @@ SVGElement.prototype = {
 			serializedCss = '',
 			hyphenate,
 			hasNew = !oldStyles,
+			rebuildKey,
 			// These CSS properties are interpreted internally by the SVG
 			// renderer, but are not supported by SVG and should not be added to
 			// the DOM. In styled mode, no CSS should find its way to the DOM
@@ -718,9 +719,6 @@ SVGElement.prototype = {
 			}
 		}
 		if (hasNew) {
-			textWidth = elemWrapper.textWidth =
-				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) ||
-				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
@@ -729,6 +727,15 @@ SVGElement.prototype = {
 					newStyles
 				);
 			}
+
+			// Get the text width from style
+			textWidth = elemWrapper.textWidth = (
+				styles &&
+				styles.width &&
+				styles.width !== 'auto' &&
+				elem.nodeName.toLowerCase() === 'text' &&
+				pInt(styles.width)
+			);
 
 			// store object
 			elemWrapper.styles = styles;
@@ -758,8 +765,11 @@ SVGElement.prototype = {
 
 
 			if (elemWrapper.added) {
+
+				rebuildKey = [textWidth, styles.textOverflow].join(',');
+
 				// Rebuild text after added
-				if (textWidth) {
+				if (rebuildKey !== elemWrapper.rebuildKey) {
 					elemWrapper.renderer.buildText(elemWrapper);
 				}
 
@@ -769,6 +779,8 @@ SVGElement.prototype = {
 				}
 			}
 		}
+
+		elemWrapper.rebuildKey = rebuildKey;
 
 		return elemWrapper;
 	},
@@ -3424,7 +3436,7 @@ SVGRenderer.prototype = {
 
 		// only change local variables
 		wrapper.widthSetter = function (value) {
-			width = value;
+			width = H.isNumber(value) ? value : null; // width:auto => null
 		};
 		wrapper.heightSetter = function (value) {
 			height = value;
