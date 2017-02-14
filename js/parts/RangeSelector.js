@@ -142,7 +142,7 @@ RangeSelector.prototype = {
 			newMin = Math.max(newMax - range, dataMin);
 			newMax = Math.min(newMin + range, dataMax);
 		
-		} else if (type === 'ytd') {
+		} else if (type === 'ytd' || type === 'financial_ytd') {
 
 			// On user clicks on the buttons, or a delayed action running from the beforeRender
 			// event (below), the baseAxis is defined.
@@ -161,7 +161,7 @@ RangeSelector.prototype = {
 					});
 					redraw = false;
 				}
-				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC);
+				ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC, type === 'financial_ytd');
 				newMin = rangeMin = ytdExtremes.min;
 				newMax = ytdExtremes.max;
 
@@ -304,7 +304,7 @@ RangeSelector.prototype = {
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
-			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC),
+			ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, useUTC, false),
 			ytdMin = ytdExtremes.min,
 			ytdMax = ytdExtremes.max,
 			selected = rangeSelector.selected,
@@ -619,11 +619,21 @@ RangeSelector.prototype = {
 	 * @param  {number} dataMin
 	 * @return {object} Returns min and max for the YTD
 	 */
-	getYTDExtremes: function (dataMax, dataMin, useUTC) {
-		var min,
+	getYTDExtremes: function (dataMax, dataMin, useUTC, financial) {
+		var rangeSelector = this,
+			data = rangeSelector.chart.series[0].xData, 
+			min,
 			now = new HCDate(dataMax),
 			year = now[HCDate.hcGetFullYear](),
 			startOfYear = useUTC ? HCDate.UTC(year, 0, 1) : +new HCDate(year, 0, 1); // eslint-disable-line new-cap
+
+		if (financial) {
+			data = data.filter(function (d) {
+				return d < startOfYear;
+			});
+			startOfYear = data[data.length - 1];
+		}
+
 		min = Math.max(dataMin || 0, startOfYear);
 		now = now.getTime();
 		return {
