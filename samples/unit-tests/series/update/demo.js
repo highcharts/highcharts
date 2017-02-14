@@ -35,3 +35,53 @@ QUnit.test('Navigator series\' should keep it\'s position in series array, even 
         'Correct zIndexes after update'
     );
 });
+
+
+QUnit.test(
+    'Updating types, new type lost after second update (#2322)',
+    function (assert) {
+        var data = [
+            [0, 1, 2, 3, 4]
+        ];
+
+        var chart = Highcharts.chart('container', {
+            series: [{
+                type: 'candlestick',
+                data: [
+                    [0, 4.11, 4.12, 4.50, 4.07]
+                ],
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].pointArrayMap.toString(),
+            'open,high,low,close',
+            'OHLC point array map'
+        );
+
+        // Update type and data at the same time
+        chart.series[0].update({
+            data: data,
+            type: 'line'
+        }, true);
+
+        assert.strictEqual(
+            chart.series[0].pointArrayMap,
+            undefined,
+            'No point array map on base Series'
+        );
+
+        // Repeat: Update type and data at the same time
+        chart.series[0].update({
+            data: data,
+            type: 'line'
+        }, true);
+
+        assert.strictEqual(
+            chart.series[0].pointArrayMap,
+            undefined,
+            'No point array map on base Series'
+        );
+
+    }
+);

@@ -584,7 +584,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
-			oldType = this.type,
+			oldType = this.oldType || this.type,
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -622,6 +622,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		});
 
 		this.init(chart, newOptions);
+		this.oldType = oldType;
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
 		if (pick(redraw, true)) {
 			chart.redraw(false);
