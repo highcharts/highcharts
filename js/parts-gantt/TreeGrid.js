@@ -14,7 +14,7 @@ var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	indentPx = 10,
-	iconSize = 7,
+	iconRadius = 5,
 	iconSpacing = 5,
 	each = H.each,
 	extend = H.extend,
@@ -233,42 +233,54 @@ var toggleCollapse = function (axis, node, pos) {
 	}
 };
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
-	var labelBox = label.element.getBBox(),
+	var labelBox = label.xy,
 		icon = label.treeIcon,
-		labelCenter = {
-			x: label.xy.x + (labelBox.width / 2),
-			y: label.xy.y
-		},
 		iconPosition = {
-			x: labelCenter.x - radius - (labelBox.width / 2) - spacing,
-			y: labelCenter.y - (radius)
+			x: labelBox.x - (radius * 2) - spacing,
+			y: labelBox.y - (radius * 2)
 		},
 		iconCenter = {
-			x: iconPosition.x + (radius / 2),
-			y: iconPosition.y + (radius / 2)
+			x: iconPosition.x + radius,
+			y: iconPosition.y + radius
 		},
 		rotation = collapsed ? 90 : 180;
 
-	if (icon) {
-		icon.destroy();
+	if (!icon) {
+		label.treeIcon = icon = label.renderer.symbol(
+			'triangle',
+			iconPosition.x,
+			iconPosition.y,
+			radius * 2,
+			radius * 2
+		)
+		.add(label.parentGroup);
+		icon.isNew = true;
+	} else {
+		icon.isNew = false;
 	}
-	label.treeIcon = label.renderer.symbol(
-		'triangle',
-		iconPosition.x,
-		iconPosition.y,
-		radius,
-		radius
-	)
-	.add(label.parentGroup)
-	.attr({
+	icon.attr({
 		'stroke-width': 1,
-		'fill': pick(label.styles.color, '#666'),
-		'transform': 'rotate(' +
-			rotation + ', ' +
-			iconCenter.x + ', ' +
-			iconCenter.y +
-		')'
+		'fill': pick(label.styles.color, '#666')
 	});
+
+
+	// Set the new position, and show or hide
+	if (H.isNumber(iconPosition.y)) {
+		if (icon.isNew) {
+			icon.attr(iconPosition);
+		} else {
+			icon.animate(iconPosition);
+			icon.attr({
+				'transform': 'rotate(' +
+				rotation + ', ' +
+				iconCenter.x + ', ' +
+				iconCenter.y +
+				')'
+			});
+		}
+	} else {
+		icon.attr('y', -9999); // #1338
+	}
 };
 var onTickHover = function (label) {
 	label.addClass('highcharts-treegrid-node-active');
@@ -356,7 +368,7 @@ override(GridAxisTick.prototype, {
 			hasLabel = label && label.element;
 
 		if (isTreeGrid) {
-			xy.x += iconSize + iconSpacing + ((node.depth - 1) * indentPx);
+			xy.x += iconRadius + iconSpacing + ((node.depth - 1) * indentPx);
 
 			if (hasLabel) {
 				if (node.children.length > 0) {
@@ -384,7 +396,7 @@ override(GridAxisTick.prototype, {
 		proceed.apply(tick, argsToArray(arguments));
 
 		if (isTreeGrid && hasLabel && treeGridMap[pos].children.length > 0) {
-			renderLabelIcon(label, iconSize, iconSpacing, isCollapsed(axis, node, pos));
+			renderLabelIcon(label, iconRadius, iconSpacing, isCollapsed(axis, node, pos));
 		}
 	}
 });
