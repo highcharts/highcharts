@@ -14,8 +14,12 @@ var each = H.each,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
-/* 
+
+/** 
  * The arearangeseries series type
+ * @extends area
+ * @optionparent plotOptions.arearange
+ * 
  */
 seriesType('arearange', 'area', {
 	/*= if (build.classic) { =*/

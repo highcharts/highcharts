@@ -21,7 +21,12 @@ var seriesType = H.seriesType,
 	each = H.each,
 	Series = H.Series;
 
-seriesType('plotband', 'column', {
+seriesType('plotband', 'column', 
+/**
+ * @extends {column}
+ * @optionparent plotOptions.plotband
+ */
+{
 	lineWidth: 0,
 	//onXAxis: false,
 	threshold: null

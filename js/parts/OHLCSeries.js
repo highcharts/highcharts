@@ -18,7 +18,12 @@ var each = H.each,
  * @constructor seriesTypes.ohlc
  * @augments seriesTypes.column
  */
-seriesType('ohlc', 'column', {
+seriesType('ohlc', 'column', 
+/**
+ * @extends {column}
+ * @optionparent plotOptions.ohlc
+ */
+	{
 	lineWidth: 1,
 	tooltip: {
 		/*= if (!build.classic) { =*/

@@ -54,7 +54,12 @@ var seriesType = H.seriesType,
 	};
 
 // The Treemap series type
-seriesType('treemap', 'scatter', {
+seriesType('treemap', 'scatter', 
+/**
+ * @extends {scatter}
+ * @optionparent plotOptions.treemap
+ */
+{
 	showInLegend: false,
 	marker: false,
 	dataLabels: {

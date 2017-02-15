@@ -23,7 +23,12 @@ var color = H.color,
  * @constructor seriesTypes.area
  * @extends {Series}
  */
-seriesType('area', 'line', {
+seriesType('area', 'line', 
+	/**
+	 * @extends {line}
+	 * @optionparent plotOptions.area
+	 */
+	{
 	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,

@@ -21,6 +21,11 @@ var correctFloat = H.correctFloat,
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
+
+/**
+ * @extends {column}
+ * @optionparent plotOptions.waterfall
+ */
 seriesType('waterfall', 'column', {
 	dataLabels: {
 		inside: true

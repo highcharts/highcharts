@@ -55,6 +55,7 @@ H.Axis.prototype = {
 
 	/**
 	 * Default options for the X axis - the Y axis has extended defaults
+	 * @optionparent xAxis
 	 */
 	defaultOptions: {
 		// allowDecimals: null,
@@ -157,6 +158,8 @@ H.Axis.prototype = {
 
 	/**
 	 * This options set extends the defaultOptions for Y axes
+	 * @extends {xAxis}
+	 * @optionparent yAxis
 	 */
 	defaultYAxisOptions: {
 		endOnTick: true,

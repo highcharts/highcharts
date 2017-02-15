@@ -19,7 +19,17 @@ var seriesType = Highcharts.seriesType,
 	each = Highcharts.each;
 
 
-seriesType('funnel', 'pie', {
+seriesType('funnel', 'pie', 
+/**
+ * Funnel charts are a type of chart often used to visualize stages in a sales 
+ * project, where the top are the initial stages with the most clients. 
+ * It requires that the modules/funnel.js file is loaded.
+ *
+ * @sample highcharts/demo/funnel/ Funnel demo
+ * @extends pie
+ * @optionparent plotOptions.funnel
+ */
+{
 	animation: false,
 	center: ['50%', '50%'],
 	width: '90%',
@@ -278,9 +288,14 @@ seriesType('funnel', 'pie', {
 
 /** 
  * Pyramid series type.
- * A pyramid series is a special type of funnel, without neck and reversed by default.
  */
-seriesType('pyramid', 'funnel', {
+seriesType('pyramid', 'funnel', 
+/** 
+ * A pyramid series is a special type of funnel, without neck and reversed by default.
+ * @extends funnel
+ * @optionparent plotOptions.pyramid
+ */
+{
 	neckWidth: '0%',
 	neckHeight: '0%',
 	reversed: true

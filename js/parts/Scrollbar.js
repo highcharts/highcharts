@@ -26,6 +26,9 @@ var addEvent = H.addEvent,
 	wrap = H.wrap,
 	swapXY;
 
+/**
+ * @optionparent scrollbar
+ */
 var defaultScrollbarOptions =  {
 	//enabled: true
 	height: isTouchDevice ? 20 : 14,

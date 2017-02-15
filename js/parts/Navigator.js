@@ -60,7 +60,11 @@ units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-extend(defaultOptions, {
+extend(defaultOptions, 
+	/** 	 
+	* @optionparent
+	*/
+	{
 	navigator: {
 		//enabled: true,
 		height: 40,

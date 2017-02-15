@@ -28,7 +28,12 @@ var animObject = H.animObject,
  * @constructor seriesTypes.column
  * @augments Series
  */
-seriesType('column', 'line', {
+seriesType('column', 'line', 
+/**
+ * @extends {line}
+ * @optionparent plotOptions.column
+ */
+{
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,

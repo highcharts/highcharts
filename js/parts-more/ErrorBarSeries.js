@@ -17,6 +17,11 @@ var each = H.each,
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
+
+/**  
+ * @extends {errorbar}
+ * @optionparent plotOptions.errorbar
+ */
 seriesType('errorbar', 'boxplot', {
 	/*= if (build.classic) { =*/
 	color: '${palette.neutralColor100}',

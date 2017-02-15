@@ -24,6 +24,13 @@ extend(defaultOptions.lang, {
 });
 
 // Add default display options for message
+/**
+ * Options for displaying a message like "No data to display". 
+ * This feature requires the file no-data-to-display.js to be loaded in the page. 
+ * The actual text to display is set in the lang.noData option.
+ * @type {Object}
+ * @optionparent noData
+ */
 defaultOptions.noData = {
 	position: {
 		x: 0,
@@ -36,6 +43,10 @@ defaultOptions.noData = {
 
 /*= if (build.classic) { =*/
 // Presentational
+/**
+ * CSS styles for the no-data label.
+ * @optionparent noData.style
+ */
 defaultOptions.noData.style = {
 	fontWeight: 'bold',
 	fontSize: '12px',

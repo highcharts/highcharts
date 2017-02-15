@@ -18,6 +18,8 @@ var each = H.each,
  *
  * @constructor seriesTypes.boxplot
  * @augments seriesTypes.column
+ * @extends {column}
+ * @optionparent plotOptions.boxPlot
  */
 seriesType('boxplot', 'column', {
 	threshold: null,

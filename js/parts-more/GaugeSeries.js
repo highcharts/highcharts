@@ -19,8 +19,10 @@ var each = H.each,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	TrackerMixin = H.TrackerMixin;
-/* 
+/** 
  * The GaugeSeries class
+ * @extends {line}
+ * @optionparent plotOptions.gauge
  */
 seriesType('gauge', 'line', {
 	dataLabels: {

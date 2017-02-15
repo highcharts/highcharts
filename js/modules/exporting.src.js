@@ -62,6 +62,11 @@ defaultOptions.navigation = {
 
 /*= if (build.classic) { =*/
 // Presentational attributes
+/**
+ * A collection of options for buttons and menus appearing in the exporting module.
+ * @type {Object}
+ * @optionparent navigation
+ */
 merge(true, defaultOptions.navigation, {
 	menuStyle: {
 		border: '1px solid ${palette.neutralColor40}',
@@ -94,6 +99,12 @@ merge(true, defaultOptions.navigation, {
 
 
 // Add the export related options
+
+/**
+ * Options for the exporting module. For an overview on the matter, see [the docs](http://www.highcharts.com/docs/export-module/export-module-overview).
+ * @type {Object}
+ * @optionparent exporting
+ */
 defaultOptions.exporting = {
 	//enabled: true,
 	//filename: 'chart',

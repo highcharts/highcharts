@@ -34,6 +34,9 @@ var seriesProto = Series.prototype,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
 
+	/** 
+	 * 
+	 */
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum
 		//enabled: null, // (true for stock charts, false for basic),

@@ -129,7 +129,14 @@ H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 });
 
 var defaultOptions = H.getOptions();
-merge(true, defaultOptions, {
+
+/**
+ * Options to render charts in 3 dimensions. 
+ * This feature requires highcharts-3d.js, found in the download package, 
+ * or online at code.highcharts.com/highcharts-3d.js.
+ * @optionparent
+ */
+var extendedOptions = 	{
 	chart: {
 		options3d: {
 			enabled: false,
@@ -151,7 +158,9 @@ merge(true, defaultOptions, {
 			}
 		}
 	}
-});
+};
+
+merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
 /**

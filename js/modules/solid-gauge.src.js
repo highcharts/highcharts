@@ -196,7 +196,12 @@ each(['fill', 'stroke'], function (prop) {
 });
 
 // The solidgauge series type
-H.seriesType('solidgauge', 'gauge', {
+H.seriesType('solidgauge', 'gauge', 
+/** 
+ * @extends gauge
+ * @optionparent plotOptions.solidgauge
+ */
+{
 	colorByPoint: true
 
 }, {

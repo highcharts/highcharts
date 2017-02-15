@@ -32,7 +32,11 @@ var addEvent = H.addEvent,
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
-extend(defaultOptions, {
+extend(defaultOptions, 
+/**
+ * @optionparent
+ */
+{
 	rangeSelector: {
 		// allButtonsEnabled: false,
 		// enabled: true,
@@ -61,7 +65,12 @@ extend(defaultOptions, {
 		/*= } =*/
 	}
 });
-defaultOptions.lang = merge(defaultOptions.lang, {
+
+defaultOptions.lang = merge(defaultOptions.lang, 
+/**
+ * @optionparent lang
+ */
+{
 	rangeSelectorZoom: 'Zoom',
 	rangeSelectorFrom: 'From',
 	rangeSelectorTo: 'To'

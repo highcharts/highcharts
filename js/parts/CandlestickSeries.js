@@ -18,7 +18,13 @@ var defaultPlotOptions = H.defaultPlotOptions,
  * @constructor seriesTypes.candlestick
  * @augments seriesTypes.ohlc
  */
-seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
+seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, 
+/**
+ * @extends {ohlc}
+ * @products highstock
+ * @optionparent plotOptions.candlestick
+ */
+{
 	states: {
 		hover: {
 			lineWidth: 2

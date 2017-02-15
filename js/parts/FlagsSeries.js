@@ -28,7 +28,12 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.flags
  * @augments seriesTypes.column
  */
-seriesType('flags', 'column', {
+seriesType('flags', 'column', 
+/**
+ * @extends {column}
+ * @optionparent plotOptions.flags
+ */
+{
 	pointRange: 0, // #673
 	//radius: 2,
 	shape: 'flag',

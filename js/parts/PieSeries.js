@@ -33,7 +33,12 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.pie
  * @augments Series
  */
-seriesType('pie', 'line', {
+seriesType('pie', 'line', 
+	/**
+	 * @extends {line}
+	 * @optionparent plotOptions.pie
+	 */
+{
 	center: [null, null],
 	clip: false,
 	colorByPoint: true, // always true for pies

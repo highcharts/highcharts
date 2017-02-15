@@ -29,6 +29,10 @@ var arrayMax = H.arrayMax,
  * Start Bubble series code											          *
  *****************************************************************************/
 
+/**
+ * @extends scatter
+ * @optionparent plotOptions.bubble
+ */
 seriesType('bubble', 'scatter', {
 	dataLabels: {
 		formatter: function () { // #2945

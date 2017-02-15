@@ -13,7 +13,12 @@ var Series = H.Series,
 /**
  * The scatter series type
  */
-seriesType('scatter', 'line', {
+seriesType('scatter', 'line', 
+/**
+ * @extends {line}
+ * @optionparent plotOptions.scatter
+ */
+{
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)

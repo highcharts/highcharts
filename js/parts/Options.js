@@ -19,6 +19,9 @@ var color = H.color,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
+/** 	 
+ * @optionparent
+ */
 H.defaultOptions = {
 	/*= if (build.classic) { =*/
 	colors: '${palette.colors}'.split(' '),

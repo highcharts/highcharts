@@ -56,7 +56,9 @@ var addEvent = H.addEvent,
  * @constructor Series
  * @param {Object} chart - The chart instance.
  * @param {Object} options - The series options.
+ * @optionparent plotOptions.line
  */
+
 H.Series = H.seriesType('line', null, { // base series options
 	/*= if (build.classic) { =*/
 	//cursor: 'default',
