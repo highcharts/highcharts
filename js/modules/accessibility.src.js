@@ -75,7 +75,11 @@ if (H.seriesTypes.pie) {
 }
 
 
-// Default a11y options
+/**
+ * Accessibility options
+ * @type {Object}
+ * @optionparent
+ */
 H.setOptions({
 	accessibility: {
 		enabled: true,
