@@ -287,14 +287,13 @@ H.seriesType('solidgauge', 'gauge', {
 				innerR: innerRadius,
 				start: minAngle,
 				end: maxAngle,
-				fill: toColor,
 				rounded: options.rounded // docs
 			};
 			point.startR = radius; // For PieSeries.animate
 
 			if (graphic) {
 				d = shapeArgs.d;
-				graphic.animate(shapeArgs);
+				graphic.animate(H.extend({ fill: toColor }, shapeArgs));
 				if (d) {
 					shapeArgs.d = d; // animate alters it
 				}
