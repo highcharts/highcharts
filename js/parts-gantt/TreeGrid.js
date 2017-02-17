@@ -99,7 +99,8 @@ var toggleCollapse = function (axis, node, pos) {
 	}
 };
 var renderLabelIcon = function (label, radius, spacing, collapsed) {
-	var labelBox = label.xy,
+	var renderer = label.renderer,
+		labelBox = label.xy,
 		icon = label.treeIcon,
 		iconPosition = {
 			x: labelBox.x - (radius * 2) - spacing,
@@ -110,42 +111,32 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 			y: iconPosition.y + radius
 		},
 		rotation = collapsed ? 90 : 180;
-
 	if (!icon) {
-		label.treeIcon = icon = label.renderer.symbol(
-			'triangle',
-			iconPosition.x,
-			iconPosition.y,
+		label.treeIcon = icon = renderer.path(renderer.symbols.triangle(
+			0 - radius,
+			0 - radius,
 			radius * 2,
 			radius * 2
-		)
+		))
+		.attr({
+			'translateX': iconCenter.x,
+			'translateY': iconCenter.y
+		})
 		.add(label.parentGroup);
-		icon.isNew = true;
 	} else {
-		icon.isNew = false;
+		icon.animate({
+			'translateX': iconCenter.x,
+			'translateY': iconCenter.y
+		});
 	}
 	icon.attr({
 		'stroke-width': 1,
-		'fill': pick(label.styles.color, '#666')
+		'fill': pick(label.styles.color, '#666'),
+		rotation: rotation
 	});
-
-	icon.attr({
-		'transform': 'rotate(' +
-		rotation + ',' +
-		iconCenter.x + ',' +
-		iconCenter.y +
-		')'
-	});
-
 
 	// Set the new position, and show or hide
-	if (H.isNumber(iconPosition.y)) {
-		if (!icon.isNew) {
-
-			icon.animate(iconPosition);
-
-		}
-	} else {
+	if (!H.isNumber(iconPosition.y)) {
 		icon.attr('y', -9999); // #1338
 	}
 };
