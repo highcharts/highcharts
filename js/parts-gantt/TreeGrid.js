@@ -263,20 +263,21 @@ var renderLabelIcon = function (label, radius, spacing, collapsed) {
 		'fill': pick(label.styles.color, '#666')
 	});
 
+	icon.attr({
+		'transform': 'rotate(' +
+		rotation + ',' +
+		iconCenter.x + ',' +
+		iconCenter.y +
+		')'
+	});
+
 
 	// Set the new position, and show or hide
 	if (H.isNumber(iconPosition.y)) {
-		if (icon.isNew) {
-			icon.attr(iconPosition);
-		} else {
+		if (!icon.isNew) {
+
 			icon.animate(iconPosition);
-			icon.attr({
-				'transform': 'rotate(' +
-				rotation + ', ' +
-				iconCenter.x + ', ' +
-				iconCenter.y +
-				')'
-			});
+
 		}
 	} else {
 		icon.attr('y', -9999); // #1338
@@ -393,6 +394,7 @@ override(GridAxisTick.prototype, {
 				}
 			}
 		}
+
 		proceed.apply(tick, argsToArray(arguments));
 
 		if (isTreeGrid && hasLabel && treeGridMap[pos].children.length > 0) {
