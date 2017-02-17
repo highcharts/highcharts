@@ -37,8 +37,8 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-var name = false,
-    enableDataLabels = true,
+chart.name = false;
+var enableDataLabels = true,
     enableMarkers = true,
     color = false;
 
@@ -46,9 +46,9 @@ var name = false,
 // Toggle names
 $('#name').click(function () {
     chart.series[0].update({
-        name: name ? null : 'First'
+        name: chart.name ? null : 'First'
     });
-    name = !name;
+    chart.name = !chart.name;
 });
 
 // Toggle data labels
