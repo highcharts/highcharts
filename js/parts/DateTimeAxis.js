@@ -35,7 +35,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - getTZOffset(min)),
+		minDate = new Date(min - Math.abs(getTZOffset(min))), // #6278
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
