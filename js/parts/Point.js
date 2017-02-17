@@ -7,7 +7,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 var Point,
-
+	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
 	erase = H.erase,
@@ -99,6 +99,8 @@ Point.prototype = {
 		// For higher dimension series types. For instance, for ranges, point.y is mapped to point.low.
 		if (pointValKey) {
 			point.y = point[pointValKey];
+		} else if (defined(point.name) && !defined(point.y) && series.yAxis && series.yAxis.hasNames && series.yAxis.nameToY) {
+			point.y = series.yAxis.nameToY(point);
 		}
 		point.isNull = pick(
 			point.isValid && !point.isValid(),

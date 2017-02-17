@@ -37,15 +37,13 @@ $(function () {
                 taskName: 'New offices',
                 id: 'new_offices',
                 start: today - 2 * day,
-                end: today + 14 * day,
-                y: 0
+                end: today + 14 * day
             }, {
                 taskName: 'Prepare office building',
                 id: 'prepare_building',
                 parent: 'new_offices',
                 start: today - (2 * day),
                 end: today + (6 * day),
-                y: 1,
                 completed: {
                     amount: 0.2
                 }
@@ -55,45 +53,39 @@ $(function () {
                 dependency: 'prepare_building',
                 parent: 'new_offices',
                 start: today + 6 * day,
-                end: today + 8 * day,
-                y: 2
+                end: today + 8 * day
             }, {
                 taskName: 'Passed inspection',
                 id: 'passed_inspection',
                 dependency: 'inspect_building',
                 parent: 'new_offices',
                 start: today + 9.5 * day,
-                milestone: true,
-                y: 3
+                milestone: true
             }, {
                 taskName: 'Relocate',
                 id: 'relocate',
                 dependency: 'passed_inspection',
                 parent: 'new_offices',
                 start: today + 10 * day,
-                end: today + 14 * day,
-                y: 4
+                end: today + 14 * day
             }, {
                 taskName: 'Relocate staff',
                 id: 'relocate_staff',
                 parent: 'relocate',
                 start: today + 10 * day,
-                end: today + 11 * day,
-                y: 5
+                end: today + 11 * day
             }, {
                 taskName: 'Relocate test facility',
                 dependency: 'relocate_staff',
                 parent: 'relocate',
                 start: today + 11 * day,
-                end: today + 13 * day,
-                y: 6
+                end: today + 13 * day
             }, {
                 taskName: 'Relocate cantina',
                 dependency: 'relocate_staff',
                 parent: 'relocate',
                 start: today + 11 * day,
-                end: today + 14 * day,
-                y: 7
+                end: today + 14 * day
             }]
         }, {
             name: 'Product',
@@ -101,15 +93,13 @@ $(function () {
                 taskName: 'New product launch',
                 id: 'new_product',
                 start: today - day,
-                end: today + 18 * day,
-                y: 8
+                end: today + 18 * day
             }, {
                 taskName: 'Development',
                 id: 'development',
                 parent: 'new_product',
                 start: today - day,
                 end: today + (11 * day),
-                y: 9,
                 completed: {
                     amount: 0.6,
                     fill: '#e80'
@@ -120,23 +110,20 @@ $(function () {
                 dependency: 'development',
                 parent: 'new_product',
                 start: today + 12.5 * day,
-                milestone: true,
-                y: 10
+                milestone: true
             }, {
                 taskName: 'Final development',
                 id: 'finalize',
                 dependency: 'beta',
                 parent: 'new_product',
                 start: today + 13 * day,
-                end: today + 17 * day,
-                y: 11
+                end: today + 17 * day
             }, {
                 taskName: 'Launch',
                 dependency: 'finalize',
                 parent: 'new_product',
                 start: today + 17.5 * day,
-                milestone: true,
-                y: 12
+                milestone: true
             }]
         }]
     });

@@ -318,6 +318,10 @@ Chart.prototype = {
 			// set axes scales
 			each(axes, function (axis) {
 				axis.updateNames();
+				// Update categories in a Gantt chart
+				if (axis.updateYNames) {
+					axis.updateYNames();
+				}
 				axis.setScale();
 			});
 		}

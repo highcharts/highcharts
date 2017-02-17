@@ -12,18 +12,78 @@ import '../modules/static-scale.src.js';
 import 'TreeGrid.js';
 import 'Pathfinder.js';
 import 'XRangeSeries.js';
+import Tree from './Tree.js';
 
 var dateFormat = H.dateFormat,
+	each = H.each,
+	extend = H.extend,
+	inArray = H.inArray,
 	isObject = H.isObject,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
+	reduce = Tree.reduce,
 	seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes,
 	stop = H.stop,
+	Axis = H.Axis,
 	Point = H.Point,
+	Series = H.Series,
 	parentName = 'xrange',
 	parent = seriesTypes[parentName];
+
+/**
+ * getCategoriesFromTree - getCategories based on a tree
+ *
+ * @param  {object} tree Root of tree to collect categories from
+ * @return {Array}       Array of categories
+ */
+var getCategoriesFromTree = function (tree) {
+	var categories = [];
+	if (tree.data) {
+		categories.push(tree.data.name);
+	}
+	each(tree.children, function (child) {
+		categories = categories.concat(getCategoriesFromTree(child));
+	});
+	return categories;
+};
+
+var mapTickPosToNode = function (node, categories) {
+	var map = {},
+		name = node.data && node.data.name,
+		pos = inArray(name, categories);
+	map[pos] = node;
+	each(node.children, function (child) {
+		extend(map, mapTickPosToNode(child, categories));
+	});
+	return map;
+};
+
+Axis.prototype.updateYNames = function () {
+	var axis = this,
+		isYAxis = !axis.isXAxis,
+		series = axis.series,
+		data;
+	if (isYAxis) {
+		// Concatenate data from all series assigned to this axis.
+		data = reduce(series, function (arr, s) {
+			return arr.concat(s.options.data);
+		}, []);
+		// Build the tree from the series data. 
+		axis.tree = Tree.getTree(data);
+		axis.categories = getCategoriesFromTree(axis.tree);
+		axis.treeGridMap = mapTickPosToNode(axis.tree, axis.categories);
+		axis.hasNames = true;
+	}
+};
+
+Axis.prototype.nameToY = function (point) {
+	var axis = this,
+		name = point.name,
+		names = axis.categories;
+	return inArray(name, names);
+};
 
 // type, parent, options, props, pointProps
 seriesType('gantt', parentName, {
@@ -189,6 +249,12 @@ seriesType('gantt', parentName, {
 		} else {
 			parent.prototype.drawPoint.call(series, point, verb);
 		}
+	},
+	
+	setData: function () {
+		var series = this;
+		series.yAxis.updateYNames();
+		Series.prototype.setData.apply(this, arguments);
 	},
 
 	setGanttPointAliases: function (options) {
