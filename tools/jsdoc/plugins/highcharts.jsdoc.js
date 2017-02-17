@@ -6,10 +6,30 @@
 
 "use strict";
 
+var exec = require('child_process').execSync;
 var logger = require('jsdoc/util/logger');
 var Doclet = require('jsdoc/doclet.js').Doclet;
 var fs = require('fs');
-var options = {};
+var options = {
+    _meta: {
+        commit: '',
+        branch: ''
+    }
+};
+
+function dumpOptions() {
+    fs.writeFile(
+        'tree.json', 
+        JSON.stringify(
+            options, 
+            undefined, 
+            '  '
+        ), 
+        function () {
+            console.log('Wrote tree!');
+        }
+    );
+}
 
 function decorateOptions(parent, target, option, filename) {
 
@@ -128,12 +148,13 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 parent = '';
                 target = options;
             }
-            
             if (target) {                
 
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
                     properties = node.arguments[2].properties;
-                } else if (node.type === 'ObjectExpression') {                
+                } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
+                    properties = node.arguments[0].properties;
+                } else if (node.type === 'ObjectExpression') {
                     properties = node.properties;                
                 } else if (node.init && node.init.type === 'ObjectExpression') {
                     properties = node.init.properties;
@@ -280,16 +301,11 @@ exports.handlers = {
     },
 
     parseComplete: function () {
-        fs.writeFile(
-            'tree.json', 
-            JSON.stringify(
-                options, 
-                undefined, 
-                '  '
-            ), 
-            function () {
+        options._meta.version = require(__dirname + '/../../../package.json').version;
+        options._meta.commit = exec('git rev-parse --short HEAD', {cwd: process.cwd()}).toString().trim();
+        options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
+        options._meta.date = (new Date()).toString();
 
-            }
-        );
+        dumpOptions();
     }
 };
