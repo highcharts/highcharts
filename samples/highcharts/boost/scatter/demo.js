@@ -38,6 +38,10 @@ $(function () {
             maxPadding: 0
         },
 
+        boost: {
+            useGPUTranslations: true
+        },
+
         title: {
             text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
         },
