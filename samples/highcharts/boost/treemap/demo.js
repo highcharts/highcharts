@@ -952,7 +952,7 @@ $(function () {
             data: points
         }],
         subtitle: {
-            text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
+            text: 'Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
         },
         title: {
             text: 'Global Mortality Rate 2012, per 100 000 population'
