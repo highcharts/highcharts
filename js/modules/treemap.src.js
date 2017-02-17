@@ -758,7 +758,7 @@ seriesType('treemap', 'scatter',
 	* Finds the drill id for a parent node.
 	* Returns false if point should not have a click event
 	* @param {Object} point
-	* @return {string || boolean} Drill to id or false when point should not have a click event
+	* @return {String|Boolean} Drill to id or false when point should not have a click event
 	*/
 	drillToByGroup: function (point) {
 		var series = this,
@@ -772,7 +772,7 @@ seriesType('treemap', 'scatter',
 	* Finds the drill id for a leaf node.
 	* Returns false if point should not have a click event
 	* @param {Object} point
-	* @return {string || boolean} Drill to id or false when point should not have a click event
+	* @return {String|Boolean} Drill to id or false when point should not have a click event
 	*/
 	drillToByLeaf: function (point) {
 		var series = this,
