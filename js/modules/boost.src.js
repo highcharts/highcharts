@@ -2072,6 +2072,10 @@ wrap(Series.prototype, 'destroy', function (proceed) {
 	var series = this,
 		chart = series.chart;
 
+	if (chart.markerGroup === series.markerGroup) {
+		series.markerGroup = null;
+	}
+
 	if (chart.hoverPoints) {
 		chart.hoverPoints = grep(chart.hoverPoints, function (point) {
 			return point.series === series;
@@ -2278,7 +2282,7 @@ H.extend(Series.prototype, {
 
 	renderCanvas: function () {
 		var series = this,
-			options = series.options,
+			options = series.options || {},
 			renderer = false,
 			chart = series.chart,
 			xAxis = this.xAxis,
