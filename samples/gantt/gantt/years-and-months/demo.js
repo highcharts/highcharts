@@ -36,23 +36,19 @@ $(function () {
             data: [{
                 taskName: 'Start prototype',
                 start: Date.UTC(2014, 4, 18),
-                end: Date.UTC(2014, 11, 25),
-                y: 0
+                end: Date.UTC(2014, 11, 25)
             }, {
                 taskName: 'Test prototype',
                 start: Date.UTC(2015, 0, 0),
-                end: Date.UTC(2015, 3, 0),
-                y: 1
+                end: Date.UTC(2015, 3, 0)
             }, {
                 taskName: 'Develop',
                 start: Date.UTC(2015, 0, 0),
-                end: Date.UTC(2015, 10, 25),
-                y: 2
+                end: Date.UTC(2015, 10, 25)
             }, {
                 taskName: 'Run acceptance tests',
                 start: Date.UTC(2015, 9, 23),
-                end: Date.UTC(2015, 10, 26),
-                y: 3
+                end: Date.UTC(2015, 10, 26)
             }]
         }]
     });

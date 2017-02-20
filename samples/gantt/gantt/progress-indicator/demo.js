@@ -16,18 +16,15 @@ $(function () {
                 taskName: 'Start prototype',
                 start: Date.UTC(2014, 10, 18),
                 end: Date.UTC(2014, 10, 25),
-                y: 0,
                 completed: 0.25
             }, {
                 taskName: 'Test prototype',
                 start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 29),
-                y: 1
+                end: Date.UTC(2014, 10, 29)
             }, {
                 taskName: 'Develop',
                 start: Date.UTC(2014, 10, 20),
                 end: Date.UTC(2014, 10, 25),
-                y: 2,
                 completed: {
                     amount: 0.12,
                     fill: '#fa0'
@@ -35,8 +32,7 @@ $(function () {
             }, {
                 taskName: 'Run acceptance tests',
                 start: Date.UTC(2014, 10, 23),
-                end: Date.UTC(2014, 10, 26),
-                y: 3
+                end: Date.UTC(2014, 10, 26)
             }]
         }]
     });

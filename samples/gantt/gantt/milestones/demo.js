@@ -17,37 +17,31 @@ $(function () {
                 taskName: 'Create prototype',
                 id: 'prototype',
                 start: Date.UTC(2014, 10, 18),
-                end: Date.UTC(2014, 10, 21),
-                y: 0
+                end: Date.UTC(2014, 10, 21)
             }, {
                 taskName: 'Prototype done',
                 dependency: 'prototype',
                 start: Date.UTC(2014, 10, 21, 12),
-                milestone: true,
-                y: 1
+                milestone: true
             }, {
                 taskName: 'Develop',
                 id: 'develop',
                 start: Date.UTC(2014, 10, 20),
-                end: Date.UTC(2014, 10, 25),
-                y: 2
+                end: Date.UTC(2014, 10, 25)
             }, {
                 taskName: 'Development done',
                 dependency: 'develop',
                 start: Date.UTC(2014, 10, 25, 12),
                 milestone: true,
-                color: '#fa0',
-                y: 3
+                color: '#fa0'
             }, {
                 taskName: 'Test prototype',
                 start: Date.UTC(2014, 10, 27),
-                end: Date.UTC(2014, 10, 29),
-                y: 4
+                end: Date.UTC(2014, 10, 29)
             }, {
                 taskName: 'Run acceptance tests',
                 start: Date.UTC(2014, 10, 23),
-                end: Date.UTC(2014, 10, 26),
-                y: 5
+                end: Date.UTC(2014, 10, 26)
             }]
         }]
     });
