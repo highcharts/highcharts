@@ -154,7 +154,9 @@ function getResources() {
 					return;
 				}
 
-				$('#bisect').click(controller.toggleBisect);
+				if (controller) {
+					$('#bisect').click(controller.toggleBisect);
+				}
 
 				if (typeof Highcharts !== 'undefined') {
 					$('#version').html(Highcharts.product + ' ' + Highcharts.version +

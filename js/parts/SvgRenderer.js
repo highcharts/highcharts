@@ -688,16 +688,14 @@ SVGElement.prototype = {
 	 * @returns {SVGElement} Return the SVG element for chaining.
 	 */
 	css: function (styles) {
-		var elemWrapper = this,
-			oldStyles = elemWrapper.styles,
+		var oldStyles = this.styles,
 			newStyles = {},
-			elem = elemWrapper.element,
+			elem = this.element,
 			textWidth,
 			n,
 			serializedCss = '',
 			hyphenate,
 			hasNew = !oldStyles,
-			rebuildKey,
 			// These CSS properties are interpreted internally by the SVG
 			// renderer, but are not supported by SVG and should not be added to
 			// the DOM. In styled mode, no CSS should find its way to the DOM
@@ -729,7 +727,7 @@ SVGElement.prototype = {
 			}
 
 			// Get the text width from style
-			textWidth = elemWrapper.textWidth = (
+			textWidth = this.textWidth = (
 				styles &&
 				styles.width &&
 				styles.width !== 'auto' &&
@@ -738,15 +736,15 @@ SVGElement.prototype = {
 			);
 
 			// store object
-			elemWrapper.styles = styles;
+			this.styles = styles;
 
-			if (textWidth && (!svg && elemWrapper.renderer.forExport)) {
+			if (textWidth && (!svg && this.renderer.forExport)) {
 				delete styles.width;
 			}
 
 			// serialize and set style attribute
 			if (isMS && !svg) {
-				css(elemWrapper.element, styles);
+				css(this.element, styles);
 			} else {
 				hyphenate = function (a, b) {
 					return '-' + b.toLowerCase();
@@ -764,25 +762,22 @@ SVGElement.prototype = {
 			}
 
 
-			if (elemWrapper.added) {
+			if (this.added) {
 
-				rebuildKey = [textWidth, styles && styles.textOverflow].join(',');
-
-				// Rebuild text after added
-				if (rebuildKey !== elemWrapper.rebuildKey) {
-					elemWrapper.renderer.buildText(elemWrapper);
+				// Rebuild text after added. Cache mechanisms in the buildText
+				// will prevent building if there are no significant changes.
+				if (this.element.nodeName === 'text') {
+					this.renderer.buildText(this);
 				}
 
 				// Apply text outline after added
 				if (styles && styles.textOutline) {
-					elemWrapper.applyTextOutline(styles.textOutline);
+					this.applyTextOutline(styles.textOutline);
 				}
 			}
 		}
 
-		elemWrapper.rebuildKey = rebuildKey;
-
-		return elemWrapper;
+		return this;
 	},
 
 	/*= if (build.classic) { =*/

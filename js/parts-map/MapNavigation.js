@@ -28,67 +28,166 @@ function stopEvent(e) {
 	}
 }
 
-// Add events to the Chart object itself
-extend(Chart.prototype, {
-	renderMapNavigation: function () {
-		var chart = this,
-			options = this.options.mapNavigation,
-			buttons = options.buttons,
-			n,
-			button,
-			buttonOptions,
-			attr,
-			states,
-			hoverStates,
-			selectStates,
-			outerHandler = function (e) {
-				this.handler.call(chart, e);
-				stopEvent(e); // Stop default click event (#4444)
-			};
+/**
+ * The MapNavigation handles buttons for navigation in addition to mousewheel
+ * and doubleclick handlers for chart zooming.
+ * @param {Chart} chart The Chart instance.
+ * @class
+ */
+function MapNavigation(chart) {
+	this.init(chart);
+}
 
-		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
-			chart.mapNavButtons = [];
-			for (n in buttons) {
-				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = merge(options.buttonOptions, buttons[n]);
+/**
+ * Initiator function.
+ * @param  {Chart} chart The Chart instance.
+ */
+MapNavigation.prototype.init = function (chart) {
+	this.chart = chart;
+	chart.mapNavButtons = [];
+};
 
-					/*= if (build.classic) { =*/
-					// Presentational
-					attr = buttonOptions.theme;
-					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
-					states = attr.states;
-					hoverStates = states && states.hover;
-					selectStates = states && states.select;
-					/*= } =*/
+/**
+ * Update the map navigation with new options. Calling this is the same as 
+ * calling `chart.update({ mapNavigation: {} })`. 
+ * @param  {Object} options New options for the map navigation.
+ */
+MapNavigation.prototype.update = function (options) {
+	var chart = this.chart,
+		o = chart.options.mapNavigation,
+		buttons,
+		n,
+		button,
+		buttonOptions,
+		attr,
+		states,
+		hoverStates,
+		selectStates,
+		outerHandler = function (e) {
+			this.handler.call(chart, e);
+			stopEvent(e); // Stop default click event (#4444)
+		},
+		mapNavButtons = chart.mapNavButtons;
 
-					button = chart.renderer.button(
-							buttonOptions.text,
-							0,
-							0,
-							outerHandler,
-							attr,
-							hoverStates,
-							selectStates,
-							0,
-							n === 'zoomIn' ? 'topbutton' : 'bottombutton'
-						)
-						.addClass('highcharts-map-navigation')
-						.attr({
-							width: buttonOptions.width,
-							height: buttonOptions.height,
-							title: chart.options.lang[n],
-							padding: buttonOptions.padding,
-							zIndex: 5
-						})
-						.add();
-					button.handler = buttonOptions.onclick;
-					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
-					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
-					chart.mapNavButtons.push(button);
-				}
+	// Merge in new options in case of update, and register back to chart
+	// options.
+	if (options) {
+		o = chart.options.mapNavigation = 
+			merge(chart.options.mapNavigation, options);
+	}
+
+	// Destroy buttons in case of dynamic update
+	while (mapNavButtons.length) {
+		mapNavButtons.pop().destroy();
+	}
+	
+	if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
+
+		buttons = o.buttons;
+		for (n in buttons) {
+			
+			if (buttons.hasOwnProperty(n)) {
+				buttonOptions = merge(o.buttonOptions, buttons[n]);
+
+				/*= if (build.classic) { =*/
+				// Presentational
+				attr = buttonOptions.theme;
+				attr.style = merge(
+					buttonOptions.theme.style,
+					buttonOptions.style // #3203
+				);
+				states = attr.states;
+				hoverStates = states && states.hover;
+				selectStates = states && states.select;
+				/*= } =*/
+
+				button = chart.renderer.button(
+						buttonOptions.text,
+						0,
+						0,
+						outerHandler,
+						attr,
+						hoverStates,
+						selectStates,
+						0,
+						n === 'zoomIn' ? 'topbutton' : 'bottombutton'
+					)
+					.addClass('highcharts-map-navigation')
+					.attr({
+						width: buttonOptions.width,
+						height: buttonOptions.height,
+						title: chart.options.lang[n],
+						padding: buttonOptions.padding,
+						zIndex: 5
+					})
+					.add();
+				button.handler = buttonOptions.onclick;
+				button.align(
+					extend(buttonOptions, {
+						width: button.width,
+						height: 2 * button.height
+					}),
+					null,
+					buttonOptions.alignTo
+				);
+				// Stop double click event (#4444)
+				addEvent(button.element, 'dblclick', stopEvent); 
+				
+				mapNavButtons.push(button);
 			}
 		}
-	},
+	}
+
+	this.updateEvents(o);
+};
+
+/**
+ * Update events, called internally from the update function. Add new event
+ * handlers, or unbinds events if disabled.
+ * @param  {Object} options Options for map navigation.
+ */
+MapNavigation.prototype.updateEvents = function (options) {
+	var chart = this.chart;
+
+	// Add the double click event
+	if (
+		pick(options.enableDoubleClickZoom,	options.enabled) ||
+		options.enableDoubleClickZoomTo
+	) {
+		this.unbindDblClick = this.unbindDblClick || addEvent(
+			chart.container,
+			'dblclick',
+			function (e) {
+				chart.pointer.onContainerDblClick(e);
+			}
+		);
+	} else if (this.unbindDblClick) {
+		// Unbind and set unbinder to undefined
+		this.unbindDblClick = this.unbindDblClick();
+	}
+
+	// Add the mousewheel event
+	if (pick(options.enableMouseWheelZoom, options.enabled)) {
+		this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
+			chart.container,
+			doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel',
+			function (e) {
+				chart.pointer.onContainerMouseWheel(e);
+				// Issue #5011, returning false from non-jQuery event does
+				// not prevent default
+				stopEvent(e);
+				return false;
+			}
+		);
+	} else if (this.unbindMouseWheel) {
+		// Unbind and set unbinder to undefined
+		this.unbindMouseWheel = this.unbindMouseWheel();
+	}
+
+};
+
+// Add events to the Chart object itself
+extend(Chart.prototype, {
 
 	/**
 	 * Fit an inner box to an outer. If the inner box overflows left or right, align it to the sides of the
@@ -202,27 +301,9 @@ extend(Chart.prototype, {
  * Extend the Chart.render method to add zooming and panning
  */
 wrap(Chart.prototype, 'render', function (proceed) {
-	var chart = this,
-		mapNavigation = chart.options.mapNavigation;
-
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
-	chart.renderMapNavigation();
+	this.mapNavigation = new MapNavigation(this);
+	this.mapNavigation.update();
 
-	proceed.call(chart);
-	
-	// Add the double click event
-	if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
-		addEvent(chart.container, 'dblclick', function (e) {
-			chart.pointer.onContainerDblClick(e);
-		});
-	}
-
-	// Add the mousewheel event
-	if (pick(mapNavigation.enableMouseWheelZoom, mapNavigation.enabled)) {
-		addEvent(chart.container, doc.onmousewheel === undefined ? 'DOMMouseScroll' : 'mousewheel', function (e) {
-			chart.pointer.onContainerMouseWheel(e);
-			stopEvent(e); // Issue #5011, returning false from non-jQuery event does not prevent default
-			return false;
-		});
-	}
+	proceed.call(this);
 });

@@ -250,6 +250,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// options.title => chart.title
 		// options.tooltip => chart.tooltip
 		// options.subtitle => chart.subtitle
+		// options.mapNavigation => chart.mapNavigation
 		// options.navigator => chart.navigator
 		// options.scrollbar => chart.scrollbar
 		for (key in options) {

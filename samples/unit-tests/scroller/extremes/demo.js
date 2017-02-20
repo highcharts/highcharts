@@ -21,3 +21,32 @@ QUnit.test('getUnionExtremes', function (assert) {
         'getUnionExtremes.max equals getExtremes.max'
     );
 });
+
+QUnit.test('Extremes with selected button: #6383', function (assert) {
+    var now = +new Date(),
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: 5,
+                max: 10
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
+            }]
+        }),
+        extremes = chart.xAxis[0].getExtremes(),
+        newExtremes;
+
+    chart.series[0].update({
+        marker: {
+            enabled: true
+        }
+    });
+    chart.series[0].addPoint(10, true, true);
+    newExtremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.max - extremes.min,
+        newExtremes.max - newExtremes.min,
+        'Range in navigator is fine.'
+    );
+});

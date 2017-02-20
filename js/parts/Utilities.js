@@ -1827,7 +1827,7 @@ H.animate = function (el, params, opt) {
 		if (!end) {
 			end = params[prop];
 		}
-		if (end.match && end.match('px')) {
+		if (end && end.match && end.match('px')) {
 			end = end.replace(/px/g, ''); // #4351
 		}
 		fx.run(start, end, unit);
