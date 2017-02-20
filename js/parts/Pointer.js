@@ -226,7 +226,7 @@ H.Pointer.prototype = {
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
 			hoverPoint = p || chart.hoverPoint,
-			hoverSeries = hoverPoint && hoverPoint.series,
+			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
 			ePoint = pointer.getPointFromEvent(e),
 			isDirectTouch = !!p || (ePoint && ePoint === hoverPoint),
 			useSharedTooltip,
@@ -241,6 +241,10 @@ H.Pointer.prototype = {
 		// Handle shared tooltip or cases where a series is not yet hovered
 		if (isDirectTouch) {
 			points = this.getKDPoints(series, shared, e);
+		} else if (hoverSeries && !hoverSeries.options.stickyTracking) {
+			points = this.getKDPoints([hoverSeries], shared, e);
+			hoverPoint = points[0];
+			hoverSeries = hoverPoint && hoverPoint.series;
 		} else {
 			if (!shared) { 
 				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
@@ -288,6 +292,15 @@ H.Pointer.prototype = {
 			// set normal state to previous series
 			if (chart.hoverSeries !== hoverSeries) {
 				hoverSeries.onMouseOver();
+			}
+
+			// If tracking is on series in stead of on each point, 
+			// fire mouseOver on hover point. 
+			if (hoverSeries && !hoverSeries.directTouch) { // #4448
+				if (chart.hoverPoint) {
+					chart.hoverPoint.firePointEvent('mouseOut');
+				}
+				hoverPoint.firePointEvent('mouseOver');
 			}
 			chart.hoverPoints = points;
 			chart.hoverPoint = hoverPoint;
