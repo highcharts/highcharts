@@ -12,9 +12,9 @@
  * controller.mousemove(150, 100, { shiftKey: true });
  * controller.mouseup();
  */
-window.TestController = function (chart, showEventMarkers) {
+window.TestController = function (chart) {
 
-    var ret;
+    var controller;
 
     /**
      * Get offset of an element.
@@ -23,52 +23,6 @@ window.TestController = function (chart, showEventMarkers) {
      */
     function getOffset(el) {
         return $(el).offset();
-    }
-
-    /**
-     * addEventMarkerStyles - description
-     *
-     * @return {undefined}
-     */
-    function addEventMarkerStyles() {
-        var css = [
-                '#container {',
-                '    position: relative;',
-                '}',
-                '.event-mousemove {',
-                '    background: green;',
-                '    width: 5px;',
-                '    height: 5px;',
-                '    border-radius: 50%;',
-                '    display: inline-block;',
-                '    position: absolute;',
-                '}'
-            ].join('\n'),
-            textNode = document.createTextNode(css),
-            styleElement = document.createElement('style');
-        styleElement.appendChild(textNode);
-        document.body.appendChild(styleElement);
-    }
-
-    /**
-     * drawMarkers - description
-     *
-     * @param  {type} type  description
-     * @param  {type} pageX description
-     * @param  {type} pageY description
-     * @return {type}       description
-     */
-    function drawEventMarker(type, pageX, pageY) {
-        var className = 'event-' + type,
-            container = chart.container,
-            chartOffset = getOffset(container),
-            left = pageX - chartOffset.left,
-            top = pageY - chartOffset.top,
-            style = 'left: ' + left + 'px; top: ' + top + 'px;',
-            span = document.createElement('span');
-        span.setAttribute('style', style);
-        span.className = className;
-        container.appendChild(span);
     }
 
     /**
@@ -95,9 +49,49 @@ window.TestController = function (chart, showEventMarkers) {
         }
 
         document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
-        if (showEventMarkers) {
-            drawEventMarker(type, pageX, pageY);
+    }
+
+    /**
+     * mouseMoving - description
+     *
+     * @param  {type} x0       description
+     * @param  {type} y0       description
+     * @param  {type} x1       description
+     * @param  {type} y1       description
+     * @param  {type} interval description
+     * @return {type}          description
+     */
+    function getPointsBeetween(a, b, interval) {
+        var points = [],
+            complete = false,
+            x1 = b.x,
+            y1 = b.y,
+            x0 = a.x,
+            y0 = a.y,
+            deltaX,
+            deltaY,
+            distance,
+            ratio,
+            moveX,
+            moveY;
+        points.push([x0, y0]);
+        while (!complete) {
+            deltaX = x1 - x0;
+            deltaY = y1 - y0;
+            distance = Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
+            if (distance > interval) {
+                ratio = interval / distance;
+                moveX = ratio * deltaX;
+                moveY = ratio * deltaY;
+                x0 += moveX;
+                y0 += moveY;
+                points.push([x0, y0]);
+            } else {
+                points.push([b.x, b.y]);
+                complete = true;
+            }
         }
+        return points;
     }
 
     /**
@@ -146,32 +140,124 @@ window.TestController = function (chart, showEventMarkers) {
             y1 = elOffset.top + (y || 0);
         triggerEvent(type, x1, y1, extra);
     }
+    controller = {
+        positionX: null,
+        positionY: null,
+        relatedTarget: null,
+        /**
+         * setPosition - Move the cursor position to a new position, without fire events.
+         *
+         * @param  {Number} x New x position on the page.
+         * @param  {Number} y New y position on the page.
+         * @return {undefined} Pure setter.
+         */
+        setPosition: function (x, y) {
+            this.positionX = x;
+            this.positionY = y;
+            this.relatedTarget = document.elementFromPoint(x, y);
+        },
+        /**
+         * setPosition - Move the cursor position to a new position,
+         *  relative to an element, without fire events.
+         *
+         * @param  {Number} x New x position on the page.
+         * @param  {Number} y New y position on the page.
+         * @return {undefined} Pure setter.
+         */
+        setPositionToElement: function (el, x, y) {
+            var elOffset = getOffset(el),
+                x1 = elOffset.left + (x || 0),
+                y1 = elOffset.top + (y || 0);
+            this.setPosition(x1, y1);
+        },
+        /**
+         * getPosition - Get the current position of the cursor.
+         *
+         * @return {Object} Object containing x, y and relatedTarget.
+         */
+        getPosition: function () {
+            var c = this,
+                position = {
+                    x: c.positionX,
+                    y: c.positionY,
+                    relatedTarget: c.relatedTarget
+                };
+            return position;
+        },
+        /**
+         * moveTo - Move the cursor from current position to a new one.
+         *  Fire a series of mousemoves, also mouseout and mouseover if new targets are found.
+         *
+         * @param  {Number} x New x position on the page.
+         * @param  {Number} y New y position on the page.
+         * @return {undefined}
+         */
+        moveTo: function (x, y) {
+            var c = this,
+                interval = 1,
+                relatedTarget = c.relatedTarget,
+                from = c.getPosition(),
+                to = { x: x, y: y },
+                points = getPointsBeetween(from, to, interval);
+            points.forEach(function (p) {
+                var x1 = p[0],
+                    y1 = p[1],
+                    target = document.elementFromPoint(x1, y1);
+                triggerEvent('mousemove', x1, y1);
+                if (target !== relatedTarget) {
+                    // First trigger a mouseout on the old target.
+                    triggerEvent('mouseout', x1, y1, {
+                        relatedTarget: relatedTarget
+                    });
+                    // Then trigger a mouseover on the new target.
+                    triggerEvent('mouseover', x1, y1, {
+                        relatedTarget: target
+                    });
+                    relatedTarget = target;
+                }
+            });
 
-    ret = {
+            // Update controller positions and relatedTarget.
+            c.setPosition(x, y);
+        },
+        /**
+         * moveTo - Move the cursor from current position to a new one.
+         *  Fire a series of mousemoves, also mouseout and mouseover if new targets are found.
+         *
+         * @param  {Element} el The element to move towards.
+         * @param  {Number} x New x position relative to the element.
+         * @param  {Number} y New y position relative to the element.
+         * @return {undefined}
+         */
+        moveToElement: function (el, x, y) {
+            var elOffset = getOffset(el),
+                x1 = elOffset.left + (x || 0),
+                y1 = elOffset.top + (y || 0);
+            this.moveTo(x1, y1);
+        },
+        // Pure functions without states
         trigger: trigger,
         triggerOnChart: triggerOnChart,
-        triggerOnElement: triggerOnElement
+        triggerOnElement: triggerOnElement,
+        getOffset: getOffset,
+        getPointsBeetween: getPointsBeetween
     };
-
     // Shorthand functions. Calls trigger, except the type.
     [
         'click',
         'mousedown',
         'mousemove',
         'mouseup',
+        'mouseout',
+        'mouseover',
         'touchstart',
         'touchmove',
         'touchend'
     ].forEach(function (type) {
-        ret[type] = function (x, y, extra) {
+        controller[type] = function (x, y, extra) {
             trigger(type, x, y, extra);
         };
     });
-
-    // Add styles to displays event markers.
-    if (showEventMarkers) {
-        addEventMarkerStyles();
-    }
-
-    return ret;
+    controller.setPositionToElement(chart.container);
+    return controller;
 };
