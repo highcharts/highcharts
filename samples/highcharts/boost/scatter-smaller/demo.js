@@ -37,7 +37,6 @@ $(function () {
         plotOptions: {
             scatter: {
                 boostThreshold: 1,
-                boostBlending: 'add',
                 marker: {
                     radius: 5,
                     states: {

@@ -2,8 +2,8 @@ $(function () {
 
     var n = 120,
         s = 600,
-        pointStart = 0, //Date.UTC(2016, 0, 1),
-        pointInterval = 1000;
+        pointStart = Date.UTC(2017, 0, 1),
+        pointInterval = 24 * 36e5;
 
     function getData(n) {
         var arr = [],

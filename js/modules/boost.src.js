@@ -1,6 +1,6 @@
 /**
  * License: www.highcharts.com/license
- * Author: Torstein Honsi
+ * Author: Christer Vasseng, Torstein Honsi
  * 
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
@@ -12,14 +12,8 @@
  * - Check how it works with Highstock and data grouping. Currently it only works when navigator.adaptToUpdatedData
  *   is false. It is also recommended to set scrollbar.liveRedraw to false.
  * - Check inverted charts.
- * - Check reversed axes.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
 	 that with initial series animation).
- * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
- *   needs to be built.
- * - Stacking is perhaps not correct since it doesn't use the translation given in 
- *   the translate method. If this gets too complicated, a possible way out would be to 
- *   have a simplified renderCanvas method that simply draws the areaPath on a canvas.
  *
  * If this module is taken in as part of the core
  * - All the loading logic should be merged with core. Update styles in the core.
@@ -271,8 +265,8 @@ function toRGBAFast(col) {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {	
-	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || 
-					chart.options.chart.seriesBoostThreshold ||
+	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || // docs
+					chart.options.chart.seriesBoostThreshold || // docs
 					10;
 
 	return chart.series.length >= threshold;
@@ -1574,7 +1568,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			//Blending
-			if (options.boostBlending === 'add') {
+			if (options.boostBlending === 'add') { // docs
 				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 				gl.blendEquation(gl.FUNC_ADD);
 
@@ -2380,7 +2374,7 @@ H.extend(Series.prototype, {
 		} else {
 			//Use a single group for the markers
 			this.markerGroup = chart.markerGroup;			
-		}			
+		}		
 
 		points = this.points = [];			
 
