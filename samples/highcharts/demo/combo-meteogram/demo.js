@@ -653,6 +653,10 @@ Meteogram.prototype.createChart = function () {
     });
 };
 
+Meteogram.prototype.error = function () {
+    $('#loading').html('<i class="fa fa-frown-o"></i> Failed loading data, please try again later');
+};
+
 /**
  * Handle the data. This part of the code is not Highcharts specific, but deals with yr.no's
  * specific data format
@@ -664,8 +668,7 @@ Meteogram.prototype.parseYrData = function () {
         pointStart;
 
     if (!xml || !xml.forecast) {
-        $('#loading').html('<i class="fa fa-frown-o"></i> Failed loading data, please try again later');
-        return;
+        return this.error();
     }
 
     // The returned xml variable is a JavaScript representation of the provided XML,
@@ -747,9 +750,11 @@ if (!location.hash) {
 // Then get the XML file through Highcharts' jsonp provider, see
 // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
 // for source code.
-$.getJSON(
-    'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
-    function (xml) {
+$.ajax({
+    dataType: 'json',
+    url: 'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
+    success: function (xml) {
         window.meteogram = new Meteogram(xml, 'container');
-    }
-);
+    },
+    error: Meteogram.prototype.error
+});
