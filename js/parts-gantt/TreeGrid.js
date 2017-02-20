@@ -18,10 +18,12 @@ var argsToArray = function (args) {
 	iconRadius = 5,
 	iconSpacing = 5,
 	each = H.each,
+	extend = H.extend,
 	merge = H.merge,
-	wrap = H.wrap,
+	inArray = H.inArray,
 	pick = H.pick,
 	reduce = Tree.reduce,
+	wrap = H.wrap,
 	GridAxis = H.Axis,
 	GridAxisTick = H.Tick;
 
@@ -51,6 +53,34 @@ var override = function (obj, methods) {
 			wrap(obj, method, func);
 		}
 	}
+};
+
+/**
+ * getCategoriesFromTree - getCategories based on a tree
+ *
+ * @param  {object} tree Root of tree to collect categories from
+ * @return {Array}       Array of categories
+ */
+var getCategoriesFromTree = function (tree) {
+	var categories = [];
+	if (tree.data) {
+		categories.push(tree.data.name);
+	}
+	each(tree.children, function (child) {
+		categories = categories.concat(getCategoriesFromTree(child));
+	});
+	return categories;
+};
+
+var mapTickPosToNode = function (node, categories) {
+	var map = {},
+		name = node.data && node.data.name,
+		pos = inArray(name, categories);
+	map[pos] = node;
+	each(node.children, function (child) {
+		extend(map, mapTickPosToNode(child, categories));
+	});
+	return map;
 };
 
 var getBreakFromNode = function (node, pos) {
@@ -162,7 +192,6 @@ override(GridAxis.prototype, {
 	init: function (proceed, chart, userOptions) {
 		var axis = this,
 			isTreeGrid = userOptions.type === 'tree-grid';
-
 		// Set default and forced options for TreeGrid
 		if (isTreeGrid) {
 			merge(true, userOptions, {
@@ -181,6 +210,7 @@ override(GridAxis.prototype, {
 		// which are sliced off this function's arguments
 		proceed.apply(axis, argsToArray(arguments));
 		if (isTreeGrid) {
+			axis.hasNames = true;
 			axis.options.showLastLabel = true;
 		}
 	},
@@ -243,3 +273,32 @@ override(GridAxisTick.prototype, {
 		}
 	}
 });
+
+GridAxis.prototype.updateYNames = function () {
+	var axis = this,
+		isTreeGrid = axis.options.type === 'tree-grid',
+		isYAxis = !axis.isXAxis,
+		series = axis.series,
+		data;
+
+	if (isTreeGrid && isYAxis) {
+		// Concatenate data from all series assigned to this axis.
+		data = reduce(series, function (arr, s) {
+			return arr.concat(s.options.data);
+		}, []);
+		// Build the tree from the series data.
+		axis.tree = Tree.getTree(data);
+		axis.categories = getCategoriesFromTree(axis.tree);
+		axis.treeGridMap = mapTickPosToNode(axis.tree, axis.categories);
+		axis.hasNames = true;
+	}
+};
+
+GridAxis.prototype.nameToY = function (point) {
+	var axis = this,
+		name = point.name;
+	if (!axis.categories) {
+		axis.updateYNames();
+	}
+	return inArray(name, axis.categories);
+};

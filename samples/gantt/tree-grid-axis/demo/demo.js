@@ -24,20 +24,17 @@ $(function () {
             data: [{
                 id: '1',
                 name: 'Node 1',
-                x: Date.UTC(2014, 10, 18),
-                y: 0
+                x: Date.UTC(2014, 10, 18)
             }, {
                 id: '2',
                 parent: '1',
                 name: 'Node 2',
-                x: Date.UTC(2014, 10, 20),
-                y: 1
+                x: Date.UTC(2014, 10, 20)
             }, {
                 id: '3',
                 parent: '2',
                 name: 'Node 3',
-                x: Date.UTC(2014, 10, 26),
-                y: 2
+                x: Date.UTC(2014, 10, 26)
             }]
         }]
     });
