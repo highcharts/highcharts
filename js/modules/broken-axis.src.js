@@ -236,13 +236,16 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 			axis.breakArray = breakArray;
 
-			// Used with staticScale
-			axis.unitLength = max - min - length;
+			// Used with staticScale, and below, the actual axis length when
+			// breaks are substracted.
+			axis.unitLength = max - min - length + axis.pointRangePadding;
 
 			fireEvent(axis, 'afterBreaks');
 			
-			axis.transA *= ((max - axis.min) / (max - min - length));
-
+			axis.transA *= (max - axis.min + axis.pointRangePadding) /
+				axis.unitLength;
+			axis.minPixelPadding = axis.transA * axis.minPointOffset;
+			
 			axis.min = min;
 			axis.max = max;
 		};
