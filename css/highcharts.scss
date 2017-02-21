@@ -168,10 +168,11 @@ $highlight-color-10: #e6ebf5; // Pressed button, color axis min color.
 }
 
 /* Legend hover affects points and series */
-g.highcharts-series, .highcharts-point {
+g.highcharts-series, .highcharts-point, .highcharts-markers {
     transition: opacity 250ms;
 }
 .highcharts-legend-series-active g.highcharts-series:not(.highcharts-series-hover),
+.highcharts-legend-series-active .highcharts-markers:not(.highcharts-series-hover),
 .highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
     opacity: 0.2;
 }
