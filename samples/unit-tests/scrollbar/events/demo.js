@@ -1,5 +1,6 @@
 QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', function (assert) {
-    var counter = 0,
+    var done = assert.async(),
+        counter = 0,
         options = {
             xAxis: {
                 minRange: 0.01,
@@ -10,6 +11,9 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
                         counter ++;
                     }
                 }
+            },
+            rangeSelector: {
+                enabled: false
             },
             navigator: {
                 adaptToUpdatedData: false
@@ -35,9 +39,12 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
     controller.mousemove(x + 90, y);
     controller.mouseup();
 
-    assert.strictEqual(
-        counter,
-        1,
-        'afterSetExtremes called just once'
-    );
+    setTimeout(function () {
+        assert.strictEqual(
+            counter,
+            1,
+            'afterSetExtremes called just once'
+        );
+        done();
+    }, 500);
 });
