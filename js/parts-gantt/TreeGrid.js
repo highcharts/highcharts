@@ -84,8 +84,8 @@ var mapTickPosToNode = function (node, categories) {
 };
 
 var getBreakFromNode = function (node, pos) {
-	var from = pos,
-		to = from + node.descendants + 0.5;
+	var from = pos + 0.5,
+		to = from + node.descendants;
 	return {
 		from: from,
 		to: to
