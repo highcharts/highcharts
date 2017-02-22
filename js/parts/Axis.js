@@ -2255,47 +2255,6 @@ H.Axis.prototype = {
 		};
 	},
 
-	renderMinorTick: function (pos) {
-		var axis = this,
-			chart = axis.chart,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin),
-			minorTicks = axis.minorTicks;
-		if (!minorTicks[pos]) {
-			minorTicks[pos] = new Tick(axis, pos, 'minor');
-		}
-
-		// render new ticks in old position
-		if (slideInTicks && minorTicks[pos].isNew) {
-			minorTicks[pos].render(null, true);
-		}
-
-		minorTicks[pos].render(null, false, 1);
-	},
-
-	renderTick: function (pos, i) {
-		var axis = this,
-			chart = axis.chart,
-			isLinked = axis.isLinked,
-			ticks = axis.ticks,
-			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && isNumber(axis.oldMin);
-		// linked axes need an extra check to find out if
-		if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
-
-			if (!ticks[pos]) {
-				ticks[pos] = new Tick(axis, pos);
-			}
-
-			// render new ticks in old position
-			if (slideInTicks && ticks[pos].isNew) {
-				ticks[pos].render(i, true, 0.1);
-			}
-
-			ticks[pos].render(i);
-		}
-	},
-
 	/**
 	 * Render a minor tick into the given position. If a minor tick already 
 	 * exists in this position, move it.
