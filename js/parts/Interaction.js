@@ -492,10 +492,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 	/**
 	 * Runs on mouse over the point
-	 *
-	 * @param {Object} e The event arguments
-	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to
-	 *        actually hovered points. True for other points in shared tooltip.
 	 */
 	onMouseOver: function (e) {
 		var point = this,
@@ -503,8 +499,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			chart = series.chart,
 			pointer = chart.pointer;
 		point.firePointEvent('mouseOver');
-		e = pointer.normalize(e);
-		pointer.runPointActions(e, point);
+		pointer.runPointActions(undefined, point);
 	},
 
 	/**

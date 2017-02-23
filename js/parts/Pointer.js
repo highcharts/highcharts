@@ -18,6 +18,7 @@ var addEvent = H.addEvent,
 	each = H.each,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
+	map = H.map,
 	offset = H.offset,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
@@ -227,20 +228,29 @@ H.Pointer.prototype = {
 			shared = tooltip ? tooltip.shared : false,
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
-			ePoint = pointer.getPointFromEvent(e),
-			isDirectTouch = !!p || (ePoint && ePoint === hoverPoint),
+			// ePoint = e && pointer.getPointFromEvent(e), // NOTE can likely be removed.
+			isDirectTouch = !!p, // || (ePoint && ePoint === hoverPoint),
 			useSharedTooltip,
 			followPointer,
 			i,
 			anchor,
-			points = [hoverPoint];
+			points;
 
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
 		// Handle shared tooltip or cases where a series is not yet hovered
 		if (isDirectTouch) {
-			points = this.getKDPoints(series, shared, e);
+			if (shared) {
+				points = map(series, function (s) {
+					return s.searchKDTree({
+						clientX: hoverPoint.clientX,
+						plotY: hoverPoint.plotY
+					}, true);
+				});
+			} else {
+				points = [hoverPoint];
+			}
 		} else if (hoverSeries && !hoverSeries.options.stickyTracking) {
 			points = this.getKDPoints([hoverSeries], shared, e);
 			hoverPoint = points[0];
