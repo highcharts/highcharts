@@ -83,9 +83,19 @@ var mapTickPosToNode = function (node, categories) {
 	return map;
 };
 
-var getBreakFromNode = function (node, pos) {
+var getBreakFromNode = function (node, pos, max) {
 	var from = pos + 0.5,
 		to = from + node.descendants;
+
+	// In broken-axis, the axis.max is minimized until it is not within a break.
+	// Therefore, if break.to is larger than axis.max, the axis.to should not
+	// add the 0.5 axis.tickMarkOffset, to avoid adding a break larger than
+	// axis.max
+	// TODO consider simplifying broken-axis and this might solve itself
+	if (to >= max) {
+		from -= 0.5;
+	}
+
 	return {
 		from: from,
 		to: to
@@ -94,14 +104,14 @@ var getBreakFromNode = function (node, pos) {
 
 var isCollapsed = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
-		obj = getBreakFromNode(node, pos);
+		obj = getBreakFromNode(node, pos, axis.max);
 	return some(breaks, function (b) {
 		return b.from === obj.from && b.to === obj.to;
 	});
 };
 var collapse = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
-		obj = getBreakFromNode(node, pos);
+		obj = getBreakFromNode(node, pos, axis.max);
 	breaks.push(obj);
 	axis.update({
 		breaks: breaks
@@ -109,7 +119,7 @@ var collapse = function (axis, node, pos) {
 };
 var expand = function (axis, node, pos) {
 	var breaks = (axis.options.breaks || []),
-		obj = getBreakFromNode(node, pos);
+		obj = getBreakFromNode(node, pos, axis.max);
 	// Remove the break from the axis breaks array.
 	breaks = reduce(breaks, function (arr, b) {
 		if (b.to !== obj.to || b.from !== obj.from) {
