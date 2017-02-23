@@ -14,7 +14,7 @@ var Chart = H.Chart,
 Chart.prototype.adjustHeight = function () {
 	each(this.axes, function (axis) {
 		var chart = axis.chart,
-			animate = !!chart.initiatedScale,
+			animate = !!chart.initiatedScale && chart.options.animation,
 			staticScale = axis.options.staticScale,
 			height,
 			diff;
