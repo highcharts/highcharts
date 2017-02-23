@@ -342,7 +342,7 @@ seriesType('treemap', 'scatter', {
 			// Select either point color, level color or inherited color.
 			color = pick(point && point.options.color, level && level.color, color);
 			colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
-			if (point) {
+			if (point && color && colorIndex) {
 				point.color = color;
 				point.colorIndex = colorIndex;
 			}
