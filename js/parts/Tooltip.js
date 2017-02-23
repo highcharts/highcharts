@@ -441,15 +441,16 @@ H.Tooltip.prototype = {
 
 	/**
 	 * Refresh the tooltip's text and position.
-	 * @param {Object} point
+	 * @param {Object|Array} pointOrPoints Rither a point or an array of points
 	 */
-	refresh: function (point, mouseEvent) {
+	refresh: function (pointOrPoints, mouseEvent) {
 		var tooltip = this,
 			chart = tooltip.chart,
 			label,
 			options = tooltip.options,
 			x,
 			y,
+			point = pointOrPoints,
 			anchor,
 			textConfig = {},
 			text,
@@ -508,7 +509,7 @@ H.Tooltip.prototype = {
 
 			// update text
 			if (tooltip.split) {
-				this.renderSplit(text, chart.hoverPoints);
+				this.renderSplit(text, pointOrPoints);
 			} else {
 				label.attr({
 					text: text && text.join ? text.join('') : text
