@@ -90,6 +90,53 @@ QUnit.test('Row height does not change with data size', function (assert) {
     assert.equal(
         chart2Spacing,
         chart1Spacing,
-        'Space between two first ticks does not change after adding axis breaks'
+        'Row height does not change with data size'
+    );
+});
+
+QUnit.test('Row height does not change with axis breaks', function (assert) {
+    var chart1Spacing,
+        chart2Spacing,
+        chart1,
+        chart2;
+
+    chart1 = Highcharts.chart('container', {
+
+        yAxis: {
+            staticScale: 24,
+            tickInterval: 1,
+            tickWidth: 1
+        },
+
+        series: [{
+            data: getData(100)
+        }]
+
+    });
+    chart1Spacing = getSpacing(chart1);
+
+    chart2 = Highcharts.chart('container', {
+
+        yAxis: {
+            staticScale: 24,
+            tickInterval: 1,
+            tickWidth: 1,
+            breaks: [{
+                from: 95,
+                to: 97
+            }]
+        },
+
+        series: [{
+            data: getData(100)
+        }]
+
+    });
+    chart2Spacing = getSpacing(chart2);
+
+    assert.equal(
+        chart2Spacing,
+        chart1Spacing,
+        'Space between two first ticks does not change with axis breaks'
     );
 });
