@@ -2187,8 +2187,8 @@ each([
 		) {
 
 			// Clear image
-			if (method === 'render' && this.image) {
-			//	this.image.attr({ href: '' });
+			if (method === 'render' && this.image && !isChartSeriesBoosting(this.chart)) {
+				this.image.attr({ href: '' });
 				this.animate = null; // We're zooming in, don't run animation
 			}
 
@@ -2403,6 +2403,7 @@ H.extend(Series.prototype, {
 		if (!this.visible) {
 			if (!isChartSeriesBoosting(chart) && renderer) {
 				renderer.clear();
+				this.image.attr({href: ''});
 			}
 			return;
 		}
