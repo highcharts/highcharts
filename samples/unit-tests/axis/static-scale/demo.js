@@ -28,10 +28,6 @@ QUnit.test('Row height does not change with chart update', function (assert) {
         spaceAfter,
         chart = Highcharts.chart('container', {
 
-            chart: {
-                animation: false
-            },
-
             yAxis: {
                 staticScale: 24,
                 tickInterval: 1,
@@ -63,10 +59,6 @@ QUnit.test('Row height does not change with data size', function (assert) {
 
     chart1 = Highcharts.chart('container', {
 
-        chart: {
-            animation: false
-        },
-
         yAxis: {
             staticScale: 24,
             tickInterval: 1,
@@ -81,10 +73,6 @@ QUnit.test('Row height does not change with data size', function (assert) {
     chart1Spacing = getSpacing(chart1);
 
     chart2 = Highcharts.chart('container', {
-
-        chart: {
-            animation: false
-        },
 
         yAxis: {
             staticScale: 24,
