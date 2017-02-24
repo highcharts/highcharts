@@ -9,8 +9,6 @@ QUnit.test('Label positions for first axis in a pane (#6071)', function (assert)
 
     chart.yAxis[0].update({});
 
-    console.log(correctPosition)
-
     assert.strictEqual(
         chart.yAxis[0].ticks[0].label.element.getBBox().x,
         correctPosition,
