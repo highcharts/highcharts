@@ -2639,8 +2639,5 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	addEvent(chart, 'predraw', preRender);
-	//Blit to image when done redrawing
 	addEvent(chart, 'render', canvasToSVG);
-	//addEvent(chart, 'load', canvasToSVG);
-
 });
