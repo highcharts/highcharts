@@ -194,11 +194,23 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			if (labelOptions.align === undefined) {
 				labelOptions.align = 'right';
 			}
-			panes[key] = 1;
+			panes[key] = this;
 			return 'right';
 		}
 	}
 	return proceed.call(this, [].slice.call(arguments, 1));
+});
+
+// Clear axis from label panes (#6071)
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	var chart = this.chart,
+		key = this.options && (this.options.top + ',' + this.options.height);
+
+	if (key && chart._labelPanes && chart._labelPanes[key] === this) {
+		delete chart._labelPanes[key];
+	}
+
+	return proceed.call(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
