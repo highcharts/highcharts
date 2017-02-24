@@ -47,7 +47,8 @@ Highcharts.chart('container', {
     },
     series: [{
         type: 'bubble',
-        color: 'rgba(152,0,67,0.01)',
+        boostBlending: 'alpha',
+        color: 'rgba(152,0,67,0.5)',
         data: data,
         minSize: 1,
         maxSize: 10,
