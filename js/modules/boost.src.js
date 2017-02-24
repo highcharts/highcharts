@@ -46,7 +46,56 @@
  *    - Per. series: boost based on number of points in individual series
  *    - Per. chart: boost based on the number of series 
  *
+ *  To set the series boost threshold, set seriesBoostThreshold on the chart object.
+ *  To set the series-specific threshold, set boostThreshold on the series object.
+ * 
+ *  In addition, the following can be set in the boost object:
+ *  {
+ *  	//Wether or not to use alpha blending
+ *  	useAlpha: boolean - default: true
+ *  	//Set to true to perform translations on the GPU.
+ *  	//Much faster, but may cause rendering issues
+ *  	//when using values far from 0 due to floating point
+ *  	//rounding issues
+ *  	useGPUTranslations: boolean - default: false
+ *  	//Use pre-allocated buffers, much faster,
+ *  	//but may cause rendering issues with some data sets
+ *  	usePreallocated: boolean - default: false
+ *  	//Output rendering time in console
+ *  	timeRendering: boolean - default: false
+ *  	//Output processing time in console
+ *  	timeSeriesProcessing: boolean - default: false
+ *  	//Output setup time in console
+ *  	timeSetup: boolean - default: false
+ *  }
  */
+
+ /**
+  * Set the series threshold for when the boost should kick in globally.
+  *
+  * Setting to e.g. 20 will cause the whole chart to enter boost mode
+  * if there are 20 or more series active. When the chart is in boost mode,
+  * every series in it will be rendered to a common canvas. This offers 
+  * a significant speed improvment in charts with a very high
+  * amount of series.
+  *  
+  * Note: only available when including the boost module.
+  *
+  * @default  null
+  * @apioption chart.seriesBoostThreshold
+  */
+ 
+ /**
+  * Set the point threshold for when a series should enter boost mode.
+  *
+  * Setting it to e.g. 2000 will cause the series to enter boost mode
+  * when there are 2000 or more points in the series.
+  *
+  * Note: only available when including the boost module.
+  *
+  * @default  5000
+  * @apioption series.boostThreshold
+  */
 
  /* global Float32Array, window, document, Image */
 
@@ -2558,9 +2607,14 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis) {	
+wrap(Series.prototype, 'setVisible', function (proceed, vis, rdraw) {
 	proceed.call(this, vis, false);
-	this.chart.redraw();
+	if (this.visible === false && this.ogl && this.canvas && this.image) {
+		this.ogl.clear();
+		this.image.attr({href: ''});
+	} else {
+		this.chart.redraw();		
+	}
 });
 
 /**
