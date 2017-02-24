@@ -1364,8 +1364,7 @@ function GLRenderer(postRenderCallback) {
 						series.closestPointRangePx,
 						Math.abs(x - lastX)
 					);					
-				}
-			//	console.log('prep', x, lastX, Math.abs(x - lastX));
+				}			
 			}
 			
 			vertice(
@@ -2184,7 +2183,6 @@ function hasWebGLSupport() {
 
 		for (; i < contexts.length; i++) {
 			try {
-				console.log('checking', contexts[i]);
 				context = canvas.getContext(contexts[i]);
 				if (typeof context !== 'undefined' && context !== null) {
 					return true;
