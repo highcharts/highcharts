@@ -60,11 +60,9 @@ seriesType('waterfall', 'column', {
 			previousIntermediate,
 			range,
 			minPointLength = pick(options.minPointLength, 5),
+			halfMinPointLength = minPointLength / 2,
 			threshold = options.threshold,
 			stacking = options.stacking,
-			// Separate offsets for negative and positive columns:
-			positiveOffset = 0,
-			negativeOffset = 0,
 			stackIndicator,
 			tooltipY;
 
@@ -103,12 +101,12 @@ seriesType('waterfall', 'column', {
 			if (point.isSum) {
 				shapeArgs.y = yAxis.toPixels(range[1], true);
 				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) -
-					shapeArgs.y + positiveOffset + negativeOffset; // #4256
+					shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.toPixels(range[1], true);
 				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) -
-					shapeArgs.y + positiveOffset + negativeOffset;
+					shapeArgs.y;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get
@@ -129,25 +127,22 @@ seriesType('waterfall', 'column', {
 			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
-			// Before minPointLength, apply negative offset:
-			shapeArgs.y -= negativeOffset;
-
-
 			if (shapeArgs.height <= minPointLength && !point.isNull) {
 				shapeArgs.height = minPointLength;
+				shapeArgs.y -= halfMinPointLength;
+				point.plotY = shapeArgs.y;
 				if (point.y < 0) {
-					negativeOffset -= minPointLength;
+					point.minPointLengthOffset = -halfMinPointLength;
 				} else {
-					positiveOffset += minPointLength;
+					point.minPointLengthOffset = halfMinPointLength;
 				}
+			} else {
+				point.minPointLengthOffset = 0;
 			}
 
-			// After minPointLength is updated, apply positive offset:
-			shapeArgs.y -= positiveOffset;
-
 			// Correct tooltip placement (#3014)
-			tooltipY = point.plotY - negativeOffset - positiveOffset +
-				(point.negative && negativeOffset >= 0 ? shapeArgs.height : 0);
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+
 			if (series.chart.inverted) {
 				point.tooltipPos[0] = yAxis.len - tooltipY;
 			} else {
@@ -265,9 +260,11 @@ seriesType('waterfall', 'column', {
 
 			d = [
 				'M',
-				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
+				prevArgs.x + prevArgs.width,
+				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer,
 				'L',
-				pointArgs.x, prevArgs.y + normalizer
+				pointArgs.x,
+				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer
 			];
 
 			if (data[i - 1].y < 0) {

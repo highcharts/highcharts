@@ -142,6 +142,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	states: { // states for the entire series
 		hover: {
 			//enabled: false,
+			animation: { // docs
+				duration: 50
+			},
 			lineWidthPlus: 1,
 			marker: {
 				// lineWidth: base + 1,
@@ -852,7 +855,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.isLog || (y.length || y > 0));
+			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.positiveValuesOnly || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
 				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
@@ -926,7 +929,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				stackValues;
 
 			// Discard disallowed y values for log axes (#3434)
-			if (yAxis.isLog && yValue !== null && yValue <= 0) {
+			if (yAxis.positiveValuesOnly && yValue !== null && yValue <= 0) {
 				point.isNull = true;
 			}
 
@@ -954,7 +957,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
 					yBottom = pick(threshold, yAxis.min);
 				}
-				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
+				if (yAxis.positiveValuesOnly && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
 				}
 
@@ -1160,7 +1163,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled,
 				xAxis.isRadial ? true : null,
-				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
+				// Use larger or equal as radius is null in bubbles (#6321)
+				series.closestPointRangePx >= 2 * seriesMarkerOptions.radius
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {

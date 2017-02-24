@@ -10,58 +10,84 @@ import './Utilities.js';
 var Chart = H.Chart,
 	each = H.each,
 	inArray = H.inArray,
+	isArray = H.isArray,
 	isObject = H.isObject,
 	pick = H.pick,
 	splat = H.splat;
 
 /**
- * Update the chart based on the current chart/document size and options for responsiveness
+ * Update the chart based on the current chart/document size and options for
+ * responsiveness.
  */
 Chart.prototype.setResponsive = function (redraw) {
-	var options = this.options.responsive;
+	var options = this.options.responsive,
+		ruleIds = [],
+		currentResponsive = this.currentResponsive,
+		currentRuleIds;
 
 	if (options && options.rules) {
 		each(options.rules, function (rule) {
-			this.matchResponsiveRule(rule, redraw);
+			if (rule._id === undefined) {
+				rule._id = H.uniqueKey();
+			}
+			
+			this.matchResponsiveRule(rule, ruleIds, redraw);
 		}, this);
+	}
+
+	// Merge matching rules
+	var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
+		return H.find(options.rules, function (rule) {
+			return rule._id === ruleId;
+		}).chartOptions;
+	}));
+
+	// Stringified key for the rules that currently apply.
+	ruleIds = ruleIds.toString() || undefined;
+	currentRuleIds = currentResponsive && currentResponsive.ruleIds;
+
+
+	// Changes in what rules apply
+	if (ruleIds !== currentRuleIds) {
+
+		// Undo previous rules. Before we apply a new set of rules, we need to
+		// roll back completely to base options (#6291).
+		if (currentResponsive) {
+			this.update(currentResponsive.undoOptions, redraw);
+		}
+
+		if (ruleIds) {
+			// Get undo-options for matching rules
+			this.currentResponsive = {
+				ruleIds: ruleIds,
+				mergedOptions: mergedOptions,
+				undoOptions: this.currentOptions(mergedOptions)
+			};
+
+			this.update(mergedOptions, redraw);
+		
+		} else {
+			this.currentResponsive = undefined;	
+		}
 	}
 };
 
 /**
  * Handle a single responsiveness rule
  */
-Chart.prototype.matchResponsiveRule = function (rule, redraw) {
-	var respRules = this.respRules,
-		condition = rule.condition,
-		matches,
+Chart.prototype.matchResponsiveRule = function (rule, matches) {
+	var condition = rule.condition,
 		fn = condition.callback || function () {
 			return this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
 				this.chartHeight <= pick(condition.maxHeight, Number.MAX_VALUE) &&
 				this.chartWidth >= pick(condition.minWidth, 0) &&
 				this.chartHeight >= pick(condition.minHeight, 0);
-		};
-		
+		};		
 
-	if (rule._id === undefined) {
-		rule._id = H.uniqueKey();
+	if (fn.call(this)) {
+		matches.push(rule._id);
 	}
-	matches = fn.call(this);
 
-	// Apply a rule
-	if (!respRules[rule._id] && matches) {
-
-		// Store the current state of the options
-		if (rule.chartOptions) {
-			respRules[rule._id] = this.currentOptions(rule.chartOptions);
-			this.update(rule.chartOptions, redraw);
-		}
-
-	// Unapply a rule based on the previous options before the rule
-	// was applied
-	} else if (respRules[rule._id] && !matches) {
-		this.update(respRules[rule._id], redraw);
-		delete respRules[rule._id];
-	}
 };
 
 /**
@@ -84,17 +110,22 @@ Chart.prototype.currentOptions = function (options) {
 				options[key] = splat(options[key]);
 			
 				ret[key] = [];
+
+				// Iterate over collections like series, xAxis or yAxis and map
+				// the items by index.
 				for (i = 0; i < options[key].length; i++) {
-					ret[key][i] = {};
-					getCurrent(
-						options[key][i],
-						curr[key][i],
-						ret[key][i],
-						depth + 1
-					);
+					if (curr[key][i]) { // Item exists in current data (#6347)
+						ret[key][i] = {};
+						getCurrent(
+							options[key][i],
+							curr[key][i],
+							ret[key][i],
+							depth + 1
+						);
+					}
 				}
 			} else if (isObject(options[key])) {
-				ret[key] = {};
+				ret[key] = isArray(options[key]) ? [] : {};
 				getCurrent(
 					options[key],
 					curr[key] || {},

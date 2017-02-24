@@ -1,31 +1,30 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            marginLeft: 120
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Axes offset by 10px'
-        },
+    chart: {
+        marginLeft: 120
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            offset: 10,
-            lineWidth: 2
-        },
+    title: {
+        text: 'Axes offset by 10px'
+    },
 
-        yAxis: {
-            lineWidth: 2,
-            min: 0,
-            offset: 10,
-            tickWidth: 1
-        },
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        offset: 10,
+        lineWidth: 2
+    },
 
-        series: [{
-            type: 'spline',
-            data: [29.9, 71.5, 0, 0, 0, 450.0, 135.6, 148.5, 216.4, 0, 0, 0]
-        }]
+    yAxis: {
+        lineWidth: 2,
+        min: 0,
+        offset: 10,
+        tickWidth: 1
+    },
 
-    });
+    series: [{
+        type: 'spline',
+        data: [29.9, 71.5, 0, 0, 0, 450.0, 135.6, 148.5, 216.4, 0, 0, 0]
+    }]
+
 });

@@ -218,6 +218,7 @@ Navigator.prototype = {
 			maskInside = navigator.navigatorOptions.maskInside,
 			outlineWidth = navigator.outline.strokeWidth(),
 			halfOutline = outlineWidth / 2,
+			outlineCorrection = (outlineWidth % 2) / 2, // #5800
 			outlineHeight = navigator.outlineHeight,
 			scrollbarHeight = navigator.scrollbarHeight,
 			navigatorSize = navigator.size,
@@ -228,13 +229,13 @@ Navigator.prototype = {
 
 		if (inverted) {
 			left -= halfOutline;
-			verticalMin = navigatorTop + zoomedMax + halfOutline;
-			zoomedMax = navigatorTop + zoomedMin + halfOutline;
+			verticalMin = navigatorTop + zoomedMax + outlineCorrection;
+			zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
 			path = [
 				'M',
 				left + outlineHeight,
-				navigatorTop - scrollbarHeight - halfOutline, // top edge
+				navigatorTop - scrollbarHeight - outlineCorrection, // top edge
 				'L',
 				left + outlineHeight,
 				verticalMin, // top right of zoomed range
@@ -259,8 +260,8 @@ Navigator.prototype = {
 				zoomedMax + halfOutline // upper right of z.r.
 			] : []);
 		} else {
-			zoomedMin += left + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
-			zoomedMax += left + scrollbarHeight - halfOutline; // #5800 - TO DO, remove halfOutline
+			zoomedMin += left + scrollbarHeight - outlineCorrection;
+			zoomedMax += left + scrollbarHeight - outlineCorrection;
 			navigatorTop += halfOutline;
 
 			path = [
@@ -379,7 +380,7 @@ Navigator.prototype = {
 		each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
 			navigator.shades[index] = renderer.rect()
 				.addClass('highcharts-navigator-mask' + 
-					(index === 1 ? '-inside' : '-outside')) // docs
+					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
 					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
@@ -481,20 +482,18 @@ Navigator.prototype = {
 
 		navigator.left = pick(
 			xAxis.left,
-			chart.plotLeft + scrollbarHeight // in case of scrollbar only, without navigator
+			// in case of scrollbar only, without navigator
+			chart.plotLeft + scrollbarHeight + (inverted ? chart.plotWidth : 0)
+		);
+
+		navigator.size = zoomedMax = navigatorSize = pick(
+			xAxis.len,
+			(inverted ? chart.plotHeight : chart.plotWidth) - 2 * scrollbarHeight
 		);
 
 		if (inverted) {
-			navigator.size = zoomedMax = navigatorSize = pick(
-				xAxis.len,
-				chart.plotHeight - 2 * scrollbarHeight
-			);
 			navigatorWidth = scrollbarHeight;
 		} else {
-			navigator.size = zoomedMax = navigatorSize = pick(
-				xAxis.len,
-				chart.plotWidth - 2 * scrollbarHeight
-			);
 			navigatorWidth = navigatorSize + 2 * scrollbarHeight;
 		}
 
@@ -585,7 +584,11 @@ Navigator.prototype = {
 			container = chart.container,
 			eventsToUnbind = [],
 			mouseMoveHandler,
-			mouseUpHandler;
+			mouseUpHandler,
+			// iOS calls both events: mousedown+touchstart and mouseup+touchend
+			// So we add them just once, #6187
+			eventNames = hasTouch ? ['touchstart', 'touchmove', 'touchend'] :
+				['mousedown', 'mousemove', 'mouseup'];
 
 		/**
 		 * Create mouse events' handlers.
@@ -599,22 +602,13 @@ Navigator.prototype = {
 		};
 
 		// Add shades and handles mousedown events
-		eventsToUnbind = navigator.getPartsEvents('mousedown');
+		eventsToUnbind = navigator.getPartsEvents(eventNames[0]);
 		// Add mouse move and mouseup events. These are bind to doc/container,
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
-			addEvent(container, 'mousemove', mouseMoveHandler),
-			addEvent(doc, 'mouseup', mouseUpHandler)
+			addEvent(container, eventNames[1], mouseMoveHandler),
+			addEvent(doc, eventNames[2], mouseUpHandler)
 		);
-
-		// Touch events
-		if (hasTouch) {
-			eventsToUnbind.push(
-				addEvent(container, 'touchmove', mouseMoveHandler),
-				addEvent(doc, 'touchend', mouseUpHandler)
-			);
-			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
-		}
 
 		navigator.eventsToUnbind = eventsToUnbind;
 
@@ -922,6 +916,8 @@ Navigator.prototype = {
 		this.scrollbarOptions = scrollbarOptions;
 		this.outlineHeight = height + scrollbarHeight;
 
+		this.opposite = pick(navigatorOptions.opposite, !navigatorEnabled && chart.inverted); // #6262
+
 		var navigator = this,
 			baseSeries = navigator.baseSeries,
 			xAxisIndex = chart.xAxis.length,
@@ -930,11 +926,11 @@ Navigator.prototype = {
 
 		// Make room for the navigator, can be placed around the chart:
 		chart.extraMargin = {
-			type: navigatorOptions.opposite ? 'plotTop' : 'marginBottom',
-			value: navigator.outlineHeight + navigatorOptions.margin
+			type: navigator.opposite ? 'plotTop' : 'marginBottom',
+			value: (navigatorEnabled || !chart.inverted ? navigator.outlineHeight : 0) + navigatorOptions.margin
 		};
 		if (chart.inverted) {
-			chart.extraMargin.type = navigatorOptions.opposite ? 'marginRight' : 'plotLeft';
+			chart.extraMargin.type = navigator.opposite ? 'marginRight' : 'plotLeft';
 		}
 		chart.isDirtyBox = true;
 
@@ -1005,7 +1001,7 @@ Navigator.prototype = {
 				translate: function (value, reverse) {
 					var axis = chart.xAxis[0],
 						ext = axis.getExtremes(),
-						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
+						scrollTrackWidth = axis.len - 2 * scrollbarHeight,
 						min = numExt('min', axis.options.min, ext.dataMin),
 						valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
 
@@ -1145,6 +1141,7 @@ Navigator.prototype = {
 			baseNavigatorOptions,
 			navSeriesMixin = {
 				enableMouseTracking: false,
+				index: null, // #6162
 				group: 'nav', // for columns
 				padXAxis: false,
 				xAxis: 'navigator-x-axis',
@@ -1365,8 +1362,11 @@ Navigator.prototype = {
 		});
 
 		// Destroy properties
-		each(['series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
-				'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup', 'rendered'], function (prop) {
+		each([
+			'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
+			'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
+			'rendered'
+		], function (prop) {
 			if (this[prop] && this[prop].destroy) {
 				this[prop].destroy();
 			}
@@ -1462,7 +1462,7 @@ wrap(Chart.prototype, 'setChartSize', function (proceed) {
 
 		// Compute the top position
 		if (this.inverted) {
-			navigator.left = navigator.navigatorOptions.opposite ? 
+			navigator.left = navigator.opposite ?
 				this.chartWidth - scrollbarHeight - navigator.height : 
 				this.spacing[3] + scrollbarHeight;
 			navigator.top = this.plotTop + scrollbarHeight;

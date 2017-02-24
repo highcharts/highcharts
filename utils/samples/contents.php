@@ -1,5 +1,6 @@
 <?php
 
+$noPath = true;
 require_once('functions.php');
 
 $browser = getBrowser();

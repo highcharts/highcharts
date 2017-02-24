@@ -96,7 +96,6 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
-		this.respRules = [];
 
 		var optionsChart = options.chart;
 
@@ -242,8 +241,7 @@ Chart.prototype = {
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
 			isDirtyBox = chart.isDirtyBox,
-			seriesLength = series.length,
-			i = seriesLength,
+			i,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
@@ -264,6 +262,7 @@ Chart.prototype = {
 		chart.layOutTitles();
 
 		// link stacked series
+		i = series.length;
 		while (i--) {
 			serie = series[i];
 
@@ -277,7 +276,7 @@ Chart.prototype = {
 			}
 		}
 		if (hasDirtyStacks) { // mark others as dirty
-			i = seriesLength;
+			i = series.length;
 			while (i--) {
 				serie = series[i];
 				if (serie.options.stacking) {
@@ -356,6 +355,8 @@ Chart.prototype = {
 			chart.drawChartBox();
 		}
 
+		// Fire an event before redrawing series, used by the boost module to
+		// clear previous series renderings.
 		fireEvent(chart, 'predraw');
 
 		// redraw affected series
@@ -373,9 +374,12 @@ Chart.prototype = {
 			pointer.reset(true);
 		}
 
-		// fire the event
+		// redraw if canvas
+		renderer.draw();
+
+		// Fire the events
 		fireEvent(chart, 'redraw');
-		fireEvent(chart, 'render'); // docs: On first render + redraws
+		fireEvent(chart, 'render');
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -618,7 +622,10 @@ Chart.prototype = {
 		);
 		chart.chartHeight = Math.max(
 			0,
-			heightOption || chart.containerHeight || 400
+			H.relativeLength( // docs: percent height. Demo added as height-percent
+				heightOption,
+				chart.chartWidth
+			) || chart.containerHeight || 400
 		);
 	},
 
@@ -1560,9 +1567,7 @@ Chart.prototype = {
 		}
 
 		chart.render();
-		
-		fireEvent(chart, 'render');
-		
+
 		// Fire the load event if there are no external images
 		if (!chart.renderer.imgCount && chart.onload) {
 			chart.onload();
@@ -1586,6 +1591,8 @@ Chart.prototype = {
 		}, this);
 
 		fireEvent(this, 'load');
+		fireEvent(this, 'render');
+		
 
 		// Set up auto resize, check for not destroyed (#6068)
 		if (defined(this.index) && this.options.chart.reflow !== false) {

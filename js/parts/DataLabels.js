@@ -486,6 +486,21 @@ if (seriesTypes.pie) {
 			return;
 		}
 
+		// Reset all labels that have been shortened
+		each(data, function (point) {
+			if (point.dataLabel && point.visible && point.dataLabel.shortened) {
+				point.dataLabel
+					.attr({
+						width: 'auto'
+					}).css({
+						width: 'auto',					
+						textOverflow: 'clip'
+					});
+				point.dataLabel.shortened = false;
+			}
+		});
+		
+
 		// run parent method
 		Series.prototype.drawDataLabels.apply(series);
 
@@ -510,6 +525,7 @@ if (seriesTypes.pie) {
 				length = points.length,
 				positions,
 				naturalY,
+				sideOverflow,
 				size;
 
 			if (!length) {
@@ -582,24 +598,39 @@ if (seriesTypes.pie) {
 
 				// Detect overflowing data labels
 				if (series.options.size === null) {
-					dataLabelWidth = dataLabel.width;
+					dataLabelWidth = dataLabel.getBBox().width;
+
+					sideOverflow = null;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = Math.max(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
+						sideOverflow = Math.round(
+							dataLabelWidth - x + connectorPadding
+						);
+						overflow[3] = Math.max(sideOverflow, overflow[3]);
 
 					// Overflow right
 					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = Math.max(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+						sideOverflow = Math.round(
+							x + dataLabelWidth - plotWidth + connectorPadding
+						);
+						overflow[1] = Math.max(sideOverflow, overflow[1]);
 					}
 
 					// Overflow top
 					if (y - labelHeight / 2 < 0) {
-						overflow[0] = Math.max(Math.round(-y + labelHeight / 2), overflow[0]);
+						overflow[0] = Math.max(
+							Math.round(-y + labelHeight / 2),
+							overflow[0]
+						);
 
 					// Overflow left
 					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = Math.max(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
+						overflow[2] = Math.max(
+							Math.round(y + labelHeight / 2 - plotHeight),
+							overflow[2]
+						);
 					}
+					dataLabel.sideOverflow = sideOverflow;
 				}
 			} // for each point
 		}); // for each half
@@ -683,10 +714,22 @@ if (seriesTypes.pie) {
 		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
-
 			if (dataLabel && point.visible) {
 				_pos = dataLabel._pos;
 				if (_pos) {
+
+					// Shorten data labels with ellipsis if they still overflow
+					// after the pie has reached minSize (#223).
+					if (dataLabel.sideOverflow) {
+						dataLabel._attr.width =
+							dataLabel.getBBox().width - dataLabel.sideOverflow;
+						dataLabel.css({
+							width: dataLabel._attr.width + 'px',
+							textOverflow: 'ellipsis'
+						});
+						dataLabel.shortened = true;
+					}
+
 					dataLabel.attr(dataLabel._attr);
 					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
 					dataLabel.moved = true;
@@ -694,7 +737,7 @@ if (seriesTypes.pie) {
 					dataLabel.attr({ y: -9999 });
 				}
 			}
-		});
+		}, this);
 	};
 
 	seriesTypes.pie.prototype.alignDataLabel =  noop;

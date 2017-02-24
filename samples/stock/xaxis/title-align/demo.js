@@ -1,28 +1,27 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        xAxis: {
-            title: {
-                text: 'Date/time',
-                align: 'high'
-            }
-        },
+Highcharts.stockChart('container', {
 
-        yAxis: {
-            title: {
-                text: 'USD to EUR',
-                align: 'high',
-                textAlign: 'left'
-            }
-        },
+    xAxis: {
+        title: {
+            text: 'Date/time',
+            align: 'high'
+        }
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        title: {
+            text: 'USD to EUR',
+            align: 'high',
+            textAlign: 'left'
+        }
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

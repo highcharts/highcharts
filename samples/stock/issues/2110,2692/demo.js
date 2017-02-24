@@ -438,44 +438,43 @@ $.each(usdeur, function (i, point) {
     usdrand[i] = [point[0], point[1] + 0.01];
 });
 
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            animation: false
-        },
+Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
-        },
+    chart: {
+        animation: false
+    },
 
-        rangeSelector: {
-            selected: 5,
-            inputEnabled: false
-        },
+    title: {
+        text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
+    },
 
-        series: [{
-            data: usdeur,
-            dataGrouping: {
-                units: [[
-                    'week',
-                    [1]
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ]]
-            }
-        }, {
-            data: usdrand,
-            dataGrouping: {
-                units: [[
-                    'week',
-                    [1]
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ]]
-            }
-        }]
-    });
+    rangeSelector: {
+        selected: 5,
+        inputEnabled: false
+    },
+
+    series: [{
+        data: usdeur,
+        dataGrouping: {
+            units: [[
+                'week',
+                [1]
+            ], [
+                'month',
+                [1, 2, 3, 4, 6]
+            ]]
+        }
+    }, {
+        data: usdrand,
+        dataGrouping: {
+            units: [[
+                'week',
+                [1]
+            ], [
+                'month',
+                [1, 2, 3, 4, 6]
+            ]]
+        }
+    }]
 });

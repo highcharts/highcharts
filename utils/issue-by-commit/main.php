@@ -29,6 +29,17 @@
 
 	// Get demo code
 	$html = isset($_SESSION['html']) ? $_SESSION['html'] : file_get_contents('demo.html');
+	$rawHTML = $html;
+	$html = preg_replace(
+		'/https?\:\/\/code\.highcharts\.com\//',
+		"http://github.highcharts.com/$commit/",
+		$html
+	);
+	$html = str_replace(
+		"http://github.highcharts.com/$commit/mapdata/",
+		"http://code.highcharts.com/mapdata/",
+		$html
+	);
 
 	$css = isset($_SESSION['css']) ? $_SESSION['css'] : @file_get_contents('demo.css');
 	$js = isset($_SESSION['js']) ? $_SESSION['js'] : file_get_contents('demo.js');
@@ -72,7 +83,7 @@
 
 
 <?php if ($commit) {
-	printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit);
+	echo $html;
 
 
 	echo "<script>$js</script>";
@@ -88,8 +99,8 @@
 
 
 <form method="post" action="main.php">
-<b>Paste HTML</b> here (including framework and Highcharts, use %s for commit):<br/>
-<textarea name="html" rows="6" style="width: 100%"><?php echo $html; ?></textarea>
+<b>Paste HTML</b> here:<br/>
+<textarea name="html" rows="6" style="width: 100%"><?php echo $rawHTML; ?></textarea>
 
 <br/>
 <b>Paste CSS</b> here:<br/>
@@ -125,7 +136,7 @@ ob_start();
 
 		<div style="margin: 1em">
 
-		<?php printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit); ?>
+		<?php echo $html ?>
 		</div>
 
 

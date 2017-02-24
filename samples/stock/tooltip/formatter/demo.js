@@ -1,25 +1,24 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        tooltip: {
-            formatter: function () {
-                var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
+Highcharts.stockChart('container', {
 
-                $.each(this.points, function () {
-                    s += '<br/>1 USD = ' + this.y + ' EUR';
-                });
+    tooltip: {
+        formatter: function () {
+            var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
 
-                return s;
-            }
-        },
+            $.each(this.points, function () {
+                s += '<br/>1 USD = ' + this.y + ' EUR';
+            });
 
-        rangeSelector: {
-            selected: 1
-        },
+            return s;
+        }
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

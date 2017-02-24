@@ -425,8 +425,14 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				flipped = panMax < panMin,
 				newMin = flipped ? panMax : panMin,
 				newMax = flipped ? panMin : panMax,
-				distMin = Math.min(extremes.dataMin, extremes.min) - newMin,
-				distMax = newMax - Math.max(extremes.dataMax, extremes.max);
+				paddedMin = axis.toValue(
+					axis.toPixels(extremes.min) - axis.minPixelPadding
+				),
+				paddedMax = axis.toValue(
+					axis.toPixels(extremes.max) + axis.minPixelPadding
+				),
+				distMin = Math.min(extremes.dataMin, paddedMin) - newMin,
+				distMax = newMax - Math.max(extremes.dataMax, paddedMax);
 
 			// Negative distMin and distMax means that we're still inside the
 			// data range.
@@ -855,8 +861,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 				attribs = {
 					'stroke-width': lineWidth
 				};
-				// use attr because animate will cause any other animation on the graph to stop
-				graph.attr(attribs);
+				
+				// Animate the graph stroke-width. By default a quick animation
+				// to hover, slower to un-hover.
+				graph.animate(
+					attribs,
+					pick(
+						series.chart.options.chart.animation,
+						stateOptions[state] && stateOptions[state].animation
+					)
+				);
 				while (series['zone-graph-' + i]) {
 					series['zone-graph-' + i].attr(attribs);
 					i = i + 1;

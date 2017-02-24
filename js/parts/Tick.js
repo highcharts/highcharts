@@ -76,7 +76,7 @@ H.Tick.prototype = {
 
 		// prepare CSS
 		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
-		
+
 		// first call
 		if (!defined(label)) {
 
@@ -259,51 +259,31 @@ H.Tick.prototype = {
 	},
 
 	/**
-	 * Put everything in place
-	 *
-	 * @param index {Number}
-	 * @param old {Boolean} Use old coordinates to prepare an animation into new position
+	 * Renders the gridLine.
+	 * @param  {Boolean} old         Whether or not the tick is old
+	 * @param  {number} opacity      The opacity of the grid line
+	 * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
+	 * @return {undefined}
 	 */
-	render: function (index, old, opacity) {
+	renderGridLine: function (old, opacity, reverseCrisp) {
 		var tick = this,
 			axis = tick.axis,
 			options = axis.options,
-			chart = axis.chart,
-			renderer = chart.renderer,
-			horiz = axis.horiz,
-			type = tick.type,
-			label = tick.label,
-			pos = tick.pos,
-			labelOptions = options.labels,
 			gridLine = tick.gridLine,
-			tickPrefix = type ? type + 'Tick' : 'tick',
-			tickSize = axis.tickSize(tickPrefix),
 			gridLinePath,
-			mark = tick.mark,
-			isNewMark = !mark,
-			step = labelOptions.step,
 			attribs = {},
-			show = true,
+			pos = tick.pos,
+			type = tick.type,
 			tickmarkOffset = axis.tickmarkOffset,
-			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
-			x = xy.x,
-			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
-				(!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+			renderer = axis.chart.renderer;
 
 		/*= if (build.classic) { =*/
 		var gridPrefix = type ? type + 'Grid' : 'grid',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
-			dashStyle = options[gridPrefix + 'LineDashStyle'],
-			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
-			tickColor = options[tickPrefix + 'Color'];
+			dashStyle = options[gridPrefix + 'LineDashStyle'];
 		/*= } =*/
 
-		opacity = pick(opacity, 1);
-		this.isActive = true;
-
-		// Create the grid line
 		if (!gridLine) {
 			/*= if (build.classic) { =*/
 			attribs.stroke = gridLineColor;
@@ -320,14 +300,20 @@ H.Tick.prototype = {
 			}
 			tick.gridLine = gridLine = renderer.path()
 				.attr(attribs)
-				.addClass('highcharts-' + (type ? type + '-' : '') + 'grid-line')
+				.addClass(
+					'highcharts-' + (type ? type + '-' : '') + 'grid-line'
+				)
 				.add(axis.gridGroup);
 		}
 
 		// If the parameter 'old' is set, the current call will be followed
 		// by another call, therefore do not do any animations this time
 		if (!old && gridLine) {
-			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLine.strokeWidth() * reverseCrisp, old, true);
+			gridLinePath = axis.getPlotLinePath(
+				pos + tickmarkOffset,
+				gridLine.strokeWidth() * reverseCrisp,
+				old, true
+			);
 			if (gridLinePath) {
 				gridLine[tick.isNew ? 'attr' : 'animate']({
 					d: gridLinePath,
@@ -335,8 +321,38 @@ H.Tick.prototype = {
 				});
 			}
 		}
+	},
 
-		// create the tick mark
+	/**
+	 * Renders the tick mark.
+	 * @param  {Object} xy           The position vector of the mark
+	 * @param  {number} xy.x         The x position of the mark
+	 * @param  {number} xy.y         The y position of the mark
+	 * @param  {number} opacity      The opacity of the mark
+	 * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
+	 * @return {undefined}
+	 */
+	renderMark: function (xy, opacity, reverseCrisp) {
+		var tick = this,
+			axis = tick.axis,
+			options = axis.options,
+			renderer = axis.chart.renderer,
+			type = tick.type,
+			tickPrefix = type ? type + 'Tick' : 'tick',
+			tickSize = axis.tickSize(tickPrefix),
+			mark = tick.mark,
+			isNewMark = !mark,
+			x = xy.x,
+			y = xy.y;
+
+		/*= if (build.classic) { =*/
+		var tickWidth = pick(
+				options[tickPrefix + 'Width'],
+				!type && axis.isXAxis ? 1 : 0
+			), // X axis defaults to 1
+			tickColor = options[tickPrefix + 'Color'];
+		/*= } =*/
+
 		if (tickSize) {
 
 			// negate the length
@@ -358,20 +374,70 @@ H.Tick.prototype = {
 				/*= } =*/
 			}
 			mark[isNewMark ? 'attr' : 'animate']({
-				d: tick.getMarkPath(x, y, tickSize[0], mark.strokeWidth() * reverseCrisp, horiz, renderer),
+				d: tick.getMarkPath(
+					x,
+					y,
+					tickSize[0],
+					mark.strokeWidth() * reverseCrisp,
+					axis.horiz,
+					renderer),
 				opacity: opacity
 			});
 
 		}
+	},
 
-		// the label is created on init - now move it into place
+	/**
+	 * Renders the tick label.
+	 * Note: The label should already be created in init(), so it should only
+	 * have to be moved into place.
+	 * @param  {Object} xy      The position vector of the label
+	 * @param  {number} xy.x    The x position of the label
+	 * @param  {number} xy.y    The y position of the label
+	 * @param  {Boolean} old    Whether or not the tick is old
+	 * @param  {number} opacity The opacity of the label
+	 * @param  {number} index   The index of the tick
+	 * @return {undefined}
+	 */
+	renderLabel: function (xy, old, opacity, index) {
+		var tick = this,
+			axis = tick.axis,
+			horiz = axis.horiz,
+			options = axis.options,
+			label = tick.label,
+			labelOptions = options.labels,
+			step = labelOptions.step,
+			tickmarkOffset = axis.tickmarkOffset,
+			show = true,
+			x = xy.x,
+			y = xy.y;
 		if (label && isNumber(x)) {
-			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
+			label.xy = xy = tick.getLabelPosition(
+				x,
+				y,
+				label,
+				horiz,
+				labelOptions,
+				tickmarkOffset,
+				index,
+				step
+			);
 
-			// Apply show first and show last. If the tick is both first and last, it is
-			// a single centered tick, in which case we show the label anyway (#2100).
-			if ((tick.isFirst && !tick.isLast && !pick(options.showFirstLabel, 1)) ||
-					(tick.isLast && !tick.isFirst && !pick(options.showLastLabel, 1))) {
+			// Apply show first and show last. If the tick is both first and
+			// last, it is a single centered tick, in which case we show the
+			// label anyway (#2100).
+			if (
+				(
+					tick.isFirst &&
+					!tick.isLast &&
+					!pick(options.showFirstLabel, 1)
+				) ||
+				(
+					tick.isLast &&
+					!tick.isFirst &&
+					!pick(options.showLastLabel, 1)
+				)
+			) {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
@@ -395,6 +461,38 @@ H.Tick.prototype = {
 			}
 			tick.isNew = false;
 		}
+	},
+
+	/**
+	 * Put everything in place
+	 *
+	 * @param index {Number}
+	 * @param old {Boolean} Use old coordinates to prepare an animation into new
+	 *                      position
+	 */
+	render: function (index, old, opacity) {
+		var tick = this,
+			axis = tick.axis,
+			horiz = axis.horiz,
+			pos = tick.pos,
+			tickmarkOffset = axis.tickmarkOffset,
+			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
+			x = xy.x,
+			y = xy.y,
+			reverseCrisp = ((horiz && x === axis.pos + axis.len) ||
+				(!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+
+		opacity = pick(opacity, 1);
+		this.isActive = true;
+
+		// Create the grid line
+		this.renderGridLine(old, opacity, reverseCrisp);
+
+		// create the tick mark
+		this.renderMark(xy, opacity, reverseCrisp);
+
+		// the label is created on init - now move it into place
+		this.renderLabel(xy, old, opacity, index);
 	},
 
 	/**

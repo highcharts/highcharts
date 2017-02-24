@@ -1,22 +1,21 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Tooltip should follow mouse'
-        },
+Highcharts.chart('container', {
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr']
-        },
+    title: {
+        text: 'Tooltip should follow mouse'
+    },
 
-        tooltip: {
-            followPointer: true
-        },
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
 
-        series: [{
-            data: [3, 2, 5, 4],
-            type: 'column'
-        }]
+    tooltip: {
+        followPointer: true
+    },
 
-    });
+    series: [{
+        data: [3, 2, 5, 4],
+        type: 'column'
+    }]
+
 });

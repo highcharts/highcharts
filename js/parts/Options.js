@@ -247,7 +247,9 @@ H.defaultOptions = {
 		snap: isTouchDevice ? 25 : 10,
 		/*= if (!build.classic) { =*/
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
-		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
+			'\u25CF</span> {series.name}: <span class="highcharts-strong">' +
+			'{point.y}</span><br/>',
 		/*= } else { =*/
 		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
 		borderWidth: 1,
@@ -301,7 +303,7 @@ function getTimezoneOffsetOption() {
 	var globalOptions = H.defaultOptions.global,
 		moment = win.moment;
 
-	if (globalOptions.timezone) { // docs
+	if (globalOptions.timezone) {
 		if (!moment) {
 			// getTimezoneOffset-function stays undefined because it depends on
 			// Moment.js

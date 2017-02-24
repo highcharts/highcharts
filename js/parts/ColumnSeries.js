@@ -388,9 +388,6 @@ seriesType('column', 'line', {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr({
-							'class': point.getClassName()
-						})
 						.add(point.group || series.group);
 				}
 
@@ -400,6 +397,9 @@ seriesType('column', 'line', {
 					.attr(series.pointAttribs(point, point.selected && 'select'))
 					.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				/*= } =*/
+				
+				graphic.addClass(point.getClassName(), true);
+						
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269

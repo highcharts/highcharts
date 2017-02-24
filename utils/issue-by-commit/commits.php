@@ -120,9 +120,11 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 				position: absolute;
 			}
 			.parents .disc {
-				width: 10px;
-				height: 10px;
+				width: 6px;
+				height: 6px;
 				border-radius: 5px;
+				border-width: 2px;
+				border-color: black;
 			}
 			.message {
 				display: block;

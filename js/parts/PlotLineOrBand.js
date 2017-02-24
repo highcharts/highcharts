@@ -97,8 +97,11 @@ H.PlotLineOrBand.prototype = {
 
 		group = axis[groupName];
 		if (!group) {
-			axis[groupName] = group = renderer.g('plot-' + groupName)
-				.attr(groupAttribs).add();
+			axis[groupName] = group = renderer
+				.g('plot-' + groupName)
+				.attr(groupAttribs)
+				.clip(axis.plotLinesAndBandsClip)
+				.add();
 		}
 
 		// Create the path
@@ -149,7 +152,7 @@ H.PlotLineOrBand.prototype = {
 
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && 
-				axis.width > 0 && axis.height > 0 && !path.flat) {
+				axis.width > 0 && axis.height > 0 && !path.hiddenLabel) {
 			// apply defaults
 			optionsLabel = merge({
 				align: horiz && isBand && 'center',
@@ -175,7 +178,8 @@ H.PlotLineOrBand.prototype = {
 	renderLabel: function (optionsLabel, path, isBand, zIndex) {
 		var plotLine = this,
 			label = plotLine.label,
-			renderer = plotLine.axis.chart.renderer,
+			axis = plotLine.axis,
+			renderer = axis.chart.renderer,
 			attribs,
 			xs,
 			ys,
@@ -210,14 +214,14 @@ H.PlotLineOrBand.prototype = {
 		// #3000 changed to better handle choice between plotband or plotline
 		xs = [path[1], path[4], (isBand ? path[6] : path[1])];
 		ys = [path[2], path[5], (isBand ? path[7] : path[2])];
-		x = arrayMin(xs);
-		y = arrayMin(ys);
+		x = Math.max(arrayMin(xs), axis.left);
+		y = Math.max(arrayMin(ys), axis.top);
 
 		label.align(optionsLabel, false, {
 			x: x,
 			y: y,
-			width: arrayMax(xs) - x,
-			height: arrayMax(ys) - y
+			width: Math.min(arrayMax(xs), axis.left + axis.width) - x,
+			height: Math.min(arrayMax(ys), axis.top + axis.height) - y
 		});
 		label.show();
 	},
@@ -242,6 +246,18 @@ H.PlotLineOrBand.prototype = {
 H.AxisPlotLineOrBandExtension = {
 
 	/**
+	 * Return axis' clipping box for plot items
+	 */
+	getPlotLinesAndBandsClip: function () {
+		return {
+			x: this.left,
+			y: this.top,
+			width: this.width,
+			height: this.height
+		};
+	},
+
+	/**
 	 * Create the path for a plot band
 	 */
 	getPlotBandPath: function (from, to) {
@@ -251,7 +267,9 @@ H.AxisPlotLineOrBandExtension = {
 		if (path && toPath) {
 
 			// Flat paths don't need labels (#3836)
-			path.flat = path.toString() === toPath.toString();
+			// Or plotBand is outside the visible range
+			path.hiddenLabel = path.toString() === toPath.toString() ||
+				to < this.min || from > this.max;
 
 			path.push(
 				toPath[4],
@@ -260,7 +278,7 @@ H.AxisPlotLineOrBandExtension = {
 				toPath[2],
 				'z' // #5909
 			);
-		} else { // outside the axis area
+		} else { // no extremes
 			path = null;
 		}
 

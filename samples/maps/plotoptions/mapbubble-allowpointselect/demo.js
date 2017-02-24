@@ -1,50 +1,49 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-        Highcharts.mapChart('container', {
-            chart: {
-                borderWidth: 1,
-                map: 'custom/world'
-            },
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
-            title: {
-                text: 'World population 2010 by country'
-            },
+    Highcharts.mapChart('container', {
+        chart: {
+            borderWidth: 1,
+            map: 'custom/world'
+        },
 
-            subtitle: {
-                text: 'Click bubbles to select'
-            },
+        title: {
+            text: 'World population 2010 by country'
+        },
 
-            legend: {
-                enabled: false
-            },
+        subtitle: {
+            text: 'Click bubbles to select'
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
-                }
-            },
+        legend: {
+            enabled: false
+        },
 
-            series: [{
-                name: 'Countries',
-                color: '#E0E0E0',
-                enableMouseTracking: false
-            }, {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                type: 'mapbubble',
-                name: 'Population 2010',
-                joinBy: ['iso-a2', 'code'],
-                data: data,
-                minSize: 4,
-                maxSize: '12%',
-                tooltip: {
-                    pointFormat: '{point.code}: {point.z} thousands'
-                }
-            }]
-        });
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
 
+        series: [{
+            name: 'Countries',
+            color: '#E0E0E0',
+            enableMouseTracking: false
+        }, {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            type: 'mapbubble',
+            name: 'Population 2010',
+            joinBy: ['iso-a2', 'code'],
+            data: data,
+            minSize: 4,
+            maxSize: '12%',
+            tooltip: {
+                pointFormat: '{point.code}: {point.z} thousands'
+            }
+        }]
     });
+
 });

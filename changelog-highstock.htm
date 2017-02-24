@@ -1,25 +1,35 @@
-<p>Highstock 5.0.6 (2016-12-07)</p>
-<ul>    <li>Most changes listed under Highcharts 5.0.6 above also apply to Highstock 5.0.6.</li>
-
-    <li>Added new option, <code>series.compareBase</code>, to allow percentage comparison to start at 100%.</li>
+<p>Highstock 5.0.7 (2017-01-17)</p>
+<ul>
+    <li>Most changes listed under Highcharts 5.0.7 above also apply to Highstock 5.0.7.</li>
+    <li>Added support for <a href="http://jsfiddle.net/gh/get/jquery/3.1.1/highcharts/highcharts/tree/master/samples/stock/navigator/inverted/">navigator in inverted charts</a>.</li>
+    <li>Created new module <code>stock.src.js</code> so Highstock can be loaded as a module for Highcharts.</li>
+    
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="hs-heading-5-0-6-bug-fixes" class="panel-heading">
+        <div id="hs-heading-5-0-7-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#hs-5-0-6-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#hs-5-0-7-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="hs-5-0-6-bug-fixes" class="panel-collapse collapse">
+        <div id="hs-5-0-7-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2685">#2685</a>, <code>xAxis.offset</code> didn't work for navigator's xAxis.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5924">#5924</a>, wrong extremes on dynamically added axes.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6057">#6057</a>, setting correct series clip-path for polar charts.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4988">#4988</a>, <code>navigator.enabled</code>, <code>rangeSelector.enabled</code>, <code>scrollbar.enabled</code> ignored when <code>setOptions</code> was used.</li>
+                    <li>Fixed issue with input range where the range would be reset based on wrong extremes. Ref <a href="https://github.com/highslide-software/highcharts.com/issues/5602">#5602</a>.</li>
                     
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5602">#5602</a>, issues with setting range by inputs.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6012">#6012</a>, navigator handles couldn't be moved after hiding and updating series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4114">#4114</a>, navigator didn't respond to mouse events when xAxis was reversed.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5823">#5823</a>, regression caused wrong columns width when one of the series was hidden.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5979">#5979</a>, wrong column width when the X axis contained breaks.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6140">#6140</a>, candlestick hover state didn't respect lineWidth.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6156">#6156</a>, a regression causing poor performance with forced dataGrouping when dealing with hundreds of thousands of data groups.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6162">#6162</a>, series.update() didn't update all series.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6166">#6166</a>, events were not bound to all plotBands.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6191">#6191</a>, navigator dropped too early when encountering minRange.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6192">#6192</a>, unwanted clipping when used with gauge series.</li>
                 </ul>
             </div>
         </div>

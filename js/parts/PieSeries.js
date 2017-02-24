@@ -324,7 +324,6 @@ seriesType('pie', 'line', {
 				} else {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.addClass(point.getClassName())
 						.setRadialReference(series.center)
 						.attr(groupTranslation)
 						.add(series.group);
@@ -340,6 +339,9 @@ seriesType('pie', 'line', {
 						.shadow(shadow, shadowGroup);
 					/*= } =*/
 				}
+
+				graphic.addClass(point.getClassName());
+						
 			}
 		});
 

@@ -1,22 +1,21 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Linked Y axis on left side'
-        },
+Highcharts.stockChart('container', {
 
-        yAxis: [{}, {
-            linkedTo: 0,
-            opposite: false
-        }],
+    title: {
+        text: 'Linked Y axis on left side'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: [{}, {
+        linkedTo: 0,
+        opposite: false
+    }],
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

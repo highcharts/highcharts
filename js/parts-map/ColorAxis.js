@@ -60,9 +60,14 @@ extend(ColorAxis.prototype, {
 		showInLegend: true
 	},
 
-	// Properties to preserve after destroy, for Axis.update (#5881)
-	keepProps: ['legendGroup', 'legendItem', 'legendSymbol']
-		.concat(Axis.prototype.keepProps),
+	// Properties to preserve after destroy, for Axis.update (#5881, #6025)
+	keepProps: [
+		'legendGroup',
+		'legendItemHeight',
+		'legendItemWidth',
+		'legendItem',
+		'legendSymbol'
+	].concat(Axis.prototype.keepProps),
 
 	/**
 	 * Initialize the color axis

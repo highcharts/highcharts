@@ -1,24 +1,24 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        plotOptions: {
-            series: {
-                animation: {
-                    duration: 2000,
-                    easing: 'easeOutBounce'
-                }
+Highcharts.stockChart('container', {
+
+    plotOptions: {
+        series: {
+            animation: {
+                duration: 2000,
+                easing: 'easeOutBounce'
             }
-        },
+        }
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    rangeSelector: {
+        selected: 4
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur,
+        type: 'area'
+    }]
 });
 /**
  * Easing function from https://github.com/danro/easing-js/blob/master/easing.js

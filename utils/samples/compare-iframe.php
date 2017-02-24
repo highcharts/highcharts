@@ -44,17 +44,6 @@ $rightExporting = "$rightPath/modules/exporting.src.js";
 $leftFramework = 'jQuery';
 $rightFramework = 'jQuery';
 
-$path = $_GET['path'];
-if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-	die ('Invalid sample path input: ' . $path);
-}
-
-$details = @file_get_contents("../../samples/$path/demo.details");
-$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
-$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
-
-
-$path = "../../samples/$path";
 
 require_once('functions.php');
 
@@ -513,14 +502,7 @@ function getExportInnerHTML() {
 		if (jQuery) {
 			jQuery.readyException = error;
 		}
-		try {
-
-		<?php echo getJS(); ?>
-
-		} catch (e) {
-			console.error(e.message);
-			parent.window.onDifferent('Error');
-		}
+		
 
 		$(function () {
 		<?php
@@ -536,5 +518,15 @@ function getExportInnerHTML() {
 		<div id="qunit-fixture"></div>
 <?php echo getHTML($_GET['which']); ?>
 
+		<script>
+		try {
+
+		<?php echo getJS(); ?>
+
+		} catch (e) {
+			console.error(e.message);
+			parent.window.onDifferent('Error');
+		}
+		</script>
 	</body>
 </html>

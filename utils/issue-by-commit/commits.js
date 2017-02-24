@@ -5,12 +5,34 @@ var ren,
 
 var mainFrame = window.parent.document.querySelector('frame#main'),
 	mainLocation = mainFrame && mainFrame.contentWindow.location.href,
-	isComparing = mainLocation && mainLocation.indexOf('view.php') > -1;
+	isComparing = mainLocation && mainLocation.indexOf('view.php') > -1,
+	colors = [
+	   '#2f7ed8', 
+	   '#0d233a', 
+	   '#8bbc21', 
+	   '#910000', 
+	   '#1aadce', 
+	   '#492970',
+	   '#f28f43', 
+	   '#77a1e5', 
+	   '#c42525', 
+	   '#a6c96a',
+	   '#2f7ed8', 
+	   '#0d233a', 
+	   '#8bbc21', 
+	   '#910000', 
+	   '#1aadce', 
+	   '#492970',
+	   '#f28f43', 
+	   '#77a1e5', 
+	   '#c42525', 
+	   '#a6c96a'
+	];
 
 // Draw the lines connecting the dots
 function drawGraph() {
 
-	var h = $('#ul').height();
+	var h = $('#ul').height() + 200;
 	
 	// First time
 	if (!ren) {
@@ -22,24 +44,119 @@ function drawGraph() {
 	// Update
 	} else { 
 		$.each(paths, function (i, path) {
-			paths[i] = path.destroy();
+			if (path.destroy) {
+				paths[i] = path.destroy();
+			}
 		});
 		paths.length = 0;
 	}
 
-	/*
-	var items = [];
+	//*
+	var oldPathOrder;
+	var closedPaths = [];
+	var names = ['blue', 'green', 'red', 'black', 'purple', 'pink', 'brown', 'black']
+		.reverse();
+	var $prevDot;
 	$('div.parents').each(function (i, item) {
-		items.push($(item));
-	});
-	items.reverse();
-	items.forEach(function ($item, i) {
-		var graphs = $item.data('graphs');
-		console.log(graphs);
-	});
-	*/
 
-	//return;
+		var $dot = $(item),
+			graphs = $dot.data('graphs'),
+			doffset = $dot && $dot.offset();
+
+		var columns = [
+			[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+		];
+
+		graphs.forEach(function (graph, g) {
+			for (var strpos = 0; strpos < graph.length; strpos += 2) {
+				var pos = strpos / 2,
+					operator = graph.substr(strpos, 2),
+					dLeft = 9 + 10 * pos,
+					dTop = doffset.top + 5,
+					curve = ['L', dLeft, dTop],
+					curveNext = ['L', dLeft, dTop + 40];
+
+				// Top
+				if (operator === '* ' && !paths[pos]) {
+					paths[pos] = ['M', dLeft, dTop];
+					paths[pos].name = names.pop();
+					//console.log(paths[pos].name, pos);
+
+				// Merge
+				} else if (operator === '|\\') {
+					// Move existing paths to the right
+					paths.splice(
+						pos + 1,
+						0,
+						['M', dLeft, dTop]
+					);
+					paths[pos + 1].name = names.pop();
+					//console.log(paths[pos + 1].name, pos)
+
+				// Fork
+				} else if (operator === '|/') {
+
+					[].push.apply(paths[pos + 1], curveNext);
+
+					if (graphs[g + 1] && graphs[g + 1].substr(strpos, 1) === '*') {
+						//closedPaths.push(paths[pos + 1]);
+						paths.splice(pos + 1, 1);
+					} /*else if (graph.substr(strpos + 2, 1) === '|') {
+						closedPaths.push(paths[pos + 1]);
+
+						paths.splice(pos + 1, 1);
+					}*/
+
+
+				// Master to the left
+				} else if (pos === 0 && operator === ' /') {
+					[].push.apply(paths[pos + 1], curveNext);
+					closedPaths.push(paths[pos]);
+					paths.splice(pos, 1);
+
+				// Swing in to the left
+				} else if (operator === ' /') {
+					[].push.apply(paths[pos + 1], curveNext);
+					//closedPaths.push(paths[pos]);
+					//paths.splice(pos, 1);
+
+				// Continue with commit
+				} else if (operator === '* ') {
+
+					// Fork from this commit
+					var prevGraphs = $prevDot.data('graphs');
+					var lastGraph = prevGraphs && prevGraphs[prevGraphs.length - 1];
+					if (lastGraph && lastGraph.substr(strpos, 2) === '|/') {
+						//[].push.apply(paths[pos + 1], curveNext);
+						closedPaths.push(paths[pos + 1]);
+						paths.splice(pos + 1, 1);
+					}
+
+					[].push.apply(paths[pos], curve);
+
+				// Continue without commit
+				} else if (operator === '| ' && paths[pos]) {
+					[].push.apply(paths[pos], curve);
+				}
+			}
+			//console.log(graph, paths.map(p => p.name))
+		});
+
+		$prevDot = $dot;
+	});
+
+
+	paths.concat(closedPaths).forEach(function (path, i) {
+		ren.path(path)
+			.attr({
+				'stroke-width': 2,
+				stroke: path.name
+			})
+			.add()
+	});
+	return;
+	// */
+
 	$('div.parents').each(function (i, item) {
 		var $dot = $(item),
 			doffset = $dot && $dot.offset(),
@@ -99,7 +216,8 @@ $(function() {
 	var $active,
 		month,
 		commits,
-		parentHierarchy = {};
+		parentHierarchy = {},
+		branchCounter = 0;
 
 	if (isComparing) {
 		document.body.className = 'compare';
@@ -109,30 +227,6 @@ $(function() {
 				.setAttribute('cols', '400, *');
 		});
 	}
-
-	var colors = [
-		   '#2f7ed8', 
-		   '#0d233a', 
-		   '#8bbc21', 
-		   '#910000', 
-		   '#1aadce', 
-		   '#492970',
-		   '#f28f43', 
-		   '#77a1e5', 
-		   '#c42525', 
-		   '#a6c96a',
-		   '#2f7ed8', 
-		   '#0d233a', 
-		   '#8bbc21', 
-		   '#910000', 
-		   '#1aadce', 
-		   '#492970',
-		   '#f28f43', 
-		   '#77a1e5', 
-		   '#c42525', 
-		   '#a6c96a'
-		],
-		branchCounter = 0;
 
 	
 
@@ -165,9 +259,11 @@ $(function() {
 				dateObj = new Date(date),
 				branchI = parseInt(item.indexOf('*'), 10) / 2;
 				*/
-			
+			if (line === '') {
+				return;
+			}
 			if (line.indexOf('<br>') === -1) {
-				graphs.unshift(line);
+				graphs.push(line);
 			
 			} else {
 				line = line.split('<br>');
@@ -191,7 +287,7 @@ $(function() {
 				// Chronoligical graph elements leading up to this commit from
 				// the previous one
 				graphs = [];
-				graphs.unshift(graph);
+				graphs.push(graph);
 				
 				if (dateObj.getMonth() !== month) {
 					$('<h3>' + ['January', 'February', 'March', 'April', 'May',
@@ -231,9 +327,7 @@ $(function() {
 						left: branchI * 10,
 						color: colors[branchI]
 					})
-					.html('<div class="disc" style="background-color: ' +
-						colors[branchI] + 
-						';margin-left:' + (branchI * 10) + 'px"></div>')
+					.html('<div class="disc" style="background-color: white; border: 2px solid black; margin-left:' + (branchI * 10) + 'px"></div>')
 					.appendTo($li);
 
 				$('<a>')

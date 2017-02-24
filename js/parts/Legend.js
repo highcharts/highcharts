@@ -199,7 +199,17 @@ Legend.prototype = {
 			each(['legendItem', 'legendGroup'], destroyItems, item);
 		});
 
-		each(['box', 'title', 'group'], destroyItems, this);
+		// Destroy legend elements
+		each([
+			'clipRect',
+			'up',
+			'down',
+			'pager',
+			'nav',
+			'box',
+			'title',
+			'group'
+		], destroyItems, this);
 		this.display = null; // Reset in .render on update.
 	},
 
@@ -592,10 +602,10 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(extend({
+			legendGroup.align(merge(options, {
 				width: legendWidth,
 				height: legendHeight
-			}, options), true, 'spacingBox');
+			}), true, 'spacingBox');
 		}
 
 		if (!chart.isResizing) {
@@ -719,7 +729,7 @@ Legend.prototype = {
 		// Reset
 		} else if (nav) {
 			clipToHeight();
-			nav.hide();
+			this.nav = nav.destroy(); // #6322
 			this.scrollGroup.attr({
 				translateY: 1
 			});

@@ -1,24 +1,23 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        plotOptions: {
-            series: {
-                cursor: 'pointer',
-                events: {
-                    click: function () {
-                        alert('You just clicked the graph');
-                    }
+Highcharts.stockChart('container', {
+
+    plotOptions: {
+        series: {
+            cursor: 'pointer',
+            events: {
+                click: function () {
+                    alert('You just clicked the graph');
                 }
             }
-        },
+        }
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

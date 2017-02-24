@@ -1,22 +1,21 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        yAxis: {
-            minorGridLineWidth: 0,
-            minorTickInterval: 'auto',
-            minorTickColor: '#000000',
-            minorTickWidth: 1,
-            minorTickLength: 10,
-            minorTickPosition: 'inside'
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    yAxis: {
+        minorGridLineWidth: 0,
+        minorTickInterval: 'auto',
+        minorTickColor: '#000000',
+        minorTickWidth: 1,
+        minorTickLength: 10,
+        minorTickPosition: 'inside'
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

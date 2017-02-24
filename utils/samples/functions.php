@@ -5,6 +5,16 @@ require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
 define('JQUERY_VERSION_OLD_IE', isset($_SESSION['jQueryVersionOldIE']) ? $_SESSION['jQueryVersionOldIE'] : Settings::$jQueryVersionOldIE);
 
+$path = @$_GET['path'];
+if (!@$noPath && !preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
+    die ('Invalid sample path input: ' . $path);
+}
+
+$path = "../../samples/$path";
+$details = @file_get_contents("$path/demo.details");
+$isUnitTest = file_exists("$path/unit-tests.js") || strstr($details, 'qunit') ? true : false;
+$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
+
 
 function getBranch() {
 
@@ -59,6 +69,11 @@ function getBrowser() {
     { 
         $bname = 'Mozilla Firefox'; 
         $ub = "Firefox"; 
+    } 
+    elseif(preg_match('/Edge/i',$u_agent)) 
+    { 
+        $bname = 'Edge'; 
+        $ub = "Edge"; 
     } 
     elseif(preg_match('/Chrome/i',$u_agent)) 
     { 
@@ -193,4 +208,5 @@ function getFramework($framework) {
 		}
 	}
 }
+
 ?>

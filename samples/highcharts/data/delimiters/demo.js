@@ -1,23 +1,22 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts data delimiters demo'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'European style CSV'
-        },
+    title: {
+        text: 'Highcharts data delimiters demo'
+    },
 
-        xAxis: {
-            type: 'category'
-        },
+    subtitle: {
+        text: 'European style CSV'
+    },
 
-        data: {
-            csv: document.getElementById('csv').innerHTML,
-            itemDelimiter: ';',
-            lineDelimiter: '\n',
-            decimalPoint: ','
-        }
-    });
+    xAxis: {
+        type: 'category'
+    },
+
+    data: {
+        csv: document.getElementById('csv').innerHTML,
+        itemDelimiter: ';',
+        lineDelimiter: '\n',
+        decimalPoint: ','
+    }
 });
