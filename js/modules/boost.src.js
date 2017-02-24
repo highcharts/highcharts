@@ -2202,11 +2202,11 @@ function hasWebGLSupport() {
 // We're wrapped in a closure, so just return if there's no webgl support
 
 if (!hasWebGLSupport()) {	
-	console.log('no ogl support');
-	if (H.initCanvasBoost) {
-		// Fallback to canvas boost
-		console.log('fallback to canvas');
+	if (typeof H.initCanvasBoost !== 'undefined') {
+		// Fallback to canvas boost		
 		H.initCanvasBoost();
+	} else {
+		H.error(26);
 	}
 	//eslint-disable
 	return; 
