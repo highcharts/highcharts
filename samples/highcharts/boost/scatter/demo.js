@@ -11,9 +11,8 @@ for (i = 0; i < n; i += 1) {
     ]);
 }
 
-if (!Highcharts.Series.prototype.renderCanvas) {
-    console.error('Module not loaded');
-    return;
+if (!Highcharts.Series.prototype.renderCanvas) {    
+    throw 'Module not loaded';
 }
 
 console.time('scatter');
