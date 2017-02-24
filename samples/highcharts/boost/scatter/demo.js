@@ -44,8 +44,9 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
+        boostBlending: 'add',
         type: 'scatter',
-        color: 'rgba(152,0,67,0.1)',
+        color: 'rgba(152,0,67,0.2)',
         data: data,
         marker: {
             radius: 1
