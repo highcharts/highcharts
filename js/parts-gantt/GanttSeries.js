@@ -97,7 +97,8 @@ seriesType('gantt', parentName, {
 		type: 'simpleConnect', // TODO: Set to 'fastAvoid' when not crashing
 		startMarker: {
 			enabled: true,
-			symbol: 'arrow',
+			symbol: 'arrow-filled',
+			radius: 4,
 			fill: '#fa0',
 			align: 'left'
 		},
