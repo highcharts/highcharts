@@ -98,7 +98,8 @@ var getBreakFromNode = function (node, pos, max) {
 
 	return {
 		from: from,
-		to: to
+		to: to,
+		showPoints: false
 	};
 };
 
