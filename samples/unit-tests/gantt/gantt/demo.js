@@ -1,4 +1,13 @@
-var defaultChartConfig;
+var defaultChartConfig,
+    getSpacing = function (chart) {
+        var yAxis = chart.yAxis[0],
+            tickIdx = yAxis.tickPositions,
+            ticks = yAxis.ticks,
+            tick1 = ticks[tickIdx[0]].mark.getBBox().y,
+            tick2 = ticks[tickIdx[1]].mark.getBBox().y;
+
+        return tick1 - tick2;
+    };
 
 QUnit.testStart(function () {
     defaultChartConfig = {
@@ -144,5 +153,127 @@ QUnit.test('Milestones', function (assert) {
     assert.ok(
         isDiamond,
         'Milestone path is a diamond'
+    );
+});
+
+QUnit.test('Axis breaks and staticScale', function (assert) {
+    var today = new Date(),
+        day = 1000 * 60 * 60 * 24,
+        spaceExpanded,
+        spaceCollapsed,
+        chart,
+        evObj;
+
+    // Set to 00:00:00:000 today
+    today.setUTCHours(0);
+    today.setUTCMinutes(0);
+    today.setUTCSeconds(0);
+    today.setUTCMilliseconds(0);
+    today = today.getTime();
+
+    chart = Highcharts.ganttChart('container', {
+        title: {
+            text: 'Gantt Chart Test'
+        },
+        xAxis: {
+            currentDateIndicator: true,
+            min: today - 3 * day,
+            max: today + 18 * day
+        },
+
+        chart: {
+            animation: false
+        },
+
+        plotOptions: {
+            series: {
+                animation: false
+            }
+        },
+
+        series: [{
+            name: 'Offices',
+            data: [{
+                taskName: 'New offices',
+                id: 'new_offices',
+                start: today - 2 * day,
+                end: today + 14 * day
+            }, {
+                taskName: 'Prepare office building',
+                id: 'prepare_building',
+                parent: 'new_offices',
+                start: today - (2 * day),
+                end: today + (6 * day),
+                completed: {
+                    amount: 0.2
+                }
+            }, {
+                taskName: 'Inspect building',
+                id: 'inspect_building',
+                dependency: 'prepare_building',
+                parent: 'new_offices',
+                start: today + 6 * day,
+                end: today + 8 * day
+            }, {
+                taskName: 'Passed inspection',
+                id: 'passed_inspection',
+                dependency: 'inspect_building',
+                parent: 'new_offices',
+                start: today + 9.5 * day,
+                milestone: true
+            }, {
+                taskName: 'Relocate',
+                id: 'relocate',
+                dependency: 'passed_inspection',
+                parent: 'new_offices',
+                start: today + 10 * day,
+                end: today + 14 * day
+            }, {
+                taskName: 'Relocate staff',
+                id: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 10 * day,
+                end: today + 11 * day
+            }, {
+                taskName: 'Relocate test facility',
+                dependency: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 11 * day,
+                end: today + 13 * day
+            }, {
+                taskName: 'Relocate cantina',
+                dependency: 'relocate_staff',
+                parent: 'relocate',
+                start: today + 11 * day,
+                end: today + 14 * day
+            }]
+        }]
+    });
+
+    spaceExpanded = getSpacing(chart);
+
+    evObj = document.createEvent('Events');
+    evObj.initEvent('click', true, false);
+    chart.yAxis[0].ticks['4'].label.element.dispatchEvent(evObj);
+
+    spaceCollapsed = getSpacing(chart);
+
+    assert.equal(
+        spaceCollapsed,
+        spaceExpanded,
+        'Space between two first ticks does not change after collapsing'
+    );
+
+
+    evObj = document.createEvent('Events');
+    evObj.initEvent('click', true, false);
+    chart.yAxis[0].ticks['4'].label.element.dispatchEvent(evObj);
+
+    spaceExpanded = getSpacing(chart);
+
+    assert.equal(
+        spaceExpanded,
+        spaceCollapsed,
+        'Space between two first ticks does not change after expanding again'
     );
 });
