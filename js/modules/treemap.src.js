@@ -340,8 +340,19 @@ seriesType('treemap', 'scatter', {
 			point = series.points[node.i];
 			level = series.levelMap[node.levelDynamic];
 			// Select either point color, level color or inherited color.
-			color = pick(point && point.options.color, level && level.color, color);
-			colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
+			color = pick(
+				point && point.options.color,
+				level && level.color,
+				color,
+				series.color
+			);
+			colorIndex = pick(
+				point && point.options.colorIndex,
+				level && level.colorIndex,
+				colorIndex,
+				series.colorIndex
+			);
+			
 			if (point) {
 				point.color = color;
 				point.colorIndex = colorIndex;
