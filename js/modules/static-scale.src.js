@@ -23,7 +23,10 @@ Chart.prototype.adjustHeight = function () {
 			!axis.horiz &&
 			H.defined(axis.min)
 		) {
-			height = pick(axis.unitLength, axis.max - axis.min) * staticScale;
+			height = pick(
+				axis.unitLength,
+				axis.max + axis.tickInterval - axis.min
+			) * staticScale;
 			diff = height - chart.plotHeight;
 			if (Math.abs(diff) >= 1) {
 				chart.plotHeight = height;
