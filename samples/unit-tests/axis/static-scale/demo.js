@@ -47,7 +47,7 @@ QUnit.test('Row height does not change with chart update', function (assert) {
     assert.equal(
         spaceAfter,
         spaceBefore,
-        'Space between two first ticks does not change Chart.update()'
+        'Space between two first ticks does not change after Chart.update()'
     );
 });
 
@@ -122,8 +122,8 @@ QUnit.test('Row height does not change with axis breaks', function (assert) {
             tickInterval: 1,
             tickWidth: 1,
             breaks: [{
-                from: 95,
-                to: 97
+                from: 80,
+                to: 90
             }]
         },
 
