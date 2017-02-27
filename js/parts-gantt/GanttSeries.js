@@ -29,6 +29,9 @@ var dateFormat = H.dateFormat,
 // type, parent, options, props, pointProps
 seriesType('gantt', parentName, {
 	// options - default options merged with parent
+	
+	grouping: false,
+	
 	dataLabels: {
 		enabled: true,
 		formatter: function () {
