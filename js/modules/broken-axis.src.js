@@ -243,8 +243,11 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 			fireEvent(axis, 'afterBreaks');
 			
-			axis.transA *= (max - axis.min + pointRangePadding) /
-				axis.unitLength;
+			if (axis.options.staticScale) {
+				axis.transA = axis.options.staticScale;
+			} else {
+				axis.transA *= (max - axis.min + pointRangePadding);
+			}
 				
 			if (pointRangePadding) {
 				axis.minPixelPadding = axis.transA * axis.minPointOffset;
