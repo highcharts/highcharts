@@ -445,7 +445,6 @@ H.Tooltip.prototype = {
 	 */
 	refresh: function (pointOrPoints, mouseEvent) {
 		var tooltip = this,
-			chart = tooltip.chart,
 			label,
 			options = tooltip.options,
 			x,
