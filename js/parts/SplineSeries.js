@@ -34,7 +34,10 @@ seriesType('spline', 'line', {}, /** @lends seriesTypes.spline.prototype */ {
 			ret;
 
 		function doCurve(otherPoint) {
-			return otherPoint && !otherPoint.isNull && otherPoint.doCurve !== false;
+			return otherPoint &&
+				!otherPoint.isNull &&
+				otherPoint.doCurve !== false &&
+				!point.isCliff; // #6387, area splines next to null
 		}
 
 		// Find control points
