@@ -19,16 +19,6 @@ Highcharts.ganttChart('container', {
         max: today + 18 * day
     },
 
-    chart: {
-        animation: false
-    },
-
-    plotOptions: {
-        series: {
-            animation: false
-        }
-    },
-
     /*
     plotOptions: {
         gantt: {
