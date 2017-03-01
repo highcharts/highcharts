@@ -1,12 +1,11 @@
 var defaultChartConfig,
-    getSpacing = function (chart) {
+    getSpacing = function (chart, tick1, tick2) {
         var yAxis = chart.yAxis[0],
-            tickIdx = yAxis.tickPositions,
             ticks = yAxis.ticks,
-            tick1 = ticks[tickIdx[0]].mark.getBBox().y,
-            tick2 = ticks[tickIdx[1]].mark.getBBox().y;
+            tick1Space = ticks[Highcharts.pick(tick1, '-1')].mark.getBBox().y,
+            tick2Space = ticks[Highcharts.pick(tick2, '0')].mark.getBBox().y;
 
-        return tick1 - tick2;
+        return tick2Space - tick1Space;
     };
 
 QUnit.testStart(function () {
@@ -161,6 +160,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
         day = 1000 * 60 * 60 * 24,
         spaceExpanded,
         spaceCollapsed,
+        axisLineLength,
         chart,
         evObj;
 
@@ -275,5 +275,19 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
         spaceExpanded,
         spaceCollapsed,
         'Space between two first ticks does not change after expanding again'
+    );
+
+    // Collapse single root parent
+    evObj = document.createEvent('Events');
+    evObj.initEvent('click', true, false);
+    chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
+
+    spaceCollapsed = getSpacing(chart);
+    axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
+
+    assert.equal(
+        axisLineLength,
+        spaceCollapsed,
+        'Single root node spacing is correct'
     );
 });
