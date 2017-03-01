@@ -70,6 +70,7 @@ seriesType('treemap', 'scatter', {
 		headerFormat: '',
 		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 	},
+	ignoreHiddenPoint: true, // docs
 	layoutAlgorithm: 'sliceAndDice',
 	layoutStartingDirection: 'vertical',
 	alternateStartingDirection: false,
@@ -340,8 +341,19 @@ seriesType('treemap', 'scatter', {
 			point = series.points[node.i];
 			level = series.levelMap[node.levelDynamic];
 			// Select either point color, level color or inherited color.
-			color = pick(point && point.options.color, level && level.color, color);
-			colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
+			color = pick(
+				point && point.options.color,
+				level && level.color,
+				color,
+				series.color
+			);
+			colorIndex = pick(
+				point && point.options.colorIndex,
+				level && level.colorIndex,
+				colorIndex,
+				series.colorIndex
+			);
+			
 			if (point) {
 				point.color = color;
 				point.colorIndex = colorIndex;
@@ -900,9 +912,13 @@ seriesType('treemap', 'scatter', {
 	},
 	setState: function (state) {
 		H.Point.prototype.setState.call(this, state);
-		this.graphic.attr({
-			zIndex: state === 'hover' ? 1 : 0
-		});
+
+		// Graphic does not exist when point is not visible.
+		if (this.graphic) {
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		}
 	},
 	setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 });

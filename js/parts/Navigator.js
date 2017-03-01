@@ -530,6 +530,7 @@ Navigator.prototype = {
 			),
 			zoomedMax
 		);
+
 		navigator.range = navigator.zoomedMax - navigator.zoomedMin;
 
 		zoomedMax = Math.round(navigator.zoomedMax);
@@ -790,6 +791,7 @@ Navigator.prototype = {
 				} else if (chartX > navigatorSize + dragOffset - range) { // outside right
 					chartX = navigatorSize + dragOffset - range;
 				}
+
 				navigator.render(
 					0,
 					0,
@@ -834,7 +836,7 @@ Navigator.prototype = {
 				fixedMax = navigator.fixedExtreme;
 			}
 			// Snap to right edge (#4076)
-			if (navigator.zoomedMax === navigator.navigatorSize) {
+			if (navigator.zoomedMax === navigator.size) {
 				fixedMax = navigator.getUnionExtremes().dataMax;
 			}
 			ext = xAxis.toFixedRange(

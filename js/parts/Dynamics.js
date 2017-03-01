@@ -382,9 +382,15 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			i = point.index;
 			series.updateParallelArrays(point, i);
 			
-			// Record the options to options.data. If there is an object from before,
-			// use point options, otherwise use raw options. (#4701)
-			seriesOptions.data[i] = isObject(seriesOptions.data[i], true) ? point.options : options;
+			// Record the options to options.data. If the old or the new config
+			// is an object, use point options, otherwise use raw options
+			// (#4701, #4916).
+			seriesOptions.data[i] = (
+					isObject(seriesOptions.data[i], true) ||
+					isObject(options, true)
+				) ?
+				point.options :
+				options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
