@@ -97,7 +97,8 @@ QUnit.test('Update className with Point.update (#6454)', function (assert) {
     });
 });
 
-QUnit.test('Point with negative color has only one highcharts-negative class',
+QUnit.test(
+    'Point with negative color has only one highcharts-negative class',
     function (assert) {
         var chart = Highcharts.chart('container', {
             series: [{
@@ -105,51 +106,53 @@ QUnit.test('Point with negative color has only one highcharts-negative class',
                 negativeColor: '#123456'
             }]
         });
-            assert.strictEqual(
-                Highcharts.attr(chart.series[0].points[0].graphic.element,
-                    'class').match(/highcharts-negative/g).length,
-                1,
-                'One occurrence of class name'
-            );
-        });
+        assert.strictEqual(
+            Highcharts.attr(chart.series[0].points[0].graphic.element,
+                'class').match(/highcharts-negative/g).length,
+            1,
+            'One occurrence of class name'
+        );
+    }
+);
 
-    QUnit.test('Point with state options (#6401)',
-        function (assert) {
-            var color = 'red',
-                chart = Highcharts.chart('container', {
-                    chart: {
-                        type: 'column'
-                    },
-                    plotOptions: {
-                        column: {
-                            states: {
-                                hover: {
+QUnit.test(
+    'Point with state options (#6401)',
+    function (assert) {
+        var color = 'red',
+            chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    column: {
+                        states: {
+                            hover: {
                                 color: 'blue'
-                              }
                             }
                         }
-                    },
-                    series: [{
-                        data: [{
-                            y: 20,
-                            states: {
-                                hover: {
-                                    color: color
-                                }
+                    }
+                },
+                series: [{
+                    data: [{
+                        y: 20,
+                        states: {
+                            hover: {
+                                color: color
                             }
-                        }]
+                        }
                     }]
-                });
+                }]
+            });
 
-            chart.series[0].points[0].setState('hover');
+        chart.series[0].points[0].setState('hover');
 
-            assert.strictEqual(
-                Highcharts.attr(
-                    chart.series[0].points[0].graphic.element,
-                    'fill'
-                ),
-                color,
-                'Correct fill color on hover'
-            );
-        });
-});
+        assert.strictEqual(
+            Highcharts.attr(
+                chart.series[0].points[0].graphic.element,
+                'fill'
+            ),
+            color,
+            'Correct fill color on hover'
+        );
+    }
+);
