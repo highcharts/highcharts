@@ -220,7 +220,7 @@ function getResources() {
 							this.reflow();
 						});
 					}
-console.log(path)
+
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
@@ -263,7 +263,7 @@ console.log(path)
 		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
-		$(function () {
+		function setUp() {
 
 			$(window).bind('keydown', parent.keyDown);
 			
@@ -308,11 +308,9 @@ console.log(path)
 					}
 				});
 			}
-		});
 		
 
-		<?php if (@$_GET['profile']) : ?>
-		$(function () {
+			<?php if (@$_GET['profile']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -333,10 +331,8 @@ console.log(path)
 
 				});
 			}
-		});
-		<?php endif ?>
-		<?php if (@$_GET['time']) : ?>
-		$(function () {
+			<?php endif ?>
+			<?php if (@$_GET['time']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -362,11 +358,9 @@ console.log(path)
 
 				});
 			}
-		});
-		<?php endif ?>
+			<?php endif ?>
 
-		<?php if ($styled) { ?>
-		$(function () {
+			<?php if ($styled) { ?>
 			var warnedAboutColors = false;
 			function warnAboutColors () {
 				if (!warnedAboutColors) {
@@ -391,8 +385,9 @@ console.log(path)
 				}
 				return options;
 			});
-		});
-		<?php } ?>
+
+			<?php } ?>
+		}
 		
 		</script>
 
@@ -466,6 +461,7 @@ console.log(path)
 			<?php echo $html ?>
 			</div>
 			<script>
+			setUp();
 			<?php @include("$path/demo.js"); ?>
 			</script>
 			<hr/>
