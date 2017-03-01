@@ -193,9 +193,11 @@ seriesTypes.xrange = extendClass(columnType, {
 	 * @param  {Object} point     the point belonging to the dataLabel
 	 * @param  {Object} dataLabel the dataLabel configuration object
 	 * @param  {Object} options   dataLabel options for the series
+	 * @param  {Object} alignTo
+	 * @param  {Boolean} isNew   Wheter the label is new or already existed
 	 * @return {void}
 	 */
-	alignDataLabel: function (point, dataLabel, options) {
+	alignDataLabel: function (point, dataLabel, options, alignTo, isNew) {
 		var chart = this.chart,
 			align = options.align,
 			inverted = chart.inverted,
@@ -251,7 +253,7 @@ seriesTypes.xrange = extendClass(columnType, {
 				attr.y = pointBox.y + pointBox.height / 2 - labelBox.height / 2;
 			}
 
-			dataLabel.attr(attr);
+			dataLabel[isNew ? 'attr' : 'animate'](attr);
 		}
 	},
 
