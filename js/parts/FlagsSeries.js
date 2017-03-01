@@ -255,6 +255,11 @@ seriesType('flags', 'column', {
 					.addClass('highcharts-point')
 					.add(series.markerGroup);
 
+					// Add reference to the point for tracker (#6303)
+					if (point.graphic.div) {
+						point.graphic.div.point = point;
+					}
+
 					/*= if (build.classic) { =*/
 					graphic.shadow(options.shadow);
 					/*= } =*/
@@ -282,6 +287,15 @@ seriesType('flags', 'column', {
 				point.graphic = graphic.destroy();
 			}
 
+		}
+
+		// Might be a mix of SVG and HTML and we need events for both (#6303)
+		if (options.useHTML) {
+			H.wrap(series.markerGroup, 'on', function (proceed) {
+				return H.SVGElement.prototype.on.apply(
+					proceed.apply(this, [].slice.call(arguments, 1)), // for HTML
+					[].slice.call(arguments, 1)); // and for SVG
+			});
 		}
 
 	},
