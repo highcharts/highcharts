@@ -409,6 +409,7 @@ function GLShader(gl) {
 			'uniform float bubbleMinSize;',
 			'uniform float bubbleMaxSize;',
 			'uniform bool  bubbleSizeAbs;',
+			'uniform bool  isInverted;',
 
 			'float bubbleRadius(){',
 				'float value = aVertexPosition.w;',
@@ -461,18 +462,18 @@ function GLShader(gl) {
 
 			'float xToPixels(float value){',
 				'if (skipTranslation){',
-					'return value + xAxisPos;',
+					'return value;// + xAxisPos;',
 				'}',
 
-				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord) + xAxisPos;',
+				'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord);// + xAxisPos;',
 			'}',
 
 			'float yToPixels(float value, float checkTreshold){',
 				'float v;',
 				'if (skipTranslation){',
-					'v = value + yAxisPos;',
+					'v = value;// + yAxisPos;',
 				'} else {',
-					'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord) + yAxisPos;',
+					'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);// + yAxisPos;',
 				'}',
 				'if (checkTreshold > 0.0 && hasThreshold) {',
 					'v = min(v, translatedThreshold);',
@@ -488,8 +489,13 @@ function GLShader(gl) {
 				'}',
 				//'gl_PointSize = 10.0;',
 				'vColor = aColor;',
+
+				'if (isInverted) {',
+					'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.y) + yAxisPos, yToPixels(aVertexPosition.x, aVertexPosition.z) + xAxisPos, 0.0, 1.0);',
+				'} else {',
+					'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x) + xAxisPos, yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, 0.0, 1.0);',
+				'}',
 				//'gl_Position = uPMatrix * vec4(aVertexPosition.x, aVertexPosition.y, 0.0, 1.0);',
-				'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x), yToPixels(aVertexPosition.y, aVertexPosition.z), 0.0, 1.0);',
 			'}'
 			/* eslint-enable */
 		].join('\n'),
@@ -541,6 +547,8 @@ function GLShader(gl) {
 		skipTranslationUniform,
 		//Set to 1 if circle
 		isCircleUniform,
+		//Uniform for invertion
+		isInverted,
 		//Texture uniform
 		uSamplerUniform;
 
@@ -583,7 +591,8 @@ function GLShader(gl) {
 			return gl.getUniformLocation(shaderProgram, n);
 		}
 
-		shaderProgram = gl.createProgram();
+		shaderProgram = gl.createProgram();	
+
 		gl.attachShader(shaderProgram, v);
 		gl.attachShader(shaderProgram, f);
 		gl.linkProgram(shaderProgram);
@@ -601,6 +610,7 @@ function GLShader(gl) {
 		uSamplerUniform = uloc('uSampler');
 		skipTranslationUniform = uloc('skipTranslation');
 		isCircleUniform = uloc('isCircle');
+		isInverted = uloc('isInverted');
 
 		return true;
 	}
@@ -641,6 +651,14 @@ function GLShader(gl) {
 	 */
 	function setTexture() {
 		gl.uniform1i(uSamplerUniform, 0);
+	}
+
+	/*
+	 * Set if inversion state
+	 * @flag is the state
+	 */
+	function setInverted(flag) {
+		gl.uniform1i(isInverted, flag);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -765,6 +783,7 @@ function GLShader(gl) {
 		setTexture: setTexture,
 		setDrawAsCircle: setDrawAsCircle,
 		reset: reset,
+		setInverted: setInverted,
 		destroy: destroy
 	};
 }
@@ -1578,6 +1597,8 @@ function GLRenderer(postRenderCallback) {
 		gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 		shader.setTexture(circleTextureHandle);
 
+		shader.setInverted(chart.options.chart ? chart.options.chart.inverted : false);
+
 		// Render the series
 		each(series, function (s, si) {
 			var options = s.series.options,
@@ -2364,6 +2385,7 @@ H.extend(Series.prototype, {
 			wasNull, //eslint-disable-line no-unused-vars
 			connectNulls = options.connectNulls,
 			useRaw = !xData,
+			isInverted = chart.options.chart ? chart.options.chart.inverted || false : false,
 			minVal,
 			maxVal,
 			minI,
@@ -2375,7 +2397,7 @@ H.extend(Series.prototype, {
 
 			addKDPoint = function (clientX, plotY, i) {
 				//Shaves off about 60ms compared to repeated concatination
-				index = clientX + ',' + plotY;
+				index = clientX + ',' + plotY;					
 
 				// The k-d tree requires series points. 
 				// Reduce the amount of points, since the time to build the 
