@@ -246,7 +246,8 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			if (axis.options.staticScale) {
 				axis.transA = axis.options.staticScale;
 			} else {
-				axis.transA *= (max - axis.min + pointRangePadding);
+				axis.transA *= (max - axis.min + pointRangePadding) /
+					axis.unitLength;
 			}
 				
 			if (pointRangePadding) {
