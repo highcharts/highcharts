@@ -1,11 +1,10 @@
+function isArray(obj) {
+    return Object.prototype.toString.call(obj) === '[object Array]';
+}
 
-$(function () {
-
-    function isArray(obj) {
-        return Object.prototype.toString.call(obj) === '[object Array]';
-    }
-
-    QUnit.test('Preserve point config initial number type in options.data', function (assert) {
+QUnit.test(
+    'Preserve point config initial number type in options.data',
+    function (assert) {
         var chart = $('#container').highcharts({
 
             series: [{
@@ -56,9 +55,12 @@ $(function () {
             'number,number,[object Object]',
             'Points are mixed'
         );
-    });
+    }
+);
 
-    QUnit.test('Preserve point config initial array type in options.data', function (assert) {
+QUnit.test(
+    'Preserve point config initial array type in options.data',
+    function (assert) {
         var chart = $('#container').highcharts({
 
             series: [{
@@ -109,5 +111,47 @@ $(function () {
             '[object Array],[object Array],[object Object]',
             'Points are mixed'
         );
-    });
-});
+    }
+);
+
+QUnit.test(
+    'Preserve data values when updating from array to object config (#4916)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'datetime'
+            },
+            series: [{
+                data: [
+                    [1, 2],
+                    [3, 4],
+                    [5, 6]
+                ]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].options.data.toString(),
+            '1,2,3,4,5,6',
+            'Initial arrays'
+        );
+
+        chart.series[0].points[0].update({
+            marker: {
+                lineColor: 'red'
+            }
+        });
+
+        assert.deepEqual(
+            chart.series[0].options.data[0],
+            {
+                x: 1,
+                y: 2,
+                marker: {
+                    lineColor: 'red'
+                }
+            },
+            'Object with data preserved'
+        );
+    }
+);
