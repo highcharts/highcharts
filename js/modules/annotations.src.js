@@ -1,393 +1,647 @@
+/*
+* TODO:
+* - padding between a label, connector and point (should be handled by a specific symbol)
+* - handle points types which have multiple values
+* - inverted chart - needs additional group for label which is attached to x, y (in axis scales)
+*/
+
 /**
- * (c) 2009-2016 Torstein Honsi
- *
- * License: www.highcharts.com/license
- */
+* issues:
+* - connectors after zooming/pointUpdating/chart-inversion are no longer placed correctly
+*   looks like a bug in original data labels aligning logic)
+**/
+
+/* global Highcharts module:true */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+import '../parts/Series.js';
+import '../parts/Tooltip.js';
 
-var defined = H.defined,
+var merge = H.merge,
+	addEvent = H.addEvent,
+	each = H.each,
+	isString = H.isString,
 	isNumber = H.isNumber,
+	defined = H.defined,
+	isObject = H.isObject,
 	inArray = H.inArray,
-	isArray = H.isArray,
-	merge = H.merge,
-	Chart = H.Chart,
-	extend = H.extend,
-	each = H.each;
+	erase = H.erase,
+	find = H.find,
+	destroyObjectProperties = H.destroyObjectProperties,
 
-var ALIGN_FACTOR,
-	ALLOWED_SHAPES;
+	tooltipPrototype = H.Tooltip.prototype,
+	seriesPrototype = H.Series.prototype,
+	chartPrototype = H.Chart.prototype;
 
-ALLOWED_SHAPES = ['path', 'rect', 'circle'];
 
-ALIGN_FACTOR = {
-	top: 0,
-	left: 0,
-	center: 0.5,
-	middle: 0.5,
-	bottom: 1,
-	right: 1
-};
+function Annotation(chart, options) {
+	this.init(chart, options);
+}
 
-function defaultOptions(shapeType) {
-	var shapeOptions,
-		options;
-
-	options = {
-		xAxis: 0,
-		yAxis: 0,
-		title: {
-			style: {},
-			text: '',
+Annotation.prototype = {
+	shapesWithAnchors: ['callout', 'connector'],
+	/**
+	 * Default options for an annotation
+	**/
+	defaultOptions: {
+		labelOptions: {
+			align: 'center',
+			allowOverlap: false,
+			backgroundColor: 'rgba(0, 0, 0, 0.75)',
+			borderColor: 'black',
+			borderRadius: 5,
+			borderWidth: 1,
+			// className:
+			// color: undefined,
+			crop: false,
+			// text: null,
+			formatter: function () {
+				return defined(this.y) ? this.y : 'Annotation label';
+			},
+			overflow: 'none',
+			padding: 5,
+			rotation: 0,
+			shadow: false,
+			shape: 'callout',
+			style: {
+				fontSize: '11px',
+				fontWeigth: 'bold',
+				color: 'red'
+			},
+			useHTML: false,
+			verticalAlign: 'bottom',
 			x: 0,
 			y: 0
+			// distance: 16
+			// zIndex: 6
 		},
-		shape: {
-			params: {
-				stroke: '${palette.neutralColor100}',
-				fill: 'transparent',
-				strokeWidth: 2
-			}
-		}
-	};
 
-	shapeOptions = {
-		circle: {
-			params: {
-				x: 0,
-				y: 0
-			}
-		}
-	};
+		zIndex: 6
+	},
 
-	if (shapeOptions[shapeType]) {
-		options.shape = merge(options.shape, shapeOptions[shapeType]);
-	}
+	/**
+	 * Annotation initialisation
+	 *
+	 * @param {Object} chart
+	 * @param {Object} userOptions
+	 * @returns {undefined}
+	**/
 
-	return options;
-}
-
-function translatePath(d, xAxis, yAxis, xOffset, yOffset) {
-	var len = d.length,
-		i = 0;
-
-	while (i < len) {
-		if (isNumber(d[i]) && isNumber(d[i + 1])) {
-			d[i] = xAxis.toPixels(d[i]) - xOffset;
-			d[i + 1] = yAxis.toPixels(d[i + 1]) - yOffset;
-			i += 2;
-		} else {
-			i += 1;
-		}
-	}
-
-	return d;
-}
-
-
-// Define annotation prototype
-var Annotation = function () {
-	this.init.apply(this, arguments);
-};
-Annotation.prototype = {
-	/* 
-	 * Initialize the annotation
-	 */
-	init: function (chart, options) {
-		var shapeType = options.shape && options.shape.type;
-
+	init: function (chart, userOptions) {
 		this.chart = chart;
-		this.options = merge({}, defaultOptions(shapeType), options);
+
+		// keeps annotation's labels
+		this.labels = [];
+
+		// keeps groups for a series - if a label is linked to a real point
+		// we create a group with the same translation as the point's group
+		// it is needed for aligning label
+		// key for series groups are series._i
+		this.labelGroups = {};
+
+		this.setOptions(userOptions);
+
+		each(this.options.labels || [], this.initLabel, this);
 	},
 
-	/*
-	 * Render the annotation
-	 */
-	render: function (redraw) {
-		var annotation = this,
-			chart = this.chart,
-			renderer = annotation.chart.renderer,
-			group = annotation.group,
-			title = annotation.title,
-			shape = annotation.shape,
-			options = annotation.options,
-			titleOptions = options.title,
-			shapeOptions = options.shape;
-
-		if (!group) {
-			group = annotation.group = renderer.g();
-		}
-
-
-		if (!shape && shapeOptions && inArray(shapeOptions.type, ALLOWED_SHAPES) !== -1) {
-			shape = annotation.shape = renderer[options.shape.type](shapeOptions.params);
-			shape.add(group);
-		}
-
-		if (!title && titleOptions) {
-			title = annotation.title = renderer.label(titleOptions);
-			title.add(group);
-		}
-
-		group.add(chart.annotations.group);
-
-		// link annotations to point or series
-		annotation.linkObjects();
-
-		if (redraw !== false) {
-			annotation.redraw();
-		}
+	/**
+	 * Merging default options with the user options
+	 *
+	 * @param {Object} userOptions options specified by the user
+	 * @returns {undefined}
+	**/
+	setOptions: function (userOptions) {
+		this.options = merge(this.defaultOptions, userOptions);
 	},
 
-	/*
-	 * Redraw the annotation title or shape after options update
-	 */
+
+	/**
+	 * Main method for drawing/redrawing an annotation, it is called everytime on chart redraw
+	 * and once on chart's load
+	 *
+	 * @returns {undefined}
+	**/
 	redraw: function () {
-		var options = this.options,
-			chart = this.chart,
-			group = this.group,
-			title = this.title,
-			shape = this.shape,
-			linkedTo = this.linkedObject,
-			xAxis = chart.xAxis[options.xAxis],
-			yAxis = chart.yAxis[options.yAxis],
-			width = options.width,
-			height = options.height,
-			anchorY = ALIGN_FACTOR[options.anchorY],
-			anchorX = ALIGN_FACTOR[options.anchorX],
-			shapeParams,
-			linkType,
-			series,
-			param,
-			bbox,
-			x,
-			y;
-
-		if (linkedTo) {
-			linkType = (linkedTo instanceof H.Point) ? 'point' :
-						(linkedTo instanceof H.Series) ? 'series' : null;
-
-			if (linkType === 'point') {
-				options.xValue = linkedTo.x;
-				options.yValue = linkedTo.y;
-				series = linkedTo.series;
-			} else if (linkType === 'series') {
-				series = linkedTo;
-			}
-
-			if (group.visibility !== series.group.visibility) {
-				group.attr({
-					visibility: series.group.visibility
-				});
-			}
+		if (!this.group) {
+			this.render();
 		}
 
-
-		// Based on given options find annotation pixel position
-		x = (defined(options.xValue) ? xAxis.toPixels(options.xValue + xAxis.minPointOffset) - xAxis.minPixelPadding : options.x);
-		y = defined(options.yValue) ? yAxis.toPixels(options.yValue) : options.y;
-
-		if (!isNumber(x) || !isNumber(y)) {
-			return;
-		}
-
-
-		if (title) {
-			title.attr(options.title);
-			title.css(options.title.style);
-		}
-
-		if (shape) {
-			shapeParams = extend({}, options.shape.params);
-
-			if (options.units === 'values') {
-				for (param in shapeParams) {
-					if (inArray(param, ['width', 'x']) > -1) {
-						shapeParams[param] = xAxis.translate(shapeParams[param]);
-					} else if (inArray(param, ['height', 'y']) > -1) {
-						shapeParams[param] = yAxis.translate(shapeParams[param]);
-					}
-				}
-
-				if (shapeParams.width) {
-					shapeParams.width -= xAxis.toPixels(0) - xAxis.left;
-				}
-
-				if (shapeParams.x) {
-					shapeParams.x += xAxis.minPixelPadding;
-				}
-
-				if (options.shape.type === 'path') {
-					translatePath(shapeParams.d, xAxis, yAxis, x, y);
-				}
-			}
-
-			// move the center of the circle to shape x/y
-			if (options.shape.type === 'circle') {
-				shapeParams.x += shapeParams.r;
-				shapeParams.y += shapeParams.r;
-			}
-
-			shape.attr(shapeParams);
-		}
-
-		group.bBox = null;
-
-		// If annotation width or height is not defined in options use bounding box size
-		if (!isNumber(width)) {
-			bbox = group.getBBox();
-			width = bbox.width;
-		}
-
-		if (!isNumber(height)) {
-			// get bbox only if it wasn't set before
-			if (!bbox) {
-				bbox = group.getBBox();
-			}
-
-			height = bbox.height;
-		}
-
-		// Calculate anchor point
-		if (!isNumber(anchorX)) {
-			anchorX = ALIGN_FACTOR.center;
-		}
-
-		if (!isNumber(anchorY)) {
-			anchorY = ALIGN_FACTOR.center;
-		}
-
-		// Translate group according to its dimension and anchor point
-		x = x - width * anchorX;
-		y = y - height * anchorY;
-
-		if (defined(group.translateX) && defined(group.translateY)) {
-			group.animate({
-				translateX: x,
-				translateY: y
-			});
-		} else {
-			group.translate(x, y);
-		}
+		this.redrawLabels();
 	},
 
-	/*
-	 * Destroy the annotation
-	 */
-	destroy: function () {
-		var annotation = this,
-			chart = this.chart,
-			allItems = chart.annotations.allItems,
-			index = allItems.indexOf(annotation);
+	/**
+	 * Redrawing all labels and hiding on overlap
+	 *
+	 * @returns {undefined}
+	**/
+	redrawLabels: function () {
+		var labels = this.labels,
+			i = labels.length;
 
-		if (index > -1) {
-			allItems.splice(index, 1);
+		// each(labels, this.redrawLabel, this) cannot be used - needs a backward loop
+		// labels array might be modified due to destruction of some label
+		while (i--) {
+			this.redrawLabel(labels[i]);
 		}
 
-		each(['title', 'shape', 'group'], function (element) {
-			if (annotation[element]) {
-				annotation[element].destroy();
-				annotation[element] = null;
+		this.collectAndHideLabels();
+	},
+
+	/**
+	 * Creating svg groups for an annotation and labels
+	 * it is called from redraw method
+	 *
+	 * @returns {undefined}
+	**/
+	render: function () {
+		this.group = this.chart.renderer.g('annotation')
+				.attr({
+					zIndex: this.options.zIndex,
+
+					// hideOverlappingLabels requires translation
+					translateX: 0,
+					translateY: 0
+				})
+				.add();
+	},
+
+
+	/**
+	 * Collecting labels and hide them if they overlap
+	 *
+	 * @returns {undefined}
+	**/
+	collectAndHideLabels: function () {
+		var labels = [];
+
+		each(this.labels, function (label) {
+			if (!label.options.allowOverlap) {
+				labels.push(label);
 			}
 		});
 
-		annotation.group = annotation.title = annotation.shape = annotation.chart = annotation.options = null;
-	},
-
-	/*
-	 * Update the annotation with a given options
-	 */
-	update: function (options, redraw) {
-		extend(this.options, options);
-
-		// update link to point or series
-		this.linkObjects();
-
-		this.render(redraw);
-	},
-
-	linkObjects: function () {
-		var annotation = this,
-			chart = annotation.chart,
-			linkedTo = annotation.linkedObject,
-			linkedId = linkedTo && (linkedTo.id || linkedTo.options.id),
-			options = annotation.options,
-			id = options.linkedTo;
-
-		if (!defined(id)) {
-			annotation.linkedObject = null;
-		} else if (!defined(linkedTo) || id !== linkedId) {
-			annotation.linkedObject = chart.get(id);
+		if (labels.length) {
+			this.hideOverlappingLabels(labels);
 		}
+	},
+
+	/**
+	 * Destroying an annotation
+	 *
+	 * @returns {undefined}
+	**/
+	destroy: function () {
+		var chart = this.chart,
+			labelGroups = this.labelGroups,
+			key;
+
+		each(this.labels, function (label) {
+			label.destroy();
+		});
+
+		for (key in labelGroups) {
+			if (labelGroups.hasOwnProperty(key)) {
+				labelGroups[key].destroy();
+			}
+		}
+
+		destroyObjectProperties(this, chart);
+	},
+
+	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
+
+	/* ******************************************************************************
+	 * LABEL SECTION
+	 * contains methods for handling a single label in an annotation
+	******************************************************************************* */
+
+	/**
+	 * Label initialisation
+	 *
+	 * @param {Object} labelOptions
+	 * @returns {undefined}
+	**/
+	initLabel: function (labelOptions) {
+		var options = merge(this.options.labelOptions, labelOptions),
+
+		// options for label's background
+			attr = {
+				fill: options.backgroundColor,
+				stroke: options.borderColor,
+				'stroke-width': options.borderWidth,
+				r: options.borderRadius,
+				padding: options.padding,
+				zIndex: options.zIndex
+			},
+
+			label = this.chart.renderer.label(
+				'',
+				0, -9e9,
+				options.shape,
+				null,
+				null,
+				options.useHTML, // call on Kacper in case of attaching events
+				null,
+				'annotation-label'
+			);
+
+		if (isNumber(options.distance) || options.positioner) {
+		// if there are specified options for a tooltip-like positioning
+		// label won't be aligned with data labels method
+			label.noAlign = true;
+		}
+
+		label.options = options;
+
+		// labelrank requires for hideOverlappingLabels()
+		label.labelrank = options.labelrank;
+		label.annotation = this;
+
+		label.attr(attr).css(options.style).shadow(options.shadow);
+
+		this.labels.push(label);
+	},
+
+
+	/**
+	 * Redrawing a label
+	 *
+	 * @param {Object} label
+	 * @returns {undefined}
+	**/
+	redrawLabel: function (label) {
+		var point = this.getLinkedPoint(label),
+			options = label.options,
+			parentGroup = label.parentGroup,
+			series,
+			position,
+			seriesPlotBox;
+
+		if (!point) {
+			this.destroyLabel(label);
+
+		} else {
+			series = point.series;
+
+			if (!parentGroup) {
+				this.renderLabel(label);
+				parentGroup = label.parentGroup;
+			}
+
+			if (!point.mock) {
+			// if it is a real point it might be needed to update its group translation
+				seriesPlotBox = series.getPlotBox();
+
+				if (
+					parentGroup.translateX !== seriesPlotBox.translateX ||
+					parentGroup.translateY !== seriesPlotBox.translateY
+					) {
+					parentGroup.attr(seriesPlotBox);
+				}
+			
+			} else {
+			// if it is a mock point point's plotX, plotY must be updated
+				point.translate();
+			}
+
+			label.attr({
+				text: options.formatter.call(point)
+			});
+
+			if (label.noAlign) {
+				position = this.getLabelPosition(label, point);
+
+				label.attr(position);
+
+				/* these are needed for hideOverlappingLabels() */
+				label.alignAttr = {
+					x: position.x,
+					y: position.y
+				};
+				label.placed = true;
+				/**/
+			
+			} else {
+				this.alignLabel(label, point);
+			}
+
+		}
+	},
+
+	/**
+	 * Creating svg groups for labels and a store in series object for labels groups
+	 *
+	 * @param {Object} label an intiailised label object
+	 * @returns {undefined}
+	**/
+	renderLabel: function (label) {
+		var group = this.group,
+			point = label.point,
+			series,
+			labelGroup,
+			seriesId;
+
+		if (!point.mock) {
+		// if it is a real point it creates a mirror group of the point for the label
+		// if the group is already created it is stored in the series
+			series = point.series;
+			seriesId = series._i;
+			labelGroup = this.labelGroups[seriesId];
+
+			if (!labelGroup) {
+			// if the mirror series group is not found, create it and link them
+				labelGroup = this.labelGroups[seriesId] = this.chart.renderer.g('annotation-label')
+					.attr({
+						zIndex: 1
+					})
+					.add(group);
+
+				labelGroup.series = series;
+			}
+		} else {
+		// a mock point does not need a special group - its group is a main annotation group
+			labelGroup = group;
+		}
+
+		label.add(labelGroup);
+	},
+
+
+
+	/**
+	 * Linking label with points
+	 *
+	 * @param {Object} label
+	 * @returns {Object | null} a point which a label is linked or a null if the point
+	 * has not been found
+	**/
+	getLinkedPoint: function (label) {
+		var pointOptions = label.options.point,
+			point = label.point;
+
+		if (!point || point.series === null) {
+		// check if the point does not exist or was destroyed/updated
+
+			if (isObject(pointOptions)) {
+			// if a point config is an object then it should require all information
+			// needed to create a mock point
+				point = this.createMockPoint(pointOptions);
+				label.point = point;
+
+			
+			} else if (isString(pointOptions)) {
+				point = this.chart.get(pointOptions) || null;
+
+				if (point) {
+					label.point = point;
+				}
+			}
+		}
+
+		return point;
+	},
+
+
+	/**
+	 * Creating a mock point for ta label
+	 *
+	 * @param {Object} pointOptions
+	 * @returns {Object} a mock point
+	**/
+	createMockPoint: function (pointOptions) {
+		var chart = this.chart,
+			
+			// initialise a mock point
+			point = {
+				series: {
+					chart: chart,
+					visible: true,
+					getPlotBox: seriesPrototype.getPlotBox,
+					alignDataLabel: seriesPrototype.alignDataLabel,
+					justifyDataLabel: seriesPrototype.justifyDataLabel
+				},
+				mock: true,
+				translate: function () {
+					var series = this.series,
+						xAxis = series.xAxis,
+						yAxis = series.yAxis,
+						plotX = point.plotX,
+						plotY = point.plotY,
+						isInside = true;
+
+					if (xAxis) {
+						point.plotX = plotX = xAxis.toPixels(this.x/* , chart.inverted */);
+						isInside = plotX >= 0 && plotX <= xAxis.len;
+					}
+
+					if (yAxis) {
+						point.plotY = plotY = yAxis.toPixels(this.y/* , chart.inverted */);
+						isInside = isInside && plotY >= 0 && plotY <= yAxis.len;
+					}
+
+					this.isInside = isInside;
+				}
+			},
+
+			xAxisId = pointOptions.xAxis,
+			xAxis = defined(xAxisId) ? chart.xAxis[xAxisId] || chart.get(xAxisId) : null,
+			
+			yAxisId = pointOptions.yAxis,
+			yAxis = defined(yAxisId) ? chart.yAxis[yAxisId] || chart.get(yAxisId) : null;
+
+		// check if axis is assigned in the options, if it is not x and y are pixels
+		// otherwise they are values in the specified axis' scale
+		if (xAxis) {
+			point.x = pointOptions.x;
+			point.series.xAxis = xAxis;
+		} else {
+			point.plotX = pointOptions.x;
+		}
+
+		if (yAxis) {
+			point.y = pointOptions.y;
+			point.series.yAxis = yAxis;
+		} else {
+			point.plotY = pointOptions.y;
+		}
+
+		return point;
+	},
+
+
+
+	/**
+	 * Tooltip-like positioning of the label
+	 *
+	 * @param {Object} label
+	 * @param {Object} point
+	 * @returns {Object} position of the label
+	**/
+	getLabelPosition: function (label, point) {
+		var chart = this.chart,
+			labelOptions = label.options,
+			shape = label.options.shape,
+			position,
+			seriesPlotBox,
+
+			round = Math.round;
+
+		if (point.isInside && point.series.type !== 'pie') {
+
+			position = (labelOptions.positioner || tooltipPrototype.getPosition).call({
+				chart: chart,
+				distance: labelOptions.distance || 16
+			}, label.width, label.height, point);
+
+			// the position must be adjusted with group's translation
+			if (!point.mock) {
+				seriesPlotBox = point.series.getPlotBox();
+				position.x -= seriesPlotBox.translateX;
+				position.y -= seriesPlotBox.translateY;
+			}
+
+			position.x = round(position.x);
+			position.y = round(position.y || 0);
+
+			if (inArray(shape, this.shapesWithAnchors) > -1) {
+			// create an array shapes with anchors
+				position.anchorX = round(point.plotX);
+				position.anchorY = round(point.plotY);
+			}
+		}
+
+		return position || {
+			x: 0,
+			y: -9e9
+		};
+	},
+
+	/**
+	 * Data label - like position of the label
+	 *
+	 * @param {Object} label
+	 * @param {Object} point
+	 * @returns {undefined}
+	**/
+	alignLabel: function (label, point) {
+		point.series.alignDataLabel(
+			point,
+			label,
+			label.options,
+			null,
+			true // true for not animating
+		);
+
+		/* Workaround for bad placing anchor on animation */
+		// if (label.placed) {
+		//     setTimeout(function () {
+		//         label.attr({
+		//            anchorX: point.plotX, // + plotBox.translateX,
+		//            anchorY: point.plotY // + plotBox.translateY
+		//         });
+		//     }, 0);
+		// }
+	},
+
+
+	destroyLabel: function (label) {
+		erase(this.labels, label);
+		label.destroy();
 	}
 };
 
+/* *******************************************************************************
+*
+* EXTENDING CHART PROTOTYPE
+*
+******************************************************************************* */
 
-// Add annotations methods to chart prototype
-extend(Chart.prototype, {
-	annotations: {
-		/*
-		 * Unified method for adding annotations to the chart
-		 */
-		add: function (options, redraw) {
-			var annotations = this.allItems,
-				chart = this.chart,
-				item,
-				len;
+H.extend(chartPrototype, {
+	addAnnotation: function (userOptions) {
+		var annotation = new Annotation(this, userOptions);
 
-			if (!isArray(options)) {
-				options = [options];
-			}
+		this.annotations.push(annotation);
+		return annotation;
+	},
 
-			len = options.length;
-
-			while (len--) {
-				item = new Annotation(chart, options[len]);
-				annotations.push(item);
-				item.render(redraw);
-			}
-		},
-
-		/**
-		 * Redraw all annotations, method used in chart events
-		 */
-		redraw: function () {
-			each(this.allItems, function (annotation) {
-				annotation.redraw();
+	removeAnnotation: function (id) {
+		var annotations = this.annotations,
+			annotation = find(annotations, function (annotation) {
+				return annotation.options.id === id;
 			});
+
+		if (annotation) {
+			erase(annotations, annotation);
+			annotation.destroy();
+		}
+	},
+
+	redrawAnnotations: function () {
+		each(this.annotations, function (annotation) {
+			annotation.redraw();
+		});
+	}
+});
+
+
+chartPrototype.callbacks.push(function (chart) {
+	chart.annotations = [];
+
+	each(chart.options.annotations, function (annotationOptions) {
+		chart.addAnnotation(annotationOptions);
+	});
+
+	chart.redrawAnnotations();
+	addEvent(chart, 'redraw', chart.redrawAnnotations);
+});
+
+
+/* ****************************************************************************** */
+
+/**
+ * General symbol definition for labels with connector
+ */
+H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
+	var anchorX = options && options.anchorX,
+		anchorY = options && options.anchorY,
+		path,
+		yOffset,
+		lateral = w / 2;
+
+	if (isNumber(anchorX) && isNumber(anchorY)) {
+
+		path = ['M', anchorX, anchorY];
+		
+		// Prefer 45 deg connectors
+		yOffset = y - anchorY;
+		if (yOffset < 0) {
+			yOffset = -h - yOffset;
+		}
+		if (yOffset < w) {
+			lateral = anchorX < x + (w / 2) ? yOffset : w - yOffset;
+		}
+		
+		// Anchor below label
+		if (anchorY > y + h) {
+			path.push('L', x + lateral, y + h);
+
+		// Anchor above label
+		} else if (anchorY < y) {
+			path.push('L', x + lateral, y);
+
+		// Anchor left of label
+		} else if (anchorX < x) {
+			path.push('L', x, y + h / 2);
+		
+		// Anchor right of label
+		} else if (anchorX > x + w) {
+			path.push('L', x + w, y + h / 2);
 		}
 	}
-});
+	return path || [];
+};
 
-
-// Initialize on chart load
-Chart.prototype.callbacks.push(function (chart) {
-	var options = chart.options.annotations,
-		group;
-
-	group = chart.renderer.g('annotations');
-	group.attr({
-		zIndex: 7
-	});
-	group.add();
-
-	// initialize empty array for annotations
-	chart.annotations.allItems = [];
-
-	// link chart object to annotations
-	chart.annotations.chart = chart;
-
-	// link annotations group element to the chart
-	chart.annotations.group = group;
-
-	if (isArray(options) && options.length > 0) {
-		chart.annotations.add(chart.options.annotations);
-	}
-
-	// update annotations after chart redraw
-	H.addEvent(chart, 'redraw', function () {
-		chart.annotations.redraw();
-	});
-});
+H.defaultOptions.annotations = [];
+H.Annotation = Annotation;
