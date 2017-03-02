@@ -80,3 +80,37 @@ QUnit.test('Axis.isBroken', function (assert) {
         'Axis.breaks: [{}] results in Axis.isBroken: true.'
     );
 });
+
+QUnit.test('Axis breaks with categories', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        xAxis: {
+            categories: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'],
+
+            breaks: [{
+                from: 2.5,
+                to: 7.5
+            }]
+        },
+
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1]
+        }]
+
+    });
+
+    var gridBox = chart.xAxis[0].gridGroup.getBBox();
+
+    assert.strictEqual(
+        gridBox.x + 0.5,
+        chart.plotLeft,
+        'Left tick is left of plot area'
+    );
+    assert.strictEqual(
+        gridBox.width,
+        chart.plotWidth,
+        'Right tick is right of plot area'
+    );
+
+
+})

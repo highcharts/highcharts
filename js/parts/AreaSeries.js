@@ -199,7 +199,8 @@ seriesType('area', 'line', {
 					graphPoints.push({
 						plotX: plotX,
 						plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
-						isNull: isNull
+						isNull: isNull,
+						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,

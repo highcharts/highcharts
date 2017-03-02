@@ -21,7 +21,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	function collectAndHide() {
 		var labels = [];
 
-		each(chart.series, function (series) {
+		each(chart.series || [], function (series) {
 			var dlOptions = series.options.dataLabels,
 				collections = series.dataLabelCollections || ['dataLabel']; // Range series have two collections
 			if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap && series.visible) { // #3866

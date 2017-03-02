@@ -12,6 +12,10 @@ for (var i = 0; i < dataPoints; i++) {
 }
 var chart = Highcharts.chart('container', {
 
+    chart: {
+        backgroundColor: '#efe'
+    },
+
     xAxis: {
         staticScale: 24,
         minRange: 1,

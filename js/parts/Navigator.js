@@ -530,6 +530,7 @@ Navigator.prototype = {
 			),
 			zoomedMax
 		);
+
 		navigator.range = navigator.zoomedMax - navigator.zoomedMin;
 
 		zoomedMax = Math.round(navigator.zoomedMax);
@@ -790,6 +791,7 @@ Navigator.prototype = {
 				} else if (chartX > navigatorSize + dragOffset - range) { // outside right
 					chartX = navigatorSize + dragOffset - range;
 				}
+
 				navigator.render(
 					0,
 					0,
@@ -814,12 +816,19 @@ Navigator.prototype = {
 		var navigator = this,
 			chart = navigator.chart,
 			xAxis = navigator.xAxis,
+			scrollbar = navigator.scrollbar,
 			fixedMin,
 			fixedMax,
 			ext,
 			DOMEvent = e.DOMEvent || e;
 
-		if (navigator.hasDragged || e.trigger === 'scrollbar') {
+		if (
+			// MouseUp is called for both, navigator and scrollbar (that order),
+			// which causes calling afterSetExtremes twice. Prevent first call
+			// by checking if scrollbar is going to set new extremes (#6334)
+			(navigator.hasDragged && (!scrollbar || !scrollbar.hasDragged)) ||
+			e.trigger === 'scrollbar'
+		) {
 			// When dragging one handle, make sure the other one doesn't change
 			if (navigator.zoomedMin === navigator.otherHandlePos) {
 				fixedMin = navigator.fixedExtreme;
@@ -827,7 +836,7 @@ Navigator.prototype = {
 				fixedMax = navigator.fixedExtreme;
 			}
 			// Snap to right edge (#4076)
-			if (navigator.zoomedMax === navigator.navigatorSize) {
+			if (navigator.zoomedMax === navigator.size) {
 				fixedMax = navigator.getUnionExtremes().dataMax;
 			}
 			ext = xAxis.toFixedRange(
@@ -1101,7 +1110,7 @@ Navigator.prototype = {
 	 */
 	setBaseSeries: function (baseSeriesOptions) {
 		var chart = this.chart,
-			baseSeries = this.baseSeries = [];
+			baseSeries;
 
 		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;
 
@@ -1112,6 +1121,8 @@ Navigator.prototype = {
 				s.destroy();
 			});
 		}
+
+		baseSeries = this.baseSeries = [];
 
 		// Iterate through series and add the ones that should be shown in navigator
 		each(chart.series || [], function (series, i) {
@@ -1200,17 +1211,13 @@ Navigator.prototype = {
 			each(baseSeries, function (base) {
 				if (base.xAxis) {
 					addEvent(base, 'updatedData', this.updatedDataHandler);
-					// Survive Series.update()
-					base.userOptions.events = extend(base.userOptions.event, {
-						updatedData: this.updatedDataHandler
-					});
 				}
 
 				// Handle series removal
 				addEvent(base, 'remove', function () {
 					if (this.navigatorSeries) {
 						erase(navigator.series, this.navigatorSeries);
-						this.navigatorSeries.remove();
+						this.navigatorSeries.remove(false);
 						delete this.navigatorSeries;
 					}
 				});		

@@ -274,7 +274,9 @@ seriesType('flags', 'column', {
 				});
 
 				// Set the tooltip anchor position
-				point.tooltipPos = chart.inverted ? [yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - plotX] : [plotX, plotY];
+				point.tooltipPos = chart.inverted ? 
+					[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - plotX] :
+					[plotX, plotY + yAxis.pos - chart.plotTop]; // #6327
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy();

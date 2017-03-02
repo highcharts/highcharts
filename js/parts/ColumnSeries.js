@@ -333,7 +333,10 @@ seriesType('column', 'line', {
 
 		// Select or hover states
 		if (state) {
-			stateOptions = options.states[state];
+			stateOptions = merge(
+				options.states[state],
+				point.options.states && point.options.states[state] || {} // #6401
+			);
 			brightness = stateOptions.brightness;
 			fill = stateOptions.color || 
 				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||

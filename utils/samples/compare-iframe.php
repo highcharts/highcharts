@@ -385,7 +385,11 @@ function getExportInnerHTML() {
 				}
 			}
 
-			$(function() {
+			/**
+			 * Do the required overrides and options for the charts to compare 
+			 * nicely.
+			 */
+			function setUpHighcharts() {
 				if (!window.Highcharts) {
 					console.warn('Highcharts is undefined');
 					window.parent.proceed();
@@ -482,7 +486,7 @@ function getExportInnerHTML() {
 
 				}
 
-			});
+			}
 
 			window.isComparing = true;
 			window.alert = function () {};
@@ -519,6 +523,8 @@ function getExportInnerHTML() {
 <?php echo getHTML($_GET['which']); ?>
 
 		<script>
+		// Set options, overrides etc.
+		setUpHighcharts();
 		try {
 
 		<?php echo getJS(); ?>

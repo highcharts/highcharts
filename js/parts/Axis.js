@@ -1032,7 +1032,9 @@ H.Axis.prototype = {
 		if (saveOld) {
 			axis.oldTransA = transA;
 		}
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
+		axis.translationSlope = axis.transA = transA =
+			axis.options.staticScale ||
+			axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
