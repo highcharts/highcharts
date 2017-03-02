@@ -299,7 +299,8 @@ H.Pointer.prototype = {
 			shared = tooltip ? tooltip.shared : false,
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
-			isDirectTouch = !!p,
+			// onMouseOver or already hovering a series with directTouch
+			isDirectTouch = !!p || (hoverSeries && hoverSeries.directTouch),
 			hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e),
 			useSharedTooltip,
 			followPointer,
