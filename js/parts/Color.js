@@ -87,8 +87,8 @@ H.Color.prototype = {
 
 					this.rgba = rgba || [
 						(input & 0xFF0000) >> 16,
-						(input & 0x00FF00) >> 8,
-						(input & 0x0000FF),
+						(input & 0xFF00) >> 8,
+						(input & 0xFF),
 						1.0
 					];				
 
@@ -99,9 +99,9 @@ H.Color.prototype = {
 					input = parseInt(input.substr(1), 16);
 
 					this.rgba = rgba || [
-						((n & 0x0000F00) >> 4) | (n & 0x00000F00) >> 8,
-						((n & 0x00000F0) >> 4) | (n & 0x000000F0),
-						((n & 0x000000F) << 4) | (n & 0x0000000F),
+						((n & 0xF00) >> 4) | (n & 0xF00) >> 8,
+						((n & 0xF0) >> 4) | (n & 0xF0),
+						((n & 0xF) << 4) | (n & 0xF),
 						1.0
 					];
 				}
