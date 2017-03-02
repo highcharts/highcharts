@@ -1552,9 +1552,16 @@ function GLRenderer(postRenderCallback) {
 	 * This renders all pushed series.
 	 */
 	function render(chart) {
+
 		if (chart) {
-			width = chart.chartWidth;
-			height = chart.chartHeight;
+			if (!chart.chartHeight || !chart.chartWidth) {
+				//chart.setChartSize();
+			}
+
+			width = chart.chartWidth || 800;
+			height = chart.chartHeight || 400;
+		} else {
+			return false;
 		}
 
 		if (!gl || !width || !height) {
@@ -1700,6 +1707,10 @@ function GLRenderer(postRenderCallback) {
 	 */
 	function renderWhenReady(chart) {
 		clear();
+		
+		if (chart.renderer.forExport) {
+			return render(chart);
+		}
 		
 		if (isInited) {
 			render(chart);
@@ -1976,7 +1987,6 @@ function createAndAttachRenderer(chart, series) {
 		
 		
 		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
-			
 			target.image.attr({ 
 				href: target.canvas.toDataURL('image/png')
 			});	
@@ -2002,13 +2012,13 @@ function createAndAttachRenderer(chart, series) {
  * @param renderer {OGLRenderer} - the renderer
  * @param series {Highcharts.Series} - the series
  */
-function renderIfNotSeriesBoosting(renderer, series) {
+function renderIfNotSeriesBoosting(renderer, series, chart) {
 	if (renderer && 
 		series.image && 
 		series.canvas && 
-		!isChartSeriesBoosting(series.chart)
-	) {		
-		renderer.render(series.chart);
+		!isChartSeriesBoosting(chart || series.chart)
+	) {
+		renderer.render(chart || series.chart);
 	}
 }
 
@@ -2439,7 +2449,8 @@ H.extend(Series.prototype, {
 			allocateIfNotSeriesBoosting(renderer, this);
 			renderer.pushSeries(series);				
 			// Perform the actual renderer if we're on series level
-			renderIfNotSeriesBoosting(renderer, this);			
+			renderIfNotSeriesBoosting(renderer, this, chart);	
+			//console.log(series, chart);
 		}
 
 		/* This builds the KD-tree */
