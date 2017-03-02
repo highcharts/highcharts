@@ -43,12 +43,6 @@ H.Color.prototype = {
 			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
 		}
 	}, {
-		// HEX color
-		regex: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
-		parse: function (result) {
-			return [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
-		}
-	}, {
 		// RGB color
 		regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
 		parse: function (result) {
@@ -85,16 +79,33 @@ H.Color.prototype = {
 		} else {
 
 			// Check if it's possible to do bitmasking instead of regex
-			if (input[0] === '#' && input.length === 7) {
-				input = parseInt(input.substr(1), 16);
+			if (input[0] === '#') {
 
-				this.rgba = rgba || [
-					(input & 0xFF0000) >> 16,
-					(input & 0x00FF00) >> 8,
-					(input & 0x0000FF),
-					1.0
-				];
+				// Handle long-form, e.g. #AABBCC
+				if (input.length === 7) {
+					input = parseInt(input.substr(1), 16);
 
+					this.rgba = rgba || [
+						(input & 0xFF0000) >> 16,
+						(input & 0x00FF00) >> 8,
+						(input & 0x0000FF),
+						1.0
+					];				
+
+				// Handle short-form, e.g. #ABC
+				// In short form, the value is assumed to be the same 
+				// for both nibbles for each component. e.g. #ABC = #AABBCC
+				} else if (input.length === 4) {
+					input = parseInt(input.substr(1), 16);
+
+					this.rgba = rgba || [
+						((n & 0x0000F00) >> 4) | (n & 0x00000F00) >> 8,
+						((n & 0x00000F0) >> 4) | (n & 0x000000F0),
+						((n & 0x000000F) << 4) | (n & 0x0000000F),
+						1.0
+					];
+				}
+				
 				return;
 			}
 
