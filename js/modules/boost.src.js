@@ -120,7 +120,7 @@ var win = H.win,
 	fireEvent = H.fireEvent,
 	grep = H.grep,
 	isNumber = H.isNumber,
-	//merge = H.merge,
+	merge = H.merge,
 	pick = H.pick,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
@@ -989,13 +989,7 @@ function GLRenderer(postRenderCallback) {
 	////////////////////////////////////////////////////////////////////////////
 
 	function setOptions(options) {
-		options = options || {};
-		settings.useAlpha = options.useAlpha || true;
-		settings.useGPUTranslations = options.useGPUTranslations || false;
-		settings.usePreallocated = options.usePreallocated || false;
-		settings.timeRendering = options.timeRendering || false;
-		settings.timeSeriesProcessing = options.timeSeriesProcessing || false;
-		settings.timeSetup = options.timeSetup || false;
+		merge(true, settings, options);
 	}
 
 	function seriesPointCount(series) {
