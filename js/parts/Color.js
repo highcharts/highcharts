@@ -65,7 +65,8 @@ H.Color.prototype = {
 		var result,
 			rgba,
 			i,
-			parser;
+			parser,
+			len;
 
 		this.input = input = this.names[input] || input;
 
@@ -81,40 +82,42 @@ H.Color.prototype = {
 			// Check if it's possible to do bitmasking instead of regex
 			if (input[0] === '#') {
 
-				// Handle long-form, e.g. #AABBCC
-				if (input.length === 7) {
-					input = parseInt(input.substr(1), 16);
+				len = input.length;
+				input = parseInt(input.substr(1), 16);
 
-					this.rgba = rgba || [
+				// Handle long-form, e.g. #AABBCC
+				if (len === 7) {
+					
+					rgba = [
 						(input & 0xFF0000) >> 16,
 						(input & 0xFF00) >> 8,
 						(input & 0xFF),
-						1.0
+						1
 					];				
 
 				// Handle short-form, e.g. #ABC
 				// In short form, the value is assumed to be the same 
 				// for both nibbles for each component. e.g. #ABC = #AABBCC
-				} else if (input.length === 4) {
-					input = parseInt(input.substr(1), 16);
+				} else if (len === 4) {
 
-					this.rgba = rgba || [
-						((n & 0xF00) >> 4) | (n & 0xF00) >> 8,
-						((n & 0xF0) >> 4) | (n & 0xF0),
-						((n & 0xF) << 4) | (n & 0xF),
-						1.0
+					rgba = [
+						((input & 0xF00) >> 4) | (input & 0xF00) >> 8,
+						((input & 0xF0) >> 4) | (input & 0xF0),
+						((input & 0xF) << 4) | (input & 0xF),
+						1
 					];
-				}
-				
-				return;
+				}				
 			}
 
-			i = this.parsers.length;
-			while (i-- && !rgba) {
-				parser = this.parsers[i];
-				result = parser.regex.exec(input);
-				if (result) {
-					rgba = parser.parse(result);
+			// Otherwise, check regex parsers
+			if (!rgba) {
+				i = this.parsers.length;
+				while (i-- && !rgba) {
+					parser = this.parsers[i];
+					result = parser.regex.exec(input);
+					if (result) {
+						rgba = parser.parse(result);
+					}
 				}
 			}
 		}
