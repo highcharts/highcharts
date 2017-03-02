@@ -16,11 +16,15 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 }
 
 console.time('scatter');
-console.time('asyncRender');
 Highcharts.chart('container', {
 
     chart: {
         zoomType: 'xy'
+    },
+
+    boost: {
+        useGPUTranslations: true,
+        usePreAllocated: true
     },
 
     xAxis: {
@@ -54,11 +58,6 @@ Highcharts.chart('container', {
         tooltip: {
             followPointer: false,
             pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
-        },
-        events: {
-            renderedCanvas: function () {
-                console.timeEnd('asyncRender');
-            }
         }
     }]
 
