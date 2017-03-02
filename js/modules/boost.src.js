@@ -97,7 +97,7 @@
   * @apioption series.boostThreshold
   */
 
- /* global Float32Array, window, document, Image */
+ /* global Float32Array, Image */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -1752,7 +1752,7 @@ function GLRenderer(postRenderCallback) {
 	 * Init OpenGL 
 	 * @param canvas {HTMLCanvas} - the canvas to render to
 	 */
-	function init(canvas, noFlush, callback) {
+	function init(canvas, noFlush) {
 		var i = 0,
 			activeContext,
 			contexts = [
@@ -1775,7 +1775,7 @@ function GLRenderer(postRenderCallback) {
 		for (; i < contexts.length; i++) {
 			gl = canvas.getContext(contexts[i]);
 			if (gl) {
-				activeContext= contexts[i];
+				activeContext = contexts[i];
 				break;
 			}
 		}
@@ -1994,7 +1994,7 @@ function createAndAttachRenderer(chart, series) {
 	if (!target.ogl) {
 		
 		
-		target.ogl = GLRenderer(function () {
+		target.ogl = GLRenderer(function () { // eslint-disable-line new-cap
 			
 			target.image.attr({ 
 				href: target.canvas.toDataURL('image/png')
@@ -2248,8 +2248,8 @@ function hasWebGLSupport() {
 		contexts = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
 		context = false;
 
-	if (typeof window.WebGLRenderingContext !== 'undefined') {
-		canvas = document.createElement('canvas');
+	if (typeof win.WebGLRenderingContext !== 'undefined') {
+		canvas = doc.createElement('canvas');
 
 		for (; i < contexts.length; i++) {
 			try {
@@ -2385,7 +2385,6 @@ H.extend(Series.prototype, {
 			wasNull, //eslint-disable-line no-unused-vars
 			connectNulls = options.connectNulls,
 			useRaw = !xData,
-			isInverted = chart.options.chart ? chart.options.chart.inverted || false : false,
 			minVal,
 			maxVal,
 			minI,
@@ -2425,7 +2424,7 @@ H.extend(Series.prototype, {
 		if (!this.visible) {
 			if (!isChartSeriesBoosting(chart) && renderer) {
 				renderer.clear();
-				this.image.attr({href: ''});
+				this.image.attr({ href: '' });
 			}
 			return;
 		}
@@ -2630,11 +2629,11 @@ extend(seriesTypes.column.prototype, {
 	sampling: true
 });
 
-wrap(Series.prototype, 'setVisible', function (proceed, vis, rdraw) {
+wrap(Series.prototype, 'setVisible', function (proceed, vis) {
 	proceed.call(this, vis, false);
 	if (this.visible === false && this.ogl && this.canvas && this.image) {
 		this.ogl.clear();
-		this.image.attr({href: ''});
+		this.image.attr({ href: '' });
 	} else {
 		this.chart.redraw();		
 	}
