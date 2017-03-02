@@ -44,9 +44,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
+    
     legend: {
         enabled: false
     },
+
     series: [{
         boostBlending: 'alpha',
         type: 'scatter',

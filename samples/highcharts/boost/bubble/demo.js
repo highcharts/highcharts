@@ -42,9 +42,16 @@ Highcharts.chart('container', {
     title: {
         text: 'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
+
     legend: {
         enabled: false
     },
+
+    boost: {
+        useGPUTranslations: true,
+        usePreallocated: true
+    },
+
     series: [{
         type: 'bubble',
         boostBlending: 'alpha',

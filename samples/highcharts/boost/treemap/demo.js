@@ -951,9 +951,15 @@ $(function () {
             }],
             data: points
         }],
+
+        boost: {
+            useGPUTranslations: true            
+        },
+
         subtitle: {
             text: 'Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
         },
+
         title: {
             text: 'Global Mortality Rate 2012, per 100 000 population'
         }

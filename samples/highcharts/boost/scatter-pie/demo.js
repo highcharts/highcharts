@@ -38,15 +38,23 @@ $(function () {
             maxPadding: 0
         },
 
+        boost: {
+            useGPUTranslations: true,
+            usePreallocated: true
+        },
+
         title: {
             text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
         },
+        
         subtitle: {
             text: '(and comparing lobsters with canaries)'
         },
+        
         legend: {
             enabled: false
         },
+        
         series: [{
             boostThreshold: 1,
             type: 'scatter',

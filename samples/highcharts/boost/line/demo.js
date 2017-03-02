@@ -40,6 +40,10 @@ Highcharts.chart('container', {
         zoomType: 'x'
     },
 
+    boost: {
+        useGPUTranslations: true
+    },
+
     title: {
         text: 'Trimmed Highcharts drawing ' + n + ' points'
     },

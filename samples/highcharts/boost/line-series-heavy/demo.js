@@ -67,6 +67,10 @@ $(function () {
             enabled: false
         },
 
+        boost: {
+            useGPUTranslations: true            
+        },
+
         xAxis: {
             min: 0,
             max: 120,

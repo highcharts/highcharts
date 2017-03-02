@@ -16,6 +16,9 @@ $(function () {
             margin: [60, 10, 80, 50]
         },
 
+        boost: {
+            useGPUTranslations: true
+        },
 
         title: {
             text: 'Highcharts boosted heat map',
