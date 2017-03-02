@@ -83,6 +83,21 @@ H.Color.prototype = {
 
 		// Solid colors
 		} else {
+
+			// Check if it's possible to do bitmasking instead of regex
+			if (input[0] === '#' && input.length === 7) {
+				input = parseInt(input.substr(1), 16);
+
+				this.rgba = rgba || [
+					(input & 0xFF0000) >> 16,
+					(input & 0x00FF00) >> 8,
+					(input & 0x0000FF),
+					1.0
+				];
+
+				return;
+			}
+
 			i = this.parsers.length;
 			while (i-- && !rgba) {
 				parser = this.parsers[i];
