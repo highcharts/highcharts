@@ -447,13 +447,21 @@ function getExportInnerHTML() {
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
-						if (chart.series[0] && chart.series[0].points[2]) {
-							chart.series[0].points[2].onMouseOver();
-							chart.tooltip.refresh(
-								chart.tooltip.options.shared ?
-									[chart.series[0].points[2]] :
-									chart.series[0].points[2]
-							);
+						var x = 2,
+							series = chart.series,
+							hoverPoint = series[0] && series[0].points[x],
+							pointOrPoints;
+						if (hoverPoint) {
+							if  (chart.tooltip.options.shared) {
+								pointOrPoints = Highcharts.map(series, function (s) {
+									return s.points[x];
+								});
+							} else {
+								pointOrPoints = hoverPoint;
+							}
+							hoverPoint.onMouseOver();
+							// Note: As of 5.0.8 onMouseOver takes care of refresh.
+							chart.tooltip.refresh(pointOrPoints);
 						}
 					});
 					<?php endif ?>
