@@ -453,9 +453,15 @@ function getExportInnerHTML() {
 							pointOrPoints;
 						if (hoverPoint) {
 							if  (chart.tooltip.options.shared) {
-								pointOrPoints = Highcharts.map(series, function (s) {
-									return s.points[x];
+								pointOrPoints = [];
+								Highcharts.each(series, function (s) {
+									if (s.options.enableMouseTracking !== false && s.points[x]) {
+										pointOrPoints.push(s.points[x]);
+									}
 								});
+								if (pointOrPoints.length === 0) {
+									pointOrPoints.push(hoverPoint);
+								}
 							} else {
 								pointOrPoints = hoverPoint;
 							}
@@ -482,7 +488,7 @@ function getExportInnerHTML() {
 					});
 					<?php endif ?>
 
-					<?php if (getExportInnerHTML()) : ?>
+					<?php if (getExportInnerHTML() || getCompareTooltips()) : ?>
 					// Bypass the export module
 					Highcharts.Chart.prototype.getSVG = function () {
 						return this.container.innerHTML
