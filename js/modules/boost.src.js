@@ -279,19 +279,6 @@ var win = H.win,
 
 // Faster conversion to RGB for hex colors
 function toRGBAFast(col) {
-
-	// Parse as a hex color
-	if (col && col.length === 7 && col[0] === '#') {
-		col = parseInt(col.substr(1), 16);
-
-		return [
-			(col & 0xFF0000) >> 16,
-			(col & 0x00FF00) >> 8,
-			(col & 0x0000FF),
-			1.0 
-		];
-	}
-	
 	// We may need to look it up
 	col = col.toLowerCase();
 	if (colorMap[col]) {
