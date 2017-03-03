@@ -2,6 +2,6 @@
  name: Highcharts Demo
  authors:
    - Torstein Hønsi
- getCompareTooltips: true
+ compareTooltips: true
  js_wrap: b
 ...
