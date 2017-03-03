@@ -150,10 +150,23 @@ const buildModules = () => {
 };
 
 const styles = () => {
-    const sass = require('gulp-sass');
-    gulp.src('./css/*.scss')
-        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
-        .pipe(gulp.dest('./code/css/'));
+    const sass = require('node-sass');
+    const U = require('./assembler/utilities.js');
+    const fileName = 'highcharts';
+    return new Promise((resolve, reject) => {
+        sass.render({
+            file: './css/' + fileName + '.scss',
+            outputStyle: 'expanded'
+        }, (err, result) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                U.writeFile('./code/css/' + fileName + '.css', result.css);
+                resolve();
+            }
+        });
+    });
 };
 
 /**
