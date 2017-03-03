@@ -327,7 +327,9 @@
                         // Pass test in drawPoints
                         point.y = point.plotY = 1;
 
-                        point.color = node.color;
+                        if (!point.color) {
+                            point.color = node.color;
+                        }
                     });
                 });
                 left += colDistance;
