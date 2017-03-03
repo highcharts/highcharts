@@ -492,6 +492,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 	/**
 	 * Runs on mouse over the point
+	 * 
+	 * @param {Object} e The event arguments
 	 */
 	onMouseOver: function (e) {
 		var point = this,
@@ -499,7 +501,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 			chart = series.chart,
 			pointer = chart.pointer;
 		point.firePointEvent('mouseOver');
-		pointer.runPointActions(undefined, point);
+		pointer.runPointActions(e, point);
 	},
 
 	/**
