@@ -27,7 +27,12 @@ Chart.prototype.adjustHeight = function () {
 				axis.unitLength,
 				axis.max + axis.tickInterval - axis.min
 			) * staticScale;
+			
+			// Minimum height is 1 x staticScale.
+			height = Math.max(height, staticScale);
+			
 			diff = height - chart.plotHeight;
+			
 			if (Math.abs(diff) >= 1) {
 				chart.plotHeight = height;
 				chart.setSize(null, chart.chartHeight + diff, animate);

@@ -225,7 +225,6 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
                 taskName: 'Relocate',
                 id: 'relocate',
                 dependency: 'passed_inspection',
-                parent: 'new_offices',
                 start: today + 10 * day,
                 end: today + 14 * day
             }, {
@@ -283,7 +282,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
     chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
 
     spaceCollapsed = getSpacing(chart);
-    axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height;
+    axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
 
     assert.equal(
         axisLineLength,
