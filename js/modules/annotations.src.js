@@ -11,7 +11,6 @@
 *   looks like a bug in original data labels aligning logic)
 **/
 
-/* global Highcharts module:true */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -29,12 +28,12 @@ var merge = H.merge,
 	inArray = H.inArray,
 	erase = H.erase,
 	find = H.find,
+	format = H.format,
 	destroyObjectProperties = H.destroyObjectProperties,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
 	chartPrototype = H.Chart.prototype;
-
 
 function Annotation(chart, options) {
 	this.init(chart, options);
@@ -275,6 +274,7 @@ Annotation.prototype = {
 		var point = this.getLinkedPoint(label),
 			options = label.options,
 			parentGroup = label.parentGroup,
+			text,
 			series,
 			position,
 			seriesPlotBox;
@@ -306,8 +306,9 @@ Annotation.prototype = {
 				point.translate();
 			}
 
+			text = options.format || options.text;
 			label.attr({
-				text: options.formatter.call(point)
+				text: text ? format(text, point.getLabelConfig()) : options.formatter.call(point)
 			});
 
 			if (label.noAlign) {
@@ -421,6 +422,7 @@ Annotation.prototype = {
 					getPlotBox: seriesPrototype.getPlotBox,
 					alignDataLabel: seriesPrototype.alignDataLabel,
 					justifyDataLabel: seriesPrototype.justifyDataLabel
+					
 				},
 				mock: true,
 				translate: function () {
@@ -442,7 +444,14 @@ Annotation.prototype = {
 					}
 
 					this.isInside = isInside;
-				}
+				},
+				getLabelConfig: function () {
+						return {
+							x: this.x,
+							y: this.y,
+							point: this
+						};
+					}
 			},
 
 			xAxisId = pointOptions.xAxis,
