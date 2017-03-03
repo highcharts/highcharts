@@ -14,6 +14,8 @@ function test(chart) { // eslint-disable-line no-unused-vars
         pageY: 250
     });
 
+    chart.scroller.scrollbar.rendered = false; // prevent animation
+
     // Drag it all the way to the right
     chart.scroller.mouseMoveHandler({
         type: 'mousemove',
