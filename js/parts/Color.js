@@ -80,7 +80,7 @@ H.Color.prototype = {
 		} else {
 
 			// Check if it's possible to do bitmasking instead of regex
-			if (input[0] === '#') {
+			if (input && input[0] === '#') {
 
 				len = input.length;
 				input = parseInt(input.substr(1), 16);
