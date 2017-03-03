@@ -111,6 +111,40 @@ function isChartSeriesBoosting(chart) {
 
 H.initCanvasBoost = function() {
 
+	if (H.seriesTypes.heatmap) {
+		H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
+			var ctx = this.getContext();
+	        if (ctx) {
+
+	            // draw the columns
+	            each(this.points, function (point) {
+	                var plotY = point.plotY,
+	                    shapeArgs,
+	                    pointAttr;
+
+	                if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+	                    shapeArgs = point.shapeArgs;
+
+	                    pointAttr = (point.pointAttr && point.pointAttr['']) || point.series.pointAttribs(point);
+
+	                    ctx.fillStyle = pointAttr.fill;
+	                    ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+	                }
+	            });
+
+	            this.canvasToSVG();
+
+	        } else {
+	            this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>please use a modern browser');
+
+	            // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
+	            // charts with more than a few thousand points.
+	            // arguments[0].call(this);
+	        }
+		});
+	}
+
+
 	/**
 	 * Override a bunch of methods the same way. If the number of points is below the threshold,
 	 * run the original method. If not, check for a canvas version or do nothing.
@@ -148,6 +182,7 @@ H.initCanvasBoost = function() {
 	// });
 
 	H.extend(Series.prototype, {
+		directTouch: false,
 		pointRange: 0,
 		allowDG: false, // No data grouping, let boost handle large data 
 		hasExtremes: function (checkX) {
@@ -256,8 +291,8 @@ H.initCanvasBoost = function() {
 			});
 
 			target.boostClipRect.attr({
-				x: chart.plotLeft,
-				y: chart.plotTop,
+				x: 0,//chart.plotLeft,
+				y: 0,//chart.plotTop,
 				width: chart.plotWidth,
 				height: chart.chartHeight
 			});
@@ -636,13 +671,13 @@ H.initCanvasBoost = function() {
 	});
 
 	wrap(Series.prototype, 'setData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true)) {
+		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 	});
 	
 	wrap(Series.prototype, 'processData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true)) {
+		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 	});
