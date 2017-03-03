@@ -478,7 +478,7 @@ seriesType('pie', 'line', {
 		/*= } =*/
 	},
 
-	getTranslate() {
+	getTranslate: function () {
 		return this.sliced ? this.slicedTranslation : {
 			translateX: 0,
 			translateY: 0

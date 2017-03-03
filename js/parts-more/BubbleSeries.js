@@ -232,7 +232,7 @@ seriesType('bubble', 'scatter', {
 	haloPath: function (size) {
 		return Point.prototype.haloPath.call(
 			this, 
-			size === 0 ? 0 : this.marker.radius + size // #6067
+			size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size // #6067
 		);
 	},
 	ttBelow: false
