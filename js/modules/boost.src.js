@@ -941,6 +941,8 @@ function GLRenderer(postRenderCallback) {
 		data = false,		
 		// The marker data
 		markerData = false,
+		// Is the texture ready?
+		textureIsReady = false,
 		// Exports
 		exports = {},
 		// Is it inited?
@@ -1673,8 +1675,8 @@ function GLRenderer(postRenderCallback) {
 				shader.setBubbleUniforms(s.series, s.zMin, s.zMax);
 			} 
 
-			shader.setDrawAsCircle(asCircle[s.series.type] || false);
-
+			shader.setDrawAsCircle((asCircle[s.series.type] && textureIsReady) || false);				
+			
 			// Do the actual rendering
 			vbuffer.render(s.from, s.to, s.drawMode);
 
@@ -1792,6 +1794,8 @@ function GLRenderer(postRenderCallback) {
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
 
+		textureIsReady = false;
+
 		/* 
 		 * In Firefox, the image isn't loaded immediatly when setting the source
 		 * to a data URL, so we need to listen to onload.
@@ -1825,6 +1829,8 @@ function GLRenderer(postRenderCallback) {
 					gl.generateMipmap(gl.TEXTURE_2D);
 
 					gl.bindTexture(gl.TEXTURE_2D, null);
+
+					textureIsReady = true;
 				} catch (e) {
 					// return false;
 				}
