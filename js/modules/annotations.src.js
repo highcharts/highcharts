@@ -41,6 +41,7 @@ function Annotation(chart, options) {
 
 Annotation.prototype = {
 	shapesWithAnchors: ['callout', 'connector'],
+	shapesWithoutBackground: ['connector'],
 	/**
 	 * Default options for an annotation
 	**/
@@ -67,7 +68,7 @@ Annotation.prototype = {
 			style: {
 				fontSize: '11px',
 				fontWeigth: 'bold',
-				color: 'red'
+				color: 'contrast'
 			},
 			useHTML: false,
 			verticalAlign: 'bottom',
@@ -225,6 +226,8 @@ Annotation.prototype = {
 	initLabel: function (labelOptions) {
 		var options = merge(this.options.labelOptions, labelOptions),
 
+			style = options.style,
+
 		// options for label's background
 			attr = {
 				fill: options.backgroundColor,
@@ -241,10 +244,18 @@ Annotation.prototype = {
 				options.shape,
 				null,
 				null,
-				options.useHTML, // call on Kacper in case of attaching events
+				options.useHTML, // if true, events need to be attached to HTML and SVG elements
 				null,
 				'annotation-label'
 			);
+
+		if (style.color === 'contrast') {
+			style.color = this.chart.renderer.getContrast(
+				inArray(options.shape, this.shapesWithoutBackground) > -1
+				? '#FFFFFF'
+				: options.backgroundColor
+			);
+		}
 
 		if (isNumber(options.distance) || options.positioner) {
 		// if there are specified options for a tooltip-like positioning
@@ -254,11 +265,11 @@ Annotation.prototype = {
 
 		label.options = options;
 
-		// labelrank requires for hideOverlappingLabels()
+		// labelrank required for hideOverlappingLabels()
 		label.labelrank = options.labelrank;
 		label.annotation = this;
 
-		label.attr(attr).css(options.style).shadow(options.shadow);
+		label.attr(attr).css(style).shadow(options.shadow);
 
 		this.labels.push(label);
 	},
