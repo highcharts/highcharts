@@ -156,99 +156,85 @@ QUnit.test('Milestones', function (assert) {
 });
 
 QUnit.test('Axis breaks and staticScale', function (assert) {
-    var today = new Date(),
+    var getToday = function () {
+            var today = new Date();
+            // Set to 00:00:00:000 today
+            today.setUTCHours(0);
+            today.setUTCMinutes(0);
+            today.setUTCSeconds(0);
+            today.setUTCMilliseconds(0);
+            return today.getTime();
+        },
+        today = getToday(),
         day = 1000 * 60 * 60 * 24,
         spaceExpanded,
         spaceCollapsed,
         axisLineLength,
+        axisLine,
+        tick,
         chart,
-        evObj;
+        evObj,
+        chartConfig = {
+            xAxis: {
+                min: today - 3 * day,
+                max: today + 18 * day
+            },
 
-    // Set to 00:00:00:000 today
-    today.setUTCHours(0);
-    today.setUTCMinutes(0);
-    today.setUTCSeconds(0);
-    today.setUTCMilliseconds(0);
-    today = today.getTime();
-
-    chart = Highcharts.ganttChart('container', {
-        title: {
-            text: 'Gantt Chart Test'
-        },
-        xAxis: {
-            currentDateIndicator: true,
-            min: today - 3 * day,
-            max: today + 18 * day
-        },
-
-        chart: {
-            animation: false
-        },
-
-        plotOptions: {
-            series: {
-                animation: false
-            }
-        },
-
-        series: [{
-            name: 'Offices',
-            data: [{
-                taskName: 'New offices',
-                id: 'new_offices',
-                start: today - 2 * day,
-                end: today + 14 * day
-            }, {
-                taskName: 'Prepare office building',
-                id: 'prepare_building',
-                parent: 'new_offices',
-                start: today - (2 * day),
-                end: today + (6 * day),
-                completed: {
-                    amount: 0.2
-                }
-            }, {
-                taskName: 'Inspect building',
-                id: 'inspect_building',
-                dependency: 'prepare_building',
-                parent: 'new_offices',
-                start: today + 6 * day,
-                end: today + 8 * day
-            }, {
-                taskName: 'Passed inspection',
-                id: 'passed_inspection',
-                dependency: 'inspect_building',
-                parent: 'new_offices',
-                start: today + 9.5 * day,
-                milestone: true
-            }, {
-                taskName: 'Relocate',
-                id: 'relocate',
-                dependency: 'passed_inspection',
-                start: today + 10 * day,
-                end: today + 14 * day
-            }, {
-                taskName: 'Relocate staff',
-                id: 'relocate_staff',
-                parent: 'relocate',
-                start: today + 10 * day,
-                end: today + 11 * day
-            }, {
-                taskName: 'Relocate test facility',
-                dependency: 'relocate_staff',
-                parent: 'relocate',
-                start: today + 11 * day,
-                end: today + 13 * day
-            }, {
-                taskName: 'Relocate cantina',
-                dependency: 'relocate_staff',
-                parent: 'relocate',
-                start: today + 11 * day,
-                end: today + 14 * day
+            series: [{
+                name: 'Offices',
+                data: [{
+                    taskName: 'New offices',
+                    id: 'new_offices',
+                    start: today - 2 * day,
+                    end: today + 14 * day
+                }, {
+                    taskName: 'Prepare office building',
+                    id: 'prepare_building',
+                    parent: 'new_offices',
+                    start: today - (2 * day),
+                    end: today + (6 * day)
+                }, {
+                    taskName: 'Inspect building',
+                    id: 'inspect_building',
+                    parent: 'new_offices',
+                    start: today + 6 * day,
+                    end: today + 8 * day
+                }, {
+                    taskName: 'Passed inspection',
+                    id: 'passed_inspection',
+                    parent: 'new_offices',
+                    start: today + 9.5 * day,
+                    milestone: true
+                }, {
+                    taskName: 'Relocate',
+                    id: 'relocate',
+                    parent: 'new_offices',
+                    start: today + 10 * day,
+                    end: today + 14 * day
+                }, {
+                    taskName: 'Relocate staff',
+                    id: 'relocate_staff',
+                    parent: 'relocate',
+                    start: today + 10 * day,
+                    end: today + 11 * day
+                }, {
+                    taskName: 'Relocate test facility',
+                    parent: 'relocate',
+                    start: today + 11 * day,
+                    end: today + 13 * day
+                }, {
+                    taskName: 'Relocate cantina',
+                    parent: 'relocate',
+                    start: today + 11 * day,
+                    end: today + 14 * day
+                }]
             }]
-        }]
-    });
+        };
 
+    chart = Highcharts.ganttChart('container', Highcharts.merge(chartConfig));
+
+
+    // Check spacing after collapsing
     spaceExpanded = getSpacing(chart);
 
     evObj = document.createEvent('Events');
@@ -264,6 +250,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
     );
 
 
+    // Check spacing after expanding
     evObj = document.createEvent('Events');
     evObj.initEvent('click', true, false);
     chart.yAxis[0].ticks['4'].label.element.dispatchEvent(evObj);
@@ -276,7 +263,8 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
         'Space between two first ticks does not change after expanding again'
     );
 
-    // Collapse single root parent
+
+    // Check spacing after collapsing single root parent
     evObj = document.createEvent('Events');
     evObj.initEvent('click', true, false);
     chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
@@ -288,5 +276,41 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
         axisLineLength,
         spaceCollapsed,
         'Single root node spacing is correct'
+    );
+
+
+    // Check spacing after collapsing two root parents
+    chartConfig.series.push({
+        name: 'Second series',
+        data: [{
+            taskName: 'Second series task 1',
+            id: '2_1',
+            start: today - 2 * day,
+            end: today + 14 * day
+        }, {
+            taskName: 'Second series task 2',
+            id: '2_2',
+            parent: '2_1',
+            start: today - (2 * day),
+            end: today + (6 * day)
+        }]
+    });
+    chart = Highcharts.ganttChart('container', Highcharts.merge(chartConfig));
+
+    evObj = document.createEvent('Events');
+    evObj.initEvent('click', true, false);
+    chart.yAxis[0].ticks['8'].label.element.dispatchEvent(evObj);
+
+    evObj = document.createEvent('Events');
+    evObj.initEvent('click', true, false);
+    chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
+
+    axisLine = chart.yAxis[0].axisLine.getBBox();
+    tick = chart.yAxis[0].ticks['0'].mark.getBBox();
+
+    assert.equal(
+        tick.y,
+        axisLine.y + chart.yAxis[0].options.staticScale,
+        'Ticks are mainated when collapsing two series'
     );
 });
