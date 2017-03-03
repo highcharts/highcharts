@@ -125,7 +125,6 @@ var win = H.win,
 	wrap = H.wrap,
 	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
-	//destroyLoadingDiv,
 	index;
 
 // Register color names since GL can't render those directly.
@@ -2345,16 +2344,15 @@ H.extend(Series.prototype, {
 			// lastPoint,
 			threshold = options.threshold,
 			yBottom = yAxis.getThreshold(threshold),
-			hasThreshold = isNumber(threshold), //eslint-disable-line no-unused-vars
+			hasThreshold = isNumber(threshold),
 			// translatedThreshold = yBottom,
 			// doFill = this.fill,
 			isRange = series.pointArrayMap && 
 					series.pointArrayMap.join(',') === 'low,high',
 			isStacked = !!options.stacking,
 			cropStart = series.cropStart || 0,
-			// loadingOptions = chart.options.loading,
 			requireSorting = series.requireSorting,
-			wasNull, //eslint-disable-line no-unused-vars
+			wasNull,
 			connectNulls = options.connectNulls,
 			useRaw = !xData,
 			minVal,
