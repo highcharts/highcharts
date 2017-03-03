@@ -21,6 +21,7 @@ RewriteRule (.*?)highmaps.unstyled.src.js $1highmaps.unstyled.src.js
 RewriteRule (.*?)accessibility.js $1accessibility.src.js
 RewriteRule (.*?)arrow-symbols.js $1arrow-symbols.src.js
 RewriteRule (.*?)boost.js $1boost.src.js
+RewriteRule (.*?)boost-canvas.js $1boost-canvas.src.js
 RewriteRule (.*?)broken-axis.js $1broken-axis.src.js
 RewriteRule (.*?)current-date-indicator.js $1current-date-indicator.src.js
 RewriteRule (.*?)data.js $1data.src.js

@@ -420,10 +420,10 @@ function getResources() {
 					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</a>
 				<?php } else { ?>
 				<a class="button active" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</a>
 				<?php } ?>
 				
 				<a class="button"
