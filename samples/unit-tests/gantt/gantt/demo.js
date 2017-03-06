@@ -6,6 +6,20 @@ var defaultChartConfig,
             tick2Space = ticks[Highcharts.pick(tick2, '0')].mark.getBBox().y;
 
         return tick2Space - tick1Space;
+    },
+    getToday = function () {
+        var today = new Date();
+        // Set to 00:00:00:000 today
+        today.setUTCHours(0);
+        today.setUTCMinutes(0);
+        today.setUTCSeconds(0);
+        today.setUTCMilliseconds(0);
+        return today.getTime();
+    },
+    click = function (element) {
+        var evObj = document.createEvent('Events');
+        evObj.initEvent('click', true, false);
+        element.dispatchEvent(evObj);
     };
 
 QUnit.testStart(function () {
@@ -156,16 +170,7 @@ QUnit.test('Milestones', function (assert) {
 });
 
 QUnit.test('Axis breaks and staticScale', function (assert) {
-    var getToday = function () {
-            var today = new Date();
-            // Set to 00:00:00:000 today
-            today.setUTCHours(0);
-            today.setUTCMinutes(0);
-            today.setUTCSeconds(0);
-            today.setUTCMilliseconds(0);
-            return today.getTime();
-        },
-        today = getToday(),
+    var today = getToday(),
         day = 1000 * 60 * 60 * 24,
         spaceExpanded,
         spaceCollapsed,
@@ -173,7 +178,6 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
         axisLine,
         tick,
         chart,
-        evObj,
         chartConfig = {
             xAxis: {
                 min: today - 3 * day,
@@ -237,9 +241,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
     // Check spacing after collapsing
     spaceExpanded = getSpacing(chart);
 
-    evObj = document.createEvent('Events');
-    evObj.initEvent('click', true, false);
-    chart.yAxis[0].ticks['4'].label.element.dispatchEvent(evObj);
+    click(chart.yAxis[0].ticks['4'].label.element);
 
     spaceCollapsed = getSpacing(chart);
 
@@ -251,9 +253,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
 
 
     // Check spacing after expanding
-    evObj = document.createEvent('Events');
-    evObj.initEvent('click', true, false);
-    chart.yAxis[0].ticks['4'].label.element.dispatchEvent(evObj);
+    click(chart.yAxis[0].ticks['4'].label.element);
 
     spaceExpanded = getSpacing(chart);
 
@@ -265,9 +265,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
 
 
     // Check spacing after collapsing single root parent
-    evObj = document.createEvent('Events');
-    evObj.initEvent('click', true, false);
-    chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
+    click(chart.yAxis[0].ticks['0'].label.element);
 
     spaceCollapsed = getSpacing(chart);
     axisLineLength = chart.yAxis[0].axisLine.element.getBBox().height + 1;
@@ -297,13 +295,9 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
     });
     chart = Highcharts.ganttChart('container', Highcharts.merge(chartConfig));
 
-    evObj = document.createEvent('Events');
-    evObj.initEvent('click', true, false);
-    chart.yAxis[0].ticks['8'].label.element.dispatchEvent(evObj);
+    click(chart.yAxis[0].ticks['8'].label.element);
 
-    evObj = document.createEvent('Events');
-    evObj.initEvent('click', true, false);
-    chart.yAxis[0].ticks['0'].label.element.dispatchEvent(evObj);
+    click(chart.yAxis[0].ticks['0'].label.element);
 
     axisLine = chart.yAxis[0].axisLine.getBBox();
     tick = chart.yAxis[0].ticks['0'].mark.getBBox();

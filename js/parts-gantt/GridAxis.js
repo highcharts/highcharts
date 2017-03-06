@@ -287,6 +287,20 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 });
 
 /**
+ * Avoid altering tickInterval when reserving space.
+ */
+wrap(Axis.prototype, 'unsquish', function (proceed) {
+	var axis = this,
+		retVal;
+	if (axis.categories) {
+		retVal = this.tickInterval;
+	} else {
+		retVal = proceed.apply(axis, argsToArray(arguments));
+	}
+	return retVal;
+});
+
+/**
  * Creates a left and right wall on horizontal axes:
  * - Places leftmost tick at the start of the axis, to create a left wall
  * - Ensures that the rightmost tick is at the end of the axis, minus the tick
