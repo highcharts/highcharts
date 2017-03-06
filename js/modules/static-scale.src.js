@@ -37,6 +37,18 @@ Chart.prototype.adjustHeight = function () {
 				chart.plotHeight = height;
 				chart.setSize(null, chart.chartHeight + diff, animate);
 			}
+
+			// Make sure clip rects have the right height before initial
+			// animation.
+			each(axis.series, function (series) {
+				var clipRect =
+					series.sharedClipKey && chart[series.sharedClipKey];
+				if (clipRect) {
+					clipRect.attr({
+						height: chart.plotHeight
+					});
+				}
+			});
 		}
 		
 	});
