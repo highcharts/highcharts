@@ -569,8 +569,9 @@ Navigator.prototype = {
 			);
 			// Keep scale 0-1
 			navigator.scrollbar.setRange(
-				zoomedMin / navigatorSize,
-				zoomedMax / navigatorSize
+				// Use real value, not rounded because range can be very small (#1716)
+				navigator.zoomedMin / navigatorSize,
+				navigator.zoomedMax / navigatorSize
 			);
 		}
 		navigator.rendered = true;
