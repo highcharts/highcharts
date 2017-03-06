@@ -1812,9 +1812,7 @@ function GLRenderer(postRenderCallback) {
 			gl.bindTexture(gl.TEXTURE_2D, null);
 
 			textureIsReady = true;
-		} catch (e) {
-			console.log(e);
-		}
+		} catch (e) {}
 
 	 	isInited = true;
 
