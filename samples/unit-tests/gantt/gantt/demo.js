@@ -304,7 +304,7 @@ QUnit.test('Axis breaks and staticScale', function (assert) {
 
     assert.equal(
         tick.y,
-        axisLine.y + chart.yAxis[0].options.staticScale,
+        axisLine.y + chart.yAxis[0].options.staticScale + 0.5,
         'Ticks are mainated when collapsing two series'
     );
 });
