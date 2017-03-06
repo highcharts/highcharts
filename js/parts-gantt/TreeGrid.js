@@ -251,10 +251,11 @@ override(GridAxisTick.prototype, {
 			treeGridMap = axis.treeGridMap,
 			options = axis.options,
 			node = treeGridMap && treeGridMap[pos],
+			level = node && node.depth - 1,
 			isTreeGrid = options.type === 'tree-grid',
 			hasLabel = label && label.element;
 		if (isTreeGrid && node) {
-			xy.x += iconRadius + iconSpacing + ((node.depth - 1) * indentPx);
+			xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
 
 			if (hasLabel && node.children.length > 0) {
 				// On hover
