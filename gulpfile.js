@@ -106,6 +106,9 @@ const getFileOptions = (base) => {
         },
         'highstock.src.js': {
             product: 'Highstock'
+        },
+        'highcharts-gantt.src.js': {
+            product: 'Highcharts Gantt'
         }
     });
     return fileOptions;
@@ -475,6 +478,10 @@ const createProductJS = () => {
     "Highcharts": {
     "date": "${date}",
     "nr": "${version}"
+    },
+    "Highcharts Gantt": {
+        "date": "${date}",
+        "nr": "${version}"
     },
     "Highstock": {
         "date": "${date}",
