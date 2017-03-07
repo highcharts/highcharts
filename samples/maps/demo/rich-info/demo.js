@@ -122,7 +122,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
                         opposite: true
                     },
                     tooltip: {
-                        shared: true
+                        split: true
                     },
                     plotOptions: {
                         series: {
