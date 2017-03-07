@@ -1702,7 +1702,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		var series = this,
 			chart = series.chart,
 			remover;
-console.log('@invertGroups')
+
 		function setInvert() {
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
