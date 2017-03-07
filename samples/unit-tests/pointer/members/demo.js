@@ -1,5 +1,5 @@
 /* global TestController */
-QUnit.test('Pointer.runPointActions. #5914', function (assert) {
+QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', function (assert) {
     var events = [],
         isNumber = Highcharts.isNumber,
         pushEvent = function (type, series, point) {
@@ -9,11 +9,16 @@ QUnit.test('Pointer.runPointActions. #5914', function (assert) {
             events.push(str);
         },
         chart = Highcharts.chart('container', {
+            chart: {
+                animation: false,
+                width: 1000
+            },
             plotOptions: {
                 series: {
+                    animation: false,
                     kdNow: true, // Force kd tree to run synchronously.
                     events: {
-                        mouseOver: function (e) {
+                        mouseOver: function () {
                             var series = this;
                             pushEvent('mouseOver', series);
                         },
@@ -44,7 +49,6 @@ QUnit.test('Pointer.runPointActions. #5914', function (assert) {
                 data: [3, 2, 1]
             }]
         }),
-        snap = chart.options.tooltip.snap,
         controller = new TestController(chart),
         el = chart.series[0].points[0].graphic.element;
 
@@ -100,9 +104,10 @@ QUnit.test('Pointer.runPointActions. #5914', function (assert) {
     );
 
     // New point, same series
-     // NOTICE Qunit has added new content to the page,
-     // so we have to move the cursor again.
-    controller.setPositionToElement(el, 0, 30);
+    // NOTICE Qunit has added new content to the page,
+    // so we have to move the cursor again.
+    el = chart.series[1].points[0].graphic.element;
+    controller.setPositionToElement(el);
     el = chart.series[1].points[2].graphic.element;
     controller.moveToElement(el);
     assert.strictEqual(
@@ -130,7 +135,6 @@ QUnit.test('Pointer.runPointActions. #5914', function (assert) {
         0,
         'mousemove to 1.2: no unexpected events'
     );
-
     // Same point, same series.
     controller.setPositionToElement(el);
     controller.moveToElement(el, 0, 30);
@@ -139,46 +143,88 @@ QUnit.test('Pointer.runPointActions. #5914', function (assert) {
         0,
         'mousemove to 30px below 1.2: no unexpected events'
     );
-    // stickyTracking
-    chart.update({
-        plotOptions: {
-            series: {
-                stickyTracking: false
-            }
-        }
-    });
-    /*
-     * NOTE Chart.update destroys the series and in the process call mouseOut
-     * on hoverPoint.
-     */
-    el = chart.series[1].points[2].graphic.element;
-    controller.moveTo(el, 0, -10);
-    events = [];
+});
 
-    // New point, same series
-    controller.setPositionToElement(el, 0, -10);
-    el = chart.series[0].points[2].graphic.element;
+QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (assert) {
+    var events = [],
+        isNumber = Highcharts.isNumber,
+        pushEvent = function (type, series, point) {
+            var sI = series && isNumber(series.index) ? series.index : '-',
+                pI = point && isNumber(point.index) ? point.index : '-',
+                str = [type, sI, pI].join('.');
+            events.push(str);
+        },
+        chart = Highcharts.chart('container', {
+            chart: {
+                animation: false,
+                width: 1000
+            },
+            plotOptions: {
+                series: {
+                    animation: false,
+                    stickyTracking: false,
+                    kdNow: true, // Force kd tree to run synchronously.
+                    events: {
+                        mouseOver: function () {
+                            var series = this;
+                            pushEvent('mouseOver', series);
+                        },
+                        mouseOut: function () {
+                            var series = this;
+                            pushEvent('mouseOut', series);
+                        }
+                    },
+                    point: {
+                        events: {
+                            mouseOver: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOver', series, point);
+                            },
+                            mouseOut: function () {
+                                var point = this,
+                                    series = point.series;
+                                pushEvent('mouseOut', series, point);
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }, {
+                data: [3, 2, 1]
+            }]
+        }),
+        snap = chart.options.tooltip.snap,
+        controller = new TestController(chart),
+        el = chart.series[1].points[0].graphic.element;
+
+    controller.setPositionToElement(el, 0, snap + 25);
     controller.moveToElement(el, 0, snap + 15);
     assert.strictEqual(
         events.length,
         0,
-        'stickyTracking: false. moveTo 15px below 0.2: no unexpected events'
+        'stickyTracking: false. moveTo 15px below 1.0: no unexpected events'
     );
+
     controller.setPositionToElement(el, 0, snap + 15);
     controller.moveToElement(el, 0, snap - 5);
+    // With Edge the Series.onMouseOver executed after all mousemoves are complete.
+    controller.triggerOnElement(el, 'mousemove', 0, snap - 5);
     assert.strictEqual(
         events.shift(),
-        'mouseOver.0.-',
-        'stickyTracking: false. moveTo to 5px below 0.2: mouseOver fired on series[0]'
+        'mouseOver.1.-',
+        'stickyTracking: false. moveTo to 5px below 1.0: mouseOver fired on series[1]'
     );
     assert.strictEqual(
         events.shift(),
-        'mouseOver.0.2',
-        'stickyTracking: false. moveTo to 5px below 0.2: mouseOver fired on series[0].points[2]'
+        'mouseOver.1.0',
+        'stickyTracking: false. moveTo to 5px below 1.0: mouseOver fired on series[1].points[0]'
     );
     assert.strictEqual(
         events.length,
         0,
-        'stickyTracking: false. moveTo to 5px below 0.2: no unexpected events'
+        'stickyTracking: false. moveTo to 5px below 1.0: no unexpected events'
     );
 });
