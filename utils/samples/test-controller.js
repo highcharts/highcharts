@@ -37,7 +37,8 @@ window.TestController = function (chart) {
      *    pressed in a mouse event.
      */
     function triggerEvent(type, pageX, pageY, extra) {
-        var evt = document.createEvent('Events');
+        var evt = document.createEvent('Events'),
+            element;
         evt.initEvent(type, true, true);
         evt.pageX = pageX;
         evt.pageY = pageY;
@@ -48,7 +49,11 @@ window.TestController = function (chart) {
             });
         }
 
-        document.elementFromPoint(pageX, pageY).dispatchEvent(evt);
+        // Find an element related to the coordinates and fire event.
+        element = document.elementFromPoint(pageX, pageY);
+        if (element) {
+            element.dispatchEvent(evt);
+        }
     }
 
     /**
