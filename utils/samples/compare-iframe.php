@@ -428,7 +428,9 @@ function getExportInnerHTML() {
 							series: {
 								animation: animation,
 								kdNow: true,
-								kdSync: true // 4.1.9 and older, remove when not testing against those
+								dataLabels: {
+									defer: false
+								}
 							}
 						},
 						tooltip: {
