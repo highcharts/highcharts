@@ -1,7 +1,7 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * (c) 2017 Lars Cabrera, Torstein Hønsi, Jon Arild Nygård & Øystein Moseng
+ * (c) 2017 Lars Cabrera, Torstein Honsi, Jon Arild Nygard & Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
