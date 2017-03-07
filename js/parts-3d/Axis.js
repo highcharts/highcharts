@@ -42,8 +42,8 @@ wrap(Axis.prototype, 'getPlotLinesAndBandsClip', function (proceed) {
 	return this.chart.is3d() ? {
 		x: 0,
 		y: 0,
-		width: 9e9,
-		height: 9e9
+		width: 9e8,
+		height: 9e8
 	} : proceed.apply(this, [].slice.call(arguments, 1));
 });
 
