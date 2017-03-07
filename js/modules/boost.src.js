@@ -921,6 +921,8 @@ function GLRenderer(postRenderCallback) {
 		data = false,		
 		// The marker data
 		markerData = false,
+		// Is the texture ready?
+		textureIsReady = false,
 		// Exports
 		exports = {},
 		// Is it inited?
@@ -928,7 +930,9 @@ function GLRenderer(postRenderCallback) {
 		// The series stack
 		series = [],	
 		// Texture for circles
-		circleTexture = new Image(),
+		circleTexture = doc.createElement('canvas'),
+		// Context for circle texture
+		circleCtx = circleTexture.getContext('2d'),
 		// Handle for the circle texture
 		circleTextureHandle,
 		// Things to draw as "rectangles" (i.e lines)
@@ -1562,8 +1566,10 @@ function GLRenderer(postRenderCallback) {
 		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
 
-		gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
-		shader.setTexture(circleTextureHandle);
+		if (textureIsReady) {			
+			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+			shader.setTexture(circleTextureHandle);			
+		}
 
 		shader.setInverted(chart.options.chart ? chart.options.chart.inverted : false);
 
@@ -1653,8 +1659,8 @@ function GLRenderer(postRenderCallback) {
 				shader.setBubbleUniforms(s.series, s.zMin, s.zMax);
 			} 
 
-			shader.setDrawAsCircle(asCircle[s.series.type] || false);
-
+			shader.setDrawAsCircle((asCircle[s.series.type] && textureIsReady) || false);				
+			
 			// Do the actual rendering
 			vbuffer.render(s.from, s.to, s.drawMode);
 
@@ -1769,63 +1775,46 @@ function GLRenderer(postRenderCallback) {
 		shader = GLShader(gl); //eslint-disable-line new-cap	
 		vbuffer = GLVertexBuffer(gl, shader); //eslint-disable-line new-cap
 
+		textureIsReady = false;
+
 		// Set up the circle texture used for bubbles
 		circleTextureHandle = gl.createTexture();
 
-		/* 
-		 * In Firefox, the image isn't loaded immediatly when setting the source
-		 * to a data URL, so we need to listen to onload.
-		 *
-		 * This has the fun side effect of the texture being blank when
-		 * rendering for the first time in most cases, as the render is fired
-		 * before the event.
-		 *
-		 * We therefore poll on isInited when rendering if it's not true.
-		 */
-		circleTexture.onload = function () {
-			if (circleTextureHandle && typeof circleTexture !== 'undefined') {
-				try {
+		// Draw the circle
+		circleTexture.width = 512;
+		circleTexture.height = 512;
 
-					gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
+		circleCtx.fillStyle = '#FFF';
+		circleCtx.beginPath();
+		circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
+		circleCtx.fill();
 
-					gl.texImage2D(
-						gl.TEXTURE_2D,
-						0,
-						gl.RGBA,
-						gl.RGBA,
-						gl.UNSIGNED_BYTE,
-						circleTexture
-					);
-					
-					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+		try {
 
-					gl.generateMipmap(gl.TEXTURE_2D);
+			gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
 
-					gl.bindTexture(gl.TEXTURE_2D, null);
-				} catch (e) {
-					// return false;
-				}
+			gl.texImage2D(
+				gl.TEXTURE_2D,
+				0,
+				gl.RGBA,
+				gl.RGBA,
+				gl.UNSIGNED_BYTE,
+				circleTexture
+			);
+			
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
 
-				isInited = true;
-			}
-		};
+			gl.generateMipmap(gl.TEXTURE_2D);
 
-		//Create a white circle texture for use with bubbles
-		circleTexture.setAttribute('src', 'data:image/svg+xml;utf8,' + encodeURIComponent([
-			'<?xml version="1.0" standalone="no"?>',
-			'<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">',
-			'<circle cx="256" cy="256" r="256" stroke="none" fill="#FFF"/>',
-			'</svg>'
-		].join('')));
+			gl.bindTexture(gl.TEXTURE_2D, null);
 
-		// IE11 will not call onload as it will cache the image.
-		// It will however load sync, so we just call onload here.		
-		if (activeContext === 'experimental-webgl') {
-			circleTexture.onload();							
-		}
+			textureIsReady = true;
+		} catch (e) {}
+
+	 	isInited = true;
 
 		if (settings.timeSetup) {
 			console.timeEnd('gl setup'); //eslint-disable-line no-console
