@@ -532,8 +532,10 @@ function getExportInnerHTML() {
 	</head>
 	<body>
 
+		<?php if (is_file("$path/unit-tests.js")) { ?>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
+		<?php } ?>
 <?php echo getHTML($_GET['which']); ?>
 
 		<script>
