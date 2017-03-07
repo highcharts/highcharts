@@ -1,5 +1,5 @@
 /* eslint valid-jsdoc: 0 */
-/* global $, document, window */
+/* global Highcharts, document, window */
 /**
  * The test controller makes it easy to emulate mouse stuff.
  *
@@ -22,7 +22,7 @@ window.TestController = function (chart) {
      * @returns {object} Element offset
      */
     function getOffset(el) {
-        return $(el).offset();
+        return Highcharts.offset(el);
     }
 
     /**
