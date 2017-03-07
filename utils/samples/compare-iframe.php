@@ -447,13 +447,27 @@ function getExportInnerHTML() {
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
-						if (chart.series[0] && chart.series[0].points[2]) {
-							chart.series[0].points[2].onMouseOver();
-							chart.tooltip.refresh(
-								chart.tooltip.options.shared ?
-									[chart.series[0].points[2]] :
-									chart.series[0].points[2]
-							);
+						var x = 2,
+							series = chart.series,
+							hoverPoint = series[0] && series[0].points[x],
+							pointOrPoints;
+						if (hoverPoint) {
+							if  (chart.tooltip.options.shared) {
+								pointOrPoints = [];
+								Highcharts.each(series, function (s) {
+									if (s.options.enableMouseTracking !== false && s.points[x]) {
+										pointOrPoints.push(s.points[x]);
+									}
+								});
+								if (pointOrPoints.length === 0) {
+									pointOrPoints.push(hoverPoint);
+								}
+							} else {
+								pointOrPoints = hoverPoint;
+							}
+							hoverPoint.onMouseOver();
+							// Note: As of 5.0.8 onMouseOver takes care of refresh.
+							chart.tooltip.refresh(pointOrPoints);
 						}
 					});
 					<?php endif ?>
@@ -474,7 +488,7 @@ function getExportInnerHTML() {
 					});
 					<?php endif ?>
 
-					<?php if (getExportInnerHTML()) : ?>
+					<?php if (getExportInnerHTML() || getCompareTooltips()) : ?>
 					// Bypass the export module
 					Highcharts.Chart.prototype.getSVG = function () {
 						return this.container.innerHTML
@@ -518,8 +532,10 @@ function getExportInnerHTML() {
 	</head>
 	<body>
 
+		<?php if (is_file("$path/unit-tests.js")) { ?>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
+		<?php } ?>
 <?php echo getHTML($_GET['which']); ?>
 
 		<script>
