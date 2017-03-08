@@ -1,10 +1,16 @@
 
 Highcharts.chart('container', {
+
     chart: {
         type: 'column'
     },
+
+    title: {
+        text: 'Click points to go to URL'
+    },
+
     xAxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        type: 'category'
     },
 
     plotOptions: {
@@ -13,7 +19,8 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     click: function () {
-                        location.href = this.options.url;
+                        location.href = 'https://en.wikipedia.org/wiki/' +
+                            this.options.key;
                     }
                 }
             }
@@ -23,13 +30,16 @@ Highcharts.chart('container', {
     series: [{
         data: [{
             y: 29.9,
-            url: 'http://bing.com/search?q=foo'
+            name: 'USA',
+            key: 'United_States'
         }, {
             y: 71.5,
-            url: 'http://bing.com/search?q=bar'
+            name: 'Canada',
+            key: 'Canada'
         }, {
             y: 106.4,
-            url: 'http://bing.com/search?q=foo+bar'
+            name: 'Mexico',
+            key: 'Mexico'
         }]
     }]
 });

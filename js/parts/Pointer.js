@@ -144,91 +144,55 @@ H.Pointer.prototype = {
 		});
 		return coordinates;
 	},
-
 	/**
-	 * With line type charts with a single tracker, get the point closest to the mouse.
-	 * Run Point.onMouseOver and display tooltip for the point or points.
+	 * Collects the points closest to a mouseEvent
+	 * @param  {Array} series Array of series to gather points from
+	 * @param  {Boolean} shared True if shared tooltip, otherwise false
+	 * @param  {Object} e Mouse event which possess a position to compare against
+	 * @return {Array} KDPoints sorted by distance
 	 */
-	runPointActions: function (e) {
-
-		var pointer = this,
-			chart = pointer.chart,
-			series = chart.series,
-			tooltip = chart.tooltip,
-			shared = tooltip ? tooltip.shared : false,
-			followPointer,
-			updatePosition = true,
-			hoverPoint = chart.hoverPoint,
-			hoverSeries = chart.hoverSeries,
-			i,
-			anchor,
+	getKDPoints: function (series, shared, e) {
+		var kdpoints = [],
 			noSharedTooltip,
-			stickToHoverSeries,
 			directTouch,
-			kdpoints = [],
-			kdpointT;
+			kdpointT,
+			i;
 
-		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
-		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
-		if (!shared && !hoverSeries) {
-			for (i = 0; i < series.length; i++) {
-				if (series[i].directTouch || !series[i].options.stickyTracking) {
-					series = [];
+		// Find nearest points on all series
+		each(series, function (s) {
+			// Skip hidden series
+			noSharedTooltip = s.noSharedTooltip && shared;
+			directTouch = !shared && s.directTouch;
+			if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
+				kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
+				if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
+					kdpoints.push(kdpointT);
 				}
 			}
-		}
+		});
 
-		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
-		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
-		// search the k-d tree.
-		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
-		if (stickToHoverSeries && hoverPoint) {
-			kdpoints = [hoverPoint];
+		// Sort kdpoints by distance to mouse pointer
+		kdpoints.sort(function (p1, p2) {
+			var isCloserX = p1.distX - p2.distX,
+				isCloser = p1.dist - p2.dist,
+				isAbove = p2.series.group.zIndex - p1.series.group.zIndex,
+				result;
 
-		// Handle shared tooltip or cases where a series is not yet hovered
-		} else {
-			// When we have non-shared tooltip and sticky tracking is disabled,
-			// search for the closest point only on hovered series: #5533, #5476
-			if (!shared && hoverSeries && !hoverSeries.options.stickyTracking) {
-				series = [hoverSeries];
+			// We have two points which are not in the same place on xAxis and shared tooltip:
+			if (isCloserX !== 0 && shared) { // #5721
+				result = isCloserX;
+			// Points are not exactly in the same place on x/yAxis:
+			} else if (isCloser !== 0) {
+				result = isCloser;
+			// The same xAxis and yAxis position, sort by z-index:
+			} else if (isAbove !== 0) {
+				result = isAbove;
+			// The same zIndex, sort by array index:
+			} else {
+				result = p1.series.index > p2.series.index ? -1 : 1;
 			}
-			// Find nearest points on all series
-			each(series, function (s) {
-				// Skip hidden series
-				noSharedTooltip = s.noSharedTooltip && shared;
-				directTouch = !shared && s.directTouch;
-				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
-					if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
-						kdpoints.push(kdpointT);
-					}
-				}
-			});
-
-			// Sort kdpoints by distance to mouse pointer
-			kdpoints.sort(function (p1, p2) {
-				var isCloserX = p1.distX - p2.distX,
-					isCloser = p1.dist - p2.dist,
-					isAbove = (p2.series.group && p2.series.group.zIndex) - 
-						(p1.series.group && p1.series.group.zIndex);
-
-				// We have two points which are not in the same place on xAxis and shared tooltip:
-				if (isCloserX !== 0 && shared) { // #5721
-					return isCloserX;
-				}
-				// Points are not exactly in the same place on x/yAxis:
-				if (isCloser !== 0) {
-					return isCloser;
-				}
-				// The same xAxis and yAxis position, sort by z-index:
-				if (isAbove !== 0) {
-					return isAbove;
-				}
-
-				// The same zIndex, sort by array index:
-				return p1.series.index > p2.series.index ? -1 : 1;
-			});
-		}
+			return result;
+		});
 
 		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
 		if (shared) {
@@ -239,54 +203,170 @@ H.Pointer.prototype = {
 				}
 			}
 		}
+		return kdpoints;
+	},
+	getPointFromEvent: function (e) {
+		var target = e.target,
+			point;
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
-		if (kdpoints[0] && (kdpoints[0] !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
-			// Draw tooltip if necessary
-			if (shared && !kdpoints[0].series.noSharedTooltip) {
-				// Do mouseover on all points (#3919, #3985, #4410, #5622)
-				for (i = 0; i < kdpoints.length; i++) {
-					kdpoints[i].onMouseOver(e, kdpoints[i] !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoints[0]));
-				}
-
-				if (kdpoints.length && tooltip) {
-					// Keep the order of series in tooltip:
-					tooltip.refresh(kdpoints.sort(function (p1, p2) {
-						return p1.series.index - p2.series.index;
-					}), e);
+		while (target && !point) {
+			point = target.point;
+			target = target.parentNode;
+		}
+		return point;
+	},
+	
+	getHoverData: function (existingHoverPoint, existingHoverSeries, series, isDirectTouch, shared, e) {
+		var i,
+			hoverPoint = existingHoverPoint,
+			hoverSeries = existingHoverSeries,
+			hoverPoints;
+			
+		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
+		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
+		// search the k-d tree.
+		// Handle shared tooltip or cases where a series is not yet hovered
+		if (isDirectTouch) {
+			if (shared) {
+				hoverPoints = [];
+				each(series, function (s) {
+					// Skip hidden series
+					var noSharedTooltip = s.noSharedTooltip && shared,
+						directTouch = !shared && s.directTouch,
+						kdpointT;
+					if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
+						kdpointT = s.searchKDTree({
+							clientX: hoverPoint.clientX,
+							plotY: hoverPoint.plotY
+						}, !noSharedTooltip && s.kdDimensions === 1);
+						if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
+							hoverPoints.push(kdpointT);
+						}
+					}
+				});
+				// If kdTree is not built
+				if (hoverPoints.length === 0) {
+					hoverPoints = [hoverPoint];
 				}
 			} else {
-				if (tooltip) {
-					tooltip.refresh(kdpoints[0], e);
-				}
-				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
-					kdpoints[0].onMouseOver(e);
+				hoverPoints = [hoverPoint];
+			}
+		} else if (hoverSeries && !hoverSeries.options.stickyTracking) {
+			hoverPoints = this.getKDPoints([hoverSeries], shared, e);
+			hoverPoint = hoverPoints[0];
+			hoverSeries = hoverPoint && hoverPoint.series;
+		} else {
+			if (!shared) { 
+				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
+				// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
+				if (!hoverSeries) {
+					for (i = 0; i < series.length; i++) {
+						if (series[i].directTouch || !series[i].options.stickyTracking) {
+							series = [];
+						}
+					}
+				// When we have non-shared tooltip and sticky tracking is disabled,
+				// search for the closest point only on hovered series: #5533, #5476
+				} else if (!hoverSeries.options.stickyTracking) {
+					series = [hoverSeries];
 				}
 			}
-			this.prevKDPoint = kdpoints[0];
-			updatePosition = false;
+			hoverPoints = this.getKDPoints(series, shared, e);
+			hoverPoint = hoverPoints[0];
+			hoverSeries = hoverPoint && hoverPoint.series;
 		}
-		// Update positions (regardless of kdpoint or hoverPoint)
-		if (updatePosition) {
-			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-			if (tooltip && followPointer && !tooltip.isHidden) {
-				anchor = tooltip.getAnchor([{}], e);
-				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
+		// Keep the order of series in tooltip
+		// Must be done after assigning of hoverPoint
+		hoverPoints.sort(function (p1, p2) {
+			return p1.series.index - p2.series.index;
+		});
+		
+		return {
+			hoverPoint: hoverPoint,
+			hoverSeries: hoverSeries,
+			hoverPoints: hoverPoints
+		};
+	},
+	/**
+	 * With line type charts with a single tracker, get the point closest to the mouse.
+	 * Run Point.onMouseOver and display tooltip for the point or points.
+	 */
+	runPointActions: function (e, p) {
+		var pointer = this,
+			chart = pointer.chart,
+			series = chart.series,
+			tooltip = chart.tooltip,
+			shared = tooltip ? tooltip.shared : false,
+			hoverPoint = p || chart.hoverPoint,
+			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
+			// onMouseOver or already hovering a series with directTouch
+			isDirectTouch = !!p || (hoverSeries && hoverSeries.directTouch),
+			hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e),
+			useSharedTooltip,
+			followPointer,
+			anchor,
+			points;
+		
+		// Update variables from hoverData.
+		hoverPoint = hoverData.hoverPoint;
+		hoverSeries = hoverData.hoverSeries;
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
+		points = useSharedTooltip ? hoverData.hoverPoints : [hoverPoint];
+
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
+		if (
+			hoverPoint &&
+			// !(hoverSeries && hoverSeries.directTouch) &&
+			(hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
+		) {
+			each(chart.hoverPoints || [], function (p) {
+				if (H.inArray(p, points) === -1) {
+					p.setState();
+				}
+			});
+			// Do mouseover on all points (#3919, #3985, #4410, #5622)
+			each(points || [], function (p) {
+				p.setState('hover');
+			});
+			// set normal state to previous series
+			if (chart.hoverSeries !== hoverSeries) {
+				hoverSeries.onMouseOver();
 			}
+
+			// If tracking is on series in stead of on each point, 
+			// fire mouseOver on hover point. 
+			if (hoverSeries && !hoverSeries.directTouch) { // #4448
+				if (chart.hoverPoint) {
+					chart.hoverPoint.firePointEvent('mouseOut');
+				}
+				hoverPoint.firePointEvent('mouseOver');
+			}
+			chart.hoverPoints = points;
+			chart.hoverPoint = hoverPoint;
+			// Draw tooltip if necessary
+			if (tooltip) {
+				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
+			}
+		// Update positions (regardless of kdpoint or hoverPoint)
+		} else if (followPointer && tooltip && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
 
 		// Start the event listener to pick up the tooltip and crosshairs
 		if (!pointer.unDocMouseMove) {
 			pointer.unDocMouseMove = addEvent(doc, 'mousemove', function (e) {
-				if (charts[H.hoverChartIndex]) {
-					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
+				var chart = charts[H.hoverChartIndex];
+				if (chart) {
+					chart.pointer.onDocumentMouseMove(e);
 				}
 			});
 		}
 
 		// Crosshair. For each hover point, loop over axes and draw cross if that point
 		// belongs to the axis (#4927).
-		each(shared ? kdpoints : [pick(hoverPoint, kdpoints[0])], function drawPointCrosshair(point) { // #5269
+		each(points, function drawPointCrosshair(point) { // #5269
 			each(chart.axes, function drawAxisCrosshair(axis) {
 				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
 				if (!point || point.series && point.series[axis.coll] === axis) { // #5658
@@ -363,7 +443,7 @@ H.Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 
-			pointer.hoverX = pointer.prevKDPoint = chart.hoverPoints = chart.hoverPoint = null;
+			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 		}
 	},
 

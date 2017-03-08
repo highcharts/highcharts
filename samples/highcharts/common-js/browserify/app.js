@@ -288,7 +288,7 @@ QUnit.test("Highcharts in use with modules", function (assert) {
     // Boost
     require('../../../../code/modules/boost.src')(Highcharts);
     assert.strictEqual(
-        typeof Highcharts.Series.prototype.getContext,
+        typeof Highcharts.Series.prototype.renderCanvas,
         'function',
         "Boost is loaded."
     );
