@@ -282,7 +282,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// item in the collection, so setting one series without an id, will
 		// update the first series in the chart. Setting two series without
 		// an id will update the first and the second respectively (#6019)
-		// // docs: New behaviour for unidentified items, add it to docs for 
 		// chart.update and responsive.
 		each(['xAxis', 'yAxis', 'series'], function (coll) {
 			if (options[coll]) {

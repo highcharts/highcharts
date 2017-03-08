@@ -105,7 +105,7 @@ extend(defaultOptions, {
 			threshold: null
 		},
 		//top: undefined,
-		//opposite: undefined, // docs
+		//opposite: undefined,
 		xAxis: {
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,

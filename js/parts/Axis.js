@@ -309,8 +309,6 @@ H.Axis.prototype = {
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
-		// docs: Add sample of negative log axis to API:
-		// highcharts/yaxis/type-log-negative
 		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
