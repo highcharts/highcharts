@@ -82,7 +82,7 @@
   * Note: only available when including the boost module.
   *
   * @default  null
-  * @apioption chart.seriesBoostThreshold
+  * @apioption boost.seriesThreshold
   */
  
  /**
@@ -281,11 +281,10 @@ Color.prototype.names = {
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 function isChartSeriesBoosting(chart) {	
-	var threshold = (chart.options.boost ? chart.options.boost.seriesThreshold : 0) || // docs
-					chart.options.chart.seriesBoostThreshold || // docs
-					10;
-
-	return chart.series.length >= threshold;
+	return chart.series.length >= pick(
+		chart.options.boost && chart.options.boost.seriesThreshold, // docs
+		10
+	);
 }
 
 /*
