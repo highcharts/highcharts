@@ -6,7 +6,8 @@ QUnit.test('Data labels, useHTML and defer', function (assert) {
             animation: true,
             dataLabels: {
                 enabled: true,
-                useHTML: true
+                useHTML: true,
+                defer: true
             },
             data: [1000, 2000, 3000]
         }]
