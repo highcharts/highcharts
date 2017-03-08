@@ -707,6 +707,22 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  */
 const antDist = () => commandLine('ant dist');
 
+/**
+ * Gzip a single file.
+ * @param {string} file Path to input file.
+ * @param {string} output Path to where output the result.
+ * @return {undefined}
+ * TODO Promisify to use in dist task.
+ */
+const gzipFile = (file, output) => {
+    const zlib = require('zlib');
+    const fs = require('fs');
+    const gzip = zlib.createGzip();
+    const inp = fs.createReadStream(file);
+    const out = fs.createWriteStream(output);
+    inp.pipe(gzip).pipe(out);
+};
+
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
