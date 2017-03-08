@@ -162,10 +162,10 @@ seriesTypes.xrange = extendClass(columnType, {
 			}
 			shapeArgs = point.shapeArgs;
 			point.partShapeArgs = {
-				x: shapeArgs.x + 0.5,
-				y: shapeArgs.y + 0.5,
-				width: shapeArgs.width - 1,
-				height: shapeArgs.height - 1
+				x: shapeArgs.x,
+				y: shapeArgs.y,
+				width: shapeArgs.width,
+				height: shapeArgs.height
 			};
 			point.clipRectArgs = {
 				x: shapeArgs.x,
@@ -300,12 +300,11 @@ seriesTypes.xrange = extendClass(columnType, {
 
 			} else {
 				point.graphic = graphic = renderer.g('point')
-					.attr({
-						'class': point.getClassName()
-					})
+					.addClass(point.getClassName())
 					.add(point.group || series.group);
 
 				point.graphicOriginal = renderer[type](shapeArgs)
+					.addClass(point.getClassName())
 					.addClass('highcharts-partfill-original')
 					.add(graphic);
 				if (clipRectArgs && partShapeArgs) {
@@ -343,8 +342,7 @@ seriesTypes.xrange = extendClass(columnType, {
 				point.graphicOverlay
 					.attr(series.pointAttribs(point, state))
 					.attr({
-						'fill': fill,
-						'stroke-width': 0.1
+						'fill': fill
 					})
 					.shadow(seriesOpts.shadow, null, cutOff);
 			}
@@ -366,6 +364,18 @@ seriesTypes.xrange = extendClass(columnType, {
 		each(series.points, function (point) {
 			series.drawPoint(point, verb);
 		});
+	},
+	
+	/**
+	 * Override to remove stroke from points.
+	 */
+	pointAttribs: function () {
+		var series = this,
+			retVal = columnType.prototype.pointAttribs.apply(series, arguments);
+		
+		retVal['stroke-width'] = 0;
+		
+		return retVal;
 	}
 });
 
