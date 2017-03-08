@@ -306,7 +306,7 @@ function getExportInnerHTML() {
 
 					    var result = number === expected || (number < expected + error && number > expected - error) || false;
 
-					    QUnit.push(result, number, expected, message);
+					    this.push(result, number, expected, message);
 					};
 
 					QUnit.done(function (e) {
