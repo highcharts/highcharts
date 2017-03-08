@@ -242,7 +242,9 @@ function getResources() {
 		}());
 		</script>
 		<script>
-		console.clear();
+		if (window.console) {
+			console.clear();
+		}
 		function next() {
 			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
 			if (a) {
