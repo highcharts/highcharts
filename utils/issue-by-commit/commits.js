@@ -3,7 +3,7 @@
 var ren,
 	paths = [];
 
-var mainFrame = window.parent.document.querySelector('frame#main'),
+var mainFrame = window.parent.document.getElementsByTagName('frame')[0],
 	mainLocation = mainFrame && mainFrame.contentWindow.location.href,
 	isComparing = mainLocation && mainLocation.indexOf('view.php') > -1,
 	colors = [
@@ -67,7 +67,7 @@ function drawGraph() {
 			[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
 		];
 
-		graphs.forEach(function (graph, g) {
+		Highcharts.each(graphs, function (graph, g) {
 			for (var strpos = 0; strpos < graph.length; strpos += 2) {
 				var pos = strpos / 2,
 					operator = graph.substr(strpos, 2),
@@ -146,7 +146,7 @@ function drawGraph() {
 	});
 
 
-	paths.concat(closedPaths).forEach(function (path, i) {
+	Highcharts.each(paths.concat(closedPaths), function (path, i) {
 		ren.path(path)
 			.attr({
 				'stroke-width': 2,
