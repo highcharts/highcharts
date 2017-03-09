@@ -40,6 +40,7 @@ var symbols = H.Renderer.prototype.symbols;
 		downloadJPEG: 'Download JPEG image',
 		downloadPDF: 'Download PDF document',
 		downloadSVG: 'Download SVG vector image',
+		printChart: 'Print chart',
 		contextButtonTitle: 'Chart context menu'
 	});
 
