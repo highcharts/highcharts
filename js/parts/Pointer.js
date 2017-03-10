@@ -754,6 +754,10 @@ H.Pointer.prototype = {
 	 */
 	destroy: function () {
 		var prop;
+		
+		if(this.unDocMouseMove){
+			this.unDocMouseMove();
+		}
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!H.chartCount) {
