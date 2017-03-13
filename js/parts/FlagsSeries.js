@@ -20,7 +20,8 @@ var addEvent = H.addEvent,
 	SVGRenderer = H.SVGRenderer,
 	TrackerMixin = H.TrackerMixin,
 	VMLRenderer = H.VMLRenderer,
-	symbols = SVGRenderer.prototype.symbols;
+	symbols = SVGRenderer.prototype.symbols,
+	stableSort = H.stableSort;
 
 /**
  * The flags series type.
@@ -127,7 +128,7 @@ seriesType('flags', 'column', {
 			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
 			// sort the data points
-			points.sort(function (a, b) {
+			stableSort(points, function (a, b) {
 				return (a.x - b.x);
 			});
 
