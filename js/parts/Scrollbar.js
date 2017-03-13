@@ -10,7 +10,6 @@ import './Axis.js';
 import './Options.js';
 var addEvent = H.addEvent,
 	Axis = H.Axis,
-	Chart = H.Chart,
 	correctFloat = H.correctFloat,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
