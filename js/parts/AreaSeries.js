@@ -25,7 +25,7 @@ var color = H.color,
  */
 seriesType('area', 'line', 
 	/**
-	 * @extends {line}
+	 * @extends {plotOptions.line}
 	 * @optionparent plotOptions.area
 	 */
 	{

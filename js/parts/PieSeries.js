@@ -35,7 +35,7 @@ var addEvent = H.addEvent,
  */
 seriesType('pie', 'line', 
 	/**
-	 * @extends {line}
+	 * @extends {plotOptions.line}
 	 * @optionparent plotOptions.pie
 	 */
 {

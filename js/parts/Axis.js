@@ -158,7 +158,7 @@ H.Axis.prototype = {
 
 	/**
 	 * This options set extends the defaultOptions for Y axes
-	 * @extends {xAxis}
+	 * @extends xAxis
 	 * @optionparent yAxis
 	 */
 	defaultYAxisOptions: {

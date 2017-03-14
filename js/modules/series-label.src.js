@@ -35,7 +35,7 @@ var labelDistance = 3,
 
 H.setOptions(
 /**
- * @optionparent plotOptions
+ * @optionparent
  */
 {
 	plotOptions: {

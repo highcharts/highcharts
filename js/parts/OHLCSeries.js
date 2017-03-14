@@ -20,7 +20,7 @@ var each = H.each,
  */
 seriesType('ohlc', 'column', 
 /**
- * @extends {column}
+ * @extends {plotOptions.column}
  * @optionparent plotOptions.ohlc
  */
 	{

@@ -15,7 +15,7 @@ var seriesType = H.seriesType;
  */
 seriesType('bar', 'column', null, 
 /**
- * @extends {column}
+ * @extends {plotOptions.column}
  * @optionparent plotOptions.bar
  */
 {

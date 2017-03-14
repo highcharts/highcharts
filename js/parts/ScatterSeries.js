@@ -15,7 +15,7 @@ var Series = H.Series,
  */
 seriesType('scatter', 'line', 
 /**
- * @extends {line}
+ * @extends {plotOptions.line}
  * @optionparent plotOptions.scatter
  */
 {

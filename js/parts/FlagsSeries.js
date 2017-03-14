@@ -30,7 +30,7 @@ var addEvent = H.addEvent,
  */
 seriesType('flags', 'column', 
 /**
- * @extends {column}
+ * @extends {plotOptions.column}
  * @optionparent plotOptions.flags
  */
 {

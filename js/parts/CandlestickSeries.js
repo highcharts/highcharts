@@ -20,7 +20,7 @@ var defaultPlotOptions = H.defaultPlotOptions,
  */
 seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, 
 /**
- * @extends {ohlc}
+ * @extends {plotOptions.ohlc}
  * @products highstock
  * @optionparent plotOptions.candlestick
  */

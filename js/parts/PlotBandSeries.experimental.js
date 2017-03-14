@@ -23,7 +23,7 @@ var seriesType = H.seriesType,
 
 seriesType('plotband', 'column', 
 /**
- * @extends {column}
+ * @extends {plotOptions.column}
  * @optionparent plotOptions.plotband
  */
 {

@@ -30,7 +30,7 @@ var animObject = H.animObject,
  */
 seriesType('column', 'line', 
 /**
- * @extends {line}
+ * @extends {plotOptions.line}
  * @optionparent plotOptions.column
  */
 {
