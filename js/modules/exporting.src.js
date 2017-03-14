@@ -1008,4 +1008,19 @@ Chart.prototype.callbacks.push(function (chart) {
 			}
 		};
 	});
+
+	// Uncomment this to see a button directly below the chart, for quick
+	// testing of export
+	/*
+	if (!chart.renderer.forExport) {
+		var button = doc.createElement('button');
+		button.innerHTML = 'View exported SVG';
+		chart.renderTo.parentNode.appendChild(button);
+		button.onclick = function () {
+			var div = doc.createElement('div');
+			div.innerHTML = chart.getSVGForExport();
+			chart.renderTo.parentNode.appendChild(div);
+		};
+	}
+	// */
 });
