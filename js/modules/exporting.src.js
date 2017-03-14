@@ -355,7 +355,9 @@ extend(Chart.prototype, {
 
 		// Assign an internal key to ensure a one-to-one mapping (#5924)
 		each(chart.axes, function (axis) {
-			axis.userOptions.internalKey = H.uniqueKey();
+			if (!axis.userOptions.internalKey) { // #6444
+				axis.userOptions.internalKey = H.uniqueKey();
+			}
 		});
 
 		// generate the chart copy
