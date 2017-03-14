@@ -219,7 +219,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 
 			if ('inverted' in optionsChart || 'polar' in optionsChart) {
-				this.propFromSeries(); // Parses options.chart.inverted and options.chart.polar together with the available series
+				// Parse options.chart.inverted and options.chart.polar together
+				// with the available series.
+				this.propFromSeries();
+				updateAllAxes = true;
+			}
+
+			if ('alignTicks' in optionsChart) { // #6452
 				updateAllAxes = true;
 			}
 
