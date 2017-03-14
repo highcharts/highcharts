@@ -2014,6 +2014,58 @@ SVGRenderer.prototype = {
 			r: gradAttr.r * radialReference[2]
 		};
 	},
+	
+	getSpanWidth: function (wrapper, tspan) {
+		var renderer = this,
+			bBox = wrapper.getBBox(true),
+			actualWidth = bBox.width;
+
+		// Old IE cannot measure the actualWidth for SVG elements (#2314)
+		if (!svg && renderer.forExport) {
+			actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
+		}
+		return actualWidth;
+	},
+	
+	applyEllipsis: function (wrapper, tspan, text, width) {
+		var renderer = this,
+			actualWidth = renderer.getSpanWidth(wrapper, tspan),
+			wasTooLong = actualWidth > width,
+			str = text,
+			currentIndex,
+			minIndex = 0,
+			maxIndex = text.length,
+			updateTSpan = function (s) {
+				tspan.removeChild(tspan.firstChild);
+				if (s) {
+					tspan.appendChild(doc.createTextNode(s));
+				}
+			};
+		if (wasTooLong) {
+			while (minIndex <= maxIndex) {
+				currentIndex = Math.ceil((minIndex + maxIndex) / 2);
+				str = text.substring(0, currentIndex) + '\u2026';
+				updateTSpan(str);
+				actualWidth = renderer.getSpanWidth(wrapper, tspan);
+				if (minIndex === maxIndex) {
+					// Complete
+					minIndex = maxIndex + 1;
+				} else if (actualWidth > width) {
+					// Too large. Set max index to current.
+					maxIndex = currentIndex - 1;
+				} else {
+					// Within width. Set min index to current.
+					minIndex = currentIndex;
+				}
+			}
+			// If max index was 0 it means just ellipsis was also to large.
+			if (maxIndex === 0) {
+				// Remove ellipses.
+				updateTSpan('');
+			}
+		}
+		return wasTooLong;
+	},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans. Called internally when text
@@ -2204,44 +2256,28 @@ SVGRenderer.prototype = {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && !noWrap),
 									tooLong,
-									actualWidth,
 									rest = [],
+									actualWidth,
 									dy = getLineHeight(tspan),
-									rotation = wrapper.rotation,
-									wordStr = span, // for ellipsis
-									cursor = wordStr.length, // binary search cursor
-									bBox;
+									rotation = wrapper.rotation;
 
-								while ((hasWhiteSpace || ellipsis) && (words.length || rest.length)) {
+								if (ellipsis) {
+									wasTooLong = renderer.applyEllipsis(wrapper, tspan, span, width);
+								}
+
+								while (!ellipsis && hasWhiteSpace && (words.length || rest.length)) {
 									wrapper.rotation = 0; // discard rotation when computing box
-									bBox = wrapper.getBBox(true);
-									actualWidth = bBox.width;
-
-									// Old IE cannot measure the actualWidth for SVG elements (#2314)
-									if (!svg && renderer.forExport) {
-										actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
-									}
-
+									actualWidth = renderer.getSpanWidth(wrapper, tspan);
 									tooLong = actualWidth > width;
 
 									// For ellipsis, do a binary search for the correct string length
 									if (wasTooLong === undefined) {
 										wasTooLong = tooLong; // First time
 									}
-									if (ellipsis && wasTooLong) {
-										cursor /= 2;
-
-										if (wordStr === '' || (!tooLong && cursor < 0.5)) {
-											words = []; // All ok, break out
-										} else {
-											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * Math.ceil(cursor));
-											words = [wordStr + (width > 3 ? '\u2026' : '')];
-											tspan.removeChild(tspan.firstChild);
-										}
 
 									// Looping down, this is the first word sequence that is not too long,
 									// so we can move on to build the next line.
-									} else if (!tooLong || words.length === 1) {
+									if (!tooLong || words.length === 1) {
 										words = rest;
 										rest = [];
 
