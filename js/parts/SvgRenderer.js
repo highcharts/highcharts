@@ -482,7 +482,12 @@ SVGElement.prototype = {
 					stop(this, key);
 				}
 
-				if (this.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+				// Special handling of symbol attributes
+				if (
+					this.symbolName &&
+					/^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)$/
+						.test(key)
+				) {
 					if (!hasSetSymbolSize) {
 						this.symbolAttr(hash);
 						hasSetSymbolSize = true;
