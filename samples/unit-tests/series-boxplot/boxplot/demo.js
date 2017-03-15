@@ -40,3 +40,79 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
         'Generic fill'
     );
 });
+
+QUnit.test('Individual options and Point.update', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'boxplot'
+        },
+
+        series: [{
+            data: [
+                [760, 801, 848, 895, 965]
+            ]
+        }]
+    });
+
+    var point = chart.series[0].points[0];
+    point.update({
+        color: 'red',
+        fillColor: '#F0F0E0',
+        medianColor: '#0C5DA5',
+        medianWidth: 3,
+        stemColor: '#A63400',
+        stemDashStyle: 'dot',
+        stemWidth: 1,
+        whiskerColor: '#3D9200',
+        whiskerWidth: 3
+    }, true, false);
+
+    assert.strictEqual(
+        point.box.attr('stroke'),
+        'red',
+        'color'
+    );
+    assert.strictEqual(
+        point.box.attr('fill'),
+        '#F0F0E0',
+        'fillColor'
+    );
+    assert.strictEqual(
+        point.medianShape.attr('stroke'),
+        '#0C5DA5',
+        'medianColor'
+    );
+    assert.strictEqual(
+        point.medianShape.attr('stroke-width'),
+        3,
+        'medianWidth'
+    );
+
+    assert.strictEqual(
+        point.stem.attr('stroke'),
+        '#A63400',
+        'stemColor'
+    );
+
+    assert.strictEqual(
+        point.stem.attr('stroke-dasharray'),
+        '1,3',
+        'stemDashStyle'
+    );
+    assert.strictEqual(
+        point.stem.attr('stroke-width'),
+        1,
+        'stemWidth'
+    );
+    assert.strictEqual(
+        point.whiskers.attr('stroke'),
+        '#3D9200',
+        'whiskerColor'
+    );
+    assert.strictEqual(
+        point.whiskers.attr('stroke-width'),
+        3,
+        'whiskerWidth'
+    );
+});
