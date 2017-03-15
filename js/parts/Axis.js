@@ -1168,17 +1168,20 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Handle options for floor, ceiling, softMin and softMax
+		// Handle options for floor, ceiling, softMin and softMax (#6359)
+		if (isNumber(options.softMin)) {
+			axis.min = Math.min(axis.min, options.softMin);
+		}
+		if (isNumber(options.softMax)) {
+			axis.max = Math.max(axis.max, options.softMax);
+		}
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) {
-			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) {
-			axis.max = Math.max(axis.max, options.softMax);
 		}
+		
 
 		// When the threshold is soft, adjust the extreme value only if
 		// the data extreme and the padded extreme land on either side of the threshold. For example,
