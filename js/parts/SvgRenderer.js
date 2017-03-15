@@ -312,11 +312,13 @@ SVGElement.prototype = {
 	applyTextOutline: function (textOutline) {
 		var elem = this.element,
 			tspans,
+			tspan,
 			hasContrast = textOutline.indexOf('contrast') !== -1,
 			styles = {},
 			color,
 			strokeWidth,
-			firstRealChild;
+			firstRealChild,
+			i;
 
 		// When the text shadow is set to contrast, use dark stroke for light
 		// text and vice versa.
@@ -353,13 +355,15 @@ SVGElement.prototype = {
 			);
 			
 			// Remove shadows from previous runs
-			each(tspans, function (tspan) {
+			// Iterate from the end to support removing items inside the cycle. (#6472)
+			for (i = tspans.length - 1; i >= 0; --i) {
+				tspan = tspans[i];
 				if (tspan.getAttribute('class') === 'highcharts-text-outline') {
 					// Remove then erase
 					erase(tspans, elem.removeChild(tspan));
 				}
-			});
-			
+			}
+
 			// For each of the tspans, create a stroked copy behind it.
 			firstRealChild = elem.firstChild;
 			each(tspans, function (tspan, y) {
