@@ -95,7 +95,12 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
 
 		for (j = i + 1; j < len; ++j) {
 			label2 = labels[j];
-			if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
+			if (
+				label1 && label2 &&
+				label1 !== label2 && // #6465, polar chart with connectEnds
+				label1.placed && label2.placed &&
+				label1.newOpacity !== 0 && label2.newOpacity !== 0
+			) {
 				pos1 = label1.alignAttr;
 				pos2 = label2.alignAttr;
 				parent1 = label1.parentGroup; // Different panes have different positions
