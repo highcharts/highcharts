@@ -11,9 +11,11 @@ var argsToArray = function (args) {
 		return Array.prototype.slice.call(args, 1);
 	},
 	dateFormat = H.dateFormat,
+	defined = H.defined,
 	each = H.each,
 	isArray = H.isArray,
 	isNumber = H.isNumber,
+	merge = H.merge,
 	pick = H.pick,
 	wrap = H.wrap,
 	Axis = H.Axis,
@@ -514,20 +516,19 @@ wrap(Axis.prototype, 'render', function (proceed) {
  *
  * @param {function} proceed - the original function
  */
-wrap(Axis.prototype, 'init', function (proceed) {
+wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
-		options,
-		// 25 is optimal height for default fontSize (11px)
-		// 25 / 11 ≈ 2.28
-		fontSizeToCellHeightRatio = 25 / 11,
-		fontMetrics,
-		fontSize;
-	// Call original Axis.init()
-	proceed.apply(axis, argsToArray(arguments));
-	options = axis.options;
-	if (options.grid) {
-		fontSize = options.labels.style.fontSize;
-		fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
+		columnOptions,
+		column,
+		columnIndex,
+		i;
+	function applyGridOptions(axis) {
+		var options = axis.options,
+			// 25 is optimal height for default fontSize (11px)
+			// 25 / 11 ≈ 2.28
+			fontSizeToCellHeightRatio = 25 / 11,
+			fontSize = options.labels.style.fontSize,
+			fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
 
 		// Prohibit timespans of multitudes of a time unit,
 		// e.g. two days, three weeks, etc.
@@ -581,5 +582,38 @@ wrap(Axis.prototype, 'init', function (proceed) {
 		 */
 		axis.labelRotation = 0;
 		options.labels.rotation = 0;
+	}
+	
+	if (userOptions.grid) {
+		if (defined(userOptions.grid.borderColor)) {
+			userOptions.tickColor = userOptions.grid.borderColor;
+			userOptions.lineColor = userOptions.grid.borderColor;
+		}
+		if (defined(userOptions.grid.borderWidth)) {
+			userOptions.tickWidth = userOptions.grid.borderWidth;
+			userOptions.lineWidth = userOptions.grid.borderWidth;
+		}
+
+		if (isArray(userOptions.grid.columns)) {
+			axis.columns = [];
+			columnIndex = 0;
+			i = userOptions.grid.columns.length;
+			while (i--) {
+				columnOptions = merge(userOptions, userOptions.grid.columns[i]);
+				delete columnOptions.grid.columns; // Prevent recursion
+				column = new Axis(chart, columnOptions);
+				column.isColumn = true;
+				column.columnIndex = columnIndex;
+				axis.columns.push(column); // eslint-disable-line no-new
+				columnIndex++;
+			}
+		} else {
+			// Call original Axis.init()
+			proceed.apply(axis, argsToArray(arguments));
+			applyGridOptions(axis);
+		}
+	} else {
+		// Call original Axis.init()
+		proceed.apply(axis, argsToArray(arguments));
 	}
 });
