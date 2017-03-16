@@ -930,7 +930,9 @@ H.Axis.prototype = {
 		}
 
 		// Write the last point's name to the names array
-		this.names[x] = point.name;
+		if (x !== undefined) {
+			this.names[x] = point.name;
+		}
 
 		return x;
 	},
@@ -959,7 +961,7 @@ H.Axis.prototype = {
 					var x;
 					if (point.options) {
 						x = axis.nameToX(point);
-						if (x !== point.x) {
+						if (x !== undefined && x !== point.x) {
 							point.x = x;
 							series.xData[i] = x;
 						}
