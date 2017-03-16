@@ -287,7 +287,7 @@ H.seriesType('solidgauge', 'gauge', {
 				innerR: innerRadius,
 				start: minAngle,
 				end: maxAngle,
-				rounded: options.rounded // docs
+				rounded: options.rounded
 			};
 			point.startR = radius; // For PieSeries.animate
 

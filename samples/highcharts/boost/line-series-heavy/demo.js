@@ -39,7 +39,7 @@ $(function () {
                 data: getData(n),
                 lineWidth: 2,
                 boostThreshold: 1,
-                turboThreshold: 1                
+                turboThreshold: 1
             });
         }
 
@@ -48,7 +48,6 @@ $(function () {
 
     var n = 1000,
         s = 600,
-        data = getData(n),
         series = getSeries(n, s);
 
 
@@ -68,7 +67,7 @@ $(function () {
         },
 
         boost: {
-            useGPUTranslations: true            
+            useGPUTranslations: true
         },
 
         xAxis: {

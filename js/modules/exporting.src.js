@@ -147,15 +147,26 @@ defaultOptions.exporting = {
 			/*
 			,{
 
-				text: 'View SVG',
+				text: 'View SVG Image',
 				onclick: function () {
-					var svg = this.getSVG()
+					var div = doc.createElement('div');
+					div.innerHTML = this.getSVGForExport();
+
+					this.renderTo.parentNode.appendChild(div);
+				}
+			}, {
+
+				text: 'View SVG Source',
+				onclick: function () {
+					var pre = doc.createElement('pre');
+					pre.innerHTML = this.getSVGForExport()
 						.replace(/</g, '\n&lt;')
 						.replace(/>/g, '&gt;');
 
-					doc.body.innerHTML = '<pre>' + svg + '</pre>';
+					this.renderTo.parentNode.appendChild(pre);
 				}
-			} // */
+			}
+			// */
 			]
 		}
 	}
@@ -344,7 +355,9 @@ extend(Chart.prototype, {
 
 		// Assign an internal key to ensure a one-to-one mapping (#5924)
 		each(chart.axes, function (axis) {
-			axis.userOptions.internalKey = H.uniqueKey();
+			if (!axis.userOptions.internalKey) { // #6444
+				axis.userOptions.internalKey = H.uniqueKey();
+			}
 		});
 
 		// generate the chart copy
@@ -997,4 +1010,19 @@ Chart.prototype.callbacks.push(function (chart) {
 			}
 		};
 	});
+
+	// Uncomment this to see a button directly below the chart, for quick
+	// testing of export
+	/*
+	if (!chart.renderer.forExport) {
+		var button = doc.createElement('button');
+		button.innerHTML = 'View exported SVG';
+		chart.renderTo.parentNode.appendChild(button);
+		button.onclick = function () {
+			var div = doc.createElement('div');
+			div.innerHTML = chart.getSVGForExport();
+			chart.renderTo.parentNode.appendChild(div);
+		};
+	}
+	// */
 });

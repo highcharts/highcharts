@@ -142,7 +142,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	states: { // states for the entire series
 		hover: {
 			//enabled: false,
-			animation: { // docs
+			animation: {
 				duration: 50
 			},
 			lineWidthPlus: 1,
@@ -1706,6 +1706,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		function setInvert() {
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
+
+					// VML/HTML needs explicit attributes for flipping
+					if (chart.renderer.isVML) {
+						series[groupName].attr({
+							width: series.yAxis.len,
+							height: series.xAxis.len
+						});
+					}
+
 					series[groupName].width = series.yAxis.len;
 					series[groupName].height = series.xAxis.len;
 					series[groupName].invert(inverted);

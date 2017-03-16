@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "5.0.7",
+  "version": "5.0.9",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -30,6 +30,7 @@
     "closurecompiler": "^1.5.2",
     "colors": "~1.1.2",
     "eslint": "3.12.2",
+    "fs-extra": "^2.0.0",
     "google-closure-compiler-js": "^20160916.0.0",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",

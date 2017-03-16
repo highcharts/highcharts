@@ -309,8 +309,6 @@ H.Axis.prototype = {
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
-		// docs: Add sample of negative log axis to API:
-		// highcharts/yaxis/type-log-negative
 		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
@@ -660,7 +658,21 @@ H.Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB;
+			transB = axis.transB,
+			/**
+			 * Check if x is between a and b. If not, either move to a/b or skip,
+			 * depending on the force parameter.
+			 */
+			between = function (x, a, b) {
+				if (x < a || x > b) {
+					if (force) {
+						x = Math.min(Math.max(a, x), b);
+					} else {
+						skip = true;
+					}
+				}
+				return x;
+			};
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
@@ -671,11 +683,11 @@ H.Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			x1 = x2;
+			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-			y1 = y2;
+			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
 		}
 		return skip && !force ?
 			null :
@@ -1156,17 +1168,20 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Handle options for floor, ceiling, softMin and softMax
+		// Handle options for floor, ceiling, softMin and softMax (#6359)
+		if (isNumber(options.softMin)) {
+			axis.min = Math.min(axis.min, options.softMin);
+		}
+		if (isNumber(options.softMax)) {
+			axis.max = Math.max(axis.max, options.softMax);
+		}
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) {
-			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) {
-			axis.max = Math.max(axis.max, options.softMax);
 		}
+		
 
 		// When the threshold is soft, adjust the extreme value only if
 		// the data extreme and the padded extreme land on either side of the threshold. For example,
@@ -2049,7 +2064,6 @@ H.Axis.prototype = {
 			className = options.className,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
-			plotLinesClip = axis.getPlotLinesAndBandsClip(),
 			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
@@ -2073,10 +2087,6 @@ H.Axis.prototype = {
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
 				.add(axisParent);
-
-			axis.plotLinesAndBandsClip = renderer.clipRect(plotLinesClip);
-		} else {
-			axis.plotLinesAndBandsClip.animate(plotLinesClip);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -2525,14 +2535,11 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
-			'gridGroup', 'labelGroup', 'plotLinesAndBandsClip', 'cross'],
-			function (prop) {
-				if (axis[prop]) {
-					axis[prop] = axis[prop].destroy();
-				}
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
+			if (axis[prop]) {
+				axis[prop] = axis[prop].destroy();
 			}
-		);
+		});
 
 		// Delete all properties and fall back to the prototype.
 		for (n in axis) {

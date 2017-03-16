@@ -143,3 +143,43 @@ QUnit.test('Top 90', function (assert) {
     );
 
 });
+
+QUnit.test(
+    'Connect ends and data label still visible (#6465)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            chart: {
+                polar: true,
+                type: 'line'
+            },
+
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        padding: 0,
+                        defer: false
+                    }
+                }
+            },
+            yAxis: {
+                max: 60000
+            },
+
+            series: [{
+                name: 'Actual Spending',
+                data: [45000, 39000, 42000, 31000, 26000, 14000],
+                pointPlacement: 'on',
+                animation: false
+            }]
+
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].dataLabel.opacity,
+            1,
+            'First data label is visible'
+        )
+    }
+);

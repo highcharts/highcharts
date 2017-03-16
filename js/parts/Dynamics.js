@@ -219,7 +219,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 
 			if ('inverted' in optionsChart || 'polar' in optionsChart) {
-				this.propFromSeries(); // Parses options.chart.inverted and options.chart.polar together with the available series
+				// Parse options.chart.inverted and options.chart.polar together
+				// with the available series.
+				this.propFromSeries();
+				updateAllAxes = true;
+			}
+
+			if ('alignTicks' in optionsChart) { // #6452
 				updateAllAxes = true;
 			}
 
@@ -282,9 +288,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// item in the collection, so setting one series without an id, will
 		// update the first series in the chart. Setting two series without
 		// an id will update the first and the second respectively (#6019)
-		// // docs: New behaviour for unidentified items, add it to docs for 
 		// chart.update and responsive.
-		each(['xAxis', 'yAxis', 'series'], function (coll) {
+		each(['xAxis', 'yAxis', 'series', 'colorAxis'], function (coll) {
 			if (options[coll]) {
 				each(splat(options[coll]), function (newOptions, i) {
 					var item = (

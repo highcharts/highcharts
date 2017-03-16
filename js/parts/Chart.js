@@ -626,7 +626,7 @@ Chart.prototype = {
 		);
 		chart.chartHeight = Math.max(
 			0,
-			H.relativeLength( // docs: percent height. Demo added as height-percent
+			H.relativeLength(
 				heightOption,
 				chart.chartWidth
 			) || chart.containerHeight || 400

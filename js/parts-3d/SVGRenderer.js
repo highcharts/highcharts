@@ -196,12 +196,13 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attr = function (args) {
+	result.attr = function (args, val) {
 
 		// Resolve setting attributes by string name
-		if (typeof args === 'string' && arguments[1] !== undefined) {
+		if (typeof args === 'string' && typeof val !== 'undefined') {
+			var key = args;
 			args = {};
-			args[arguments[0]] = arguments[1];
+			args[key] = val;
 		}
 
 		if (args.shapeArgs || defined(args.x)) {

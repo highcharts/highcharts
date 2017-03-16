@@ -70,7 +70,7 @@ seriesType('treemap', 'scatter', {
 		headerFormat: '',
 		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 	},
-	ignoreHiddenPoint: true, // docs
+	ignoreHiddenPoint: true,
 	layoutAlgorithm: 'sliceAndDice',
 	layoutStartingDirection: 'vertical',
 	alternateStartingDirection: false,

@@ -341,13 +341,10 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 		i;
 
 	if (path && toPath) {
-		if (
-			path.toString() === toPath.toString() || // flat band
-			to < this.min || from > this.max // outside the extremes
-		) {
+		if (path.toString() === toPath.toString()) {
 			// #6166
 			result = path;
-			result.hiddenLabel = true;
+			result.flat = true;
 		} else {
 			// Go over each subpath
 			for (i = 0; i < path.length; i += 6) {
@@ -360,7 +357,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 				);
 			}
 		}
-	} else { // undefined axis extremes
+	} else { // outside the axis area
 		result = null;
 	}
 

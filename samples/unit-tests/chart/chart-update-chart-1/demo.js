@@ -44,7 +44,7 @@ QUnit.test('Option chart.alignTicks update', function (assert) {
         }]
 
     });
-
+    
     assert.notEqual(
         chart.yAxis[0].tickPositions.length,
         chart.yAxis[1].tickPositions.length,
@@ -61,6 +61,18 @@ QUnit.test('Option chart.alignTicks update', function (assert) {
         chart.yAxis[0].tickPositions.length,
         chart.yAxis[1].tickPositions.length,
         'Aligned ticks'
+    );
+
+    chart.update({
+        chart: {
+            alignTicks: false
+        }
+    });
+
+    assert.notEqual(
+        chart.yAxis[0].tickPositions.length,
+        chart.yAxis[1].tickPositions.length,
+        'Back to not aligned ticks (#6452)'
     );
 });
 
