@@ -36,3 +36,23 @@ QUnit.test('Global marker is null (#6321)', function (assert) {
         'Has marker'
     );
 });
+
+QUnit.test('Markers are clipped (#6296)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bubble'
+            },
+            xAxis: {
+                min: 0
+            },
+            series: [{
+                data: [[0, 1, 2], [2, 3, 4]]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.series[0].markerGroup.attr('clip-path') !== 'none',
+        true,
+        'Markers group have a clippping path'
+    );
+});

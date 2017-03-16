@@ -222,6 +222,21 @@ seriesType('bubble', 'scatter', {
 			}
 		}
 	},
+	/**
+	 * Extend the base render method to add clip path, #6296
+	 */
+	render: function () {
+		seriesTypes.scatter.prototype.render.apply(this, arguments);
+		this.markerGroup.clip(this.chart.clipRect);
+	},
+
+	/**
+	 * Extend the base setClip method to add clip path, #6296
+	 */
+	setClip: function () {
+		seriesTypes.scatter.prototype.setClip.apply(this, arguments);
+		this.markerGroup.clip(this.chart.clipRect);
+	},
 
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
