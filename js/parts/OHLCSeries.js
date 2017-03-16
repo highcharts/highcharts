@@ -90,18 +90,18 @@ seriesType('ohlc', 'column', {
 		var series = this,
 			yAxis = series.yAxis,
 			hasModifyValue = !!series.modifyValue,
-			translatedOLC = ['plotOpen', 'yBottom', 'plotClose'];
+			translated = ['plotOpen', 'plotHigh', 'plotLow', 'plotClose', 'yBottom']; // translate OHLC for
 
 		seriesTypes.column.prototype.translate.apply(series);
 
 		// Do the translation
 		each(series.points, function (point) {
-			each([point.open, point.low, point.close], function (value, i) {
+			each([point.open, point.high, point.low, point.close, point.low], function (value, i) {
 				if (value !== null) {
 					if (hasModifyValue) {
 						value = series.modifyValue(value);
 					}
-					point[translatedOLC[i]] = yAxis.toPixels(value, true);
+					point[translated[i]] = yAxis.toPixels(value, true);
 				}
 			});
 		});
