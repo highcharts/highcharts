@@ -95,9 +95,9 @@ H.PlotLineOrBand.prototype = {
 		groupAttribs.zIndex = zIndex;
 		groupName += '-' + zIndex;
 
-		group = axis[groupName];
+		group = axis.plotLinesAndBandsGroups[groupName];
 		if (!group) {
-			axis[groupName] = group = renderer.g('plot-' + groupName)
+			axis.plotLinesAndBandsGroups[groupName] = group = renderer.g('plot-' + groupName)
 				.attr(groupAttribs).add();
 		}
 
