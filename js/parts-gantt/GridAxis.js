@@ -570,7 +570,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			options.tickLength = options.cellHeight ||
 					fontMetrics.h * fontSizeToCellHeightRatio;
 		} else {
-			options.tickWidth = 1;
+			options.tickWidth = pick(options.tickWidth, 1);
 			if (!options.lineWidth) {
 				options.lineWidth = 1;
 			}
