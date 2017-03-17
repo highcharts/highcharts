@@ -533,8 +533,7 @@ extend(Chart.prototype, {
 			menuPadding = Math.max(width, height), // for mouse leave detection
 			innerMenu,
 			hide,
-			menuStyle,
-			removeMouseUp;
+			menuStyle;
 
 		// create the menu only the first time
 		if (!menu) {
@@ -569,23 +568,27 @@ extend(Chart.prototype, {
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
-			addEvent(menu, 'mouseleave', function () {
-				menu.hideTimer = setTimeout(hide, 500);
-			});
-			addEvent(menu, 'mouseenter', function () {
-				clearTimeout(menu.hideTimer);
-			});
+			chart.exportEvents.push(
+				addEvent(menu, 'mouseleave', function () {
+					menu.hideTimer = setTimeout(hide, 500);
+				})
+			);
 
+			chart.exportEvents.push(
+				addEvent(menu, 'mouseenter', function () {
+					clearTimeout(menu.hideTimer);
+				})
+			);
 
 			// Hide it on clicking or touching outside the menu (#2258, #2335,
 			// #2407)
-			removeMouseUp = addEvent(doc, 'mouseup', function (e) {
-				if (!chart.pointer.inClass(e.target, className)) {
-					hide();
-				}
-			});
-			addEvent(chart, 'destroy', removeMouseUp);
-
+			chart.exportEvents.push(
+				addEvent(doc, 'mouseup', function (e) {
+					if (!chart.pointer.inClass(e.target, className)) {
+						hide();
+					}
+				})
+			);
 
 			// create the items
 			each(items, function (item) {
@@ -773,7 +776,9 @@ extend(Chart.prototype, {
 	destroyExport: function (e) {
 		var chart = e ? e.target : this,
 			exportSVGElements = chart.exportSVGElements,
-			exportDivElements = chart.exportDivElements;
+			exportDivElements = chart.exportDivElements,
+			exportEvents = chart.exportEvents,
+			cacheName;
 
 		// Destroy the extra buttons added
 		if (exportSVGElements) {
@@ -782,6 +787,12 @@ extend(Chart.prototype, {
 				// Destroy and null the svg/vml elements
 				if (elem) { // #1822
 					elem.onclick = elem.ontouchstart = null;
+					cacheName = 'cache-' + elem.menuClassName;
+
+					if (chart[cacheName]) {
+						delete chart[cacheName];
+					}
+
 					chart.exportSVGElements[i] = elem.destroy();
 				}
 			});
@@ -803,6 +814,13 @@ extend(Chart.prototype, {
 				discardElement(elem);
 			});
 			exportDivElements.length = 0;
+		}
+
+		if (exportEvents) {
+			each(exportEvents, function (unbind) {
+				unbind();
+			});
+			exportEvents.length = 0;
 		}
 	}
 });
@@ -974,6 +992,7 @@ Chart.prototype.renderExporting = function () {
 	}
 	
 	if (isDirty && exportingOptions.enabled !== false) {
+		this.exportEvents = [];
 
 		for (n in buttons) {
 			this.addButton(buttons[n]);
