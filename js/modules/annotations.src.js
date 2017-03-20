@@ -2,7 +2,6 @@
 * TODO:
 * - padding between a label, connector and point (should be handled by a specific symbol)
 * - handle points types which have multiple values
-* - inverted chart - needs additional group for label which is attached to x, y (in axis scales)
 */
 
 /**
@@ -30,17 +29,101 @@ var merge = H.merge,
 	find = H.find,
 	format = H.format,
 	destroyObjectProperties = H.destroyObjectProperties,
+	correctFloat = H.correctFloat,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
 	chartPrototype = H.Chart.prototype;
+
+
+function MockPoint(chart, options) {
+	this.init(chart, options);
+}
+
+MockPoint.prototype = {
+	init: function (chart, options) {
+		this.series = {
+			visible: true,
+			chart: chart,
+			getPlotBox: seriesPrototype.getPlotBox,
+			alignDataLabel: seriesPrototype.alignDataLabel,
+			justifyDataLabel: seriesPrototype.justifyDataLabel
+		};
+
+		this.mock = true;
+
+		var xAxisId = options.xAxis,
+			xAxis = defined(xAxisId) ? chart.xAxis[xAxisId] || chart.get(xAxisId) : null,
+			
+			yAxisId = options.yAxis,
+			yAxis = defined(yAxisId) ? chart.yAxis[yAxisId] || chart.get(yAxisId) : null;
+
+		if (xAxis) {
+			this.x = options.x;
+			this.series.xAxis = xAxis;
+		} else {
+			this.plotX = options.x;
+		}
+
+		if (yAxis) {
+			this.y = options.y;
+			this.series.yAxis = yAxis;
+		} else {
+			this.plotY = options.y;
+		}
+	},
+
+	translate: function () {
+		var series = this.series,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			plotX = this.plotX,
+			plotY = this.plotY,
+			isInside = true;
+
+		if (xAxis) {
+			this.plotX = plotX = correctFloat(
+				Math.min(
+					Math.max(
+						-1e5, 
+						xAxis.translate(this.x, 0, 0, 0, 1, null)
+						),
+					1e5
+				)
+			);
+
+			isInside = plotX >= 0 && plotX <= xAxis.len;
+		}
+
+		if (yAxis) {
+			this.plotY = plotY = Math.min(
+				Math.max(
+					-1e5,
+					yAxis.translate(this.y, 0, 1, 0, 1)
+					),
+				1e5
+			);
+			isInside = isInside && plotY >= 0 && plotY <= yAxis.len;
+		}
+
+		this.isInside = isInside;
+	},
+
+	getLabelConfig: function () {
+		return {
+			x: this.x,
+			y: this.y,
+			point: this
+		};
+	}
+};
 
 function Annotation(chart, options) {
 	this.init(chart, options);
 }
 
 Annotation.prototype = {
-	shapesWithAnchors: ['callout', 'connector'],
+	shapesWithAnchor: ['callout', 'connector'],
 	shapesWithoutBackground: ['connector'],
 	/**
 	 * Default options for an annotation
@@ -73,7 +156,7 @@ Annotation.prototype = {
 			useHTML: false,
 			verticalAlign: 'bottom',
 			x: 0,
-			y: 0
+			y: -16
 			// distance: 16
 			// zIndex: 6
 		},
@@ -94,12 +177,6 @@ Annotation.prototype = {
 
 		// keeps annotation's labels
 		this.labels = [];
-
-		// keeps groups for a series - if a label is linked to a real point
-		// we create a group with the same translation as the point's group
-		// it is needed for aligning label
-		// key for series groups are series._i
-		this.labelGroups = {};
 
 		this.setOptions(userOptions);
 
@@ -193,19 +270,11 @@ Annotation.prototype = {
 	 * @returns {undefined}
 	**/
 	destroy: function () {
-		var chart = this.chart,
-			labelGroups = this.labelGroups,
-			key;
+		var chart = this.chart;
 
 		each(this.labels, function (label) {
 			label.destroy();
 		});
-
-		for (key in labelGroups) {
-			if (labelGroups.hasOwnProperty(key)) {
-				labelGroups[key].destroy();
-			}
-		}
 
 		destroyObjectProperties(this, chart);
 	},
@@ -251,9 +320,9 @@ Annotation.prototype = {
 
 		if (style.color === 'contrast') {
 			style.color = this.chart.renderer.getContrast(
-				inArray(options.shape, this.shapesWithoutBackground) > -1
-				? '#FFFFFF'
-				: options.backgroundColor
+				inArray(options.shape, this.shapesWithoutBackground) > -1 ? 
+				'#FFFFFF' :
+				options.backgroundColor
 			);
 		}
 
@@ -286,9 +355,7 @@ Annotation.prototype = {
 			options = label.options,
 			parentGroup = label.parentGroup,
 			text,
-			series,
-			position,
-			seriesPlotBox;
+			position;
 
 		if (!point) {
 			this.destroyLabel(label);
@@ -298,22 +365,9 @@ Annotation.prototype = {
 
 			if (!parentGroup) {
 				this.renderLabel(label);
-				parentGroup = label.parentGroup;
 			}
 
-			if (!point.mock) {
-			// if it is a real point it might be needed to update its group translation
-				seriesPlotBox = series.getPlotBox();
-
-				if (
-					parentGroup.translateX !== seriesPlotBox.translateX ||
-					parentGroup.translateY !== seriesPlotBox.translateY
-					) {
-					parentGroup.attr(seriesPlotBox);
-				}
-			
-			} else {
-			// if it is a mock point point's plotX, plotY must be updated
+			if (point.mock) {
 				point.translate();
 			}
 
@@ -343,44 +397,12 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Creating svg groups for labels and a store in series object for labels groups
-	 *
 	 * @param {Object} label an intiailised label object
 	 * @returns {undefined}
 	**/
 	renderLabel: function (label) {
-		var group = this.group,
-			point = label.point,
-			series,
-			labelGroup,
-			seriesId;
-
-		if (!point.mock) {
-		// if it is a real point it creates a mirror group of the point for the label
-		// if the group is already created it is stored in the series
-			series = point.series;
-			seriesId = series._i;
-			labelGroup = this.labelGroups[seriesId];
-
-			if (!labelGroup) {
-			// if the mirror series group is not found, create it and link them
-				labelGroup = this.labelGroups[seriesId] = this.chart.renderer.g('annotation-label')
-					.attr({
-						zIndex: 1
-					})
-					.add(group);
-
-				labelGroup.series = series;
-			}
-		} else {
-		// a mock point does not need a special group - its group is a main annotation group
-			labelGroup = group;
-		}
-
-		label.add(labelGroup);
+		label.add(this.group);
 	},
-
-
 
 	/**
 	 * Linking label with points
@@ -420,76 +442,11 @@ Annotation.prototype = {
 	 * Creating a mock point for ta label
 	 *
 	 * @param {Object} pointOptions
-	 * @returns {Object} a mock point
+	 * @returns {MockPoint} a mock point
 	**/
 	createMockPoint: function (pointOptions) {
-		var chart = this.chart,
-			
-			// initialise a mock point
-			point = {
-				series: {
-					chart: chart,
-					visible: true,
-					getPlotBox: seriesPrototype.getPlotBox,
-					alignDataLabel: seriesPrototype.alignDataLabel,
-					justifyDataLabel: seriesPrototype.justifyDataLabel
-					
-				},
-				mock: true,
-				translate: function () {
-					var series = this.series,
-						xAxis = series.xAxis,
-						yAxis = series.yAxis,
-						plotX = point.plotX,
-						plotY = point.plotY,
-						isInside = true;
-
-					if (xAxis) {
-						point.plotX = plotX = xAxis.toPixels(this.x/* , chart.inverted */);
-						isInside = plotX >= 0 && plotX <= xAxis.len;
-					}
-
-					if (yAxis) {
-						point.plotY = plotY = yAxis.toPixels(this.y/* , chart.inverted */);
-						isInside = isInside && plotY >= 0 && plotY <= yAxis.len;
-					}
-
-					this.isInside = isInside;
-				},
-				getLabelConfig: function () {
-						return {
-							x: this.x,
-							y: this.y,
-							point: this
-						};
-					}
-			},
-
-			xAxisId = pointOptions.xAxis,
-			xAxis = defined(xAxisId) ? chart.xAxis[xAxisId] || chart.get(xAxisId) : null,
-			
-			yAxisId = pointOptions.yAxis,
-			yAxis = defined(yAxisId) ? chart.yAxis[yAxisId] || chart.get(yAxisId) : null;
-
-		// check if axis is assigned in the options, if it is not x and y are pixels
-		// otherwise they are values in the specified axis' scale
-		if (xAxis) {
-			point.x = pointOptions.x;
-			point.series.xAxis = xAxis;
-		} else {
-			point.plotX = pointOptions.x;
-		}
-
-		if (yAxis) {
-			point.y = pointOptions.y;
-			point.series.yAxis = yAxis;
-		} else {
-			point.plotY = pointOptions.y;
-		}
-
-		return point;
+		return new MockPoint(this.chart, pointOptions);
 	},
-
 
 
 	/**
@@ -515,20 +472,14 @@ Annotation.prototype = {
 				distance: labelOptions.distance || 16
 			}, label.width, label.height, point);
 
-			// the position must be adjusted with group's translation
-			if (!point.mock) {
-				seriesPlotBox = point.series.getPlotBox();
-				position.x -= seriesPlotBox.translateX;
-				position.y -= seriesPlotBox.translateY;
-			}
-
 			position.x = round(position.x);
 			position.y = round(position.y || 0);
 
-			if (inArray(shape, this.shapesWithAnchors) > -1) {
+			if (inArray(shape, this.shapesWithAnchor) > -1) {
+				seriesPlotBox = point.series.getPlotBox();
 			// create an array shapes with anchors
-				position.anchorX = round(point.plotX);
-				position.anchorY = round(point.plotY);
+				position.anchorX = round(point.plotX) + seriesPlotBox.translateX;
+				position.anchorY = round(point.plotY) + seriesPlotBox.translateY;
 			}
 		}
 
@@ -546,6 +497,10 @@ Annotation.prototype = {
 	 * @returns {undefined}
 	**/
 	alignLabel: function (label, point) {
+		var plotBox,
+			x,
+			y;
+
 		point.series.alignDataLabel(
 			point,
 			label,
@@ -553,6 +508,23 @@ Annotation.prototype = {
 			null,
 			true // true for not animating
 		);
+
+		if (label.placed) {
+			plotBox = point.series.getPlotBox();
+			x = label.x + plotBox.translateX;
+			y = label.y + plotBox.translateY;
+
+			label.attr({
+				x: x,
+				y: y
+			});
+
+			// used by hideOvarlappingLabels
+			label.alignAttr = {
+				x: x,
+				y: y
+			};
+		}
 
 		/* Workaround for bad placing anchor on animation */
 		// if (label.placed) {
@@ -665,3 +637,4 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 
 H.defaultOptions.annotations = [];
 H.Annotation = Annotation;
+H.MockPoint = MockPoint;
