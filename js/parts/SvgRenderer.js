@@ -709,8 +709,8 @@ SVGElement.prototype = {
 			// These CSS properties are interpreted internally by the SVG
 			// renderer, but are not supported by SVG and should not be added to
 			// the DOM. In styled mode, no CSS should find its way to the DOM
-			// whatsoever (#6173).
-			svgPseudoProps = ['textOverflow', 'width'];
+			// whatsoever (#6173, #6474).
+			svgPseudoProps = ['textOutline', 'textOverflow', 'width'];
 
 		// convert legacy
 		if (styles && styles.color) {
