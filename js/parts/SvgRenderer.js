@@ -329,20 +329,20 @@ SVGElement.prototype = {
 			);
 		}
 
-		this.fakeTS = true; // Fake text shadow
-
-		// In order to get the right y position of the clone,
-		// copy over the y setter
-		this.ySetter = this.xSetter;
-
-		tspans = [].slice.call(elem.getElementsByTagName('tspan'));
-		
 		// Extract the stroke width and color
 		textOutline = textOutline.split(' ');
 		color = textOutline[textOutline.length - 1];
 		strokeWidth = textOutline[0];
 
 		if (strokeWidth && strokeWidth !== 'none') {
+
+			this.fakeTS = true; // Fake text shadow
+
+			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
+
+			// In order to get the right y position of the clone,
+			// copy over the y setter
+			this.ySetter = this.xSetter;
 
 			// Since the stroke is applied on center of the actual outline, we
 			// need to double it to get the correct stroke-width outside the 
