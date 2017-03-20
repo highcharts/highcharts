@@ -43,6 +43,7 @@ function MockPoint(chart, options) {
 MockPoint.prototype = {
 	init: function (chart, options) {
 		this.series = {
+			forceDL: defined(options.forced) ? options.forced : false,
 			visible: true,
 			chart: chart,
 			getPlotBox: seriesPrototype.getPlotBox,
@@ -361,8 +362,6 @@ Annotation.prototype = {
 			this.destroyLabel(label);
 
 		} else {
-			series = point.series;
-
 			if (!parentGroup) {
 				this.renderLabel(label);
 			}
@@ -465,7 +464,7 @@ Annotation.prototype = {
 
 			round = Math.round;
 
-		if (point.isInside && point.series.type !== 'pie') {
+		if (point.isInside && point.series.visible && point.series.type !== 'pie') {
 
 			position = (labelOptions.positioner || tooltipPrototype.getPosition).call({
 				chart: chart,
@@ -509,7 +508,7 @@ Annotation.prototype = {
 			true // true for not animating
 		);
 
-		if (label.placed) {
+		if (label.placed && isNumber(point.plotX) && isNumber(point.plotY)) {
 			plotBox = point.series.getPlotBox();
 			x = label.x + plotBox.translateX;
 			y = label.y + plotBox.translateY;
