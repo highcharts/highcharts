@@ -19,6 +19,7 @@ RewriteRule (.*?)highmaps.unstyled.src.js $1highmaps.unstyled.src.js
 # RewriteRule (.*?)highstock.js $1highstock.src.js
 
 RewriteRule (.*?)accessibility.js $1accessibility.src.js
+RewriteRule (.*?)annotations.js $1annotations.src.js
 RewriteRule (.*?)boost.js $1boost.src.js
 RewriteRule (.*?)boost-canvas.js $1boost-canvas.src.js
 RewriteRule (.*?)broken-axis.js $1broken-axis.src.js
