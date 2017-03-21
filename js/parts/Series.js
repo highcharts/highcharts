@@ -803,8 +803,10 @@ H.Series = H.seriesType('line', null, { // base series options
 				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 				point.dataGroup = series.groupMap[i];
 			}
-			point.index = cursor; // For faster access in Point.update
-			points[i] = point;
+			if (point) { // #6279
+				point.index = cursor; // For faster access in Point.update
+				points[i] = point;
+			}
 		}
 
 		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when
