@@ -8,7 +8,6 @@ Highcharts.chart('container', {
     }],
 
     annotations: [{
-        enabled: false,
     	labels: [{
     		point: 'max',
     		text: 'Max',

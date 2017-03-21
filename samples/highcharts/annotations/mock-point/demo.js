@@ -38,7 +38,7 @@ Highcharts.chart('container', {
         ]
         ,
         labelOptions: {
-            x: 40, y: -10, align: 'center'
+            x: 40, y: -10
         }
     }]
 });
