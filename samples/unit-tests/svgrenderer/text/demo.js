@@ -90,3 +90,25 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         'Width was too small for ellipsis.'
     );
 });
+
+QUnit.test('BBox for mulitiple lines', function (assert) {
+    var outerHTML,
+        chart = Highcharts.chart('container', {}, function(chart) {
+            var r = chart.renderer,
+                lab = r.label('<span></span><br/>line<br/>line', 20, 20)
+                    .css({
+                        color: '#f00'
+                    })
+                    .attr({
+                        fill: 'rgba(0, 100, 0, 0.75)',
+                        padding: 0
+                    })
+                    .add();
+            outerHTML = lab.text.element.children[0].outerHTML;
+        });
+
+    assert.ok(
+        !(/dy="\d/.test(outerHTML)),
+        "Frist line shouldn't have dy (#6144) - visually the red text fits in the green box."
+    );
+});

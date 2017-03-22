@@ -2112,6 +2112,7 @@ SVGRenderer.prototype = {
 			noWrap = textStyles && textStyles.whiteSpace === 'nowrap',
 			fontSize = textStyles && textStyles.fontSize,
 			textCache,
+			isSubsequentLine,
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
@@ -2247,7 +2248,7 @@ SVGRenderer.prototype = {
 							textNode.appendChild(tspan);
 
 							// first span on subsequent line, add the line height
-							if (!spanNo && lineNo) {
+							if (!spanNo && isSubsequentLine) {
 
 								// allow getting the right offset height in exporting in IE
 								if (!svg && forExport) {
@@ -2326,6 +2327,8 @@ SVGRenderer.prototype = {
 						}
 					}
 				});
+				// To avoid beginning lines that doesn't add to the textNode (#6144)
+				isSubsequentLine = isSubsequentLine || textNode.childNodes.length;
 			});
 
 			if (wasTooLong) {
