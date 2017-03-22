@@ -28,6 +28,7 @@ var merge = H.merge,
 	erase = H.erase,
 	find = H.find,
 	format = H.format,
+	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
 	correctFloat = H.correctFloat,
 
@@ -87,7 +88,7 @@ MockPoint.prototype = {
 				Math.min(
 					Math.max(
 						-1e5, 
-						xAxis.translate(this.x, 0, 0, 0, 1, null)
+						xAxis.translate(this.x, 0, 0, 0, 1)
 						),
 					1e5
 				)
@@ -135,7 +136,7 @@ Annotation.prototype = {
 			allowOverlap: false,
 			backgroundColor: 'rgba(0, 0, 0, 0.75)',
 			borderColor: 'black',
-			borderRadius: 5,
+			borderRadius: 1,
 			borderWidth: 1,
 			// className:
 			// color: undefined,
@@ -461,15 +462,31 @@ Annotation.prototype = {
 			shape = label.options.shape,
 			position,
 			seriesPlotBox,
+			tooltipContext,
+			anchor,
 
 			round = Math.round;
 
 		if (point.isInside && point.series.visible && point.series.type !== 'pie') {
-
-			position = (labelOptions.positioner || tooltipPrototype.getPosition).call({
+			tooltipContext = {
 				chart: chart,
-				distance: labelOptions.distance || 16
-			}, label.width, label.height, point);
+				distance: pick(labelOptions.distance, 16)
+			};
+
+			anchor = tooltipPrototype.getAnchor.call(tooltipContext, point);
+
+			position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
+				tooltipContext,
+				label.width,
+				label.height,
+				{
+					plotX: anchor[0],
+					plotY: anchor[1],
+					negative: point.negative,
+					ttBelow: point.ttBelow,
+					h: anchor[2] || 0
+				}
+			);
 
 			position.x = round(position.x);
 			position.y = round(position.y || 0);
@@ -477,8 +494,8 @@ Annotation.prototype = {
 			if (inArray(shape, this.shapesWithAnchor) > -1) {
 				seriesPlotBox = point.series.getPlotBox();
 			// create an array shapes with anchors
-				position.anchorX = round(point.plotX) + seriesPlotBox.translateX;
-				position.anchorY = round(point.plotY) + seriesPlotBox.translateY;
+				position.anchorX = anchor[0] + seriesPlotBox.translateX;
+				position.anchorY = anchor[1] + seriesPlotBox.translateY;
 			}
 		}
 
@@ -515,13 +532,13 @@ Annotation.prototype = {
 
 			label.attr({
 				x: x,
-				y: y
+				y: y,
 			});
 
 			// used by hideOvarlappingLabels
 			label.alignAttr = {
 				x: x,
-				y: y
+				y: y,
 			};
 		}
 
