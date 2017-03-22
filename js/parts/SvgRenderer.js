@@ -1387,6 +1387,17 @@ SVGElement.prototype = {
 		stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
+			// Look for existing references to this clipPath and remove them
+			// before destroying the element (#6196).
+			each(
+				wrapper.element.ownerSVGElement.querySelectorAll('[clip-path]'),
+				function (el) {
+					if (el.getAttribute('clip-path')
+							.indexOf(wrapper.clipPath.element.id) > -1) {
+						el.removeAttribute('clip-path');
+					}
+				}
+			);
 			wrapper.clipPath = wrapper.clipPath.destroy();
 		}
 
