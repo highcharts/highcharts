@@ -29,7 +29,8 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	/*= if (build.classic) { =*/
 	lineColor: '${palette.neutralColor100}',
 	lineWidth: 1,
-	upColor: '${palette.backgroundColor}'
+	upColor: '${palette.backgroundColor}',
+	stickyTracking: true
 	// upLineColor: null
 	/*= } =*/
 

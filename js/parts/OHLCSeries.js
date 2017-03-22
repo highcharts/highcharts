@@ -41,11 +41,13 @@ seriesType('ohlc', 'column', {
 		hover: {
 			lineWidth: 3
 		}
-	}
+	},
+	stickyTracking: true
 	//upColor: undefined
 	/*= } =*/
 
 }, /** @lends seriesTypes.ohlc */ {
+	directTouch: false,
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
