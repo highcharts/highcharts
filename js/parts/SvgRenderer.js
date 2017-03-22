@@ -334,7 +334,7 @@ SVGElement.prototype = {
 		color = textOutline[textOutline.length - 1];
 		strokeWidth = textOutline[0];
 
-		if (strokeWidth && strokeWidth !== 'none') {
+		if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
 			this.fakeTS = true; // Fake text shadow
 
