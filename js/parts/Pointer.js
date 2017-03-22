@@ -219,11 +219,11 @@ H.Pointer.prototype = {
 	},
 	
 	getHoverData: function (existingHoverPoint, existingHoverSeries, series, isDirectTouch, shared, e) {
-		var i,
-			hoverPoint = existingHoverPoint,
+		var hoverPoint = existingHoverPoint,
 			hoverSeries = existingHoverSeries,
+			searchSeries,
 			hoverPoints;
-			
+
 		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
 		// search the k-d tree.
@@ -253,36 +253,46 @@ H.Pointer.prototype = {
 			} else {
 				hoverPoints = [hoverPoint];
 			}
+		// When the hovered series has stickyTracking false.
 		} else if (hoverSeries && !hoverSeries.options.stickyTracking) {
-			hoverPoints = this.getKDPoints([hoverSeries], shared, e);
-			hoverPoint = hoverPoints[0];
-			hoverSeries = hoverPoint && hoverPoint.series;
-		} else {
-			if (!shared) { 
-				// For hovering over the empty parts of the plot area (hoverSeries is undefined).
-				// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
-				if (!hoverSeries) {
-					for (i = 0; i < series.length; i++) {
-						if (series[i].directTouch || !series[i].options.stickyTracking) {
-							series = [];
-						}
-					}
-				// When we have non-shared tooltip and sticky tracking is disabled,
-				// search for the closest point only on hovered series: #5533, #5476
-				} else if (!hoverSeries.options.stickyTracking) {
-					series = [hoverSeries];
-				}
+			if (!shared) {
+				series = [hoverSeries];
+			}
+			hoverPoints = this.getKDPoints(series, shared, e);
+			hoverPoint = H.find(hoverPoints, function (p) {
+				return p.series === hoverSeries;
+			});
+		// When the hoverSeries has stickyTracking or there is no series hovered.
+		} else if (hoverSeries && hoverSeries.options.stickyTracking) {
+			// If not shared tooltip, only search in series with stickyTracking
+			if (!shared) {
+				series = H.grep(series, function (s) {
+					return s.options.stickyTracking;
+				});
 			}
 			hoverPoints = this.getKDPoints(series, shared, e);
 			hoverPoint = hoverPoints[0];
 			hoverSeries = hoverPoint && hoverPoint.series;
+		// Nothing is currently hovered, look for something to hover.
+		} else {
+			// Avoid series with stickyTracking
+			searchSeries = H.grep(series, function (s) {
+				return s.options.stickyTracking;
+			});
+			hoverPoints = this.getKDPoints(searchSeries, shared, e);
+			hoverPoint = hoverPoints[0];
+			hoverSeries = hoverPoint && hoverPoint.series;
+			// If 
+			if (shared) {
+				hoverPoints = this.getKDPoints(series, shared, e);
+			}
 		}
 		// Keep the order of series in tooltip
 		// Must be done after assigning of hoverPoint
 		hoverPoints.sort(function (p1, p2) {
 			return p1.series.index - p2.series.index;
 		});
-		
+
 		return {
 			hoverPoint: hoverPoint,
 			hoverSeries: hoverSeries,
@@ -302,7 +312,7 @@ H.Pointer.prototype = {
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
 			// onMouseOver or already hovering a series with directTouch
-			isDirectTouch = !!p || (hoverSeries && hoverSeries.directTouch),
+			isDirectTouch = !!p || (!shared && hoverSeries && hoverSeries.directTouch),
 			hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e),
 			useSharedTooltip,
 			followPointer,
@@ -746,7 +756,7 @@ H.Pointer.prototype = {
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
-		
+
 		if (series && relatedTarget && !series.options.stickyTracking && 
 				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
 					(
