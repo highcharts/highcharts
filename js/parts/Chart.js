@@ -584,9 +584,11 @@ Chart.prototype = {
 					}, titleOptions), false, 'spacingBox');
 
 				if (!titleOptions.floating && !titleOptions.verticalAlign) {
-					titleOffset = Math.ceil(titleOffset
-						+ title.getBBox(titleOptions.useHTML).height);
+					titleOffset = Math.ceil(
+						titleOffset +
 						// Skip the cache for HTML (#3481)
+						title.getBBox(titleOptions.useHTML).height
+					);
 				}
 			}
 		}, this);
