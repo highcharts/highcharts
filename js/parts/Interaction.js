@@ -773,7 +773,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
+		if (tooltip && !series.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
 			tooltip.hide();
 		}
 

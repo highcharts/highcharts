@@ -254,7 +254,7 @@ H.Pointer.prototype = {
 				hoverPoints = [hoverPoint];
 			}
 		// When the hovered series has stickyTracking false.
-		} else if (hoverSeries && !hoverSeries.options.stickyTracking) {
+		} else if (hoverSeries && !hoverSeries.stickyTracking) {
 			if (!shared) {
 				series = [hoverSeries];
 			}
@@ -263,21 +263,10 @@ H.Pointer.prototype = {
 				return p.series === hoverSeries;
 			});
 		// When the hoverSeries has stickyTracking or there is no series hovered.
-		} else if (hoverSeries && hoverSeries.options.stickyTracking) {
-			// If not shared tooltip, only search in series with stickyTracking
-			if (!shared) {
-				series = H.grep(series, function (s) {
-					return s.options.stickyTracking;
-				});
-			}
-			hoverPoints = this.getKDPoints(series, shared, e);
-			hoverPoint = hoverPoints[0];
-			hoverSeries = hoverPoint && hoverPoint.series;
-		// Nothing is currently hovered, look for something to hover.
 		} else {
 			// Avoid series with stickyTracking
 			searchSeries = H.grep(series, function (s) {
-				return s.options.stickyTracking;
+				return s.stickyTracking;
 			});
 			hoverPoints = this.getKDPoints(searchSeries, shared, e);
 			hoverPoint = hoverPoints[0];
@@ -757,7 +746,7 @@ H.Pointer.prototype = {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
 
-		if (series && relatedTarget && !series.options.stickyTracking && 
+		if (series && relatedTarget && !series.stickyTracking && 
 				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
 					(
 						!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465

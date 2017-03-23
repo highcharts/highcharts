@@ -415,6 +415,19 @@ H.Series = H.seriesType('line', null, { // base series options
 			itemOptions.tooltip
 		);
 
+		// When shared tooltip, stickyTracking is true by default,
+		// unless user says otherwise.
+		this.stickyTracking = pick(
+			itemOptions.stickyTracking,
+			userPlotOptions[this.type] && userPlotOptions[this.type].stickyTracking,
+			userPlotOptions.series && userPlotOptions.series.stickyTracking,
+			(
+				this.tooltipOptions.shared && !this.noSharedTooltip ?
+				true :
+				options.stickyTracking
+			)
+		);
+		
 		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
