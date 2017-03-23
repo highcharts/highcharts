@@ -176,3 +176,50 @@ QUnit.test('3D pies stay in place on redraw (#5350)', function (assert) {
 
 
 });
+
+QUnit.test('Titles with useHTML: true adjust chart after resize (#3481)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 800,
+            height: 400
+        },
+        title: {
+            useHTML: true,
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque molestie mauris sed nibh pulvinar, sed commodo metus sodales. Mauris congue quam ultrices suscipit dictum."
+        },
+        subtitle: {
+            useHTML: true,
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel elit at nulla mollis dictum vel vel lectus. Aenean blandit scelerisque nunc. Quisque blandit ligula bibendum enim consectetur, et dignissim eros volutpat."
+        },
+
+        series: [{
+            data: [1, 2, 3]
+        }]
+    }),
+        plotTop = chart.plotTop;
+
+    // smaller
+    chart.setSize(600, 400);
+
+     assert.ok(
+        plotTop < chart.plotTop,
+        'plot top adjusted'
+    );
+
+    // back to start
+    chart.setSize(800, 400);
+
+    assert.strictEqual(
+        chart.plotTop,
+        plotTop,
+        'plot top back to start'
+    );
+
+    // bigger
+    chart.setSize(1000, 400);
+
+     assert.ok(
+        plotTop > chart.plotTop,
+        'plot top adjusted'
+    );
+});

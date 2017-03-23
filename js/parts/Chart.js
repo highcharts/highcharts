@@ -575,13 +575,18 @@ Chart.prototype = {
 				titleSize = renderer.fontMetrics(titleSize, title).b;
 				
 				title
-					.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + 'px' })
+					.css({
+						width: (titleOptions.width ||
+							spacingBox.width + titleOptions.widthAdjust) + 'px'
+					})
 					.align(extend({ 
 						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
 					}, titleOptions), false, 'spacingBox');
 
 				if (!titleOptions.floating && !titleOptions.verticalAlign) {
-					titleOffset = Math.ceil(titleOffset + title.getBBox().height);
+					titleOffset = Math.ceil(titleOffset
+						+ title.getBBox(titleOptions.useHTML).height);
+						// Skip the cache for HTML (#3481)
 				}
 			}
 		}, this);
