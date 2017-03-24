@@ -64,7 +64,6 @@ Legend.prototype = {
 		/*= } =*/
 		this.itemMarginTop = options.itemMarginTop || 0;
 		this.padding = padding;
-		this.initialItemX = padding;
 		this.initialItemY = padding - 5; // 5 is the number of pixels above the text
 		this.maxItemWidth = 0;
 		this.itemHeight = 0;
@@ -299,7 +298,6 @@ Legend.prototype = {
 			widthOption = options.width,
 			itemMarginBottom = options.itemMarginBottom || 0,
 			itemMarginTop = legend.itemMarginTop,
-			initialItemX = legend.initialItemX,
 			bBox,
 			itemWidth,
 			li = item.legendItem,
@@ -380,10 +378,16 @@ Legend.prototype = {
 			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
 		legend.itemHeight = itemHeight = Math.round(item.legendItemHeight || bBox.height);
 
-		// if the item exceeds the width, start a new line
-		if (horizontal && legend.itemX - initialItemX + itemWidth >
-				(widthOption || (chart.chartWidth - 2 * padding - initialItemX - options.x))) {
-			legend.itemX = initialItemX;
+		// If the item exceeds the width, start a new line
+		if (
+			horizontal &&
+			legend.itemX - padding + itemWidth > (
+				widthOption || (
+					chart.spacingBox.width - 2 * padding - options.x
+				)
+			)
+		) {
+			legend.itemX = padding;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
 			legend.lastLineHeight = 0; // reset for next line (#915, #3976)
 		}
@@ -414,7 +418,7 @@ Legend.prototype = {
 
 		// the width of the widest item
 		legend.offsetWidth = widthOption || Math.max(
-			(horizontal ? legend.itemX - initialItemX - itemDistance : itemWidth) + padding,
+			(horizontal ? legend.itemX - padding - itemDistance : itemWidth) + padding,
 			legend.offsetWidth
 		);
 	},
@@ -494,7 +498,7 @@ Legend.prototype = {
 			options = legend.options,
 			padding = legend.padding;
 
-		legend.itemX = legend.initialItemX;
+		legend.itemX = padding;
 		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
@@ -623,7 +627,9 @@ Legend.prototype = {
 			options = this.options,
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
-			spaceHeight = chart.spacingBox.height + (alignTop ? -optionsY : optionsY) - this.padding,
+			padding = this.padding,
+			spaceHeight = chart.spacingBox.height +
+				(alignTop ? -optionsY : optionsY) - padding,
 			maxHeight = options.maxHeight,
 			clipHeight,
 			clipRect = this.clipRect,
@@ -632,7 +638,6 @@ Legend.prototype = {
 			arrowSize = navOptions.arrowSize || 12,
 			nav = this.nav,
 			pages = this.pages,
-			padding = this.padding,
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
