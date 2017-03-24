@@ -473,11 +473,11 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
 
 wrap(H.Chart.prototype, 'getAxes', function (proceed) {
 
-	if (!this.panes) {
-		this.panes = [];
+	if (!this.pane) {
+		this.pane = [];
 	}
-	each(H.splat(this.options.pane), function (paneOptions, i) {
-		this.panes[i] = new H.Pane(
+	each(H.splat(this.options.pane), function (paneOptions) {
+		new H.Pane( // eslint-disable-line no-new
 			paneOptions,
 			this
 		);
@@ -489,7 +489,17 @@ wrap(H.Chart.prototype, 'getAxes', function (proceed) {
 wrap(H.Chart.prototype, 'drawChartBox', function (proceed) {
 	proceed.call(this);
 
-	each(this.panes, function (pane) {
+	each(this.pane, function (pane) {
 		pane.render();
 	});
+});
+
+/**
+ * Extend chart.get to also search in panes. Used internally in responsiveness
+ * and chart.update.
+ */
+wrap(H.Chart.prototype, 'get', function (proceed, id) {
+	return H.find(this.pane, function (pane) {
+		return pane.options.id === id;
+	}) || proceed.call(this, id);
 });

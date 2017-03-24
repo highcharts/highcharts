@@ -422,7 +422,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
-		pane = this.pane = chart.panes[paneIndex],
+		pane = this.pane = chart.pane[paneIndex],
 		paneOptions = pane.options;
 
 	// A pointer back to this axis to borrow geometry

@@ -14,6 +14,7 @@ var each = H.each,
  * The Pane object allows options that are common to a set of X and Y axes.
  *
  * In the future, this can be extended to basic Highcharts and Highstock.
+ *
  */
 function Pane(options, chart) {
 	this.init(options, chart);
@@ -22,17 +23,26 @@ function Pane(options, chart) {
 // Extend the Pane prototype
 extend(Pane.prototype, {
 
+	coll: 'pane', // Member of chart.pane
+
 	/**
 	 * Initiate the Pane object
 	 */
 	init: function (options, chart) {
 		this.chart = chart;
-		this.backgrounds = [];
+		this.background = [];
+
+		chart.pane.push(this);
+
+		this.setOptions(options);
+	},
+
+	setOptions: function (options) {
 
 		// Set options. Angular charts have a default background (#3318)
 		this.options = options = merge(
 			this.defaultOptions,
-			chart.angular ? { background: {} } : undefined,
+			this.chart.angular ? { background: {} } : undefined,
 			options
 		);
 	},
@@ -44,23 +54,41 @@ extend(Pane.prototype, {
 
 		var options = this.options,
 			backgroundOption = this.options.background,
-			renderer = this.chart.renderer;
+			renderer = this.chart.renderer,
+			len,
+			i;
 
-		this.group = renderer.g('pane-group')
-			.attr({ zIndex: options.zIndex || 0 })
-			.add();
+		if (!this.group) {
+			this.group = renderer.g('pane-group')
+				.attr({ zIndex: options.zIndex || 0 })
+				.add();
+		}
 
 		
 		// To avoid having weighty logic to place, update and remove the
 		// backgrounds, push them to the first axis' plot bands and borrow the
 		// existing logic there.
 		if (backgroundOption) {
-			each(splat(backgroundOption), function (config, i) {
-				this.renderBackground(
-					merge(this.defaultBackgroundOptions, config),
-					i
-				);
-			}, this);
+			backgroundOption = splat(backgroundOption);
+			len = Math.max(
+				backgroundOption.length,
+				this.background.length || 0
+			);
+
+			for (i = 0; i < len; i++) {
+				if (backgroundOption[i]) {
+					this.renderBackground(
+						merge(
+							this.defaultBackgroundOptions,
+							backgroundOption[i]
+						),
+						i
+					);
+				} else if (this.background[i]) {
+					this.background[i] = this.background[i].destroy();
+					this.background.splice(i, 1);
+				}
+			}
 		}
 	},
 
@@ -71,25 +99,25 @@ extend(Pane.prototype, {
 	 */
 	renderBackground: function (backgroundOptions, i) {
 		var method = 'animate';
-		
-		if (!this.backgrounds[i]) {
-			this.backgrounds[i] = this.chart.renderer.path()
+
+		if (!this.background[i]) {
+			this.background[i] = this.chart.renderer.path()
 				.add(this.group);
 			method = 'attr';
 		}
 
-		this.backgrounds[i][method]({
-			/*= if (build.classic) { =*/
-			'fill': backgroundOptions.backgroundColor,
-			'stroke': backgroundOptions.borderColor,
-			'stroke-width': backgroundOptions.borderWidth,
-			/*= } =*/
+		this.background[i][method]({
 			'd': this.axis.getPlotBandPath(
 				backgroundOptions.from,
 				backgroundOptions.to,
 				backgroundOptions
 			)
 		}).attr({
+			/*= if (build.classic) { =*/
+			'fill': backgroundOptions.backgroundColor,
+			'stroke': backgroundOptions.borderColor,
+			'stroke-width': backgroundOptions.borderWidth,
+			/*= } =*/
 			'class': 'highcharts-pane ' + (backgroundOptions.className || '')
 		});
 
@@ -127,6 +155,35 @@ extend(Pane.prototype, {
 		innerRadius: 0,
 		to: Number.MAX_VALUE, // corrected to axis max
 		outerRadius: '105%'
+	},
+
+	/**
+	 * Destroy the pane item
+	 * /
+	destroy: function () {
+		H.erase(this.chart.pane, this);
+		each(this.background, function (background) {
+			background.destroy();
+		});
+		this.background.length = 0;
+		this.group = this.group.destroy();
+	},
+	*/
+
+	/**
+	 * Update the pane item with new options
+	 * @param  {Object} options New pane options
+	 */
+	update: function (options) {
+		merge(true, this.options, options);
+		this.setOptions(this.options);
+		this.render();
+		each(this.chart.axes, function (axis) {
+			if (axis.pane === this) {
+				axis.pane = null;
+				axis.update({});
+			}
+		}, this);
 	}
 	
 });
