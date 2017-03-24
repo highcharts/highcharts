@@ -17,11 +17,9 @@ var Axis = H.Axis,
 	map = H.map,
 	merge = H.merge,
 	noop = H.noop,
-	Pane = H.Pane,
 	pick = H.pick,
 	pInt = H.pInt,
 	Tick = H.Tick,
-	splat = H.splat,
 	wrap = H.wrap,
 	
 
@@ -416,8 +414,7 @@ radialAxisMixin = {
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
 wrap(axisProto, 'init', function (proceed, chart, userOptions) {
-	var axis = this,
-		angular = chart.angular,
+	var angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,
 		isHidden = angular && isX,
@@ -425,8 +422,11 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
-		pane,
-		paneOptions;
+		pane = this.pane = chart.panes[paneIndex],
+		paneOptions = pane.options;
+
+	// A pointer back to this axis to borrow geometry
+	pane.axis = this;
 
 	// Before prototype.init
 	if (angular) {
@@ -457,17 +457,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 
 	if (!isHidden && (angular || polar)) {
 		options = this.options;
-
-		// Create the pane and set the pane options.
-		if (!chart.panes) {
-			chart.panes = [];
-		}
-		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			splat(chartOptions.pane)[paneIndex],
-			chart,
-			axis
-		);
-		paneOptions = pane.options;
 
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are

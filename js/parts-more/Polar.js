@@ -470,3 +470,26 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
 
 	return ret;
 });
+
+wrap(H.Chart.prototype, 'getAxes', function (proceed) {
+
+	if (!this.panes) {
+		this.panes = [];
+	}
+	each(H.splat(this.options.pane), function (paneOptions, i) {
+		this.panes[i] = new H.Pane(
+			paneOptions,
+			this
+		);
+	}, this);
+	
+	proceed.call(this);
+});
+
+wrap(H.Chart.prototype, 'drawChartBox', function (proceed) {
+	proceed.call(this);
+
+	each(this.panes, function (pane) {
+		pane.render();
+	});
+});
