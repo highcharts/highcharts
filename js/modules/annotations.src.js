@@ -84,31 +84,37 @@ MockPoint.prototype = {
 			isInside = true;
 
 		if (xAxis) {
-			this.plotX = plotX = correctFloat(
-				Math.min(
-					Math.max(
-						-1e5, 
-						xAxis.translate(this.x, 0, 0, 0, 1)
-						),
-					1e5
-				)
-			);
+			this.plotX = plotX = xAxis.toPixels(this.x, true);
 
 			isInside = plotX >= 0 && plotX <= xAxis.len;
 		}
 
 		if (yAxis) {
-			this.plotY = plotY = Math.min(
-				Math.max(
-					-1e5,
-					yAxis.translate(this.y, 0, 1, 0, 1)
-					),
-				1e5
-			);
+			this.plotY = plotY = yAxis.toPixels(this.y, true);
+
 			isInside = isInside && plotY >= 0 && plotY <= yAxis.len;
 		}
 
 		this.isInside = isInside;
+	},
+
+	getAlignToBox: function (returnsAsArray) {
+		var x = this.plotX,
+			y = this.plotY,
+			temp;
+
+		if (this.series.chart.inverted) {
+			temp = x;
+			x = y;
+			y = temp;
+		}
+
+		return !returnsAsArray ? {
+			width: 0,
+			height: 0,
+			x: x,
+			y: y 
+		} : [x, y, 0, 0];
 	},
 
 	getLabelConfig: function () {
@@ -464,6 +470,7 @@ Annotation.prototype = {
 			seriesPlotBox,
 			tooltipContext,
 			anchor,
+			alignToBox,
 
 			round = Math.round;
 
@@ -473,7 +480,8 @@ Annotation.prototype = {
 				distance: pick(labelOptions.distance, 16)
 			};
 
-			anchor = tooltipPrototype.getAnchor.call(tooltipContext, point);
+			anchor = (point.mock && point.getAlignToBox(true))
+				|| tooltipPrototype.getAnchor.call(tooltipContext, point);
 
 			position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
 				tooltipContext,
@@ -521,7 +529,7 @@ Annotation.prototype = {
 			point,
 			label,
 			label.options,
-			null,
+			point.mock && point.getAlignToBox(),
 			true // true for not animating
 		);
 
@@ -532,7 +540,7 @@ Annotation.prototype = {
 
 			label.attr({
 				x: x,
-				y: y,
+				y: y
 			});
 
 			// used by hideOvarlappingLabels
