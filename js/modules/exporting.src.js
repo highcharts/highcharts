@@ -571,18 +571,13 @@ extend(Chart.prototype, {
 			chart.exportEvents.push(
 				addEvent(menu, 'mouseleave', function () {
 					menu.hideTimer = setTimeout(hide, 500);
-				})
-			);
-
-			chart.exportEvents.push(
+				}),
 				addEvent(menu, 'mouseenter', function () {
 					clearTimeout(menu.hideTimer);
-				})
-			);
+				}),
 
-			// Hide it on clicking or touching outside the menu (#2258, #2335,
-			// #2407)
-			chart.exportEvents.push(
+				// Hide it on clicking or touching outside the menu (#2258, #2335,
+				// #2407)
 				addEvent(doc, 'mouseup', function (e) {
 					if (!chart.pointer.inClass(e.target, className)) {
 						hide();
