@@ -1363,7 +1363,7 @@ H.Axis.prototype = {
 			minPointOffset = this.minPointOffset || 0;
 
 		if (!this.isLinked) {
-			if (startOnTick) {
+			if (startOnTick && roundedMin !== -Infinity) { // #6502
 				this.min = roundedMin;
 			} else {
 				while (this.min - minPointOffset > tickPositions[0]) {
