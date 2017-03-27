@@ -5,8 +5,10 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import '../parts/CenteredSeriesMixin.js';
 import '../parts/Utilities.js';
-var each = H.each,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
+	each = H.each,
 	extend = H.extend,
 	merge = H.merge,
 	splat = H.splat;
@@ -64,10 +66,9 @@ extend(Pane.prototype, {
 				.add();
 		}
 
-		
-		// To avoid having weighty logic to place, update and remove the
-		// backgrounds, push them to the first axis' plot bands and borrow the
-		// existing logic there.
+		this.updateCenter();
+
+		// Render the backgrounds
 		if (backgroundOption) {
 			backgroundOption = splat(backgroundOption);
 			len = Math.max(
@@ -158,6 +159,14 @@ extend(Pane.prototype, {
 	},
 
 	/**
+	 * Gets the center for the pane and its axis.
+	 */
+	updateCenter: function () {
+		this.center = this.axis.center =
+			CenteredSeriesMixin.getCenter.call(this);
+	},
+
+	/**
 	 * Destroy the pane item
 	 * /
 	destroy: function () {
@@ -174,14 +183,15 @@ extend(Pane.prototype, {
 	 * Update the pane item with new options
 	 * @param  {Object} options New pane options
 	 */
-	update: function (options) {
+	update: function (options, redraw) {
+		
 		merge(true, this.options, options);
 		this.setOptions(this.options);
 		this.render();
 		each(this.chart.axes, function (axis) {
 			if (axis.pane === this) {
 				axis.pane = null;
-				axis.update({});
+				axis.update({}, redraw);
 			}
 		}, this);
 	}

@@ -7,11 +7,9 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
-import '../parts/CenteredSeriesMixin.js';
 import '../parts/Tick.js';
 import './Pane.js';
 var Axis = H.Axis,
-	CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,
 	extend = H.extend,
 	map = H.map,
@@ -131,9 +129,7 @@ radialAxisMixin = {
 
 		// Title or label offsets are not counted
 		this.chart.axisOffset[this.side] = 0;
-
-		// Set the center array
-		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+		
 	},
 
 
@@ -225,7 +221,7 @@ radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+			this.pane.updateCenter();
 
 			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
 			if (this.isCircular) {

@@ -245,3 +245,71 @@ QUnit.test('Pane update, backgrounds', function (assert) {
         '2 backgrounds after update'
     );
 });
+
+QUnit.test('Pane responsiveness', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'gauge',
+            height: '70%',
+            width: 300
+        },
+
+        title: null,
+
+        pane: {
+            center: ['50%', '85%'],
+            size: '140%',
+            startAngle: -90,
+            endAngle: 90,
+            background: {
+                backgroundColor: 'red',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
+        },
+
+        series: [{
+            data: [50]
+        }],
+
+        yAxis: {
+            min: 0,
+            max: 100
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 350
+                },
+                chartOptions: {
+                    plotOptions: {
+                        solidgauge: {
+                            dataLabels: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    yAxis: {
+                        labels: {
+                            enabled: false
+                        }
+                    },
+                    pane: {
+                        background: {
+                            backgroundColor: "green"
+                        }
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelector('.highcharts-pane-group path')
+            .getAttribute('fill'),
+        'green',
+        'Green background respected'
+    );
+});
