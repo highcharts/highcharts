@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nl-fr', 0],
+    ['nl-gr', 1],
+    ['nl-fl', 2],
+    ['nl-ze', 3],
+    ['nl-nh', 4],
+    ['nl-zh', 5],
+    ['nl-dr', 6],
+    ['nl-ge', 7],
+    ['nl-li', 8],
+    ['nl-ov', 9],
+    ['nl-nb', 10],
+    ['nl-ut', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nl-fr",
-            "value": 0
-        },
-        {
-            "hc-key": "nl-gr",
-            "value": 1
-        },
-        {
-            "hc-key": "nl-fl",
-            "value": 2
-        },
-        {
-            "hc-key": "nl-ze",
-            "value": 3
-        },
-        {
-            "hc-key": "nl-nh",
-            "value": 4
-        },
-        {
-            "hc-key": "nl-zh",
-            "value": 5
-        },
-        {
-            "hc-key": "nl-dr",
-            "value": 6
-        },
-        {
-            "hc-key": "nl-ge",
-            "value": 7
-        },
-        {
-            "hc-key": "nl-li",
-            "value": 8
-        },
-        {
-            "hc-key": "nl-ov",
-            "value": 9
-        },
-        {
-            "hc-key": "nl-nb",
-            "value": 10
-        },
-        {
-            "hc-key": "nl-ut",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/nl/nl-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-all.js">The Netherlands</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-all.js">The Netherlands</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/nl/nl-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

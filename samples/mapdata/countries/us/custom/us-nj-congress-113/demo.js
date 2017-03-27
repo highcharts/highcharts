@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-nj-02', 0],
+    ['us-nj-07', 1],
+    ['us-nj-01', 2],
+    ['us-nj-09', 3],
+    ['us-nj-06', 4],
+    ['us-nj-10', 5],
+    ['us-nj-12', 6],
+    ['us-nj-03', 7],
+    ['us-nj-11', 8],
+    ['us-nj-04', 9],
+    ['us-nj-05', 10],
+    ['us-nj-08', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-nj-02",
-            "value": 0
-        },
-        {
-            "hc-key": "us-nj-07",
-            "value": 1
-        },
-        {
-            "hc-key": "us-nj-01",
-            "value": 2
-        },
-        {
-            "hc-key": "us-nj-09",
-            "value": 3
-        },
-        {
-            "hc-key": "us-nj-06",
-            "value": 4
-        },
-        {
-            "hc-key": "us-nj-10",
-            "value": 5
-        },
-        {
-            "hc-key": "us-nj-12",
-            "value": 6
-        },
-        {
-            "hc-key": "us-nj-03",
-            "value": 7
-        },
-        {
-            "hc-key": "us-nj-11",
-            "value": 8
-        },
-        {
-            "hc-key": "us-nj-04",
-            "value": 9
-        },
-        {
-            "hc-key": "us-nj-05",
-            "value": 10
-        },
-        {
-            "hc-key": "us-nj-08",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-nj-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-nj-congress-113.js">New Jersey congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-nj-congress-113.js">New Jersey congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-nj-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

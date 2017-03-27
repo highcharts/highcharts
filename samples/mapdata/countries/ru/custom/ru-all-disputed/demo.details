@@ -1,4 +1,5 @@
 ---
  name: Russia with disputed territories - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

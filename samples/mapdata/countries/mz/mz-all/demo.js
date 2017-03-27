@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mz-nm', 0],
+    ['mz-in', 1],
+    ['mz-mp', 2],
+    ['mz-za', 3],
+    ['mz-7278', 4],
+    ['mz-te', 5],
+    ['mz-mn', 6],
+    ['mz-cd', 7],
+    ['mz-ns', 8],
+    ['mz-ga', 9],
+    ['mz-so', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mz-nm",
-            "value": 0
-        },
-        {
-            "hc-key": "mz-in",
-            "value": 1
-        },
-        {
-            "hc-key": "mz-mp",
-            "value": 2
-        },
-        {
-            "hc-key": "mz-za",
-            "value": 3
-        },
-        {
-            "hc-key": "mz-7278",
-            "value": 4
-        },
-        {
-            "hc-key": "mz-te",
-            "value": 5
-        },
-        {
-            "hc-key": "mz-mn",
-            "value": 6
-        },
-        {
-            "hc-key": "mz-cd",
-            "value": 7
-        },
-        {
-            "hc-key": "mz-ns",
-            "value": 8
-        },
-        {
-            "hc-key": "mz-ga",
-            "value": 9
-        },
-        {
-            "hc-key": "mz-so",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mz/mz-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mz/mz-all.js">Mozambique</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mz/mz-all.js">Mozambique</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mz/mz-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

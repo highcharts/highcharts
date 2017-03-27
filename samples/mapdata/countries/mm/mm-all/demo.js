@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mm-tn', 0],
+    ['mm-5760', 1],
+    ['mm-mo', 2],
+    ['mm-ra', 3],
+    ['mm-ay', 4],
+    ['mm-ch', 5],
+    ['mm-mg', 6],
+    ['mm-sh', 7],
+    ['mm-kh', 8],
+    ['mm-kn', 9],
+    ['mm-kc', 10],
+    ['mm-sa', 11],
+    ['mm-ba', 12],
+    ['mm-md', 13],
+    ['mm-ya', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mm-tn",
-            "value": 0
-        },
-        {
-            "hc-key": "mm-5760",
-            "value": 1
-        },
-        {
-            "hc-key": "mm-mo",
-            "value": 2
-        },
-        {
-            "hc-key": "mm-ra",
-            "value": 3
-        },
-        {
-            "hc-key": "mm-ay",
-            "value": 4
-        },
-        {
-            "hc-key": "mm-ch",
-            "value": 5
-        },
-        {
-            "hc-key": "mm-mg",
-            "value": 6
-        },
-        {
-            "hc-key": "mm-sh",
-            "value": 7
-        },
-        {
-            "hc-key": "mm-kh",
-            "value": 8
-        },
-        {
-            "hc-key": "mm-kn",
-            "value": 9
-        },
-        {
-            "hc-key": "mm-kc",
-            "value": 10
-        },
-        {
-            "hc-key": "mm-sa",
-            "value": 11
-        },
-        {
-            "hc-key": "mm-ba",
-            "value": 12
-        },
-        {
-            "hc-key": "mm-md",
-            "value": 13
-        },
-        {
-            "hc-key": "mm-ya",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mm/mm-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mm/mm-all.js">Myanmar</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mm/mm-all.js">Myanmar</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mm/mm-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

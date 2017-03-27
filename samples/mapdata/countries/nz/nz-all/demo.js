@@ -1,121 +1,64 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nz-au', 0],
+    ['nz-ma', 1],
+    ['nz-so', 2],
+    ['nz-wk', 3],
+    ['nz-wg', 4],
+    ['nz-4680', 5],
+    ['nz-6943', 6],
+    ['nz-6947', 7],
+    ['nz-ca', 8],
+    ['nz-ot', 9],
+    ['nz-mw', 10],
+    ['nz-gi', 11],
+    ['nz-hb', 12],
+    ['nz-bp', 13],
+    ['nz-3315', 14],
+    ['nz-3316', 15],
+    ['nz-no', 16],
+    ['nz-tk', 17],
+    ['nz-wc', 18]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nz-au",
-            "value": 0
-        },
-        {
-            "hc-key": "nz-ma",
-            "value": 1
-        },
-        {
-            "hc-key": "nz-so",
-            "value": 2
-        },
-        {
-            "hc-key": "nz-wk",
-            "value": 3
-        },
-        {
-            "hc-key": "nz-wg",
-            "value": 4
-        },
-        {
-            "hc-key": "nz-4680",
-            "value": 5
-        },
-        {
-            "hc-key": "nz-6943",
-            "value": 6
-        },
-        {
-            "hc-key": "nz-6947",
-            "value": 7
-        },
-        {
-            "hc-key": "nz-ca",
-            "value": 8
-        },
-        {
-            "hc-key": "nz-ot",
-            "value": 9
-        },
-        {
-            "hc-key": "nz-mw",
-            "value": 10
-        },
-        {
-            "hc-key": "nz-gi",
-            "value": 11
-        },
-        {
-            "hc-key": "nz-hb",
-            "value": 12
-        },
-        {
-            "hc-key": "nz-bp",
-            "value": 13
-        },
-        {
-            "hc-key": "nz-3315",
-            "value": 14
-        },
-        {
-            "hc-key": "nz-3316",
-            "value": 15
-        },
-        {
-            "hc-key": "nz-no",
-            "value": 16
-        },
-        {
-            "hc-key": "nz-tk",
-            "value": 17
-        },
-        {
-            "hc-key": "nz-wc",
-            "value": 18
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/nz/nz-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nz/nz-all.js">New Zealand</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nz/nz-all.js">New Zealand</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/nz/nz-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

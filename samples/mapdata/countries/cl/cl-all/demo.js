@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cl-2730', 0],
+    ['cl-bi', 1],
+    ['cl-ll', 2],
+    ['cl-li', 3],
+    ['cl-ai', 4],
+    ['cl-ma', 5],
+    ['cl-co', 6],
+    ['cl-at', 7],
+    ['cl-vs', 8],
+    ['cl-rm', 9],
+    ['cl-ar', 10],
+    ['cl-ml', 11],
+    ['cl-ta', 12],
+    ['cl-2740', 13],
+    ['cl-an', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cl-2730",
-            "value": 0
-        },
-        {
-            "hc-key": "cl-bi",
-            "value": 1
-        },
-        {
-            "hc-key": "cl-ll",
-            "value": 2
-        },
-        {
-            "hc-key": "cl-li",
-            "value": 3
-        },
-        {
-            "hc-key": "cl-ai",
-            "value": 4
-        },
-        {
-            "hc-key": "cl-ma",
-            "value": 5
-        },
-        {
-            "hc-key": "cl-co",
-            "value": 6
-        },
-        {
-            "hc-key": "cl-at",
-            "value": 7
-        },
-        {
-            "hc-key": "cl-vs",
-            "value": 8
-        },
-        {
-            "hc-key": "cl-rm",
-            "value": 9
-        },
-        {
-            "hc-key": "cl-ar",
-            "value": 10
-        },
-        {
-            "hc-key": "cl-ml",
-            "value": 11
-        },
-        {
-            "hc-key": "cl-ta",
-            "value": 12
-        },
-        {
-            "hc-key": "cl-2740",
-            "value": 13
-        },
-        {
-            "hc-key": "cl-an",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cl/cl-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cl/cl-all.js">Chile</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cl/cl-all.js">Chile</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cl/cl-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

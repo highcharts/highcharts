@@ -1,117 +1,63 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['hn-ib', 0],
+    ['hn-va', 1],
+    ['hn-at', 2],
+    ['hn-gd', 3],
+    ['hn-cl', 4],
+    ['hn-ol', 5],
+    ['hn-fm', 6],
+    ['hn-yo', 7],
+    ['hn-cm', 8],
+    ['hn-cr', 9],
+    ['hn-in', 10],
+    ['hn-lp', 11],
+    ['hn-sb', 12],
+    ['hn-cp', 13],
+    ['hn-le', 14],
+    ['hn-oc', 15],
+    ['hn-ch', 16],
+    ['hn-ep', 17]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "hn-ib",
-            "value": 0
-        },
-        {
-            "hc-key": "hn-va",
-            "value": 1
-        },
-        {
-            "hc-key": "hn-at",
-            "value": 2
-        },
-        {
-            "hc-key": "hn-gd",
-            "value": 3
-        },
-        {
-            "hc-key": "hn-cl",
-            "value": 4
-        },
-        {
-            "hc-key": "hn-ol",
-            "value": 5
-        },
-        {
-            "hc-key": "hn-fm",
-            "value": 6
-        },
-        {
-            "hc-key": "hn-yo",
-            "value": 7
-        },
-        {
-            "hc-key": "hn-cm",
-            "value": 8
-        },
-        {
-            "hc-key": "hn-cr",
-            "value": 9
-        },
-        {
-            "hc-key": "hn-in",
-            "value": 10
-        },
-        {
-            "hc-key": "hn-lp",
-            "value": 11
-        },
-        {
-            "hc-key": "hn-sb",
-            "value": 12
-        },
-        {
-            "hc-key": "hn-cp",
-            "value": 13
-        },
-        {
-            "hc-key": "hn-le",
-            "value": 14
-        },
-        {
-            "hc-key": "hn-oc",
-            "value": 15
-        },
-        {
-            "hc-key": "hn-ch",
-            "value": 16
-        },
-        {
-            "hc-key": "hn-ep",
-            "value": 17
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/hn/hn-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hn/hn-all.js">Honduras</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/hn/hn-all.js">Honduras</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/hn/hn-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

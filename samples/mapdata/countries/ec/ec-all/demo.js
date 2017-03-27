@@ -1,145 +1,72 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ec-gu', 0],
+    ['ec-es', 1],
+    ['ec-cr', 2],
+    ['ec-im', 3],
+    ['ec-su', 4],
+    ['ec-se', 5],
+    ['ec-sd', 6],
+    ['ec-az', 7],
+    ['ec-eo', 8],
+    ['ec-lj', 9],
+    ['ec-zc', 10],
+    ['ec-cn', 11],
+    ['ec-bo', 12],
+    ['ec-ct', 13],
+    ['ec-lr', 14],
+    ['ec-mn', 15],
+    ['ec-cb', 16],
+    ['ec-ms', 17],
+    ['ec-pi', 18],
+    ['ec-pa', 19],
+    ['ec-1076', 20],
+    ['ec-na', 21],
+    ['ec-tu', 22],
+    ['ec-ga', 23],
+    ['undefined', 24]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ec-gu",
-            "value": 0
-        },
-        {
-            "hc-key": "ec-es",
-            "value": 1
-        },
-        {
-            "hc-key": "ec-cr",
-            "value": 2
-        },
-        {
-            "hc-key": "ec-im",
-            "value": 3
-        },
-        {
-            "hc-key": "ec-su",
-            "value": 4
-        },
-        {
-            "hc-key": "ec-se",
-            "value": 5
-        },
-        {
-            "hc-key": "ec-sd",
-            "value": 6
-        },
-        {
-            "hc-key": "ec-az",
-            "value": 7
-        },
-        {
-            "hc-key": "ec-eo",
-            "value": 8
-        },
-        {
-            "hc-key": "ec-lj",
-            "value": 9
-        },
-        {
-            "hc-key": "ec-zc",
-            "value": 10
-        },
-        {
-            "hc-key": "ec-cn",
-            "value": 11
-        },
-        {
-            "hc-key": "ec-bo",
-            "value": 12
-        },
-        {
-            "hc-key": "ec-ct",
-            "value": 13
-        },
-        {
-            "hc-key": "ec-lr",
-            "value": 14
-        },
-        {
-            "hc-key": "ec-mn",
-            "value": 15
-        },
-        {
-            "hc-key": "ec-cb",
-            "value": 16
-        },
-        {
-            "hc-key": "ec-ms",
-            "value": 17
-        },
-        {
-            "hc-key": "ec-pi",
-            "value": 18
-        },
-        {
-            "hc-key": "ec-pa",
-            "value": 19
-        },
-        {
-            "hc-key": "ec-1076",
-            "value": 20
-        },
-        {
-            "hc-key": "ec-na",
-            "value": 21
-        },
-        {
-            "hc-key": "ec-tu",
-            "value": 22
-        },
-        {
-            "hc-key": "ec-ga",
-            "value": 23
-        },
-        {
-            "value": 24
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ec/ec-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ec/ec-all.js">Ecuador</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ec/ec-all.js">Ecuador</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ec/ec-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }, {
+            format: '{point.name}'
+        }
+    }, {
             name: 'Separators',
             type: 'mapline',
             data: Highcharts.geojson(Highcharts.maps['countries/ec/ec-all'], 'mapline'),
@@ -147,5 +74,4 @@ $(function () {
             showInLegend: false,
             enableMouseTracking: false
         }]
-    });
 });

@@ -1,141 +1,69 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-md-047', 0],
+    ['us-md-039', 1],
+    ['us-md-037', 2],
+    ['us-md-019', 3],
+    ['us-md-027', 4],
+    ['us-md-021', 5],
+    ['us-md-031', 6],
+    ['us-md-023', 7],
+    ['us-md-003', 8],
+    ['us-md-033', 9],
+    ['us-md-017', 10],
+    ['us-md-510', 11],
+    ['us-md-005', 12],
+    ['us-md-001', 13],
+    ['us-md-043', 14],
+    ['us-md-035', 15],
+    ['us-md-041', 16],
+    ['us-md-011', 17],
+    ['us-md-045', 18],
+    ['us-md-013', 19],
+    ['us-md-015', 20],
+    ['us-md-029', 21],
+    ['us-md-009', 22],
+    ['us-md-025', 23]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-md-047",
-            "value": 0
-        },
-        {
-            "hc-key": "us-md-039",
-            "value": 1
-        },
-        {
-            "hc-key": "us-md-037",
-            "value": 2
-        },
-        {
-            "hc-key": "us-md-019",
-            "value": 3
-        },
-        {
-            "hc-key": "us-md-027",
-            "value": 4
-        },
-        {
-            "hc-key": "us-md-021",
-            "value": 5
-        },
-        {
-            "hc-key": "us-md-031",
-            "value": 6
-        },
-        {
-            "hc-key": "us-md-023",
-            "value": 7
-        },
-        {
-            "hc-key": "us-md-003",
-            "value": 8
-        },
-        {
-            "hc-key": "us-md-033",
-            "value": 9
-        },
-        {
-            "hc-key": "us-md-017",
-            "value": 10
-        },
-        {
-            "hc-key": "us-md-510",
-            "value": 11
-        },
-        {
-            "hc-key": "us-md-005",
-            "value": 12
-        },
-        {
-            "hc-key": "us-md-001",
-            "value": 13
-        },
-        {
-            "hc-key": "us-md-043",
-            "value": 14
-        },
-        {
-            "hc-key": "us-md-035",
-            "value": 15
-        },
-        {
-            "hc-key": "us-md-041",
-            "value": 16
-        },
-        {
-            "hc-key": "us-md-011",
-            "value": 17
-        },
-        {
-            "hc-key": "us-md-045",
-            "value": 18
-        },
-        {
-            "hc-key": "us-md-013",
-            "value": 19
-        },
-        {
-            "hc-key": "us-md-015",
-            "value": 20
-        },
-        {
-            "hc-key": "us-md-029",
-            "value": 21
-        },
-        {
-            "hc-key": "us-md-009",
-            "value": 22
-        },
-        {
-            "hc-key": "us-md-025",
-            "value": 23
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-md-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-md-all.js">Maryland</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-md-all.js">Maryland</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-md-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

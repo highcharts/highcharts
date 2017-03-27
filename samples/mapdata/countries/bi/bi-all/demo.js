@@ -1,113 +1,62 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['bi-br', 0],
+    ['bi-bb', 1],
+    ['bi-ci', 2],
+    ['bi-gi', 3],
+    ['bi-ky', 4],
+    ['bi-ma', 5],
+    ['bi-ng', 6],
+    ['bi-ki', 7],
+    ['bi-my', 8],
+    ['bi-bm', 9],
+    ['bi-mv', 10],
+    ['bi-bu', 11],
+    ['bi-mw', 12],
+    ['bi-ca', 13],
+    ['bi-kr', 14],
+    ['bi-rt', 15],
+    ['bi-ry', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "bi-br",
-            "value": 0
-        },
-        {
-            "hc-key": "bi-bb",
-            "value": 1
-        },
-        {
-            "hc-key": "bi-ci",
-            "value": 2
-        },
-        {
-            "hc-key": "bi-gi",
-            "value": 3
-        },
-        {
-            "hc-key": "bi-ky",
-            "value": 4
-        },
-        {
-            "hc-key": "bi-ma",
-            "value": 5
-        },
-        {
-            "hc-key": "bi-ng",
-            "value": 6
-        },
-        {
-            "hc-key": "bi-ki",
-            "value": 7
-        },
-        {
-            "hc-key": "bi-my",
-            "value": 8
-        },
-        {
-            "hc-key": "bi-bm",
-            "value": 9
-        },
-        {
-            "hc-key": "bi-mv",
-            "value": 10
-        },
-        {
-            "hc-key": "bi-bu",
-            "value": 11
-        },
-        {
-            "hc-key": "bi-mw",
-            "value": 12
-        },
-        {
-            "hc-key": "bi-ca",
-            "value": 13
-        },
-        {
-            "hc-key": "bi-kr",
-            "value": 14
-        },
-        {
-            "hc-key": "bi-rt",
-            "value": 15
-        },
-        {
-            "hc-key": "bi-ry",
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/bi/bi-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bi/bi-all.js">Burundi</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bi/bi-all.js">Burundi</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/bi/bi-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,453 +1,147 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-il-003', 0],
+    ['us-il-181', 1],
+    ['us-il-187', 2],
+    ['us-il-109', 3],
+    ['us-il-147', 4],
+    ['us-il-113', 5],
+    ['us-il-195', 6],
+    ['us-il-089', 7],
+    ['us-il-043', 8],
+    ['us-il-119', 9],
+    ['us-il-083', 10],
+    ['us-il-193', 11],
+    ['us-il-059', 12],
+    ['us-il-019', 13],
+    ['us-il-053', 14],
+    ['us-il-041', 15],
+    ['us-il-045', 16],
+    ['us-il-007', 17],
+    ['us-il-201', 18],
+    ['us-il-155', 19],
+    ['us-il-099', 20],
+    ['us-il-121', 21],
+    ['us-il-025', 22],
+    ['us-il-197', 23],
+    ['us-il-049', 24],
+    ['us-il-051', 25],
+    ['us-il-035', 26],
+    ['us-il-163', 27],
+    ['us-il-027', 28],
+    ['us-il-189', 29],
+    ['us-il-145', 30],
+    ['us-il-175', 31],
+    ['us-il-073', 32],
+    ['us-il-123', 33],
+    ['us-il-143', 34],
+    ['us-il-011', 35],
+    ['us-il-103', 36],
+    ['us-il-029', 37],
+    ['us-il-037', 38],
+    ['us-il-093', 39],
+    ['us-il-039', 40],
+    ['us-il-107', 41],
+    ['us-il-129', 42],
+    ['us-il-157', 43],
+    ['us-il-077', 44],
+    ['us-il-203', 45],
+    ['us-il-105', 46],
+    ['us-il-057', 47],
+    ['us-il-071', 48],
+    ['us-il-135', 49],
+    ['us-il-061', 50],
+    ['us-il-149', 51],
+    ['us-il-017', 52],
+    ['us-il-009', 53],
+    ['us-il-137', 54],
+    ['us-il-117', 55],
+    ['us-il-005', 56],
+    ['us-il-191', 57],
+    ['us-il-167', 58],
+    ['us-il-153', 59],
+    ['us-il-127', 60],
+    ['us-il-065', 61],
+    ['us-il-047', 62],
+    ['us-il-173', 63],
+    ['us-il-115', 64],
+    ['us-il-021', 65],
+    ['us-il-031', 66],
+    ['us-il-131', 67],
+    ['us-il-183', 68],
+    ['us-il-185', 69],
+    ['us-il-101', 70],
+    ['us-il-111', 71],
+    ['us-il-179', 72],
+    ['us-il-055', 73],
+    ['us-il-081', 74],
+    ['us-il-141', 75],
+    ['us-il-067', 76],
+    ['us-il-169', 77],
+    ['us-il-079', 78],
+    ['us-il-023', 79],
+    ['us-il-091', 80],
+    ['us-il-125', 81],
+    ['us-il-159', 82],
+    ['us-il-165', 83],
+    ['us-il-069', 84],
+    ['us-il-151', 85],
+    ['us-il-133', 86],
+    ['us-il-177', 87],
+    ['us-il-161', 88],
+    ['us-il-001', 89],
+    ['us-il-075', 90],
+    ['us-il-087', 91],
+    ['us-il-095', 92],
+    ['us-il-013', 93],
+    ['us-il-171', 94],
+    ['us-il-015', 95],
+    ['us-il-063', 96],
+    ['us-il-085', 97],
+    ['us-il-199', 98],
+    ['us-il-033', 99],
+    ['us-il-097', 100],
+    ['us-il-139', 101]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-il-003",
-            "value": 0
-        },
-        {
-            "hc-key": "us-il-181",
-            "value": 1
-        },
-        {
-            "hc-key": "us-il-187",
-            "value": 2
-        },
-        {
-            "hc-key": "us-il-109",
-            "value": 3
-        },
-        {
-            "hc-key": "us-il-147",
-            "value": 4
-        },
-        {
-            "hc-key": "us-il-113",
-            "value": 5
-        },
-        {
-            "hc-key": "us-il-195",
-            "value": 6
-        },
-        {
-            "hc-key": "us-il-089",
-            "value": 7
-        },
-        {
-            "hc-key": "us-il-043",
-            "value": 8
-        },
-        {
-            "hc-key": "us-il-119",
-            "value": 9
-        },
-        {
-            "hc-key": "us-il-083",
-            "value": 10
-        },
-        {
-            "hc-key": "us-il-193",
-            "value": 11
-        },
-        {
-            "hc-key": "us-il-059",
-            "value": 12
-        },
-        {
-            "hc-key": "us-il-019",
-            "value": 13
-        },
-        {
-            "hc-key": "us-il-053",
-            "value": 14
-        },
-        {
-            "hc-key": "us-il-041",
-            "value": 15
-        },
-        {
-            "hc-key": "us-il-045",
-            "value": 16
-        },
-        {
-            "hc-key": "us-il-007",
-            "value": 17
-        },
-        {
-            "hc-key": "us-il-201",
-            "value": 18
-        },
-        {
-            "hc-key": "us-il-155",
-            "value": 19
-        },
-        {
-            "hc-key": "us-il-099",
-            "value": 20
-        },
-        {
-            "hc-key": "us-il-121",
-            "value": 21
-        },
-        {
-            "hc-key": "us-il-025",
-            "value": 22
-        },
-        {
-            "hc-key": "us-il-197",
-            "value": 23
-        },
-        {
-            "hc-key": "us-il-049",
-            "value": 24
-        },
-        {
-            "hc-key": "us-il-051",
-            "value": 25
-        },
-        {
-            "hc-key": "us-il-035",
-            "value": 26
-        },
-        {
-            "hc-key": "us-il-163",
-            "value": 27
-        },
-        {
-            "hc-key": "us-il-027",
-            "value": 28
-        },
-        {
-            "hc-key": "us-il-189",
-            "value": 29
-        },
-        {
-            "hc-key": "us-il-145",
-            "value": 30
-        },
-        {
-            "hc-key": "us-il-175",
-            "value": 31
-        },
-        {
-            "hc-key": "us-il-073",
-            "value": 32
-        },
-        {
-            "hc-key": "us-il-123",
-            "value": 33
-        },
-        {
-            "hc-key": "us-il-143",
-            "value": 34
-        },
-        {
-            "hc-key": "us-il-011",
-            "value": 35
-        },
-        {
-            "hc-key": "us-il-103",
-            "value": 36
-        },
-        {
-            "hc-key": "us-il-029",
-            "value": 37
-        },
-        {
-            "hc-key": "us-il-037",
-            "value": 38
-        },
-        {
-            "hc-key": "us-il-093",
-            "value": 39
-        },
-        {
-            "hc-key": "us-il-039",
-            "value": 40
-        },
-        {
-            "hc-key": "us-il-107",
-            "value": 41
-        },
-        {
-            "hc-key": "us-il-129",
-            "value": 42
-        },
-        {
-            "hc-key": "us-il-157",
-            "value": 43
-        },
-        {
-            "hc-key": "us-il-077",
-            "value": 44
-        },
-        {
-            "hc-key": "us-il-203",
-            "value": 45
-        },
-        {
-            "hc-key": "us-il-105",
-            "value": 46
-        },
-        {
-            "hc-key": "us-il-057",
-            "value": 47
-        },
-        {
-            "hc-key": "us-il-071",
-            "value": 48
-        },
-        {
-            "hc-key": "us-il-135",
-            "value": 49
-        },
-        {
-            "hc-key": "us-il-061",
-            "value": 50
-        },
-        {
-            "hc-key": "us-il-149",
-            "value": 51
-        },
-        {
-            "hc-key": "us-il-017",
-            "value": 52
-        },
-        {
-            "hc-key": "us-il-009",
-            "value": 53
-        },
-        {
-            "hc-key": "us-il-137",
-            "value": 54
-        },
-        {
-            "hc-key": "us-il-117",
-            "value": 55
-        },
-        {
-            "hc-key": "us-il-005",
-            "value": 56
-        },
-        {
-            "hc-key": "us-il-191",
-            "value": 57
-        },
-        {
-            "hc-key": "us-il-167",
-            "value": 58
-        },
-        {
-            "hc-key": "us-il-153",
-            "value": 59
-        },
-        {
-            "hc-key": "us-il-127",
-            "value": 60
-        },
-        {
-            "hc-key": "us-il-065",
-            "value": 61
-        },
-        {
-            "hc-key": "us-il-047",
-            "value": 62
-        },
-        {
-            "hc-key": "us-il-173",
-            "value": 63
-        },
-        {
-            "hc-key": "us-il-115",
-            "value": 64
-        },
-        {
-            "hc-key": "us-il-021",
-            "value": 65
-        },
-        {
-            "hc-key": "us-il-031",
-            "value": 66
-        },
-        {
-            "hc-key": "us-il-131",
-            "value": 67
-        },
-        {
-            "hc-key": "us-il-183",
-            "value": 68
-        },
-        {
-            "hc-key": "us-il-185",
-            "value": 69
-        },
-        {
-            "hc-key": "us-il-101",
-            "value": 70
-        },
-        {
-            "hc-key": "us-il-111",
-            "value": 71
-        },
-        {
-            "hc-key": "us-il-179",
-            "value": 72
-        },
-        {
-            "hc-key": "us-il-055",
-            "value": 73
-        },
-        {
-            "hc-key": "us-il-081",
-            "value": 74
-        },
-        {
-            "hc-key": "us-il-141",
-            "value": 75
-        },
-        {
-            "hc-key": "us-il-067",
-            "value": 76
-        },
-        {
-            "hc-key": "us-il-169",
-            "value": 77
-        },
-        {
-            "hc-key": "us-il-079",
-            "value": 78
-        },
-        {
-            "hc-key": "us-il-023",
-            "value": 79
-        },
-        {
-            "hc-key": "us-il-091",
-            "value": 80
-        },
-        {
-            "hc-key": "us-il-125",
-            "value": 81
-        },
-        {
-            "hc-key": "us-il-159",
-            "value": 82
-        },
-        {
-            "hc-key": "us-il-165",
-            "value": 83
-        },
-        {
-            "hc-key": "us-il-069",
-            "value": 84
-        },
-        {
-            "hc-key": "us-il-151",
-            "value": 85
-        },
-        {
-            "hc-key": "us-il-133",
-            "value": 86
-        },
-        {
-            "hc-key": "us-il-177",
-            "value": 87
-        },
-        {
-            "hc-key": "us-il-161",
-            "value": 88
-        },
-        {
-            "hc-key": "us-il-001",
-            "value": 89
-        },
-        {
-            "hc-key": "us-il-075",
-            "value": 90
-        },
-        {
-            "hc-key": "us-il-087",
-            "value": 91
-        },
-        {
-            "hc-key": "us-il-095",
-            "value": 92
-        },
-        {
-            "hc-key": "us-il-013",
-            "value": 93
-        },
-        {
-            "hc-key": "us-il-171",
-            "value": 94
-        },
-        {
-            "hc-key": "us-il-015",
-            "value": 95
-        },
-        {
-            "hc-key": "us-il-063",
-            "value": 96
-        },
-        {
-            "hc-key": "us-il-085",
-            "value": 97
-        },
-        {
-            "hc-key": "us-il-199",
-            "value": 98
-        },
-        {
-            "hc-key": "us-il-033",
-            "value": 99
-        },
-        {
-            "hc-key": "us-il-097",
-            "value": 100
-        },
-        {
-            "hc-key": "us-il-139",
-            "value": 101
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-il-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-il-all.js">Illinois</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-il-all.js">Illinois</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-il-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

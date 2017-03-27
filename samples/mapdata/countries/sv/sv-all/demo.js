@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sv-un', 0],
+    ['sv-li', 1],
+    ['sv-pa', 2],
+    ['sv-cu', 3],
+    ['sv-so', 4],
+    ['sv-ss', 5],
+    ['sv-mo', 6],
+    ['sv-sm', 7],
+    ['sv-sv', 8],
+    ['sv-us', 9],
+    ['sv-ch', 10],
+    ['sv-sa', 11],
+    ['sv-ah', 12],
+    ['sv-ca', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sv-un",
-            "value": 0
-        },
-        {
-            "hc-key": "sv-li",
-            "value": 1
-        },
-        {
-            "hc-key": "sv-pa",
-            "value": 2
-        },
-        {
-            "hc-key": "sv-cu",
-            "value": 3
-        },
-        {
-            "hc-key": "sv-so",
-            "value": 4
-        },
-        {
-            "hc-key": "sv-ss",
-            "value": 5
-        },
-        {
-            "hc-key": "sv-mo",
-            "value": 6
-        },
-        {
-            "hc-key": "sv-sm",
-            "value": 7
-        },
-        {
-            "hc-key": "sv-sv",
-            "value": 8
-        },
-        {
-            "hc-key": "sv-us",
-            "value": 9
-        },
-        {
-            "hc-key": "sv-ch",
-            "value": 10
-        },
-        {
-            "hc-key": "sv-sa",
-            "value": 11
-        },
-        {
-            "hc-key": "sv-ah",
-            "value": 12
-        },
-        {
-            "hc-key": "sv-ca",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sv/sv-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sv/sv-all.js">El Salvador</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sv/sv-all.js">El Salvador</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sv/sv-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

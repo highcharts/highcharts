@@ -1,181 +1,79 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['af-kt', 0],
+    ['af-pk', 1],
+    ['af-gz', 2],
+    ['af-bd', 3],
+    ['af-nr', 4],
+    ['af-kr', 5],
+    ['af-kz', 6],
+    ['af-ng', 7],
+    ['af-tk', 8],
+    ['af-bl', 9],
+    ['af-kb', 10],
+    ['af-kp', 11],
+    ['af-2030', 12],
+    ['af-la', 13],
+    ['af-lw', 14],
+    ['af-pv', 15],
+    ['af-sm', 16],
+    ['af-vr', 17],
+    ['af-pt', 18],
+    ['af-bg', 19],
+    ['af-hr', 20],
+    ['af-bk', 21],
+    ['af-jw', 22],
+    ['af-bm', 23],
+    ['af-gr', 24],
+    ['af-fb', 25],
+    ['af-sp', 26],
+    ['af-fh', 27],
+    ['af-hm', 28],
+    ['af-nm', 29],
+    ['af-2014', 30],
+    ['af-oz', 31],
+    ['af-kd', 32],
+    ['af-zb', 33]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "af-kt",
-            "value": 0
-        },
-        {
-            "hc-key": "af-pk",
-            "value": 1
-        },
-        {
-            "hc-key": "af-gz",
-            "value": 2
-        },
-        {
-            "hc-key": "af-bd",
-            "value": 3
-        },
-        {
-            "hc-key": "af-nr",
-            "value": 4
-        },
-        {
-            "hc-key": "af-kr",
-            "value": 5
-        },
-        {
-            "hc-key": "af-kz",
-            "value": 6
-        },
-        {
-            "hc-key": "af-ng",
-            "value": 7
-        },
-        {
-            "hc-key": "af-tk",
-            "value": 8
-        },
-        {
-            "hc-key": "af-bl",
-            "value": 9
-        },
-        {
-            "hc-key": "af-kb",
-            "value": 10
-        },
-        {
-            "hc-key": "af-kp",
-            "value": 11
-        },
-        {
-            "hc-key": "af-2030",
-            "value": 12
-        },
-        {
-            "hc-key": "af-la",
-            "value": 13
-        },
-        {
-            "hc-key": "af-lw",
-            "value": 14
-        },
-        {
-            "hc-key": "af-pv",
-            "value": 15
-        },
-        {
-            "hc-key": "af-sm",
-            "value": 16
-        },
-        {
-            "hc-key": "af-vr",
-            "value": 17
-        },
-        {
-            "hc-key": "af-pt",
-            "value": 18
-        },
-        {
-            "hc-key": "af-bg",
-            "value": 19
-        },
-        {
-            "hc-key": "af-hr",
-            "value": 20
-        },
-        {
-            "hc-key": "af-bk",
-            "value": 21
-        },
-        {
-            "hc-key": "af-jw",
-            "value": 22
-        },
-        {
-            "hc-key": "af-bm",
-            "value": 23
-        },
-        {
-            "hc-key": "af-gr",
-            "value": 24
-        },
-        {
-            "hc-key": "af-fb",
-            "value": 25
-        },
-        {
-            "hc-key": "af-sp",
-            "value": 26
-        },
-        {
-            "hc-key": "af-fh",
-            "value": 27
-        },
-        {
-            "hc-key": "af-hm",
-            "value": 28
-        },
-        {
-            "hc-key": "af-nm",
-            "value": 29
-        },
-        {
-            "hc-key": "af-2014",
-            "value": 30
-        },
-        {
-            "hc-key": "af-oz",
-            "value": 31
-        },
-        {
-            "hc-key": "af-kd",
-            "value": 32
-        },
-        {
-            "hc-key": "af-zb",
-            "value": 33
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/af/af-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/af/af-all.js">Afghanistan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/af/af-all.js">Afghanistan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/af/af-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

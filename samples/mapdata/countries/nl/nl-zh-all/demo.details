@@ -1,4 +1,5 @@
 ---
  name: Zuid-Holland - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

@@ -1,256 +1,98 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-sl-10041000-10041516', 0],
+    ['de-sl-10041000-10041518', 1],
+    ['de-sl-10043000-10043115', 2],
+    ['de-sl-10045000-10045111', 3],
+    ['de-sl-10041000-10041511', 4],
+    ['de-sl-10042000-10042111', 5],
+    ['de-sl-10042000-10042113', 6],
+    ['de-sl-10044000-10044122', 7],
+    ['de-sl-10044000-10044123', 8],
+    ['de-sl-10041000-10041513', 9],
+    ['de-sl-10041000-10041100', 10],
+    ['de-sl-10041000-10041512', 11],
+    ['de-sl-10046000-10046113', 12],
+    ['de-sl-10046000-10046114', 13],
+    ['de-sl-10044000-10044120', 14],
+    ['de-sl-10046000-10046118', 15],
+    ['de-sl-10041000-10041515', 16],
+    ['de-sl-10044000-10044116', 17],
+    ['de-sl-10043000-10043117', 18],
+    ['de-sl-10045000-10045117', 19],
+    ['de-sl-10043000-10043114', 20],
+    ['de-sl-10044000-10044115', 21],
+    ['de-sl-10043000-10043111', 22],
+    ['de-sl-10043000-10043112', 23],
+    ['de-sl-10044000-10044112', 24],
+    ['de-sl-10044000-10044113', 25],
+    ['de-sl-10045000-10045112', 26],
+    ['de-sl-10044000-10044114', 27],
+    ['de-sl-10042000-10042112', 28],
+    ['de-sl-10044000-10044117', 29],
+    ['de-sl-10044000-10044111', 30],
+    ['de-sl-10044000-10044118', 31],
+    ['de-sl-10042000-10042115', 32],
+    ['de-sl-10046000-10046117', 33],
+    ['de-sl-10045000-10045114', 34],
+    ['de-sl-10045000-10045115', 35],
+    ['de-sl-10042000-10042114', 36],
+    ['de-sl-10045000-10045116', 37],
+    ['de-sl-10041000-10041519', 38],
+    ['de-sl-10046000-10046112', 39],
+    ['de-sl-10044000-10044121', 40],
+    ['de-sl-10042000-10042117', 41],
+    ['de-sl-10041000-10041514', 42],
+    ['de-sl-10046000-10046111', 43],
+    ['de-sl-10045000-10045113', 44],
+    ['de-sl-10046000-10046115', 45],
+    ['de-sl-10044000-10044119', 46],
+    ['de-sl-10043000-10043113', 47],
+    ['de-sl-10042000-10042116', 48],
+    ['de-sl-10046000-10046116', 49],
+    ['de-sl-10043000-10043116', 50],
+    ['de-sl-10041000-10041517', 51],
+    ['undefined', 52]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-sl-10041000-10041516",
-            "value": 0
-        },
-        {
-            "hc-key": "de-sl-10041000-10041518",
-            "value": 1
-        },
-        {
-            "hc-key": "de-sl-10043000-10043115",
-            "value": 2
-        },
-        {
-            "hc-key": "de-sl-10045000-10045111",
-            "value": 3
-        },
-        {
-            "hc-key": "de-sl-10041000-10041511",
-            "value": 4
-        },
-        {
-            "hc-key": "de-sl-10042000-10042111",
-            "value": 5
-        },
-        {
-            "hc-key": "de-sl-10042000-10042113",
-            "value": 6
-        },
-        {
-            "hc-key": "de-sl-10044000-10044122",
-            "value": 7
-        },
-        {
-            "hc-key": "de-sl-10044000-10044123",
-            "value": 8
-        },
-        {
-            "hc-key": "de-sl-10041000-10041513",
-            "value": 9
-        },
-        {
-            "hc-key": "de-sl-10041000-10041100",
-            "value": 10
-        },
-        {
-            "hc-key": "de-sl-10041000-10041512",
-            "value": 11
-        },
-        {
-            "hc-key": "de-sl-10046000-10046113",
-            "value": 12
-        },
-        {
-            "hc-key": "de-sl-10046000-10046114",
-            "value": 13
-        },
-        {
-            "hc-key": "de-sl-10044000-10044120",
-            "value": 14
-        },
-        {
-            "hc-key": "de-sl-10046000-10046118",
-            "value": 15
-        },
-        {
-            "hc-key": "de-sl-10041000-10041515",
-            "value": 16
-        },
-        {
-            "hc-key": "de-sl-10044000-10044116",
-            "value": 17
-        },
-        {
-            "hc-key": "de-sl-10043000-10043117",
-            "value": 18
-        },
-        {
-            "hc-key": "de-sl-10045000-10045117",
-            "value": 19
-        },
-        {
-            "hc-key": "de-sl-10043000-10043114",
-            "value": 20
-        },
-        {
-            "hc-key": "de-sl-10044000-10044115",
-            "value": 21
-        },
-        {
-            "hc-key": "de-sl-10043000-10043111",
-            "value": 22
-        },
-        {
-            "hc-key": "de-sl-10043000-10043112",
-            "value": 23
-        },
-        {
-            "hc-key": "de-sl-10044000-10044112",
-            "value": 24
-        },
-        {
-            "hc-key": "de-sl-10044000-10044113",
-            "value": 25
-        },
-        {
-            "hc-key": "de-sl-10045000-10045112",
-            "value": 26
-        },
-        {
-            "hc-key": "de-sl-10044000-10044114",
-            "value": 27
-        },
-        {
-            "hc-key": "de-sl-10042000-10042112",
-            "value": 28
-        },
-        {
-            "hc-key": "de-sl-10044000-10044117",
-            "value": 29
-        },
-        {
-            "hc-key": "de-sl-10044000-10044111",
-            "value": 30
-        },
-        {
-            "hc-key": "de-sl-10044000-10044118",
-            "value": 31
-        },
-        {
-            "hc-key": "de-sl-10042000-10042115",
-            "value": 32
-        },
-        {
-            "hc-key": "de-sl-10046000-10046117",
-            "value": 33
-        },
-        {
-            "hc-key": "de-sl-10045000-10045114",
-            "value": 34
-        },
-        {
-            "hc-key": "de-sl-10045000-10045115",
-            "value": 35
-        },
-        {
-            "hc-key": "de-sl-10042000-10042114",
-            "value": 36
-        },
-        {
-            "hc-key": "de-sl-10045000-10045116",
-            "value": 37
-        },
-        {
-            "hc-key": "de-sl-10041000-10041519",
-            "value": 38
-        },
-        {
-            "hc-key": "de-sl-10046000-10046112",
-            "value": 39
-        },
-        {
-            "hc-key": "de-sl-10044000-10044121",
-            "value": 40
-        },
-        {
-            "hc-key": "de-sl-10042000-10042117",
-            "value": 41
-        },
-        {
-            "hc-key": "de-sl-10041000-10041514",
-            "value": 42
-        },
-        {
-            "hc-key": "de-sl-10046000-10046111",
-            "value": 43
-        },
-        {
-            "hc-key": "de-sl-10045000-10045113",
-            "value": 44
-        },
-        {
-            "hc-key": "de-sl-10046000-10046115",
-            "value": 45
-        },
-        {
-            "hc-key": "de-sl-10044000-10044119",
-            "value": 46
-        },
-        {
-            "hc-key": "de-sl-10043000-10043113",
-            "value": 47
-        },
-        {
-            "hc-key": "de-sl-10042000-10042116",
-            "value": 48
-        },
-        {
-            "hc-key": "de-sl-10046000-10046116",
-            "value": 49
-        },
-        {
-            "hc-key": "de-sl-10043000-10043116",
-            "value": 50
-        },
-        {
-            "hc-key": "de-sl-10041000-10041517",
-            "value": 51
-        },
-        {
-            "value": 52
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-sl-all-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-sl-all-all.js">Saarland</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-sl-all-all.js">Saarland</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-sl-all-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

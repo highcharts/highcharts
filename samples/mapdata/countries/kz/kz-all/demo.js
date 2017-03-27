@@ -1,113 +1,62 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['kz-5085', 0],
+    ['kz-qo', 1],
+    ['kz-ac', 2],
+    ['kz-as', 3],
+    ['kz-qs', 4],
+    ['kz-nk', 5],
+    ['kz-pa', 6],
+    ['kz-am', 7],
+    ['kz-zm', 8],
+    ['kz-ek', 9],
+    ['kz-ar', 10],
+    ['kz-mg', 11],
+    ['kz-aa', 12],
+    ['kz-at', 13],
+    ['kz-wk', 14],
+    ['kz-sk', 15],
+    ['kz-qg', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "kz-5085",
-            "value": 0
-        },
-        {
-            "hc-key": "kz-qo",
-            "value": 1
-        },
-        {
-            "hc-key": "kz-ac",
-            "value": 2
-        },
-        {
-            "hc-key": "kz-as",
-            "value": 3
-        },
-        {
-            "hc-key": "kz-qs",
-            "value": 4
-        },
-        {
-            "hc-key": "kz-nk",
-            "value": 5
-        },
-        {
-            "hc-key": "kz-pa",
-            "value": 6
-        },
-        {
-            "hc-key": "kz-am",
-            "value": 7
-        },
-        {
-            "hc-key": "kz-zm",
-            "value": 8
-        },
-        {
-            "hc-key": "kz-ek",
-            "value": 9
-        },
-        {
-            "hc-key": "kz-ar",
-            "value": 10
-        },
-        {
-            "hc-key": "kz-mg",
-            "value": 11
-        },
-        {
-            "hc-key": "kz-aa",
-            "value": 12
-        },
-        {
-            "hc-key": "kz-at",
-            "value": 13
-        },
-        {
-            "hc-key": "kz-wk",
-            "value": 14
-        },
-        {
-            "hc-key": "kz-sk",
-            "value": 15
-        },
-        {
-            "hc-key": "kz-qg",
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/kz/kz-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kz/kz-all.js">Kazakhstan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kz/kz-all.js">Kazakhstan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/kz/kz-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

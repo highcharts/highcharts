@@ -1,141 +1,69 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nl-gr-gm1651', 0],
+    ['nl-gr-gm1663', 1],
+    ['nl-gr-gm1895', 2],
+    ['nl-gr-gm0037', 3],
+    ['nl-gr-gm0056', 4],
+    ['nl-gr-gm0053', 5],
+    ['nl-gr-gm0047', 6],
+    ['nl-gr-gm1730', 7],
+    ['nl-gr-gm0048', 8],
+    ['nl-gr-gm0765', 9],
+    ['nl-gr-gm1987', 10],
+    ['nl-gr-gm0024', 11],
+    ['nl-gr-gm0005', 12],
+    ['nl-gr-gm0040', 13],
+    ['nl-gr-gm0007', 14],
+    ['nl-gr-gm0009', 15],
+    ['nl-gr-gm0014', 16],
+    ['nl-gr-gm0018', 17],
+    ['nl-gr-gm0010', 18],
+    ['nl-gr-gm0003', 19],
+    ['nl-gr-gm0022', 20],
+    ['nl-gr-gm0017', 21],
+    ['nl-gr-gm0015', 22],
+    ['nl-gr-gm0025', 23]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nl-gr-gm1651",
-            "value": 0
-        },
-        {
-            "hc-key": "nl-gr-gm1663",
-            "value": 1
-        },
-        {
-            "hc-key": "nl-gr-gm1895",
-            "value": 2
-        },
-        {
-            "hc-key": "nl-gr-gm0037",
-            "value": 3
-        },
-        {
-            "hc-key": "nl-gr-gm0056",
-            "value": 4
-        },
-        {
-            "hc-key": "nl-gr-gm0053",
-            "value": 5
-        },
-        {
-            "hc-key": "nl-gr-gm0047",
-            "value": 6
-        },
-        {
-            "hc-key": "nl-gr-gm1730",
-            "value": 7
-        },
-        {
-            "hc-key": "nl-gr-gm0048",
-            "value": 8
-        },
-        {
-            "hc-key": "nl-gr-gm0765",
-            "value": 9
-        },
-        {
-            "hc-key": "nl-gr-gm1987",
-            "value": 10
-        },
-        {
-            "hc-key": "nl-gr-gm0024",
-            "value": 11
-        },
-        {
-            "hc-key": "nl-gr-gm0005",
-            "value": 12
-        },
-        {
-            "hc-key": "nl-gr-gm0040",
-            "value": 13
-        },
-        {
-            "hc-key": "nl-gr-gm0007",
-            "value": 14
-        },
-        {
-            "hc-key": "nl-gr-gm0009",
-            "value": 15
-        },
-        {
-            "hc-key": "nl-gr-gm0014",
-            "value": 16
-        },
-        {
-            "hc-key": "nl-gr-gm0018",
-            "value": 17
-        },
-        {
-            "hc-key": "nl-gr-gm0010",
-            "value": 18
-        },
-        {
-            "hc-key": "nl-gr-gm0003",
-            "value": 19
-        },
-        {
-            "hc-key": "nl-gr-gm0022",
-            "value": 20
-        },
-        {
-            "hc-key": "nl-gr-gm0017",
-            "value": 21
-        },
-        {
-            "hc-key": "nl-gr-gm0015",
-            "value": 22
-        },
-        {
-            "hc-key": "nl-gr-gm0025",
-            "value": 23
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/nl/nl-gr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-gr-all.js">Groningen</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-gr-all.js">Groningen</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/nl/nl-gr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

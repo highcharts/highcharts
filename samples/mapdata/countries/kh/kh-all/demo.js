@@ -1,141 +1,69 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['kh-kk', 0],
+    ['kh-pp', 1],
+    ['kh-ka', 2],
+    ['kh-om', 3],
+    ['kh-ba', 4],
+    ['kh-po', 5],
+    ['kh-si', 6],
+    ['kh-oc', 7],
+    ['kh-pl', 8],
+    ['kh-km', 9],
+    ['kh-kg', 10],
+    ['kh-kn', 11],
+    ['kh-ks', 12],
+    ['kh-kt', 13],
+    ['kh-py', 14],
+    ['kh-ph', 15],
+    ['kh-st', 16],
+    ['kh-kh', 17],
+    ['kh-mk', 18],
+    ['kh-ro', 19],
+    ['kh-kp', 20],
+    ['kh-ke', 21],
+    ['kh-sr', 22],
+    ['kh-ta', 23]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "kh-kk",
-            "value": 0
-        },
-        {
-            "hc-key": "kh-pp",
-            "value": 1
-        },
-        {
-            "hc-key": "kh-ka",
-            "value": 2
-        },
-        {
-            "hc-key": "kh-om",
-            "value": 3
-        },
-        {
-            "hc-key": "kh-ba",
-            "value": 4
-        },
-        {
-            "hc-key": "kh-po",
-            "value": 5
-        },
-        {
-            "hc-key": "kh-si",
-            "value": 6
-        },
-        {
-            "hc-key": "kh-oc",
-            "value": 7
-        },
-        {
-            "hc-key": "kh-pl",
-            "value": 8
-        },
-        {
-            "hc-key": "kh-km",
-            "value": 9
-        },
-        {
-            "hc-key": "kh-kg",
-            "value": 10
-        },
-        {
-            "hc-key": "kh-kn",
-            "value": 11
-        },
-        {
-            "hc-key": "kh-ks",
-            "value": 12
-        },
-        {
-            "hc-key": "kh-kt",
-            "value": 13
-        },
-        {
-            "hc-key": "kh-py",
-            "value": 14
-        },
-        {
-            "hc-key": "kh-ph",
-            "value": 15
-        },
-        {
-            "hc-key": "kh-st",
-            "value": 16
-        },
-        {
-            "hc-key": "kh-kh",
-            "value": 17
-        },
-        {
-            "hc-key": "kh-mk",
-            "value": 18
-        },
-        {
-            "hc-key": "kh-ro",
-            "value": 19
-        },
-        {
-            "hc-key": "kh-kp",
-            "value": 20
-        },
-        {
-            "hc-key": "kh-ke",
-            "value": 21
-        },
-        {
-            "hc-key": "kh-sr",
-            "value": 22
-        },
-        {
-            "hc-key": "kh-ta",
-            "value": 23
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/kh/kh-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kh/kh-all.js">Cambodia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kh/kh-all.js">Cambodia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/kh/kh-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

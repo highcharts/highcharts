@@ -1,133 +1,67 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['td-ma', 0],
+    ['td-sa', 1],
+    ['td-nj', 2],
+    ['td-lo', 3],
+    ['td-mw', 4],
+    ['td-br', 5],
+    ['td-ti', 6],
+    ['td-en', 7],
+    ['td-cg', 8],
+    ['td-bg', 9],
+    ['td-si', 10],
+    ['td-mo', 11],
+    ['td-hd', 12],
+    ['td-km', 13],
+    ['td-lc', 14],
+    ['td-bi', 15],
+    ['td-ba', 16],
+    ['td-gr', 17],
+    ['td-oa', 18],
+    ['td-lr', 19],
+    ['td-me', 20],
+    ['td-ta', 21]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "td-ma",
-            "value": 0
-        },
-        {
-            "hc-key": "td-sa",
-            "value": 1
-        },
-        {
-            "hc-key": "td-nj",
-            "value": 2
-        },
-        {
-            "hc-key": "td-lo",
-            "value": 3
-        },
-        {
-            "hc-key": "td-mw",
-            "value": 4
-        },
-        {
-            "hc-key": "td-br",
-            "value": 5
-        },
-        {
-            "hc-key": "td-ti",
-            "value": 6
-        },
-        {
-            "hc-key": "td-en",
-            "value": 7
-        },
-        {
-            "hc-key": "td-cg",
-            "value": 8
-        },
-        {
-            "hc-key": "td-bg",
-            "value": 9
-        },
-        {
-            "hc-key": "td-si",
-            "value": 10
-        },
-        {
-            "hc-key": "td-mo",
-            "value": 11
-        },
-        {
-            "hc-key": "td-hd",
-            "value": 12
-        },
-        {
-            "hc-key": "td-km",
-            "value": 13
-        },
-        {
-            "hc-key": "td-lc",
-            "value": 14
-        },
-        {
-            "hc-key": "td-bi",
-            "value": 15
-        },
-        {
-            "hc-key": "td-ba",
-            "value": 16
-        },
-        {
-            "hc-key": "td-gr",
-            "value": 17
-        },
-        {
-            "hc-key": "td-oa",
-            "value": 18
-        },
-        {
-            "hc-key": "td-lr",
-            "value": 19
-        },
-        {
-            "hc-key": "td-me",
-            "value": 20
-        },
-        {
-            "hc-key": "td-ta",
-            "value": 21
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/td/td-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/td/td-all.js">Chad</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/td/td-all.js">Chad</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/td/td-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });
