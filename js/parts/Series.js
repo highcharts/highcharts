@@ -872,7 +872,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			// visible range, consider y extremes
 			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.positiveValuesOnly || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
-				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
+				((xData[i] || x) >= xMin &&	(xData[i] || x) <= xMax);
 
 			if (validValue && withinRange) {
 
@@ -888,6 +888,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 			}
 		}
+
 		this.dataMin = arrayMin(activeYData);
 		this.dataMax = arrayMax(activeYData);
 	},
