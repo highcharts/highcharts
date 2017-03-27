@@ -499,7 +499,8 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(grep(serie.points || [], function (point) {
+			// series.data - for points outside of viewed range (#6445)
+			points = points.concat(grep(serie.data || [], function (point) {
 				return point.selected;
 			}));
 		});

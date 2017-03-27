@@ -21,6 +21,7 @@ var arrayMax = H.arrayMax,
 	each = H.each,
 	extend = H.extend,
 	format = H.format,
+	grep = H.grep,
 	inArray = H.inArray,
 	isNumber = H.isNumber,
 	isString = H.isString,
@@ -727,6 +728,20 @@ wrap(Series.prototype, 'render', function (proceed) {
 		}
 	}
 	proceed.call(this);
+});
+
+wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
+	var points = proceed.call(this);
+
+	each(this.series, function (serie) {
+		// series.points - for grouped points (#6445)
+		if (serie.hasGroupedData) {
+			points = points.concat(grep(serie.points || [], function (point) {
+				return point.selected;
+			}));
+		}
+	});
+	return points;
 });
 
 wrap(Chart.prototype, 'update', function (proceed, options) {
