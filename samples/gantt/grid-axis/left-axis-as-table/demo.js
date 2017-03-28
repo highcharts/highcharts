@@ -14,8 +14,8 @@ Highcharts.chart('container', {
         reversed: true,
         grid: {
             enabled: true,
-            borderColor: '#fa0',
-            borderWidth: 5,
+            borderColor: 'rgba(0,0,0,0.3)',
+            borderWidth: 2,
             columns: [{
                 name: 'Project',
                 pointProperty: 'name'
