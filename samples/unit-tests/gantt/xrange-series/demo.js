@@ -67,25 +67,25 @@ QUnit.test('translate()', function (assert) {
         // partShapeArgs
         assert.equal(
             partShapeArgs.y,
-            shapeArgs.y + 0.5,
+            shapeArgs.y,
             'point ' + i + ' partShapeArgs y-position is correctly calculated'
         );
 
         assert.equal(
             partShapeArgs.height,
-            shapeArgs.height - 1,
+            shapeArgs.height,
             'point ' + i + ' partShapeArgs height is correctly calculated'
         );
 
         assert.equal(
             partShapeArgs.x,
-            shapeArgs.x + 0.5,
+            shapeArgs.x,
             'point ' + i + ' partShapeArgs has correct calulated x-position'
         );
 
         assert.equal(
             partShapeArgs.width,
-            shapeArgs.width - 1,
+            shapeArgs.width,
             'point ' + i + ' partShapeArgs has correct calculated width'
         );
 
@@ -170,28 +170,28 @@ QUnit.test('drawPoints()', function (assert) {
         // partShapeArgs
         assert.close(
             overY,
-            origY + 0.5,
+            origY,
             error,
             'point ' + i + ' partShapeArgs y-position is rendered correctly'
         );
 
         assert.close(
             overHeight,
-            origHeight - 1,
+            origHeight,
             error,
             'point ' + i + ' partShapeArgs height is rendered correctly'
         );
 
         assert.close(
             overX,
-            origX + 0.5,
+            origX,
             error,
             'point ' + i + ' partShapeArgs has correct rendered x-position'
         );
 
         assert.close(
             overWidth,
-            origWidth - 1,
+            origWidth,
             error,
             'point ' + i + ' partShapeArgs has correct rendered width'
         );
