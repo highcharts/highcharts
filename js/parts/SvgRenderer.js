@@ -198,10 +198,10 @@ SVGElement.prototype = {
 			value;
 
 		// Apply linear or radial gradients
-		if (color.linearGradient) {
-			gradName = 'linearGradient';
-		} else if (color.radialGradient) {
+		if (color.radialGradient) {
 			gradName = 'radialGradient';
+		} else if (color.linearGradient) {
+			gradName = 'linearGradient';
 		}
 
 		if (gradName) {
@@ -222,12 +222,17 @@ SVGElement.prototype = {
 			}
 
 			// Correct the radial gradient for the radial reference system
-			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+			if (
+				gradName === 'radialGradient' &&
+				radialReference &&
+				!defined(gradAttr.gradientUnits)
+			) {
 				radAttr = gradAttr; // Save the radial attributes for updating
-				gradAttr = merge(gradAttr,
+				gradAttr = merge(
+					gradAttr,
 					renderer.getRadialAttr(radialReference, radAttr),
 					{ gradientUnits: 'userSpaceOnUse' }
-					);
+				);
 			}
 
 			// Build the unique key to detect whether we need to create a new element (#1282)
