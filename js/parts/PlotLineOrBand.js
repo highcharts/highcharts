@@ -251,16 +251,22 @@ H.AxisPlotLineOrBandExtension = {
 			horiz  = this.horiz; 
 
 		if (path && toPath) {
-			
+
+			// Add 1 pixel, when coordinates are the same
+			if (horiz && toPath[4] === path[4]) { toPath[4]++; }
+			if (!horiz && toPath[5] === path[5]) { toPath[5]++; }
+			if (horiz && toPath[1] === path[1]) { toPath[1]++; }
+			if (!horiz && toPath[2] === path[2]) { toPath[2]++; }
+
 			// Flat paths don't need labels (#3836)
 			path.flat = path.toString() === toPath.toString();
 
-			// Add 1 pixel, when coordinates are the same
 			path.push(
-				horiz && toPath[4] === path[4] ? toPath[4] + 1 : toPath[4], 
-				!horiz && toPath[5] === path[5] ? toPath[5] + 1 : toPath[5],
-				horiz && toPath[1] === path[1] ? toPath[1] + 1 : toPath[1],
-				!horiz && toPath[2] === path[2] ? toPath[2] + 1 : toPath[2]
+				toPath[4],
+				toPath[5],
+				toPath[1],
+				toPath[2],
+				'z' // #5909
 			);
 		} else { // outside the axis area
 			path = null;
