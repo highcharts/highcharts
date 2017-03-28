@@ -50,8 +50,8 @@ H.Color.prototype = {
 		}
 	}],
 
-	// Collection of named colors. Can be extended from the outside by adding colors
-	// to Highcharts.Color.prototype.names.
+	// Collection of named colors. Can be extended from the outside by adding
+	// colors to Highcharts.Color.prototype.names.
 	names: {
 		white: '#ffffff',
 		black: '#000000'
@@ -69,9 +69,9 @@ H.Color.prototype = {
 			len;
 
 		this.input = input = this.names[
-								input && input.toLowerCase 
-								? input.toLowerCase() 
-								: ''
+								input && input.toLowerCase ?
+									input.toLowerCase() :
+									''
 							] || input;
 
 		// Gradients

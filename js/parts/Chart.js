@@ -554,7 +554,8 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Lay out the chart titles and cache the full offset height for use in getMargins
+	 * Lay out the chart titles and cache the full offset height for use
+	 * in getMargins
 	 */
 	layOutTitles: function (redraw) {
 		var titleOffset = 0,
