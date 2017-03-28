@@ -5,7 +5,6 @@ Highcharts.chart('container', {
         text: 'Left Axis as Table'
     },
     xAxis: [{
-        grid: true,
         type: 'datetime',
         min: Date.UTC(2017, 10, 18),
         max: Date.UTC(2017, 11, 16)
