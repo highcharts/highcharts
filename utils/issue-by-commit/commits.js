@@ -3,7 +3,7 @@
 var ren,
 	paths = [];
 
-var mainFrame = window.parent.document.getElementsByTagName('frame')[0],
+var mainFrame = window.parent.document.querySelector('frame#main'),
 	mainLocation = mainFrame && mainFrame.contentWindow.location.href,
 	isComparing = mainLocation && mainLocation.indexOf('view.php') > -1,
 	colors = [
