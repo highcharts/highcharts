@@ -597,53 +597,59 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			columnIndex = 0;
 			i = userOptions.grid.columns.length;
 			while (i--) {
-				columnOptions = merge(userOptions, userOptions.grid.columns[i]);
+				columnOptions = merge({
+
+					// Default to use point.name
+					pointProperty: 'name'
+
+				}, userOptions, userOptions.grid.columns[i], {
+
+					// Force to behave like category axis
+					type: 'category'
+
+				});
+				
 				delete columnOptions.grid.columns; // Prevent recursion
 				
 				column = new Axis(chart, columnOptions);
 				column.isColumn = true;
 				column.columnIndex = columnIndex;
-				if (defined(columnOptions.pointProperty)) {
-					wrap(column, 'labelFormatter', function (proceed) {
-						var axis = this.axis,
-							tickPos = axis.tickPositions,
-							tickPosInfo = tickPos.info,
-							pointProperty = axis.options.pointProperty,
-							value = this.value,
-							series = axis.series[0],
-							isFirst = value === tickPos[0],
-							isLast = value === tickPos[tickPos.length - 1],
-							point = H.find(series.options.data, function (p) {
-								return p[axis.isXAxis ? 'x' : 'y'] === value;
-							}),
-							dateTimeLabelFormat;
 
-						if (point) {
-							if (typeof pointProperty === 'function') {
-								value = pointProperty(point);
-							} else if (point[pointProperty]) {
-								value = point[pointProperty];
-							}
-						}
-
-						if (axis.isDatetimeAxis && tickPosInfo) {
-							dateTimeLabelFormat =
-							axis.options.dateTimeLabelFormats[
-								tickPosInfo.higherRanks[value] ||
-								tickPosInfo.unitName
-							];
-						}
-
-						return proceed.call({
-							axis: axis,
-							chart: chart,
-							isFirst: isFirst,
-							isLast: isLast,
-							dateTimeLabelFormat: dateTimeLabelFormat,
-							value: value
+				wrap(column, 'labelFormatter', function (proceed) {
+					var axis = this.axis,
+						tickPos = axis.tickPositions,
+						options = axis.options,
+						pointProperty = options.pointProperty,
+						dateTimeLabelFormat = options.dateTimeLabelFormats.day,
+						value = this.value,
+						series = axis.series[0],
+						isFirst = value === tickPos[0],
+						isLast = value === tickPos[tickPos.length - 1],
+						point = H.find(series.options.data, function (p) {
+							return p[axis.isXAxis ? 'x' : 'y'] === value;
 						});
+					
+					if (point) {
+						if (typeof pointProperty === 'function') {
+							value = pointProperty(point);
+						} else if (point[pointProperty]) {
+							value = point[pointProperty];
+						}
+					}
+					
+					if (options.dataType === 'datetime') {
+						value = H.dateFormat(dateTimeLabelFormat, value);
+					}
+					
+					// Call original labelFormatter
+					return proceed.call({
+						axis: axis,
+						chart: chart,
+						isFirst: isFirst,
+						isLast: isLast,
+						value: value
 					});
-				}
+				});
 				
 				axis.columns.push(column); // eslint-disable-line no-new
 				

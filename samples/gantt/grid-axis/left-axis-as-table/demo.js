@@ -18,31 +18,25 @@ Highcharts.chart('container', {
             borderWidth: 5,
             columns: [{
                 name: 'Project',
-                pointProperty: 'name',
-                type: 'category'
+                pointProperty: 'name'
             }, {
                 name: 'Assignee',
-                pointProperty: 'assignee',
-                type: 'category'
+                pointProperty: 'assignee'
             }, {
                 name: 'Est. days',
                 pointProperty: function (point) {
                     var number = (point.x2 - point.x) / (1000 * 60 * 60 * 24);
                     return Math.round(number * 100) / 100;
                 },
-                type: 'category' // TODO Make linear axis behave like category axis
+                dataType: 'linear'
             }, {
                 name: 'Start date',
                 pointProperty: 'x',
-                type: 'datetime',
-                min: Date.UTC(2017, 10, 18),
-                max: Date.UTC(2017, 11, 16)
+                dataType: 'datetime'
             }, {
                 name: 'End date',
-                pointProperty: 'x',
-                type: 'datetime',
-                min: Date.UTC(2017, 10, 18),
-                max: Date.UTC(2017, 11, 16)
+                pointProperty: 'x2',
+                dataType: 'datetime'
             }]
         }
     },
