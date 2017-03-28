@@ -221,7 +221,7 @@ radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.pane.updateCenter();
+			this.pane.updateCenter(this);
 
 			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
 			if (this.isCircular) {
@@ -421,9 +421,6 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		pane = this.pane = chart.pane[paneIndex],
 		paneOptions = pane.options;
 
-	// A pointer back to this axis to borrow geometry
-	pane.axis = this;
-
 	// Before prototype.init
 	if (angular) {
 		extend(this, isHidden ? hiddenAxisMixin : radialAxisMixin);
@@ -446,6 +443,11 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		chartOptions.chart.zoomType = null;
 	} else {
 		this.isRadial = false;
+	}
+
+	// A pointer back to this axis to borrow geometry
+	if (isCircular) {
+		pane.axis = this;
 	}
 
 	// Run prototype.init
