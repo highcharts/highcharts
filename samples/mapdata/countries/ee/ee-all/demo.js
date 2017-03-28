@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ee-6019', 0],
+    ['ee-ha', 1],
+    ['ee-ta', 2],
+    ['ee-hi', 3],
+    ['ee-ln', 4],
+    ['ee-pr', 5],
+    ['ee-sa', 6],
+    ['ee-iv', 7],
+    ['ee-jr', 8],
+    ['ee-jn', 9],
+    ['ee-lv', 10],
+    ['ee-pl', 11],
+    ['ee-ra', 12],
+    ['ee-vg', 13],
+    ['ee-vd', 14],
+    ['ee-vr', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ee-6019",
-            "value": 0
-        },
-        {
-            "hc-key": "ee-ha",
-            "value": 1
-        },
-        {
-            "hc-key": "ee-ta",
-            "value": 2
-        },
-        {
-            "hc-key": "ee-hi",
-            "value": 3
-        },
-        {
-            "hc-key": "ee-ln",
-            "value": 4
-        },
-        {
-            "hc-key": "ee-pr",
-            "value": 5
-        },
-        {
-            "hc-key": "ee-sa",
-            "value": 6
-        },
-        {
-            "hc-key": "ee-iv",
-            "value": 7
-        },
-        {
-            "hc-key": "ee-jr",
-            "value": 8
-        },
-        {
-            "hc-key": "ee-jn",
-            "value": 9
-        },
-        {
-            "hc-key": "ee-lv",
-            "value": 10
-        },
-        {
-            "hc-key": "ee-pl",
-            "value": 11
-        },
-        {
-            "hc-key": "ee-ra",
-            "value": 12
-        },
-        {
-            "hc-key": "ee-vg",
-            "value": 13
-        },
-        {
-            "hc-key": "ee-vd",
-            "value": 14
-        },
-        {
-            "hc-key": "ee-vr",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ee/ee-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ee/ee-all.js">Estonia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ee/ee-all.js">Estonia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ee/ee-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

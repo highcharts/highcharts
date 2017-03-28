@@ -1,213 +1,87 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ro-bi', 0],
+    ['ro-cs', 1],
+    ['ro-tm', 2],
+    ['ro-bt', 3],
+    ['ro-bn', 4],
+    ['ro-cj', 5],
+    ['ro-ab', 6],
+    ['ro-hd', 7],
+    ['ro-mm', 8],
+    ['ro-ms', 9],
+    ['ro-sj', 10],
+    ['ro-sm', 11],
+    ['ro-ag', 12],
+    ['ro-sb', 13],
+    ['ro-vl', 14],
+    ['ro-bv', 15],
+    ['ro-cv', 16],
+    ['ro-hr', 17],
+    ['ro-is', 18],
+    ['ro-nt', 19],
+    ['ro-ph', 20],
+    ['ro-sv', 21],
+    ['ro-bc', 22],
+    ['ro-br', 23],
+    ['ro-bz', 24],
+    ['ro-gl', 25],
+    ['ro-vs', 26],
+    ['ro-vn', 27],
+    ['ro-if', 28],
+    ['ro-tl', 29],
+    ['ro-dj', 30],
+    ['ro-gj', 31],
+    ['ro-mh', 32],
+    ['ro-ot', 33],
+    ['ro-tr', 34],
+    ['ro-cl', 35],
+    ['ro-db', 36],
+    ['ro-gr', 37],
+    ['ro-il', 38],
+    ['ro-ct', 39],
+    ['ro-ar', 40],
+    ['ro-bh', 41]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ro-bi",
-            "value": 0
-        },
-        {
-            "hc-key": "ro-cs",
-            "value": 1
-        },
-        {
-            "hc-key": "ro-tm",
-            "value": 2
-        },
-        {
-            "hc-key": "ro-bt",
-            "value": 3
-        },
-        {
-            "hc-key": "ro-bn",
-            "value": 4
-        },
-        {
-            "hc-key": "ro-cj",
-            "value": 5
-        },
-        {
-            "hc-key": "ro-ab",
-            "value": 6
-        },
-        {
-            "hc-key": "ro-hd",
-            "value": 7
-        },
-        {
-            "hc-key": "ro-mm",
-            "value": 8
-        },
-        {
-            "hc-key": "ro-ms",
-            "value": 9
-        },
-        {
-            "hc-key": "ro-sj",
-            "value": 10
-        },
-        {
-            "hc-key": "ro-sm",
-            "value": 11
-        },
-        {
-            "hc-key": "ro-ag",
-            "value": 12
-        },
-        {
-            "hc-key": "ro-sb",
-            "value": 13
-        },
-        {
-            "hc-key": "ro-vl",
-            "value": 14
-        },
-        {
-            "hc-key": "ro-bv",
-            "value": 15
-        },
-        {
-            "hc-key": "ro-cv",
-            "value": 16
-        },
-        {
-            "hc-key": "ro-hr",
-            "value": 17
-        },
-        {
-            "hc-key": "ro-is",
-            "value": 18
-        },
-        {
-            "hc-key": "ro-nt",
-            "value": 19
-        },
-        {
-            "hc-key": "ro-ph",
-            "value": 20
-        },
-        {
-            "hc-key": "ro-sv",
-            "value": 21
-        },
-        {
-            "hc-key": "ro-bc",
-            "value": 22
-        },
-        {
-            "hc-key": "ro-br",
-            "value": 23
-        },
-        {
-            "hc-key": "ro-bz",
-            "value": 24
-        },
-        {
-            "hc-key": "ro-gl",
-            "value": 25
-        },
-        {
-            "hc-key": "ro-vs",
-            "value": 26
-        },
-        {
-            "hc-key": "ro-vn",
-            "value": 27
-        },
-        {
-            "hc-key": "ro-if",
-            "value": 28
-        },
-        {
-            "hc-key": "ro-tl",
-            "value": 29
-        },
-        {
-            "hc-key": "ro-dj",
-            "value": 30
-        },
-        {
-            "hc-key": "ro-gj",
-            "value": 31
-        },
-        {
-            "hc-key": "ro-mh",
-            "value": 32
-        },
-        {
-            "hc-key": "ro-ot",
-            "value": 33
-        },
-        {
-            "hc-key": "ro-tr",
-            "value": 34
-        },
-        {
-            "hc-key": "ro-cl",
-            "value": 35
-        },
-        {
-            "hc-key": "ro-db",
-            "value": 36
-        },
-        {
-            "hc-key": "ro-gr",
-            "value": 37
-        },
-        {
-            "hc-key": "ro-il",
-            "value": 38
-        },
-        {
-            "hc-key": "ro-ct",
-            "value": 39
-        },
-        {
-            "hc-key": "ro-ar",
-            "value": 40
-        },
-        {
-            "hc-key": "ro-bh",
-            "value": 41
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ro/ro-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ro/ro-all.js">Romania</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ro/ro-all.js">Romania</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ro/ro-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

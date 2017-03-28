@@ -86,3 +86,32 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Linear-log axis with natural min at 0 (#6502)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        "chart": {
+            "height": 1800
+        },
+
+        "yAxis": [{
+        }, {
+            "type": "logarithmic",
+            "opposite": true
+        }],
+        "series": [{
+            "data": [5, 7]
+        }, {
+            "data": [90, 107],
+            "yAxis": 1
+        }, {
+            "data": [4.9, 13],
+            "yAxis": 1
+        }]
+    });
+
+    assert.notEqual(
+        chart.yAxis[1].min,
+        -Infinity,
+        'Axis min is ok'
+    );
+});

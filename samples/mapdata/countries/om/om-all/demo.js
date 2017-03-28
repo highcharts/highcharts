@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['om-ss', 0],
+    ['om-ja', 1],
+    ['om-mu', 2],
+    ['om-wu', 3],
+    ['om-da', 4],
+    ['om-za', 5],
+    ['om-bn', 6],
+    ['om-ma', 7],
+    ['om-bu', 8],
+    ['om-sh', 9],
+    ['om-bs', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "om-ss",
-            "value": 0
-        },
-        {
-            "hc-key": "om-ja",
-            "value": 1
-        },
-        {
-            "hc-key": "om-mu",
-            "value": 2
-        },
-        {
-            "hc-key": "om-wu",
-            "value": 3
-        },
-        {
-            "hc-key": "om-da",
-            "value": 4
-        },
-        {
-            "hc-key": "om-za",
-            "value": 5
-        },
-        {
-            "hc-key": "om-bn",
-            "value": 6
-        },
-        {
-            "hc-key": "om-ma",
-            "value": 7
-        },
-        {
-            "hc-key": "om-bu",
-            "value": 8
-        },
-        {
-            "hc-key": "om-sh",
-            "value": 9
-        },
-        {
-            "hc-key": "om-bs",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/om/om-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/om/om-all.js">Oman</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/om/om-all.js">Oman</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/om/om-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sy-di', 0],
+    ['sy-hl', 1],
+    ['sy-hm', 2],
+    ['sy-hi', 3],
+    ['sy-id', 4],
+    ['sy-ha', 5],
+    ['sy-dy', 6],
+    ['sy-su', 7],
+    ['sy-rd', 8],
+    ['sy-qu', 9],
+    ['sy-dr', 10],
+    ['sy-3686', 11],
+    ['sy-la', 12],
+    ['sy-ta', 13],
+    ['sy-ra', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sy-di",
-            "value": 0
-        },
-        {
-            "hc-key": "sy-hl",
-            "value": 1
-        },
-        {
-            "hc-key": "sy-hm",
-            "value": 2
-        },
-        {
-            "hc-key": "sy-hi",
-            "value": 3
-        },
-        {
-            "hc-key": "sy-id",
-            "value": 4
-        },
-        {
-            "hc-key": "sy-ha",
-            "value": 5
-        },
-        {
-            "hc-key": "sy-dy",
-            "value": 6
-        },
-        {
-            "hc-key": "sy-su",
-            "value": 7
-        },
-        {
-            "hc-key": "sy-rd",
-            "value": 8
-        },
-        {
-            "hc-key": "sy-qu",
-            "value": 9
-        },
-        {
-            "hc-key": "sy-dr",
-            "value": 10
-        },
-        {
-            "hc-key": "sy-3686",
-            "value": 11
-        },
-        {
-            "hc-key": "sy-la",
-            "value": 12
-        },
-        {
-            "hc-key": "sy-ta",
-            "value": 13
-        },
-        {
-            "hc-key": "sy-ra",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sy/sy-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sy/sy-all.js">Syria</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sy/sy-all.js">Syria</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sy/sy-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

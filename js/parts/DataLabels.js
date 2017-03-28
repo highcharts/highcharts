@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -196,9 +196,9 @@ Series.prototype.drawDataLabels = function () {
 				style.color = pick(options.color, style.color, series.color, '${palette.neutralColor100}');
 				// Get automated contrast color
 				if (style.color === 'contrast') {
+					point.contrastColor = renderer.getContrast(point.color || series.color);
 					style.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
-						renderer.getContrast(point.color || series.color) :
-						'${palette.neutralColor100}';
+						point.contrastColor : '${palette.neutralColor100}';
 				}
 				if (seriesOptions.cursor) {
 					style.cursor = seriesOptions.cursor;
@@ -361,7 +361,14 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Handle justify or crop
 		if (justify) {
-			this.justifyDataLabel(dataLabel, options, alignAttr, bBox, alignTo, isNew);
+			point.isLabelJustified = this.justifyDataLabel(
+				dataLabel,
+				options,
+				alignAttr,
+				bBox,
+				alignTo,
+				isNew
+			);
 			
 		// Now check that the data label is within the plot area
 		} else if (pick(options.crop, true)) {
@@ -445,6 +452,8 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 		dataLabel.placed = !isNew;
 		dataLabel.align(options, null, alignTo);
 	}
+
+	return justified;
 };
 
 /**
@@ -861,5 +870,12 @@ if (seriesTypes.column) {
 
 		// Call the parent method
 		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+
+		// If label was justified and we have contrast, set it:
+		if (point.isLabelJustified && point.contrastColor) {
+			point.dataLabel.css({
+				color: point.contrastColor
+			});
+		}
 	};
 }

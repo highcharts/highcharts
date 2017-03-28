@@ -1,373 +1,127 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['tr-or', 0],
+    ['tr-ss', 1],
+    ['tr-ga', 2],
+    ['tr-4409', 3],
+    ['tr-kc', 4],
+    ['tr-bk', 5],
+    ['tr-ck', 6],
+    ['tr-tt', 7],
+    ['tr-gi', 8],
+    ['tr-en', 9],
+    ['tr-bg', 10],
+    ['tr-ht', 11],
+    ['tr-aa', 12],
+    ['tr-cm', 13],
+    ['tr-kk', 14],
+    ['tr-ng', 15],
+    ['tr-ak', 16],
+    ['tr-kh', 17],
+    ['tr-yz', 18],
+    ['tr-am', 19],
+    ['tr-ms', 20],
+    ['tr-bm', 21],
+    ['tr-ka', 22],
+    ['tr-ig', 23],
+    ['tr-du', 24],
+    ['tr-zo', 25],
+    ['tr-kb', 26],
+    ['tr-yl', 27],
+    ['tr-sk', 28],
+    ['tr-ci', 29],
+    ['tr-bl', 30],
+    ['tr-ed', 31],
+    ['tr-es', 32],
+    ['tr-ko', 33],
+    ['tr-bu', 34],
+    ['tr-kl', 35],
+    ['tr-ib', 36],
+    ['tr-kr', 37],
+    ['tr-al', 38],
+    ['tr-af', 39],
+    ['tr-bd', 40],
+    ['tr-ip', 41],
+    ['tr-ay', 42],
+    ['tr-mn', 43],
+    ['tr-dy', 44],
+    ['tr-ad', 45],
+    ['tr-km', 46],
+    ['tr-ky', 47],
+    ['tr-eg', 48],
+    ['tr-ic', 49],
+    ['tr-sp', 50],
+    ['tr-av', 51],
+    ['tr-ri', 52],
+    ['tr-tb', 53],
+    ['tr-an', 54],
+    ['tr-su', 55],
+    ['tr-bb', 56],
+    ['tr-em', 57],
+    ['tr-mr', 58],
+    ['tr-sr', 59],
+    ['tr-si', 60],
+    ['tr-hk', 61],
+    ['tr-va', 62],
+    ['tr-ar', 63],
+    ['tr-ki', 64],
+    ['tr-br', 65],
+    ['tr-tg', 66],
+    ['tr-iz', 67],
+    ['tr-ks', 68],
+    ['tr-mg', 69],
+    ['tr-ku', 70],
+    ['tr-nv', 71],
+    ['tr-sv', 72],
+    ['tr-tc', 73],
+    ['tr-ml', 74],
+    ['tr-ag', 75],
+    ['tr-bt', 76],
+    ['tr-gu', 77],
+    ['tr-os', 78],
+    ['tr-bc', 79],
+    ['tr-dn', 80],
+    ['tr-us', 81]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "tr-or",
-            "value": 0
-        },
-        {
-            "hc-key": "tr-ss",
-            "value": 1
-        },
-        {
-            "hc-key": "tr-ga",
-            "value": 2
-        },
-        {
-            "hc-key": "tr-4409",
-            "value": 3
-        },
-        {
-            "hc-key": "tr-kc",
-            "value": 4
-        },
-        {
-            "hc-key": "tr-bk",
-            "value": 5
-        },
-        {
-            "hc-key": "tr-ck",
-            "value": 6
-        },
-        {
-            "hc-key": "tr-tt",
-            "value": 7
-        },
-        {
-            "hc-key": "tr-gi",
-            "value": 8
-        },
-        {
-            "hc-key": "tr-en",
-            "value": 9
-        },
-        {
-            "hc-key": "tr-bg",
-            "value": 10
-        },
-        {
-            "hc-key": "tr-ht",
-            "value": 11
-        },
-        {
-            "hc-key": "tr-aa",
-            "value": 12
-        },
-        {
-            "hc-key": "tr-cm",
-            "value": 13
-        },
-        {
-            "hc-key": "tr-kk",
-            "value": 14
-        },
-        {
-            "hc-key": "tr-ng",
-            "value": 15
-        },
-        {
-            "hc-key": "tr-ak",
-            "value": 16
-        },
-        {
-            "hc-key": "tr-kh",
-            "value": 17
-        },
-        {
-            "hc-key": "tr-yz",
-            "value": 18
-        },
-        {
-            "hc-key": "tr-am",
-            "value": 19
-        },
-        {
-            "hc-key": "tr-ms",
-            "value": 20
-        },
-        {
-            "hc-key": "tr-bm",
-            "value": 21
-        },
-        {
-            "hc-key": "tr-ka",
-            "value": 22
-        },
-        {
-            "hc-key": "tr-ig",
-            "value": 23
-        },
-        {
-            "hc-key": "tr-du",
-            "value": 24
-        },
-        {
-            "hc-key": "tr-zo",
-            "value": 25
-        },
-        {
-            "hc-key": "tr-kb",
-            "value": 26
-        },
-        {
-            "hc-key": "tr-yl",
-            "value": 27
-        },
-        {
-            "hc-key": "tr-sk",
-            "value": 28
-        },
-        {
-            "hc-key": "tr-ci",
-            "value": 29
-        },
-        {
-            "hc-key": "tr-bl",
-            "value": 30
-        },
-        {
-            "hc-key": "tr-ed",
-            "value": 31
-        },
-        {
-            "hc-key": "tr-es",
-            "value": 32
-        },
-        {
-            "hc-key": "tr-ko",
-            "value": 33
-        },
-        {
-            "hc-key": "tr-bu",
-            "value": 34
-        },
-        {
-            "hc-key": "tr-kl",
-            "value": 35
-        },
-        {
-            "hc-key": "tr-ib",
-            "value": 36
-        },
-        {
-            "hc-key": "tr-kr",
-            "value": 37
-        },
-        {
-            "hc-key": "tr-al",
-            "value": 38
-        },
-        {
-            "hc-key": "tr-af",
-            "value": 39
-        },
-        {
-            "hc-key": "tr-bd",
-            "value": 40
-        },
-        {
-            "hc-key": "tr-ip",
-            "value": 41
-        },
-        {
-            "hc-key": "tr-ay",
-            "value": 42
-        },
-        {
-            "hc-key": "tr-mn",
-            "value": 43
-        },
-        {
-            "hc-key": "tr-dy",
-            "value": 44
-        },
-        {
-            "hc-key": "tr-ad",
-            "value": 45
-        },
-        {
-            "hc-key": "tr-km",
-            "value": 46
-        },
-        {
-            "hc-key": "tr-ky",
-            "value": 47
-        },
-        {
-            "hc-key": "tr-eg",
-            "value": 48
-        },
-        {
-            "hc-key": "tr-ic",
-            "value": 49
-        },
-        {
-            "hc-key": "tr-sp",
-            "value": 50
-        },
-        {
-            "hc-key": "tr-av",
-            "value": 51
-        },
-        {
-            "hc-key": "tr-ri",
-            "value": 52
-        },
-        {
-            "hc-key": "tr-tb",
-            "value": 53
-        },
-        {
-            "hc-key": "tr-an",
-            "value": 54
-        },
-        {
-            "hc-key": "tr-su",
-            "value": 55
-        },
-        {
-            "hc-key": "tr-bb",
-            "value": 56
-        },
-        {
-            "hc-key": "tr-em",
-            "value": 57
-        },
-        {
-            "hc-key": "tr-mr",
-            "value": 58
-        },
-        {
-            "hc-key": "tr-sr",
-            "value": 59
-        },
-        {
-            "hc-key": "tr-si",
-            "value": 60
-        },
-        {
-            "hc-key": "tr-hk",
-            "value": 61
-        },
-        {
-            "hc-key": "tr-va",
-            "value": 62
-        },
-        {
-            "hc-key": "tr-ar",
-            "value": 63
-        },
-        {
-            "hc-key": "tr-ki",
-            "value": 64
-        },
-        {
-            "hc-key": "tr-br",
-            "value": 65
-        },
-        {
-            "hc-key": "tr-tg",
-            "value": 66
-        },
-        {
-            "hc-key": "tr-iz",
-            "value": 67
-        },
-        {
-            "hc-key": "tr-ks",
-            "value": 68
-        },
-        {
-            "hc-key": "tr-mg",
-            "value": 69
-        },
-        {
-            "hc-key": "tr-ku",
-            "value": 70
-        },
-        {
-            "hc-key": "tr-nv",
-            "value": 71
-        },
-        {
-            "hc-key": "tr-sv",
-            "value": 72
-        },
-        {
-            "hc-key": "tr-tc",
-            "value": 73
-        },
-        {
-            "hc-key": "tr-ml",
-            "value": 74
-        },
-        {
-            "hc-key": "tr-ag",
-            "value": 75
-        },
-        {
-            "hc-key": "tr-bt",
-            "value": 76
-        },
-        {
-            "hc-key": "tr-gu",
-            "value": 77
-        },
-        {
-            "hc-key": "tr-os",
-            "value": 78
-        },
-        {
-            "hc-key": "tr-bc",
-            "value": 79
-        },
-        {
-            "hc-key": "tr-dn",
-            "value": 80
-        },
-        {
-            "hc-key": "tr-us",
-            "value": 81
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/tr/tr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tr/tr-all.js">Turkey</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tr/tr-all.js">Turkey</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/tr/tr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

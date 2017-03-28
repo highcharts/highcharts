@@ -1,249 +1,96 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cn-3664', 0],
+    ['cn-fj', 1],
+    ['cn-gd', 2],
+    ['cn-sh', 3],
+    ['cn-zj', 4],
+    ['cn-3681', 5],
+    ['cn-3682', 6],
+    ['cn-6655', 7],
+    ['cn-6656', 8],
+    ['cn-6658', 9],
+    ['cn-6659', 10],
+    ['cn-6660', 11],
+    ['cn-6661', 12],
+    ['cn-6662', 13],
+    ['cn-6664', 14],
+    ['cn-6668', 15],
+    ['cn-nx', 16],
+    ['cn-sa', 17],
+    ['cn-cq', 18],
+    ['cn-ah', 19],
+    ['cn-hu', 20],
+    ['cn-6657', 21],
+    ['cn-6663', 22],
+    ['cn-6665', 23],
+    ['cn-6666', 24],
+    ['cn-6667', 25],
+    ['cn-6669', 26],
+    ['cn-6670', 27],
+    ['cn-6671', 28],
+    ['cn-xz', 29],
+    ['cn-yn', 30],
+    ['cn-bj', 31],
+    ['cn-hb', 32],
+    ['cn-sd', 33],
+    ['cn-tj', 34],
+    ['cn-gs', 35],
+    ['cn-jl', 36],
+    ['cn-xj', 37],
+    ['cn-sx', 38],
+    ['cn-nm', 39],
+    ['cn-hl', 40],
+    ['cn-gx', 41],
+    ['cn-ln', 42],
+    ['cn-ha', 43],
+    ['cn-js', 44],
+    ['cn-sc', 45],
+    ['cn-qh', 46],
+    ['cn-he', 47],
+    ['cn-gz', 48],
+    ['cn-hn', 49],
+    ['cn-jx', 50]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cn-3664",
-            "value": 0
-        },
-        {
-            "hc-key": "cn-fj",
-            "value": 1
-        },
-        {
-            "hc-key": "cn-gd",
-            "value": 2
-        },
-        {
-            "hc-key": "cn-sh",
-            "value": 3
-        },
-        {
-            "hc-key": "cn-zj",
-            "value": 4
-        },
-        {
-            "hc-key": "cn-3681",
-            "value": 5
-        },
-        {
-            "hc-key": "cn-3682",
-            "value": 6
-        },
-        {
-            "hc-key": "cn-6655",
-            "value": 7
-        },
-        {
-            "hc-key": "cn-6656",
-            "value": 8
-        },
-        {
-            "hc-key": "cn-6658",
-            "value": 9
-        },
-        {
-            "hc-key": "cn-6659",
-            "value": 10
-        },
-        {
-            "hc-key": "cn-6660",
-            "value": 11
-        },
-        {
-            "hc-key": "cn-6661",
-            "value": 12
-        },
-        {
-            "hc-key": "cn-6662",
-            "value": 13
-        },
-        {
-            "hc-key": "cn-6664",
-            "value": 14
-        },
-        {
-            "hc-key": "cn-6668",
-            "value": 15
-        },
-        {
-            "hc-key": "cn-nx",
-            "value": 16
-        },
-        {
-            "hc-key": "cn-sa",
-            "value": 17
-        },
-        {
-            "hc-key": "cn-cq",
-            "value": 18
-        },
-        {
-            "hc-key": "cn-ah",
-            "value": 19
-        },
-        {
-            "hc-key": "cn-hu",
-            "value": 20
-        },
-        {
-            "hc-key": "cn-6657",
-            "value": 21
-        },
-        {
-            "hc-key": "cn-6663",
-            "value": 22
-        },
-        {
-            "hc-key": "cn-6665",
-            "value": 23
-        },
-        {
-            "hc-key": "cn-6666",
-            "value": 24
-        },
-        {
-            "hc-key": "cn-6667",
-            "value": 25
-        },
-        {
-            "hc-key": "cn-6669",
-            "value": 26
-        },
-        {
-            "hc-key": "cn-6670",
-            "value": 27
-        },
-        {
-            "hc-key": "cn-6671",
-            "value": 28
-        },
-        {
-            "hc-key": "cn-xz",
-            "value": 29
-        },
-        {
-            "hc-key": "cn-yn",
-            "value": 30
-        },
-        {
-            "hc-key": "cn-bj",
-            "value": 31
-        },
-        {
-            "hc-key": "cn-hb",
-            "value": 32
-        },
-        {
-            "hc-key": "cn-sd",
-            "value": 33
-        },
-        {
-            "hc-key": "cn-tj",
-            "value": 34
-        },
-        {
-            "hc-key": "cn-gs",
-            "value": 35
-        },
-        {
-            "hc-key": "cn-jl",
-            "value": 36
-        },
-        {
-            "hc-key": "cn-xj",
-            "value": 37
-        },
-        {
-            "hc-key": "cn-sx",
-            "value": 38
-        },
-        {
-            "hc-key": "cn-nm",
-            "value": 39
-        },
-        {
-            "hc-key": "cn-hl",
-            "value": 40
-        },
-        {
-            "hc-key": "cn-gx",
-            "value": 41
-        },
-        {
-            "hc-key": "cn-ln",
-            "value": 42
-        },
-        {
-            "hc-key": "cn-ha",
-            "value": 43
-        },
-        {
-            "hc-key": "cn-js",
-            "value": 44
-        },
-        {
-            "hc-key": "cn-sc",
-            "value": 45
-        },
-        {
-            "hc-key": "cn-qh",
-            "value": 46
-        },
-        {
-            "hc-key": "cn-he",
-            "value": 47
-        },
-        {
-            "hc-key": "cn-gz",
-            "value": 48
-        },
-        {
-            "hc-key": "cn-hn",
-            "value": 49
-        },
-        {
-            "hc-key": "cn-jx",
-            "value": 50
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cn/custom/cn-all-sar'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.js">China with Hong Kong and Macau</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.js">China with Hong Kong and Macau</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cn/custom/cn-all-sar'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

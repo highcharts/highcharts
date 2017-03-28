@@ -1,73 +1,52 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['er-5773', 0],
+    ['er-du', 1],
+    ['er-gb', 2],
+    ['er-an', 3],
+    ['er-sk', 4],
+    ['er-ma', 5],
+    ['er-dk', 6]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "er-5773",
-            "value": 0
-        },
-        {
-            "hc-key": "er-du",
-            "value": 1
-        },
-        {
-            "hc-key": "er-gb",
-            "value": 2
-        },
-        {
-            "hc-key": "er-an",
-            "value": 3
-        },
-        {
-            "hc-key": "er-sk",
-            "value": 4
-        },
-        {
-            "hc-key": "er-ma",
-            "value": 5
-        },
-        {
-            "hc-key": "er-dk",
-            "value": 6
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/er/er-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/er/er-all.js">Eritrea</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/er/er-all.js">Eritrea</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/er/er-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

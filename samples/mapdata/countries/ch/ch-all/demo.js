@@ -1,149 +1,71 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ch-fr', 0],
+    ['ch-ne', 1],
+    ['ch-ag', 2],
+    ['ch-lu', 3],
+    ['ch-7', 4],
+    ['ch-vs', 5],
+    ['ch-sg', 6],
+    ['ch-ar', 7],
+    ['ch-ti', 8],
+    ['ch-gl', 9],
+    ['ch-gr', 10],
+    ['ch-sz', 11],
+    ['ch-tg', 12],
+    ['ch-sh', 13],
+    ['ch-ur', 14],
+    ['ch-zh', 15],
+    ['ch-zg', 16],
+    ['ch-vd', 17],
+    ['ch-3306', 18],
+    ['ch-be', 19],
+    ['ch-bs', 20],
+    ['ch-so', 21],
+    ['ch-nw', 22],
+    ['ch-ai', 23],
+    ['ch-ge', 24],
+    ['ch-ju', 25]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ch-fr",
-            "value": 0
-        },
-        {
-            "hc-key": "ch-ne",
-            "value": 1
-        },
-        {
-            "hc-key": "ch-ag",
-            "value": 2
-        },
-        {
-            "hc-key": "ch-lu",
-            "value": 3
-        },
-        {
-            "hc-key": "ch-7",
-            "value": 4
-        },
-        {
-            "hc-key": "ch-vs",
-            "value": 5
-        },
-        {
-            "hc-key": "ch-sg",
-            "value": 6
-        },
-        {
-            "hc-key": "ch-ar",
-            "value": 7
-        },
-        {
-            "hc-key": "ch-ti",
-            "value": 8
-        },
-        {
-            "hc-key": "ch-gl",
-            "value": 9
-        },
-        {
-            "hc-key": "ch-gr",
-            "value": 10
-        },
-        {
-            "hc-key": "ch-sz",
-            "value": 11
-        },
-        {
-            "hc-key": "ch-tg",
-            "value": 12
-        },
-        {
-            "hc-key": "ch-sh",
-            "value": 13
-        },
-        {
-            "hc-key": "ch-ur",
-            "value": 14
-        },
-        {
-            "hc-key": "ch-zh",
-            "value": 15
-        },
-        {
-            "hc-key": "ch-zg",
-            "value": 16
-        },
-        {
-            "hc-key": "ch-vd",
-            "value": 17
-        },
-        {
-            "hc-key": "ch-3306",
-            "value": 18
-        },
-        {
-            "hc-key": "ch-be",
-            "value": 19
-        },
-        {
-            "hc-key": "ch-bs",
-            "value": 20
-        },
-        {
-            "hc-key": "ch-so",
-            "value": 21
-        },
-        {
-            "hc-key": "ch-nw",
-            "value": 22
-        },
-        {
-            "hc-key": "ch-ai",
-            "value": 23
-        },
-        {
-            "hc-key": "ch-ge",
-            "value": 24
-        },
-        {
-            "hc-key": "ch-ju",
-            "value": 25
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ch/ch-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ch/ch-all.js">Switzerland</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ch/ch-all.js">Switzerland</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ch/ch-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,465 +1,150 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ks-091', 0],
+    ['us-ks-045', 1],
+    ['us-ks-165', 2],
+    ['us-ks-051', 3],
+    ['us-ks-195', 4],
+    ['us-ks-205', 5],
+    ['us-ks-125', 6],
+    ['us-ks-137', 7],
+    ['us-ks-065', 8],
+    ['us-ks-179', 9],
+    ['us-ks-079', 10],
+    ['us-ks-155', 11],
+    ['us-ks-053', 12],
+    ['us-ks-105', 13],
+    ['us-ks-035', 14],
+    ['us-ks-019', 15],
+    ['us-ks-063', 16],
+    ['us-ks-109', 17],
+    ['us-ks-135', 18],
+    ['us-ks-181', 19],
+    ['us-ks-153', 20],
+    ['us-ks-023', 21],
+    ['us-ks-145', 22],
+    ['us-ks-009', 23],
+    ['us-ks-089', 24],
+    ['us-ks-123', 25],
+    ['us-ks-029', 26],
+    ['us-ks-143', 27],
+    ['us-ks-071', 28],
+    ['us-ks-075', 29],
+    ['us-ks-041', 30],
+    ['us-ks-131', 31],
+    ['us-ks-149', 32],
+    ['us-ks-013', 33],
+    ['us-ks-005', 34],
+    ['us-ks-127', 35],
+    ['us-ks-111', 36],
+    ['us-ks-073', 37],
+    ['us-ks-161', 38],
+    ['us-ks-197', 39],
+    ['us-ks-061', 40],
+    ['us-ks-115', 41],
+    ['us-ks-095', 42],
+    ['us-ks-141', 43],
+    ['us-ks-085', 44],
+    ['us-ks-037', 45],
+    ['us-ks-099', 46],
+    ['us-ks-049', 47],
+    ['us-ks-133', 48],
+    ['us-ks-057', 49],
+    ['us-ks-047', 50],
+    ['us-ks-151', 51],
+    ['us-ks-169', 52],
+    ['us-ks-113', 53],
+    ['us-ks-203', 54],
+    ['us-ks-167', 55],
+    ['us-ks-163', 56],
+    ['us-ks-011', 57],
+    ['us-ks-055', 58],
+    ['us-ks-083', 59],
+    ['us-ks-039', 60],
+    ['us-ks-193', 61],
+    ['us-ks-147', 62],
+    ['us-ks-069', 63],
+    ['us-ks-175', 64],
+    ['us-ks-119', 65],
+    ['us-ks-081', 66],
+    ['us-ks-007', 67],
+    ['us-ks-103', 68],
+    ['us-ks-093', 69],
+    ['us-ks-171', 70],
+    ['us-ks-177', 71],
+    ['us-ks-187', 72],
+    ['us-ks-189', 73],
+    ['us-ks-031', 74],
+    ['us-ks-059', 75],
+    ['us-ks-207', 76],
+    ['us-ks-139', 77],
+    ['us-ks-183', 78],
+    ['us-ks-199', 79],
+    ['us-ks-173', 80],
+    ['us-ks-077', 81],
+    ['us-ks-191', 82],
+    ['us-ks-001', 83],
+    ['us-ks-121', 84],
+    ['us-ks-021', 85],
+    ['us-ks-033', 86],
+    ['us-ks-185', 87],
+    ['us-ks-159', 88],
+    ['us-ks-117', 89],
+    ['us-ks-015', 90],
+    ['us-ks-017', 91],
+    ['us-ks-043', 92],
+    ['us-ks-107', 93],
+    ['us-ks-157', 94],
+    ['us-ks-097', 95],
+    ['us-ks-067', 96],
+    ['us-ks-129', 97],
+    ['us-ks-025', 98],
+    ['us-ks-003', 99],
+    ['us-ks-209', 100],
+    ['us-ks-027', 101],
+    ['us-ks-087', 102],
+    ['us-ks-201', 103],
+    ['us-ks-101', 104]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ks-091",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ks-045",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ks-165",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ks-051",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ks-195",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ks-205",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ks-125",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ks-137",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ks-065",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ks-179",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ks-079",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ks-155",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ks-053",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ks-105",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ks-035",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ks-019",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ks-063",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ks-109",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ks-135",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ks-181",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ks-153",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ks-023",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ks-145",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ks-009",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ks-089",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ks-123",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ks-029",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ks-143",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ks-071",
-            "value": 28
-        },
-        {
-            "hc-key": "us-ks-075",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ks-041",
-            "value": 30
-        },
-        {
-            "hc-key": "us-ks-131",
-            "value": 31
-        },
-        {
-            "hc-key": "us-ks-149",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ks-013",
-            "value": 33
-        },
-        {
-            "hc-key": "us-ks-005",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ks-127",
-            "value": 35
-        },
-        {
-            "hc-key": "us-ks-111",
-            "value": 36
-        },
-        {
-            "hc-key": "us-ks-073",
-            "value": 37
-        },
-        {
-            "hc-key": "us-ks-161",
-            "value": 38
-        },
-        {
-            "hc-key": "us-ks-197",
-            "value": 39
-        },
-        {
-            "hc-key": "us-ks-061",
-            "value": 40
-        },
-        {
-            "hc-key": "us-ks-115",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ks-095",
-            "value": 42
-        },
-        {
-            "hc-key": "us-ks-141",
-            "value": 43
-        },
-        {
-            "hc-key": "us-ks-085",
-            "value": 44
-        },
-        {
-            "hc-key": "us-ks-037",
-            "value": 45
-        },
-        {
-            "hc-key": "us-ks-099",
-            "value": 46
-        },
-        {
-            "hc-key": "us-ks-049",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ks-133",
-            "value": 48
-        },
-        {
-            "hc-key": "us-ks-057",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ks-047",
-            "value": 50
-        },
-        {
-            "hc-key": "us-ks-151",
-            "value": 51
-        },
-        {
-            "hc-key": "us-ks-169",
-            "value": 52
-        },
-        {
-            "hc-key": "us-ks-113",
-            "value": 53
-        },
-        {
-            "hc-key": "us-ks-203",
-            "value": 54
-        },
-        {
-            "hc-key": "us-ks-167",
-            "value": 55
-        },
-        {
-            "hc-key": "us-ks-163",
-            "value": 56
-        },
-        {
-            "hc-key": "us-ks-011",
-            "value": 57
-        },
-        {
-            "hc-key": "us-ks-055",
-            "value": 58
-        },
-        {
-            "hc-key": "us-ks-083",
-            "value": 59
-        },
-        {
-            "hc-key": "us-ks-039",
-            "value": 60
-        },
-        {
-            "hc-key": "us-ks-193",
-            "value": 61
-        },
-        {
-            "hc-key": "us-ks-147",
-            "value": 62
-        },
-        {
-            "hc-key": "us-ks-069",
-            "value": 63
-        },
-        {
-            "hc-key": "us-ks-175",
-            "value": 64
-        },
-        {
-            "hc-key": "us-ks-119",
-            "value": 65
-        },
-        {
-            "hc-key": "us-ks-081",
-            "value": 66
-        },
-        {
-            "hc-key": "us-ks-007",
-            "value": 67
-        },
-        {
-            "hc-key": "us-ks-103",
-            "value": 68
-        },
-        {
-            "hc-key": "us-ks-093",
-            "value": 69
-        },
-        {
-            "hc-key": "us-ks-171",
-            "value": 70
-        },
-        {
-            "hc-key": "us-ks-177",
-            "value": 71
-        },
-        {
-            "hc-key": "us-ks-187",
-            "value": 72
-        },
-        {
-            "hc-key": "us-ks-189",
-            "value": 73
-        },
-        {
-            "hc-key": "us-ks-031",
-            "value": 74
-        },
-        {
-            "hc-key": "us-ks-059",
-            "value": 75
-        },
-        {
-            "hc-key": "us-ks-207",
-            "value": 76
-        },
-        {
-            "hc-key": "us-ks-139",
-            "value": 77
-        },
-        {
-            "hc-key": "us-ks-183",
-            "value": 78
-        },
-        {
-            "hc-key": "us-ks-199",
-            "value": 79
-        },
-        {
-            "hc-key": "us-ks-173",
-            "value": 80
-        },
-        {
-            "hc-key": "us-ks-077",
-            "value": 81
-        },
-        {
-            "hc-key": "us-ks-191",
-            "value": 82
-        },
-        {
-            "hc-key": "us-ks-001",
-            "value": 83
-        },
-        {
-            "hc-key": "us-ks-121",
-            "value": 84
-        },
-        {
-            "hc-key": "us-ks-021",
-            "value": 85
-        },
-        {
-            "hc-key": "us-ks-033",
-            "value": 86
-        },
-        {
-            "hc-key": "us-ks-185",
-            "value": 87
-        },
-        {
-            "hc-key": "us-ks-159",
-            "value": 88
-        },
-        {
-            "hc-key": "us-ks-117",
-            "value": 89
-        },
-        {
-            "hc-key": "us-ks-015",
-            "value": 90
-        },
-        {
-            "hc-key": "us-ks-017",
-            "value": 91
-        },
-        {
-            "hc-key": "us-ks-043",
-            "value": 92
-        },
-        {
-            "hc-key": "us-ks-107",
-            "value": 93
-        },
-        {
-            "hc-key": "us-ks-157",
-            "value": 94
-        },
-        {
-            "hc-key": "us-ks-097",
-            "value": 95
-        },
-        {
-            "hc-key": "us-ks-067",
-            "value": 96
-        },
-        {
-            "hc-key": "us-ks-129",
-            "value": 97
-        },
-        {
-            "hc-key": "us-ks-025",
-            "value": 98
-        },
-        {
-            "hc-key": "us-ks-003",
-            "value": 99
-        },
-        {
-            "hc-key": "us-ks-209",
-            "value": 100
-        },
-        {
-            "hc-key": "us-ks-027",
-            "value": 101
-        },
-        {
-            "hc-key": "us-ks-087",
-            "value": 102
-        },
-        {
-            "hc-key": "us-ks-201",
-            "value": 103
-        },
-        {
-            "hc-key": "us-ks-101",
-            "value": 104
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-ks-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ks-all.js">Kansas</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ks-all.js">Kansas</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-ks-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

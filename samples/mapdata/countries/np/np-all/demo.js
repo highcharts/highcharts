@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['np-750', 0],
+    ['np-751', 1],
+    ['np-752', 2],
+    ['np-753', 3],
+    ['np-754', 4],
+    ['np-755', 5],
+    ['np-756', 6],
+    ['np-757', 7],
+    ['np-354', 8],
+    ['np-1278', 9],
+    ['np-746', 10],
+    ['np-747', 11],
+    ['np-748', 12],
+    ['np-749', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "np-750",
-            "value": 0
-        },
-        {
-            "hc-key": "np-751",
-            "value": 1
-        },
-        {
-            "hc-key": "np-752",
-            "value": 2
-        },
-        {
-            "hc-key": "np-753",
-            "value": 3
-        },
-        {
-            "hc-key": "np-754",
-            "value": 4
-        },
-        {
-            "hc-key": "np-755",
-            "value": 5
-        },
-        {
-            "hc-key": "np-756",
-            "value": 6
-        },
-        {
-            "hc-key": "np-757",
-            "value": 7
-        },
-        {
-            "hc-key": "np-354",
-            "value": 8
-        },
-        {
-            "hc-key": "np-1278",
-            "value": 9
-        },
-        {
-            "hc-key": "np-746",
-            "value": 10
-        },
-        {
-            "hc-key": "np-747",
-            "value": 11
-        },
-        {
-            "hc-key": "np-748",
-            "value": 12
-        },
-        {
-            "hc-key": "np-749",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/np/np-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/np/np-all.js">Nepal</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/np/np-all.js">Nepal</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/np/np-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

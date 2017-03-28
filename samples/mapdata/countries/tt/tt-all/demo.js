@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['tt-180', 0],
+    ['tt-dm', 1],
+    ['tt-tp', 2],
+    ['tt-sf', 3],
+    ['tt-ch', 4],
+    ['tt-ps', 5],
+    ['tt-193', 6],
+    ['tt-6597', 7],
+    ['tt-si', 8],
+    ['tt-sn', 9],
+    ['tt-mr', 10],
+    ['tt-sl', 11],
+    ['tt-pt', 12],
+    ['tt-ct', 13],
+    ['tt-pd', 14],
+    ['tt-pf', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "tt-180",
-            "value": 0
-        },
-        {
-            "hc-key": "tt-dm",
-            "value": 1
-        },
-        {
-            "hc-key": "tt-tp",
-            "value": 2
-        },
-        {
-            "hc-key": "tt-sf",
-            "value": 3
-        },
-        {
-            "hc-key": "tt-ch",
-            "value": 4
-        },
-        {
-            "hc-key": "tt-ps",
-            "value": 5
-        },
-        {
-            "hc-key": "tt-193",
-            "value": 6
-        },
-        {
-            "hc-key": "tt-6597",
-            "value": 7
-        },
-        {
-            "hc-key": "tt-si",
-            "value": 8
-        },
-        {
-            "hc-key": "tt-sn",
-            "value": 9
-        },
-        {
-            "hc-key": "tt-mr",
-            "value": 10
-        },
-        {
-            "hc-key": "tt-sl",
-            "value": 11
-        },
-        {
-            "hc-key": "tt-pt",
-            "value": 12
-        },
-        {
-            "hc-key": "tt-ct",
-            "value": 13
-        },
-        {
-            "hc-key": "tt-pd",
-            "value": 14
-        },
-        {
-            "hc-key": "tt-pf",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/tt/tt-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tt/tt-all.js">Trinidad and Tobago</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tt/tt-all.js">Trinidad and Tobago</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/tt/tt-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

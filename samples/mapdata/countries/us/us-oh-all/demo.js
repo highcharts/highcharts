@@ -1,397 +1,133 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-oh-085', 0],
+    ['us-oh-035', 1],
+    ['us-oh-103', 2],
+    ['us-oh-153', 3],
+    ['us-oh-063', 4],
+    ['us-oh-173', 5],
+    ['us-oh-039', 6],
+    ['us-oh-077', 7],
+    ['us-oh-093', 8],
+    ['us-oh-145', 9],
+    ['us-oh-087', 10],
+    ['us-oh-015', 11],
+    ['us-oh-001', 12],
+    ['us-oh-049', 13],
+    ['us-oh-067', 14],
+    ['us-oh-013', 15],
+    ['us-oh-081', 16],
+    ['us-oh-105', 17],
+    ['us-oh-163', 18],
+    ['us-oh-079', 19],
+    ['us-oh-009', 20],
+    ['us-oh-059', 21],
+    ['us-oh-031', 22],
+    ['us-oh-129', 23],
+    ['us-oh-097', 24],
+    ['us-oh-045', 25],
+    ['us-oh-047', 26],
+    ['us-oh-141', 27],
+    ['us-oh-071', 28],
+    ['us-oh-101', 29],
+    ['us-oh-065', 30],
+    ['us-oh-149', 31],
+    ['us-oh-091', 32],
+    ['us-oh-161', 33],
+    ['us-oh-137', 34],
+    ['us-oh-133', 35],
+    ['us-oh-155', 36],
+    ['us-oh-055', 37],
+    ['us-oh-007', 38],
+    ['us-oh-143', 39],
+    ['us-oh-147', 40],
+    ['us-oh-165', 41],
+    ['us-oh-017', 42],
+    ['us-oh-113', 43],
+    ['us-oh-033', 44],
+    ['us-oh-061', 45],
+    ['us-oh-073', 46],
+    ['us-oh-037', 47],
+    ['us-oh-019', 48],
+    ['us-oh-151', 49],
+    ['us-oh-075', 50],
+    ['us-oh-099', 51],
+    ['us-oh-005', 52],
+    ['us-oh-041', 53],
+    ['us-oh-083', 54],
+    ['us-oh-011', 55],
+    ['us-oh-089', 56],
+    ['us-oh-095', 57],
+    ['us-oh-069', 58],
+    ['us-oh-171', 59],
+    ['us-oh-157', 60],
+    ['us-oh-127', 61],
+    ['us-oh-131', 62],
+    ['us-oh-025', 63],
+    ['us-oh-027', 64],
+    ['us-oh-159', 65],
+    ['us-oh-021', 66],
+    ['us-oh-109', 67],
+    ['us-oh-003', 68],
+    ['us-oh-023', 69],
+    ['us-oh-107', 70],
+    ['us-oh-053', 71],
+    ['us-oh-117', 72],
+    ['us-oh-111', 73],
+    ['us-oh-135', 74],
+    ['us-oh-119', 75],
+    ['us-oh-139', 76],
+    ['us-oh-051', 77],
+    ['us-oh-167', 78],
+    ['us-oh-175', 79],
+    ['us-oh-169', 80],
+    ['us-oh-115', 81],
+    ['us-oh-057', 82],
+    ['us-oh-043', 83],
+    ['us-oh-125', 84],
+    ['us-oh-029', 85],
+    ['us-oh-123', 86],
+    ['us-oh-121', 87]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-oh-085",
-            "value": 0
-        },
-        {
-            "hc-key": "us-oh-035",
-            "value": 1
-        },
-        {
-            "hc-key": "us-oh-103",
-            "value": 2
-        },
-        {
-            "hc-key": "us-oh-153",
-            "value": 3
-        },
-        {
-            "hc-key": "us-oh-063",
-            "value": 4
-        },
-        {
-            "hc-key": "us-oh-173",
-            "value": 5
-        },
-        {
-            "hc-key": "us-oh-039",
-            "value": 6
-        },
-        {
-            "hc-key": "us-oh-077",
-            "value": 7
-        },
-        {
-            "hc-key": "us-oh-093",
-            "value": 8
-        },
-        {
-            "hc-key": "us-oh-145",
-            "value": 9
-        },
-        {
-            "hc-key": "us-oh-087",
-            "value": 10
-        },
-        {
-            "hc-key": "us-oh-015",
-            "value": 11
-        },
-        {
-            "hc-key": "us-oh-001",
-            "value": 12
-        },
-        {
-            "hc-key": "us-oh-049",
-            "value": 13
-        },
-        {
-            "hc-key": "us-oh-067",
-            "value": 14
-        },
-        {
-            "hc-key": "us-oh-013",
-            "value": 15
-        },
-        {
-            "hc-key": "us-oh-081",
-            "value": 16
-        },
-        {
-            "hc-key": "us-oh-105",
-            "value": 17
-        },
-        {
-            "hc-key": "us-oh-163",
-            "value": 18
-        },
-        {
-            "hc-key": "us-oh-079",
-            "value": 19
-        },
-        {
-            "hc-key": "us-oh-009",
-            "value": 20
-        },
-        {
-            "hc-key": "us-oh-059",
-            "value": 21
-        },
-        {
-            "hc-key": "us-oh-031",
-            "value": 22
-        },
-        {
-            "hc-key": "us-oh-129",
-            "value": 23
-        },
-        {
-            "hc-key": "us-oh-097",
-            "value": 24
-        },
-        {
-            "hc-key": "us-oh-045",
-            "value": 25
-        },
-        {
-            "hc-key": "us-oh-047",
-            "value": 26
-        },
-        {
-            "hc-key": "us-oh-141",
-            "value": 27
-        },
-        {
-            "hc-key": "us-oh-071",
-            "value": 28
-        },
-        {
-            "hc-key": "us-oh-101",
-            "value": 29
-        },
-        {
-            "hc-key": "us-oh-065",
-            "value": 30
-        },
-        {
-            "hc-key": "us-oh-149",
-            "value": 31
-        },
-        {
-            "hc-key": "us-oh-091",
-            "value": 32
-        },
-        {
-            "hc-key": "us-oh-161",
-            "value": 33
-        },
-        {
-            "hc-key": "us-oh-137",
-            "value": 34
-        },
-        {
-            "hc-key": "us-oh-133",
-            "value": 35
-        },
-        {
-            "hc-key": "us-oh-155",
-            "value": 36
-        },
-        {
-            "hc-key": "us-oh-055",
-            "value": 37
-        },
-        {
-            "hc-key": "us-oh-007",
-            "value": 38
-        },
-        {
-            "hc-key": "us-oh-143",
-            "value": 39
-        },
-        {
-            "hc-key": "us-oh-147",
-            "value": 40
-        },
-        {
-            "hc-key": "us-oh-165",
-            "value": 41
-        },
-        {
-            "hc-key": "us-oh-017",
-            "value": 42
-        },
-        {
-            "hc-key": "us-oh-113",
-            "value": 43
-        },
-        {
-            "hc-key": "us-oh-033",
-            "value": 44
-        },
-        {
-            "hc-key": "us-oh-061",
-            "value": 45
-        },
-        {
-            "hc-key": "us-oh-073",
-            "value": 46
-        },
-        {
-            "hc-key": "us-oh-037",
-            "value": 47
-        },
-        {
-            "hc-key": "us-oh-019",
-            "value": 48
-        },
-        {
-            "hc-key": "us-oh-151",
-            "value": 49
-        },
-        {
-            "hc-key": "us-oh-075",
-            "value": 50
-        },
-        {
-            "hc-key": "us-oh-099",
-            "value": 51
-        },
-        {
-            "hc-key": "us-oh-005",
-            "value": 52
-        },
-        {
-            "hc-key": "us-oh-041",
-            "value": 53
-        },
-        {
-            "hc-key": "us-oh-083",
-            "value": 54
-        },
-        {
-            "hc-key": "us-oh-011",
-            "value": 55
-        },
-        {
-            "hc-key": "us-oh-089",
-            "value": 56
-        },
-        {
-            "hc-key": "us-oh-095",
-            "value": 57
-        },
-        {
-            "hc-key": "us-oh-069",
-            "value": 58
-        },
-        {
-            "hc-key": "us-oh-171",
-            "value": 59
-        },
-        {
-            "hc-key": "us-oh-157",
-            "value": 60
-        },
-        {
-            "hc-key": "us-oh-127",
-            "value": 61
-        },
-        {
-            "hc-key": "us-oh-131",
-            "value": 62
-        },
-        {
-            "hc-key": "us-oh-025",
-            "value": 63
-        },
-        {
-            "hc-key": "us-oh-027",
-            "value": 64
-        },
-        {
-            "hc-key": "us-oh-159",
-            "value": 65
-        },
-        {
-            "hc-key": "us-oh-021",
-            "value": 66
-        },
-        {
-            "hc-key": "us-oh-109",
-            "value": 67
-        },
-        {
-            "hc-key": "us-oh-003",
-            "value": 68
-        },
-        {
-            "hc-key": "us-oh-023",
-            "value": 69
-        },
-        {
-            "hc-key": "us-oh-107",
-            "value": 70
-        },
-        {
-            "hc-key": "us-oh-053",
-            "value": 71
-        },
-        {
-            "hc-key": "us-oh-117",
-            "value": 72
-        },
-        {
-            "hc-key": "us-oh-111",
-            "value": 73
-        },
-        {
-            "hc-key": "us-oh-135",
-            "value": 74
-        },
-        {
-            "hc-key": "us-oh-119",
-            "value": 75
-        },
-        {
-            "hc-key": "us-oh-139",
-            "value": 76
-        },
-        {
-            "hc-key": "us-oh-051",
-            "value": 77
-        },
-        {
-            "hc-key": "us-oh-167",
-            "value": 78
-        },
-        {
-            "hc-key": "us-oh-175",
-            "value": 79
-        },
-        {
-            "hc-key": "us-oh-169",
-            "value": 80
-        },
-        {
-            "hc-key": "us-oh-115",
-            "value": 81
-        },
-        {
-            "hc-key": "us-oh-057",
-            "value": 82
-        },
-        {
-            "hc-key": "us-oh-043",
-            "value": 83
-        },
-        {
-            "hc-key": "us-oh-125",
-            "value": 84
-        },
-        {
-            "hc-key": "us-oh-029",
-            "value": 85
-        },
-        {
-            "hc-key": "us-oh-123",
-            "value": 86
-        },
-        {
-            "hc-key": "us-oh-121",
-            "value": 87
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-oh-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-oh-all.js">Ohio</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-oh-all.js">Ohio</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-oh-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

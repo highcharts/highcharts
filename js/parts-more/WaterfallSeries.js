@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,7 +11,6 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 var correctFloat = H.correctFloat,
 	isNumber = H.isNumber,
-	noop = H.noop,
 	pick = H.pick,
 	Point = H.Point,
 	Series = H.Series,
@@ -67,7 +66,7 @@ seriesType('waterfall', 'column', {
 			tooltipY;
 
 		// run column series translate
-		seriesTypes.column.prototype.translate.apply(this);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -75,14 +74,18 @@ seriesType('waterfall', 'column', {
 		for (i = 0, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
-			yValue = this.processedYData[i];
+			yValue = series.processedYData[i];
 			shapeArgs = point.shapeArgs;
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
-			stackIndicator = series.getStackIndicator(stackIndicator, point.x);
+			stackIndicator = series.getStackIndicator(
+				stackIndicator,
+				point.x,
+				series.index
+			);
 			range = stack ?
-				stack[point.x].points[series.index + ',' + i + ',' + stackIndicator.index] :
+				stack[point.x].points[stackIndicator.key] :
 				[0, yValue];
 
 			// override point value for sums
@@ -95,7 +98,6 @@ seriesType('waterfall', 'column', {
 			// up points
 			y = Math.max(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.toPixels(y, true);
-
 
 			// sum points
 			if (point.isSum) {
@@ -115,8 +117,10 @@ seriesType('waterfall', 'column', {
 				shapeArgs.height = yValue > 0 ?
 					yAxis.toPixels(previousY, true) - shapeArgs.y :
 					yAxis.toPixels(previousY, true) - yAxis.toPixels(previousY - yValue, true);
-				previousY += yValue;
+
+				previousY += stack && stack[point.x] ? stack[point.x].total : yValue;
 			}
+
 			// #3952 Negative sum or intermediate sum not rendered correctly
 			if (shapeArgs.height < 0) {
 				shapeArgs.y += shapeArgs.height;
@@ -189,9 +193,11 @@ seriesType('waterfall', 'column', {
 
 		Series.prototype.processData.call(this, force);
 
-		// Record extremes
-		series.dataMin = dataMin;
-		series.dataMax = dataMax;
+		// Record extremes only if stacking was not set:
+		if (!series.options.stacking) {
+			series.dataMin = dataMin;
+			series.dataMax = dataMax;
+		}
 	},
 
 	/**
@@ -290,9 +296,40 @@ seriesType('waterfall', 'column', {
 	},
 
 	/**
-	 * Extremes are recorded in processData
+	 * Waterfall has stacking along the x-values too.
 	 */
-	getExtremes: noop
+	setStackedPoints: function () {
+		var series = this,
+			options = series.options,
+			stackedYLength,
+			i;
+
+		Series.prototype.setStackedPoints.apply(series, arguments);
+
+		stackedYLength = series.stackedYData ? series.stackedYData.length : 0;
+
+		// Start from the second point:
+		for (i = 1; i < stackedYLength; i++) {
+			if (
+				!options.data[i].isSum &&
+				!options.data[i].isIntermediateSum
+			) {
+				// Sum previous stacked data as waterfall can grow up/down:
+				series.stackedYData[i] += series.stackedYData[i - 1];
+			}
+		}
+	},
+
+	/**
+	 * Extremes for a non-stacked series are recorded in processData.
+	 * In case of stacking, use Series.stackedYData to calculate extremes.
+	 */
+	getExtremes: function () {
+		if (this.options.stacking) {
+			return Series.prototype.getExtremes.apply(this, arguments);
+		}
+	}
+
 
 // Point members
 }, {

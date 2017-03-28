@@ -1,193 +1,82 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ng-ri', 0],
+    ['ng-kt', 1],
+    ['ng-so', 2],
+    ['ng-za', 3],
+    ['ng-yo', 4],
+    ['ng-ke', 5],
+    ['ng-ad', 6],
+    ['ng-bo', 7],
+    ['ng-ak', 8],
+    ['ng-ab', 9],
+    ['ng-im', 10],
+    ['ng-by', 11],
+    ['ng-be', 12],
+    ['ng-cr', 13],
+    ['ng-ta', 14],
+    ['ng-kw', 15],
+    ['ng-la', 16],
+    ['ng-ni', 17],
+    ['ng-fc', 18],
+    ['ng-og', 19],
+    ['ng-on', 20],
+    ['ng-ek', 21],
+    ['ng-os', 22],
+    ['ng-oy', 23],
+    ['ng-an', 24],
+    ['ng-ba', 25],
+    ['ng-go', 26],
+    ['ng-de', 27],
+    ['ng-ed', 28],
+    ['ng-en', 29],
+    ['ng-eb', 30],
+    ['ng-kd', 31],
+    ['ng-ko', 32],
+    ['ng-pl', 33],
+    ['ng-na', 34],
+    ['ng-ji', 35],
+    ['ng-kn', 36]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ng-ri",
-            "value": 0
-        },
-        {
-            "hc-key": "ng-kt",
-            "value": 1
-        },
-        {
-            "hc-key": "ng-so",
-            "value": 2
-        },
-        {
-            "hc-key": "ng-za",
-            "value": 3
-        },
-        {
-            "hc-key": "ng-yo",
-            "value": 4
-        },
-        {
-            "hc-key": "ng-ke",
-            "value": 5
-        },
-        {
-            "hc-key": "ng-ad",
-            "value": 6
-        },
-        {
-            "hc-key": "ng-bo",
-            "value": 7
-        },
-        {
-            "hc-key": "ng-ak",
-            "value": 8
-        },
-        {
-            "hc-key": "ng-ab",
-            "value": 9
-        },
-        {
-            "hc-key": "ng-im",
-            "value": 10
-        },
-        {
-            "hc-key": "ng-by",
-            "value": 11
-        },
-        {
-            "hc-key": "ng-be",
-            "value": 12
-        },
-        {
-            "hc-key": "ng-cr",
-            "value": 13
-        },
-        {
-            "hc-key": "ng-ta",
-            "value": 14
-        },
-        {
-            "hc-key": "ng-kw",
-            "value": 15
-        },
-        {
-            "hc-key": "ng-la",
-            "value": 16
-        },
-        {
-            "hc-key": "ng-ni",
-            "value": 17
-        },
-        {
-            "hc-key": "ng-fc",
-            "value": 18
-        },
-        {
-            "hc-key": "ng-og",
-            "value": 19
-        },
-        {
-            "hc-key": "ng-on",
-            "value": 20
-        },
-        {
-            "hc-key": "ng-ek",
-            "value": 21
-        },
-        {
-            "hc-key": "ng-os",
-            "value": 22
-        },
-        {
-            "hc-key": "ng-oy",
-            "value": 23
-        },
-        {
-            "hc-key": "ng-an",
-            "value": 24
-        },
-        {
-            "hc-key": "ng-ba",
-            "value": 25
-        },
-        {
-            "hc-key": "ng-go",
-            "value": 26
-        },
-        {
-            "hc-key": "ng-de",
-            "value": 27
-        },
-        {
-            "hc-key": "ng-ed",
-            "value": 28
-        },
-        {
-            "hc-key": "ng-en",
-            "value": 29
-        },
-        {
-            "hc-key": "ng-eb",
-            "value": 30
-        },
-        {
-            "hc-key": "ng-kd",
-            "value": 31
-        },
-        {
-            "hc-key": "ng-ko",
-            "value": 32
-        },
-        {
-            "hc-key": "ng-pl",
-            "value": 33
-        },
-        {
-            "hc-key": "ng-na",
-            "value": 34
-        },
-        {
-            "hc-key": "ng-ji",
-            "value": 35
-        },
-        {
-            "hc-key": "ng-kn",
-            "value": 36
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ng/ng-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ng/ng-all.js">Nigeria</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ng/ng-all.js">Nigeria</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ng/ng-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

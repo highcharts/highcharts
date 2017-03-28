@@ -1,133 +1,67 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mn-da', 0],
+    ['mn-ub', 1],
+    ['mn-hg', 2],
+    ['mn-uv', 3],
+    ['mn-dg', 4],
+    ['mn-og', 5],
+    ['mn-hn', 6],
+    ['mn-bh', 7],
+    ['mn-ar', 8],
+    ['mn-dz', 9],
+    ['mn-ga', 10],
+    ['mn-hd', 11],
+    ['mn-bo', 12],
+    ['mn-bu', 13],
+    ['mn-er', 14],
+    ['mn-sl', 15],
+    ['mn-oh', 16],
+    ['mn-du', 17],
+    ['mn-to', 18],
+    ['mn-gs', 19],
+    ['mn-dd', 20],
+    ['mn-sb', 21]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mn-da",
-            "value": 0
-        },
-        {
-            "hc-key": "mn-ub",
-            "value": 1
-        },
-        {
-            "hc-key": "mn-hg",
-            "value": 2
-        },
-        {
-            "hc-key": "mn-uv",
-            "value": 3
-        },
-        {
-            "hc-key": "mn-dg",
-            "value": 4
-        },
-        {
-            "hc-key": "mn-og",
-            "value": 5
-        },
-        {
-            "hc-key": "mn-hn",
-            "value": 6
-        },
-        {
-            "hc-key": "mn-bh",
-            "value": 7
-        },
-        {
-            "hc-key": "mn-ar",
-            "value": 8
-        },
-        {
-            "hc-key": "mn-dz",
-            "value": 9
-        },
-        {
-            "hc-key": "mn-ga",
-            "value": 10
-        },
-        {
-            "hc-key": "mn-hd",
-            "value": 11
-        },
-        {
-            "hc-key": "mn-bo",
-            "value": 12
-        },
-        {
-            "hc-key": "mn-bu",
-            "value": 13
-        },
-        {
-            "hc-key": "mn-er",
-            "value": 14
-        },
-        {
-            "hc-key": "mn-sl",
-            "value": 15
-        },
-        {
-            "hc-key": "mn-oh",
-            "value": 16
-        },
-        {
-            "hc-key": "mn-du",
-            "value": 17
-        },
-        {
-            "hc-key": "mn-to",
-            "value": 18
-        },
-        {
-            "hc-key": "mn-gs",
-            "value": 19
-        },
-        {
-            "hc-key": "mn-dd",
-            "value": 20
-        },
-        {
-            "hc-key": "mn-sb",
-            "value": 21
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mn/mn-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mn/mn-all.js">Mongolia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mn/mn-all.js">Mongolia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mn/mn-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

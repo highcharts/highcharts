@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-me-009', 0],
+    ['us-me-029', 1],
+    ['us-me-013', 2],
+    ['us-me-027', 3],
+    ['us-me-015', 4],
+    ['us-me-019', 5],
+    ['us-me-031', 6],
+    ['us-me-005', 7],
+    ['us-me-025', 8],
+    ['us-me-021', 9],
+    ['us-me-023', 10],
+    ['us-me-001', 11],
+    ['us-me-007', 12],
+    ['us-me-003', 13],
+    ['us-me-011', 14],
+    ['us-me-017', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-me-009",
-            "value": 0
-        },
-        {
-            "hc-key": "us-me-029",
-            "value": 1
-        },
-        {
-            "hc-key": "us-me-013",
-            "value": 2
-        },
-        {
-            "hc-key": "us-me-027",
-            "value": 3
-        },
-        {
-            "hc-key": "us-me-015",
-            "value": 4
-        },
-        {
-            "hc-key": "us-me-019",
-            "value": 5
-        },
-        {
-            "hc-key": "us-me-031",
-            "value": 6
-        },
-        {
-            "hc-key": "us-me-005",
-            "value": 7
-        },
-        {
-            "hc-key": "us-me-025",
-            "value": 8
-        },
-        {
-            "hc-key": "us-me-021",
-            "value": 9
-        },
-        {
-            "hc-key": "us-me-023",
-            "value": 10
-        },
-        {
-            "hc-key": "us-me-001",
-            "value": 11
-        },
-        {
-            "hc-key": "us-me-007",
-            "value": 12
-        },
-        {
-            "hc-key": "us-me-003",
-            "value": 13
-        },
-        {
-            "hc-key": "us-me-011",
-            "value": 14
-        },
-        {
-            "hc-key": "us-me-017",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-me-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-me-all.js">Maine</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-me-all.js">Maine</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-me-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

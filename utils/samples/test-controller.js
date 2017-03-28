@@ -36,7 +36,7 @@ window.TestController = function (chart) {
      *    example `{ shiftKey: true }` to emulate that the shift key has been
      *    pressed in a mouse event.
      */
-    function triggerEvent(type, pageX, pageY, extra) {
+    function triggerEvent(type, pageX, pageY, extra, el) {
         var evt = document.createEvent('Events'),
             element;
         evt.initEvent(type, true, true);
@@ -50,7 +50,7 @@ window.TestController = function (chart) {
         }
 
         // Find an element related to the coordinates and fire event.
-        element = document.elementFromPoint(pageX, pageY);
+        element = el || document.elementFromPoint(pageX, pageY);
         if (element) {
             element.dispatchEvent(evt);
         }
@@ -212,8 +212,8 @@ window.TestController = function (chart) {
                 if (target !== relatedTarget) {
                     // First trigger a mouseout on the old target.
                     triggerEvent('mouseout', x1, y1, {
-                        relatedTarget: relatedTarget
-                    });
+                        relatedTarget: target
+                    }, relatedTarget);
                     // Then trigger a mouseover on the new target.
                     triggerEvent('mouseover', x1, y1, {
                         relatedTarget: target

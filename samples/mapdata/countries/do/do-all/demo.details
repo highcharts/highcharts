@@ -1,4 +1,5 @@
 ---
  name: Dominican Republic - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

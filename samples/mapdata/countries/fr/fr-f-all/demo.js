@@ -1,69 +1,51 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['fr-f-in', 0],
+    ['fr-f-il', 1],
+    ['fr-f-el', 2],
+    ['fr-f-lc', 3],
+    ['fr-f-ch', 4],
+    ['fr-f-lt', 5]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "fr-f-in",
-            "value": 0
-        },
-        {
-            "hc-key": "fr-f-il",
-            "value": 1
-        },
-        {
-            "hc-key": "fr-f-el",
-            "value": 2
-        },
-        {
-            "hc-key": "fr-f-lc",
-            "value": 3
-        },
-        {
-            "hc-key": "fr-f-ch",
-            "value": 4
-        },
-        {
-            "hc-key": "fr-f-lt",
-            "value": 5
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/fr/fr-f-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-f-all.js">Centre</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-f-all.js">Centre</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/fr/fr-f-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -114,6 +114,7 @@ seriesType('flags', 'column', {
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			xAxisExt = xAxis.getExtremes(),
 			xOffset = 0,
 			leftPoint,
@@ -165,12 +166,16 @@ seriesType('flags', 'column', {
 
 			var stackIndex;
 
-			// Undefined plotY means the point is either on axis, outside series range or hidden series.
-			// If the series is outside the range of the x axis it should fall through with
-			// an undefined plotY, but then we must remove the shapeArgs (#847).
+			// Undefined plotY means the point is either on axis, outside series
+			// range or hidden series. If the series is outside the range of the
+			// x axis it should fall through with an undefined plotY, but then
+			// we must remove the shapeArgs (#847).
 			if (point.plotY === undefined) {
-				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
-					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
+				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) {
+					// we're inside xAxis range
+					point.plotY = chart.chartHeight - xAxis.bottom -
+						(xAxis.opposite ? xAxis.height : 0) +
+						xAxis.offset - yAxis.top; // #3517
 				} else {
 					point.shapeArgs = {}; // 847
 				}

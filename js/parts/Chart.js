@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -558,7 +558,8 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Lay out the chart titles and cache the full offset height for use in getMargins
+	 * Lay out the chart titles and cache the full offset height for use
+	 * in getMargins
 	 */
 	layOutTitles: function (redraw) {
 		var titleOffset = 0,
@@ -579,13 +580,20 @@ Chart.prototype = {
 				titleSize = renderer.fontMetrics(titleSize, title).b;
 				
 				title
-					.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + 'px' })
+					.css({
+						width: (titleOptions.width ||
+							spacingBox.width + titleOptions.widthAdjust) + 'px'
+					})
 					.align(extend({ 
 						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
 					}, titleOptions), false, 'spacingBox');
 
 				if (!titleOptions.floating && !titleOptions.verticalAlign) {
-					titleOffset = Math.ceil(titleOffset + title.getBBox().height);
+					titleOffset = Math.ceil(
+						titleOffset +
+						// Skip the cache for HTML (#3481)
+						title.getBBox(titleOptions.useHTML).height
+					);
 				}
 			}
 		}, this);

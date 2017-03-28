@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -773,7 +773,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
 
 		// hide the tooltip
-		if (tooltip && !options.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
+		if (tooltip && !series.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
 			tooltip.hide();
 		}
 

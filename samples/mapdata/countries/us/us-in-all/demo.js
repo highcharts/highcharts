@@ -1,413 +1,137 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-in-139', 0],
+    ['us-in-031', 1],
+    ['us-in-149', 2],
+    ['us-in-099', 3],
+    ['us-in-033', 4],
+    ['us-in-151', 5],
+    ['us-in-043', 6],
+    ['us-in-019', 7],
+    ['us-in-181', 8],
+    ['us-in-131', 9],
+    ['us-in-153', 10],
+    ['us-in-021', 11],
+    ['us-in-045', 12],
+    ['us-in-165', 13],
+    ['us-in-039', 14],
+    ['us-in-087', 15],
+    ['us-in-093', 16],
+    ['us-in-071', 17],
+    ['us-in-171', 18],
+    ['us-in-121', 19],
+    ['us-in-167', 20],
+    ['us-in-015', 21],
+    ['us-in-065', 22],
+    ['us-in-095', 23],
+    ['us-in-053', 24],
+    ['us-in-069', 25],
+    ['us-in-003', 26],
+    ['us-in-157', 27],
+    ['us-in-023', 28],
+    ['us-in-159', 29],
+    ['us-in-067', 30],
+    ['us-in-057', 31],
+    ['us-in-059', 32],
+    ['us-in-111', 33],
+    ['us-in-073', 34],
+    ['us-in-135', 35],
+    ['us-in-035', 36],
+    ['us-in-005', 37],
+    ['us-in-081', 38],
+    ['us-in-013', 39],
+    ['us-in-055', 40],
+    ['us-in-109', 41],
+    ['us-in-133', 42],
+    ['us-in-105', 43],
+    ['us-in-137', 44],
+    ['us-in-049', 45],
+    ['us-in-169', 46],
+    ['us-in-113', 47],
+    ['us-in-075', 48],
+    ['us-in-041', 49],
+    ['us-in-027', 50],
+    ['us-in-101', 51],
+    ['us-in-103', 52],
+    ['us-in-179', 53],
+    ['us-in-009', 54],
+    ['us-in-079', 55],
+    ['us-in-143', 56],
+    ['us-in-115', 57],
+    ['us-in-029', 58],
+    ['us-in-175', 59],
+    ['us-in-107', 60],
+    ['us-in-063', 61],
+    ['us-in-145', 62],
+    ['us-in-097', 63],
+    ['us-in-011', 64],
+    ['us-in-141', 65],
+    ['us-in-037', 66],
+    ['us-in-117', 67],
+    ['us-in-025', 68],
+    ['us-in-083', 69],
+    ['us-in-173', 70],
+    ['us-in-163', 71],
+    ['us-in-051', 72],
+    ['us-in-089', 73],
+    ['us-in-007', 74],
+    ['us-in-125', 75],
+    ['us-in-155', 76],
+    ['us-in-123', 77],
+    ['us-in-161', 78],
+    ['us-in-147', 79],
+    ['us-in-001', 80],
+    ['us-in-129', 81],
+    ['us-in-061', 82],
+    ['us-in-017', 83],
+    ['us-in-085', 84],
+    ['us-in-047', 85],
+    ['us-in-119', 86],
+    ['us-in-077', 87],
+    ['us-in-091', 88],
+    ['us-in-127', 89],
+    ['us-in-177', 90],
+    ['us-in-183', 91]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-in-139",
-            "value": 0
-        },
-        {
-            "hc-key": "us-in-031",
-            "value": 1
-        },
-        {
-            "hc-key": "us-in-149",
-            "value": 2
-        },
-        {
-            "hc-key": "us-in-099",
-            "value": 3
-        },
-        {
-            "hc-key": "us-in-033",
-            "value": 4
-        },
-        {
-            "hc-key": "us-in-151",
-            "value": 5
-        },
-        {
-            "hc-key": "us-in-043",
-            "value": 6
-        },
-        {
-            "hc-key": "us-in-019",
-            "value": 7
-        },
-        {
-            "hc-key": "us-in-181",
-            "value": 8
-        },
-        {
-            "hc-key": "us-in-131",
-            "value": 9
-        },
-        {
-            "hc-key": "us-in-153",
-            "value": 10
-        },
-        {
-            "hc-key": "us-in-021",
-            "value": 11
-        },
-        {
-            "hc-key": "us-in-045",
-            "value": 12
-        },
-        {
-            "hc-key": "us-in-165",
-            "value": 13
-        },
-        {
-            "hc-key": "us-in-039",
-            "value": 14
-        },
-        {
-            "hc-key": "us-in-087",
-            "value": 15
-        },
-        {
-            "hc-key": "us-in-093",
-            "value": 16
-        },
-        {
-            "hc-key": "us-in-071",
-            "value": 17
-        },
-        {
-            "hc-key": "us-in-171",
-            "value": 18
-        },
-        {
-            "hc-key": "us-in-121",
-            "value": 19
-        },
-        {
-            "hc-key": "us-in-167",
-            "value": 20
-        },
-        {
-            "hc-key": "us-in-015",
-            "value": 21
-        },
-        {
-            "hc-key": "us-in-065",
-            "value": 22
-        },
-        {
-            "hc-key": "us-in-095",
-            "value": 23
-        },
-        {
-            "hc-key": "us-in-053",
-            "value": 24
-        },
-        {
-            "hc-key": "us-in-069",
-            "value": 25
-        },
-        {
-            "hc-key": "us-in-003",
-            "value": 26
-        },
-        {
-            "hc-key": "us-in-157",
-            "value": 27
-        },
-        {
-            "hc-key": "us-in-023",
-            "value": 28
-        },
-        {
-            "hc-key": "us-in-159",
-            "value": 29
-        },
-        {
-            "hc-key": "us-in-067",
-            "value": 30
-        },
-        {
-            "hc-key": "us-in-057",
-            "value": 31
-        },
-        {
-            "hc-key": "us-in-059",
-            "value": 32
-        },
-        {
-            "hc-key": "us-in-111",
-            "value": 33
-        },
-        {
-            "hc-key": "us-in-073",
-            "value": 34
-        },
-        {
-            "hc-key": "us-in-135",
-            "value": 35
-        },
-        {
-            "hc-key": "us-in-035",
-            "value": 36
-        },
-        {
-            "hc-key": "us-in-005",
-            "value": 37
-        },
-        {
-            "hc-key": "us-in-081",
-            "value": 38
-        },
-        {
-            "hc-key": "us-in-013",
-            "value": 39
-        },
-        {
-            "hc-key": "us-in-055",
-            "value": 40
-        },
-        {
-            "hc-key": "us-in-109",
-            "value": 41
-        },
-        {
-            "hc-key": "us-in-133",
-            "value": 42
-        },
-        {
-            "hc-key": "us-in-105",
-            "value": 43
-        },
-        {
-            "hc-key": "us-in-137",
-            "value": 44
-        },
-        {
-            "hc-key": "us-in-049",
-            "value": 45
-        },
-        {
-            "hc-key": "us-in-169",
-            "value": 46
-        },
-        {
-            "hc-key": "us-in-113",
-            "value": 47
-        },
-        {
-            "hc-key": "us-in-075",
-            "value": 48
-        },
-        {
-            "hc-key": "us-in-041",
-            "value": 49
-        },
-        {
-            "hc-key": "us-in-027",
-            "value": 50
-        },
-        {
-            "hc-key": "us-in-101",
-            "value": 51
-        },
-        {
-            "hc-key": "us-in-103",
-            "value": 52
-        },
-        {
-            "hc-key": "us-in-179",
-            "value": 53
-        },
-        {
-            "hc-key": "us-in-009",
-            "value": 54
-        },
-        {
-            "hc-key": "us-in-079",
-            "value": 55
-        },
-        {
-            "hc-key": "us-in-143",
-            "value": 56
-        },
-        {
-            "hc-key": "us-in-115",
-            "value": 57
-        },
-        {
-            "hc-key": "us-in-029",
-            "value": 58
-        },
-        {
-            "hc-key": "us-in-175",
-            "value": 59
-        },
-        {
-            "hc-key": "us-in-107",
-            "value": 60
-        },
-        {
-            "hc-key": "us-in-063",
-            "value": 61
-        },
-        {
-            "hc-key": "us-in-145",
-            "value": 62
-        },
-        {
-            "hc-key": "us-in-097",
-            "value": 63
-        },
-        {
-            "hc-key": "us-in-011",
-            "value": 64
-        },
-        {
-            "hc-key": "us-in-141",
-            "value": 65
-        },
-        {
-            "hc-key": "us-in-037",
-            "value": 66
-        },
-        {
-            "hc-key": "us-in-117",
-            "value": 67
-        },
-        {
-            "hc-key": "us-in-025",
-            "value": 68
-        },
-        {
-            "hc-key": "us-in-083",
-            "value": 69
-        },
-        {
-            "hc-key": "us-in-173",
-            "value": 70
-        },
-        {
-            "hc-key": "us-in-163",
-            "value": 71
-        },
-        {
-            "hc-key": "us-in-051",
-            "value": 72
-        },
-        {
-            "hc-key": "us-in-089",
-            "value": 73
-        },
-        {
-            "hc-key": "us-in-007",
-            "value": 74
-        },
-        {
-            "hc-key": "us-in-125",
-            "value": 75
-        },
-        {
-            "hc-key": "us-in-155",
-            "value": 76
-        },
-        {
-            "hc-key": "us-in-123",
-            "value": 77
-        },
-        {
-            "hc-key": "us-in-161",
-            "value": 78
-        },
-        {
-            "hc-key": "us-in-147",
-            "value": 79
-        },
-        {
-            "hc-key": "us-in-001",
-            "value": 80
-        },
-        {
-            "hc-key": "us-in-129",
-            "value": 81
-        },
-        {
-            "hc-key": "us-in-061",
-            "value": 82
-        },
-        {
-            "hc-key": "us-in-017",
-            "value": 83
-        },
-        {
-            "hc-key": "us-in-085",
-            "value": 84
-        },
-        {
-            "hc-key": "us-in-047",
-            "value": 85
-        },
-        {
-            "hc-key": "us-in-119",
-            "value": 86
-        },
-        {
-            "hc-key": "us-in-077",
-            "value": 87
-        },
-        {
-            "hc-key": "us-in-091",
-            "value": 88
-        },
-        {
-            "hc-key": "us-in-127",
-            "value": 89
-        },
-        {
-            "hc-key": "us-in-177",
-            "value": 90
-        },
-        {
-            "hc-key": "us-in-183",
-            "value": 91
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-in-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-in-all.js">Indiana</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-in-all.js">Indiana</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-in-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

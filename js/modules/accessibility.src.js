@@ -1,7 +1,7 @@
 /**
  * Accessibility module
  *
- * (c) 2010-2016 Highsoft AS
+ * (c) 2010-2017 Highsoft AS
  * Author: Oystein Moseng
  *
  * License: www.highcharts.com/license

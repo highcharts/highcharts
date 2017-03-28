@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['gr-as', 0],
+    ['gr-ii', 1],
+    ['gr-at', 2],
+    ['gr-pp', 3],
+    ['gr-ts', 4],
+    ['gr-an', 5],
+    ['gr-gc', 6],
+    ['gr-cr', 7],
+    ['gr-mc', 8],
+    ['gr-ma', 9],
+    ['gr-mt', 10],
+    ['gr-gw', 11],
+    ['gr-mw', 12],
+    ['gr-ep', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "gr-as",
-            "value": 0
-        },
-        {
-            "hc-key": "gr-ii",
-            "value": 1
-        },
-        {
-            "hc-key": "gr-at",
-            "value": 2
-        },
-        {
-            "hc-key": "gr-pp",
-            "value": 3
-        },
-        {
-            "hc-key": "gr-ts",
-            "value": 4
-        },
-        {
-            "hc-key": "gr-an",
-            "value": 5
-        },
-        {
-            "hc-key": "gr-gc",
-            "value": 6
-        },
-        {
-            "hc-key": "gr-cr",
-            "value": 7
-        },
-        {
-            "hc-key": "gr-mc",
-            "value": 8
-        },
-        {
-            "hc-key": "gr-ma",
-            "value": 9
-        },
-        {
-            "hc-key": "gr-mt",
-            "value": 10
-        },
-        {
-            "hc-key": "gr-gw",
-            "value": 11
-        },
-        {
-            "hc-key": "gr-mw",
-            "value": 12
-        },
-        {
-            "hc-key": "gr-ep",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/gr/gr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gr/gr-all.js">Greece</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gr/gr-all.js">Greece</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/gr/gr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

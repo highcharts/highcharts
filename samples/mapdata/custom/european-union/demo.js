@@ -1,165 +1,75 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['dk', 0],
+    ['de', 1],
+    ['fr', 2],
+    ['ie', 3],
+    ['hr', 4],
+    ['gb', 5],
+    ['ee', 6],
+    ['cy', 7],
+    ['fi', 8],
+    ['gr', 9],
+    ['se', 10],
+    ['nl', 11],
+    ['es', 12],
+    ['lt', 13],
+    ['it', 14],
+    ['mt', 15],
+    ['nc', 16],
+    ['pl', 17],
+    ['sk', 18],
+    ['hu', 19],
+    ['lu', 20],
+    ['si', 21],
+    ['be', 22],
+    ['cnm', 23],
+    ['bg', 24],
+    ['ro', 25],
+    ['lv', 26],
+    ['at', 27],
+    ['cz', 28],
+    ['pt', 29]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "dk",
-            "value": 0
-        },
-        {
-            "hc-key": "de",
-            "value": 1
-        },
-        {
-            "hc-key": "fr",
-            "value": 2
-        },
-        {
-            "hc-key": "ie",
-            "value": 3
-        },
-        {
-            "hc-key": "hr",
-            "value": 4
-        },
-        {
-            "hc-key": "gb",
-            "value": 5
-        },
-        {
-            "hc-key": "ee",
-            "value": 6
-        },
-        {
-            "hc-key": "cy",
-            "value": 7
-        },
-        {
-            "hc-key": "fi",
-            "value": 8
-        },
-        {
-            "hc-key": "gr",
-            "value": 9
-        },
-        {
-            "hc-key": "se",
-            "value": 10
-        },
-        {
-            "hc-key": "nl",
-            "value": 11
-        },
-        {
-            "hc-key": "es",
-            "value": 12
-        },
-        {
-            "hc-key": "lt",
-            "value": 13
-        },
-        {
-            "hc-key": "it",
-            "value": 14
-        },
-        {
-            "hc-key": "mt",
-            "value": 15
-        },
-        {
-            "hc-key": "nc",
-            "value": 16
-        },
-        {
-            "hc-key": "pl",
-            "value": 17
-        },
-        {
-            "hc-key": "sk",
-            "value": 18
-        },
-        {
-            "hc-key": "hu",
-            "value": 19
-        },
-        {
-            "hc-key": "lu",
-            "value": 20
-        },
-        {
-            "hc-key": "si",
-            "value": 21
-        },
-        {
-            "hc-key": "be",
-            "value": 22
-        },
-        {
-            "hc-key": "cnm",
-            "value": 23
-        },
-        {
-            "hc-key": "bg",
-            "value": 24
-        },
-        {
-            "hc-key": "ro",
-            "value": 25
-        },
-        {
-            "hc-key": "lv",
-            "value": 26
-        },
-        {
-            "hc-key": "at",
-            "value": 27
-        },
-        {
-            "hc-key": "cz",
-            "value": 28
-        },
-        {
-            "hc-key": "pt",
-            "value": 29
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'custom/european-union'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title: {
-            text: 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/european-union'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

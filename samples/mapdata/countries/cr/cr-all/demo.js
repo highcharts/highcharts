@@ -1,73 +1,52 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cr-pu', 0],
+    ['cr-sj', 1],
+    ['cr-al', 2],
+    ['cr-gu', 3],
+    ['cr-li', 4],
+    ['cr-ca', 5],
+    ['cr-he', 6]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cr-pu",
-            "value": 0
-        },
-        {
-            "hc-key": "cr-sj",
-            "value": 1
-        },
-        {
-            "hc-key": "cr-al",
-            "value": 2
-        },
-        {
-            "hc-key": "cr-gu",
-            "value": 3
-        },
-        {
-            "hc-key": "cr-li",
-            "value": 4
-        },
-        {
-            "hc-key": "cr-ca",
-            "value": 5
-        },
-        {
-            "hc-key": "cr-he",
-            "value": 6
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cr/cr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cr/cr-all.js">Costa Rica</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cr/cr-all.js">Costa Rica</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cr/cr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

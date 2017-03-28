@@ -1,445 +1,145 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-nc-031', 0],
+    ['us-nc-187', 1],
+    ['us-nc-095', 2],
+    ['us-nc-129', 3],
+    ['us-nc-183', 4],
+    ['us-nc-077', 5],
+    ['us-nc-121', 6],
+    ['us-nc-011', 7],
+    ['us-nc-091', 8],
+    ['us-nc-033', 9],
+    ['us-nc-001', 10],
+    ['us-nc-019', 11],
+    ['us-nc-087', 12],
+    ['us-nc-175', 13],
+    ['us-nc-153', 14],
+    ['us-nc-107', 15],
+    ['us-nc-191', 16],
+    ['us-nc-079', 17],
+    ['us-nc-161', 18],
+    ['us-nc-101', 19],
+    ['us-nc-127', 20],
+    ['us-nc-081', 21],
+    ['us-nc-157', 22],
+    ['us-nc-013', 23],
+    ['us-nc-137', 24],
+    ['us-nc-103', 25],
+    ['us-nc-049', 26],
+    ['us-nc-063', 27],
+    ['us-nc-037', 28],
+    ['us-nc-185', 29],
+    ['us-nc-131', 30],
+    ['us-nc-065', 31],
+    ['us-nc-195', 32],
+    ['us-nc-145', 33],
+    ['us-nc-083', 34],
+    ['us-nc-117', 35],
+    ['us-nc-135', 36],
+    ['us-nc-055', 37],
+    ['us-nc-099', 38],
+    ['us-nc-159', 39],
+    ['us-nc-097', 40],
+    ['us-nc-025', 41],
+    ['us-nc-179', 42],
+    ['us-nc-181', 43],
+    ['us-nc-177', 44],
+    ['us-nc-189', 45],
+    ['us-nc-193', 46],
+    ['us-nc-003', 47],
+    ['us-nc-027', 48],
+    ['us-nc-151', 49],
+    ['us-nc-041', 50],
+    ['us-nc-073', 51],
+    ['us-nc-139', 52],
+    ['us-nc-039', 53],
+    ['us-nc-113', 54],
+    ['us-nc-133', 55],
+    ['us-nc-045', 56],
+    ['us-nc-109', 57],
+    ['us-nc-119', 58],
+    ['us-nc-199', 59],
+    ['us-nc-089', 60],
+    ['us-nc-147', 61],
+    ['us-nc-143', 62],
+    ['us-nc-125', 63],
+    ['us-nc-007', 64],
+    ['us-nc-141', 65],
+    ['us-nc-163', 66],
+    ['us-nc-085', 67],
+    ['us-nc-155', 68],
+    ['us-nc-051', 69],
+    ['us-nc-075', 70],
+    ['us-nc-023', 71],
+    ['us-nc-165', 72],
+    ['us-nc-093', 73],
+    ['us-nc-111', 74],
+    ['us-nc-047', 75],
+    ['us-nc-061', 76],
+    ['us-nc-197', 77],
+    ['us-nc-067', 78],
+    ['us-nc-171', 79],
+    ['us-nc-169', 80],
+    ['us-nc-057', 81],
+    ['us-nc-059', 82],
+    ['us-nc-029', 83],
+    ['us-nc-053', 84],
+    ['us-nc-009', 85],
+    ['us-nc-115', 86],
+    ['us-nc-021', 87],
+    ['us-nc-071', 88],
+    ['us-nc-015', 89],
+    ['us-nc-173', 90],
+    ['us-nc-035', 91],
+    ['us-nc-069', 92],
+    ['us-nc-005', 93],
+    ['us-nc-123', 94],
+    ['us-nc-149', 95],
+    ['us-nc-105', 96],
+    ['us-nc-043', 97],
+    ['us-nc-017', 98],
+    ['us-nc-167', 99]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-nc-031",
-            "value": 0
-        },
-        {
-            "hc-key": "us-nc-187",
-            "value": 1
-        },
-        {
-            "hc-key": "us-nc-095",
-            "value": 2
-        },
-        {
-            "hc-key": "us-nc-129",
-            "value": 3
-        },
-        {
-            "hc-key": "us-nc-183",
-            "value": 4
-        },
-        {
-            "hc-key": "us-nc-077",
-            "value": 5
-        },
-        {
-            "hc-key": "us-nc-121",
-            "value": 6
-        },
-        {
-            "hc-key": "us-nc-011",
-            "value": 7
-        },
-        {
-            "hc-key": "us-nc-091",
-            "value": 8
-        },
-        {
-            "hc-key": "us-nc-033",
-            "value": 9
-        },
-        {
-            "hc-key": "us-nc-001",
-            "value": 10
-        },
-        {
-            "hc-key": "us-nc-019",
-            "value": 11
-        },
-        {
-            "hc-key": "us-nc-087",
-            "value": 12
-        },
-        {
-            "hc-key": "us-nc-175",
-            "value": 13
-        },
-        {
-            "hc-key": "us-nc-153",
-            "value": 14
-        },
-        {
-            "hc-key": "us-nc-107",
-            "value": 15
-        },
-        {
-            "hc-key": "us-nc-191",
-            "value": 16
-        },
-        {
-            "hc-key": "us-nc-079",
-            "value": 17
-        },
-        {
-            "hc-key": "us-nc-161",
-            "value": 18
-        },
-        {
-            "hc-key": "us-nc-101",
-            "value": 19
-        },
-        {
-            "hc-key": "us-nc-127",
-            "value": 20
-        },
-        {
-            "hc-key": "us-nc-081",
-            "value": 21
-        },
-        {
-            "hc-key": "us-nc-157",
-            "value": 22
-        },
-        {
-            "hc-key": "us-nc-013",
-            "value": 23
-        },
-        {
-            "hc-key": "us-nc-137",
-            "value": 24
-        },
-        {
-            "hc-key": "us-nc-103",
-            "value": 25
-        },
-        {
-            "hc-key": "us-nc-049",
-            "value": 26
-        },
-        {
-            "hc-key": "us-nc-063",
-            "value": 27
-        },
-        {
-            "hc-key": "us-nc-037",
-            "value": 28
-        },
-        {
-            "hc-key": "us-nc-185",
-            "value": 29
-        },
-        {
-            "hc-key": "us-nc-131",
-            "value": 30
-        },
-        {
-            "hc-key": "us-nc-065",
-            "value": 31
-        },
-        {
-            "hc-key": "us-nc-195",
-            "value": 32
-        },
-        {
-            "hc-key": "us-nc-145",
-            "value": 33
-        },
-        {
-            "hc-key": "us-nc-083",
-            "value": 34
-        },
-        {
-            "hc-key": "us-nc-117",
-            "value": 35
-        },
-        {
-            "hc-key": "us-nc-135",
-            "value": 36
-        },
-        {
-            "hc-key": "us-nc-055",
-            "value": 37
-        },
-        {
-            "hc-key": "us-nc-099",
-            "value": 38
-        },
-        {
-            "hc-key": "us-nc-159",
-            "value": 39
-        },
-        {
-            "hc-key": "us-nc-097",
-            "value": 40
-        },
-        {
-            "hc-key": "us-nc-025",
-            "value": 41
-        },
-        {
-            "hc-key": "us-nc-179",
-            "value": 42
-        },
-        {
-            "hc-key": "us-nc-181",
-            "value": 43
-        },
-        {
-            "hc-key": "us-nc-177",
-            "value": 44
-        },
-        {
-            "hc-key": "us-nc-189",
-            "value": 45
-        },
-        {
-            "hc-key": "us-nc-193",
-            "value": 46
-        },
-        {
-            "hc-key": "us-nc-003",
-            "value": 47
-        },
-        {
-            "hc-key": "us-nc-027",
-            "value": 48
-        },
-        {
-            "hc-key": "us-nc-151",
-            "value": 49
-        },
-        {
-            "hc-key": "us-nc-041",
-            "value": 50
-        },
-        {
-            "hc-key": "us-nc-073",
-            "value": 51
-        },
-        {
-            "hc-key": "us-nc-139",
-            "value": 52
-        },
-        {
-            "hc-key": "us-nc-039",
-            "value": 53
-        },
-        {
-            "hc-key": "us-nc-113",
-            "value": 54
-        },
-        {
-            "hc-key": "us-nc-133",
-            "value": 55
-        },
-        {
-            "hc-key": "us-nc-045",
-            "value": 56
-        },
-        {
-            "hc-key": "us-nc-109",
-            "value": 57
-        },
-        {
-            "hc-key": "us-nc-119",
-            "value": 58
-        },
-        {
-            "hc-key": "us-nc-199",
-            "value": 59
-        },
-        {
-            "hc-key": "us-nc-089",
-            "value": 60
-        },
-        {
-            "hc-key": "us-nc-147",
-            "value": 61
-        },
-        {
-            "hc-key": "us-nc-143",
-            "value": 62
-        },
-        {
-            "hc-key": "us-nc-125",
-            "value": 63
-        },
-        {
-            "hc-key": "us-nc-007",
-            "value": 64
-        },
-        {
-            "hc-key": "us-nc-141",
-            "value": 65
-        },
-        {
-            "hc-key": "us-nc-163",
-            "value": 66
-        },
-        {
-            "hc-key": "us-nc-085",
-            "value": 67
-        },
-        {
-            "hc-key": "us-nc-155",
-            "value": 68
-        },
-        {
-            "hc-key": "us-nc-051",
-            "value": 69
-        },
-        {
-            "hc-key": "us-nc-075",
-            "value": 70
-        },
-        {
-            "hc-key": "us-nc-023",
-            "value": 71
-        },
-        {
-            "hc-key": "us-nc-165",
-            "value": 72
-        },
-        {
-            "hc-key": "us-nc-093",
-            "value": 73
-        },
-        {
-            "hc-key": "us-nc-111",
-            "value": 74
-        },
-        {
-            "hc-key": "us-nc-047",
-            "value": 75
-        },
-        {
-            "hc-key": "us-nc-061",
-            "value": 76
-        },
-        {
-            "hc-key": "us-nc-197",
-            "value": 77
-        },
-        {
-            "hc-key": "us-nc-067",
-            "value": 78
-        },
-        {
-            "hc-key": "us-nc-171",
-            "value": 79
-        },
-        {
-            "hc-key": "us-nc-169",
-            "value": 80
-        },
-        {
-            "hc-key": "us-nc-057",
-            "value": 81
-        },
-        {
-            "hc-key": "us-nc-059",
-            "value": 82
-        },
-        {
-            "hc-key": "us-nc-029",
-            "value": 83
-        },
-        {
-            "hc-key": "us-nc-053",
-            "value": 84
-        },
-        {
-            "hc-key": "us-nc-009",
-            "value": 85
-        },
-        {
-            "hc-key": "us-nc-115",
-            "value": 86
-        },
-        {
-            "hc-key": "us-nc-021",
-            "value": 87
-        },
-        {
-            "hc-key": "us-nc-071",
-            "value": 88
-        },
-        {
-            "hc-key": "us-nc-015",
-            "value": 89
-        },
-        {
-            "hc-key": "us-nc-173",
-            "value": 90
-        },
-        {
-            "hc-key": "us-nc-035",
-            "value": 91
-        },
-        {
-            "hc-key": "us-nc-069",
-            "value": 92
-        },
-        {
-            "hc-key": "us-nc-005",
-            "value": 93
-        },
-        {
-            "hc-key": "us-nc-123",
-            "value": 94
-        },
-        {
-            "hc-key": "us-nc-149",
-            "value": 95
-        },
-        {
-            "hc-key": "us-nc-105",
-            "value": 96
-        },
-        {
-            "hc-key": "us-nc-043",
-            "value": 97
-        },
-        {
-            "hc-key": "us-nc-017",
-            "value": 98
-        },
-        {
-            "hc-key": "us-nc-167",
-            "value": 99
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-nc-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-nc-all.js">North Carolina</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-nc-all.js">North Carolina</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-nc-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

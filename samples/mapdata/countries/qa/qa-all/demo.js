@@ -1,73 +1,52 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['qa-ms', 0],
+    ['qa-us', 1],
+    ['qa-dy', 2],
+    ['qa-da', 3],
+    ['qa-ra', 4],
+    ['qa-wa', 5],
+    ['qa-kh', 6]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "qa-ms",
-            "value": 0
-        },
-        {
-            "hc-key": "qa-us",
-            "value": 1
-        },
-        {
-            "hc-key": "qa-dy",
-            "value": 2
-        },
-        {
-            "hc-key": "qa-da",
-            "value": 3
-        },
-        {
-            "hc-key": "qa-ra",
-            "value": 4
-        },
-        {
-            "hc-key": "qa-wa",
-            "value": 5
-        },
-        {
-            "hc-key": "qa-kh",
-            "value": 6
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/qa/qa-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/qa/qa-all.js">Qatar</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/qa/qa-all.js">Qatar</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/qa/qa-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -321,11 +321,14 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
 
 	/**
-	 * Get custom attributes. Mutate the original object and return an object with only custom attr.
+	 * Get custom attributes. Don't mutate the original object and return an object with only custom attr.
 	 */
 	function suckOutCustom(params) {
 		var hasCA = false,
 			ca = {};
+
+		params = merge(params); // Don't mutate the original object
+
 		for (var key in params) {
 			if (inArray(key, customAttribs) !== -1) {
 				ca[key] = params[key];
@@ -455,7 +458,6 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 		anim = animObject(pick(animation, this.renderer.globalAnimation));
 		
 		if (anim.duration) {
-			params = merge(params); // Don't mutate the original object
 			ca = suckOutCustom(params);
 			params.dummy = 1; // Params need to have a property in order for the step to run (#5765)
 
