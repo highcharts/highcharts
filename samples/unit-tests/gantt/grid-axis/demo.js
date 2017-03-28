@@ -125,14 +125,14 @@ QUnit.test('Vertical Linear axis horizontal placement', function (assert) {
 
     assert.close(
         axes[1].x + axes[1].width,
-        axes[0].x,
+        Math.round(axes[0].x),
         error,
         'Left outer linear axis horizontal placement'
     );
 
     assert.close(
         axes[3].x,
-        axes[2].x + axes[2].width,
+        Math.round(axes[2].x + axes[2].width),
         error,
         'Right outer linear axis horizontal placement'
     );
@@ -237,7 +237,7 @@ QUnit.test('Vertical Datetime axis horizontal placement', function (assert) {
 
     assert.close(
         axes[3].x,
-        axes[2].x + axes[2].width,
+        Math.round(axes[2].x + axes[2].width),
         error,
         'Right outer datetime axis horizontal placement'
     );
