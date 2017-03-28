@@ -342,8 +342,7 @@ Scrollbar.prototype = {
 		}
 
 		from = Math.max(from, 0);
-
-		fromPX = fullWidth * from;
+		fromPX = Math.ceil(fullWidth * from);
 		toPX = fullWidth * Math.min(to, 1);
 		scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
