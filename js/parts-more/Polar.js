@@ -143,7 +143,7 @@ wrap(seriesProto, 'buildKDTree', function (proceed) {
 		if (this.kdByAngle) {
 			this.searchPoint = this.searchPointByAngle;
 		} else {
-			this.kdDimensions = 2;
+			this.options.findNearestPointBy = 'xy';
 		}
 	}
 	proceed.apply(this);

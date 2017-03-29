@@ -169,9 +169,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		//valuePrefix: '',
 		//ySuffix: ''
 	//}
-	turboThreshold: 1000
+	turboThreshold: 1000,
 	// zIndex: null
-
+	findNearestPointBy: 'x' // docs
 
 }, /** @lends Series.prototype */ {
 	isCartesian: true,
@@ -1932,7 +1932,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * KD Tree && PointSearching Implementation
 	 */
 
-	kdDimensions: 1,
 	kdAxisArray: ['clientX', 'plotY'],
 
 	searchPoint: function (e, compareX) {
@@ -1959,7 +1958,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		this.buildingKdTree = true;
 
 		var series = this,
-			dimensions = series.kdDimensions;
+			dimensions = series.options.findNearestPointBy.indexOf('y') > -1 ?
+							2 : 1;
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
@@ -2011,7 +2011,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		var series = this,
 			kdX = this.kdAxisArray[0],
 			kdY = this.kdAxisArray[1],
-			kdComparer = compareX ? 'distX' : 'dist';
+			kdComparer = compareX ? 'distX' : 'dist',
+			kdDimensions = series.options.findNearestPointBy.indexOf('y') > -1 ?
+							2 : 1;
 
 		// Set the one and two dimensional distance on the point object
 		function setDistance(p1, p2) {
@@ -2061,8 +2063,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		if (this.kdTree) {
-			return _search(point,
-				this.kdTree, this.kdDimensions, this.kdDimensions);
+			return _search(point, this.kdTree, kdDimensions, kdDimensions);
 		}
 	}
 

@@ -164,7 +164,11 @@ H.Pointer.prototype = {
 			noSharedTooltip = s.noSharedTooltip && shared;
 			directTouch = !shared && s.directTouch;
 			if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
-				kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
+				// #3828
+				kdpointT = s.searchPoint(
+					e,
+					!noSharedTooltip && s.options.findNearestPointBy.indexOf('y') < 0
+				);
 				if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
 					kdpoints.push(kdpointT);
 				}
