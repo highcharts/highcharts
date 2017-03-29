@@ -163,7 +163,7 @@ H.Pointer.prototype = {
 			// Skip hidden series
 			noSharedTooltip = s.noSharedTooltip && shared;
 			directTouch = !shared && s.directTouch;
-			if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
+			if (s.visible && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
 				// #3828
 				kdpointT = s.searchPoint(
 					e,
@@ -201,7 +201,7 @@ H.Pointer.prototype = {
 		});
 
 		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
-		if (shared) {
+		if (shared && kdpoints[0] && !kdpoints[0].series.noSharedTooltip) {
 			i = kdpoints.length;
 			while (i--) {
 				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
