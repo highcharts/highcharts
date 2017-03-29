@@ -338,7 +338,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
 		horiz = this.horiz,
-		isInside = (from >= this.min && to <= this.max), 
+		isInside = from >= this.min || to <= this.max, 
 		result = [],
 		i;
 
