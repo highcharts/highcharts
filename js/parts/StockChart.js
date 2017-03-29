@@ -338,11 +338,13 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
 		horiz = this.horiz,
-		isInside = from >= this.min || to <= this.max, 
+		outside =
+			(from < this.min && to < this.min) ||
+			(from > this.max && to > this.max),
 		result = [],
 		i;
 
-	if (path && toPath && isInside) {
+	if (path && toPath && !outside) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
 			result.push(
