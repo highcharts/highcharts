@@ -114,6 +114,33 @@ window.TestController = function (chart) {
         var offset = getOffset(chart.container),
             pageX = offset.left + (x || 0),
             pageY = offset.top + (y || 0);
+
+        // Leave marks for debugging
+        if (typeof x === 'number' && typeof y === 'number') {
+            chart.renderer.circle(
+                x,
+                y,
+                {
+                    mousedown: 3,
+                    mousemove: 2
+                }[type] || 3
+
+            ).attr({
+                'fill': 'white',
+                'stroke': {
+                    mousedown: 'green',
+                    mousemove: 'blue'
+                }[type] || 'red',
+                'stroke-width': {
+                    mousedown: 2,
+                    mousemove: 1
+                }[type] || 2,
+                'zIndex': 100
+            }).css({
+                'pointer-events': 'none'
+            }).add();
+        }
+
         triggerEvent(type, pageX, pageY, extra);
     }
 
