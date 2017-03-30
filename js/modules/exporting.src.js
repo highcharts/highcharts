@@ -212,7 +212,7 @@ extend(Chart.prototype, {
 		// Move HTML into a foreignObject
 		if (options && options.exporting && options.exporting.allowHTML) {
 			var html = svg.match(/<\/svg>(.*?$)/);
-			if (html) {
+			if (html && html[1]) {
 				html = '<foreignObject x="0" y="0" ' +
 							'width="' + options.chart.width + '" ' +
 							'height="' + options.chart.height + '">' +

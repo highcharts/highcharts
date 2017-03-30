@@ -248,19 +248,26 @@ H.AxisPlotLineOrBandExtension = {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path   = this.getPlotLinePath(from, null, null, true),
 			// #4964 check if chart is inverted or plotband is on yAxis 
-			horiz  = this.horiz; 
+			horiz  = this.horiz,
+			plus = 1,
+			outside =
+				(from < this.min && to < this.min) ||
+				(from > this.max && to > this.max);
 
 		if (path && toPath) {
 			
 			// Flat paths don't need labels (#3836)
-			path.flat = path.toString() === toPath.toString();
+			if (outside) {
+				path.flat = path.toString() === toPath.toString();
+				plus = 0;
+			}
 
 			// Add 1 pixel, when coordinates are the same
 			path.push(
-				horiz && toPath[4] === path[4] ? toPath[4] + 1 : toPath[4], 
-				!horiz && toPath[5] === path[5] ? toPath[5] + 1 : toPath[5],
-				horiz && toPath[1] === path[1] ? toPath[1] + 1 : toPath[1],
-				!horiz && toPath[2] === path[2] ? toPath[2] + 1 : toPath[2]
+				horiz && toPath[4] === path[4] ? toPath[4] + plus : toPath[4], 
+				!horiz && toPath[5] === path[5] ? toPath[5] + plus : toPath[5],
+				horiz && toPath[1] === path[1] ? toPath[1] + plus : toPath[1],
+				!horiz && toPath[2] === path[2] ? toPath[2] + plus : toPath[2]
 			);
 		} else { // outside the axis area
 			path = null;

@@ -4,22 +4,16 @@
  * Highcharts Linear-Gauge series plugin
  */
 (function (H) {
-    var defaultPlotOptions = H.getOptions().plotOptions,
-        columnType = H.seriesTypes.column;
-
-    defaultPlotOptions.lineargauge = H.merge(defaultPlotOptions.column, {});
-    H.seriesTypes.lineargauge = H.extendClass(columnType, {
-        type: 'lineargauge',
-        //inverted: true,
+    H.seriesType('lineargauge', 'column', null, {
         setVisible: function () {
-            columnType.prototype.setVisible.apply(this, arguments);
+            H.seriesTypes.column.prototype.setVisible.apply(this, arguments);
             if (this.markLine) {
                 this.markLine[this.visible ? 'show' : 'hide']();
             }
         },
         drawPoints: function () {
             // Draw the Column like always
-            columnType.prototype.drawPoints.apply(this, arguments);
+            H.seriesTypes.column.prototype.drawPoints.apply(this, arguments);
 
             // Add a Marker
             var series = this,
@@ -108,8 +102,7 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             align: 'center',
-            format: '{point.y}%',
-            y: 10
+            format: '{point.y}%'
         }
     }]
 

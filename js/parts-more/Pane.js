@@ -161,8 +161,8 @@ extend(Pane.prototype, {
 	/**
 	 * Gets the center for the pane and its axis.
 	 */
-	updateCenter: function () {
-		this.center = this.axis.center =
+	updateCenter: function (axis) {
+		this.center = (axis || this.axis || {}).center =
 			CenteredSeriesMixin.getCenter.call(this);
 	},
 

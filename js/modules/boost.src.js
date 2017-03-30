@@ -1927,9 +1927,7 @@ function createAndAttachRenderer(chart, series) {
 		if (target instanceof H.Chart) {
 			target.markerGroup = target.renderer.g().add(targetGroup);
 
-			target.markerGroup.translateX = series.xAxis.pos;
-			target.markerGroup.translateY = series.yAxis.pos;
-			target.markerGroup.updateTransform();
+			target.markerGroup.translate(series.xAxis.pos, series.yAxis.pos);
 		}
 	}
 	
@@ -2374,7 +2372,7 @@ H.extend(Series.prototype, {
 						i: cropStart + i
 					});
 				}
-			};			
+			};		
 
 		// Get or create the renderer
 		renderer = createAndAttachRenderer(chart, series);
@@ -2615,6 +2613,14 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
 			// Allocate
 			chart.ogl.allocateBuffer(chart);
+		}
+
+		//see #6518
+		if (chart.markerGroup) {
+			chart.markerGroup.translate(
+				chart.xAxis[0].pos,
+				chart.yAxis[0].pos
+			);
 		}
 	}
 
