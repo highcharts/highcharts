@@ -12,7 +12,7 @@ Highcharts.chart('container', {
             text: 'Day'
         },
         type: 'datetime',
-        // opposite: true,
+        opposite: true,
         tickInterval: 1000 * 60 * 60 * 24, // Day
         labels: {
             format: '{value:%E}'
