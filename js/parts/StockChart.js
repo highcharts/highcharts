@@ -337,35 +337,25 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 Axis.prototype.getPlotBandPath = function (from, to) {
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
-		horiz = this.horiz,
-		outside =
-			(from < this.min && to < this.min) ||
-			(from > this.max && to > this.max),
 		result = [],
 		i;
 
-	if (path && toPath && !outside) {
-		// Go over each subpath
-		for (i = 0; i < path.length; i += 6) {
-			result.push(
-				'M', path[i + 1], 
-				path[i + 2], 
-				'L', 
-				path[i + 4], 
-				path[i + 5], 
-				horiz && toPath[i + 4] === path[i + 4] ?
-					toPath[i + 4] + 1 :
-					toPath[i + 4], 
-				!horiz && toPath[i + 5] === path[i + 5] ?
-					toPath[i + 5] + 1 :
-					toPath[i + 5],
-				horiz && toPath[i + 1] === path[i + 1] ?
-					toPath[i + 1] + 1 :
-					toPath[i + 1],
-				!horiz && toPath[i + 2] === path[i + 2] ?
-					toPath[i + 2] + 1 :
-					toPath[i + 2]
-			);
+	if (path && toPath) {
+		if (path.toString() === toPath.toString()) {
+			// #6166
+			result = path;
+			result.flat = true;
+		} else {
+			// Go over each subpath
+			for (i = 0; i < path.length; i += 6) {
+				result.push(
+					'M', path[i + 1], path[i + 2],
+					'L', path[i + 4], path[i + 5],
+					toPath[i + 4], toPath[i + 5],
+					toPath[i + 1], toPath[i + 2],
+					'z'
+				);
+			}
 		}
 	} else { // outside the axis area
 		result = null;
