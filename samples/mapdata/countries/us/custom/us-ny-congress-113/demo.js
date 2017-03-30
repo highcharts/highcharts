@@ -1,153 +1,72 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ny-11', 0],
+    ['us-ny-21', 1],
+    ['us-ny-01', 2],
+    ['us-ny-07', 3],
+    ['us-ny-05', 4],
+    ['us-ny-24', 5],
+    ['us-ny-16', 6],
+    ['us-ny-17', 7],
+    ['us-ny-15', 8],
+    ['us-ny-23', 9],
+    ['us-ny-08', 10],
+    ['us-ny-12', 11],
+    ['us-ny-18', 12],
+    ['us-ny-02', 13],
+    ['us-ny-10', 14],
+    ['us-ny-25', 15],
+    ['us-ny-04', 16],
+    ['us-ny-13', 17],
+    ['us-ny-09', 18],
+    ['us-ny-19', 19],
+    ['us-ny-20', 20],
+    ['us-ny-22', 21],
+    ['us-ny-03', 22],
+    ['us-ny-26', 23],
+    ['us-ny-27', 24],
+    ['us-ny-14', 25],
+    ['us-ny-06', 26]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ny-11",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ny-21",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ny-01",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ny-07",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ny-05",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ny-24",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ny-16",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ny-17",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ny-15",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ny-23",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ny-08",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ny-12",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ny-18",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ny-02",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ny-10",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ny-25",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ny-04",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ny-13",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ny-09",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ny-19",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ny-20",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ny-22",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ny-03",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ny-26",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ny-27",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ny-14",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ny-06",
-            "value": 26
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-ny-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ny-congress-113.js">New York congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ny-congress-113.js">New York congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-ny-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

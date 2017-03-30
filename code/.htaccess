@@ -20,12 +20,13 @@ RewriteRule (.*?)highmaps.unstyled.src.js $1highmaps.unstyled.src.js
 
 RewriteRule (.*?)accessibility.js $1accessibility.src.js
 RewriteRule (.*?)boost.js $1boost.src.js
+RewriteRule (.*?)boost-canvas.js $1boost-canvas.src.js
 RewriteRule (.*?)broken-axis.js $1broken-axis.src.js
 RewriteRule (.*?)data.js $1data.src.js
 RewriteRule (.*?)drilldown.js $1drilldown.src.js
 RewriteRule (.*?)exporting.js $1exporting.src.js
 RewriteRule (.*?)funnel.js $1funnel.src.js
-RewriteRule (.*?)gantt.js $1gantt.src.js;
+RewriteRule (.*?)gantt.js $1gantt.src.js
 RewriteRule (.*?)grid-axis.js $1grid-axis.src.js
 RewriteRule (.*?)heatmap.js $1heatmap.src.js
 RewriteRule (.*?)map.js $1map.src.js
@@ -34,6 +35,7 @@ RewriteRule (.*?)offline-exporting.js $1offline-exporting.src.js
 RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
 RewriteRule (.*?)series-label.js $1series-label.src.js
 RewriteRule (.*?)solid-gauge.js $1solid-gauge.src.js
+RewriteRule (.*?)static-scale.js $1static-scale.src.js
 RewriteRule (.*?)stock.js $1stock.src.js
 RewriteRule (.*?)xrange-series.js $1xrange-series.src.js
 

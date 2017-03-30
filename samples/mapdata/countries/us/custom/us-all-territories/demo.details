@@ -1,4 +1,5 @@
 ---
  name: United States of America with Territories - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

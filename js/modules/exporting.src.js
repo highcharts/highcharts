@@ -1,7 +1,7 @@
 /**
  * Exporting module
  *
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -147,15 +147,26 @@ defaultOptions.exporting = {
 			/*
 			,{
 
-				text: 'View SVG',
+				text: 'View SVG Image',
 				onclick: function () {
-					var svg = this.getSVG()
+					var div = doc.createElement('div');
+					div.innerHTML = this.getSVGForExport();
+
+					this.renderTo.parentNode.appendChild(div);
+				}
+			}, {
+
+				text: 'View SVG Source',
+				onclick: function () {
+					var pre = doc.createElement('pre');
+					pre.innerHTML = this.getSVGForExport()
 						.replace(/</g, '\n&lt;')
 						.replace(/>/g, '&gt;');
 
-					doc.body.innerHTML = '<pre>' + svg + '</pre>';
+					this.renderTo.parentNode.appendChild(pre);
 				}
-			} // */
+			}
+			// */
 			]
 		}
 	}
@@ -201,7 +212,7 @@ extend(Chart.prototype, {
 		// Move HTML into a foreignObject
 		if (options && options.exporting && options.exporting.allowHTML) {
 			var html = svg.match(/<\/svg>(.*?$)/);
-			if (html) {
+			if (html && html[1]) {
 				html = '<foreignObject x="0" y="0" ' +
 							'width="' + options.chart.width + '" ' +
 							'height="' + options.chart.height + '">' +
@@ -344,7 +355,9 @@ extend(Chart.prototype, {
 
 		// Assign an internal key to ensure a one-to-one mapping (#5924)
 		each(chart.axes, function (axis) {
-			axis.userOptions.internalKey = H.uniqueKey();
+			if (!axis.userOptions.internalKey) { // #6444
+				axis.userOptions.internalKey = H.uniqueKey();
+			}
 		});
 
 		// generate the chart copy
@@ -520,8 +533,7 @@ extend(Chart.prototype, {
 			menuPadding = Math.max(width, height), // for mouse leave detection
 			innerMenu,
 			hide,
-			menuStyle,
-			removeMouseUp;
+			menuStyle;
 
 		// create the menu only the first time
 		if (!menu) {
@@ -556,23 +568,22 @@ extend(Chart.prototype, {
 			};
 
 			// Hide the menu some time after mouse leave (#1357)
-			addEvent(menu, 'mouseleave', function () {
-				menu.hideTimer = setTimeout(hide, 500);
-			});
-			addEvent(menu, 'mouseenter', function () {
-				clearTimeout(menu.hideTimer);
-			});
+			chart.exportEvents.push(
+				addEvent(menu, 'mouseleave', function () {
+					menu.hideTimer = setTimeout(hide, 500);
+				}),
+				addEvent(menu, 'mouseenter', function () {
+					clearTimeout(menu.hideTimer);
+				}),
 
-
-			// Hide it on clicking or touching outside the menu (#2258, #2335,
-			// #2407)
-			removeMouseUp = addEvent(doc, 'mouseup', function (e) {
-				if (!chart.pointer.inClass(e.target, className)) {
-					hide();
-				}
-			});
-			addEvent(chart, 'destroy', removeMouseUp);
-
+				// Hide it on clicking or touching outside the menu (#2258, #2335,
+				// #2407)
+				addEvent(doc, 'mouseup', function (e) {
+					if (!chart.pointer.inClass(e.target, className)) {
+						hide();
+					}
+				})
+			);
 
 			// create the items
 			each(items, function (item) {
@@ -760,7 +771,9 @@ extend(Chart.prototype, {
 	destroyExport: function (e) {
 		var chart = e ? e.target : this,
 			exportSVGElements = chart.exportSVGElements,
-			exportDivElements = chart.exportDivElements;
+			exportDivElements = chart.exportDivElements,
+			exportEvents = chart.exportEvents,
+			cacheName;
 
 		// Destroy the extra buttons added
 		if (exportSVGElements) {
@@ -769,6 +782,12 @@ extend(Chart.prototype, {
 				// Destroy and null the svg/vml elements
 				if (elem) { // #1822
 					elem.onclick = elem.ontouchstart = null;
+					cacheName = 'cache-' + elem.menuClassName;
+
+					if (chart[cacheName]) {
+						delete chart[cacheName];
+					}
+
 					chart.exportSVGElements[i] = elem.destroy();
 				}
 			});
@@ -790,6 +809,13 @@ extend(Chart.prototype, {
 				discardElement(elem);
 			});
 			exportDivElements.length = 0;
+		}
+
+		if (exportEvents) {
+			each(exportEvents, function (unbind) {
+				unbind();
+			});
+			exportEvents.length = 0;
 		}
 	}
 });
@@ -961,6 +987,7 @@ Chart.prototype.renderExporting = function () {
 	}
 	
 	if (isDirty && exportingOptions.enabled !== false) {
+		this.exportEvents = [];
 
 		for (n in buttons) {
 			this.addButton(buttons[n]);
@@ -997,4 +1024,19 @@ Chart.prototype.callbacks.push(function (chart) {
 			}
 		};
 	});
+
+	// Uncomment this to see a button directly below the chart, for quick
+	// testing of export
+	/*
+	if (!chart.renderer.forExport) {
+		var button = doc.createElement('button');
+		button.innerHTML = 'View exported SVG';
+		chart.renderTo.parentNode.appendChild(button);
+		button.onclick = function () {
+			var div = doc.createElement('div');
+			div.innerHTML = chart.getSVGForExport();
+			chart.renderTo.parentNode.appendChild(div);
+		};
+	}
+	// */
 });

@@ -9,6 +9,10 @@ QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
             text: 'Styling axes'
         },
 
+        subtitle: {
+            text: 'Subtitle has <b>bold</b> and <i>italic</i> pseudo-HTML'
+        },
+
         yAxis: [{
             className: 'highcharts-color-0',
             title: {

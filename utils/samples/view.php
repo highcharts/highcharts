@@ -125,7 +125,7 @@ function getResources() {
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>',
+			path = '<?php echo $path ?>'.replace('../../samples/', ''),
 			browser = <?php echo json_encode(getBrowser()); ?>,
 			controller = window.parent && window.parent.controller;
 
@@ -154,7 +154,9 @@ function getResources() {
 					return;
 				}
 
-				$('#bisect').click(controller.toggleBisect);
+				if (controller) {
+					$('#bisect').click(controller.toggleBisect);
+				}
 
 				if (typeof Highcharts !== 'undefined') {
 					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
@@ -222,7 +224,7 @@ function getResources() {
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
-								src: 'view-source.php?path=<?php echo $path ?>'
+								src: 'view-source.php?path=' + path
 							})
 							.css({
 								width: '100%',
@@ -240,7 +242,9 @@ function getResources() {
 		}());
 		</script>
 		<script>
-		console.clear();
+		if (window.console) {
+			console.clear();
+		}
 		function next() {
 			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
 			if (a) {
@@ -261,7 +265,7 @@ function getResources() {
 		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
-		$(function () {
+		function setUp() {
 
 			$(window).bind('keydown', parent.keyDown);
 			
@@ -306,11 +310,9 @@ function getResources() {
 					}
 				});
 			}
-		});
 		
 
-		<?php if (@$_GET['profile']) : ?>
-		$(function () {
+			<?php if (@$_GET['profile']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -331,10 +333,8 @@ function getResources() {
 
 				});
 			}
-		});
-		<?php endif ?>
-		<?php if (@$_GET['time']) : ?>
-		$(function () {
+			<?php endif ?>
+			<?php if (@$_GET['time']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -360,11 +360,9 @@ function getResources() {
 
 				});
 			}
-		});
-		<?php endif ?>
+			<?php endif ?>
 
-		<?php if ($styled) { ?>
-		$(function () {
+			<?php if ($styled) { ?>
 			var warnedAboutColors = false;
 			function warnAboutColors () {
 				if (!warnedAboutColors) {
@@ -389,11 +387,10 @@ function getResources() {
 				}
 				return options;
 			});
-		});
-		<?php } ?>
-		
 
-		<?php @include("$path/demo.js"); ?>
+			<?php } ?>
+		}
+		
 		</script>
 
 		<style type="text/css">
@@ -425,10 +422,10 @@ function getResources() {
 					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</a>
 				<?php } else { ?>
 				<a class="button active" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</a>
 				<?php } ?>
 				
 				<a class="button"
@@ -449,7 +446,7 @@ function getResources() {
 				<a id="view-source" class="button" href="javascript:;"
 					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
 				</a><a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
@@ -465,6 +462,10 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+			<script>
+			setUp();
+			<?php @include("$path/demo.js"); ?>
+			</script>
 			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
@@ -492,9 +493,6 @@ ob_start();
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
-		<?php @include("$path/demo.js"); ?>
-		</script>
 
 		<style type="text/css">
 			<?php echo $css; ?>
@@ -507,6 +505,9 @@ ob_start();
 
 		<?php echo $html ?>
 		</div>
+		<script type="text/javascript">
+		<?php @include("$path/demo.js"); ?>
+		</script>
 
 	</body>
 </html>

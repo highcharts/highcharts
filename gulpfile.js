@@ -150,10 +150,23 @@ const buildModules = () => {
 };
 
 const styles = () => {
-    const sass = require('gulp-sass');
-    gulp.src('./css/*.scss')
-        .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
-        .pipe(gulp.dest('./code/css/'));
+    const sass = require('node-sass');
+    const U = require('./assembler/utilities.js');
+    const fileName = 'highcharts';
+    return new Promise((resolve, reject) => {
+        sass.render({
+            file: './css/' + fileName + '.scss',
+            outputStyle: 'expanded'
+        }, (err, result) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                U.writeFile('./code/css/' + fileName + '.css', result.css);
+                resolve();
+            }
+        });
+    });
 };
 
 /**
@@ -693,6 +706,22 @@ const downloadAllAPI = () => new Promise((resolve, reject) => {
  * @return {Promise} Returns a promise which resolves when scripts is finished.
  */
 const antDist = () => commandLine('ant dist');
+
+/**
+ * Gzip a single file.
+ * @param {string} file Path to input file.
+ * @param {string} output Path to where output the result.
+ * @return {undefined}
+ * TODO Promisify to use in dist task.
+ */
+const gzipFile = (file, output) => {
+    const zlib = require('zlib');
+    const fs = require('fs');
+    const gzip = zlib.createGzip();
+    const inp = fs.createReadStream(file);
+    const out = fs.createWriteStream(output);
+    inp.pipe(gzip).pipe(out);
+};
 
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);

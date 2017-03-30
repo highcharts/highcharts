@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2016 Torstein Honsi
+ * (c) 2009-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -161,6 +161,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				brk,
 				min = axis.userMin || axis.min,
 				max = axis.userMax || axis.max,
+				pointRangePadding = pick(axis.pointRangePadding, 0),
 				start,
 				i,
 				j;
@@ -236,10 +237,23 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 			axis.breakArray = breakArray;
 
+			// Used with staticScale, and below, the actual axis length when
+			// breaks are substracted.
+			axis.unitLength = max - min - length + pointRangePadding;
+
 			fireEvent(axis, 'afterBreaks');
 			
-			axis.transA *= ((max - axis.min) / (max - min - length));
-
+			if (axis.options.staticScale) {
+				axis.transA = axis.options.staticScale;
+			} else {
+				axis.transA *= (max - axis.min + pointRangePadding) /
+					axis.unitLength;
+			}
+				
+			if (pointRangePadding) {
+				axis.minPixelPadding = axis.transA * axis.minPointOffset;
+			}
+			
 			axis.min = min;
 			axis.max = max;
 		};

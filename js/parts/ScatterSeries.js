@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -15,6 +15,7 @@ var Series = H.Series,
  */
 seriesType('scatter', 'line', {
 	lineWidth: 0,
+	findNearestPointBy: 'xy',
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
 	},
@@ -38,7 +39,6 @@ seriesType('scatter', 'line', {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
-	kdDimensions: 2,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);

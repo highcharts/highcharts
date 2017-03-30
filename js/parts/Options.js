@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -247,7 +247,9 @@ H.defaultOptions = {
 		snap: isTouchDevice ? 25 : 10,
 		/*= if (!build.classic) { =*/
 		headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
-		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
+			'\u25CF</span> {series.name}: <span class="highcharts-strong">' +
+			'{point.y}</span><br/>',
 		/*= } else { =*/
 		backgroundColor: color('${palette.neutralColor3}').setOpacity(0.85).get(),
 		borderWidth: 1,

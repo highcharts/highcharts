@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -306,9 +306,13 @@ H.Axis.prototype = {
 		//axis.axisTitle = undefined;
 		//axis.axisLine = undefined;
 
+		// Placeholder for plotlines and plotbands groups
+		axis.plotLinesAndBandsGroups = {};
+
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
+		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
@@ -407,6 +411,7 @@ H.Axis.prototype = {
 		}
 
 		// extend logarithmic axis
+		axis.lin2log = options.linearToLogConverter || axis.lin2log;
 		if (axis.isLog) {
 			axis.val2lin = axis.log2lin;
 			axis.lin2val = axis.lin2log;
@@ -446,7 +451,7 @@ H.Axis.prototype = {
 			formatOption = axis.options.labels.format,
 
 			// make sure the same symbol is added for all labels on a linear axis
-			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
+			numericSymbolDetector = axis.isLog ? Math.abs(value) : axis.tickInterval;
 
 		if (formatOption) {
 			ret = format(formatOption, this);
@@ -510,7 +515,7 @@ H.Axis.prototype = {
 				axis.hasVisibleSeries = true;
 
 				// Validate threshold in logarithmic axes
-				if (axis.isLog && threshold <= 0) {
+				if (axis.positiveValuesOnly && threshold <= 0) {
 					threshold = null;
 				}
 
@@ -555,7 +560,7 @@ H.Axis.prototype = {
 						axis.threshold = threshold;
 					}
 					// If any series has a hard threshold, it takes precedence
-					if (!seriesOptions.softThreshold || axis.isLog) {
+					if (!seriesOptions.softThreshold || axis.positiveValuesOnly) {
 						axis.softThreshold = false;
 					}
 				}
@@ -741,23 +746,31 @@ H.Axis.prototype = {
 			minorTickInterval = axis.minorTickInterval,
 			minorTickPositions = [],
 			pos,
-			i,
 			pointRangePadding = axis.pointRangePadding || 0,
 			min = axis.min - pointRangePadding, // #1498
 			max = axis.max + pointRangePadding, // #1498
-			range = max - min,
-			len;
+			range = max - min;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
 		if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
 			if (axis.isLog) {
-				len = tickPositions.length;
-				for (i = 1; i < len; i++) {
-					minorTickPositions = minorTickPositions.concat(
-						axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
-					);
-				}
+				// For each interval in the major ticks, compute the minor ticks
+				// separately.
+				each(this.paddedTicks, function (pos, i, paddedTicks) {
+					if (i) {
+						minorTickPositions.push.apply(
+							minorTickPositions, 
+							axis.getLogTickPositions(
+								minorTickInterval,
+								paddedTicks[i - 1],
+								paddedTicks[i],
+								true
+							)
+						);
+					}
+				});
+
 			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
 				minorTickPositions = minorTickPositions.concat(
 					axis.getTimeTicks(
@@ -782,8 +795,8 @@ H.Axis.prototype = {
 			}
 		}
 
-		if (minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
-			axis.trimTicks(minorTickPositions, options.startOnTick, options.endOnTick); // #3652 #3743 #1498
+		if (minorTickPositions.length !== 0) {
+			axis.trimTicks(minorTickPositions); // #3652 #3743 #1498 #6330
 		}
 		return minorTickPositions;
 	},
@@ -920,7 +933,9 @@ H.Axis.prototype = {
 		}
 
 		// Write the last point's name to the names array
-		this.names[x] = point.name;
+		if (x !== undefined) {
+			this.names[x] = point.name;
+		}
 
 		return x;
 	},
@@ -949,7 +964,7 @@ H.Axis.prototype = {
 					var x;
 					if (point.options) {
 						x = axis.nameToX(point);
-						if (x !== point.x) {
+						if (x !== undefined && x !== point.x) {
 							point.x = x;
 							series.xData[i] = x;
 						}
@@ -1034,7 +1049,9 @@ H.Axis.prototype = {
 		if (saveOld) {
 			axis.oldTransA = transA;
 		}
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
+		axis.translationSlope = axis.transA = transA =
+			axis.options.staticScale ||
+			axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
@@ -1109,7 +1126,11 @@ H.Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+			if (
+				axis.positiveValuesOnly &&
+				!secondPass &&
+				Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0
+			) { // #978
 				H.error(10, 1); // Can't plot negative values on log axis
 			}
 			// The correctFloat cures #934, float errors on full tens. But it
@@ -1152,17 +1173,20 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Handle options for floor, ceiling, softMin and softMax
+		// Handle options for floor, ceiling, softMin and softMax (#6359)
+		if (isNumber(options.softMin)) {
+			axis.min = Math.min(axis.min, options.softMin);
+		}
+		if (isNumber(options.softMax)) {
+			axis.max = Math.max(axis.max, options.softMax);
+		}
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) {
-			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) {
-			axis.max = Math.max(axis.max, options.softMax);
 		}
+		
 
 		// When the threshold is soft, adjust the extreme value only if
 		// the data extreme and the padded extreme land on either side of the threshold. For example,
@@ -1314,7 +1338,8 @@ H.Axis.prototype = {
 
 		}
 
-		// reset min/max or remove extremes based on start/end on tick
+		// Reset min/max or remove extremes based on start/end on tick
+		this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
 		this.trimTicks(tickPositions, startOnTick, endOnTick);
 		if (!this.isLinked) {
 			
@@ -1338,7 +1363,7 @@ H.Axis.prototype = {
 			minPointOffset = this.minPointOffset || 0;
 
 		if (!this.isLinked) {
-			if (startOnTick) {
+			if (startOnTick && roundedMin !== -Infinity) { // #6502
 				this.min = roundedMin;
 			} else {
 				while (this.min - minPointOffset > tickPositions[0]) {
@@ -2487,6 +2512,7 @@ H.Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
+			plotGroup,
 			i,
 			n;
 
@@ -2519,6 +2545,11 @@ H.Axis.prototype = {
 				axis[prop] = axis[prop].destroy();
 			}
 		});
+
+		// Destroy each generated group for plotlines and plotbands
+		for (plotGroup in axis.plotLinesAndBandsGroups) {
+			axis.plotLinesAndBandsGroups[plotGroup] = axis.plotLinesAndBandsGroups[plotGroup].destroy();
+		}
 
 		// Delete all properties and fall back to the prototype.
 		for (n in axis) {

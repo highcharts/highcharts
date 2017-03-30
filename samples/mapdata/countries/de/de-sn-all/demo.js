@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-sn-14522000', 0],
+    ['de-sn-14511000', 1],
+    ['de-sn-14626000', 2],
+    ['de-sn-14521000', 3],
+    ['de-sn-14523000', 4],
+    ['de-sn-14524000', 5],
+    ['de-sn-14729000', 6],
+    ['de-sn-14612000', 7],
+    ['de-sn-14627000', 8],
+    ['de-sn-14628000', 9],
+    ['de-sn-14625000', 10],
+    ['de-sn-14713000', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-sn-14522000",
-            "value": 0
-        },
-        {
-            "hc-key": "de-sn-14511000",
-            "value": 1
-        },
-        {
-            "hc-key": "de-sn-14626000",
-            "value": 2
-        },
-        {
-            "hc-key": "de-sn-14521000",
-            "value": 3
-        },
-        {
-            "hc-key": "de-sn-14523000",
-            "value": 4
-        },
-        {
-            "hc-key": "de-sn-14524000",
-            "value": 5
-        },
-        {
-            "hc-key": "de-sn-14729000",
-            "value": 6
-        },
-        {
-            "hc-key": "de-sn-14612000",
-            "value": 7
-        },
-        {
-            "hc-key": "de-sn-14627000",
-            "value": 8
-        },
-        {
-            "hc-key": "de-sn-14628000",
-            "value": 9
-        },
-        {
-            "hc-key": "de-sn-14625000",
-            "value": 10
-        },
-        {
-            "hc-key": "de-sn-14713000",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-sn-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-sn-all.js">Sachsen</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-sn-all.js">Sachsen</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-sn-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

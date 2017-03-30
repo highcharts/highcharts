@@ -1,45 +1,43 @@
-$(function () {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-        Highcharts.stockChart('container', {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
-            chart: {
-                type: 'arearange'
-            },
+    Highcharts.stockChart('container', {
 
+        chart: {
+            type: 'arearange'
+        },
+
+        title: {
+            text: 'Data grouping on individual series. Groups should be weeks.'
+        },
+
+        xAxis: {
+            type: 'datetime'
+        },
+
+        yAxis: {
             title: {
-                text: 'Data grouping on individual series. Groups should be weeks.'
-            },
+                text: null
+            }
+        },
 
-            xAxis: {
-                type: 'datetime'
-            },
+        tooltip: {
+            crosshairs: true,
+            shared: true,
+            valueSuffix: '°C'
+        },
 
-            yAxis: {
-                title: {
-                    text: null
-                }
-            },
+        legend: {
+            enabled: false
+        },
 
-            tooltip: {
-                crosshairs: true,
-                shared: true,
-                valueSuffix: '°C'
-            },
+        series: [{
+            name: 'Temperatures',
+            data: data,
+            dataGrouping: {
+                groupPixelWidth: 20
+            }
+        }]
 
-            legend: {
-                enabled: false
-            },
-
-            series: [{
-                name: 'Temperatures',
-                data: data,
-                dataGrouping: {
-                    groupPixelWidth: 20
-                }
-            }]
-
-        });
     });
-
 });

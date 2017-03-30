@@ -1,333 +1,117 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-wi-111', 0],
+    ['us-wi-049', 1],
+    ['us-wi-003', 2],
+    ['us-wi-007', 3],
+    ['us-wi-113', 4],
+    ['us-wi-021', 5],
+    ['us-wi-001', 6],
+    ['us-wi-085', 7],
+    ['us-wi-099', 8],
+    ['us-wi-017', 9],
+    ['us-wi-019', 10],
+    ['us-wi-087', 11],
+    ['us-wi-115', 12],
+    ['us-wi-069', 13],
+    ['us-wi-055', 14],
+    ['us-wi-027', 15],
+    ['us-wi-125', 16],
+    ['us-wi-041', 17],
+    ['us-wi-047', 18],
+    ['us-wi-137', 19],
+    ['us-wi-045', 20],
+    ['us-wi-105', 21],
+    ['us-wi-127', 22],
+    ['us-wi-005', 23],
+    ['us-wi-093', 24],
+    ['us-wi-033', 25],
+    ['us-wi-107', 26],
+    ['us-wi-119', 27],
+    ['us-wi-101', 28],
+    ['us-wi-053', 29],
+    ['us-wi-035', 30],
+    ['us-wi-083', 31],
+    ['us-wi-009', 32],
+    ['us-wi-079', 33],
+    ['us-wi-089', 34],
+    ['us-wi-103', 35],
+    ['us-wi-023', 36],
+    ['us-wi-133', 37],
+    ['us-wi-057', 38],
+    ['us-wi-123', 39],
+    ['us-wi-025', 40],
+    ['us-wi-051', 41],
+    ['us-wi-135', 42],
+    ['us-wi-139', 43],
+    ['us-wi-061', 44],
+    ['us-wi-097', 45],
+    ['us-wi-015', 46],
+    ['us-wi-063', 47],
+    ['us-wi-073', 48],
+    ['us-wi-013', 49],
+    ['us-wi-121', 50],
+    ['us-wi-129', 51],
+    ['us-wi-091', 52],
+    ['us-wi-141', 53],
+    ['us-wi-043', 54],
+    ['us-wi-065', 55],
+    ['us-wi-117', 56],
+    ['us-wi-077', 57],
+    ['us-wi-067', 58],
+    ['us-wi-078', 59],
+    ['us-wi-131', 60],
+    ['us-wi-109', 61],
+    ['us-wi-037', 62],
+    ['us-wi-039', 63],
+    ['us-wi-081', 64],
+    ['us-wi-011', 65],
+    ['us-wi-029', 66],
+    ['us-wi-095', 67],
+    ['us-wi-075', 68],
+    ['us-wi-031', 69],
+    ['us-wi-059', 70],
+    ['us-wi-071', 71]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-wi-111",
-            "value": 0
-        },
-        {
-            "hc-key": "us-wi-049",
-            "value": 1
-        },
-        {
-            "hc-key": "us-wi-003",
-            "value": 2
-        },
-        {
-            "hc-key": "us-wi-007",
-            "value": 3
-        },
-        {
-            "hc-key": "us-wi-113",
-            "value": 4
-        },
-        {
-            "hc-key": "us-wi-021",
-            "value": 5
-        },
-        {
-            "hc-key": "us-wi-001",
-            "value": 6
-        },
-        {
-            "hc-key": "us-wi-085",
-            "value": 7
-        },
-        {
-            "hc-key": "us-wi-099",
-            "value": 8
-        },
-        {
-            "hc-key": "us-wi-017",
-            "value": 9
-        },
-        {
-            "hc-key": "us-wi-019",
-            "value": 10
-        },
-        {
-            "hc-key": "us-wi-087",
-            "value": 11
-        },
-        {
-            "hc-key": "us-wi-115",
-            "value": 12
-        },
-        {
-            "hc-key": "us-wi-069",
-            "value": 13
-        },
-        {
-            "hc-key": "us-wi-055",
-            "value": 14
-        },
-        {
-            "hc-key": "us-wi-027",
-            "value": 15
-        },
-        {
-            "hc-key": "us-wi-125",
-            "value": 16
-        },
-        {
-            "hc-key": "us-wi-041",
-            "value": 17
-        },
-        {
-            "hc-key": "us-wi-047",
-            "value": 18
-        },
-        {
-            "hc-key": "us-wi-137",
-            "value": 19
-        },
-        {
-            "hc-key": "us-wi-045",
-            "value": 20
-        },
-        {
-            "hc-key": "us-wi-105",
-            "value": 21
-        },
-        {
-            "hc-key": "us-wi-127",
-            "value": 22
-        },
-        {
-            "hc-key": "us-wi-005",
-            "value": 23
-        },
-        {
-            "hc-key": "us-wi-093",
-            "value": 24
-        },
-        {
-            "hc-key": "us-wi-033",
-            "value": 25
-        },
-        {
-            "hc-key": "us-wi-107",
-            "value": 26
-        },
-        {
-            "hc-key": "us-wi-119",
-            "value": 27
-        },
-        {
-            "hc-key": "us-wi-101",
-            "value": 28
-        },
-        {
-            "hc-key": "us-wi-053",
-            "value": 29
-        },
-        {
-            "hc-key": "us-wi-035",
-            "value": 30
-        },
-        {
-            "hc-key": "us-wi-083",
-            "value": 31
-        },
-        {
-            "hc-key": "us-wi-009",
-            "value": 32
-        },
-        {
-            "hc-key": "us-wi-079",
-            "value": 33
-        },
-        {
-            "hc-key": "us-wi-089",
-            "value": 34
-        },
-        {
-            "hc-key": "us-wi-103",
-            "value": 35
-        },
-        {
-            "hc-key": "us-wi-023",
-            "value": 36
-        },
-        {
-            "hc-key": "us-wi-133",
-            "value": 37
-        },
-        {
-            "hc-key": "us-wi-057",
-            "value": 38
-        },
-        {
-            "hc-key": "us-wi-123",
-            "value": 39
-        },
-        {
-            "hc-key": "us-wi-025",
-            "value": 40
-        },
-        {
-            "hc-key": "us-wi-051",
-            "value": 41
-        },
-        {
-            "hc-key": "us-wi-135",
-            "value": 42
-        },
-        {
-            "hc-key": "us-wi-139",
-            "value": 43
-        },
-        {
-            "hc-key": "us-wi-061",
-            "value": 44
-        },
-        {
-            "hc-key": "us-wi-097",
-            "value": 45
-        },
-        {
-            "hc-key": "us-wi-015",
-            "value": 46
-        },
-        {
-            "hc-key": "us-wi-063",
-            "value": 47
-        },
-        {
-            "hc-key": "us-wi-073",
-            "value": 48
-        },
-        {
-            "hc-key": "us-wi-013",
-            "value": 49
-        },
-        {
-            "hc-key": "us-wi-121",
-            "value": 50
-        },
-        {
-            "hc-key": "us-wi-129",
-            "value": 51
-        },
-        {
-            "hc-key": "us-wi-091",
-            "value": 52
-        },
-        {
-            "hc-key": "us-wi-141",
-            "value": 53
-        },
-        {
-            "hc-key": "us-wi-043",
-            "value": 54
-        },
-        {
-            "hc-key": "us-wi-065",
-            "value": 55
-        },
-        {
-            "hc-key": "us-wi-117",
-            "value": 56
-        },
-        {
-            "hc-key": "us-wi-077",
-            "value": 57
-        },
-        {
-            "hc-key": "us-wi-067",
-            "value": 58
-        },
-        {
-            "hc-key": "us-wi-078",
-            "value": 59
-        },
-        {
-            "hc-key": "us-wi-131",
-            "value": 60
-        },
-        {
-            "hc-key": "us-wi-109",
-            "value": 61
-        },
-        {
-            "hc-key": "us-wi-037",
-            "value": 62
-        },
-        {
-            "hc-key": "us-wi-039",
-            "value": 63
-        },
-        {
-            "hc-key": "us-wi-081",
-            "value": 64
-        },
-        {
-            "hc-key": "us-wi-011",
-            "value": 65
-        },
-        {
-            "hc-key": "us-wi-029",
-            "value": 66
-        },
-        {
-            "hc-key": "us-wi-095",
-            "value": 67
-        },
-        {
-            "hc-key": "us-wi-075",
-            "value": 68
-        },
-        {
-            "hc-key": "us-wi-031",
-            "value": 69
-        },
-        {
-            "hc-key": "us-wi-059",
-            "value": 70
-        },
-        {
-            "hc-key": "us-wi-071",
-            "value": 71
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-wi-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-wi-all.js">Wisconsin</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-wi-all.js">Wisconsin</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-wi-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

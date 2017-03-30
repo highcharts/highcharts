@@ -1,55 +1,54 @@
-$(function () {
 
-    Highcharts.chart('container', {
 
-        chart: {
-            polar: true,
-            type: 'line'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Budget vs spending',
-            x: -80
-        },
+    chart: {
+        polar: true,
+        type: 'line'
+    },
 
-        pane: {
-            size: '80%'
-        },
+    title: {
+        text: 'Budget vs spending',
+        x: -80
+    },
 
-        xAxis: {
-            categories: ['Sales', 'Marketing', 'Development', 'Customer Support',
-                    'Information Technology', 'Administration'],
-            tickmarkPlacement: 'on',
-            lineWidth: 0
-        },
+    pane: {
+        size: '80%'
+    },
 
-        yAxis: {
-            gridLineInterpolation: 'polygon',
-            lineWidth: 0,
-            min: 0
-        },
+    xAxis: {
+        categories: ['Sales', 'Marketing', 'Development', 'Customer Support',
+                'Information Technology', 'Administration'],
+        tickmarkPlacement: 'on',
+        lineWidth: 0
+    },
 
-        tooltip: {
-            shared: true,
-            pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
-        },
+    yAxis: {
+        gridLineInterpolation: 'polygon',
+        lineWidth: 0,
+        min: 0
+    },
 
-        legend: {
-            align: 'right',
-            verticalAlign: 'top',
-            y: 70,
-            layout: 'vertical'
-        },
+    tooltip: {
+        shared: true,
+        pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+    },
 
-        series: [{
-            name: 'Allocated Budget',
-            data: [43000, 19000, 60000, 35000, 17000, 10000],
-            pointPlacement: 'on'
-        }, {
-            name: 'Actual Spending',
-            data: [50000, 39000, 42000, 31000, 26000, 14000],
-            pointPlacement: 'on'
-        }]
+    legend: {
+        align: 'right',
+        verticalAlign: 'top',
+        y: 70,
+        layout: 'vertical'
+    },
 
-    });
+    series: [{
+        name: 'Allocated Budget',
+        data: [43000, 19000, 60000, 35000, 17000, 10000],
+        pointPlacement: 'on'
+    }, {
+        name: 'Actual Spending',
+        data: [50000, 39000, 42000, 31000, 26000, 14000],
+        pointPlacement: 'on'
+    }]
+
 });

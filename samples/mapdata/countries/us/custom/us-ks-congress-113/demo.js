@@ -1,61 +1,49 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ks-02', 0],
+    ['us-ks-01', 1],
+    ['us-ks-04', 2],
+    ['us-ks-03', 3]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ks-02",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ks-01",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ks-04",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ks-03",
-            "value": 3
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-ks-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ks-congress-113.js">Kansas congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ks-congress-113.js">Kansas congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-ks-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

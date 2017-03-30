@@ -1,113 +1,64 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['my-sa', 0],
+    ['my-sk', 1],
+    ['my-la', 2],
+    ['my-pg', 3],
+    ['my-kh', 4],
+    ['my-sl', 5],
+    ['my-ph', 6],
+    ['my-kl', 7],
+    ['my-pj', 8],
+    ['my-pl', 9],
+    ['my-jh', 10],
+    ['my-pk', 11],
+    ['my-kn', 12],
+    ['my-me', 13],
+    ['my-ns', 14],
+    ['my-te', 15],
+    ['undefined', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "my-sa",
-            "value": 0
-        },
-        {
-            "hc-key": "my-sk",
-            "value": 1
-        },
-        {
-            "hc-key": "my-la",
-            "value": 2
-        },
-        {
-            "hc-key": "my-pg",
-            "value": 3
-        },
-        {
-            "hc-key": "my-kh",
-            "value": 4
-        },
-        {
-            "hc-key": "my-sl",
-            "value": 5
-        },
-        {
-            "hc-key": "my-ph",
-            "value": 6
-        },
-        {
-            "hc-key": "my-kl",
-            "value": 7
-        },
-        {
-            "hc-key": "my-pj",
-            "value": 8
-        },
-        {
-            "hc-key": "my-pl",
-            "value": 9
-        },
-        {
-            "hc-key": "my-jh",
-            "value": 10
-        },
-        {
-            "hc-key": "my-pk",
-            "value": 11
-        },
-        {
-            "hc-key": "my-kn",
-            "value": 12
-        },
-        {
-            "hc-key": "my-me",
-            "value": 13
-        },
-        {
-            "hc-key": "my-ns",
-            "value": 14
-        },
-        {
-            "hc-key": "my-te",
-            "value": 15
-        },
-        {
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/my/my-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/my/my-all.js">Malaysia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/my/my-all.js">Malaysia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/my/my-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }, {
+            format: '{point.name}'
+        }
+    }, {
             name: 'Separators',
             type: 'mapline',
             data: Highcharts.geojson(Highcharts.maps['countries/my/my-all'], 'mapline'),
@@ -115,5 +66,4 @@ $(function () {
             showInLegend: false,
             enableMouseTracking: false
         }]
-    });
 });

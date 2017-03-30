@@ -1,60 +1,59 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-        // Instanciate the map
-        Highcharts.mapChart('container', {
-            title: {
-                text: 'World population 2010 by country'
-            },
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-            subtitle: {
-                text: 'Demo of map button theming'
-            },
+    // Instanciate the map
+    Highcharts.mapChart('container', {
+        title: {
+            text: 'World population 2010 by country'
+        },
 
-            legend: {
-                enabled: false
-            },
+        subtitle: {
+            text: 'Demo of map button theming'
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    theme: {
-                        fill: 'white',
-                        'stroke-width': 1,
-                        stroke: 'silver',
-                        r: 0,
-                        states: {
-                            hover: {
-                                fill: '#a4edba'
-                            },
-                            select: {
-                                stroke: '#039',
-                                fill: '#a4edba'
-                            }
+        legend: {
+            enabled: false
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                theme: {
+                    fill: 'white',
+                    'stroke-width': 1,
+                    stroke: 'silver',
+                    r: 0,
+                    states: {
+                        hover: {
+                            fill: '#a4edba'
+                        },
+                        select: {
+                            stroke: '#039',
+                            fill: '#a4edba'
                         }
-                    },
-                    verticalAlign: 'bottom'
-                }
-            },
+                    }
+                },
+                verticalAlign: 'bottom'
+            }
+        },
 
-            colorAxis: {
-                minColor: '#efecf3',
-                maxColor: '#990041',
-                startOnTick: false,
-                endOnTick: false,
-                type: 'logarithmic'
-            },
+        colorAxis: {
+            minColor: '#efecf3',
+            maxColor: '#990041',
+            startOnTick: false,
+            endOnTick: false,
+            type: 'logarithmic'
+        },
 
-            series: [{
-                name: 'Population',
-                mapData: Highcharts.maps['custom/world'],
-                data: data,
-                joinBy: ['iso-a2', 'code'],
-                tooltip: {
-                    pointFormat: '{point.code}: {point.value:,f},000'
-                }
-            }]
-        });
+        series: [{
+            name: 'Population',
+            mapData: Highcharts.maps['custom/world'],
+            data: data,
+            joinBy: ['iso-a2', 'code'],
+            tooltip: {
+                pointFormat: '{point.code}: {point.value:,f},000'
+            }
+        }]
     });
 });

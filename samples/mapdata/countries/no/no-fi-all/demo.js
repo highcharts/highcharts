@@ -1,121 +1,64 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['no-fi-2002', 0],
+    ['no-fi-2019', 1],
+    ['no-fi-2030', 2],
+    ['no-fi-2018', 3],
+    ['no-fi-2014', 4],
+    ['no-fi-2020', 5],
+    ['no-fi-2015', 6],
+    ['no-fi-2017', 7],
+    ['no-tr-2012', 8],
+    ['no-fi-2004', 9],
+    ['no-fi-2027', 10],
+    ['no-fi-2025', 11],
+    ['no-fi-2011', 12],
+    ['no-fi-2022', 13],
+    ['no-fi-2024', 14],
+    ['no-fi-2021', 15],
+    ['no-fi-2023', 16],
+    ['no-fi-2028', 17],
+    ['no-fi-2003', 18]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "no-fi-2002",
-            "value": 0
-        },
-        {
-            "hc-key": "no-fi-2019",
-            "value": 1
-        },
-        {
-            "hc-key": "no-fi-2030",
-            "value": 2
-        },
-        {
-            "hc-key": "no-fi-2018",
-            "value": 3
-        },
-        {
-            "hc-key": "no-fi-2014",
-            "value": 4
-        },
-        {
-            "hc-key": "no-fi-2020",
-            "value": 5
-        },
-        {
-            "hc-key": "no-fi-2015",
-            "value": 6
-        },
-        {
-            "hc-key": "no-fi-2017",
-            "value": 7
-        },
-        {
-            "hc-key": "no-tr-2012",
-            "value": 8
-        },
-        {
-            "hc-key": "no-fi-2004",
-            "value": 9
-        },
-        {
-            "hc-key": "no-fi-2027",
-            "value": 10
-        },
-        {
-            "hc-key": "no-fi-2025",
-            "value": 11
-        },
-        {
-            "hc-key": "no-fi-2011",
-            "value": 12
-        },
-        {
-            "hc-key": "no-fi-2022",
-            "value": 13
-        },
-        {
-            "hc-key": "no-fi-2024",
-            "value": 14
-        },
-        {
-            "hc-key": "no-fi-2021",
-            "value": 15
-        },
-        {
-            "hc-key": "no-fi-2023",
-            "value": 16
-        },
-        {
-            "hc-key": "no-fi-2028",
-            "value": 17
-        },
-        {
-            "hc-key": "no-fi-2003",
-            "value": 18
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/no/no-fi-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-fi-all.js">Finnmark</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-fi-all.js">Finnmark</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/no/no-fi-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

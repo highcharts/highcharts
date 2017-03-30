@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -194,11 +194,23 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			if (labelOptions.align === undefined) {
 				labelOptions.align = 'right';
 			}
-			panes[key] = 1;
+			panes[key] = this;
 			return 'right';
 		}
 	}
 	return proceed.call(this, [].slice.call(arguments, 1));
+});
+
+// Clear axis from label panes (#6071)
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	var chart = this.chart,
+		key = this.options && (this.options.top + ',' + this.options.height);
+
+	if (key && chart._labelPanes && chart._labelPanes[key] === this) {
+		delete chart._labelPanes[key];
+	}
+
+	return proceed.call(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -325,25 +337,35 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 Axis.prototype.getPlotBandPath = function (from, to) {
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
+		horiz = this.horiz,
+		outside =
+			(from < this.min && to < this.min) ||
+			(from > this.max && to > this.max),
 		result = [],
 		i;
 
-	if (path && toPath) {
-		if (path.toString() === toPath.toString()) {
-			// #6166
-			result = path;
-			result.flat = true;
-		} else {
-			// Go over each subpath
-			for (i = 0; i < path.length; i += 6) {
-				result.push(
-					'M', path[i + 1], path[i + 2],
-					'L', path[i + 4], path[i + 5],
-					toPath[i + 4], toPath[i + 5],
-					toPath[i + 1], toPath[i + 2],
-					'z'
-				);
-			}
+	if (path && toPath && !outside) {
+		// Go over each subpath
+		for (i = 0; i < path.length; i += 6) {
+			result.push(
+				'M', path[i + 1], 
+				path[i + 2], 
+				'L', 
+				path[i + 4], 
+				path[i + 5], 
+				horiz && toPath[i + 4] === path[i + 4] ?
+					toPath[i + 4] + 1 :
+					toPath[i + 4], 
+				!horiz && toPath[i + 5] === path[i + 5] ?
+					toPath[i + 5] + 1 :
+					toPath[i + 5],
+				horiz && toPath[i + 1] === path[i + 1] ?
+					toPath[i + 1] + 1 :
+					toPath[i + 1],
+				!horiz && toPath[i + 2] === path[i + 2] ?
+					toPath[i + 2] + 1 :
+					toPath[i + 2]
+			);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -522,7 +544,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 });
 
 /* ****************************************************************************
- * Start value compare logic                                                  *
+ * Start value compare logic												  *
  *****************************************************************************/
 	
 /**
@@ -671,7 +693,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 };
 
 /* ****************************************************************************
- * End value compare logic                                                    *
+ * End value compare logic													*
  *****************************************************************************/
 
 

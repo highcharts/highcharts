@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -296,8 +296,9 @@ seriesType('pie', 'line', {
 				shapeArgs = point.shapeArgs;
 
 
-				// if the point is sliced, use special translation, else use plot area traslation
-				groupTranslation = point.sliced ? point.slicedTranslation : {};
+				// If the point is sliced, use special translation, else use
+				// plot area traslation
+				groupTranslation = point.getTranslate();
 
 				/*= if (build.classic) { =*/
 				// Put the shadow behind all points
@@ -457,8 +458,7 @@ seriesType('pie', 'line', {
 	slice: function (sliced, redraw, animation) {
 		var point = this,
 			series = point.series,
-			chart = series.chart,
-			translation;
+			chart = series.chart;
 
 		setAnimation(animation, chart);
 
@@ -469,18 +469,20 @@ seriesType('pie', 'line', {
 		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		translation = sliced ? point.slicedTranslation : {
-			translateX: 0,
-			translateY: 0
-		};
-
-		point.graphic.animate(translation);
+		point.graphic.animate(this.getTranslate());
 		
 		/*= if (build.classic) { =*/
 		if (point.shadowGroup) {
-			point.shadowGroup.animate(translation);
+			point.shadowGroup.animate(this.getTranslate());
 		}
 		/*= } =*/
+	},
+
+	getTranslate: function () {
+		return this.sliced ? this.slicedTranslation : {
+			translateX: 0,
+			translateY: 0
+		};
 	},
 
 	haloPath: function (size) {

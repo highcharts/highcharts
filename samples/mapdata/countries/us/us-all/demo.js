@@ -1,253 +1,99 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ma', 0],
+    ['us-wa', 1],
+    ['us-ca', 2],
+    ['us-or', 3],
+    ['us-wi', 4],
+    ['us-me', 5],
+    ['us-mi', 6],
+    ['us-nv', 7],
+    ['us-nm', 8],
+    ['us-co', 9],
+    ['us-wy', 10],
+    ['us-ks', 11],
+    ['us-ne', 12],
+    ['us-ok', 13],
+    ['us-mo', 14],
+    ['us-il', 15],
+    ['us-in', 16],
+    ['us-vt', 17],
+    ['us-ar', 18],
+    ['us-tx', 19],
+    ['us-ri', 20],
+    ['us-al', 21],
+    ['us-ms', 22],
+    ['us-nc', 23],
+    ['us-va', 24],
+    ['us-ia', 25],
+    ['us-md', 26],
+    ['us-de', 27],
+    ['us-pa', 28],
+    ['us-nj', 29],
+    ['us-ny', 30],
+    ['us-id', 31],
+    ['us-sd', 32],
+    ['us-ct', 33],
+    ['us-nh', 34],
+    ['us-ky', 35],
+    ['us-oh', 36],
+    ['us-tn', 37],
+    ['us-wv', 38],
+    ['us-dc', 39],
+    ['us-la', 40],
+    ['us-fl', 41],
+    ['us-ga', 42],
+    ['us-sc', 43],
+    ['us-mn', 44],
+    ['us-mt', 45],
+    ['us-nd', 46],
+    ['us-az', 47],
+    ['us-ut', 48],
+    ['us-hi', 49],
+    ['us-ak', 50],
+    ['undefined', 51]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ma",
-            "value": 0
-        },
-        {
-            "hc-key": "us-wa",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ca",
-            "value": 2
-        },
-        {
-            "hc-key": "us-or",
-            "value": 3
-        },
-        {
-            "hc-key": "us-wi",
-            "value": 4
-        },
-        {
-            "hc-key": "us-me",
-            "value": 5
-        },
-        {
-            "hc-key": "us-mi",
-            "value": 6
-        },
-        {
-            "hc-key": "us-nv",
-            "value": 7
-        },
-        {
-            "hc-key": "us-nm",
-            "value": 8
-        },
-        {
-            "hc-key": "us-co",
-            "value": 9
-        },
-        {
-            "hc-key": "us-wy",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ks",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ne",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ok",
-            "value": 13
-        },
-        {
-            "hc-key": "us-mo",
-            "value": 14
-        },
-        {
-            "hc-key": "us-il",
-            "value": 15
-        },
-        {
-            "hc-key": "us-in",
-            "value": 16
-        },
-        {
-            "hc-key": "us-vt",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ar",
-            "value": 18
-        },
-        {
-            "hc-key": "us-tx",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ri",
-            "value": 20
-        },
-        {
-            "hc-key": "us-al",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ms",
-            "value": 22
-        },
-        {
-            "hc-key": "us-nc",
-            "value": 23
-        },
-        {
-            "hc-key": "us-va",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ia",
-            "value": 25
-        },
-        {
-            "hc-key": "us-md",
-            "value": 26
-        },
-        {
-            "hc-key": "us-de",
-            "value": 27
-        },
-        {
-            "hc-key": "us-pa",
-            "value": 28
-        },
-        {
-            "hc-key": "us-nj",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ny",
-            "value": 30
-        },
-        {
-            "hc-key": "us-id",
-            "value": 31
-        },
-        {
-            "hc-key": "us-sd",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ct",
-            "value": 33
-        },
-        {
-            "hc-key": "us-nh",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ky",
-            "value": 35
-        },
-        {
-            "hc-key": "us-oh",
-            "value": 36
-        },
-        {
-            "hc-key": "us-tn",
-            "value": 37
-        },
-        {
-            "hc-key": "us-wv",
-            "value": 38
-        },
-        {
-            "hc-key": "us-dc",
-            "value": 39
-        },
-        {
-            "hc-key": "us-la",
-            "value": 40
-        },
-        {
-            "hc-key": "us-fl",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ga",
-            "value": 42
-        },
-        {
-            "hc-key": "us-sc",
-            "value": 43
-        },
-        {
-            "hc-key": "us-mn",
-            "value": 44
-        },
-        {
-            "hc-key": "us-mt",
-            "value": 45
-        },
-        {
-            "hc-key": "us-nd",
-            "value": 46
-        },
-        {
-            "hc-key": "us-az",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ut",
-            "value": 48
-        },
-        {
-            "hc-key": "us-hi",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ak",
-            "value": 50
-        },
-        {
-            "value": 51
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-all.js">United States of America</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-all.js">United States of America</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }, {
+            format: '{point.name}'
+        }
+    }, {
             name: 'Separators',
             type: 'mapline',
             data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
@@ -255,5 +101,4 @@ $(function () {
             showInLegend: false,
             enableMouseTracking: false
         }]
-    });
 });

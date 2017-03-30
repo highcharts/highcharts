@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ca-5682', 0],
+    ['ca-bc', 1],
+    ['ca-nu', 2],
+    ['ca-nt', 3],
+    ['ca-ab', 4],
+    ['ca-nl', 5],
+    ['ca-sk', 6],
+    ['ca-mb', 7],
+    ['ca-qc', 8],
+    ['ca-on', 9],
+    ['ca-nb', 10],
+    ['ca-ns', 11],
+    ['ca-pe', 12],
+    ['ca-yt', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ca-5682",
-            "value": 0
-        },
-        {
-            "hc-key": "ca-bc",
-            "value": 1
-        },
-        {
-            "hc-key": "ca-nu",
-            "value": 2
-        },
-        {
-            "hc-key": "ca-nt",
-            "value": 3
-        },
-        {
-            "hc-key": "ca-ab",
-            "value": 4
-        },
-        {
-            "hc-key": "ca-nl",
-            "value": 5
-        },
-        {
-            "hc-key": "ca-sk",
-            "value": 6
-        },
-        {
-            "hc-key": "ca-mb",
-            "value": 7
-        },
-        {
-            "hc-key": "ca-qc",
-            "value": 8
-        },
-        {
-            "hc-key": "ca-on",
-            "value": 9
-        },
-        {
-            "hc-key": "ca-nb",
-            "value": 10
-        },
-        {
-            "hc-key": "ca-ns",
-            "value": 11
-        },
-        {
-            "hc-key": "ca-pe",
-            "value": 12
-        },
-        {
-            "hc-key": "ca-yt",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ca/ca-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-all.js">Canada</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-all.js">Canada</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ca/ca-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

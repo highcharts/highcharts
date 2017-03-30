@@ -1,24 +1,23 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            ignoreHiddenSeries: false
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    chart: {
+        ignoreHiddenSeries: false
+    },
 
-        legend: {
-            enabled: true
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'GOOGL',
-            data: GOOGL
-        }, {
-            name: 'MSFT',
-            data: MSFT
-        }]
-    });
+    legend: {
+        enabled: true
+    },
+
+    series: [{
+        name: 'GOOGL',
+        data: GOOGL
+    }, {
+        name: 'MSFT',
+        data: MSFT
+    }]
 });

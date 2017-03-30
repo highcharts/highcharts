@@ -4,4 +4,5 @@
    - Torstein Hønsi
  resources:
    - https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css
+ js_wrap: b
 ...

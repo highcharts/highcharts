@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['pa-ch', 0],
+    ['pa-sb', 1],
+    ['pa-vr', 2],
+    ['pa-bc', 3],
+    ['pa-nb', 4],
+    ['pa-em', 5],
+    ['pa-cl', 6],
+    ['pa-he', 7],
+    ['pa-ls', 8],
+    ['pa-dr', 9],
+    ['pa-1119', 10],
+    ['pa-cc', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "pa-ch",
-            "value": 0
-        },
-        {
-            "hc-key": "pa-sb",
-            "value": 1
-        },
-        {
-            "hc-key": "pa-vr",
-            "value": 2
-        },
-        {
-            "hc-key": "pa-bc",
-            "value": 3
-        },
-        {
-            "hc-key": "pa-nb",
-            "value": 4
-        },
-        {
-            "hc-key": "pa-em",
-            "value": 5
-        },
-        {
-            "hc-key": "pa-cl",
-            "value": 6
-        },
-        {
-            "hc-key": "pa-he",
-            "value": 7
-        },
-        {
-            "hc-key": "pa-ls",
-            "value": 8
-        },
-        {
-            "hc-key": "pa-dr",
-            "value": 9
-        },
-        {
-            "hc-key": "pa-1119",
-            "value": 10
-        },
-        {
-            "hc-key": "pa-cc",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/pa/pa-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pa/pa-all.js">Panama</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pa/pa-all.js">Panama</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/pa/pa-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

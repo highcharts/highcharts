@@ -1,16 +1,15 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'pie'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Pie chart on highstock.js'
-        },
+    chart: {
+        type: 'pie'
+    },
 
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
-    });
+    title: {
+        text: 'Pie chart on highstock.js'
+    },
+
+    series: [{
+        data: [1, 3, 2, 4]
+    }]
 });

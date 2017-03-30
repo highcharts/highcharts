@@ -1,129 +1,68 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['pt-fa', 0],
+    ['pt-li', 1],
+    ['pt-av', 2],
+    ['pt-vc', 3],
+    ['pt-be', 4],
+    ['pt-ev', 5],
+    ['pt-se', 6],
+    ['pt-pa', 7],
+    ['pt-sa', 8],
+    ['pt-br', 9],
+    ['pt-le', 10],
+    ['pt-ba', 11],
+    ['pt-cb', 12],
+    ['pt-gu', 13],
+    ['pt-co', 14],
+    ['pt-po', 15],
+    ['pt-vi', 16],
+    ['pt-vr', 17],
+    ['pt-ma', 18],
+    ['pt-ac', 19],
+    ['undefined', 20]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "pt-fa",
-            "value": 0
-        },
-        {
-            "hc-key": "pt-li",
-            "value": 1
-        },
-        {
-            "hc-key": "pt-av",
-            "value": 2
-        },
-        {
-            "hc-key": "pt-vc",
-            "value": 3
-        },
-        {
-            "hc-key": "pt-be",
-            "value": 4
-        },
-        {
-            "hc-key": "pt-ev",
-            "value": 5
-        },
-        {
-            "hc-key": "pt-se",
-            "value": 6
-        },
-        {
-            "hc-key": "pt-pa",
-            "value": 7
-        },
-        {
-            "hc-key": "pt-sa",
-            "value": 8
-        },
-        {
-            "hc-key": "pt-br",
-            "value": 9
-        },
-        {
-            "hc-key": "pt-le",
-            "value": 10
-        },
-        {
-            "hc-key": "pt-ba",
-            "value": 11
-        },
-        {
-            "hc-key": "pt-cb",
-            "value": 12
-        },
-        {
-            "hc-key": "pt-gu",
-            "value": 13
-        },
-        {
-            "hc-key": "pt-co",
-            "value": 14
-        },
-        {
-            "hc-key": "pt-po",
-            "value": 15
-        },
-        {
-            "hc-key": "pt-vi",
-            "value": 16
-        },
-        {
-            "hc-key": "pt-vr",
-            "value": 17
-        },
-        {
-            "hc-key": "pt-ma",
-            "value": 18
-        },
-        {
-            "hc-key": "pt-ac",
-            "value": 19
-        },
-        {
-            "value": 20
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/pt/pt-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pt/pt-all.js">Portugal</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pt/pt-all.js">Portugal</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/pt/pt-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }, {
+            format: '{point.name}'
+        }
+    }, {
             name: 'Separators',
             type: 'mapline',
             data: Highcharts.geojson(Highcharts.maps['countries/pt/pt-all'], 'mapline'),
@@ -131,5 +70,4 @@ $(function () {
             showInLegend: false,
             enableMouseTracking: false
         }]
-    });
 });

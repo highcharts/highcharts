@@ -1,117 +1,63 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-il-12', 0],
+    ['us-il-01', 1],
+    ['us-il-11', 2],
+    ['us-il-04', 3],
+    ['us-il-07', 4],
+    ['us-il-05', 5],
+    ['us-il-08', 6],
+    ['us-il-09', 7],
+    ['us-il-02', 8],
+    ['us-il-18', 9],
+    ['us-il-15', 10],
+    ['us-il-16', 11],
+    ['us-il-14', 12],
+    ['us-il-13', 13],
+    ['us-il-17', 14],
+    ['us-il-06', 15],
+    ['us-il-03', 16],
+    ['us-il-10', 17]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-il-12",
-            "value": 0
-        },
-        {
-            "hc-key": "us-il-01",
-            "value": 1
-        },
-        {
-            "hc-key": "us-il-11",
-            "value": 2
-        },
-        {
-            "hc-key": "us-il-04",
-            "value": 3
-        },
-        {
-            "hc-key": "us-il-07",
-            "value": 4
-        },
-        {
-            "hc-key": "us-il-05",
-            "value": 5
-        },
-        {
-            "hc-key": "us-il-08",
-            "value": 6
-        },
-        {
-            "hc-key": "us-il-09",
-            "value": 7
-        },
-        {
-            "hc-key": "us-il-02",
-            "value": 8
-        },
-        {
-            "hc-key": "us-il-18",
-            "value": 9
-        },
-        {
-            "hc-key": "us-il-15",
-            "value": 10
-        },
-        {
-            "hc-key": "us-il-16",
-            "value": 11
-        },
-        {
-            "hc-key": "us-il-14",
-            "value": 12
-        },
-        {
-            "hc-key": "us-il-13",
-            "value": 13
-        },
-        {
-            "hc-key": "us-il-17",
-            "value": 14
-        },
-        {
-            "hc-key": "us-il-06",
-            "value": 15
-        },
-        {
-            "hc-key": "us-il-03",
-            "value": 16
-        },
-        {
-            "hc-key": "us-il-10",
-            "value": 17
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-il-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-il-congress-113.js">Illinois congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-il-congress-113.js">Illinois congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-il-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

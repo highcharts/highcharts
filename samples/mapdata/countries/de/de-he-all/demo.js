@@ -1,149 +1,71 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-he-06633000', 0],
+    ['de-he-06635000', 1],
+    ['de-he-06431000', 2],
+    ['de-he-06535000', 3],
+    ['de-he-06634000', 4],
+    ['de-he-06611000', 5],
+    ['de-he-06636000', 6],
+    ['de-he-06532000', 7],
+    ['de-he-06440000', 8],
+    ['de-he-06531000', 9],
+    ['de-he-06632000', 10],
+    ['de-he-06435000', 11],
+    ['de-he-06413000', 12],
+    ['de-he-06432000', 13],
+    ['de-he-06411000', 14],
+    ['de-he-06438000', 15],
+    ['de-he-06436000', 16],
+    ['de-he-06439000', 17],
+    ['de-he-06414000', 18],
+    ['de-he-06437000', 19],
+    ['de-he-06434000', 20],
+    ['de-he-06631000', 21],
+    ['de-he-06412000', 22],
+    ['de-he-06533000', 23],
+    ['de-he-06534000', 24],
+    ['de-he-06433000', 25]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-he-06633000",
-            "value": 0
-        },
-        {
-            "hc-key": "de-he-06635000",
-            "value": 1
-        },
-        {
-            "hc-key": "de-he-06431000",
-            "value": 2
-        },
-        {
-            "hc-key": "de-he-06535000",
-            "value": 3
-        },
-        {
-            "hc-key": "de-he-06634000",
-            "value": 4
-        },
-        {
-            "hc-key": "de-he-06611000",
-            "value": 5
-        },
-        {
-            "hc-key": "de-he-06636000",
-            "value": 6
-        },
-        {
-            "hc-key": "de-he-06532000",
-            "value": 7
-        },
-        {
-            "hc-key": "de-he-06440000",
-            "value": 8
-        },
-        {
-            "hc-key": "de-he-06531000",
-            "value": 9
-        },
-        {
-            "hc-key": "de-he-06632000",
-            "value": 10
-        },
-        {
-            "hc-key": "de-he-06435000",
-            "value": 11
-        },
-        {
-            "hc-key": "de-he-06413000",
-            "value": 12
-        },
-        {
-            "hc-key": "de-he-06432000",
-            "value": 13
-        },
-        {
-            "hc-key": "de-he-06411000",
-            "value": 14
-        },
-        {
-            "hc-key": "de-he-06438000",
-            "value": 15
-        },
-        {
-            "hc-key": "de-he-06436000",
-            "value": 16
-        },
-        {
-            "hc-key": "de-he-06439000",
-            "value": 17
-        },
-        {
-            "hc-key": "de-he-06414000",
-            "value": 18
-        },
-        {
-            "hc-key": "de-he-06437000",
-            "value": 19
-        },
-        {
-            "hc-key": "de-he-06434000",
-            "value": 20
-        },
-        {
-            "hc-key": "de-he-06631000",
-            "value": 21
-        },
-        {
-            "hc-key": "de-he-06412000",
-            "value": 22
-        },
-        {
-            "hc-key": "de-he-06533000",
-            "value": 23
-        },
-        {
-            "hc-key": "de-he-06534000",
-            "value": 24
-        },
-        {
-            "hc-key": "de-he-06433000",
-            "value": 25
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-he-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-he-all.js">Hessen</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-he-all.js">Hessen</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-he-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

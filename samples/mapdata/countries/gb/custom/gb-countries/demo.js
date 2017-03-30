@@ -1,61 +1,49 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['gb-eng', 0],
+    ['gb-wls', 1],
+    ['gb-sct', 2],
+    ['gb-nir', 3]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "gb-eng",
-            "value": 0
-        },
-        {
-            "hc-key": "gb-wls",
-            "value": 1
-        },
-        {
-            "hc-key": "gb-sct",
-            "value": 2
-        },
-        {
-            "hc-key": "gb-nir",
-            "value": 3
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/gb/custom/gb-countries'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gb/custom/gb-countries.js">United Kingdom countries</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gb/custom/gb-countries.js">United Kingdom countries</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/gb/custom/gb-countries'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -29,7 +29,8 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 	/*= if (build.classic) { =*/
 	lineColor: '${palette.neutralColor100}',
 	lineWidth: 1,
-	upColor: '${palette.backgroundColor}'
+	upColor: '${palette.backgroundColor}',
+	stickyTracking: true
 	// upLineColor: null
 	/*= } =*/
 

@@ -1,21 +1,20 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        title: {
-            text: 'Chart title',
-            floating: true,
-            align: 'left',
-            x: 75,
-            y: 70
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    title: {
+        text: 'Chart title',
+        floating: true,
+        align: 'left',
+        x: 75,
+        y: 70
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

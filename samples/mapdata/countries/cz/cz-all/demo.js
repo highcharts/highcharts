@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cz-2293', 0],
+    ['cz-6305', 1],
+    ['cz-6306', 2],
+    ['cz-6307', 3],
+    ['cz-6308', 4],
+    ['cz-kk', 5],
+    ['cz-ck', 6],
+    ['cz-jk', 7],
+    ['cz-sk', 8],
+    ['cz-lk', 9],
+    ['cz-hk', 10],
+    ['cz-vk', 11],
+    ['cz-6303', 12],
+    ['cz-6304', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cz-2293",
-            "value": 0
-        },
-        {
-            "hc-key": "cz-6305",
-            "value": 1
-        },
-        {
-            "hc-key": "cz-6306",
-            "value": 2
-        },
-        {
-            "hc-key": "cz-6307",
-            "value": 3
-        },
-        {
-            "hc-key": "cz-6308",
-            "value": 4
-        },
-        {
-            "hc-key": "cz-kk",
-            "value": 5
-        },
-        {
-            "hc-key": "cz-ck",
-            "value": 6
-        },
-        {
-            "hc-key": "cz-jk",
-            "value": 7
-        },
-        {
-            "hc-key": "cz-sk",
-            "value": 8
-        },
-        {
-            "hc-key": "cz-lk",
-            "value": 9
-        },
-        {
-            "hc-key": "cz-hk",
-            "value": 10
-        },
-        {
-            "hc-key": "cz-vk",
-            "value": 11
-        },
-        {
-            "hc-key": "cz-6303",
-            "value": 12
-        },
-        {
-            "hc-key": "cz-6304",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cz/cz-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cz/cz-all.js">Czech Republic</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cz/cz-all.js">Czech Republic</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cz/cz-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

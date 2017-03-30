@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -199,7 +199,8 @@ seriesType('area', 'line', {
 					graphPoints.push({
 						plotX: plotX,
 						plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
-						isNull: isNull
+						isNull: isNull,
+						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,

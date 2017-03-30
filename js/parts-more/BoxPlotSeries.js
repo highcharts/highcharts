@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -179,36 +179,38 @@ seriesType('boxplot', 'column', {
 					point.medianShape = renderer.path(medianPath)
 						.addClass('highcharts-boxplot-median')
 						.add(graphic);
-
-
-					/*= if (build.classic) { =*/
-				
-					// Stem attributes
-					stemAttr.stroke = point.stemColor || options.stemColor || color;
-					stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-					stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
-					point.stem.attr(stemAttr);
-					
-					// Whiskers attributes
-					if (whiskerLength) {
-						whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
-						whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
-						point.whiskers.attr(whiskersAttr);
-					}
-					
-					if (doQuartiles) {
-						boxAttr = series.pointAttribs(point);
-						point.box.attr(boxAttr);
-					}
-					
-
-					// Median attributes
-					medianAttr.stroke = point.medianColor || options.medianColor || color;
-					medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
-					point.medianShape.attr(medianAttr);
-
-					/*= } =*/
 				}
+
+
+
+
+				/*= if (build.classic) { =*/
+			
+				// Stem attributes
+				stemAttr.stroke = point.stemColor || options.stemColor || color;
+				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
+				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
+				point.stem.attr(stemAttr);
+				
+				// Whiskers attributes
+				if (whiskerLength) {
+					whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
+					whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
+					point.whiskers.attr(whiskersAttr);
+				}
+				
+				if (doQuartiles) {
+					boxAttr = series.pointAttribs(point);
+					point.box.attr(boxAttr);
+				}
+				
+
+				// Median attributes
+				medianAttr.stroke = point.medianColor || options.medianColor || color;
+				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+				point.medianShape.attr(medianAttr);
+
+				/*= } =*/
 				
 				
 

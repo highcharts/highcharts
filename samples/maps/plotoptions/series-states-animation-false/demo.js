@@ -1,48 +1,47 @@
-$(function () {
 
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-        // Initiate the chart
-        Highcharts.mapChart('container', {
+$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
-            title: {
-                text: 'Population density by country (/km²)'
-            },
+    // Initiate the chart
+    Highcharts.mapChart('container', {
 
-            subtitle: {
-                text: 'Animation on mouse out disabled. Notice the annoying flickering when hovering over Canadian arctic islands.'
-            },
+        title: {
+            text: 'Population density by country (/km²)'
+        },
 
-            mapNavigation: {
-                enabled: true,
-                buttonOptions: {
-                    verticalAlign: 'bottom'
-                }
-            },
+        subtitle: {
+            text: 'Animation on mouse out disabled. Notice the annoying flickering when hovering over Canadian arctic islands.'
+        },
 
-            colorAxis: {
-                min: 1,
-                max: 1000,
-                type: 'logarithmic'
-            },
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
 
-            series: [{
-                data: data,
-                mapData: Highcharts.maps['custom/world'],
-                joinBy: ['iso-a2', 'code'],
-                name: 'Population density',
-                states: {
-                    hover: {
-                        color: '#a4edba'
-                    },
-                    normal: {
-                        animation: false
-                    }
+        colorAxis: {
+            min: 1,
+            max: 1000,
+            type: 'logarithmic'
+        },
+
+        series: [{
+            data: data,
+            mapData: Highcharts.maps['custom/world'],
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            states: {
+                hover: {
+                    color: '#a4edba'
                 },
-                tooltip: {
-                    valueSuffix: '/km²'
+                normal: {
+                    animation: false
                 }
-            }]
-        });
+            },
+            tooltip: {
+                valueSuffix: '/km²'
+            }
+        }]
     });
 });

@@ -1,97 +1,58 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['tl-dl', 0],
+    ['tl-am', 1],
+    ['tl-bb', 2],
+    ['tl-cl', 3],
+    ['tl-er', 4],
+    ['tl-mt', 5],
+    ['tl-mf', 6],
+    ['tl-vq', 7],
+    ['tl-bt', 8],
+    ['tl-lq', 9],
+    ['tl-al', 10],
+    ['tl-an', 11],
+    ['tl-bc', 12]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "tl-dl",
-            "value": 0
-        },
-        {
-            "hc-key": "tl-am",
-            "value": 1
-        },
-        {
-            "hc-key": "tl-bb",
-            "value": 2
-        },
-        {
-            "hc-key": "tl-cl",
-            "value": 3
-        },
-        {
-            "hc-key": "tl-er",
-            "value": 4
-        },
-        {
-            "hc-key": "tl-mt",
-            "value": 5
-        },
-        {
-            "hc-key": "tl-mf",
-            "value": 6
-        },
-        {
-            "hc-key": "tl-vq",
-            "value": 7
-        },
-        {
-            "hc-key": "tl-bt",
-            "value": 8
-        },
-        {
-            "hc-key": "tl-lq",
-            "value": 9
-        },
-        {
-            "hc-key": "tl-al",
-            "value": 10
-        },
-        {
-            "hc-key": "tl-an",
-            "value": 11
-        },
-        {
-            "hc-key": "tl-bc",
-            "value": 12
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/tl/tl-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tl/tl-all.js">East Timor</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tl/tl-all.js">East Timor</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/tl/tl-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

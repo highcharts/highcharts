@@ -371,9 +371,8 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';
-										$dummy = time();
 										$dissIndex = "
-											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=$dummy'
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=" . time() . "'
 												target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
@@ -413,9 +412,13 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 									";
 								}
 
+								$mainLink = $isUnitTest ?
+									"compare-view.php?path=$path&amp;dummy=" . time() :
+									"view.php?path=$path";
+
 								$html .= "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path'>$innerFile</a>
+									<a target='main' id='i$i' class='$batchClass' href='$mainLink'>$innerFile</a>
 									<a class='comment' href='compare-comment.php?path=$path&amp;diff=$diff' target='main'>
 										$comment
 									</a>

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -96,7 +96,6 @@ Chart.prototype = {
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
-		this.respRules = [];
 
 		var optionsChart = options.chart;
 
@@ -242,8 +241,7 @@ Chart.prototype = {
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
 			isDirtyBox = chart.isDirtyBox,
-			seriesLength = series.length,
-			i = seriesLength,
+			i,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
@@ -264,6 +262,7 @@ Chart.prototype = {
 		chart.layOutTitles();
 
 		// link stacked series
+		i = series.length;
 		while (i--) {
 			serie = series[i];
 
@@ -277,7 +276,7 @@ Chart.prototype = {
 			}
 		}
 		if (hasDirtyStacks) { // mark others as dirty
-			i = seriesLength;
+			i = series.length;
 			while (i--) {
 				serie = series[i];
 				if (serie.options.stacking) {
@@ -555,7 +554,8 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Lay out the chart titles and cache the full offset height for use in getMargins
+	 * Lay out the chart titles and cache the full offset height for use
+	 * in getMargins
 	 */
 	layOutTitles: function (redraw) {
 		var titleOffset = 0,
@@ -576,13 +576,20 @@ Chart.prototype = {
 				titleSize = renderer.fontMetrics(titleSize, title).b;
 				
 				title
-					.css({ width: (titleOptions.width || spacingBox.width + titleOptions.widthAdjust) + 'px' })
+					.css({
+						width: (titleOptions.width ||
+							spacingBox.width + titleOptions.widthAdjust) + 'px'
+					})
 					.align(extend({ 
 						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
 					}, titleOptions), false, 'spacingBox');
 
 				if (!titleOptions.floating && !titleOptions.verticalAlign) {
-					titleOffset = Math.ceil(titleOffset + title.getBBox().height);
+					titleOffset = Math.ceil(
+						titleOffset +
+						// Skip the cache for HTML (#3481)
+						title.getBBox(titleOptions.useHTML).height
+					);
 				}
 			}
 		}, this);
@@ -623,7 +630,10 @@ Chart.prototype = {
 		);
 		chart.chartHeight = Math.max(
 			0,
-			heightOption || chart.containerHeight || 400
+			H.relativeLength(
+				heightOption,
+				chart.chartWidth
+			) || chart.containerHeight || 400
 		);
 	},
 

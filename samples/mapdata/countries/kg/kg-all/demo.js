@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['kg-gb', 0],
+    ['kg-ba', 1],
+    ['kg-834', 2],
+    ['kg-yk', 3],
+    ['kg-na', 4],
+    ['kg-tl', 5],
+    ['kg-os', 6],
+    ['kg-da', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "kg-gb",
-            "value": 0
-        },
-        {
-            "hc-key": "kg-ba",
-            "value": 1
-        },
-        {
-            "hc-key": "kg-834",
-            "value": 2
-        },
-        {
-            "hc-key": "kg-yk",
-            "value": 3
-        },
-        {
-            "hc-key": "kg-na",
-            "value": 4
-        },
-        {
-            "hc-key": "kg-tl",
-            "value": 5
-        },
-        {
-            "hc-key": "kg-os",
-            "value": 6
-        },
-        {
-            "hc-key": "kg-da",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/kg/kg-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kg/kg-all.js">Kyrgyzstan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kg/kg-all.js">Kyrgyzstan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/kg/kg-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

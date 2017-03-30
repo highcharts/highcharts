@@ -50,14 +50,21 @@ if (!isset($_SESSION['branch'])) {
 	$_SESSION['branch'] = 'master';
 }
 if (!isset($_SESSION['after'])) {
-	$_SESSION['after'] = strftime('%Y-%m-%d', time() - 31 * 24 * 3600);
+
+	$tags = $repo->list_tags();
+	$_SESSION['after'] = end($tags);
+
+	file_put_contents(sys_get_temp_dir() . '/log.txt', '');
 }
 
 // Move the log file back from temp dir
 if (!is_dir('../samples/temp')) {
 	mkdir('../samples/temp');
 }
-copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+
+if (is_file('../samples/temp/log.txt')) {
+	copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
+}
 
 ?>
 <html>
@@ -66,7 +73,7 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
 		
-		<script src="commits.js"></script>
+		<script src="commits.js?1"></script>
 		
 		<style type="text/css">
 			* {
@@ -139,11 +146,11 @@ copy(sys_get_temp_dir() . '/log.txt', '../samples/temp/log.txt');
 				text-align: center;
 			}
 			.status.status-good {
-				background: green;
+				background: #a4edba;
 				color: white;
 			}
 			.status.status-bad {
-				background: red;
+				background: rgb(241, 92, 128);
 				color: white;
 			}
 

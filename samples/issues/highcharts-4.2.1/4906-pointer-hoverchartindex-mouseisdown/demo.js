@@ -1,7 +1,12 @@
 $(function () {
     QUnit.test('Do not change hoverChartIndex during a drag.', function (assert) {
         var chart1,
-            chart2;
+            chart2,
+            offset1,
+            offset2,
+            y,
+            start,
+            end;
 
         chart1 = Highcharts.chart('container1', {
             chart: {
@@ -45,21 +50,26 @@ $(function () {
             }
         });
 
+        offset1 = Highcharts.offset(chart1.container);
+        offset2 = Highcharts.offset(chart2.container);
+        start = offset1.left + chart1.plotLeft + (chart1.plotSizeX / 2);
+        end = offset2.left + chart2.plotLeft + (chart2.plotSizeX / 2);
+        y = offset1.top + chart1.plotTop + (chart1.plotSizeY / 2);
         // Do a drag and drop
         chart1.pointer.onContainerMouseDown({
             type: 'mousedown',
-            pageX: 500,
-            pageY: 600
+            pageX: start,
+            pageY: y
         });
         chart1.pointer.onContainerMouseMove({
             type: 'mousemove',
-            pageX: 900,
-            pageY: 600
+            pageX: end,
+            pageY: y
         });
         chart1.pointer.onDocumentMouseUp({
             type: 'mouseup',
-            pageX: 900,
-            pageY: 600
+            pageX: end,
+            pageY: y
         });
 
         // Test after interaction

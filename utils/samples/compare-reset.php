@@ -1,4 +1,5 @@
 <?php
+$noPath = true;
 require_once('functions.php');
 @unlink(compareJSON());
 

@@ -1,12 +1,14 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 'use strict';
 import H from '../parts/Globals.js';
+import '../parts/CenteredSeriesMixin.js';
 import '../parts/Utilities.js';
-var each = H.each,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
+	each = H.each,
 	extend = H.extend,
 	merge = H.merge,
 	splat = H.splat;
@@ -14,51 +16,112 @@ var each = H.each,
  * The Pane object allows options that are common to a set of X and Y axes.
  *
  * In the future, this can be extended to basic Highcharts and Highstock.
+ *
  */
-function Pane(options, chart, firstAxis) {
-	this.init(options, chart, firstAxis);
+function Pane(options, chart) {
+	this.init(options, chart);
 }
 
 // Extend the Pane prototype
 extend(Pane.prototype, {
 
+	coll: 'pane', // Member of chart.pane
+
 	/**
 	 * Initiate the Pane object
 	 */
-	init: function (options, chart, firstAxis) {
-		var pane = this,
-			backgroundOption,
-			defaultOptions = pane.defaultOptions;
+	init: function (options, chart) {
+		this.chart = chart;
+		this.background = [];
 
-		pane.chart = chart;
+		chart.pane.push(this);
+
+		this.setOptions(options);
+	},
+
+	setOptions: function (options) {
 
 		// Set options. Angular charts have a default background (#3318)
-		pane.options = options = merge(defaultOptions, chart.angular ? { background: {} } : undefined, options);
+		this.options = options = merge(
+			this.defaultOptions,
+			this.chart.angular ? { background: {} } : undefined,
+			options
+		);
+	},
 
-		backgroundOption = options.background;
+	/**
+	 * Render the pane with its backgrounds.
+	 */
+	render: function () {
 
-		// To avoid having weighty logic to place, update and remove the backgrounds,
-		// push them to the first axis' plot bands and borrow the existing logic there.
-		if (backgroundOption) {
-			each([].concat(splat(backgroundOption)).reverse(), function (config) {
-				var mConfig,
-					axisUserOptions = firstAxis.userOptions;
-				mConfig = merge(pane.defaultBackgroundOptions, config);
+		var options = this.options,
+			backgroundOption = this.options.background,
+			renderer = this.chart.renderer,
+			len,
+			i;
 
-				/*= if (build.classic) { =*/
-				if (config.backgroundColor) {
-					mConfig.backgroundColor = config.backgroundColor;
-				}
-				mConfig.color = mConfig.backgroundColor; // due to naming in plotBands
-				/*= } =*/
-
-				firstAxis.options.plotBands.unshift(mConfig);
-				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
-				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
-					axisUserOptions.plotBands.unshift(mConfig);
-				}
-			});
+		if (!this.group) {
+			this.group = renderer.g('pane-group')
+				.attr({ zIndex: options.zIndex || 0 })
+				.add();
 		}
+
+		this.updateCenter();
+
+		// Render the backgrounds
+		if (backgroundOption) {
+			backgroundOption = splat(backgroundOption);
+			len = Math.max(
+				backgroundOption.length,
+				this.background.length || 0
+			);
+
+			for (i = 0; i < len; i++) {
+				if (backgroundOption[i]) {
+					this.renderBackground(
+						merge(
+							this.defaultBackgroundOptions,
+							backgroundOption[i]
+						),
+						i
+					);
+				} else if (this.background[i]) {
+					this.background[i] = this.background[i].destroy();
+					this.background.splice(i, 1);
+				}
+			}
+		}
+	},
+
+	/**
+	 * Render an individual pane background.
+	 * @param  {Object} backgroundOptions Background options
+	 * @param  {number} i The index of the background in this.backgrounds
+	 */
+	renderBackground: function (backgroundOptions, i) {
+		var method = 'animate';
+
+		if (!this.background[i]) {
+			this.background[i] = this.chart.renderer.path()
+				.add(this.group);
+			method = 'attr';
+		}
+
+		this.background[i][method]({
+			'd': this.axis.getPlotBandPath(
+				backgroundOptions.from,
+				backgroundOptions.to,
+				backgroundOptions
+			)
+		}).attr({
+			/*= if (build.classic) { =*/
+			'fill': backgroundOptions.backgroundColor,
+			'stroke': backgroundOptions.borderColor,
+			'stroke-width': backgroundOptions.borderWidth,
+			/*= } =*/
+			'class': 'highcharts-pane ' + (backgroundOptions.className || '')
+		});
+
 	},
 
 	/**
@@ -76,7 +139,7 @@ extend(Pane.prototype, {
 	 * The default background options
 	 */
 	defaultBackgroundOptions: {
-		className: 'highcharts-pane',
+		//className: 'highcharts-pane',
 		shape: 'circle',
 		/*= if (build.classic) { =*/
 		borderWidth: 1,
@@ -93,6 +156,44 @@ extend(Pane.prototype, {
 		innerRadius: 0,
 		to: Number.MAX_VALUE, // corrected to axis max
 		outerRadius: '105%'
+	},
+
+	/**
+	 * Gets the center for the pane and its axis.
+	 */
+	updateCenter: function (axis) {
+		this.center = (axis || this.axis || {}).center =
+			CenteredSeriesMixin.getCenter.call(this);
+	},
+
+	/**
+	 * Destroy the pane item
+	 * /
+	destroy: function () {
+		H.erase(this.chart.pane, this);
+		each(this.background, function (background) {
+			background.destroy();
+		});
+		this.background.length = 0;
+		this.group = this.group.destroy();
+	},
+	*/
+
+	/**
+	 * Update the pane item with new options
+	 * @param  {Object} options New pane options
+	 */
+	update: function (options, redraw) {
+		
+		merge(true, this.options, options);
+		this.setOptions(this.options);
+		this.render();
+		each(this.chart.axes, function (axis) {
+			if (axis.pane === this) {
+				axis.pane = null;
+				axis.update({}, redraw);
+			}
+		}, this);
 	}
 	
 });

@@ -1,5 +1,5 @@
  /**
- * (c) 2014-2016 Highsoft AS
+ * (c) 2014-2017 Highsoft AS
  * Authors: Torstein Honsi, Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license

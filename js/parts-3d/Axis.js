@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -351,7 +351,7 @@ extend(ZAxis.prototype, {
 				axis.hasVisibleSeries = true;
 
 				// Validate threshold in logarithmic axes
-				if (axis.isLog && threshold <= 0) {
+				if (axis.positiveValuesOnly && threshold <= 0) {
 					threshold = null;
 				}
 

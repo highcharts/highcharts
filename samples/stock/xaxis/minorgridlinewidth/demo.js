@@ -1,19 +1,18 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+Highcharts.stockChart('container', {
 
-        yAxis: {
-            minorGridLineColor: '#F0F0F0',
-            minorGridLineWidth: 2,
-            minorTickInterval: 'auto'
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    yAxis: {
+        minorGridLineColor: '#F0F0F0',
+        minorGridLineWidth: 2,
+        minorTickInterval: 'auto'
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

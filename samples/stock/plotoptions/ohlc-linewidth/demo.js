@@ -1,24 +1,23 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        title: {
-            text: 'OHLC series with line width 3'
-        },
+Highcharts.stockChart('container', {
 
-        plotOptions: {
-            ohlc: {
-                lineWidth: 3
-            }
-        },
+    title: {
+        text: 'OHLC series with line width 3'
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    plotOptions: {
+        ohlc: {
+            lineWidth: 3
+        }
+    },
 
-        series: [{
-            type: 'ohlc',
-            name: 'USD to EUR',
-            data: ohlcdata
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        type: 'ohlc',
+        name: 'USD to EUR',
+        data: ohlcdata
+    }]
 });

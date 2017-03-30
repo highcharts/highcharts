@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-mn-02', 0],
+    ['us-mn-06', 1],
+    ['us-mn-04', 2],
+    ['us-mn-01', 3],
+    ['us-mn-07', 4],
+    ['us-mn-03', 5],
+    ['us-mn-05', 6],
+    ['us-mn-08', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-mn-02",
-            "value": 0
-        },
-        {
-            "hc-key": "us-mn-06",
-            "value": 1
-        },
-        {
-            "hc-key": "us-mn-04",
-            "value": 2
-        },
-        {
-            "hc-key": "us-mn-01",
-            "value": 3
-        },
-        {
-            "hc-key": "us-mn-07",
-            "value": 4
-        },
-        {
-            "hc-key": "us-mn-03",
-            "value": 5
-        },
-        {
-            "hc-key": "us-mn-05",
-            "value": 6
-        },
-        {
-            "hc-key": "us-mn-08",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-mn-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-mn-congress-113.js">Minnesota congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-mn-congress-113.js">Minnesota congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-mn-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -31,6 +31,7 @@ var animObject = H.animObject,
 seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
+	crisp: true, // docs, API created since next
 	groupPadding: 0.2,
 	//grouping: true,
 	marker: null, // point options are specified in the base options
@@ -189,9 +190,11 @@ seriesType('column', 'line', {
 
 		// Horizontal. We need to first compute the exact right edge, then round it
 		// and compute the width from there.
-		right = Math.round(x + w) + xCrisp;
-		x = Math.round(x) + xCrisp;
-		w = right - x;
+		if (this.options.crisp) {
+			right = Math.round(x + w) + xCrisp;
+			x = Math.round(x) + xCrisp;
+			w = right - x;
+		}
 
 		// Vertical
 		bottom = Math.round(y + h) + yCrisp;
@@ -333,7 +336,10 @@ seriesType('column', 'line', {
 
 		// Select or hover states
 		if (state) {
-			stateOptions = options.states[state];
+			stateOptions = merge(
+				options.states[state],
+				point.options.states && point.options.states[state] || {} // #6401
+			);
 			brightness = stateOptions.brightness;
 			fill = stateOptions.color || 
 				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||

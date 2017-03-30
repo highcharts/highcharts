@@ -26,7 +26,8 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
                 },
                 pointAttribs: pointAttribs,
                 zones: []
-            }
+            },
+            options: {}
         };
     setState.call(point, '');
     assert.strictEqual(

@@ -1,97 +1,58 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['na-os', 0],
+    ['na-on', 1],
+    ['na-ow', 2],
+    ['na-ot', 3],
+    ['na-oh', 4],
+    ['na-ok', 5],
+    ['na-ca', 6],
+    ['na-ka', 7],
+    ['na-ha', 8],
+    ['na-kh', 9],
+    ['na-ku', 10],
+    ['na-er', 11],
+    ['na-od', 12]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "na-os",
-            "value": 0
-        },
-        {
-            "hc-key": "na-on",
-            "value": 1
-        },
-        {
-            "hc-key": "na-ow",
-            "value": 2
-        },
-        {
-            "hc-key": "na-ot",
-            "value": 3
-        },
-        {
-            "hc-key": "na-oh",
-            "value": 4
-        },
-        {
-            "hc-key": "na-ok",
-            "value": 5
-        },
-        {
-            "hc-key": "na-ca",
-            "value": 6
-        },
-        {
-            "hc-key": "na-ka",
-            "value": 7
-        },
-        {
-            "hc-key": "na-ha",
-            "value": 8
-        },
-        {
-            "hc-key": "na-kh",
-            "value": 9
-        },
-        {
-            "hc-key": "na-ku",
-            "value": 10
-        },
-        {
-            "hc-key": "na-er",
-            "value": 11
-        },
-        {
-            "hc-key": "na-od",
-            "value": 12
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/na/na-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/na/na-all.js">Namibia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/na/na-all.js">Namibia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/na/na-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

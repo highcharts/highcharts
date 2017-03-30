@@ -16,6 +16,7 @@ QUnit.test('Series.drawDataLabels', function (assert) {
             },
             chart: {
                 renderer: {
+                    getContrast: H.Renderer.prototype.getContrast,
                     label: function () {
                         return {
                             attribs: {},

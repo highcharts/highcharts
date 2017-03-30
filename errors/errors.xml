@@ -9,6 +9,10 @@
 				<li>If the minimum of a logarithimic axis is set to 0 or less</li>
 				<li>If the threshold is set to 0 or less</li>
 			</ul>
+			As of Highcharts 5.0.8 it is possible to bypass this error message
+			by setting <code>Axis.prototype.allowNegativeLog</code> to
+			<code>true</code> and add custom conversion functions. <a
+			href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/samples/highcharts/yaxis/type-log-negative/">View live demo</a>.
 		</description>
 	</error>
 
@@ -145,4 +149,17 @@
 			<p>Using the global.timezone option requires the <a href="http://momentjs.com/">Moment.js</a> library to be loaded.</p>
 		</description>
 	</error>
+
+	<error id="26">
+		<title>WebGL not supported, and no fallback module included</title>
+		<description>
+			<p>This happens when your browser does not support WebGL, <b>and</b> 
+				the canvas fallback module (<code>boost-canvas.js</code>) has not been included OR if the fallback module was included <b>after</b> the boost module. 
+			</p>
+			<p>
+				Make sure you include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.
+			</p>
+		</description>
+	</error>
+
 </errors>

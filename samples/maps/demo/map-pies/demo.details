@@ -2,4 +2,5 @@
  name: Highcharts Demo
  authors:
    - Øystein Moseng
+ js_wrap: b
 ...

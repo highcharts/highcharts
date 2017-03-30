@@ -1,113 +1,62 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sd-rs', 0],
+    ['sd-711', 1],
+    ['sd-7281', 2],
+    ['sd-wd', 3],
+    ['sd-kh', 4],
+    ['sd-gz', 5],
+    ['sd-gd', 6],
+    ['sd-rn', 7],
+    ['sd-no', 8],
+    ['sd-kn', 9],
+    ['sd-wn', 10],
+    ['sd-si', 11],
+    ['sd-nd', 12],
+    ['sd-ks', 13],
+    ['sd-sd', 14],
+    ['sd-ka', 15],
+    ['sd-bn', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sd-rs",
-            "value": 0
-        },
-        {
-            "hc-key": "sd-711",
-            "value": 1
-        },
-        {
-            "hc-key": "sd-7281",
-            "value": 2
-        },
-        {
-            "hc-key": "sd-wd",
-            "value": 3
-        },
-        {
-            "hc-key": "sd-kh",
-            "value": 4
-        },
-        {
-            "hc-key": "sd-gz",
-            "value": 5
-        },
-        {
-            "hc-key": "sd-gd",
-            "value": 6
-        },
-        {
-            "hc-key": "sd-rn",
-            "value": 7
-        },
-        {
-            "hc-key": "sd-no",
-            "value": 8
-        },
-        {
-            "hc-key": "sd-kn",
-            "value": 9
-        },
-        {
-            "hc-key": "sd-wn",
-            "value": 10
-        },
-        {
-            "hc-key": "sd-si",
-            "value": 11
-        },
-        {
-            "hc-key": "sd-nd",
-            "value": 12
-        },
-        {
-            "hc-key": "sd-ks",
-            "value": 13
-        },
-        {
-            "hc-key": "sd-sd",
-            "value": 14
-        },
-        {
-            "hc-key": "sd-ka",
-            "value": 15
-        },
-        {
-            "hc-key": "sd-bn",
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sd/sd-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sd/sd-all.js">Sudan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sd/sd-all.js">Sudan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sd/sd-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });
