@@ -37,7 +37,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
 				
-					href = href.replace("view.php", "compare-view.php");
+					href = href.replace("/view.php", "/compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
 				batchMode();
