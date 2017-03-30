@@ -1,14 +1,41 @@
 
 // THE CHART
 Highcharts.chart('container', {
+
     title: {
         text: 'Left Axis as Table'
     },
+
     xAxis: [{
+        grid: true,
+        title: {
+            text: 'Day'
+        },
         type: 'datetime',
-        min: Date.UTC(2017, 10, 18),
+        // opposite: true,
+        tickInterval: 1000 * 60 * 60 * 24, // Day
+        labels: {
+            format: '{value:%E}'
+        },
+        min: Date.UTC(2017, 10, 17),
         max: Date.UTC(2017, 11, 16)
+    }, {
+        grid: true,
+        title: {
+            text: 'Week'
+        },
+        type: 'datetime',
+        opposite: true,
+        tickInterval: 1000 * 60 * 60 * 24 * 7, // Week
+        labels: {
+            format: '{value:Week %W}',
+            style: {
+                fontSize: '1.2em'
+            }
+        },
+        linkedTo: 0
     }],
+
     yAxis: {
         reversed: true,
         grid: {
@@ -16,29 +43,41 @@ Highcharts.chart('container', {
             borderColor: 'rgba(0,0,0,0.3)',
             borderWidth: 2,
             columns: [{
-                name: 'Project',
+                title: {
+                    text: 'Project'
+                },
                 pointProperty: 'name'
             }, {
-                name: 'Assignee',
+                title: {
+                    text: 'Assignee'
+                },
                 pointProperty: 'assignee'
             }, {
-                name: 'Est. days',
+                title: {
+                    text: 'Est. days'
+                },
                 pointProperty: function (point) {
                     var number = (point.x2 - point.x) / (1000 * 60 * 60 * 24);
                     return Math.round(number * 100) / 100;
                 },
                 dataType: 'linear'
             }, {
-                name: 'Start date',
+                title: {
+                    text: 'Start date'
+                },
                 pointProperty: 'x',
                 dataType: 'datetime'
             }, {
-                name: 'End date',
+                title: {
+                    text: 'End date'
+                },
+                offset: 30,
                 pointProperty: 'x2',
                 dataType: 'datetime'
             }]
         }
     },
+
     series: [{
         name: 'Project 1',
         type: 'xrange',

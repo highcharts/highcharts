@@ -153,7 +153,8 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
  * @return {object} object - an object containing x and y positions
  *						 for the tick
  */
-wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOpts, tmo, index) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
+			labelOpts, tickmarkOffset, index) {
 	var tick = this,
 		retVal = proceed.apply(tick, argsToArray(arguments)),
 		axis = tick.axis,
@@ -191,8 +192,8 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
 					retVal.x = x + axis.left;
 				}
 			}
-
-			axisYCenter = (axis.axisGroup.getBBox().height / 2);
+			
+			axisYCenter = (axis.tickSize() / 2);
 
 			y += labelYCenter;
 
@@ -251,41 +252,58 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 		labelPadding,
 		distance;
 
-	if (axis.options.grid && !axis.horiz) {
+	if (axis.options.grid) {
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-		distance = axis.getMaxLabelLength() + labelPadding;
+		distance = labelPadding + (axis.horiz ?
+			axis.labelMetrics().f :
+			axis.getMaxLabelLength());
 
 		if (isArray(retVal)) {
 			retVal[0] = distance;
+		} else {
+			retVal = [distance];
 		}
 	}
 	return retVal;
 });
 
-/**
- * Disregards space required by axisTitle, by adding axisTitle to axisParent
- * instead of axisGroup, and disregarding margins and offsets related to
- * axisTitle.
- *
- * @param {function} proceed - the original function
- */
-wrap(Axis.prototype, 'getOffset', function (proceed) {
+wrap(Axis.prototype, 'getTitlePosition', function () {
+	// compute anchor points for each of the title align options
 	var axis = this,
-		axisOffset = axis.chart.axisOffset,
-		side = axis.side,
-		tickSize;
+		title = axis.axisTitle,
+		titleWidth = title && title.getBBox().width,
+		horiz = axis.horiz,
+		axisLeft = axis.left,
+		axisTop = axis.top,
+		axisWidth = axis.width,
+		axisHeight = axis.height,
+		axisTitleOptions = axis.options.title,
+		opposite = axis.opposite,
+		offset = axis.offset,
+		tickSize = axis.tickSize() || [0],
+		xOption = axisTitleOptions.x || 0,
+		yOption = axisTitleOptions.y || 0,
+		titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10),
+		titleFontSize = axis.chart.renderer.fontMetrics(
+			axisTitleOptions.style && axisTitleOptions.style.fontSize,
+			title
+		).f,
+		// TODO account for alignment
+		// the position in the perpendicular direction of the axis
+		offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
+			(horiz ? 1 : -1) * // horizontal axis reverses the margin
+			(opposite ? -1 : 1) * // so does opposite axes
+			(tickSize[0] / 2) +
+			(axis.side === axisSide.bottom ? titleFontSize : 0);
 
-	if (axis.options.grid) {
-
-		proceed.apply(axis, argsToArray(arguments));
-
-		// Calculate tick size and see if it's larger than the calculated axis
-		// offset.
-		tickSize = axis.tickSize('tick')[0];
-		axisOffset[side] = Math.max(axisOffset[side], tickSize);
-	} else {
-		proceed.apply(axis, argsToArray(arguments));
-	}
+	return {
+		x: horiz ?
+			axisLeft - titleWidth / 2 - titleMargin + xOption :
+			offAxis + (opposite ? axisWidth : 0) + offset + xOption,
+		y: horiz ?
+			offAxis - (opposite ? axisHeight : 0) + (opposite ? titleFontSize : -titleFontSize) / 2 + offset + yOption :
+			axisTop - titleMargin + yOption
+	};
 });
 
 /**
@@ -319,11 +337,11 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 		/**
 		 * Sets the axis title to null unless otherwise specified by user.
 		 */
-		if (!options.title) {
-			options.title = '';
-		} else if (options.title && !options.title.text) {
-			options.title.text = null;
-		}
+		options.title = merge({
+			text: null,
+			reserveSpace: false,
+			rotation: 0
+		}, options.title);
 
 		if (axis.horiz) {
 			/**              _________________________
@@ -518,6 +536,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
  */
 wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
+		grid = userOptions.grid,
 		columnOptions,
 		column,
 		columnIndex,
@@ -582,27 +601,25 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		options.labels.rotation = 0;
 	}
 	
-	if (userOptions.grid) {
-		if (defined(userOptions.grid.borderColor)) {
-			userOptions.tickColor = userOptions.grid.borderColor;
-			userOptions.lineColor = userOptions.grid.borderColor;
+	if (grid) {
+		if (defined(grid.borderColor)) {
+			userOptions.tickColor = userOptions.lineColor = grid.borderColor;
 		}
-		if (defined(userOptions.grid.borderWidth)) {
-			userOptions.tickWidth = userOptions.grid.borderWidth;
-			userOptions.lineWidth = userOptions.grid.borderWidth;
+		if (defined(grid.borderWidth)) {
+			userOptions.tickWidth = userOptions.lineWidth = grid.borderWidth;
 		}
 
-		if (isArray(userOptions.grid.columns)) {
+		if (isArray(grid.columns)) {
 			axis.columns = [];
 			columnIndex = 0;
-			i = userOptions.grid.columns.length;
+			i = grid.columns.length;
 			while (i--) {
 				columnOptions = merge({
 
 					// Default to use point.name
 					pointProperty: 'name'
 
-				}, userOptions, userOptions.grid.columns[i], {
+				}, userOptions, grid.columns[i], {
 
 					// Force to behave like category axis
 					type: 'category'
