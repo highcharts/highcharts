@@ -317,7 +317,10 @@ H.Pointer.prototype = {
 		hoverSeries = hoverData.hoverSeries;
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
-		points = useSharedTooltip ? hoverData.hoverPoints : [hoverPoint];
+		points = (useSharedTooltip ? 
+			hoverData.hoverPoints : 
+			(hoverPoint ? [hoverPoint] : [])
+		);
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
 		if (
