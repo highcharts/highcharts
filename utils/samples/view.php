@@ -466,7 +466,6 @@ function getResources() {
 			setUp();
 			<?php @include("$path/demo.js"); ?>
 			</script>
-			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
@@ -474,6 +473,8 @@ function getResources() {
 					<?php include("$path/test-notes.html"); ?>
 				</div>
 			</section>
+			<?php } else { ?>
+			<hr/>
 			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
