@@ -1,5 +1,4 @@
 <?php 
-
 require_once('functions.php');
 
 $compare = json_decode(file_get_contents(compareJSON()));
