@@ -331,7 +331,7 @@ seriesType('column', 'line', {
 		// Handle zone colors
 		if (point && this.zones.length) {
 			zone = point.getZone();
-			fill = (zone && zone.color) || point.options.color || this.color; // When zones are present, don't use point.color (#4267)
+			fill = point.options.color || (zone && zone.color) || this.color; // When zones are present, don't use point.color (#4267). Changed order (#6527)
 		}
 
 		// Select or hover states
