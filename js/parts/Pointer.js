@@ -372,19 +372,19 @@ H.Pointer.prototype = {
 			});
 		}
 		
-		// Issues related to crosshair #4927, #5269 #5066, #5658
+		// Draw crosshairs (#4927, #5269 #5066, #5658)
 		each(chart.axes, function drawAxisCrosshair(axis) {
-			var snap = pick(axis.crosshair.snap, true);
-			if (!snap) {
-				axis.drawCrosshair(e);
-			// Snap is true, draw a crosshair for each hover point on the axis.
-			// TODO only one crosshair gets drawn per axis.
-			} else {
+			// Snap is true. For each hover point, loop over the axes and draw a
+			// crosshair if that point belongs to the axis.
+			// @todo Consider only one crosshair per axis.
+			if (pick(axis.crosshair.snap, true)) {
 				each(points, function (p) {
 					if (p.series[axis.coll] === axis) {
 						axis.drawCrosshair(e, p);
 					}
 				});
+			} else {
+				axis.drawCrosshair(e);
 			}
 		});
 	},
