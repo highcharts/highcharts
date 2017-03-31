@@ -549,21 +549,6 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			fontSize = options.labels.style.fontSize,
 			fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
 
-		// Prohibit timespans of multitudes of a time unit,
-		// e.g. two days, three weeks, etc.
-		if (options.type === 'datetime') {
-			options.units = [
-				['millisecond', [1]],
-				['second', [1]],
-				['minute', [1]],
-				['hour', [1]],
-				['day', [1]],
-				['week', [1]],
-				['month', [1]],
-				['year', null]
-			];
-		}
-
 		// Center-align by default
 		if (!options.labels) {
 			options.labels = {};
