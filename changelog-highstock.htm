@@ -1,30 +1,25 @@
-<p>Highstock 5.0.8 (2017-03-08)</p>
-<ul>    <li>Most changes listed under Highcharts 5.0.8 above also apply to Highstock 5.0.8.</li>
+<p>Highstock 5.0.10 (2017-03-31)</p>
+<ul>    <li>Most changes listed under Highcharts 5.0.10 above also apply to Highstock 5.0.10.</li>
 
-    <li>closes <a href="https://github.com/highslide-software/highcharts.com/issues/6276">#6276</a>, fixes regression which broke x-panning.</li>
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="hs-heading-5-0-8-bug-fixes" class="panel-heading">
+        <div id="hs-heading-5-0-10-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#hs-5-0-8-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#hs-5-0-10-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="hs-5-0-8-bug-fixes" class="panel-collapse collapse">
+        <div id="hs-5-0-10-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5493">#5493</a>, performance regression with data grouping for a hidden series.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5800">#5800</a>, outline position was wrong when <code>outlineWidth</code> was wider.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6071">#6071</a>, <code>Axis.update()</code> changed default settings.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6262">#6262</a>, vertical scrollbar on an inverted chart was positioned incorrectly when used without navigator.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6266">#6266</a>, dragging navigator with full range caused points to disappear.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6327">#6327</a>, flags series tooltip position.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6334">#6334</a>, scrollbar called <code>afterSetExtremes</code> event twice.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6363">#6363</a>, <code>series.remove()</code> ignored <code>redraw</code> param if series had a related series in the navigator.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6383">#6383</a>, adding point after <code>series.update()</code> reset xAxis extremes.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6421">#6421</a>, errors after destroying a chart with multiple scrollbars.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1716">#1716</a>, navigator handles were not moving if the range was very small.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3517">#3517</a>, yAxis.top caused flags on xAxis to be rendered outside the view.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3763">#3763</a>, stable sort was not used for flags.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6303">#6303</a>, events didn't work for flags when useHTML was set to true.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6453">#6453</a>, scrollbars for multiple yAxes were positioned incorrectly.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6478">#6478</a>, flags on OHLC were unable to have onKey set to low or high.</li>
                 </ul>
             </div>
         </div>

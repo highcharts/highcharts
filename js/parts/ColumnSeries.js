@@ -31,7 +31,7 @@ var animObject = H.animObject,
 seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
-	crisp: true, // docs, API created since next
+	crisp: true,
 	groupPadding: 0.2,
 	//grouping: true,
 	marker: null, // point options are specified in the base options
