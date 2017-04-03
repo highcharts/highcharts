@@ -1350,7 +1350,7 @@ function GLRenderer(postRenderCallback) {
 				closestLeft.y = y;
 			}
 
-			if ((!y || !isYInside)) {
+			if (y !== 0 && (!y || !isYInside)) {
 				return;
 			}
 
