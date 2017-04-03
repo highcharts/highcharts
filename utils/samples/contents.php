@@ -310,7 +310,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 		Showing only failed samples. Click "Fails only" again to change.
 	</div>
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'unit-tests', 'issues', 'cloud');
+	$products = array('highcharts', 'maps', 'stock', 'gantt', 'unit-tests', 'issues', 'cloud');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 
 	$html = "";
