@@ -1397,8 +1397,10 @@ SVGElement.prototype = {
 			each(
 				wrapper.element.ownerSVGElement.querySelectorAll('[clip-path]'),
 				function (el) {
+					// Include the closing paranthesis in the test to rule out
+					// id's from 10 and above (#6550)
 					if (el.getAttribute('clip-path')
-							.indexOf(wrapper.clipPath.element.id) > -1) {
+							.indexOf(wrapper.clipPath.element.id + ')') > -1) {
 						el.removeAttribute('clip-path');
 					}
 				}
