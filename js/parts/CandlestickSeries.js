@@ -109,7 +109,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 				topBox = Math.min(plotOpen, plotClose);
 				bottomBox = Math.max(plotOpen, plotClose);
 				halfWidth = Math.round(point.shapeArgs.width / 2);
-				hasTopWhisker = Math.round(topBox) !== Math.round(point.plotY);
+				hasTopWhisker = Math.round(topBox) !== Math.round(point.plotHigh);
 				hasBottomWhisker = bottomBox !== point.yBottom;
 				topBox = Math.round(topBox) + crispCorr;
 				bottomBox = Math.round(bottomBox) + crispCorr;
@@ -132,7 +132,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, {
 					'M',
 					crispX, topBox,
 					'L',
-					crispX, hasTopWhisker ? Math.round(point.plotY) : topBox, // #460, #2094
+					crispX, hasTopWhisker ? Math.round(point.plotHigh) : topBox, // #460, #2094
 					'M',
 					crispX, bottomBox,
 					'L',

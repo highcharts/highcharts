@@ -28,7 +28,7 @@ QUnit.test('Compare in candlesticks', function (assert) {
         'Plot open'
     );
     assert.ok(
-        Math.abs(points[2].plotY - yAxis.toPixels(3, true)) < 2,
+        Math.abs(points[2].plotHigh - yAxis.toPixels(3, true)) < 2,
         'Plot high'
     );
     assert.ok(
