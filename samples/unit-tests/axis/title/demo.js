@@ -110,3 +110,112 @@ QUnit.test('textAlign', function (assert) {
         'vertical opposite Axis align:low has textAlign:right'
     );
 });
+
+/*
+ * Checks that the option *Axis.title.reserveSpace works as intended
+ */
+QUnit.test('title.reserveSpace', function (assert) {
+    var reserveSpaceTrue,
+        reserveSpaceFalse,
+        noTitle,
+        chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+
+            yAxis: [{
+                title: {
+                    text: 'Left Vertical Axis 1'
+                }
+            }, {
+                title: {
+                    text: 'Left Vertical Axis 2'
+                },
+                linkedTo: 0
+            }, {
+                title: {
+                    text: 'Right Vertical Axis 1'
+                },
+                linkedTo: 0,
+                opposite: true
+            }, {
+                title: {
+                    text: 'Right Vertical Axis 2'
+                },
+                linkedTo: 0,
+                opposite: true
+            }],
+
+            xAxis: [{
+                title: {
+                    text: 'Bottom Horizontal Axis 1'
+                }
+            }, {
+                title: {
+                    text: 'Bottom Horizontal Axis 2'
+                },
+                linkedTo: 0
+            }, {
+                title: {
+                    text: 'Top Horizontal Axis 1'
+                },
+                linkedTo: 0,
+                opposite: true
+            }, {
+                title: {
+                    text: 'Top Horizontal Axis 2'
+                },
+                linkedTo: 0,
+                opposite: true
+            }],
+
+            series: [{
+                data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            }]
+        }),
+        axes = chart.axes;
+
+    Highcharts.each(axes, function (axis) {
+        var axisName = axis.options.title.text,
+            dir = axis.horiz ? 'y' : 'x',
+            lessThan = axis.opposite && !axis.horiz || !axis.opposite && axis.horiz;
+
+        // Check that reserveSpace is true by default
+        assert.equal(
+            axis.options.title.reserveSpace,
+            true,
+            axisName + ': title.reserveSpace is true by default'
+        );
+        reserveSpaceTrue = axis.labelGroup.getBBox()[dir];
+
+        // Set reserveSpace to false
+        axis.update(Highcharts.merge(axis.options, {
+            title: {
+                reserveSpace: false
+            }
+        }));
+        reserveSpaceFalse =  axis.labelGroup.getBBox()[dir];
+
+        // Set title to null
+        axis.update(Highcharts.merge(axis.options, {
+            title: null
+        }));
+
+        noTitle = axis.labelGroup.getBBox()[dir];
+
+        assert.ok(
+            lessThan ?
+                reserveSpaceTrue < reserveSpaceFalse :
+                reserveSpaceTrue > reserveSpaceFalse,
+            axisName + ': reserveSpaceTrue ' + dir + ' ' +
+                        (lessThan ? '<' : '>') +
+                        ' reserveSpaceFalse ' + dir
+        );
+        assert.equal(
+            reserveSpaceFalse,
+            noTitle,
+            axisName + ': reserveSpaceFalse === noTitle'
+        );
+    });
+    console.log(axes);
+});

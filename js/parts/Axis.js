@@ -127,6 +127,7 @@ H.Axis.prototype = {
 			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
+			reserveSpace: true,
 			//rotation: 0,
 			//side: 'outside',
 			/*= if (build.classic) { =*/
@@ -2133,7 +2134,7 @@ H.Axis.prototype = {
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
 			axis.addTitle(showAxis);
 
-			if (showAxis) {
+			if (showAxis && axisTitleOptions.reserveSpace !== false) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
