@@ -317,7 +317,10 @@ H.Pointer.prototype = {
 		hoverSeries = hoverData.hoverSeries;
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
-		points = useSharedTooltip ? hoverData.hoverPoints : [hoverPoint];
+		points = (useSharedTooltip ? 
+			hoverData.hoverPoints : 
+			(hoverPoint ? [hoverPoint] : [])
+		);
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
 		if (
@@ -368,16 +371,21 @@ H.Pointer.prototype = {
 				}
 			});
 		}
-
-		// Crosshair. For each hover point, loop over axes and draw cross if that point
-		// belongs to the axis (#4927).
-		each(points, function drawPointCrosshair(point) { // #5269
-			each(chart.axes, function drawAxisCrosshair(axis) {
-				// In case of snap = false, point is undefined, and we draw the crosshair anyway (#5066)
-				if (!point || point.series && point.series[axis.coll] === axis) { // #5658
-					axis.drawCrosshair(e, point);
-				}
-			});
+		
+		// Draw crosshairs (#4927, #5269 #5066, #5658)
+		each(chart.axes, function drawAxisCrosshair(axis) {
+			// Snap is true. For each hover point, loop over the axes and draw a
+			// crosshair if that point belongs to the axis.
+			// @todo Consider only one crosshair per axis.
+			if (pick(axis.crosshair.snap, true)) {
+				each(points, function (p) {
+					if (p.series[axis.coll] === axis) {
+						axis.drawCrosshair(e, p);
+					}
+				});
+			} else {
+				axis.drawCrosshair(e);
+			}
 		});
 	},
 

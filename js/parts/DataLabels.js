@@ -377,7 +377,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
 		if (options.shape && !rotation) {
-			dataLabel.attr({
+			dataLabel[isNew ? 'attr' : 'animate']({
 				anchorX: point.plotX,
 				anchorY: point.plotY
 			});

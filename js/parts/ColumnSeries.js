@@ -31,7 +31,7 @@ var animObject = H.animObject,
 seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
-	crisp: true, // docs, API created since next
+	crisp: true,
 	groupPadding: 0.2,
 	//grouping: true,
 	marker: null, // point options are specified in the base options
@@ -331,7 +331,7 @@ seriesType('column', 'line', {
 		// Handle zone colors
 		if (point && this.zones.length) {
 			zone = point.getZone();
-			fill = (zone && zone.color) || point.options.color || this.color; // When zones are present, don't use point.color (#4267)
+			fill = point.options.color || (zone && zone.color) || this.color; // When zones are present, don't use point.color (#4267). Changed order (#6527)
 		}
 
 		// Select or hover states

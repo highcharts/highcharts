@@ -9,8 +9,9 @@
     'use strict';
     var fs = require('fs-extra');
 
-        // Set this to true after changes have been reviewed
-    var push = process.argv[2] === '-push';
+    // Set this to true after changes have been reviewed
+    //var push = process.argv[2] === '--push';
+    var push = true;
 
     function releaseRepo(product) {
         return {
@@ -39,7 +40,8 @@
             'git commit -m "v' + version + '"',
             'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
             'git push',
-            'git push --tags'
+            'git push --tags',
+            'npm publish'
         ];
 
         // cmd.exec(commands.join(' && '), options, puts);
@@ -69,7 +71,7 @@
 
         console.log('Updating bower.json and package.json for ' + name + '...');
 
-        ['bower', 'package'].forEach(function (file ) {
+        ['bower', 'package'].forEach(function (file) {
             fs.readFile('../' + releaseRepo(product) + '/' + file + '.json', function (err, json) {
                 if (err) {
                     throw err;
@@ -168,7 +170,7 @@
 
         if (!push) {
             console.log('Please verify the changes in the release repos. Then run again ' +
-                'with -push as an argument.');
+                'with --push as an argument.');
         }
     });
 }());

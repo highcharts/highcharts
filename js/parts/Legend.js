@@ -411,8 +411,9 @@ Legend.prototype = {
 			item.legendItemWidth ||
 			symbolWidth + symbolPadding + bBox.width + itemDistance +
 				(showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight =
-			Math.round(item.legendItemHeight || bBox.height);
+		legend.itemHeight = itemHeight = Math.round(
+			item.legendItemHeight || bBox.height || legend.symbolHeight
+		);
 
 		// If the item exceeds the width, start a new line
 		if (

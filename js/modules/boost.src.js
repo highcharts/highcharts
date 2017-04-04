@@ -1090,7 +1090,9 @@ function GLRenderer(postRenderCallback) {
 			minVal,
 			color,
 			scolor,
-			sdata = isStacked ? series.data : (xData || rawData)
+			sdata = isStacked ? series.data : (xData || rawData),
+			closestLeft = {x: Number.MIN_VALUE, y: 0},
+			closestRight = {x: Number.MIN_VALUE, y: 0}
 			;
 
 		if (options.boostData && options.boostData.length > 0) {			
@@ -1310,7 +1312,7 @@ function GLRenderer(postRenderCallback) {
 						inst.zMin = zData[i];
 					}					
 				}
-			}
+			}			
 
 			if (nx && nx >= xMin && nx <= xMax) {
 				nextInside = true;
@@ -1338,7 +1340,17 @@ function GLRenderer(postRenderCallback) {
 				isYInside = y >= yMin && y <= yMax;
 			}
 
-			if ((!y || !isYInside)) {
+			if (x > xMax && closestRight.x < xMax) {
+				closestRight.x = x;
+				closestRight.y = y;
+			}
+
+			if (x < xMin && closestLeft.x < xMin) {
+				closestLeft.x = x;
+				closestLeft.y = y;
+			}
+
+			if (y !== 0 && (!y || !isYInside)) {
 				return;
 			}
 
@@ -1420,7 +1432,31 @@ function GLRenderer(postRenderCallback) {
 			lastX = x;
 
 			//return true;
-		});		
+		});
+
+		function pushSupplementPoint(point) {
+			if (!settings.useGPUTranslations) {
+				inst.skipTranslation = true;
+				point.x = xAxis.toPixels(x, true);
+				point.y = yAxis.toPixels(y, true);
+			}
+
+			// We should only do this for lines, and we should ignore markers
+			// since there's no point here that would have a marker.
+			
+			vertice(
+				point.x,
+				point.y,
+				0,
+				2
+			);
+		}
+
+		if (!lastX) {
+			// There are no points within the selected range
+			pushSupplementPoint(closestLeft);
+			pushSupplementPoint(closestRight);
+		}
 	}
 
 	/*

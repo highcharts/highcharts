@@ -156,3 +156,62 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Select and unselect', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+            xAxis:[{
+                min: 0,
+                max: 10
+            }],
+            series: [{
+                cropThreshold: 5,
+                type: 'column',
+                    allowPointSelect: true,
+                data: (function (i) {
+                    var tab = [];
+                    while (i--) {
+                        tab.push(i + 1);
+                    }
+                    return tab;
+                }(200))
+            }]
+        }),
+        series = chart.series[0],
+        axis = chart.xAxis[0];
+
+    // select 1st visible point
+    series.points[0].select();
+    // scroll over points - more than cropThreshold
+    axis.setExtremes(190, 200);
+    // select last visible point
+    series.points[series.points.length - 1].select();
+    // scroll back
+    axis.setExtremes(0, 10);
+
+    assert.strictEqual(
+        series.points[0].selected,
+        false,
+        'Unselected point out of range (#6445)'
+    );
+
+// for grouped points
+    // show all
+    axis.setExtremes(0, 200);
+    // select 1st visible point
+    series.points[0].select();
+    assert.strictEqual(
+        series.points[0].selected,
+        true,
+        'Selection for grouped points works'
+    );
+
+    // select 2nd visible point
+    series.points[1].select();
+
+    assert.strictEqual(
+        series.points[0].selected,
+        false,
+        'Unselected grouped point when selecting another (#6445)'
+    );
+});

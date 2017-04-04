@@ -171,7 +171,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	//}
 	turboThreshold: 1000,
 	// zIndex: null
-	findNearestPointBy: 'x' // docs
+	findNearestPointBy: 'x'
 
 }, /** @lends Series.prototype */ {
 	isCartesian: true,
