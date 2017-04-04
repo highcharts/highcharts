@@ -127,7 +127,7 @@ H.Axis.prototype = {
 			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
-			reserveSpace: true,
+			// reserveSpace: true, // docs
 			//rotation: 0,
 			//side: 'outside',
 			/*= if (build.classic) { =*/
