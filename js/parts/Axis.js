@@ -1299,8 +1299,17 @@ H.Axis.prototype = {
 		// this axis, then min and max are equal and tickPositions.length is 0
 		// or 1. In this case, add some padding in order to center the point,
 		// but leave it with one tick. #1337.
-		this.single = this.min === this.max && defined(this.min) &&
-			!this.tickAmount && options.allowDecimals !== false;
+		this.single =
+			this.min === this.max &&
+			defined(this.min) &&
+			!this.tickAmount &&
+			(
+				// Data is on integer (#6563)
+				parseInt(this.min, 10) === this.min ||
+
+				// Between integers and decimals are not allowed (#6274)
+				options.allowDecimals !== false
+			);
 
 		// Find the tick positions
 		this.tickPositions = tickPositions = tickPositionsOption && tickPositionsOption.slice(); // Work on a copy (#1565)

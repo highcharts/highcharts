@@ -24,7 +24,14 @@ QUnit.test('Line series', function (assert) {
     assert.strictEqual(
         chart.yAxis[0].tickPositions.toString(),
         '1,2',
-        'Now two ticks'
+        'Now two ticks (#6274)'
+    );
+
+    chart.series[0].setData([1, 1]);
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.toString(),
+        '1',
+        'Now one tick (#6563)'
     );
 
 });
