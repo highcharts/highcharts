@@ -732,6 +732,110 @@ const gzipFile = (file, output) => {
     inp.pipe(gzip).pipe(out);
 };
 
+const getDirectories = (path) => {
+    const fs = require('fs');
+    return fs.readdirSync(path).filter(file => fs.lstatSync(path + file).isDirectory());
+};
+
+const replaceAll = (str, search, replace) => str.split(search).join(replace);
+
+const assembleSample = (template, content) => {
+    return Object.keys(content).reduce((str, key) => {
+        return str.replace('@demo.' + key + '@', content[key]);
+    }, template);
+};
+
+const createExamples = (title, samplesFolder, output) => {
+    const U = require('./assembler/utilities.js');
+    const getFile = U.getFile;
+    const writeFile = U.writeFile;
+    const template = getFile('samples/template-example.htm');
+    const samples = getDirectories(samplesFolder);
+    const convertURLToLocal = str => {
+        const stock = 'src="https://code.highcharts.com/stock/';
+        const maps = 'src="https://code.highcharts.com/maps/';
+        const chart = 'src="https://code.highcharts.com/';
+        const mapdata = 'src="https://code.highcharts.com/mapdata';
+        const localPath = 'src="../../code/';
+        str = replaceAll(str, stock, localPath);
+        str = replaceAll(str, maps, localPath);
+        str = replaceAll(str, chart, localPath);
+        str = replaceAll(str, '../../js/mapdata', mapdata);
+        return str;
+    };
+    samples.forEach((name) => {
+        const folder = samplesFolder + name + '/';
+        const contents = ['html', 'css', 'js'].reduce((obj, key) => {
+            let content = getFile(folder + 'demo.' + key);
+            obj[key] = content ? content : '';
+            return obj;
+        }, {});
+        contents.title = title;
+        let sample = assembleSample(template, contents);
+        sample = convertURLToLocal(sample);
+        writeFile(output + name + '/index.htm', sample);
+    });
+    const index = getFile(samplesFolder + 'index.htm');
+    writeFile(output + '../index.htm', index);
+};
+
+const copyFile = (source, target) => new Promise((resolve, reject) => {
+    const fs = require('fs');
+    const U = require('./assembler/utilities.js');
+    const directory = U.folder(target);
+    U.createDirectory(directory);
+    let read = fs.createReadStream(source);
+    let write = fs.createWriteStream(target);
+    const onError = (err) => {
+        read.destroy();
+        write.end();
+        reject(err);
+    };
+    read.on('error', onError);
+    write.on('error', onError);
+    write.on('finish', resolve);
+    read.pipe(write);
+});
+
+const copyFolder = (input, output) => {
+    const getFilesInFolder = require('./assembler/build.js').getFilesInFolder;
+    const files = getFilesInFolder(input);
+    const promises = files.map(file => copyFile(input + file, output + file));
+    return Promise.all(promises)
+        .then(() => console.log('Copied folder ' + input + ' to ' + output));
+};
+
+const copyGraphicsToDist = () => {
+    const dist = 'build/dist/';
+    const promises = ['highcharts', 'highstock', 'highmaps'].map((lib) => {
+        return copyFolder('samples/graphics/', dist + lib + '/graphics/');
+    });
+    return Promise.all(promises)
+        .then(() => console.log('Copied all graphics to dist folders.'));
+};
+
+const createAllExamples = () => new Promise((resolve) => {
+    const config = {
+        'Highcharts': {
+            samplesFolder: 'samples/highcharts/demo/',
+            output: 'build/dist/highcharts/examples/'
+        },
+        'Highstock': {
+            samplesFolder: 'samples/stock/demo/',
+            output: 'build/dist/highstock/examples/'
+        },
+        'Highmaps': {
+            samplesFolder: 'samples/maps/demo/',
+            output: 'build/dist/highmaps/examples/'
+        }
+    };
+    Object.keys(config).forEach(lib => {
+        const c = config[lib];
+        createExamples(lib, c.samplesFolder, c.output);
+    });
+    resolve();
+});
+
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
@@ -745,11 +849,14 @@ gulp.task('lint-samples', lintSamples);
 gulp.task('compile', compileScripts);
 gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);
+gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
+gulp.task('examples', createAllExamples);
 /**
  * Create distribution files
  */
 gulp.task('dist', () => {
-    return gulpify('cleanCode', cleanCode)()
+    return Promise.resolve()
+        .then(gulpify('cleanCode', cleanCode))
         .then(gulpify('styles', styles))
         .then(gulpify('scripts', scripts))
         .then(gulpify('lint', lint))
@@ -758,6 +865,8 @@ gulp.task('dist', () => {
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('downloadAllAPI', downloadAllAPI))
         .then(gulpify('createProductJS', createProductJS))
+        .then(gulpify('createExamples', createAllExamples))
+        .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
         .then(gulpify('ant-dist', antDist));
 });
 gulp.task('browserify', function () {
