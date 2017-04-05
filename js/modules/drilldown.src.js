@@ -452,7 +452,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 		animateFrom,
 		animationOptions = this.chart.options.drilldown.animation,
 		xAxis = this.xAxis;
-		
+
 	if (!init) {
 		each(drilldownLevels, function (level) {
 			if (series.options._ddSeriesId === level.lowerSeriesOptions._ddSeriesId) {
@@ -498,6 +498,9 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 ColumnSeries.prototype.animateDrillupFrom = function (level) {
 	var animationOptions = this.chart.options.drilldown.animation,
 		group = this.group,
+		// For 3d column series all columns are added to one group 
+		// so we should not delete the whole group. #5297
+		removeGroup = group !== this.chart.seriesGroup,
 		series = this;
 
 	// Cancel mouse events on the series group (#2787)
@@ -507,14 +510,16 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		}
 	});
 		
-
-	delete this.group;
+	if (removeGroup) {
+		delete this.group;
+	}
+	
 	each(this.points, function (point) {
 		var graphic = point.graphic,
 			animateTo = level.shapeArgs,
 			complete = function () {
 				graphic.destroy();
-				if (group) {
+				if (group && removeGroup) {
 					group = group.destroy();
 				}
 			};
