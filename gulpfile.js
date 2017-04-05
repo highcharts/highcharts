@@ -340,6 +340,7 @@ gulp.task('jsdoc', function (cb) {
 });
 
 const compile = (files, sourceFolder) => {
+    const createSourceMap = true;
     console.log(colors.yellow('Warning: This task may take a few minutes on Mac, and even longer on Windows.'));
     return new Promise((resolve) => {
         files.forEach(path => {
@@ -355,9 +356,13 @@ const compile = (files, sourceFolder) => {
                     src: src
                 }],
                 languageIn: 'ES5',
-                languageOut: 'ES5'
+                languageOut: 'ES5',
+                createSourceMap: createSourceMap
             });
             U.writeFile(outputPath, out.compiledCode);
+            if (createSourceMap) {
+                U.writeFile(outputPath + '.map', out.sourceMap);
+            }
             // @todo add filesize information
             console.log(colors.green('Compiled ' + sourcePath + ' => ' + outputPath));
         });
@@ -424,7 +429,11 @@ const copyToDist = () => {
     };
 
     // Copy source files to the distribution packages.
-    files.filter((path) => (path.endsWith('.js') || path.endsWith('.css')))
+    files.filter((path) => (
+            path.endsWith('.js') ||
+            path.endsWith('.js.map') ||
+            path.endsWith('.css')
+        ))
         .forEach((path) => {
             const content = fs.readFileSync(sourceFolder + path);
             const filename = path.replace('.src.js', '.js').replace('js/', '');
