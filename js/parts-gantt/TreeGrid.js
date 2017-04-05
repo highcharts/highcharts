@@ -185,16 +185,14 @@ var onTickHover = function (label) {
 	label.addClass('highcharts-treegrid-node-active');
 	/*= if (build.classic) { =*/
 	label.css({
-		cursor: 'pointer',
 		textDecoration: 'underline'
 	});
 	/*= } =*/
 };
 var onTickHoverExit = function (label) {
-	label.removeClass('highcharts-treegrid-node-active');
+	label.addClass('highcharts-treegrid-node-active');
 	/*= if (build.classic) { =*/
 	label.css({
-		cursor: 'default',
 		textDecoration: 'none'
 	});
 	/*= } =*/
@@ -254,34 +252,42 @@ override(GridAxisTick.prototype, {
 			level = node && node.depth - 1,
 			isTreeGrid = options.type === 'tree-grid',
 			hasLabel = label && label.element;
+
+		proceed.apply(tick, argsToArray(arguments));
+
 		if (isTreeGrid && node) {
 			xy.x += iconRadius + (iconSpacing * 2) + (level * indentPx);
 
 			if (hasLabel && node.children.length > 0) {
-				// On hover
-				H.addEvent(label.element, 'mouseover', function () {
-					onTickHover(label);
+				renderLabelIcon(label, iconRadius, iconSpacing, isCollapsed(axis, node, pos));
+				label.css({
+					cursor: 'pointer'
 				});
-
-				// On hover out
-				H.addEvent(label.element, 'mouseout', function () {
-					onTickHoverExit(label);
+				label.treeIcon.css({
+					cursor: 'pointer'
 				});
-
-				H.addEvent(label.element, 'click', function () {
-					var axis = tick.axis,
-						pos = tick.pos;
-					if (axis) {
-						toggleCollapse(axis, axis.treeGridMap[pos], pos);
-					}
+				
+				// Add events to both label text and icon
+				each([label, label.treeIcon], function (object) {
+					// On hover
+					H.addEvent(object.element, 'mouseover', function () {
+						onTickHover(label);
+					});
+					
+					// On hover out
+					H.addEvent(object.element, 'mouseout', function () {
+						onTickHoverExit(label);
+					});
+					
+					H.addEvent(object.element, 'click', function () {
+						var axis = tick.axis,
+							pos = tick.pos;
+						if (axis) {
+							toggleCollapse(axis, axis.treeGridMap[pos], pos);
+						}
+					});
 				});
 			}
-		}
-
-		proceed.apply(tick, argsToArray(arguments));
-
-		if (isTreeGrid && hasLabel && node && node.children.length > 0) {
-			renderLabelIcon(label, iconRadius, iconSpacing, isCollapsed(axis, node, pos));
 		}
 	}
 });
