@@ -137,9 +137,11 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
 			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
 			pointVis = vis ? 'visible' : 'hidden';
 			series.options.data[inArray(point, series.data)] = point.options;
-			point.graphic.attr({
-				visibility: pointVis
-			});
+			if (point.graphic) {
+				point.graphic.attr({
+					visibility: pointVis
+				});
+			}
 		});
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -192,21 +194,10 @@ function pointAttribs(proceed) {
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+	seriesTypes.columnrange.prototype.plotGroup = seriesTypes.column.prototype.plotGroup;
+	seriesTypes.columnrange.prototype.setVisible = seriesTypes.column.prototype.setVisible;
 }
 /*= } =*/
-
-function draw3DPoints(proceed) {
-	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		var grouping = this.chart.options.plotOptions.column.grouping;
-		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-			this.group.attr({ zIndex: this.group.zIndex * 10 });
-			this.zIndexSet = true; // #4062 set zindex only once
-		}
-	}
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-}
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	
@@ -226,12 +217,6 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
-
-if (seriesTypes.columnrange) {
-	wrap(seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
-}
-
-wrap(seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
 /***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
