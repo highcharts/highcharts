@@ -1,145 +1,70 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['nl-3559-gm0351', 0],
+    ['nl-3559-gm0632', 1],
+    ['nl-3559-gm1904', 2],
+    ['nl-3559-gm0352', 3],
+    ['nl-3559-gm0355', 4],
+    ['nl-3559-gm0345', 5],
+    ['nl-3559-gm1581', 6],
+    ['nl-3559-gm0307', 7],
+    ['nl-3559-gm0313', 8],
+    ['nl-3559-gm0308', 9],
+    ['nl-3559-gm0356', 10],
+    ['nl-3559-gm0317', 11],
+    ['nl-3559-gm0736', 12],
+    ['nl-3559-gm0327', 13],
+    ['nl-3559-gm0342', 14],
+    ['nl-3559-gm0339', 15],
+    ['nl-3559-gm0340', 16],
+    ['nl-3559-gm0331', 17],
+    ['nl-3559-gm0589', 18],
+    ['nl-3559-gm0312', 19],
+    ['nl-3559-gm0321', 20],
+    ['nl-3559-gm0310', 21],
+    ['nl-3559-gm0344', 22],
+    ['nl-3559-gm0335', 23],
+    ['nl-3559-gm0353', 24]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "nl-3559-gm0351",
-            "value": 0
-        },
-        {
-            "hc-key": "nl-3559-gm0632",
-            "value": 1
-        },
-        {
-            "hc-key": "nl-3559-gm1904",
-            "value": 2
-        },
-        {
-            "hc-key": "nl-3559-gm0352",
-            "value": 3
-        },
-        {
-            "hc-key": "nl-3559-gm0355",
-            "value": 4
-        },
-        {
-            "hc-key": "nl-3559-gm0345",
-            "value": 5
-        },
-        {
-            "hc-key": "nl-3559-gm1581",
-            "value": 6
-        },
-        {
-            "hc-key": "nl-3559-gm0307",
-            "value": 7
-        },
-        {
-            "hc-key": "nl-3559-gm0313",
-            "value": 8
-        },
-        {
-            "hc-key": "nl-3559-gm0308",
-            "value": 9
-        },
-        {
-            "hc-key": "nl-3559-gm0356",
-            "value": 10
-        },
-        {
-            "hc-key": "nl-3559-gm0317",
-            "value": 11
-        },
-        {
-            "hc-key": "nl-3559-gm0736",
-            "value": 12
-        },
-        {
-            "hc-key": "nl-3559-gm0327",
-            "value": 13
-        },
-        {
-            "hc-key": "nl-3559-gm0342",
-            "value": 14
-        },
-        {
-            "hc-key": "nl-3559-gm0339",
-            "value": 15
-        },
-        {
-            "hc-key": "nl-3559-gm0340",
-            "value": 16
-        },
-        {
-            "hc-key": "nl-3559-gm0331",
-            "value": 17
-        },
-        {
-            "hc-key": "nl-3559-gm0589",
-            "value": 18
-        },
-        {
-            "hc-key": "nl-3559-gm0312",
-            "value": 19
-        },
-        {
-            "hc-key": "nl-3559-gm0321",
-            "value": 20
-        },
-        {
-            "hc-key": "nl-3559-gm0310",
-            "value": 21
-        },
-        {
-            "hc-key": "nl-3559-gm0344",
-            "value": 22
-        },
-        {
-            "hc-key": "nl-3559-gm0335",
-            "value": 23
-        },
-        {
-            "hc-key": "nl-3559-gm0353",
-            "value": 24
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/nl/nl-ut-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-ut-all.js">Utrecht</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-ut-all.js">Utrecht</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/nl/nl-ut-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

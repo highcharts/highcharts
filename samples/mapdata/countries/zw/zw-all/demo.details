@@ -1,4 +1,5 @@
 ---
  name: Zimbabwe - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

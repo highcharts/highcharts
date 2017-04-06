@@ -20,7 +20,7 @@ $(function () {
 
         assert.strictEqual(
             chart.series[0].tracker,
-            null
+            undefined
         );
     });
 });

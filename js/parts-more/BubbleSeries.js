@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -83,6 +83,7 @@ seriesType('bubble', 'scatter', {
 	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
+	directTouch: true,
 
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
@@ -236,7 +237,7 @@ seriesType('bubble', 'scatter', {
 	haloPath: function (size) {
 		return Point.prototype.haloPath.call(
 			this, 
-			size === 0 ? 0 : this.marker.radius + size // #6067
+			size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size // #6067
 		);
 	},
 	ttBelow: false

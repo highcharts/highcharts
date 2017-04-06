@@ -136,13 +136,13 @@ function getHTML($which) {
 
 	// for issue-by-commit
 	$issueHTML = $s;
-	$issueHTML = str_replace('https://code.highcharts.com/stock/', $githubServer . '/%s/', $issueHTML);
+	/*$issueHTML = str_replace('https://code.highcharts.com/stock/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace('https://code.highcharts.com/maps/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace('https://code.highcharts.com/mapdata/', $bogus, $issueHTML);
 	$issueHTML = str_replace('https://code.highcharts.com/', $githubServer . '/%s/', $issueHTML);
 	$issueHTML = str_replace($bogus, 'https://code.highcharts.com/mapdata/', $issueHTML);
 
-	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;
+	$issueHTML = "<script src=\"http://code.jquery.com/jquery-1.11.0.js\"></script>\n" . $issueHTML;*/
 	$_SESSION['html'] = $issueHTML;
 
 	if (strstr($s, 'http://code.highcharts.com') || strstr($s, 'http://www.highcharts.com')) {
@@ -306,7 +306,7 @@ function getExportInnerHTML() {
 
 					    var result = number === expected || (number < expected + error && number > expected - error) || false;
 
-					    QUnit.push(result, number, expected, message);
+					    this.push(result, number, expected, message);
 					};
 
 					QUnit.done(function (e) {
@@ -385,7 +385,11 @@ function getExportInnerHTML() {
 				}
 			}
 
-			$(function() {
+			/**
+			 * Do the required overrides and options for the charts to compare 
+			 * nicely.
+			 */
+			function setUpHighcharts() {
 				if (!window.Highcharts) {
 					console.warn('Highcharts is undefined');
 					window.parent.proceed();
@@ -424,7 +428,9 @@ function getExportInnerHTML() {
 							series: {
 								animation: animation,
 								kdNow: true,
-								kdSync: true // 4.1.9 and older, remove when not testing against those
+								dataLabels: {
+									defer: false
+								}
 							}
 						},
 						tooltip: {
@@ -443,13 +449,27 @@ function getExportInnerHTML() {
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
-						if (chart.series[0] && chart.series[0].points[2]) {
-							chart.series[0].points[2].onMouseOver();
-							chart.tooltip.refresh(
-								chart.tooltip.options.shared ?
-									[chart.series[0].points[2]] :
-									chart.series[0].points[2]
-							);
+						var x = 2,
+							series = chart.series,
+							hoverPoint = series[0] && series[0].points[x],
+							pointOrPoints;
+						if (hoverPoint) {
+							if  (chart.tooltip.options.shared) {
+								pointOrPoints = [];
+								Highcharts.each(series, function (s) {
+									if (s.options.enableMouseTracking !== false && s.points[x]) {
+										pointOrPoints.push(s.points[x]);
+									}
+								});
+								if (pointOrPoints.length === 0) {
+									pointOrPoints.push(hoverPoint);
+								}
+							} else {
+								pointOrPoints = hoverPoint;
+							}
+							hoverPoint.onMouseOver();
+							// Note: As of 5.0.8 onMouseOver takes care of refresh.
+							chart.tooltip.refresh(pointOrPoints);
 						}
 					});
 					<?php endif ?>
@@ -470,7 +490,7 @@ function getExportInnerHTML() {
 					});
 					<?php endif ?>
 
-					<?php if (getExportInnerHTML()) : ?>
+					<?php if (getExportInnerHTML() || getCompareTooltips()) : ?>
 					// Bypass the export module
 					Highcharts.Chart.prototype.getSVG = function () {
 						return this.container.innerHTML
@@ -482,7 +502,7 @@ function getExportInnerHTML() {
 
 				}
 
-			});
+			}
 
 			window.isComparing = true;
 			window.alert = function () {};
@@ -514,11 +534,15 @@ function getExportInnerHTML() {
 	</head>
 	<body>
 
+		<?php if (is_file("$path/unit-tests.js")) { ?>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
+		<?php } ?>
 <?php echo getHTML($_GET['which']); ?>
 
 		<script>
+		// Set options, overrides etc.
+		setUpHighcharts();
 		try {
 
 		<?php echo getJS(); ?>

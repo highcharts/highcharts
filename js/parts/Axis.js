@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -128,6 +128,7 @@ H.Axis.prototype = {
 			//text: null,
 			align: 'middle', // low, middle or high
 			//margin: 0 for horizontal, 10 for vertical axes,
+			// reserveSpace: true, // docs
 			//rotation: 0,
 			//side: 'outside',
 			/*= if (build.classic) { =*/
@@ -309,11 +310,12 @@ H.Axis.prototype = {
 		//axis.axisTitle = undefined;
 		//axis.axisLine = undefined;
 
+		// Placeholder for plotlines and plotbands groups
+		axis.plotLinesAndBandsGroups = {};
+
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
 		axis.isDatetimeAxis = isDatetimeAxis;
-		// docs: Add sample of negative log axis to API:
-		// highcharts/yaxis/type-log-negative
 		axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
 
 		// Flag, if axis is linked to another axis
@@ -663,7 +665,21 @@ H.Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB;
+			transB = axis.transB,
+			/**
+			 * Check if x is between a and b. If not, either move to a/b or skip,
+			 * depending on the force parameter.
+			 */
+			between = function (x, a, b) {
+				if (x < a || x > b) {
+					if (force) {
+						x = Math.min(Math.max(a, x), b);
+					} else {
+						skip = true;
+					}
+				}
+				return x;
+			};
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
@@ -674,11 +690,11 @@ H.Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			x1 = x2;
+			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-			y1 = y2;
+			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
 		}
 		return skip && !force ?
 			null :
@@ -921,7 +937,9 @@ H.Axis.prototype = {
 		}
 
 		// Write the last point's name to the names array
-		this.names[x] = point.name;
+		if (x !== undefined) {
+			this.names[x] = point.name;
+		}
 
 		return x;
 	},
@@ -950,7 +968,7 @@ H.Axis.prototype = {
 					var x;
 					if (point.options) {
 						x = axis.nameToX(point);
-						if (x !== point.x) {
+						if (x !== undefined && x !== point.x) {
 							point.x = x;
 							series.xData[i] = x;
 						}
@@ -1035,7 +1053,9 @@ H.Axis.prototype = {
 		if (saveOld) {
 			axis.oldTransA = transA;
 		}
-		axis.translationSlope = axis.transA = transA = axis.len / ((range + pointRangePadding) || 1);
+		axis.translationSlope = axis.transA = transA =
+			axis.options.staticScale ||
+			axis.len / ((range + pointRangePadding) || 1);
 		axis.transB = axis.horiz ? axis.left : axis.bottom; // translation addend
 		axis.minPixelPadding = transA * minPointOffset;
 	},
@@ -1157,17 +1177,20 @@ H.Axis.prototype = {
 			}
 		}
 
-		// Handle options for floor, ceiling, softMin and softMax
+		// Handle options for floor, ceiling, softMin and softMax (#6359)
+		if (isNumber(options.softMin)) {
+			axis.min = Math.min(axis.min, options.softMin);
+		}
+		if (isNumber(options.softMax)) {
+			axis.max = Math.max(axis.max, options.softMax);
+		}
 		if (isNumber(options.floor)) {
 			axis.min = Math.max(axis.min, options.floor);
-		} else if (isNumber(options.softMin)) {
-			axis.min = Math.min(axis.min, options.softMin);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
-		} else if (isNumber(options.softMax)) {
-			axis.max = Math.max(axis.max, options.softMax);
 		}
+		
 
 		// When the threshold is soft, adjust the extreme value only if
 		// the data extreme and the padded extreme land on either side of the threshold. For example,
@@ -1279,8 +1302,17 @@ H.Axis.prototype = {
 		// this axis, then min and max are equal and tickPositions.length is 0
 		// or 1. In this case, add some padding in order to center the point,
 		// but leave it with one tick. #1337.
-		this.single = this.min === this.max && defined(this.min) &&
-			!this.tickAmount && options.allowDecimals !== false;
+		this.single =
+			this.min === this.max &&
+			defined(this.min) &&
+			!this.tickAmount &&
+			(
+				// Data is on integer (#6563)
+				parseInt(this.min, 10) === this.min ||
+
+				// Between integers and decimals are not allowed (#6274)
+				options.allowDecimals !== false
+			);
 
 		// Find the tick positions
 		this.tickPositions = tickPositions = tickPositionsOption && tickPositionsOption.slice(); // Work on a copy (#1565)
@@ -1344,7 +1376,7 @@ H.Axis.prototype = {
 			minPointOffset = this.minPointOffset || 0;
 
 		if (!this.isLinked) {
-			if (startOnTick) {
+			if (startOnTick && roundedMin !== -Infinity) { // #6502
 				this.min = roundedMin;
 			} else {
 				while (this.min - minPointOffset > tickPositions[0]) {
@@ -2049,7 +2081,6 @@ H.Axis.prototype = {
 			className = options.className,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
-			plotLinesClip = axis.getPlotLinesAndBandsClip(),
 			tickSize = this.tickSize('tick');
 
 		// For reuse in Axis.render
@@ -2073,10 +2104,6 @@ H.Axis.prototype = {
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels ' + (className || ''))
 				.add(axisParent);
-
-			axis.plotLinesAndBandsClip = renderer.clipRect(plotLinesClip);
-		} else {
-			axis.plotLinesAndBandsClip.animate(plotLinesClip);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -2119,7 +2146,7 @@ H.Axis.prototype = {
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
 			axis.addTitle(showAxis);
 
-			if (showAxis) {
+			if (showAxis && axisTitleOptions.reserveSpace !== false) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
@@ -2498,6 +2525,7 @@ H.Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
+			plotGroup,
 			i,
 			n;
 
@@ -2525,14 +2553,16 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
-			'gridGroup', 'labelGroup', 'plotLinesAndBandsClip', 'cross'],
-			function (prop) {
-				if (axis[prop]) {
-					axis[prop] = axis[prop].destroy();
-				}
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup', 'cross'], function (prop) {
+			if (axis[prop]) {
+				axis[prop] = axis[prop].destroy();
 			}
-		);
+		});
+
+		// Destroy each generated group for plotlines and plotbands
+		for (plotGroup in axis.plotLinesAndBandsGroups) {
+			axis.plotLinesAndBandsGroups[plotGroup] = axis.plotLinesAndBandsGroups[plotGroup].destroy();
+		}
 
 		// Delete all properties and fall back to the prototype.
 		for (n in axis) {

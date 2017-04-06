@@ -1,113 +1,62 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cu-ho', 0],
+    ['cu-ar', 1],
+    ['cu-ma', 2],
+    ['cu-vc', 3],
+    ['cu-5812', 4],
+    ['cu-ij', 5],
+    ['cu-ss', 6],
+    ['cu-ca', 7],
+    ['cu-cm', 8],
+    ['cu-ch', 9],
+    ['cu-cf', 10],
+    ['cu-gu', 11],
+    ['cu-gr', 12],
+    ['cu-lt', 13],
+    ['cu-sc', 14],
+    ['cu-mq', 15],
+    ['cu-pr', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cu-ho",
-            "value": 0
-        },
-        {
-            "hc-key": "cu-ar",
-            "value": 1
-        },
-        {
-            "hc-key": "cu-ma",
-            "value": 2
-        },
-        {
-            "hc-key": "cu-vc",
-            "value": 3
-        },
-        {
-            "hc-key": "cu-5812",
-            "value": 4
-        },
-        {
-            "hc-key": "cu-ij",
-            "value": 5
-        },
-        {
-            "hc-key": "cu-ss",
-            "value": 6
-        },
-        {
-            "hc-key": "cu-ca",
-            "value": 7
-        },
-        {
-            "hc-key": "cu-cm",
-            "value": 8
-        },
-        {
-            "hc-key": "cu-ch",
-            "value": 9
-        },
-        {
-            "hc-key": "cu-cf",
-            "value": 10
-        },
-        {
-            "hc-key": "cu-gu",
-            "value": 11
-        },
-        {
-            "hc-key": "cu-gr",
-            "value": 12
-        },
-        {
-            "hc-key": "cu-lt",
-            "value": 13
-        },
-        {
-            "hc-key": "cu-sc",
-            "value": 14
-        },
-        {
-            "hc-key": "cu-mq",
-            "value": 15
-        },
-        {
-            "hc-key": "cu-pr",
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cu/cu-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cu/cu-all.js">Cuba</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cu/cu-all.js">Cuba</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cu/cu-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

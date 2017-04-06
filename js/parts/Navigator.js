@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -109,7 +109,7 @@ extend(defaultOptions,
 			threshold: null
 		},
 		//top: undefined,
-		//opposite: undefined, // docs
+		//opposite: undefined,
 		xAxis: {
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,
@@ -534,6 +534,7 @@ Navigator.prototype = {
 			),
 			zoomedMax
 		);
+
 		navigator.range = navigator.zoomedMax - navigator.zoomedMin;
 
 		zoomedMax = Math.round(navigator.zoomedMax);
@@ -572,8 +573,9 @@ Navigator.prototype = {
 			);
 			// Keep scale 0-1
 			navigator.scrollbar.setRange(
-				zoomedMin / navigatorSize,
-				zoomedMax / navigatorSize
+				// Use real value, not rounded because range can be very small (#1716)
+				navigator.zoomedMin / navigatorSize,
+				navigator.zoomedMax / navigatorSize
 			);
 		}
 		navigator.rendered = true;
@@ -588,11 +590,7 @@ Navigator.prototype = {
 			container = chart.container,
 			eventsToUnbind = [],
 			mouseMoveHandler,
-			mouseUpHandler,
-			// iOS calls both events: mousedown+touchstart and mouseup+touchend
-			// So we add them just once, #6187
-			eventNames = hasTouch ? ['touchstart', 'touchmove', 'touchend'] :
-				['mousedown', 'mousemove', 'mouseup'];
+			mouseUpHandler;
 
 		/**
 		 * Create mouse events' handlers.
@@ -606,13 +604,22 @@ Navigator.prototype = {
 		};
 
 		// Add shades and handles mousedown events
-		eventsToUnbind = navigator.getPartsEvents(eventNames[0]);
+		eventsToUnbind = navigator.getPartsEvents('mousedown');
 		// Add mouse move and mouseup events. These are bind to doc/container,
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
-			addEvent(container, eventNames[1], mouseMoveHandler),
-			addEvent(doc, eventNames[2], mouseUpHandler)
+			addEvent(container, 'mousemove', mouseMoveHandler),
+			addEvent(doc, 'mouseup', mouseUpHandler)
 		);
+
+		// Touch events
+		if (hasTouch) {
+			eventsToUnbind.push(
+				addEvent(container, 'touchmove', mouseMoveHandler),
+				addEvent(doc, 'touchend', mouseUpHandler)
+			);
+			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
+		}
 
 		navigator.eventsToUnbind = eventsToUnbind;
 
@@ -794,6 +801,7 @@ Navigator.prototype = {
 				} else if (chartX > navigatorSize + dragOffset - range) { // outside right
 					chartX = navigatorSize + dragOffset - range;
 				}
+
 				navigator.render(
 					0,
 					0,
@@ -818,12 +826,19 @@ Navigator.prototype = {
 		var navigator = this,
 			chart = navigator.chart,
 			xAxis = navigator.xAxis,
+			scrollbar = navigator.scrollbar,
 			fixedMin,
 			fixedMax,
 			ext,
 			DOMEvent = e.DOMEvent || e;
 
-		if (navigator.hasDragged || e.trigger === 'scrollbar') {
+		if (
+			// MouseUp is called for both, navigator and scrollbar (that order),
+			// which causes calling afterSetExtremes twice. Prevent first call
+			// by checking if scrollbar is going to set new extremes (#6334)
+			(navigator.hasDragged && (!scrollbar || !scrollbar.hasDragged)) ||
+			e.trigger === 'scrollbar'
+		) {
 			// When dragging one handle, make sure the other one doesn't change
 			if (navigator.zoomedMin === navigator.otherHandlePos) {
 				fixedMin = navigator.fixedExtreme;
@@ -831,7 +846,7 @@ Navigator.prototype = {
 				fixedMax = navigator.fixedExtreme;
 			}
 			// Snap to right edge (#4076)
-			if (navigator.zoomedMax === navigator.navigatorSize) {
+			if (navigator.zoomedMax === navigator.size) {
 				fixedMax = navigator.getUnionExtremes().dataMax;
 			}
 			ext = xAxis.toFixedRange(
@@ -1105,7 +1120,7 @@ Navigator.prototype = {
 	 */
 	setBaseSeries: function (baseSeriesOptions) {
 		var chart = this.chart,
-			baseSeries = this.baseSeries = [];
+			baseSeries;
 
 		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;
 
@@ -1116,6 +1131,8 @@ Navigator.prototype = {
 				s.destroy();
 			});
 		}
+
+		baseSeries = this.baseSeries = [];
 
 		// Iterate through series and add the ones that should be shown in navigator
 		each(chart.series || [], function (series, i) {
@@ -1204,17 +1221,13 @@ Navigator.prototype = {
 			each(baseSeries, function (base) {
 				if (base.xAxis) {
 					addEvent(base, 'updatedData', this.updatedDataHandler);
-					// Survive Series.update()
-					base.userOptions.events = extend(base.userOptions.event, {
-						updatedData: this.updatedDataHandler
-					});
 				}
 
 				// Handle series removal
 				addEvent(base, 'remove', function () {
 					if (this.navigatorSeries) {
 						erase(navigator.series, this.navigatorSeries);
-						this.navigatorSeries.remove();
+						this.navigatorSeries.remove(false);
 						delete this.navigatorSeries;
 					}
 				});		

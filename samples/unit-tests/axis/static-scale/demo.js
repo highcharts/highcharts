@@ -1,118 +1,142 @@
-var now,
-    data,
-    dataPoints,
-    addPoints,
-    i,
-    j,
-    chart,
-    axis,
-    series,
-    ticks,
-    createPoint = function (i) {
+var getPoint = function (i) {
         return {
-            name: new Date(now + i * 1000),
-            y: Math.random()
+            name: new Date(Date.now() + i * 1000),
+            y: i
         };
+    },
+
+    getData = function (dataPoints) {
+        var data = [];
+        for (var i = 0; i < dataPoints; i++) {
+            data.push(getPoint(i));
+        }
+        return data;
+    },
+
+    getSpacing = function (chart) {
+        var yAxis = chart.yAxis[0],
+            tickIdx = yAxis.tickPositions,
+            ticks = yAxis.ticks,
+            tick1 = ticks[tickIdx[0]].mark.getBBox().y,
+            tick2 = ticks[tickIdx[1]].mark.getBBox().y;
+
+        return tick1 - tick2;
     };
 
-QUnit.testStart(function () {
-    now = Date.now();
-    data = [];
-    dataPoints = 3;
-    addPoints = 100;
-    ticks = [];
+QUnit.test('Row height does not change with chart update', function (assert) {
+    var spaceBefore,
+        spaceAfter,
+        chart = Highcharts.chart('container', {
 
+            yAxis: {
+                staticScale: 24,
+                tickInterval: 1,
+                tickWidth: 1
+            },
 
-    for (i = 0; i < dataPoints; i++) {
-        data.push(createPoint(i));
-    }
+            series: [{
+                data: getData(100)
+            }]
 
-    chart = Highcharts.chart('container', {
+        });
 
-        xAxis: {
+    spaceBefore = getSpacing(chart);
+    chart.update({});
+
+    spaceAfter = getSpacing(chart);
+    assert.equal(
+        spaceAfter,
+        spaceBefore,
+        'Space between two first ticks does not change after Chart.update()'
+    );
+});
+
+QUnit.test('Row height does not change with data size', function (assert) {
+    var chart1Spacing,
+        chart2Spacing,
+        chart1,
+        chart2;
+
+    chart1 = Highcharts.chart('container', {
+
+        yAxis: {
             staticScale: 24,
-            minRange: 1,
-            categories: true
+            tickInterval: 1,
+            tickWidth: 1
         },
 
         series: [{
-            data: data,
-            type: 'bar'
+            data: getData(300)
         }]
 
     });
-    axis = chart.xAxis[0];
-    series = chart.series[0];
+    chart1Spacing = getSpacing(chart1);
 
-    Highcharts.each(axis.tickPositions, function (pos) {
-        ticks.push(axis.ticks[pos]);
+    chart2 = Highcharts.chart('container', {
+
+        yAxis: {
+            staticScale: 24,
+            tickInterval: 1,
+            tickWidth: 1
+        },
+
+        series: [{
+            data: getData(5)
+        }]
+
     });
-});
-
-/**
- * Checks that the space between ticks is maintained.
- */
-QUnit.test('Interval between ticks is maintained', function (assert) {
-    var diff1,
-        diff2,
-        diff3;
-
-    diff1 = ticks[1].mark.getBBox().y - ticks[0].mark.getBBox().y;
-    for (j = 0; j < addPoints; j++) {
-        series.addPoint(createPoint(i++), false); // Do not redraw for every add
-    }
-    chart.redraw();
-
-    diff2 = ticks[1].mark.getBBox().y - ticks[0].mark.getBBox().y;
+    chart2Spacing = getSpacing(chart2);
 
     assert.equal(
-        diff1,
-        diff2,
-        'Space between ticks is equal after adding ' + addPoints + ' points'
-    );
-
-    series.addPoint(createPoint(i++));
-
-    diff3 = ticks[1].mark.getBBox().y - ticks[0].mark.getBBox().y;
-
-    assert.equal(
-        diff2,
-        diff3,
-        'Space between ticks is equal after adding an extra point with redraw'
+        chart2Spacing,
+        chart1Spacing,
+        'Row height does not change with data size'
     );
 });
 
-/**
- * Checks that the space between the lowermost tick and the legend is
- * maintained. By checking this, we are checking that the static scale does not
- * alter the relationship with other chart elements.
- */
-QUnit.test('Legend margin is maintained', function (assert) {
-    var diff1,
-        diff2,
-        diff3,
-        legend;
-    legend = chart.legend.box;
-    diff1 = legend.getBBox().y - ticks[ticks.length - 1].mark.getBBox().y;
+QUnit.test('Row height does not change with axis breaks', function (assert) {
+    var chart1Spacing,
+        chart2Spacing,
+        chart1,
+        chart2;
 
-    for (j = 0; j < addPoints; j++) {
-        series.addPoint(createPoint(i++), false); // Do not redraw for every add
-    }
-    chart.redraw();
+    chart1 = Highcharts.chart('container', {
 
-    diff2 = legend.getBBox().y - ticks[ticks.length - 1].mark.getBBox().y;
+        yAxis: {
+            staticScale: 24,
+            tickInterval: 1,
+            tickWidth: 1
+        },
+
+        series: [{
+            data: getData(100)
+        }]
+
+    });
+    chart1Spacing = getSpacing(chart1);
+
+    chart2 = Highcharts.chart('container', {
+
+        yAxis: {
+            staticScale: 24,
+            tickInterval: 1,
+            tickWidth: 1,
+            breaks: [{
+                from: 80,
+                to: 90
+            }]
+        },
+
+        series: [{
+            data: getData(100)
+        }]
+
+    });
+    chart2Spacing = getSpacing(chart2);
 
     assert.equal(
-        diff1,
-        diff2,
-        'Space is equal after adding ' + addPoints + ' points'
-    );
-
-    diff3 = legend.getBBox().y - ticks[ticks.length - 1].mark.getBBox().y;
-
-    assert.equal(
-        diff2,
-        diff3,
-        'Space is equal after adding an extra point with redraw'
+        chart2Spacing,
+        chart1Spacing,
+        'Space between two first ticks does not change with axis breaks'
     );
 });

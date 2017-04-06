@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mr-4965', 0],
+    ['mr-dn', 1],
+    ['mr-in', 2],
+    ['mr-no', 3],
+    ['mr-br', 4],
+    ['mr-tr', 5],
+    ['mr-as', 6],
+    ['mr-gd', 7],
+    ['mr-go', 8],
+    ['mr-ad', 9],
+    ['mr-hc', 10],
+    ['mr-hg', 11],
+    ['mr-tg', 12],
+    ['mr-tz', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mr-4965",
-            "value": 0
-        },
-        {
-            "hc-key": "mr-dn",
-            "value": 1
-        },
-        {
-            "hc-key": "mr-in",
-            "value": 2
-        },
-        {
-            "hc-key": "mr-no",
-            "value": 3
-        },
-        {
-            "hc-key": "mr-br",
-            "value": 4
-        },
-        {
-            "hc-key": "mr-tr",
-            "value": 5
-        },
-        {
-            "hc-key": "mr-as",
-            "value": 6
-        },
-        {
-            "hc-key": "mr-gd",
-            "value": 7
-        },
-        {
-            "hc-key": "mr-go",
-            "value": 8
-        },
-        {
-            "hc-key": "mr-ad",
-            "value": 9
-        },
-        {
-            "hc-key": "mr-hc",
-            "value": 10
-        },
-        {
-            "hc-key": "mr-hg",
-            "value": 11
-        },
-        {
-            "hc-key": "mr-tg",
-            "value": 12
-        },
-        {
-            "hc-key": "mr-tz",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mr/mr-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mr/mr-all.js">Mauritania</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mr/mr-all.js">Mauritania</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mr/mr-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

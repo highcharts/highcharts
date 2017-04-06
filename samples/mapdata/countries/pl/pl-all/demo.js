@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['pl-ld', 0],
+    ['pl-mz', 1],
+    ['pl-sk', 2],
+    ['pl-pd', 3],
+    ['pl-lu', 4],
+    ['pl-pk', 5],
+    ['pl-op', 6],
+    ['pl-ma', 7],
+    ['pl-wn', 8],
+    ['pl-pm', 9],
+    ['pl-ds', 10],
+    ['pl-zp', 11],
+    ['pl-lb', 12],
+    ['pl-wp', 13],
+    ['pl-kp', 14],
+    ['pl-sl', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "pl-ld",
-            "value": 0
-        },
-        {
-            "hc-key": "pl-mz",
-            "value": 1
-        },
-        {
-            "hc-key": "pl-sk",
-            "value": 2
-        },
-        {
-            "hc-key": "pl-pd",
-            "value": 3
-        },
-        {
-            "hc-key": "pl-lu",
-            "value": 4
-        },
-        {
-            "hc-key": "pl-pk",
-            "value": 5
-        },
-        {
-            "hc-key": "pl-op",
-            "value": 6
-        },
-        {
-            "hc-key": "pl-ma",
-            "value": 7
-        },
-        {
-            "hc-key": "pl-wn",
-            "value": 8
-        },
-        {
-            "hc-key": "pl-pm",
-            "value": 9
-        },
-        {
-            "hc-key": "pl-ds",
-            "value": 10
-        },
-        {
-            "hc-key": "pl-zp",
-            "value": 11
-        },
-        {
-            "hc-key": "pl-lb",
-            "value": 12
-        },
-        {
-            "hc-key": "pl-wp",
-            "value": 13
-        },
-        {
-            "hc-key": "pl-kp",
-            "value": 14
-        },
-        {
-            "hc-key": "pl-sl",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/pl/pl-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pl/pl-all.js">Poland</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pl/pl-all.js">Poland</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/pl/pl-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,161 +1,74 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['gl', 0],
+    ['lc', 1],
+    ['um', 2],
+    ['us', 3],
+    ['vi', 4],
+    ['ca', 5],
+    ['cu', 6],
+    ['kn', 7],
+    ['ni', 8],
+    ['gd', 9],
+    ['dm', 10],
+    ['ag', 11],
+    ['tt', 12],
+    ['sw', 13],
+    ['bb', 14],
+    ['jm', 15],
+    ['bu', 16],
+    ['bs', 17],
+    ['vc', 18],
+    ['ht', 19],
+    ['sv', 20],
+    ['hn', 21],
+    ['do', 22],
+    ['mx', 23],
+    ['bz', 24],
+    ['gt', 25],
+    ['cr', 26],
+    ['pr', 27],
+    ['pa', 28]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "gl",
-            "value": 0
-        },
-        {
-            "hc-key": "lc",
-            "value": 1
-        },
-        {
-            "hc-key": "um",
-            "value": 2
-        },
-        {
-            "hc-key": "us",
-            "value": 3
-        },
-        {
-            "hc-key": "vi",
-            "value": 4
-        },
-        {
-            "hc-key": "ca",
-            "value": 5
-        },
-        {
-            "hc-key": "cu",
-            "value": 6
-        },
-        {
-            "hc-key": "kn",
-            "value": 7
-        },
-        {
-            "hc-key": "ni",
-            "value": 8
-        },
-        {
-            "hc-key": "gd",
-            "value": 9
-        },
-        {
-            "hc-key": "dm",
-            "value": 10
-        },
-        {
-            "hc-key": "ag",
-            "value": 11
-        },
-        {
-            "hc-key": "tt",
-            "value": 12
-        },
-        {
-            "hc-key": "sw",
-            "value": 13
-        },
-        {
-            "hc-key": "bb",
-            "value": 14
-        },
-        {
-            "hc-key": "jm",
-            "value": 15
-        },
-        {
-            "hc-key": "bu",
-            "value": 16
-        },
-        {
-            "hc-key": "bs",
-            "value": 17
-        },
-        {
-            "hc-key": "vc",
-            "value": 18
-        },
-        {
-            "hc-key": "ht",
-            "value": 19
-        },
-        {
-            "hc-key": "sv",
-            "value": 20
-        },
-        {
-            "hc-key": "hn",
-            "value": 21
-        },
-        {
-            "hc-key": "do",
-            "value": 22
-        },
-        {
-            "hc-key": "mx",
-            "value": 23
-        },
-        {
-            "hc-key": "bz",
-            "value": 24
-        },
-        {
-            "hc-key": "gt",
-            "value": 25
-        },
-        {
-            "hc-key": "cr",
-            "value": 26
-        },
-        {
-            "hc-key": "pr",
-            "value": 27
-        },
-        {
-            "hc-key": "pa",
-            "value": 28
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'custom/north-america'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/north-america.js">North America</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title: {
-            text: 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/north-america.js">North America</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/north-america'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

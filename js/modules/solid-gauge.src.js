@@ -1,7 +1,7 @@
 /**
  * Solid angular gauge module
  *
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -292,14 +292,13 @@ H.seriesType('solidgauge', 'gauge',
 				innerR: innerRadius,
 				start: minAngle,
 				end: maxAngle,
-				fill: toColor,
-				rounded: options.rounded // docs
+				rounded: options.rounded
 			};
 			point.startR = radius; // For PieSeries.animate
 
 			if (graphic) {
 				d = shapeArgs.d;
-				graphic.animate(shapeArgs);
+				graphic.animate(H.extend({ fill: toColor }, shapeArgs));
 				if (d) {
 					shapeArgs.d = d; // animate alters it
 				}

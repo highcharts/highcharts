@@ -1,309 +1,111 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-sd-129', 0],
+    ['us-sd-041', 1],
+    ['us-sd-067', 2],
+    ['us-sd-043', 3],
+    ['us-sd-045', 4],
+    ['us-sd-107', 5],
+    ['us-sd-061', 6],
+    ['us-sd-097', 7],
+    ['us-sd-087', 8],
+    ['us-sd-079', 9],
+    ['us-sd-099', 10],
+    ['us-sd-051', 11],
+    ['us-sd-039', 12],
+    ['us-sd-103', 13],
+    ['us-sd-025', 14],
+    ['us-sd-005', 15],
+    ['us-sd-011', 16],
+    ['us-sd-057', 17],
+    ['us-sd-109', 18],
+    ['us-sd-037', 19],
+    ['us-sd-015', 20],
+    ['us-sd-023', 21],
+    ['us-sd-059', 22],
+    ['us-sd-115', 23],
+    ['us-sd-085', 24],
+    ['us-sd-053', 25],
+    ['us-sd-105', 26],
+    ['us-sd-063', 27],
+    ['us-sd-019', 28],
+    ['us-sd-137', 29],
+    ['us-sd-055', 30],
+    ['us-sd-031', 31],
+    ['us-sd-069', 32],
+    ['us-sd-093', 33],
+    ['us-sd-089', 34],
+    ['us-sd-073', 35],
+    ['us-sd-013', 36],
+    ['us-sd-049', 37],
+    ['us-sd-077', 38],
+    ['us-sd-111', 39],
+    ['us-sd-003', 40],
+    ['us-sd-021', 41],
+    ['us-sd-117', 42],
+    ['us-sd-119', 43],
+    ['us-sd-027', 44],
+    ['us-sd-017', 45],
+    ['us-sd-071', 46],
+    ['us-sd-127', 47],
+    ['us-sd-081', 48],
+    ['us-sd-029', 49],
+    ['us-sd-033', 50],
+    ['us-sd-007', 51],
+    ['us-sd-035', 52],
+    ['us-sd-009', 53],
+    ['us-sd-101', 54],
+    ['us-sd-125', 55],
+    ['us-sd-135', 56],
+    ['us-sd-121', 57],
+    ['us-sd-095', 58],
+    ['us-sd-123', 59],
+    ['us-sd-083', 60],
+    ['us-sd-091', 61],
+    ['us-sd-047', 62],
+    ['us-sd-113', 63],
+    ['us-sd-065', 64],
+    ['us-sd-075', 65]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-sd-129",
-            "value": 0
-        },
-        {
-            "hc-key": "us-sd-041",
-            "value": 1
-        },
-        {
-            "hc-key": "us-sd-067",
-            "value": 2
-        },
-        {
-            "hc-key": "us-sd-043",
-            "value": 3
-        },
-        {
-            "hc-key": "us-sd-045",
-            "value": 4
-        },
-        {
-            "hc-key": "us-sd-107",
-            "value": 5
-        },
-        {
-            "hc-key": "us-sd-061",
-            "value": 6
-        },
-        {
-            "hc-key": "us-sd-097",
-            "value": 7
-        },
-        {
-            "hc-key": "us-sd-087",
-            "value": 8
-        },
-        {
-            "hc-key": "us-sd-079",
-            "value": 9
-        },
-        {
-            "hc-key": "us-sd-099",
-            "value": 10
-        },
-        {
-            "hc-key": "us-sd-051",
-            "value": 11
-        },
-        {
-            "hc-key": "us-sd-039",
-            "value": 12
-        },
-        {
-            "hc-key": "us-sd-103",
-            "value": 13
-        },
-        {
-            "hc-key": "us-sd-025",
-            "value": 14
-        },
-        {
-            "hc-key": "us-sd-005",
-            "value": 15
-        },
-        {
-            "hc-key": "us-sd-011",
-            "value": 16
-        },
-        {
-            "hc-key": "us-sd-057",
-            "value": 17
-        },
-        {
-            "hc-key": "us-sd-109",
-            "value": 18
-        },
-        {
-            "hc-key": "us-sd-037",
-            "value": 19
-        },
-        {
-            "hc-key": "us-sd-015",
-            "value": 20
-        },
-        {
-            "hc-key": "us-sd-023",
-            "value": 21
-        },
-        {
-            "hc-key": "us-sd-059",
-            "value": 22
-        },
-        {
-            "hc-key": "us-sd-115",
-            "value": 23
-        },
-        {
-            "hc-key": "us-sd-085",
-            "value": 24
-        },
-        {
-            "hc-key": "us-sd-053",
-            "value": 25
-        },
-        {
-            "hc-key": "us-sd-105",
-            "value": 26
-        },
-        {
-            "hc-key": "us-sd-063",
-            "value": 27
-        },
-        {
-            "hc-key": "us-sd-019",
-            "value": 28
-        },
-        {
-            "hc-key": "us-sd-137",
-            "value": 29
-        },
-        {
-            "hc-key": "us-sd-055",
-            "value": 30
-        },
-        {
-            "hc-key": "us-sd-031",
-            "value": 31
-        },
-        {
-            "hc-key": "us-sd-069",
-            "value": 32
-        },
-        {
-            "hc-key": "us-sd-093",
-            "value": 33
-        },
-        {
-            "hc-key": "us-sd-089",
-            "value": 34
-        },
-        {
-            "hc-key": "us-sd-073",
-            "value": 35
-        },
-        {
-            "hc-key": "us-sd-013",
-            "value": 36
-        },
-        {
-            "hc-key": "us-sd-049",
-            "value": 37
-        },
-        {
-            "hc-key": "us-sd-077",
-            "value": 38
-        },
-        {
-            "hc-key": "us-sd-111",
-            "value": 39
-        },
-        {
-            "hc-key": "us-sd-003",
-            "value": 40
-        },
-        {
-            "hc-key": "us-sd-021",
-            "value": 41
-        },
-        {
-            "hc-key": "us-sd-117",
-            "value": 42
-        },
-        {
-            "hc-key": "us-sd-119",
-            "value": 43
-        },
-        {
-            "hc-key": "us-sd-027",
-            "value": 44
-        },
-        {
-            "hc-key": "us-sd-017",
-            "value": 45
-        },
-        {
-            "hc-key": "us-sd-071",
-            "value": 46
-        },
-        {
-            "hc-key": "us-sd-127",
-            "value": 47
-        },
-        {
-            "hc-key": "us-sd-081",
-            "value": 48
-        },
-        {
-            "hc-key": "us-sd-029",
-            "value": 49
-        },
-        {
-            "hc-key": "us-sd-033",
-            "value": 50
-        },
-        {
-            "hc-key": "us-sd-007",
-            "value": 51
-        },
-        {
-            "hc-key": "us-sd-035",
-            "value": 52
-        },
-        {
-            "hc-key": "us-sd-009",
-            "value": 53
-        },
-        {
-            "hc-key": "us-sd-101",
-            "value": 54
-        },
-        {
-            "hc-key": "us-sd-125",
-            "value": 55
-        },
-        {
-            "hc-key": "us-sd-135",
-            "value": 56
-        },
-        {
-            "hc-key": "us-sd-121",
-            "value": 57
-        },
-        {
-            "hc-key": "us-sd-095",
-            "value": 58
-        },
-        {
-            "hc-key": "us-sd-123",
-            "value": 59
-        },
-        {
-            "hc-key": "us-sd-083",
-            "value": 60
-        },
-        {
-            "hc-key": "us-sd-091",
-            "value": 61
-        },
-        {
-            "hc-key": "us-sd-047",
-            "value": 62
-        },
-        {
-            "hc-key": "us-sd-113",
-            "value": 63
-        },
-        {
-            "hc-key": "us-sd-065",
-            "value": 64
-        },
-        {
-            "hc-key": "us-sd-075",
-            "value": 65
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-sd-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-sd-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

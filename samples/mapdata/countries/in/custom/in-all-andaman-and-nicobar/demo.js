@@ -1,189 +1,81 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['in-5390', 0],
+    ['in-py', 1],
+    ['in-ld', 2],
+    ['in-an', 3],
+    ['in-wb', 4],
+    ['in-or', 5],
+    ['in-br', 6],
+    ['in-sk', 7],
+    ['in-ct', 8],
+    ['in-tn', 9],
+    ['in-mp', 10],
+    ['in-2984', 11],
+    ['in-ga', 12],
+    ['in-nl', 13],
+    ['in-mn', 14],
+    ['in-ar', 15],
+    ['in-mz', 16],
+    ['in-tr', 17],
+    ['in-3464', 18],
+    ['in-dl', 19],
+    ['in-hr', 20],
+    ['in-ch', 21],
+    ['in-hp', 22],
+    ['in-jk', 23],
+    ['in-kl', 24],
+    ['in-ka', 25],
+    ['in-dn', 26],
+    ['in-mh', 27],
+    ['in-as', 28],
+    ['in-ap', 29],
+    ['in-ml', 30],
+    ['in-pb', 31],
+    ['in-rj', 32],
+    ['in-up', 33],
+    ['in-ut', 34],
+    ['in-jh', 35]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "in-5390",
-            "value": 0
-        },
-        {
-            "hc-key": "in-py",
-            "value": 1
-        },
-        {
-            "hc-key": "in-ld",
-            "value": 2
-        },
-        {
-            "hc-key": "in-an",
-            "value": 3
-        },
-        {
-            "hc-key": "in-wb",
-            "value": 4
-        },
-        {
-            "hc-key": "in-or",
-            "value": 5
-        },
-        {
-            "hc-key": "in-br",
-            "value": 6
-        },
-        {
-            "hc-key": "in-sk",
-            "value": 7
-        },
-        {
-            "hc-key": "in-ct",
-            "value": 8
-        },
-        {
-            "hc-key": "in-tn",
-            "value": 9
-        },
-        {
-            "hc-key": "in-mp",
-            "value": 10
-        },
-        {
-            "hc-key": "in-2984",
-            "value": 11
-        },
-        {
-            "hc-key": "in-ga",
-            "value": 12
-        },
-        {
-            "hc-key": "in-nl",
-            "value": 13
-        },
-        {
-            "hc-key": "in-mn",
-            "value": 14
-        },
-        {
-            "hc-key": "in-ar",
-            "value": 15
-        },
-        {
-            "hc-key": "in-mz",
-            "value": 16
-        },
-        {
-            "hc-key": "in-tr",
-            "value": 17
-        },
-        {
-            "hc-key": "in-3464",
-            "value": 18
-        },
-        {
-            "hc-key": "in-dl",
-            "value": 19
-        },
-        {
-            "hc-key": "in-hr",
-            "value": 20
-        },
-        {
-            "hc-key": "in-ch",
-            "value": 21
-        },
-        {
-            "hc-key": "in-hp",
-            "value": 22
-        },
-        {
-            "hc-key": "in-jk",
-            "value": 23
-        },
-        {
-            "hc-key": "in-kl",
-            "value": 24
-        },
-        {
-            "hc-key": "in-ka",
-            "value": 25
-        },
-        {
-            "hc-key": "in-dn",
-            "value": 26
-        },
-        {
-            "hc-key": "in-mh",
-            "value": 27
-        },
-        {
-            "hc-key": "in-as",
-            "value": 28
-        },
-        {
-            "hc-key": "in-ap",
-            "value": 29
-        },
-        {
-            "hc-key": "in-ml",
-            "value": 30
-        },
-        {
-            "hc-key": "in-pb",
-            "value": 31
-        },
-        {
-            "hc-key": "in-rj",
-            "value": 32
-        },
-        {
-            "hc-key": "in-up",
-            "value": 33
-        },
-        {
-            "hc-key": "in-ut",
-            "value": 34
-        },
-        {
-            "hc-key": "in-jh",
-            "value": 35
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/in/custom/in-all-andaman-and-nicobar'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.js">India with Andaman and Nicobar</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/in/custom/in-all-andaman-and-nicobar.js">India with Andaman and Nicobar</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/in/custom/in-all-andaman-and-nicobar'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

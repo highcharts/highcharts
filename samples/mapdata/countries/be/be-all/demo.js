@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['be-3530', 0],
+    ['be-3527', 1],
+    ['be-3532', 2],
+    ['be-3533', 3],
+    ['be-3534', 4],
+    ['be-3535', 5],
+    ['be-3528', 6],
+    ['be-3529', 7],
+    ['be-489', 8],
+    ['be-490', 9],
+    ['be-3526', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "be-3530",
-            "value": 0
-        },
-        {
-            "hc-key": "be-3527",
-            "value": 1
-        },
-        {
-            "hc-key": "be-3532",
-            "value": 2
-        },
-        {
-            "hc-key": "be-3533",
-            "value": 3
-        },
-        {
-            "hc-key": "be-3534",
-            "value": 4
-        },
-        {
-            "hc-key": "be-3535",
-            "value": 5
-        },
-        {
-            "hc-key": "be-3528",
-            "value": 6
-        },
-        {
-            "hc-key": "be-3529",
-            "value": 7
-        },
-        {
-            "hc-key": "be-489",
-            "value": 8
-        },
-        {
-            "hc-key": "be-490",
-            "value": 9
-        },
-        {
-            "hc-key": "be-3526",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/be/be-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/be/be-all.js">Belgium</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/be/be-all.js">Belgium</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/be/be-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

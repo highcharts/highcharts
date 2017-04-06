@@ -280,7 +280,7 @@
 						}
 					}
 
-					href = href.replace("view.php", "compare-view.php");
+					href = href.replace("/view.php", "/compare-view.php");
 
 
 					window.parent.batchRuns++;

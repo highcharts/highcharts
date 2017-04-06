@@ -9,7 +9,7 @@ The master file should contain a minimum of 3 things. A license header, the 'use
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  *
- * (c) 2010-2016 Highsoft AS
+ * (c) 2010-2017 Highsoft AS
  * Author: <author_name>
  *
  * License: www.highcharts.com/license

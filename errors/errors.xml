@@ -149,4 +149,17 @@
 			<p>Using the global.timezone option requires the <a href="http://momentjs.com/">Moment.js</a> library to be loaded.</p>
 		</description>
 	</error>
+
+	<error id="26">
+		<title>WebGL not supported, and no fallback module included</title>
+		<description>
+			<p>This happens when your browser does not support WebGL, <b>and</b> 
+				the canvas fallback module (<code>boost-canvas.js</code>) has not been included OR if the fallback module was included <b>after</b> the boost module. 
+			</p>
+			<p>
+				Make sure you include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.
+			</p>
+		</description>
+	</error>
+
 </errors>

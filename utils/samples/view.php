@@ -11,11 +11,6 @@ if (isset($_GET['styled'])) {
 }
 $styled = @$_SESSION['styled'];
 
-if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $_GET['path'])) {
-	header('Location: start.php');
-	exit;
-}
-
 
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
@@ -154,7 +149,9 @@ function getResources() {
 					return;
 				}
 
-				$('#bisect').click(controller.toggleBisect);
+				if (controller) {
+					$('#bisect').click(controller.toggleBisect);
+				}
 
 				if (typeof Highcharts !== 'undefined') {
 					$('#version').html(Highcharts.product + ' ' + Highcharts.version +
@@ -218,7 +215,7 @@ function getResources() {
 							this.reflow();
 						});
 					}
-console.log(path)
+
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
@@ -240,7 +237,9 @@ console.log(path)
 		}());
 		</script>
 		<script>
-		console.clear();
+		if (window.console) {
+			console.clear();
+		}
 		function next() {
 			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
 			if (a) {
@@ -261,7 +260,7 @@ console.log(path)
 		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
-		$(function () {
+		function setUp() {
 
 			$(window).bind('keydown', parent.keyDown);
 			
@@ -306,11 +305,9 @@ console.log(path)
 					}
 				});
 			}
-		});
 		
 
-		<?php if (@$_GET['profile']) : ?>
-		$(function () {
+			<?php if (@$_GET['profile']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -331,10 +328,8 @@ console.log(path)
 
 				});
 			}
-		});
-		<?php endif ?>
-		<?php if (@$_GET['time']) : ?>
-		$(function () {
+			<?php endif ?>
+			<?php if (@$_GET['time']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -360,11 +355,9 @@ console.log(path)
 
 				});
 			}
-		});
-		<?php endif ?>
+			<?php endif ?>
 
-		<?php if ($styled) { ?>
-		$(function () {
+			<?php if ($styled) { ?>
 			var warnedAboutColors = false;
 			function warnAboutColors () {
 				if (!warnedAboutColors) {
@@ -389,8 +382,9 @@ console.log(path)
 				}
 				return options;
 			});
-		});
-		<?php } ?>
+
+			<?php } ?>
+		}
 		
 		</script>
 
@@ -423,10 +417,10 @@ console.log(path)
 					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</a>
 				<?php } else { ?>
 				<a class="button active" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</a>
 				<?php } ?>
 				
 				<a class="button"
@@ -464,9 +458,9 @@ console.log(path)
 			<?php echo $html ?>
 			</div>
 			<script>
+			setUp();
 			<?php @include("$path/demo.js"); ?>
 			</script>
-			<hr/>
 			<?php if (is_file("$path/test-notes.html")) { ?>
 			<section class="test-notes">
 				<header>Test notes</header>
@@ -474,6 +468,8 @@ console.log(path)
 					<?php include("$path/test-notes.html"); ?>
 				</div>
 			</section>
+			<?php } else { ?>
+			<hr/>
 			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>

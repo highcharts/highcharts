@@ -14,25 +14,28 @@ var Chart = H.Chart,
 Chart.prototype.adjustHeight = function () {
 	each(this.axes, function (axis) {
 		var chart = axis.chart,
-			animate = !!chart.initiatedScale,
+			animate = !!chart.initiatedScale && chart.options.animation,
 			staticScale = axis.options.staticScale,
 			height,
 			diff;
 		if (
 			H.isNumber(staticScale) &&
 			!axis.horiz &&
-			H.defined(axis.min) &&
-			!chart.settingSize // Prevent recursion
+			H.defined(axis.min)
 		) {
-			height = pick(axis.unitLength, axis.max - axis.min) * staticScale;
+			height = pick(
+				axis.unitLength,
+				axis.max + axis.tickInterval - axis.min
+			) * staticScale;
+			
+			// Minimum height is 1 x staticScale.
+			height = Math.max(height, staticScale);
+			
 			diff = height - chart.plotHeight;
-			chart.oldPlotHeight = chart.plotHeight;
-			chart.plotHeight = height;
+			
 			if (Math.abs(diff) >= 1) {
-
-				chart.settingSize = true;
+				chart.plotHeight = height;
 				chart.setSize(null, chart.chartHeight + diff, animate);
-				chart.settingSize = false;
 			}
 		}
 		

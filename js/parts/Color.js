@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -43,12 +43,6 @@ H.Color.prototype = {
 			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
 		}
 	}, {
-		// HEX color
-		regex: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
-		parse: function (result) {
-			return [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
-		}
-	}, {
 		// RGB color
 		regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
 		parse: function (result) {
@@ -56,8 +50,8 @@ H.Color.prototype = {
 		}
 	}],
 
-	// Collection of named colors. Can be extended from the outside by adding colors
-	// to Highcharts.Color.prototype.names.
+	// Collection of named colors. Can be extended from the outside by adding
+	// colors to Highcharts.Color.prototype.names.
 	names: {
 		white: '#ffffff',
 		black: '#000000'
@@ -71,9 +65,14 @@ H.Color.prototype = {
 		var result,
 			rgba,
 			i,
-			parser;
+			parser,
+			len;
 
-		this.input = input = this.names[input] || input;
+		this.input = input = this.names[
+								input && input.toLowerCase ?
+									input.toLowerCase() :
+									''
+							] || input;
 
 		// Gradients
 		if (input && input.stops) {
@@ -83,12 +82,46 @@ H.Color.prototype = {
 
 		// Solid colors
 		} else {
-			i = this.parsers.length;
-			while (i-- && !rgba) {
-				parser = this.parsers[i];
-				result = parser.regex.exec(input);
-				if (result) {
-					rgba = parser.parse(result);
+
+			// Check if it's possible to do bitmasking instead of regex
+			if (input && input[0] === '#') {
+
+				len = input.length;
+				input = parseInt(input.substr(1), 16);
+
+				// Handle long-form, e.g. #AABBCC
+				if (len === 7) {
+					
+					rgba = [
+						(input & 0xFF0000) >> 16,
+						(input & 0xFF00) >> 8,
+						(input & 0xFF),
+						1
+					];				
+
+				// Handle short-form, e.g. #ABC
+				// In short form, the value is assumed to be the same 
+				// for both nibbles for each component. e.g. #ABC = #AABBCC
+				} else if (len === 4) {
+
+					rgba = [
+						((input & 0xF00) >> 4) | (input & 0xF00) >> 8,
+						((input & 0xF0) >> 4) | (input & 0xF0),
+						((input & 0xF) << 4) | (input & 0xF),
+						1
+					];
+				}				
+			}
+
+			// Otherwise, check regex parsers
+			if (!rgba) {
+				i = this.parsers.length;
+				while (i-- && !rgba) {
+					parser = this.parsers[i];
+					result = parser.regex.exec(input);
+					if (result) {
+						rgba = parser.parse(result);
+					}
 				}
 			}
 		}

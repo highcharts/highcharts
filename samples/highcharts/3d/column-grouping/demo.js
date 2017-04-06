@@ -2,19 +2,18 @@
 Highcharts.chart('container', {
     chart: {
         type: 'column',
-        margin: 75,
         options3d: {
             enabled: true,
             alpha: 15,
-            beta: 15,
-            depth: 110
+            beta: 15
         }
     },
     title: {
         text: 'Fruit Consumption'
     },
     xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears', 'Kiwis',
+            'Grapes', 'Dates']
     },
     yAxis: {
         title: {
@@ -22,7 +21,7 @@ Highcharts.chart('container', {
         }
     },
     plotOptions: {
-        column: {
+        series: {
             depth: 40,
             grouping: false,
             groupZPadding: 10
@@ -30,9 +29,9 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Jane',
-        data: [1, 0, 4]
+        data: [1, 0, 4, 5, 2, 3, 1]
     }, {
         name: 'John',
-        data: [5, 7, 3]
+        data: [5, 7, 3, 6, 4, 2, 1]
     }]
 });

@@ -1,4 +1,5 @@
 ---
  name: Baden-Württemberg - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

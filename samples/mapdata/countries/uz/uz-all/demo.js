@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['uz-fa', 0],
+    ['uz-tk', 1],
+    ['uz-an', 2],
+    ['uz-ng', 3],
+    ['uz-ji', 4],
+    ['uz-si', 5],
+    ['uz-ta', 6],
+    ['uz-bu', 7],
+    ['uz-kh', 8],
+    ['uz-qr', 9],
+    ['uz-nw', 10],
+    ['uz-sa', 11],
+    ['uz-qa', 12],
+    ['uz-su', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "uz-fa",
-            "value": 0
-        },
-        {
-            "hc-key": "uz-tk",
-            "value": 1
-        },
-        {
-            "hc-key": "uz-an",
-            "value": 2
-        },
-        {
-            "hc-key": "uz-ng",
-            "value": 3
-        },
-        {
-            "hc-key": "uz-ji",
-            "value": 4
-        },
-        {
-            "hc-key": "uz-si",
-            "value": 5
-        },
-        {
-            "hc-key": "uz-ta",
-            "value": 6
-        },
-        {
-            "hc-key": "uz-bu",
-            "value": 7
-        },
-        {
-            "hc-key": "uz-kh",
-            "value": 8
-        },
-        {
-            "hc-key": "uz-qr",
-            "value": 9
-        },
-        {
-            "hc-key": "uz-nw",
-            "value": 10
-        },
-        {
-            "hc-key": "uz-sa",
-            "value": 11
-        },
-        {
-            "hc-key": "uz-qa",
-            "value": 12
-        },
-        {
-            "hc-key": "uz-su",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/uz/uz-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/uz/uz-all.js">Uzbekistan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/uz/uz-all.js">Uzbekistan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/uz/uz-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

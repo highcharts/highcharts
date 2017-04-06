@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -311,9 +311,8 @@ seriesProto.processData = function () {
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order) or #5493
-	skip = baseProcessData.apply(series, arguments) === false ||
-		!groupingEnabled || !visible;
+	// skip if processData returns false or if grouping is disabled (in that order)
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
 	if (!skip) {
 		series.destroyGroupedData();
 
@@ -365,7 +364,8 @@ seriesProto.processData = function () {
 			series.groupMap = groupedData[2];
 
 			// Make sure the X axis extends to show the first group (#2533)
-			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			// But only for visible series (#5493, #6393)
+			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin && visible) {
 				if (xAxis.min === xAxis.dataMin) {
 					xAxis.min = groupedXData[0];
 				}

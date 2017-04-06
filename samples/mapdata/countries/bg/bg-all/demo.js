@@ -1,157 +1,73 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['bg-vt', 0],
+    ['bg-mt', 1],
+    ['bg-vr', 2],
+    ['bg-ky', 3],
+    ['bg-vd', 4],
+    ['bg-br', 5],
+    ['bg-ya', 6],
+    ['bg-tu', 7],
+    ['bg-rg', 8],
+    ['bg-sh', 9],
+    ['bg-do', 10],
+    ['bg-vn', 11],
+    ['bg-si', 12],
+    ['bg-rs', 13],
+    ['bg-bl', 14],
+    ['bg-sl', 15],
+    ['bg-sz', 16],
+    ['bg-kk', 17],
+    ['bg-pd', 18],
+    ['bg-pz', 19],
+    ['bg-sm', 20],
+    ['bg-kz', 21],
+    ['bg-sf', 22],
+    ['bg-sg', 23],
+    ['bg-pn', 24],
+    ['bg-gb', 25],
+    ['bg-lv', 26],
+    ['bg-pv', 27]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "bg-vt",
-            "value": 0
-        },
-        {
-            "hc-key": "bg-mt",
-            "value": 1
-        },
-        {
-            "hc-key": "bg-vr",
-            "value": 2
-        },
-        {
-            "hc-key": "bg-ky",
-            "value": 3
-        },
-        {
-            "hc-key": "bg-vd",
-            "value": 4
-        },
-        {
-            "hc-key": "bg-br",
-            "value": 5
-        },
-        {
-            "hc-key": "bg-ya",
-            "value": 6
-        },
-        {
-            "hc-key": "bg-tu",
-            "value": 7
-        },
-        {
-            "hc-key": "bg-rg",
-            "value": 8
-        },
-        {
-            "hc-key": "bg-sh",
-            "value": 9
-        },
-        {
-            "hc-key": "bg-do",
-            "value": 10
-        },
-        {
-            "hc-key": "bg-vn",
-            "value": 11
-        },
-        {
-            "hc-key": "bg-si",
-            "value": 12
-        },
-        {
-            "hc-key": "bg-rs",
-            "value": 13
-        },
-        {
-            "hc-key": "bg-bl",
-            "value": 14
-        },
-        {
-            "hc-key": "bg-sl",
-            "value": 15
-        },
-        {
-            "hc-key": "bg-sz",
-            "value": 16
-        },
-        {
-            "hc-key": "bg-kk",
-            "value": 17
-        },
-        {
-            "hc-key": "bg-pd",
-            "value": 18
-        },
-        {
-            "hc-key": "bg-pz",
-            "value": 19
-        },
-        {
-            "hc-key": "bg-sm",
-            "value": 20
-        },
-        {
-            "hc-key": "bg-kz",
-            "value": 21
-        },
-        {
-            "hc-key": "bg-sf",
-            "value": 22
-        },
-        {
-            "hc-key": "bg-sg",
-            "value": 23
-        },
-        {
-            "hc-key": "bg-pn",
-            "value": 24
-        },
-        {
-            "hc-key": "bg-gb",
-            "value": 25
-        },
-        {
-            "hc-key": "bg-lv",
-            "value": 26
-        },
-        {
-            "hc-key": "bg-pv",
-            "value": 27
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/bg/bg-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bg/bg-all.js">Bulgaria</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bg/bg-all.js">Bulgaria</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/bg/bg-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

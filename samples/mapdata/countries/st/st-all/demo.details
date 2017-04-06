@@ -1,4 +1,5 @@
 ---
  name: Sao Tome and Principe - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

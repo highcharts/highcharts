@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mu-6684', 0],
+    ['mu-6682', 1],
+    ['mu-6679', 2],
+    ['mu-6683', 3],
+    ['mu-6691', 4],
+    ['mu-6690', 5],
+    ['mu-90', 6],
+    ['mu-6689', 7],
+    ['mu-6692', 8],
+    ['mu-6680', 9],
+    ['mu-6686', 10],
+    ['mu-6685', 11],
+    ['mu-6693', 12],
+    ['mu-6681', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mu-6684",
-            "value": 0
-        },
-        {
-            "hc-key": "mu-6682",
-            "value": 1
-        },
-        {
-            "hc-key": "mu-6679",
-            "value": 2
-        },
-        {
-            "hc-key": "mu-6683",
-            "value": 3
-        },
-        {
-            "hc-key": "mu-6691",
-            "value": 4
-        },
-        {
-            "hc-key": "mu-6690",
-            "value": 5
-        },
-        {
-            "hc-key": "mu-90",
-            "value": 6
-        },
-        {
-            "hc-key": "mu-6689",
-            "value": 7
-        },
-        {
-            "hc-key": "mu-6692",
-            "value": 8
-        },
-        {
-            "hc-key": "mu-6680",
-            "value": 9
-        },
-        {
-            "hc-key": "mu-6686",
-            "value": 10
-        },
-        {
-            "hc-key": "mu-6685",
-            "value": 11
-        },
-        {
-            "hc-key": "mu-6693",
-            "value": 12
-        },
-        {
-            "hc-key": "mu-6681",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mu/mu-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mu/mu-all.js">Mauritius</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mu/mu-all.js">Mauritius</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mu/mu-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

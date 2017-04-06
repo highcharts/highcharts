@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sk-bl', 0],
+    ['sk-bc', 1],
+    ['sk-zi', 2],
+    ['sk-ni', 3],
+    ['sk-tc', 4],
+    ['sk-ta', 5],
+    ['sk-ki', 6],
+    ['sk-pv', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sk-bl",
-            "value": 0
-        },
-        {
-            "hc-key": "sk-bc",
-            "value": 1
-        },
-        {
-            "hc-key": "sk-zi",
-            "value": 2
-        },
-        {
-            "hc-key": "sk-ni",
-            "value": 3
-        },
-        {
-            "hc-key": "sk-tc",
-            "value": 4
-        },
-        {
-            "hc-key": "sk-ta",
-            "value": 5
-        },
-        {
-            "hc-key": "sk-ki",
-            "value": 6
-        },
-        {
-            "hc-key": "sk-pv",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sk/sk-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sk/sk-all.js">Slovakia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sk/sk-all.js">Slovakia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sk/sk-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

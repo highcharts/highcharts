@@ -1,81 +1,54 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['is-ne', 0],
+    ['is-sl', 1],
+    ['is-su', 2],
+    ['is-ho', 3],
+    ['is-6642', 4],
+    ['is-vf', 5],
+    ['is-al', 6],
+    ['is-vl', 7],
+    ['is-nv', 8]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "is-ne",
-            "value": 0
-        },
-        {
-            "hc-key": "is-sl",
-            "value": 1
-        },
-        {
-            "hc-key": "is-su",
-            "value": 2
-        },
-        {
-            "hc-key": "is-ho",
-            "value": 3
-        },
-        {
-            "hc-key": "is-6642",
-            "value": 4
-        },
-        {
-            "hc-key": "is-vf",
-            "value": 5
-        },
-        {
-            "hc-key": "is-al",
-            "value": 6
-        },
-        {
-            "hc-key": "is-vl",
-            "value": 7
-        },
-        {
-            "hc-key": "is-nv",
-            "value": 8
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/is/is-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/is/is-all.js">Iceland</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/is/is-all.js">Iceland</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/is/is-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

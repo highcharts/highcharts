@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -194,11 +194,23 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			if (labelOptions.align === undefined) {
 				labelOptions.align = 'right';
 			}
-			panes[key] = 1;
+			panes[key] = this;
 			return 'right';
 		}
 	}
 	return proceed.call(this, [].slice.call(arguments, 1));
+});
+
+// Clear axis from label panes (#6071)
+wrap(Axis.prototype, 'destroy', function (proceed) {
+	var chart = this.chart,
+		key = this.options && (this.options.top + ',' + this.options.height);
+
+	if (key && chart._labelPanes && chart._labelPanes[key] === this) {
+		delete chart._labelPanes[key];
+	}
+
+	return proceed.call(this, Array.prototype.slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -329,13 +341,10 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 		i;
 
 	if (path && toPath) {
-		if (
-			path.toString() === toPath.toString() || // flat band
-			to < this.min || from > this.max // outside the extremes
-		) {
+		if (path.toString() === toPath.toString()) {
 			// #6166
 			result = path;
-			result.hiddenLabel = true;
+			result.flat = true;
 		} else {
 			// Go over each subpath
 			for (i = 0; i < path.length; i += 6) {
@@ -348,7 +357,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 				);
 			}
 		}
-	} else { // undefined axis extremes
+	} else { // outside the axis area
 		result = null;
 	}
 
@@ -525,7 +534,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 });
 
 /* ****************************************************************************
- * Start value compare logic                                                  *
+ * Start value compare logic												  *
  *****************************************************************************/
 	
 /**
@@ -674,7 +683,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 };
 
 /* ****************************************************************************
- * End value compare logic                                                    *
+ * End value compare logic													*
  *****************************************************************************/
 
 

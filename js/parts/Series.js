@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -144,7 +144,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	states: { // states for the entire series
 		hover: {
 			//enabled: false,
-			animation: { // docs
+			animation: {
 				duration: 50
 			},
 			lineWidthPlus: 1,
@@ -171,9 +171,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		//valuePrefix: '',
 		//ySuffix: ''
 	//}
-	turboThreshold: 1000
+	turboThreshold: 1000,
 	// zIndex: null
-
+	findNearestPointBy: 'x'
 
 }, /** @lends Series.prototype */ {
 	isCartesian: true,
@@ -417,6 +417,19 @@ H.Series = H.seriesType('line', null, { // base series options
 			itemOptions.tooltip
 		);
 
+		// When shared tooltip, stickyTracking is true by default,
+		// unless user says otherwise.
+		this.stickyTracking = pick(
+			itemOptions.stickyTracking,
+			userPlotOptions[this.type] && userPlotOptions[this.type].stickyTracking,
+			userPlotOptions.series && userPlotOptions.series.stickyTracking,
+			(
+				this.tooltipOptions.shared && !this.noSharedTooltip ?
+				true :
+				options.stickyTracking
+			)
+		);
+		
 		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
@@ -805,8 +818,10 @@ H.Series = H.seriesType('line', null, { // base series options
 				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 				point.dataGroup = series.groupMap[i];
 			}
-			point.index = cursor; // For faster access in Point.update
-			points[i] = point;
+			if (point) { // #6279
+				point.index = cursor; // For faster access in Point.update
+				points[i] = point;
+			}
 		}
 
 		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when
@@ -859,7 +874,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			// visible range, consider y extremes
 			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.positiveValuesOnly || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
-				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
+				((xData[i] || x) >= xMin &&	(xData[i] || x) <= xMax);
 
 			if (validValue && withinRange) {
 
@@ -875,6 +890,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 			}
 		}
+
 		this.dataMin = arrayMin(activeYData);
 		this.dataMax = arrayMax(activeYData);
 	},
@@ -1086,7 +1102,6 @@ H.Series = H.seriesType('line', null, { // base series options
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
 				if (chart[sharedClipKey + 'm']) {
-					this.markerGroup.clip();
 					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 				}
 			}
@@ -1708,6 +1723,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		function setInvert() {
 			each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
+
+					// VML/HTML needs explicit attributes for flipping
+					if (chart.renderer.isVML) {
+						series[groupName].attr({
+							width: series.yAxis.len,
+							height: series.xAxis.len
+						});
+					}
+
 					series[groupName].width = series.yAxis.len;
 					series[groupName].height = series.xAxis.len;
 					series[groupName].invert(inverted);
@@ -1910,7 +1934,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * KD Tree && PointSearching Implementation
 	 */
 
-	kdDimensions: 1,
 	kdAxisArray: ['clientX', 'plotY'],
 
 	searchPoint: function (e, compareX) {
@@ -1937,7 +1960,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		this.buildingKdTree = true;
 
 		var series = this,
-			dimensions = series.kdDimensions;
+			dimensions = series.options.findNearestPointBy.indexOf('y') > -1 ?
+							2 : 1;
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
@@ -1989,7 +2013,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		var series = this,
 			kdX = this.kdAxisArray[0],
 			kdY = this.kdAxisArray[1],
-			kdComparer = compareX ? 'distX' : 'dist';
+			kdComparer = compareX ? 'distX' : 'dist',
+			kdDimensions = series.options.findNearestPointBy.indexOf('y') > -1 ?
+							2 : 1;
 
 		// Set the one and two dimensional distance on the point object
 		function setDistance(p1, p2) {
@@ -2039,8 +2065,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		if (this.kdTree) {
-			return _search(point,
-				this.kdTree, this.kdDimensions, this.kdDimensions);
+			return _search(point, this.kdTree, kdDimensions, kdDimensions);
 		}
 	}
 

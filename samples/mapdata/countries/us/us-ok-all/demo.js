@@ -1,353 +1,122 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ok-037', 0],
+    ['us-ok-081', 1],
+    ['us-ok-049', 2],
+    ['us-ok-051', 3],
+    ['us-ok-059', 4],
+    ['us-ok-151', 5],
+    ['us-ok-011', 6],
+    ['us-ok-017', 7],
+    ['us-ok-075', 8],
+    ['us-ok-015', 9],
+    ['us-ok-137', 10],
+    ['us-ok-141', 11],
+    ['us-ok-033', 12],
+    ['us-ok-083', 13],
+    ['us-ok-103', 14],
+    ['us-ok-001', 15],
+    ['us-ok-041', 16],
+    ['us-ok-107', 17],
+    ['us-ok-039', 18],
+    ['us-ok-009', 19],
+    ['us-ok-055', 20],
+    ['us-ok-057', 21],
+    ['us-ok-019', 22],
+    ['us-ok-095', 23],
+    ['us-ok-093', 24],
+    ['us-ok-073', 25],
+    ['us-ok-035', 26],
+    ['us-ok-123', 27],
+    ['us-ok-125', 28],
+    ['us-ok-131', 29],
+    ['us-ok-147', 30],
+    ['us-ok-071', 31],
+    ['us-ok-047', 32],
+    ['us-ok-021', 33],
+    ['us-ok-109', 34],
+    ['us-ok-023', 35],
+    ['us-ok-005', 36],
+    ['us-ok-087', 37],
+    ['us-ok-079', 38],
+    ['us-ok-061', 39],
+    ['us-ok-003', 40],
+    ['us-ok-077', 41],
+    ['us-ok-027', 42],
+    ['us-ok-045', 43],
+    ['us-ok-007', 44],
+    ['us-ok-031', 45],
+    ['us-ok-067', 46],
+    ['us-ok-119', 47],
+    ['us-ok-111', 48],
+    ['us-ok-145', 49],
+    ['us-ok-129', 50],
+    ['us-ok-043', 51],
+    ['us-ok-117', 52],
+    ['us-ok-143', 53],
+    ['us-ok-091', 54],
+    ['us-ok-069', 55],
+    ['us-ok-135', 56],
+    ['us-ok-101', 57],
+    ['us-ok-013', 58],
+    ['us-ok-089', 59],
+    ['us-ok-115', 60],
+    ['us-ok-063', 61],
+    ['us-ok-121', 62],
+    ['us-ok-029', 63],
+    ['us-ok-149', 64],
+    ['us-ok-025', 65],
+    ['us-ok-105', 66],
+    ['us-ok-113', 67],
+    ['us-ok-053', 68],
+    ['us-ok-085', 69],
+    ['us-ok-127', 70],
+    ['us-ok-139', 71],
+    ['us-ok-153', 72],
+    ['us-ok-065', 73],
+    ['us-ok-097', 74],
+    ['us-ok-099', 75],
+    ['us-ok-133', 76]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ok-037",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ok-081",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ok-049",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ok-051",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ok-059",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ok-151",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ok-011",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ok-017",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ok-075",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ok-015",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ok-137",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ok-141",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ok-033",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ok-083",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ok-103",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ok-001",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ok-041",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ok-107",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ok-039",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ok-009",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ok-055",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ok-057",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ok-019",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ok-095",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ok-093",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ok-073",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ok-035",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ok-123",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ok-125",
-            "value": 28
-        },
-        {
-            "hc-key": "us-ok-131",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ok-147",
-            "value": 30
-        },
-        {
-            "hc-key": "us-ok-071",
-            "value": 31
-        },
-        {
-            "hc-key": "us-ok-047",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ok-021",
-            "value": 33
-        },
-        {
-            "hc-key": "us-ok-109",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ok-023",
-            "value": 35
-        },
-        {
-            "hc-key": "us-ok-005",
-            "value": 36
-        },
-        {
-            "hc-key": "us-ok-087",
-            "value": 37
-        },
-        {
-            "hc-key": "us-ok-079",
-            "value": 38
-        },
-        {
-            "hc-key": "us-ok-061",
-            "value": 39
-        },
-        {
-            "hc-key": "us-ok-003",
-            "value": 40
-        },
-        {
-            "hc-key": "us-ok-077",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ok-027",
-            "value": 42
-        },
-        {
-            "hc-key": "us-ok-045",
-            "value": 43
-        },
-        {
-            "hc-key": "us-ok-007",
-            "value": 44
-        },
-        {
-            "hc-key": "us-ok-031",
-            "value": 45
-        },
-        {
-            "hc-key": "us-ok-067",
-            "value": 46
-        },
-        {
-            "hc-key": "us-ok-119",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ok-111",
-            "value": 48
-        },
-        {
-            "hc-key": "us-ok-145",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ok-129",
-            "value": 50
-        },
-        {
-            "hc-key": "us-ok-043",
-            "value": 51
-        },
-        {
-            "hc-key": "us-ok-117",
-            "value": 52
-        },
-        {
-            "hc-key": "us-ok-143",
-            "value": 53
-        },
-        {
-            "hc-key": "us-ok-091",
-            "value": 54
-        },
-        {
-            "hc-key": "us-ok-069",
-            "value": 55
-        },
-        {
-            "hc-key": "us-ok-135",
-            "value": 56
-        },
-        {
-            "hc-key": "us-ok-101",
-            "value": 57
-        },
-        {
-            "hc-key": "us-ok-013",
-            "value": 58
-        },
-        {
-            "hc-key": "us-ok-089",
-            "value": 59
-        },
-        {
-            "hc-key": "us-ok-115",
-            "value": 60
-        },
-        {
-            "hc-key": "us-ok-063",
-            "value": 61
-        },
-        {
-            "hc-key": "us-ok-121",
-            "value": 62
-        },
-        {
-            "hc-key": "us-ok-029",
-            "value": 63
-        },
-        {
-            "hc-key": "us-ok-149",
-            "value": 64
-        },
-        {
-            "hc-key": "us-ok-025",
-            "value": 65
-        },
-        {
-            "hc-key": "us-ok-105",
-            "value": 66
-        },
-        {
-            "hc-key": "us-ok-113",
-            "value": 67
-        },
-        {
-            "hc-key": "us-ok-053",
-            "value": 68
-        },
-        {
-            "hc-key": "us-ok-085",
-            "value": 69
-        },
-        {
-            "hc-key": "us-ok-127",
-            "value": 70
-        },
-        {
-            "hc-key": "us-ok-139",
-            "value": 71
-        },
-        {
-            "hc-key": "us-ok-153",
-            "value": 72
-        },
-        {
-            "hc-key": "us-ok-065",
-            "value": 73
-        },
-        {
-            "hc-key": "us-ok-097",
-            "value": 74
-        },
-        {
-            "hc-key": "us-ok-099",
-            "value": 75
-        },
-        {
-            "hc-key": "us-ok-133",
-            "value": 76
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-ok-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ok-all.js">Oklahoma</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ok-all.js">Oklahoma</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-ok-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

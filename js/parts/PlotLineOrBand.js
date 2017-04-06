@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -95,13 +95,10 @@ H.PlotLineOrBand.prototype = {
 		groupAttribs.zIndex = zIndex;
 		groupName += '-' + zIndex;
 
-		group = axis[groupName];
+		group = axis.plotLinesAndBandsGroups[groupName];
 		if (!group) {
-			axis[groupName] = group = renderer
-				.g('plot-' + groupName)
-				.attr(groupAttribs)
-				.clip(axis.plotLinesAndBandsClip)
-				.add();
+			axis.plotLinesAndBandsGroups[groupName] = group = renderer.g('plot-' + groupName)
+				.attr(groupAttribs).add();
 		}
 
 		// Create the path
@@ -152,7 +149,7 @@ H.PlotLineOrBand.prototype = {
 
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && 
-				axis.width > 0 && axis.height > 0 && !path.hiddenLabel) {
+				axis.width > 0 && axis.height > 0 && !path.flat) {
 			// apply defaults
 			optionsLabel = merge({
 				align: horiz && isBand && 'center',
@@ -178,8 +175,7 @@ H.PlotLineOrBand.prototype = {
 	renderLabel: function (optionsLabel, path, isBand, zIndex) {
 		var plotLine = this,
 			label = plotLine.label,
-			axis = plotLine.axis,
-			renderer = axis.chart.renderer,
+			renderer = plotLine.axis.chart.renderer,
 			attribs,
 			xs,
 			ys,
@@ -214,14 +210,14 @@ H.PlotLineOrBand.prototype = {
 		// #3000 changed to better handle choice between plotband or plotline
 		xs = [path[1], path[4], (isBand ? path[6] : path[1])];
 		ys = [path[2], path[5], (isBand ? path[7] : path[2])];
-		x = Math.max(arrayMin(xs), axis.left);
-		y = Math.max(arrayMin(ys), axis.top);
+		x = arrayMin(xs);
+		y = arrayMin(ys);
 
 		label.align(optionsLabel, false, {
 			x: x,
 			y: y,
-			width: Math.min(arrayMax(xs), axis.left + axis.width) - x,
-			height: Math.min(arrayMax(ys), axis.top + axis.height) - y
+			width: arrayMax(xs) - x,
+			height: arrayMax(ys) - y
 		});
 		label.show();
 	},
@@ -246,39 +242,34 @@ H.PlotLineOrBand.prototype = {
 H.AxisPlotLineOrBandExtension = {
 
 	/**
-	 * Return axis' clipping box for plot items
-	 */
-	getPlotLinesAndBandsClip: function () {
-		return {
-			x: this.left,
-			y: this.top,
-			width: this.width,
-			height: this.height
-		};
-	},
-
-	/**
 	 * Create the path for a plot band
 	 */
 	getPlotBandPath: function (from, to) {
 		var toPath = this.getPlotLinePath(to, null, null, true),
-			path = this.getPlotLinePath(from, null, null, true);
+			path   = this.getPlotLinePath(from, null, null, true),
+			// #4964 check if chart is inverted or plotband is on yAxis 
+			horiz  = this.horiz,
+			plus = 1,
+			outside =
+				(from < this.min && to < this.min) ||
+				(from > this.max && to > this.max);
 
 		if (path && toPath) {
-
+			
 			// Flat paths don't need labels (#3836)
-			// Or plotBand is outside the visible range
-			path.hiddenLabel = path.toString() === toPath.toString() ||
-				to < this.min || from > this.max;
+			if (outside) {
+				path.flat = path.toString() === toPath.toString();
+				plus = 0;
+			}
 
+			// Add 1 pixel, when coordinates are the same
 			path.push(
-				toPath[4],
-				toPath[5],
-				toPath[1],
-				toPath[2],
-				'z' // #5909
+				horiz && toPath[4] === path[4] ? toPath[4] + plus : toPath[4], 
+				!horiz && toPath[5] === path[5] ? toPath[5] + plus : toPath[5],
+				horiz && toPath[1] === path[1] ? toPath[1] + plus : toPath[1],
+				!horiz && toPath[2] === path[2] ? toPath[2] + plus : toPath[2]
 			);
-		} else { // no extremes
+		} else { // outside the axis area
 			path = null;
 		}
 

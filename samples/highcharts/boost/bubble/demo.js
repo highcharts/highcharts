@@ -12,9 +12,8 @@ for (i = 0; i < n; i += 1) {
     ]);
 }
 
-if (!Highcharts.Series.prototype.renderCanvas) {
-    console.error('Module not loaded');
-    return;
+if (!Highcharts.Series.prototype.renderCanvas) {    
+    throw 'Module not loaded';
 }
 
 console.time('bubble');
@@ -43,12 +42,20 @@ Highcharts.chart('container', {
     title: {
         text: 'Bubble chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
+
     legend: {
         enabled: false
     },
+
+    boost: {
+        useGPUTranslations: true,
+        usePreallocated: true
+    },
+
     series: [{
         type: 'bubble',
-        color: 'rgba(152,0,67,0.01)',
+        boostBlending: 'alpha',
+        color: 'rgba(152,0,67,0.5)',
         data: data,
         minSize: 1,
         maxSize: 10,

@@ -1,161 +1,74 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['dk', 0],
+    ['de', 1],
+    ['gl', 2],
+    ['fr', 3],
+    ['no', 4],
+    ['us', 5],
+    ['ca', 6],
+    ['hr', 7],
+    ['gb', 8],
+    ['ee', 9],
+    ['gr', 10],
+    ['nl', 11],
+    ['es', 12],
+    ['lt', 13],
+    ['it', 14],
+    ['tr', 15],
+    ['pl', 16],
+    ['sk', 17],
+    ['bg', 18],
+    ['lv', 19],
+    ['hu', 20],
+    ['lu', 21],
+    ['si', 22],
+    ['be', 23],
+    ['al', 24],
+    ['ro', 25],
+    ['pt', 26],
+    ['is', 27],
+    ['cz', 28]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "dk",
-            "value": 0
-        },
-        {
-            "hc-key": "de",
-            "value": 1
-        },
-        {
-            "hc-key": "gl",
-            "value": 2
-        },
-        {
-            "hc-key": "fr",
-            "value": 3
-        },
-        {
-            "hc-key": "no",
-            "value": 4
-        },
-        {
-            "hc-key": "us",
-            "value": 5
-        },
-        {
-            "hc-key": "ca",
-            "value": 6
-        },
-        {
-            "hc-key": "hr",
-            "value": 7
-        },
-        {
-            "hc-key": "gb",
-            "value": 8
-        },
-        {
-            "hc-key": "ee",
-            "value": 9
-        },
-        {
-            "hc-key": "gr",
-            "value": 10
-        },
-        {
-            "hc-key": "nl",
-            "value": 11
-        },
-        {
-            "hc-key": "es",
-            "value": 12
-        },
-        {
-            "hc-key": "lt",
-            "value": 13
-        },
-        {
-            "hc-key": "it",
-            "value": 14
-        },
-        {
-            "hc-key": "tr",
-            "value": 15
-        },
-        {
-            "hc-key": "pl",
-            "value": 16
-        },
-        {
-            "hc-key": "sk",
-            "value": 17
-        },
-        {
-            "hc-key": "bg",
-            "value": 18
-        },
-        {
-            "hc-key": "lv",
-            "value": 19
-        },
-        {
-            "hc-key": "hu",
-            "value": 20
-        },
-        {
-            "hc-key": "lu",
-            "value": 21
-        },
-        {
-            "hc-key": "si",
-            "value": 22
-        },
-        {
-            "hc-key": "be",
-            "value": 23
-        },
-        {
-            "hc-key": "al",
-            "value": 24
-        },
-        {
-            "hc-key": "ro",
-            "value": 25
-        },
-        {
-            "hc-key": "pt",
-            "value": 26
-        },
-        {
-            "hc-key": "is",
-            "value": 27
-        },
-        {
-            "hc-key": "cz",
-            "value": 28
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'custom/nato'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/nato.js">North Atlantic Treaty Organization</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title: {
-            text: 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/nato.js">North Atlantic Treaty Organization</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/nato'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

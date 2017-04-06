@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,21 +7,17 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
-import '../parts/CenteredSeriesMixin.js';
 import '../parts/Tick.js';
 import './Pane.js';
 var Axis = H.Axis,
-	CenteredSeriesMixin = H.CenteredSeriesMixin,
 	each = H.each,
 	extend = H.extend,
 	map = H.map,
 	merge = H.merge,
 	noop = H.noop,
-	Pane = H.Pane,
 	pick = H.pick,
 	pInt = H.pInt,
 	Tick = H.Tick,
-	splat = H.splat,
 	wrap = H.wrap,
 	
 
@@ -133,9 +129,7 @@ radialAxisMixin = {
 
 		// Title or label offsets are not counted
 		this.chart.axisOffset[this.side] = 0;
-
-		// Set the center array
-		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+		
 	},
 
 
@@ -227,7 +221,7 @@ radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+			this.pane.updateCenter(this);
 
 			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
 			if (this.isCircular) {
@@ -295,6 +289,7 @@ radialAxisMixin = {
 
 		// Circular grid bands
 		} else {
+
 			// Keep within bounds
 			from = Math.max(from, this.min);
 			to = Math.min(to, this.max);
@@ -415,8 +410,7 @@ radialAxisMixin = {
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
 wrap(axisProto, 'init', function (proceed, chart, userOptions) {
-	var axis = this,
-		angular = chart.angular,
+	var angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,
 		isHidden = angular && isX,
@@ -424,8 +418,8 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		options,
 		chartOptions = chart.options,
 		paneIndex = userOptions.pane || 0,
-		pane,
-		paneOptions;
+		pane = this.pane = chart.pane[paneIndex],
+		paneOptions = pane.options;
 
 	// Before prototype.init
 	if (angular) {
@@ -451,22 +445,16 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		this.isRadial = false;
 	}
 
+	// A pointer back to this axis to borrow geometry
+	if (isCircular) {
+		pane.axis = this;
+	}
+
 	// Run prototype.init
 	proceed.call(this, chart, userOptions);
 
 	if (!isHidden && (angular || polar)) {
 		options = this.options;
-
-		// Create the pane and set the pane options.
-		if (!chart.panes) {
-			chart.panes = [];
-		}
-		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			splat(chartOptions.pane)[paneIndex],
-			chart,
-			axis
-		);
-		paneOptions = pane.options;
 
 		// Start and end angle options are
 		// given in degrees relative to top, while internal computations are
@@ -491,26 +479,6 @@ wrap(axisProto, 'autoLabelAlign', function (proceed) {
 	if (!this.isRadial) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	} // else return undefined
-});
-
-/**
- * Wrap clipping box for plotLines and plotBands
- * @param   {Function} proceed
- */
-wrap(axisProto, 'getPlotLinesAndBandsClip', function (proceed) {
-	var center = this.center,
-		clip = proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (this.isRadial) {
-		clip = {
-			x: this.left + center[0] - center[2],
-			y: this.top + center[1] - center[2],
-			width: center[2] * 2,
-			height: center[2] * 2
-		};
-	}
-
-	return clip;
 });
 
 /**

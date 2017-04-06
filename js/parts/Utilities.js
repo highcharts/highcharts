@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -1827,7 +1827,7 @@ H.animate = function (el, params, opt) {
 		if (!end) {
 			end = params[prop];
 		}
-		if (end.match && end.match('px')) {
+		if (end && end.match && end.match('px')) {
 			end = end.replace(/px/g, ''); // #4351
 		}
 		fx.run(start, end, unit);

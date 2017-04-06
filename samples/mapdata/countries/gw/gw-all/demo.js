@@ -1,81 +1,54 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['gw-bm', 0],
+    ['gw-bl', 1],
+    ['gw-ga', 2],
+    ['gw-to', 3],
+    ['gw-bs', 4],
+    ['gw-ca', 5],
+    ['gw-oi', 6],
+    ['gw-qu', 7],
+    ['gw-ba', 8]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "gw-bm",
-            "value": 0
-        },
-        {
-            "hc-key": "gw-bl",
-            "value": 1
-        },
-        {
-            "hc-key": "gw-ga",
-            "value": 2
-        },
-        {
-            "hc-key": "gw-to",
-            "value": 3
-        },
-        {
-            "hc-key": "gw-bs",
-            "value": 4
-        },
-        {
-            "hc-key": "gw-ca",
-            "value": 5
-        },
-        {
-            "hc-key": "gw-oi",
-            "value": 6
-        },
-        {
-            "hc-key": "gw-qu",
-            "value": 7
-        },
-        {
-            "hc-key": "gw-ba",
-            "value": 8
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/gw/gw-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gw/gw-all.js">Guinea Bissau</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gw/gw-all.js">Guinea Bissau</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/gw/gw-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });
