@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "request": "*",
+        "colors": "*",
+        "to-markdown": "*",
+        "async": "*"
+    }
+}
