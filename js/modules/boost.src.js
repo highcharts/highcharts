@@ -114,8 +114,6 @@ var win = H.win,
 	Color = H.Color,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
-	nav = win.navigator,
-	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
 	each = H.each,
 	extend = H.extend,
 	addEvent = H.addEvent,
@@ -1598,7 +1596,7 @@ function GLRenderer(postRenderCallback) {
 		gl.viewport(0, 0, width, height);
 		shader.setPMatrix(orthoMatrix(width, height));
 
-		if (settings.lineWidth>1 && !isMSBrowser) {
+		if (settings.lineWidth > 1 && !H.isMS) {
 			gl.lineWidth(settings.lineWidth);
 		}
 		
