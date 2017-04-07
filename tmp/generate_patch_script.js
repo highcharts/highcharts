@@ -425,6 +425,7 @@ function doCompare(code, dump) {
         
         r.replace('{{MissingCodeCount}}', htmlReport.missingInCode.length)
         .replace('{{MissingCode}}', htmlReport.missingInCode.map(function (t) {
+            t.meta = t.meta || {};
             return '<tr><td>' + t + '</td></tr>';
             // return '<tr>' + 
             //         '<td><code>' + t.fullname + '</code></td>' +
@@ -432,6 +433,7 @@ function doCompare(code, dump) {
             //         '</tr>';
         }).join(''))
         .replace('{{MissingAPI}}', htmlReport.missingInAPI.map(function (t) {
+            t.meta = t.meta || {};
             return '<tr>' + 
                     '<td><code>' + t.meta.fullname + '</code></td>' +
                     '<td>' + t.meta.filename + ':' + t.meta.line + '</td>' +
@@ -439,6 +441,7 @@ function doCompare(code, dump) {
         }).join(''))
         .replace('{{MissingAPICount}}', htmlReport.missingInAPI.length)
         .replace('{{OutOfSync}}', htmlReport.outOfSync.map(function (t) {
+            t.meta = t.meta || {};
             return '<tr>' +
                     '<td><code>' + t.doclet.description + '</code></td>' +
                     '<td>' + t.meta.filename + ':' + t.meta.line + '</td>' +
