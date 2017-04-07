@@ -43,8 +43,8 @@
  *
  * Settings
  *	There are two ways of setting the boost threshold:
- *    - Per. series: boost based on number of points in individual series
- *    - Per. chart: boost based on the number of series 
+ *	- Per. series: boost based on number of points in individual series
+ *	- Per. chart: boost based on the number of series 
  *
  *  To set the series boost threshold, set seriesBoostThreshold on the chart object.
  *  To set the series-specific threshold, set boostThreshold on the series object.
@@ -97,7 +97,7 @@
   * @apioption series.boostThreshold
   */
 
- /* global Float32Array, Image */
+ /* global Float32Array */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -129,149 +129,149 @@ var win = H.win,
 
 // Register color names since GL can't render those directly.
 Color.prototype.names = {
-    aliceblue: '#f0f8ff',
-    antiquewhite: '#faebd7',
-    aqua: '#00ffff',
-    aquamarine: '#7fffd4',
-    azure: '#f0ffff',
-    beige: '#f5f5dc',
-    bisque: '#ffe4c4',
-    black: '#000000',
-    blanchedalmond: '#ffebcd',
-    blue: '#0000ff',
-    blueviolet: '#8a2be2',
-    brown: '#a52a2a',
-    burlywood: '#deb887',
-    cadetblue: '#5f9ea0',
-    chartreuse: '#7fff00',
-    chocolate: '#d2691e',
-    coral: '#ff7f50',
-    cornflowerblue: '#6495ed',
-    cornsilk: '#fff8dc',
-    crimson: '#dc143c',
-    cyan: '#00ffff',
-    darkblue: '#00008b',
-    darkcyan: '#008b8b',
-    darkgoldenrod: '#b8860b',
-    darkgray: '#a9a9a9',
-    darkgreen: '#006400',
-    darkkhaki: '#bdb76b',
-    darkmagenta: '#8b008b',
-    darkolivegreen: '#556b2f',
-    darkorange: '#ff8c00',
-    darkorchid: '#9932cc',
-    darkred: '#8b0000',
-    darksalmon: '#e9967a',
-    darkseagreen: '#8fbc8f',
-    darkslateblue: '#483d8b',
-    darkslategray: '#2f4f4f',
-    darkturquoise: '#00ced1',
-    darkviolet: '#9400d3',
-    deeppink: '#ff1493',
-    deepskyblue: '#00bfff',
-    dimgray: '#696969',
-    dodgerblue: '#1e90ff',
-    feldspar: '#d19275',
-    firebrick: '#b22222',
-    floralwhite: '#fffaf0',
-    forestgreen: '#228b22',
-    fuchsia: '#ff00ff',
-    gainsboro: '#dcdcdc',
-    ghostwhite: '#f8f8ff',
-    gold: '#ffd700',
-    goldenrod: '#daa520',
-    gray: '#808080',
-    green: '#008000',
-    greenyellow: '#adff2f',
-    honeydew: '#f0fff0',
-    hotpink: '#ff69b4',
-    indianred: '#cd5c5c',
-    indigo: '#4b0082',
-    ivory: '#fffff0',
-    khaki: '#f0e68c',
-    lavender: '#e6e6fa',
-    lavenderblush: '#fff0f5',
-    lawngreen: '#7cfc00',
-    lemonchiffon: '#fffacd',
-    lightblue: '#add8e6',
-    lightcoral: '#f08080',
-    lightcyan: '#e0ffff',
-    lightgoldenrodyellow: '#fafad2',
-    lightgrey: '#d3d3d3',
-    lightgreen: '#90ee90',
-    lightpink: '#ffb6c1',
-    lightsalmon: '#ffa07a',
-    lightseagreen: '#20b2aa',
-    lightskyblue: '#87cefa',
-    lightslateblue: '#8470ff',
-    lightslategray: '#778899',
-    lightsteelblue: '#b0c4de',
-    lightyellow: '#ffffe0',
-    lime: '#00ff00',
-    limegreen: '#32cd32',
-    linen: '#faf0e6',
-    magenta: '#ff00ff',
-    maroon: '#800000',
-    mediumaquamarine: '#66cdaa',
-    mediumblue: '#0000cd',
-    mediumorchid: '#ba55d3',
-    mediumpurple: '#9370d8',
-    mediumseagreen: '#3cb371',
-    mediumslateblue: '#7b68ee',
-    mediumspringgreen: '#00fa9a',
-    mediumturquoise: '#48d1cc',
-    mediumvioletred: '#c71585',
-    midnightblue: '#191970',
-    mintcream: '#f5fffa',
-    mistyrose: '#ffe4e1',
-    moccasin: '#ffe4b5',
-    navajowhite: '#ffdead',
-    navy: '#000080',
-    oldlace: '#fdf5e6',
-    olive: '#808000',
-    olivedrab: '#6b8e23',
-    orange: '#ffa500',
-    orangered: '#ff4500',
-    orchid: '#da70d6',
-    palegoldenrod: '#eee8aa',
-    palegreen: '#98fb98',
-    paleturquoise: '#afeeee',
-    palevioletred: '#d87093',
-    papayawhip: '#ffefd5',
-    peachpuff: '#ffdab9',
-    peru: '#cd853f',
-    pink: '#ffc0cb',
-    plum: '#dda0dd',
-    powderblue: '#b0e0e6',
-    purple: '#800080',
-    red: '#ff0000',
-    rosybrown: '#bc8f8f',
-    royalblue: '#4169e1',
-    saddlebrown: '#8b4513',
-    salmon: '#fa8072',
-    sandybrown: '#f4a460',
-    seagreen: '#2e8b57',
-    seashell: '#fff5ee',
-    sienna: '#a0522d',
-    silver: '#c0c0c0',
-    skyblue: '#87ceeb',
-    slateblue: '#6a5acd',
-    slategray: '#708090',
-    snow: '#fffafa',
-    springgreen: '#00ff7f',
-    steelblue: '#4682b4',
-    tan: '#d2b48c',
-    teal: '#008080',
-    thistle: '#d8bfd8',
-    tomato: '#ff6347',
-    turquoise: '#40e0d0',
-    violet: '#ee82ee',
-    violetred: '#d02090',
-    wheat: '#f5deb3',
-    white: '#ffffff',
-    whitesmoke: '#f5f5f5',
-    yellow: '#ffff00',
-    yellowgreen: '#9acd32'
+	aliceblue: '#f0f8ff',
+	antiquewhite: '#faebd7',
+	aqua: '#00ffff',
+	aquamarine: '#7fffd4',
+	azure: '#f0ffff',
+	beige: '#f5f5dc',
+	bisque: '#ffe4c4',
+	black: '#000000',
+	blanchedalmond: '#ffebcd',
+	blue: '#0000ff',
+	blueviolet: '#8a2be2',
+	brown: '#a52a2a',
+	burlywood: '#deb887',
+	cadetblue: '#5f9ea0',
+	chartreuse: '#7fff00',
+	chocolate: '#d2691e',
+	coral: '#ff7f50',
+	cornflowerblue: '#6495ed',
+	cornsilk: '#fff8dc',
+	crimson: '#dc143c',
+	cyan: '#00ffff',
+	darkblue: '#00008b',
+	darkcyan: '#008b8b',
+	darkgoldenrod: '#b8860b',
+	darkgray: '#a9a9a9',
+	darkgreen: '#006400',
+	darkkhaki: '#bdb76b',
+	darkmagenta: '#8b008b',
+	darkolivegreen: '#556b2f',
+	darkorange: '#ff8c00',
+	darkorchid: '#9932cc',
+	darkred: '#8b0000',
+	darksalmon: '#e9967a',
+	darkseagreen: '#8fbc8f',
+	darkslateblue: '#483d8b',
+	darkslategray: '#2f4f4f',
+	darkturquoise: '#00ced1',
+	darkviolet: '#9400d3',
+	deeppink: '#ff1493',
+	deepskyblue: '#00bfff',
+	dimgray: '#696969',
+	dodgerblue: '#1e90ff',
+	feldspar: '#d19275',
+	firebrick: '#b22222',
+	floralwhite: '#fffaf0',
+	forestgreen: '#228b22',
+	fuchsia: '#ff00ff',
+	gainsboro: '#dcdcdc',
+	ghostwhite: '#f8f8ff',
+	gold: '#ffd700',
+	goldenrod: '#daa520',
+	gray: '#808080',
+	green: '#008000',
+	greenyellow: '#adff2f',
+	honeydew: '#f0fff0',
+	hotpink: '#ff69b4',
+	indianred: '#cd5c5c',
+	indigo: '#4b0082',
+	ivory: '#fffff0',
+	khaki: '#f0e68c',
+	lavender: '#e6e6fa',
+	lavenderblush: '#fff0f5',
+	lawngreen: '#7cfc00',
+	lemonchiffon: '#fffacd',
+	lightblue: '#add8e6',
+	lightcoral: '#f08080',
+	lightcyan: '#e0ffff',
+	lightgoldenrodyellow: '#fafad2',
+	lightgrey: '#d3d3d3',
+	lightgreen: '#90ee90',
+	lightpink: '#ffb6c1',
+	lightsalmon: '#ffa07a',
+	lightseagreen: '#20b2aa',
+	lightskyblue: '#87cefa',
+	lightslateblue: '#8470ff',
+	lightslategray: '#778899',
+	lightsteelblue: '#b0c4de',
+	lightyellow: '#ffffe0',
+	lime: '#00ff00',
+	limegreen: '#32cd32',
+	linen: '#faf0e6',
+	magenta: '#ff00ff',
+	maroon: '#800000',
+	mediumaquamarine: '#66cdaa',
+	mediumblue: '#0000cd',
+	mediumorchid: '#ba55d3',
+	mediumpurple: '#9370d8',
+	mediumseagreen: '#3cb371',
+	mediumslateblue: '#7b68ee',
+	mediumspringgreen: '#00fa9a',
+	mediumturquoise: '#48d1cc',
+	mediumvioletred: '#c71585',
+	midnightblue: '#191970',
+	mintcream: '#f5fffa',
+	mistyrose: '#ffe4e1',
+	moccasin: '#ffe4b5',
+	navajowhite: '#ffdead',
+	navy: '#000080',
+	oldlace: '#fdf5e6',
+	olive: '#808000',
+	olivedrab: '#6b8e23',
+	orange: '#ffa500',
+	orangered: '#ff4500',
+	orchid: '#da70d6',
+	palegoldenrod: '#eee8aa',
+	palegreen: '#98fb98',
+	paleturquoise: '#afeeee',
+	palevioletred: '#d87093',
+	papayawhip: '#ffefd5',
+	peachpuff: '#ffdab9',
+	peru: '#cd853f',
+	pink: '#ffc0cb',
+	plum: '#dda0dd',
+	powderblue: '#b0e0e6',
+	purple: '#800080',
+	red: '#ff0000',
+	rosybrown: '#bc8f8f',
+	royalblue: '#4169e1',
+	saddlebrown: '#8b4513',
+	salmon: '#fa8072',
+	sandybrown: '#f4a460',
+	seagreen: '#2e8b57',
+	seashell: '#fff5ee',
+	sienna: '#a0522d',
+	silver: '#c0c0c0',
+	skyblue: '#87ceeb',
+	slateblue: '#6a5acd',
+	slategray: '#708090',
+	snow: '#fffafa',
+	springgreen: '#00ff7f',
+	steelblue: '#4682b4',
+	tan: '#d2b48c',
+	teal: '#008080',
+	thistle: '#d8bfd8',
+	tomato: '#ff6347',
+	turquoise: '#40e0d0',
+	violet: '#ee82ee',
+	violetred: '#d02090',
+	wheat: '#f5deb3',
+	white: '#ffffff',
+	whitesmoke: '#f5f5f5',
+	yellow: '#ffff00',
+	yellowgreen: '#9acd32'
 };
 
 
@@ -360,7 +360,7 @@ function GLShader(gl) {
 			'uniform float yAxisMin;',
 			'uniform float yAxisMinPad;',
 			'uniform float yAxisPointRange;',
-			'uniform float yAxisLen;',          
+			'uniform float yAxisLen;',		  
 			'uniform bool  yAxisPostTranslate;', 
 			'uniform float yAxisOrdinalSlope;',
 			'uniform float yAxisOrdinalOffset;', 
@@ -471,7 +471,7 @@ function GLShader(gl) {
 			'precision highp float;',
 			'uniform vec4 fillColor;',
 			'varying highp vec2 position;',  
-			'varying highp vec4 vColor;',    
+			'varying highp vec4 vColor;',	
   			'uniform sampler2D uSampler;',
   			'uniform bool isCircle;',
   			'uniform bool hasColor;',
@@ -896,7 +896,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		render: render,
 		allocate: allocate,
 		push: push
-	};    	
+	};		
 }
 
 /* Main renderer. Used to render series.
@@ -1022,7 +1022,7 @@ function GLRenderer(postRenderCallback) {
 	 * @param {number} width - the width of the viewport in pixels
 	 * @param {number} height - the height of the viewport in pixels
 	 */
-	function orthoMatrix(width, height) {     
+	function orthoMatrix(width, height) {	 
 		var near = 0, 
 			far = 1;
 		
@@ -1091,8 +1091,8 @@ function GLRenderer(postRenderCallback) {
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
-			closestLeft = {x: Number.MIN_VALUE, y: 0},
-			closestRight = {x: Number.MIN_VALUE, y: 0}
+			closestLeft = { x: Number.MIN_VALUE, y: 0 },
+			closestRight = { x: Number.MIN_VALUE, y: 0 }
 			;
 
 		if (options.boostData && options.boostData.length > 0) {			
@@ -1437,8 +1437,8 @@ function GLRenderer(postRenderCallback) {
 		function pushSupplementPoint(point) {
 			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
-				point.x = xAxis.toPixels(x, true);
-				point.y = yAxis.toPixels(y, true);
+				point.x = xAxis.toPixels(point.x, true);
+				point.y = yAxis.toPixels(point.y, true);
 			}
 
 			// We should only do this for lines, and we should ignore markers
@@ -1769,7 +1769,6 @@ function GLRenderer(postRenderCallback) {
 	 */
 	function init(canvas, noFlush) {
 		var i = 0,
-			activeContext,
 			contexts = [
 				'webgl', 
 				'experimental-webgl', 
@@ -1790,7 +1789,6 @@ function GLRenderer(postRenderCallback) {
 		for (; i < contexts.length; i++) {
 			gl = canvas.getContext(contexts[i]);
 			if (gl) {
-				activeContext = contexts[i];
 				break;
 			}
 		}
@@ -1798,7 +1796,7 @@ function GLRenderer(postRenderCallback) {
 		if (gl) {   
 			if (!noFlush) {
 				flush();				
-			}     	
+			}	 	
 		} else {
 			return false;
 		}
@@ -1851,7 +1849,7 @@ function GLRenderer(postRenderCallback) {
 			textureIsReady = true;
 		} catch (e) {}
 
-	 	isInited = true;
+		isInited = true;
 
 		if (settings.timeSetup) {
 			console.timeEnd('gl setup'); //eslint-disable-line no-console
@@ -2261,6 +2259,25 @@ function hasWebGLSupport() {
 	return false;
 }
 
+/* Used for treemap|heatmap.drawPoints */
+function pointDrawHandler(proceed) {
+	if (!isSeriesBoosting(this)) {
+		return proceed.call(this);
+	}
+
+	//Make sure we have a valid OGL context
+	var renderer = createAndAttachRenderer(this.chart, this);
+	
+	if (renderer) {
+		allocateIfNotSeriesBoosting(renderer, this);
+		renderer.pushSeries(this);				
+	}		
+	
+	renderIfNotSeriesBoosting(renderer, this);
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // We're wrapped in a closure, so just return if there's no webgl support
 
@@ -2273,7 +2290,7 @@ if (!hasWebGLSupport()) {
 	}
 } else {
 
-	////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////
 	// GL-SPECIFIC WRAPPINGS FOLLOWS
 
 	/** If the series is a heatmap or treemap, or if the series is not boosting
@@ -2357,34 +2374,20 @@ if (!hasWebGLSupport()) {
 				lastClientX,
 				sampling = !!series.sampling,
 				points,
-				// r = options.marker && options.marker.radius,
-				// cvsDrawPoint = this.cvsDrawPoint,
-				// cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
-				// cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
 				enableMouseTracking = options.enableMouseTracking !== false,
-				// lastPoint,
 				threshold = options.threshold,
 				yBottom = yAxis.getThreshold(threshold),
-				hasThreshold = isNumber(threshold),
-				// translatedThreshold = yBottom,
-				// doFill = this.fill,
 				isRange = series.pointArrayMap && 
-						series.pointArrayMap.join(',') === 'low,high',
+					series.pointArrayMap.join(',') === 'low,high',
 				isStacked = !!options.stacking,
 				cropStart = series.cropStart || 0,
 				requireSorting = series.requireSorting,
-				wasNull,
-				connectNulls = options.connectNulls,
 				useRaw = !xData,
 				minVal,
 				maxVal,
 				minI,
 				maxI,			
-				// fillColor = series.fillOpacity ?
-				// 		new Color(series.color).setOpacity(
-				// 				pick(options.fillOpacity, 0.75)
-				// 			).get() : series.color,
-
+				
 				addKDPoint = function (clientX, plotY, i) {
 					//Shaves off about 60ms compared to repeated concatination
 					index = clientX + ',' + plotY;					
@@ -2495,8 +2498,8 @@ if (!hasWebGLSupport()) {
 
 					if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
-						// We use ceil to allow the KD tree to work with sub pixels,
-						// which can be used in boost to space pixels
+						// We use ceil to allow the KD tree to work with sub
+						// pixels, which can be used in boost to space pixels
 						clientX = Math.ceil(xAxis.toPixels(x, true));
 
 						if (sampling) {
@@ -2533,7 +2536,6 @@ if (!hasWebGLSupport()) {
 							addKDPoint(clientX, plotY, i);
 						}
 					}
-					wasNull = isNull && !connectNulls;
 				}
 
 				return !chartDestroyed;
@@ -2542,12 +2544,13 @@ if (!hasWebGLSupport()) {
 			function doneProcessing() {
 				fireEvent(series, 'renderedCanvas');
 				// Pass tests in Pointer. 
-				// Replace this with a single property, and replace when zooming in
-				// below boostThreshold.
+				// Replace this with a single property, and replace when zooming
+				// in below boostThreshold.
 				series.directTouch = false;
 				series.options.stickyTracking = true;
 
-				delete series.buildKDTree; // Go back to prototype, ready to build
+				// Go back to prototype, ready to build
+				delete series.buildKDTree;
 				series.buildKDTree();
 			}
 
@@ -2561,26 +2564,9 @@ if (!hasWebGLSupport()) {
 		}
 	});
 
-	/* Used for treemap|heatmap.drawPoints */
-	function pointDrawHandler(proceed) {
-		if (!isSeriesBoosting(this)) {
-			return proceed.call(this);
-		}
-
-		//Make sure we have a valid OGL context
-		var renderer = createAndAttachRenderer(this.chart, this);
-		
-		if (renderer) {
-			allocateIfNotSeriesBoosting(renderer, this);
-			renderer.pushSeries(this);				
-		}		
-		
-		renderIfNotSeriesBoosting(renderer, this);
-	}
-
 	/*
-	 * We need to handle heatmaps separatly, since we can't perform the size/color
-	 * calculations in the shader easily.
+	 * We need to handle heatmaps separatly, since we can't perform the
+	 * size/color calculations in the shader easily.
 	 *
 	 * This likely needs future optimization.
 	 *
@@ -2595,17 +2581,22 @@ if (!hasWebGLSupport()) {
 	);
 
 	if (seriesTypes.bubble) {
-		// By default, the bubble series does not use the KD-tree, so force it to.
+		// By default, the bubble series does not use the KD-tree, so force it
+		// to.
 		delete seriesTypes.bubble.prototype.buildKDTree;
 		seriesTypes.bubble.prototype.directTouch = false;
 		
 		// Needed for markers to work correctly
-		wrap(seriesTypes.bubble.prototype, 'markerAttribs', function (proceed) {
-			if (isSeriesBoosting(this)) {
-				return false;
+		wrap(
+			seriesTypes.bubble.prototype,
+			'markerAttribs',
+			function (proceed) {
+				if (isSeriesBoosting(this)) {
+					return false;
+				}
+				return proceed.apply(this, [].slice.call(arguments, 1));
 			}
-			return proceed.apply(this, [].slice.call(arguments, 1));
-		});
+		);
 	}
 
 	seriesTypes.scatter.prototype.fill = true;
