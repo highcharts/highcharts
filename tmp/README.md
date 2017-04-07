@@ -31,3 +31,5 @@ as the input for the documentation generator.
 Once you have that file, go to [the api-gen github page](https://github.com/highcharts/api-docs) for further instructions.
 
 Note that the API front-end is not done as of yet (07/04).
+
+**Remember to copy `supplemental.docs.js` outputted by the patch generator script to somewhere where jsdoc can find it before running jsdoc!**
