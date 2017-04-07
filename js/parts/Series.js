@@ -405,16 +405,22 @@ H.Series = H.seriesType('line', null, { // base series options
 			itemOptions
 		);
 
-		// The tooltip options are merged between global and series specific options
+		// The tooltip options are merged between global and series specific
+		// options. Importance order asscendingly:
+		// globals: (1)tooltip, (2)plotOptions.series, (3)plotOptions[this.type]
+		// init userOptions with possible later updates: 4-6 like 1-3 and
+		// (7)this series options
 		this.tooltipOptions = merge(
-			defaultOptions.tooltip,
-			defaultOptions.plotOptions[this.type].tooltip,
-			userOptions.tooltip,
-			userPlotOptions.series && userPlotOptions.series.tooltip,
-			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
-			itemOptions.tooltip
+			defaultOptions.tooltip, // 1
+			defaultOptions.plotOptions.series &&
+				defaultOptions.plotOptions.series.tooltip, // 2
+			defaultOptions.plotOptions[this.type].tooltip, // 3
+			chartOptions.tooltip.userOptions, // 4
+			plotOptions.series && plotOptions.series.tooltip, // 5
+			plotOptions[this.type].tooltip, // 6
+			itemOptions.tooltip // 7
 		);
-
+		
 		// When shared tooltip, stickyTracking is true by default,
 		// unless user says otherwise.
 		this.stickyTracking = pick(

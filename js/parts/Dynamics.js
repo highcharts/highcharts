@@ -191,7 +191,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * extended from plugins.
 	 */
 	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
-		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
+		'tooltip'],
 
 	/**
 	 * Chart.update function that takes the whole options stucture.
@@ -248,6 +249,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 			/*= } =*/
 		}
+
+		// Moved up, because tooltip needs updated plotOptions (#6218)
+		/*= if (build.classic) { =*/
+		if (options.colors) {
+			this.options.colors = options.colors;
+		}
+		/*= } =*/
+
+		if (options.plotOptions) {
+			merge(true, this.options.plotOptions, options.plotOptions);
+		}
 		
 		// Some option stuctures correspond one-to-one to chart objects that have
 		// update methods, for example
@@ -271,16 +283,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries) !== -1) {
 				updateAllSeries = true;
 			}
-		}
-
-		/*= if (build.classic) { =*/
-		if (options.colors) {
-			this.options.colors = options.colors;
-		}
-		/*= } =*/
-
-		if (options.plotOptions) {
-			merge(true, this.options.plotOptions, options.plotOptions);
 		}
 
 		// Setters for collections. For axes and series, each item is referred

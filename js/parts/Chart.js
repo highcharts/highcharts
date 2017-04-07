@@ -90,10 +90,27 @@ Chart.prototype = {
 
 		// Handle regular options
 		var options,
-			seriesOptions = userOptions.series; // skip merging data points to increase performance
+			type,
+			seriesOptions = userOptions.series, // skip merging data points to increase performance
+			userPlotOptions = userOptions.plotOptions || {};
 
 		userOptions.series = null;
 		options = merge(defaultOptions, userOptions); // do the merge
+
+		// Override (by copy of user options) or clear tooltip options
+		// in chart.options.plotOptions (#6218)
+		for (type in options.plotOptions) {
+			options.plotOptions[type].tooltip = (
+				userPlotOptions[type] &&
+				merge(userPlotOptions[type].tooltip) // override by copy
+			) || undefined; // or clear
+		}
+		// User options have higher priority than default options (#6218).
+		// In case of exporting: path is changed
+		options.tooltip.userOptions = (userOptions.chart &&
+			userOptions.chart.forExport && userOptions.tooltip.userOptions) ||
+			userOptions.tooltip;
+
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
