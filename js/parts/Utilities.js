@@ -1544,6 +1544,26 @@ H.each = function (arr, fn, ctx) { // modern browsers
 };
 
 /**
+ * Iterate over object key pairs in an object.
+ *
+ * @function #objectEach
+ * @param  {Object}   obj - The object to iterate over.
+ * @param  {Function} fn  - The iterator callback. It passes three arguments:
+ * * value - The property value.
+ * * key - The property key.
+ * * obj - The object that objectEach is being applied to.
+ * @param  {Object}   ctx The context
+ */
+H.objectEach = function (obj, fn, ctx) {
+	var key;
+	for (key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			fn.call(ctx, obj[key], key, obj);
+		}
+	}
+};
+
+/**
  * Add an event listener.
  *
  * @function #addEvent
