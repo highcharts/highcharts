@@ -60,3 +60,9 @@ nbproject/
 samples/highcharts/common-js/browserify/demo.js
 samples/highcharts/common-js/webpack/demo.js
 /samples/cloud/charts
+
+/tmp/report.html
+
+/tmp/missing.in.code.json
+
+/tmp/processed.api.json
