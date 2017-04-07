@@ -6,7 +6,7 @@ This folder contains the one-off scripts required to automagically add doclets t
 - Run npm install in this (`tmp/`) folder
 - Run JSDoc in the root highcharts repository: `jsdoc js/modules js/parts js/parts-3d js/parts-more -c jsdoc.json`
 - Then run `node generate_patch_script.js`: this creates `patch.json`
-- Then run `patch.js` to patch the source code
+- Then run `node patch.js` to patch the source code
 
 ## The files
 
