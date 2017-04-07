@@ -464,15 +464,6 @@ function doCompare(code, dump) {
 
 console.log('API Patch Generator'.green);
 
-if (args.length <= 2) {
-    console.log('');
-    console.log('Generates a patch document for patching the options with the data from the API.'.gray);
-    console.log('');
-    console.log('Usage: generate_patch_script.js <dictionary>'.bold);
-    console.log('');
-    process.exit();
-}
-
 fs.readFile(__dirname + '/../tree.json', function (err, data) {
     if (err) {
         return console.log('ERROR: no tree found. Have you ran JSDoc?');
