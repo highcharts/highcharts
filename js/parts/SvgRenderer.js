@@ -35,6 +35,7 @@ var SVGElement,
 	isWebKit = H.isWebKit,
 	merge = H.merge,
 	noop = H.noop,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	pInt = H.pInt,
 	removeEvent = H.removeEvent,
@@ -192,7 +193,6 @@ SVGElement.prototype = {
 			stopColor,
 			stopOpacity,
 			radialReference,
-			n,
 			id,
 			key = [],
 			value;
@@ -236,14 +236,14 @@ SVGElement.prototype = {
 			}
 
 			// Build the unique key to detect whether we need to create a new element (#1282)
-			for (n in gradAttr) {
+			objectEach(gradAttr, function (val, n) {
 				if (n !== 'id') {
-					key.push(n, gradAttr[n]);
+					key.push(n, val);
 				}
-			}
-			for (n in stops) {
-				key.push(stops[n]);
-			}
+			});
+			objectEach(stops, function (val) {
+				key.push(val);
+			});
 			key = key.join(',');
 
 			// Check if a gradient object with the same config object is created within this renderer
@@ -461,7 +461,6 @@ SVGElement.prototype = {
 	 */
 	attr: function (hash, val, complete, continueAnimation) {
 		var key,
-			value,
 			element = this.element,
 			hasSetSymbolSize,
 			ret = this,
@@ -482,21 +481,20 @@ SVGElement.prototype = {
 		// setter
 		} else {
 
-			for (key in hash) {
-				value = hash[key];
+			objectEach(hash, function (val, key) {
 				skipAttr = false;
-
+				
 				// Unless .attr is from the animator update, stop current
 				// running animation of this property
 				if (!continueAnimation) {
 					stop(this, key);
 				}
-
+				
 				// Special handling of symbol attributes
 				if (
 					this.symbolName &&
 					/^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)$/
-						.test(key)
+					.test(key)
 				) {
 					if (!hasSetSymbolSize) {
 						this.symbolAttr(hash);
@@ -504,23 +502,23 @@ SVGElement.prototype = {
 					}
 					skipAttr = true;
 				}
-
+				
 				if (this.rotation && (key === 'x' || key === 'y')) {
 					this.doTransform = true;
 				}
-
+				
 				if (!skipAttr) {
 					setter = this[key + 'Setter'] || this._defaultSetter;
-					setter.call(this, value, key, element);
-
+					setter.call(this, val, key, element);
+					
 					/*= if (build.classic) { =*/
 					// Let the shadow follow the main element
 					if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-						this.updateShadows(key, value, setter);
+						this.updateShadows(key, val, setter);
 					}
 					/*= } =*/
 				}
-			}
+			}, this);
 
 			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
 			// of attributes.
@@ -669,7 +667,6 @@ SVGElement.prototype = {
 	crisp: function (rect, strokeWidth) {
 
 		var wrapper = this,
-			key,
 			attribs = {},
 			normalizer;
 
@@ -685,11 +682,11 @@ SVGElement.prototype = {
 			rect.strokeWidth = strokeWidth;
 		}
 
-		for (key in rect) {
-			if (wrapper[key] !== rect[key]) { // only set attribute if changed
-				wrapper[key] = attribs[key] = rect[key];
+		objectEach(rect, function (val, key) {
+			if (wrapper[key] !== val) { // only set attribute if changed
+				wrapper[key] = attribs[key] = val;
 			}
-		}
+		});
 
 		return attribs;
 	},
@@ -707,7 +704,6 @@ SVGElement.prototype = {
 			newStyles = {},
 			elem = this.element,
 			textWidth,
-			n,
 			serializedCss = '',
 			hyphenate,
 			hasNew = !oldStyles,
@@ -724,12 +720,12 @@ SVGElement.prototype = {
 
 		// Filter out existing styles to increase performance (#2640)
 		if (oldStyles) {
-			for (n in styles) {
-				if (styles[n] !== oldStyles[n]) {
-					newStyles[n] = styles[n];
+			objectEach(styles, function (style, n) {
+				if (style !== oldStyles[n]) {
+					newStyles[n] = style;
 					hasNew = true;
 				}
-			}
+			});
 		}
 		if (hasNew) {
 
@@ -764,13 +760,13 @@ SVGElement.prototype = {
 				hyphenate = function (a, b) {
 					return '-' + b.toLowerCase();
 				};
-				for (n in styles) {
+				objectEach(styles, function (style, n) {
 					if (inArray(n, svgPseudoProps) === -1) {
 						serializedCss +=
-							n.replace(/([A-Z])/g, hyphenate) + ':' +
-							styles[n] + ';';
+						n.replace(/([A-Z])/g, hyphenate) + ':' +
+						style + ';';
 					}
-				}
+				});
 				if (serializedCss) {
 					attr(elem, 'style', serializedCss); // #1881
 				}
@@ -1384,7 +1380,6 @@ SVGElement.prototype = {
 			element = wrapper.element || {},
 			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
 			grandParent,
-			key,
 			i;
 
 		// remove events
@@ -1436,9 +1431,9 @@ SVGElement.prototype = {
 			erase(wrapper.renderer.alignedObjects, wrapper);
 		}
 
-		for (key in wrapper) {
+		objectEach(wrapper, function (val, key) {
 			delete wrapper[key];
-		}
+		});
 
 		return null;
 	},
@@ -1903,15 +1898,14 @@ SVGRenderer.prototype = {
 			var ret;
 			each(splat(config), function (item) {
 				var node = ren.createElement(item.tagName),
-					key,
 					attr = {};
 
 				// Set attributes
-				for (key in item) {
+				objectEach(item, function (val, key) {
 					if (key !== 'tagName' && key !== 'children' && key !== 'textContent') {
-						attr[key] = item[key];
+						attr[key] = val;
 					}
-				}
+				});
 				node.attr(attr);
 
 				// Add to the tree

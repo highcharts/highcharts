@@ -21,6 +21,7 @@ var noop = H.noop,
 	each = H.each,
 	extend = H.extend,
 	format = H.format,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	wrap = H.wrap,
 	Chart = H.Chart,
@@ -630,15 +631,11 @@ H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) 
  * Drill down to a given category. This is the same as clicking on an axis label.
  */
 H.Axis.prototype.drilldownCategory = function (x, e) {
-	var key,
-		point,
-		ddPointsX = this.getDDPoints(x);
-	for (key in ddPointsX) {
-		point = ddPointsX[key];
+	objectEach(this.getDDPoints(x), function (point) {
 		if (point && point.series && point.series.visible && point.doDrilldown) { // #3197
 			point.doDrilldown(true, x, e);
 		}
-	}
+	});
 	this.chart.applyDrilldown();
 };
 
@@ -777,21 +774,21 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 });
 
 // Mark the trackers with a pointer 
-var type, 
-	drawTrackerWrapper = function (proceed) {
-		proceed.call(this);
-		each(this.points, function (point) {
-			if (point.drilldown && point.graphic) {
-				point.graphic.addClass('highcharts-drilldown-point');
+var drawTrackerWrapper = function (proceed) {
+	proceed.call(this);
+	each(this.points, function (point) {
+		if (point.drilldown && point.graphic) {
+			point.graphic.addClass('highcharts-drilldown-point');
 
-				/*= if (build.classic) { =*/
-				point.graphic.css({ cursor: 'pointer' });
-				/*= } =*/
-			}
-		});
-	};
-for (type in seriesTypes) {
-	if (seriesTypes[type].prototype.supportsDrilldown) {
-		wrap(seriesTypes[type].prototype, 'drawTracker', drawTrackerWrapper);
+			/*= if (build.classic) { =*/
+			point.graphic.css({ cursor: 'pointer' });
+			/*= } =*/
+		}
+	});
+};
+
+objectEach(seriesTypes, function (seriesType) {
+	if (seriesType.prototype.supportsDrilldown) {
+		wrap(seriesType.prototype, 'drawTracker', drawTrackerWrapper);
 	}
-}
+});

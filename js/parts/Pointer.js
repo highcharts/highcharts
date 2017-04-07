@@ -847,27 +847,27 @@ H.Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var prop;
-		
-		if (this.unDocMouseMove) {
-			this.unDocMouseMove();
+		var pointer = this;
+
+		if (pointer.unDocMouseMove) {
+			pointer.unDocMouseMove();
 		}
 
 		removeEvent(
-			this.chart.container,
+			pointer.chart.container,
 			'mouseleave',
-			this.onContainerMouseLeave
+			pointer.onContainerMouseLeave
 		);
 		if (!H.chartCount) {
-			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+			removeEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+			removeEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
 		}
 
 		// memory and CPU leak
-		clearInterval(this.tooltipTimeout);
+		clearInterval(pointer.tooltipTimeout);
 
-		for (prop in this) {
-			this[prop] = null;
-		}
+		H.objectEach(pointer, function (val, prop) {
+			pointer[prop] = null;
+		});
 	}
 };

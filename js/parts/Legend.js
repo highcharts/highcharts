@@ -109,8 +109,7 @@ Legend.prototype = {
 			textColor = visible ? options.itemStyle.color : hiddenColor,
 			symbolColor = visible ? (item.color || hiddenColor) : hiddenColor,
 			markerOptions = item.options && item.options.marker,
-			symbolAttr = { fill: symbolColor },
-			key;
+			symbolAttr = { fill: symbolColor };
 
 		if (legendItem) {
 			legendItem.css({
@@ -129,9 +128,9 @@ Legend.prototype = {
 				//symbolAttr.stroke = symbolColor;
 				symbolAttr = item.pointAttribs();
 				if (!visible) {
-					for (key in symbolAttr) {
+					H.objectEach(symbolAttr, function (val, key) {
 						symbolAttr[key] = hiddenColor;
-					}
+					});
 				}
 			}
 

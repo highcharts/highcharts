@@ -189,8 +189,7 @@ H.Fx.prototype = {
 			elem = this.elem,
 			complete = options.complete,
 			duration = options.duration,
-			curAnim = options.curAnim,
-			i;
+			curAnim = options.curAnim;
 		
 		if (elem.attr && !elem.element) { // #2616, element is destroyed
 			ret = false;
@@ -203,11 +202,12 @@ H.Fx.prototype = {
 			curAnim[this.prop] = true;
 
 			done = true;
-			for (i in curAnim) {
-				if (curAnim[i] !== true) {
+			
+			H.objectEach(curAnim, function (val) {
+				if (val !== true) {
 					done = false;
 				}
-			}
+			});
 
 			if (done && complete) {
 				complete.call(elem);
@@ -434,29 +434,24 @@ H.merge = function () {
 		len,
 		ret = {},
 		doCopy = function (copy, original) {
-			var value, key;
-
 			// An object is replacing a primitive
 			if (typeof copy !== 'object') {
 				copy = {};
 			}
 
-			for (key in original) {
-				if (original.hasOwnProperty(key)) {
-					value = original[key];
-
-					// Copy the contents of objects, but not arrays or DOM nodes
-					if (H.isObject(value, true) &&
-							key !== 'renderTo' &&
-							typeof value.nodeType !== 'number') {
-						copy[key] = doCopy(copy[key] || {}, value);
-
+			H.objectEach(original, function (value, key) {
+				
+				// Copy the contents of objects, but not arrays or DOM nodes
+				if (H.isObject(value, true) &&
+				key !== 'renderTo' &&
+				typeof value.nodeType !== 'number') {
+					copy[key] = doCopy(copy[key] || {}, value);
+					
 					// Primitives and arrays are copied over directly
-					} else {
-						copy[key] = original[key];
-					}
+				} else {
+					copy[key] = original[key];
 				}
-			}
+			});
 			return copy;
 		};
 
@@ -581,8 +576,7 @@ H.defined = function (obj) {
  * @returns {*} When used as a getter, return the value.
  */
 H.attr = function (elem, prop, value) {
-	var key,
-		ret;
+	var ret;
 
 	// if the prop is a string
 	if (H.isString(prop)) {
@@ -597,9 +591,9 @@ H.attr = function (elem, prop, value) {
 
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (H.defined(prop) && H.isObject(prop)) {
-		for (key in prop) {
-			elem.setAttribute(key, prop[key]);
-		}
+		H.objectEach(prop, function (val, key) {
+			elem.setAttribute(key, val);
+		});
 	}
 	return ret;
 };
@@ -839,7 +833,6 @@ H.dateFormat = function (format, timestamp, capitalize) {
 
 	var D = H.Date,
 		date = new D(timestamp - H.getTZOffset(timestamp)),
-		key, // used in for constuct below
 		// get the basic time values
 		hours = date[D.hcGetHours](),
 		day = date[D.hcGetDay](),
@@ -907,17 +900,16 @@ H.dateFormat = function (format, timestamp, capitalize) {
 
 
 	// Do the replaces
-	for (key in replacements) {
+	H.objectEach(replacements, function (val, key) {
 		// Regex would do it in one line, but this is faster
 		while (format.indexOf('%' + key) !== -1) {
 			format = format.replace(
 				'%' + key,
-				typeof replacements[key] === 'function' ?
-					replacements[key](timestamp) :
-					replacements[key]
+				typeof val === 'function' ? val(timestamp) : val
 			);
 		}
-	}
+		
+	});
 
 	// Optionally capitalize the string and return
 	return capitalize ?
@@ -1201,17 +1193,16 @@ H.arrayMax = function (data) {
  * @returns {void}
  */
 H.destroyObjectProperties = function (obj, except) {
-	var n;
-	for (n in obj) {
+	H.objectEach(obj, function (val, n) {
 		// If the object is non-null and destroy is defined
-		if (obj[n] && obj[n] !== except && obj[n].destroy) {
+		if (val && val !== except && val.destroy) {
 			// Invoke the destroy
-			obj[n].destroy();
+			val.destroy();
 		}
-
+		
 		// Delete the property from the object.
 		delete obj[n];
-	}
+	});
 };
 
 
@@ -1642,8 +1633,7 @@ H.removeEvent = function (el, type, fn) {
 
 	function removeAllEvents() {
 		var types,
-			len,
-			n;
+			len;
 
 		if (!el.nodeName) {
 			return; // break on non-DOM events
@@ -1656,14 +1646,14 @@ H.removeEvent = function (el, type, fn) {
 			types = hcEvents;
 		}
 
-		for (n in types) {
+		H.objectEach(types, function (val, n) {
 			if (hcEvents[n]) {
 				len = hcEvents[n].length;
 				while (len--) {
 					removeOneEvent(n, hcEvents[n][len]);
 				}
 			}
-		}
+		});
 	}
 
 	if (hcEvents) {
@@ -1799,8 +1789,7 @@ H.animate = function (el, params, opt) {
 		unit = '',
 		end,
 		fx,
-		args,
-		prop;
+		args;
 
 	if (!H.isObject(opt)) { // Number or undefined/null
 		args = arguments;
@@ -1818,14 +1807,13 @@ H.animate = function (el, params, opt) {
 		(Math[opt.easing] || Math.easeInOutSine);
 	opt.curAnim = H.merge(params);
 
-	for (prop in params) {
-
+	H.objectEach(params, function (val, prop) {
 		// Stop current running animation of this property
 		H.stop(el, prop);
-
+		
 		fx = new H.Fx(el, opt, prop);
 		end = null;
-
+		
 		if (prop === 'd') {
 			fx.paths = fx.initPath(
 				el,
@@ -1843,15 +1831,15 @@ H.animate = function (el, params, opt) {
 				unit = 'px';
 			}
 		}
-
+		
 		if (!end) {
-			end = params[prop];
+			end = val;
 		}
 		if (end && end.match && end.match('px')) {
 			end = end.replace(/px/g, ''); // #4351
 		}
 		fx.run(start, end, unit);
-	}
+	});
 };
 
 /**

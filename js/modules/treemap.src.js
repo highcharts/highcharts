@@ -26,13 +26,10 @@ var seriesType = H.seriesType,
 	stableSort = H.stableSort,
 	color = H.Color,
 	eachObject = function (list, func, context) {
-		var key;
 		context = context || this;
-		for (key in list) {
-			if (list.hasOwnProperty(key)) {
-				func.call(context, list[key], key, list);
-			}
-		}
+		H.objectEach(list, function (val, key) {
+			func.call(context, val, key, list);
+		});
 	},
 	reduce = function (arr, func, previous, context) {
 		context = context || this;

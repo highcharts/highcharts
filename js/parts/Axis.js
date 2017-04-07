@@ -34,6 +34,7 @@ var addEvent = H.addEvent,
 	isString = H.isString,
 	merge = H.merge,
 	normalizeTickInterval = H.normalizeTickInterval,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	PlotLineOrBand = H.PlotLineOrBand,
 	removeEvent = H.removeEvent,
@@ -381,8 +382,7 @@ H.Axis.prototype = {
 		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
 		// Run Axis
 
-		var eventType,
-			events = axis.options.events;
+		var events = axis.options.events;
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
@@ -407,9 +407,9 @@ H.Axis.prototype = {
 
 
 		// register event listeners
-		for (eventType in events) {
-			addEvent(axis, eventType, events[eventType]);
-		}
+		objectEach(events, function (event, eventType) {
+			addEvent(axis, eventType, event);
+		});
 
 		// extend logarithmic axis
 		axis.lin2log = options.linearToLogConverter || axis.lin2log;
@@ -2074,7 +2074,6 @@ H.Axis.prototype = {
 			clipOffset = chart.clipOffset,
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
-			n,
 			className = options.className,
 			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection,
@@ -2134,10 +2133,10 @@ H.Axis.prototype = {
 
 
 		} else { // doesn't have data
-			for (n in ticks) {
-				ticks[n].destroy();
+			objectEach(ticks, function (tick, n) {
+				tick.destroy();
 				delete ticks[n];
-			}
+			});
 		}
 
 		if (axisTitleOptions && axisTitleOptions.text && axisTitleOptions.enabled !== false) {
@@ -2361,10 +2360,9 @@ H.Axis.prototype = {
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {
-			var pos;
-			for (pos in coll) {
-				coll[pos].isActive = false;
-			}
+			objectEach(coll, function (tick) {
+				tick.isActive = false;
+			});
 		});
 
 		// If the series has data draw the ticks. Else only the line and title
@@ -2426,8 +2424,7 @@ H.Axis.prototype = {
 
 		// Remove inactive ticks
 		each([ticks, minorTicks, alternateBands], function (coll) {
-			var pos,
-				i,
+			var i,
 				forDestruction = [],
 				delay = animation.duration,
 				destroyInactiveItems = function () {
@@ -2443,15 +2440,14 @@ H.Axis.prototype = {
 
 				};
 
-			for (pos in coll) {
-
-				if (!coll[pos].isActive) {
+			objectEach(coll, function (tick, pos) {
+				if (!tick.isActive) {
 					// Render to zero opacity
-					coll[pos].render(pos, false, 0);
-					coll[pos].isActive = false;
+					tick.render(pos, false, 0);
+					tick.isActive = false;
 					forDestruction.push(pos);
 				}
-			}
+			});
 
 			// When the objects are finished fading out, destroy them
 			syncTimeout(
@@ -2520,11 +2516,9 @@ H.Axis.prototype = {
 	destroy: function (keepEvents) {
 		var axis = this,
 			stacks = axis.stacks,
-			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
 			plotGroup,
-			i,
-			n;
+			i;
 
 		// Remove the events
 		if (!keepEvents) {
@@ -2532,11 +2526,11 @@ H.Axis.prototype = {
 		}
 
 		// Destroy each stack total
-		for (stackKey in stacks) {
-			destroyObjectProperties(stacks[stackKey]);
-
+		objectEach(stacks, function (stack, stackKey) {
+			destroyObjectProperties(stack);
+			
 			stacks[stackKey] = null;
-		}
+		});
 
 		// Destroy collections
 		each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
@@ -2562,11 +2556,11 @@ H.Axis.prototype = {
 		}
 
 		// Delete all properties and fall back to the prototype.
-		for (n in axis) {
-			if (axis.hasOwnProperty(n) && inArray(n, axis.keepProps) === -1) {
-				delete axis[n];
+		objectEach(axis, function (val, key) {
+			if (inArray(key, axis.keepProps) === -1) {
+				delete axis[key];
 			}
-		}
+		});
 	},
 
 	/**

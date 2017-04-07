@@ -55,9 +55,6 @@ MapNavigation.prototype.init = function (chart) {
 MapNavigation.prototype.update = function (options) {
 	var chart = this.chart,
 		o = chart.options.mapNavigation,
-		buttons,
-		n,
-		button,
 		buttonOptions,
 		attr,
 		states,
@@ -83,59 +80,56 @@ MapNavigation.prototype.update = function (options) {
 	
 	if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
-		buttons = o.buttons;
-		for (n in buttons) {
+		H.objectEach(o.buttons, function (button, n) {
+			buttonOptions = merge(o.buttonOptions, button);
 			
-			if (buttons.hasOwnProperty(n)) {
-				buttonOptions = merge(o.buttonOptions, buttons[n]);
-
-				/*= if (build.classic) { =*/
-				// Presentational
-				attr = buttonOptions.theme;
-				attr.style = merge(
-					buttonOptions.theme.style,
-					buttonOptions.style // #3203
-				);
-				states = attr.states;
-				hoverStates = states && states.hover;
-				selectStates = states && states.select;
-				/*= } =*/
-
-				button = chart.renderer.button(
-						buttonOptions.text,
-						0,
-						0,
-						outerHandler,
-						attr,
-						hoverStates,
-						selectStates,
-						0,
-						n === 'zoomIn' ? 'topbutton' : 'bottombutton'
-					)
-					.addClass('highcharts-map-navigation')
-					.attr({
-						width: buttonOptions.width,
-						height: buttonOptions.height,
-						title: chart.options.lang[n],
-						padding: buttonOptions.padding,
-						zIndex: 5
-					})
-					.add();
-				button.handler = buttonOptions.onclick;
-				button.align(
-					extend(buttonOptions, {
-						width: button.width,
-						height: 2 * button.height
-					}),
-					null,
-					buttonOptions.alignTo
-				);
-				// Stop double click event (#4444)
-				addEvent(button.element, 'dblclick', stopEvent); 
-				
-				mapNavButtons.push(button);
-			}
-		}
+			/*= if (build.classic) { =*/
+			// Presentational
+			attr = buttonOptions.theme;
+			attr.style = merge(
+				buttonOptions.theme.style,
+				buttonOptions.style // #3203
+			);
+			states = attr.states;
+			hoverStates = states && states.hover;
+			selectStates = states && states.select;
+			/*= } =*/
+			
+			button = chart.renderer.button(
+				buttonOptions.text,
+				0,
+				0,
+				outerHandler,
+				attr,
+				hoverStates,
+				selectStates,
+				0,
+				n === 'zoomIn' ? 'topbutton' : 'bottombutton'
+			)
+			.addClass('highcharts-map-navigation')
+			.attr({
+				width: buttonOptions.width,
+				height: buttonOptions.height,
+				title: chart.options.lang[n],
+				padding: buttonOptions.padding,
+				zIndex: 5
+			})
+			.add();
+			button.handler = buttonOptions.onclick;
+			button.align(
+				extend(buttonOptions, {
+					width: button.width,
+					height: 2 * button.height
+				}),
+				null,
+				buttonOptions.alignTo
+			);
+			// Stop double click event (#4444)
+			addEvent(button.element, 'dblclick', stopEvent); 
+			
+			mapNavButtons.push(button);
+			
+		});
 	}
 
 	this.updateEvents(o);

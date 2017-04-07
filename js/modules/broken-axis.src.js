@@ -158,17 +158,14 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				length = 0, 
 				inBrk,
 				repeat,
-				brk,
 				min = axis.userMin || axis.min,
 				max = axis.userMax || axis.max,
 				pointRangePadding = pick(axis.pointRangePadding, 0),
 				start,
-				i,
-				j;
+				i;
 
 			// Min & max check (#4247)
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				repeat = brk.repeat || Infinity;
 				if (axis.isInBreak(brk, min)) {
 					min += (brk.to % repeat) - (min % repeat);
@@ -176,33 +173,32 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				if (axis.isInBreak(brk, max)) {
 					max -= (max % repeat) - (brk.from % repeat);
 				}
-			}
+			});
 
 			// Construct an array holding all breaks in the axis
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				start = brk.from;
 				repeat = brk.repeat || Infinity;
-
+				
 				while (start - repeat > min) {
 					start -= repeat;
 				}
 				while (start < min) {
 					start += repeat;
 				}
-
-				for (j = start; j < max; j += repeat) {
+				
+				for (i = start; i < max; i += repeat) {
 					breakArrayT.push({
-						value: j,
+						value: i,
 						move: 'in'
 					});
 					breakArrayT.push({
-						value: j + (brk.to - brk.from),
+						value: i + (brk.to - brk.from),
 						move: 'out',
 						size: brk.breakSize
 					});
 				}
-			}
+			});
 
 			breakArrayT.sort(function (a, b) {
 				var ret;
@@ -218,10 +214,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			inBrk = 0;
 			start = min;
 
-			for (i in breakArrayT) {
-				brk = breakArrayT[i];
+			each(breakArrayT, function (brk) {
 				inBrk += (brk.move === 'in' ? 1 : -1);
-
+				
 				if (inBrk === 1 && brk.move === 'in') {
 					start = brk.value;
 				}
@@ -233,7 +228,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 					});
 					length += brk.value - start - (brk.size || 0);
 				}
-			}
+			});
 
 			axis.breakArray = breakArray;
 

@@ -248,7 +248,6 @@ seriesType('map', 'scatter', {
 			dataUsed = [],
 			mapMap = {},
 			mapPoint,
-			transform,
 			mapTransforms = this.chart.mapTransforms,
 			props,
 			i;
@@ -302,12 +301,12 @@ seriesType('map', 'scatter', {
 
 		// Cache cos/sin of transform rotation angle
 		if (mapTransforms) {
-			for (transform in mapTransforms) {
-				if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
+			H.objectEach(mapTransforms, function (transform) {
+				if (transform.rotation) {
 					transform.cosAngle = Math.cos(transform.rotation);
 					transform.sinAngle = Math.sin(transform.rotation);
 				}
-			}
+			});
 		}
 
 		if (mapData) {

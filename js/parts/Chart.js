@@ -34,6 +34,7 @@ var addEvent = H.addEvent,
 	Legend = H.Legend, // @todo add as requirement
 	marginNames = H.marginNames,
 	merge = H.merge,
+	objectEach = H.objectEach,
 	Pointer = H.Pointer, // @todo add as requirement
 	pick = H.pick,
 	pInt = H.pInt,
@@ -144,8 +145,7 @@ Chart.prototype = {
 		//this.loadingDiv = undefined;
 		//this.loadingSpan = undefined;
 
-		var chart = this,
-			eventType;
+		var chart = this;
 
 		// Add the chart to the global lookup
 		chart.index = charts.length;
@@ -154,9 +154,9 @@ Chart.prototype = {
 
 		// Chart event handlers
 		if (chartEvents) {
-			for (eventType in chartEvents) {
-				addEvent(chart, eventType, chartEvents[eventType]);
-			}
+			objectEach(chartEvents, function (event, eventType) {
+				addEvent(chart, eventType, event);
+			});
 		}
 
 		chart.xAxis = [];
@@ -1502,9 +1502,9 @@ Chart.prototype = {
 		}
 
 		// clean it all up
-		for (i in chart) {
-			delete chart[i];
-		}
+		objectEach(chart, function (val, key) {
+			delete chart[key];
+		});
 
 	},
 

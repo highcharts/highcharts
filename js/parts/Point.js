@@ -222,8 +222,7 @@ Point.prototype = {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			hoverPoints = chart.hoverPoints,
-			prop;
+			hoverPoints = chart.hoverPoints;
 
 		chart.pointCount--;
 
@@ -249,9 +248,9 @@ Point.prototype = {
 			chart.legend.destroyItem(point);
 		}
 
-		for (prop in point) {
+		H.objectEach(point, function (val, prop) {
 			point[prop] = null;
-		}
+		});
 
 
 	},
