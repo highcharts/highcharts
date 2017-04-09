@@ -19,6 +19,7 @@ import '../parts/Tooltip.js';
 
 var merge = H.merge,
 	addEvent = H.addEvent,
+	extend = H.extend,
 	each = H.each,
 	isString = H.isString,
 	isNumber = H.isNumber,
@@ -30,7 +31,6 @@ var merge = H.merge,
 	format = H.format,
 	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
-	correctFloat = H.correctFloat,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
@@ -98,7 +98,7 @@ MockPoint.prototype = {
 		this.isInside = isInside;
 	},
 
-	getAlignToBox: function (returnsAsArray) {
+	getAlignToBox: function () {
 		var x = this.plotX,
 			y = this.plotY,
 			temp;
@@ -109,12 +109,7 @@ MockPoint.prototype = {
 			y = temp;
 		}
 
-		return !returnsAsArray ? {
-			width: 0,
-			height: 0,
-			x: x,
-			y: y 
-		} : [x, y, 0, 0];
+		return [x, y, 0, 0];
 	},
 
 	getLabelConfig: function () {
@@ -362,8 +357,7 @@ Annotation.prototype = {
 		var point = this.getLinkedPoint(label),
 			options = label.options,
 			parentGroup = label.parentGroup,
-			text,
-			position;
+			text;
 
 		if (!point) {
 			this.destroyLabel(label);
@@ -382,22 +376,7 @@ Annotation.prototype = {
 				text: text ? format(text, point.getLabelConfig()) : options.formatter.call(point)
 			});
 
-			if (label.noAlign) {
-				position = this.getLabelPosition(label, point);
-
-				label.attr(position);
-
-				/* these are needed for hideOverlappingLabels() */
-				label.alignAttr = {
-					x: position.x,
-					y: position.y
-				};
-				label.placed = true;
-				/**/
-			
-			} else {
-				this.alignLabel(label, point);
-			}
+			this.positionLabel(label);
 
 		}
 	},
@@ -462,29 +441,19 @@ Annotation.prototype = {
 	 * @param {Object} point
 	 * @returns {Object} position of the label
 	**/
-	getLabelPosition: function (label, point) {
+	getLabelPosition: function (label, point, anchor) {
 		var chart = this.chart,
 			labelOptions = label.options,
-			shape = label.options.shape,
 			position,
-			seriesPlotBox,
-			tooltipContext,
-			anchor,
-			alignToBox,
 
 			round = Math.round;
 
-		if (point.isInside && point.series.visible && point.series.type !== 'pie') {
-			tooltipContext = {
-				chart: chart,
-				distance: pick(labelOptions.distance, 16)
-			};
-
-			anchor = (point.mock && point.getAlignToBox(true))
-				|| tooltipPrototype.getAnchor.call(tooltipContext, point);
-
+		if (point.isInside !== false && point.series.visible) {
 			position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
-				tooltipContext,
+				{
+					chart: chart,
+					distance: pick(labelOptions.distance, 16)
+				},
 				label.width,
 				label.height,
 				{
@@ -498,13 +467,6 @@ Annotation.prototype = {
 
 			position.x = round(position.x);
 			position.y = round(position.y || 0);
-
-			if (inArray(shape, this.shapesWithAnchor) > -1) {
-				seriesPlotBox = point.series.getPlotBox();
-			// create an array shapes with anchors
-				position.anchorX = anchor[0] + seriesPlotBox.translateX;
-				position.anchorY = anchor[1] + seriesPlotBox.translateY;
-			}
 		}
 
 		return position || {
@@ -520,34 +482,30 @@ Annotation.prototype = {
 	 * @param {Object} point
 	 * @returns {undefined}
 	**/
-	alignLabel: function (label, point) {
-		var plotBox,
-			x,
-			y;
-
-		point.series.alignDataLabel(
-			point,
-			label,
-			label.options,
-			point.mock && point.getAlignToBox(),
-			true // true for not animating
-		);
-
-		if (label.placed && isNumber(point.plotX) && isNumber(point.plotY)) {
-			plotBox = point.series.getPlotBox();
-			x = label.x + plotBox.translateX;
-			y = label.y + plotBox.translateY;
-
-			label.attr({
-				x: x,
-				y: y
-			});
-
-			// used by hideOvarlappingLabels
-			label.alignAttr = {
-				x: x,
-				y: y,
+	alignLabel: function (label, point, alignTo) {
+		var series = point.series,
+			rawAlign = label.rawAlign = !(series.alignDataLabel && series.alignDataLabel !== H.noop),
+			box = alignTo && {
+				x: alignTo[0],
+				y: alignTo[1],
+				height: alignTo[2] || 0,
+				width: alignTo[3] || 0
 			};
+
+		if (!rawAlign) {
+			series.alignDataLabel(
+				point,
+				label,
+				label.options,
+				box,
+				true // true for not animating
+			);
+
+		} else {
+			label.align(extend(label.options, {
+				width: label.width,
+				height: label.height
+			}), null, box);
 		}
 
 		/* Workaround for bad placing anchor on animation */
@@ -559,6 +517,53 @@ Annotation.prototype = {
 		//         });
 		//     }, 0);
 		// }
+	},
+
+	positionLabel: function (label) {
+		var point = label.point,
+			series = point.series,
+			anchor = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
+				chart: this.chart
+			}, point),
+
+			plotBox = series.getPlotBox(),
+			tx = plotBox.translateX,
+			ty = plotBox.translateY,
+			translatedAnchor = {
+				anchorX: anchor[0] + tx,
+				anchorY: anchor[1] + ty
+			},
+
+			labelPosition;
+
+
+		if (label.noAlign) {
+			labelPosition = this.getLabelPosition(label, point, anchor);
+			label.placed = true;
+
+			extend(labelPosition, translatedAnchor);
+
+		} else {
+			this.alignLabel(label, point, anchor);
+
+			labelPosition = {
+				x: label.x + tx,
+				y: label.y + ty
+			};
+
+			if (label.rawAlign) {
+				extend(labelPosition, translatedAnchor);
+			}
+		}
+
+		if (label.placed) {
+			label.attr(labelPosition);
+
+			label.alignAttr = {
+				x: labelPosition.x,
+				y: labelPosition.y
+			};
+		}
 	},
 
 
