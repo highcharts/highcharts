@@ -453,6 +453,7 @@ Navigator.prototype = {
 			scrollbarHeight = navigator.scrollbarHeight,
 			navigatorSize,
 			xAxis = navigator.xAxis,
+			scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
 			navigatorEnabled = navigator.navigatorEnabled,
 			zoomedMin,
 			zoomedMax,
@@ -553,7 +554,9 @@ Navigator.prototype = {
 			if (inverted) {
 				scrollbarTop = navigator.top - scrollbarHeight;
 				scrollbarLeft = navigator.left - scrollbarHeight +
-					(navigatorEnabled ? 0 : navigator.height);
+					(navigatorEnabled ? 0 : (scrollbarXAxis.titleOffset || 0) +
+						scrollbarXAxis.axisTitleMargin
+					);
 				scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
 			} else {
 				scrollbarTop = navigator.top +
