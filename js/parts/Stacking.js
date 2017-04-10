@@ -214,7 +214,6 @@ Axis.prototype.renderStackTotals = function () {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		stacks = axis.stacks,
-		oneStack,
 		stackTotalGroup = axis.stackTotalGroup;
 
 	// Create a separate group for the stack total labels
@@ -233,9 +232,9 @@ Axis.prototype.renderStackTotals = function () {
 	stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
 	// Render each stack total
-	objectEach(stacks, function (stack) {
-		objectEach(stack, function (val, stackCategory) {
-			oneStack[stackCategory].render(stackTotalGroup);
+	objectEach(stacks, function (type) {
+		objectEach(type, function (stack) {
+			stack.render(stackTotalGroup);
 		});
 	});
 };
@@ -244,21 +243,23 @@ Axis.prototype.renderStackTotals = function () {
  * Set all the stacks to initial states and destroy unused ones.
  */
 Axis.prototype.resetStacks = function () {
+	var stacks = this.stacks,
+		i;
 	if (!this.isXAxis) {
-		objectEach(this.stacks, function (stackType) {
-			objectEach(stackType, function (stack, i) {
+		objectEach(stacks, function (type) {
+			objectEach(type, function (stack) {
 				// Clean up memory after point deletion (#1044, #4320)
 				if (stack.touched < this.stacksTouched) {
 					stack.destroy();
-					delete stackType[i];
-					
-					// Reset stacks
+					delete type[i];
+
+				// Reset stacks
 				} else {
 					stack.total = null;
 					stack.cum = null;
 				}
-			});
-		});
+			}, this);
+		}, this);
 	}
 };
 

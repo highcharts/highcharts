@@ -799,7 +799,7 @@ RangeSelector.prototype = {
 			if (val !== RangeSelector.prototype[key]) {
 				rSelector[key] = null;
 			}
-		});
+		}, this);
 	}
 };
 

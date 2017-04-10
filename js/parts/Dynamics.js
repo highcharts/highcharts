@@ -258,8 +258,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// options.navigator => chart.navigator
 		// options.scrollbar => chart.scrollbar
 		objectEach(options, function (val, key) {
-			if (val && typeof val.update === 'function') {
-				val.update(val, false);
+			if (chart[key] && typeof chart[key].update === 'function') {
+				chart[key].update(val, false);
 				
 			// If a one-to-one object does not exist, look for an adder function
 			} else if (typeof chart[adders[key]] === 'function') {
@@ -302,7 +302,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					}
 				});
 			}
-		}, chart);
+		});
 
 		if (updateAllAxes) {
 			each(chart.axes, function (axis) {
