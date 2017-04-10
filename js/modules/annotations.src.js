@@ -160,7 +160,6 @@ Annotation.prototype = {
 			shapeParams,
 			linkType,
 			series,
-			param,
 			bbox,
 			x,
 			y;
@@ -203,13 +202,13 @@ Annotation.prototype = {
 			shapeParams = extend({}, options.shape.params);
 
 			if (options.units === 'values') {
-				for (param in shapeParams) {
+				H.objectEach(shapeParams, function (val, param) {
 					if (inArray(param, ['width', 'x']) > -1) {
 						shapeParams[param] = xAxis.translate(shapeParams[param]);
 					} else if (inArray(param, ['height', 'y']) > -1) {
 						shapeParams[param] = yAxis.translate(shapeParams[param]);
 					}
-				}
+				});
 
 				if (shapeParams.width) {
 					shapeParams.width -= xAxis.toPixels(0) - xAxis.left;

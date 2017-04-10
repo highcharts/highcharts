@@ -48,8 +48,6 @@ H.PlotLineOrBand.prototype = {
 			svgElem = plotLine.svgElem,
 			isNew = !svgElem,
 			path = [],
-			addEvent,
-			eventType,
 			color = options.color,
 			zIndex = pick(options.zIndex, 0),
 			events = options.events,
@@ -126,14 +124,11 @@ H.PlotLineOrBand.prototype = {
 
 			// events
 			if (events) {
-				addEvent = function (eventType) {
+				H.objectEach(events, function (event, eventType) {
 					svgElem.on(eventType, function (e) {
 						events[eventType].apply(plotLine, [e]);
 					});
-				};
-				for (eventType in events) {
-					addEvent(eventType);
-				}
+				});
 			}
 		} else if (svgElem) {
 			if (path) {

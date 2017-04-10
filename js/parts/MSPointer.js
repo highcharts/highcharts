@@ -24,20 +24,17 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
 		getWebkitTouches = function () {
-			var key,
-				fake = [];
+			var fake = [];
 			fake.item = function (i) {
 				return this[i];
 			};
-			for (key in touches) {
-				if (touches.hasOwnProperty(key)) {
-					fake.push({
-						pageX: touches[key].pageX,
-						pageY: touches[key].pageY,
-						target: touches[key].target
-					});
-				}
-			}
+			H.objectEach(touches, function (touch) {
+				fake.push({
+					pageX: touch.pageX,
+					pageY: touch.pageY,
+					target: touch.target
+				});
+			});
 			return fake;
 		},
 		translateMSPointer = function (e, method, wktype, func) {
