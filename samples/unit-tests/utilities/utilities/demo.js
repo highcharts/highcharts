@@ -526,3 +526,64 @@ QUnit.test('find', function (assert) {
     );
 });
 
+
+QUnit.test('datePropsToTimestamps', function (assert) {
+    var date = new Date(2017, 0, 0),
+        actual = {
+            date1: date,
+            date2: +date,
+            object: {
+                date3: date,
+                date4: +date
+            },
+            array: [
+                date,
+                +date
+            ]
+        },
+        expectedTimestamp = date.getTime(),
+        expected = {
+            date1: expectedTimestamp,
+            date2: expectedTimestamp,
+            object: {
+                date3: expectedTimestamp,
+                date4: expectedTimestamp
+            },
+            array: [
+                expectedTimestamp,
+                expectedTimestamp
+            ]
+        };
+
+    Highcharts.datePropsToTimestamps(actual);
+
+    assert.equal(
+        actual.date1,
+        expectedTimestamp,
+        'Date object converted to timeStamp'
+    );
+
+    assert.equal(
+        actual.date2,
+        expectedTimestamp,
+        'Timestamp left as is'
+    );
+
+    assert.equal(
+        actual.object.date3,
+        expectedTimestamp,
+        'Date object inside object, inside another object is converted'
+    );
+
+    assert.equal(
+        actual.array[0],
+        expectedTimestamp,
+        'Date object inside array, inside another object is converted'
+    );
+
+    assert.deepEqual(
+        actual,
+        expected,
+        'All date objects inside object are recursively converted'
+    );
+});
