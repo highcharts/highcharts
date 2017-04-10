@@ -243,23 +243,23 @@ Axis.prototype.renderStackTotals = function () {
  * Set all the stacks to initial states and destroy unused ones.
  */
 Axis.prototype.resetStacks = function () {
-	var stacks = this.stacks,
-		i;
-	if (!this.isXAxis) {
+	var axis = this,
+		stacks = axis.stacks;
+	if (!axis.isXAxis) {
 		objectEach(stacks, function (type) {
-			objectEach(type, function (stack) {
+			objectEach(type, function (stack, key) {
 				// Clean up memory after point deletion (#1044, #4320)
-				if (stack.touched < this.stacksTouched) {
+				if (stack.touched < axis.stacksTouched) {
 					stack.destroy();
-					delete type[i];
-
+					delete type[key];
+		
 				// Reset stacks
 				} else {
 					stack.total = null;
 					stack.cum = null;
 				}
-			}, this);
-		}, this);
+			});
+		});
 	}
 };
 
@@ -272,8 +272,8 @@ Axis.prototype.cleanStacks = function () {
 		}
 
 		// reset stacks
-		objectEach(stacks, function (stackType) {
-			objectEach(stackType, function (stack) {
+		objectEach(stacks, function (type) {
+			objectEach(type, function (stack) {
 				stack.cum = stack.total;
 			});
 		});
