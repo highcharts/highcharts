@@ -11,11 +11,6 @@ if (isset($_GET['styled'])) {
 }
 $styled = @$_SESSION['styled'];
 
-if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $_GET['path'])) {
-	header('Location: start.php');
-	exit;
-}
-
 
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);

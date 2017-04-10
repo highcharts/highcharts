@@ -52,7 +52,7 @@ seriesType('ohlc', 'column', {
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
 	},
-	pointValKey: 'high',
+	pointValKey: 'close',
 
 	/*= if (build.classic) { =*/
 	pointAttrToOptions: {
@@ -106,6 +106,10 @@ seriesType('ohlc', 'column', {
 					point[translated[i]] = yAxis.toPixels(value, true);
 				}
 			});
+
+			// Align the tooltip to the high value to avoid covering the point
+			point.tooltipPos[1] =
+				point.plotHigh + yAxis.pos - series.chart.plotTop;
 		});
 	},
 
@@ -150,7 +154,7 @@ seriesType('ohlc', 'column', {
 					'M',
 					crispX, Math.round(point.yBottom),
 					'L',
-					crispX, Math.round(point.plotY)
+					crispX, Math.round(point.plotHigh)
 				];
 
 				// open

@@ -48,15 +48,6 @@ function shapeArea(vertexes) {
 	return area / 2;
 }
 
-function averageZ(vertexes) {
-	var z = 0,
-		i;
-	for (i = 0; i < vertexes.length; i++) {
-		z += vertexes[i].z;
-	}
-	return vertexes.length ? z / vertexes.length : 0;
-}
-
 /** Method to construct a curved path
   * Can 'wrap' around more then 180 degrees
   */
@@ -160,16 +151,13 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	// create the 3 sides
 	result.front = this.path(paths[0]).attr({
-		'class': 'highcharts-3d-front',
-		zIndex: paths[3]
-	}).add(result);
+		'class': 'highcharts-3d-front'
+	}).add(result); // Front, top and side are never overlapping in our case so it is redundant to set zIndex of every element.
 	result.top = this.path(paths[1]).attr({
-		'class': 'highcharts-3d-top',
-		zIndex: paths[4]
+		'class': 'highcharts-3d-top'
 	}).add(result);
 	result.side = this.path(paths[2]).attr({
-		'class': 'highcharts-3d-side',
-		zIndex: paths[5]
+		'class': 'highcharts-3d-side'
 	}).add(result);
 
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
@@ -208,9 +196,9 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		if (args.shapeArgs || defined(args.x)) {
 			var shapeArgs = args.shapeArgs || args;
 			var paths = this.renderer.cuboidPath(shapeArgs);
-			this.front.attr({ d: paths[0], zIndex: paths[3] });
-			this.top.attr({ d: paths[1], zIndex: paths[4] });
-			this.side.attr({ d: paths[2], zIndex: paths[5] });
+			this.front.attr({ d: paths[0] });
+			this.top.attr({ d: paths[1] });
+			this.side.attr({ d: paths[2] });
 		} else {
 			return H.SVGElement.prototype.attr.call(this, args); // getter returns value
 		}
@@ -221,11 +209,11 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	result.animate = function (args, duration, complete) {
 		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
-			this.front.attr({ zIndex: paths[3] }).animate({ d: paths[0] }, duration, complete);
-			this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
-			this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
+			this.front.animate({ d: paths[0] }, duration, complete);
+			this.top.animate({ d: paths[1] }, duration, complete);
+			this.side.animate({ d: paths[2] }, duration, complete);
 			this.attr({
-				zIndex: -paths[6] // #4774
+				zIndex: -paths[3] // #4774
 			});
 		} else if (args.opacity) {
 			this.front.animate(args, duration, complete);
@@ -247,7 +235,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	// Apply the Z index to the cuboid group
-	result.attr({ zIndex: -paths[6] });
+	result.attr({ zIndex: -paths[3] });
 
 	return result;
 };
@@ -255,26 +243,72 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 /**
  *	Generates a cuboid
  */
-SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var x = shapeArgs.x,
 		y = shapeArgs.y,
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,		
-		chart = charts[this.chartIndex];
+		d = shapeArgs.depth,
+		chart = charts[this.chartIndex],
+		front,
+		back,
+		top,
+		bottom,
+		left,
+		right,
+		shape,
+		path1,
+		path2,
+		path3,
+		isFront,
+		isTop,
+		isRight,
+		options3d = chart.options.chart.options3d,
+		alpha = options3d.alpha,
+		// Priority for x axis is the biggest, 
+		// because of x direction has biggest influence on zIndex
+		incrementX = 10000,
+		// y axis has the smallest priority in case of our charts 
+		// (needs to be set because of stacking)
+		incrementY = 10,
+		incrementZ = 100,
+		zIndex = 0;
 
 	// The 8 corners of the cube
-	var pArr = [
-		{ x: x, y: y, z: z },
-		{ x: x + w, y: y, z: z },
-		{ x: x + w, y: y + h, z: z },
-		{ x: x, y: y + h, z: z },
-		{ x: x, y: y + h, z: z + d },
-		{ x: x + w, y: y + h, z: z + d },
-		{ x: x + w, y: y, z: z + d },
-		{ x: x, y: y, z: z + d }
-	];
+	var pArr = [{
+		x: x,
+		y: y,
+		z: z
+	}, {
+		x: x + w,
+		y: y,
+		z: z
+	}, {
+		x: x + w,
+		y: y + h,
+		z: z
+	}, {
+		x: x,
+		y: y + h,
+		z: z
+	}, {
+		x: x,
+		y: y + h,
+		z: z + d
+	}, {
+		x: x + w,
+		y: y + h,
+		z: z + d
+	}, {
+		x: x + w,
+		y: y,
+		z: z + d
+	}, {
+		x: x,
+		y: y,
+		z: z + d
+	}];
 
 	// apply perspective
 	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
@@ -283,34 +317,82 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	function mapPath(i) {
 		return pArr[i];
 	}
+
+	/*
+	 * First value - path with specific side
+	 * Second  value - added information about side for later calculations. 
+	 * Possible second values are 0 for path1, 1 for path2 and -1 for no path choosed.
+	 */
 	var pickShape = function (path1, path2) {
-		var ret = [];
+		var ret = [
+				[], -1
+		];
 		path1 = map(path1, mapPath);
 		path2 = map(path2, mapPath);
 		if (shapeArea(path1) < 0) {
-			ret = path1;
+			ret = [path1, 0];
 		} else if (shapeArea(path2) < 0) {
-			ret = path2;
+			ret = [path2, 1];
 		}
 		return ret;
 	};
 
 	// front or back
-	var front = [3, 2, 1, 0];
-	var back = [7, 6, 5, 4];
-	var path1 = pickShape(front, back);
+	front = [3, 2, 1, 0];
+	back = [7, 6, 5, 4];
+	shape = pickShape(front, back);
+	path1 = shape[0];
+	isFront = shape[1];
+	
 
 	// top or bottom
-	var top = [1, 6, 7, 0];
-	var bottom = [4, 5, 2, 3];
-	var path2 = pickShape(top, bottom);
+	top = [1, 6, 7, 0];
+	bottom = [4, 5, 2, 3];
+	shape = pickShape(top, bottom);
+	path2 = shape[0];
+	isTop = shape[1];
 
 	// side
-	var right = [1, 2, 5, 6];
-	var left = [0, 7, 4, 3];
-	var path3 = pickShape(right, left);
+	right = [1, 2, 5, 6];
+	left = [0, 7, 4, 3];
+	shape = pickShape(right, left);
+	path3 = shape[0];
+	isRight = shape[1];
 
-	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3), averageZ(map(bottom, mapPath)) * 9e9]; // #4774
+	/*
+	 * New block used for calculating zIndex. It is basing on X, Y and Z position of specific columns.
+	 * All zIndexes (for X, Y and Z values) are added to the final zIndex, where every value has different priority.
+	 * The biggest priority is in X and Z directions, the lowest index is for stacked columns (Y direction and the same X and Z positions).
+	 * Big differents between priorities is made because we need to ensure that even for big changes in Y and Z parameters
+	 * all columns will be drawn correctly.
+	 */
+
+	if (isRight === 1) {
+		zIndex += incrementX * (1000 - x);
+	} else if (!isRight) {
+		zIndex += incrementX * x;
+	}
+
+	zIndex += incrementY * (
+		!isTop || 
+		(alpha >= 0 && alpha <= 180 || alpha < 360 && alpha > 357.5) ? // Numbers checked empirically
+			chart.plotHeight - y : 10 + y
+	);
+
+	if (isFront === 1) {
+		zIndex += incrementZ * (z);
+	} else if (!isFront) {
+		zIndex += incrementZ * (1000 - z);
+	}
+
+	zIndex = -Math.round(zIndex);
+
+	return [
+		this.toLinePath(path1, true),
+		this.toLinePath(path2, true),
+		this.toLinePath(path3, true),
+		zIndex
+	]; // #4774
 };
 
 ////// SECTORS //////

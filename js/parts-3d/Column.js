@@ -12,8 +12,10 @@ var each = H.each,
 	pick = H.pick,
 	Series = H.Series,
 	seriesTypes = H.seriesTypes,
+	inArray = H.inArray,
 	svg = H.svg,
 	wrap = H.wrap;
+
 /***
 	EXTENSION FOR 3D COLUMNS
 ***/
@@ -107,6 +109,44 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 	}
 });
 
+/*
+ * In case of 3d columns there is no sense to add this columns
+ * to a specific series group - if series is added to a group
+ * all columns will have the same zIndex in comparison with different series
+ */
+
+wrap(seriesTypes.column.prototype, 'plotGroup', function (proceed, prop, name, visibility, zIndex, parent) {
+	if (this.chart.is3d() && parent && !this[prop]) {
+		this[prop] = parent;
+		parent.attr(this.getPlotBox());
+		this[prop].survive = true;
+	}
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
+/*
+ * When series is not added to group it is needed to change 
+ * setVisible method to allow correct Legend funcionality
+ * This wrap is basing on pie chart series
+ */
+wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
+	var series = this,
+		pointVis;
+	if (series.chart.is3d()) {
+		each(series.data, function (point) {
+			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
+			pointVis = vis ? 'visible' : 'hidden';
+			series.options.data[inArray(point, series.data)] = point.options;
+			if (point.graphic) {
+				point.graphic.attr({
+					visibility: pointVis
+				});
+			}
+		});
+	}
+	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
+
 wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -115,8 +155,8 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
 			reversedStacks = pick(this.yAxis.options.reversedStacks, true),
-			z = 0;	
-		
+			z = 0;
+
 		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
@@ -154,21 +194,10 @@ function pointAttribs(proceed) {
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+	seriesTypes.columnrange.prototype.plotGroup = seriesTypes.column.prototype.plotGroup;
+	seriesTypes.columnrange.prototype.setVisible = seriesTypes.column.prototype.setVisible;
 }
 /*= } =*/
-
-function draw3DPoints(proceed) {
-	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		var grouping = this.chart.options.plotOptions.column.grouping;
-		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-			this.group.attr({ zIndex: this.group.zIndex * 10 });
-			this.zIndexSet = true; // #4062 set zindex only once
-		}
-	}
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-}
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	
@@ -188,12 +217,6 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
-
-if (seriesTypes.columnrange) {
-	wrap(seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
-}
-
-wrap(seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
 /***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
