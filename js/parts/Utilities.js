@@ -1546,8 +1546,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * @param  {Object}   ctx The context
  */
 H.objectEach = function (obj, fn, ctx) {
-	var key;
-	for (key in obj) {
+	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
 			fn.call(ctx, obj[key], key, obj);
 		}
