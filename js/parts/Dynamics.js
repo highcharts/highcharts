@@ -600,7 +600,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			oldType = series.oldType || series.type,
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
-			preserve = ['group', 'markerGroup', 'dataLabelsGroup'];
+			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
+			n;
 
 		// If we're changing type or zIndex, create new groups (#3380, #3404)
 		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
@@ -623,9 +624,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
 		series.remove(false, null, false);
-		objectEach(proto, function (val, n) {
+		for (n in proto) {
 			series[n] = undefined;
-		});
+		}
 		extend(series, seriesTypes[newType || oldType].prototype);
 
 		// Re-register groups (#3094)
