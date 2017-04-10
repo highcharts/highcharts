@@ -13,7 +13,6 @@ var Chart = H.Chart,
 	extend = H.extend,
 	format = H.format,
 	merge = H.merge,
-	objectEach = H.objectEach,
 	win = H.win,
 	wrap = H.wrap;
 /** 
@@ -87,32 +86,27 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 };
 
 Chart.prototype.fromPointToLatLon = function (point) {
-	var transforms = this.mapTransforms;
+	var transforms = this.mapTransforms,
+		transform;
 
 	if (!transforms) {
 		H.error(22);
 		return;
 	}
 
-	objectEach(transforms, function (transform) {
-		if (
-			transform.hitZone &&
-			pointInPolygon(
-				{ x: point.x, y: -point.y },
-				transform.hitZone.coordinates[0]
-			)
-		) {
-			return this.transformToLatLon(point, transform);
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+				pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
+			return this.transformToLatLon(point, transforms[transform]);
 		}
-		
-	});
+	}
 
 	return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
-	var chart = this,
-		transforms = chart.mapTransforms,
+	var transforms = this.mapTransforms,
+		transform,
 		coords;
 
 	if (!transforms) {
@@ -123,19 +117,16 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		};
 	}
 
-	objectEach(transforms, function (transform) {
-		if (transform.hitZone) {
-			coords = chart.transformFromLatLon(latLon, transform);
-			if (pointInPolygon(
-				{ x: coords.x, y: -coords.y },
-				transform.hitZone.coordinates[0])
-			) {
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
+			coords = this.transformFromLatLon(latLon, transforms[transform]);
+			if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
 				return coords;
 			}
 		}
-	});
+	}
 
-	return chart.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
+	return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
 };
 
 /**
