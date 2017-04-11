@@ -32,7 +32,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 25;
 
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series.index; // #4743
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) {
