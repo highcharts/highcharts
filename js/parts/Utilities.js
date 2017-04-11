@@ -926,7 +926,7 @@ H.datePropsToTimestamps = function (object) {
 	H.objectEach(object, function (val, key) {
 		if (H.isObject(val) && typeof val.getTime === 'function') {
 			object[key] = val.getTime();
-		} else if (val instanceof Object || val instanceof Array) {
+		} else if (H.isObject(val) || H.isArray(val)) {
 			H.datePropsToTimestamps(val);
 		}
 	});
