@@ -918,6 +918,21 @@ H.dateFormat = function (format, timestamp, capitalize) {
 };
 
 /**
+ * Recursively converts all Date properties to timestamps.
+ * 
+ * @param  {Object} object - any object to convert properties of
+ */
+H.datePropsToTimestamps = function (object) {
+	H.objectEach(object, function (val, key) {
+		if (H.isObject(val) && typeof val.getTime === 'function') {
+			object[key] = val.getTime();
+		} else if (H.isObject(val) || H.isArray(val)) {
+			H.datePropsToTimestamps(val);
+		}
+	});
+};
+
+/**
  * Format a single variable. Similar to sprintf, without the % prefix.
  *
  * @example
