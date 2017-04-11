@@ -171,7 +171,6 @@ Series.prototype.drawDataLabels = function () {
 				dataLabel = point.dataLabel,
 				labelConfig,
 				attr,
-				name,
 				rotation,
 				connector = point.connector,
 				isNew = !dataLabel,
@@ -219,11 +218,11 @@ Series.prototype.drawDataLabels = function () {
 				};
 
 				// Remove unused attributes (#947)
-				for (name in attr) {
-					if (attr[name] === undefined) {
+				H.objectEach(attr, function (val, name) {
+					if (val === undefined) {
 						delete attr[name];
 					}
-				}
+				});
 			}
 			// If the point is outside the plot area, destroy it. #678, #820
 			if (dataLabel && (!enabled || !defined(str))) {

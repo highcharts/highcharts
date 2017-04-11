@@ -16,6 +16,7 @@ var Axis = H.Axis,
 	destroyObjectProperties = H.destroyObjectProperties,
 	each = H.each,
 	format = H.format,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	Series = H.Series;
 
@@ -213,9 +214,6 @@ Axis.prototype.renderStackTotals = function () {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		stacks = axis.stacks,
-		stackKey,
-		oneStack,
-		stackCategory,
 		stackTotalGroup = axis.stackTotalGroup;
 
 	// Create a separate group for the stack total labels
@@ -234,42 +232,39 @@ Axis.prototype.renderStackTotals = function () {
 	stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
 
 	// Render each stack total
-	for (stackKey in stacks) {
-		oneStack = stacks[stackKey];
-		for (stackCategory in oneStack) {
-			oneStack[stackCategory].render(stackTotalGroup);
-		}
-	}
+	objectEach(stacks, function (type) {
+		objectEach(type, function (stack) {
+			stack.render(stackTotalGroup);
+		});
+	});
 };
 
 /**
  * Set all the stacks to initial states and destroy unused ones.
  */
 Axis.prototype.resetStacks = function () {
-	var stacks = this.stacks,
-		type,
-		i;
-	if (!this.isXAxis) {
-		for (type in stacks) {
-			for (i in stacks[type]) {
-
+	var axis = this,
+		stacks = axis.stacks;
+	if (!axis.isXAxis) {
+		objectEach(stacks, function (type) {
+			objectEach(type, function (stack, key) {
 				// Clean up memory after point deletion (#1044, #4320)
-				if (stacks[type][i].touched < this.stacksTouched) {
-					stacks[type][i].destroy();
-					delete stacks[type][i];
-
+				if (stack.touched < axis.stacksTouched) {
+					stack.destroy();
+					delete type[key];
+		
 				// Reset stacks
 				} else {
-					stacks[type][i].total = null;
-					stacks[type][i].cum = null;
+					stack.total = null;
+					stack.cum = null;
 				}
-			}
-		}
+			});
+		});
 	}
 };
 
 Axis.prototype.cleanStacks = function () {
-	var stacks, type, i;
+	var stacks;
 
 	if (!this.isXAxis) {
 		if (this.oldStacks) {
@@ -277,11 +272,11 @@ Axis.prototype.cleanStacks = function () {
 		}
 
 		// reset stacks
-		for (type in stacks) {
-			for (i in stacks[type]) {
-				stacks[type][i].cum = stacks[type][i].total;
-			}
-		}
+		objectEach(stacks, function (type) {
+			objectEach(type, function (stack) {
+				stack.cum = stack.total;
+			});
+		});
 	}
 };
 

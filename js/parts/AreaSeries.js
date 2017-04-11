@@ -50,8 +50,7 @@ seriesType('area', 'line', {
 			seriesLength = yAxisSeries.length,
 			visibleSeries,
 			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
-			i,
-			x;
+			i;
 
 		if (this.options.stacking) {
 			// Create a map where we can quickly look up the points by their X value.
@@ -60,11 +59,11 @@ seriesType('area', 'line', {
 			}
 
 			// Sort the keys (#1651)
-			for (x in stack) {
-				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
+			H.objectEach(stack, function (stackX, x) {
+				if (stackX.total !== null) { // nulled after switching between grouping and not (#1651, #2336)
 					keys.push(x);
 				}
-			}
+			});
 			keys.sort(function (a, b) {
 				return a - b;
 			});
