@@ -585,6 +585,9 @@ Chart.prototype = {
 		each(['title', 'subtitle'], function (key) {
 			var title = this[key],
 				titleOptions = this.options[key],
+				offset = key === 'title' ? -3 :
+					// Floating subtitle (#6574)
+					titleOptions.verticalAlign ? 0 : titleOffset + 2,
 				titleSize;
 
 			if (title) {
@@ -599,7 +602,7 @@ Chart.prototype = {
 							spacingBox.width + titleOptions.widthAdjust) + 'px'
 					})
 					.align(extend({ 
-						y: titleOffset + titleSize + (key === 'title' ? -3 : 2)
+						y: offset + titleSize
 					}, titleOptions), false, 'spacingBox');
 
 				if (!titleOptions.floating && !titleOptions.verticalAlign) {
