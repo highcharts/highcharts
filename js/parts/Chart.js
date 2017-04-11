@@ -93,6 +93,7 @@ Chart.prototype = {
 		var options,
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
+		H.datePropsToTimestamps(userOptions);
 		userOptions.series = null;
 		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data

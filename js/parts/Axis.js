@@ -423,7 +423,6 @@ H.Axis.prototype = {
 	 * Merge and set options
 	 */
 	setOptions: function (userOptions) {
-		H.datePropsToTimestamps(userOptions);
 		this.options = merge(
 			this.defaultOptions,
 			this.coll === 'yAxis' && this.defaultYAxisOptions,
