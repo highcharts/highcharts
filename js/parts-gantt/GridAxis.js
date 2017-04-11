@@ -113,14 +113,14 @@ Axis.prototype.getMaxLabelLength = function (force) {
 H.dateFormats = {
 	// Week number
 	W: function (timestamp) {
-		var date = new Date(timestamp),
-			day = date.getUTCDay() === 0 ? 7 : date.getUTCDay(),
-			time = date.getTime(),
-			startOfYear = new Date(date.getUTCFullYear(), 0, 1, -6),
-			dayNumber;
-		date.setDate(date.getUTCDate() + 4 - day);
-		dayNumber = Math.floor((time - startOfYear) / 86400000);
-		return 1 + Math.floor(dayNumber / 7);
+		var d = new Date(timestamp),
+			yearStart,
+			weekNo;
+		d.setHours(0, 0, 0, 0);
+		d.setDate(d.getDate() - (d.getDay() || 7));
+		yearStart = new Date(d.getFullYear(), 0, 1);
+		weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+		return weekNo;
 	},
 	// First letter of the day of the week, e.g. 'M' for 'Monday'.
 	E: function (timestamp) {
