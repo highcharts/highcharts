@@ -1178,7 +1178,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			hasPointMarker,
 			enabled,
 			isInside,
-			markerGroup = series.markerGroup,
+			markerGroup = series[series.specialGroup] || series.markerGroup,
 			xAxis = series.xAxis,
 			markerAttribs,
 			globallyEnabled = pick(
