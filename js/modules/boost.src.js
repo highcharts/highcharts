@@ -1037,7 +1037,7 @@ function GLRenderer(postRenderCallback) {
 	/*
 	 * Clear the depth and color buffer
 	 */
-	function clear() {
+	function clear() {		
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
@@ -1660,8 +1660,9 @@ function GLRenderer(postRenderCallback) {
 				gl.blendEquation(gl.FUNC_MIN);
 			
 			} else {
-				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
-				gl.blendEquation(gl.FUNC_ADD);
+				//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				//gl.blendEquation(gl.FUNC_ADD);
+				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 			}
 
 			shader.reset();		
@@ -1819,7 +1820,7 @@ function GLRenderer(postRenderCallback) {
 		circleTexture.width = 512;
 		circleTexture.height = 512;
 
-		circleCtx.fillStyle = '#FFF';
+		circleCtx.fillStyle = '#FFF';		
 		circleCtx.beginPath();
 		circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
 		circleCtx.fill();
