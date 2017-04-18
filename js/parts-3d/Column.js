@@ -40,11 +40,30 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	}
 
 	z += (seriesOptions.groupZPadding || 1);
-
 	each(series.data, function (point) {
 		if (point.y !== null) {
 			var shapeArgs = point.shapeArgs,
-				tooltipPos = point.tooltipPos;
+				tooltipPos = point.tooltipPos,
+				dimensions = [['x', 'width'], ['y', 'height']]; // Array for final shapeArgs calculation.
+				// We are checking two dimensions (x and y).
+
+				// #3131 We need to check if column shape arguments are inside plotArea.
+
+			each(dimensions, function (d) {
+				if (
+					shapeArgs[d[0]] + shapeArgs[d[1]] < 0 || // End column position is smaller than axis start.
+					shapeArgs[d[0]] > series[d[0] + 'Axis'].len // Start column position is bigger than axis end.
+					) {
+					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
+						shapeArgs[key] = 0;
+					}
+				} if (shapeArgs[d[0]] < 0) {
+					shapeArgs[d[1]] += shapeArgs[d[0]]; 
+					shapeArgs[d[0]] = 0;
+				} if (shapeArgs[d[0]] + shapeArgs[d[1]] > series[d[0] + 'Axis'].len) {
+					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
+				}
+			});
 
 			point.shapeType = 'cuboid';
 			shapeArgs.z = z;
