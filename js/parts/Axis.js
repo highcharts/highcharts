@@ -2580,10 +2580,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		}
 
 		if (axisTitle && showAxis) {
-
-			axisTitle[axisTitle.isNew ? 'attr' : 'animate'](
-				axis.getTitlePosition()
-			);
+			var titleXy = axis.getTitlePosition();
+			if (isNumber(titleXy.y)) {
+				axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+			} else {
+				axisTitle.attr('y', -9999);
+			}
 			axisTitle.isNew = false;
 		}
 
