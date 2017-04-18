@@ -49,21 +49,60 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d,
 		d = this.isZAxis ? chart.plotWidth : options3d.depth,
-		opposite = this.opposite;
-	if (this.horiz) {
-		opposite = !opposite;
-	}
+		frame = chart.frame3d;
+
 	var pArr = [
-		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
+		this.swapZ({ x: path[1], y: path[2], z: 0 }),
 		this.swapZ({ x: path[1], y: path[2], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
+		this.swapZ({ x: path[4], y: path[5], z: 0 }),
+		this.swapZ({ x: path[4], y: path[5], z: d })
 	];
 
-	pArr = perspective(pArr, this.chart, false);
-	path = this.chart.renderer.toLinePath(pArr, false);
+	var pathSegments = [];
+	if (!this.horiz) {  // Y-Axis
+		if (frame.front.visible && frame.front.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.back.visible && frame.back.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.left.visible && frame.left.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.right.visible && frame.right.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	} else if (this.isZAxis) {  // Z-Axis
+		if (frame.left.visible && frame.left.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.right.visible && frame.right.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.top.visible && frame.top.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.bottom.visible && frame.bottom.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	} else {  // X-Axis
+		if (frame.front.visible && frame.front.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.back.visible && frame.back.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.top.visible && frame.top.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.bottom.visible && frame.bottom.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	}
 
-	return path;
+	pathSegments = perspective(pathSegments, this.chart, false);
+
+	return this.chart.renderer.toLineSegments(pathSegments);
 });
 
 // Do not draw axislines in 3D
@@ -80,26 +119,19 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 	var args = arguments,
 		from = args[1],
 		to = args[2],
-		toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from);
+		path = [],
+		fromPath = this.getPlotLinePath(from),
+		toPath = this.getPlotLinePath(to);
 
-	if (path && toPath) {
-		path.push(
-			'L',
-			toPath[10],	// These two do not exist in the regular getPlotLine
-			toPath[11],  // ---- # 3005
-			'L',
-			toPath[7],
-			toPath[8],
-			'L',
-			toPath[4],
-			toPath[5],
-			'L',
-			toPath[1],
-			toPath[2]
-		);
-	} else { // outside the axis area
-		path = null;
+	if (fromPath && toPath) {
+		for (var i = 0; i < fromPath.length; i += 6) {
+			path.push(
+				'M', fromPath[i + 1], fromPath[i + 2],
+				'L', fromPath[i + 4], fromPath[i + 5],
+				'L',   toPath[i + 4],   toPath[i + 5],
+				'L',   toPath[i + 1],   toPath[i + 2],
+				'Z');
+		}
 	}
 
 	return path;
@@ -194,9 +226,8 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 Axis.prototype.swapZ = function (p, insidePlotArea) {
 	if (this.isZAxis) {
 		var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
-		var chart = this.chart;
 		return {
-			x: plotLeft + (chart.yAxis[0].opposite ? p.z : chart.xAxis[0].width - p.z),
+			x: plotLeft + p.z,
 			y: p.y,
 			z: p.x - plotLeft
 		};

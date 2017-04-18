@@ -255,6 +255,8 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 		zmm = zm - (frame.front.visible ? frame.front.size : 0),
 		zpp = zp + (frame.back.visible ? frame.back.size : 0);
 
+	this.frame3d = frame;
+
 	if (!this.frameShapes) {
 		this.frameShapes = {
 			bottom: renderer.polyhedron().add(),

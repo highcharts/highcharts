@@ -123,6 +123,18 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 	return result;
 };
 
+SVGRenderer.prototype.toLineSegments = function (points) {
+	var result = [];
+
+	var m = true;
+	each(points, function (point) {
+		result.push(m ? 'M' : 'L', point.x, point.y);
+		m = !m;
+	});
+
+	return result;
+};
+
 /**
  * A 3-D Face is defined by it's 3D vertexes, and is only
  * visible if it's vertexes are counter-clockwise (Back-face culling).

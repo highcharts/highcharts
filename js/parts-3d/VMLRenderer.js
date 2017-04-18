@@ -27,6 +27,7 @@ if (VMLRenderer) {
 	VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
 
 	VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
+	VMLRenderer.prototype.toLineSegments = SVGRenderer.prototype.toLineSegments;
 
 	VMLRenderer.prototype.createElement3D = SVGRenderer.prototype.createElement3D;
 
