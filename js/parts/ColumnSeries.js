@@ -288,7 +288,7 @@ seriesType('column', 'line', {
 				point.isNull ?
 					// #3169, drilldown from null must have a position to work from
 					// #6585, dataLabel should be placed on xAxis, not floating in the middle of the chart
-					[barX, yAxis.len, barW, 0] :
+					[barX, translatedThreshold, barW, 0] :
 					[barX, barY, barW, barH]
 			);
 		});
