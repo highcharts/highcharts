@@ -364,6 +364,124 @@ QUnit.test('DateFormat', function (assert) {
 });
 
 
+QUnit.test('isHTMLElement', function (assert) {
+    var isHTMLElement = Highcharts.isHTMLElement,
+        // Mock an ES6 class
+        classes = {
+            constructor: function TestClass() {}
+        };
+
+    assert.strictEqual(
+      isHTMLElement("a"),
+      false,
+      'String is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(1),
+      false,
+      'Number is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(true),
+      false,
+      'Boolean is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(null),
+      false,
+      'null is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(undefined),
+      false,
+      'undefined is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement([1]),
+      false,
+      'Array is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement({ a: 1 }),
+      false,
+      'Object is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(classes),
+      false,
+      'Object classes is not a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(document.createElement('div')),
+      true,
+      'HTMLElement is a HTML Element'
+    );
+    assert.strictEqual(
+      isHTMLElement(function Test() {}),
+      false,
+      'Function is not a HTML Element'
+    );
+});
+
+QUnit.test('isCgit dlass', function (assert) {
+    var isClass = Highcharts.isClass,
+        // Mock an ES6 class
+        classes = {
+            constructor: function TestClass() {}
+        };
+
+    assert.strictEqual(
+      isClass("a"),
+      false,
+      'String is not a class'
+    );
+    assert.strictEqual(
+      isClass(1),
+      false,
+      'Number is not a class'
+    );
+    assert.strictEqual(
+      isClass(true),
+      false,
+      'Boolean is not a class'
+    );
+    assert.strictEqual(
+      isClass(null),
+      false,
+      'null is not a class'
+    );
+    assert.strictEqual(
+      isClass(undefined),
+      false,
+      'undefined is not a class'
+    );
+    assert.strictEqual(
+      isClass([1]),
+      false,
+      'Array is not a class'
+    );
+    assert.strictEqual(
+      isClass({ a: 1 }),
+      false,
+      'Object is not a class'
+    );
+    assert.strictEqual(
+      isClass(classes),
+      true,
+      'Object classes is a class'
+    );
+    assert.strictEqual(
+      isClass(document.createElement('div')),
+      false,
+      'HTMLElement is not a class'
+    );
+    assert.strictEqual(
+      isClass(function Test() {}),
+      false,
+      'Function is not a class'
+    );
+});
+
 QUnit.test('isNumber', function (assert) {
     var isNumber = Highcharts.isNumber;
     assert.strictEqual(

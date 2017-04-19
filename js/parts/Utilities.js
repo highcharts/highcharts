@@ -446,9 +446,11 @@ H.merge = function () {
 					value = original[key];
 
 					// Copy the contents of objects, but not arrays or DOM nodes
-					if (H.isObject(value, true) &&
-							key !== 'renderTo' &&
-							typeof value.nodeType !== 'number') {
+					if (
+						H.isObject(value, true) &&
+						!H.isClass(value) &&
+						!H.isHTMLElement(value)
+					) {
 						copy[key] = doCopy(copy[key] || {}, value);
 
 					// Primitives and arrays are copied over directly
@@ -522,7 +524,35 @@ H.isArray = function (obj) {
  * @returns {Boolean} - True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
-	return obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+	return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+};
+
+/**
+ * Utility function to check if an Object is a HTML Element.
+ *
+ * @function #isHTMLElement
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @returns {Boolean} - True if the argument is a HTML Element.
+ */
+H.isHTMLElement = function (obj) {
+	return H.isObject(obj) && typeof obj.nodeType === 'number';
+};
+
+/**
+ * Utility function to check if an Object is an class.
+ *
+ * @function #isClass
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @returns {Boolean} - True if the argument is an class.
+ */
+H.isClass = function (obj) {
+	return !!(
+		H.isObject(obj, true) &&
+    !H.isHTMLElement(obj) &&
+		(obj.constructor && obj.constructor.name !== 'Object')
+	);
 };
 
 /**
