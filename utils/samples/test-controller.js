@@ -218,7 +218,8 @@ window.TestController = function (chart) {
         },
         /**
          * moveTo - Move the cursor from current position to a new one.
-         *  Fire a series of mousemoves, also mouseout and mouseover if new targets are found.
+         *  Fire a series of mousemoves, also mouseout and mouseover if new
+         *  targets are found.
          *
          * @param  {Number} x New x position on the page.
          * @param  {Number} y New y position on the page.
