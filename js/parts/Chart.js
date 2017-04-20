@@ -165,12 +165,10 @@ Chart.prototype = {
 			eventType;
 
 		// Add the chart to the global lookup
-		if (!optionsChart.forExport) {
-			chart.index = charts.length;
+		chart.index = charts.length;
 
-			charts.push(chart);
-			H.chartCount++;
-		}
+		charts.push(chart);
+		H.chartCount++;
 
 		// Chart event handlers
 		if (chartEvents) {
@@ -1472,11 +1470,13 @@ Chart.prototype = {
 		fireEvent(chart, 'destroy');
 
 		// Delete the chart from charts lookup array
-		if (chart.index !== undefined) { // undefined when forExport is true
+		if (chart.renderer.forExport) {
+			H.erase(charts, chart); // #6569
+		} else {
 			charts[chart.index] = undefined;
-			H.chartCount--;
-			chart.renderTo.removeAttribute('data-highcharts-chart');
 		}
+		H.chartCount--;
+		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
 		removeEvent(chart);
