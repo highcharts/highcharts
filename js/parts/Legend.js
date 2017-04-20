@@ -269,7 +269,7 @@ Legend.prototype = {
 						null,
 						null,
 						null,
-						null,
+						options.useHTML,
 						null,
 						'legend-title'
 					)
