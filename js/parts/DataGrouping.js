@@ -114,9 +114,10 @@ var seriesProto = Series.prototype,
 
 
 	/**
-	 * Define the available approximation types. The data grouping approximations takes an array
-	 * or numbers as the first parameter. In case of ohlc, four arrays are sent in as four parameters.
-	 * Each array consists only of numbers. In case null values belong to the group, the property
+	 * Define the available approximation types. The data grouping
+	 * approximations takes an array or numbers as the first parameter. In case
+	 * of ohlc, four arrays are sent in as four parameters. Each array consists
+	 * only of numbers. In case null values belong to the group, the property
 	 * .hasNulls will be set to true on the array.
 	 */
 	approximations = {
@@ -143,11 +144,23 @@ var seriesProto = Series.prototype,
 			var len = arr.length,
 				ret = approximations.sum(arr);
 
-			// If we have a number, return it divided by the length. If not, return
-			// null or undefined based on what the sum method finds.
+			// If we have a number, return it divided by the length. If not,
+			// return null or undefined based on what the sum method finds.
 			if (isNumber(ret) && len) {
 				ret = ret / len;
 			}
+
+			return ret;
+		},
+		// docs, add to http://api.highcharts.com/highstock/plotOptions.series.dataGrouping.approximation
+		// The same as average, but for series with multiple values, like area
+		// ranges.
+		averages: function () { // #5479
+			var ret = [];
+
+			each(arguments, function (arr) {
+				ret.push(approximations.average(arr));
+			});
 
 			return ret;
 		},
