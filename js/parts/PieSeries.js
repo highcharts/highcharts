@@ -45,7 +45,7 @@ seriesType('pie', 'line', {
 		distance: 30,
 		enabled: true,
 		formatter: function () { // #2945
-			return this.y === null ? undefined : this.point.name;
+			return this.point.isNull ? undefined : this.point.name;
 		},
 		// softConnector: true,
 		x: 0
@@ -130,11 +130,9 @@ seriesType('pie', 'line', {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
-			// Disallow negative values (#1530, #3623, #5322)
-			if (point.y < 0) {
-				point.y = null;
-			}
-			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
+			total += (ignoreHiddenPoint && !point.visible) ?
+				0 :
+				point.isNull ? 0 : point.y;
 		}
 		this.total = total;
 
@@ -291,7 +289,7 @@ seriesType('pie', 'line', {
 
 		// draw the slices
 		each(series.points, function (point) {
-			if (point.y !== null) {
+			if (!point.isNull) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 
@@ -401,6 +399,13 @@ seriesType('pie', 'line', {
 		addEvent(point, 'unselect', toggleSlice);
 
 		return point;
+	},
+
+	/**
+	 * Negative points are not valid (#1530, #3623, #5322)
+	 */
+	isValid: function () {
+		return this.y >= 0;
 	},
 
 	/**
