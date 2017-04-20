@@ -64,3 +64,49 @@ QUnit.test('snap', function (assert) {
 
     // TODO Test positioning of crosshairs.
 });
+
+QUnit.test('Show only one snapping crosshair at the same time. #6420', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: [{
+                crosshair: true
+            }, {
+                opposite: true,
+                crosshair: true
+            }],
+            series: [{
+                name: 'Installation',
+                data: [1, 2, 3],
+                xAxis: 0
+            }, {
+                name: 'Manufacturing',
+                data: [1, 2, 3].reverse(),
+                xAxis: 1
+            }]
+        }),
+        series1 = chart.series[0],
+        series2 = chart.series[1];
+
+    series1.points[0].onMouseOver();
+    assert.strictEqual(
+        series1.xAxis.cross.attr('visibility'),
+        'visible',
+        'Hover Series 1: crosshair on xAxis of Series 1 is visible'
+    );
+    assert.strictEqual(
+        !!series2.xAxis.cross,
+        false,
+        'Hover Series 1: crosshair on xAxis of Series 2 does not exist'
+    );
+
+    series2.points[2].onMouseOver();
+    assert.strictEqual(
+        series1.xAxis.cross.attr('visibility'),
+        'hidden',
+        'Hover Series 2: crosshair on xAxis of Series 1 is hidden'
+    );
+    assert.strictEqual(
+        series2.xAxis.cross.attr('visibility'),
+        'visible',
+        'Hover Series 2: crosshair on xAxis of Series 2 is visible'
+    );
+});
