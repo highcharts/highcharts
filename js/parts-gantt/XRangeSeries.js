@@ -68,6 +68,7 @@ seriesTypes.xrange = extendClass(columnType, {
 	requireSorting: false,
 	animate: seriesTypes.line.prototype.animate,
 	cropShoulder: 1,
+	getExtremesFromAll: true, // TODO: Test with BIG DATA
 
 	/**
 	 * Borrow the column series metrics, but with swapped axes. This gives free
