@@ -113,4 +113,4 @@ QUnit.test('Axis breaks with categories', function (assert) {
     );
 
 
-})
+});

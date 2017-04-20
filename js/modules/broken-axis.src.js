@@ -329,5 +329,34 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 	});
 };
 
+
+/**
+ * Extend getGraphPath by identifying gaps in the data so that we can draw a gap
+ * in the line or area. This was moved from ordinal axis module to broken axis
+ * module as of #5045.
+ */
+H.Series.prototype.gappedPath = function () {
+	var gapSize = this.options.gapSize,
+		points = this.points.slice(),
+		i = points.length - 1;
+
+	if (gapSize && i > 0) { // #5008
+
+		// extension for ordinal breaks
+		while (i--) {
+			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
+				points.splice( // insert after this one
+					i + 1,
+					0,
+					{ isNull: true }
+				);
+			}
+		}
+	}
+
+	// Call base method
+	return this.getGraphPath(points);
+};
+
 wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
