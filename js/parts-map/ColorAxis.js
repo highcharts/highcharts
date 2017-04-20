@@ -448,6 +448,16 @@ extend(ColorAxis.prototype, {
 	},
 
 	/**
+	 * Extend basic axis destroy by also destroying the legend item.
+	 */
+	destroy: function () {
+		if (this.legendItem) {
+			this.chart.legend.destroyItem(this);
+		}
+		Axis.prototype.destroy.call(this);
+	},
+
+	/**
 	 * Get the legend item symbols for data classes
 	 */
 	getDataClassLegendSymbols: function () {
