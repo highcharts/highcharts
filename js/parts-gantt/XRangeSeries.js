@@ -384,20 +384,21 @@ seriesTypes.xrange = extendClass(columnType, {
  */
 wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var axis = this,
-		series = axis.series,
+		axisSeries = axis.series,
 		dataMax,
 		modMax;
-
-	proceed.call(this);
-	if (axis.isXAxis && series.type === xrange) {
+	proceed.call(axis);
+	if (axis.isXAxis) {
 		dataMax = pick(axis.dataMax, Number.MIN_VALUE);
-		each(this.series, function (series) {
-			each(series.x2Data || [], function (val) {
-				if (val > dataMax) {
-					dataMax = val;
-					modMax = true;
-				}
-			});
+		each(axisSeries, function (series) {
+			if (series.type === xrange) {
+				each(series.x2Data || [], function (val) {
+					if (val > dataMax) {
+						dataMax = val;
+						modMax = true;
+					}
+				});
+			}
 		});
 		if (modMax) {
 			axis.dataMax = dataMax;
