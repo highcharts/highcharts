@@ -221,7 +221,13 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		values = [],
 		approximationFn = typeof approximation === 'function' ?
 			approximation :
-			approximations[approximation],
+			approximations[approximation] ||
+				// if the approximation is not found use default series type
+				// approximation (#2914)
+				(
+					specificOptions[series.type] &&
+					approximations[specificOptions[series.type].approximation]
+				) || approximations[commonOptions.approximation],
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
 		pos = 0,
