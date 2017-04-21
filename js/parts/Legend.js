@@ -709,7 +709,7 @@ Legend.prototype = {
 			lastY,
 			allItems = this.allItems,
 			clipToHeight = function (height) {
-				if (height) {
+				if (typeof height === 'number') {
 					clipRect.attr({
 						height: height
 					});
