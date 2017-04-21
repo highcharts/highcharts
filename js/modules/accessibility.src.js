@@ -819,8 +819,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			}]
 		], {
 			// Only run this module if we have at least one legend - wait for it - item.
+			// Don't run if the legend is populated by a colorAxis.
 			validate: function () {
-				return chart.legend && chart.legend.allItems && !chart.colorAxis;
+				return chart.legend && chart.legend.allItems &&
+					!(chart.colorAxis && chart.colorAxis.length);
 			},
 
 			// Make elements focusable and accessible
