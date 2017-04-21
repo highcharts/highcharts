@@ -543,10 +543,11 @@ H.isDOMElement = function (obj) {
  * @returns {Boolean} - True if the argument is an class.
  */
 H.isClass = function (obj) {
+	var c = obj && obj.constructor;
 	return !!(
 		H.isObject(obj, true) &&
 		!H.isDOMElement(obj) &&
-		(obj.constructor && obj.constructor.name !== 'Object')
+		(c && c.name && c.name !== 'Object')
 	);
 };
 

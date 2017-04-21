@@ -423,7 +423,7 @@ QUnit.test('isHTMLElement', function (assert) {
     );
 });
 
-QUnit.test('isCgit dlass', function (assert) {
+QUnit.test('isClass', function (assert) {
     var isClass = Highcharts.isClass,
         // Mock an ES6 class
         classes = {
@@ -469,6 +469,13 @@ QUnit.test('isCgit dlass', function (assert) {
       isClass(classes),
       true,
       'Object classes is a class'
+    );
+    // Some legacy browsers do not have named functions
+    classes.constructor = function () {};
+    assert.strictEqual(
+      isClass(classes),
+      false,
+      'Object with unnamed constructor is not a class'
     );
     assert.strictEqual(
       isClass(document.createElement('div')),
