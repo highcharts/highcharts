@@ -400,8 +400,10 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	}
 
 	// Recursively skip null points
-	if (newPoint.isNull && this.options.accessibility.keyboardNavigation &&
-			this.options.accessibility.keyboardNavigation.skipNullPoints) {
+	if (
+		newPoint.isNull && 
+		this.options.accessibility.keyboardNavigation.skipNullPoints
+	) {
 		this.highlightedPoint = newPoint;
 		return this.highlightAdjacentPoint(next);
 	}
@@ -984,7 +986,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
 	// Enable keyboard navigation
-	if (a11yOptions.keyboardNavigation) {
+	if (a11yOptions.keyboardNavigation.enabled) {
 		chart.addKeyboardNavEvents();
 	}
 
