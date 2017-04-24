@@ -29,6 +29,7 @@ var addEvent = H.addEvent,
 	isString = H.isString,
 	LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 	merge = H.merge,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	Point = H.Point, // @todo  add as a requirement
 	removeEvent = H.removeEvent,
@@ -193,7 +194,6 @@ H.Series = H.seriesType('line', null, { // base series options
 	coll: 'series',
 	init: function (chart, options) {
 		var series = this,
-			eventType,
 			events,
 			chartSeries = chart.series,
 			lastSeries;
@@ -215,9 +215,10 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// register event listeners
 		events = options.events;
-		for (eventType in events) {
-			addEvent(series, eventType, events[eventType]);
-		}
+
+		objectEach(events, function (event, eventType) {
+			addEvent(series, eventType, event);
+		});
 		if (
 			(events && events.click) ||
 			(
@@ -1537,7 +1538,6 @@ H.Series = H.seriesType('line', null, { // base series options
 			i,
 			data = series.data || [],
 			point,
-			prop,
 			axis;
 
 		// add event hook
@@ -1574,17 +1574,17 @@ H.Series = H.seriesType('line', null, { // base series options
 		clearTimeout(series.animationTimeout);
 
 		// Destroy all SVGElements associated to the series
-		for (prop in series) {
-			if (series[prop] instanceof SVGElement && !series[prop].survive) { // Survive provides a hook for not destroying
-
+		objectEach(series, function (val, prop) {
+			if (val instanceof SVGElement && !val.survive) { // Survive provides a hook for not destroying
+				
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
-					'hide' :
-					'destroy';
-
-				series[prop][destroy]();
+				'hide' :
+				'destroy';
+				
+				val[destroy]();
 			}
-		}
+		});
 
 		// remove from hoverSeries
 		if (chart.hoverSeries === series) {
@@ -1594,9 +1594,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		chart.orderSeries();
 
 		// clear all members
-		for (prop in series) {
+		objectEach(series, function (val, prop) {
 			delete series[prop];
-		}
+		});
 	},
 
 	/**

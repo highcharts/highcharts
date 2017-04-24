@@ -525,14 +525,13 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 		if (!this.hasImportedEvents) {
 			var point = this,
 				options = merge(point.series.options.point, point.options),
-				events = options.events,
-				eventType;
+				events = options.events;
 
 			point.events = events;
 
-			for (eventType in events) {
-				addEvent(point, eventType, events[eventType]);
-			}
+			H.objectEach(events, function (event, eventType) {
+				addEvent(point, eventType, event);
+			});
 			this.hasImportedEvents = true;
 
 		}

@@ -26,6 +26,7 @@ var addEvent = H.addEvent,
 	isObject = H.isObject,
 	isArray = H.isArray,
 	merge = H.merge,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	Point = H.Point,
 	Series = H.Series,
@@ -199,7 +200,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * Chart.update function that takes the whole options stucture.
 	 */
 	update: function (options, redraw) {
-		var key,
+		var chart = this,
 			adders = {
 				credits: 'addCredits',
 				title: 'setTitle',
@@ -213,17 +214,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// If the top-level chart option is present, some special updates are required		
 		if (optionsChart) {
-			merge(true, this.options.chart, optionsChart);
+			merge(true, chart.options.chart, optionsChart);
 
 			// Setter function
 			if ('className' in optionsChart) {
-				this.setClassName(optionsChart.className);
+				chart.setClassName(optionsChart.className);
 			}
 
 			if ('inverted' in optionsChart || 'polar' in optionsChart) {
 				// Parse options.chart.inverted and options.chart.polar together
 				// with the available series.
-				this.propFromSeries();
+				chart.propFromSeries();
 				updateAllAxes = true;
 			}
 
@@ -231,22 +232,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				updateAllAxes = true;
 			}
 
-			for (key in optionsChart) {
-				if (optionsChart.hasOwnProperty(key)) {
-					if (inArray('chart.' + key, this.propsRequireUpdateSeries) !== -1) {
-						updateAllSeries = true;
-					}
-					// Only dirty box
-					if (inArray(key, this.propsRequireDirtyBox) !== -1) {
-						this.isDirtyBox = true;
-					}
-					
+			objectEach(optionsChart, function (val, key) {
+				if (inArray('chart.' + key, chart.propsRequireUpdateSeries) !== -1) {
+					updateAllSeries = true;
 				}
-			}
+				// Only dirty box
+				if (inArray(key, chart.propsRequireDirtyBox) !== -1) {
+					chart.isDirtyBox = true;
+				}
+			});
 
 			/*= if (build.classic) { =*/
 			if ('style' in optionsChart) {
-				this.renderer.setStyle(optionsChart.style);
+				chart.renderer.setStyle(optionsChart.style);
 			}
 			/*= } =*/
 		}
@@ -262,8 +260,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			merge(true, this.options.plotOptions, options.plotOptions);
 		}
 		
-		// Some option stuctures correspond one-to-one to chart objects that have
-		// update methods, for example
+		// Some option stuctures correspond one-to-one to chart objects that
+		// have update methods, for example
 		// options.credits => chart.credits
 		// options.legend => chart.legend
 		// options.title => chart.title
@@ -272,19 +270,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// options.mapNavigation => chart.mapNavigation
 		// options.navigator => chart.navigator
 		// options.scrollbar => chart.scrollbar
-		for (key in options) {
-			if (this[key] && typeof this[key].update === 'function') {
-				this[key].update(options[key], false);
-
+		objectEach(options, function (val, key) {
+			if (chart[key] && typeof chart[key].update === 'function') {
+				chart[key].update(val, false);
+				
 			// If a one-to-one object does not exist, look for an adder function
-			} else if (typeof this[adders[key]] === 'function') {
-				this[adders[key]](options[key]);
+			} else if (typeof chart[adders[key]] === 'function') {
+				chart[adders[key]](val);
 			}
-
-			if (key !== 'chart' && inArray(key, this.propsRequireUpdateSeries) !== -1) {
+			
+			if (
+				key !== 'chart' &&
+				inArray(key, chart.propsRequireUpdateSeries) !== -1
+			) {
 				updateAllSeries = true;
 			}
-		}
+		});
 
 		// Setters for collections. For axes and series, each item is referred
 		// by an id. If the id is not found, it defaults to the corresponding
@@ -304,17 +305,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 				each(splat(options[coll]), function (newOptions, i) {
 					var item = (
 						defined(newOptions.id) &&
-						this.get(newOptions.id)
-					) || this[coll][i];
+						chart.get(newOptions.id)
+					) || chart[coll][i];
 					if (item && item.coll === coll) {
 						item.update(newOptions, false);
 					}
-				}, this);
+				});
 			}
-		}, this);
+		});
 
 		if (updateAllAxes) {
-			each(this.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				axis.update({}, false);
 			});
 		}
@@ -322,24 +323,24 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		// Certain options require the whole series structure to be thrown away
 		// and rebuilt
 		if (updateAllSeries) {
-			each(this.series, function (series) {
+			each(chart.series, function (series) {
 				series.update({}, false);
 			});
 		}
 
 		// For loading, just update the options, do not redraw
 		if (options.loading) {
-			merge(true, this.options.loading, options.loading);
+			merge(true, chart.options.loading, options.loading);
 		}
 
 		// Update size. Redraw is forced.
 		newWidth = optionsChart && optionsChart.width;
 		newHeight = optionsChart && optionsChart.height;
-		if ((isNumber(newWidth) && newWidth !== this.chartWidth) ||
-				(isNumber(newHeight) && newHeight !== this.chartHeight)) {
-			this.setSize(newWidth, newHeight);
+		if ((isNumber(newWidth) && newWidth !== chart.chartWidth) ||
+				(isNumber(newHeight) && newHeight !== chart.chartHeight)) {
+			chart.setSize(newWidth, newHeight);
 		} else if (pick(redraw, true)) {
-			this.redraw();
+			chart.redraw();
 		}
 	},
 
@@ -602,11 +603,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	 */
 	update: function (newOptions, redraw) {
 		var series = this,
-			chart = this.chart,
-			// must use user options when changing type because this.options is merged
-			// in with type specific plotOptions
-			oldOptions = this.userOptions,
-			oldType = this.oldType || this.type,
+			chart = series.chart,
+			// must use user options when changing type because series.options
+			// is merged in with type specific plotOptions
+			oldOptions = series.userOptions,
+			oldType = series.oldType || series.type,
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -626,26 +627,26 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
 			animation: false,
-			index: this.index,
-			pointStart: this.xData[0] // when updating after addPoint
-		}, { data: this.options.data }, newOptions);
+			index: series.index,
+			pointStart: series.xData[0] // when updating after addPoint
+		}, { data: series.options.data }, newOptions);
 
 		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
-		this.remove(false, null, false);
+		series.remove(false, null, false);
 		for (n in proto) {
-			this[n] = undefined;
+			series[n] = undefined;
 		}
-		extend(this, seriesTypes[newType || oldType].prototype);
+		extend(series, seriesTypes[newType || oldType].prototype);
 
 		// Re-register groups (#3094)
 		each(preserve, function (prop) {
 			series[prop] = preserve[prop];
 		});
 
-		this.init(chart, newOptions);
-		this.oldType = oldType;
-		chart.linkSeries(); // Links are lost in this.remove (#3028)
+		series.init(chart, newOptions);
+		series.oldType = oldType;
+		chart.linkSeries(); // Links are lost in series.remove (#3028)
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}

@@ -26,6 +26,7 @@ var defaultOptions = H.defaultOptions,
 	merge = H.merge,
 	pick = H.pick,
 	each = H.each,
+	objectEach = H.objectEach,
 	extend = H.extend,
 	isTouchDevice = H.isTouchDevice,
 	win = H.win,
@@ -174,11 +175,8 @@ defaultOptions.exporting = {
 
 // Add the H.post utility
 H.post = function (url, data, formAttributes) {
-	var name,
-		form;
-
 	// create the form
-	form = createElement('form', merge({
+	var form = createElement('form', merge({
 		method: 'post',
 		action: url,
 		enctype: 'multipart/form-data'
@@ -187,13 +185,13 @@ H.post = function (url, data, formAttributes) {
 	}, doc.body);
 
 	// add the data
-	for (name in data) {
+	objectEach(data, function (val, name) {
 		createElement('input', {
 			type: 'hidden',
 			name: name,
-			value: data[name]
+			value: val
 		}, null, form);
-	}
+	});
 
 	// submit
 	form.submit();
@@ -879,8 +877,7 @@ Chart.prototype.inlineStyles = function () {
 	 * Call this on all elements and recurse to children
 	 */
 	function recurse(node) {
-		var prop,
-			styles,
+		var styles,
 			parentStyles,
 			cssText = '',
 			dummy,
@@ -907,31 +904,30 @@ Chart.prototype.inlineStyles = function () {
 
 			// Loop over all the computed styles and check whether they are in the 
 			// white list for styles or atttributes.
-			for (prop in styles) {
-
+			objectEach(styles, function (val, prop) {
 				// Check against blacklist
 				blacklisted = false;
 				i = blacklist.length;
 				while (i-- && !blacklisted) {
-					blacklisted = blacklist[i].test(prop) || typeof styles[prop] === 'function';
+					blacklisted = blacklist[i].test(prop) || typeof val === 'function';
 				}
-
+				
 				if (!blacklisted) {
 					
 					// If parent node has the same style, it gets inherited, no need to inline it
-					if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
-
+					if (parentStyles[prop] !== val && defaultStyles[node.nodeName][prop] !== val) {
+						
 						// Attributes
 						if (inlineToAttributes.indexOf(prop) !== -1) {
-							node.setAttribute(hyphenate(prop), styles[prop]);
-
-						// Styles
+							node.setAttribute(hyphenate(prop), val);
+							
+							// Styles
 						} else {
-							cssText += hyphenate(prop) + ':' + styles[prop] + ';';
+							cssText += hyphenate(prop) + ':' + val + ';';
 						}
 					}
 				}
-			}
+			});
 
 			// Apply styles
 			if (cssText) {
@@ -976,28 +972,28 @@ symbols.menu = function (x, y, width, height) {
 
 // Add the buttons on chart load
 Chart.prototype.renderExporting = function () {
-	var n,
-		exportingOptions = this.options.exporting,
+	var chart = this,
+		exportingOptions = chart.options.exporting,
 		buttons = exportingOptions.buttons,
-		isDirty = this.isDirtyExporting || !this.exportSVGElements;
+		isDirty = chart.isDirtyExporting || !chart.exportSVGElements;
 	
-	this.buttonOffset = 0;
-	if (this.isDirtyExporting) {
-		this.destroyExport();
+	chart.buttonOffset = 0;
+	if (chart.isDirtyExporting) {
+		chart.destroyExport();
 	}
 	
 	if (isDirty && exportingOptions.enabled !== false) {
-		this.exportEvents = [];
+		chart.exportEvents = [];
 
-		for (n in buttons) {
-			this.addButton(buttons[n]);
-		}
+		objectEach(buttons, function (button) {
+			chart.addButton(button);
+		});
 
-		this.isDirtyExporting = false;
+		chart.isDirtyExporting = false;
 	}
 
 	// Destroy the export elements at chart destroy
-	addEvent(this, 'destroy', this.destroyExport);		
+	addEvent(chart, 'destroy', chart.destroyExport);		
 };
 
 Chart.prototype.callbacks.push(function (chart) {
