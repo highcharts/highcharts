@@ -32,10 +32,17 @@ function dumpOptions() {
 }
 
 function decorateOptions(parent, target, option, filename) {
+    var index;
+
+    if (option.key && option.key.name) {
+        index = option.key.name;
+    } else {
+        index = parent;
+    }
 
     if (!option) {
         return;
-    }
+    }    
 
     if (parent && parent.length > 0) {
         parent += '.';
@@ -45,36 +52,37 @@ function decorateOptions(parent, target, option, filename) {
         //filename = filename.substr(filename.indexOf('highcharts/'));
     }
 
-    target[option.key.name] = target[option.key.name] || {
-        meta: {
-            fullname: parent + option.key.name,
-            name: option.key.name,
-            line: option.key.loc.start.line,
-            column: option.key.loc.start.column,
-            filename: filename//.replace('highcharts/', '')
-        },
+    target[index] = target[index] || {
         doclet: {},
       //  type: option.key.type,
         children: {}
     };
 
-    if (option.value.type == 'ObjectExpression') {     
+    target[index].meta = {
+        fullname: parent + index,
+        name: index,
+        line: option.key.loc.start.line,
+        column: option.key.loc.start.column,
+        filename: filename//.replace('highcharts/', '')
+    };
+
+    if (option.value && option.value.type == 'ObjectExpression') {     
 
         // This is a nested object probably
         option.value.properties.forEach(function (sub) {
             var s = {};
 
-            s = target[option.key.name].children;
+            s = target[index].children;
 
             decorateOptions(
-                parent + option.key.name,
+                parent + index,
                 s,
                 sub,
                 filename
             );
         });
-    } else if (option.value.type === 'Literal') {
-       target[option.key.name].meta.default = option.value.value;
+    } else if (option.value && option.value.type === 'Literal') {
+       target[index].meta.default = option.value.value;
        //target[option.key.name].meta.type = option.value.type;
     } else {
         return;
@@ -82,7 +90,7 @@ function decorateOptions(parent, target, option, filename) {
 
     // Add options decorations directly to the node
     option.highcharts = option.highcharts || {};
-    option.highcharts.fullname = parent + option.key.name;
+    option.highcharts.fullname = parent + index;
     option.highcharts.isOption = true;
 }
 
@@ -104,6 +112,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         parent,
         comment,
         properties,
+        fullPath,
         s
     ;
 
@@ -124,6 +133,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         
         if (s >= 0) {
             s = comment.substr(s).replace(/\*/g, '').trim();
+            fullPath = '';
             
             parent = s.split('\n')[0].trim().split(' ');
             
@@ -136,18 +146,30 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
 
                 s.forEach(function (p, i) {
-                    
+                    fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
+
                     target[p] = target[p] || {
                         doclet: {},
                         children: {}
+                    };                    
+
+                    target[p].meta = {
+                        filename: currentSourceName,
+                        name: p,
+                        fullname: fullPath,
+                        line: node.loc.start.line,
+                        column: node.loc.start.column
                     };
 
+                    
                     target = target[p].children; 
+
                 });                
             } else {
                 parent = '';
                 target = options;
             }
+
             if (target) {                
 
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
@@ -172,8 +194,9 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     properties.forEach(function (child) {
                         decorateOptions(parent, target, child, e.filename || currentSourceName);
                     });
+                } else {
+                    console.log('INVALID properties for node', node);
                 }
-
             } else {
                 logger.error('@optionparent is missing an argument');
             }       
@@ -189,14 +212,8 @@ function augmentOption(path, obj) {
         p = (path || '').split('.')
     ;
     
-  //  console.log('augmenting', path);
-
     if (!obj) {
         return;
-    }
-
-    if (p.length === 0) {
-
     }
 
     p.forEach(function (thing, i) {
@@ -204,6 +221,7 @@ function augmentOption(path, obj) {
             // Merge in stuff
 
             current[thing] = current[thing] || {
+                meta: {},
                 doclet: {},
                 children: {}
             };
@@ -214,15 +232,15 @@ function augmentOption(path, obj) {
                 }
             });
 
-            current[thing].meta = current[thing].meta || {};
+            //current[thing].meta = current[thing].meta || {};
 
-            if (obj && obj.meta) {
-                if (current[thing].meta.filename === '??') {
-                    current[thing].meta.filename = obj.meta.filename.substr(
-                        obj.meta.filename.indexOf('highcharts/')
-                    );                    
-                }
-            } 
+            // if (obj && obj.meta) {
+            //     if (!current[thing].meta.filename === '??') {
+            //         current[thing].meta.filename = obj.meta.filename.substr(
+            //             obj.meta.filename.indexOf('highcharts/')
+            //         );                    
+            //     }
+            // } 
         
             return;
         }
