@@ -32,7 +32,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 25;
 
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series.index; // #4743
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) {
@@ -40,11 +40,30 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	}
 
 	z += (seriesOptions.groupZPadding || 1);
-
 	each(series.data, function (point) {
 		if (point.y !== null) {
 			var shapeArgs = point.shapeArgs,
-				tooltipPos = point.tooltipPos;
+				tooltipPos = point.tooltipPos,
+				dimensions = [['x', 'width'], ['y', 'height']]; // Array for final shapeArgs calculation.
+				// We are checking two dimensions (x and y).
+
+				// #3131 We need to check if column shape arguments are inside plotArea.
+
+			each(dimensions, function (d) {
+				if (
+					shapeArgs[d[0]] + shapeArgs[d[1]] < 0 || // End column position is smaller than axis start.
+					shapeArgs[d[0]] > series[d[0] + 'Axis'].len // Start column position is bigger than axis end.
+					) {
+					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
+						shapeArgs[key] = 0;
+					}
+				} if (shapeArgs[d[0]] < 0) {
+					shapeArgs[d[1]] += shapeArgs[d[0]]; 
+					shapeArgs[d[0]] = 0;
+				} if (shapeArgs[d[0]] + shapeArgs[d[1]] > series[d[0] + 'Axis'].len) {
+					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
+				}
+			});
 
 			point.shapeType = 'cuboid';
 			shapeArgs.z = z;
@@ -137,9 +156,11 @@ wrap(seriesTypes.column.prototype, 'setVisible', function (proceed, vis) {
 			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
 			pointVis = vis ? 'visible' : 'hidden';
 			series.options.data[inArray(point, series.data)] = point.options;
-			point.graphic.attr({
-				visibility: pointVis
-			});
+			if (point.graphic) {
+				point.graphic.attr({
+					visibility: pointVis
+				});
+			}
 		});
 	}
 	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -192,21 +213,10 @@ function pointAttribs(proceed) {
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 if (seriesTypes.columnrange) {
 	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+	seriesTypes.columnrange.prototype.plotGroup = seriesTypes.column.prototype.plotGroup;
+	seriesTypes.columnrange.prototype.setVisible = seriesTypes.column.prototype.setVisible;
 }
 /*= } =*/
-
-function draw3DPoints(proceed) {
-	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		var grouping = this.chart.options.plotOptions.column.grouping;
-		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-			this.group.attr({ zIndex: this.group.zIndex * 10 });
-			this.zIndexSet = true; // #4062 set zindex only once
-		}
-	}
-
-	proceed.apply(this, [].slice.call(arguments, 1));
-}
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	
@@ -226,12 +236,6 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
-
-if (seriesTypes.columnrange) {
-	wrap(seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
-}
-
-wrap(seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
 /***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS

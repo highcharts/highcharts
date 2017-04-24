@@ -850,8 +850,15 @@ Axis.prototype.minFromRange = function () {
 		range,
 		// Get the true range from a start date
 		getTrueRange = function (base, count) {
-			var date = new Date(base);
-			date['set' + timeName](date['get' + timeName]() + count);
+			var date = new Date(base),
+				basePeriod = date['get' + timeName]();
+
+			date['set' + timeName](basePeriod + count);
+
+			if (basePeriod === date['get' + timeName]()) {
+				date.setDate(0); // #6537
+			}
+
 			return date.getTime() - base;
 		};
 

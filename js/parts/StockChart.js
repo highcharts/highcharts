@@ -281,7 +281,13 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
 	each(axes, function (axis2) {
-		if (inArray(axis2, uniqueAxes) === -1) {
+		if (
+			inArray(axis2, uniqueAxes) === -1 &&
+			// Do not draw on axis which overlap completely. #5424
+			!H.find(uniqueAxes, function (unique) {
+				return unique.pos === axis2.pos && unique.len && axis2.len;
+			})
+		) {
 			uniqueAxes.push(axis2);
 		}
 	});

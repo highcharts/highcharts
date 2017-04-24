@@ -39,20 +39,24 @@ var addEvent = H.addEvent,
 	win = H.win;
 
 /**
- * The base function which all other series types inherit from. The data in the series is stored
- * in various arrays.
+ * The base function which all other series types inherit from. The data in the
+ * series is stored in various arrays.
  *
  * - First, series.options.data contains all the original config options for
  * each point whether added by options or methods like series.addPoint.
- * - Next, series.data contains those values converted to points, but in case the series data length
- * exceeds the cropThreshold, or if the data is grouped, series.data doesn't contain all the points. It
- * only contains the points that have been created on demand.
- * - Then there's series.points that contains all currently visible point objects. In case of cropping,
- * the cropped-away points are not part of this array. The series.points array starts at series.cropStart
- * compared to series.data and series.options.data. If however the series data is grouped, these can't
- * be correlated one to one.
- * - series.xData and series.processedXData contain clean x values, equivalent to series.data and series.points.
- * - series.yData and series.processedYData contain clean y values, equivalent to series.data and series.points.
+ * - Next, series.data contains those values converted to points, but in case
+ * the series data length exceeds the cropThreshold, or if the data is grouped,
+ * series.data doesn't contain all the points. It only contains the points that
+ * have been created on demand.
+ * - Then there's series.points that contains all currently visible point
+ * objects. In case of cropping, the cropped-away points are not part of this
+ * array. The series.points array starts at series.cropStart compared to
+ * series.data and series.options.data. If however the series data is grouped,
+ * these can't be correlated one to one.
+ * - series.xData and series.processedXData contain clean x values, equivalent
+ * to series.data and series.points.
+ * - series.yData and series.processedYData contain clean y values, equivalent
+ * to series.data and series.points.
  *
  * @constructor Series
  * @param {Object} chart - The chart instance.
@@ -134,11 +138,13 @@ H.Series = H.seriesType('line', null, { // base series options
 		// borderRadius: undefined,
 		padding: 5
 	},
-	cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
+	// draw points outside the plot area when the number of points is less than
+	// this
+	cropThreshold: 300,
 	pointRange: 0,
 	//pointStart: 0,
 	//pointInterval: 1,
-	//showInLegend: null, // auto: true for standalone series, false for linked series
+	//showInLegend: null, // auto = false for linked series
 	softThreshold: true,
 	states: { // states for the entire series
 		hover: {
@@ -164,7 +170,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 	stickyTracking: true,
 	//tooltip: {
-		//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+		//pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+		// '{series.name}: <b>{point.y}</b>'
 		//valueDecimals: null,
 		//xDateFormat: '%A, %b %e, %Y',
 		//valuePrefix: '',
@@ -182,7 +189,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
-	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
+	// each point's x and y values are stored in this.xData and this.yData
+	parallelArrays: ['x', 'y'],
 	coll: 'series',
 	init: function (chart, options) {
 		var series = this,
@@ -191,7 +199,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			lastSeries;
 
 		series.chart = chart;
-		series.options = options = series.setOptions(options); // merge with plotOptions
+		series.options = options = series.setOptions(options);
 		series.linkedSeries = [];
 
 		// bind the axes
@@ -213,7 +221,11 @@ H.Series = H.seriesType('line', null, { // base series options
 		});
 		if (
 			(events && events.click) ||
-			(options.point && options.point.events && options.point.events.click) ||
+			(
+				options.point &&
+				options.point.events &&
+				options.point.events.click
+			) ||
 			options.allowPointSelect
 		) {
 			chart.runTrackerClick = true;
@@ -292,16 +304,26 @@ H.Series = H.seriesType('line', null, { // base series options
 			chart = series.chart,
 			axisOptions;
 
-		each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
+		// repeat for xAxis and yAxis
+		each(series.axisTypes || [], function (AXIS) {
 
-			each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+			// loop through the chart's axis objects
+			each(chart[AXIS], function (axis) {
 				axisOptions = axis.options;
 
-				// apply if the series xAxis or yAxis option mathches the number of the
-				// axis, or if undefined, use the first axis
-				if ((seriesOptions[AXIS] === axisOptions.index) ||
-						(seriesOptions[AXIS] !== undefined && seriesOptions[AXIS] === axisOptions.id) ||
-						(seriesOptions[AXIS] === undefined && axisOptions.index === 0)) {
+				// apply if the series xAxis or yAxis option mathches the number
+				// of the axis, or if undefined, use the first axis
+				if (
+					seriesOptions[AXIS] === axisOptions.index ||
+					(
+						seriesOptions[AXIS] !== undefined &&
+						seriesOptions[AXIS] === axisOptions.id
+					) ||
+					(
+						seriesOptions[AXIS] === undefined &&
+						axisOptions.index === 0
+					)
+				) {
 
 					// register this series in the axis.series lookup
 					series.insert(axis.series);
@@ -323,10 +345,11 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * For simple series types like line and column, the data values are held in arrays like
-	 * xData and yData for quick lookup to find extremes and more. For multidimensional series
-	 * like bubble and map, this can be extended with arrays like zData and valueData by
-	 * adding to the series.parallelArrays array.
+	 * For simple series types like line and column, the data values are held in
+	 * arrays like xData and yData for quick lookup to find extremes and more.
+	 * For multidimensional series like bubble and map, this can be extended
+	 * with arrays like zData and valueData by adding to the
+	 * series.parallelArrays array.
 	 */
 	updateParallelArrays: function (point, i) {
 		var series = point.series,
@@ -334,20 +357,27 @@ H.Series = H.seriesType('line', null, { // base series options
 			fn = isNumber(i) ?
 				// Insert the value in the given position
 				function (key) {
-					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
+					var val = key === 'y' && series.toYData ?
+						series.toYData(point) :
+						point[key];
 					series[key + 'Data'][i] = val;
 				} :
-				// Apply the method specified in i with the following arguments as arguments
+				// Apply the method specified in i with the following arguments
+				// as arguments
 				function (key) {
-					Array.prototype[i].apply(series[key + 'Data'], Array.prototype.slice.call(args, 2));
+					Array.prototype[i].apply(
+						series[key + 'Data'],
+						Array.prototype.slice.call(args, 2)
+					);
 				};
 
 		each(series.parallelArrays, fn);
 	},
 
 	/**
-	 * Return an auto incremented x value based on the pointStart and pointInterval options.
-	 * This is only used if an x value is not given for the point that calls autoIncrement.
+	 * Return an auto incremented x value based on the pointStart and
+	 * pointInterval options. This is only used if an x value is not given for
+	 * the point that calls autoIncrement.
 	 */
 	autoIncrement: function () {
 
@@ -359,18 +389,28 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		xIncrement = pick(xIncrement, options.pointStart, 0);
 
-		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+		this.pointInterval = pointInterval = pick(
+			this.pointInterval,
+			options.pointInterval,
+			1
+		);
 
 		// Added code for pointInterval strings
 		if (pointIntervalUnit) {
 			date = new Date(xIncrement);
 
 			if (pointIntervalUnit === 'day') {
-				date = +date[Date.hcSetDate](date[Date.hcGetDate]() + pointInterval);
+				date = +date[Date.hcSetDate](
+					date[Date.hcGetDate]() + pointInterval
+				);
 			} else if (pointIntervalUnit === 'month') {
-				date = +date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval);
+				date = +date[Date.hcSetMonth](
+					date[Date.hcGetMonth]() + pointInterval
+				);
 			} else if (pointIntervalUnit === 'year') {
-				date = +date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
+				date = +date[Date.hcSetFullYear](
+					date[Date.hcGetFullYear]() + pointInterval
+				);
 			}
 			pointInterval = date - xIncrement;
 
@@ -396,31 +436,39 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		this.userOptions = itemOptions;
 
-		// General series options take precedence over type options because otherwise, default
-		// type options like column.animation would be overwritten by the general option.
-		// But issues have been raised here (#3881), and the solution may be to distinguish
-		// between default option and userOptions like in the tooltip below.
+		// General series options take precedence over type options because
+		// otherwise, default type options like column.animation would be
+		// overwritten by the general option. But issues have been raised here
+		// (#3881), and the solution may be to distinguish between default
+		// option and userOptions like in the tooltip below.
 		options = merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
 
-		// The tooltip options are merged between global and series specific options
+		// The tooltip options are merged between global and series specific
+		// options. Importance order asscendingly:
+		// globals: (1)tooltip, (2)plotOptions.series, (3)plotOptions[this.type]
+		// init userOptions with possible later updates: 4-6 like 1-3 and
+		// (7)this series options
 		this.tooltipOptions = merge(
-			defaultOptions.tooltip,
-			defaultOptions.plotOptions[this.type].tooltip,
-			userOptions.tooltip,
-			userPlotOptions.series && userPlotOptions.series.tooltip,
-			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
-			itemOptions.tooltip
+			defaultOptions.tooltip, // 1
+			defaultOptions.plotOptions.series &&
+				defaultOptions.plotOptions.series.tooltip, // 2
+			defaultOptions.plotOptions[this.type].tooltip, // 3
+			chartOptions.tooltip.userOptions, // 4
+			plotOptions.series && plotOptions.series.tooltip, // 5
+			plotOptions[this.type].tooltip, // 6
+			itemOptions.tooltip // 7
 		);
-
+		
 		// When shared tooltip, stickyTracking is true by default,
 		// unless user says otherwise.
 		this.stickyTracking = pick(
 			itemOptions.stickyTracking,
-			userPlotOptions[this.type] && userPlotOptions[this.type].stickyTracking,
+			userPlotOptions[this.type] &&
+				userPlotOptions[this.type].stickyTracking,
 			userPlotOptions.series && userPlotOptions.series.stickyTracking,
 			(
 				this.tooltipOptions.shared && !this.noSharedTooltip ?
@@ -437,9 +485,15 @@ H.Series = H.seriesType('line', null, { // base series options
 		// Handle color zones
 		this.zoneAxis = options.zoneAxis;
 		zones = this.zones = (options.zones || []).slice();
-		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
+		if (
+			(options.negativeColor || options.negativeFillColor) &&
+			!options.zones
+		) {
 			zones.push({
-				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				value:
+					options[this.zoneAxis + 'Threshold'] ||
+					options.threshold ||
+					0,
 				className: 'highcharts-negative',
 				/*= if (build.classic) { =*/
 				color: options.negativeColor,
@@ -473,8 +527,12 @@ H.Series = H.seriesType('line', null, { // base series options
 			setting;
 
 		if (!value) {
-			// Pick up either the colorIndex option, or the _colorIndex after Series.update()
-			setting = pick(userOptions[indexName], userOptions['_' + indexName]);
+			// Pick up either the colorIndex option, or the _colorIndex after
+			// Series.update()
+			setting = pick(
+				userOptions[indexName],
+				userOptions['_' + indexName]
+			);
 			if (defined(setting)) { // after Series.update()
 				i = setting;
 			} else {
@@ -507,9 +565,15 @@ H.Series = H.seriesType('line', null, { // base series options
 	/*= } else { =*/
 	getColor: function () {
 		if (this.options.colorByPoint) {
-			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
+			// #4359, selected slice got series.color even when colorByPoint was
+			// set.
+			this.options.color = null;
 		} else {
-			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic(
+				'color',
+				this.options.color || defaultPlotOptions[this.type].color,
+				this.chart.options.colors
+			);
 		}
 	},
 	/*= } =*/
@@ -519,7 +583,11 @@ H.Series = H.seriesType('line', null, { // base series options
 	getSymbol: function () {
 		var seriesMarkerOption = this.options.marker;
 
-		this.getCyclic('symbol', seriesMarkerOption.symbol, this.chart.options.symbols);
+		this.getCyclic(
+			'symbol',
+			seriesMarkerOption.symbol,
+			this.chart.options.symbols
+		);
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
@@ -550,9 +618,16 @@ H.Series = H.seriesType('line', null, { // base series options
 		dataLength = data.length;
 		redraw = pick(redraw, true);
 
-		// If the point count is the same as is was, just run Point.update which is
-		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
+		// If the point count is the same as is was, just run Point.update which
+		// is cheaper, allows animation, and keeps references to points.
+		if (
+			updatePoints !== false &&
+			dataLength &&
+			oldDataLength === dataLength &&
+			!series.cropped &&
+			!series.hasGroupedData &&
+			series.visible
+		) {
 			each(data, function (point, i) {
 				// .update doesn't exist on a linked, hidden series (#3709)
 				if (oldData[i].update && point !== options.data[i]) {
@@ -572,10 +647,11 @@ H.Series = H.seriesType('line', null, { // base series options
 				series[key + 'Data'].length = 0;
 			});
 
-			// In turbo mode, only one- or twodimensional arrays of numbers are allowed. The
-			// first value is tested, and we assume that all the rest are defined the same
-			// way. Although the 'for' loops are similar, they are repeated inside each
-			// if-else conditional for max performance.
+			// In turbo mode, only one- or twodimensional arrays of numbers are
+			// allowed. The first value is tested, and we assume that all the
+			// rest are defined the same way. Although the 'for' loops are
+			// similar, they are repeated inside each if-else conditional for
+			// max performance.
 			if (turboThreshold && dataLength > turboThreshold) {
 
 				// find the first non-null point
@@ -591,7 +667,9 @@ H.Series = H.seriesType('line', null, { // base series options
 						xData[i] = this.autoIncrement();
 						yData[i] = data[i];
 					}
-				} else if (isArray(firstPoint)) { // assume all points are arrays
+
+				// Assume all points are arrays when first point is
+				} else if (isArray(firstPoint)) {
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
 							pt = data[i];
@@ -606,19 +684,25 @@ H.Series = H.seriesType('line', null, { // base series options
 						}
 					}
 				} else {
-					H.error(12); // Highcharts expects configs to be numbers or arrays in turbo mode
+					// Highcharts expects configs to be numbers or arrays in
+					// turbo mode
+					H.error(12); 
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
 					if (data[i] !== undefined) { // stray commas in oldIE
 						pt = { series: series };
-						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
+						series.pointClass.prototype.applyOptions.apply(
+							pt,
+							[data[i]]
+						);
 						series.updateParallelArrays(pt, i);
 					}
 				}
 			}
 
-			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
+			// Forgetting to cast strings to numbers is a common caveat when
+			// handling CSV or JSON
 			if (isString(yData[0])) {
 				H.error(14, true);
 			}
@@ -658,12 +742,13 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Process the data by cropping away unused data points if the series is longer
-	 * than the crop threshold. This saves computing time for large series.
+	 * Process the data by cropping away unused data points if the series is
+	 * longer than the crop threshold. This saves computing time for large
+	 * series.
 	 */
 	processData: function (force) {
 		var series = this,
-			processedXData = series.xData, // copied during slice operation below
+			processedXData = series.xData, // copied during slice operation
 			processedYData = series.yData,
 			dataLength = processedXData.length,
 			croppedData,
@@ -675,7 +760,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
+			getExtremesFromAll =
+				series.getExtremesFromAll ||
+				options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
 			val2lin = xAxis && xAxis.val2lin,
@@ -683,9 +770,16 @@ H.Series = H.seriesType('line', null, { // base series options
 			min,
 			max;
 
-		// If the series data or axes haven't changed, don't go through this. Return false to pass
-		// the message on to override methods like in data grouping.
-		if (isCartesian && !series.isDirty && !xAxis.isDirty && !series.yAxis.isDirty && !force) {
+		// If the series data or axes haven't changed, don't go through this.
+		// Return false to pass the message on to override methods like in data
+		// grouping.
+		if (
+			isCartesian &&
+			!series.isDirty &&
+			!xAxis.isDirty &&
+			!series.yAxis.isDirty &&
+			!force
+		) {
 			return false;
 		}
 
@@ -696,16 +790,32 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		// optionally filter out points outside the plot area
-		if (isCartesian && series.sorted && !getExtremesFromAll && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
+		if (
+			isCartesian &&
+			series.sorted &&
+			!getExtremesFromAll &&
+			(!cropThreshold || dataLength > cropThreshold || series.forceCrop)
+		) {
 
 			// it's outside current extremes
-			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
+			if (
+				processedXData[dataLength - 1] < min ||
+				processedXData[0] > max
+			) {
 				processedXData = [];
 				processedYData = [];
 
 			// only crop if it's actually spilling out
-			} else if (processedXData[0] < min || processedXData[dataLength - 1] > max) {
-				croppedData = this.cropData(series.xData, series.yData, min, max);
+			} else if (
+				processedXData[0] < min ||
+				processedXData[dataLength - 1] > max
+			) {
+				croppedData = this.cropData(
+					series.xData,
+					series.yData,
+					min,
+					max
+				);
 				processedXData = croppedData.xData;
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
@@ -721,11 +831,18 @@ H.Series = H.seriesType('line', null, { // base series options
 				val2lin(processedXData[i]) - val2lin(processedXData[i - 1]) :
 				processedXData[i] - processedXData[i - 1];
 
-			if (distance > 0 && (closestPointRange === undefined || distance < closestPointRange)) {
+			if (
+				distance > 0 &&
+				(
+					closestPointRange === undefined ||
+					distance < closestPointRange
+				)
+			) {
 				closestPointRange = distance;
 
-			// Unsorted data is not supported by the line tooltip, as well as data grouping and
-			// navigation in Stock charts (#725) and width calculation of columns (#1900)
+			// Unsorted data is not supported by the line tooltip, as well as
+			// data grouping and navigation in Stock charts (#725) and width
+			// calculation of columns (#1900)
 			} else if (distance < 0 && series.requireSorting) {
 				H.error(15);
 			}
@@ -742,14 +859,16 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Iterate over xData and crop values between min and max. Returns object containing crop start/end
-	 * cropped xData with corresponding part of yData, dataMin and dataMax within the cropped range
+	 * Iterate over xData and crop values between min and max. Returns object
+	 * containing crop start/end cropped xData with corresponding part of yData,
+	 * dataMin and dataMax within the cropped range
 	 */
 	cropData: function (xData, yData, min, max) {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
+			// line-type series need one point outside
+			cropShoulder = pick(this.cropShoulder, 1),
 			i,
 			j;
 
@@ -779,8 +898,8 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 	/**
-	 * Generate the data point after the data has been processed by cropping away
-	 * unused points and optionally grouped in Highcharts Stock.
+	 * Generate the data point after the data has been processed by cropping
+	 * away unused points and optionally grouped in Highcharts Stock.
 	 */
 	generatePoints: function () {
 		var series = this,
@@ -810,11 +929,18 @@ H.Series = H.seriesType('line', null, { // base series options
 			if (!hasGroupedData) {
 				point = data[cursor];
 				if (!point && dataOptions[cursor] !== undefined) { // #970
-					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
+					data[cursor] = point = (new PointClass()).init(
+						series,
+						dataOptions[cursor],
+						processedXData[i]
+					);
 				}
 			} else {
 				// splat the y data in case of ohlc data array
-				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				point = (new PointClass()).init(
+					series,
+					[processedXData[i]].concat(splat(processedYData[i]))
+				);
 				point.dataGroup = series.groupMap[i];
 			}
 			if (point) { // #6279
@@ -823,11 +949,19 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 		}
 
-		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when
-		// swithching view from non-grouped data to grouped data (#637)
-		if (data && (processedDataLength !== (dataLength = data.length) || hasGroupedData)) {
+		// Hide cropped-away points - this only runs when the number of points
+		// is above cropThreshold, or when swithching view from non-grouped
+		// data to grouped data (#637)
+		if (
+			data &&
+			(
+				processedDataLength !== (dataLength = data.length) ||
+				hasGroupedData
+			)
+		) {
 			for (i = 0; i < dataLength; i++) {
-				if (i === cropStart && !hasGroupedData) { // when has grouped data, clear all points
+				// when has grouped data, clear all points
+				if (i === cropStart && !hasGroupedData) { 
 					i += processedDataLength;
 				}
 				if (data[i]) {
@@ -851,7 +985,8 @@ H.Series = H.seriesType('line', null, { // base series options
 			yDataLength,
 			activeYData = [],
 			activeCounter = 0,
-			xExtremes = xAxis.getExtremes(), // #2117, need to compensate for log X axis
+			// #2117, need to compensate for log X axis
+			xExtremes = xAxis.getExtremes(),
 			xMin = xExtremes.min,
 			xMax = xExtremes.max,
 			validValue,
@@ -869,10 +1004,15 @@ H.Series = H.seriesType('line', null, { // base series options
 			x = xData[i];
 			y = yData[i];
 
-			// For points within the visible range, including the first point outside the
-			// visible range, consider y extremes
-			validValue = (isNumber(y, true) || isArray(y)) && (!yAxis.positiveValuesOnly || (y.length || y > 0));
-			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
+			// For points within the visible range, including the first point
+			// outside the visible range, consider y extremes
+			validValue =
+				(isNumber(y, true) || isArray(y)) &&
+				(!yAxis.positiveValuesOnly || (y.length || y > 0));
+			withinRange =
+				this.getExtremesFromAll ||
+				this.options.getExtremesFromAll ||
+				this.cropped ||
 				((xData[i] || x) >= xMin &&	(xData[i] || x) <= xMax);
 
 			if (validValue && withinRange) {
@@ -918,7 +1058,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			hasModifyValue = !!series.modifyValue,
 			i,
 			pointPlacement = options.pointPlacement,
-			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
+			dynamicallyPlaced =
+				pointPlacement === 'between' ||
+				isNumber(pointPlacement),
 			threshold = options.threshold,
 			stackThreshold = options.startFromThreshold ? threshold : 0,
 			plotX,
@@ -941,7 +1083,10 @@ H.Series = H.seriesType('line', null, { // base series options
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = stacking && yAxis.stacks[(series.negStacks && yValue < (stackThreshold ? 0 : threshold) ? '-' : '') + series.stackKey],
+				stack = stacking && yAxis.stacks[(
+					series.negStacks &&
+					yValue < (stackThreshold ? 0 : threshold) ? '-' : ''
+				) + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -964,14 +1109,27 @@ H.Series = H.seriesType('line', null, { // base series options
 			);
 			
 			// Calculate the bottom y value for stacked series
-			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
-				stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
+			if (
+				stacking &&
+				series.visible &&
+				!point.isNull &&
+				stack &&
+				stack[xValue]
+			) {
+				stackIndicator = series.getStackIndicator(
+					stackIndicator,
+					xValue,
+					series.index
+				);
 				pointStack = stack[xValue];
 				stackValues = pointStack.points[stackIndicator.key];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === stackThreshold && stackIndicator.key === stack[xValue].base) {
+				if (
+					yBottom === stackThreshold &&
+					stackIndicator.key === stack[xValue].base
+				) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.positiveValuesOnly && yBottom <= 0) { // #1200, #1232
@@ -979,11 +1137,16 @@ H.Series = H.seriesType('line', null, { // base series options
 				}
 
 				point.total = point.stackTotal = pointStack.total;
-				point.percentage = pointStack.total && (point.y / pointStack.total * 100);
+				point.percentage =
+					pointStack.total &&
+					(point.y / pointStack.total * 100);
 				point.stackY = yValue;
 
 				// Place the stack label
-				pointStack.setOffset(series.pointXOffset || 0, series.barW || 0);
+				pointStack.setOffset(
+					series.pointXOffset || 0,
+					series.barW || 0
+				);
 
 			}
 
@@ -998,16 +1161,28 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
-				undefined;
+			point.plotY = plotY = 
+				(typeof yValue === 'number' && yValue !== Infinity) ?
+					Math.min(Math.max(
+						-1e5,
+						yAxis.translate(yValue, 0, 1, 0, 1)), 1e5
+					) : // #3201
+					undefined;
 
-			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
-				plotX >= 0 && plotX <= xAxis.len;
+			point.isInside =
+				plotY !== undefined &&
+				plotY >= 0 &&
+				plotY <= yAxis.len && // #3519
+				plotX >= 0 &&
+				plotX <= xAxis.len;
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) : plotX; // #1514, #5383, #5518
+			point.clientX = dynamicallyPlaced ?
+				correctFloat(
+					xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)
+				) :
+				plotX; // #1514, #5383, #5518
 
 			point.negative = point.y < (threshold || 0);
 
@@ -1018,7 +1193,10 @@ H.Series = H.seriesType('line', null, { // base series options
 			// Determine auto enabling of markers (#3635, #5099)
 			if (!point.isNull) {
 				if (lastPlotX !== undefined) {
-					closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
+					closestPointRangePx = Math.min(
+						closestPointRangePx,
+						Math.abs(plotX - lastPlotX)
+					);
 				}
 				lastPlotX = plotX;
 			}
@@ -1034,8 +1212,13 @@ H.Series = H.seriesType('line', null, { // base series options
 	 */
 	getValidPoints: function (points, insideOnly) {
 		var chart = this.chart;
-		return grep(points || this.points || [], function isValidPoint(point) { // #3916, #5029
-			if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) { // #5085
+		// #3916, #5029, #5085
+		return grep(points || this.points || [], function isValidPoint(point) {
+			if (insideOnly && !chart.isInsidePlot(
+				point.plotX,
+				point.plotY,
+				chart.inverted
+			)) {
 				return false;
 			}
 			return !point.isNull;
@@ -1043,8 +1226,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * Set the clipping for the series. For animated series it is called twice, first to initiate
-	 * animating the clip then the second time without the animation to set the final clip.
+	 * Set the clipping for the series. For animated series it is called twice,
+	 * first to initiate animating the clip then the second time without the
+	 * animation to set the final clip.
 	 */
 	setClip: function (animation) {
 		var chart = this.chart,
@@ -1053,11 +1237,21 @@ H.Series = H.seriesType('line', null, { // base series options
 			inverted = chart.inverted,
 			seriesClipBox = this.clipBox,
 			clipBox = seriesClipBox || chart.clipBox,
-			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height, options.xAxis, options.yAxis].join(','), // #4526
+			sharedClipKey =
+				this.sharedClipKey ||
+				[
+					'_sharedClip',
+					animation && animation.duration,
+					animation && animation.easing,
+					clipBox.height,
+					options.xAxis,
+					options.yAxis
+				].join(','), // #4526
 			clipRect = chart[sharedClipKey],
 			markerClipRect = chart[sharedClipKey + 'm'];
 
-		// If a clipping rectangle with the same properties is currently present in the chart, use that.
+		// If a clipping rectangle with the same properties is currently present
+		// in the chart, use that.
 		if (!clipRect) {
 
 			// When animation is set, prepare the initial positions
@@ -1173,7 +1367,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			hasPointMarker,
 			enabled,
 			isInside,
-			markerGroup = series.markerGroup,
+			markerGroup = series[series.specialGroup] || series.markerGroup,
 			xAxis = series.xAxis,
 			markerAttribs,
 			globallyEnabled = pick(

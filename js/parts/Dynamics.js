@@ -24,6 +24,7 @@ var addEvent = H.addEvent,
 	inArray = H.inArray,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
+	isArray = H.isArray,
 	merge = H.merge,
 	objectEach = H.objectEach,
 	pick = H.pick,
@@ -192,7 +193,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * extended from plugins.
 	 */
 	propsRequireUpdateSeries: ['chart.inverted', 'chart.polar',
-		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions'],
+		'chart.ignoreHiddenSeries', 'chart.type', 'colors', 'plotOptions',
+		'tooltip'],
 
 	/**
 	 * Chart.update function that takes the whole options stucture.
@@ -246,6 +248,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 			/*= } =*/
 		}
+
+		// Moved up, because tooltip needs updated plotOptions (#6218)
+		/*= if (build.classic) { =*/
+		if (options.colors) {
+			this.options.colors = options.colors;
+		}
+		/*= } =*/
+
+		if (options.plotOptions) {
+			merge(true, this.options.plotOptions, options.plotOptions);
+		}
 		
 		// Some option stuctures correspond one-to-one to chart objects that
 		// have update methods, for example
@@ -274,23 +287,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			}
 		});
 
-		/*= if (build.classic) { =*/
-		if (options.colors) {
-			chart.options.colors = options.colors;
-		}
-		/*= } =*/
-
-		if (options.plotOptions) {
-			merge(true, chart.options.plotOptions, options.plotOptions);
-		}
-
 		// Setters for collections. For axes and series, each item is referred
 		// by an id. If the id is not found, it defaults to the corresponding
 		// item in the collection, so setting one series without an id, will
 		// update the first series in the chart. Setting two series without
 		// an id will update the first and the second respectively (#6019)
 		// chart.update and responsive.
-		each(['xAxis', 'yAxis', 'series', 'colorAxis', 'pane'], function (coll) {
+		each([
+			'xAxis',
+			'yAxis',
+			'zAxis',
+			'series',
+			'colorAxis',
+			'pane'
+		], function (coll) {
 			if (options[coll]) {
 				each(splat(options[coll]), function (newOptions, i) {
 					var item = (
@@ -683,7 +693,13 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 		// Remove the axis
 		erase(chart.axes, this);
 		erase(chart[key], this);
-		chart.options[key].splice(this.options.index, 1);
+
+		if (isArray(chart.options[key])) {
+			chart.options[key].splice(this.options.index, 1);
+		} else { // color axis, #6488
+			delete chart.options[key];
+		}
+
 		each(chart[key], function (axis, i) { // Re-index, #1706
 			axis.options.index = i;
 		});

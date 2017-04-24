@@ -76,7 +76,8 @@ seriesType('bubble', 'scatter', {
 }, {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
-	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
+	trackerGroups: ['group', 'dataLabelsGroup'],
+	specialGroup: 'group', // To allow clipping (#6296)
 	bubblePadding: true,
 	zoneAxis: 'z',
 	directTouch: true,
