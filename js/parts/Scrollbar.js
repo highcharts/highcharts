@@ -603,7 +603,7 @@ Scrollbar.prototype = {
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
-		this._events = undefined;
+		this._events.length = 0;
 	},
 
 	/**

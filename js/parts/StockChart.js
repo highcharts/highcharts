@@ -728,3 +728,16 @@ wrap(Series.prototype, 'render', function (proceed) {
 	}
 	proceed.call(this);
 });
+
+wrap(Chart.prototype, 'update', function (proceed, options) {
+	// Use case: enabling scrollbar from a disabled state.
+	// Scrollbar needs to be initialized from a controller, Navigator in this
+	// case (#6615)
+	if ('scrollbar' in options && this.navigator) {
+		merge(true, this.options.scrollbar, options.scrollbar);
+		this.navigator.update({}, false);
+		delete options.scrollbar;
+	}
+
+	return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+});
