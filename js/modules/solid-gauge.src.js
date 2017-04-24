@@ -299,7 +299,7 @@ H.seriesType('solidgauge', 'gauge', {
 				}
 			} else {
 				point.graphic = renderer.arc(shapeArgs)
-					.addClass('highcharts-point')
+					.addClass(point.getClassName(), true)
 					.attr({
 						fill: toColor,
 						'sweep-flag': 0
