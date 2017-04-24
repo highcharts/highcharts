@@ -4,7 +4,7 @@ This folder contains the one-off scripts required to automagically add doclets t
 
 ## How to shot web
 - Run npm install in this (`tmp/`) folder
-- Run JSDoc in the root highcharts repository: `jsdoc js/modules js/parts js/parts-3d js/parts-more -c jsdoc.json`
+- Run JSDoc in the root highcharts repository: `jsdoc js/modules js/parts js/parts-3d js/parts-map js/parts-more -c jsdoc.json`
 - Then run `node generate_patch_script.js`: this creates `patch.json`
 - Then run `node patch.js` to patch the source code
 
@@ -24,7 +24,7 @@ in a single array..
 ## Testing the frontend
 
 After patching the source code with the above steps, re-generate the JSDocs 
-by running `jsdoc js/modules js/parts js/parts-3d js/parts-more -c jsdoc.json`
+by running `jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map tmp/supplemental.docs.js -c jsdoc.json`
 in the highcharts repository root. This produces tree.json, which is used 
 as the input for the documentation generator.
 
