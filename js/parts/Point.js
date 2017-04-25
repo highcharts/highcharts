@@ -132,7 +132,7 @@ Point.prototype = {
 	optionsToObject: function (options) {
 		var ret = {},
 			series = this.series,
-			keys = !series.hasGroupedData && series.options.keys, // #6590
+			keys = series.options.keys,
 			pointArrayMap = keys || series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
