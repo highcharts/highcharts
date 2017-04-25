@@ -929,18 +929,11 @@ H.Series = H.seriesType('line', null, { // base series options
 			if (!hasGroupedData) {
 				point = data[cursor];
 				if (!point && dataOptions[cursor] !== undefined) { // #970
-					data[cursor] = point = (new PointClass()).init(
-						series,
-						dataOptions[cursor],
-						processedXData[i]
-					);
+					data[cursor] = point = (new PointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 			} else {
 				// splat the y data in case of ohlc data array
-				point = (new PointClass()).init(
-					series,
-					[processedXData[i]].concat(splat(processedYData[i]))
-				);
+				point = (new PointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 				point.dataGroup = series.groupMap[i];
 			}
 			if (point) { // #6279
@@ -949,16 +942,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 		}
 
-		// Hide cropped-away points - this only runs when the number of points
-		// is above cropThreshold, or when swithching view from non-grouped
-		// data to grouped data (#637)
-		if (
-			data &&
-			(
-				processedDataLength !== (dataLength = data.length) ||
-				hasGroupedData
-			)
-		) {
+		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when
+		// swithching view from non-grouped data to grouped data (#637)
+		if (data && (processedDataLength !== (dataLength = data.length) || hasGroupedData)) {
 			for (i = 0; i < dataLength; i++) {
 				// when has grouped data, clear all points
 				if (i === cropStart && !hasGroupedData) { 
