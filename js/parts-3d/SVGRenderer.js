@@ -35,19 +35,6 @@ var animObject = H.animObject,
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-
-//Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
-function shapeArea(vertexes) {
-	var area = 0,
-		i,
-		j;
-	for (i = 0; i < vertexes.length; i++) {
-		j = (i + 1) % vertexes.length;
-		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
-	}
-	return area / 2;
-}
-
 /** Method to construct a curved path
   * Can 'wrap' around more then 180 degrees
   */
@@ -329,9 +316,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		];
 		path1 = map(path1, mapPath);
 		path2 = map(path2, mapPath);
-		if (shapeArea(path1) < 0) {
+		if (H.shapeArea(path1) < 0) {
 			ret = [path1, 0];
-		} else if (shapeArea(path2) < 0) {
+		} else if (H.shapeArea(path2) < 0) {
 			ret = [path2, 1];
 		}
 		return ret;
