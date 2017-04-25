@@ -9,7 +9,12 @@ import H from './Globals.js';
 
 /**
  * The Highcharts object is the placeholder for all other members, and various
- * utility functions.
+ * utility functions. The most important member of the namespace would be the
+ * chart constructor.
+ *
+ * @example
+ * var chart = Highcharts.chart('container', { ... });
+ * 
  * @namespace Highcharts
  */
 

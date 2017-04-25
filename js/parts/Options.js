@@ -366,8 +366,15 @@ function setTimeMethods() {
 }
 
 /**
- * Merge the default options with custom options and return the new options structure
- * @param {Object} options The new custom options
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @function #setOptions
+ * @memberOf  Highcharts
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ * @param {Object} options The new custom chart options.
+ * @returns {Object} Updated options.
  */
 H.setOptions = function (options) {
 	
