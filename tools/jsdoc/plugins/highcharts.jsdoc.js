@@ -91,7 +91,13 @@ function decorateOptions(parent, target, option, filename) {
     // Add options decorations directly to the node
     option.highcharts = option.highcharts || {};
     option.highcharts.fullname = parent + index;
-    option.highcharts.isOption = true;
+    option.highcharts.isOption = true;    
+
+    if (option.comment) {
+        option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');            
+    } else {
+        option.comment = '/** @apioption ' + parent + index + ' */';
+    }
 }
 
 function addToComment(comment, line) {    
@@ -116,13 +122,12 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         s
     ;
 
-    if (node.highcharts && node.highcharts.isOption) {       
+    if (node.highcharts && node.highcharts.isOption) {     
         if (e.comment) {
             e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');            
         } else {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
         }
-
         return;
     }
 
@@ -149,6 +154,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
 
                     target[p] = target[p] || {
+                        meta: {},
                         doclet: {},
                         children: {}
                     };                    
@@ -170,8 +176,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
             }
 
-            if (target) {                
-
+            if (target) {               
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
                     properties = node.arguments[2].properties;
                 } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
