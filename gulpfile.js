@@ -312,12 +312,12 @@ gulp.task('jsdoc', function (cb) {
             },
             opts: {
                 destination: './internal-docs/',
-                private: false,
-                template: templateDir + '/template'
+                private: false
+                // template: templateDir + '/template'
             },
             plugins: [
                 templateDir + '/plugins/markdown',
-                templateDir + '/plugins/optiontag',
+                // templateDir + '/plugins/optiontag',
                 templateDir + '/plugins/sampletag'
             ],
             templates: {
