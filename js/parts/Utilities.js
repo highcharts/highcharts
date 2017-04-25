@@ -1412,9 +1412,10 @@ Math.easeInOutSine = function (pos) {
  * @memberOf Highcharts
  * @param {HTMLDOMElement} el - A HTML element.
  * @param {String} prop - The property name.
+ * @param {Boolean} [toInt=true] - Parse to integer.
  * @returns {Number} - The numeric value.
  */
-H.getStyle = function (el, prop) {
+H.getStyle = function (el, prop, toInt) {
 
 	var style;
 
@@ -1431,7 +1432,13 @@ H.getStyle = function (el, prop) {
 
 	// Otherwise, get the computed style
 	style = win.getComputedStyle(el, undefined);
-	return style && H.pInt(style.getPropertyValue(prop));
+	if (style) {
+		style = style.getPropertyValue(prop);
+		if (H.pick(toInt, true)) {
+			style = H.pInt(style);
+		}
+	}
+	return style;
 };
 
 /**

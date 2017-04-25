@@ -148,7 +148,6 @@ Chart.prototype = {
 		//this.oldChartHeight = undefined;
 
 		//this.renderTo = undefined;
-		//this.renderToClone = undefined;
 
 		//this.spacingBox = undefined
 
@@ -211,7 +210,7 @@ Chart.prototype = {
 	 * #6112). This function is called on series initialization and destroy.
 	 *
 	 * @param {number} fromIndex - If this is given, only the series above this
-	 *    index are handled.
+	 *	 index are handled.
 	 */
 	orderSeries: function (fromIndex) {
 		var series = this.series,
@@ -273,7 +272,7 @@ Chart.prototype = {
 		H.setAnimation(animation, chart);
 		
 		if (isHiddenChart) {
-			chart.cloneRenderTo();
+			chart.temporaryDisplay();
 		}
 
 		// Adjust title layout (reflow multiline text)
@@ -400,7 +399,7 @@ Chart.prototype = {
 		fireEvent(chart, 'render');
 
 		if (isHiddenChart) {
-			chart.cloneRenderTo(true);
+			chart.temporaryDisplay(true);
 		}
 
 		// Fire callbacks that are put on hold until after the redraw
@@ -635,7 +634,7 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
-			renderTo = chart.renderToClone || chart.renderTo;
+			renderTo = chart.renderTo;
 
 		// Get inner width and height
 		if (!defined(widthOption)) {
@@ -659,41 +658,41 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Create a clone of the chart's renderTo div and place it outside the
-	 * viewport to allow size computation on chart.render and chart.redraw
+	 * If the renderTo element has no offsetWidth, most likely one or more of
+	 * its parents are hidden. Loop up the DOM tree to temporarily display the
+	 * parents, then save the original display properties, and when the true
+	 * size is retrieved, reset them. Used on first render and on redraws.
+	 *
+	 * @param {Boolean} revert - Revert to the saved original styles.
 	 */
-	cloneRenderTo: function (revert) {
-		var clone = this.renderToClone,
-			container = this.container;
-
-		// Destroy the clone and bring the container back to the real renderTo
-		// div
-		if (revert) {
-			if (clone) {
-				while (clone.childNodes.length) { // #5231
-					this.renderTo.appendChild(clone.firstChild);
+	temporaryDisplay: function (revert) {
+		var node = this.renderTo;
+		if (!revert) {
+			while (node && node.style) {
+				if (getStyle(node, 'display', false) === 'none') {
+					node.hcOrigStyle = {
+						display: node.style.display,
+						height: node.style.height,
+						overflow: node.style.overflow
+					};
+					H.css(node, {
+						display: 'block',
+						height: 0,
+						overflow: 'hidden'
+					});
+					if (node.style.setProperty) { // #2631
+						node.style.setProperty('display', 'block', 'important');
+					}
 				}
-				discardElement(clone);
-				delete this.renderToClone;
+				node = node.parentNode;
 			}
-
-		// Set up the clone
 		} else {
-			if (container && container.parentNode === this.renderTo) {
-				this.renderTo.removeChild(container); // do not clone this
-			}
-			this.renderToClone = clone = this.renderTo.cloneNode(0);
-			css(clone, {
-				position: 'absolute',
-				top: '-9999px',
-				display: 'block' // #833
-			});
-			if (clone.style.setProperty) { // #2631
-				clone.style.setProperty('display', 'block', 'important');
-			}
-			doc.body.appendChild(clone);
-			if (container) {
-				clone.appendChild(container);
+			while (node && node.style) {
+				if (node.hcOrigStyle) {
+					H.css(node, node.hcOrigStyle);
+					delete node.hcOrigStyle;
+				}
+				node = node.parentNode;
 			}
 		}
 	},
@@ -763,7 +762,7 @@ Chart.prototype = {
 		// won't render properly. The skipClone option is used in sparklines as
 		// a micro optimization, saving about 1-2 ms each chart.
 		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
-			chart.cloneRenderTo();
+			chart.temporaryDisplay();
 		}
 
 		// get the width and height
@@ -791,7 +790,7 @@ Chart.prototype = {
 				id: containerId
 			},
 			containerStyle,
-			chart.renderToClone || renderTo
+			renderTo
 		);
 
 		// cache the cursor (#1650)
@@ -1665,7 +1664,7 @@ Chart.prototype = {
 		}
 
 		// If the chart was rendered outside the top container, put it back in (#3679)
-		chart.cloneRenderTo(true);
+		chart.temporaryDisplay(true);
 
 	},
 
