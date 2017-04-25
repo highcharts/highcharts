@@ -196,8 +196,8 @@ Series.prototype.drawDataLabels = function () {
 				// Get automated contrast color
 				if (style.color === 'contrast') {
 					point.contrastColor = renderer.getContrast(point.color || series.color);
-					style.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
-						point.contrastColor : '${palette.neutralColor100}';
+					style.color = options.inside || pick(point.labelDistance, options.distance) < 0 ||
+						!!seriesOptions.stacking ? point.contrastColor : '${palette.neutralColor100}';
 				}
 				if (seriesOptions.cursor) {
 					style.cursor = seriesOptions.cursor;
@@ -470,11 +470,9 @@ if (seriesTypes.pie) {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			connector,
-			distanceOption = options.distance,
 			seriesCenter = series.center,
 			radius = seriesCenter[2] / 2,
 			centerY = seriesCenter[1],
-			outside = distanceOption > 0,
 			dataLabel,
 			dataLabelWidth,
 			labelPos,
@@ -531,9 +529,10 @@ if (seriesTypes.pie) {
 			var top,
 				bottom,
 				length = points.length,
-				positions,
+				positions = [],
 				naturalY,
 				sideOverflow,
+				positionsIndex, // Point index in positions array.
 				size;
 
 			if (!length) {
@@ -542,51 +541,79 @@ if (seriesTypes.pie) {
 
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
-
-			// Only do anti-collision when we are outside the pie and have connectors (#856)
-			if (distanceOption > 0) {
-				top = Math.max(0, centerY - radius - distanceOption);
-				bottom = Math.min(centerY + radius + distanceOption, chart.plotHeight);
-				positions = map(points, function (point) {
-					if (point.dataLabel) {
+			// Only do anti-collision when we have dataLabels outside the pie 
+			// and have connectors. (#856)
+			if (series.maxLabelDistance > 0) {
+				top = Math.max(
+					0,
+					centerY - radius - series.maxLabelDistance
+				);
+				bottom = Math.min(
+					centerY + radius + series.maxLabelDistance,
+					chart.plotHeight
+				);
+				each(points, function (point) {
+					// check if specific points' label is outside the pie
+					if (point.labelDistance > 0 && point.dataLabel) {
+						// point.top depends on point.labelDistance value
+						// Used for calculation of y value in getX method 
+						point.top = Math.max(
+							0,
+							centerY - radius - point.labelDistance
+						);
+						point.bottom = Math.min(
+							centerY + radius + point.labelDistance,
+							chart.plotHeight
+						);
 						size = point.dataLabel.getBBox().height || 21;
-						return {
-							target: point.labelPos[1] - top + size / 2,
+
+						// point.positionsIndex is needed for getting index of 
+						// parameter related to specific point inside positions 
+						// array - not every point is in positions array.
+						point.positionsIndex = positions.push({
+							target: point.labelPos[1] - point.top + size / 2,
 							size: size,
 							rank: point.y
-						};
+						}) - 1;
 					}
 				});
 				H.distribute(positions, bottom + size - top);
 			}
 
-			// now the used slots are sorted, fill them up sequentially
+			// Now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
 
 				point = points[j];
+				positionsIndex = point.positionsIndex;
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
 				visibility = point.visible === false ? 'hidden' : 'inherit';
 				naturalY = labelPos[1];
 
-				if (positions) {
-					if (positions[j].pos === undefined) {
+				if (positions && defined(positions[positionsIndex])) {
+					if (positions[positionsIndex].pos === undefined) {
 						visibility = 'hidden';
 					} else {
-						labelHeight = positions[j].size;
-						y = top + positions[j].pos;
+						labelHeight = positions[positionsIndex].size;
+						y = point.top + positions[positionsIndex].pos;
 					}
 
 				} else {
 					y = naturalY;
 				}
 
-				// get the x - use the natural x position for labels near the top and bottom, to prevent the top
-				// and botton slice connectors from touching each other on either side
+				// It is needed to delete point.positionIndex for 
+				// dynamically added points etc.
+				
+				delete point.positionIndex;
+
+				// get the x - use the natural x position for labels near the 
+				// top and bottom, to prevent the top and botton slice connectors 
+				// from touching each other on either side
 				if (options.justify) {
-					x = seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption);
+					x = seriesCenter[0] + (i ? -1 : 1) * (radius + point.labelDistance);
 				} else {
-					x = series.getX(y < top + 2 || y > bottom - 2 ? naturalY : y, i);
+					x = series.getX(y < point.top + 2 || y > point.bottom - 2 ? naturalY : y, i, point);
 				}
 
 
@@ -651,14 +678,19 @@ if (seriesTypes.pie) {
 			this.placeDataLabels();
 
 			// Draw the connectors
-			if (outside && connectorWidth) {
+			if (connectorWidth) {
 				each(this.points, function (point) {
 					var isNew;
 
 					connector = point.connector;
 					dataLabel = point.dataLabel;
 
-					if (dataLabel && dataLabel._pos && point.visible) {
+					if (
+						dataLabel &&
+						dataLabel._pos &&
+						point.visible &&
+						point.labelDistance > 0
+					) {
 						visibility = dataLabel._attr.visibility;
 
 						isNew = !connector;
