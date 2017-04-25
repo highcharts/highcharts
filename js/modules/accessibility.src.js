@@ -997,22 +997,29 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	// Keep track of columns
 	merge(true, options.exporting, {
 		csv: {
-			columnHeaderFormatter: function (series, key, keyLength) {
+			columnHeaderFormatter: function (item, key, keyLength) {
+				if (!item) {
+					return 'Category';
+				}
+				if (item instanceof H.Axis) {
+					return (item.options.title && item.options.title.text) ||
+						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+				}
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
 					// Populate a list of column headers to add in addition to the ones added by export-csv
-					if ((prevCol && prevCol.text) !== series.name) {
+					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
-							text: series.name,
+							text: item.name,
 							span: keyLength
 						});
 					}
 				}
 				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(this, series, key, keyLength);
+					return oldColumnHeaderFormatter.call(this, item, key, keyLength);
 				}
-				return keyLength > 1 ? key : series.name;
+				return keyLength > 1 ? key : item.name;
 			}
 		}
 	});
@@ -1029,8 +1036,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 			var table = doc.getElementById(tableId),
+				head = table.getElementsByTagName('thead')[0],
 				body = table.getElementsByTagName('tbody')[0],
-				firstRow = body.firstChild.children,
+				firstRow = head.firstChild.children,
 				columnHeaderRow = '<tr><td></td>',
 				cell,
 				newCell;
@@ -1059,7 +1067,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				each(topLevelColumns, function (col) {
 					columnHeaderRow += '<th scope="col" colspan="' + col.span + '">' + col.text + '</th>';
 				});
-				body.insertAdjacentHTML('afterbegin', columnHeaderRow);
+				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
 			}
 		}
 	});
