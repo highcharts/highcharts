@@ -632,7 +632,7 @@ seriesProto.processData = function () {
 
 		// find the first value for comparison
 		for (i = 0; i < length - 1; i++) {
-			compareValue = keyIndex > -1 ? 
+			compareValue = processedYData[i] && keyIndex > -1 ? 
 				processedYData[i][keyIndex] :
 				processedYData[i];
 			if (isNumber(compareValue) && processedXData[i + 1] >= series.xAxis.min && compareValue !== 0) {
