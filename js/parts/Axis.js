@@ -284,7 +284,8 @@ H.Axis.prototype = {
 			type = options.type,
 			isDatetimeAxis = type === 'datetime';
 
-		axis.labelFormatter = options.labels.formatter || axis.defaultLabelFormatter; // can be overwritten by dynamic format
+		axis.labelFormatter = options.labels.formatter ||
+			axis.defaultLabelFormatter; // can be overwritten by dynamic format
 
 
 		// Flag, stagger lines or not
@@ -320,13 +321,6 @@ H.Axis.prototype = {
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
 		//axis.linkedParent = undefined;
-
-		// Tick positions
-		//axis.tickPositions = undefined; // array containing predefined positions
-		// Tick intervals
-		//axis.tickInterval = undefined;
-		//axis.minorTickInterval = undefined;
-
 
 		// Major ticks
 		axis.ticks = {};
@@ -379,13 +373,16 @@ H.Axis.prototype = {
 		//axis.userMax = undefined,
 
 		// Crosshair options
-		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
-		// Run Axis
-
+		axis.crosshair = pick(
+			options.crosshair,
+			splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
+			false
+		);
+		
 		var events = axis.options.events;
 
-		// Register
-		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+		// Register. Don't add it again on Axis.update().
+		if (inArray(axis, chart.axes) === -1) { // 
 			if (isXAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
@@ -426,8 +423,12 @@ H.Axis.prototype = {
 		this.options = merge(
 			this.defaultOptions,
 			this.coll === 'yAxis' && this.defaultYAxisOptions,
-			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
-				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
+			[
+				this.defaultTopAxisOptions,
+				this.defaultRightAxisOptions,
+				this.defaultBottomAxisOptions,
+				this.defaultLeftAxisOptions
+			][this.side],
 			merge(
 				defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
@@ -436,7 +437,8 @@ H.Axis.prototype = {
 	},
 
 	/**
-	 * The default label formatter. The context is a special config object for the label.
+	 * The default label formatter. The context is a special config object for
+	 * the label.
 	 */
 	defaultLabelFormatter: function () {
 		var axis = this.axis,
@@ -451,8 +453,11 @@ H.Axis.prototype = {
 			ret,
 			formatOption = axis.options.labels.format,
 
-			// make sure the same symbol is added for all labels on a linear axis
-			numericSymbolDetector = axis.isLog ? Math.abs(value) : axis.tickInterval;
+			// make sure the same symbol is added for all labels on a linear
+			// axis
+			numericSymbolDetector = axis.isLog ?
+				Math.abs(value) :
+				axis.tickInterval;
 
 		if (formatOption) {
 			ret = format(formatOption, this);
@@ -464,12 +469,18 @@ H.Axis.prototype = {
 			ret = H.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
-			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
-			// If we are to enable this in tooltip or other places as well, we can move this
-			// logic to the numberFormatter and enable it by a parameter.
+			// Decide whether we should add a numeric symbol like k (thousands)
+			// or M (millions). If we are to enable this in tooltip or other
+			// places as well, we can move this logic to the numberFormatter and
+			// enable it by a parameter.
 			while (i-- && ret === undefined) {
 				multi = Math.pow(numSymMagnitude, i + 1);
-				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null && value !== 0) { // #5480
+				if (
+					numericSymbolDetector >= multi &&
+					(value * 10) % multi === 0 &&
+					numericSymbols[i] !== null &&
+					value !== 0
+				) { // #5480
 					ret = H.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
@@ -524,23 +535,34 @@ H.Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						// If xData contains values which is not numbers, then filter them out.
-						// To prevent performance hit, we only do this after we have already
-						// found seriesDataMin because in most cases all data is valid. #5234.
+						// If xData contains values which is not numbers, then
+						// filter them out. To prevent performance hit, we only
+						// do this after we have already found seriesDataMin
+						// because in most cases all data is valid. #5234.
 						seriesDataMin = arrayMin(xData);
-						if (!isNumber(seriesDataMin) && !(seriesDataMin instanceof Date)) { // Date for #5010
+						if (
+							!isNumber(seriesDataMin) &&
+							!(seriesDataMin instanceof Date) // #5010
+						) {
 							xData = grep(xData, function (x) {
 								return isNumber(x);
 							});
 							seriesDataMin = arrayMin(xData); // Do it again with valid data
 						}
 
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), seriesDataMin);
-						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						axis.dataMin = Math.min(
+							pick(axis.dataMin, xData[0]),
+							seriesDataMin
+						);
+						axis.dataMax = Math.max(
+							pick(axis.dataMax, xData[0]),
+							arrayMax(xData)
+						);
 						
 					}
 
-				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
+				// Get dataMin and dataMax for Y axes, as well as handle
+				// stacking and processed data
 				} else {
 
 					// Get this particular series extremes
@@ -548,12 +570,19 @@ H.Axis.prototype = {
 					seriesDataMax = series.dataMax;
 					seriesDataMin = series.dataMin;
 
-					// Get the dataMin and dataMax so far. If percentage is used, the min and max are
-					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
+					// Get the dataMin and dataMax so far. If percentage is
+					// used, the min and max are always 0 and 100. If
+					// seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
 					if (defined(seriesDataMin) && defined(seriesDataMax)) {
-						axis.dataMin = Math.min(pick(axis.dataMin, seriesDataMin), seriesDataMin);
-						axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
+						axis.dataMin = Math.min(
+							pick(axis.dataMin, seriesDataMin),
+							seriesDataMin
+						);
+						axis.dataMax = Math.max(
+							pick(axis.dataMax, seriesDataMax),
+							seriesDataMax
+						);
 					}
 
 					// Adjust to threshold
@@ -561,7 +590,10 @@ H.Axis.prototype = {
 						axis.threshold = threshold;
 					}
 					// If any series has a hard threshold, it takes precedence
-					if (!seriesOptions.softThreshold || axis.positiveValuesOnly) {
+					if (
+						!seriesOptions.softThreshold ||
+						axis.positiveValuesOnly
+					) {
 						axis.softThreshold = false;
 					}
 				}
@@ -1317,7 +1349,10 @@ H.Axis.prototype = {
 
 			if (this.isDatetimeAxis) {
 				tickPositions = this.getTimeTicks(
-					this.normalizeTimeTickInterval(this.tickInterval, options.units),
+					this.normalizeTimeTickInterval(
+						this.tickInterval,
+						options.units
+					),
 					this.min,
 					this.max,
 					options.startOfWeek,
@@ -1326,9 +1361,17 @@ H.Axis.prototype = {
 					true
 				);
 			} else if (this.isLog) {
-				tickPositions = this.getLogTickPositions(this.tickInterval, this.min, this.max);
+				tickPositions = this.getLogTickPositions(
+					this.tickInterval,
+					this.min,
+					this.max
+				);
 			} else {
-				tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
+				tickPositions = this.getLinearTickPositions(
+					this.tickInterval,
+					this.min,
+					this.max
+				);
 			}
 
 			// Too dense ticks, keep only the first and last (#4477)

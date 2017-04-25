@@ -1569,6 +1569,7 @@ H.each = function (arr, fn, ctx) { // modern browsers
  * Iterate over object key pairs in an object.
  *
  * @function #objectEach
+ * @memberOf Highcharts
  * @param  {Object}   obj - The object to iterate over.
  * @param  {Function} fn  - The iterator callback. It passes three arguments:
  * * value - The property value.
