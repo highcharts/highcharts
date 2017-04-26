@@ -52,12 +52,27 @@ var addEvent = H.addEvent,
  * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
  * id.
  * @param {ChartOptions} options - The chart options structure.
- * @param {Function} callback - Function to run when the chart has loaded.
+ * @param {Function} callback - Function to run when the chart has loaded and
+ * and all external images are loaded. Defining a {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load} handler is
+ * equivalent.
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
 };
 
+/**
+ * Factory function for basic charts. 
+ *
+ * @function #chart
+ * @memberOf Highcharts
+ * @param  {String|HTMLDOMElement} renderTo - The DOM element to render to, or
+ * its id.
+ * @param  {ChartOptions} options - The chart options structure.
+ * @param  {Function} [callback] - Function to run when the chart has loaded and
+ * and all external images are loaded. Defining a {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load} handler is
+ * equivalent.
+ * @return {Highcharts.Chart} - Returns the Chart object.
+ */
 H.chart = function (a, b, c) {
 	return new Chart(a, b, c);
 };

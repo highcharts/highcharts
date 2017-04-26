@@ -36,6 +36,8 @@ var charts = H.charts,
  *     directly in the console.
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
+ *
+ * @sample highcharts/chart/highcharts-error/ Custom error handler
  */
 H.error = function (code, stop) {
 	var msg = H.isNumber(code) ?
@@ -850,8 +852,11 @@ H.getTZOffset = function (timestamp) {
 };
 
 /**
- * Format a date, based on the syntax for PHP's [strftime]{@link
- * http://www.php.net/manual/en/function.strftime.php} function.
+ * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
+ * human readable date string. The format is a subset of the formats for PHP's
+ * [strftime]{@link
+ * http://www.php.net/manual/en/function.strftime.php} function. Additional
+ * formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * @function #dateFormat
  * @memberOf Highcharts
@@ -881,58 +886,74 @@ H.dateFormat = function (format, timestamp, capitalize) {
 		pad = H.pad,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		replacements = H.extend({
+		replacements = H.extend(
+			{
 
-			//-- Day
-			// Short weekday, like 'Mon'
-			'a': shortWeekdays ?
-				shortWeekdays[day] :
-				langWeekdays[day].substr(0, 3),
-			// Long weekday, like 'Monday'
-			'A': langWeekdays[day],
-			// Two digit day of the month, 01 to 31
-			'd': pad(dayOfMonth),
-			// Day of the month, 1 through 31
-			'e': pad(dayOfMonth, 2, ' '),
-			'w': day,
+				//-- Day
+				// Short weekday, like 'Mon'
+				'a': shortWeekdays ?
+					shortWeekdays[day] :
+					langWeekdays[day].substr(0, 3),
+				// Long weekday, like 'Monday'
+				'A': langWeekdays[day],
+				// Two digit day of the month, 01 to 31
+				'd': pad(dayOfMonth),
+				// Day of the month, 1 through 31
+				'e': pad(dayOfMonth, 2, ' '),
+				'w': day,
 
-			// Week (none implemented)
-			//'W': weekNumber(),
+				// Week (none implemented)
+				//'W': weekNumber(),
 
-			//-- Month
-			// Short month, like 'Jan'
-			'b': lang.shortMonths[month],
-			// Long month, like 'January'
-			'B': lang.months[month],
-			// Two digit month number, 01 through 12
-			'm': pad(month + 1),
+				//-- Month
+				// Short month, like 'Jan'
+				'b': lang.shortMonths[month],
+				// Long month, like 'January'
+				'B': lang.months[month],
+				// Two digit month number, 01 through 12
+				'm': pad(month + 1),
 
-			//-- Year
-			// Two digits year, like 09 for 2009
-			'y': fullYear.toString().substr(2, 2),
-			// Four digits year, like 2009
-			'Y': fullYear,
+				//-- Year
+				// Two digits year, like 09 for 2009
+				'y': fullYear.toString().substr(2, 2),
+				// Four digits year, like 2009
+				'Y': fullYear,
 
-			//-- Time
-			// Two digits hours in 24h format, 00 through 23
-			'H': pad(hours),
-			// Hours in 24h format, 0 through 23
-			'k': hours,
-			// Two digits hours in 12h format, 00 through 11
-			'I': pad((hours % 12) || 12),
-			// Hours in 12h format, 1 through 12
-			'l': (hours % 12) || 12,
-			// Two digits minutes, 00 through 59
-			'M': pad(date[D.hcGetMinutes]()),
-			// Upper case AM or PM
-			'p': hours < 12 ? 'AM' : 'PM',
-			// Lower case AM or PM
-			'P': hours < 12 ? 'am' : 'pm',
-			// Two digits seconds, 00 through  59
-			'S': pad(date.getSeconds()),
-			// Milliseconds (naming from Ruby)
-			'L': pad(Math.round(timestamp % 1000), 3)
-		}, H.dateFormats);
+				//-- Time
+				// Two digits hours in 24h format, 00 through 23
+				'H': pad(hours),
+				// Hours in 24h format, 0 through 23
+				'k': hours,
+				// Two digits hours in 12h format, 00 through 11
+				'I': pad((hours % 12) || 12),
+				// Hours in 12h format, 1 through 12
+				'l': (hours % 12) || 12,
+				// Two digits minutes, 00 through 59
+				'M': pad(date[D.hcGetMinutes]()),
+				// Upper case AM or PM
+				'p': hours < 12 ? 'AM' : 'PM',
+				// Lower case AM or PM
+				'P': hours < 12 ? 'am' : 'pm',
+				// Two digits seconds, 00 through  59
+				'S': pad(date.getSeconds()),
+				// Milliseconds (naming from Ruby)
+				'L': pad(Math.round(timestamp % 1000), 3)
+			},
+			
+			/**
+			 * A hook for defining additional date format specifiers. New
+			 * specifiers are defined as key-value pairs by using the specifier
+			 * as key, and a function which takes the timestamp as value. This
+			 * function returns the formatted portion of the date.
+			 *
+			 * @type {Object}
+			 * @name dateFormats
+			 * @memberOf Highcharts
+			 * @sample highcharts/global/dateformats/ Adding support for week
+			 * number
+			 */
+			H.dateFormats
+		);
 
 
 	// Do the replaces
@@ -1339,10 +1360,12 @@ H.timeUnits = {
  * @param {Number} decimals - The amount of decimals. A value of -1 preserves
  *        the amount in the input number.
  * @param {String} [decimalPoint] - The decimal point, defaults to the one given
- *        in the lang options.
+ *        in the lang options, or a dot.
  * @param {String} [thousandsSep] - The thousands separator, defaults to the one
- *        given in the lang options.
+ *        given in the lang options, or a space character.
  * @returns {String} The formatted number.
+ *
+ * @sample members/highcharts-numberformat/ Custom number format
  */
 H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	number = +number || 0;
