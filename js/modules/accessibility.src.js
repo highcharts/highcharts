@@ -896,7 +896,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
-	// Add shortcut to data table if export-csv is loaded
+	// Add shortcut to data table if export-data is loaded
 	if (chart.getCSV) {
 		tableShortcutAnchor.innerHTML = 'View as data table.';
 		tableShortcutAnchor.href = '#' + tableId;
@@ -992,7 +992,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		chart.addKeyboardNavEvents();
 	}
 
-	/* Wrap table functionality from export-csv */
+	/* Wrap table functionality from export-data */
 
 	// Keep track of columns
 	merge(true, options.exporting, {
@@ -1008,7 +1008,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to the ones added by export-csv
+					// Populate a list of column headers to add in addition to the ones added by export-data
 					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
 							text: item.name,

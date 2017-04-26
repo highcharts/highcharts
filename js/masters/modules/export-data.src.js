@@ -7,4 +7,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/export-csv.src.js';
+import '../../modules/export-data.src.js';
