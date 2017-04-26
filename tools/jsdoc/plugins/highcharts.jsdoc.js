@@ -123,7 +123,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
         }
         //if (node.highcharts.name === 'colors') {
-            console.log('tagged', node.highcharts.fullname);
+        //    console.log('tagged', node.highcharts.fullname);
         //}
         return;
     }
@@ -169,8 +169,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             } else {
                 parent = '';
 
-                options.children = options.children || {};
-                target = options.children;
+                //options.children = options.children || {};
+                target = options;
             }
 
             if (target) {               
@@ -234,13 +234,13 @@ function augmentOption(path, obj) {
         //     return;
         // }
 
-        if (p.length === 1) {            
-            if (current.children) {
-                current = current.children;
-            } else {
-                current = current.children = {};
-            }
-        }
+        // if (p.length === 1) {            
+        //     if (current.children) {
+        //         current = current.children;
+        //     } else {
+        //         current = current.children = {};
+        //     }
+        // }
 
         p.forEach(function (thing, i) {
             if (i === p.length - 1) {
