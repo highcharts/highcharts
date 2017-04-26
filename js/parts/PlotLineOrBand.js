@@ -234,7 +234,7 @@ H.PlotLineOrBand.prototype = {
  * @todo Extend directly instead of adding object to Highcharts first
  */
 
-H.AxisPlotLineOrBandExtension = {
+H.AxisPlotLineOrBandExtension = /** @lends Highcharts.Axis.prototype */ {
 
 	/**
 	 * Create the path for a plot band
@@ -271,6 +271,12 @@ H.AxisPlotLineOrBandExtension = {
 		return path;
 	},
 
+	/**
+	 * Add a plot band after render time.
+	 * @memberOf Highcharts.Axis.prototype
+	 * @param {Object} options - A configuration object for the plot band.
+	 * @returns {Object} The added plot band.
+	 */
 	addPlotBand: function (options) {
 		return this.addPlotBandOrLine(options, 'plotBands');
 	},

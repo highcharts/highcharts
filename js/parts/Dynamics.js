@@ -654,19 +654,25 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 });
 
 // Extend the Axis.prototype for dynamic methods
-extend(Axis.prototype, /** @lends Axis.prototype */ {
+extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
 	/**
-	 * Axis.update with a new options structure
+	 * Update an axis object with a new set of options. The options are merged
+	 * with the existing options, so only new or altered options need to be
+	 * specified.
+	 *
+	 * @param {Object} options - New additional axis options.
+	 * @sample highcharts/members/axis-update/ Axis update demo
 	 */
-	update: function (newOptions, redraw) {
+	update: function (options, redraw) {
 		var chart = this.chart;
 
-		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
+		options = chart.options[this.coll][this.options.index] =
+			merge(this.userOptions, options);
 
 		this.destroy(true);
 
-		this.init(chart, extend(newOptions, { events: undefined }));
+		this.init(chart, extend(options, { events: undefined }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
@@ -675,7 +681,12 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 	},
 
 	/**
-     * Remove the axis from the chart
+     * Remove the axis from the chart.
+     *
+     * @param {Boolean} [redraw=true] Whether to redraw the chart following the
+     * remove.
+     *
+     * @sample highcharts/members/chart-addaxis/ Add and remove axes
      */
 	remove: function (redraw) {
 		var chart = this.chart,
@@ -712,16 +723,23 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 	},
 
 	/**
-	 * Update the axis title by options
+	 * Update the axis title by options after render time.
+	 *
+	 * @param {Object} newTitleOptions - The additional title options.
+	 * @param {Boolean} [redraw=true] - Whether to redraw the chart after
+	 * setting the title.
+	 * @sample highcharts/members/axis-settitle/ Set a new Y axis title
 	 */
 	setTitle: function (newTitleOptions, redraw) {
 		this.update({ title: newTitleOptions }, redraw);
 	},
 
 	/**
-	 * Set new axis categories and optionally redraw
-	 * @param {Array} categories
-	 * @param {Boolean} redraw
+	 * Set new axis categories and optionally redraw.
+	 * @param {Array.<String>} categories - The new categories.
+	 * @param {Boolean} [redraw=true] - Whether to redraw the chart.
+	 * @sample highcharts/members/axis-setcategories/ Set categories by click on
+	 * a button
 	 */
 	setCategories: function (categories, redraw) {
 		this.update({ categories: categories }, redraw);

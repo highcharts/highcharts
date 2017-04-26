@@ -191,7 +191,19 @@ Chart.prototype = {
 			});
 		}
 
+		/**
+		 * A collection of the X axes in the chart.
+		 * @type {Array}
+		 * @name xAxis
+		 * @memberOf Highcharts.Chart
+		 */
 		chart.xAxis = [];
+		/**
+		 * A collection of the Y axes in the chart.
+		 * @type {Array}
+		 * @name yAxis
+		 * @memberOf Highcharts.Chart
+		 */
 		chart.yAxis = [];
 
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;

@@ -53,14 +53,20 @@ H.error = function (code, stop) {
 };
 
 /**
- * An animator object. One instance applies to one property (attribute or style
- * prop) on one element.
+ * An animator object used internally. One instance applies to one property
+ * (attribute or style prop) on one element. Animation is always initiated
+ * through {@link SVGElement#animate}.
  *
  * @constructor Fx
  * @memberOf Highcharts
  * @param {HTMLDOMElement|SVGElement} elem - The element to animate.
  * @param {AnimationOptions} options - Animation options.
  * @param {string} prop - The single attribute or CSS property to animate.
+ * @private
+ *
+ * @example
+ * var rect = renderer.rect(0, 0, 10, 10).add();
+ * rect.animate({ width: 100 });
  */
 H.Fx = function (elem, options, prop) {
 	this.options = options;

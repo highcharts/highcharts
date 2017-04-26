@@ -307,9 +307,12 @@ gulp.task('jsdoc', function (cb) {
     gulp.src([
         'README.md',
         './js/parts/Utilities.js',
+        './js/parts/Axis.js',
         './js/parts/Chart.js',
+        './js/parts/Dynamics.js',
         './js/parts/Globals.js',
-        './js/parts/Options.js'
+        './js/parts/Options.js',
+        './js/parts/PlotLineOrBand.js'
     ], { read: false })
     // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
         .pipe(jsdoc({
