@@ -110,4 +110,22 @@ QUnit.test('Symbol tests', function (assert) {
         console.log(Highcharts.symbolSizes);
     }, 100);
 
+    // Symbol with wrong name #6627
+    var symbol3 = ren
+        .symbol('krakow', 100, 200, 10, 10)
+        .attr({
+            fill: 'red'
+        })
+        .add();
+
+    total++;
+    setTimeout(function () {
+        assert.strictEqual(
+            symbol3.symbolName,
+            'circle',
+            'Wrong symbol name defualts to "circle" (#6627)'
+        );
+        ifDone();
+    }, 100);
+
 });

@@ -2950,6 +2950,13 @@ SVGRenderer.prototype = {
 				});
 				this.imgCount++;
 			}
+
+		// gracefully fall back to the default symbol - circle (#6627)
+		} else {
+			obj = this.symbol.apply(
+				this,
+				['circle'].concat([].slice.call(arguments, 1))
+			);
 		}
 
 		return obj;
