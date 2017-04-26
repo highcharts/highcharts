@@ -448,13 +448,13 @@ extend(ColorAxis.prototype, {
 	},
 
 	/**
-	 * Extend basic axis destroy by also destroying the legend item.
+	 * Extend basic axis remove by also removing the legend item.
 	 */
-	destroy: function () {
+	remove: function () {
 		if (this.legendItem) {
 			this.chart.legend.destroyItem(this);
 		}
-		Axis.prototype.destroy.call(this);
+		Axis.prototype.remove.call(this);
 	},
 
 	/**
