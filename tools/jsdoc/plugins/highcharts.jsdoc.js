@@ -34,15 +34,11 @@ function dumpOptions() {
 function decorateOptions(parent, target, option, filename) {
     var index;
 
-    if (option.key && option.key.name) {
-        index = option.key.name;
-    } else {
-        index = parent;
-    }
-
     if (!option) {
         return;
     }    
+
+    index = option.key.name;
 
     if (parent && parent.length > 0) {
         parent += '.';
@@ -91,13 +87,14 @@ function decorateOptions(parent, target, option, filename) {
     // Add options decorations directly to the node
     option.highcharts = option.highcharts || {};
     option.highcharts.fullname = parent + index;
+    option.highcharts.name = index;
     option.highcharts.isOption = true;    
 
-    if (option.comment) {
-        option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');            
-    } else {
-        option.comment = '/** @apioption ' + parent + index + ' */';
-    }
+    // if (option.comment) {
+    //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');            
+    // } else {
+    //     option.comment = '/** @apioption ' + parent + index + ' */';
+    // }
 }
 
 function addToComment(comment, line) {    
@@ -127,6 +124,9 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');            
         } else {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
+        }
+        if (node.highcharts.name === 'colors') {
+            console.log(e.comment);
         }
         return;
     }
@@ -192,7 +192,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
                     properties = node.right.arguments[2].properties;
                 } else {    
-                    logger.error('code tagged with @optionparent must be an object:', node.right);
+                    logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
                 }
 
                 if (properties && properties.length > 0) {
@@ -221,37 +221,44 @@ function augmentOption(path, obj) {
         return;
     }
 
-    p.forEach(function (thing, i) {
-        if (i === p.length - 1) {
-            // Merge in stuff
+    try {
 
-            current[thing] = current[thing] || {
-                meta: {},
-                doclet: {},
-                children: {}
-            };
+        p.forEach(function (thing, i) {
+            if (i === p.length - 1) {
+                // Merge in stuff
 
-            Object.keys(obj).forEach(function (property) {
-                if (property !== 'comment' && property !== 'meta') {
-                    current[thing].doclet[property] = obj[property];
-                }
-            });
+                current[thing] = current[thing] || {};
 
-            //current[thing].meta = current[thing].meta || {};
+                current[thing].doclet = current[thing].doclet || {};
+                current[thing].meta = current[thing].meta || {};
+                current[thing].children = current[thing].children || {};
 
-            // if (obj && obj.meta) {
-            //     if (!current[thing].meta.filename === '??') {
-            //         current[thing].meta.filename = obj.meta.filename.substr(
-            //             obj.meta.filename.indexOf('highcharts/')
-            //         );                    
-            //     }
-            // } 
-        
-            return;
-        }
-        current[thing] = current[thing] || {children: {}}; 
-        current = current[thing].children;
-   });
+                Object.keys(obj).forEach(function (property) {
+                    if (property !== 'comment' && property !== 'meta') {
+                        current[thing].doclet[property] = obj[property];
+                    }
+                });
+
+                //==current[thing].meta = current[thing].meta || {};
+
+                // if (obj && obj.meta) {
+                //     if (!current[thing].meta.filename === '??') {
+                //         current[thing].meta.filename = obj.meta.filename.substr(
+                //             obj.meta.filename.indexOf('highcharts/')
+                //         );                    
+                //     }
+                // } 
+            
+                return;
+            }
+
+            current[thing] = current[thing] || {children: {}}; 
+            current = current[thing].children;
+        });
+
+    } catch (e) {
+        console.log('ERROR deducing path', path);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
