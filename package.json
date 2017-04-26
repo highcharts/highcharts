@@ -40,6 +40,7 @@
     "node-sass": "^4.5.0",
     "request": "^2.65.0",
     "requirejs": "^2.1.20",
+    "taffydb": "^2.7.3",
     "vinyl-ftp": "^0.4.5",
     "webpack": "^1.12.14",
     "xml2js": "^0.4.13",
