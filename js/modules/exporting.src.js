@@ -62,12 +62,14 @@ defaultOptions.navigation = {
 
 /*= if (build.classic) { =*/
 // Presentational attributes
+
+merge(true, defaultOptions.navigation, 
 /**
  * A collection of options for buttons and menus appearing in the exporting module.
  * @type {Object}
  * @optionparent navigation
  */
-merge(true, defaultOptions.navigation, {
+{
 	menuStyle: {
 		border: '1px solid ${palette.neutralColor40}',
 		background: '${palette.backgroundColor}',
