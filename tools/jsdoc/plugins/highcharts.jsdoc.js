@@ -35,6 +35,7 @@ function decorateOptions(parent, target, option, filename) {
     var index;
 
     if (!option) {
+        console.log('WARN: decorateOptions called with no valid AST node');
         return;
     }    
 
@@ -42,10 +43,6 @@ function decorateOptions(parent, target, option, filename) {
 
     if (parent && parent.length > 0) {
         parent += '.';
-    }
-
-    if (filename) {
-        //filename = filename.substr(filename.indexOf('highcharts/'));
     }
 
     target[index] = target[index] || {
@@ -81,14 +78,14 @@ function decorateOptions(parent, target, option, filename) {
        target[index].meta.default = option.value.value;
        //target[option.key.name].meta.type = option.value.type;
     } else {
-        return;
+       // return;
     }
 
     // Add options decorations directly to the node
     option.highcharts = option.highcharts || {};
     option.highcharts.fullname = parent + index;
     option.highcharts.name = index;
-    option.highcharts.isOption = true;    
+    option.highcharts.isOption = true;
 
     // if (option.comment) {
     //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');            
@@ -125,9 +122,9 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         } else {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
         }
-        if (node.highcharts.name === 'colors') {
-            console.log(e.comment);
-        }
+        //if (node.highcharts.name === 'colors') {
+            console.log('tagged', node.highcharts.fullname);
+        //}
         return;
     }
 
@@ -153,11 +150,10 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 s.forEach(function (p, i) {
                     fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
 
-                    target[p] = target[p] || {
-                        meta: {},
-                        doclet: {},
-                        children: {}
-                    };                    
+                    target[p] = target[p] || {};
+
+                    target[p].doclet = target[p].doclet || {};
+                    target[p].children = target[p].children || {};          
 
                     target[p].meta = {
                         filename: currentSourceName,
@@ -166,14 +162,15 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                         line: node.loc.start.line,
                         column: node.loc.start.column
                     };
-
                     
                     target = target[p].children; 
 
                 });                
             } else {
                 parent = '';
-                target = options;
+
+                options.children = options.children || {};
+                target = options.children;
             }
 
             if (target) {               
@@ -223,15 +220,36 @@ function augmentOption(path, obj) {
 
     try {
 
+        // if (p.length === 1) {
+        //     current[p[0]] = current[p[0]] || {};
+        //     current[p[0]].doclet = {};
+        //     current[p[0]].meta = {};
+        //     current[p[0]].children = {};
+
+        //     Object.keys(obj).forEach(function (property) {
+        //         if (property !== 'comment' && property !== 'meta') {
+        //             current[p[0]].doclet[property] = obj[property];
+        //         }
+        //     });
+        //     return;
+        // }
+
+        if (p.length === 1) {            
+            if (current.children) {
+                current = current.children;
+            } else {
+                current = current.children = {};
+            }
+        }
+
         p.forEach(function (thing, i) {
             if (i === p.length - 1) {
                 // Merge in stuff
-
                 current[thing] = current[thing] || {};
 
                 current[thing].doclet = current[thing].doclet || {};
-                current[thing].meta = current[thing].meta || {};
                 current[thing].children = current[thing].children || {};
+                current[thing].meta = current[thing].meta || {};
 
                 Object.keys(obj).forEach(function (property) {
                     if (property !== 'comment' && property !== 'meta') {
