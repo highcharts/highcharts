@@ -139,15 +139,14 @@ merge(true, defaultOptions, {
 			fitToPlot: true,
 			viewDistance: 25,
 			frame: {
-				bottom: {
-					size: 1
-				},
-				side: {
-					size: 1
-				},
-				back: {
-					size: 1
-				}
+				visible: 'default',
+				size: 1,
+				bottom: {},
+				top: {},
+				left: {},
+				right: {},
+				back: {},
+				front: {}
 			}
 		}
 	}
@@ -253,3 +252,93 @@ Chart.prototype.retrieveStacks = function (stacking) {
 	stacks.totalStacks = i + 1;
 	return stacks;
 };
+
+Chart.prototype.get3dFrame = function () {
+	var chart = this,
+		options3d = chart.options.chart.options3d,
+		frameOptions = options3d.frame,
+		xm = chart.plotLeft,
+		xp = chart.plotLeft + chart.plotWidth,
+		ym = chart.plotTop,
+		yp = chart.plotTop + chart.plotHeight,
+		zm = 0,
+		zp = options3d.depth,
+		bottomOrientation = H.shapeArea3d([{ x: xm, y: yp, z: zp }, { x: xp, y: yp, z: zp }, { x: xp, y: yp, z: zm }, { x: xm, y: yp, z: zm }], chart),
+		topOrientation    = H.shapeArea3d([{ x: xm, y: ym, z: zm }, { x: xp, y: ym, z: zm }, { x: xp, y: ym, z: zp }, { x: xm, y: ym, z: zp }], chart),
+		leftOrientation   = H.shapeArea3d([{ x: xm, y: ym, z: zm }, { x: xm, y: ym, z: zp }, { x: xm, y: yp, z: zp }, { x: xm, y: yp, z: zm }], chart),
+		rightOrientation  = H.shapeArea3d([{ x: xp, y: ym, z: zp }, { x: xp, y: ym, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: yp, z: zp }], chart),
+		frontOrientation  = H.shapeArea3d([{ x: xm, y: yp, z: zm }, { x: xp, y: yp, z: zm }, { x: xp, y: ym, z: zm }, { x: xm, y: ym, z: zm }], chart),
+		backOrientation   = H.shapeArea3d([{ x: xm, y: ym, z: zp }, { x: xp, y: ym, z: zp }, { x: xp, y: yp, z: zp }, { x: xm, y: yp, z: zp }], chart),
+		defaultShowBottom = false,
+		defaultShowTop = false,
+		defaultShowLeft = false,
+		defaultShowRight = false,
+		defaultShowFront = false,
+		defaultShowBack = true;
+
+	// The 'default' criteria to visible faces of the frame is looking up every axis to decide whenever the left/right//top/bottom sides of the frame will be shown
+	each(chart.xAxis, function (axis) {
+		if (axis.opposite) {
+			defaultShowTop = true;
+		} else {
+			defaultShowBottom = true;
+		}
+	});
+	each(chart.zAxis, function (axis) {
+		if (axis.opposite) {
+			defaultShowTop = true;
+		} else {
+			defaultShowBottom = true;
+		}
+	});
+	each(chart.yAxis, function (axis) {
+		if (axis.opposite) {
+			defaultShowRight = true;
+		} else {
+			defaultShowLeft = true;
+		}
+	});
+
+	var getFaceOptions = function (sources, faceOrientation, defaultVisible) {
+		var faceAttrs = ['size', 'color', 'visible'];
+		var options = {};
+		for (var i = 0; i < faceAttrs.length; i++) {
+			var attr = faceAttrs[i];
+			for (var j = 0; j < sources.length; j++) {
+				if (typeof sources[j] === 'object') {
+					var val = sources[j][attr];
+					if (val !== undefined && val !== null) {
+						options[attr] = val;
+						break;
+					}
+				}
+			}
+		}
+		var isVisible = defaultVisible;
+		if (options.visible === true || options.visible === false) {
+			isVisible = options.visible;
+		} else if (options.visible === 'auto') {
+			isVisible = faceOrientation >= 0;
+		}
+
+		return {
+			size: pick(options.size, 1),
+			color: pick(options.color, 'none'),
+			frontFacing: faceOrientation > 0,
+			visible: isVisible
+		};
+	};
+
+	return {
+		//FIXME: Previously, left/right, top/bottom and front/back pairs shared size and color.
+		//For compatibility and consistency sake, when one face have size/color/visibility set, the opposite face will default to the same values
+		//Also, left/right used to be called 'side', so that's also added as a fallback
+		bottom: getFaceOptions([frameOptions.bottom, frameOptions.top, frameOptions], bottomOrientation, defaultShowBottom),
+		top: getFaceOptions([frameOptions.top, frameOptions.bottom, frameOptions], topOrientation, defaultShowTop),
+		left: getFaceOptions([frameOptions.left, frameOptions.right, frameOptions.side, frameOptions], leftOrientation, defaultShowLeft),
+		right: getFaceOptions([frameOptions.right, frameOptions.left, frameOptions.side, frameOptions], rightOrientation, defaultShowRight),
+		back: getFaceOptions([frameOptions.back, frameOptions.front, frameOptions], backOrientation, defaultShowBack),
+		front: getFaceOptions([frameOptions.front, frameOptions.back, frameOptions], frontOrientation, defaultShowFront)
+	};
+};
+
