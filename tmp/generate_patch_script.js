@@ -303,15 +303,15 @@ function doCompare(code, dump) {
             supplementalDoclets.push(                
                 '\n' +
                 '/**\n' +
-                ' * ' + '@apioption ' + dump[dkey].fullname.replace('<', '.').replace('>', '') + '\n' +
-                ' * \n' +
+                //' * ' + '@apioption ' + dump[dkey].fullname.replace('<', '.').replace('>', '') + '\n' +
+                //' * \n' +
                 ' * ' +
                 toDolcet(
                     dump[dkey], 
                     doclet
                 ).concat([
-                    '@todo Copy ' + dkey + ' docs to actual source code'//,
-                    //'@apioption ' + dump[dkey].fullname.replace('<', '.').replace('>', '')
+                    '@todo Copy ' + dkey + ' docs to actual source code',
+                    '@apioption ' + dump[dkey].fullname.replace('<', '.').replace('>', '')
                 ]).join('\n * ') +
                 '\n */'
             );
@@ -354,8 +354,9 @@ function doCompare(code, dump) {
                 ckey
             );
             
-            dentry = {
-                todo: 'implement docs for ' + ckey
+            dentry
+             = {
+                //todo: 'implement docs for ' + ckey
             };
         }
 
