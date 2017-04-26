@@ -123,6 +123,87 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 	return result;
 };
 
+/**
+ * A 3-D Face is defined by it's 3D vertexes, and is only
+ * visible if it's vertexes are counter-clockwise (Back-face culling).
+ * It is used as a polyhedron Element
+ */
+SVGRenderer.prototype.face3d = function (args) {
+	var renderer = this,
+		ret = this.createElement('path');
+	ret.vertexes = [];
+	ret.insidePlotArea = false;
+	ret.enabled = true;
+
+	ret.insidePlotAreaSetter = function (insidePlotArea) {
+		this.insidePlotArea = insidePlotArea;
+		this._refreshFace3d = true;
+	};
+	ret.enabledSetter = function (enabled) {
+		this.enabled = enabled;
+		this._refreshFace3d = true;
+	};
+	ret.vertexesSetter = function (vertexes) {
+		this.vertexes = vertexes;
+		this._refreshFace3d = true;
+	};
+	wrap(ret, 'afterSetters', function (proceed) {
+		var chart = charts[renderer.chartIndex],
+			element = this.element,
+			vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
+			path = renderer.toLinePath(vertexes2d, true),
+			area = H.shapeArea(vertexes2d),
+			visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+
+		this.dSetter(path, 'd', element);
+		this._defaultSetter(visibility, 'visibility', element);
+
+		proceed.apply(this, [].slice.call(arguments, 1));
+	});
+	return ret.attr(args);
+};
+
+/**
+ * A Polyhedron is a handy way of defining a group of 3-D faces.
+ * It's only attribute is `faces`, an array of attributes of each one of it's Face3D instances.
+ */
+SVGRenderer.prototype.polyhedron = function (args) {
+	var renderer = this,
+		result = this.g(),
+		destroy = result.destroy;
+
+	/*= if (build.classic) { =*/
+	result.attr({
+		'stroke-linejoin': 'round'
+	});
+	/*= } =*/
+
+	result.faces = [];
+
+
+	// destroy all children
+	result.destroy = function () {
+		for (var i = 0; i < result.faces.length; i++) {
+			result.faces[i].destroy();
+		}
+		return destroy.call(this);
+	};
+
+	// Apply 
+	result.facesSetter = function (faces) {
+		while (result.faces.length > faces.length) {
+			result.faces.pop().destroy();
+		}
+		while (result.faces.length < faces.length) {
+			result.faces.push(renderer.face3d().add(result));
+		}
+		for (var i = 0; i < faces.length; i++) {
+			result.faces[i].attr(faces[i]);
+		}
+	};
+	return result.attr(args);
+};
+
 ////// CUBOIDS //////
 SVGRenderer.prototype.cuboid = function (shapeArgs) {
 

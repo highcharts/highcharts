@@ -21,6 +21,8 @@ if (VMLRenderer) {
 
 	H.setOptions({ animate: false });
 
+	VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
+	VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
 	VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
 	VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
 
