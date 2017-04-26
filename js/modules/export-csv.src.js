@@ -1,5 +1,5 @@
 /**
- * Exporting module
+ * Expoerimental data export module for Highcharts
  *
  * (c) 2010-2017 Torstein Honsi
  *
@@ -7,10 +7,11 @@
  */
 
 // docs
-// - After release:
+// - After experimental release:
 // - Move info in repo readme to docs/API.
 // - Deprecate repo and plugins page
 // - Update demos (esp accessibility) to use new URL
+// - Before official release, set up systematic tests for all series types
 
 /* eslint indent:0 */
 'use strict';
