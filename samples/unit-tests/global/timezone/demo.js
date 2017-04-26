@@ -197,3 +197,42 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
     );
 
 });
+
+QUnit.test('Negative timezoneOffset', function (assert) {
+    Highcharts.setOptions({
+        global: {
+            getTimezoneOffset: null,
+            timezone: null,
+            timezoneOffset: -3 * 60
+        }
+    });
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 400
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            data: [{
+                x: 1493031600000,
+                y: 39.9
+            }, {
+                x: 1493031630000,
+                y: 81.5
+            }]
+        }]
+    });
+
+    var ticks = chart.xAxis[0].tickPositions
+        .map(function (pos) {
+            return chart.xAxis[0].ticks[pos].label.element.textContent;
+        });
+
+    assert.deepEqual(
+        ticks,
+        ['14:00:00', '14:00:30'],
+        'Two ticks'
+    );
+});
