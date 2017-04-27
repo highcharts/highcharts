@@ -38,14 +38,25 @@ var addEvent = H.addEvent,
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
-	 * Add a series dynamically after  time
+	 * Add a series to the chart after render time. Note that this method should
+	 * never be used when adding data synchronously at chart render time, as it
+	 * adds expense to the calculations and rendering. When adding data at the
+	 * same time as the chart is initiated, add the series as a configuration
+	 * option instead. With multiple axes, the `offset` is dynamically adjusted.
 	 *
-	 * @param {Object} options The config options
-	 * @param {Boolean} redraw Whether to redraw the chart after adding. Defaults to true.
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 * @param  {SeriesOptions} options
+	 *         The config options for the series.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after adding.
+	 * @param  {AnimationOptions} animation
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
 	 *
-	 * @return {Object} series The newly created series object
+	 * @return {Highcharts.Series}
+	 *         The newly created series object.
+	 *
+	 * @sample highcharts/members/chart-addseries/
+	 *         Add a series from a button
 	 */
 	addSeries: function (options, redraw, animation) {
 		var series,
@@ -69,9 +80,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-     * Add an axis to the chart
-     * @param {Object} options The axis option
-     * @param {Boolean} isX Whether it is an X axis or a value axis
+     * Add an axis to the chart after render time. Note that this method should
+     * never be used when adding data synchronously at chart render time, as it
+     * adds expense to the calculations and rendering. When adding data at the
+     * same time as the chart is initiated, add the axis as a configuration
+     * option instead.
+     * @param  {AxisOptions} options
+     *         The axis options.
+     * @param  {Boolean} [isX=false]
+     *         Whether it is an X axis or a value axis.
+     * @param  {Boolean} [redraw=true]
+     *         Whether to redraw the chart after adding.
+     * @param  {AnimationOptions} [animation=true]
+     *         Whether and how to apply animation in the redraw.
+     *
+     * @sample highcharts/members/chart-addaxis/ Add and remove axes
      */
 	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
@@ -158,7 +181,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Hide the loading layer
+	 * Hide the loading layer.
+	 *
+	 * @see    Highcharts.Chart#showLoading
+	 * @sample highcharts/members/chart-hideloading/
+	 *         Show and hide loading from a button
 	 */
 	hideLoading: function () {
 		var options = this.options,

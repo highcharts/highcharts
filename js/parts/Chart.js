@@ -46,15 +46,16 @@ var addEvent = H.addEvent,
 	win = H.win,
 	Renderer = H.Renderer;
 /**
- * The Chart class.
+ * The Chart class. The recommended constructor is {@link Highcharts#chart}.
  * @class Highcharts.Chart
  * @memberOf Highcharts
  * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
  * id.
- * @param {ChartOptions} options - The chart options structure.
+ * @param {Options} options - The chart options structure.
  * @param {Function} callback - Function to run when the chart has loaded and
- * and all external images are loaded. Defining a {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load} handler is
- * equivalent.
+ * and all external images are loaded. Defining a {@link
+ * https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ * handler is equivalent.
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
@@ -67,17 +68,29 @@ var Chart = H.Chart = function () {
  * @memberOf Highcharts
  * @param  {String|HTMLDOMElement} renderTo - The DOM element to render to, or
  * its id.
- * @param  {ChartOptions} options - The chart options structure.
+ * @param  {Options} options - The chart options structure.
  * @param  {Function} [callback] - Function to run when the chart has loaded and
- * and all external images are loaded. Defining a {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load} handler is
- * equivalent.
+ * and all external images are loaded. Defining a {@link
+ * https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ * handler is equivalent.
  * @return {Highcharts.Chart} - Returns the Chart object.
+ *
+ * @example
+ * // Render a chart in to div#container
+ * var chart = Highcharts.chart('container', {
+ *     title: {
+ *         text: 'My chart'
+ *     },
+ *     series: [{
+ *         data: [1, 3, 2, 4]
+ *     }]
+ * });
  */
 H.chart = function (a, b, c) {
 	return new Chart(a, b, c);
 };
 
-Chart.prototype = {
+extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Hook for modules
@@ -142,11 +155,34 @@ Chart.prototype = {
 
 		this.callback = callback;
 		this.isResizing = 0;
-		this.options = options;
-		//chartTitleOptions = undefined;
-		//chartSubtitleOptions = undefined;
 
+		/**
+		 * The options structure for the chart. It contains members for the sub
+		 * elements like series, legend, tooltip etc.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name options
+		 * @type {Options}
+		 */
+		this.options = options;
+		/**
+		 * All the axes in the chart.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name axes
+		 * @see  Highcharts.Chart.xAxis
+		 * @see  Highcharts.Chart.yAxis
+		 * @type {Array.<Highcharts.Axis>}
+		 */
 		this.axes = [];
+
+		/**
+		 * All the current series in the chart.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name series
+		 * @type {Array.<Highcharts.Series>}
+		 */
 		this.series = [];
 		this.hasCartesianSeries = optionsChart.showAxes;
 		//this.axisOffset = undefined;
@@ -193,14 +229,14 @@ Chart.prototype = {
 
 		/**
 		 * A collection of the X axes in the chart.
-		 * @type {Array}
+		 * @type {Array.<Highcharts.Axis>}
 		 * @name xAxis
 		 * @memberOf Highcharts.Chart
 		 */
 		chart.xAxis = [];
 		/**
 		 * A collection of the Y axes in the chart.
-		 * @type {Array}
+		 * @type {Array.<Highcharts.Axis>}
 		 * @name yAxis
 		 * @memberOf Highcharts.Chart
 		 */
@@ -269,10 +305,16 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Redraw legend, axes or series based on updated data
+	 * Redraw the chart after changes have been done to the data, axis extremes
+	 * chart size or chart elements. All methods for updating axes, series or
+	 * points have a parameter for redrawing the chart. This is `true` by
+	 * default. But in many cases you want to do more than one operation on the
+	 * chart before redrawing, for example add a number of points. In those
+	 * cases it is a waste of resources to redraw the chart for each new point
+	 * added. So you add the points and call `chart.redraw()` after.
 	 *
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *	configuration
+	 * @param  {AnimationOptions} animation
+	 *         If or how to apply animation to the redraw.
 	 */
 	redraw: function (animation) {
 		var chart = this,
@@ -436,8 +478,13 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Get an axis, series or point object by id.
-	 * @param id {String} The id as given in the configuration options
+	 * Get an axis, series or point object by `id` as given in the configuration
+	 * options. Returns `undefined` if no item is found.
+	 * @param id {String} The id as given in the configuration options.
+	 * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
+	 *         The retrieved item.
+	 * @sample highcharts/plotoptions/series-id/
+	 *         Get series by id
 	 */
 	get: function (id) {
 
@@ -494,7 +541,15 @@ Chart.prototype = {
 
 
 	/**
-	 * Get the currently selected points from all series
+	 * Returns an array of all currently selected points in the chart. Points
+	 * can be selected by clicking or programmatically by the {@link
+	 * Highcharts.Point#select} function.
+	 *
+	 * @return {Array.<Highcharts.Point>}
+	 *         The currently selected points.
+	 *
+	 * @sample highcharts/plotoptions/series-allowpointselect-line/
+	 *         Get selected points
 	 */
 	getSelectedPoints: function () {
 		var points = [];
@@ -508,7 +563,18 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Get the currently selected series
+	 * Returns an array of all currently selected series in the chart. Series
+	 * can be selected either programmatically by the {@link
+	 * Highcharts.Series#select} function or by checking the checkbox next to
+	 * the legend item if {@link
+	 * https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox|
+	 * series.showCheckBox} is true.
+	 * 
+	 * @return {Array.<Highcharts.Series>}
+	 *         The currently selected series.
+	 *
+	 * @sample highcharts/members/chart-getselectedseries/
+	 *         Get selected series
 	 */
 	getSelectedSeries: function () {
 		return grep(this.series, function (serie) {
@@ -812,7 +878,16 @@ Chart.prototype = {
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 		}, optionsChart.style);
 		/*= } =*/
-		chart.container = container = createElement(
+
+		/**
+		 * The containing HTML element of the chart. The container is
+		 * dynamically inserted into the element given as the `renderTo`
+		 * parameterin the {@link Highcharts#chart} constructor.
+		 *
+		 * @memberOf Highcharts.Chart
+		 * @type {HTMLDOMElement}
+		 */
+		container = createElement(
 			'div',
 			{
 				id: containerId
@@ -820,6 +895,7 @@ Chart.prototype = {
 			containerStyle,
 			renderTo
 		);
+		chart.container = container;
 
 		// cache the cursor (#1650)
 		chart._cursor = container.style.cursor;
@@ -917,7 +993,21 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Resize the chart to its container if size is not explicitly set
+	 * Reflows the chart to its container. By default, the chart reflows
+	 * automatically to its container following a `window.resize` event, as per
+	 * the {@link https://api.highcharts/highcharts/chart.reflow|chart.reflow}
+	 * option. However, there are no reliable events for div resize, so if the
+	 * container is resized without a window resize event, this must be called
+	 * explicitly.
+	 *
+	 * @param  {Object} e
+	 *         Event arguments. Used primarily when the function is called
+	 *         internally as a response to window resize.
+	 *
+	 * @sample highcharts/members/chart-reflow/
+	 *         Resize div and reflow
+	 * @sample highcharts/chart/events-container/
+	 *         Pop up and reflow
 	 */
 	reflow: function (e) {
 		var chart = this,
@@ -982,10 +1072,25 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Resize the chart to a given width and height
-	 * @param {Number} width
-	 * @param {Number} height
-	 * @param {Object|Boolean} animation
+	 * Resize the chart to a given width and height. In order to set the width
+	 * only, the height argument may be skipped. To set the height only, pass
+	 * `undefined for the width.
+	 * @param  {Number|undefined|null} [width]
+	 *         The new pixel width of the chart. Since v4.2.6, the argument can
+	 *         be `undefined` in order to preserve the current value (when
+	 *         setting height only), or `null` to adapt to the width of the
+	 *         containing element.
+	 * @param  {Number|undefined|null} [height]
+	 *         The new pixel height of the chart. Since v4.2.6, the argument can
+	 *         be `undefined` in order to preserve the current value, or `null`
+	 *         in order to adapt to the height of the containing element.
+	 * @param  {AnimationOptions} [animation=true]
+	 *         Whether and how to apply animation.
+	 *
+	 * @sample highcharts/members/chart-setsize-button/
+	 *         Test resizing from buttons
+	 * @sample highcharts/members/chart-setsize-jquery-resizable/
+	 *         Add a jQuery UI resizable
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
@@ -1507,13 +1612,28 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Show chart credits based on config options
+	 * Set a new credits label for the chart.
+	 *
+	 * @param  {CreditOptions} options
+	 *         A configuration object for the new credits.
+	 * @sample highcharts/credits/credits-update/ Add and update credits
 	 */
 	addCredits: function (credits) {
 		var chart = this;
 
 		credits = merge(true, this.options.credits, credits);
 		if (credits.enabled && !this.credits) {
+
+			/**
+			 * The chart's credits label. The label has an `update` method that
+			 * allows setting new options as per the {@link
+			 * https://api.highcharts.com/highcharts/credits|
+			 * credits options set}.
+			 *
+			 * @memberof Highcharts.Chart
+			 * @name credits
+			 * @type {Highcharts.SVGElement}
+			 */
 			this.credits = this.renderer.text(
 				credits.text + (this.mapCredits || ''),
 				0,
@@ -1544,7 +1664,11 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Clean up memory usage
+	 * Remove the chart and purge memory. This method is called internally
+	 * before adding a second chart into the same container, as well as on
+	 * window unload to prevent leaks.
+	 *
+	 * @sample highcharts/members/chart-destroy/ Destroy the chart from a button
 	 */
 	destroy: function () {
 		var chart = this,
@@ -1721,4 +1845,4 @@ Chart.prototype = {
 		this.onload = null;
 	}
 
-}; // end Chart
+}); // end Chart

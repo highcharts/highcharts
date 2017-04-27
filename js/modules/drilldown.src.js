@@ -125,8 +125,26 @@ H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
 	});
 };
 
-Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
-	this.addSingleSeriesAsDrilldown(point, ddOptions);
+/**
+ * Add a series to the chart as drilldown from a specific point in the parent
+ * series. This method is used for async drilldown, when clicking a point in a
+ * series should result in loading and displaying a more high-resolution series.
+ * When not async, the setup is simpler using the {@link 
+ * https://api.highcharts.com/highcharts/drilldown.series|drilldown.series}
+ * options structure.
+ *
+ * @memberOf Highcharts.Chart
+ * @function #addSeriesAsDrilldown
+ * 
+ * @param  {Highcharts.Point} point
+ *         The point from which the drilldown will start.
+ * @param  {SeriesOptions} options
+ *         The series options for the new, detailed series.
+ *
+ * @sample highcharts/drilldown/async/ Async drilldown
+ */
+Chart.prototype.addSeriesAsDrilldown = function (point, options) {
+	this.addSingleSeriesAsDrilldown(point, options);
 	this.applyDrilldown();
 };
 Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
@@ -291,6 +309,13 @@ Chart.prototype.showDrillUpButton = function () {
 	}
 };
 
+/**
+ * When the chart is drilled down to a child series, calling `chart.drillUp()`
+ * will drill up to the parent series.
+ *
+ * @memberOf Highcharts.Chart
+ * @name #drillUp
+ */
 Chart.prototype.drillUp = function () {
 	var chart = this,
 		drilldownLevels = chart.drilldownLevels,
