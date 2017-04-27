@@ -143,32 +143,7 @@ defaultOptions.exporting = {
 						type: 'image/svg+xml'
 					});
 				}
-			}
-			// Enable this block to add "View SVG" to the dropdown menu
-			/*
-			,{
-
-				text: 'View SVG Image',
-				onclick: function () {
-					var div = doc.createElement('div');
-					div.innerHTML = this.getSVGForExport();
-
-					this.renderTo.parentNode.appendChild(div);
-				}
-			}, {
-
-				text: 'View SVG Source',
-				onclick: function () {
-					var pre = doc.createElement('pre');
-					pre.innerHTML = this.getSVGForExport()
-						.replace(/</g, '\n&lt;')
-						.replace(/>/g, '&gt;');
-
-					this.renderTo.parentNode.appendChild(pre);
-				}
-			}
-			// */
-			]
+			}]
 		}
 	}
 };
@@ -1025,13 +1000,28 @@ Chart.prototype.callbacks.push(function (chart) {
 	// testing of export
 	/*
 	if (!chart.renderer.forExport) {
-		var button = doc.createElement('button');
-		button.innerHTML = 'View exported SVG';
+		var button;
+
+		// View SVG Image
+		button = doc.createElement('button');
+		button.innerHTML = 'View SVG Image';
 		chart.renderTo.parentNode.appendChild(button);
 		button.onclick = function () {
 			var div = doc.createElement('div');
 			div.innerHTML = chart.getSVGForExport();
 			chart.renderTo.parentNode.appendChild(div);
+		};
+
+		// View SVG Source
+		button = doc.createElement('button');
+		button.innerHTML = 'View SVG Source';
+		chart.renderTo.parentNode.appendChild(button);
+		button.onclick = function () {
+			var pre = doc.createElement('pre');
+			pre.innerHTML = chart.getSVGForExport()
+				.replace(/</g, '\n&lt;')
+				.replace(/>/g, '&gt;');
+			chart.renderTo.parentNode.appendChild(pre);
 		};
 	}
 	// */
