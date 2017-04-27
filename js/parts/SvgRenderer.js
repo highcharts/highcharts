@@ -1378,19 +1378,24 @@ SVGElement.prototype = {
 	destroy: function () {
 		var wrapper = this,
 			element = wrapper.element || {},
-			parentToClean = wrapper.renderer.isSVG && element.nodeName === 'SPAN' && wrapper.parentGroup,
+			parentToClean =
+				wrapper.renderer.isSVG &&
+				element.nodeName === 'SPAN' &&
+				wrapper.parentGroup,
 			grandParent,
+			ownerSVGElement = element.ownerSVGElement,
 			i;
 
 		// remove events
-		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
+		element.onclick = element.onmouseout = element.onmouseover =
+			element.onmousemove = element.point = null;
 		stop(wrapper); // stop running animations
 
-		if (wrapper.clipPath) {
+		if (wrapper.clipPath && ownerSVGElement) {
 			// Look for existing references to this clipPath and remove them
 			// before destroying the element (#6196).
 			each(
-				wrapper.element.ownerSVGElement.querySelectorAll('[clip-path]'),
+				ownerSVGElement.querySelectorAll('[clip-path]'),
 				function (el) {
 					// Include the closing paranthesis in the test to rule out
 					// id's from 10 and above (#6550)
