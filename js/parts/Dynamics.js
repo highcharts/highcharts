@@ -661,7 +661,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 	 * with the existing options, so only new or altered options need to be
 	 * specified.
 	 *
-	 * @param {Object} options - New additional axis options.
+	 * @param  {Object} options
+	 *         The new options that will be merged in with existing options on
+	 *         the axis.
 	 * @sample highcharts/members/axis-update/ Axis update demo
 	 */
 	update: function (options, redraw) {
@@ -725,13 +727,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 	/**
 	 * Update the axis title by options after render time.
 	 *
-	 * @param {Object} newTitleOptions - The additional title options.
-	 * @param {Boolean} [redraw=true] - Whether to redraw the chart after
-	 * setting the title.
+	 * @param  {TitleOptions} titleOptions
+	 *         The additional title options.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after setting the title.
 	 * @sample highcharts/members/axis-settitle/ Set a new Y axis title
 	 */
-	setTitle: function (newTitleOptions, redraw) {
-		this.update({ title: newTitleOptions }, redraw);
+	setTitle: function (titleOptions, redraw) {
+		this.update({ title: titleOptions }, redraw);
 	},
 
 	/**

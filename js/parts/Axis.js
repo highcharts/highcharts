@@ -8,14 +8,12 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
 import './Options.js';
-import './PlotLineOrBand.js';
 import './Tick.js';
 
 var addEvent = H.addEvent,
 	animObject = H.animObject,
 	arrayMax = H.arrayMax,
 	arrayMin = H.arrayMin,
-	AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
 	color = H.color,
 	correctFloat = H.correctFloat,
 	defaultOptions = H.defaultOptions,
@@ -36,7 +34,6 @@ var addEvent = H.addEvent,
 	normalizeTickInterval = H.normalizeTickInterval,
 	objectEach = H.objectEach,
 	pick = H.pick,
-	PlotLineOrBand = H.PlotLineOrBand,
 	removeEvent = H.removeEvent,
 	splat = H.splat,
 	syncTimeout = H.syncTimeout,
@@ -70,11 +67,11 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart - The Chart instance to apply the axis on.
  * @param {Object} options - Axis options
  */
-H.Axis = function () {
+var Axis = function () {
 	this.init.apply(this, arguments);
 };
 
-H.extend(H.Axis.prototype, /** @lends Highcharts.Axis.prototype */{
+H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
 	 * Default options for the X axis - the Y axis has extended defaults
@@ -421,10 +418,6 @@ H.extend(H.Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			axis.reversed = true;
 		}
 
-		axis.removePlotBand = axis.removePlotBandOrLine;
-		axis.removePlotLine = axis.removePlotBandOrLine;
-
-
 		// register event listeners
 		objectEach(events, function (event, eventType) {
 			addEvent(axis, eventType, event);
@@ -678,23 +671,38 @@ H.extend(H.Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Utility method to translate an axis value to pixel position.
-	 * @param {Number} value A value in terms of axis units
-	 * @param {Boolean} paneCoordinates Whether to return the pixel coordinate relative to the chart
-	 *        or just the axis/pane itself.
+	 * Translate a value in terms of axis units into pixels within the chart.
+	 * 
+	 * @param  {Number} value
+	 *         A value in terms of axis units.
+	 * @param  {Boolean} paneCoordinates
+	 *         Whether to return the pixel coordinate relative to the chart or
+	 *         just the axis/pane itself.
+	 * @return {Number} Pixel position of the value on the chart or axis.
 	 */
 	toPixels: function (value, paneCoordinates) {
-		return this.translate(value, false, !this.horiz, null, true) + (paneCoordinates ? 0 : this.pos);
+		return this.translate(value, false, !this.horiz, null, true) +
+			(paneCoordinates ? 0 : this.pos);
 	},
 
 	/**
-	 * Utility method to translate a pixel position in to an axis value.
-	 * @param {Number} pixel The pixel value coordinate
-	 * @param {Boolean} paneCoordiantes Whether the input pixel is relative to the chart or just the
-	 *        axis/pane itself.
+	 * Translate a pixel position along the axis to a value in terms of axis
+	 * units.
+	 * @param  {Number} pixel
+	 *         The pixel value coordinate.
+	 * @param  {Boolean} paneCoordiantes
+	 *         Whether the input pixel is relative to the chart or just the
+	 *         axis/pane itself.
+	 * @return {Number} The axis value.
 	 */
 	toValue: function (pixel, paneCoordinates) {
-		return this.translate(pixel - (paneCoordinates ? 0 : this.pos), true, !this.horiz, null, true);
+		return this.translate(
+			pixel - (paneCoordinates ? 0 : this.pos),
+			true,
+			!this.horiz,
+			null,
+			true
+		);
 	},
 
 	/**
@@ -2501,7 +2509,7 @@ H.extend(H.Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 					to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
 					if (i % 2 === 0 && pos < axis.max && to <= axis.max + (chart.polar ? -tickmarkOffset : tickmarkOffset)) { // #2248, #4660
 						if (!alternateBands[pos]) {
-							alternateBands[pos] = new PlotLineOrBand(axis);
+							alternateBands[pos] = new H.PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
 						alternateBands[pos].options = {
@@ -2770,4 +2778,5 @@ H.extend(H.Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	}
 }); // end Axis
 
-extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
+H.Axis = Axis;
+export default Axis;
