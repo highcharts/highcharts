@@ -14,8 +14,21 @@
  */
 window.TestController = function (chart) {
 
-    var controller;
+    var controller,
+        MSPointer = window.MSPointerEvent,
+        Pointer = window.PointerEvent;
 
+    /**
+     * Mock a TochList element
+     * @param {Array} arr The list of touches
+     * @returns {Array} Array of touches including required internal methods
+     */
+    function createTouchList(arr) {
+        arr.item = function (i) {
+            return this[i];
+        };
+        return arr;
+    }
     /**
      * Get offset of an element.
      * @param  {string} type  Event type
@@ -267,6 +280,36 @@ window.TestController = function (chart) {
                 x1 = elOffset.left + (x || 0),
                 y1 = elOffset.top + (y || 0);
             this.moveTo(x1, y1);
+        },
+        tap: function (x, y) {
+            var target = document.elementFromPoint(x, y),
+                extra = {
+                    relatedTarget: target,
+                    touches: createTouchList([{
+                        pageX: x,
+                        pageY: y
+                    }])
+                };
+            triggerEvent('touchstart', x, y, extra, target);
+            if (Pointer) {
+                triggerEvent('pointerdown', x, y, extra, target);
+            }
+            if (MSPointer) {
+                triggerEvent('MSPointerDown', x, y, extra, target);
+            }
+            if (Pointer) {
+                triggerEvent('pointerup', x, y, extra, target);
+            }
+            if (MSPointer) {
+                triggerEvent('MSPointerUp', x, y, extra, target);
+            }
+            triggerEvent('touchend', x, y, extra, target);
+        },
+        tapOnElement: function (el, x, y) {
+            var elOffset = getOffset(el);
+            var x1 = elOffset.left + (x || 0),
+                y1 = elOffset.top + (y || 0);
+            this.tap(x1, y1);
         },
         // Pure functions without states
         trigger: trigger,
