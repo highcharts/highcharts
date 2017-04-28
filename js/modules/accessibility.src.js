@@ -399,10 +399,11 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		return false;
 	}
 
-	// Recursively skip null points
+	// Recursively skip null points or points in series that should be skipped
 	if (
 		newPoint.isNull && 
-		this.options.accessibility.keyboardNavigation.skipNullPoints
+		this.options.accessibility.keyboardNavigation.skipNullPoints ||
+		newPoint.series.options.skipKeyboardNavigation // docs
 	) {
 		this.highlightedPoint = newPoint;
 		return this.highlightAdjacentPoint(next);
