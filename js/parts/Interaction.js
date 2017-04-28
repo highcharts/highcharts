@@ -420,18 +420,35 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 				flipped = panMax < panMin,
 				newMin = flipped ? panMax : panMin,
 				newMax = flipped ? panMin : panMax,
-				paddedMin = axis.toValue(
-					axis.toPixels(extremes.min) - axis.minPixelPadding
+				paddedMin = Math.min(
+					extremes.dataMin, 
+					axis.toValue(
+						axis.toPixels(extremes.min) - axis.minPixelPadding
+					)
 				),
-				paddedMax = axis.toValue(
-					axis.toPixels(extremes.max) + axis.minPixelPadding
+				paddedMax = Math.max(
+					extremes.dataMax,
+					axis.toValue(
+						axis.toPixels(extremes.max) + axis.minPixelPadding
+					)
 				),
-				distMin = Math.min(extremes.dataMin, paddedMin) - newMin,
-				distMax = newMax - Math.max(extremes.dataMax, paddedMax);
+				spill;
 
-			// Negative distMin and distMax means that we're still inside the
-			// data range.
-			if (axis.series.length && distMin < 0 && distMax < 0) {
+			// If the new range spills over, either to the min or max, adjust
+			// the new range.
+			spill = paddedMin - newMin;
+			if (spill > 0) {
+				newMax += spill;
+				newMin = paddedMin;
+			}
+			spill = newMax - paddedMax;
+			if (spill > 0) {
+				newMax = paddedMax;
+				newMin -= spill;
+			}
+
+			// Set new extremes if they are actually new
+			if (axis.series.length && newMin !== extremes.min && newMax !== extremes.max) {
 				axis.setExtremes(
 					newMin,
 					newMax,
