@@ -48,14 +48,25 @@ var addEvent = H.addEvent,
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
  * @class Highcharts.Chart
- * @memberOf Highcharts
- * @param {String|HTMLDOMElement} renderTo - The DOM element to render to, or its
- * id.
- * @param {Options} options - The chart options structure.
- * @param {Function} callback - Function to run when the chart has loaded and
- * and all external images are loaded. Defining a {@link
- * https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- * handler is equivalent.
+ * @param  {String|HTMLDOMElement} renderTo
+ *         The DOM element to render to, or its id.
+ * @param  {Options} options
+ *         The chart options structure.
+ * @param  {Function} [callback]
+ *         Function to run when the chart has loaded and and all external images
+ *         are loaded. Defining a {@link
+ *         https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *         handler is equivalent.
+ *
+ * @example
+ * var chart = new Highcharts.Chart('container', {
+ * 	   title: {
+ * 	   	   text: 'My chart'
+ * 	   },
+ * 	   series: [{
+ * 	       data: [1, 3, 2, 4]
+ * 	   }]
+ * })
  */
 var Chart = H.Chart = function () {
 	this.getArgs.apply(this, arguments);
