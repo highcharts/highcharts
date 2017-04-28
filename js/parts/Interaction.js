@@ -235,7 +235,7 @@ extend(Legend.prototype, {
 		})
 		.on('mouseout', function () {
 			/*= if (build.classic) { =*/
-			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
+			legendItem.css(merge(item.visible ? legend.itemStyle : legend.itemHiddenStyle));
 			/*= } =*/
 
 			// A CSS class to dim or hide other than the hovered series
