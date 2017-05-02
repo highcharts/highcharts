@@ -364,60 +364,60 @@ QUnit.test('DateFormat', function (assert) {
 });
 
 
-QUnit.test('isHTMLElement', function (assert) {
-    var isHTMLElement = Highcharts.isHTMLElement,
+QUnit.test('isDOMElement', function (assert) {
+    var isDOMElement = Highcharts.isDOMElement,
         // Mock an ES6 class
         classes = {
             constructor: function TestClass() {}
         };
 
     assert.strictEqual(
-      isHTMLElement("a"),
+      isDOMElement("a"),
       false,
       'String is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(1),
+      isDOMElement(1),
       false,
       'Number is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(true),
+      isDOMElement(true),
       false,
       'Boolean is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(null),
+      isDOMElement(null),
       false,
       'null is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(undefined),
+      isDOMElement(undefined),
       false,
       'undefined is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement([1]),
+      isDOMElement([1]),
       false,
       'Array is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement({ a: 1 }),
+      isDOMElement({ a: 1 }),
       false,
       'Object is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(classes),
+      isDOMElement(classes),
       false,
       'Object classes is not a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(document.createElement('div')),
+      isDOMElement(document.createElement('div')),
       true,
       'HTMLElement is a HTML Element'
     );
     assert.strictEqual(
-      isHTMLElement(function Test() {}),
+      isDOMElement(function Test() {}),
       false,
       'Function is not a HTML Element'
     );
