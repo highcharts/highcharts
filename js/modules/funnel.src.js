@@ -216,13 +216,6 @@ seriesType('funnel', 'pie', {
 			}
 		});		
 	},
-	/**
-	 * Draw a single point (wedge)
-	 * @param {Object} point The point object
-	 * @param {Object} color The color of the point
-	 * @param {Number} brightness The brightness relative to the color
-	 */
-	drawPoints: seriesTypes.column.prototype.drawPoints,
 
 	/**
 	 * Funnel items don't have angles (#2289)
