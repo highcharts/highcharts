@@ -47,8 +47,8 @@
         point.plotY += this.chart.pointer.chartPosition.top;
 
         // Temporary set the chart size to the full document, so that the tooltip positioner picks it up
-        chart.chartWidth = $(document).width();
-        chart.chartHeight = $(document).height();
+        chart.chartWidth = $(window).width();
+        chart.chartHeight = $(window).height();
 
         // Compute the tooltip position
         pos = proceed.call(this, boxWidth, boxHeight, point);
