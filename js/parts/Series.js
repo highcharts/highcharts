@@ -1966,7 +1966,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Generate it on first call
 		if (isNew) {
-			this[prop] = group = this.chart.renderer.g(name)
+			this[prop] = group = this.chart.renderer.g()
 				.attr({
 					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
@@ -1978,7 +1978,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		// Series.update (#6660)
 		group.addClass(
 			(
-				'highcharts-series-' + this.index +
+				'highcharts-' + name +
+				' highcharts-series-' + this.index +
 				' highcharts-' + this.type + '-series ' +
 				'highcharts-color-' + this.colorIndex + ' ' +
 				(this.options.className || '')
