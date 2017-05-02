@@ -49,7 +49,7 @@ QUnit.test(
                 type: 'candlestick',
                 data: [
                     [0, 4.11, 4.12, 4.50, 4.07]
-                ],
+                ]
             }]
         });
 
@@ -81,6 +81,46 @@ QUnit.test(
             chart.series[0].pointArrayMap,
             undefined,
             'No point array map on base Series'
+        );
+
+    }
+);
+
+QUnit.test(
+    'Udating color index, class name should change',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            title: {
+                text: 'Color index'
+            },
+
+            series: [{
+                type: 'area',
+                data: [1, 3, 2, 4]
+            }]
+
+        });
+        var s = chart.series[0];
+
+        assert.notEqual(
+            s.group.element.getAttribute('class').indexOf('highcharts-color-0'),
+            -1,
+            'Correct class'
+        );
+
+        s.update({ colorIndex: 5 });
+
+        assert.strictEqual(
+            s.group.element.getAttribute('class').indexOf('highcharts-color-0'),
+            -1,
+            'Original color class gone'
+        );
+
+        assert.notEqual(
+            s.group.element.getAttribute('class').indexOf('highcharts-color-5'),
+            -1,
+            'New color class added'
         );
 
     }

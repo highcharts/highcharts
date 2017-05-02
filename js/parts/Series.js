@@ -1971,10 +1971,20 @@ H.Series = H.seriesType('line', null, { // base series options
 					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
-
-			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
-				' ' + (this.options.className || ''));
+			
 		}
+
+		// Add the class names, and replace existing ones as response to
+		// Series.update (#6660)
+		group.addClass(
+			(
+				'highcharts-series-' + this.index +
+				' highcharts-' + this.type + '-series ' +
+				'highcharts-color-' + this.colorIndex + ' ' +
+				(this.options.className || '')
+			),
+			true
+		);
 
 		// Place it on first and subsequent (redraw) calls
 		group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
