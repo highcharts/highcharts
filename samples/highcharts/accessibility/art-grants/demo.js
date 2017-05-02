@@ -19,15 +19,25 @@ function updatePointStart() {
     });
 }
 
+function dollarFormat(x) {
+    return '$' + Highcharts.numberFormat(x, -1);
+}
+
 var colors = Highcharts.getOptions().colors;
 
-Highcharts.chart('container', {
+Highcharts.setOptions({
+    lang: {
+        thousandsSep: ','
+    }
+});
+
+var chart = Highcharts.chart('container', {
     chart: {
         type: 'column',
         description: 'Chart displaying art grants in 2016, grouped by grant category. ' +
         'Cultural Center grants have significantly higher individual grant amounts than the other categories. ' +
-        'The largest grant amount went to SOMArts Cultural Centers, and was $630191.36. ' +
-        'The chart leaves out all grants below $50000. ' +
+        'The largest grant amount went to SOMArts Cultural Centers, and was $630,191.36. ' +
+        'The chart leaves out all grants below $50,000. ' +
         'The chart displays one column series for each of the 4 grant categories, ' +
         'as well as a line series for each of the grant category totals.'
     },
@@ -35,7 +45,7 @@ Highcharts.chart('container', {
     accessibility: {
         seriesDescriptionFormatter: function (series) {
             return series.type !== 'line' ? series.buildSeriesInfoString() :
-                series.name + ', $' + series.points[0].y;
+                series.name + ', ' + dollarFormat(series.points[0].y);
         }
     },
 
@@ -114,6 +124,11 @@ Highcharts.chart('container', {
             tooltip: {
                 headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
                 pointFormat: '{point.name}: <b>${point.y}</b><br/>'
+            },
+            pointDescriptionFormatter: function (point) {
+                return (point.index + 1) + '. ' + point.name + ' ' +
+                    dollarFormat(point.y) + '.' +
+                    (point.description ? ' ' + point.description : '');
             }
         },
         line: {
@@ -125,6 +140,8 @@ Highcharts.chart('container', {
             enableMouseTracking: false,
             skipKeyboardNavigation: true,
             includeInCSVExport: false,
+            exposeElementToA11y: true,
+            linkedTo: ':previous',
             dataLabels: {
                 enabled: true,
                 verticalAlign: 'bottom',
@@ -164,7 +181,6 @@ Highcharts.chart('container', {
         data: [
             550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000
         ],
-        linkedTo: ':previous',
         color: colors[0]
     }, {
         name: 'Cultural Center',
@@ -184,7 +200,6 @@ Highcharts.chart('container', {
         data: [
             2273366, 2273366, 2273366, 2273366, 2273366, 2273366
         ],
-        linkedTo: ':previous',
         pointStart: 10,
         color: colors[1]
     }, {
@@ -217,7 +232,6 @@ Highcharts.chart('container', {
             1050000, 1050000, 1050000, 1050000, 1050000, 1050000, 1050000,
             1050000, 1050000
         ],
-        linkedTo: ':previous',
         pointStart: 17,
         color: colors[2]
     }, {
@@ -239,8 +253,13 @@ Highcharts.chart('container', {
         data: [
             660000, 660000, 660000, 660000, 660000, 660000, 660000
         ],
-        linkedTo: ':previous',
         pointStart: 34,
         color: colors[3]
     }]
 });
+
+// Remove click events on container to avoid having "clickable" announced by AT
+// These events are needed for custom click events, drag to zoom, and navigator
+// support.
+delete chart.container.onmousedown;
+delete chart.container.onclick;
