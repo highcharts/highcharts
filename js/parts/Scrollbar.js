@@ -675,10 +675,11 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
 		scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
 		scrollbar = axis.scrollbar,
+		titleOffset = axis.titleOffset || 0,
 		offsetsIndex,
 		from,
 		to;
-
+console.log('@render', titleOffset)
 	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (scrollbar) {
@@ -687,7 +688,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			scrollbar.position(
 				axis.left, 
 				axis.top + axis.height + 2 + axis.chart.scrollbarsOffsets[1] +
-					(axis.opposite ? 0 : axis.axisTitleMargin + axis.offset),
+					(axis.opposite ?
+						0 :
+						titleOffset + axis.axisTitleMargin + axis.offset
+					),
 				axis.width,
 				axis.height
 			);
@@ -695,7 +699,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		} else {
 			scrollbar.position(
 				axis.left + axis.width + 2 + axis.chart.scrollbarsOffsets[0] +
-					(axis.opposite ? axis.axisTitleMargin + axis.offset : 0),
+					(axis.opposite ? 
+						titleOffset + axis.axisTitleMargin + axis.offset :
+						0
+					),
 				axis.top, 
 				axis.width, 
 				axis.height

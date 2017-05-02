@@ -2254,7 +2254,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			axis.addTitle(showAxis);
 
 			if (showAxis && axisTitleOptions.reserveSpace !== false) {
-				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
+				axis.titleOffset = titleOffset =
+					axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
 				titleOffsetOption = axisTitleOptions.offset;
 				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
 			}
