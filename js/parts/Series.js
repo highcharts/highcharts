@@ -1957,8 +1957,9 @@ H.Series = H.seriesType('line', null, { // base series options
 	},
 
 	/**
-	 * General abstraction for creating plot groups like series.group, series.dataLabelsGroup and
-	 * series.markerGroup. On subsequent calls, the group will only be adjusted to the updated plot size.
+	 * General abstraction for creating plot groups like series.group,
+	 * series.dataLabelsGroup and series.markerGroup. On subsequent calls, the
+	 * group will only be adjusted to the updated plot size.
 	 */
 	plotGroup: function (prop, name, visibility, zIndex, parent) {
 		var group = this[prop],
@@ -1988,7 +1989,9 @@ H.Series = H.seriesType('line', null, { // base series options
 		);
 
 		// Place it on first and subsequent (redraw) calls
-		group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
+		group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](
+			this.getPlotBox()
+		);
 		return group;
 	},
 
@@ -2021,9 +2024,13 @@ H.Series = H.seriesType('line', null, { // base series options
 			chart = series.chart,
 			group,
 			options = series.options,
-			// Animation doesn't work in IE8 quirks when the group div is hidden,
-			// and looks bad in other oldIE
-			animDuration = !!series.animate && chart.renderer.isSVG && animObject(options.animation).duration,
+			// Animation doesn't work in IE8 quirks when the group div is
+			// hidden, and looks bad in other oldIE
+			animDuration = (
+				!!series.animate &&
+				chart.renderer.isSVG &&
+				animObject(options.animation).duration
+			),
 			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -2079,14 +2086,18 @@ H.Series = H.seriesType('line', null, { // base series options
 
 
 		// draw the mouse tracking area
-		if (series.drawTracker && series.options.enableMouseTracking !== false) {
+		if (
+			series.drawTracker &&
+			series.options.enableMouseTracking !== false
+		) {
 			series.drawTracker();
 		}
 
 		// Handle inverted series and tracker groups
 		series.invertGroups(inverted);
 
-		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
+		// Initial clipping, must be defined after inverting groups for VML.
+		// Applies to columns etc. (#3839).
 		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
 			group.clip(chart.clipRect);
 		}
@@ -2096,8 +2107,9 @@ H.Series = H.seriesType('line', null, { // base series options
 			series.animate();
 		}
 
-		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
-		// which should be available to the user).
+		// Call the afterAnimate function on animation complete (but don't
+		// overwrite the animation.complete option which should be available to
+		// the user).
 		if (!hasRendered) {
 			series.animationTimeout = syncTimeout(function () {
 				series.afterAnimate();
@@ -2105,7 +2117,8 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		series.isDirty = false; // means data is in accordance with what you see
-		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+		// (See #322) series.isDirty = series.isDirtyData = false; // means
+		// data is in accordance with what you see
 		series.hasRendered = true;
 	},
 
@@ -2115,7 +2128,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
-			wasDirty = series.isDirty || series.isDirtyData, // cache it here as it is set to false in render, but used after
+			// cache it here as it is set to false in render, but used after
+			wasDirty = series.isDirty || series.isDirtyData,
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -2155,8 +2169,12 @@ H.Series = H.seriesType('line', null, { // base series options
 			inverted = series.chart.inverted;
 
 		return this.searchKDTree({
-			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
-			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
+			clientX: inverted ?
+				xAxis.len - e.chartY + xAxis.pos :
+				e.chartX - xAxis.pos,
+			plotY: inverted ?
+				yAxis.len - e.chartX + yAxis.pos :
+				e.chartY - yAxis.pos
 		}, compareX);
 	},
 
@@ -2196,19 +2214,26 @@ H.Series = H.seriesType('line', null, { // base series options
 				// build and return nod
 				return {
 					point: points[median],
-					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
-					right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+					left: _kdtree(
+						points.slice(0, median), depth + 1, dimensions
+					),
+					right: _kdtree(
+						points.slice(median + 1), depth + 1, dimensions
+					)
 				};
 
 			}
 		}
 
-		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
+		// Start the recursive build process with a clone of the points array
+		// and null points filtered out (#3873)
 		function startRecursive() {
 			series.kdTree = _kdtree(
 				series.getValidPoints(
 					null,
-					!series.directTouch // For line-type series restrict to plot area, but column-type series not (#3916, #4511)
+					// For line-type series restrict to plot area, but
+					// column-type series not (#3916, #4511)
+					!series.directTouch 
 				),
 				dimensions,
 				dimensions
@@ -2231,8 +2256,12 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// Set the one and two dimensional distance on the point object
 		function setDistance(p1, p2) {
-			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
-				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
+			var x = (defined(p1[kdX]) && defined(p2[kdX])) ?
+					Math.pow(p1[kdX] - p2[kdX], 2) :
+					null,
+				y = (defined(p1[kdY]) && defined(p2[kdY])) ?
+					Math.pow(p1[kdY] - p2[kdY], 2) :
+					null,
 				r = (x || 0) + (y || 0);
 
 			p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
@@ -2262,10 +2291,18 @@ H.Series = H.seriesType('line', null, { // base series options
 				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
 			}
 			if (tree[sideB]) {
-				// compare distance to current best to splitting point to decide wether to check side B or not
+				// compare distance to current best to splitting point to decide
+				// wether to check side B or not
 				if (Math.sqrt(tdist * tdist) < ret[kdComparer]) {
-					nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-					ret = (nPoint2[kdComparer] < ret[kdComparer] ? nPoint2 : ret);
+					nPoint2 = _search(
+						search,
+						tree[sideB],
+						depth + 1,
+						dimensions
+					);
+					ret = nPoint2[kdComparer] < ret[kdComparer] ?
+						nPoint2 :
+						ret;
 				}
 			}
 
