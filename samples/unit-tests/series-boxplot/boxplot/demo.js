@@ -74,7 +74,7 @@ QUnit.test('Individual options and Point.update', function (assert) {
         'color'
     );
     assert.strictEqual(
-        point.box.attr('fill'),
+        point.box.attr('fill').toUpperCase(),
         '#F0F0E0',
         'fillColor'
     );
