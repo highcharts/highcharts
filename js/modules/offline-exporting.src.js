@@ -94,7 +94,6 @@ Highcharts.downloadURL = function (dataURL, filename) {
 	if (a.download !== undefined) {
 		a.href = dataURL;
 		a.download = filename; // HTML5 download attribute
-		a.target = '_blank';
 		doc.body.appendChild(a);
 		a.click();
 		doc.body.removeChild(a);
