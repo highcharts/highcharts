@@ -27,7 +27,7 @@
         };
         chart.puzzleCount = chart.renderer.label('', 10, 5)
             .css({
-                fontSize: '20pt'
+                fontSize: '30px'
             })
             .add();
 
@@ -198,7 +198,7 @@ Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps puzzle',
         style: {
-            fontSize: '20pt'
+            fontSize: '30px'
         }
     },
 
@@ -210,7 +210,7 @@ Highcharts.mapChart('container', {
         headerFormat: '',
         pointFormat: '{point.name}',
         style: {
-            fontSize: '14pt'
+            fontSize: '20px'
         }
     },
 
