@@ -377,10 +377,12 @@ H.Pointer.prototype = {
 			var snap = pick(axis.crosshair.snap, true);
 			if (!snap) {
 				axis.drawCrosshair(e);
-			// axis has snapping crosshairs, and hover point is belonging to axis
-			} else if (hoverPoint && hoverPoint.series[axis.coll] === axis) {
+			// axis has snapping crosshairs, and one of the hover points is belongs to axis
+			} else if (H.find(points, function (p) {
+				return p.series[axis.coll] === axis;
+			})) {
 				axis.drawCrosshair(e, hoverPoint);
-			// axis has snapping crosshairs, but hover point is not belonging to axis
+			// axis has snapping crosshairs, but no hover point is not belonging to axis
 			} else {
 				axis.hideCrosshair();
 			}
