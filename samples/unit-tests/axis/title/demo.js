@@ -181,9 +181,9 @@ QUnit.test('title.reserveSpace', function (assert) {
             lessThan = axis.opposite && !axis.horiz || !axis.opposite && axis.horiz;
 
         // Check that reserveSpace is true by default
-        assert.equal(
+        assert.strictEqual(
             axis.options.title.reserveSpace,
-            true,
+            undefined,
             axisName + ': title.reserveSpace is true by default'
         );
         reserveSpaceTrue = axis.labelGroup.getBBox()[dir];
