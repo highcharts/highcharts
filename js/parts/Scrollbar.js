@@ -679,7 +679,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		offsetsIndex,
 		from,
 		to;
-console.log('@render', titleOffset)
+
 	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (scrollbar) {
