@@ -81,34 +81,47 @@ QUnit.test('TouchPointer events', function (assert) {
             data: [1]
         }]
     });
+    Highcharts.hoverChartIndex = chart.index;
     controller = new TestController(chart);
     el = chart.series[0].points[0].graphic.element;
     events = [];
 
     controller.tapOnElement(el);
-    assert.strictEqual(
-        events.shift(),
-        'onContainerTouchStart',
-        'Tap on point 0.0: onContainerTouchStart'
-    );
-    assert.strictEqual(
-        events.shift(),
-        'touch',
-        'Tap on point 0.0: touch'
-    );
-    assert.strictEqual(
-        events.shift(),
-        'pinch',
-        'Tap on point 0.0: pinch'
-    );
-    assert.strictEqual(
-        events.shift(),
-        'onDocumentTouchEnd',
-        'Tap on point 0.0: onDocumentTouchEnd'
-    );
-    assert.strictEqual(
-        events.length,
-        0,
-        'Tap on point 0.0: no unexpected events'
-    );
+    if (
+        window.document.documentElement.ontouchstart !== undefined ||
+        window.PointerEvent ||
+        window.MSPointerEvent
+    ) {
+        assert.strictEqual(
+            events.shift(),
+            'onContainerTouchStart',
+            'Tap on point 0.0: onContainerTouchStart'
+        );
+        assert.strictEqual(
+            events.shift(),
+            'touch',
+            'Tap on point 0.0: touch'
+        );
+        assert.strictEqual(
+            events.shift(),
+            'pinch',
+            'Tap on point 0.0: pinch'
+        );
+        assert.strictEqual(
+            events.shift(),
+            'onDocumentTouchEnd',
+            'Tap on point 0.0: onDocumentTouchEnd'
+        );
+        assert.strictEqual(
+            events.length,
+            0,
+            'Tap on point 0.0: no unexpected events'
+        );
+    } else {
+        assert.strictEqual(
+            events.length,
+            0,
+            'This browser does not support touch.'
+        );
+    }
 });
