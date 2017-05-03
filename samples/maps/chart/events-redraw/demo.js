@@ -20,6 +20,7 @@ $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-popu
         subtitle: {
             align: 'left',
             verticalAlign: 'middle',
+            y: 50,
             floating: true
         },
 
