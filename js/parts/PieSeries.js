@@ -417,7 +417,7 @@ seriesType('pie', 'line', {
 	 * Negative points are not valid (#1530, #3623, #5322)
 	 */
 	isValid: function () {
-		return this.y >= 0;
+		return H.isNumber(this.y, true) && this.y >= 0;
 	},
 
 	/**
