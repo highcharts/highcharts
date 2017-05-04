@@ -1042,7 +1042,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	// Uncomment this to see a button directly below the chart, for quick
 	// testing of export
-	//*
+	/*
 	if (!chart.renderer.forExport) {
 		var button;
 

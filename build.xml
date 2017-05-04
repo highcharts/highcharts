@@ -485,7 +485,7 @@
         <echo message="placing zipped folder structure in ${gzip.dir}"/>
         <!-- make copy so we don't double-compress files -->
         <sync todir="${gzip.dir}" includeEmptyDirs="true" overwrite="true">
-            <fileset dir="${js.dir}" includes="**/*.js,**/*.css"/>
+            <fileset dir="${js.dir}" includes="**/*.js,**/*.css,**/*.map"/>
         </sync>
         <ac:for param="file">
             <path>

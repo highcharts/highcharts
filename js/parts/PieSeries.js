@@ -42,7 +42,7 @@ seriesType('pie', 'line', {
 		// connectorWidth: 1,
 		// connectorColor: point.color,
 		// connectorPadding: 5,
-		distance: 30, // docs: now also on individual pie points
+		distance: 30,
 		enabled: true,
 		formatter: function () { // #2945
 			return this.point.isNull ? undefined : this.point.name;

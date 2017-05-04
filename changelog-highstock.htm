@@ -1,25 +1,29 @@
-<p>Highstock 5.0.10 (2017-03-31)</p>
-<ul>    <li>Most changes listed under Highcharts 5.0.10 above also apply to Highstock 5.0.10.</li>
+<p>Highstock 5.0.11 (2017-05-04)</p>
+<ul>    <li>Most changes listed under Highcharts 5.0.11 above also apply to Highstock 5.0.11.</li>
 
+    
 </ul>
 <div id="accordion" class="panel-group">
     <div class="panel panel-default">
-        <div id="hs-heading-5-0-10-bug-fixes" class="panel-heading">
+        <div id="hs-heading-5-0-11-bug-fixes" class="panel-heading">
             <h4 class="panel-title">
-                <a href="#hs-5-0-10-bug-fixes" data-toggle="collapse" data-parent="#accordion">
+                <a href="#hs-5-0-11-bug-fixes" data-toggle="collapse" data-parent="#accordion">
                     Bug fixes
                 </a>
             </h4>
         </div>
-        <div id="hs-5-0-10-bug-fixes" class="panel-collapse collapse">
+        <div id="hs-5-0-11-bug-fixes" class="panel-collapse collapse">
             <div class="panel-body">
                 <ul>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/1716">#1716</a>, navigator handles were not moving if the range was very small.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3517">#3517</a>, yAxis.top caused flags on xAxis to be rendered outside the view.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3763">#3763</a>, stable sort was not used for flags.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6303">#6303</a>, events didn't work for flags when useHTML was set to true.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6453">#6453</a>, scrollbars for multiple yAxes were positioned incorrectly.</li>
-                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6478">#6478</a>, flags on OHLC were unable to have onKey set to low or high.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2914">#2914</a>, dataGrouping approximation wasn't checked properly.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/5479">#5479</a>, added <code>averages</code> option for approximation in dataGrouping.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6445">#6445</a>, function getSelectedPoints did not find points outside of cropThreshold.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6537">#6537</a>, month buttons were not setting correct extremes when the current month had more days than previous months.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6562">#6562</a>, crosshairs always drawn relative to high value in OHLC and candlestick charts.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6573">#6573</a>, scrollbar was rendered on xAxis labels, when using <code>chart.scrollbar</code> option.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6590">#6590</a>, dataGrouoping wasn't wokring correctly with keys set on data.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6590">#6590</a>, dataGrouping wasn't working correctly with keys set on data.</li>
+                    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/6615">#6615</a>, enabling Chart.scrollbar by <code>chart.update()</code> caused errors.</li>
                 </ul>
             </div>
         </div>
