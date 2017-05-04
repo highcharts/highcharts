@@ -109,14 +109,32 @@ H.Pointer.prototype = {
 			this.chartPosition = chartPosition = offset(this.chart.container);
 		}
 
+		// Get chart scale and zoom
+		var currentElement = this.chart.container,
+			scale = currentElement.getBoundingClientRect().width / currentElement.offsetWidth,
+			zoom = 1.0;
+
+		if (currentElement.style.zoom !== undefined) {
+			do {
+				if (currentElement.style) {
+					var elementZoom = currentElement.style.zoom;
+
+					if (!isNaN(elementZoom = parseFloat(elementZoom))) {
+						scale *= elementZoom;
+						zoom *= elementZoom;
+					}
+				}
+			} while ((currentElement = currentElement.parentNode));
+		}
+
 		// chartX and chartY
 		if (ePos.pageX === undefined) { // IE < 9. #886.
 			chartX = Math.max(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
 				// for IE10 quirks mode within framesets
 			chartY = e.y;
 		} else {
-			chartX = ePos.pageX - chartPosition.left;
-			chartY = ePos.pageY - chartPosition.top;
+			chartX = (ePos.pageX - chartPosition.left * zoom) / scale;
+			chartY = (ePos.pageY - chartPosition.top * zoom) / scale;
 		}
 
 		return extend(e, {
