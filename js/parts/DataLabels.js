@@ -134,7 +134,7 @@ Series.prototype.drawDataLabels = function () {
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
-		defer = pick(options.defer, true),
+		defer = pick(options.defer, !!seriesOptions.animation),
 		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
