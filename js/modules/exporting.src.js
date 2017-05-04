@@ -893,7 +893,8 @@ Chart.prototype.inlineStyles = function () {
 			dummy,
 			styleAttr,
 			blacklisted,
-			i;
+			i,
+			prop;
 		
 		if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
 			styles = win.getComputedStyle(node, null);
@@ -912,32 +913,40 @@ Chart.prototype.inlineStyles = function () {
 				dummySVG.removeChild(dummy);
 			}
 
-			// Loop over all the computed styles and check whether they are in the 
-			// white list for styles or atttributes.
-			objectEach(styles, function (val, prop) {
+			// Loop over all the computed styles and check whether they are in
+			// the white list for styles or atttributes. Use a plain for-in loop
+			// because the styles object also contains numerically indexed
+			// pointers to its keys, and objectEach will fail in Firefox.
+			for (prop in styles) {
 				// Check against blacklist
 				blacklisted = false;
 				i = blacklist.length;
 				while (i-- && !blacklisted) {
-					blacklisted = blacklist[i].test(prop) || typeof val === 'function';
+					blacklisted = blacklist[i].test(prop) ||
+						typeof styles[prop] === 'function';
 				}
 				
 				if (!blacklisted) {
 					
-					// If parent node has the same style, it gets inherited, no need to inline it
-					if (parentStyles[prop] !== val && defaultStyles[node.nodeName][prop] !== val) {
+					// If parent node has the same style, it gets inherited, no
+					// need to inline it
+					if (
+						parentStyles[prop] !== styles[prop] &&
+						defaultStyles[node.nodeName][prop] !== styles[prop]
+					) {
 						
 						// Attributes
 						if (inlineToAttributes.indexOf(prop) !== -1) {
-							node.setAttribute(hyphenate(prop), val);
+							node.setAttribute(hyphenate(prop), styles[prop]);
 							
 							// Styles
 						} else {
-							cssText += hyphenate(prop) + ':' + val + ';';
+							cssText += hyphenate(prop) + ':' +
+								styles[prop] + ';';
 						}
 					}
 				}
-			});
+			}
 
 			// Apply styles
 			if (cssText) {
@@ -1033,7 +1042,7 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	// Uncomment this to see a button directly below the chart, for quick
 	// testing of export
-	/*
+	//*
 	if (!chart.renderer.forExport) {
 		var button;
 
