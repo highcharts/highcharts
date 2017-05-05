@@ -1,4 +1,4 @@
-QUnit.test('#6262 - inverted chart: wrong position for chart.scrollbar without navigator.', function (assert) {
+QUnit.test('Inverted chart: wrong position for chart.scrollbar without navigator.', function (assert) {
     var options = {
             chart: {
                 inverted: true
@@ -27,7 +27,13 @@ QUnit.test('#6262 - inverted chart: wrong position for chart.scrollbar without n
     assert.strictEqual(
         chart.scrollbar.group.translateY,
         position,
-        'The same position for xAxis.scrollbar and chart.scrollbar'
+        '#6262: The same y-position for xAxis.scrollbar and chart.scrollbar'
+    );
+
+    assert.strictEqual(
+        chart.scrollbar.group.translateX + chart.scrollbar.group.getBBox().width < chart.chartWidth,
+        true,
+        '#6683: chart.scrollbar rendered within the container'
     );
 });
 
