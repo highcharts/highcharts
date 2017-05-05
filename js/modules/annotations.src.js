@@ -31,6 +31,7 @@ var merge = H.merge,
 	format = H.format,
 	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
+	UNDEFINED,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
@@ -98,10 +99,15 @@ MockPoint.prototype = {
 		this.isInside = isInside;
 	},
 
-	getAlignToBox: function () {
+	getAlignToBox: function (forceTranslate) {
+		if (forceTranslate) {
+			this.translate()
+		}
+
 		var x = this.plotX,
 			y = this.plotY,
 			temp;
+
 
 		if (this.series.chart.inverted) {
 			temp = x;
@@ -164,6 +170,14 @@ Annotation.prototype = {
 			// zIndex: 6
 		},
 
+		shapeOptions: {
+			borderColor: 'black',
+			borderWidth: 1,
+			backgroundColor: 'none',
+			// type: 'rect',
+			borderRadius: 0
+		},
+
 		zIndex: 6
 	},
 
@@ -180,10 +194,12 @@ Annotation.prototype = {
 
 		// keeps annotation's labels
 		this.labels = [];
+		this.shapes = [];
 
 		this.setOptions(userOptions);
 
 		each(this.options.labels || [], this.initLabel, this);
+		each(this.options.shapes || [], this.initShape, this);
 	},
 
 	/**
@@ -209,6 +225,7 @@ Annotation.prototype = {
 		}
 
 		this.redrawLabels();
+		this.redrawShapes();
 	},
 
 	/**
@@ -227,6 +244,17 @@ Annotation.prototype = {
 		}
 
 		this.collectAndHideLabels();
+	},
+
+	redrawShapes: function () {
+		var shapes = this.shapes,
+			i = shapes.length;
+
+		// each(labels, this.redrawLabel, this) cannot be used - needs a backward loop
+		// labels array might be modified due to destruction of some label
+		while (i--) {
+			this.redrawShape(shapes[i]);
+		}
 	},
 
 	/**
@@ -284,6 +312,84 @@ Annotation.prototype = {
 
 	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
 
+	initShape: function (shapeOptions) {
+		var renderer = this.chart.renderer,
+			options = merge(this.options.shapeOptions, shapeOptions),
+			type = options.type,
+			attr = this.itemOptionsToAttrs(options),
+
+			shape = renderer[type] ? renderer[type](0, 0, 0, 0) : 
+				renderer.symbols[type] ? renderer.symbol(type) : 'rect';
+
+		shape.attr(attr);
+		shape.options = options;
+		this.shapes.push(shape);
+	},
+
+	redrawShape: function (shape) {
+		var point = this.getLinkedPoint(shape),
+			options = shape.options,
+			parentGroup = shape.parentGroup,
+			anchor,
+			series = point.series,
+			plotBox,
+			ty, tx, translatedAnchor;
+
+		if (!point) {
+			this.destroyShape(shape);
+		
+		} else {
+			if (!parentGroup) {
+				shape.add(this.group);
+			}
+
+			anchor = point.mock ? point.getAlignToBox(true) : tooltipPrototype.getAnchor.call({
+				chart: this.chart
+			}, point);
+
+			plotBox = series.getPlotBox(),
+			tx = plotBox.translateX,
+			ty = plotBox.translateY,
+			translatedAnchor = {
+				anchorX: anchor[0] + tx,
+				anchorY: anchor[1] + ty
+			};
+
+			shape.attr({
+				x: translatedAnchor.anchorX,
+				y: translatedAnchor.anchorY
+			});
+		}
+	},
+
+	destroyShape: function (shape) {
+		erase(this.shapes, shape);
+		shape.destroy();
+	},
+
+	itemOptionsToAttrs: function (options) {
+		var attrs = {
+				fill: options.backgroundColor,
+				stroke: options.borderColor,
+				'stroke-width': options.borderWidth,
+				zIndex: options.zIndex,
+				width: options.width,
+				height: options.height,
+				r: pick(options.r, options.borderRadius),
+				padding: options.padding
+			},
+
+			key;
+
+		for (key in attrs) {
+			if (attrs[key] === UNDEFINED) {
+				delete attrs[key];
+			}
+		}
+
+		return attrs;
+	},
+
 	/* ******************************************************************************
 	 * LABEL SECTION
 	 * contains methods for handling a single label in an annotation
@@ -301,14 +407,15 @@ Annotation.prototype = {
 			style = options.style,
 
 		// options for label's background
-			attr = {
-				fill: options.backgroundColor,
-				stroke: options.borderColor,
-				'stroke-width': options.borderWidth,
-				r: options.borderRadius,
-				padding: options.padding,
-				zIndex: options.zIndex
-			},
+			// attr = {
+			// 	fill: options.backgroundColor,
+			// 	stroke: options.borderColor,
+			// 	'stroke-width': options.borderWidth,
+			// 	r: options.borderRadius,
+			// 	padding: options.padding,
+			// 	zIndex: options.zIndex
+			// },
+			attr = this.itemOptionsToAttrs(options),
 
 			label = this.chart.renderer.label(
 				'',
@@ -376,6 +483,7 @@ Annotation.prototype = {
 				text: text ? format(text, point.getLabelConfig()) : options.formatter.call(point)
 			});
 
+			// this.positionLabel(label);
 			this.positionLabel(label);
 
 		}
@@ -441,39 +549,39 @@ Annotation.prototype = {
 	 * @param {Object} point
 	 * @returns {Object} position of the label
 	**/
-	getLabelPosition: function (label, point, anchor) {
-		var chart = this.chart,
-			labelOptions = label.options,
-			position,
+	// getLabelPosition: function (label, point, anchor) {
+	// 	var chart = this.chart,
+	// 		labelOptions = label.options,
+	// 		position,
 
-			round = Math.round;
+	// 		round = Math.round;
 
-		if (point.isInside !== false && point.series.visible) {
-			position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
-				{
-					chart: chart,
-					distance: pick(labelOptions.distance, 16)
-				},
-				label.width,
-				label.height,
-				{
-					plotX: anchor[0],
-					plotY: anchor[1],
-					negative: point.negative,
-					ttBelow: point.ttBelow,
-					h: anchor[2] || 0
-				}
-			);
+	// 	if (point.isInside !== false && point.series.visible) {
+	// 		position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
+	// 			{
+	// 				chart: chart,
+	// 				distance: pick(labelOptions.distance, 16)
+	// 			},
+	// 			label.width,
+	// 			label.height,
+	// 			{
+	// 				plotX: anchor.x,
+	// 				plotY: anchor.y,
+	// 				negative: point.negative,
+	// 				ttBelow: point.ttBelow,
+	// 				h: anchor.h
+	// 			}
+	// 		);
 
-			position.x = round(position.x);
-			position.y = round(position.y || 0);
-		}
+	// 		position.x = round(position.x);
+	// 		position.y = round(position.y || 0);
+	// 	}
 
-		return position || {
-			x: 0,
-			y: -9e9
-		};
-	},
+	// 	return position || {
+	// 		x: 0,
+	// 		y: -9e9
+	// 	};
+	// },
 
 	/**
 	 * Data label - like position of the label
@@ -491,14 +599,16 @@ Annotation.prototype = {
 				height: alignTo[2] || 0,
 				width: alignTo[3] || 0
 			};
-
+		rawAlign = true
 		if (!rawAlign) {
 			series.alignDataLabel(
 				point,
 				label,
 				label.options,
 				box,
+			//	label.placed
 				true // true for not animating
+
 			);
 
 		} else {
@@ -519,57 +629,526 @@ Annotation.prototype = {
 		// }
 	},
 
-	positionLabel: function (label) {
-		var point = label.point,
+	// positionLabel: function (label) {
+	// 	var point = label.point,
+	// 		series = point.series,
+	// 		anchor = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
+	// 			chart: this.chart
+	// 		}, point),
+
+	// 		plotBox = series.getPlotBox(),
+	// 		tx = plotBox.translateX,
+	// 		ty = plotBox.translateY,
+	// 		translatedAnchor = {
+	// 			anchorX: anchor[0] + tx,
+	// 			anchorY: anchor[1] + ty
+	// 		},
+
+	// 		labelPosition;
+
+
+	// 	if (label.noAlign) {
+	// 		labelPosition = this.getLabelPosition(label, point, anchor);
+	// 		label.placed = true;
+
+	// 		extend(labelPosition, translatedAnchor);
+
+	// 		label.attr(labelPosition)
+
+	// 	} else {
+	// 		var a = anchor.slice()
+	// 		a[0] += tx
+	// 		a[1] += ty
+
+	// 		this.alignLabel(label, point, a);
+
+	// 		labelPosition = {
+	// 			x: label.x + tx,
+	// 			y: label.y + ty
+	// 		};
+
+	// 		if (label.rawAlign) {
+	// 			extend(labelPosition, translatedAnchor);
+	// 		}
+
+	// 		label.attr(translatedAnchor)
+	// 	}
+
+	// 	if (label.placed) {
+	// 	//	label.attr(labelPosition); //animate instead of attr is a workaround for zooming with animation
+
+	// 		label.alignAttr = {
+	// 			x: labelPosition.x,
+	// 			y: labelPosition.y
+	// 		};
+	// 	}
+	// },
+
+	getAnchorPosition: function (label) {
+		var labelOptions = label.options,
+			point = label.point,
 			series = point.series,
-			anchor = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
+			inverted = this.chart.inverted,
+			plotBox = point.series.getPlotBox(),
+
+			box = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
 				chart: this.chart
 			}, point),
-
-			plotBox = series.getPlotBox(),
-			tx = plotBox.translateX,
-			ty = plotBox.translateY,
-			translatedAnchor = {
-				anchorX: anchor[0] + tx,
-				anchorY: anchor[1] + ty
+			anchor = {
+				x: box[0],
+				y: box[1],
+				height: box[2] || 0
 			},
 
-			labelPosition;
+			dlBox = point.dlBox || point.shapeArgs,
+			below,
+			inside,
+			overshoot;
 
+		if (dlBox && !(defined(labelOptions.distance) || labelOptions.positioner)) {
+			below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)),
+			inside = pick(labelOptions.inside, !!series.options.stacking)
+			anchor = merge(dlBox);
 
-		if (label.noAlign) {
-			labelPosition = this.getLabelPosition(label, point, anchor);
-			label.placed = true;
+            if (anchor.y < 0) {
+                anchor.height += anchor.y;
+                anchor.y = 0;
+            }
+            overshoot = anchor.y + anchor.height - series.yAxis.len;
+            if (overshoot > 0) {
+                anchor.height -= overshoot;
+            }
 
-			extend(labelPosition, translatedAnchor);
+            if (inverted) {
+                anchor = {
+                    x: series.yAxis.len - anchor.y - anchor.height,
+                    y: series.xAxis.len - anchor.x - anchor.width,
+                    width: anchor.height,
+                    height: anchor.width
+                };
+            }
 
-		} else {
-			this.alignLabel(label, point, anchor);
+            // Compute the alignment box
+            if (!inside) {
+                if (inverted) {
+                    anchor.x += below ? 0 : anchor.width;
+                    anchor.width = 0;
+                } else {
+                    anchor.y += below ? anchor.height : 0;
+                    anchor.height = 0;
+                }
+            }
+        }
 
-			labelPosition = {
-				x: label.x + tx,
-				y: label.y + ty
-			};
-
-			if (label.rawAlign) {
-				extend(labelPosition, translatedAnchor);
-			}
-		}
-
-		if (label.placed) {
-			label.attr(labelPosition);
-
-			label.alignAttr = {
-				x: labelPosition.x,
-				y: labelPosition.y
-			};
-		}
+		return {
+			relativePosition: anchor,
+			absolutePosition: merge(anchor, {
+				x: anchor.x + plotBox.translateX,
+				y: anchor.y + plotBox.translateY
+			})
+		};
 	},
 
+	getPosition: function (label, anchor) {
+		var labelOptions = label.options,
+			labelPosition;
+
+		if (defined(labelOptions.distance) || labelOptions.positioner) {
+			labelPosition = this.getLabelPosition(label, label.point, anchor.relativePosition);
+
+			extend(labelPosition, {
+				anchorX: anchor.absolutePosition.x,
+				anchorY: anchor.absolutePosition.y
+			});
+		}
+
+		return labelPosition;
+	},
+
+	adjustForColumns: function (label) {
+		var options = label.options,
+			point = label.point,
+			inverted = this.chart.inverted,
+            series = point.series,
+            dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
+            below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)), // point.below is used in range series
+            inside = pick(options.inside, !!series.options.stacking), // draw it inside the box?
+            overshoot,
+            alignTo = {};
+
+        // Align to the column itself, or the top of it
+        if (dlBox) { // Area range uses this method but not alignTo
+            alignTo = merge(dlBox);
+
+            if (alignTo.y < 0) {
+                alignTo.height += alignTo.y;
+                alignTo.y = 0;
+            }
+            overshoot = alignTo.y + alignTo.height - series.yAxis.len;
+            if (overshoot > 0) {
+                alignTo.height -= overshoot;
+            }
+
+            if (inverted) {
+                alignTo = {
+                    x: series.yAxis.len - alignTo.y - alignTo.height,
+                    y: series.xAxis.len - alignTo.x - alignTo.width,
+                    width: alignTo.height,
+                    height: alignTo.width
+                };
+            }
+
+            // Compute the alignment box
+            if (!inside) {
+                if (inverted) {
+                    alignTo.x += below ? 0 : alignTo.width;
+                    alignTo.width = 0;
+                } else {
+                    alignTo.y += below ? alignTo.height : 0;
+                    alignTo.height = 0;
+                }
+            }
+        }
+
+
+        // When alignment is undefined (typically columns and bars), display the individual
+        // point below or above the point depending on the threshold
+        // options.align = pick(
+        //     options.align, !inverted || inside ? 'center' : below ? 'right' : 'left'
+        // );
+        // options.verticalAlign = pick(
+        //     options.verticalAlign,
+        //     inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+        // );
+        console.log(alignTo);
+        return alignTo;
+	},
+
+	align: function (label, point, anchor) {
+		var box = {
+			x: anchor.x,
+			y: anchor.y,
+			height: anchor.h || anchor.height || 0,
+			width: anchor.w || anchor.width || 0
+		};
+
+		// // label.placed = false;
+		// label.align(extend(label.options, {
+		// 	width: label.width,
+		// 	height: label.height
+		// }), null, box);
+		
+		// label[true ? 'attr' : 'animate']({
+		// 	anchorX: anchor[0],
+		// 	anchorY: anchor[1]
+		// });
+
+		// extend(box, this.adjustForColumns(label));
+
+		// var plotBox = point.series.getPlotBox();
+		// box.x += plotBox.translateX;
+		// box.y += plotBox.translateY;
+
+		var position = this.getAlignedPosition(
+				extend(label.options, {
+					width: label.width,
+					height: label.height
+				}),
+				box
+			);
+
+
+		if (pick(label.options.overflow, 'justify') === 'justify') {
+			position = this.getAlignedPosition(
+				this.getJustifiedOptions(label, label.options, position),
+				box
+			);
+		}
+
+		label.alignAttr = position;
+		label.placed = true;
+		label.attr(extend(position, {
+			anchorX: anchor.x,
+			anchorY: anchor.y
+		}));
+		// label.alignAttr = {
+		// 	x: label.x,
+		// 	y: label.y
+		// }
+	},
+
+	position: function (label) {
+		var anchor = this.getAnchorPosition(label),
+			labelPosition = this.getPosition(label, anchor);
+
+		if (labelPosition) {
+			label.attr(labelPosition);
+			label.alignAttr = labelPosition;
+		} else {
+			this.align(label, label.point, anchor.absolutePosition)
+		}
+	},
 
 	destroyLabel: function (label) {
 		erase(this.labels, label);
 		label.destroy();
+	},
+
+	getAlignedPosition: function (alignOptions, box) {
+		var align = alignOptions.align,
+			vAlign = alignOptions.verticalAlign,
+			x = (box.x || 0) + (alignOptions.x || 0),
+			y = (box.y || 0) + (alignOptions.y || 0),
+
+			alignFactor,
+			vAlignFactor;
+
+	    if (align === 'right') {
+	        alignFactor = 1;
+	    } else if (align === 'center') {
+	        alignFactor = 2;
+	    }
+	    if (alignFactor) {
+	        x += (box.width - (alignOptions.width || 0)) / alignFactor;
+	    }
+
+	    if (vAlign === 'bottom') {
+	        vAlignFactor = 1;
+	    } else if (vAlign === 'middle') {
+	        vAlignFactor = 2;
+	    }
+	    if (vAlignFactor) {
+	        y += (box.height - (alignOptions.height || 0)) / vAlignFactor;
+	    }
+	    
+	    return {
+	    	x: Math.round(x),
+	    	y: Math.round(y)
+	    }
+	},
+
+	getJustifiedOptions: function (label, alignOptions, alignAttr) {
+		var chart = this.chart,
+			align = alignOptions.align,
+			verticalAlign = alignOptions.verticalAlign,
+			padding = label.box ? 0 : (label.padding || 0),
+			bBox = label.getBBox(),
+			off,
+
+			options = {
+				align: align,
+				verticalAlign: verticalAlign,
+				x: alignOptions.x,
+				y: alignOptions.y,
+				width: label.width,
+				height: label.height
+			},
+
+			x = alignAttr.x - chart.plotLeft,
+			y = alignAttr.y - chart.plotTop;
+
+  		// Off left
+        off = x + padding;
+        if (off < 0) {
+            if (align === 'right') {
+                options.align = 'left';
+            } else {
+                options.x = -off;
+            }
+        }
+
+        // Off right
+        off = x + bBox.width - padding;
+        if (off > chart.plotWidth) {
+            if (align === 'left') {
+                options.align = 'right';
+            } else {
+                options.x = chart.plotWidth - off;
+            }
+        }
+
+        // Off top
+        off = y + padding;
+        if (off < 0) {
+            if (verticalAlign === 'bottom') {
+                options.verticalAlign = 'top';
+            } else {
+                options.y = -off;
+            }
+        }
+
+        // Off bottom
+        off = y + bBox.height - padding;
+        if (off > chart.plotHeight) {
+            if (verticalAlign === 'top') {
+                options.verticalAlign = 'bottom';
+            } else {
+                options.y = chart.plotHeight - off;
+            }
+        }
+
+        return options;
+	},
+
+	positionLabel: function (label) {
+		var anchor = this.getAnchor(label, label.point),
+			attrs = this.getLabelPosition(label, anchor);
+
+		if (attrs) {
+			label.alignAttr = attrs;
+			label.placed = true;
+
+			attrs.anchorX = anchor.absolutePosition.x;
+			attrs.anchorY = anchor.absolutePosition.y;
+
+			label.attr(attrs)
+		
+		} else {
+			label.placed = false;
+			label.attr({
+				x: 0,
+				y: -9e9
+			});
+		}
+
+	},
+
+	getAnchor: function (label, point) {
+		var labelOptions = label.options,
+			series = point.series,
+			inverted = this.chart.inverted,
+			plotBox = point.series.getPlotBox(),
+
+			box = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
+				chart: this.chart
+			}, point),
+
+			anchor = {
+				x: box[0],
+				y: box[1],
+				height: box[2] || 0,
+				width: box[3] || 0
+			};
+
+			// dlBox = point.dlBox || point.shapeArgs,
+			// below,
+			// inside,
+			// overshoot;
+
+		// if (dlBox && !(defined(labelOptions.distance) || labelOptions.positioner)) {
+		// 	below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)),
+		// 	inside = pick(labelOptions.inside, !!series.options.stacking)
+		// 	anchor = merge(dlBox);
+
+  //           if (anchor.y < 0) {
+  //               anchor.height += anchor.y;
+  //               anchor.y = 0;
+  //           }
+  //           overshoot = anchor.y + anchor.height - series.yAxis.len;
+  //           if (overshoot > 0) {
+  //               anchor.height -= overshoot;
+  //           }
+
+  //           if (inverted) {
+  //               anchor = {
+  //                   x: series.yAxis.len - anchor.y - anchor.height,
+  //                   y: series.xAxis.len - anchor.x - anchor.width,
+  //                   width: anchor.height,
+  //                   height: anchor.width
+  //               };
+  //           }
+
+  //           if (!inside) {
+  //               if (inverted) {
+  //                   anchor.x += below ? 0 : anchor.width;
+  //                   anchor.width = 0;
+  //               } else {
+  //                   anchor.y += below ? anchor.height : 0;
+  //                   anchor.height = 0;
+  //               }
+  //           }
+        // }
+
+		return {
+			relativePosition: anchor,
+			absolutePosition: merge(anchor, {
+				x: anchor.x + plotBox.translateX,
+				y: anchor.y + plotBox.translateY
+			})
+		};
+	},
+
+	getLabelPosition: function (label, anchor) {
+		var chart = this.chart,
+			point = label.point,
+			labelOptions = label.options,
+			anchorAbsolutePosition = anchor.absolutePosition,
+			anchorRelativePosition = anchor.relativePosition,
+			labelPosition,
+			isInsidePlot,
+			alignTo,
+
+			visible = point.series.visible && point.isInside !== false;
+
+		if (visible) {
+			if (defined(labelOptions.distance) || labelOptions.positioner) {
+				labelPosition = (labelOptions.positioner || tooltipPrototype.getPosition).call(
+					{
+						chart: chart,
+						distance: pick(labelOptions.distance, 16)
+					},
+					label.width,
+					label.height,
+					{
+						plotX: anchorRelativePosition.x,
+						plotY: anchorRelativePosition.y,
+						negative: point.negative,
+						ttBelow: point.ttBelow,
+						h: anchorRelativePosition.height || anchorRelativePosition.width
+					}
+				);
+
+			} else {
+				alignTo = {
+					x: anchorAbsolutePosition.x,
+					y: anchorAbsolutePosition.y,
+					width: 0,
+					height: 0
+				};
+				
+				labelPosition = this.getAlignedPosition(
+					extend(labelOptions, {
+						width: label.width,
+						height: label.height
+					}),
+					alignTo
+				);
+
+				if (pick(label.options.overflow, 'justify') === 'justify') {
+					labelPosition = this.getAlignedPosition(
+						this.getJustifiedOptions(label, label.options, labelPosition),
+						alignTo
+					);
+				}
+			}
+
+
+
+			if (labelOptions.crop) {
+				isInsidePlot = function (x, y) {
+					return x >= chart.plotLeft &&
+						x <= chart.plotLeft + chart.plotWidth &&
+						y >= chart.plotTop &&
+						y <= chart.plotTop + chart.plotHeight;
+				};
+
+				visible = 
+					isInsidePlot(labelPosition.x, labelPosition.y) &&
+					isInsidePlot(labelPosition.x + label.width, labelPosition.y + label.height);
+			}
+		}
+
+		return visible ? labelPosition : null;
 	}
 };
 
@@ -580,10 +1159,15 @@ Annotation.prototype = {
 ******************************************************************************* */
 
 H.extend(chartPrototype, {
-	addAnnotation: function (userOptions) {
+	addAnnotation: function (userOptions, redraw) {
 		var annotation = new Annotation(this, userOptions);
 
 		this.annotations.push(annotation);
+
+		if (redraw) {
+			this.redraw();
+		}
+
 		return annotation;
 	},
 
