@@ -333,6 +333,9 @@ Legend.prototype = {
 			showCheckbox = legend.createCheckboxForItem &&
 				seriesOptions &&
 				seriesOptions.showCheckbox,
+			// full width minus text width
+			itemExtraWidth = symbolWidth + symbolPadding + itemDistance +
+				(showCheckbox ? 20 : 0),
 			useHTML = options.useHTML,
 			fontSize = 12,
 			itemClassName = item.options.className;
@@ -399,6 +402,14 @@ Legend.prototype = {
 		// Colorize the items
 		legend.colorizeItem(item, item.visible);
 
+		// Take care of max width and text overflow (#6659)
+		if (!itemStyle.width) {
+			li.css({
+				width: (options.itemWidth || chart.spacingBox.width) -
+					itemExtraWidth
+			});
+		}
+
 		// Always update the text
 		legend.setText(item);
 
@@ -408,8 +419,7 @@ Legend.prototype = {
 		itemWidth = item.checkboxOffset =
 			options.itemWidth ||
 			item.legendItemWidth ||
-			symbolWidth + symbolPadding + bBox.width + itemDistance +
-				(showCheckbox ? 20 : 0);
+			bBox.width + itemExtraWidth;
 		legend.itemHeight = itemHeight = Math.round(
 			item.legendItemHeight || bBox.height || legend.symbolHeight
 		);
