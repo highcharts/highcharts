@@ -512,6 +512,14 @@ H.Tooltip.prototype = {
 			if (tooltip.split) {
 				this.renderSplit(text, pointOrPoints);
 			} else {
+
+				// Prevent the tooltip from flowing over the chart box (#6659)
+				if (!options.style.width) {
+					label.css({
+						width: this.chart.spacingBox.width
+					});
+				}
+
 				label.attr({
 					text: text && text.join ? text.join('') : text
 				});
