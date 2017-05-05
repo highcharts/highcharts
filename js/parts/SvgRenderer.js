@@ -2227,7 +2227,7 @@ SVGRenderer.prototype = {
 							attr(tspan, 'style', spanStyle);
 						}
 						if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
-							attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
+							attr(tspan, 'onclick', 'window.open(\"' + span.match(hrefRegex)[1] + '\")');
 							css(tspan, { cursor: 'pointer' });
 						}
 
