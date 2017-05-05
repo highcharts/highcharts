@@ -1,4 +1,89 @@
 
+// Workaround to modify the data table.
+// The default format is a bit messy for this dataset.
+Highcharts.Chart.prototype.callbacks.push(function (chart) {
+    // We wrap the specific instance after the chart has been created to make
+    // sure we don't interfere with the table mutation of the accessibility
+    // module.
+    Highcharts.wrap(chart, 'viewData', function (proceed) {
+        if (this.dataTableDiv) {
+            return;
+        }
+
+        proceed.apply(this); // Run original method
+
+        var tableDiv = document.getElementById('highcharts-data-table-' + this.index),
+            thead = tableDiv.getElementsByTagName('thead')[0],
+            tbody = tableDiv.getElementsByTagName('tbody')[0],
+            first = [],
+            second = [],
+            third = [],
+            fourth = [];
+
+        // Remove first column from head
+        Highcharts.each(thead.children, function (row) {
+            row.deleteCell(0);
+        });
+
+        Highcharts.each(tbody.children, function (row) {
+            // Remove first column from body
+            row.deleteCell(0);
+
+            // Split rows into columns
+            if (row.firstChild.innerHTML.length) {
+                first.push([row.firstChild.innerHTML, row.children[1].innerHTML]);
+            } else if (row.children[2] && row.children[2].innerHTML.length) {
+                second.push([row.children[2].innerHTML, row.children[3].innerHTML]);
+            } else if (row.children[4] && row.children[4].innerHTML.length) {
+                third.push([row.children[4].innerHTML, row.children[5].innerHTML]);
+            } else if (row.children[6] && row.children[6].innerHTML.length) {
+                fourth.push([row.children[6].innerHTML, row.children[7].innerHTML]);
+            }
+        });
+
+        // Remove existing table body
+        tbody.innerHTML = '';
+
+        for (var i = 0; i < Math.max(
+            first.length, second.length, third.length, fourth.length
+        ); ++i) {
+            tbody.insertAdjacentHTML('beforeend',
+                '<tr>' +
+                (first[i] ?
+                    '<td>' + first[i][0] + '</td>' +
+                    '<td class="number">' + first[i][1] + '</td>' :
+                    '<td></td><td></td>'
+                ) +
+                (second[i] ?
+                    '<td>' + second[i][0] + '</td>' +
+                    '<td class="number">' + second[i][1] + '</td>' :
+                    '<td></td><td></td>'
+                ) +
+                (third[i] ?
+                    '<td>' + third[i][0] + '</td>' +
+                    '<td class="number">' + third[i][1] + '</td>' :
+                    '<td></td><td></td>'
+                ) +
+                (fourth[i] ?
+                    '<td>' + fourth[i][0] + '</td>' +
+                    '<td class="number">' + fourth[i][1] + '</td>' :
+                    '<td></td><td></td>'
+                ) +
+                '</tr>'
+            );
+        }
+    });
+
+    // Remove click events on container to avoid having "clickable" announced by AT
+    // These events are needed for custom click events, drag to zoom, and navigator
+    // support.
+    chart.container.onmousedown = null;
+    chart.container.onclick = null;
+});
+
+
+// Function to run on series show/hide to update the pointStart settings of
+// all series. We do this to avoid gaps on the xAxis when hiding series.
 function updatePointStart() {
     var allSeries = this.chart.series;
     Highcharts.each(allSeries, function (series) {
