@@ -2172,7 +2172,7 @@ SVGRenderer.prototype = {
 
 			clsRegex = /<.*class="([^"]+)".*>/;
 			styleRegex = /<.*style="([^"]+)".*>/;
-			hrefRegex = /<.*href="(http[^"]+)".*>/;
+			hrefRegex = /<.*href="([^"]+)".*>/;
 
 			if (tempParent) {
 				tempParent.appendChild(textNode); // attach it to the DOM to read offset width
