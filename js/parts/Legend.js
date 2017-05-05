@@ -403,12 +403,16 @@ Legend.prototype = {
 		legend.colorizeItem(item, item.visible);
 
 		// Take care of max width and text overflow (#6659)
+		/*= if (build.classic) { =*/
 		if (!itemStyle.width) {
+		/*= } =*/
 			li.css({
 				width: (options.itemWidth || chart.spacingBox.width) -
 					itemExtraWidth
 			});
+		/*= if (build.classic) { =*/
 		}
+		/*= } =*/
 
 		// Always update the text
 		legend.setText(item);
