@@ -138,6 +138,7 @@ merge(true, defaultOptions, {
 			depth: 100,
 			fitToPlot: true,
 			viewDistance: 25,
+			axisLabelPosition: 'default',
 			frame: {
 				visible: 'default',
 				size: 1,
@@ -582,7 +583,7 @@ Chart.prototype.get3dFrame = function () {
 		};
 	};
 
-	return {
+	var ret = {
 		//FIXME: Previously, left/right, top/bottom and front/back pairs shared size and color.
 		//For compatibility and consistency sake, when one face have size/color/visibility set, the opposite face will default to the same values
 		//Also, left/right used to be called 'side', so that's also added as a fallback
@@ -593,5 +594,111 @@ Chart.prototype.get3dFrame = function () {
 		back: getFaceOptions([frameOptions.back, frameOptions.front, frameOptions], backOrientation, defaultShowBack),
 		front: getFaceOptions([frameOptions.front, frameOptions.back, frameOptions], frontOrientation, defaultShowFront)
 	};
+
+
+	// Decide the bast place to put axis title/labels based on the visible faces.
+	// Ideally, The labels can only be on the edge between a visible face and an invisble one.
+	// Also, the Y label should be one the left-most edge (right-most if opposite),
+	if (options3d.axisLabelPosition === 'auto') {
+		var isValidEdge = function (face1, face2) {
+			return (face1.visible !== face2.visible) ||
+				(face1.visible && face2.visible && (face1.frontFacing !== face2.frontFacing));
+		};
+
+		var yEdges = [];
+		if (isValidEdge(ret.left, ret.front)) {
+			yEdges.push({ y: (ym + yp) / 2, x: xm, z: zm });
+		}
+		if (isValidEdge(ret.left, ret.back)) {
+			yEdges.push({ y: (ym + yp) / 2, x: xm, z: zp });
+		}
+		if (isValidEdge(ret.right, ret.front)) {
+			yEdges.push({ y: (ym + yp) / 2, x: xp, z: zm });
+		}
+		if (isValidEdge(ret.right, ret.back)) {
+			yEdges.push({ y: (ym + yp) / 2, x: xp, z: zp });
+		}
+
+		var xBottomEdges = [];
+		if (isValidEdge(ret.bottom, ret.front)) {
+			xBottomEdges.push({ x: (xm + xp) / 2, y: yp, z: zm });
+		}
+		if (isValidEdge(ret.bottom, ret.back)) {
+			xBottomEdges.push({ x: (xm + xp) / 2, y: yp, z: zp });
+		}
+
+		var xTopEdges = [];
+		if (isValidEdge(ret.top, ret.front)) {
+			xTopEdges.push({ x: (xm + xp) / 2, y: ym, z: zm });
+		}
+		if (isValidEdge(ret.top, ret.back)) {
+			xTopEdges.push({ x: (xm + xp) / 2, y: ym, z: zp });
+		}
+
+		var zBottomEdges = [];
+		if (isValidEdge(ret.bottom, ret.left)) {
+			zBottomEdges.push({ z: (zm + zp) / 2, y: yp, x: xm });
+		}
+		if (isValidEdge(ret.bottom, ret.right)) {
+			zBottomEdges.push({ z: (zm + zp) / 2, y: yp, x: xp });
+		}
+
+		var zTopEdges = [];
+		if (isValidEdge(ret.top, ret.left)) {
+			zTopEdges.push({ z: (zm + zp) / 2, y: ym, x: xm });
+		}
+		if (isValidEdge(ret.top, ret.right)) {
+			zTopEdges.push({ z: (zm + zp) / 2, y: ym, x: xp });
+		}
+
+		var pickEdge = function (edges, axis, mult) {
+			if (edges.length === 0) {
+				return null;
+			} else if (edges.length === 1) {
+				return edges[0];
+			}
+			var best = 0,
+				projections = perspective(edges, chart, false);
+			for (var i = 1; i < projections.length; i++) {
+				if (mult * projections[i][axis] > mult * projections[best][axis]) {
+					best = i;
+				} else if ((mult * projections[i][axis] === mult * projections[best][axis]) && (projections[i].z < projections[best].z)) {
+					best = i;
+				}
+			}
+			return edges[best];
+		};
+		ret.axes = {
+			y: {
+				'left': pickEdge(yEdges, 'x', -1),
+				'right': pickEdge(yEdges, 'x', +1)
+			},
+			x: {
+				'top': pickEdge(xTopEdges, 'y', -1),
+				'bottom': pickEdge(xBottomEdges, 'y', +1)
+			},
+			z: {
+				'top': pickEdge(zTopEdges, 'y', -1),
+				'bottom': pickEdge(zBottomEdges, 'y', +1)
+			}
+		};
+	} else {
+		ret.axes = {
+			y: {
+				'left': { x: xm, z: zm },
+				'right': { x: xp, z: zm }
+			},
+			x: {
+				'top': { y: ym, z: zm },
+				'bottom': { y: yp, z: zm }
+			},
+			z: {
+				'top': { x: defaultShowLeft ? xp : xm, y: ym },
+				'bottom': { x: defaultShowLeft ? xp : xm, y: yp }
+			}
+		};
+	}
+
+	return ret;
 };
 
