@@ -149,7 +149,7 @@ H.Series.prototype.setA11yDescription = function () {
 					point.graphic.element.setAttribute('tabindex', '-1');
 					point.graphic.element.setAttribute('aria-label', 
 						point.series.options.pointDescriptionFormatter && 
-						point.series.options.pointDescriptionFormatter(point) || // docs
+						point.series.options.pointDescriptionFormatter(point) ||
 						a11yOptions.pointDescriptionFormatter && 
 						a11yOptions.pointDescriptionFormatter(point) ||
 						point.buildPointInfoString());
@@ -160,7 +160,7 @@ H.Series.prototype.setA11yDescription = function () {
 		if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
 			seriesEl.setAttribute(
 				'role', 
-				this.options.exposeElementToA11y ? 'img' : 'region' // docs
+				this.options.exposeElementToA11y ? 'img' : 'region'
 			);
 			seriesEl.setAttribute('tabindex', '-1');
 			seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
@@ -410,7 +410,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	if (
 		newPoint.isNull && 
 		this.options.accessibility.keyboardNavigation.skipNullPoints ||
-		newPoint.series.options.skipKeyboardNavigation // docs
+		newPoint.series.options.skipKeyboardNavigation
 	) {
 		this.highlightedPoint = newPoint;
 		return this.highlightAdjacentPoint(next);
