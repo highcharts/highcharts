@@ -31,7 +31,6 @@ var merge = H.merge,
 	format = H.format,
 	pick = H.pick,
 	destroyObjectProperties = H.destroyObjectProperties,
-	UNDEFINED,
 
 	tooltipPrototype = H.Tooltip.prototype,
 	seriesPrototype = H.Series.prototype,
@@ -39,22 +38,18 @@ var merge = H.merge,
 
 
 function MockPoint(chart, options) {
+	this.mock = true;
+	this.series = {
+		visible: true,
+		chart: chart,
+		getPlotBox: seriesPrototype.getPlotBox
+	};
+
 	this.init(chart, options);
 }
 
 MockPoint.prototype = {
 	init: function (chart, options) {
-		this.series = {
-			forceDL: defined(options.forced) ? options.forced : false,
-			visible: true,
-			chart: chart,
-			getPlotBox: seriesPrototype.getPlotBox,
-			alignDataLabel: seriesPrototype.alignDataLabel,
-			justifyDataLabel: seriesPrototype.justifyDataLabel
-		};
-
-		this.mock = true;
-
 		var xAxisId = options.xAxis,
 			xAxis = defined(xAxisId) ? chart.xAxis[xAxisId] || chart.get(xAxisId) : null,
 			
@@ -99,9 +94,9 @@ MockPoint.prototype = {
 		this.isInside = isInside;
 	},
 
-	getAlignToBox: function (forceTranslate) {
+	alignToBox: function (forceTranslate) {
 		if (forceTranslate) {
-			this.translate()
+			this.translate();
 		}
 
 		var x = this.plotX,
@@ -127,17 +122,36 @@ MockPoint.prototype = {
 	}
 };
 
-function Annotation(chart, options) {
-	this.init(chart, options);
+function Annotation(chart, userOptions) {
+	this.chart = chart;
+
+	this.labels = [];
+	this.shapes = [];
+
+	this.options = merge(this.defaultOptions, userOptions);
+
+	this.init(chart, userOptions);
 }
 
 Annotation.prototype = {
-	shapesWithAnchor: ['callout', 'connector'],
 	shapesWithoutBackground: ['connector'],
+	attrsMap: {
+		backgroundColor: 'fill',
+		borderColor: 'stroke',
+		borderWidth: 'stroke-width',
+		zIndex: 'zIndex',
+		width: 'width',
+		height: 'height',
+		borderRadius: 'r',
+		r: 'r',
+		padding: 'padding'
+	},
 	/**
 	 * Default options for an annotation
 	**/
 	defaultOptions: {
+		visible: true,
+
 		labelOptions: {
 			align: 'center',
 			allowOverlap: false,
@@ -185,36 +199,17 @@ Annotation.prototype = {
 	 * Annotation initialisation
 	 *
 	 * @param {Object} chart
-	 * @param {Object} userOptions
+	 * @param {Object} [userOptions]
 	 * @returns {undefined}
 	**/
 
 	init: function (chart, userOptions) {
-		this.chart = chart;
-
-		// keeps annotation's labels
-		this.labels = [];
-		this.shapes = [];
-
-		this.setOptions(userOptions);
-
 		each(this.options.labels || [], this.initLabel, this);
 		each(this.options.shapes || [], this.initShape, this);
 	},
 
 	/**
-	 * Merging default options with the user options
-	 *
-	 * @param {Object} userOptions options specified by the user
-	 * @returns {undefined}
-	**/
-	setOptions: function (userOptions) {
-		this.options = merge(this.defaultOptions, userOptions);
-	},
-
-
-	/**
-	 * Main method for drawing/redrawing an annotation, it is called everytime on chart redraw
+	 * Main method for drawing an annotation, it is called everytime on chart redraw
 	 * and once on chart's load
 	 *
 	 * @returns {undefined}
@@ -224,36 +219,23 @@ Annotation.prototype = {
 			this.render();
 		}
 
-		this.redrawLabels();
-		this.redrawShapes();
-	},
-
-	/**
-	 * Redrawing all labels and hiding on overlap
-	 *
-	 * @returns {undefined}
-	**/
-	redrawLabels: function () {
-		var labels = this.labels,
-			i = labels.length;
-
-		// each(labels, this.redrawLabel, this) cannot be used - needs a backward loop
-		// labels array might be modified due to destruction of some label
-		while (i--) {
-			this.redrawLabel(labels[i]);
-		}
+		this.redrawItems(this.shapes);
+		this.redrawItems(this.labels);
 
 		this.collectAndHideLabels();
 	},
 
-	redrawShapes: function () {
-		var shapes = this.shapes,
-			i = shapes.length;
+	/**
+	 * @param {Array<Object>} items
+	 * @returns {undefined}
+	**/
+	redrawItems: function (items) {
+		var i = items.length;
 
-		// each(labels, this.redrawLabel, this) cannot be used - needs a backward loop
-		// labels array might be modified due to destruction of some label
+		// needs a backward loop
+		// labels/shapes array might be modified due to destruction of the item
 		while (i--) {
-			this.redrawShape(shapes[i]);
+			this.redrawItem(items[i]);
 		}
 	},
 
@@ -265,14 +247,29 @@ Annotation.prototype = {
 	**/
 	render: function () {
 		this.group = this.chart.renderer.g('annotation')
-				.attr({
-					zIndex: this.options.zIndex,
+			.attr({
+				zIndex: this.options.zIndex,
 
-					// hideOverlappingLabels requires translation
-					translateX: 0,
-					translateY: 0
-				})
-				.add();
+				// hideOverlappingLabels requires translation
+				translateX: 0,
+				translateY: 0,
+				visibility: this.options.visible ? 'visible' : 'hidden'
+			})
+			.add();
+	},
+
+	/**
+	 * @param {boolean} [visibility]
+	 **/
+	setVisible(visibility) {
+		var options = this.options,
+			visible = pick(visibility, !options.visible);
+
+		this.group.attr({
+			visibility: visible ? 'visible' : 'hidden'
+		});
+
+		options.visible = visible;
 	},
 
 
@@ -295,6 +292,8 @@ Annotation.prototype = {
 		}
 	},
 
+	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
+
 	/**
 	 * Destroying an annotation
 	 *
@@ -307,93 +306,35 @@ Annotation.prototype = {
 			label.destroy();
 		});
 
+		each(this.shapes, function (shape) {
+			shape.destroy();
+		});
+
 		destroyObjectProperties(this, chart);
 	},
 
-	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
+
+	/* ******************************************************************************
+	 * ITEM SECTION
+	 * contains methods for handling a single item in an annotation
+	******************************************************************************* */
 
 	initShape: function (shapeOptions) {
 		var renderer = this.chart.renderer,
 			options = merge(this.options.shapeOptions, shapeOptions),
-			type = options.type,
-			attr = this.itemOptionsToAttrs(options),
+			attr = this.attrsFromOptions(options),
 
-			shape = renderer[type] ? renderer[type](0, 0, 0, 0) : 
-				renderer.symbols[type] ? renderer.symbol(type) : 'rect';
+			type = renderer[options.type] ? options.type : 'rect',
+			shape = renderer[type](0, -9e9, 0, 0);
+
+		shape.type = type;
+		shape.options = options;
+		shape.itemType = 'shape';
 
 		shape.attr(attr);
-		shape.options = options;
+
 		this.shapes.push(shape);
 	},
-
-	redrawShape: function (shape) {
-		var point = this.getLinkedPoint(shape),
-			options = shape.options,
-			parentGroup = shape.parentGroup,
-			anchor,
-			series = point.series,
-			plotBox,
-			ty, tx, translatedAnchor;
-
-		if (!point) {
-			this.destroyShape(shape);
-		
-		} else {
-			if (!parentGroup) {
-				shape.add(this.group);
-			}
-
-			anchor = point.mock ? point.getAlignToBox(true) : tooltipPrototype.getAnchor.call({
-				chart: this.chart
-			}, point);
-
-			plotBox = series.getPlotBox(),
-			tx = plotBox.translateX,
-			ty = plotBox.translateY,
-			translatedAnchor = {
-				anchorX: anchor[0] + tx,
-				anchorY: anchor[1] + ty
-			};
-
-			shape.attr({
-				x: translatedAnchor.anchorX,
-				y: translatedAnchor.anchorY
-			});
-		}
-	},
-
-	destroyShape: function (shape) {
-		erase(this.shapes, shape);
-		shape.destroy();
-	},
-
-	itemOptionsToAttrs: function (options) {
-		var attrs = {
-				fill: options.backgroundColor,
-				stroke: options.borderColor,
-				'stroke-width': options.borderWidth,
-				zIndex: options.zIndex,
-				width: options.width,
-				height: options.height,
-				r: pick(options.r, options.borderRadius),
-				padding: options.padding
-			},
-
-			key;
-
-		for (key in attrs) {
-			if (attrs[key] === UNDEFINED) {
-				delete attrs[key];
-			}
-		}
-
-		return attrs;
-	},
-
-	/* ******************************************************************************
-	 * LABEL SECTION
-	 * contains methods for handling a single label in an annotation
-	******************************************************************************* */
 
 	/**
 	 * Label initialisation
@@ -403,19 +344,8 @@ Annotation.prototype = {
 	**/
 	initLabel: function (labelOptions) {
 		var options = merge(this.options.labelOptions, labelOptions),
-
 			style = options.style,
-
-		// options for label's background
-			// attr = {
-			// 	fill: options.backgroundColor,
-			// 	stroke: options.borderColor,
-			// 	'stroke-width': options.borderWidth,
-			// 	r: options.borderRadius,
-			// 	padding: options.padding,
-			// 	zIndex: options.zIndex
-			// },
-			attr = this.itemOptionsToAttrs(options),
+			attr = this.attrsFromOptions(options),
 
 			label = this.chart.renderer.label(
 				'',
@@ -436,13 +366,8 @@ Annotation.prototype = {
 			);
 		}
 
-		if (isNumber(options.distance) || options.positioner) {
-		// if there are specified options for a tooltip-like positioning
-		// label won't be aligned with data labels method
-			label.noAlign = true;
-		}
-
 		label.options = options;
+		label.itemType = 'label';
 
 		// labelrank required for hideOverlappingLabels()
 		label.labelrank = options.labelrank;
@@ -453,60 +378,46 @@ Annotation.prototype = {
 		this.labels.push(label);
 	},
 
-
-	/**
-	 * Redrawing a label
-	 *
-	 * @param {Object} label
-	 * @returns {undefined}
-	**/
-	redrawLabel: function (label) {
-		var point = this.getLinkedPoint(label),
-			options = label.options,
-			parentGroup = label.parentGroup,
+	redrawItem: function (item) {
+		var point = this.linkPoint(item),
+			itemOptions = item.options,
 			text;
 
 		if (!point) {
-			this.destroyLabel(label);
+			this.destroyItem(item);
 
 		} else {
-			if (!parentGroup) {
-				this.renderLabel(label);
+			if (!item.parentGroup) {
+				item.add(this.group);
 			}
 
-			if (point.mock) {
-				point.translate();
+			if (item.itemType === 'label') {
+				text = itemOptions.format || itemOptions.text;
+				item.attr({
+					text: text ? format(text, point.getLabelConfig()) : itemOptions.formatter.call(point)
+				});
 			}
 
-			text = options.format || options.text;
-			label.attr({
-				text: text ? format(text, point.getLabelConfig()) : options.formatter.call(point)
-			});
-
-			// this.positionLabel(label);
-			this.positionLabel(label);
-
+			this.alignItem(item, !item.placed);
 		}
 	},
 
-	/**
-	 * @param {Object} label an intiailised label object
-	 * @returns {undefined}
-	**/
-	renderLabel: function (label) {
-		label.add(this.group);
+	destroyItem: function (item) {
+		//erase from shapes or labels array
+		erase(this[item.itemType + 's'], item);
+		item.destroy();
 	},
 
 	/**
-	 * Linking label with points
+	 * Linking item with the point
 	 *
-	 * @param {Object} label
-	 * @returns {Object | null} a point which a label is linked or a null if the point
+	 * @param {Object} item
+	 * @returns {Object | null} a point which a item is linked or a null if the point
 	 * has not been found
 	**/
-	getLinkedPoint: function (label) {
-		var pointOptions = label.options.point,
-			point = label.point;
+	linkPoint: function (item) {
+		var pointOptions = item.options.point,
+			point = item.point;
 
 		if (!point || point.series === null) {
 		// check if the point does not exist or was destroyed/updated
@@ -514,15 +425,15 @@ Annotation.prototype = {
 			if (isObject(pointOptions)) {
 			// if a point config is an object then it should require all information
 			// needed to create a mock point
-				point = this.createMockPoint(pointOptions);
-				label.point = point;
+				point = this.mockPoint(pointOptions);
+				item.point = point;
 
 			
 			} else if (isString(pointOptions)) {
 				point = this.chart.get(pointOptions) || null;
 
 				if (point) {
-					label.point = point;
+					item.point = point;
 				}
 			}
 		}
@@ -530,215 +441,42 @@ Annotation.prototype = {
 		return point;
 	},
 
+	alignItem: function (item, isNew) {
+		var anchor = this.itemAnchor(item, item.point),
+			attrs = this.itemPosition(item, anchor);
 
-	/**
-	 * Creating a mock point for ta label
-	 *
-	 * @param {Object} pointOptions
-	 * @returns {MockPoint} a mock point
-	**/
-	createMockPoint: function (pointOptions) {
-		return new MockPoint(this.chart, pointOptions);
-	},
+		if (attrs) {
+			item.alignAttr = attrs;
+			item.placed = true;
 
+			attrs.anchorX = anchor.absolutePosition.x;
+			attrs.anchorY = anchor.absolutePosition.y;
 
-	/**
-	 * Tooltip-like positioning of the label
-	 *
-	 * @param {Object} label
-	 * @param {Object} point
-	 * @returns {Object} position of the label
-	**/
-	// getLabelPosition: function (label, point, anchor) {
-	// 	var chart = this.chart,
-	// 		labelOptions = label.options,
-	// 		position,
-
-	// 		round = Math.round;
-
-	// 	if (point.isInside !== false && point.series.visible) {
-	// 		position = (labelOptions.positioner || tooltipPrototype.getPosition).call(
-	// 			{
-	// 				chart: chart,
-	// 				distance: pick(labelOptions.distance, 16)
-	// 			},
-	// 			label.width,
-	// 			label.height,
-	// 			{
-	// 				plotX: anchor.x,
-	// 				plotY: anchor.y,
-	// 				negative: point.negative,
-	// 				ttBelow: point.ttBelow,
-	// 				h: anchor.h
-	// 			}
-	// 		);
-
-	// 		position.x = round(position.x);
-	// 		position.y = round(position.y || 0);
-	// 	}
-
-	// 	return position || {
-	// 		x: 0,
-	// 		y: -9e9
-	// 	};
-	// },
-
-	/**
-	 * Data label - like position of the label
-	 *
-	 * @param {Object} label
-	 * @param {Object} point
-	 * @returns {undefined}
-	**/
-	alignLabel: function (label, point, alignTo) {
-		var series = point.series,
-			rawAlign = label.rawAlign = !(series.alignDataLabel && series.alignDataLabel !== H.noop),
-			box = alignTo && {
-				x: alignTo[0],
-				y: alignTo[1],
-				height: alignTo[2] || 0,
-				width: alignTo[3] || 0
-			};
-		rawAlign = true
-		if (!rawAlign) {
-			series.alignDataLabel(
-				point,
-				label,
-				label.options,
-				box,
-			//	label.placed
-				true // true for not animating
-
-			);
+			item[isNew ? 'attr' : 'animate'](attrs);
 
 		} else {
-			label.align(extend(label.options, {
-				width: label.width,
-				height: label.height
-			}), null, box);
-		}
+			item.placed = false;
 
-		/* Workaround for bad placing anchor on animation */
-		// if (label.placed) {
-		//     setTimeout(function () {
-		//         label.attr({
-		//            anchorX: point.plotX, // + plotBox.translateX,
-		//            anchorY: point.plotY // + plotBox.translateY
-		//         });
-		//     }, 0);
-		// }
+			item.attr({
+				x: 0,
+				y: -9e9
+			});
+		}
 	},
 
-	// positionLabel: function (label) {
-	// 	var point = label.point,
-	// 		series = point.series,
-	// 		anchor = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
-	// 			chart: this.chart
-	// 		}, point),
+	itemAnchor: function (item, point) {
+		var plotBox = point.series.getPlotBox(),
 
-	// 		plotBox = series.getPlotBox(),
-	// 		tx = plotBox.translateX,
-	// 		ty = plotBox.translateY,
-	// 		translatedAnchor = {
-	// 			anchorX: anchor[0] + tx,
-	// 			anchorY: anchor[1] + ty
-	// 		},
-
-	// 		labelPosition;
-
-
-	// 	if (label.noAlign) {
-	// 		labelPosition = this.getLabelPosition(label, point, anchor);
-	// 		label.placed = true;
-
-	// 		extend(labelPosition, translatedAnchor);
-
-	// 		label.attr(labelPosition)
-
-	// 	} else {
-	// 		var a = anchor.slice()
-	// 		a[0] += tx
-	// 		a[1] += ty
-
-	// 		this.alignLabel(label, point, a);
-
-	// 		labelPosition = {
-	// 			x: label.x + tx,
-	// 			y: label.y + ty
-	// 		};
-
-	// 		if (label.rawAlign) {
-	// 			extend(labelPosition, translatedAnchor);
-	// 		}
-
-	// 		label.attr(translatedAnchor)
-	// 	}
-
-	// 	if (label.placed) {
-	// 	//	label.attr(labelPosition); //animate instead of attr is a workaround for zooming with animation
-
-	// 		label.alignAttr = {
-	// 			x: labelPosition.x,
-	// 			y: labelPosition.y
-	// 		};
-	// 	}
-	// },
-
-	getAnchorPosition: function (label) {
-		var labelOptions = label.options,
-			point = label.point,
-			series = point.series,
-			inverted = this.chart.inverted,
-			plotBox = point.series.getPlotBox(),
-
-			box = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
+			box = point.mock ? point.alignToBox(true) : tooltipPrototype.getAnchor.call({
 				chart: this.chart
 			}, point),
+
 			anchor = {
 				x: box[0],
 				y: box[1],
-				height: box[2] || 0
-			},
-
-			dlBox = point.dlBox || point.shapeArgs,
-			below,
-			inside,
-			overshoot;
-
-		if (dlBox && !(defined(labelOptions.distance) || labelOptions.positioner)) {
-			below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)),
-			inside = pick(labelOptions.inside, !!series.options.stacking)
-			anchor = merge(dlBox);
-
-            if (anchor.y < 0) {
-                anchor.height += anchor.y;
-                anchor.y = 0;
-            }
-            overshoot = anchor.y + anchor.height - series.yAxis.len;
-            if (overshoot > 0) {
-                anchor.height -= overshoot;
-            }
-
-            if (inverted) {
-                anchor = {
-                    x: series.yAxis.len - anchor.y - anchor.height,
-                    y: series.xAxis.len - anchor.x - anchor.width,
-                    width: anchor.height,
-                    height: anchor.width
-                };
-            }
-
-            // Compute the alignment box
-            if (!inside) {
-                if (inverted) {
-                    anchor.x += below ? 0 : anchor.width;
-                    anchor.width = 0;
-                } else {
-                    anchor.y += below ? anchor.height : 0;
-                    anchor.height = 0;
-                }
-            }
-        }
+				height: box[2] || 0,
+				width: box[3] || 0
+			};
 
 		return {
 			relativePosition: anchor,
@@ -749,152 +487,89 @@ Annotation.prototype = {
 		};
 	},
 
-	getPosition: function (label, anchor) {
-		var labelOptions = label.options,
-			labelPosition;
+	itemPosition: function (item, anchor) {
+		var chart = this.chart,
+			point = item.point,
+			itemOptions = item.options,
+			anchorAbsolutePosition = anchor.absolutePosition,
+			anchorRelativePosition = anchor.relativePosition,
+			itemPosition,
+			isInsidePlot,
+			alignTo,
 
-		if (defined(labelOptions.distance) || labelOptions.positioner) {
-			labelPosition = this.getLabelPosition(label, label.point, anchor.relativePosition);
+			showItem = point.series.visible && point.isInside !== false;
 
-			extend(labelPosition, {
-				anchorX: anchor.absolutePosition.x,
-				anchorY: anchor.absolutePosition.y
-			});
+		if (showItem) {
+
+			if (defined(itemOptions.distance) || itemOptions.positioner) {
+				itemPosition = (itemOptions.positioner || tooltipPrototype.getPosition).call(
+					{
+						chart: chart,
+						distance: pick(itemOptions.distance, 16)
+					},
+					item.width,
+					item.height,
+					{
+						plotX: anchorRelativePosition.x,
+						plotY: anchorRelativePosition.y,
+						negative: point.negative,
+						ttBelow: point.ttBelow,
+						h: anchorRelativePosition.height || anchorRelativePosition.width
+					}
+				);
+
+			} else {
+				alignTo = {
+					x: anchorAbsolutePosition.x,
+					y: anchorAbsolutePosition.y,
+					width: 0,
+					height: 0
+				};
+
+				itemPosition = this.alignedPosition(
+					extend(itemOptions, {
+						width: item.width,
+						height: item.height
+					}),
+					alignTo
+				);
+
+				if (item.options.overflow === 'justify') {
+					itemPosition = this.alignedPosition(
+						this.justifiedOptions(item, itemOptions, itemPosition),
+						alignTo
+					);
+				}
+			}
+
+
+			if (itemOptions.crop) {
+				isInsidePlot = function (x, y) {
+					return x >= chart.plotLeft &&
+						x <= chart.plotLeft + chart.plotWidth &&
+						y >= chart.plotTop &&
+						y <= chart.plotTop + chart.plotHeight;
+				};
+
+				showItem = 
+					isInsidePlot(itemPosition.x, itemPosition.y) &&
+					isInsidePlot(itemPosition.x + item.width, itemPosition.y + item.height);
+			}
 		}
 
-		return labelPosition;
+		return showItem ? itemPosition : null;
 	},
 
-	adjustForColumns: function (label) {
-		var options = label.options,
-			point = label.point,
-			inverted = this.chart.inverted,
-            series = point.series,
-            dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-            below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)), // point.below is used in range series
-            inside = pick(options.inside, !!series.options.stacking), // draw it inside the box?
-            overshoot,
-            alignTo = {};
-
-        // Align to the column itself, or the top of it
-        if (dlBox) { // Area range uses this method but not alignTo
-            alignTo = merge(dlBox);
-
-            if (alignTo.y < 0) {
-                alignTo.height += alignTo.y;
-                alignTo.y = 0;
-            }
-            overshoot = alignTo.y + alignTo.height - series.yAxis.len;
-            if (overshoot > 0) {
-                alignTo.height -= overshoot;
-            }
-
-            if (inverted) {
-                alignTo = {
-                    x: series.yAxis.len - alignTo.y - alignTo.height,
-                    y: series.xAxis.len - alignTo.x - alignTo.width,
-                    width: alignTo.height,
-                    height: alignTo.width
-                };
-            }
-
-            // Compute the alignment box
-            if (!inside) {
-                if (inverted) {
-                    alignTo.x += below ? 0 : alignTo.width;
-                    alignTo.width = 0;
-                } else {
-                    alignTo.y += below ? alignTo.height : 0;
-                    alignTo.height = 0;
-                }
-            }
-        }
-
-
-        // When alignment is undefined (typically columns and bars), display the individual
-        // point below or above the point depending on the threshold
-        // options.align = pick(
-        //     options.align, !inverted || inside ? 'center' : below ? 'right' : 'left'
-        // );
-        // options.verticalAlign = pick(
-        //     options.verticalAlign,
-        //     inverted || inside ? 'middle' : below ? 'top' : 'bottom'
-        // );
-        console.log(alignTo);
-        return alignTo;
-	},
-
-	align: function (label, point, anchor) {
-		var box = {
-			x: anchor.x,
-			y: anchor.y,
-			height: anchor.h || anchor.height || 0,
-			width: anchor.w || anchor.width || 0
-		};
-
-		// // label.placed = false;
-		// label.align(extend(label.options, {
-		// 	width: label.width,
-		// 	height: label.height
-		// }), null, box);
-		
-		// label[true ? 'attr' : 'animate']({
-		// 	anchorX: anchor[0],
-		// 	anchorY: anchor[1]
-		// });
-
-		// extend(box, this.adjustForColumns(label));
-
-		// var plotBox = point.series.getPlotBox();
-		// box.x += plotBox.translateX;
-		// box.y += plotBox.translateY;
-
-		var position = this.getAlignedPosition(
-				extend(label.options, {
-					width: label.width,
-					height: label.height
-				}),
-				box
-			);
-
-
-		if (pick(label.options.overflow, 'justify') === 'justify') {
-			position = this.getAlignedPosition(
-				this.getJustifiedOptions(label, label.options, position),
-				box
-			);
-		}
-
-		label.alignAttr = position;
-		label.placed = true;
-		label.attr(extend(position, {
-			anchorX: anchor.x,
-			anchorY: anchor.y
-		}));
-		// label.alignAttr = {
-		// 	x: label.x,
-		// 	y: label.y
-		// }
-	},
-
-	position: function (label) {
-		var anchor = this.getAnchorPosition(label),
-			labelPosition = this.getPosition(label, anchor);
-
-		if (labelPosition) {
-			label.attr(labelPosition);
-			label.alignAttr = labelPosition;
-		} else {
-			this.align(label, label.point, anchor.absolutePosition)
-		}
-	},
-
-	destroyLabel: function (label) {
-		erase(this.labels, label);
-		label.destroy();
-	},
-
-	getAlignedPosition: function (alignOptions, box) {
+	/**
+	 * Returns new aligned position based alignment options and box to align to.
+	 * It is almost a one-to-one copy from SVGElement.prototype.align except it does not use and mutate
+	 * an element
+	 *
+	 * @param {Object} alignOptions
+	 * @param {Object} box
+	 * @returns {Object} aligned position
+	**/
+	alignedPosition: function (alignOptions, box) {
 		var align = alignOptions.align,
 			vAlign = alignOptions.verticalAlign,
 			x = (box.x || 0) + (alignOptions.x || 0),
@@ -903,31 +578,41 @@ Annotation.prototype = {
 			alignFactor,
 			vAlignFactor;
 
-	    if (align === 'right') {
-	        alignFactor = 1;
-	    } else if (align === 'center') {
-	        alignFactor = 2;
-	    }
-	    if (alignFactor) {
-	        x += (box.width - (alignOptions.width || 0)) / alignFactor;
-	    }
+		if (align === 'right') {
+			alignFactor = 1;
+		} else if (align === 'center') {
+			alignFactor = 2;
+		}
+		if (alignFactor) {
+			x += (box.width - (alignOptions.width || 0)) / alignFactor;
+		}
 
-	    if (vAlign === 'bottom') {
-	        vAlignFactor = 1;
-	    } else if (vAlign === 'middle') {
-	        vAlignFactor = 2;
-	    }
-	    if (vAlignFactor) {
-	        y += (box.height - (alignOptions.height || 0)) / vAlignFactor;
-	    }
-	    
-	    return {
-	    	x: Math.round(x),
-	    	y: Math.round(y)
-	    }
+		if (vAlign === 'bottom') {
+			vAlignFactor = 1;
+		} else if (vAlign === 'middle') {
+			vAlignFactor = 2;
+		}
+		if (vAlignFactor) {
+			y += (box.height - (alignOptions.height || 0)) / vAlignFactor;
+		}
+		
+		return {
+			x: Math.round(x),
+			y: Math.round(y)
+		};
 	},
 
-	getJustifiedOptions: function (label, alignOptions, alignAttr) {
+	/**
+	 * Returns new alignment options for a label if the label is outside the plot area.
+	 * It is almost a one-to-one copy from Series.prototype.justifyDataLabels except it does not mutate
+	 * the label and it works with absolute instead of relative position
+	 *
+	 * @param {Object} label
+	 * @param {Object} alignOptions
+	 * @param {Object} alignAttr
+	 * @returns {Object} justified options
+	**/
+	justifiedOptions: function (label, alignOptions, alignAttr) {
 		var chart = this.chart,
 			align = alignOptions.align,
 			verticalAlign = alignOptions.verticalAlign,
@@ -947,208 +632,79 @@ Annotation.prototype = {
 			x = alignAttr.x - chart.plotLeft,
 			y = alignAttr.y - chart.plotTop;
 
-  		// Off left
-        off = x + padding;
-        if (off < 0) {
-            if (align === 'right') {
-                options.align = 'left';
-            } else {
-                options.x = -off;
-            }
-        }
-
-        // Off right
-        off = x + bBox.width - padding;
-        if (off > chart.plotWidth) {
-            if (align === 'left') {
-                options.align = 'right';
-            } else {
-                options.x = chart.plotWidth - off;
-            }
-        }
-
-        // Off top
-        off = y + padding;
-        if (off < 0) {
-            if (verticalAlign === 'bottom') {
-                options.verticalAlign = 'top';
-            } else {
-                options.y = -off;
-            }
-        }
-
-        // Off bottom
-        off = y + bBox.height - padding;
-        if (off > chart.plotHeight) {
-            if (verticalAlign === 'top') {
-                options.verticalAlign = 'bottom';
-            } else {
-                options.y = chart.plotHeight - off;
-            }
-        }
-
-        return options;
-	},
-
-	positionLabel: function (label) {
-		var anchor = this.getAnchor(label, label.point),
-			attrs = this.getLabelPosition(label, anchor);
-
-		if (attrs) {
-			label.alignAttr = attrs;
-			label.placed = true;
-
-			attrs.anchorX = anchor.absolutePosition.x;
-			attrs.anchorY = anchor.absolutePosition.y;
-
-			label.attr(attrs)
-		
-		} else {
-			label.placed = false;
-			label.attr({
-				x: 0,
-				y: -9e9
-			});
-		}
-
-	},
-
-	getAnchor: function (label, point) {
-		var labelOptions = label.options,
-			series = point.series,
-			inverted = this.chart.inverted,
-			plotBox = point.series.getPlotBox(),
-
-			box = point.mock ? point.getAlignToBox() : tooltipPrototype.getAnchor.call({
-				chart: this.chart
-			}, point),
-
-			anchor = {
-				x: box[0],
-				y: box[1],
-				height: box[2] || 0,
-				width: box[3] || 0
-			};
-
-			// dlBox = point.dlBox || point.shapeArgs,
-			// below,
-			// inside,
-			// overshoot;
-
-		// if (dlBox && !(defined(labelOptions.distance) || labelOptions.positioner)) {
-		// 	below = pick(point.below, point.plotY > pick(series.translatedThreshold, series.yAxis.len)),
-		// 	inside = pick(labelOptions.inside, !!series.options.stacking)
-		// 	anchor = merge(dlBox);
-
-  //           if (anchor.y < 0) {
-  //               anchor.height += anchor.y;
-  //               anchor.y = 0;
-  //           }
-  //           overshoot = anchor.y + anchor.height - series.yAxis.len;
-  //           if (overshoot > 0) {
-  //               anchor.height -= overshoot;
-  //           }
-
-  //           if (inverted) {
-  //               anchor = {
-  //                   x: series.yAxis.len - anchor.y - anchor.height,
-  //                   y: series.xAxis.len - anchor.x - anchor.width,
-  //                   width: anchor.height,
-  //                   height: anchor.width
-  //               };
-  //           }
-
-  //           if (!inside) {
-  //               if (inverted) {
-  //                   anchor.x += below ? 0 : anchor.width;
-  //                   anchor.width = 0;
-  //               } else {
-  //                   anchor.y += below ? anchor.height : 0;
-  //                   anchor.height = 0;
-  //               }
-  //           }
-        // }
-
-		return {
-			relativePosition: anchor,
-			absolutePosition: merge(anchor, {
-				x: anchor.x + plotBox.translateX,
-				y: anchor.y + plotBox.translateY
-			})
-		};
-	},
-
-	getLabelPosition: function (label, anchor) {
-		var chart = this.chart,
-			point = label.point,
-			labelOptions = label.options,
-			anchorAbsolutePosition = anchor.absolutePosition,
-			anchorRelativePosition = anchor.relativePosition,
-			labelPosition,
-			isInsidePlot,
-			alignTo,
-
-			visible = point.series.visible && point.isInside !== false;
-
-		if (visible) {
-			if (defined(labelOptions.distance) || labelOptions.positioner) {
-				labelPosition = (labelOptions.positioner || tooltipPrototype.getPosition).call(
-					{
-						chart: chart,
-						distance: pick(labelOptions.distance, 16)
-					},
-					label.width,
-					label.height,
-					{
-						plotX: anchorRelativePosition.x,
-						plotY: anchorRelativePosition.y,
-						negative: point.negative,
-						ttBelow: point.ttBelow,
-						h: anchorRelativePosition.height || anchorRelativePosition.width
-					}
-				);
-
+		// Off left
+		off = x + padding;
+		if (off < 0) {
+			if (align === 'right') {
+				options.align = 'left';
 			} else {
-				alignTo = {
-					x: anchorAbsolutePosition.x,
-					y: anchorAbsolutePosition.y,
-					width: 0,
-					height: 0
-				};
-				
-				labelPosition = this.getAlignedPosition(
-					extend(labelOptions, {
-						width: label.width,
-						height: label.height
-					}),
-					alignTo
-				);
-
-				if (pick(label.options.overflow, 'justify') === 'justify') {
-					labelPosition = this.getAlignedPosition(
-						this.getJustifiedOptions(label, label.options, labelPosition),
-						alignTo
-					);
-				}
-			}
-
-
-
-			if (labelOptions.crop) {
-				isInsidePlot = function (x, y) {
-					return x >= chart.plotLeft &&
-						x <= chart.plotLeft + chart.plotWidth &&
-						y >= chart.plotTop &&
-						y <= chart.plotTop + chart.plotHeight;
-				};
-
-				visible = 
-					isInsidePlot(labelPosition.x, labelPosition.y) &&
-					isInsidePlot(labelPosition.x + label.width, labelPosition.y + label.height);
+				options.x = -off;
 			}
 		}
 
-		return visible ? labelPosition : null;
+		// Off right
+		off = x + bBox.width - padding;
+		if (off > chart.plotWidth) {
+			if (align === 'left') {
+				options.align = 'right';
+			} else {
+				options.x = chart.plotWidth - off;
+			}
+		}
+
+		// Off top
+		off = y + padding;
+		if (off < 0) {
+			if (verticalAlign === 'bottom') {
+				options.verticalAlign = 'top';
+			} else {
+				options.y = -off;
+			}
+		}
+
+		// Off bottom
+		off = y + bBox.height - padding;
+		if (off > chart.plotHeight) {
+			if (verticalAlign === 'top') {
+				options.verticalAlign = 'bottom';
+			} else {
+				options.y = chart.plotHeight - off;
+			}
+		}
+
+		return options;
+	},
+
+	/**
+	 * Creating a mock point for an item
+	 *
+	 * @param {Object} pointOptions
+	 * @returns {MockPoint} a mock point
+	**/
+	mockPoint: function (pointOptions) {
+		return new MockPoint(this.chart, pointOptions);
+	},
+
+	/**
+	 * Utility function for mapping item's options to element's attribute
+	 *
+	 * @param {Object} options
+	 * @returns {Object} mapped options
+	**/
+	attrsFromOptions: function (options) {
+		var map = this.attrsMap,
+			attrs = {},
+			key,
+			mappedKey;
+
+		for (key in options) {
+			mappedKey = map[key];
+			if (mappedKey) {
+				attrs[mappedKey] = options[key];
+			}
+		}
+
+		return attrs;
 	}
 };
 
@@ -1164,8 +720,8 @@ H.extend(chartPrototype, {
 
 		this.annotations.push(annotation);
 
-		if (redraw) {
-			this.redraw();
+		if (pick(redraw, true)) {
+			annotation.redraw();
 		}
 
 		return annotation;
