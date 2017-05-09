@@ -632,41 +632,39 @@ if (seriesTypes.pie) {
 
 
 				// Detect overflowing data labels
-				if (series.options.size === null) {
-					dataLabelWidth = dataLabel.getBBox().width;
+				dataLabelWidth = dataLabel.getBBox().width;
 
-					sideOverflow = null;
-					// Overflow left
-					if (x - dataLabelWidth < connectorPadding) {
-						sideOverflow = Math.round(
-							dataLabelWidth - x + connectorPadding
-						);
-						overflow[3] = Math.max(sideOverflow, overflow[3]);
+				sideOverflow = null;
+				// Overflow left
+				if (x - dataLabelWidth < connectorPadding) {
+					sideOverflow = Math.round(
+						dataLabelWidth - x + connectorPadding
+					);
+					overflow[3] = Math.max(sideOverflow, overflow[3]);
 
-					// Overflow right
-					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						sideOverflow = Math.round(
-							x + dataLabelWidth - plotWidth + connectorPadding
-						);
-						overflow[1] = Math.max(sideOverflow, overflow[1]);
-					}
-
-					// Overflow top
-					if (y - labelHeight / 2 < 0) {
-						overflow[0] = Math.max(
-							Math.round(-y + labelHeight / 2),
-							overflow[0]
-						);
-
-					// Overflow left
-					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = Math.max(
-							Math.round(y + labelHeight / 2 - plotHeight),
-							overflow[2]
-						);
-					}
-					dataLabel.sideOverflow = sideOverflow;
+				// Overflow right
+				} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
+					sideOverflow = Math.round(
+						x + dataLabelWidth - plotWidth + connectorPadding
+					);
+					overflow[1] = Math.max(sideOverflow, overflow[1]);
 				}
+
+				// Overflow top
+				if (y - labelHeight / 2 < 0) {
+					overflow[0] = Math.max(
+						Math.round(-y + labelHeight / 2),
+						overflow[0]
+					);
+
+				// Overflow left
+				} else if (y + labelHeight / 2 > plotHeight) {
+					overflow[2] = Math.max(
+						Math.round(y + labelHeight / 2 - plotHeight),
+						overflow[2]
+					);
+				}
+				dataLabel.sideOverflow = sideOverflow;
 			} // for each point
 		}); // for each half
 
@@ -794,47 +792,62 @@ if (seriesTypes.pie) {
 			centerOption = options.center,
 			minSize = options.minSize || 80,
 			newSize = minSize,
-			ret;
+			// If a size is set, return true and don't try to shrink the pie
+			// to fit the labels.
+			ret = options.size !== null;
 
-		// Handle horizontal size and center
-		if (centerOption[0] !== null) { // Fixed center
-			newSize = Math.max(center[2] - Math.max(overflow[1], overflow[3]), minSize);
+		if (!ret) {
+			// Handle horizontal size and center
+			if (centerOption[0] !== null) { // Fixed center
+				newSize = Math.max(center[2] -
+					Math.max(overflow[1], overflow[3]), minSize);
 
-		} else { // Auto center
-			newSize = Math.max(
-				center[2] - overflow[1] - overflow[3], // horizontal overflow
-				minSize
-			);
-			center[0] += (overflow[3] - overflow[1]) / 2; // horizontal center
-		}
-
-		// Handle vertical size and center
-		if (centerOption[1] !== null) { // Fixed center
-			newSize = Math.max(Math.min(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
-
-		} else { // Auto center
-			newSize = Math.max(
-				Math.min(
-					newSize,
-					center[2] - overflow[0] - overflow[2] // vertical overflow
-				),
-				minSize
-			);
-			center[1] += (overflow[0] - overflow[2]) / 2; // vertical center
-		}
-
-		// If the size must be decreased, we need to run translate and drawDataLabels again
-		if (newSize < center[2]) {
-			center[2] = newSize;
-			center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
-			this.translate(center);
-			
-			if (this.drawDataLabels) {
-				this.drawDataLabels();
+			} else { // Auto center
+				newSize = Math.max(
+					// horizontal overflow
+					center[2] - overflow[1] - overflow[3],
+					minSize
+				);
+				// horizontal center
+				center[0] += (overflow[3] - overflow[1]) / 2;
 			}
-		// Else, return true to indicate that the pie and its labels is within the plot area
-		} else {
-			ret = true;
+
+			// Handle vertical size and center
+			if (centerOption[1] !== null) { // Fixed center
+				newSize = Math.max(Math.min(newSize, center[2] -
+					Math.max(overflow[0], overflow[2])), minSize);
+
+			} else { // Auto center
+				newSize = Math.max(
+					Math.min(
+						newSize,
+						// vertical overflow
+						center[2] - overflow[0] - overflow[2]
+					),
+					minSize
+				);
+				// vertical center
+				center[1] += (overflow[0] - overflow[2]) / 2;
+			}
+
+			// If the size must be decreased, we need to run translate and
+			// drawDataLabels again
+			if (newSize < center[2]) {
+				center[2] = newSize;
+				center[3] = Math.min( // #3632
+					relativeLength(options.innerSize || 0, newSize),
+					newSize
+				);
+				this.translate(center);
+				
+				if (this.drawDataLabels) {
+					this.drawDataLabels();
+				}
+			// Else, return true to indicate that the pie and its labels is
+			// within the plot area
+			} else {
+				ret = true;
+			}
 		}
 		return ret;
 	};
