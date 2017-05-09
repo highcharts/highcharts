@@ -313,6 +313,7 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Globals.js',
         './js/parts/Options.js',
         './js/parts/PlotLineOrBand.js',
+        './js/parts/SVGRenderer.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/offline-exporting.src.js'
