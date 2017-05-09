@@ -116,8 +116,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Dim the chart and show a loading text or symbol
-	 * @param {String} str An optional text to show in the loading label instead of the default one
+	 * Dim the chart and show a loading text or symbol. Options for the loading
+	 * screen are defined in {@link
+	 * https://api.highcharts.com/highcharts/loading|the loading options}.
+	 * 
+	 * @param  {String} str
+	 *         An optional text to show in the loading label instead of the
+	 *         default one. The default text is set in {@link
+	 *         http://api.highcharts.com/highcharts/lang.loading|lang.loading}.
+	 *
+	 * @sample highcharts/members/chart-hideloading/
+	 *         Show and hide loading from a button
+	 * @sample highcharts/members/chart-showloading/
+	 *         Apply different text labels
 	 */
 	showLoading: function (str) {
 		var chart = this,
@@ -224,7 +235,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		'tooltip'],
 
 	/**
-	 * Chart.update function that takes the whole options stucture.
+	 * A generic function to update any element of the chart. Elements can be
+	 * enabled and disabled, moved, re-styled, re-formatted etc.
+	 *
+	 * A special case is configuration objects that take arrays, for example
+	 * {@link https://api.highcharts.com/highcharts/xAxis|xAxis}, 
+	 * {@link https://api.highcharts.com/highcharts/yAxis|yAxis} or 
+	 * {@link https://api.highcharts.com/highcharts/series|series}. For these
+	 * collections, an `id` option is used to map the new option set to an
+	 * existing object. If an existing object of the same id is not found, the
+	 * corresponding item is updated. So for example, running `chart.update`
+	 * with a series item without an id, will cause the existing chart's series
+	 * with the same index in the series array to be updated.
+	 *
+	 * See also the {@link https://api.highcharts.com/highcharts/responsive|
+	 * responsive option set}. Switching between `responsive.rules` basically
+	 * runs `chart.update` under the hood.
+	 *
+	 * @param  {Options} options
+	 *         A configuration object for the new chart options.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart.
+	 *
+	 * @sample highcharts/members/chart-update/
+	 *         Update chart geometry 
 	 */
 	update: function (options, redraw) {
 		var chart = this,

@@ -195,6 +195,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		 * @type {Array.<Highcharts.Series>}
 		 */
 		this.series = [];
+
+		/**
+		 * The chart title. The title has an `update` method that allows
+		 * modifying the options directly or indirectly via `chart.update`.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name title
+		 * @type Object
+		 *
+		 * @sample highcharts/members/title-update/
+		 *         Updating titles
+		 */
+		
+		/**
+		 * The chart subtitle. The subtitle has an `update` method that allows
+		 * modifying the options directly or indirectly via `chart.update`.
+		 *
+		 * @memberof Highcharts.Chart
+		 * @name subtitle
+		 * @type Object
+		 */
+
+
+
 		this.hasCartesianSeries = optionsChart.showAxes;
 		//this.axisOffset = undefined;
 		//this.inverted = undefined;
@@ -594,10 +618,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Show the title and subtitle of the chart
+	 * Set a new title or subtitle for the chart.
 	 *
-	 * @param titleOptions {Object} New title options
-	 * @param subtitleOptions {Object} New subtitle options
+	 * @param  titleOptions {TitleOptions}
+	 *         New title options.
+	 * @param  subtitleOptions {SubtitleOptions}
+	 *         New subtitle options.
+	 * @param  redraw {Boolean}
+	 *         Whether to redraw the chart or wait for a later call to 
+	 *         `chart.redraw()`.
+	 *
+	 * @sample highcharts/members/chart-settitle/ Set title text and styles
 	 *
 	 */
 	setTitle: function (titleOptions, subtitleOptions, redraw) {

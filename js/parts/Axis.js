@@ -41,7 +41,7 @@ var addEvent = H.addEvent,
 	
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
- * adding axes by {@link Chart#addAxis}.
+ * adding axes by {@link Highcharts.Chart#addAxis}.
  *
  * A chart can have from 0 axes (pie chart) to multiples. In a normal, single
  * series cartesian chart, there is one X axis and one Y axis.
