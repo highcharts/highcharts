@@ -311,6 +311,7 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Chart.js',
         './js/parts/Dynamics.js',
         './js/parts/Globals.js',
+        './js/parts/Legend.js',
         './js/parts/Options.js',
         './js/parts/PlotLineOrBand.js',
         './js/parts/SVGRenderer.js',

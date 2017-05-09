@@ -4,10 +4,11 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
+import Highcharts from './Globals.js';
 import './Utilities.js';
 var Legend,
-		
+	H = Highcharts,
+
 	addEvent = H.addEvent,
 	css = H.css,
 	discardElement = H.discardElement,
@@ -21,15 +22,19 @@ var Legend,
 	stableSort = H.stableSort,
 	win = H.win,
 	wrap = H.wrap;
+
 /**
- * The overview of the chart's series.
+ * The overview of the chart's series. The legend object is instanciated
+ * internally in the chart constructor, and available from `chart.legend`. Each
+ * chart has only one legend.
+ * 
  * @class
  */
-Legend = H.Legend = function (chart, options) {
+Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
-Legend.prototype = {
+Highcharts.Legend.prototype = {
 
 	/**
 	 * Initialize the legend
@@ -73,10 +78,15 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Update the legend with new options. Equivalent to running chart.update
+	 * Update the legend with new options. Equivalent to running `chart.update`
 	 * with a legend configuration option.
-	 * @param {Object} options Legend options
-	 * @param {Boolean} redraw Whether to redraw the chart, defaults to true.
+	 * @param  {LegendOptions} options
+	 *         Legend options.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart.
+	 *
+	 * @sample highcharts/legend/legend-update/
+	 *         Legend update
 	 */
 	update: function (options, redraw) {
 		var chart = this.chart;
