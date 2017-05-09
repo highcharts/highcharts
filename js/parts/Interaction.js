@@ -472,12 +472,26 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
-	 * Toggle the selection status of a point
-	 * @param {Boolean} selected Whether to select or unselect the point.
-	 * @param {Boolean} accumulate Whether to add to the previous selection. By default,
-	 *		 this happens if the control key (Cmd on Mac) was pressed during clicking.
+	 * Toggle the selection status of a point.
+	 * @param  {Boolean} [selected]
+	 *         When `true`, the point is selected. When `false`, the point is
+	 *         unselected. When `null` or `undefined`, the selection state is
+	 *         toggled.
+	 * @param  {Boolean} [accumulate=false]
+	 *         When `true`, the selection is added to other selected points.
+	 *         When `false`, other selected points are deselected. Internally in
+	 *         Highcharts, when {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
+	 *         is `true`, selected points are accumulated on Control, Shift or
+	 *         Cmd clicking the point.
+	 *
+	 * @see    Highcharts.Chart#getSelectedPoints
+	 *
+	 * @sample highcharts/members/point-select/
+	 *         Select a point from a button
+	 * @sample highcharts/chart/events-selection-points/
+	 *         Select a range of points through a drag selection
 	 */
 	select: function (selected, accumulate) {
 		var point = this,
@@ -488,6 +502,14 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+			
+			/**
+			 * Whether the point is selected or not. 
+			 * @see Highcharts.Point#select
+			 * @memberof Highcharts.Point
+			 * @name selected
+			 * @type {Boolean}
+			 */
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
 

@@ -416,14 +416,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 });
 
 // extend the Point prototype for dynamic methods
-extend(Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
-	 * Point.update with new options (typically x/y data) and optionally redraw the series.
+	 * Point.update with new options (typically x/y data) and optionally redraw
+	 * the series.
 	 *
-	 * @param {Object} options Point options as defined in the series.data array
-	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 * @param  {Object} options
+	 *         The point options. Point options are handled as described under
+	 *         the `series<type>.data` item for each series type. For example
+	 *         for a line series, if options is a single number, the point will
+	 *         be given that number as the main y value. If it is an array, it
+	 *         will be interpreted as x and y values respectively. If it is an
+	 *         object, advanced options are applied. 
+	 * @param  {Boolean} [redraw=true]
+	 *          Whether to redraw the chart after the point is updated. If doing
+	 *          more operations on the chart, it is best practice to set
+	 *          `redraw` to false and call `chart.redraw()` after.
+	 * @param  {AnimationOptions} [animation=true]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
+	 *
+	 * @sample highcharts/members/point-update-column/
+	 *         Update column value
+	 * @sample highcharts/members/point-update-pie/
+	 *         Update pie slice
 	 */
 	update: function (options, redraw, animation, runEvent) {
 		var point = this,
@@ -493,9 +509,19 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
 	/**
 	 * Remove a point and optionally redraw the series and if necessary the axes
-	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 * @param  {Boolean} redraw
+	 *         Whether to redraw the chart or wait for an explicit call. When
+	 *         doing more operations on the chart, for example running
+	 *         `point.remove()` in a loop, it is best practice to set `redraw`
+	 *         to false and call `chart.redraw()` after.         
+	 * @param  {AnimationOptions} [animation=false]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
+	 *
+	 * @sample highcharts/plotoptions/series-point-events-remove/
+	 *         Remove point and confirm
+	 * @sample highcharts/members/point-remove/
+	 *         Remove pie slice
 	 */
 	remove: function (redraw, animation) {
 		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
