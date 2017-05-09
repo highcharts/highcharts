@@ -1,15 +1,3 @@
-/*
-* TODO:
-* - padding between a label, connector and point (should be handled by a specific symbol)
-* - handle points types which have multiple values
-*/
-
-/**
-* issues:
-* - connectors after zooming/pointUpdating/chart-inversion are no longer placed correctly
-*   looks like a bug in original data labels aligning logic)
-**/
-
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -17,7 +5,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/Tooltip.js';
 
-var merge = H.merge,
+var	merge = H.merge,
 	addEvent = H.addEvent,
 	extend = H.extend,
 	each = H.each,
@@ -37,7 +25,44 @@ var merge = H.merge,
 	chartPrototype = H.Chart.prototype;
 
 
-function MockPoint(chart, options) {
+H.defaultOptions.annotations = [];
+
+/**
+ * A mock point configuration.
+ *
+ * @typedef {Object} MockPointOptions
+ * @property {Number} x - x value for the point in xAxis scale or pixels
+ * @property {Number} y - y value for the point in yAxis scale or pixels
+ * @property {String|Number} [xAxis] - xAxis index or id
+ * @property {String|Number} [yAxis] - yAxis index or id
+ */
+
+
+/**
+ * A factory function for creating a mock point object
+ * 
+ * @function #mockPoint
+ * @memberOf Highcharts
+ *
+ * @param {MockPointOptions} mockPointOptions
+ * @return {MockPoint} a mock point
+ */
+var mockPoint = H.mockPoint = function (chart, mockPointOptions) {
+	return new MockPoint(chart, mockPointOptions);
+};
+
+/**
+ * A trimmed point object which imitates {@link Highchart.Point} class.
+ * It is created when there is a need of pointing to some chart's position
+ * using axis values or pixel values
+ * 
+ * @class MockPoint
+ * @memberOf Highcharts
+ *
+ * @param {Highcharts.Chart} - the chart object
+ * @param {MockPointOptions} - the options object
+ */
+var MockPoint = H.MockPoint = function (chart, options) {
 	this.mock = true;
 	this.series = {
 		visible: true,
@@ -45,16 +70,38 @@ function MockPoint(chart, options) {
 		getPlotBox: seriesPrototype.getPlotBox
 	};
 
+	//this.plotX
+	//this.plotY
+
+	/* Those might not exist if a specific axis was not found/defined */
+	//this.x? 
+	//this.y?
+
 	this.init(chart, options);
 }
 
 MockPoint.prototype = {
+	/**
+	 * Initialisation of the mock point
+	 *
+	 * @function #init
+	 * @memberOf Highcharts.MockPoint#
+	 *
+	 * @param {Highcharts.Chart} chart - a chart object to which the mock point
+	 * is attached
+	 * @param {MockPointOptions} options - a config for the mock point
+	 */
 	init: function (chart, options) {
 		var xAxisId = options.xAxis,
-			xAxis = defined(xAxisId) ? chart.xAxis[xAxisId] || chart.get(xAxisId) : null,
+			xAxis = defined(xAxisId)
+				? chart.xAxis[xAxisId] || chart.get(xAxisId)
+				: null,
 			
 			yAxisId = options.yAxis,
-			yAxis = defined(yAxisId) ? chart.yAxis[yAxisId] || chart.get(yAxisId) : null;
+			yAxis = defined(yAxisId)
+				? chart.yAxis[yAxisId] || chart.get(yAxisId)
+				: null;
+
 
 		if (xAxis) {
 			this.x = options.x;
@@ -71,6 +118,14 @@ MockPoint.prototype = {
 		}
 	},
 
+	/**
+	 * Update of the point's coordinates (plotX/plotY)
+	 * 
+	 * @function #translate
+	 * @memberOf Highcharts.MockPoint#
+	 *
+	 * @return {undefined}
+	 */
 	translate: function () {
 		var series = this.series,
 			xAxis = series.xAxis,
@@ -94,6 +149,17 @@ MockPoint.prototype = {
 		this.isInside = isInside;
 	},
 
+	/**
+	 * Returns a box to which an item can be aligned to
+	 *
+	 * @function #alignToBox
+	 * @memberOf Highcharts.MockPoint#
+	 *
+	 * @param {Boolean} [forceTranslate=false] - whether to update the point's
+	 * coordinates
+	 * @return {Array.<Number>} A quadruple of numbers which denotes x, y,
+	 * width and height of the box
+	**/
 	alignToBox: function (forceTranslate) {
 		if (forceTranslate) {
 			this.translate();
@@ -113,6 +179,18 @@ MockPoint.prototype = {
 		return [x, y, 0, 0];
 	},
 
+	/**
+	 * Returns a label config object - 
+	 * the same as Highcharts.Point.prototype.getLabelConfig
+	 *
+	 * @function #getLabelConfig
+	 * @memberOf Highcharts.MockPoint#
+	 *
+	 * @return {Object} labelConfig - label config object
+	 * @return {Number|undefined} labelConfig.x - x value translated to x axis scale
+	 * @return {Number|undefined} labelConfig.y - y value translated to y axis scale
+	 * @return {MockPoint} labelConfig.point - the instance of the point
+	 */
 	getLabelConfig: function () {
 		return {
 			x: this.x,
@@ -122,7 +200,18 @@ MockPoint.prototype = {
 	}
 };
 
-function Annotation(chart, userOptions) {
+/**
+ * An annotation class which serves as a container for items like labels or shapes.
+ * Created items are positioned on the chart either by linking them to
+ * existing points or created mock points 
+ * 
+ * @class Annotation
+ * @memberOf Highcharts
+ *
+ * @param {Highcharts.Chart} - the chart object
+ * @param {AnnotationOptions} - the options object
+ */
+var Annotation = H.Annotation = function (chart, userOptions) {
 	this.chart = chart;
 
 	this.labels = [];
@@ -134,7 +223,21 @@ function Annotation(chart, userOptions) {
 }
 
 Annotation.prototype = {
+	/**
+	 * Shapes which do not have background - the object is used for proper
+	 * setting of the contrast color
+	 *
+	 * @memberOf Highcharts.Annotation#
+	 * @type {Array.<String>}
+	 */
 	shapesWithoutBackground: ['connector'],
+
+	/**
+	 * A map object which allows to map options attributes to element attributes
+	 *
+	 * @memberOf Highcharts.Annotation#
+	 * @type {Object}
+	 */
 	attrsMap: {
 		backgroundColor: 'fill',
 		borderColor: 'stroke',
@@ -148,6 +251,9 @@ Annotation.prototype = {
 	},
 	/**
 	 * Default options for an annotation
+	 *
+	 * @memberOf Highcharts.Annotation#
+	 * @type {Object}
 	**/
 	defaultOptions: {
 		visible: true,
@@ -168,7 +274,6 @@ Annotation.prototype = {
 			},
 			overflow: 'none',
 			padding: 5,
-			rotation: 0,
 			shadow: false,
 			shape: 'callout',
 			style: {
@@ -198,9 +303,12 @@ Annotation.prototype = {
 	/**
 	 * Annotation initialisation
 	 *
-	 * @param {Object} chart
+	 * @function #init
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Highcharts.chart} chart
 	 * @param {Object} [userOptions]
-	 * @returns {undefined}
+	 * @return {undefined}
 	**/
 
 	init: function (chart, userOptions) {
@@ -212,7 +320,10 @@ Annotation.prototype = {
 	 * Main method for drawing an annotation, it is called everytime on chart redraw
 	 * and once on chart's load
 	 *
-	 * @returns {undefined}
+	 * @function #redraw
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @return {undefined}
 	**/
 	redraw: function () {
 		if (!this.group) {
@@ -226,8 +337,11 @@ Annotation.prototype = {
 	},
 
 	/**
+	 * @function #redrawItems
+	 * @memberOf Highcharts.Annotation#
+	 *
 	 * @param {Array<Object>} items
-	 * @returns {undefined}
+	 * @return {undefined}
 	**/
 	redrawItems: function (items) {
 		var i = items.length;
@@ -240,10 +354,10 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Creating svg groups for an annotation and labels
-	 * it is called from redraw method
+	 * @function #render
+	 * @memberOf Highcharts.Annotation#
 	 *
-	 * @returns {undefined}
+	 * @return {undefined}
 	**/
 	render: function () {
 		this.group = this.chart.renderer.g('annotation')
@@ -259,7 +373,12 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * @param {boolean} [visibility]
+	 * @function #setVisible
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Boolean} [visibility] - whether to show or hide an annotation.
+	 * If the param is omitted, the annotation's visibility is toggled
+	 * @return {undefined}
 	 **/
 	setVisible(visibility) {
 		var options = this.options,
@@ -276,7 +395,10 @@ Annotation.prototype = {
 	/**
 	 * Collecting labels and hide them if they overlap
 	 *
-	 * @returns {undefined}
+	 * @function #collectAndHideLabels
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @return {undefined}
 	**/
 	collectAndHideLabels: function () {
 		var labels = [];
@@ -292,12 +414,19 @@ Annotation.prototype = {
 		}
 	},
 
+	/**
+	 * @function #hideOverlappingLabels
+	 * @memberOf Highcharts.Annotation#
+	 */
 	hideOverlappingLabels: chartPrototype.hideOverlappingLabels,
 
 	/**
 	 * Destroying an annotation
 	 *
-	 * @returns {undefined}
+	 * @function #destroy
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @return {undefined}
 	**/
 	destroy: function () {
 		var chart = this.chart;
@@ -314,11 +443,20 @@ Annotation.prototype = {
 	},
 
 
-	/* ******************************************************************************
+	/* ***********************************************************************
 	 * ITEM SECTION
-	 * contains methods for handling a single item in an annotation
-	******************************************************************************* */
+	 * Contains methods for handling a single item in an annotation
+	 *********************************************************************** */
 
+	/**
+	 * Initialisation of a single shape
+	 *
+	 * @function #initShape
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} shapeOptions - a confg object for a single shape
+	 * @return {undefined}
+	**/
 	initShape: function (shapeOptions) {
 		var renderer = this.chart.renderer,
 			options = merge(this.options.shapeOptions, shapeOptions),
@@ -337,10 +475,13 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Label initialisation
+	 * Initialisation of a single label
+	 *
+	 * @function #initShape
+	 * @memberOf Highcharts.Annotation#
 	 *
 	 * @param {Object} labelOptions
-	 * @returns {undefined}
+	 * @return {undefined}
 	**/
 	initLabel: function (labelOptions) {
 		var options = merge(this.options.labelOptions, labelOptions),
@@ -353,7 +494,7 @@ Annotation.prototype = {
 				options.shape,
 				null,
 				null,
-				options.useHTML, // if true, events need to be attached to HTML and SVG elements
+				options.useHTML,
 				null,
 				'annotation-label'
 			);
@@ -369,7 +510,7 @@ Annotation.prototype = {
 		label.options = options;
 		label.itemType = 'label';
 
-		// labelrank required for hideOverlappingLabels()
+		// Labelrank required for hideOverlappingLabels()
 		label.labelrank = options.labelrank;
 		label.annotation = this;
 
@@ -378,6 +519,15 @@ Annotation.prototype = {
 		this.labels.push(label);
 	},
 
+	/**
+	 * Redrawing a single item
+	 *
+	 * @function #redrawItem
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} item
+	 * @return {undefined}
+	 */
 	redrawItem: function (item) {
 		var point = this.linkPoint(item),
 			itemOptions = item.options,
@@ -394,7 +544,9 @@ Annotation.prototype = {
 			if (item.itemType === 'label') {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
-					text: text ? format(text, point.getLabelConfig()) : itemOptions.formatter.call(point)
+					text: text
+						? format(text, point.getLabelConfig())
+						: itemOptions.formatter.call(point)
 				});
 			}
 
@@ -402,6 +554,15 @@ Annotation.prototype = {
 		}
 	},
 
+	/**
+	 * Destroing a single item
+	 *
+	 * @function #destroyItem
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} item
+	 * @return {undefined}
+	 */
 	destroyItem: function (item) {
 		//erase from shapes or labels array
 		erase(this[item.itemType + 's'], item);
@@ -411,10 +572,13 @@ Annotation.prototype = {
 	/**
 	 * Linking item with the point
 	 *
+	 * @function #linkPoint
+	 * @memberOf Highcharts.Annotation#
+	 *
 	 * @param {Object} item
-	 * @returns {Object | null} a point which a item is linked or a null if the point
-	 * has not been found
-	**/
+	 * @return {Highcharts.Point|Highcharts.MockPoint|null} a point 
+	 * which a item is linked or a null if the point has not been found
+	 */
 	linkPoint: function (item) {
 		var pointOptions = item.options.point,
 			point = item.point;
@@ -425,7 +589,7 @@ Annotation.prototype = {
 			if (isObject(pointOptions)) {
 			// if a point config is an object then it should require all information
 			// needed to create a mock point
-				point = this.mockPoint(pointOptions);
+				point = mockPoint(this.chart, pointOptions);
 				item.point = point;
 
 			
@@ -441,6 +605,16 @@ Annotation.prototype = {
 		return point;
 	},
 
+	/**
+	 * Aligning the item and setting its anchor
+	 *
+	 * @function #alignItem
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} item
+	 * @param {Boolean} isNew - if the label is re-positioned (is not new) it is animated
+	 * @return {undefined}
+	 */
 	alignItem: function (item, isNew) {
 		var anchor = this.itemAnchor(item, item.point),
 			attrs = this.itemPosition(item, anchor);
@@ -464,12 +638,36 @@ Annotation.prototype = {
 		}
 	},
 
+	/**
+	 * An object which denotes an anchor position
+	 *
+	 * @typedef {Object} AnchorPosition
+	 * @property {Number} AnchorPosition.x
+	 * @property {Number} AnchorPosition.y
+	 * @property {Number} AnchorPosition.height
+	 * @property {Number} AnchorPosition.width
+	 */
+
+	/**
+	 * Returns object which denotes anchor position - relative and absolute
+	 *
+	 * @function #itemAnchor
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} item
+	 * @param {Highcharts.Point|Highcharts.MockPoint} point
+	 * @return {Object} anchor
+	 * @return {AnchorPosition} anchor.relativePosition - relative to the plot area position
+	 * @return {AnchorPosition} anchor.absolutePosition - absolute position
+	 */
 	itemAnchor: function (item, point) {
 		var plotBox = point.series.getPlotBox(),
 
-			box = point.mock ? point.alignToBox(true) : tooltipPrototype.getAnchor.call({
-				chart: this.chart
-			}, point),
+			box = point.mock
+				? point.alignToBox(true)
+				: tooltipPrototype.getAnchor.call({
+					chart: this.chart
+				}, point),
 
 			anchor = {
 				x: box[0],
@@ -487,6 +685,18 @@ Annotation.prototype = {
 		};
 	},
 
+	/**
+	 * Returns the item position
+	 *
+	 * @function #itemPosition
+	 * @memberOf Highcharts.Annotation#
+	 * 
+	 * @param {Object} item
+	 * @param {AnchorPosition} anchor
+	 * @return {Object|null} position
+	 * @return {Number} position.x
+	 * @return {Number} position.y
+	 */
 	itemPosition: function (item, anchor) {
 		var chart = this.chart,
 			point = item.point,
@@ -494,8 +704,9 @@ Annotation.prototype = {
 			anchorAbsolutePosition = anchor.absolutePosition,
 			anchorRelativePosition = anchor.relativePosition,
 			itemPosition,
-			isInsidePlot,
 			alignTo,
+			itemPosRelativeX,
+			itemPosRelativeY,
 
 			showItem = point.series.visible && point.isInside !== false;
 
@@ -544,16 +755,15 @@ Annotation.prototype = {
 
 
 			if (itemOptions.crop) {
-				isInsidePlot = function (x, y) {
-					return x >= chart.plotLeft &&
-						x <= chart.plotLeft + chart.plotWidth &&
-						y >= chart.plotTop &&
-						y <= chart.plotTop + chart.plotHeight;
-				};
+				itemPosRelativeX = itemPosition.x - chart.plotLeft;
+				itemPosRelativeY = itemPosition.y - chart.plotTop;
 
 				showItem = 
-					isInsidePlot(itemPosition.x, itemPosition.y) &&
-					isInsidePlot(itemPosition.x + item.width, itemPosition.y + item.height);
+					chart.isInsidePlot(itemPosRelativeX, itemPosRelativeY) &&
+					chart.isInsidePlot(
+						itemPosRelativeX + item.width,
+						itemPosRelativeY + item.height
+					);
 			}
 		}
 
@@ -562,12 +772,15 @@ Annotation.prototype = {
 
 	/**
 	 * Returns new aligned position based alignment options and box to align to.
-	 * It is almost a one-to-one copy from SVGElement.prototype.align except it does not use and mutate
-	 * an element
+	 * It is almost a one-to-one copy from SVGElement.prototype.align
+	 * except it does not use and mutate an element
+	 *
+	 * @function #alignedPosition
+	 * @memberOf Highcharts.Annotation#
 	 *
 	 * @param {Object} alignOptions
 	 * @param {Object} box
-	 * @returns {Object} aligned position
+	 * @return {Object} aligned position
 	**/
 	alignedPosition: function (alignOptions, box) {
 		var align = alignOptions.align,
@@ -604,13 +817,16 @@ Annotation.prototype = {
 
 	/**
 	 * Returns new alignment options for a label if the label is outside the plot area.
-	 * It is almost a one-to-one copy from Series.prototype.justifyDataLabels except it does not mutate
-	 * the label and it works with absolute instead of relative position
+	 * It is almost a one-to-one copy from Series.prototype.justifyDataLabel 
+	 * except it does not mutate the label and it works with absolute instead of relative position
+	 *
+	 * @function #justifiedOptions
+	 * @memberOf Highcharts.Annotation#
 	 *
 	 * @param {Object} label
 	 * @param {Object} alignOptions
 	 * @param {Object} alignAttr
-	 * @returns {Object} justified options
+	 * @return {Object} justified options
 	**/
 	justifiedOptions: function (label, alignOptions, alignAttr) {
 		var chart = this.chart,
@@ -675,21 +891,15 @@ Annotation.prototype = {
 		return options;
 	},
 
-	/**
-	 * Creating a mock point for an item
-	 *
-	 * @param {Object} pointOptions
-	 * @returns {MockPoint} a mock point
-	**/
-	mockPoint: function (pointOptions) {
-		return new MockPoint(this.chart, pointOptions);
-	},
 
 	/**
 	 * Utility function for mapping item's options to element's attribute
 	 *
+	 * @function #attrsFromOptions
+	 * @memberOf Highcharts.Annotation#
+	 *
 	 * @param {Object} options
-	 * @returns {Object} mapped options
+	 * @return {Object} mapped options
 	**/
 	attrsFromOptions: function (options) {
 		var map = this.attrsMap,
@@ -708,11 +918,11 @@ Annotation.prototype = {
 	}
 };
 
-/* *******************************************************************************
+/* ***************************************************************************
 *
 * EXTENDING CHART PROTOTYPE
 *
-******************************************************************************* */
+**************************************************************************** */
 
 H.extend(chartPrototype, {
 	addAnnotation: function (userOptions, redraw) {
@@ -759,7 +969,7 @@ chartPrototype.callbacks.push(function (chart) {
 });
 
 
-/* ****************************************************************************** */
+/* ************************************************************************* */
 
 /**
  * General symbol definition for labels with connector
@@ -803,7 +1013,3 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 	}
 	return path || [];
 };
-
-H.defaultOptions.annotations = [];
-H.Annotation = Annotation;
-H.MockPoint = MockPoint;
