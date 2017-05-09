@@ -1881,9 +1881,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 * Return the size of the labels
 	 */
 	labelMetrics: function () {
+		var index = this.tickPositions && this.tickPositions[0] || 0;
 		return this.chart.renderer.fontMetrics(
 			this.options.labels.style && this.options.labels.style.fontSize, 
-			this.ticks[0] && this.ticks[0].label
+			this.ticks[index] && this.ticks[index].label
 		);
 	},
 
