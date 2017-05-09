@@ -640,6 +640,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
+		// Running Series.update to update the data only is an intuitive usage,
+		// so we want to make sure that when used like this, we run the
+		// cheaper setData function and allow animation instead of completely
+		// recreating the series instance.
+		if (Object.keys && Object.keys(newOptions).toString() === 'data') {
+			return this.setData(newOptions.data, redraw);
+		}
+
 		// If we're changing type or zIndex, create new groups (#3380, #3404)
 		if ((newType && newType !== oldType) || newOptions.zIndex !== undefined) {
 			preserve.length = 0;
