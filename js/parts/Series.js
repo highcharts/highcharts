@@ -58,7 +58,7 @@ var addEvent = H.addEvent,
  * - series.yData and series.processedYData contain clean y values, equivalent
  * to series.data and series.points.
  *
- * @constructor Series
+ * @class Highcharts.Series
  * @param {Object} chart - The chart instance.
  * @param {Object} options - The series options.
  */
@@ -181,7 +181,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	// zIndex: null
 	findNearestPointBy: 'x'
 
-}, /** @lends Series.prototype */ {
+}, /** @lends Highcharts.Series.prototype */ {
 	isCartesian: true,
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted

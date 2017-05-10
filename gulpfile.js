@@ -317,6 +317,7 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Options.js',
         './js/parts/Point.js',
         './js/parts/PlotLineOrBand.js',
+        './js/parts/Series.js',
         './js/parts/SVGRenderer.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',

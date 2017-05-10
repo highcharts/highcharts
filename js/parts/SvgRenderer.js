@@ -1923,6 +1923,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 *   general definitions to the SVG's defs tag. Definitions can be
 	 *   referenced from the CSS by its `id`. Read more in
 	 *   [gradients, shadows and patterns]{@link http://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns}.
+	 *   {@link http://www.highcharts.com/docs/chart-design-and-style/style-by-css|
+	 *   Styled mode} only.
 	 *
 	 * @param {Object} def - A serialized form of an SVG definition, including
 	 *   children
@@ -2590,6 +2592,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 *     .attr({ stroke: '#ff00ff' })
 	 *     .add();
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-path-on-chart/
+	 *         Draw a path in a chart
+	 * @sample highcharts/members/renderer-path/
+	 *         Draw a path independent from a chart
+	 *
 	 *//**
 	 * Draw a path, wraps the SVG `path` element.
 	 * 
@@ -2617,6 +2625,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @param {number} [y] The center y position.
 	 * @param {number} [r] The radius.
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-circle/ Drawing a circle
 	 *//**
 	 * Draw a circle, wraps the SVG `circle` element.
 	 * 
@@ -2646,6 +2656,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @param {number} [end=0] The ending angle of the arc in radians, where 0
 	 *    is to the right and `-Math.PI/2` is up.
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-arc/
+	 *         Drawing an arc
 	 *//**
 	 * Draw and return an arc. Overloaded function that takes arguments object.
 	 * @param {SVGAttributes} attribs Initial SVG attributes.
@@ -2690,9 +2703,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
 	 *//**
 	 * Draw and return a rectangle.
-	 * @param {SVGAttributes} [attributes] General SVG attributes for the 
-	 *    rectangle.
-	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 * @param  {SVGAttributes} [attributes]
+	 *         General SVG attributes for the rectangle.
+	 * @return {Highcharts.SVGElement}
+	 *         The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-rect-on-chart/
+	 *         Draw a rectangle in a chart
+	 * @sample highcharts/members/renderer-rect/
+	 *         Draw a rectangle independent from a chart
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 
@@ -2761,11 +2780,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
-	 * Create and return an svg group element.
+	 * Create and return an svg group element. Child {@link Highcharts.SVGElement}
+	 * objects are added to the group by using the group as the first parameter
+	 * in {@link Highcharts.SVGElement#add|add()}.
 	 * 
 	 * @param {string} [name] The group will be given a class name of
 	 * `highcharts-{name}`. This can be used for styling and scripting.
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-g/
+	 *         Show and hide grouped objects
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
@@ -2782,6 +2806,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * @param {number} [height] The image height. If omitted it defaults to the
 	 *    image file height.
 	 * @returns {Highcharts.SVGElement} The generated wrapper element.
+	 *
+	 * @sample highcharts/members/renderer-image-on-chart/
+	 *         Add an image in a chart
+	 * @sample highcharts/members/renderer-image/
+	 *         Add an image independent of a chart
 	 */
 	image: function (src, x, y, width, height) {
 		var attribs = {
@@ -3235,11 +3264,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 
 	/**
-	 * Add text to the SVG object
-	 * @param {String} str
-	 * @param {number} x Left position
-	 * @param {number} y Top position
-	 * @param {Boolean} useHTML Use HTML to render the text
+	 * Draw text. The text can contain a subset of HTML, like spans and anchors
+	 * and some basic text styling of these. For more advanced features like
+	 * border and background, use {@link Highcharts.SVGRenderer#label} instead.
+	 * To update the text after render, run `text.attr({ text: 'New text' })`.
+	 * @param  {String} str
+	 *         The text of (subset) HTML to draw.
+	 * @param  {number} x
+	 *         The x position of the text's lower left corner.
+	 * @param  {number} y
+	 *         The y position of the text's lower left corner.
+	 * @param  {Boolean} [useHTML=false]
+	 *         Use HTML to render the text.
+	 *
+	 * @return {Highcharts.SVGElement} The text object.
+	 *
+	 * @sample highcharts/members/renderer-text-on-chart/
+	 *         Annotate the chart freely
+	 * @sample highcharts/members/renderer-on-chart/
+	 *         Annotate with a border and in response to the data
+	 * @sample highcharts/members/renderer-text/
+	 *         Formatted text
 	 */
 	text: function (str, x, y, useHTML) {
 
@@ -3359,20 +3404,42 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
-	 * Add a label, a text item that can hold a colored or gradient background
-	 * as well as a border and shadow. Supported custom attributes include
-	 * `padding`. 
+	 * Draw a label, which is an extended text element with support for border
+	 * and background. Highcharts creates a `g` element with a text and a `path`
+	 * or `rect` inside, to make it behave somewhat like a HTML div. Border and
+	 * background are set through `stroke`, `stroke-width` and `fill` attributes
+	 * using the {@link Highcharts.SVGElement#attr|attr} method. To update the
+	 * text after render, run `label.attr({ text: 'New text' })`.
 	 * 
-	 * @param {string} str
-	 * @param {number} x
-	 * @param {number} y
-	 * @param {String} shape
-	 * @param {number} anchorX In case the shape has a pointer, like a flag, this is the
-	 *	coordinates it should be pinned to
-	 * @param {number} anchorY
-	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
-	 *	like renderer.text, or to the upper border of the rectangle.
-	 * @param {String} className Class name for the group
+	 * @param  {string} str
+	 *         The initial text string or (subset) HTML to render.
+	 * @param  {number} x
+	 *         The x position of the label's left side.
+	 * @param  {number} y
+	 *         The y position of the label's top side or baseline, depending on
+	 *         the `baseline` parameter.
+	 * @param  {String} shape
+	 *         The shape of the label's border/background, if any. Defaults to
+	 *         `rect`. Other possible values are `callout` or other shapes
+	 *         defined in {@link Highcharts.SVGRenderer#symbols}.
+	 * @param  {number} anchorX
+	 *         In case the `shape` has a pointer, like a flag, this is the
+	 *         coordinates it should be pinned to.
+	 * @param  {number} anchorY
+	 *         In case the `shape` has a pointer, like a flag, this is the
+	 *         coordinates it should be pinned to.
+	 * @param  {Boolean} baseline
+	 *         Whether to position the label relative to the text baseline,
+	 *	       like {@link Highcharts.SVGRenderer#text|renderer.text}, or to the
+	 *	       upper border of the rectangle.
+	 * @param  {String} className
+	 *         Class name for the group.
+	 *
+	 * @return {Highcharts.SVGElement}
+	 *         The generated label.
+	 *
+	 * @sample highcharts/members/renderer-label-on-chart/
+	 *         A label on the chart
 	 */
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
 
