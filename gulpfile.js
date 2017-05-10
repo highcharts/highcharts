@@ -303,6 +303,7 @@ gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
 
     const templateDir = './../highcharts-docstrap';
+    const destination = './internal-docs/';
 
     gulp.src([
         'README.md',
@@ -327,7 +328,7 @@ gulp.task('jsdoc', function (cb) {
                 theme: 'highsoft'
             },
             opts: {
-                destination: './internal-docs/',
+                destination: destination,
                 private: false,
                 template: templateDir + '/template'
             },
@@ -345,13 +346,16 @@ gulp.task('jsdoc', function (cb) {
             cb(err); // eslint-disable-line
             if (!err) {
                 console.log(
-                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                    colors.green(`Wrote JSDoc to ${destination}index.html`)
                 );
             }
         }));
 
     if (argv.watch) {
         gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
+        console.log('Watching file changes in JS files');
+    } else {
+        console.log('Tip: use the --watch argument to watch JS file changes');
     }
 });
 
