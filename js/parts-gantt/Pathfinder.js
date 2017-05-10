@@ -670,13 +670,16 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 			pathfinder.group = renderer.g()
 				.addClass('highcharts-pathfinder')
 				.attr({ zIndex: -1 })
-				.translate(chart.plotLeft, chart.plotTop)
 				.add(chart.seriesGroup);
 		}
 
+		// Shift to compensate for plot area. Do this every time to avoid issues
+		// when updating chart in a way that changes plot positions.
+		pathfinder.group.translate(chart.plotLeft, chart.plotTop);
+
 		path = pathResult.path;
 
-		// Add path
+		// Add path to pathfinder group and keep track of it
 		this.addPath(path, attribs);
 
 		// Override common marker options
