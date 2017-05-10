@@ -224,6 +224,11 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 	// Push it to the lookup array
 	this.drilldownLevels.push(level);
 
+	// Reset names to prevent extending (#6704)
+	if (xAxis && xAxis.names) {
+		xAxis.names.length = 0;
+	}
+
 	newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
 	newSeries.options._levelNumber = levelNumber + 1;
 	if (xAxis) {
