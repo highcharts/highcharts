@@ -28,7 +28,7 @@ var Point,
  * @class
  */
 
-Highcharts.Point = function () {};
+Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
 
 	/**
