@@ -531,13 +531,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				}
 			}, this);
 
-			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
-			// of attributes.
-			if (this.doTransform) {
-				this.updateTransform();
-				this.doTransform = false;
-			}
-
+			this.afterSetters();
 		}
 
 		// In accordance with animate, run a complete callback
@@ -546,6 +540,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		}
 
 		return ret;
+	},
+
+	/**
+	 * This method is executed in the end of {attr}, after setting all attributes in the hash.
+	 * In can be used to efficiently consolidate multiple attributes in one SVG property -- e.g.,
+	 * translate, rotate and scale are merged in one "transform" attribute in the SVG node.
+	 */
+	afterSetters: function () {
+		// Update transform. Do this outside the loop to prevent redundant updating for batch setting
+		// of attributes.
+		if (this.doTransform) {
+			this.updateTransform();
+			this.doTransform = false;
+		}
 	},
 
 	/*= if (build.classic) { =*/

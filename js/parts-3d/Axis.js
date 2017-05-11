@@ -34,109 +34,6 @@ wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
 	}
 });
 
-wrap(Axis.prototype, 'render', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d() || this.coll === 'colorAxis') {
-		return;
-	}
-
-	var chart = this.chart,
-		renderer = chart.renderer,
-		options3d = chart.options.chart.options3d,
-		frame = options3d.frame,
-		fbottom = frame.bottom,
-		fback = frame.back,
-		fside = frame.side,
-		depth = options3d.depth,
-		height = this.height,
-		width = this.width,
-		left = this.left,
-		top = this.top;
-
-	if (this.isZAxis) {
-		return;
-	}
-	if (this.horiz) {
-		var bottomShape = {
-			x: left,
-			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
-			z: 0,
-			width: width,
-			height: fbottom.size,
-			depth: depth,
-			insidePlotArea: false
-		};
-		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({
-				'class': 'highcharts-3d-frame highcharts-3d-frame-bottom',
-				'zIndex': (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
-			}).add();
-
-			/*= if (build.classic) { =*/
-			this.bottomFrame.attr({
-				fill: fbottom.color || 'none',
-				stroke: fbottom.color || 'none'
-			});
-			/*= } =*/
-		} else {
-			this.bottomFrame.animate(bottomShape);
-		}
-	} else {
-		// BACK
-		var backShape = {
-			x: left + (chart.yAxis[0].opposite ? 0 : -fside.size),
-			y: top + (chart.xAxis[0].opposite ? -fbottom.size : 0),
-			z: depth,
-			width: width + fside.size,
-			height: height + fbottom.size,
-			depth: fback.size,
-			insidePlotArea: false
-		};
-		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({
-				'class': 'highcharts-3d-frame highcharts-3d-frame-back',
-				zIndex: -3
-			}).add();
-
-			/*= if (build.classic) { =*/
-			this.backFrame.attr({
-				fill: fback.color || 'none',
-				stroke: fback.color || 'none'
-			});
-			/*= } =*/
-		} else {
-			this.backFrame.animate(backShape);
-		}
-		var sideShape = {
-			x: left + (chart.yAxis[0].opposite ? width : -fside.size),
-			y: top + (chart.xAxis[0].opposite ? -fbottom.size : 0),
-			z: 0,
-			width: fside.size,
-			height: height + fbottom.size,
-			depth: depth,
-			insidePlotArea: false
-		};
-		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({
-				'class': 'highcharts-3d-frame highcharts-3d-frame-side',
-				zIndex: -2
-			}).add();
-
-			/*= if (build.classic) { =*/
-			this.sideFrame.attr({
-				fill: fside.color || 'none',
-				stroke: fside.color || 'none'
-			});
-			/*= } =*/
-
-		} else {
-			this.sideFrame.animate(sideShape);
-		}
-	}
-});
-
 wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -152,21 +49,60 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d,
 		d = this.isZAxis ? chart.plotWidth : options3d.depth,
-		opposite = this.opposite;
-	if (this.horiz) {
-		opposite = !opposite;
-	}
+		frame = chart.frame3d;
+
 	var pArr = [
-		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
+		this.swapZ({ x: path[1], y: path[2], z: 0 }),
 		this.swapZ({ x: path[1], y: path[2], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
+		this.swapZ({ x: path[4], y: path[5], z: 0 }),
+		this.swapZ({ x: path[4], y: path[5], z: d })
 	];
 
-	pArr = perspective(pArr, this.chart, false);
-	path = this.chart.renderer.toLinePath(pArr, false);
+	var pathSegments = [];
+	if (!this.horiz) {  // Y-Axis
+		if (frame.front.visible && frame.front.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.back.visible && frame.back.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.left.visible && frame.left.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.right.visible && frame.right.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	} else if (this.isZAxis) {  // Z-Axis
+		if (frame.left.visible && frame.left.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.right.visible && frame.right.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.top.visible && frame.top.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.bottom.visible && frame.bottom.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	} else {  // X-Axis
+		if (frame.front.visible && frame.front.frontFacing) {
+			pathSegments.push(pArr[0], pArr[2]);
+		}
+		if (frame.back.visible && frame.back.frontFacing) {
+			pathSegments.push(pArr[1], pArr[3]);
+		}
+		if (frame.top.visible && frame.top.frontFacing) {
+			pathSegments.push(pArr[0], pArr[1]);
+		}
+		if (frame.bottom.visible && frame.bottom.frontFacing) {
+			pathSegments.push(pArr[2], pArr[3]);
+		}
+	}
 
-	return path;
+	pathSegments = perspective(pathSegments, this.chart, false);
+
+	return this.chart.renderer.toLineSegments(pathSegments);
 });
 
 // Do not draw axislines in 3D
@@ -183,89 +119,118 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 	var args = arguments,
 		from = args[1],
 		to = args[2],
-		toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from);
+		path = [],
+		fromPath = this.getPlotLinePath(from),
+		toPath = this.getPlotLinePath(to);
 
-	if (path && toPath) {
-		path.push(
-			'L',
-			toPath[10],	// These two do not exist in the regular getPlotLine
-			toPath[11],  // ---- # 3005
-			'L',
-			toPath[7],
-			toPath[8],
-			'L',
-			toPath[4],
-			toPath[5],
-			'L',
-			toPath[1],
-			toPath[2]
-		);
-	} else { // outside the axis area
-		path = null;
+	if (fromPath && toPath) {
+		for (var i = 0; i < fromPath.length; i += 6) {
+			path.push(
+				'M', fromPath[i + 1], fromPath[i + 2],
+				'L', fromPath[i + 4], fromPath[i + 5],
+				'L',   toPath[i + 4],   toPath[i + 5],
+				'L',   toPath[i + 1],   toPath[i + 2],
+				'Z');
+		}
 	}
 
 	return path;
 });
+
+
+function fix3dPosition(axis, pos) {
+	if (axis.chart.is3d() && axis.coll !== 'colorAxis') {
+		var chart = axis.chart,
+			frame = chart.get3dFrame(),
+			plotLeft = chart.plotLeft,
+			plotRight = chart.plotWidth + plotLeft,
+			plotTop = chart.plotTop,
+			plotBottom = chart.plotHeight + plotTop,
+			dx = 0,
+			dy = 0;
+
+		pos = axis.swapZ({ x: pos.x, y: pos.y, z: 0 });
+
+
+		if (axis.isZAxis) {  // Z Axis
+			if (axis.opposite) {
+				if (frame.axes.z.top === null) {
+					return {};
+				}
+				dy = pos.y - plotTop;
+				pos.x = frame.axes.z.top.x;
+				pos.y = frame.axes.z.top.y;
+			} else {
+				if (frame.axes.z.bottom === null) {
+					return {};
+				}
+				dy = pos.y - plotBottom;
+				pos.x = frame.axes.z.bottom.x;
+				pos.y = frame.axes.z.bottom.y;
+			}
+		} else if (axis.horiz) {  // X Axis
+			if (axis.opposite) {
+				if (frame.axes.x.top === null) {
+					return {};
+				}
+				dy = pos.y - plotTop;
+				pos.y = frame.axes.x.top.y;
+				pos.z = frame.axes.x.top.z;
+			} else {
+				if (frame.axes.x.bottom === null) {
+					return {};
+				}
+				dy = pos.y - plotBottom;
+				pos.y = frame.axes.x.bottom.y;
+				pos.z = frame.axes.x.bottom.z;
+			}
+		} else {  //Y Axis
+			if (axis.opposite) {
+				if (frame.axes.y.right === null) {
+					return {};
+				}
+				dx = pos.x - plotRight;
+				pos.x = frame.axes.y.right.x;
+				pos.z = frame.axes.y.right.z;
+			} else {
+				if (frame.axes.y.left === null) {
+					return {};
+				}
+				dx = pos.x - plotLeft;
+				pos.x = frame.axes.y.left.x;
+				pos.z = frame.axes.y.left.z;
+			}
+		}
+		pos = perspective([pos], axis.chart)[0];
+		pos.x += dx;
+		pos.y += dy;
+	}
+	return pos;
+}
 
 /***
 	EXTENSION TO THE TICKS
 ***/
 
 wrap(Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));	
-
-	// Do not do this if the chart is not 3D
-	if (!this.axis.chart.is3d() || this.axis.coll === 'colorAxis') {
-		return path;
-	}
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
 	var pArr = [
-		this.axis.swapZ({ x: path[1], y: path[2], z: 0 }),
-		this.axis.swapZ({ x: path[4], y: path[5], z: 0 })
+		fix3dPosition(this.axis, { x: path[1], y: path[2], z: 0 }),
+		fix3dPosition(this.axis, { x: path[4], y: path[5], z: 0 })
 	];
 
-	pArr = perspective(pArr, this.axis.chart, false);
-	path = [
-		'M', pArr[0].x, pArr[0].y,
-		'L', pArr[1].x, pArr[1].y
-	];
-	return path;
+	return this.axis.chart.renderer.toLineSegments(pArr);
 });
 
 wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
-
-	// Do not do this if the chart is not 3D
-	if (this.axis.chart.is3d() && this.axis.coll !== 'colorAxis') {
-		pos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
-	}
-	return pos;
+	return fix3dPosition(this.axis, pos);
 });
 
 H.wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
-	var is3d = this.chart.is3d() && this.coll !== 'colorAxis',
-		pos,
-		axisTitleMargin;
-
-	// Pull out the axis title margin, that is not subject to the perspective
-	if (is3d) {
-		axisTitleMargin = this.axisTitleMargin;
-		this.axisTitleMargin = 0;
-	}
-
-	pos = proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (is3d) {
-		pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
-
-		// Re-apply the axis title margin outside the perspective
-		pos[this.horiz ? 'y' : 'x'] += (this.horiz ? 1 : -1) * // horizontal axis reverses the margin ...
-			(this.opposite ? -1 : 1) * // ... so does opposite axes
-			axisTitleMargin;
-		this.axisTitleMargin = axisTitleMargin;
-	}
-	return pos;
+	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+	return fix3dPosition(this, pos);
 });
 
 wrap(Axis.prototype, 'drawCrosshair', function (proceed) {
@@ -297,9 +262,8 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 Axis.prototype.swapZ = function (p, insidePlotArea) {
 	if (this.isZAxis) {
 		var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
-		var chart = this.chart;
 		return {
-			x: plotLeft + (chart.yAxis[0].opposite ? p.z : chart.xAxis[0].width - p.z),
+			x: plotLeft + p.z,
 			y: p.y,
 			z: p.x - plotLeft
 		};

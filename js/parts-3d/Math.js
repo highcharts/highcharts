@@ -120,3 +120,26 @@ H.pointCameraDistance = function (coordinates, chart) {
 		distance = Math.sqrt(Math.pow(cameraPosition.x - coordinates.plotX, 2) + Math.pow(cameraPosition.y - coordinates.plotY, 2) + Math.pow(cameraPosition.z - coordinates.plotZ, 2));
 	return distance;
 };
+
+/**
+ * Calculate area of a 2D polygon using Shoelace algorithm
+ * http://en.wikipedia.org/wiki/Shoelace_formula
+ */
+H.shapeArea = function (vertexes) {
+	var area = 0,
+		i,
+		j;
+	for (i = 0; i < vertexes.length; i++) {
+		j = (i + 1) % vertexes.length;
+		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
+	}
+	return area / 2;
+};
+
+/**
+ * Calculate area of a 3D polygon after perspective projection
+ */
+H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
+	return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
+};
+
