@@ -1,4 +1,13 @@
 Highcharts.chart('container', {
+
+    title: {
+        text: 'Highcharts Annotations'
+    },
+
+    subtitle: {
+        text: 'Styled and formatted like tooltips'
+    },
+
     series: [{
         keys: ['y', 'id'],
         data: [[29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'], [176.0, '5']]
@@ -9,11 +18,11 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-    	labels: [{
+        labels: [{
             point: '0'
         }, {
             point: '1'
-    	}, {
+        }, {
             point: '2'
         }, {
             point: '3'
@@ -24,7 +33,7 @@ Highcharts.chart('container', {
         }],
         labelOptions: {
             format: '' +
-                '<span style="font-size: 10px">{point.x}</span><br/>' /* header */ + 
+                '<span style="font-size: 10px">{point.x}</span><br/>' /* header */ +
                 '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>' /* body */,
 
             backgroundColor: Highcharts.color('#f7f7f7').setOpacity(0.85).get(),

@@ -1,39 +1,50 @@
 var labelsNumber = 40;
 
-var chart = Highcharts.chart('container', {
-  series: [{
-    type: 'scatter',
-    keys: ['x', 'y', 'id'],
-    data: (function () {
-      var data = [], i;
+Highcharts.chart('container', {
+    
+    title: {
+        text: 'Highcharts Annotations'
+    },
 
-      for (i = 0; i <= labelsNumber; i++) {
-        data.push([i / labelsNumber * 2, i, 'id' + i]);
-      }
+    subtitle: {
+        text: 'Labels should not overlap'
+    },
 
-      return data;
-    })()
-  }],
+    series: [{
+        type: 'scatter',
+        keys: ['x', 'y', 'id'],
+        data: (function () {
+            var data = [],
+                i;
 
-  xAxis: {
-    min: 0,
-    max: 2
-  },
+            for (i = 0; i <= labelsNumber; i++) {
+                data.push([i / labelsNumber * 2, i, 'id' + i]);
+            }
 
-  annotations: [{
-    labels: (function () {
-      var labels = [], i;
+            return data;
+        }())
+    }],
 
-      for (i = 0; i <= labelsNumber; i++) {
-        labels.push({
-          point: 'id' + i
-        });
-      }
+    xAxis: {
+        min: 0,
+        max: 2
+    },
 
-      return labels;
-    })(),
-    labelOptions: {
-    //  allowOverlap: false
-    }
-  }]
+    annotations: [{
+        labels: (function () {
+            var labels = [],
+                i;
+
+            for (i = 0; i <= labelsNumber; i++) {
+                labels.push({
+                    point: 'id' + i
+                });
+            }
+
+            return labels;
+        }()),
+        labelOptions: {
+            //  allowOverlap: false
+        }
+    }]
 });
