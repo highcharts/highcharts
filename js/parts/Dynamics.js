@@ -529,9 +529,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	/**
-	 * Add a point dynamically after chart load time
+	 * Add a point to the series after render time. The point can be added at
+	 * the end, or by giving it an X value, to the start or in the middle of the
+	 * series.
+	 * 
 	 * @param {Object} options Point options as given in series.data
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
 	 * @param {Boolean} shift If shift is true, a point is shifted off the start

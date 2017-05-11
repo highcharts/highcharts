@@ -353,8 +353,13 @@ gulp.task('jsdoc', function (cb) {
         }));
 
     if (argv.watch) {
-        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
-        console.log('Watching file changes in JS files');
+        gulp.watch([
+            './js/!(adapters|builds)/*.js',
+            templateDir + '/template/tmpl/*.tmpl',
+            templateDir + '/template/static/styles/*.css',
+            templateDir + '/template/static/scripts/*.js'
+        ], ['jsdoc']);
+        console.log('Watching file changes in JS files and templates');
     } else {
         console.log('Tip: use the --watch argument to watch JS file changes');
     }
