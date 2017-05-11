@@ -6,8 +6,7 @@
 'use strict';
 import Highcharts from './Globals.js';
 import './Utilities.js';
-var Legend,
-	H = Highcharts,
+var H = Highcharts,
 
 	addEvent = H.addEvent,
 	css = H.css,
@@ -1058,7 +1057,7 @@ H.LegendSymbolMixin = {
 // to nested group elements, as the legend item texts are within 4 group
 // elements.
 if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	wrap(Highcharts.Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			// If chart destroyed in sync, this is undefined (#2030)
 			runPositionItem = function () {
