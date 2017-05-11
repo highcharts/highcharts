@@ -38,18 +38,7 @@ H.defaultOptions.annotations = [];
  */
 
 
-/**
- * A factory function for creating a mock point object
- * 
- * @function #mockPoint
- * @memberOf Highcharts
- *
- * @param {MockPointOptions} mockPointOptions
- * @return {MockPoint} a mock point
- */
-var mockPoint = H.mockPoint = function (chart, mockPointOptions) {
-	return new MockPoint(chart, mockPointOptions);
-};
+
 
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class.
@@ -78,7 +67,20 @@ var MockPoint = H.MockPoint = function (chart, options) {
 	//this.y?
 
 	this.init(chart, options);
-}
+};
+
+/**
+ * A factory function for creating a mock point object
+ * 
+ * @function #mockPoint
+ * @memberOf Highcharts
+ *
+ * @param {MockPointOptions} mockPointOptions
+ * @return {MockPoint} a mock point
+ */
+var mockPoint = H.mockPoint = function (chart, mockPointOptions) {
+	return new MockPoint(chart, mockPointOptions);
+};
 
 MockPoint.prototype = {
 	/**
@@ -93,14 +95,14 @@ MockPoint.prototype = {
 	 */
 	init: function (chart, options) {
 		var xAxisId = options.xAxis,
-			xAxis = defined(xAxisId)
-				? chart.xAxis[xAxisId] || chart.get(xAxisId)
-				: null,
+			xAxis = defined(xAxisId) ?
+				chart.xAxis[xAxisId] || chart.get(xAxisId) :
+				null,
 			
 			yAxisId = options.yAxis,
-			yAxis = defined(yAxisId)
-				? chart.yAxis[yAxisId] || chart.get(yAxisId)
-				: null;
+			yAxis = defined(yAxisId) ?
+				chart.yAxis[yAxisId] || chart.get(yAxisId) :
+				null;
 
 
 		if (xAxis) {
@@ -220,7 +222,7 @@ var Annotation = H.Annotation = function (chart, userOptions) {
 	this.options = merge(this.defaultOptions, userOptions);
 
 	this.init(chart, userOptions);
-}
+};
 
 Annotation.prototype = {
 	/**
@@ -306,12 +308,10 @@ Annotation.prototype = {
 	 * @function #init
 	 * @memberOf Highcharts.Annotation#
 	 *
-	 * @param {Highcharts.chart} chart
-	 * @param {Object} [userOptions]
 	 * @return {undefined}
 	**/
 
-	init: function (chart, userOptions) {
+	init: function () {
 		each(this.options.labels || [], this.initLabel, this);
 		each(this.options.shapes || [], this.initShape, this);
 	},
@@ -544,9 +544,9 @@ Annotation.prototype = {
 			if (item.itemType === 'label') {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
-					text: text
-						? format(text, point.getLabelConfig())
-						: itemOptions.formatter.call(point)
+					text: text ?
+						format(text, point.getLabelConfig()) :
+						itemOptions.formatter.call(point)
 				});
 			}
 
@@ -663,9 +663,9 @@ Annotation.prototype = {
 	itemAnchor: function (item, point) {
 		var plotBox = point.series.getPlotBox(),
 
-			box = point.mock
-				? point.alignToBox(true)
-				: tooltipPrototype.getAnchor.call({
+			box = point.mock ?
+				point.alignToBox(true) :
+				tooltipPrototype.getAnchor.call({
 					chart: this.chart
 				}, point),
 
