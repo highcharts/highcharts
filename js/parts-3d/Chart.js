@@ -272,6 +272,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 	this.frameShapes.bottom.attr({
 		class: 'highcharts-3d-frame highcharts-3d-frame-bottom',
 		zIndex: frame.bottom.frontFacing ? -1000 : 1000,
+		// docs: See https://github.com/highcharts/highcharts/pull/6603#issuecomment-300243647
 		faces: [
 			{ //bottom
 				fill: H.color(frame.bottom.color).brighten(0.1).get(),
@@ -599,7 +600,7 @@ Chart.prototype.get3dFrame = function () {
 	// Decide the bast place to put axis title/labels based on the visible faces.
 	// Ideally, The labels can only be on the edge between a visible face and an invisble one.
 	// Also, the Y label should be one the left-most edge (right-most if opposite),
-	if (options3d.axisLabelPosition === 'auto') {
+	if (options3d.axisLabelPosition === 'auto') { // docs, see https://github.com/highcharts/highcharts/pull/6603#issuecomment-300243647
 		var isValidEdge = function (face1, face2) {
 			return (face1.visible !== face2.visible) ||
 				(face1.visible && face2.visible && (face1.frontFacing !== face2.frontFacing));
