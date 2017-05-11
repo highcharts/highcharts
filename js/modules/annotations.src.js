@@ -961,7 +961,7 @@ chartPrototype.callbacks.push(function (chart) {
 	chart.annotations = [];
 
 	each(chart.options.annotations, function (annotationOptions) {
-		chart.addAnnotation(annotationOptions);
+		chart.addAnnotation(annotationOptions, false);
 	});
 
 	chart.redrawAnnotations();
