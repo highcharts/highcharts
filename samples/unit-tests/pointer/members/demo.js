@@ -305,3 +305,68 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         'No unexpected events.'
     );
 });
+
+QUnit.test('Pointer.getHoverData', function (assert) {
+    // Create the chart
+    var options = {
+            chart: merge(config.chart, {
+                type: 'column'
+            }),
+            plotOptions: merge(config.plotOptions, {
+                series: {
+                    stacking: 'normal'
+                }
+            }),
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [1, 1, 1, 1, 1]
+            }, {
+                data: [5, 1, 1, 1, 1]
+            }, {
+                data: [1, 1, 1, 1, 1]
+            }]
+        },
+        data,
+        find = Highcharts.find,
+        chart = Highcharts.chart('container', options),
+        series = chart.series[2],
+        point = series.points[0],
+        xAxis = series.xAxis,
+        yAxis = series.yAxis;
+
+    data = chart.pointer.getHoverData(
+        point,
+        series,
+        chart.series,
+        true,
+        true,
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        }
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'isDirectTouch && shared: hoverPoint should equal existing hoverPoint'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'isDirectTouch && shared: hoverSeries should equal existing hoverSeries'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        chart.series.length,
+        'isDirectTouch && shared: one point hovered per series'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.x !== data.hoverPoint.x;
+        }),
+        false,
+        'isDirectTouch && shared: All hoverPoints should have the same index as the hoverPoint'
+    );
+});

@@ -539,6 +539,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			series = point.series,
 			chart = series.chart,
 			pointer = chart.pointer;
+		e = e ?
+			pointer.normalize(e) :
+			// In cases where onMouseOver is called directly without an event
+			pointer.getChartCoordinatesFromPoint(point, chart.inverted);
 		point.firePointEvent('mouseOver');
 		pointer.runPointActions(e, point);
 	},
