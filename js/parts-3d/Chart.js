@@ -247,7 +247,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 		var chart = this,
 			renderer = chart.renderer,
 			options3d = this.options.chart.options3d,
-			frame = chart.frame3d,
+			frame = chart.get3dFrame(),
 			xm = this.plotLeft,
 			xp = this.plotLeft + this.plotWidth,
 			ym = this.plotTop,
@@ -261,6 +261,8 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			zmm = zm - (frame.front.visible ? frame.front.size : 0),
 			zpp = zp + (frame.back.visible ? frame.back.size : 0),
 			verb = chart.hasRendered ? 'animate' : 'attr';
+
+		this.frame3d = frame;
 
 		if (!this.frameShapes) {
 			this.frameShapes = {
