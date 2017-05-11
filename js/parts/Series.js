@@ -221,7 +221,23 @@ H.Series = H.seriesType('line', null, { // base series options
 			chartSeries = chart.series,
 			lastSeries;
 
+		/**
+		 * Read only. The chart that the series belongs to.
+		 *
+		 * @name chart
+		 * @memberOf Highcharts.Series
+		 * @type {Highcharts.Chart}
+		 */
 		series.chart = chart;
+
+		/**
+		 * Read only. The series' current options. To update, use {@link
+		 * Highcharts.Series#update}.
+		 *
+		 * @name options
+		 * @memberOf Highcharts.Series
+		 * @type SeriesOptions
+		 */
 		series.options = options = series.setOptions(options);
 		series.linkedSeries = [];
 
@@ -230,6 +246,14 @@ H.Series = H.seriesType('line', null, { // base series options
 
 		// set some variables
 		extend(series, {
+			/**
+			 * The series name as given in the options. Defaults to
+			 * "Series {n}".
+			 *
+			 * @name name
+			 * @memberOf Highcharts.Series
+			 * @type {String}
+			 */
 			name: options.name,
 			state: '',
 			visible: options.visible !== false, // true by default
@@ -730,6 +754,15 @@ H.Series = H.seriesType('line', null, { // base series options
 				H.error(14, true);
 			}
 
+			/**
+			 * Read only. An array containing the series' data point objects. To
+			 * modify the data, use {@link Highcharts.Series#setData} or {@link
+			 * Highcharts.Point#update}.
+			 *
+			 * @name data
+			 * @memberOf Highcharts.Series
+			 * @type {Array.<Highcharts.Point>}
+			 */
 			series.data = [];
 			series.options.data = series.userOptions.data = data;
 

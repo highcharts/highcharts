@@ -760,7 +760,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, /** @lends Series.prototype */ {
+extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	/**
 	 * Series mouse over handler
 	 */
@@ -958,7 +958,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	},
 
 	/**
-	 * Hide the graph
+	 * Hide the series if visible. If the {@link
+	 * https://api.highcharts.com/highcharts/chart.ignoreHiddenSeries|
+	 * chart.ignoreHiddenSeries} option is true, the chart is redrawn without
+	 * this series.
+	 *
+	 * @sample highcharts/members/series-hide/
+	 *         Toggle visibility from a button
 	 */
 	hide: function () {
 		this.setVisible(false);

@@ -535,12 +535,33 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	 * the end, or by giving it an X value, to the start or in the middle of the
 	 * series.
 	 * 
-	 * @param {Object} options Point options as given in series.data
-	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
-	 * @param {Boolean} shift If shift is true, a point is shifted off the start
-	 *    of the series as one is appended to the end.
-	 * @param {Boolean|AnimationOptions} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 * @param  {Number|Array|Object} options
+	 *         The point options. If options is a single number, a point with
+	 *         that y value is appended to the series.If it is an array, it will
+	 *         be interpreted as x and y values respectively. If it is an
+	 *         object, advanced options as outlined under `series.data` are
+	 *         applied.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the point is added. When adding
+	 *         more than one point, it is highly recommended that the redraw
+	 *         option be set to false, and instead {@link Highcharts.Chart#redraw}
+	 *         is explicitly called after the adding of points is finished.
+	 *         Otherwise, the chart will redraw after adding each point.
+	 * @param  {Boolean} [shift=false]
+	 *         If true, a point is shifted off the start of the series as one is
+	 *         appended to the end.
+	 * @param  {AnimationOptions} [animation]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration.
+	 *
+	 * @sample highcharts/members/series-addpoint-append/
+	 *         Append point
+	 * @sample highcharts/members/series-addpoint-append-and-shift/
+	 *         Append and shift
+	 * @sample highcharts/members/series-addpoint-x-and-y/
+	 *         Both X and Y values given
+	 * @sample highcharts/members/series-addpoint-pie/
+	 *         Append pie slice
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
@@ -614,7 +635,24 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Remove a point (rendered or not), by index
+	 * Remove a point from the series. Unlike the {@link Highcharts.Point#remove}
+	 * method, this can also be done on a point that is not instanciated because
+	 * it is outside the view or subject to Highstock data grouping.
+	 *
+	 * @param  {Number} i
+	 *         The index of the point in the {@link Highcharts.Series.data|data}
+	 *         array.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the point is added. When 
+	 *         removing more than one point, it is highly recommended that the
+	 *         `redraw` option be set to `false`, and instead {@link
+	 *         Highcharts.Chart#redraw} is explicitly called after the adding of
+	 *         points is finished.
+	 * @param  {AnimationOptions} [animation]
+	 *         Whether and optionally how the series should be animated.
+	 *
+	 * @sample highcharts/members/series-removepoint/
+	 *         Remove cropped point
 	 */
 	removePoint: function (i, redraw, animation) {
 
@@ -656,11 +694,19 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Remove a series and optionally redraw the chart
+	 * Remove a series and optionally redraw the chart.
 	 *
-	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart or wait for an explicit call to
+	 *         {@link Highcharts.Chart#redraw}.
+	 * @param  {AnimationOptions} [animation]
+	 *         Whether to apply animation, and optionally animation
+	 *         configuration
+	 * @param  {Boolean} [withEvent=true]
+	 *         Used internally, whether to fire the series `remove` event.
+	 *
+	 * @sample highcharts/members/series-remove/
+	 *         Remove first series from a button
 	 */
 	remove: function (redraw, animation, withEvent) {
 		var series = this,
