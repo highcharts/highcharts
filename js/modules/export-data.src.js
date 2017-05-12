@@ -265,17 +265,17 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     return html;
 };
 
-function getContent(chart, href, extension, content, MIME) {
+Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MIME) {
     var a,
         blobObject,
         name,
-        options = (chart.options.exporting || {}).csv || {},
+        options = (this.options.exporting || {}).csv || {},
         url = options.url || 'http://www.highcharts.com/studies/csv-export/download.php';
 
-    if (chart.options.exporting.filename) {
-        name = chart.options.exporting.filename;
-    } else if (chart.title) {
-        name = chart.title.textStr.replace(/ /g, '-').toLowerCase();
+    if (this.options.exporting.filename) {
+        name = this.options.exporting.filename;
+    } else if (this.title) {
+        name = this.title.textStr.replace(/ /g, '-').toLowerCase();
     } else {
         name = 'chart';
     }
@@ -292,7 +292,7 @@ function getContent(chart, href, extension, content, MIME) {
         a.href = href;
         a.target = '_blank';
         a.download = name + '.' + extension;
-        chart.container.append(a); // #111
+        this.container.append(a); // #111
         a.click();
         a.remove();
 
@@ -304,15 +304,14 @@ function getContent(chart, href, extension, content, MIME) {
             extension: extension
         });
     }
-}
+};
 
 /**
  * Call this on click of 'Download CSV' button
  */
 Highcharts.Chart.prototype.downloadCSV = function () {
     var csv = this.getCSV(true);
-    getContent(
-        this,
+    this.fileDownload(
         'data:text/csv,\uFEFF' + encodeURIComponent(csv),
         'csv',
         csv,
@@ -338,8 +337,7 @@ Highcharts.Chart.prototype.downloadXLS = function () {
         base64 = function (s) { 
             return win.btoa(unescape(encodeURIComponent(s))); // #50
         };
-    getContent(
-        this,
+    this.fileDownload(
         uri + base64(template),
         'xls',
         template,
