@@ -214,6 +214,14 @@ wrap(Chart.prototype, 'redraw', function (proceed) {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
+		this.frame3d = this.get3dFrame();
+	}
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
+wrap(Chart.prototype, 'render', function (proceed) {
+	if (this.is3d()) {
+		this.frame3d = this.get3dFrame();
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
@@ -239,7 +247,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 		var chart = this,
 			renderer = chart.renderer,
 			options3d = this.options.chart.options3d,
-			frame = chart.get3dFrame(),
+			frame = chart.frame3d,
 			xm = this.plotLeft,
 			xp = this.plotLeft + this.plotWidth,
 			ym = this.plotTop,
@@ -252,8 +260,6 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			ypp = yp + (frame.bottom.visible ? frame.bottom.size : 0),
 			zmm = zm - (frame.front.visible ? frame.front.size : 0),
 			zpp = zp + (frame.back.visible ? frame.back.size : 0);
-
-		this.frame3d = frame;
 
 		if (!this.frameShapes) {
 			this.frameShapes = {
