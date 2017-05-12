@@ -1133,6 +1133,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         Test resizing from buttons
 	 * @sample highcharts/members/chart-setsize-jquery-resizable/
 	 *         Add a jQuery UI resizable
+	 * @sample stock/members/chart-setsize/
+	 *         Highstock with UI resizable
 	 */
 	setSize: function (width, height, animation) {
 		var chart = this,
@@ -1710,7 +1712,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * before adding a second chart into the same container, as well as on
 	 * window unload to prevent leaks.
 	 *
-	 * @sample highcharts/members/chart-destroy/ Destroy the chart from a button
+	 * @sample highcharts/members/chart-destroy/
+	 *         Destroy the chart from a button
+	 * @sample stock/members/chart-destroy/
+	 *         Destroy with Highstock
 	 */
 	destroy: function () {
 		var chart = this,

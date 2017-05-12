@@ -425,6 +425,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         PDF type and custom filename
 	 * @sample highcharts/members/chart-exportchart-custom-background/
 	 *         Different chart background in export
+	 * @sample stock/members/chart-exportchart/
+	 *         Export with Highstock
 	 */
 	exportChart: function (exportingOptions, chartOptions) {
 

@@ -1644,24 +1644,26 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 * will not allow a range lower than the `minRange` option, which by default
 	 * is the range of five points.
 	 * 
-	 * @param {Number} [newMin]
-	 *        The new minimum value.
-	 * @param {Number} [newMax]
-	 *        The new maximum value.
-	 * @param {Boolean} [redraw=true]
-	 *        Whether to redraw the chart or wait for an explicit call to 
-	 *        {@link Highcharts.Chart#redraw}
-	 * @param {AnimationOptions} [animation=true]
-	 *        Enable or modify animations.
-	 * @param {Object} [eventArguments]
-	 *        Arguments to be accessed in event handler.
+	 * @param  {Number} [newMin]
+	 *         The new minimum value.
+	 * @param  {Number} [newMax]
+	 *         The new maximum value.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart or wait for an explicit call to 
+	 *         {@link Highcharts.Chart#redraw}
+	 * @param  {AnimationOptions} [animation=true]
+	 *         Enable or modify animations.
+	 * @param  {Object} [eventArguments]
+	 *         Arguments to be accessed in event handler.
 	 *
 	 * @sample highcharts/members/axis-setextremes/
-	 *        Set extremes from a button
+	 *         Set extremes from a button
 	 * @sample highcharts/members/axis-setextremes-datetime/
-	 *        Set extremes on a datetime axis
+	 *         Set extremes on a datetime axis
 	 * @sample highcharts/members/axis-setextremes-off-ticks/
-	 *        Set extremes off ticks
+	 *         Set extremes off ticks
+	 * @sample stock/members/axis-setextremes/
+	 *         Set extremes in Highstock
 	 */
 	setExtremes: function (newMin, newMax, redraw, animation, eventArguments) {
 		var axis = this,

@@ -713,7 +713,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *         Set new data from a button
 	 * @sample highcharts/members/series-setdata-pie/
 	 *         Set data in a pie
-	 *         
+	 * @sample stock/members/series-setdata/
+	 *         Set new data in Highstock
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,
@@ -1074,6 +1075,22 @@ H.Series = H.seriesType('line', null, { // base series options
 					series,
 					[processedXData[i]].concat(splat(processedYData[i]))
 				);
+
+				/**
+				 * Highstock only. If a point object is created by data
+				 * grouping, it doesn't reflect actual points in the raw data.
+				 * In this case, the `dataGroup` property holds information
+				 * that points back to the raw data.
+				 *
+				 * - `dataGroup.start` is the index of the first raw data point
+				 * in the group.
+				 * - `dataGroup.length` is the amount of points in the group.
+				 *
+				 * @name dataGroup
+				 * @memberOf Point
+				 * @type {Object}
+				 * 
+				 */
 				point.dataGroup = series.groupMap[i];
 			}
 			if (point) { // #6279

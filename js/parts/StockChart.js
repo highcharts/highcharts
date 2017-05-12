@@ -41,8 +41,39 @@ var arrayMax = H.arrayMax,
 	seriesInit = seriesProto.init, 
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Point.prototype.tooltipFormatter;
+
 /**
- * A wrapper for Chart with all the default values for a Stock chart
+ * Factory function for creating new stock charts. Creates a new {@link Chart|
+ * Chart} object with different default options than the basic Chart.
+ * 
+ * @function #stockChart
+ * @memberOf Highcharts
+ *
+ * @param  {String|HTMLDOMElement} renderTo
+ *         The DOM element to render to, or its id.
+ * @param  {Options} options
+ *         The chart options structure as described in the {@link
+ *         https://api.highcharts.com/highstock|options reference}.
+ * @param  {Function} callback
+ *         A function to execute when the chart object is finished loading and
+ *         rendering. In most cases the chart is built in one thread, but in
+ *         Internet Explorer version 8 or less the chart is sometimes initiated
+ *         before the document is ready, and in these cases the chart object
+ *         will not be finished synchronously. As a consequence, code that
+ *         relies on the newly built Chart object should always run in the
+ *         callback. Defining a {@link https://api.highcharts.com/highstock/chart.events.load|
+ *         chart.event.load} handler is equivalent.
+ *
+ * @return {Chart}
+ *         The chart object.
+ *
+ * @example
+ * var chart = Highcharts.stockChart('container', {
+ *     series: [{
+ *         data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+ *         pointInterval: 24 * 60 * 60 * 1000
+ *     }]
+ * });
  */
 H.StockChart = H.stockChart = function (a, b, c) {
 	var hasRenderToArg = isString(a) || a.nodeName,
@@ -559,7 +590,17 @@ seriesProto.init = function () {
 };
 
 /**
- * The setCompare method can be called also from the outside after render time
+ * Highstock only. Set the {@link
+ * http://api.highcharts.com/highstock/plotOptions.series.compare|
+ * compare} mode of the series after render time. In most cases it is more
+ * useful running {@link Axis#setCompare} on the X axis to update all its
+ * series.
+ *
+ * @function setCompare
+ * @memberOf Series.prototype
+ *
+ * @param  {String} compare
+ *         Can be one of `null`, `"percent"` or `"value"`.
  */
 seriesProto.setCompare = function (compare) {
 
@@ -660,7 +701,23 @@ wrap(seriesProto, 'getExtremes', function (proceed) {
 });
 
 /**
- * Add a utility method, setCompare, to the Y axis
+ * Highstock only. Set the compare mode on all series belonging to an Y axis
+ * after render time.
+ *
+ * @param  {String} compare
+ *         The compare mode. Can be one of `null`, `"value"` or `"percent"`.
+ * @param  {Boolean} [redraw=true]
+ *         Whether to redraw the chart or to wait for a later call to {@link
+ *         Chart#redraw},
+ *
+ * @function setCompare
+ * @memberOf Axis.prototype
+ *
+ * @see    {@link https://api.highcharts.com/highstock/series.plotOptions.compare|
+ *         series.plotOptions.compare}
+ *
+ * @sample stock/members/axis-setcompare/
+ *         Set compoare
  */
 Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {

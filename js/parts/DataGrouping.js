@@ -619,7 +619,17 @@ Axis.prototype.getGroupPixelWidth = function () {
 };
 
 /**
- * Force data grouping on all the axis' series.
+ * Highstock only. Force data grouping on all the axis' series.
+ *
+ * @param  {SeriesDatagroupingOptions} [dataGrouping]
+ *         A `dataGrouping` configuration. Use `false` to disable data grouping
+ *         dynamically.
+ * @param  {Boolean} [redraw=true]
+ *         Whether to redraw the chart or wait for a later call to {@link
+ *         Chart#redraw}.
+ *
+ * @function setDataGrouping
+ * @memberOf Axis.prototype
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 	var i;

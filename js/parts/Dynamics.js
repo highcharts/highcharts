@@ -57,6 +57,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *
 	 * @sample highcharts/members/chart-addseries/
 	 *         Add a series from a button
+	 * @sample stock/members/chart-addseries/
+	 *         Add a series in Highstock
 	 */
 	addSeries: function (options, redraw, animation) {
 		var series,
@@ -129,6 +131,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 *         Show and hide loading from a button
 	 * @sample highcharts/members/chart-showloading/
 	 *         Apply different text labels
+	 * @sample stock/members/chart-show-hide-loading/
+	 *         Toggle loading in Highstock
 	 */
 	showLoading: function (str) {
 		var chart = this,
@@ -197,6 +201,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * @see    Highcharts.Chart#showLoading
 	 * @sample highcharts/members/chart-hideloading/
 	 *         Show and hide loading from a button
+	 * @sample stock/members/chart-show-hide-loading/
+	 *         Toggle loading in Highstock
 	 */
 	hideLoading: function () {
 		var options = this.options,
@@ -562,6 +568,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	 *         Both X and Y values given
 	 * @sample highcharts/members/series-addpoint-pie/
 	 *         Append pie slice
+	 * @sample stock/members/series-addpoint/
+	 *         Append 100 points in Highstock
+	 * @sample stock/members/series-addpoint-shift/
+	 *         Append and shift in Highstock
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
