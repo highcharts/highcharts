@@ -147,31 +147,51 @@ SVGRenderer.prototype.face3d = function (args) {
 	ret.insidePlotArea = false;
 	ret.enabled = true;
 
-	ret.insidePlotAreaSetter = function (insidePlotArea) {
-		this.insidePlotArea = insidePlotArea;
-		this._refreshFace3d = true;
-	};
-	ret.enabledSetter = function (enabled) {
-		this.enabled = enabled;
-		this._refreshFace3d = true;
-	};
-	ret.vertexesSetter = function (vertexes) {
-		this.vertexes = vertexes;
-		this._refreshFace3d = true;
-	};
-	wrap(ret, 'afterSetters', function (proceed) {
-		var chart = charts[renderer.chartIndex],
-			element = this.element,
-			vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
-			path = renderer.toLinePath(vertexes2d, true),
-			area = H.shapeArea(vertexes2d),
-			visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+	wrap(ret, 'attr', function (proceed, hash) {
+		if (typeof hash === 'object' &&
+				(defined(hash.enabled) || defined(hash.vertexes) || defined(hash.insidePlotArea))) {
+			this.enabled = pick(hash.enabled, this.enabled);
+			this.vertexes = pick(hash.vertexes, this.vertexes);
+			this.insidePlotArea = pick(hash.insidePlotArea, this.insidePlotArea);
+			delete hash.enabled;
+			delete hash.vertexes;
+			delete hash.insidePlotArea;
 
-		this.dSetter(path, 'd', element);
-		this._defaultSetter(visibility, 'visibility', element);
+			var chart = charts[renderer.chartIndex],
+				vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
+				path = renderer.toLinePath(vertexes2d, true),
+				area = H.shapeArea(vertexes2d),
+				visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
 
-		proceed.apply(this, [].slice.call(arguments, 1));
+			hash.d = path;
+			hash.visibility = visibility;
+		}
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	});
+
+	wrap(ret, 'animate', function (proceed, params) {
+		if (typeof params === 'object' &&
+				(defined(params.enabled) || defined(params.vertexes) || defined(params.insidePlotArea))) {
+			this.enabled = pick(params.enabled, this.enabled);
+			this.vertexes = pick(params.vertexes, this.vertexes);
+			this.insidePlotArea = pick(params.insidePlotArea, this.insidePlotArea);
+			delete params.enabled;
+			delete params.vertexes;
+			delete params.insidePlotArea;
+
+			var chart = charts[renderer.chartIndex],
+				vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea),
+				path = renderer.toLinePath(vertexes2d, true),
+				area = H.shapeArea(vertexes2d),
+				visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+
+			params.d = path;
+			this.attr('visibility', visibility);
+		}
+
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
 	return ret.attr(args);
 };
 
@@ -201,18 +221,38 @@ SVGRenderer.prototype.polyhedron = function (args) {
 		return destroy.call(this);
 	};
 
-	// Apply 
-	result.facesSetter = function (faces) {
-		while (result.faces.length > faces.length) {
-			result.faces.pop().destroy();
+	wrap(result, 'attr', function (proceed, hash, val, complete, continueAnimation) {
+		if (typeof hash === 'object' && defined(hash.faces)) {
+			while (result.faces.length > hash.faces.length) {
+				result.faces.pop().destroy();
+			}
+			while (result.faces.length < hash.faces.length) {
+				result.faces.push(renderer.face3d().add(result));
+			}
+			for (var i = 0; i < hash.faces.length; i++) {
+				result.faces[i].attr(hash.faces[i], null, complete, continueAnimation);
+			}
+			delete hash.faces;
 		}
-		while (result.faces.length < faces.length) {
-			result.faces.push(renderer.face3d().add(result));
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
+	wrap(result, 'animate', function (proceed, params, duration, complete) {
+		if (params && params.faces) {
+			while (result.faces.length > params.faces.length) {
+				result.faces.pop().destroy();
+			}
+			while (result.faces.length < params.faces.length) {
+				result.faces.push(renderer.face3d().add(result));
+			}
+			for (var i = 0; i < params.faces.length; i++) {
+				result.faces[i].animate(params.faces[i], duration, complete);
+			}
+			delete params.faces;
 		}
-		for (var i = 0; i < faces.length; i++) {
-			result.faces[i].attr(faces[i]);
-		}
-	};
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	});
+
 	return result.attr(args);
 };
 

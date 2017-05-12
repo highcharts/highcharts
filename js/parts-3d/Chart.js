@@ -266,7 +266,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			};
 		}
 
-		this.frameShapes.bottom.attr({
+		this.frameShapes.bottom.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-bottom',
 			zIndex: frame.bottom.frontFacing ? -1000 : 1000,
 			faces: [
@@ -302,7 +302,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.top.attr({
+		this.frameShapes.top.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-top',
 			zIndex: frame.top.frontFacing ? -1000 : 1000,
 			faces: [
@@ -338,7 +338,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.left.attr({
+		this.frameShapes.left.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-left',
 			zIndex: frame.left.frontFacing ? -1000 : 1000,
 			faces: [
@@ -374,7 +374,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.right.attr({
+		this.frameShapes.right.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-right',
 			zIndex: frame.right.frontFacing ? -1000 : 1000,
 			faces: [
@@ -410,7 +410,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.back.attr({
+		this.frameShapes.back.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-back',
 			zIndex: frame.back.frontFacing ? -1000 : 1000,
 			faces: [
@@ -446,7 +446,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.front.attr({
+		this.frameShapes.front.animate({
 			class: 'highcharts-3d-frame highcharts-3d-frame-front',
 			zIndex: frame.front.frontFacing ? -1000 : 1000,
 			faces: [
