@@ -321,6 +321,10 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Series.js',
         './js/parts/StockChart.js',
         './js/parts/SVGRenderer.js',
+        './js/parts-map/GeoJSON.js',
+        './js/parts-map/Map.js',
+        './js/parts-map/MapNavigation.js',
+        './js/parts-map/MapSeries.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/offline-exporting.src.js'

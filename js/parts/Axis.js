@@ -1664,6 +1664,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 *         Set extremes off ticks
 	 * @sample stock/members/axis-setextremes/
 	 *         Set extremes in Highstock
+	 * @sample maps/members/axis-setextremes/
+	 *         Set extremes in Highmaps
 	 */
 	setExtremes: function (newMin, newMax, redraw, animation, eventArguments) {
 		var axis = this,
@@ -1802,7 +1804,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 *
 	 * @returns {Extremes}
 	 * An object containing extremes information.
-	 * @sample members/axis-getextremes/ Report extremes by click on a button
+	 * 
+	 * @sample  members/axis-getextremes/
+	 *          Report extremes by click on a button
+	 * @sample  maps/members/axis-getextremes/
+	 *          Get extremes in Highmaps
 	 */
 	getExtremes: function () {
 		var axis = this,

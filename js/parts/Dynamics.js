@@ -424,7 +424,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 // extend the Point prototype for dynamic methods
 extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	/**
-	 * Point.update with new options (typically x/y data) and optionally redraw
+	 * Update point with new options (typically x/y data) and optionally redraw
 	 * the series.
 	 *
 	 * @param  {Object} options
@@ -446,6 +446,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 *         Update column value
 	 * @sample highcharts/members/point-update-pie/
 	 *         Update pie slice
+	 * @sample maps/members/point-update/
+	 *         Update map area value in Highmaps
 	 */
 	update: function (options, redraw, animation, runEvent) {
 		var point = this,
@@ -528,6 +530,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 *         Remove point and confirm
 	 * @sample highcharts/members/point-remove/
 	 *         Remove pie slice
+	 * @sample maps/members/point-remove/
+	 *         Remove selected points in Highmaps
 	 */
 	remove: function (redraw, animation) {
 		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
@@ -572,6 +576,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	 *         Append 100 points in Highstock
 	 * @sample stock/members/series-addpoint-shift/
 	 *         Append and shift in Highstock
+	 * @sample maps/members/series-addpoint/
+	 *         Add a point in Highmaps
 	 */
 	addPoint: function (options, redraw, shift, animation) {
 		var series = this,
@@ -761,6 +767,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 	 *
 	 * @sample highcharts/members/series-update/
 	 *         Updating series options
+	 * @sample maps/members/series-update/
+	 *         Update series options in Highmaps
 	 */
 	update: function (newOptions, redraw) {
 		var series = this,

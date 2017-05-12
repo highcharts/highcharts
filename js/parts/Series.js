@@ -715,6 +715,8 @@ H.Series = H.seriesType('line', null, { // base series options
 	 *         Set data in a pie
 	 * @sample stock/members/series-setdata/
 	 *         Set new data in Highstock
+	 * @sample maps/members/series-setdata/
+	 *         Set new data in Highmaps
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,

@@ -834,7 +834,12 @@ seriesType('map', 'scatter', {
 	/*= } =*/
 
 	/**
-	 * Zoom the chart to view a specific area point
+	 * Highmaps only. Zoom in on the point using the global animation.
+	 *
+	 * @function #zoomTo
+	 * @memberOf Point
+	 * @sample maps/members/point-zoomto/
+	 *         Zoom to points from butons
 	 */
 	zoomTo: function () {
 		var point = this,

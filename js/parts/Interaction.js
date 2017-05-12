@@ -492,6 +492,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 *         Select a point from a button
 	 * @sample highcharts/chart/events-selection-points/
 	 *         Select a range of points through a drag selection
+	 * @sample maps/series/data-id/
+	 *         Select a point in Highmaps
 	 */
 	select: function (selected, accumulate) {
 		var point = this,
