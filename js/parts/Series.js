@@ -225,17 +225,27 @@ H.Series = H.seriesType('line', null, { // base series options
 		 * Read only. The chart that the series belongs to.
 		 *
 		 * @name chart
-		 * @memberOf Highcharts.Series
-		 * @type {Highcharts.Chart}
+		 * @memberOf Series
+		 * @type {Chart}
 		 */
 		series.chart = chart;
 
 		/**
+		 * Read only. The series' type, like "line", "area", "column" etc. The
+		 * type in the series options anc can be altered using {@link
+		 * Series#update}.
+		 *
+		 * @name type
+		 * @memberOf Series
+		 * @type String
+		 */
+
+		/**
 		 * Read only. The series' current options. To update, use {@link
-		 * Highcharts.Series#update}.
+		 * Series#update}.
 		 *
 		 * @name options
-		 * @memberOf Highcharts.Series
+		 * @memberOf Series
 		 * @type SeriesOptions
 		 */
 		series.options = options = series.setOptions(options);
@@ -251,12 +261,29 @@ H.Series = H.seriesType('line', null, { // base series options
 			 * "Series {n}".
 			 *
 			 * @name name
-			 * @memberOf Highcharts.Series
+			 * @memberOf Series
 			 * @type {String}
 			 */
 			name: options.name,
 			state: '',
+			/**
+			 * Read only. The series' visibility state as set by {@link
+			 * Series#show}, {@link Series#hide}, or in the initial
+			 * configuration.
+			 *
+			 * @name visible
+			 * @memberOf Series
+			 * @type {Boolean}
+			 */
 			visible: options.visible !== false, // true by default
+			/**
+			 * Read only. The series' selected state as set by {@link
+			 * Highcharts.Series#select}.
+			 * 
+			 * @name selected
+			 * @memberOf Series
+			 * @type {Boolean}
+			 */
 			selected: options.selected === true // false by default
 		});
 
@@ -376,6 +403,22 @@ H.Series = H.seriesType('line', null, { // base series options
 					series.insert(axis.series);
 
 					// set this series.xAxis or series.yAxis reference
+					/**
+					 * Read only. The unique xAxis object associated with the
+					 * series.
+					 *
+					 * @name xAxis
+					 * @memberOf Series
+					 * @type Axis
+					 */
+					/**
+					 * Read only. The unique yAxis object associated with the
+					 * series.
+					 *
+					 * @name yAxis
+					 * @memberOf Series
+					 * @type Axis
+					 */
 					series[AXIS] = axis;
 
 					// mark dirty for redraw
@@ -640,9 +683,37 @@ H.Series = H.seriesType('line', null, { // base series options
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
 
 	/**
-	 * Replace the series data with a new set of data
-	 * @param {Object} data
-	 * @param {Object} redraw
+	 * Apply a new set of data to the series and optionally redraw it. The new
+	 * data array is passed by reference (except in case of `updatePoints`), and
+	 * may later be mutated when updating the chart data.
+	 * 
+	 * Note the difference in behaviour when setting the same amount of points,
+	 * or a different amount of points, as handled by the `updatePoints`
+	 * parameter. 
+	 * 
+	 * @param  {SeriesDataOptions} data
+	 *         Takes an array of data in the same format as described under
+	 *         `series<type>data` for the given series type.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the series is altered. If doing
+	 *         more operations on the chart, it is a good idea to set redraw to
+	 *         false and call {@link Chart#redraw} after.
+	 * @param  {AnimationOptions} [animation]
+	 *         When the updated data is the same length as the existing data,
+	 *         points will be updated by default, and animation visualizes how
+	 *         the points are changed. Set false to disable animation, or a
+	 *         configuration object to set duration or easing.
+	 * @param  {Boolean} [updatePoints=true]
+	 *         When the updated data is the same length as the existing data,
+	 *         points will be updated instead of replaced. This allows updating
+	 *         with animation and performs better. In this case, the original
+	 *         array is not passed by reference. Set false to prevent.
+	 *
+	 * @sample highcharts/members/series-setdata/
+	 *         Set new data from a button
+	 * @sample highcharts/members/series-setdata-pie/
+	 *         Set data in a pie
+	 *         
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,

@@ -888,10 +888,15 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Set the visibility of the graph
+	 * Show or hide the series.
 	 *
-	 * @param vis {Boolean} True to show the series, false to hide. If undefined,
-	 *				the visibility is toggled.
+	 * @param  {Boolean} [visible]
+	 *         True to show the series, false to hide. If undefined, the
+	 *         visibility is toggled.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the series is altered. If doing
+	 *         more operations on the chart, it is a good idea to set redraw to
+	 *         false and call {@link Chart#redraw|chart.redraw()} after.
 	 */
 	setVisible: function (vis, redraw) {
 		var series = this,
@@ -951,7 +956,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Show the graph
+	 * Show the series if hidden.
+	 *
+	 * @sample highcharts/members/series-hide/
+	 *         Toggle visibility from a button
 	 */
 	show: function () {
 		this.setVisible(true);
@@ -972,15 +980,24 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
 
 	/**
-	 * Set the selected state of the graph
+	 * Select or unselect the series. This means its {@link
+	 * Highcharts.Series.selected|selected} property is set, the checkbox in the
+	 * legend is toggled and when selected, the series is returned by the
+	 * {@link Highcharts.Chart#getSelectedSeries} function.
 	 *
-	 * @param selected {Boolean} True to select the series, false to unselect. If
-	 *				undefined, the selection state is toggled.
+	 * @param  {Boolean} [selected]
+	 *         True to select the series, false to unselect. If	undefined, the
+	 *         selection state is toggled.
+	 *
+	 * @sample highcharts/members/series-select/
+	 *         Select a series from a button
 	 */
 	select: function (selected) {
 		var series = this;
-		// if called without an argument, toggle
-		series.selected = selected = (selected === undefined) ? !series.selected : selected;
+		
+		series.selected = selected = (selected === undefined) ?
+			!series.selected :
+			selected;
 
 		if (series.checkbox) {
 			series.checkbox.checked = selected;

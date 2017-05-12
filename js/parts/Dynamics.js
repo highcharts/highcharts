@@ -529,7 +529,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
+extend(Series.prototype, /** @lends Series.prototype */ {
 	/**
 	 * Add a point to the series after render time. The point can be added at
 	 * the end, or by giving it an X value, to the start or in the middle of the
@@ -544,7 +544,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	 * @param  {Boolean} [redraw=true]
 	 *         Whether to redraw the chart after the point is added. When adding
 	 *         more than one point, it is highly recommended that the redraw
-	 *         option be set to false, and instead {@link Highcharts.Chart#redraw}
+	 *         option be set to false, and instead {@link Chart#redraw}
 	 *         is explicitly called after the adding of points is finished.
 	 *         Otherwise, the chart will redraw after adding each point.
 	 * @param  {Boolean} [shift=false]
@@ -735,7 +735,22 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	},
 
 	/**
-	 * Series.update with a new set of options
+	 * Update the series with a new set of options. For a clean and precise
+	 * handling of new options, all methods and elements from the series are
+	 * removed, and it is initiated from scratch. Therefore, this method is more
+	 * performance expensive than some other utility methods like {@link
+	 * Series#setData} or {@link Series#setVisible}.
+	 *
+	 * @param  {SeriesOptions} options
+	 *         New options that will be merged with the series' existing
+	 *         options.
+	 * @param  {Boolean} [redraw=true]
+	 *         Whether to redraw the chart after the series is altered. If doing
+	 *         more operations on the chart, it is a good idea to set redraw to
+	 *         false and call {@link Chart#redraw} after.
+	 *
+	 * @sample highcharts/members/series-update/
+	 *         Updating series options
 	 */
 	update: function (newOptions, redraw) {
 		var series = this,

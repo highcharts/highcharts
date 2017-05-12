@@ -334,8 +334,8 @@ gulp.task('jsdoc', function (cb) {
                 template: templateDir + '/template'
             },
             plugins: [
+                templateDir + '/plugins/add-namespace',
                 templateDir + '/plugins/markdown',
-                // templateDir + '/plugins/optiontag',
                 templateDir + '/plugins/sampletag'
             ],
             templates: {
