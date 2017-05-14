@@ -223,6 +223,13 @@ extend(ColorAxis.prototype, {
 		}
 	},
 
+	normalizedValue: function (value) {
+		if (this.isLog) {
+			value = this.val2lin(value);
+		}
+		return 1 - ((this.max - value) / ((this.max - this.min) || 1));
+	},
+
 	/**
 	 * Translate from a value to a color
 	 */
@@ -254,10 +261,7 @@ extend(ColorAxis.prototype, {
 
 		} else {
 
-			if (this.isLog) {
-				value = this.val2lin(value);
-			}
-			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
+			pos = this.normalizedValue(value);
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
