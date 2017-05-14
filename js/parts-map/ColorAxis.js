@@ -97,7 +97,7 @@ extend(ColorAxis.prototype, {
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
-		this.initStops(userOptions);
+		this.initStops();
 
 		// Override original axis properties
 		this.horiz = horiz;
@@ -178,8 +178,8 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
-	initStops: function (userOptions) {
-		this.stops = userOptions.stops || [
+	initStops: function () {
+		this.stops = this.options.stops || [
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
