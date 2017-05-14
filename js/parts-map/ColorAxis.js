@@ -313,7 +313,6 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options,
 			reversed = this.reversed,
 			one = reversed ? 1 : 0,
 			zero = reversed ? 0 : 1;
@@ -321,10 +320,7 @@ extend(ColorAxis.prototype, {
 		grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-			stops: options.stops || [
-				[0, options.minColor],
-				[1, options.maxColor]
-			]
+			stops: this.stops
 		};
 	},
 
