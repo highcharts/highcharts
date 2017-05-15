@@ -259,7 +259,8 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			ymm = ym - (frame.top.visible ? frame.top.size : 0),
 			ypp = yp + (frame.bottom.visible ? frame.bottom.size : 0),
 			zmm = zm - (frame.front.visible ? frame.front.size : 0),
-			zpp = zp + (frame.back.visible ? frame.back.size : 0);
+			zpp = zp + (frame.back.visible ? frame.back.size : 0),
+			verb = chart.hasRendered ? 'animate' : 'attr';
 
 		if (!this.frameShapes) {
 			this.frameShapes = {
@@ -272,7 +273,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 			};
 		}
 
-		this.frameShapes.bottom.animate({
+		this.frameShapes.bottom[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-bottom',
 			zIndex: frame.bottom.frontFacing ? -1000 : 1000,
 			faces: [
@@ -308,7 +309,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.top.animate({
+		this.frameShapes.top[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-top',
 			zIndex: frame.top.frontFacing ? -1000 : 1000,
 			faces: [
@@ -344,7 +345,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.left.animate({
+		this.frameShapes.left[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-left',
 			zIndex: frame.left.frontFacing ? -1000 : 1000,
 			faces: [
@@ -380,7 +381,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.right.animate({
+		this.frameShapes.right[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-right',
 			zIndex: frame.right.frontFacing ? -1000 : 1000,
 			faces: [
@@ -416,7 +417,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.back.animate({
+		this.frameShapes.back[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-back',
 			zIndex: frame.back.frontFacing ? -1000 : 1000,
 			faces: [
@@ -452,7 +453,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed) {
 				}
 			]
 		});
-		this.frameShapes.front.animate({
+		this.frameShapes.front[verb]({
 			class: 'highcharts-3d-frame highcharts-3d-frame-front',
 			zIndex: frame.front.frontFacing ? -1000 : 1000,
 			faces: [
