@@ -97,7 +97,7 @@ extend(ColorAxis.prototype, {
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
-		this.initStops(userOptions);
+		this.initStops();
 
 		// Override original axis properties
 		this.horiz = horiz;
@@ -146,8 +146,8 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
-	initStops: function (userOptions) {
-		this.stops = userOptions.stops || [
+	initStops: function () {
+		this.stops = this.options.stops || [
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
@@ -191,6 +191,13 @@ extend(ColorAxis.prototype, {
 		}
 	},
 
+	normalizedValue: function (value) {
+		if (this.isLog) {
+			value = this.val2lin(value);
+		}
+		return 1 - ((this.max - value) / ((this.max - this.min) || 1));
+	},
+
 	/**
 	 * Translate from a value to a color
 	 */
@@ -222,10 +229,7 @@ extend(ColorAxis.prototype, {
 
 		} else {
 
-			if (this.isLog) {
-				value = this.val2lin(value);
-			}
-			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
+			pos = this.normalizedValue(value);
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -280,7 +284,6 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options,
 			reversed = this.reversed,
 			one = reversed ? 1 : 0,
 			zero = reversed ? 0 : 1;
@@ -288,10 +291,7 @@ extend(ColorAxis.prototype, {
 		grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-			stops: options.stops || [
-				[0, options.minColor],
-				[1, options.maxColor]
-			]
+			stops: this.stops
 		};
 	},
 
