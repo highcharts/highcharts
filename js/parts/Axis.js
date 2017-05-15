@@ -2592,10 +2592,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			var titleXy = axis.getTitlePosition();
 			if (isNumber(titleXy.y)) {
 				axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
+				axisTitle.isNew = false;
 			} else {
 				axisTitle.attr('y', -9999);
+				axisTitle.isNew = true;
 			}
-			axisTitle.isNew = false;
 		}
 
 		// Stacked totals:

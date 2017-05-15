@@ -141,7 +141,7 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 function fix3dPosition(axis, pos) {
 	if (axis.chart.is3d() && axis.coll !== 'colorAxis') {
 		var chart = axis.chart,
-			frame = chart.get3dFrame(),
+			frame = chart.frame3d,
 			plotLeft = chart.plotLeft,
 			plotRight = chart.plotWidth + plotLeft,
 			plotTop = chart.plotTop,

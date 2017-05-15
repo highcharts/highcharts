@@ -53,6 +53,7 @@ H.Color.prototype = {
 	// Collection of named colors. Can be extended from the outside by adding
 	// colors to Highcharts.Color.prototype.names.
 	names: {
+		none: 'rgba(255,255,255,0)',
 		white: '#ffffff',
 		black: '#000000'
 	},
