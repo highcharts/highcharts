@@ -820,7 +820,10 @@ seriesType('map', 'scatter', {
 					pos = 1;
 				}
 				if (graphic) {
-					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
+					graphic.attr(
+						'fill',
+						hoverColor.tweenTo(normalColor, pos)
+					);
 				}
 				if (pos >= 1) {
 					clearTimeout(point.colorInterval);

@@ -109,31 +109,6 @@ H.Fx.prototype = {
 		this.elem.attr('d', ret, null, true);
 	},
 
-	fillSetter: function () {
-		if (this.pos <= 0) {
-			this.elem.attr('fill', this.start, null, true);
-		} else if (this.pos >= 1) {
-			this.elem.attr('fill', this.end, null, true);
-		} else {
-			var pos = this.pos,
-				color1 = H.color(this.start).rgba,
-				color2 = H.color(this.end).rgba;
-
-			// We can only interpolate solid RGBA colors -- fallback to end fill
-			if (color1.length === 4 && color2.length === 4) {
-				var rgba = [
-					Math.round((1 - pos) * color1[0] + pos * color2[0]),
-					Math.round((1 - pos) * color1[1] + pos * color2[1]),
-					Math.round((1 - pos) * color1[2] + pos * color2[2]),
-					(1 - pos) * color1[3] + pos * color2[3]
-				];
-				this.elem.attr('fill', 'rgba(' + rgba.join(',') + ')', null, true);
-			} else {
-				this.elem.attr('fill', this.end, null, true);
-			}
-		}
-	},
-
 	/**
 	 * Update the element with the current animation step.
 	 *
@@ -428,6 +403,19 @@ H.Fx.prototype = {
 		return [start, end];
 	}
 }; // End of Fx prototype
+
+/**
+ * Handle animation of the color attributes directly.
+ */
+H.Fx.prototype.fillSetter = 
+H.Fx.prototype.strokeSetter = function () {
+	this.elem.attr(
+		this.prop,
+		H.color(this.start).tweenTo(H.color(this.end), this.pos),
+		null,
+		true
+	);
+};
 
 
 /**

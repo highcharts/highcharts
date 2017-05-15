@@ -33,49 +33,6 @@ var noop = H.noop,
 	inArray = H.inArray,
 	ddSeriesId = 1;
 
-// Utilities
-/*
- * Return an intermediate color between two colors, according to pos where 0
- * is the from color and 1 is the to color. This method is copied from ColorAxis.js
- * and should always be kept updated, until we get AMD support.
- */
-function tweenColors(from, to, pos) {
-	// Check for has alpha, because rgba colors perform worse due to lack of
-	// support in WebKit.
-	var hasAlpha,
-		ret;
-
-	// Unsupported color, return to-color (#3920)
-	if (!to.rgba.length || !from.rgba.length) {
-		ret = to.input || 'none';
-
-	// Interpolate
-	} else {
-		from = from.rgba;
-		to = to.rgba;
-		hasAlpha = (to[3] !== 1 || from[3] !== 1);
-		ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
-			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
-			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-	}
-	return ret;
-}
-/**
- * Handle animation of the color attributes directly
- */
-each(['fill', 'stroke'], function (prop) {
-	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(
-			prop,
-			tweenColors(color(this.start), color(this.end), this.pos),
-			null,
-			true
-		);
-	};
-});
-
 // Add language
 extend(defaultOptions.lang, {
 	drillUpText: '◁ Back to {series.name}'
