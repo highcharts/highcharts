@@ -9,6 +9,7 @@ var	merge = H.merge,
 	addEvent = H.addEvent,
 	extend = H.extend,
 	each = H.each,
+	map = H.map,
 	isString = H.isString,
 	isNumber = H.isNumber,
 	defined = H.defined,
@@ -18,6 +19,7 @@ var	merge = H.merge,
 	find = H.find,
 	format = H.format,
 	pick = H.pick,
+	uniqueKey = H.uniqueKey,
 	destroyObjectProperties = H.destroyObjectProperties,
 
 	tooltipPrototype = H.Tooltip.prototype,
@@ -247,8 +249,21 @@ Annotation.prototype = {
 		height: 'height',
 		borderRadius: 'r',
 		r: 'r',
-		padding: 'padding'
+		padding: 'padding',
+		arrowWidth: 'arrowWidth',
+		arrowHeight: 'arrowHeight'
 	},
+
+	markers: [{
+		id: 'highcharts-annotation-arrow',
+		refY: 5,
+		refX: 5,
+		markerWidth: 10,
+		markerHeight: 10,
+		path: {
+			d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
+		}
+	}],
 	/**
 	 * Default options for an annotation
 	 *
@@ -290,9 +305,9 @@ Annotation.prototype = {
 		},
 
 		shapeOptions: {
-			borderColor: 'black',
+			borderColor: 'rgba(0, 0, 0, 0.75)',
 			borderWidth: 1,
-			backgroundColor: 'none',
+			backgroundColor: 'rgba(0, 0, 0, 0.75)',
 			// type: 'rect',
 			borderRadius: 0
 		},
@@ -529,28 +544,35 @@ Annotation.prototype = {
 	 * @return {undefined}
 	 */
 	redrawItem: function (item) {
-		var point = this.linkPoint(item),
+		var pointOrPoints = this.linkPoints(item),
 			itemOptions = item.options,
 			text;
 
-		if (!point) {
+		if (!pointOrPoints) {
 			this.destroyItem(item);
 
 		} else {
 			if (!item.parentGroup) {
-				item.add(this.group);
+				this.renderItem(item);
 			}
 
 			if (item.itemType === 'label') {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
 					text: text
-						? format(text, point.getLabelConfig())
-						: itemOptions.formatter.call(point)
+						? format(text, pointOrPoints.getLabelConfig())
+						: itemOptions.formatter.call(pointOrPoints)
 				});
 			}
 
-			this.alignItem(item, !item.placed);
+
+			if (item.type === 'path') {
+				this.redrawPath(item);
+			}
+
+			else {
+				this.alignItem(item, !item.placed);
+			}
 		}
 	},
 
@@ -579,30 +601,73 @@ Annotation.prototype = {
 	 * @return {Highcharts.Point|Highcharts.MockPoint|null} a point 
 	 * which a item is linked or a null if the point has not been found
 	 */
-	linkPoint: function (item) {
-		var pointOptions = item.options.point,
-			point = item.point;
+	// linkPoint: function (item) {
+	// 	var pointOptions = item.options.point,
+	// 		point = item.point;
 
-		if (!point || point.series === null) {
-		// check if the point does not exist or was destroyed/updated
+	// 	if (!point || point.series === null) {
+	// 	// check if the point does not exist or was destroyed/updated
 
-			if (isObject(pointOptions)) {
-			// if a point config is an object then it should require all information
-			// needed to create a mock point
-				point = mockPoint(this.chart, pointOptions);
-				item.point = point;
+	// 		if (isObject(pointOptions)) {
+	// 		// if a point config is an object then it should require all information
+	// 		// needed to create a mock point
+	// 			point = mockPoint(this.chart, pointOptions);
+	// 			item.point = point;
 
 			
-			} else if (isString(pointOptions)) {
-				point = this.chart.get(pointOptions) || null;
+	// 		} else if (isString(pointOptions)) {
+	// 			point = this.chart.get(pointOptions) || null;
 
-				if (point) {
-					item.point = point;
-				}
+	// 			if (point) {
+	// 				item.point = point;
+	// 			}
+	// 		}
+	// 	}
+
+	// 	return point;
+	// },
+
+	pointItem: function (pointOptions, point) {
+		if (!point || point.series === null) {
+			if (isObject(pointOptions)) {
+				point = mockPoint(this.chart, pointOptions);
+			}
+
+			else if (isString(pointOptions)) {
+				point = this.chart.get(pointOptions) || null;
 			}
 		}
 
 		return point;
+	},
+
+	linkPoints: function (item) {
+		var	annotation = this,
+			manyPointsOptions = item.options.points,
+			singlePointOptions = item.options.point,
+			pointOrPoints = null,
+			itemPoints;
+
+		if (manyPointsOptions && manyPointsOptions.length) {
+			itemPoints = item.points;
+			pointOrPoints = map(manyPointsOptions, function (pointOptions, i) {
+				return annotation.pointItem(pointOptions, itemPoints && itemPoints[i]);
+			});
+			
+			if (pointOrPoints.length !== manyPointsOptions.length) {
+				pointOrPoints = null;
+			}
+
+			item.points = pointOrPoints;
+		}
+
+		else if (singlePointOptions) {
+			pointOrPoints = this.pointItem(singlePointOptions, item.point);
+
+			item.point = pointOrPoints;
+		}
+
+		return pointOrPoints;
 	},
 
 	/**
@@ -637,6 +702,102 @@ Annotation.prototype = {
 			});
 		}
 	},
+
+	redrawPath: function (pathItem, isNew) {
+		var points = pathItem.points,
+			options = pathItem.options,
+			d = ['M'],
+			pointIndex = -1,
+			dIndex = 0,
+			len = points && points.length,
+			anchor,
+			point,
+			startMarker = options.startMarker,
+			showPath = true;
+
+		if (len) {
+			while (++pointIndex < len && showPath) {
+				point = points[pointIndex];
+
+				anchor = this.itemAnchor(pathItem, point).absolutePosition;
+				d[++dIndex] = anchor.x;
+				d[++dIndex] = anchor.y;
+
+				if (pointIndex < len - 1) {
+					d[++dIndex] = 'L';
+				}
+
+				showPath = point.series.visible && point.isInside !== false;
+			}
+		}
+
+
+		if (showPath && len) {
+			pathItem[isNew ? 'attr' : 'animate']({
+				d: d
+			});
+		}
+
+		else {
+			pathItem.attr({
+				d: 'M 0 ' + -9e9
+			});
+		}
+
+		pathItem.placed = showPath && len;
+	},
+
+	renderItem: function (item) {
+		var itemOptions = item.options,
+			marker;
+
+		item.add(this.group);
+
+		if (item.type === 'path' && itemOptions.endMarker) {
+	//		marker = this.renderMarker(itemOptions.endMarker);
+
+			item.attr({
+				'marker-end': 'url(#' + itemOptions.endMarker + ')'
+			});
+		}
+	},
+
+/*
+	renderMarker: function (markerOptions) {
+		var markerId = uniqueKey(),
+			renderer = this.chart.renderer,
+			width = markerOptions.width || 20,
+			height = markerOptions.height || 20,
+			refX = markerOptions.refX || 0,
+			refY = (markerOptions.refY || 0) + height / 2,
+
+			triangle = [
+				'M', 0, 0,
+				'L', width, height / 2,
+				'L', 0, height,
+				'Z'
+			],
+			
+			marker = renderer.createElement('marker').attr({
+				id: markerId,
+				refX: refX,
+				refY: refY,
+				markerWidth: width,
+				markerHeight: height,
+				orient: 'auto'
+			}).add(renderer.defs),
+
+			markerPath = renderer.path(triangle).attr({
+				fill: markerOptions.fill || 'rgba(0, 0, 0, 0.75)',
+				'stroke-width': pick(markerOptions['stroke-width'], 1),
+				stroke: markerOptions.stroke || 'black'
+			}).add(marker);
+
+		marker.id = markerId;
+
+		return marker;
+	},
+*/
 
 	/**
 	 * An object which denotes an anchor position
@@ -1013,3 +1174,60 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 	}
 	return path || [];
 };
+
+H.SVGRenderer.prototype.addMarker = (function () {
+	var idCounter = -1;
+
+	return function (id, options) {
+		var markerId = pick(id, 'highcharts-annotation-marker-' + (++idCounter)),
+			marker = this.createElement('marker').attr({
+				id: markerId,
+				markerWidth: pick(options.markerWidth, 20),
+				markerHeight: pick(options.markerHeight, 20),
+				refX: options.refX || 0,
+				refY: options.refY || 0,
+				orient: 'auto'
+			}).add(this.defs),
+
+			createPath,
+			defaultPathAttrs,
+			paths = options.path ? H.splat(options.path) : null,
+			renderer = this;
+
+		marker.id = markerId;
+
+		if (paths) {
+			defaultPathAttrs = {
+				stroke: options.color || 'none',
+				'stroke-width': 0,
+				fill: options.color || 'rgba(0, 0, 0, 0.75)'
+			};
+
+			createPath = function (attrs) {
+				return renderer.createElement('path')
+					.attr(extend(defaultPathAttrs, attrs))
+					.add(marker);
+			};
+
+			each(paths, function (pathOptions) {
+				createPath(pathOptions)
+			});
+		}
+
+		return marker;
+	};
+})();
+
+
+
+H.wrap(H.Chart.prototype, 'getContainer', function (p) {
+	p.call(this);
+
+	var renderer = this.renderer,
+		options = this.options,
+		markers = (options.defs && options.defs.markers) || [];
+
+	each(Annotation.prototype.markers.concat(markers), function (markerOptions) {
+		renderer.addMarker(markerOptions.id, markerOptions);
+	});
+});
