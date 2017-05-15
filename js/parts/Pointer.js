@@ -87,8 +87,25 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Add crossbrowser support for chartX and chartY
-	 * @param {Object} e The event object in standard browsers
+	 * @typedef  {Object} PointerEvent
+	 *           A native browser mouse or touch event, extended with position
+	 *           information relative to the {@link Chart.container}.
+	 * @property {Number} chartX
+	 *           The X coordinate of the pointer interaction relative to the
+	 *           chart.
+	 * @property {Number} chartY
+	 *           The Y coordinate of the pointer interaction relative to the 
+	 *           chart.
+	 * 
+	 */
+	/**
+	 * Add crossbrowser support for chartX and chartY.
+	 * 
+	 * @param  {Object} e
+	 *         The event object in standard browsers.
+	 *
+	 * @return {PointerEvent}
+	 *         A browser event with extended properties `chartX` and `chartY`
 	 */
 	normalize: function (e, chartPosition) {
 		var chartX,

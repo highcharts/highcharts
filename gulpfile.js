@@ -303,7 +303,8 @@ gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
 
     const templateDir = './../highcharts-docstrap';
-    const destination = './internal-docs/';
+    const destination = './api-docs/class-reference/';
+
 
     gulp.src([
         'README.md',
@@ -317,6 +318,7 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Legend.js',
         './js/parts/Options.js',
         './js/parts/Point.js',
+        './js/parts/Pointer.js',
         './js/parts/PlotLineOrBand.js',
         './js/parts/Series.js',
         './js/parts/StockChart.js',
