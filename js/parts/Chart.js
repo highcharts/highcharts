@@ -802,7 +802,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * @param {Boolean} revert - Revert to the saved original styles.
 	 */
 	temporaryDisplay: function (revert) {
-		var node = this.renderTo;
+		var node = this.renderTo,
+			tempStyle;
 		if (!revert) {
 			while (node && node.style) {
 				if (getStyle(node, 'display', false) === 'none') {
@@ -811,11 +812,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 						height: node.style.height,
 						overflow: node.style.overflow
 					};
-					H.css(node, {
+					tempStyle = {
 						display: 'block',
-						height: 0,
 						overflow: 'hidden'
-					});
+					};
+					if (node !== this.renderTo) {
+						tempStyle.height = 0;
+					}
+					
+					H.css(node, tempStyle);
 					if (node.style.setProperty) { // #2631
 						node.style.setProperty('display', 'block', 'important');
 					}
