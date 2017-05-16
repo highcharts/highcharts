@@ -383,7 +383,7 @@ Navigator.prototype = {
 					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
-					fill: hasMask ? navigatorOptions.maskFill : 'none'
+					fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
 				})
 				.css(index === 1 && mouseCursor)
 				/*= } =*/
