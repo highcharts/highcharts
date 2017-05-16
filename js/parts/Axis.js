@@ -303,7 +303,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		axis.chart = chart;
 
 		// Flag, is the axis horizontal
-		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
+		axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
@@ -432,7 +432,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
-		if (chart.inverted && isXAxis && axis.reversed === undefined) {
+		if (chart.inverted && !axis.isZAxis  && isXAxis && axis.reversed === undefined) {
 			axis.reversed = true;
 		}
 
@@ -2231,7 +2231,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			ticks = axis.ticks,
 			horiz = axis.horiz,
 			side = axis.side,
-			invertedSide = chart.inverted ? [1, 0, 3, 2][side] : side,
+			invertedSide = chart.inverted  && !axis.isZAxis ? [1, 0, 3, 2][side] : side,
 			hasData,
 			showAxis,
 			titleOffset = 0,
