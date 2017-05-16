@@ -71,6 +71,23 @@ QUnit.test('dataGrouping approximations', function (assert) {
         }, {
             type: 'ohlc',
             data: [[1, 3, 0, 2], [1, 5, 1, 2], [2, 2, 2, 2]]
+        }, {
+            type: 'arearange',
+            dataGrouping: {
+                forced: true,
+                approximation: 'range',
+                units: [
+                    ['millisecond', [2]]
+                ]
+            },
+            data: [
+                [0, 1, 2],
+                [1, 2, 3],
+                [2, null, null],
+                [3, null, null],
+                [4, 2, 3],
+                [5, 1, 2]
+            ]
         }]
     });
 
@@ -80,5 +97,10 @@ QUnit.test('dataGrouping approximations', function (assert) {
             chart.series[2].points[0].high === 5,
         true,
         'wrong approximation - fallback to series default (#2914)'
+    );
+    assert.strictEqual(
+        chart.series[3].points[1].isNull,
+        true,
+        '"range" approximation should return nulls when all points in a group are nulls (#6716).'
     );
 });

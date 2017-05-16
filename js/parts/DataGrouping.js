@@ -193,6 +193,8 @@ var seriesProto = Series.prototype,
 
 			if (isNumber(low) || isNumber(high)) {
 				return [low, high];
+			} else if (low === null && high === null) {
+				return null;
 			}
 			// else, return is undefined
 		}
