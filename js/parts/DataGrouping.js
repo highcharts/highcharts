@@ -367,6 +367,7 @@ seriesProto.processData = function () {
 			hasGroupedData = true;
 
 			series.isDirty = true; // force recreation of point instances in series.translate, #5699
+			series.points = null; // #6709
 
 			var extremes = xAxis.getExtremes(),
 				xMin = extremes.min,

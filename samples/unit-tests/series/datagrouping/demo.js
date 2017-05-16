@@ -103,4 +103,35 @@ QUnit.test('dataGrouping approximations', function (assert) {
         true,
         '"range" approximation should return nulls when all points in a group are nulls (#6716).'
     );
+
+});
+
+QUnit.test('Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 400
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['millisecond', [10]]
+                    ]
+                }
+            }
+        },
+        series: [{
+            data: [0, 5, 40]
+        }, {
+            type: 'column',
+            data: [2, 2, 2]
+        }]
+    });
+    chart.series[1].hide();
+    assert.strictEqual(
+        chart.series[1].points,
+        null,
+        'Points array is nullified for a hidden series.'
+    );
 });
