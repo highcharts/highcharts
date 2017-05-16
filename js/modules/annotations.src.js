@@ -254,6 +254,12 @@ Annotation.prototype = {
 		arrowHeight: 'arrowHeight'
 	},
 
+	/**
+	 * An object with predefined markers options
+	 *
+	 * @memberOf Highcharts.Annotation#
+	 * @type {Object}
+	 */
 	markers: [{
 		id: 'highcharts-annotation-arrow',
 		refY: 5,
@@ -480,6 +486,7 @@ Annotation.prototype = {
 			type = renderer[options.type] ? options.type : 'rect',
 			shape = renderer[type](0, -9e9, 0, 0);
 
+		shape.points = [];
 		shape.type = type;
 		shape.options = options;
 		shape.itemType = 'shape';
@@ -522,6 +529,7 @@ Annotation.prototype = {
 			);
 		}
 
+		label.points = [];
 		label.options = options;
 		label.itemType = 'label';
 
@@ -544,11 +552,11 @@ Annotation.prototype = {
 	 * @return {undefined}
 	 */
 	redrawItem: function (item) {
-		var pointOrPoints = this.linkPoints(item),
+		var points = this.linkPoints(item),
 			itemOptions = item.options,
 			text;
 
-		if (!pointOrPoints) {
+		if (!points.length) {
 			this.destroyItem(item);
 
 		} else {
@@ -560,8 +568,8 @@ Annotation.prototype = {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
 					text: text
-						? format(text, pointOrPoints.getLabelConfig())
-						: itemOptions.formatter.call(pointOrPoints)
+						? format(text, points[0].getLabelConfig())
+						: itemOptions.formatter.call(points[0])
 				});
 			}
 
@@ -627,6 +635,17 @@ Annotation.prototype = {
 	// 	return point;
 	// },
 
+	/**
+	 * Returns a point object
+	 *
+	 * @function #pointItem
+	 * @memberOf Highcharts.Annotation#
+	 * 
+	 * @param {Object} pointOptions
+	 * @param {Highcharts.MockPoint|Highcharts.Point} point
+	 * @return {Highcharts.MockPoint|Highcharts.Point|null} if the point is
+	 * found/exists returns this point, otherwise null
+	 */
 	pointItem: function (pointOptions, point) {
 		if (!point || point.series === null) {
 			if (isObject(pointOptions)) {
@@ -641,21 +660,42 @@ Annotation.prototype = {
 		return point;
 	},
 
-	linkPoints: function (item) {
+	/**
+	 * Linking item with the point or points and returning the linked points/point
+	 *
+	 * @function #linkPoints
+	 * @memberOf Highcharts.Annotation#
+	 *
+	 * @param {Object} item
+	 * @return {
+	 * 	Highcharts.Point|
+	 * 	Highcharts.MockPoint|
+	 * 	Array<Highcharts.Point|Highcharts.MockPoint>|
+	 *	null
+	 *	}
+	 */
+/*	linkPoints: function (item) {
 		var	annotation = this,
 			manyPointsOptions = item.options.points,
 			singlePointOptions = item.options.point,
 			pointOrPoints = null,
-			itemPoints;
+			itemPoints,
+			i,
+			len,
+			point;
 
 		if (manyPointsOptions && manyPointsOptions.length) {
 			itemPoints = item.points;
-			pointOrPoints = map(manyPointsOptions, function (pointOptions, i) {
-				return annotation.pointItem(pointOptions, itemPoints && itemPoints[i]);
-			});
-			
-			if (pointOrPoints.length !== manyPointsOptions.length) {
-				pointOrPoints = null;
+			pointOrPoints = [];
+
+			for (i = 0, len = manyPointsOptions.length; i < len; i++) {
+				point = this.pointItem(manyPointsOptions[i], itemPoints && itemPoints[i]);
+
+				if (!point) {
+					return null;
+				}
+
+				pointOrPoints.push(point);
 			}
 
 			item.points = pointOrPoints;
@@ -669,6 +709,27 @@ Annotation.prototype = {
 
 		return pointOrPoints;
 	},
+*/
+
+	linkPoints: function (item) {
+		var pointsOptions = item.options.points || (item.options.point && H.splat(item.options.point)),
+			points = item.points,
+			len = pointsOptions && pointsOptions.length,
+			i,
+			point;
+
+		for (i = 0; i < len; i++) {
+			point = this.pointItem(pointsOptions[i], points[i]);
+
+			if (!point) {
+				return item.points = [];
+			}
+
+			points[i] = point;
+		}
+
+		return points;
+	},
 
 	/**
 	 * Aligning the item and setting its anchor
@@ -681,7 +742,7 @@ Annotation.prototype = {
 	 * @return {undefined}
 	 */
 	alignItem: function (item, isNew) {
-		var anchor = this.itemAnchor(item, item.point),
+		var anchor = this.itemAnchor(item, item.points[0]),
 			attrs = this.itemPosition(item, anchor);
 
 		if (attrs) {
@@ -713,10 +774,10 @@ Annotation.prototype = {
 			anchor,
 			point,
 			startMarker = options.startMarker,
-			showPath = true;
+			showPath;
 
 		if (len) {
-			while (++pointIndex < len && showPath) {
+		/*	while (++pointIndex < len && showPath) {
 				point = points[pointIndex];
 
 				anchor = this.itemAnchor(pathItem, point).absolutePosition;
@@ -729,10 +790,28 @@ Annotation.prototype = {
 
 				showPath = point.series.visible && point.isInside !== false;
 			}
+*/
+			pointIndex = 0;
+			dIndex = 0;
+
+			do {
+				point = points[pointIndex];
+
+				anchor = this.itemAnchor(pathItem, point).absolutePosition;
+				d[++dIndex] = anchor.x;
+				d[++dIndex] = anchor.y;
+
+				if (pointIndex < len - 1) {
+					d[++dIndex] = 'L';
+				}
+
+				showPath = point.series.visible && point.isInside !== false;
+
+			} while (++pointIndex < len && showPath);
 		}
 
 
-		if (showPath && len) {
+		if (showPath) {
 			pathItem[isNew ? 'attr' : 'animate']({
 				d: d
 			});
@@ -744,7 +823,7 @@ Annotation.prototype = {
 			});
 		}
 
-		pathItem.placed = showPath && len;
+		pathItem.placed = showPath;
 	},
 
 	renderItem: function (item) {
@@ -761,43 +840,6 @@ Annotation.prototype = {
 			});
 		}
 	},
-
-/*
-	renderMarker: function (markerOptions) {
-		var markerId = uniqueKey(),
-			renderer = this.chart.renderer,
-			width = markerOptions.width || 20,
-			height = markerOptions.height || 20,
-			refX = markerOptions.refX || 0,
-			refY = (markerOptions.refY || 0) + height / 2,
-
-			triangle = [
-				'M', 0, 0,
-				'L', width, height / 2,
-				'L', 0, height,
-				'Z'
-			],
-			
-			marker = renderer.createElement('marker').attr({
-				id: markerId,
-				refX: refX,
-				refY: refY,
-				markerWidth: width,
-				markerHeight: height,
-				orient: 'auto'
-			}).add(renderer.defs),
-
-			markerPath = renderer.path(triangle).attr({
-				fill: markerOptions.fill || 'rgba(0, 0, 0, 0.75)',
-				'stroke-width': pick(markerOptions['stroke-width'], 1),
-				stroke: markerOptions.stroke || 'black'
-			}).add(marker);
-
-		marker.id = markerId;
-
-		return marker;
-	},
-*/
 
 	/**
 	 * An object which denotes an anchor position
@@ -860,7 +902,7 @@ Annotation.prototype = {
 	 */
 	itemPosition: function (item, anchor) {
 		var chart = this.chart,
-			point = item.point,
+			point = item.points[0],
 			itemOptions = item.options,
 			anchorAbsolutePosition = anchor.absolutePosition,
 			anchorRelativePosition = anchor.relativePosition,
@@ -1186,7 +1228,7 @@ H.SVGRenderer.prototype.addMarker = (function () {
 				markerHeight: pick(options.markerHeight, 20),
 				refX: options.refX || 0,
 				refY: options.refY || 0,
-				orient: 'auto'
+				orient: options.orient || 'auto'
 			}).add(this.defs),
 
 			createPath,
