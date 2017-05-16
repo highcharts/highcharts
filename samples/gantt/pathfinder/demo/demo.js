@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     pathfinder: {
         marker: {
             enabled: true
@@ -48,3 +48,7 @@ Highcharts.chart('container', {
         type: 'column'
     }]
 });
+
+document.getElementById('btn').onclick = function () {
+    chart.series[0].points[0].update(180);
+};
