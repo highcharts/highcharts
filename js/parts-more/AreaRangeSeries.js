@@ -126,6 +126,7 @@ seriesType('arearange', 'area', {
 			lowerPath,
 			options = this.options,
 			connectEnds = this.chart.polar && options.connectEnds !== false,
+			connectNulls = options.connectNulls,
 			step = options.step,
 			higherPath,
 			higherAreaPath;
@@ -143,6 +144,7 @@ seriesType('arearange', 'area', {
 			if (
 				!point.isNull &&
 				!connectEnds &&
+				!connectNulls &&
 				(!points[i + 1] || points[i + 1].isNull)
 			) {
 				highAreaPoints.push({
@@ -160,12 +162,15 @@ seriesType('arearange', 'area', {
 				plotY: point.plotHigh,
 				isNull: point.isNull
 			};
+			
 			highAreaPoints.push(pointShim);
+
 			highPoints.push(pointShim);
 			
 			if (
 				!point.isNull &&
 				!connectEnds &&
+				!connectNulls &&
 				(!points[i - 1] || points[i - 1].isNull)
 			) {
 				highAreaPoints.push({
