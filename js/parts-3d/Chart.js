@@ -574,7 +574,7 @@ Chart.prototype.get3dFrame = function () {
 		var isVisible = defaultVisible;
 		if (options.visible === true || options.visible === false) {
 			isVisible = options.visible;
-		} else if (options.visible === 'auto') {
+		} else if (options.visible === 'auto') { // docs, see: https://github.com/highcharts/highcharts/pull/6603#issuecomment-302080878
 			isVisible = faceOrientation >= 0;
 		}
 
@@ -586,6 +586,7 @@ Chart.prototype.get3dFrame = function () {
 		};
 	};
 
+	// docs, more "frame" options for http://api.highcharts.com/highcharts/chart.options3d.frame
 	var ret = {
 		//FIXME: Previously, left/right, top/bottom and front/back pairs shared size and color.
 		//For compatibility and consistency sake, when one face have size/color/visibility set, the opposite face will default to the same values
