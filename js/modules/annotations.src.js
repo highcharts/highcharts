@@ -9,7 +9,6 @@ var	merge = H.merge,
 	addEvent = H.addEvent,
 	extend = H.extend,
 	each = H.each,
-	map = H.map,
 	isString = H.isString,
 	isNumber = H.isNumber,
 	defined = H.defined,
@@ -19,7 +18,6 @@ var	merge = H.merge,
 	find = H.find,
 	format = H.format,
 	pick = H.pick,
-	uniqueKey = H.uniqueKey,
 	destroyObjectProperties = H.destroyObjectProperties,
 
 	tooltipPrototype = H.Tooltip.prototype,
@@ -40,18 +38,7 @@ H.defaultOptions.annotations = [];
  */
 
 
-/**
- * A factory function for creating a mock point object
- * 
- * @function #mockPoint
- * @memberOf Highcharts
- *
- * @param {MockPointOptions} mockPointOptions
- * @return {MockPoint} a mock point
- */
-var mockPoint = H.mockPoint = function (chart, mockPointOptions) {
-	return new MockPoint(chart, mockPointOptions);
-};
+
 
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class.
@@ -80,7 +67,20 @@ var MockPoint = H.MockPoint = function (chart, options) {
 	//this.y?
 
 	this.init(chart, options);
-}
+};
+
+/**
+ * A factory function for creating a mock point object
+ * 
+ * @function #mockPoint
+ * @memberOf Highcharts
+ *
+ * @param {MockPointOptions} mockPointOptions
+ * @return {MockPoint} a mock point
+ */
+var mockPoint = H.mockPoint = function (chart, mockPointOptions) {
+	return new MockPoint(chart, mockPointOptions);
+};
 
 MockPoint.prototype = {
 	/**
@@ -95,14 +95,14 @@ MockPoint.prototype = {
 	 */
 	init: function (chart, options) {
 		var xAxisId = options.xAxis,
-			xAxis = defined(xAxisId)
-				? chart.xAxis[xAxisId] || chart.get(xAxisId)
-				: null,
+			xAxis = defined(xAxisId) ?
+				chart.xAxis[xAxisId] || chart.get(xAxisId) :
+				null,
 			
 			yAxisId = options.yAxis,
-			yAxis = defined(yAxisId)
-				? chart.yAxis[yAxisId] || chart.get(yAxisId)
-				: null;
+			yAxis = defined(yAxisId) ?
+				chart.yAxis[yAxisId] || chart.get(yAxisId) :
+				null;
 
 
 		if (xAxis) {
@@ -222,7 +222,7 @@ var Annotation = H.Annotation = function (chart, userOptions) {
 	this.options = merge(this.defaultOptions, userOptions);
 
 	this.init(chart, userOptions);
-}
+};
 
 Annotation.prototype = {
 	/**
@@ -244,14 +244,17 @@ Annotation.prototype = {
 		backgroundColor: 'fill',
 		borderColor: 'stroke',
 		borderWidth: 'stroke-width',
+		strokeWidth: 'stroke-width',
+		stroke: 'stroke',
+		fill: 'fill',
+		markerEnd: 'marker-end',
+		markerStart: 'marker-start',
 		zIndex: 'zIndex',
 		width: 'width',
 		height: 'height',
 		borderRadius: 'r',
 		r: 'r',
-		padding: 'padding',
-		arrowWidth: 'arrowWidth',
-		arrowHeight: 'arrowHeight'
+		padding: 'padding'
 	},
 
 	/**
@@ -261,14 +264,18 @@ Annotation.prototype = {
 	 * @type {Object}
 	 */
 	markers: [{
-		id: 'highcharts-annotation-arrow',
+		id: 'highcharts-marker-arrow',
 		refY: 5,
 		refX: 5,
 		markerWidth: 10,
 		markerHeight: 10,
-		path: {
-			d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
-		}
+		elements: [{
+			type: 'path',
+			attrs: {
+				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+				fill: 'black'
+			}
+		}]
 	}],
 	/**
 	 * Default options for an annotation
@@ -311,11 +318,11 @@ Annotation.prototype = {
 		},
 
 		shapeOptions: {
-			borderColor: 'rgba(0, 0, 0, 0.75)',
-			borderWidth: 1,
-			backgroundColor: 'rgba(0, 0, 0, 0.75)',
+			stroke: 'rgba(0, 0, 0, 0.75)',
+			strokeWidth: 1,
+			fill: 'rgba(0, 0, 0, 0.75)',
 			// type: 'rect',
-			borderRadius: 0
+			r: 0
 		},
 
 		zIndex: 6
@@ -327,12 +334,12 @@ Annotation.prototype = {
 	 * @function #init
 	 * @memberOf Highcharts.Annotation#
 	 *
-	 * @param {Highcharts.chart} chart
+	 * @param {Highcharts.chart} [chart]
 	 * @param {Object} [userOptions]
 	 * @return {undefined}
 	**/
 
-	init: function (chart, userOptions) {
+	init: function () {
 		each(this.options.labels || [], this.initLabel, this);
 		each(this.options.shapes || [], this.initShape, this);
 	},
@@ -567,18 +574,17 @@ Annotation.prototype = {
 			if (item.itemType === 'label') {
 				text = itemOptions.format || itemOptions.text;
 				item.attr({
-					text: text
-						? format(text, points[0].getLabelConfig())
-						: itemOptions.formatter.call(points[0])
+					text: text ?
+						format(text, points[0].getLabelConfig()) :
+						itemOptions.formatter.call(points[0])
 				});
 			}
 
 
 			if (item.type === 'path') {
 				this.redrawPath(item);
-			}
-
-			else {
+		
+			} else {
 				this.alignItem(item, !item.placed);
 			}
 		}
@@ -600,42 +606,6 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Linking item with the point
-	 *
-	 * @function #linkPoint
-	 * @memberOf Highcharts.Annotation#
-	 *
-	 * @param {Object} item
-	 * @return {Highcharts.Point|Highcharts.MockPoint|null} a point 
-	 * which a item is linked or a null if the point has not been found
-	 */
-	// linkPoint: function (item) {
-	// 	var pointOptions = item.options.point,
-	// 		point = item.point;
-
-	// 	if (!point || point.series === null) {
-	// 	// check if the point does not exist or was destroyed/updated
-
-	// 		if (isObject(pointOptions)) {
-	// 		// if a point config is an object then it should require all information
-	// 		// needed to create a mock point
-	// 			point = mockPoint(this.chart, pointOptions);
-	// 			item.point = point;
-
-			
-	// 		} else if (isString(pointOptions)) {
-	// 			point = this.chart.get(pointOptions) || null;
-
-	// 			if (point) {
-	// 				item.point = point;
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return point;
-	// },
-
-	/**
 	 * Returns a point object
 	 *
 	 * @function #pointItem
@@ -650,9 +620,8 @@ Annotation.prototype = {
 		if (!point || point.series === null) {
 			if (isObject(pointOptions)) {
 				point = mockPoint(this.chart, pointOptions);
-			}
-
-			else if (isString(pointOptions)) {
+			
+			} else if (isString(pointOptions)) {
 				point = this.chart.get(pointOptions) || null;
 			}
 		}
@@ -661,7 +630,7 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Linking item with the point or points and returning the linked points/point
+	 * Linking item with the point or points and returning an array of linked points
 	 *
 	 * @function #linkPoints
 	 * @memberOf Highcharts.Annotation#
@@ -670,47 +639,9 @@ Annotation.prototype = {
 	 * @return {
 	 * 	Highcharts.Point|
 	 * 	Highcharts.MockPoint|
-	 * 	Array<Highcharts.Point|Highcharts.MockPoint>|
-	 *	null
+	 * 	Array<Highcharts.Point|Highcharts.MockPoint>
 	 *	}
 	 */
-/*	linkPoints: function (item) {
-		var	annotation = this,
-			manyPointsOptions = item.options.points,
-			singlePointOptions = item.options.point,
-			pointOrPoints = null,
-			itemPoints,
-			i,
-			len,
-			point;
-
-		if (manyPointsOptions && manyPointsOptions.length) {
-			itemPoints = item.points;
-			pointOrPoints = [];
-
-			for (i = 0, len = manyPointsOptions.length; i < len; i++) {
-				point = this.pointItem(manyPointsOptions[i], itemPoints && itemPoints[i]);
-
-				if (!point) {
-					return null;
-				}
-
-				pointOrPoints.push(point);
-			}
-
-			item.points = pointOrPoints;
-		}
-
-		else if (singlePointOptions) {
-			pointOrPoints = this.pointItem(singlePointOptions, item.point);
-
-			item.point = pointOrPoints;
-		}
-
-		return pointOrPoints;
-	},
-*/
-
 	linkPoints: function (item) {
 		var pointsOptions = item.options.points || (item.options.point && H.splat(item.options.point)),
 			points = item.points,
@@ -722,7 +653,7 @@ Annotation.prototype = {
 			point = this.pointItem(pointsOptions[i], points[i]);
 
 			if (!point) {
-				return item.points = [];
+				return (item.points = []);
 			}
 
 			points[i] = point;
@@ -766,34 +697,15 @@ Annotation.prototype = {
 
 	redrawPath: function (pathItem, isNew) {
 		var points = pathItem.points,
-			options = pathItem.options,
 			d = ['M'],
-			pointIndex = -1,
+			pointIndex = 0,
 			dIndex = 0,
 			len = points && points.length,
 			anchor,
 			point,
-			startMarker = options.startMarker,
 			showPath;
 
 		if (len) {
-		/*	while (++pointIndex < len && showPath) {
-				point = points[pointIndex];
-
-				anchor = this.itemAnchor(pathItem, point).absolutePosition;
-				d[++dIndex] = anchor.x;
-				d[++dIndex] = anchor.y;
-
-				if (pointIndex < len - 1) {
-					d[++dIndex] = 'L';
-				}
-
-				showPath = point.series.visible && point.isInside !== false;
-			}
-*/
-			pointIndex = 0;
-			dIndex = 0;
-
 			do {
 				point = points[pointIndex];
 
@@ -815,9 +727,8 @@ Annotation.prototype = {
 			pathItem[isNew ? 'attr' : 'animate']({
 				d: d
 			});
-		}
-
-		else {
+		
+		} else {
 			pathItem.attr({
 				d: 'M 0 ' + -9e9
 			});
@@ -827,18 +738,7 @@ Annotation.prototype = {
 	},
 
 	renderItem: function (item) {
-		var itemOptions = item.options,
-			marker;
-
 		item.add(this.group);
-
-		if (item.type === 'path' && itemOptions.endMarker) {
-	//		marker = this.renderMarker(itemOptions.endMarker);
-
-			item.attr({
-				'marker-end': 'url(#' + itemOptions.endMarker + ')'
-			});
-		}
 	},
 
 	/**
@@ -866,9 +766,9 @@ Annotation.prototype = {
 	itemAnchor: function (item, point) {
 		var plotBox = point.series.getPlotBox(),
 
-			box = point.mock
-				? point.alignToBox(true)
-				: tooltipPrototype.getAnchor.call({
+			box = point.mock ?
+				point.alignToBox(true) :
+				tooltipPrototype.getAnchor.call({
 					chart: this.chart
 				}, point),
 
@@ -1164,7 +1064,7 @@ chartPrototype.callbacks.push(function (chart) {
 	chart.annotations = [];
 
 	each(chart.options.annotations, function (annotationOptions) {
-		chart.addAnnotation(annotationOptions);
+		chart.addAnnotation(annotationOptions, false);
 	});
 
 	chart.redrawAnnotations();
@@ -1220,49 +1120,39 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 H.SVGRenderer.prototype.addMarker = (function () {
 	var idCounter = -1;
 
-	return function (id, options) {
-		var markerId = pick(id, 'highcharts-annotation-marker-' + (++idCounter)),
+	return function (id, markerOptions) {
+		var markerId = pick(id, 'highcharts-marker-' + (++idCounter)),
 			marker = this.createElement('marker').attr({
 				id: markerId,
-				markerWidth: pick(options.markerWidth, 20),
-				markerHeight: pick(options.markerHeight, 20),
-				refX: options.refX || 0,
-				refY: options.refY || 0,
-				orient: options.orient || 'auto'
+				markerWidth: pick(markerOptions.markerWidth, 20),
+				markerHeight: pick(markerOptions.markerHeight, 20),
+				refX: markerOptions.refX || 0,
+				refY: markerOptions.refY || 0,
+				orient: markerOptions.orient || 'auto'
 			}).add(this.defs),
 
-			createPath,
-			defaultPathAttrs,
-			paths = options.path ? H.splat(options.path) : null,
-			renderer = this;
+			defaultAttrs = {
+				stroke: markerOptions.color || 'none',
+				'stroke-width': 0,
+				fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+			},
+			elements = markerOptions.elements;
 
 		marker.id = markerId;
 
-		if (paths) {
-			defaultPathAttrs = {
-				stroke: options.color || 'none',
-				'stroke-width': 0,
-				fill: options.color || 'rgba(0, 0, 0, 0.75)'
-			};
-
-			createPath = function (attrs) {
-				return renderer.createElement('path')
-					.attr(extend(defaultPathAttrs, attrs))
-					.add(marker);
-			};
-
-			each(paths, function (pathOptions) {
-				createPath(pathOptions)
-			});
-		}
+		each(elements, function (element) {
+			this.createElement(element.type)
+				.attr(merge({}, defaultAttrs, element.attrs))
+				.add(marker);
+		}, this);
 
 		return marker;
 	};
-})();
+}());
 
 
 
-H.wrap(H.Chart.prototype, 'getContainer', function (p) {
+H.wrap(chartPrototype, 'getContainer', function (p) {
 	p.call(this);
 
 	var renderer = this.renderer,
