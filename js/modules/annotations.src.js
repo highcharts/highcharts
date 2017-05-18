@@ -334,8 +334,6 @@ Annotation.prototype = {
 	 * @function #init
 	 * @memberOf Highcharts.Annotation#
 	 *
-	 * @param {Highcharts.chart} [chart]
-	 * @param {Object} [userOptions]
 	 * @return {undefined}
 	**/
 
