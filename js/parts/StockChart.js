@@ -286,8 +286,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		});
 	}
 
-	// Ignore in case of color Axis. #3360, #3524
-	if (axis.coll === 'colorAxis') {
+	// Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
+	if (axis.coll !== 'xAxis' && axis.coll !== 'yAxis') {
 		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
 
