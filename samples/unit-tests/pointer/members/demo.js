@@ -337,15 +337,15 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         yAxis = series.yAxis;
 
     data = chart.pointer.getHoverData(
-        point,
-        series,
-        chart.series,
-        true,
-        true,
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        true, // shared
         {
             chartX: xAxis.pos + point.clientX,
             chartY: yAxis.pos + point.plotY
-        }
+        } // coordinates
     );
     assert.strictEqual(
         data.hoverPoint === point,
@@ -368,5 +368,33 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         }),
         false,
         'isDirectTouch && shared: All hoverPoints should have the same index as the hoverPoint'
+    );
+
+    // isDirectTouch and !shared tooltip
+    data = chart.pointer.getHoverData(
+        point, // existingHoverPoint
+        series, // existingHoverSeries
+        chart.series, // series
+        true, // isDirectTouch
+        false, // shared
+        {
+            chartX: xAxis.pos + point.clientX,
+            chartY: yAxis.pos + point.plotY
+        } // coordinates
+    );
+    assert.strictEqual(
+        data.hoverPoint === point,
+        true,
+        'isDirectTouch && !shared: hoverPoint should equal existing hoverPoint'
+    );
+    assert.strictEqual(
+        data.hoverSeries === series,
+        true,
+        'isDirectTouch && !shared: hoverSeries should equal existing hoverSeries'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        1,
+        'isDirectTouch && !shared: there should be only 1 hoverPoint'
     );
 });

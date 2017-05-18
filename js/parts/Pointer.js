@@ -269,6 +269,7 @@ H.Pointer.prototype = {
 		var hoverPoint = existingHoverPoint,
 			hoverSeries = existingHoverSeries,
 			searchSeries = shared ? series : [hoverSeries],
+			useExisting = !!(isDirectTouch && existingHoverPoint),
 			notSticky = hoverSeries && !hoverSeries.stickyTracking,
 			isHoverPoint = function (point, i) {
 				return i === 0;
@@ -277,7 +278,7 @@ H.Pointer.prototype = {
 
 		// If there is a hoverPoint and its series requires direct touch (like columns, #3899), or we're on
 		// a noSharedTooltip series among shared tooltip series (#4546), use the existing hoverPoint.
-		if  (isDirectTouch && existingHoverPoint) {
+		if  (useExisting) {
 			isHoverPoint = function (p) {
 				return p === existingHoverPoint;
 			};
@@ -291,13 +292,15 @@ H.Pointer.prototype = {
 				return s.stickyTracking;
 			});
 		}
-		hoverPoints = this.getKDPoints(searchSeries, shared, coordinates);
+		hoverPoints = (useExisting && !shared) ?
+			[existingHoverPoint] : // can't use getKDPoints due to !kdNow.
+			this.getKDPoints(searchSeries, shared, coordinates);
 		hoverPoint = H.find(hoverPoints, isHoverPoint);
 		hoverSeries = hoverPoint && hoverPoint.series;
 
 		/* In this case we could only look for the hoverPoint in series with
 		 * stickyTracking, but we should still include all series in the shared tooltip */
-		if (!isDirectTouch && !notSticky && shared) {
+		if (!useExisting && !notSticky && shared) {
 			hoverPoints = this.getKDPoints(series, shared, coordinates);
 		}
 		// Keep the order of series in tooltip
