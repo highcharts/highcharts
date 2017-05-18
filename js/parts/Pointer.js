@@ -253,19 +253,36 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * getHoverData - Calculates what is the current hovered point/points and series.
+	 * Calculates what is the current hovered point/points and series.
 	 *
-	 * @param  {undefined|object} existingHoverPoint The point currrently beeing hovered.
-	 * @param  {undefined|object} existingHoverSeries The series currently beeing hovered.
-	 * @param  {Array} series All the series in the chart.
-	 * @param  {boolean} isDirectTouch Is the pointer directly hovering the point.
-	 * @param  {boolean} shared Wether it is a shared tooltip or not.
-	 * @param  {object} coordinates Chart coordinates of the pointer.
+	 * @private
+	 *
+	 * @param  {undefined|Point} existingHoverPoint
+	 *         The point currrently beeing hovered.
+	 * @param  {undefined|Series} existingHoverSeries
+	 *         The series currently beeing hovered.
+	 * @param  {Array<.Series>} series
+	 *         All the series in the chart.
+	 * @param  {boolean} isDirectTouch
+	 *         Is the pointer directly hovering the point.
+	 * @param  {boolean} shared
+	 *         Whether it is a shared tooltip or not.
+	 * @param  {object} coordinates
+	 *         Chart coordinates of the pointer.
 	 * @param  {number} coordinates.chartX
 	 * @param  {number} coordinates.chartY
-	 * @return {object} Object containing resulting hover data.
+	 * 
+	 * @return {object}
+	 *         Object containing resulting hover data.
 	 */
-	getHoverData: function (existingHoverPoint, existingHoverSeries, series, isDirectTouch, shared, coordinates) {
+	getHoverData: function (
+		existingHoverPoint,
+		existingHoverSeries,
+		series,
+		isDirectTouch,
+		shared,
+		coordinates
+	) {
 		var hoverPoint = existingHoverPoint,
 			hoverSeries = existingHoverSeries,
 			searchSeries = shared ? series : [hoverSeries],
@@ -276,8 +293,9 @@ H.Pointer.prototype = {
 			},
 			hoverPoints;
 
-		// If there is a hoverPoint and its series requires direct touch (like columns, #3899), or we're on
-		// a noSharedTooltip series among shared tooltip series (#4546), use the existing hoverPoint.
+		// If there is a hoverPoint and its series requires direct touch (like
+		// columns, #3899), or we're on a noSharedTooltip series among shared
+		// tooltip series (#4546), use the existing hoverPoint.
 		if  (useExisting) {
 			isHoverPoint = function (p) {
 				return p === existingHoverPoint;
@@ -293,13 +311,15 @@ H.Pointer.prototype = {
 			});
 		}
 		hoverPoints = (useExisting && !shared) ?
-			[existingHoverPoint] : // can't use getKDPoints due to !kdNow.
+			// Non-shared tooltips with directTouch don't use the k-d-tree
+			[existingHoverPoint] :
 			this.getKDPoints(searchSeries, shared, coordinates);
 		hoverPoint = H.find(hoverPoints, isHoverPoint);
 		hoverSeries = hoverPoint && hoverPoint.series;
 
-		/* In this case we could only look for the hoverPoint in series with
-		 * stickyTracking, but we should still include all series in the shared tooltip */
+		// In this case we could only look for the hoverPoint in series with
+		// stickyTracking, but we should still include all series in the shared
+		// tooltip.
 		if (!useExisting && !notSticky && shared) {
 			hoverPoints = this.getKDPoints(series, shared, coordinates);
 		}
@@ -329,7 +349,14 @@ H.Pointer.prototype = {
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
 			// onMouseOver or already hovering a series with directTouch
 			isDirectTouch = !!p || (hoverSeries && hoverSeries.directTouch),
-			hoverData = this.getHoverData(hoverPoint, hoverSeries, series, isDirectTouch, shared, e),
+			hoverData = this.getHoverData(
+				hoverPoint,
+				hoverSeries,
+				series,
+				isDirectTouch,
+				shared,
+				e
+			),
 			useSharedTooltip,
 			followPointer,
 			anchor,
@@ -339,12 +366,17 @@ H.Pointer.prototype = {
 		hoverPoint = hoverData.hoverPoint;
 		hoverSeries = hoverData.hoverSeries;
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		useSharedTooltip = shared && hoverPoint && !hoverPoint.series.noSharedTooltip;
+		useSharedTooltip = (
+			shared &&
+			hoverPoint &&
+			!hoverPoint.series.noSharedTooltip
+		);
 		points = (useSharedTooltip ? 
 			hoverData.hoverPoints : 
 			(hoverPoint ? [hoverPoint] : [])
 		);
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
+		// #3926, #4200
 		if (
 			hoverPoint &&
 			// !(hoverSeries && hoverSeries.directTouch) &&
@@ -399,12 +431,14 @@ H.Pointer.prototype = {
 			var snap = pick(axis.crosshair.snap, true);
 			if (!snap) {
 				axis.drawCrosshair(e);
-			// axis has snapping crosshairs, and one of the hover points is belongs to axis
+			
+			// Axis has snapping crosshairs, and one of the hover points belongs
+			// to axis
 			} else if (H.find(points, function (p) {
 				return p.series[axis.coll] === axis;
 			})) {
 				axis.drawCrosshair(e, hoverPoint);
-			// axis has snapping crosshairs, but no hover point is not belonging to axis
+			// Axis has snapping crosshairs, but no hover point belongs to axis
 			} else {
 				axis.hideCrosshair();
 			}
@@ -412,9 +446,12 @@ H.Pointer.prototype = {
 	},
 
 	/**
-	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
+	 * Reset the tracking by hiding the tooltip, the hover series state and the
+	 * hover point
 	 *
-	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
+	 * @param allowMove {Boolean}
+	 *        Instead of destroying the tooltip altogether, allow moving it if
+	 *        possible
 	 */
 	reset: function (allowMove, delay) {
 		var pointer = this,
