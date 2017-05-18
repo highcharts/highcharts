@@ -174,7 +174,6 @@ Connection.prototype = {
 
 		// Create path if does not exist
 		if (!(pathGraphic && pathGraphic.renderer)) {
-			// Create the path element
 			pathGraphic = chart.renderer.path()
 				.addClass('highcharts-point-connecting-path')
 				.attr({
@@ -193,10 +192,10 @@ Connection.prototype = {
 		});
 
 		// Store reference on connection
-		if (!connection.graphics) {
-			connection.graphics = {};
+		if (!this.graphics) {
+			this.graphics = {};
 		}
-		connection.graphics.path = pathGraphic;
+		this.graphics.path = pathGraphic;
 	},
 
 	/**
@@ -249,9 +248,9 @@ Connection.prototype = {
 
 		// Rotation of marker is calculated from angle between pathVector and 
 		// markerVector.
-		// Note: Used to recalculate radians between markerVector and pathVector,
-		//  but this should be the same as between pathVector and anchor.
-		// TODO: Verify this.
+		// (Note: 
+		//  Used to recalculate radians between markerVector and pathVector,
+		//  but this should be the same as between pathVector and anchor.)
 		rotation = radians / deg2rad;
 
 		if (options.width && options.height) {
@@ -276,7 +275,7 @@ Connection.prototype = {
 			)
 			.addClass('highcharts-point-connecting-path-' + type + '-marker')
 			.attr({
-				fill: options.color || this.color,
+				fill: options.color || connection.fromPoint.color,
 				stroke: options.stroke,
 				'stroke-width': options['stroke-width']
 			})
@@ -400,6 +399,18 @@ Connection.prototype = {
 				pathfinder.lineObstacles.concat(pathResult.obstacles);
 		}
 
+		// Remove markers
+		if (connection.graphics) {
+			if (connection.graphics.start) {
+				connection.graphics.start.destroy();
+				delete connection.graphics.start;
+			}
+			if (connection.graphics.end) {
+				connection.graphics.end.destroy();
+				delete connection.graphics.end;
+			}
+		}
+
 		// Add the calculated path to the pathfinder group
 		connection.renderPath(path, attribs, function () {
 			// On animation complete
@@ -468,13 +479,12 @@ Pathfinder.prototype = {
 			pathfinder = this,
 			oldConnections = pathfinder.connections;
 
-		// Find the points and their mate and cache this information
+		// Rebuild pathfinder connections from options
 		pathfinder.connections = [];
 		each(chart.series, function (series) {
 			if (series.visible) {
 				each(series.points, function (point) {
 					var to,
-						connection,
 						connects = point.options.connect && 
 									H.splat(point.options.connect);
 					if (point.visible && connects) {
@@ -482,15 +492,17 @@ Pathfinder.prototype = {
 							to = chart.get(typeof connect === 'string' ?
 								connect : connect.to
 							);
-							if (to instanceof H.Point && to.series.visible && to.visible) {
-								// We store start/end/options for each connection to
-								// be picked up in drawConnections
-								connection = new Connection(
+							if (
+								to instanceof H.Point &&
+								to.series.visible &&
+								to.visible
+							) {
+								// Add new connection
+								pathfinder.connections.push(new Connection(
 									point, // from
 									to,
 									typeof connect === 'string' ? {} : connect
-								);
-								pathfinder.connections.push(connection);
+								));
 							}
 						});
 					}
@@ -498,7 +510,8 @@ Pathfinder.prototype = {
 			}
 		});
 
-		// Clear connections that should not be updated
+		// Clear connections that should not be updated, and move old info over
+		// to new connections.
 		for (
 			var j = 0, k, found, lenOld = oldConnections.length,
 				lenNew = pathfinder.connections.length;
@@ -513,6 +526,7 @@ Pathfinder.prototype = {
 					oldConnections[j].toPoint ===
 						pathfinder.connections[k].toPoint
 				) {
+					pathfinder.connections[k].graphics = oldConnections[j].graphics;
 					found = true;
 					break;
 				}
@@ -553,18 +567,24 @@ Pathfinder.prototype = {
 		var obstacles = [],
 			series = this.chart.series,
 			margin = pick(options.algorithmMargin, 0),
-			bb,
 			calculatedMargin;
 		for (var i = 0, sLen = series.length; i < sLen; ++i) {
 			if (series[i].visible) {
-				for (var j = 0, pLen = series[i].points.length; j < pLen; ++j) {
-					bb = series[i].points[j].graphic.getBBox();
-					obstacles.push({
-						xMin: bb.x - margin,
-						xMax: bb.x + bb.width + margin,
-						yMin: bb.y - margin,
-						yMax: bb.y + bb.height + margin
-					});
+				for (
+					var j = 0, pLen = series[i].points.length, bb, point;
+					j < pLen;
+					++j
+				) {
+					point = series[i].points[j];
+					if (point.visible) {
+						bb = point.graphic.getBBox();
+						obstacles.push({
+							xMin: point.plotX - bb.width / 2 - margin,
+							xMax: point.plotX + bb.width / 2 + margin,
+							yMin: point.plotY - bb.height / 2 - margin,
+							yMax: point.plotY + bb.height / 2 + margin
+						});
+					}
 				}
 			}
 		}
