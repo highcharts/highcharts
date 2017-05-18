@@ -342,9 +342,3 @@ var chart = Highcharts.chart('container', {
         color: colors[3]
     }]
 });
-
-// Remove click events on container to avoid having "clickable" announced by AT
-// These events are needed for custom click events, drag to zoom, and navigator
-// support.
-delete chart.container.onmousedown;
-delete chart.container.onclick;
