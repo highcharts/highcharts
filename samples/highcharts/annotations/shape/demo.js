@@ -8,44 +8,6 @@ Highcharts.chart('container', {
         data: [[29.9, '0'], [71.5, '1'], [106.4, '2'], [129.2, '3'], [144.0, '4'], [176.0, '5']]
     }],
 
-    defs: {
-        markers: [{
-            color: 'red',
-            elements: [{
-                type: 'path',
-                attrs: {
-                    d: 'M 0 0 L 10 0 L 10 10 L 0 10 Z'
-               }
-            }],
-            refY: 5
-        }, {
-            elements: [{
-                type: 'path',
-                attrs: {
-                    d: 'M 10,0 C 0,0 0,10 10,10 C 12.5,7.5 12.5,7.5 20,5 C 12.5,2.5 12.5,2.5 10,0 Z'
-                }
-            }],
-            markerWidth: 40,
-            markerHeight: 40,
-            refX: 15,
-            refY: 5
-        }, {
-            elements: [{
-                type: 'circle',
-                attrs: {
-                    r: 5,
-                    cx: 5,
-                    cy: 5
-                }
-            }],
-            id: 'circle',
-            markerWidth: 10,
-            markerHeight: 10,
-            refX: 5,
-            refY: 5
-        }]
-    },
-
     yAxis: {
         max: 300
     },
@@ -86,8 +48,7 @@ Highcharts.chart('container', {
                 y: 195,
                 xAxis: 0,
                 yAxis: 0
-            },
-            format: '{y} ?'
+            }
         }]
     }]
 });
