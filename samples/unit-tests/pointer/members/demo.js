@@ -398,3 +398,244 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'isDirectTouch && !shared: there should be only 1 hoverPoint'
     );
 });
+
+QUnit.test('Pointer.updateHoverData', function (assert) {
+    var updateHoverData = Highcharts.Pointer.prototype.updateHoverData,
+        mockPoint = function (series) {
+            var point = {
+                firePointEvent: function (type) {
+                    pushEvent(type, this.series, this);
+                },
+                index: series.points.length,
+                series: series,
+                setState: function (type) {
+                    var prev = this.state,
+                        str;
+                    this.state = (type || 'normal');
+                    str = 'state(' + prev + '->' + this.state + ')';
+                    pushEvent(str, this.series, this);
+                },
+                state: 'normal'
+            };
+            series.points.push(point);
+            return point;
+        },
+        mockSeries = function (chart) {
+            var cb = function (event) {
+                    pushEvent(event.type, this);
+                },
+                series = {
+                    chart: chart,
+                    hcEvents: {
+                        mouseOver: [cb],
+                        mouseOut: [cb]
+                    },
+                    index: chart.series.length,
+                    options: {
+                        events: {
+                            mouseOver: true
+                        }
+                    },
+                    points: [],
+                    setState: function (type) {
+                        var prev = this.state,
+                            str;
+                        this.state = (type || 'normal');
+                        str = 'state(' + prev + '->' + this.state + ')';
+                        pushEvent(str, this);
+                    },
+                    state: 'normal'
+                };
+            chart.series.push(series);
+            return series;
+        },
+        chart = {
+            hoverSeries: undefined,
+            hoverPoints: undefined,
+            hoverPoint: undefined,
+            series: []
+        },
+        S1 = mockSeries(chart),
+        P1 = mockPoint(S1),
+        P2 = mockPoint(S1),
+        hoverSeries,
+        hoverPoint,
+        hoverPoints;
+
+    events = [];
+    updateHoverData(chart);
+    assert.strictEqual(
+        events.length,
+        0,
+        'No update: no unexpected events.'
+    );
+    assert.strictEqual(
+        chart.hoverSeries,
+        undefined,
+        'No update: chart.hoverSeries is undefined.'
+    );
+    assert.strictEqual(
+        chart.hoverPoint,
+        undefined,
+        'No update: chart.hoverPoint is undefined.'
+    );
+    assert.strictEqual(
+        chart.hoverPoints,
+        undefined,
+        'No update: chart.hoverPoints is undefined.'
+    );
+
+    hoverSeries = S1;
+    hoverPoint = P1;
+    hoverPoints = [P1];
+    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    assert.strictEqual(
+        events.shift(),
+        'state(normal->hover).0.-',
+        'mouseOver 0.0: state(normal->hover).0.-.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.0.-',
+        'mouseOver 0.0: mouseOver.0.-.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'state(normal->hover).0.0',
+        'mouseOver 0.0: state(normal->hover).0.0.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.0.0',
+        'mouseOver 0.0: mouseOver.0.0.'
+    );
+    assert.strictEqual(
+        events.length,
+        0,
+        'mouseOver 0.0: no unexpected events.'
+    );
+    assert.strictEqual(
+        chart.hoverSeries,
+        hoverSeries,
+        'mouseOver 0.0: chart.hoverSeries is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoint,
+        hoverPoint,
+        'mouseOver 0.0: chart.hoverPoint is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoints,
+        hoverPoints,
+        'mouseOver 0.0: chart.hoverPoints is correct.'
+    );
+
+    // Same input twice in the row should not do any changes
+    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    assert.strictEqual(
+        events.length,
+        0,
+        'No update: no unexpected events.'
+    );
+    assert.strictEqual(
+        chart.hoverSeries,
+        hoverSeries,
+        'No update: chart.hoverSeries is undefined.'
+    );
+    assert.strictEqual(
+        chart.hoverPoint,
+        hoverPoint,
+        'No update: chart.hoverPoint is undefined.'
+    );
+    assert.strictEqual(
+        chart.hoverPoints,
+        hoverPoints,
+        'No update: chart.hoverPoints is undefined.'
+    );
+
+    hoverPoint = P2;
+    hoverPoints = [P2];
+    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    assert.strictEqual(
+        events.shift(),
+        'state(hover->normal).0.0',
+        'mouseOver 0.1: state(hover->normal).0.0.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOut.0.0',
+        'mouseOver 0.1: mouseOut.0.0'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'state(normal->hover).0.1',
+        'mouseOver 0.1: state(normal->hover).0.1.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.0.1',
+        'mouseOver 0.1: mouseOut.0.1'
+    );
+    assert.strictEqual(
+        events.length,
+        0,
+        'mouseOver 0.1: no unexpected events.'
+    );
+    assert.strictEqual(
+        chart.hoverSeries,
+        hoverSeries,
+        'mouseOver 0.1: chart.hoverSeries is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoint,
+        hoverPoint,
+        'mouseOver 0.1: chart.hoverPoint is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoints,
+        hoverPoints,
+        'mouseOver 0.1: chart.hoverPoints is correct.'
+    );
+
+    updateHoverData(chart);
+    assert.strictEqual(
+        events.shift(),
+        'state(hover->normal).0.1',
+        'mouseOut: state(hover->normal).0.1.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOut.0.1',
+        'mouseOut: mouseOut.0.1'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'state(hover->normal).0.-',
+        'mouseOut: state(hover->normal).0.-.'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOut.0.-',
+        'mouseOut: mouseOut.0.-'
+    );
+    assert.strictEqual(
+        events.length,
+        0,
+        'mouseOut: no unexpected events.'
+    );
+    assert.strictEqual(
+        chart.hoverSeries,
+        undefined,
+        'mouseOut: chart.hoverSeries is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoint,
+        undefined,
+        'mouseOut: chart.hoverPoint is correct.'
+    );
+    assert.strictEqual(
+        chart.hoverPoints,
+        undefined,
+        'mouseOut: chart.hoverPoints is correct.'
+    );
+});

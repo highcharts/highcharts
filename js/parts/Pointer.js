@@ -335,6 +335,48 @@ H.Pointer.prototype = {
 			hoverPoints: hoverPoints
 		};
 	},
+	updateHoverData: function (chart, hoverSeries, hoverPoint, hoverPoints) {
+		var newHP = chart.hoverPoint !== hoverPoint,
+			points = hoverPoints || [],
+			existingHoverPoints = chart.hoverPoints || [],
+			updatePointStates = function (state, updates, existing) {
+				each(updates, function (p) {
+					if (H.inArray(p, existing) === -1) {
+						p.setState(state);
+					}
+				});
+			};
+		// Remove hover from existing hover points
+		updatePointStates(undefined, existingHoverPoints, points);
+		if (newHP && chart.hoverPoint) {
+			chart.hoverPoint.firePointEvent('mouseOut');
+		}
+		if (chart.hoverSeries !== hoverSeries) {
+			if (chart.hoverSeries) {
+				chart.hoverSeries.setState();
+				fireEvent(chart.hoverSeries, 'mouseOut');
+			}
+			if (hoverSeries) {
+				hoverSeries.setState('hover');
+				// only trigger the event if defined, to save processing time.
+				if (
+					hoverSeries.options &&
+					hoverSeries.options.events &&
+					hoverSeries.options.events.mouseOver
+				) {
+					fireEvent(hoverSeries, 'mouseOver');
+				}
+			}
+		}
+		// Do hover on all points (#3919, #3985, #4410, #5622)
+		updatePointStates('hover', points, existingHoverPoints);
+		if (newHP && hoverPoint) {
+			hoverPoint.firePointEvent('mouseOver');
+		}
+		chart.hoverSeries = hoverSeries;
+		chart.hoverPoints = hoverPoints;
+		chart.hoverPoint = hoverPoint;
+	},
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
@@ -379,33 +421,9 @@ H.Pointer.prototype = {
 		// #3926, #4200
 		if (
 			hoverPoint &&
-			// !(hoverSeries && hoverSeries.directTouch) &&
 			(hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
 		) {
-			each(chart.hoverPoints || [], function (p) {
-				if (H.inArray(p, points) === -1) {
-					p.setState();
-				}
-			});
-			// Do mouseover on all points (#3919, #3985, #4410, #5622)
-			each(points || [], function (p) {
-				p.setState('hover');
-			});
-			// set normal state to previous series
-			if (chart.hoverSeries !== hoverSeries) {
-				hoverSeries.onMouseOver();
-			}
-
-			// If tracking is on series in stead of on each point, 
-			// fire mouseOver on hover point. 
-			if (hoverSeries && !hoverSeries.directTouch) { // #4448
-				if (chart.hoverPoint) {
-					chart.hoverPoint.firePointEvent('mouseOut');
-				}
-				hoverPoint.firePointEvent('mouseOver');
-			}
-			chart.hoverPoints = points;
-			chart.hoverPoint = hoverPoint;
+			pointer.updateHoverData(chart, hoverSeries, hoverPoint, points);
 			// Draw tooltip if necessary
 			if (tooltip) {
 				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
