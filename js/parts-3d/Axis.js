@@ -60,42 +60,42 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 
 	var pathSegments = [];
 	if (!this.horiz) {  // Y-Axis
-		if (frame.front.visible && frame.front.frontFacing) {
+		if (frame.front.visible) {
 			pathSegments.push(pArr[0], pArr[2]);
 		}
-		if (frame.back.visible && frame.back.frontFacing) {
+		if (frame.back.visible) {
 			pathSegments.push(pArr[1], pArr[3]);
 		}
-		if (frame.left.visible && frame.left.frontFacing) {
+		if (frame.left.visible) {
 			pathSegments.push(pArr[0], pArr[1]);
 		}
-		if (frame.right.visible && frame.right.frontFacing) {
+		if (frame.right.visible) {
 			pathSegments.push(pArr[2], pArr[3]);
 		}
 	} else if (this.isZAxis) {  // Z-Axis
-		if (frame.left.visible && frame.left.frontFacing) {
+		if (frame.left.visible) {
 			pathSegments.push(pArr[0], pArr[2]);
 		}
-		if (frame.right.visible && frame.right.frontFacing) {
+		if (frame.right.visible) {
 			pathSegments.push(pArr[1], pArr[3]);
 		}
-		if (frame.top.visible && frame.top.frontFacing) {
+		if (frame.top.visible) {
 			pathSegments.push(pArr[0], pArr[1]);
 		}
-		if (frame.bottom.visible && frame.bottom.frontFacing) {
+		if (frame.bottom.visible) {
 			pathSegments.push(pArr[2], pArr[3]);
 		}
 	} else {  // X-Axis
-		if (frame.front.visible && frame.front.frontFacing) {
+		if (frame.front.visible) {
 			pathSegments.push(pArr[0], pArr[2]);
 		}
-		if (frame.back.visible && frame.back.frontFacing) {
+		if (frame.back.visible) {
 			pathSegments.push(pArr[1], pArr[3]);
 		}
-		if (frame.top.visible && frame.top.frontFacing) {
+		if (frame.top.visible) {
 			pathSegments.push(pArr[0], pArr[1]);
 		}
-		if (frame.bottom.visible && frame.bottom.frontFacing) {
+		if (frame.bottom.visible) {
 			pathSegments.push(pArr[2], pArr[3]);
 		}
 	}
