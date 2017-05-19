@@ -2,7 +2,7 @@
 Highcharts.chart('container', {
 
     chart: {
-        marginBottom: 120,
+        marginBottom: 110,
         marginLeft: 80,
         width: 500
     },
@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         floating: true,
         align: 'left',
         x: 70, // = marginLeft - default spacingLeft
-        itemWidth: 70,
+        itemWidth: 100,
         borderWidth: 1
     },
 

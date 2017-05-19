@@ -514,11 +514,15 @@ H.Tooltip.prototype = {
 			} else {
 
 				// Prevent the tooltip from flowing over the chart box (#6659)
+				/*= if (build.classic) { =*/
 				if (!options.style.width) {
+				/*= } =*/
 					label.css({
 						width: this.chart.spacingBox.width
 					});
+				/*= if (build.classic) { =*/
 				}
+				/*= } =*/
 
 				label.attr({
 					text: text && text.join ? text.join('') : text

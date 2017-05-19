@@ -243,13 +243,16 @@ H.Pointer.prototype = {
 		var series = point.series,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
-		return inverted ? {
-			chartX: xAxis.len + xAxis.pos - point.clientX,
-			chartY: yAxis.len + yAxis.pos - point.plotY
-		} : {
-			chartX: point.clientX + xAxis.pos,
-			chartY: point.plotY + yAxis.pos
-		};
+
+		if (xAxis && yAxis) {
+			return inverted ? {
+				chartX: xAxis.len + xAxis.pos - point.clientX,
+				chartY: yAxis.len + yAxis.pos - point.plotY
+			} : {
+				chartX: point.clientX + xAxis.pos,
+				chartY: point.plotY + yAxis.pos
+			};
+		}
 	},
 
 	/**

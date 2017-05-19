@@ -2,12 +2,10 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'funnel',
-        marginRight: 100
+        type: 'funnel'
     },
     title: {
-        text: 'Sales funnel',
-        x: -50
+        text: 'Sales funnel'
     },
     plotOptions: {
         series: {
@@ -17,12 +15,10 @@ Highcharts.chart('container', {
                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                 softConnector: true
             },
+            center: ['40%', '50%'],
             neckWidth: '30%',
-            neckHeight: '25%'
-
-            //-- Other available options
-            // height: pixels or percent
-            // width: pixels or percent
+            neckHeight: '25%',
+            width: '80%'
         }
     },
     legend: {
