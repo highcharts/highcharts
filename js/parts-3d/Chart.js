@@ -539,19 +539,23 @@ Chart.prototype.get3dFrame = function () {
 		defaultShowFront = false,
 		defaultShowBack = true;
 
-	// The 'default' criteria to visible faces of the frame is looking up every axis to decide whenever the left/right//top/bottom sides of the frame will be shown
+	// The 'default' criteria to visible faces of the frame is looking up every
+	// axis to decide whenever the left/right//top/bottom sides of the frame
+	// will be shown
 	each([].concat(chart.xAxis, chart.yAxis, chart.zAxis), function (axis) {
-		if (axis.horiz) {
-			if (axis.opposite) {
-				defaultShowTop = true;
+		if (axis) {
+			if (axis.horiz) {
+				if (axis.opposite) {
+					defaultShowTop = true;
+				} else {
+					defaultShowBottom = true;
+				}
 			} else {
-				defaultShowBottom = true;
-			}
-		} else {
-			if (axis.opposite) {
-				defaultShowRight = true;
-			} else {
-				defaultShowLeft = true;
+				if (axis.opposite) {
+					defaultShowRight = true;
+				} else {
+					defaultShowLeft = true;
+				}
 			}
 		}
 	});
