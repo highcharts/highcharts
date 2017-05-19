@@ -1773,7 +1773,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 					}
 				}
 			}
-console.log('@zoom', newMin, newMax)
+
 			// In full view, displaying the reset zoom button is not required
 			this.displayBtn = newMin !== undefined || newMax !== undefined;
 
