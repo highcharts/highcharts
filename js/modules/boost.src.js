@@ -2674,8 +2674,8 @@ if (!hasWebGLSupport()) {
 				chart.ogl.allocateBuffer(chart);
 			}
 
-			//see #6518
-			if (chart.markerGroup) {
+			//see #6518 + #6739
+			if (chart.markerGroup && chart.xAxis && chart.xAxis.length > 0 && chart.yAxis && chart.yAxis.length > 0) {
 				chart.markerGroup.translate(
 					chart.xAxis[0].pos,
 					chart.yAxis[0].pos
