@@ -911,7 +911,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			min = axis.min,
 			max = axis.max,
 			zoomOffset,
-			spaceAvailable = axis.dataMax - axis.dataMin >= axis.minRange,
+			spaceAvailable,
 			closestDataRange,
 			i,
 			distance,
@@ -947,6 +947,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
+
+			spaceAvailable = axis.dataMax - axis.dataMin >= axis.minRange;
 			minRange = axis.minRange;
 			zoomOffset = (minRange - max + min) / 2;
 
@@ -1048,7 +1050,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		if (this.names.length > 0) {
 			this.names.length = 0;
-			this.minRange = undefined;
+			this.minRange = this.userMinRange; // Reset
 			each(this.series || [], function (series) {
 			
 				// Reset incrementer (#5928)
@@ -1771,7 +1773,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 					}
 				}
 			}
-
+console.log('@zoom', newMin, newMax)
 			// In full view, displaying the reset zoom button is not required
 			this.displayBtn = newMin !== undefined || newMax !== undefined;
 
