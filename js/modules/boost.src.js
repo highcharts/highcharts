@@ -2670,17 +2670,18 @@ if (!hasWebGLSupport()) {
 		/* Clear chart-level canvas */
 		function preRender() {
 
-      if (!isChartSeriesBoosting(chart) && chart.didBoost) {
-        chart.didBoost = false;
-        // Clear the canvas
-        if (chart.image) {
-          chart.image.attr({ href: '' });
-        }
-      }
+			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
+				chart.didBoost = false;
+				// Clear the canvas
+				if (chart.image) {
+					chart.image.attr({ href: '' });
+				}
+			}
 
 			if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
 				chart.didBoost = true;
-        // Allocate
+			
+				// Allocate
 				chart.ogl.allocateBuffer(chart);
 			}
 
@@ -2692,7 +2693,7 @@ if (!hasWebGLSupport()) {
 				);
 			}
 
-    }
+		}
 
 		addEvent(chart, 'predraw', preRender);
 		addEvent(chart, 'render', canvasToSVG);
