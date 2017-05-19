@@ -714,7 +714,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(point.graphic.parentGroup); // #5818, #5903, #6705
+					// #5818, #5903, #6705
+					.add((point.graphic || stateMarkerGraphic).parentGroup);
 			}
 			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
