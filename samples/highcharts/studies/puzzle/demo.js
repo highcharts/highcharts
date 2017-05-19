@@ -14,6 +14,27 @@
         };
     }
 
+    Chart.prototype.presentNext = function presentNext() {
+        var point;
+        for (var sI = 0; sI < this.series.length && !point; sI++) {
+            for (var pI = 0; pI < this.series[sI].points.length && !point; pI++) {
+                if (this.series[sI].points[pI].inPuzzle) {
+                    point = this.series[sI].points[pI];
+                }
+            }
+        }
+        if (point) {
+            point.graphic.attr({
+                display: ''
+            }).animate({
+                opacity: 1
+            }, {
+                duration: 500
+            });
+        }
+    };
+
+
     Chart.prototype.callbacks.push(function (chart) {
         var total = 0;
         each(chart.series, function (series) {
@@ -57,6 +78,7 @@
             point.inPuzzle = false;
             stopDrag(point);
             updateCount(-1);
+            chart.presentNext();
 
         }
 
@@ -159,7 +181,9 @@
                         scaleX: scale,
                         scaleY: scale,
                         translateX: -bBox.x * scale,
-                        translateY: -bBox.y * scale
+                        translateY: -bBox.y * scale,
+                        opacity: 0,
+                        display: 'none'
                     });
 
                     point.inPuzzle = true;
@@ -167,6 +191,8 @@
                 }
 
             });
+
+            this.chart.presentNext();
         }
         return total;
     };
