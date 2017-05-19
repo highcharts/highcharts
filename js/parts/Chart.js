@@ -1225,6 +1225,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			plotHeight,
 			plotBorderWidth;
 
+		function clipOffsetSide(side) {
+			var offset = clipOffset[side] || 0;
+			return Math.max(plotBorderWidth || offset, offset) / 2;
+		}
+
 		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
 		chart.plotTop = plotTop = Math.round(chart.plotTop);
 		chart.plotWidth = plotWidth = Math.max(
@@ -1256,21 +1261,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = Math.ceil(Math.max(plotBorderWidth, clipOffset[3]) / 2);
-		clipY = Math.ceil(Math.max(plotBorderWidth, clipOffset[0]) / 2);
+		clipX = Math.ceil(clipOffsetSide(3));
+		clipY = Math.ceil(clipOffsetSide(0));
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
 			width: Math.floor(
 				chart.plotSizeX -
-				Math.max(plotBorderWidth, clipOffset[1]) / 2 -
+				clipOffsetSide(1) -
 				clipX
 			), 
 			height: Math.max(
 				0,
 				Math.floor(
 					chart.plotSizeY -
-					Math.max(plotBorderWidth, clipOffset[2]) / 2 -
+					clipOffsetSide(2) -
 					clipY
 				)
 			)
@@ -1310,7 +1315,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
-		chart.clipOffset = [0, 0, 0, 0];
+		chart.clipOffset = [];
 	},
 
 	/**

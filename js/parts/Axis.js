@@ -2353,9 +2353,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				0 // #4866
 		);
 
-		// Decide the clipping needed to keep the graph inside the plot area and axis lines
-		clip = options.offset ? 0 : Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
-		clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+		// Decide the clipping needed to keep the graph inside the plot area and
+		// axis lines
+		clip = Math.floor(axis.axisLine.strokeWidth() / 2) * 2; // #4308, #4371
+		if (options.offset > 0) {
+			clip -= options.offset * 2;
+		}
+		clipOffset[invertedSide] = Math.max(
+			clipOffset[invertedSide] || clip,
+			clip
+		);
 	},
 
 	/**
