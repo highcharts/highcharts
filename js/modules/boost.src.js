@@ -2669,8 +2669,18 @@ if (!hasWebGLSupport()) {
 
 		/* Clear chart-level canvas */
 		function preRender() {
+
+      if (!isChartSeriesBoosting(chart) && chart.didBoost) {
+        chart.didBoost = false;
+        // Clear the canvas
+        if (chart.image) {
+          chart.image.attr({ href: '' });
+        }
+      }
+
 			if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
-				// Allocate
+				chart.didBoost = true;
+        // Allocate
 				chart.ogl.allocateBuffer(chart);
 			}
 
@@ -2681,7 +2691,8 @@ if (!hasWebGLSupport()) {
 					chart.yAxis[0].pos
 				);
 			}
-		}
+
+    }
 
 		addEvent(chart, 'predraw', preRender);
 		addEvent(chart, 'render', canvasToSVG);
