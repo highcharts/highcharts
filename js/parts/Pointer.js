@@ -338,9 +338,8 @@ H.Pointer.prototype = {
 			hoverPoints: hoverPoints
 		};
 	},
-	updateHoverData: function (hoverSeries, hoverPoint, hoverPoints) {
-		var chart = this.chart,
-			newHP = chart.hoverPoint !== hoverPoint,
+	updateHoverData: function (chart, hoverSeries, hoverPoint, hoverPoints) {
+		var newHP = chart.hoverPoint !== hoverPoint,
 			points = hoverPoints || [],
 			existingHoverPoints = chart.hoverPoints || [],
 			updatePointStates = function (state, updates, existing) {
@@ -352,7 +351,6 @@ H.Pointer.prototype = {
 			};
 		// Remove hover from existing hover points
 		updatePointStates(undefined, existingHoverPoints, points);
-
 		if (newHP && chart.hoverPoint) {
 			chart.hoverPoint.firePointEvent('mouseOut');
 		}
@@ -428,7 +426,7 @@ H.Pointer.prototype = {
 			hoverPoint &&
 			(hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
 		) {
-			pointer.updateHoverData(hoverSeries, hoverPoint, points);
+			pointer.updateHoverData(chart, hoverSeries, hoverPoint, points);
 			// Draw tooltip if necessary
 			if (tooltip) {
 				tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
