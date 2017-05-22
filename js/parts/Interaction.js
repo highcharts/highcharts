@@ -545,7 +545,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			pointer.normalize(e) :
 			// In cases where onMouseOver is called directly without an event
 			pointer.getChartCoordinatesFromPoint(point, chart.inverted);
-		// runPointActions takes care of calculating hoverData and updating them
+		point.firePointEvent('mouseOver');
 		pointer.runPointActions(e, point);
 	},
 
@@ -554,9 +554,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 */
 	onMouseOut: function () {
 		var point = this,
-			chart = point.series.chart,
-			pointer = chart.pointer;
-		pointer.updateHoverData(chart, chart.hoverSeries);
+			chart = point.series.chart;
+		point.firePointEvent('mouseOut');
+		each(chart.hoverPoints || [], function (p) {
+			p.setState();
+		});
+		chart.hoverPoints = chart.hoverPoint = null;
 	},
 
 	/**
@@ -771,8 +774,22 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	onMouseOver: function () {
 		var series = this,
 			chart = series.chart,
-			pointer = chart.pointer;
-		pointer.updateHoverData(chart, series);
+			hoverSeries = chart.hoverSeries;
+
+		// set normal state to previous series
+		if (hoverSeries && hoverSeries !== series) {
+			hoverSeries.onMouseOut();
+		}
+
+		// trigger the event, but to save processing time,
+		// only if defined
+		if (series.options.events.mouseOver) {
+			fireEvent(series, 'mouseOver');
+		}
+
+		// hover this
+		series.setState('hover');
+		chart.hoverSeries = series;
 	},
 
 	/**
@@ -781,15 +798,31 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 	onMouseOut: function () {
 		// trigger the event only if listeners exist
 		var series = this,
+			options = series.options,
 			chart = series.chart,
-			pointer = chart.pointer,
-			tooltip = chart.tooltip;
-		pointer.updateHoverData(chart);
+			tooltip = chart.tooltip,
+			hoverPoint = chart.hoverPoint;
+
+		chart.hoverSeries = null; // #182, set to null before the mouseOut event fires
+
+		// trigger mouse out on the point, which must be in this series
+		if (hoverPoint) {
+			hoverPoint.onMouseOut();
+		}
+
+		// fire the mouse out event
+		if (series && options.events.mouseOut) {
+			fireEvent(series, 'mouseOut');
+		}
+
 
 		// hide the tooltip
 		if (tooltip && !series.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
 			tooltip.hide();
 		}
+
+		// set normal state
+		series.setState();
 	},
 
 	/**
