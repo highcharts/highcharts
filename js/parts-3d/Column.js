@@ -31,17 +31,15 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 		chart = series.chart,
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 25,
+		stack = seriesOptions.stacking ?
+			(seriesOptions.stack || 0) :
+			series.index, // #4743
+		z = stack * (depth + (seriesOptions.groupZPadding || 1)),
 		borderCrisp = series.borderWidth % 2 ? 0.5 : 0;
 
-	if (
-		(chart.inverted && !series.yAxis.reversed) ||
-		(!chart.inverted && series.yAxis.reversed)
-	) {
+	if (chart.inverted && !series.yAxis.reversed) {
 		borderCrisp *= -1;
 	}
-
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series.index; // #4743
-	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) {
 		z = 0;
@@ -55,25 +53,36 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 				// Array for final shapeArgs calculation.
 				// We are checking two dimensions (x and y).
 				dimensions = [['x', 'width'], ['y', 'height']],
-				borderlessBase; // crisped rects can have +/- 0.5 pixels offset
+				borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
 
-			// #3131 We need to check if column shape arguments are inside plotArea.
+			// #3131 We need to check if column is inside plotArea.
 			each(dimensions, function (d) {
 				borderlessBase = shapeArgs[d[0]] - borderCrisp;
+				if (borderlessBase < 0) {
+					// If borderLessBase is smaller than 0, it is needed to set
+					// its value to 0 or 0.5 depending on borderWidth
+					// borderWidth may be even or odd.
+					shapeArgs[d[1]] += shapeArgs[d[0]] + borderCrisp;
+					shapeArgs[d[0]] = -borderCrisp;
+					borderlessBase = 0;
+				}
 				if (
-					borderlessBase + shapeArgs[d[1]] < 0 || // End column position is smaller than axis start.
-					borderlessBase > series[d[0] + 'Axis'].len // Start column position is bigger than axis end.
-				) {
+						borderlessBase + shapeArgs[d[1]] > series[d[0] + 'Axis'].len &&
+						shapeArgs[d[1]] !== 0 // Do not change height/width of column if 0.
+						// #6708
+					) {
+					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
+				}
+				if (
+						(shapeArgs[d[1]] !== 0) && // Do not remove columns with zero height/width.
+						(
+							shapeArgs[d[0]] >= series[d[0] + 'Axis'].len ||
+							shapeArgs[d[0]] + shapeArgs[d[1]] <= borderCrisp
+						)
+					) {
 					for (var key in shapeArgs) { // Set args to 0 if column is outside the chart.
 						shapeArgs[key] = 0;
 					}
-				}
-				if (borderlessBase < 0) {
-					shapeArgs[d[1]] += shapeArgs[d[0]]; 
-					shapeArgs[d[0]] = 0;
-				}
-				if (borderlessBase + shapeArgs[d[1]] > series[d[0] + 'Axis'].len) {
-					shapeArgs[d[1]] = series[d[0] + 'Axis'].len - shapeArgs[d[0]];
 				}
 			});
 
