@@ -743,10 +743,19 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 	proceed.call(this);
 
 	each(this.points, function (point) {
-		var pointCSS = {};
+		var dataLabelsOptions = point.options.dataLabels,
+			pointCSS = pick(
+				point.dlOptions,
+				dataLabelsOptions && dataLabelsOptions.style,
+				{}
+			);
+
 		if (point.drilldown && point.dataLabel) {
 			if (css.color === 'contrast') {
 				pointCSS.color = renderer.getContrast(point.color || this.color);
+			}
+			if (dataLabelsOptions && dataLabelsOptions.color) {
+				pointCSS.color = dataLabelsOptions.color;
 			}
 			point.dataLabel
 				.addClass('highcharts-drilldown-data-label');
