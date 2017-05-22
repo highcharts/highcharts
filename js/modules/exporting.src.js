@@ -33,7 +33,8 @@ var defaultOptions = H.defaultOptions,
 	SVGRenderer = H.SVGRenderer;
 
 var symbols = H.Renderer.prototype.symbols,
-	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(win.navigator.userAgent);
+	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(win.navigator.userAgent),
+	isFirefoxBrowser = /firefox/i.test(navigator.userAgent);
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -958,7 +959,8 @@ Chart.prototype.inlineStyles = function () {
 			}
 
 			// Loop through all styles and add them inline if they are ok
-			if (isMSBrowser) { // MS browsers put lots of styles on the prototype
+			if (isFirefoxBrowser || isMSBrowser) {
+				// Some browsers put lots of styles on the prototype
 				for (var p in styles) {
 					filterStyles(styles[p], p);
 				}
