@@ -1165,6 +1165,7 @@ Navigator.prototype = {
 			navSeriesMixin = {
 				enableMouseTracking: false,
 				index: null, // #6162
+				linkedTo: null, // #6734
 				group: 'nav', // for columns
 				padXAxis: false,
 				xAxis: 'navigator-x-axis',

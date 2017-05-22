@@ -1,40 +1,44 @@
 
-QUnit.test('Navigator series\' should keep it\'s position in series array, even after series.update()', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 2, 3],
-                id: '1'
-            }, {
-                data: [1, 2, 3],
-                id: '2'
-            }, {
-                data: [1, 2, 3],
-                id: '3'
-            }]
-        }),
-        initialIndexes = chart.series.map(function (s) {
+QUnit.test(
+    'Navigator series\' should keep it\'s position in series array, ' +
+    'even after series.update()',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+                series: [{
+                    data: [1, 2, 3],
+                    id: '1'
+                }, {
+                    data: [1, 2, 3],
+                    id: '2'
+                }, {
+                    data: [1, 2, 3],
+                    id: '3'
+                }]
+            }),
+            initialIndexes = chart.series.map(function (s) {
+                return s.options.id;
+            }),
+            afterUpdateIndexes;
+
+
+        Highcharts.each(chart.series, function (s, i) {
+            s.update({
+                name: 'Name ' + i
+            }, false);
+        });
+        chart.redraw();
+
+        afterUpdateIndexes = chart.series.map(function (s) {
             return s.options.id;
-        }),
-        afterUpdateIndexes;
+        });
 
-
-    Highcharts.each(chart.series, function (s, i) {
-        s.update({
-            name: 'Name ' + i
-        }, false);
-    });
-    chart.redraw();
-
-    afterUpdateIndexes = chart.series.map(function (s) {
-        return s.options.id;
-    });
-
-    assert.deepEqual(
-        initialIndexes,
-        afterUpdateIndexes,
-        'Correct zIndexes after update'
-    );
-});
+        assert.deepEqual(
+            initialIndexes,
+            afterUpdateIndexes,
+            'Correct zIndexes after update'
+        );
+    }
+);
 
 
 QUnit.test(
@@ -155,6 +159,49 @@ QUnit.test(
             chart.series[0].points[0].kilroyWasHere,
             true,
             'Original point item is preserved'
+        );
+    }
+);
+
+QUnit.test(
+    'Navigator series\' do not allow linkeTo (#6734).',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 1],
+                id: '1'
+            }, {
+                data: [1, 3, 1],
+                id: '2',
+                linkedTo: '1',
+                showInNavigator: true
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[2].options.linkedTo,
+            null,
+            'No linkedTo for navigator series'
+        );
+        assert.deepEqual(
+            chart.series[3].options.linkedTo,
+            null,
+            'No linkedTo in navigator series based on series with linkedTo'
+        );
+
+        chart.series[0].update({
+            type: 'spline'
+        });
+
+        assert.deepEqual(
+            chart.series[2].options.linkedTo,
+            null,
+            'No linkedTo for navigator series'
+        );
+        assert.deepEqual(
+            chart.series[3].options.linkedTo,
+            null,
+            'No linkedTo in navigator series based on series with linkedTo'
         );
     }
 );
