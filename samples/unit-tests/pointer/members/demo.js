@@ -453,6 +453,8 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
             hoverSeries: undefined,
             hoverPoints: undefined,
             hoverPoint: undefined,
+            pointer: {
+            },
             series: []
         },
         S1 = mockSeries(chart),
@@ -462,8 +464,10 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
         hoverPoint,
         hoverPoints;
 
+    chart.pointer.chart = chart;
+
     events = [];
-    updateHoverData(chart);
+    updateHoverData.call(chart.pointer);
     assert.strictEqual(
         events.length,
         0,
@@ -488,7 +492,7 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
     hoverSeries = S1;
     hoverPoint = P1;
     hoverPoints = [P1];
-    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    updateHoverData.call(chart.pointer, hoverSeries, hoverPoint, hoverPoints);
     assert.strictEqual(
         events.shift(),
         'state(normal->hover).0.-',
@@ -531,7 +535,7 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
     );
 
     // Same input twice in the row should not do any changes
-    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    updateHoverData.call(chart.pointer, hoverSeries, hoverPoint, hoverPoints);
     assert.strictEqual(
         events.length,
         0,
@@ -555,7 +559,7 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
 
     hoverPoint = P2;
     hoverPoints = [P2];
-    updateHoverData(chart, hoverSeries, hoverPoint, hoverPoints);
+    updateHoverData.call(chart.pointer, hoverSeries, hoverPoint, hoverPoints);
     assert.strictEqual(
         events.shift(),
         'state(hover->normal).0.0',
@@ -597,7 +601,7 @@ QUnit.test('Pointer.updateHoverData', function (assert) {
         'mouseOver 0.1: chart.hoverPoints is correct.'
     );
 
-    updateHoverData(chart);
+    updateHoverData.call(chart.pointer);
     assert.strictEqual(
         events.shift(),
         'state(hover->normal).0.1',

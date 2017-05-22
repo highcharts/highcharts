@@ -553,10 +553,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 	 * Runs on mouse out from the point
 	 */
 	onMouseOut: function () {
+
 		var point = this,
 			chart = point.series.chart,
 			pointer = chart.pointer;
-		pointer.updateHoverData(chart, chart.hoverSeries);
+		pointer.updateHoverData(chart.hoverSeries);
 	},
 
 	/**
@@ -772,7 +773,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 		var series = this,
 			chart = series.chart,
 			pointer = chart.pointer;
-		pointer.updateHoverData(chart, series);
+		pointer.updateHoverData(series);
 	},
 
 	/**
@@ -784,7 +785,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 			chart = series.chart,
 			pointer = chart.pointer,
 			tooltip = chart.tooltip;
-		pointer.updateHoverData(chart);
+		pointer.updateHoverData();
 
 		// hide the tooltip
 		if (tooltip && !series.stickyTracking && (!tooltip.shared || series.noSharedTooltip)) {
