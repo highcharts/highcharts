@@ -168,8 +168,7 @@ H.defaultOptions = {
 			color: '${palette.neutralColor80}',
 			fontSize: '12px',
 			fontWeight: 'bold',
-			textOverflow: 'ellipsis' // docs: Explain the difference, setting
-				// this to null will make long texts wrap
+			textOverflow: 'ellipsis'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601

@@ -327,7 +327,7 @@ function shouldForceChartSeriesBoosting(chart) {
  */
 function isChartSeriesBoosting(chart) {
 	return shouldForceChartSeriesBoosting(chart) || chart.series.length >= pick(
-		chart.options.boost && chart.options.boost.seriesThreshold, // docs
+		chart.options.boost && chart.options.boost.seriesThreshold,
 		50
 	);
 }
@@ -1680,7 +1680,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			//Blending
-			if (options.boostBlending === 'add') { // docs
+			if (options.boostBlending === 'add') {
 				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 				gl.blendEquation(gl.FUNC_ADD);
 
