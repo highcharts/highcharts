@@ -21,8 +21,13 @@ var colProto = seriesTypes.column.prototype;
  */
 seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 	lineWidth: 1,
-	pointRange: null
-
+	pointRange: null,
+	marker: null,
+	states: {
+		hover: {
+			halo: false
+		}
+	}
 // Prototype members
 }), {
 	/**
@@ -96,6 +101,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 	directTouch: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	drawGraph: noop,
+	getSymbol: noop,
 	crispCol: colProto.crispCol,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
@@ -107,4 +113,6 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 		return colProto.polarArc.apply(this, arguments);
 	},
 	pointAttribs: colProto.pointAttribs
+}, {
+	setState: colProto.pointClass.prototype.setState
 });

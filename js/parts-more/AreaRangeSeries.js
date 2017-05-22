@@ -11,9 +11,12 @@ import '../parts/Series.js';
 var each = H.each,
 	noop = H.noop,
 	pick = H.pick,
+	defined = H.defined,
 	Series = H.Series,
 	seriesType = H.seriesType,
-	seriesTypes = H.seriesTypes;
+	seriesTypes = H.seriesTypes,
+	seriesProto = Series.prototype,
+	pointProto = H.Point.prototype;
 /* 
  * The arearangeseries series type
  */
@@ -21,7 +24,6 @@ seriesType('arearange', 'area', {
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	/*= } =*/
-	marker: null,
 	threshold: null,
 	tooltip: {
 		/*= if (!build.classic) { =*/
@@ -38,11 +40,6 @@ seriesType('arearange', 'area', {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0
-	},
-	states: {
-		hover: {
-			halo: false
-		}
 	}
 
 // Prototype members
@@ -66,6 +63,7 @@ seriesType('arearange', 'area', {
 			xy = this.xAxis.postTranslate(point.rectPlotX, this.yAxis.len - point.plotHigh);
 		point.plotHighX = xy.x - chart.plotLeft;
 		point.plotHigh = xy.y - chart.plotTop;
+		point.plotLowX = point.plotX;
 	},
 
 	/**
@@ -87,6 +85,7 @@ seriesType('arearange', 'area', {
 
 			if (high === null || low === null) {
 				point.isNull = true;
+				point.plotY = null;
 			} else {
 				point.plotLow = plotY;
 				point.plotHigh = yAxis.translate(
@@ -106,6 +105,10 @@ seriesType('arearange', 'area', {
 		if (this.chart.polar) {
 			each(this.points, function (point) {
 				series.highToXY(point);
+				point.tooltipPos = [
+					(point.plotHighX + point.plotLowX) / 2,
+					(point.plotHigh + point.plotLow) / 2
+				];
 			});
 		}
 	},
@@ -222,7 +225,6 @@ seriesType('arearange', 'area', {
 			length = data.length,
 			i,
 			originalDataLabels = [],
-			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			verticalAlign = dataLabelOptions.verticalAlign,
@@ -316,9 +318,121 @@ seriesType('arearange', 'area', {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 
-	setStackedPoints: noop,
+	drawPoints: function () {
+		var series = this,
+			pointLength = series.points.length,
+			point,
+			i;
 
-	getSymbol: noop,
+		// Draw bottom points
+		seriesProto.drawPoints.apply(series, arguments);
 
-	drawPoints: noop
+		i = 0;
+		while (i < pointLength) {
+			point = series.points[i];
+			point.lowerGraphic = point.graphic;
+			point.graphic = point.upperGraphic;
+			point._plotY = point.plotY;
+			point._plotX = point.plotX;
+			point.plotY = point.plotHigh;
+			if (defined(point.plotHighX)) {
+				point.plotX = point.plotHighX;
+			}
+			i++;
+		}
+
+		// Draw top points
+		seriesProto.drawPoints.apply(series, arguments);
+
+		i = 0;
+		while (i < pointLength) {
+			point = series.points[i];
+			point.upperGraphic = point.graphic;
+			point.graphic = point.lowerGraphic;
+			point.plotY = point._plotY;
+			point.plotX = point._plotX;
+			i++;
+		}
+	},
+
+	setStackedPoints: noop
+}, {
+	setState: function () {
+		var prevState = this.state,
+			series = this.series,
+			isPolar = series.chart.polar;
+
+
+		if (!defined(this.plotHigh)) {
+			// Boost doesn't calculate plotHigh
+			this.plotHigh = series.yAxis.toPixels(this.high, true);
+		}
+
+		if (!defined(this.plotLow)) {
+			// Boost doesn't calculate plotLow
+			this.plotLow = this.plotY = series.yAxis.toPixels(this.low, true);
+		}
+
+		// Bottom state:
+		pointProto.setState.apply(this, arguments);
+
+		// Change state also for the top marker
+		this.graphic = this.upperGraphic;
+		this.plotY = this.plotHigh;
+
+		if (isPolar) {
+			this.plotX = this.plotHighX;
+		}
+
+		this.state = prevState;
+
+		if (series.stateMarkerGraphic) {
+			series.lowerStateMarkerGraphic = series.stateMarkerGraphic;
+			series.stateMarkerGraphic = series.upperStateMarkerGraphic;
+		}
+
+		pointProto.setState.apply(this, arguments);
+
+		// Now restore defaults
+		this.plotY = this.plotLow;
+		this.graphic = this.lowerGraphic;
+
+		if (isPolar) {
+			this.plotX = this.plotLowX;
+		}
+
+		if (series.stateMarkerGraphic) {
+			series.upperStateMarkerGraphic = series.stateMarkerGraphic;
+			series.stateMarkerGraphic = series.lowerStateMarkerGraphic;
+		}
+	},
+	haloPath: function () {
+		var isPolar = this.series.chart.polar,
+			path = [];
+
+		// Bottom halo
+		this.plotY = this.plotLow;
+		if (isPolar) {
+			this.plotX = this.plotLowX;
+		}
+
+		path = pointProto.haloPath.apply(this, arguments);
+
+		// Top halo
+		this.plotY = this.plotHigh;
+		if (isPolar) {
+			this.plotX = this.plotHighX;
+		}
+		path = path.concat(
+			pointProto.haloPath.apply(this, arguments)
+		);
+
+		return path;
+	},
+	destroy: function () {
+		if (this.upperGraphic) {
+			this.upperGraphic = this.upperGraphic.destroy();
+		}
+		return pointProto.destroy.apply(this, arguments);
+	}
 });
