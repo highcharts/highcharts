@@ -402,13 +402,11 @@ H.Pointer.prototype = {
 			}
 
 			// If tracking is on series in stead of on each point, 
-			// fire mouseOver on hover point. 
-			if (hoverSeries && !hoverSeries.directTouch) { // #4448
-				if (chart.hoverPoint) {
-					chart.hoverPoint.firePointEvent('mouseOut');
-				}
-				hoverPoint.firePointEvent('mouseOver');
+			// fire mouseOver on hover point. // #4448
+			if (chart.hoverPoint) {
+				chart.hoverPoint.firePointEvent('mouseOut');
 			}
+			hoverPoint.firePointEvent('mouseOver');
 			chart.hoverPoints = points;
 			chart.hoverPoint = hoverPoint;
 			// Draw tooltip if necessary

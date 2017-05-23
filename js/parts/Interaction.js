@@ -545,7 +545,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			pointer.normalize(e) :
 			// In cases where onMouseOver is called directly without an event
 			pointer.getChartCoordinatesFromPoint(point, chart.inverted);
-		point.firePointEvent('mouseOver');
 		pointer.runPointActions(e, point);
 	},
 
