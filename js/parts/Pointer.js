@@ -351,7 +351,7 @@ H.Pointer.prototype = {
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
 			// onMouseOver or already hovering a series with directTouch
-			isDirectTouch = (
+			isDirectTouch = !!p || (
 				(hoverSeries && hoverSeries.directTouch) &&
 				pointer.isDirectTouch
 			),
