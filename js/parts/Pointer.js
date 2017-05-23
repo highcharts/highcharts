@@ -351,7 +351,10 @@ H.Pointer.prototype = {
 			hoverPoint = p || chart.hoverPoint,
 			hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
 			// onMouseOver or already hovering a series with directTouch
-			isDirectTouch = !!p || (hoverSeries && hoverSeries.directTouch),
+			isDirectTouch = (
+				(hoverSeries && hoverSeries.directTouch) &&
+				pointer.isDirectTouch
+			),
 			hoverData = this.getHoverData(
 				hoverPoint,
 				hoverSeries,
@@ -364,7 +367,6 @@ H.Pointer.prototype = {
 			followPointer,
 			anchor,
 			points;
-		
 		// Update variables from hoverData.
 		hoverPoint = hoverData.hoverPoint;
 		hoverSeries = hoverData.hoverSeries;
@@ -819,7 +821,7 @@ H.Pointer.prototype = {
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
 			relatedTarget = e.relatedTarget || e.toElement;
-
+		this.isDirectTouch = false;
 		if (series && relatedTarget && !series.stickyTracking && 
 				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
 					(

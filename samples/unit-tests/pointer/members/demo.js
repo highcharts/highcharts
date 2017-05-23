@@ -306,6 +306,101 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
     );
 });
 
+QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517, #6586', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: merge(config.chart, {
+                type: 'column'
+            }),
+            plotOptions: config.plotOptions,
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }, {
+                data: [3, 2, 1]
+            }]
+        }),
+        pointer = chart.pointer,
+        controller = new TestController(chart),
+        // series1 = chart.series[0],
+        series2 = chart.series[1],
+        el = series2.points[0].graphic.element;
+    events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
+    // Move starting position of cursor to 50px below series[0].points[0].
+    controller.moveToElement(el, 10, -50);
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.1.-',
+        'mousemove to 50px above 1.0: mouseOver fired on series[1]'
+    );
+    assert.strictEqual(
+        events.shift(),
+        'mouseOver.1.0',
+        'mousemove to 50px above 1.0: mouseOver fired on series[1].points[0]'
+    );
+    assert.strictEqual(
+        events.length,
+        0,
+        'mousemove to 50px above 1.0: no unexpected events'
+    );
+    assert.strictEqual(
+        pointer.isDirectTouch,
+        undefined,
+        'mousemove to 50px above 1.0: not a direct touch.'
+    );
+
+    // Move inside point 0.1
+    controller.moveToElement(el, 10, 10);
+    assert.strictEqual(
+        events.length,
+        0,
+        'mousemove to 10px inside 0.1: no unexpected events'
+    );
+    assert.strictEqual(
+        pointer.isDirectTouch,
+        true,
+        'mousemove to 50px above 0.1: not a direct touch.'
+    );
+
+    // TODO getKDPoints returns wrong hoverPoint with columns and shared tooltip
+    // Move to 50px above 0.1
+    // el = series1.points[1].graphic.element;
+    // console.log(el);
+    // chart.pointer.debug = true;
+    // controller.moveToElement(el, 0, -10);
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOut.1.0',
+    //     'mousemove to 10px above 0.1: mouseOut fired on series[1].points[0]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOut.1.-',
+    //     'mousemove to 10px above 0.1: mouseOut fired on series[1]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOver.0.-',
+    //     'mousemove to 10px above 0.1: mouseOver fired on series[0]'
+    // );
+    // assert.strictEqual(
+    //     events.shift(),
+    //     'mouseOver.0.1',
+    //     'mousemove to 10px above 0.1: mouseOver fired on series[0].points[1].'
+    // );
+    // assert.strictEqual(
+    //     events.length,
+    //     0,
+    //     'mousemove to 10px above 0.1: no unexpected events'
+    // );
+    // assert.strictEqual(
+    //     pointer.isDirectTouch,
+    //     false,
+    //     'mousemove to 10px above 0.1: not a direct touch.'
+    // );
+});
+
 QUnit.test('Pointer.getHoverData', function (assert) {
     // Create the chart
     var options = {
