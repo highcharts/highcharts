@@ -30,21 +30,21 @@ var defaultOptions = H.defaultOptions,
 	extend = H.extend,
 	isTouchDevice = H.isTouchDevice,
 	win = H.win,
-	SVGRenderer = H.SVGRenderer;
+	userAgent = win.navigator.userAgent,
+	SVGRenderer = H.SVGRenderer,
+	symbols = H.Renderer.prototype.symbols,
+	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
+	isFirefoxBrowser = /firefox/i.test(userAgent);
 
-var symbols = H.Renderer.prototype.symbols,
-	isMSBrowser = /Edge\/|Trident\/|MSIE /.test(win.navigator.userAgent),
-	isFirefoxBrowser = /firefox/i.test(navigator.userAgent);
-
-	// Add language
-	extend(defaultOptions.lang, {
-		printChart: 'Print chart',
-		downloadPNG: 'Download PNG image',
-		downloadJPEG: 'Download JPEG image',
-		downloadPDF: 'Download PDF document',
-		downloadSVG: 'Download SVG vector image',
-		contextButtonTitle: 'Chart context menu'
-	});
+// Add language
+extend(defaultOptions.lang, {
+	printChart: 'Print chart',
+	downloadPNG: 'Download PNG image',
+	downloadJPEG: 'Download JPEG image',
+	downloadPDF: 'Download PDF document',
+	downloadSVG: 'Download SVG vector image',
+	contextButtonTitle: 'Chart context menu'
+});
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
