@@ -130,7 +130,7 @@ chartPrototype.hasData = function () {
 		}	
 	}
 
-	return false;
+	return chart.loadingShown; // #4588
 };
 
 /**
