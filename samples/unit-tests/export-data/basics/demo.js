@@ -211,6 +211,47 @@ QUnit.test("Scatter chart, multiple points on same X (#49)", function (assert) {
 });
 
 
+QUnit.test("Scatter chart, multiple series (#6761)", function (assert) {
+    var chart = new Highcharts.Chart({
+
+        chart: {
+            renderTo: 'container',
+            type: 'scatter'
+        },
+
+        series: [{
+            name: 'New York',
+            data: [{
+                x: -8,
+                y: 445.42
+            }, {
+                x: -7,
+                y: 450.83
+            }]
+        }, {
+            name: 'Tokyo',
+            data: [{
+                x: -12,
+                y: 594.25
+            }, {
+                x: -11,
+                y: 710.83
+            }, {
+                x: -6,
+                y: 549.58
+            }]
+        }]
+
+    });
+    var rows = chart.getDataRows();
+    assert.equal(
+        rows.length,
+        6,
+        "All points are added"
+    );
+});
+
+
 QUnit.test("Heatmap, all points added", function (assert) {
     var chart = new Highcharts.Chart({
         chart: {
