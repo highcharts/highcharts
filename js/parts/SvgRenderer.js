@@ -2750,9 +2750,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	/**
 	 * Resize the {@link SVGRenderer#box} and re-align all aligned child
 	 * elements.
-	 * @param {number} width The new pixel width.
-	 * @param {number} height The new pixel height.
-	 * @param {boolean} animate Whether to animate.
+	 * @param  {number} width
+	 *         The new pixel width.
+	 * @param  {number} height
+	 *         The new pixel height.
+	 * @param  {Boolean|AnimationOptions} [animate=true]
+	 *         Whether and how to animate.
 	 */
 	setSize: function (width, height, animate) {
 		var renderer = this,

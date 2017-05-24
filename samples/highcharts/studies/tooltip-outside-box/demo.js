@@ -14,7 +14,7 @@
 
         if (!this.label) {
 
-            this.renderer = new H.Renderer(document.body, 400, 60);
+            this.renderer = new H.Renderer(document.body, 0, 0);
             box = this.renderer.boxWrapper;
             box.css({
                 position: 'absolute',
@@ -73,6 +73,13 @@
                 label.height,
                 point
             );
+
+        // Set the renderer size dynamically to prevent document size to change
+        this.renderer.setSize(
+            label.width + (this.options.borderWidth || 0),
+            label.height + this.distance,
+            false
+        );
 
         // do the move
         this.move(
