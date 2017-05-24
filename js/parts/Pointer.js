@@ -432,6 +432,7 @@ H.Pointer.prototype = {
 		// Issues related to crosshair #4927, #5269 #5066, #5658
 		each(chart.axes, function drawAxisCrosshair(axis) {
 			var snap = pick(axis.crosshair.snap, true);
+			
 			if (!snap) {
 				axis.drawCrosshair(e);
 			

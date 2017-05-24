@@ -432,11 +432,6 @@ seriesType('map', 'scatter', {
 		attr = this.colorAttribs(point);
 		/*= } =*/
 
-		// Prevent flickering whan called from setState
-		if (point.isFading) {
-			delete attr.fill;
-		}
-
 		// If vector-effect is not supported, we set the stroke-width on the group element
 		// and let all point graphics inherit. That way we don't have to iterate over all 
 		// points to update the stroke-width on zooming. TODO: Check unstyled
@@ -793,46 +788,6 @@ seriesType('map', 'scatter', {
 			this.series.onMouseOut(e);
 		}
 	},
-	/*= if (build.classic) { =*/
-	// Todo: check unstyled
-	/**
-	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
-	 * over islands and coast lines. We run a custom implementation of animation becuase we
-	 * need to be able to run this independently from other animations like zoom redraw. Also,
-	 * adding color animation to the adapters would introduce almost the same amount of code.
-	 */
-	onMouseOut: function () {
-		var point = this,
-			start = +new Date(),
-			normalColor = color(this.series.pointAttribs(point).fill),
-			hoverColor = color(this.series.pointAttribs(point, 'hover').fill),
-			animation = point.series.options.states.normal.animation,
-			duration = animation && (animation.duration || 500);
-
-		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
-			clearTimeout(point.colorInterval);
-			point.colorInterval = setInterval(function () {
-				var pos = (new Date() - start) / duration,
-					graphic = point.graphic;
-				if (pos > 1) {
-					pos = 1;
-				}
-				if (graphic) {
-					graphic.attr(
-						'fill',
-						hoverColor.tweenTo(normalColor, pos)
-					);
-				}
-				if (pos >= 1) {
-					clearTimeout(point.colorInterval);
-				}
-			}, 13);
-			point.isFading = true;
-		}
-		Point.prototype.onMouseOut.call(point);
-		point.isFading = null;
-	},
-	/*= } =*/
 
 	/**
 	 * Highmaps only. Zoom in on the point using the global animation.
