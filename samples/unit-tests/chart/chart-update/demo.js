@@ -299,3 +299,28 @@ QUnit.test('Plot options update', function (assert) {
         'Color by point was reset'
     );
 });
+
+QUnit.test('Tooltip update', function (assert) {
+    var chart = Highcharts.chart($('<div>').appendTo('#container')[0], getConfig());
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.tooltip.isHidden,
+        false,
+        'Tooltip visible'
+    );
+
+    chart.update({
+        tooltip: {
+            enabled: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.tooltip.isHidden,
+        true,
+        'Tooltip hidden'
+    );
+
+});

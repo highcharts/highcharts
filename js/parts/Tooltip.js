@@ -460,6 +460,10 @@ H.Tooltip.prototype = {
 			shared = tooltip.shared,
 			currentSeries;
 
+		if (!options.enabled) {
+			return;
+		}
+
 		clearTimeout(this.hideTimer);
 
 		// get the reference point coordinates (pie charts use tooltipPos)
