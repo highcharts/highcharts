@@ -647,7 +647,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
 			/*= if (build.classic) { =*/
 			//attribs = merge(series.pointAttribs(point, state), attribs);
-			point.graphic.attr(series.pointAttribs(point, state));
+			point.graphic.animate(
+				series.pointAttribs(point, state),
+				pick(
+					chart.options.chart.animation,
+					stateOptions.animation
+				)
+			);
 			/*= } =*/
 
 			if (markerAttribs) {
