@@ -292,7 +292,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Initialize the axis
+	 * Overrideable function to initialize the axis. 
+	 *
+	 * @see {@link Axis}
 	 */
 	init: function (chart, userOptions) {
 
@@ -300,16 +302,50 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		var isXAxis = userOptions.isX,
 			axis = this;
 
-		axis.chart = chart;
 
-		// Flag, is the axis horizontal
+		/**
+		 * The Chart that the axis belongs to.
+		 *
+		 * @name chart
+		 * @memberOf Axis
+		 * @type {Chart}
+		 */
+		axis.chart = chart;
+		
+		/**
+		 * Whether the axis is horizontal.
+		 *
+		 * @name horiz
+		 * @memberOf Axis
+		 * @type {Boolean}
+		 */
 		axis.horiz = chart.inverted && !axis.isZAxis ? !isXAxis : isXAxis;
 
 		// Flag, isXAxis
 		axis.isXAxis = isXAxis;
+
+		/**
+		 * The collection where the axis belongs, for example `xAxis`, `yAxis`
+		 * or `colorAxis`. Corresponds to properties on Chart, for example
+		 * {@link Chart.xAxis}.
+		 *
+		 * @name coll
+		 * @memberOf Axis
+		 * @type {String}
+		 */
 		axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
 
+
 		axis.opposite = userOptions.opposite; // needed in setOptions
+
+		/**
+		 * The side on which the axis is rendered. 0 is top, 1 is right, 2 is
+		 * bottom and 3 is left.
+		 *
+		 * @name side
+		 * @memberOf Axis
+		 * @type {Number}
+		 */
 		axis.side = userOptions.side || (axis.horiz ?
 				(axis.opposite ? 0 : 2) : // top : bottom
 				(axis.opposite ? 1 : 3));  // right : left
@@ -331,6 +367,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		//axis.axisTitleMargin = undefined,// = options.title.margin,
 		axis.minPixelPadding = 0;
 
+
+		/**
+		 * Whether the axis is reversed. Based on the `axis.reversed`,
+		 * option, but inverted charts have reversed xAxis by default.
+		 *
+		 * @name reversed
+		 * @memberOf Axis
+		 * @type {Boolean}
+		 */
 		axis.reversed = options.reversed;
 		axis.visible = options.visible !== false;
 		axis.zoomEnabled = options.zoomEnabled !== false;
@@ -401,15 +446,38 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		//axis.dataMin = undefined,
 		//axis.dataMax = undefined,
 
-		// The axis range
+		/**
+		 * The maximum value of the axis. In a logarithmic axis, this is the
+		 * logarithm of the real value, and the real value can be obtained from
+		 * {@link Axis#getExtremes}.
+		 *
+		 * @name max
+		 * @memberOf Axis
+		 * @type {Number}
+		 */
 		axis.max = null;
+		/**
+		 * The minimum value of the axis. In a logarithmic axis, this is the
+		 * logarithm of the real value, and the real value can be obtained from
+		 * {@link Axis#getExtremes}.
+		 *
+		 * @name min
+		 * @memberOf Axis
+		 * @type {Number}
+		 */
 		axis.min = null;
 
 		// User set min and max
 		//axis.userMin = undefined,
 		//axis.userMax = undefined,
 
-		// Crosshair options
+		/**
+		 * The processed crosshair options.
+		 *
+		 * @name crosshair
+		 * @memberOf Axis
+		 * @type {AxisCrosshairOptions}
+		 */
 		axis.crosshair = pick(
 			options.crosshair,
 			splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
@@ -429,10 +497,22 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			chart[axis.coll].push(axis);
 		}
 
+		/**
+		 * All series associated to the axis.
+		 *
+		 * @name series
+		 * @memberOf Axis
+		 * @type {Array.<Series>}
+		 */
 		axis.series = axis.series || []; // populated by Series
 
-		// inverted charts have reversed xAxes as default
-		if (chart.inverted && !axis.isZAxis  && isXAxis && axis.reversed === undefined) {
+		// Reversed axis
+		if (
+			chart.inverted &&
+			!axis.isZAxis &&
+			isXAxis &&
+			axis.reversed === undefined
+		) {
 			axis.reversed = true;
 		}
 
@@ -450,7 +530,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Merge and set options
+	 * Merge and set options.
+	 *
+	 * @private
 	 */
 	setOptions: function (userOptions) {
 		this.options = merge(
@@ -535,7 +617,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Get the minimum and maximum for the series of each axis
+	 * Get the minimum and maximum for the series of each axis. The function
+	 * analyzes the axis series and updates `this.dataMin` and `this.dataMax`.
+	 *
+	 * @private
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
@@ -639,8 +724,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Translate from axis value to pixel position on the chart, or back
+	 * Translate from axis value to pixel position on the chart, or back. Use
+	 * the `toPixels` and `toValue` functions in applications.
 	 *
+	 * @private
 	 */
 	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
 		var axis = this.linkedParent || this, // #1417
@@ -729,10 +816,24 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
 	 * Create the path for a plot line that goes from the given value on
-	 * this axis, across the plot to the opposite side
-	 * @param {Number} value
-	 * @param {Number} lineWidth Used for calculation crisp line
-	 * @param {Number] old Use old coordinates (for resizing and rescaling)
+	 * this axis, across the plot to the opposite side. Also used internally for
+	 * grid lines and crosshairs.
+	 * 
+	 * @param  {Number} value
+	 *         Axis value.
+	 * @param  {Number} [lineWidth=1]
+	 *         Used for calculation crisp line coordinates.
+	 * @param  {Boolean} [old=false]
+	 *         Use old coordinates (for resizing and rescaling).
+	 * @param  {Boolean} [force=false]
+	 *         If `false`, the function will return null when it falls outside
+	 *         the axis bounds.
+	 * @param  {Number} [translatedValue]
+	 *         If given, return the plot line path of a pixel position on the
+	 *         axis.
+	 *
+	 * @return {Array.<String|Number>}
+	 *         The SVG path definition for the plot line.
 	 */
 	getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
 		var axis = this,
@@ -794,7 +895,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	 *         Axis maximum.
 	 *
 	 * @return {Array.<Number>}
-	 *         An array of numbers where ticks should be placed.
+	 *         An array of axis values where ticks should be placed.
 	 */
 	getLinearTickPositions: function (tickInterval, min, max) {
 		var pos,
@@ -832,8 +933,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Return the minor tick positions. For logarithmic axes, reuse the same logic
-	 * as for major ticks.
+	 * Internal function to return the minor tick positions. For logarithmic
+	 * axes, the same logic as for major ticks is reused.
+	 *
+	 * @return {Array.<Number>}
+	 *         An array of axis values where ticks should be placed.
 	 */
 	getMinorTickPositions: function () {
 		var axis = this,
@@ -1010,8 +1114,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * When a point name is given and no x, search for the name in the existing categories,
-	 * or if categories aren't provided, search names or create a new category (#2522).
+	 * When a point name is given and no x, search for the name in the existing
+	 * categories, or if categories aren't provided, search names or create a
+	 * new category (#2522).
+	 *
+	 * @private
+	 *
+	 * @param  {Point}
+	 *         The point to inspect.
+	 *
+	 * @return {Number}
+	 *         The X value that the point is given.
 	 */
 	nameToX: function (point) {
 		var explicitCategories = isArray(this.categories),
@@ -1044,6 +1157,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
 	 * When changes have been done to series data, update the axis.names.
+	 *
+	 * @private
 	 */
 	updateNames: function () {
 		var axis = this;
@@ -1077,7 +1192,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Update translation information
+	 * Update translation information.
+	 *
+	 * @private
 	 */
 	setAxisTranslation: function (saveOld) {
 		var axis = this,
@@ -1164,7 +1281,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
 	 * Set the tick positions to round values and optionally extend the extremes
-	 * to the nearest tick
+	 * to the nearest tick.
+	 *
+	 * @private
 	 */
 	setTickInterval: function (secondPass) {
 		var axis = this,
@@ -1477,7 +1596,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Handle startOnTick and endOnTick by either adapting to padding min/max or rounded min/max
+	 * Handle startOnTick and endOnTick by either adapting to padding min/max or
+	 * rounded min/max. Also handle single data points.
+	 *
+	 * @private
 	 */
 	trimTicks: function (tickPositions, startOnTick, endOnTick) {
 		var roundedMin = tickPositions[0],
@@ -1553,7 +1675,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Set the max ticks of either the x and y axis collection
+	 * Find the max ticks of either the x and y axis collection, and record it
+	 * in `this.tickAmount`.
+	 *
+	 * @private
 	 */
 	getTickAmount: function () {
 		var options = this.options,
@@ -1626,8 +1751,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Set the scale based on data min and max, user set min and max or options
-	 *
+	 * Set the scale based on data min and max, user set min and max or options.
+	 * 
+	 * @private
 	 */
 	setScale: function () {
 		var axis = this,
@@ -1741,8 +1867,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Overridable method for zooming chart. Pulled out in a separate method to allow overriding
-	 * in stock charts.
+	 * Overridable method for zooming chart. Pulled out in a separate method to
+	 * allow overriding in stock charts.
+	 *
+	 * @private
 	 */
 	zoom: function (newMin, newMax) {
 		var dataMin = this.dataMin,
@@ -1791,7 +1919,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Update the axis metrics
+	 * Update the axis metrics.
+	 *
+	 * @private
 	 */
 	setAxisSize: function () {
 		var chart = this.chart,
@@ -1871,7 +2001,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 	/**
 	 * Get the zero plane either based on zero or on the min or max value.
-	 * Used in bar and area plots
+	 * Used in bar and area plots.
+	 *
+	 * @param  {Number} threshold
+	 *         The threshold in axis values.
+	 *
+	 * @return {Number}
+	 *         The translated threshold position in terms of pixels, and
+	 *         corrected to stay within the axis bounds.
 	 */
 	getThreshold: function (threshold) {
 		var axis = this,
@@ -1915,9 +2052,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Get the tick length and width for the axis.
-	 * @param   {String} prefix 'tick' or 'minorTick'
-	 * @returns {Array}        An array of tickLength and tickWidth
+	 * Get the tick length and width for the axis based on axis options.
+	 *
+	 * @private
+	 * 
+	 * @param  {String} prefix
+	 *         'tick' or 'minorTick'
+	 * @return {Array.<Number>}
+	 *         An array of tickLength and tickWidth
 	 */
 	tickSize: function (prefix) {
 		var options = this.options,
@@ -1935,7 +2077,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Return the size of the labels
+	 * Return the size of the labels.
+	 *
+	 * @private
 	 */
 	labelMetrics: function () {
 		var index = this.tickPositions && this.tickPositions[0] || 0;
@@ -1946,9 +2090,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
-	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
-	 * On a vertical axis remove ticks and add ellipsis.
+	 * Prevent the ticks from getting so close we can't draw the labels. On a
+	 * horizontal axis, this is handled by rotating the labels, removing ticks
+	 * and adding ellipsis. On a vertical axis remove ticks and add ellipsis.
+	 *
+	 * @private
 	 */
 	unsquish: function () {
 		var labelOptions = this.options.labels,
@@ -2009,10 +2155,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Get the general slot width for this axis. This may change between the pre-render (from Axis.getOffset) 
-	 * and the final tick rendering and placement (#5086).
+	 * Get the general slot width for labels/categories on this axis. This may
+	 * change between the pre-render (from Axis.getOffset) and the final tick
+	 * rendering and placement.
+	 *
+	 * @private
+	 * @return {Number}
+	 *         The pixel width allocated to each axis label.
 	 */
 	getSlotWidth: function () {
+		// #5086, #1580, #1931
 		var chart = this.chart,
 			horiz = this.horiz,
 			labelOptions = this.options.labels,
@@ -2029,12 +2181,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				(marginLeft && (marginLeft - chart.spacing[3])) ||
 				chart.chartWidth * 0.33
 			)
-		); // #1580, #1931
+		);
 
 	},
 
 	/**
-	 * Render the axis labels and determine whether ellipsis or rotation need to be applied
+	 * Render the axis labels and determine whether ellipsis or rotation need
+	 * to be applied.
+	 *
+	 * @private
 	 */
 	renderUnsquish: function () {
 		var chart = this.chart,
@@ -2147,10 +2302,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Return true if the axis has associated data
+	 * Return true if the axis has associated data.
+	 *
+	 * @return {Boolean}
+	 *         True if the axis has associated visible series and those series
+	 *         have either valid data points or explicit `min` and `max`
+	 *         settings.
 	 */
 	hasData: function () {
-		return this.hasVisibleSeries || (defined(this.min) && defined(this.max) && !!this.tickPositions);
+		return (
+			this.hasVisibleSeries ||
+			(defined(this.min) && defined(this.max) && !!this.tickPositions)
+		);
 	},
 	
 	/**
@@ -2222,7 +2385,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Render the tick labels to a preliminary position to get their sizes
+	 * Render the tick labels to a preliminary position to get their sizes.
+	 *
+	 * @private
 	 */
 	getOffset: function () {
 		var axis = this,
@@ -2409,7 +2574,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Render the axis line
+	 * Render the axis line. Called internally when rendering and redrawing the
+	 * axis.
 	 */
 	renderLine: function () {
 		if (!this.axisLine) {
@@ -2428,7 +2594,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Position the title
+	 * Position the axis title.
+	 *
+	 * @private
+	 *
+	 * @return {Object}
+	 *         X and Y positions for the title.
 	 */
 	getTitlePosition: function () {
 		// compute anchor points for each of the title align options
@@ -2442,7 +2613,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style && axisTitleOptions.style.fontSize, this.axisTitle).f,
+			fontSize = this.chart.renderer.fontMetrics(
+				axisTitleOptions.style && axisTitleOptions.style.fontSize,
+				this.axisTitle
+			).f,
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -2471,7 +2645,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	/**
 	 * Render a minor tick into the given position. If a minor tick already 
 	 * exists in this position, move it.
-	 * @param  {number} pos - The position in axis values.
+	 * 
+	 * @param  {number} pos
+	 *         The position in axis values.
 	 */
 	renderMinorTick: function (pos) {
 		var slideInTicks = this.chart.hasRendered && isNumber(this.oldMin),
@@ -2492,8 +2668,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	/**
 	 * Render a major tick into the given position. If a tick already exists
 	 * in this position, move it.
-	 * @param  {number} pos - The position in axis values
-	 * @param  {number} i - The tick index
+	 * 
+	 * @param  {number} pos
+	 *         The position in axis values.
+	 * @param  {number} i
+	 *         The tick index.
 	 */
 	renderTick: function (pos, i) {
 		var isLinked = this.isLinked,
@@ -2517,7 +2696,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Render the axis
+	 * Render the axis.
+	 *
+	 * @private
 	 */
 	render: function () {
 		var axis = this,
@@ -2676,7 +2857,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 * Redraw the axis to reflect changes in the data or axis extremes
+	 * Redraw the axis to reflect changes in the data or axis extremes. Called
+	 * internally from {@link Chart#redraw}.
+	 *
+	 * @private
 	 */
 	redraw: function () {
 
@@ -2857,7 +3041,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 	},
 
 	/**
-	 *	Hide the crosshair.
+	 *	Hide the crosshair if visible.
 	 */
 	hideCrosshair: function () {
 		if (this.cross) {

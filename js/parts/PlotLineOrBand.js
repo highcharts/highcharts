@@ -238,7 +238,15 @@ H.PlotLineOrBand.prototype = {
 H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
 	/**
-	 * Create the path for a plot band
+	 * Internal function to create the SVG path definition for a plot band.
+	 *
+	 * @param  {Number} from
+	 *         The axis value to start from.
+	 * @param  {Number} to
+	 *         The axis value to end on.
+	 *
+	 * @return {Array.<String|Number>}
+	 *         The SVG path definition in array form.
 	 */
 	getPlotBandPath: function (from, to) {
 		var toPath = this.getPlotLinePath(to, null, null, true),
