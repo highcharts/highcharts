@@ -3090,9 +3090,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 			var start = options.start,
 				rx = options.r || w,
 				ry = options.r || h || w,
-				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
+				proximity = 0.001,
+				fullCircle = 
+					Math.abs(options.end - options.start - 2 * Math.PI) <
+					proximity,
+				// Substract a small number to prevent cos and sin of start and
+				// end from becoming equal on 360 arcs (related: #1561)
+				end = options.end - proximity, 
 				innerRadius = options.innerR,
-				open = options.open,
+				open = pick(options.open, fullCircle),
 				cosStart = Math.cos(start),
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
