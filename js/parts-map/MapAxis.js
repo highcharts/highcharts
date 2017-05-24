@@ -42,7 +42,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
 				dataMin = Math.min(dataMin, pick(series.minX, dataMin));
-				dataMax = Math.max(dataMax, pick(series.maxX, dataMin));
+				dataMax = Math.max(dataMax, pick(series.maxX, dataMax));
 				series.xData = xData[i]; // Reset xData array
 				useMapGeometry = true;
 			}
