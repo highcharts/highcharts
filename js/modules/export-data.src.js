@@ -265,6 +265,11 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     return html;
 };
 
+/**
+ * Use download attribute if supported, else  run a simple PHP script that
+ * returns a file. The source code for the PHP script can be viewed at
+ * https://raw.github.com/highcharts/highcharts/master/studies/csv-export/csv.php
+ */
 Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MIME) {
     var a,
         blobObject,
@@ -364,26 +369,37 @@ Highcharts.Chart.prototype.viewData = function () {
 };
 
 
-// Add "Download CSV" to the exporting menu. Use download attribute if supported, else
-// run a simple PHP script that returns a file. The source code for the PHP script can be viewed at
-// https://raw.github.com/highslide-software/highcharts.com/master/studies/csv-export/csv.php
-if (Highcharts.getOptions().exporting) {
-    Highcharts.getOptions().exporting.buttons.contextButton.menuItems.push({
-        textKey: 'downloadCSV',
-        onclick: function () {
-			this.downloadCSV();
-		}
-    }, {
-        textKey: 'downloadXLS',
-        onclick: function () {
-			this.downloadXLS();
-		}
-    }, {
-        textKey: 'viewData',
-        onclick: function () { 
-			this.viewData(); 
-		}
+// Add "Download CSV" to the exporting menu.
+var exportingOptions = Highcharts.getOptions().exporting;
+if (exportingOptions) {
+
+    Highcharts.extend(exportingOptions.menuItemDefinitions, {
+        downloadCSV: {
+            textKey: 'downloadCSV',
+            onclick: function () {
+                this.downloadCSV();
+            }
+        },
+        downloadXLS: {
+            textKey: 'downloadXLS',
+            onclick: function () {
+                this.downloadXLS();
+            }
+        },
+        viewData: {
+            textKey: 'viewData',
+            onclick: function () { 
+                this.viewData(); 
+            }
+        }
     });
+
+    exportingOptions.buttons.contextButton.menuItems.push(
+        'separator',
+        'downloadCSV',
+        'downloadXLS',
+        'viewData'
+    );
 }
 
 // Series specific

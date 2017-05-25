@@ -112,40 +112,55 @@ defaultOptions.exporting = {
 			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
-			menuItems: [{
-				textKey: 'printChart',
-				onclick: function () {
-					this.print();
-				}
-			}, {
-				separator: true
-			}, {
-				textKey: 'downloadPNG',
-				onclick: function () {
-					this.exportChart();
-				}
-			}, {
-				textKey: 'downloadJPEG',
-				onclick: function () {
-					this.exportChart({
-						type: 'image/jpeg'
-					});
-				}
-			}, {
-				textKey: 'downloadPDF',
-				onclick: function () {
-					this.exportChart({
-						type: 'application/pdf'
-					});
-				}
-			}, {
-				textKey: 'downloadSVG',
-				onclick: function () {
-					this.exportChart({
-						type: 'image/svg+xml'
-					});
-				}
-			}]
+			menuItems: [
+				'printChart',
+				'separator',
+				'downloadPNG',
+				'downloadJPEG',
+				'downloadPDF',
+				'downloadSVG'
+			]
+		}
+	},
+	menuItemDefinitions: { // docs
+		printChart: {
+			textKey: 'printChart',
+			onclick: function () {
+				this.print();
+			}
+		},
+		separator: {
+			separator: true
+		},
+		downloadPNG: {
+			textKey: 'downloadPNG',
+			onclick: function () {
+				this.exportChart();
+			}
+		},
+		downloadJPEG: {
+			textKey: 'downloadJPEG',
+			onclick: function () {
+				this.exportChart({
+					type: 'image/jpeg'
+				});
+			}
+		},
+		downloadPDF: {
+			textKey: 'downloadPDF',
+			onclick: function () {
+				this.exportChart({
+					type: 'application/pdf'
+				});
+			}
+		},
+		downloadSVG: {
+			textKey: 'downloadSVG',
+			onclick: function () {
+				this.exportChart({
+					type: 'image/svg+xml'
+				});
+			}
 		}
 	}
 };
@@ -599,7 +614,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 			// create the items
 			each(items, function (item) {
-				if (item) {
+
+				if (typeof item === 'string') {
+					item = chart.options.exporting.menuItemDefinitions[item];
+				}		
+
+				if (H.isObject(item, true)) {
 					var element;
 
 					if (item.separator) {
