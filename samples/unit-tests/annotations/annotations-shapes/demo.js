@@ -1,3 +1,4 @@
+// 1
 QUnit.test('Drawing path based on points', function (assert) {
 	var chart = Highcharts.chart('container', {
 		chart: {
@@ -61,6 +62,7 @@ QUnit.test('Drawing path based on points', function (assert) {
 	assert.deepEqual(roundPath(actualPath), roundPath(expectedPath), 'Compare path d attribute');
 });
 
+// 2
 QUnit.test('Drawing shapes on incorrect points', function (assert) {
 	var chart = Highcharts.chart('container', {
 		chart: {
@@ -94,7 +96,7 @@ QUnit.test('Drawing shapes on incorrect points', function (assert) {
 	assert.strictEqual(chart.annotations[0].shapes.length, 0, 'Shape is destroyed if the points are incorrect');
 });
 
-
+// 3
 QUnit.test('Drawing path with a marker', function (assert) {
 	var chart = Highcharts.chart('container', {
 		chart: {
@@ -103,19 +105,21 @@ QUnit.test('Drawing path with a marker', function (assert) {
 		},
 
 		defs: {
-			markers: [{
-				id: 'arrow-marker',
-				refY: 5,
-				refX: 5,
-				markerWidth: 10,
-				markerHeight: 10,
-				elements: [{
-					type: 'path',
-					attrs: {
-						d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
-					}
-				}]
-			}]
+			markers: {
+				marker0: {
+					id: 'arrow-marker',
+					refY: 5,
+					refX: 5,
+					markerWidth: 10,
+					markerHeight: 10,
+					children: [{
+						tagName: 'path',
+						attrs: {
+							d: 'M 0 0 L 10 5 L 0 10 Z' // triangle (used as an arrow)
+						}
+					}]
+				}
+			}
 		},
 
 		series: [{
@@ -135,8 +139,8 @@ QUnit.test('Drawing path with a marker', function (assert) {
 			shapes: [{
 				type: 'path',
 				points: [{x: 200, y: 100}, '2'],
-				markerEnd: 'url(#arrow-marker)',
-				markerStart: 'url(#arrow-marker)'
+				markerEnd: 'arrow-marker',
+				markerStart: 'arrow-marker'
 			}]
 		}]
 	});
@@ -149,6 +153,8 @@ QUnit.test('Drawing path with a marker', function (assert) {
 	assert.ok(path, 'Marker path is created inside the marker');
 	assert.strictEqual(path.getAttribute('d'), 'M 0 0 L 10 5 L 0 10 Z', 'Marker path d attribute is correct');
 
-	assert.strictEqual(chart.annotations[0].shapes[0].element.getAttribute('marker-end'), 'url(#arrow-marker)', 'End marker id is correctly attached to the annotation\'s path');
-	assert.strictEqual(chart.annotations[0].shapes[0].element.getAttribute('marker-start'), 'url(#arrow-marker)', 'Start marker is correctly attached to the annotation\'s path');
+	var shape = chart.annotations[0].shapes[0];
+	console.log(shape)
+	assert.strictEqual(shape.element.getAttribute('marker-end'), 'url(#' + shape.markerEnd.id + ')', 'End marker id is correctly attached to the annotation\'s path');
+	assert.strictEqual(shape.element.getAttribute('marker-start'), 'url(#' + shape.markerStart.id + ')', 'Start marker is correctly attached to the annotation\'s path');
 });
