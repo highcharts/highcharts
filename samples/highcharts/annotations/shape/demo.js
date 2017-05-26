@@ -31,8 +31,8 @@ Highcharts.chart('container', {
             y: -25
         }, {
             point: '1',
-            borderWidth: 1,
-            backgroundColor: 'none',
+            fill: 'none',
+            stroke: Highcharts.getOptions().colors[3],
             type: 'path',
             points: ['0', '3', {
                 x: 6,
@@ -40,7 +40,7 @@ Highcharts.chart('container', {
                 xAxis: 0,
                 yAxis: 0
             }],
-            markerEnd: 'url(#highcharts-marker-arrow)'
+            markerEnd: 'arrow'
         }],
         labels: [{
             point: {
