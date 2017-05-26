@@ -122,7 +122,9 @@ defaultOptions.exporting = {
 			]
 		}
 	},
-	menuItemDefinitions: { // docs
+	// docs. Created API item with since:next. Add information and link to sample
+	// from menuItems too.
+	menuItemDefinitions: {
 		printChart: {
 			textKey: 'printChart',
 			onclick: function () {
