@@ -98,6 +98,7 @@ seriesType('treemap', 'scatter', {
 }, {
 	pointArrayMap: ['value'],
 	axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
+	directTouch: true,
 	optionalAxis: 'colorAxis',
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value', 'colorValue'],
