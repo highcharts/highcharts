@@ -25,7 +25,84 @@ var	merge = H.merge,
 	chartPrototype = H.Chart.prototype;
 
 
-H.defaultOptions.annotations = [];
+/* ***************************************************************************
+*
+* MARKER SECTION
+* Contains objects and functions for adding a marker element to a path element
+*
+**************************************************************************** */
+
+/**
+ * An object with predefined markers options
+ *
+ * @type {Object}
+ */
+var defaultMarkers = {
+	arrow: {
+		render: false,
+		id: 'arrow',
+		refY: 5,
+		refX: 5,
+		markerWidth: 10,
+		markerHeight: 10,
+		children: [{
+			tagName: 'path',
+			attrs: {
+				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+				strokeWidth: 0
+			}
+		}]
+	}
+};
+
+var MarkerMixin = {
+	markerSetter: function (markerType) {
+		return function (value) {
+			this.attr(markerType, 'url(#' + value + ')');
+		};
+	}
+};
+
+extend(MarkerMixin, {
+	markerEndSetter: MarkerMixin.markerSetter('marker-end'),
+	markerStartSetter: MarkerMixin.markerSetter('marker-start')
+});
+
+
+H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
+	var markerId = pick(id, H.uniqueKey()),
+		marker = this.createElement('marker').attr({
+			id: markerId,
+			markerWidth: pick(markerOptions.markerWidth, 20),
+			markerHeight: pick(markerOptions.markerHeight, 20),
+			refX: markerOptions.refX || 0,
+			refY: markerOptions.refY || 0,
+			orient: markerOptions.orient || 'auto'
+		}).add(this.defs),
+
+		attrs = {
+			stroke: markerOptions.color || 'none',
+			fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+		},
+		children = markerOptions.children;
+
+	marker.id = markerId;
+
+	each(children, function (child) {
+		this.createElement(child.tagName)
+			.attr(merge(attrs, child.attrs))
+			.add(marker);
+	}, this);
+
+	return marker;
+};
+
+
+/* ***************************************************************************
+*
+* MOCK POINT
+*
+**************************************************************************** */
 
 /**
  * A mock point configuration.
@@ -36,8 +113,6 @@ H.defaultOptions.annotations = [];
  * @property {String|Number} [xAxis] - xAxis index or id
  * @property {String|Number} [yAxis] - yAxis index or id
  */
-
-
 
 
 /**
@@ -202,6 +277,15 @@ MockPoint.prototype = {
 	}
 };
 
+
+/* ***************************************************************************
+*
+* ANNOTATION
+*
+**************************************************************************** */
+
+H.defaultOptions.annotations = [];
+
 /**
  * An annotation class which serves as a container for items like labels or shapes.
  * Created items are positioned on the chart either by linking them to
@@ -247,8 +331,6 @@ Annotation.prototype = {
 		strokeWidth: 'stroke-width',
 		stroke: 'stroke',
 		fill: 'fill',
-		markerEnd: 'marker-end',
-		markerStart: 'marker-start',
 		zIndex: 'zIndex',
 		width: 'width',
 		height: 'height',
@@ -257,26 +339,6 @@ Annotation.prototype = {
 		padding: 'padding'
 	},
 
-	/**
-	 * An object with predefined markers options
-	 *
-	 * @memberOf Highcharts.Annotation#
-	 * @type {Object}
-	 */
-	markers: [{
-		id: 'highcharts-marker-arrow',
-		refY: 5,
-		refX: 5,
-		markerWidth: 10,
-		markerHeight: 10,
-		elements: [{
-			type: 'path',
-			attrs: {
-				d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-				fill: 'black'
-			}
-		}]
-	}],
 	/**
 	 * Default options for an annotation
 	 *
@@ -495,6 +557,15 @@ Annotation.prototype = {
 		shape.type = type;
 		shape.options = options;
 		shape.itemType = 'shape';
+
+		if (type === 'path') {
+			extend(shape, {
+				markerStartSetter: MarkerMixin.markerStartSetter,
+				markerEndSetter: MarkerMixin.markerEndSetter,
+				markerStart: MarkerMixin.markerStart,
+				markerEnd: MarkerMixin.markerEnd
+			});
+		}
 
 		shape.attr(attr);
 
@@ -737,6 +808,45 @@ Annotation.prototype = {
 
 	renderItem: function (item) {
 		item.add(this.group);
+
+		this.setItemMarkers(item);
+	},
+
+	setItemMarkers: function (item) {
+		var itemOptions = item.options,
+			chart = this.chart,
+			markers = chart.options.defs.markers,
+			fill = itemOptions.fill,
+			color = defined(fill) && fill !== 'none' ? fill : itemOptions.stroke,
+
+
+			setMarker = function (markerType) {
+				var markerId = itemOptions[markerType],
+					marker,
+					predefinedMarker,
+					key;
+
+				if (markerId) {
+					for (key in markers) {
+						marker = markers[key];
+						if (markerId === marker.id) {
+							predefinedMarker = marker;
+							break;
+						}
+					}
+
+					if (predefinedMarker) {
+						marker = item[markerType] = chart.renderer.addMarker(
+							null, 
+							merge(predefinedMarker, { color: color })
+						);
+
+						item.attr(markerType, marker.id);
+					}
+				}
+			};
+
+		each(['markerStart', 'markerEnd'], setMarker);
 	},
 
 	/**
@@ -1070,6 +1180,28 @@ chartPrototype.callbacks.push(function (chart) {
 });
 
 
+H.wrap(chartPrototype, 'getContainer', function (p) {
+	p.call(this);
+
+	var renderer = this.renderer,
+		options = this.options,
+		key,
+		markers,
+		marker;
+
+	options.defs = merge(options.defs || {}, { markers: defaultMarkers });
+	markers = options.defs.markers;
+
+	for (key in markers) {
+		marker = markers[key];
+		
+		if (pick(marker.render, true)) {
+			renderer.addMarker(marker.id, marker);			
+		}
+	}
+});
+
+
 /* ************************************************************************* */
 
 /**
@@ -1114,50 +1246,3 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 	}
 	return path || [];
 };
-
-H.SVGRenderer.prototype.addMarker = (function () {
-	var idCounter = -1;
-
-	return function (id, markerOptions) {
-		var markerId = pick(id, 'highcharts-marker-' + (++idCounter)),
-			marker = this.createElement('marker').attr({
-				id: markerId,
-				markerWidth: pick(markerOptions.markerWidth, 20),
-				markerHeight: pick(markerOptions.markerHeight, 20),
-				refX: markerOptions.refX || 0,
-				refY: markerOptions.refY || 0,
-				orient: markerOptions.orient || 'auto'
-			}).add(this.defs),
-
-			defaultAttrs = {
-				stroke: markerOptions.color || 'none',
-				'stroke-width': 0,
-				fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
-			},
-			elements = markerOptions.elements;
-
-		marker.id = markerId;
-
-		each(elements, function (element) {
-			this.createElement(element.type)
-				.attr(merge({}, defaultAttrs, element.attrs))
-				.add(marker);
-		}, this);
-
-		return marker;
-	};
-}());
-
-
-
-H.wrap(chartPrototype, 'getContainer', function (p) {
-	p.call(this);
-
-	var renderer = this.renderer,
-		options = this.options,
-		markers = (options.defs && options.defs.markers) || [];
-
-	each(Annotation.prototype.markers.concat(markers), function (markerOptions) {
-		renderer.addMarker(markerOptions.id, markerOptions);
-	});
-});
