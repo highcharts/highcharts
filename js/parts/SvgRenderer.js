@@ -1607,9 +1607,14 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		if (/(NaN| {2}|^$)/.test(value)) {
 			value = 'M 0 0';
 		}
-		element.setAttribute(key, value);
+		// Check for cache before resetting. Resetting causes disturbance in the
+		// DOM, causing flickering in some cases in Edge/IE (#6747#. Also
+		// possible performance gain.
+		if (this[key] !== value) {
+			element.setAttribute(key, value);
+			this[key] = value;
+		}		
 
-		this[key] = value;
 	},
 	/*= if (build.classic) { =*/
 	dashstyleSetter: function (value) {
@@ -1692,9 +1697,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
 		if (value === 'inherit') {
 			element.removeAttribute(key);
-		} else {
+		} else if (this[key] !== value) { // #6747
 			element.setAttribute(key, value);
 		}
+		this[key] = value;
 	},
 	zIndexSetter: function (value, key) {
 		var renderer = this.renderer,
