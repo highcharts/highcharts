@@ -1950,10 +1950,6 @@ H.seriesType = function (type, parent, options, props, pointProps) {
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
 
-	if (seriesTypes[type]) {
-		return H.error(27); // Series type already defined
-	}
-	
 	// Merge the options
 	defaultOptions.plotOptions[type] = H.merge(
 		defaultOptions.plotOptions[parent], 
