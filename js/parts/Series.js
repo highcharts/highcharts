@@ -95,6 +95,7 @@ H.Series = H.seriesType('line', null, { // base series options
 	/*= } =*/
 	allowPointSelect: false,
 	showCheckbox: false,
+	ignoreHiddenPoint: true,
 	animation: {
 		duration: 1000
 	},
