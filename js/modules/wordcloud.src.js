@@ -11,17 +11,30 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
-	WordCloudSeries,
+	Series = H.Series,
 	defaultOptions;
 
-WordCloudOptions = {
+var WordCloudOptions = {
 	borderWidth: 0,
 	tooltip: {
 		followPointer: true
 	}
 };
-
-WordCloudSeries = {
+var WordCloudSeries = {
+	bindAxes: function () {
+		var wordcloudAxis = {
+			endOnTick: false,
+			gridLineWidth: 0,
+			lineWidth: 0,
+			maxPadding: 0,
+			startOnTick: false,
+			title: null,
+			tickPositions: []
+		};
+		Series.prototype.bindAxes.call(this);
+		H.extend(this.yAxis.options, wordcloudAxis);
+		H.extend(this.xAxis.options, wordcloudAxis);
+	},
 	// series prototype
 	drawPoints: function () {
 		var series = this,
