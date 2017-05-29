@@ -52,6 +52,38 @@ extend(H.defaultOptions, {
 
 
 /**
+ * Get point bounding box using plotX/plotY and shapeArgs. If using 
+ * graphic.getBBox() directly, the bbox will be affected by animation.
+ *
+ * @param {Object} point The point to get BB of.
+ *
+ * @return {Object} result xMax, xMin, yMax, yMin
+ */
+function getPointBB(point) {
+	var shapeArgs = point.shapeArgs,
+		bb = point.graphic.getBBox();
+
+	// Prefer using shapeArgs (columns)
+	if (shapeArgs) {
+		return {
+			xMin: shapeArgs.x,
+			xMax: shapeArgs.x + shapeArgs.width,
+			yMin: shapeArgs.y,
+			yMax: shapeArgs.y + shapeArgs.height
+		};
+	}
+
+	// Otherwise use plotX/plotY and bb
+	return {
+		xMin: point.plotX - bb.width / 2,
+		xMax: point.plotX + bb.width / 2,
+		yMin: point.plotY - bb.height / 2,
+		yMax: point.plotY + bb.height / 2
+	};
+}
+
+
+/**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
  *
@@ -577,12 +609,12 @@ Pathfinder.prototype = {
 				) {
 					point = series[i].points[j];
 					if (point.visible) {
-						bb = point.graphic.getBBox();
+						bb = getPointBB(point);
 						obstacles.push({
-							xMin: point.plotX - bb.width / 2 - margin,
-							xMax: point.plotX + bb.width / 2 + margin,
-							yMin: point.plotY - bb.height / 2 - margin,
-							yMax: point.plotY + bb.height / 2 + margin
+							xMin: bb.xMin - margin,
+							xMax: bb.xMax + margin,
+							yMin: bb.yMin - margin,
+							yMax: bb.yMax + margin
 						});
 					}
 				}
@@ -676,35 +708,29 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 	 * 	Coordinates are in plot values, not relative to point.
 	 */
 	getPathfinderAnchorPoint: function (markerOptions) {
-		var bb = merge(this.graphic.getBBox()),
-			xFactor, // Make Simon Cowell proud
-			yFactor;
+		var bb = getPointBB(this),
+			x,
+			y;
 
-		switch (markerOptions.align) {
+		switch (markerOptions.align) { // eslint-disable-line default-case
 		case 'right':
-			xFactor = 1;
+			x = 'xMax';
 			break;
 		case 'left':
-			xFactor = -1;
-			break;
-		default:
-			xFactor = 0;
+			x = 'xMin';
 		}
 
-		switch (markerOptions.verticalAlign) {
+		switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
 		case 'top':
-			yFactor = -1;
+			y = 'yMin';
 			break;
 		case 'bottom':
-			yFactor = 1;
-			break;
-		default:
-			yFactor = 0;
+			y = 'yMax';
 		}
 
 		return {
-			x: this.plotX + bb.width / 2 * xFactor,
-			y: this.plotY + bb.height / 2 * yFactor
+			x: x ? bb[x] : (bb.xMin + bb.xMax) / 2,
+			y: y ? bb[y] : (bb.yMin + bb.yMax) / 2
 		};
 	},
 
