@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,8 +21,13 @@ var colProto = seriesTypes.column.prototype;
  */
 seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 	lineWidth: 1,
-	pointRange: null
-
+	pointRange: null,
+	marker: null,
+	states: {
+		hover: {
+			halo: false
+		}
+	}
 // Prototype members
 }), {
 	/**
@@ -79,21 +84,24 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 				shapeArgs.y = y;
 
 				point.tooltipPos = chart.inverted ? 
-					[ 
-						yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
-						xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
-						height
-					] : [
-						xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
-						yAxis.pos - chart.plotTop + y + height / 2, 
-						height
-					]; // don't inherit from column tooltip position - #3372
+				[ 
+					yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+					xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x -
+						shapeArgs.width / 2, 
+					height
+				] : [
+					xAxis.left - chart.plotLeft + shapeArgs.x +
+						shapeArgs.width / 2, 
+					yAxis.pos - chart.plotTop + y + height / 2, 
+					height
+				]; // don't inherit from column tooltip position - #3372
 			}
 		});
 	},
 	directTouch: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	drawGraph: noop,
+	getSymbol: noop,
 	crispCol: colProto.crispCol,
 	drawPoints: colProto.drawPoints,
 	drawTracker: colProto.drawTracker,
@@ -105,4 +113,6 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 		return colProto.polarArc.apply(this, arguments);
 	},
 	pointAttribs: colProto.pointAttribs
+}, {
+	setState: colProto.pointClass.prototype.setState
 });

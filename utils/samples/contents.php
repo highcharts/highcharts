@@ -36,7 +36,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 				if (currentLi) {
 					var href = currentLi.getElementsByTagName("a")[0].href;
 				
-					href = href.replace("view.php", "compare-view.php");
+					href = href.replace("/view.php", "/compare-view.php");
 					window.parent.frames[1].location.href = href;
 				}
 				batchMode();
@@ -61,6 +61,23 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 					if (e.target !== $('#batch-compare')[0]) {
 						stopBatch();
 					}
+				});
+
+				$('.manual-checkbox').click(function () {
+					var path = this.id.replace(/^checkbox-/, ''),
+						$li = $(this).parent(),
+						diff = this.checked ? 0 : 1;
+
+					if (this.checked) {
+						$li.removeClass('different').addClass('identical');
+					} else {
+						$li.removeClass('identical').addClass('different');
+					}
+
+					$.get('compare-update-report.php', {
+						path: path,
+						diff: diff
+					});
 				});
 
 				
@@ -317,6 +334,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 						while (false !== ($innerFile = readdir($innerHandle))) {
 							$batchClass = 'batch';
 							$compareClass = '';
+							$isManual = false;
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
 								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
@@ -328,6 +346,7 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$compareClass = 'manual';
+									$isManual = true;
 								}
 
 								// Display diff from previous comparison
@@ -351,9 +370,8 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';
-										$dummy = time();
 										$dissIndex = "
-											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=$dummy'
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;dummy=" . time() . "'
 												target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
@@ -362,16 +380,15 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 								}
 
 								// No symbol for manual tests
-								if ($compareClass == 'manual') {
+								if ($isManual) {
+									$checked = $diff == '0' ? 'checked' : '';
 									$dissIndex = "
-										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path' target='main'>
-											<i class='icon-hand-left'></i>
-										</a>
+										<input type='checkbox' class='dissimilarity-index manual-checkbox'
+											id='checkbox-$path' $checked />
 									";
 								}
 
 								// Comments
-								$showCheckbox = ($compareClass == 'manual');
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
 									
@@ -394,19 +411,13 @@ $compare = @json_decode(file_get_contents(compareJSON()));
 									";
 								}
 
-								/*
-								if ($showCheckbox) {
-									$comment = "
-									<input type='checkbox' class='manual-checkbox' id='checkbox-$path' />
-									" . $comment;
-								}
-								*/
-									
-									
+								$mainLink = $isUnitTest ?
+									"compare-view.php?path=$path&amp;dummy=" . time() :
+									"view.php?path=$path";
 
 								$html .= "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path'>$innerFile</a>
+									<a target='main' id='i$i' class='$batchClass' href='$mainLink'>$innerFile</a>
 									<a class='comment' href='compare-comment.php?path=$path&amp;diff=$diff' target='main'>
 										$comment
 									</a>

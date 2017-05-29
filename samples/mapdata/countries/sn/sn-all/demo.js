@@ -1,101 +1,59 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['sn-sl', 0],
+    ['sn-th', 1],
+    ['sn-680', 2],
+    ['sn-zg', 3],
+    ['sn-tc', 4],
+    ['sn-kd', 5],
+    ['sn-6976', 6],
+    ['sn-6978', 7],
+    ['sn-6975', 8],
+    ['sn-dk', 9],
+    ['sn-db', 10],
+    ['sn-fk', 11],
+    ['sn-1181', 12],
+    ['sn-lg', 13]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "sn-sl",
-            "value": 0
-        },
-        {
-            "hc-key": "sn-th",
-            "value": 1
-        },
-        {
-            "hc-key": "sn-680",
-            "value": 2
-        },
-        {
-            "hc-key": "sn-zg",
-            "value": 3
-        },
-        {
-            "hc-key": "sn-tc",
-            "value": 4
-        },
-        {
-            "hc-key": "sn-kd",
-            "value": 5
-        },
-        {
-            "hc-key": "sn-6976",
-            "value": 6
-        },
-        {
-            "hc-key": "sn-6978",
-            "value": 7
-        },
-        {
-            "hc-key": "sn-6975",
-            "value": 8
-        },
-        {
-            "hc-key": "sn-dk",
-            "value": 9
-        },
-        {
-            "hc-key": "sn-db",
-            "value": 10
-        },
-        {
-            "hc-key": "sn-fk",
-            "value": 11
-        },
-        {
-            "hc-key": "sn-1181",
-            "value": 12
-        },
-        {
-            "hc-key": "sn-lg",
-            "value": 13
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/sn/sn-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sn/sn-all.js">Senegal</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sn/sn-all.js">Senegal</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/sn/sn-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

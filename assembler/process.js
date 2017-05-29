@@ -31,7 +31,9 @@ const getPalette = path => {
         let key;
         let val;
         if (line.indexOf('$') === 0) {
-            parts = line.replace(/\r/, '').split(':');
+            parts = line
+                .replace(' !default', '')
+                .replace(/\r/, '').split(':');
             key = parts[0].trim().replace(/^\$/, '')
                 // Camelcase
                 .replace(/-([a-z0-9])/g, g => g[1].toUpperCase());
@@ -125,9 +127,17 @@ const preProcess = (content, build) => {
     return tpl;
 };
 
+const transpile = (content) => {
+    const babel = require('babel-core');
+    return babel.transform(content, {
+        extends: './assembler/.babelrc'
+    }).code;
+};
+
 module.exports = {
-    getFunction: getFunction,
-    getPalette: getPalette,
-    preProcess: preProcess,
-    printPalette: printPalette
+    getFunction,
+    getPalette,
+    preProcess,
+    printPalette,
+    transpile
 };

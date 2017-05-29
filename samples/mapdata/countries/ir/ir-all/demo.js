@@ -1,173 +1,77 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ir-5428', 0],
+    ['ir-hg', 1],
+    ['ir-bs', 2],
+    ['ir-kb', 3],
+    ['ir-fa', 4],
+    ['ir-es', 5],
+    ['ir-sm', 6],
+    ['ir-go', 7],
+    ['ir-mn', 8],
+    ['ir-th', 9],
+    ['ir-mk', 10],
+    ['ir-ya', 11],
+    ['ir-cm', 12],
+    ['ir-kz', 13],
+    ['ir-lo', 14],
+    ['ir-il', 15],
+    ['ir-ar', 16],
+    ['ir-qm', 17],
+    ['ir-hd', 18],
+    ['ir-za', 19],
+    ['ir-qz', 20],
+    ['ir-wa', 21],
+    ['ir-ea', 22],
+    ['ir-bk', 23],
+    ['ir-gi', 24],
+    ['ir-kd', 25],
+    ['ir-kj', 26],
+    ['ir-kv', 27],
+    ['ir-ks', 28],
+    ['ir-sb', 29],
+    ['ir-ke', 30],
+    ['ir-al', 31]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ir-5428",
-            "value": 0
-        },
-        {
-            "hc-key": "ir-hg",
-            "value": 1
-        },
-        {
-            "hc-key": "ir-bs",
-            "value": 2
-        },
-        {
-            "hc-key": "ir-kb",
-            "value": 3
-        },
-        {
-            "hc-key": "ir-fa",
-            "value": 4
-        },
-        {
-            "hc-key": "ir-es",
-            "value": 5
-        },
-        {
-            "hc-key": "ir-sm",
-            "value": 6
-        },
-        {
-            "hc-key": "ir-go",
-            "value": 7
-        },
-        {
-            "hc-key": "ir-mn",
-            "value": 8
-        },
-        {
-            "hc-key": "ir-th",
-            "value": 9
-        },
-        {
-            "hc-key": "ir-mk",
-            "value": 10
-        },
-        {
-            "hc-key": "ir-ya",
-            "value": 11
-        },
-        {
-            "hc-key": "ir-cm",
-            "value": 12
-        },
-        {
-            "hc-key": "ir-kz",
-            "value": 13
-        },
-        {
-            "hc-key": "ir-lo",
-            "value": 14
-        },
-        {
-            "hc-key": "ir-il",
-            "value": 15
-        },
-        {
-            "hc-key": "ir-ar",
-            "value": 16
-        },
-        {
-            "hc-key": "ir-qm",
-            "value": 17
-        },
-        {
-            "hc-key": "ir-hd",
-            "value": 18
-        },
-        {
-            "hc-key": "ir-za",
-            "value": 19
-        },
-        {
-            "hc-key": "ir-qz",
-            "value": 20
-        },
-        {
-            "hc-key": "ir-wa",
-            "value": 21
-        },
-        {
-            "hc-key": "ir-ea",
-            "value": 22
-        },
-        {
-            "hc-key": "ir-bk",
-            "value": 23
-        },
-        {
-            "hc-key": "ir-gi",
-            "value": 24
-        },
-        {
-            "hc-key": "ir-kd",
-            "value": 25
-        },
-        {
-            "hc-key": "ir-kj",
-            "value": 26
-        },
-        {
-            "hc-key": "ir-kv",
-            "value": 27
-        },
-        {
-            "hc-key": "ir-ks",
-            "value": 28
-        },
-        {
-            "hc-key": "ir-sb",
-            "value": 29
-        },
-        {
-            "hc-key": "ir-ke",
-            "value": 30
-        },
-        {
-            "hc-key": "ir-al",
-            "value": 31
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ir/ir-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ir/ir-all.js">Iran</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ir/ir-all.js">Iran</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ir/ir-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

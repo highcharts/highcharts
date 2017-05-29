@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,7 +11,6 @@ import '../parts/Series.js';
 import '../parts/Point.js';
 var correctFloat = H.correctFloat,
 	isNumber = H.isNumber,
-	noop = H.noop,
 	pick = H.pick,
 	Point = H.Point,
 	Series = H.Series,
@@ -60,16 +59,14 @@ seriesType('waterfall', 'column', {
 			previousIntermediate,
 			range,
 			minPointLength = pick(options.minPointLength, 5),
+			halfMinPointLength = minPointLength / 2,
 			threshold = options.threshold,
 			stacking = options.stacking,
-			// Separate offsets for negative and positive columns:
-			positiveOffset = 0,
-			negativeOffset = 0,
 			stackIndicator,
 			tooltipY;
 
 		// run column series translate
-		seriesTypes.column.prototype.translate.apply(this);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -77,14 +74,18 @@ seriesType('waterfall', 'column', {
 		for (i = 0, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
-			yValue = this.processedYData[i];
+			yValue = series.processedYData[i];
 			shapeArgs = point.shapeArgs;
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
-			stackIndicator = series.getStackIndicator(stackIndicator, point.x);
+			stackIndicator = series.getStackIndicator(
+				stackIndicator,
+				point.x,
+				series.index
+			);
 			range = stack ?
-				stack[point.x].points[series.index + ',' + i + ',' + stackIndicator.index] :
+				stack[point.x].points[stackIndicator.key] :
 				[0, yValue];
 
 			// override point value for sums
@@ -96,29 +97,30 @@ seriesType('waterfall', 'column', {
 			}
 			// up points
 			y = Math.max(previousY, previousY + point.y) + range[0];
-			shapeArgs.y = yAxis.toPixels(y, true);
-
+			shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
 
 			// sum points
 			if (point.isSum) {
-				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(range[0], true), yAxis.len) -
-					shapeArgs.y + positiveOffset + negativeOffset; // #4256
+				shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1, 0, 1), yAxis.len) -
+					shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
-				shapeArgs.y = yAxis.toPixels(range[1], true);
-				shapeArgs.height = Math.min(yAxis.toPixels(previousIntermediate, true), yAxis.len) -
-					shapeArgs.y + positiveOffset + negativeOffset;
+				shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1, 0, 1), yAxis.len) -
+					shapeArgs.y;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get
 			// shape height (#3886)
 			} else {
 				shapeArgs.height = yValue > 0 ?
-					yAxis.toPixels(previousY, true) - shapeArgs.y :
-					yAxis.toPixels(previousY, true) - yAxis.toPixels(previousY - yValue, true);
-				previousY += yValue;
+					yAxis.translate(previousY, 0, 1, 0, 1) - shapeArgs.y :
+					yAxis.translate(previousY, 0, 1, 0, 1) - yAxis.translate(previousY - yValue, 0, 1, 0, 1);
+
+				previousY += stack && stack[point.x] ? stack[point.x].total : yValue;
 			}
+
 			// #3952 Negative sum or intermediate sum not rendered correctly
 			if (shapeArgs.height < 0) {
 				shapeArgs.y += shapeArgs.height;
@@ -129,25 +131,22 @@ seriesType('waterfall', 'column', {
 			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
-			// Before minPointLength, apply negative offset:
-			shapeArgs.y -= negativeOffset;
-
-
 			if (shapeArgs.height <= minPointLength && !point.isNull) {
 				shapeArgs.height = minPointLength;
+				shapeArgs.y -= halfMinPointLength;
+				point.plotY = shapeArgs.y;
 				if (point.y < 0) {
-					negativeOffset -= minPointLength;
+					point.minPointLengthOffset = -halfMinPointLength;
 				} else {
-					positiveOffset += minPointLength;
+					point.minPointLengthOffset = halfMinPointLength;
 				}
+			} else {
+				point.minPointLengthOffset = 0;
 			}
 
-			// After minPointLength is updated, apply positive offset:
-			shapeArgs.y -= positiveOffset;
-
 			// Correct tooltip placement (#3014)
-			tooltipY = point.plotY - negativeOffset - positiveOffset +
-				(point.negative && negativeOffset >= 0 ? shapeArgs.height : 0);
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+
 			if (series.chart.inverted) {
 				point.tooltipPos[0] = yAxis.len - tooltipY;
 			} else {
@@ -194,9 +193,11 @@ seriesType('waterfall', 'column', {
 
 		Series.prototype.processData.call(this, force);
 
-		// Record extremes
-		series.dataMin = dataMin;
-		series.dataMax = dataMax;
+		// Record extremes only if stacking was not set:
+		if (!series.options.stacking) {
+			series.dataMin = dataMin;
+			series.dataMax = dataMax;
+		}
 	},
 
 	/**
@@ -253,6 +254,7 @@ seriesType('waterfall', 'column', {
 			length = data.length,
 			lineWidth = this.graph.strokeWidth() + this.borderWidth,
 			normalizer = Math.round(lineWidth) % 2 / 2,
+			reversedYAxis = this.yAxis.reversed,
 			path = [],
 			prevArgs,
 			pointArgs,
@@ -265,12 +267,17 @@ seriesType('waterfall', 'column', {
 
 			d = [
 				'M',
-				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
+				prevArgs.x + prevArgs.width,
+				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer,
 				'L',
-				pointArgs.x, prevArgs.y + normalizer
+				pointArgs.x,
+				prevArgs.y + data[i - 1].minPointLengthOffset + normalizer
 			];
 
-			if (data[i - 1].y < 0) {
+			if (
+				(data[i - 1].y < 0 && !reversedYAxis) ||
+				(data[i - 1].y > 0 && reversedYAxis)
+			) {
 				d[2] += prevArgs.height;
 				d[5] += prevArgs.height;
 			}
@@ -293,9 +300,40 @@ seriesType('waterfall', 'column', {
 	},
 
 	/**
-	 * Extremes are recorded in processData
+	 * Waterfall has stacking along the x-values too.
 	 */
-	getExtremes: noop
+	setStackedPoints: function () {
+		var series = this,
+			options = series.options,
+			stackedYLength,
+			i;
+
+		Series.prototype.setStackedPoints.apply(series, arguments);
+
+		stackedYLength = series.stackedYData ? series.stackedYData.length : 0;
+
+		// Start from the second point:
+		for (i = 1; i < stackedYLength; i++) {
+			if (
+				!options.data[i].isSum &&
+				!options.data[i].isIntermediateSum
+			) {
+				// Sum previous stacked data as waterfall can grow up/down:
+				series.stackedYData[i] += series.stackedYData[i - 1];
+			}
+		}
+	},
+
+	/**
+	 * Extremes for a non-stacked series are recorded in processData.
+	 * In case of stacking, use Series.stackedYData to calculate extremes.
+	 */
+	getExtremes: function () {
+		if (this.options.stacking) {
+			return Series.prototype.getExtremes.apply(this, arguments);
+		}
+	}
+
 
 // Point members
 }, {

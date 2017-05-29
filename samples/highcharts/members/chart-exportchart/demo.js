@@ -1,33 +1,32 @@
-$(function () {
-    var chart = Highcharts.chart('container', {
 
-        credits: {
-            enabled: false
-        },
+var chart = Highcharts.chart('container', {
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+    credits: {
+        enabled: false
+    },
 
-        series: [{
-            data: [null, 71.5, 106.4, 129.2, null, 176.0, 135.6, 148.5, 216.4, 194.1, null, 54.4]
-        }, {
-            data: [129.2, null, 176.0, 135.6, 0, 216.4, 194.1, null, 54.4, null, 71.5, 106.4],
-            type: 'column',
-            dataLabels: {
-                enabled: true
-            }
-        }],
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
 
-        navigation: {
-            buttonOptions: {
-                enabled: false
-            }
+    series: [{
+        data: [null, 71.5, 106.4, 129.2, null, 176.0, 135.6, 148.5, 216.4, 194.1, null, 54.4]
+    }, {
+        data: [129.2, null, 176.0, 135.6, 0, 216.4, 194.1, null, 54.4, null, 71.5, 106.4],
+        type: 'column',
+        dataLabels: {
+            enabled: true
         }
-    });
+    }],
 
-    // the button handler
-    $('#button').click(function () {
-        chart.exportChart();
-    });
+    navigation: {
+        buttonOptions: {
+            enabled: false
+        }
+    }
+});
+
+// the button handler
+$('#button').click(function () {
+    chart.exportChart();
 });

@@ -1,17 +1,16 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'column'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Styling exporting elements'
-        },
+    chart: {
+        type: 'column'
+    },
 
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+    title: {
+        text: 'Styling exporting elements'
+    },
 
-    });
+    series: [{
+        data: [1, 3, 2, 4]
+    }]
+
 });

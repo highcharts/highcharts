@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -15,11 +15,20 @@ var Series = H.Series,
  */
 seriesType('scatter', 'line', {
 	lineWidth: 0,
+	findNearestPointBy: 'xy',
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
 	},
 	tooltip: {
-		headerFormat: '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.85em"> {series.name}</span><br/>',
+		/*= if (build.classic) { =*/
+		headerFormat:
+			'<span style="color:{point.color}">\u25CF</span> ' +
+			'<span style="font-size: 0.85em"> {series.name}</span><br/>',
+		/*= } else { =*/
+		headerFormat: 
+			'<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
+			'<span class="highcharts-header"> {series.name}</span><br/>',
+		/*= } =*/
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	}
 
@@ -30,7 +39,6 @@ seriesType('scatter', 'line', {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
-	kdDimensions: 2,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);

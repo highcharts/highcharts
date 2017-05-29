@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -769,15 +769,15 @@ RangeSelector.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var minInput = this.minInput,
-			maxInput = this.maxInput,
-			key;
+		var rSelector = this,
+			minInput = rSelector.minInput,
+			maxInput = rSelector.maxInput;
 
-		this.unMouseDown();
-		this.unResize();
+		rSelector.unMouseDown();
+		rSelector.unResize();
 
 		// Destroy elements in collections
-		destroyObjectProperties(this.buttons);
+		destroyObjectProperties(rSelector.buttons);
 
 		// Clear input element events
 		if (minInput) {
@@ -788,18 +788,18 @@ RangeSelector.prototype = {
 		}
 
 		// Destroy HTML and SVG elements
-		for (key in this) {
-			if (this[key] && key !== 'chart') {
-				if (this[key].destroy) { // SVGElement
-					this[key].destroy();
-				} else if (this[key].nodeType) { // HTML element
+		H.objectEach(rSelector, function (val, key) {
+			if (val && key !== 'chart') {
+				if (val.destroy) { // SVGElement
+					val.destroy();
+				} else if (val.nodeType) { // HTML element
 					discardElement(this[key]);
 				}
 			}
-			if (this[key] !== RangeSelector.prototype[key]) {
-				this[key] = null;
+			if (val !== RangeSelector.prototype[key]) {
+				rSelector[key] = null;
 			}
-		}
+		}, this);
 	}
 };
 
@@ -808,8 +808,8 @@ RangeSelector.prototype = {
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
-		newMin = pick(fixedMin, this.translate(pxMin, true)),
-		newMax = pick(fixedMax, this.translate(pxMax, true)),
+		newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)),
+		newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)),
 		changeRatio = fixedRange && (newMax - newMin) / fixedRange;
 
 	// If the difference between the fixed range and the actual requested range is
@@ -850,8 +850,15 @@ Axis.prototype.minFromRange = function () {
 		range,
 		// Get the true range from a start date
 		getTrueRange = function (base, count) {
-			var date = new Date(base);
-			date['set' + timeName](date['get' + timeName]() + count);
+			var date = new Date(base),
+				basePeriod = date['get' + timeName]();
+
+			date['set' + timeName](basePeriod + count);
+
+			if (basePeriod === date['get' + timeName]()) {
+				date.setDate(0); // #6537
+			}
+
 			return date.getTime() - base;
 		};
 
@@ -896,6 +903,45 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	proceed.call(this, options, callback);
 
+});
+
+Chart.prototype.callbacks.push(function (chart) {
+	var extremes,
+		rangeSelector = chart.rangeSelector,
+		unbindRender,
+		unbindSetExtremes;
+
+	function renderRangeSelector() {
+		extremes = chart.xAxis[0].getExtremes();
+		if (isNumber(extremes.min)) {
+			rangeSelector.render(extremes.min, extremes.max);
+		}
+	}
+
+	if (rangeSelector) {
+		// redraw the scroller on setExtremes
+		unbindSetExtremes = addEvent(
+			chart.xAxis[0],
+			'afterSetExtremes',
+			function (e) {
+				rangeSelector.render(e.min, e.max);
+			}
+		);
+
+		// redraw the scroller chart resize
+		unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
+
+		// do it now
+		renderRangeSelector();
+	}
+
+	// Remove resize/afterSetExtremes at chart destroy
+	addEvent(chart, 'destroy', function destroyEvents() {
+		if (rangeSelector) {
+			unbindRender();
+			unbindSetExtremes();
+		}
+	});
 });
 
 

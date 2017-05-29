@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -31,6 +31,7 @@ var animObject = H.animObject,
 seriesType('column', 'line', {
 	borderRadius: 0,
 	//colorByPoint: undefined,
+	crisp: true,
 	groupPadding: 0.2,
 	//grouping: true,
 	marker: null, // point options are specified in the base options
@@ -129,8 +130,15 @@ seriesType('column', 'line', {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis,
 					columnIndex;
-				if (otherSeries.type === series.type && otherSeries.visible &&
-						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
+				if (
+					otherSeries.type === series.type &&
+					(
+						otherSeries.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries
+					) &&
+					yAxis.len === otherYAxis.len &&
+					yAxis.pos === otherYAxis.pos
+				) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
 						if (stackGroups[stackKey] === undefined) {
@@ -151,7 +159,7 @@ seriesType('column', 'line', {
 			),
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
-			pointOffsetWidth = groupWidth / columnCount,
+			pointOffsetWidth = groupWidth / (columnCount || 1),
 			pointWidth = Math.min(
 				options.maxPointWidth || xAxis.len,
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
@@ -189,9 +197,11 @@ seriesType('column', 'line', {
 
 		// Horizontal. We need to first compute the exact right edge, then round it
 		// and compute the width from there.
-		right = Math.round(x + w) + xCrisp;
-		x = Math.round(x) + xCrisp;
-		w = right - x;
+		if (this.options.crisp) {
+			right = Math.round(x + w) + xCrisp;
+			x = Math.round(x) + xCrisp;
+			w = right - x;
+		}
 
 		// Vertical
 		bottom = Math.round(y + h) + yCrisp;
@@ -282,8 +292,10 @@ seriesType('column', 'line', {
 			point.shapeType = 'rect';
 			point.shapeArgs = series.crispCol.apply(
 				series,
-				point.isNull ? 
-					[point.plotX, yAxis.len / 2, 0, 0] : // #3169, drilldown from null must have a position to work from
+				point.isNull ?
+					// #3169, drilldown from null must have a position to work from
+					// #6585, dataLabel should be placed on xAxis, not floating in the middle of the chart
+					[barX, translatedThreshold, barW, 0] :
 					[barX, barY, barW, barH]
 			);
 		});
@@ -328,12 +340,15 @@ seriesType('column', 'line', {
 		// Handle zone colors
 		if (point && this.zones.length) {
 			zone = point.getZone();
-			fill = (zone && zone.color) || point.options.color || this.color; // When zones are present, don't use point.color (#4267)
+			fill = point.options.color || (zone && zone.color) || this.color; // When zones are present, don't use point.color (#4267). Changed order (#6527)
 		}
 
 		// Select or hover states
 		if (state) {
-			stateOptions = options.states[state];
+			stateOptions = merge(
+				options.states[state],
+				point.options.states && point.options.states[state] || {} // #6401
+			);
 			brightness = stateOptions.brightness;
 			fill = stateOptions.color || 
 				(brightness !== undefined && color(fill).brighten(stateOptions.brightness).get()) ||
@@ -388,9 +403,6 @@ seriesType('column', 'line', {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr({
-							'class': point.getClassName()
-						})
 						.add(point.group || series.group);
 				}
 
@@ -400,6 +412,9 @@ seriesType('column', 'line', {
 					.attr(series.pointAttribs(point, point.selected && 'select'))
 					.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				/*= } =*/
+				
+				graphic.addClass(point.getClassName(), true);
+						
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269

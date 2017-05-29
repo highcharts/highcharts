@@ -1,24 +1,23 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
+Highcharts.chart('container', {
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    },
 
-    }, function (chart) { // on complete
+    series: [{
+        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+    }]
 
-        chart.renderer.rect(100, 100, 100, 100, 5)
-            .attr({
-                'stroke-width': 2,
-                stroke: 'red',
-                fill: 'yellow',
-                zIndex: 3
-            })
-            .add();
+}, function (chart) { // on complete
 
-    });
+    chart.renderer.rect(100, 100, 100, 100, 5)
+        .attr({
+            'stroke-width': 2,
+            stroke: 'red',
+            fill: 'yellow',
+            zIndex: 3
+        })
+        .add();
+
 });

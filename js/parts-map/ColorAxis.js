@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -51,7 +51,8 @@ extend(ColorAxis.prototype, {
 			/*= } =*/
 		},
 		labels: {
-			overflow: 'justify'
+			overflow: 'justify',
+			rotation: 0
 		},
 		minColor: '${palette.highlightColor10}',
 		maxColor: '${palette.highlightColor100}',
@@ -59,9 +60,14 @@ extend(ColorAxis.prototype, {
 		showInLegend: true
 	},
 
-	// Properties to preserve after destroy, for Axis.update (#5881)
-	keepProps: ['legendGroup', 'legendItem', 'legendSymbol']
-		.concat(Axis.prototype.keepProps),
+	// Properties to preserve after destroy, for Axis.update (#5881, #6025)
+	keepProps: [
+		'legendGroup',
+		'legendItemHeight',
+		'legendItemWidth',
+		'legendItem',
+		'legendSymbol'
+	].concat(Axis.prototype.keepProps),
 
 	/**
 	 * Initialize the color axis
@@ -91,7 +97,7 @@ extend(ColorAxis.prototype, {
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
-		this.initStops(userOptions);
+		this.initStops();
 
 		// Override original axis properties
 		this.horiz = horiz;
@@ -101,39 +107,8 @@ extend(ColorAxis.prototype, {
 		this.defaultLegendLength = 200;
 	},
 
-	/*
-	 * Return an intermediate color between two colors, according to pos where 0
-	 * is the from color and 1 is the to color.
-	 * NOTE: Changes here should be copied
-	 * to the same function in drilldown.src.js and solid-gauge-src.js.
-	 */
-	tweenColors: function (from, to, pos) {
-		// Check for has alpha, because rgba colors perform worse due to lack of
-		// support in WebKit.
-		var hasAlpha,
-			ret;
-
-		// Unsupported color, return to-color (#3920)
-		if (!to.rgba.length || !from.rgba.length) {
-			ret = to.input || 'none';
-
-		// Interpolate
-		} else {
-			from = from.rgba;
-			to = to.rgba;
-			hasAlpha = (to[3] !== 1 || from[3] !== 1);
-			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
-				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
-				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
-				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
-				(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-		}
-		return ret;
-	},
-
 	initDataClasses: function (userOptions) {
-		var axis = this,
-			chart = this.chart,
+		var chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
 			colorCount = chart.options.chart.colorCount,
@@ -162,8 +137,7 @@ extend(ColorAxis.prototype, {
 						colorCounter = 0;
 					}
 				} else {
-					dataClass.color = axis.tweenColors(
-						color(options.minColor),
+					dataClass.color = color(options.minColor).tweenTo(
 						color(options.maxColor),
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
@@ -172,8 +146,8 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
-	initStops: function (userOptions) {
-		this.stops = userOptions.stops || [
+	initStops: function () {
+		this.stops = this.options.stops || [
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
@@ -217,6 +191,13 @@ extend(ColorAxis.prototype, {
 		}
 	},
 
+	normalizedValue: function (value) {
+		if (this.isLog) {
+			value = this.val2lin(value);
+		}
+		return 1 - ((this.max - value) / ((this.max - this.min) || 1));
+	},
+
 	/**
 	 * Translate from a value to a color
 	 */
@@ -248,10 +229,7 @@ extend(ColorAxis.prototype, {
 
 		} else {
 
-			if (this.isLog) {
-				value = this.val2lin(value);
-			}
-			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
+			pos = this.normalizedValue(value);
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -264,8 +242,7 @@ extend(ColorAxis.prototype, {
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
 
-			color = this.tweenColors(
-				from.color,
+			color = from.color.tweenTo(
 				to.color,
 				pos
 			);
@@ -307,7 +284,6 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options,
 			reversed = this.reversed,
 			one = reversed ? 1 : 0,
 			zero = reversed ? 0 : 1;
@@ -315,10 +291,7 @@ extend(ColorAxis.prototype, {
 		grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-			stops: options.stops || [
-				[0, options.minColor],
-				[1, options.maxColor]
-			]
+			stops: this.stops
 		};
 	},
 
@@ -357,11 +330,15 @@ extend(ColorAxis.prototype, {
 	visible: true,
 	setVisible: noop,
 	getSeriesExtremes: function () {
-		var series;
-		if (this.series.length) {
-			series = this.series[0];
-			this.dataMin = series.valueMin;
-			this.dataMax = series.valueMax;
+		var series = this.series,
+			i = series.length;
+		this.dataMin = Infinity;
+		this.dataMax = -Infinity;
+		while (i--) {
+			if (series[i].valueMin !== undefined) {
+				this.dataMin = Math.min(this.dataMin, series[i].valueMin);
+				this.dataMax = Math.max(this.dataMax, series[i].valueMax);
+			}
 		}
 	},
 	drawCrosshair: function (e, point) {
@@ -419,7 +396,7 @@ extend(ColorAxis.prototype, {
 		// When updating data classes, destroy old items and make sure new ones are created (#3207)
 		if (newOptions.dataClasses && legend.allItems) {
 			each(legend.allItems, function (item) {
-				if (item.isDataClass) {
+				if (item.isDataClass && item.legendGroup) {
 					item.legendGroup.destroy();
 				}
 			});
@@ -435,6 +412,16 @@ extend(ColorAxis.prototype, {
 			this.setLegendColor();
 			legend.colorizeItem(this, true);
 		}
+	},
+
+	/**
+	 * Extend basic axis remove by also removing the legend item.
+	 */
+	remove: function () {
+		if (this.legendItem) {
+			this.chart.legend.destroyItem(this);
+		}
+		Axis.prototype.remove.call(this);
 	},
 
 	/**
@@ -507,8 +494,7 @@ each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
 		this.elem.attr(
 			prop,
-			ColorAxis.prototype.tweenColors(
-				color(this.start),
+			color(this.start).tweenTo(
 				color(this.end),
 				this.pos
 			),

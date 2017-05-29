@@ -1,109 +1,61 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-ni', 0],
+    ['de-sh', 1],
+    ['de-be', 2],
+    ['de-mv', 3],
+    ['de-hb', 4],
+    ['de-sl', 5],
+    ['de-by', 6],
+    ['de-th', 7],
+    ['de-st', 8],
+    ['de-sn', 9],
+    ['de-bb', 10],
+    ['de-nw', 11],
+    ['de-bw', 12],
+    ['de-he', 13],
+    ['de-hh', 14],
+    ['de-rp', 15]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-ni",
-            "value": 0
-        },
-        {
-            "hc-key": "de-sh",
-            "value": 1
-        },
-        {
-            "hc-key": "de-be",
-            "value": 2
-        },
-        {
-            "hc-key": "de-mv",
-            "value": 3
-        },
-        {
-            "hc-key": "de-hb",
-            "value": 4
-        },
-        {
-            "hc-key": "de-sl",
-            "value": 5
-        },
-        {
-            "hc-key": "de-by",
-            "value": 6
-        },
-        {
-            "hc-key": "de-th",
-            "value": 7
-        },
-        {
-            "hc-key": "de-st",
-            "value": 8
-        },
-        {
-            "hc-key": "de-sn",
-            "value": 9
-        },
-        {
-            "hc-key": "de-bb",
-            "value": 10
-        },
-        {
-            "hc-key": "de-nw",
-            "value": 11
-        },
-        {
-            "hc-key": "de-bw",
-            "value": 12
-        },
-        {
-            "hc-key": "de-he",
-            "value": 13
-        },
-        {
-            "hc-key": "de-hh",
-            "value": 14
-        },
-        {
-            "hc-key": "de-rp",
-            "value": 15
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-all.js">Germany</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-all.js">Germany</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

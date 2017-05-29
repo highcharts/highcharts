@@ -21,6 +21,7 @@ var noop = H.noop,
 	each = H.each,
 	extend = H.extend,
 	format = H.format,
+	objectEach = H.objectEach,
 	pick = H.pick,
 	wrap = H.wrap,
 	Chart = H.Chart,
@@ -31,49 +32,6 @@ var noop = H.noop,
 	fireEvent = H.fireEvent,
 	inArray = H.inArray,
 	ddSeriesId = 1;
-
-// Utilities
-/*
- * Return an intermediate color between two colors, according to pos where 0
- * is the from color and 1 is the to color. This method is copied from ColorAxis.js
- * and should always be kept updated, until we get AMD support.
- */
-function tweenColors(from, to, pos) {
-	// Check for has alpha, because rgba colors perform worse due to lack of
-	// support in WebKit.
-	var hasAlpha,
-		ret;
-
-	// Unsupported color, return to-color (#3920)
-	if (!to.rgba.length || !from.rgba.length) {
-		ret = to.input || 'none';
-
-	// Interpolate
-	} else {
-		from = from.rgba;
-		to = to.rgba;
-		hasAlpha = (to[3] !== 1 || from[3] !== 1);
-		ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
-			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
-			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-	}
-	return ret;
-}
-/**
- * Handle animation of the color attributes directly
- */
-each(['fill', 'stroke'], function (prop) {
-	H.Fx.prototype[prop + 'Setter'] = function () {
-		this.elem.attr(
-			prop,
-			tweenColors(color(this.start), color(this.end), this.pos),
-			null,
-			true
-		);
-	};
-});
 
 // Add language
 extend(defaultOptions.lang, {
@@ -124,8 +82,26 @@ H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
 	});
 };
 
-Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
-	this.addSingleSeriesAsDrilldown(point, ddOptions);
+/**
+ * Add a series to the chart as drilldown from a specific point in the parent
+ * series. This method is used for async drilldown, when clicking a point in a
+ * series should result in loading and displaying a more high-resolution series.
+ * When not async, the setup is simpler using the {@link 
+ * https://api.highcharts.com/highcharts/drilldown.series|drilldown.series}
+ * options structure.
+ *
+ * @memberOf Highcharts.Chart
+ * @function #addSeriesAsDrilldown
+ * 
+ * @param  {Highcharts.Point} point
+ *         The point from which the drilldown will start.
+ * @param  {SeriesOptions} options
+ *         The series options for the new, detailed series.
+ *
+ * @sample highcharts/drilldown/async/ Async drilldown
+ */
+Chart.prototype.addSeriesAsDrilldown = function (point, options) {
+	this.addSingleSeriesAsDrilldown(point, options);
 	this.applyDrilldown();
 };
 Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
@@ -204,6 +180,11 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 
 	// Push it to the lookup array
 	this.drilldownLevels.push(level);
+
+	// Reset names to prevent extending (#6704)
+	if (xAxis && xAxis.names) {
+		xAxis.names.length = 0;
+	}
 
 	newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
 	newSeries.options._levelNumber = levelNumber + 1;
@@ -290,6 +271,13 @@ Chart.prototype.showDrillUpButton = function () {
 	}
 };
 
+/**
+ * When the chart is drilled down to a child series, calling `chart.drillUp()`
+ * will drill up to the parent series.
+ *
+ * @memberOf Highcharts.Chart
+ * @name #drillUp
+ */
 Chart.prototype.drillUp = function () {
 	var chart = this,
 		drilldownLevels = chart.drilldownLevels,
@@ -392,15 +380,25 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 		var newSeries = this,
 			level = newSeries.drilldownLevel;
 
+		// First hide all items before animating in again
 		each(this.points, function (point) {
+			var dataLabel = point.dataLabel;
+
 			if (point.graphic) { // #3407
 				point.graphic.hide();
 			}
-			if (point.dataLabel) {
-				point.dataLabel.hide();
-			}
-			if (point.connector) {
-				point.connector.hide();
+
+			if (dataLabel) {
+				// The data label is initially hidden, make sure it is not faded
+				// in (#6127)
+				dataLabel.hidden = dataLabel.attr('visibility') === 'hidden';
+
+				if (!dataLabel.hidden) {
+					dataLabel.hide();
+					if (point.connector) {
+						point.connector.hide();
+					}
+				}
 			}
 		});
 
@@ -410,16 +408,21 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
 			if (newSeries.points) { // May be destroyed in the meantime, #3389
 				each(newSeries.points, function (point, i) {  
 					// Fade in other points			  
-					var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn',
-						inherit = verb === 'show' ? true : undefined;
+					var verb = 
+						i === (level && level.pointIndex) ?	'show' : 'fadeIn',
+						inherit = verb === 'show' ? true : undefined,
+						dataLabel = point.dataLabel;
+
+					
 					if (point.graphic) { // #3407
 						point.graphic[verb](inherit);
 					}
-					if (point.dataLabel) {
-						point.dataLabel[verb](inherit);
-					}
-					if (point.connector) {
-						point.connector[verb](inherit);
+
+					if (dataLabel && !dataLabel.hidden) { // #6127
+						dataLabel[verb](inherit);
+						if (point.connector) {
+							point.connector[verb](inherit);
+						}
 					}
 				});
 			}
@@ -437,7 +440,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 		animateFrom,
 		animationOptions = this.chart.options.drilldown.animation,
 		xAxis = this.xAxis;
-		
+
 	if (!init) {
 		each(drilldownLevels, function (level) {
 			if (series.options._ddSeriesId === level.lowerSeriesOptions._ddSeriesId) {
@@ -483,6 +486,9 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 ColumnSeries.prototype.animateDrillupFrom = function (level) {
 	var animationOptions = this.chart.options.drilldown.animation,
 		group = this.group,
+		// For 3d column series all columns are added to one group 
+		// so we should not delete the whole group. #5297
+		removeGroup = group !== this.chart.seriesGroup,
 		series = this;
 
 	// Cancel mouse events on the series group (#2787)
@@ -492,14 +498,16 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		}
 	});
 		
-
-	delete this.group;
+	if (removeGroup) {
+		delete this.group;
+	}
+	
 	each(this.points, function (point) {
 		var graphic = point.graphic,
 			animateTo = level.shapeArgs,
 			complete = function () {
 				graphic.destroy();
-				if (group) {
+				if (group && removeGroup) {
 					group = group.destroy();
 				}
 			};
@@ -610,15 +618,11 @@ H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) 
  * Drill down to a given category. This is the same as clicking on an axis label.
  */
 H.Axis.prototype.drilldownCategory = function (x, e) {
-	var key,
-		point,
-		ddPointsX = this.getDDPoints(x);
-	for (key in ddPointsX) {
-		point = ddPointsX[key];
+	objectEach(this.getDDPoints(x), function (point) {
 		if (point && point.series && point.series.visible && point.doDrilldown) { // #3197
 			point.doDrilldown(true, x, e);
 		}
-	}
+	});
 	this.chart.applyDrilldown();
 };
 
@@ -739,10 +743,19 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 	proceed.call(this);
 
 	each(this.points, function (point) {
-		var pointCSS = {};
+		var dataLabelsOptions = point.options.dataLabels,
+			pointCSS = pick(
+				point.dlOptions,
+				dataLabelsOptions && dataLabelsOptions.style,
+				{}
+			);
+
 		if (point.drilldown && point.dataLabel) {
 			if (css.color === 'contrast') {
 				pointCSS.color = renderer.getContrast(point.color || this.color);
+			}
+			if (dataLabelsOptions && dataLabelsOptions.color) {
+				pointCSS.color = dataLabelsOptions.color;
 			}
 			point.dataLabel
 				.addClass('highcharts-drilldown-data-label');
@@ -757,21 +770,21 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 });
 
 // Mark the trackers with a pointer 
-var type, 
-	drawTrackerWrapper = function (proceed) {
-		proceed.call(this);
-		each(this.points, function (point) {
-			if (point.drilldown && point.graphic) {
-				point.graphic.addClass('highcharts-drilldown-point');
+var drawTrackerWrapper = function (proceed) {
+	proceed.call(this);
+	each(this.points, function (point) {
+		if (point.drilldown && point.graphic) {
+			point.graphic.addClass('highcharts-drilldown-point');
 
-				/*= if (build.classic) { =*/
-				point.graphic.css({ cursor: 'pointer' });
-				/*= } =*/
-			}
-		});
-	};
-for (type in seriesTypes) {
-	if (seriesTypes[type].prototype.supportsDrilldown) {
-		wrap(seriesTypes[type].prototype, 'drawTracker', drawTrackerWrapper);
+			/*= if (build.classic) { =*/
+			point.graphic.css({ cursor: 'pointer' });
+			/*= } =*/
+		}
+	});
+};
+
+objectEach(seriesTypes, function (seriesType) {
+	if (seriesType.prototype.supportsDrilldown) {
+		wrap(seriesType.prototype, 'drawTracker', drawTrackerWrapper);
 	}
-}
+});

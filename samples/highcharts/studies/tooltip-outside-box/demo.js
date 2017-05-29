@@ -1,159 +1,209 @@
-$(function () {
 
-    /**
-     * A Highcharts plugin to display the tooltip in a separate container outside the chart's
-     * bounding box, so that it can utilize all space available in the page.
-     */
-    (function (H) {
-        H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
 
-            var chart = this.chart,
-                options = this.options,
-                chartRenderer = chart.renderer,
-                box;
+/**
+ * A Highcharts plugin to display the tooltip in a separate container outside the chart's
+ * bounding box, so that it can utilize all space available in the page.
+ */
+(function (H) {
+    H.wrap(H.Tooltip.prototype, 'getLabel', function (proceed) {
 
-            if (!this.label) {
+        var chart = this.chart,
+            options = this.options,
+            chartRenderer = chart.renderer,
+            box;
 
-                this.renderer = new H.Renderer(document.body, 400, 60);
-                box = this.renderer.boxWrapper;
-                box.css({
-                    position: 'absolute',
-                    top: '-9999px'
-                });
-                chart.renderer = this.renderer;
-                proceed.call(this, chart, options);
-                chart.renderer = chartRenderer;
+        if (!this.label) {
 
-                this.label.attr({
-                    x: 0,
-                    y: 0
-                });
-                this.label.xSetter = function (value) {
-                    box.element.style.left = value + 'px';
-                };
-                this.label.ySetter = function (value) {
-                    box.element.style.top = value + 'px';
-                };
-            }
-            return this.label;
-        });
+            this.renderer = new H.Renderer(document.body, 0, 0);
+            box = this.renderer.boxWrapper;
+            box.css({
+                position: 'absolute',
+                top: '-9999px'
+            });
+            chart.renderer = this.renderer;
+            proceed.call(this, chart, options);
+            chart.renderer = chartRenderer;
 
-        H.wrap(H.Tooltip.prototype, 'getPosition', function (proceed, boxWidth, boxHeight, point) {
-            var chart = this.chart,
-                chartWidth = chart.chartWidth,
-                chartHeight = chart.chartHeight,
-                pos;
-            point.plotX += this.chart.pointer.chartPosition.left;
-            point.plotY += this.chart.pointer.chartPosition.top;
+            this.label.attr({
+                x: 0,
+                y: 0
+            });
+            this.label.xSetter = function (value) {
+                box.element.style.left = value + 'px';
+            };
+            this.label.ySetter = function (value) {
+                box.element.style.top = value + 'px';
+            };
+        }
+        return this.label;
+    });
 
-            // Temporary set the chart size to the full document, so that the tooltip positioner picks it up
-            chart.chartWidth = $(document).width();
-            chart.chartHeight = $(document).height();
+    H.wrap(H.Tooltip.prototype, 'getPosition', function (proceed, boxWidth, boxHeight, point) {
+        var chart = this.chart,
+            pos,
+            plusWidth = $(window).width() - chart.chartWidth,
+            plusHeight = $(document).height() - chart.chartHeight;
 
-            // Compute the tooltip position
-            pos = proceed.call(this, boxWidth, boxHeight, point);
+        point.plotX += this.chart.pointer.chartPosition.left;
+        point.plotY += this.chart.pointer.chartPosition.top;
 
-            // Reset chart size
-            chart.chartWidth = chartWidth;
-            chart.chartHeight = chartHeight;
-
-            return pos;
-        });
-
-        /**
-         * Find the new position and perform the move. This override is identical
-         * to the core function, except the anchorX and anchorY arguments to move().
-         */
-        H.Tooltip.prototype.updatePosition = function (point) {
-            var chart = this.chart,
-                label = this.label,
-                pos = (this.options.positioner || this.getPosition).call(
-                    this,
-                    label.width,
-                    label.height,
-                    point
-                );
-
-            // do the move
-            this.move(
-                Math.round(pos.x),
-                Math.round(pos.y || 0), // can be undefined (#3977)
-                point.plotX + chart.plotLeft - pos.x,
-                point.plotY + chart.plotTop - pos.y
-            );
+        // Temporary set the chart referece to a mock object, so that the
+        // tooltip positioner picks it up
+        this.chart = {
+            chartWidth: chart.chartWidth + plusWidth,
+            chartHeight: chart.chartHeight + plusHeight,
+            plotWidth: chart.plotWidth + plusWidth,
+            plotHeight: chart.plotHeight + plusHeight,
+            plotTop: chart.plotTop,
+            plotLeft: chart.plotLeft,
+            inverted: chart.inverted
         };
 
-    }(Highcharts));
+        // Compute the tooltip position
+        pos = proceed.call(this, boxWidth, boxHeight, point);
 
+        // Reset chart reference
+        this.chart = chart;
 
-    $('#container1').highcharts({
-
-        chart: {
-            type: 'column',
-            borderWidth: 1
-        },
-
-        title: {
-            text: 'Tooltip outside the box'
-        },
-
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr']
-        },
-
-        legend: {
-            enabled: false
-        },
-
-        series: [{
-            name: 'Really, really long series name 1',
-            data: [1, 4, 2, 3]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [4, 2, 5, 3]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [6, 5, 3, 1]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [6, 4, 2, 1]
-        }]
-
+        return pos;
     });
 
+    /**
+     * Find the new position and perform the move. This override is identical
+     * to the core function, except the anchorX and anchorY arguments to move().
+     */
+    H.Tooltip.prototype.updatePosition = function (point) {
+        var chart = this.chart,
+            label = this.label,
+            pos = (this.options.positioner || this.getPosition).call(
+                this,
+                label.width,
+                label.height,
+                point
+            );
 
-    $('#container2').highcharts({
+        // Set the renderer size dynamically to prevent document size to change
+        this.renderer.setSize(
+            label.width + (this.options.borderWidth || 0) + this.distance,
+            label.height + this.distance,
+            false
+        );
 
-        chart: {
-            type: 'line',
-            borderWidth: 1
-        },
+        // do the move
+        this.move(
+            Math.round(pos.x),
+            Math.round(pos.y || 0), // can be undefined (#3977)
+            point.plotX + chart.plotLeft - pos.x,
+            point.plotY + chart.plotTop - pos.y
+        );
+    };
 
-        title: {
-            text: 'Tooltip outside the box'
-        },
+}(Highcharts));
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr']
-        },
 
-        legend: {
-            enabled: false
-        },
+Highcharts.chart('container1', {
 
-        series: [{
-            name: 'Really, really long series name 1',
-            data: [1, 4, 2, 3]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [4, 2, 5, 3]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [6, 5, 3, 1]
-        }, {
-            name: 'Really, really long series name 2',
-            data: [6, 4, 2, 1]
-        }]
+    chart: {
+        type: 'column',
+        borderWidth: 1
+    },
 
-    });
+    title: {
+        text: 'Tooltip outside the box'
+    },
+
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
+
+    legend: {
+        enabled: false
+    },
+
+    series: [{
+        name: 'Really, really long series name 1',
+        data: [1, 4, 2, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [4, 2, 5, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 5, 3, 1]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 4, 2, 1]
+    }]
+
+});
+
+
+Highcharts.chart('container2', {
+
+    chart: {
+        type: 'line',
+        borderWidth: 1
+    },
+
+    title: {
+        text: 'Tooltip outside the box'
+    },
+
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
+
+    legend: {
+        enabled: false
+    },
+
+    series: [{
+        name: 'Really, really long series name 1',
+        data: [1, 4, 2, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [4, 2, 5, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 5, 3, 1]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 4, 2, 1]
+    }]
+
+});
+
+
+Highcharts.chart('container3', {
+
+    chart: {
+        type: 'bar',
+        borderWidth: 1
+    },
+
+    title: {
+        text: 'Tooltip outside the box'
+    },
+
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
+
+    legend: {
+        enabled: false
+    },
+
+    series: [{
+        name: 'Really, really long series name 1',
+        data: [1, 4, 2, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [4, 2, 5, 3]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 5, 3, 1]
+    }, {
+        name: 'Really, really long series name 2',
+        data: [6, 4, 2, 1]
+    }]
+
 });

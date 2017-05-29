@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -105,25 +105,34 @@ H.maps = {};
 
 // Create symbols for the zoom buttons
 function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
-	return ['M', x + rTopLeft, y,
-        // top side
-        'L', x + w - rTopRight, y,
-        // top right corner
-        'C', x + w - rTopRight / 2, y, x + w, y + rTopRight / 2, x + w, y + rTopRight,
-        // right side
-        'L', x + w, y + h - rBottomRight,
-        // bottom right corner
-        'C', x + w, y + h - rBottomRight / 2, x + w - rBottomRight / 2, y + h, x + w - rBottomRight, y + h,
-        // bottom side
-        'L', x + rBottomLeft, y + h,
-        // bottom left corner
-        'C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft,
-        // left side
-        'L', x, y + rTopLeft,
-        // top left corner
-        'C', x, y + rTopLeft / 2, x + rTopLeft / 2, y, x + rTopLeft, y,
-        'Z'
-    ];
+	return [
+		'M', x + rTopLeft, y,
+		// top side
+		'L', x + w - rTopRight, y,
+		// top right corner
+		'C', x + w - rTopRight / 2,
+		y, x + w,
+		y + rTopRight / 2, x + w, y + rTopRight,
+		// right side
+		'L', x + w, y + h - rBottomRight,
+		// bottom right corner
+		'C', x + w, y + h - rBottomRight / 2,
+		x + w - rBottomRight / 2, y + h,
+		x + w - rBottomRight, y + h,
+		// bottom side
+		'L', x + rBottomLeft, y + h,
+		// bottom left corner
+		'C', x + rBottomLeft / 2, y + h, 
+		x, y + h - rBottomLeft / 2,
+		x, y + h - rBottomLeft,
+		// left side
+		'L', x, y + rTopLeft,
+		// top left corner
+		'C', x, y + rTopLeft / 2,
+		x + rTopLeft / 2, y,
+		x + rTopLeft, y,
+		'Z'
+	];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
@@ -142,7 +151,29 @@ if (Renderer === VMLRenderer) {
 
 
 /**
- * A wrapper for Chart with all the default values for a Map
+ * The factory function for creating new map charts. Creates a new {@link
+ * Chart|Chart} object with different default options than the basic Chart.
+ * 
+ * @function #mapChart
+ * @memberOf Highcharts
+ *
+ * @param  {String|HTMLDOMElement} renderTo
+ *         The DOM element to render to, or its id.
+ * @param  {Options} options
+ *         The chart options structure as described in the {@link
+ *         https://api.highcharts.com/highstock|options reference}.
+ * @param  {Function} callback
+ *         A function to execute when the chart object is finished loading and
+ *         rendering. In most cases the chart is built in one thread, but in
+ *         Internet Explorer version 8 or less the chart is sometimes initiated
+ *         before the document is ready, and in these cases the chart object
+ *         will not be finished synchronously. As a consequence, code that
+ *         relies on the newly built Chart object should always run in the
+ *         callback. Defining a {@link https://api.highcharts.com/highstock/chart.events.load|
+ *         chart.event.load} handler is equivalent.
+ *
+ * @return {Chart}
+ *         The chart object.
  */
 H.Map = H.mapChart = function (a, b, c) {
 

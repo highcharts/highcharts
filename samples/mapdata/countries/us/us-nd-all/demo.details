@@ -1,4 +1,5 @@
 ---
  name: North Dakota - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

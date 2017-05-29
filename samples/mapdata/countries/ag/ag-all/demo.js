@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ag-6313', 0],
+    ['ag-6598', 1],
+    ['ag-6599', 2],
+    ['ag-6600', 3],
+    ['ag-6601', 4],
+    ['ag-6602', 5],
+    ['ag-6603', 6],
+    ['ag-6604', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ag-6313",
-            "value": 0
-        },
-        {
-            "hc-key": "ag-6598",
-            "value": 1
-        },
-        {
-            "hc-key": "ag-6599",
-            "value": 2
-        },
-        {
-            "hc-key": "ag-6600",
-            "value": 3
-        },
-        {
-            "hc-key": "ag-6601",
-            "value": 4
-        },
-        {
-            "hc-key": "ag-6602",
-            "value": 5
-        },
-        {
-            "hc-key": "ag-6603",
-            "value": 6
-        },
-        {
-            "hc-key": "ag-6604",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ag/ag-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ag/ag-all.js">Antigua and Barbuda</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ag/ag-all.js">Antigua and Barbuda</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ag/ag-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

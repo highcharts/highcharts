@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cg-ni', 0],
+    ['cg-pl', 1],
+    ['cg-br', 2],
+    ['cg-7280', 3],
+    ['cg-bo', 4],
+    ['cg-li', 5],
+    ['cg-sa', 6],
+    ['cg-cu', 7],
+    ['cg-po', 8],
+    ['cg-co', 9],
+    ['cg-ko', 10],
+    ['cg-le', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cg-ni",
-            "value": 0
-        },
-        {
-            "hc-key": "cg-pl",
-            "value": 1
-        },
-        {
-            "hc-key": "cg-br",
-            "value": 2
-        },
-        {
-            "hc-key": "cg-7280",
-            "value": 3
-        },
-        {
-            "hc-key": "cg-bo",
-            "value": 4
-        },
-        {
-            "hc-key": "cg-li",
-            "value": 5
-        },
-        {
-            "hc-key": "cg-sa",
-            "value": 6
-        },
-        {
-            "hc-key": "cg-cu",
-            "value": 7
-        },
-        {
-            "hc-key": "cg-po",
-            "value": 8
-        },
-        {
-            "hc-key": "cg-co",
-            "value": 9
-        },
-        {
-            "hc-key": "cg-ko",
-            "value": 10
-        },
-        {
-            "hc-key": "cg-le",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cg/cg-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cg/cg-all.js">Republic of the Congo</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cg/cg-all.js">Republic of the Congo</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cg/cg-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

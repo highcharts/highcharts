@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -114,9 +114,10 @@ var seriesProto = Series.prototype,
 
 
 	/**
-	 * Define the available approximation types. The data grouping approximations takes an array
-	 * or numbers as the first parameter. In case of ohlc, four arrays are sent in as four parameters.
-	 * Each array consists only of numbers. In case null values belong to the group, the property
+	 * Define the available approximation types. The data grouping
+	 * approximations takes an array or numbers as the first parameter. In case
+	 * of ohlc, four arrays are sent in as four parameters. Each array consists
+	 * only of numbers. In case null values belong to the group, the property
 	 * .hasNulls will be set to true on the array.
 	 */
 	approximations = {
@@ -143,11 +144,22 @@ var seriesProto = Series.prototype,
 			var len = arr.length,
 				ret = approximations.sum(arr);
 
-			// If we have a number, return it divided by the length. If not, return
-			// null or undefined based on what the sum method finds.
+			// If we have a number, return it divided by the length. If not,
+			// return null or undefined based on what the sum method finds.
 			if (isNumber(ret) && len) {
 				ret = ret / len;
 			}
+
+			return ret;
+		},
+		// The same as average, but for series with multiple values, like area
+		// ranges.
+		averages: function () { // #5479
+			var ret = [];
+
+			each(arguments, function (arr) {
+				ret.push(approximations.average(arr));
+			});
 
 			return ret;
 		},
@@ -181,6 +193,8 @@ var seriesProto = Series.prototype,
 
 			if (isNumber(low) || isNumber(high)) {
 				return [low, high];
+			} else if (low === null && high === null) {
+				return null;
 			}
 			// else, return is undefined
 		}
@@ -188,8 +202,8 @@ var seriesProto = Series.prototype,
 
 
 /**
- * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
- * of starting x values for each group.
+ * Takes parallel arrays of x and y data and groups the data into intervals 
+ * defined by groupPositions, a collection of starting x values for each group.
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 	var series = this,
@@ -202,14 +216,35 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		pointX,
 		pointY,
 		groupedY,
-		handleYData = !!yData, // when grouping the fake extended axis for panning, we don't need to consider y
-		values = [[], [], [], []],
-		approximationFn = typeof approximation === 'function' ? approximation : approximations[approximation],
+		// when grouping the fake extended axis for panning,
+		// we don't need to consider y
+		handleYData = !!yData,
+		values = [],
+		approximationFn = typeof approximation === 'function' ?
+			approximation :
+			approximations[approximation] ||
+				// if the approximation is not found use default series type
+				// approximation (#2914)
+				(
+					specificOptions[series.type] &&
+					approximations[specificOptions[series.type].approximation]
+				) || approximations[commonOptions.approximation],
 		pointArrayMap = series.pointArrayMap,
 		pointArrayMapLength = pointArrayMap && pointArrayMap.length,
-		i,
 		pos = 0,
-		start = 0;
+		start = 0,
+		valuesLen,
+		i, j;
+
+	// Calculate values array size from pointArrayMap length
+	if (pointArrayMapLength) {
+		each(pointArrayMap, function () {
+			values.push([]);
+		});
+	} else {
+		values.push([]);
+	}
+	valuesLen = pointArrayMapLength || 1;
 
 	// Start with the first point within the X axis range (#2696)
 	for (i = 0; i <= dataLength; i++) {
@@ -220,9 +255,12 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 	for (i; i <= dataLength; i++) {
 
-		// when a new group is entered, summarize and initiate the previous group
-		while ((groupPositions[pos + 1] !== undefined && xData[i] >= groupPositions[pos + 1]) ||
-				i === dataLength) { // get the last group
+		// when a new group is entered, summarize and initiate 
+		// the previous group
+		while ((
+					groupPositions[pos + 1] !== undefined &&
+					xData[i] >= groupPositions[pos + 1]
+				) || i === dataLength) { // get the last group
 
 			// get group x and y
 			pointX = groupPositions[pos];
@@ -238,10 +276,10 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			// reset the aggregate arrays
 			start = i;
-			values[0] = [];
-			values[1] = [];
-			values[2] = [];
-			values[3] = [];
+			for (j = 0; j < valuesLen; j++) {
+				values[j].length = 0; // faster than values[j] = []
+				values[j].hasNulls = false;
+			}
 
 			// Advance on the group positions
 			pos += 1;
@@ -257,12 +295,15 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			break;
 		}
 
-		// for each raw data point, push it to an array that contains all values for this specific group
+		// for each raw data point, push it to an array that contains all values
+		// for this specific group
 		if (pointArrayMap) {
 
 			var index = series.cropStart + i,
-				point = (data && data[index]) || series.pointClass.prototype.applyOptions.apply({ series: series }, [dataOptions[index]]),
-				j,
+				point = (data && data[index]) ||
+					series.pointClass.prototype.applyOptions.apply({
+						series: series
+					}, [dataOptions[index]]),
 				val;
 
 			for (j = 0; j < pointArrayMapLength; j++) {
@@ -308,9 +349,8 @@ seriesProto.processData = function () {
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order) or #5493
-	skip = baseProcessData.apply(series, arguments) === false ||
-		!groupingEnabled || !visible;
+	// skip if processData returns false or if grouping is disabled (in that order)
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
 	if (!skip) {
 		series.destroyGroupedData();
 
@@ -327,6 +367,7 @@ seriesProto.processData = function () {
 			hasGroupedData = true;
 
 			series.isDirty = true; // force recreation of point instances in series.translate, #5699
+			series.points = null; // #6709
 
 			var extremes = xAxis.getExtremes(),
 				xMin = extremes.min,
@@ -362,7 +403,8 @@ seriesProto.processData = function () {
 			series.groupMap = groupedData[2];
 
 			// Make sure the X axis extends to show the first group (#2533)
-			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			// But only for visible series (#5493, #6393)
+			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin && visible) {
 				if (xAxis.min === xAxis.dataMin) {
 					xAxis.min = groupedXData[0];
 				}
@@ -580,7 +622,17 @@ Axis.prototype.getGroupPixelWidth = function () {
 };
 
 /**
- * Force data grouping on all the axis' series.
+ * Highstock only. Force data grouping on all the axis' series.
+ *
+ * @param  {SeriesDatagroupingOptions} [dataGrouping]
+ *         A `dataGrouping` configuration. Use `false` to disable data grouping
+ *         dynamically.
+ * @param  {Boolean} [redraw=true]
+ *         Whether to redraw the chart or wait for a later call to {@link
+ *         Chart#redraw}.
+ *
+ * @function setDataGrouping
+ * @memberOf Axis.prototype
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 	var i;

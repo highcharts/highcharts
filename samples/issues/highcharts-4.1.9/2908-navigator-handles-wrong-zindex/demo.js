@@ -12,7 +12,7 @@ $(function () {
 
 
         assert.strictEqual(
-            chart.scroller.handles[0].zIndex > chart.scroller.xAxis.labelGroup.zIndex,
+            chart.scroller.handles[0].zIndex >= chart.scroller.xAxis.labelGroup.zIndex,
             true,
             "Labels no overlap handles"
         );

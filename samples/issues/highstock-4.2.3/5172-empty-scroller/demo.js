@@ -25,9 +25,9 @@ $(function () {
         });
 
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-navigator rect'),
-            null,
-            'Navigator not created due to missing data'
+            chart.navigator.navigatorGroup.attr('visibility'),
+            'hidden',
+            'Navigator hidden due to missing data'
         );
     });
 });

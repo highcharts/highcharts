@@ -116,7 +116,7 @@ body.single-col #frame-row {
 }
 body.unit iframe {
 	width: 100%;
-	height: 600px;
+	height: 100vh;
 	border: none;
 }
 body.manual iframe {
@@ -130,6 +130,21 @@ body.single-col #report, body.single-col #svg, body.single-col #preview {
 }
 body.manual #comment-placeholder {
 	vertical-align: top;
+}
+
+.test-notes {
+	margin: 0 0 1em 0;
+	padding: 1em;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background-color: #efefef;
+}
+.test-notes header {
+	font-weight: bold;
+	margin: 0.5em 0;
+}
+.test-notes div {
+	font-size: 0.9em;
 }
 
 .nightly {

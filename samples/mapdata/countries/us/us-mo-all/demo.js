@@ -1,505 +1,160 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-mo-223', 0],
+    ['us-mo-179', 1],
+    ['us-mo-035', 2],
+    ['us-mo-145', 3],
+    ['us-mo-003', 4],
+    ['us-mo-147', 5],
+    ['us-mo-199', 6],
+    ['us-mo-103', 7],
+    ['us-mo-097', 8],
+    ['us-mo-011', 9],
+    ['us-mo-227', 10],
+    ['us-mo-079', 11],
+    ['us-mo-117', 12],
+    ['us-mo-125', 13],
+    ['us-mo-131', 14],
+    ['us-mo-073', 15],
+    ['us-mo-151', 16],
+    ['us-mo-021', 17],
+    ['us-mo-165', 18],
+    ['us-mo-209', 19],
+    ['us-mo-111', 20],
+    ['us-mo-127', 21],
+    ['us-mo-107', 22],
+    ['us-mo-101', 23],
+    ['us-mo-163', 24],
+    ['us-mo-007', 25],
+    ['us-mo-211', 26],
+    ['us-mo-129', 27],
+    ['us-mo-119', 28],
+    ['us-mo-009', 29],
+    ['us-mo-173', 30],
+    ['us-mo-201', 31],
+    ['us-mo-143', 32],
+    ['us-mo-187', 33],
+    ['us-mo-099', 34],
+    ['us-mo-186', 35],
+    ['us-mo-093', 36],
+    ['us-mo-221', 37],
+    ['us-mo-157', 38],
+    ['us-mo-109', 39],
+    ['us-mo-123', 40],
+    ['us-mo-075', 41],
+    ['us-mo-139', 42],
+    ['us-mo-045', 43],
+    ['us-mo-121', 44],
+    ['us-mo-001', 45],
+    ['us-mo-039', 46],
+    ['us-mo-167', 47],
+    ['us-mo-085', 48],
+    ['us-mo-029', 49],
+    ['us-mo-189', 50],
+    ['us-mo-067', 51],
+    ['us-mo-091', 52],
+    ['us-mo-041', 53],
+    ['us-mo-141', 54],
+    ['us-mo-015', 55],
+    ['us-mo-149', 56],
+    ['us-mo-115', 57],
+    ['us-mo-175', 58],
+    ['us-mo-137', 59],
+    ['us-mo-219', 60],
+    ['us-mo-047', 61],
+    ['us-mo-081', 62],
+    ['us-mo-059', 63],
+    ['us-mo-077', 64],
+    ['us-mo-061', 65],
+    ['us-mo-195', 66],
+    ['us-mo-053', 67],
+    ['us-mo-019', 68],
+    ['us-mo-065', 69],
+    ['us-mo-013', 70],
+    ['us-mo-083', 71],
+    ['us-mo-095', 72],
+    ['us-mo-215', 73],
+    ['us-mo-159', 74],
+    ['us-mo-057', 75],
+    ['us-mo-043', 76],
+    ['us-mo-135', 77],
+    ['us-mo-205', 78],
+    ['us-mo-185', 79],
+    ['us-mo-055', 80],
+    ['us-mo-033', 81],
+    ['us-mo-025', 82],
+    ['us-mo-049', 83],
+    ['us-mo-063', 84],
+    ['us-mo-213', 85],
+    ['us-mo-225', 86],
+    ['us-mo-171', 87],
+    ['us-mo-023', 88],
+    ['us-mo-031', 89],
+    ['us-mo-133', 90],
+    ['us-mo-113', 91],
+    ['us-mo-197', 92],
+    ['us-mo-037', 93],
+    ['us-mo-069', 94],
+    ['us-mo-153', 95],
+    ['us-mo-017', 96],
+    ['us-mo-183', 97],
+    ['us-mo-071', 98],
+    ['us-mo-181', 99],
+    ['us-mo-177', 100],
+    ['us-mo-087', 101],
+    ['us-mo-217', 102],
+    ['us-mo-105', 103],
+    ['us-mo-169', 104],
+    ['us-mo-161', 105],
+    ['us-mo-229', 106],
+    ['us-mo-155', 107],
+    ['us-mo-203', 108],
+    ['us-mo-005', 109],
+    ['us-mo-510', 110],
+    ['us-mo-207', 111],
+    ['us-mo-027', 112],
+    ['us-mo-051', 113],
+    ['us-mo-089', 114]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-mo-223",
-            "value": 0
-        },
-        {
-            "hc-key": "us-mo-179",
-            "value": 1
-        },
-        {
-            "hc-key": "us-mo-035",
-            "value": 2
-        },
-        {
-            "hc-key": "us-mo-145",
-            "value": 3
-        },
-        {
-            "hc-key": "us-mo-003",
-            "value": 4
-        },
-        {
-            "hc-key": "us-mo-147",
-            "value": 5
-        },
-        {
-            "hc-key": "us-mo-199",
-            "value": 6
-        },
-        {
-            "hc-key": "us-mo-103",
-            "value": 7
-        },
-        {
-            "hc-key": "us-mo-097",
-            "value": 8
-        },
-        {
-            "hc-key": "us-mo-011",
-            "value": 9
-        },
-        {
-            "hc-key": "us-mo-227",
-            "value": 10
-        },
-        {
-            "hc-key": "us-mo-079",
-            "value": 11
-        },
-        {
-            "hc-key": "us-mo-117",
-            "value": 12
-        },
-        {
-            "hc-key": "us-mo-125",
-            "value": 13
-        },
-        {
-            "hc-key": "us-mo-131",
-            "value": 14
-        },
-        {
-            "hc-key": "us-mo-073",
-            "value": 15
-        },
-        {
-            "hc-key": "us-mo-151",
-            "value": 16
-        },
-        {
-            "hc-key": "us-mo-021",
-            "value": 17
-        },
-        {
-            "hc-key": "us-mo-165",
-            "value": 18
-        },
-        {
-            "hc-key": "us-mo-209",
-            "value": 19
-        },
-        {
-            "hc-key": "us-mo-111",
-            "value": 20
-        },
-        {
-            "hc-key": "us-mo-127",
-            "value": 21
-        },
-        {
-            "hc-key": "us-mo-107",
-            "value": 22
-        },
-        {
-            "hc-key": "us-mo-101",
-            "value": 23
-        },
-        {
-            "hc-key": "us-mo-163",
-            "value": 24
-        },
-        {
-            "hc-key": "us-mo-007",
-            "value": 25
-        },
-        {
-            "hc-key": "us-mo-211",
-            "value": 26
-        },
-        {
-            "hc-key": "us-mo-129",
-            "value": 27
-        },
-        {
-            "hc-key": "us-mo-119",
-            "value": 28
-        },
-        {
-            "hc-key": "us-mo-009",
-            "value": 29
-        },
-        {
-            "hc-key": "us-mo-173",
-            "value": 30
-        },
-        {
-            "hc-key": "us-mo-201",
-            "value": 31
-        },
-        {
-            "hc-key": "us-mo-143",
-            "value": 32
-        },
-        {
-            "hc-key": "us-mo-187",
-            "value": 33
-        },
-        {
-            "hc-key": "us-mo-099",
-            "value": 34
-        },
-        {
-            "hc-key": "us-mo-186",
-            "value": 35
-        },
-        {
-            "hc-key": "us-mo-093",
-            "value": 36
-        },
-        {
-            "hc-key": "us-mo-221",
-            "value": 37
-        },
-        {
-            "hc-key": "us-mo-157",
-            "value": 38
-        },
-        {
-            "hc-key": "us-mo-109",
-            "value": 39
-        },
-        {
-            "hc-key": "us-mo-123",
-            "value": 40
-        },
-        {
-            "hc-key": "us-mo-075",
-            "value": 41
-        },
-        {
-            "hc-key": "us-mo-139",
-            "value": 42
-        },
-        {
-            "hc-key": "us-mo-045",
-            "value": 43
-        },
-        {
-            "hc-key": "us-mo-121",
-            "value": 44
-        },
-        {
-            "hc-key": "us-mo-001",
-            "value": 45
-        },
-        {
-            "hc-key": "us-mo-039",
-            "value": 46
-        },
-        {
-            "hc-key": "us-mo-167",
-            "value": 47
-        },
-        {
-            "hc-key": "us-mo-085",
-            "value": 48
-        },
-        {
-            "hc-key": "us-mo-029",
-            "value": 49
-        },
-        {
-            "hc-key": "us-mo-189",
-            "value": 50
-        },
-        {
-            "hc-key": "us-mo-067",
-            "value": 51
-        },
-        {
-            "hc-key": "us-mo-091",
-            "value": 52
-        },
-        {
-            "hc-key": "us-mo-041",
-            "value": 53
-        },
-        {
-            "hc-key": "us-mo-141",
-            "value": 54
-        },
-        {
-            "hc-key": "us-mo-015",
-            "value": 55
-        },
-        {
-            "hc-key": "us-mo-149",
-            "value": 56
-        },
-        {
-            "hc-key": "us-mo-115",
-            "value": 57
-        },
-        {
-            "hc-key": "us-mo-175",
-            "value": 58
-        },
-        {
-            "hc-key": "us-mo-137",
-            "value": 59
-        },
-        {
-            "hc-key": "us-mo-219",
-            "value": 60
-        },
-        {
-            "hc-key": "us-mo-047",
-            "value": 61
-        },
-        {
-            "hc-key": "us-mo-081",
-            "value": 62
-        },
-        {
-            "hc-key": "us-mo-059",
-            "value": 63
-        },
-        {
-            "hc-key": "us-mo-077",
-            "value": 64
-        },
-        {
-            "hc-key": "us-mo-061",
-            "value": 65
-        },
-        {
-            "hc-key": "us-mo-195",
-            "value": 66
-        },
-        {
-            "hc-key": "us-mo-053",
-            "value": 67
-        },
-        {
-            "hc-key": "us-mo-019",
-            "value": 68
-        },
-        {
-            "hc-key": "us-mo-065",
-            "value": 69
-        },
-        {
-            "hc-key": "us-mo-013",
-            "value": 70
-        },
-        {
-            "hc-key": "us-mo-083",
-            "value": 71
-        },
-        {
-            "hc-key": "us-mo-095",
-            "value": 72
-        },
-        {
-            "hc-key": "us-mo-215",
-            "value": 73
-        },
-        {
-            "hc-key": "us-mo-159",
-            "value": 74
-        },
-        {
-            "hc-key": "us-mo-057",
-            "value": 75
-        },
-        {
-            "hc-key": "us-mo-043",
-            "value": 76
-        },
-        {
-            "hc-key": "us-mo-135",
-            "value": 77
-        },
-        {
-            "hc-key": "us-mo-205",
-            "value": 78
-        },
-        {
-            "hc-key": "us-mo-185",
-            "value": 79
-        },
-        {
-            "hc-key": "us-mo-055",
-            "value": 80
-        },
-        {
-            "hc-key": "us-mo-033",
-            "value": 81
-        },
-        {
-            "hc-key": "us-mo-025",
-            "value": 82
-        },
-        {
-            "hc-key": "us-mo-049",
-            "value": 83
-        },
-        {
-            "hc-key": "us-mo-063",
-            "value": 84
-        },
-        {
-            "hc-key": "us-mo-213",
-            "value": 85
-        },
-        {
-            "hc-key": "us-mo-225",
-            "value": 86
-        },
-        {
-            "hc-key": "us-mo-171",
-            "value": 87
-        },
-        {
-            "hc-key": "us-mo-023",
-            "value": 88
-        },
-        {
-            "hc-key": "us-mo-031",
-            "value": 89
-        },
-        {
-            "hc-key": "us-mo-133",
-            "value": 90
-        },
-        {
-            "hc-key": "us-mo-113",
-            "value": 91
-        },
-        {
-            "hc-key": "us-mo-197",
-            "value": 92
-        },
-        {
-            "hc-key": "us-mo-037",
-            "value": 93
-        },
-        {
-            "hc-key": "us-mo-069",
-            "value": 94
-        },
-        {
-            "hc-key": "us-mo-153",
-            "value": 95
-        },
-        {
-            "hc-key": "us-mo-017",
-            "value": 96
-        },
-        {
-            "hc-key": "us-mo-183",
-            "value": 97
-        },
-        {
-            "hc-key": "us-mo-071",
-            "value": 98
-        },
-        {
-            "hc-key": "us-mo-181",
-            "value": 99
-        },
-        {
-            "hc-key": "us-mo-177",
-            "value": 100
-        },
-        {
-            "hc-key": "us-mo-087",
-            "value": 101
-        },
-        {
-            "hc-key": "us-mo-217",
-            "value": 102
-        },
-        {
-            "hc-key": "us-mo-105",
-            "value": 103
-        },
-        {
-            "hc-key": "us-mo-169",
-            "value": 104
-        },
-        {
-            "hc-key": "us-mo-161",
-            "value": 105
-        },
-        {
-            "hc-key": "us-mo-229",
-            "value": 106
-        },
-        {
-            "hc-key": "us-mo-155",
-            "value": 107
-        },
-        {
-            "hc-key": "us-mo-203",
-            "value": 108
-        },
-        {
-            "hc-key": "us-mo-005",
-            "value": 109
-        },
-        {
-            "hc-key": "us-mo-510",
-            "value": 110
-        },
-        {
-            "hc-key": "us-mo-207",
-            "value": 111
-        },
-        {
-            "hc-key": "us-mo-027",
-            "value": 112
-        },
-        {
-            "hc-key": "us-mo-051",
-            "value": 113
-        },
-        {
-            "hc-key": "us-mo-089",
-            "value": 114
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-mo-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-mo-all.js">Missouri</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-mo-all.js">Missouri</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-mo-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

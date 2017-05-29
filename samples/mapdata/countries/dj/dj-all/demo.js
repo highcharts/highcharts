@@ -1,73 +1,52 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['dj-5766', 0],
+    ['dj-db', 1],
+    ['dj-1166', 2],
+    ['dj-as', 3],
+    ['dj-dk', 4],
+    ['dj-ob', 5],
+    ['dj-ta', 6]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "dj-5766",
-            "value": 0
-        },
-        {
-            "hc-key": "dj-db",
-            "value": 1
-        },
-        {
-            "hc-key": "dj-1166",
-            "value": 2
-        },
-        {
-            "hc-key": "dj-as",
-            "value": 3
-        },
-        {
-            "hc-key": "dj-dk",
-            "value": 4
-        },
-        {
-            "hc-key": "dj-ob",
-            "value": 5
-        },
-        {
-            "hc-key": "dj-ta",
-            "value": 6
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/dj/dj-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/dj/dj-all.js">Djibouti</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/dj/dj-all.js">Djibouti</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/dj/dj-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

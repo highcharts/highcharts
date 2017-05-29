@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -35,7 +35,8 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - getTZOffset(min)),
+		// When crossing DST, use the max. Resolves #6278.
+		minDate = new Date(min - Math.max(getTZOffset(min), getTZOffset(max))),
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
@@ -151,10 +152,17 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// Handle higher ranks. Mark new days if the time is on midnight
-		// (#950, #1649, #1760, #3349)
-		if (interval <= timeUnits.hour) {
+		// (#950, #1649, #1760, #3349). Use a reasonable dropout threshold to 
+		// prevent looping over dense data grouping (#6156).
+		if (interval <= timeUnits.hour && tickPositions.length < 10000) {
 			each(tickPositions, function (time) {
-				if (dateFormat('%H%M%S%L', time) === '000000000') {
+				if (
+					// Speed optimization, no need to run dateFormat unless
+					// we're on a full or half hour
+					time % 1800000 === 0 &&
+					// Check for local or global midnight
+					dateFormat('%H%M%S%L', time) === '000000000'
+				) {
 					higherRanks[time] = 'day';	
 				}
 			});

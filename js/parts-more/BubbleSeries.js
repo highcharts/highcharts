@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -50,7 +50,8 @@ seriesType('bubble', 'scatter', {
 			hover: {
 				radiusPlus: 0
 			}
-		}
+		},
+		symbol: 'circle'
 	},
 	minSize: 8,
 	maxSize: '20%',
@@ -76,9 +77,10 @@ seriesType('bubble', 'scatter', {
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	specialGroup: 'group', // To allow clipping (#6296)
 	bubblePadding: true,
 	zoneAxis: 'z',
-	markerAttribs: null,
+	directTouch: true,
 
 	/*= if (build.classic) { =*/
 	pointAttribs: function (point, state) {
@@ -153,16 +155,26 @@ seriesType('bubble', 'scatter', {
 		if (!init) { // run the animation
 			each(this.points, function (point) {
 				var graphic = point.graphic,
-					shapeArgs = point.shapeArgs;
+					animationTarget;
 
-				if (graphic && shapeArgs) {
-					// start values
-					graphic.attr('r', 1);
+				if (graphic && graphic.width) { // URL symbols don't have width
+					animationTarget = {
+						x: graphic.x,
+						y: graphic.y,
+						width: graphic.width,
+						height: graphic.height
+					};
 
-					// animate
-					graphic.animate({
-						r: shapeArgs.r
-					}, animation);
+					// Start values
+					graphic.attr({
+						x: point.plotX,
+						y: point.plotY,
+						width: 1,
+						height: 1
+					});
+
+					// Run animation
+					graphic.animate(animationTarget, animation);
 				}
 			});
 
@@ -194,12 +206,11 @@ seriesType('bubble', 'scatter', {
 
 			if (isNumber(radius) && radius >= this.minPxSize / 2) {
 				// Shape arguments
-				point.shapeType = 'circle';
-				point.shapeArgs = {
-					x: point.plotX,
-					y: point.plotY,
-					r: radius
-				};
+				point.marker = H.extend(point.marker, {
+					radius: radius,
+					width: 2 * radius,
+					height: 2 * radius
+				});
 
 				// Alignment box for the data label
 				point.dlBox = {
@@ -214,31 +225,6 @@ seriesType('bubble', 'scatter', {
 		}
 	},
 
-	/**
-	 * Get the series' symbol in the legend
-	 *
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
-	 */
-	drawLegendSymbol: function (legend, item) {
-		var renderer = this.chart.renderer,
-			radius = renderer.fontMetrics(
-				legend.itemStyle && legend.itemStyle.fontSize,
-				item.legendItem
-			).f / 2;
-
-		item.legendSymbol = renderer.circle(
-			radius,
-			legend.baseline - radius,
-			radius
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);
-		item.legendSymbol.isMarker = true;
-
-	},
-
-	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
 	applyZones: noop
@@ -248,7 +234,7 @@ seriesType('bubble', 'scatter', {
 	haloPath: function (size) {
 		return Point.prototype.haloPath.call(
 			this, 
-			size === 0 ? 0 : this.shapeArgs.r + size // #6067
+			size === 0 ? 0 : (this.marker ? this.marker.radius || 0 : 0) + size // #6067
 		);
 	},
 	ttBelow: false

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -50,8 +50,7 @@ seriesType('area', 'line', {
 			seriesLength = yAxisSeries.length,
 			visibleSeries,
 			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
-			i,
-			x;
+			i;
 
 		if (this.options.stacking) {
 			// Create a map where we can quickly look up the points by their X value.
@@ -60,11 +59,11 @@ seriesType('area', 'line', {
 			}
 
 			// Sort the keys (#1651)
-			for (x in stack) {
-				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
+			H.objectEach(stack, function (stackX, x) {
+				if (stackX.total !== null) { // nulled after switching between grouping and not (#1651, #2336)
 					keys.push(x);
 				}
-			}
+			});
 			keys.sort(function (a, b) {
 				return a - b;
 			});
@@ -134,11 +133,11 @@ seriesType('area', 'line', {
 						// When reversedStacks is true, loop up, else loop down
 						i += upOrDown;
 					}
-
-					y = yAxis.toPixels(y, true);
+					y = yAxis.translate(y, 0, 1, 0, 1); // #6272
 					segment.push({ 
 						isNull: true,
-						plotX: xAxis.toPixels(x, true),
+						plotX: xAxis.translate(x, 0, 0, 0, 1), // #6272
+						x: x,
 						plotY: y,
 						yBottom: y
 					});
@@ -199,7 +198,8 @@ seriesType('area', 'line', {
 					graphPoints.push({
 						plotX: plotX,
 						plotY: top === null ? translatedThreshold : yAxis.getThreshold(top),
-						isNull: isNull
+						isNull: isNull,
+						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,
@@ -211,7 +211,7 @@ seriesType('area', 'line', {
 
 		// Find what points to use
 		points = points || this.points;
-		
+
 		// Fill in missing points
 		if (stacking) {
 			points = this.getStackPoints();
@@ -256,6 +256,7 @@ seriesType('area', 'line', {
 
 		areaPath.xMap = topPath.xMap;
 		this.areaPath = areaPath;
+
 		return graphPath;
 	},
 

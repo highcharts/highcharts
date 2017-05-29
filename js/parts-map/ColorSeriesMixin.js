@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -38,9 +38,11 @@ H.colorPointMixin = {
 	},
 	setState: function (state) {
 		H.Point.prototype.setState.call(this, state);
-		this.graphic.attr({
-			zIndex: state === 'hover' ? 1 : 0
-		});
+		if (this.graphic) {
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		}
 	}
 };
 

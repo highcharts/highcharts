@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['al-vr', 0],
+    ['al-ke', 1],
+    ['al-du', 2],
+    ['al-fi', 3],
+    ['al-sd', 4],
+    ['al-kk', 5],
+    ['al-be', 6],
+    ['al-eb', 7],
+    ['al-gk', 8],
+    ['al-db', 9],
+    ['al-lz', 10],
+    ['al-ti', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "al-vr",
-            "value": 0
-        },
-        {
-            "hc-key": "al-ke",
-            "value": 1
-        },
-        {
-            "hc-key": "al-du",
-            "value": 2
-        },
-        {
-            "hc-key": "al-fi",
-            "value": 3
-        },
-        {
-            "hc-key": "al-sd",
-            "value": 4
-        },
-        {
-            "hc-key": "al-kk",
-            "value": 5
-        },
-        {
-            "hc-key": "al-be",
-            "value": 6
-        },
-        {
-            "hc-key": "al-eb",
-            "value": 7
-        },
-        {
-            "hc-key": "al-gk",
-            "value": 8
-        },
-        {
-            "hc-key": "al-db",
-            "value": 9
-        },
-        {
-            "hc-key": "al-lz",
-            "value": 10
-        },
-        {
-            "hc-key": "al-ti",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/al/al-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/al/al-all.js">Albania</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/al/al-all.js">Albania</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/al/al-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

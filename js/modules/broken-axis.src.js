@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2016 Torstein Honsi
+ * (c) 2009-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -13,6 +13,7 @@ var pick = H.pick,
 	wrap = H.wrap,
 	each = H.each,
 	extend = H.extend,
+	isArray = H.isArray,
 	fireEvent = H.fireEvent,
 	Axis = H.Axis,
 	Series = H.Series;
@@ -89,20 +90,17 @@ wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 });
 
 wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+	var axis = this,
+		breaks;
 	// Force Axis to be not-ordinal when breaks are defined
 	if (userOptions.breaks && userOptions.breaks.length) {
 		userOptions.ordinal = false;
 	}
-
 	proceed.call(this, chart, userOptions);
-
-	if (this.options.breaks) {
-
-		var axis = this;
-		
-		axis.isBroken = true;
-
-		this.val2lin = function (val) {
+	breaks = this.options.breaks;
+	axis.isBroken = (isArray(breaks) && !!breaks.length);
+	if (axis.isBroken) {
+		axis.val2lin = function (val) {
 			var nval = val,
 				brk,
 				i;
@@ -122,7 +120,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			return nval;
 		};
 		
-		this.lin2val = function (val) {
+		axis.lin2val = function (val) {
 			var nval = val,
 				brk,
 				i;
@@ -140,7 +138,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			return nval;
 		};
 
-		this.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
+		axis.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
 			// If trying to set extremes inside a break, extend it to before and after the break ( #3857 )
 			while (this.isInAnyBreak(newMin)) {
 				newMin -= this.closestPointRange;
@@ -151,7 +149,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			Axis.prototype.setExtremes.call(this, newMin, newMax, redraw, animation, eventArguments);
 		};
 
-		this.setAxisTranslation = function (saveOld) {
+		axis.setAxisTranslation = function (saveOld) {
 			Axis.prototype.setAxisTranslation.call(this, saveOld);
 
 			var breaks = axis.options.breaks,
@@ -160,16 +158,14 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				length = 0, 
 				inBrk,
 				repeat,
-				brk,
 				min = axis.userMin || axis.min,
 				max = axis.userMax || axis.max,
+				pointRangePadding = pick(axis.pointRangePadding, 0),
 				start,
-				i,
-				j;
+				i;
 
 			// Min & max check (#4247)
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				repeat = brk.repeat || Infinity;
 				if (axis.isInBreak(brk, min)) {
 					min += (brk.to % repeat) - (min % repeat);
@@ -177,33 +173,32 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				if (axis.isInBreak(brk, max)) {
 					max -= (max % repeat) - (brk.from % repeat);
 				}
-			}
+			});
 
 			// Construct an array holding all breaks in the axis
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				start = brk.from;
 				repeat = brk.repeat || Infinity;
-
+				
 				while (start - repeat > min) {
 					start -= repeat;
 				}
 				while (start < min) {
 					start += repeat;
 				}
-
-				for (j = start; j < max; j += repeat) {
+				
+				for (i = start; i < max; i += repeat) {
 					breakArrayT.push({
-						value: j,
+						value: i,
 						move: 'in'
 					});
 					breakArrayT.push({
-						value: j + (brk.to - brk.from),
+						value: i + (brk.to - brk.from),
 						move: 'out',
 						size: brk.breakSize
 					});
 				}
-			}
+			});
 
 			breakArrayT.sort(function (a, b) {
 				var ret;
@@ -219,10 +214,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			inBrk = 0;
 			start = min;
 
-			for (i in breakArrayT) {
-				brk = breakArrayT[i];
+			each(breakArrayT, function (brk) {
 				inBrk += (brk.move === 'in' ? 1 : -1);
-
+				
 				if (inBrk === 1 && brk.move === 'in') {
 					start = brk.value;
 				}
@@ -234,14 +228,27 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 					});
 					length += brk.value - start - (brk.size || 0);
 				}
-			}
+			});
 
 			axis.breakArray = breakArray;
 
+			// Used with staticScale, and below, the actual axis length when
+			// breaks are substracted.
+			axis.unitLength = max - min - length + pointRangePadding;
+
 			fireEvent(axis, 'afterBreaks');
 			
-			axis.transA *= ((max - axis.min) / (max - min - length));
-
+			if (axis.options.staticScale) {
+				axis.transA = axis.options.staticScale;
+			} else if (axis.unitLength) {
+				axis.transA *= (max - axis.min + pointRangePadding) /
+					axis.unitLength;
+			}
+				
+			if (pointRangePadding) {
+				axis.minPixelPadding = axis.transA * axis.minPointOffset;
+			}
+			
 			axis.min = min;
 			axis.max = max;
 		};
@@ -315,6 +322,35 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 			});
 		});
 	});
+};
+
+
+/**
+ * Extend getGraphPath by identifying gaps in the data so that we can draw a gap
+ * in the line or area. This was moved from ordinal axis module to broken axis
+ * module as of #5045.
+ */
+H.Series.prototype.gappedPath = function () {
+	var gapSize = this.options.gapSize,
+		points = this.points.slice(),
+		i = points.length - 1;
+
+	if (gapSize && i > 0) { // #5008
+
+		// extension for ordinal breaks
+		while (i--) {
+			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
+				points.splice( // insert after this one
+					i + 1,
+					0,
+					{ isNull: true }
+				);
+			}
+		}
+	}
+
+	// Call base method
+	return this.getGraphPath(points);
 };
 
 wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);

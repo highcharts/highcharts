@@ -1,417 +1,138 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ne-085', 0],
+    ['us-ne-087', 1],
+    ['us-ne-037', 2],
+    ['us-ne-053', 3],
+    ['us-ne-157', 4],
+    ['us-ne-165', 5],
+    ['us-ne-059', 6],
+    ['us-ne-169', 7],
+    ['us-ne-083', 8],
+    ['us-ne-065', 9],
+    ['us-ne-179', 10],
+    ['us-ne-139', 11],
+    ['us-ne-077', 12],
+    ['us-ne-011', 13],
+    ['us-ne-183', 14],
+    ['us-ne-027', 15],
+    ['us-ne-095', 16],
+    ['us-ne-151', 17],
+    ['us-ne-035', 18],
+    ['us-ne-079', 19],
+    ['us-ne-001', 20],
+    ['us-ne-185', 21],
+    ['us-ne-159', 22],
+    ['us-ne-067', 23],
+    ['us-ne-097', 24],
+    ['us-ne-007', 25],
+    ['us-ne-123', 26],
+    ['us-ne-019', 27],
+    ['us-ne-041', 28],
+    ['us-ne-131', 29],
+    ['us-ne-127', 30],
+    ['us-ne-141', 31],
+    ['us-ne-125', 32],
+    ['us-ne-133', 33],
+    ['us-ne-109', 34],
+    ['us-ne-161', 35],
+    ['us-ne-075', 36],
+    ['us-ne-137', 37],
+    ['us-ne-047', 38],
+    ['us-ne-111', 39],
+    ['us-ne-003', 40],
+    ['us-ne-167', 41],
+    ['us-ne-063', 42],
+    ['us-ne-057', 43],
+    ['us-ne-033', 44],
+    ['us-ne-055', 45],
+    ['us-ne-105', 46],
+    ['us-ne-081', 47],
+    ['us-ne-017', 48],
+    ['us-ne-115', 49],
+    ['us-ne-009', 50],
+    ['us-ne-113', 51],
+    ['us-ne-121', 52],
+    ['us-ne-163', 53],
+    ['us-ne-023', 54],
+    ['us-ne-143', 55],
+    ['us-ne-175', 56],
+    ['us-ne-025', 57],
+    ['us-ne-119', 58],
+    ['us-ne-181', 59],
+    ['us-ne-129', 60],
+    ['us-ne-099', 61],
+    ['us-ne-089', 62],
+    ['us-ne-031', 63],
+    ['us-ne-103', 64],
+    ['us-ne-015', 65],
+    ['us-ne-093', 66],
+    ['us-ne-071', 67],
+    ['us-ne-135', 68],
+    ['us-ne-049', 69],
+    ['us-ne-101', 70],
+    ['us-ne-107', 71],
+    ['us-ne-153', 72],
+    ['us-ne-155', 73],
+    ['us-ne-013', 74],
+    ['us-ne-005', 75],
+    ['us-ne-091', 76],
+    ['us-ne-061', 77],
+    ['us-ne-029', 78],
+    ['us-ne-021', 79],
+    ['us-ne-147', 80],
+    ['us-ne-069', 81],
+    ['us-ne-171', 82],
+    ['us-ne-073', 83],
+    ['us-ne-051', 84],
+    ['us-ne-043', 85],
+    ['us-ne-177', 86],
+    ['us-ne-039', 87],
+    ['us-ne-117', 88],
+    ['us-ne-145', 89],
+    ['us-ne-149', 90],
+    ['us-ne-045', 91],
+    ['us-ne-173', 92]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ne-085",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ne-087",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ne-037",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ne-053",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ne-157",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ne-165",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ne-059",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ne-169",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ne-083",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ne-065",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ne-179",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ne-139",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ne-077",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ne-011",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ne-183",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ne-027",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ne-095",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ne-151",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ne-035",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ne-079",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ne-001",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ne-185",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ne-159",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ne-067",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ne-097",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ne-007",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ne-123",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ne-019",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ne-041",
-            "value": 28
-        },
-        {
-            "hc-key": "us-ne-131",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ne-127",
-            "value": 30
-        },
-        {
-            "hc-key": "us-ne-141",
-            "value": 31
-        },
-        {
-            "hc-key": "us-ne-125",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ne-133",
-            "value": 33
-        },
-        {
-            "hc-key": "us-ne-109",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ne-161",
-            "value": 35
-        },
-        {
-            "hc-key": "us-ne-075",
-            "value": 36
-        },
-        {
-            "hc-key": "us-ne-137",
-            "value": 37
-        },
-        {
-            "hc-key": "us-ne-047",
-            "value": 38
-        },
-        {
-            "hc-key": "us-ne-111",
-            "value": 39
-        },
-        {
-            "hc-key": "us-ne-003",
-            "value": 40
-        },
-        {
-            "hc-key": "us-ne-167",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ne-063",
-            "value": 42
-        },
-        {
-            "hc-key": "us-ne-057",
-            "value": 43
-        },
-        {
-            "hc-key": "us-ne-033",
-            "value": 44
-        },
-        {
-            "hc-key": "us-ne-055",
-            "value": 45
-        },
-        {
-            "hc-key": "us-ne-105",
-            "value": 46
-        },
-        {
-            "hc-key": "us-ne-081",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ne-017",
-            "value": 48
-        },
-        {
-            "hc-key": "us-ne-115",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ne-009",
-            "value": 50
-        },
-        {
-            "hc-key": "us-ne-113",
-            "value": 51
-        },
-        {
-            "hc-key": "us-ne-121",
-            "value": 52
-        },
-        {
-            "hc-key": "us-ne-163",
-            "value": 53
-        },
-        {
-            "hc-key": "us-ne-023",
-            "value": 54
-        },
-        {
-            "hc-key": "us-ne-143",
-            "value": 55
-        },
-        {
-            "hc-key": "us-ne-175",
-            "value": 56
-        },
-        {
-            "hc-key": "us-ne-025",
-            "value": 57
-        },
-        {
-            "hc-key": "us-ne-119",
-            "value": 58
-        },
-        {
-            "hc-key": "us-ne-181",
-            "value": 59
-        },
-        {
-            "hc-key": "us-ne-129",
-            "value": 60
-        },
-        {
-            "hc-key": "us-ne-099",
-            "value": 61
-        },
-        {
-            "hc-key": "us-ne-089",
-            "value": 62
-        },
-        {
-            "hc-key": "us-ne-031",
-            "value": 63
-        },
-        {
-            "hc-key": "us-ne-103",
-            "value": 64
-        },
-        {
-            "hc-key": "us-ne-015",
-            "value": 65
-        },
-        {
-            "hc-key": "us-ne-093",
-            "value": 66
-        },
-        {
-            "hc-key": "us-ne-071",
-            "value": 67
-        },
-        {
-            "hc-key": "us-ne-135",
-            "value": 68
-        },
-        {
-            "hc-key": "us-ne-049",
-            "value": 69
-        },
-        {
-            "hc-key": "us-ne-101",
-            "value": 70
-        },
-        {
-            "hc-key": "us-ne-107",
-            "value": 71
-        },
-        {
-            "hc-key": "us-ne-153",
-            "value": 72
-        },
-        {
-            "hc-key": "us-ne-155",
-            "value": 73
-        },
-        {
-            "hc-key": "us-ne-013",
-            "value": 74
-        },
-        {
-            "hc-key": "us-ne-005",
-            "value": 75
-        },
-        {
-            "hc-key": "us-ne-091",
-            "value": 76
-        },
-        {
-            "hc-key": "us-ne-061",
-            "value": 77
-        },
-        {
-            "hc-key": "us-ne-029",
-            "value": 78
-        },
-        {
-            "hc-key": "us-ne-021",
-            "value": 79
-        },
-        {
-            "hc-key": "us-ne-147",
-            "value": 80
-        },
-        {
-            "hc-key": "us-ne-069",
-            "value": 81
-        },
-        {
-            "hc-key": "us-ne-171",
-            "value": 82
-        },
-        {
-            "hc-key": "us-ne-073",
-            "value": 83
-        },
-        {
-            "hc-key": "us-ne-051",
-            "value": 84
-        },
-        {
-            "hc-key": "us-ne-043",
-            "value": 85
-        },
-        {
-            "hc-key": "us-ne-177",
-            "value": 86
-        },
-        {
-            "hc-key": "us-ne-039",
-            "value": 87
-        },
-        {
-            "hc-key": "us-ne-117",
-            "value": 88
-        },
-        {
-            "hc-key": "us-ne-145",
-            "value": 89
-        },
-        {
-            "hc-key": "us-ne-149",
-            "value": 90
-        },
-        {
-            "hc-key": "us-ne-045",
-            "value": 91
-        },
-        {
-            "hc-key": "us-ne-173",
-            "value": 92
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-ne-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ne-all.js">Nebraska</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ne-all.js">Nebraska</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-ne-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,7 +23,8 @@ var addEvent = H.addEvent,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
 	svg = H.svg,
-	wrap = H.wrap;
+	wrap = H.wrap,
+	swapXY;
 
 var defaultScrollbarOptions =  {
 	//enabled: true
@@ -54,6 +55,28 @@ var defaultScrollbarOptions =  {
 };
 
 defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.scrollbar);
+
+/**
+* When we have vertical scrollbar, rifles and arrow in buttons should be rotated.
+* The same method is used in Navigator's handles, to rotate them.
+* @param {Array} path - path to be rotated
+* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
+*/
+H.swapXY = swapXY = function (path, vertical) {
+	var i,
+		len = path.length,
+		temp;
+
+	if (vertical) {
+		for (i = 0; i < len; i += 3) {
+			temp = path[i + 1];
+			path[i + 1] = path[i + 2];
+			path[i + 2] = temp;
+		}
+	}
+
+	return path;
+};
 
 /**
  * A reusable scrollbar, internally used in Highstock's navigator and optionally
@@ -141,8 +164,8 @@ Scrollbar.prototype = {
 				r: options.barBorderRadius || 0
 			}).add(scroller.scrollbarGroup);
 
-		scroller.scrollbarRifles = renderer.path(scroller.swapXY(
-			[
+		scroller.scrollbarRifles = renderer.path(
+			swapXY([
 				'M',
 				-3, size / 4,
 				'L',
@@ -228,7 +251,7 @@ Scrollbar.prototype = {
 		});
 
 		// Move right/bottom button ot it's place:
-		scroller.scrollbarButtons[1].attr({
+		scroller.scrollbarButtons[1][method]({
 			translateX: vertical ? 0 : width - xOffset,
 			translateY: vertical ? height - yOffset : 0
 		});
@@ -275,7 +298,7 @@ Scrollbar.prototype = {
 
 		// Button arrow
 		tempElem = renderer
-			.path(scroller.swapXY([
+			.path(swapXY([
 				'M',
 				size / 2 + (index ? -1 : 1), 
 				size / 2 - 3,
@@ -294,27 +317,6 @@ Scrollbar.prototype = {
 			fill: options.buttonArrowColor
 		});
 		/*= } =*/
-	},
-
-	/**
-	* When we have vertical scrollbar, rifles are rotated, the same for arrow in buttons:
-	* @param {Array} path - path to be rotated
-	* @param {Boolean} vertical - if vertical scrollbar, swap x-y values
-	*/
-	swapXY: function (path, vertical) {
-		var i,
-			len = path.length,
-			temp;
-
-		if (vertical) {
-			for (i = 0; i < len; i += 3) {
-				temp = path[i + 1];
-				path[i + 1] = path[i + 2];
-				path[i + 2] = temp;
-			}
-		}
-
-		return path;
 	},
 
 	/**
@@ -340,8 +342,7 @@ Scrollbar.prototype = {
 		}
 
 		from = Math.max(from, 0);
-
-		fromPX = fullWidth * from;
+		fromPX = Math.ceil(fullWidth * from);
 		toPX = fullWidth * Math.min(to, 1);
 		scroller.calculatedWidth = newSize = correctFloat(toPX - fromPX);
 
@@ -602,7 +603,7 @@ Scrollbar.prototype = {
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
-		this._events = undefined;
+		this._events.length = 0;
 	},
 
 	/**
@@ -622,7 +623,7 @@ Scrollbar.prototype = {
 			}
 		}, this);
 
-		if (scroller) {
+		if (scroller && this === scroller.scrollbar) { // #6421, chart may have more scrollbars
 			scroller.scrollbar = null;
 
 			// Destroy elements in collection
@@ -636,7 +637,7 @@ Scrollbar.prototype = {
 */
 wrap(Axis.prototype, 'init', function (proceed) {
 	var axis = this;
-	proceed.apply(axis, [].slice.call(arguments, 1));
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
 		// Predefined options:
@@ -674,26 +675,44 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, axis.dataMin),
 		scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, axis.dataMax),
 		scrollbar = axis.scrollbar,
+		titleOffset = axis.titleOffset || 0,
+		offsetsIndex,
 		from,
 		to;
 
-	proceed.apply(axis, [].slice.call(arguments, 1));
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (scrollbar) {
+
 		if (axis.horiz) {
 			scrollbar.position(
 				axis.left, 
-				axis.top + axis.height + axis.offset + 2 + (axis.opposite ? 0 : axis.axisTitleMargin),
+				axis.top + axis.height + 2 + axis.chart.scrollbarsOffsets[1] +
+					(axis.opposite ?
+						0 :
+						titleOffset + axis.axisTitleMargin + axis.offset
+					),
 				axis.width,
 				axis.height
 			);
+			offsetsIndex = 1;
 		} else {
 			scrollbar.position(
-				axis.left + axis.width + 2 + axis.offset + (axis.opposite ? axis.axisTitleMargin : 0), 
+				axis.left + axis.width + 2 + axis.chart.scrollbarsOffsets[0] +
+					(axis.opposite ? 
+						titleOffset + axis.axisTitleMargin + axis.offset :
+						0
+					),
 				axis.top, 
 				axis.width, 
 				axis.height
 			);
+			offsetsIndex = 0;
+		}
+
+		if ((!axis.opposite && !axis.horiz) || (axis.opposite && axis.horiz)) {
+			axis.chart.scrollbarsOffsets[offsetsIndex] +=
+				axis.scrollbar.size + axis.scrollbar.options.margin;
 		}
 
 		if (isNaN(scrollMin) || isNaN(scrollMax) || !defined(axis.min) || !defined(axis.max)) {
@@ -719,9 +738,10 @@ wrap(Axis.prototype, 'getOffset', function (proceed) {
 		index = axis.horiz ? 2 : 1,
 		scrollbar = axis.scrollbar;
 
-	proceed.apply(axis, [].slice.call(arguments, 1));
+	proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
 
 	if (scrollbar) {
+		axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
 		axis.chart.axisOffset[index] += scrollbar.size + scrollbar.options.margin;
 	}
 });
@@ -734,7 +754,7 @@ wrap(Axis.prototype, 'destroy', function (proceed) {
 		this.scrollbar = this.scrollbar.destroy();
 	}
 
-	proceed.apply(this, [].slice.call(arguments, 1));
+	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 H.Scrollbar = Scrollbar;

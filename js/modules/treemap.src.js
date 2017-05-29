@@ -20,18 +20,16 @@ var seriesType = H.seriesType,
 	each = H.each,
 	grep = H.grep,
 	isNumber = H.isNumber,
+	isString = H.isString,
 	pick = H.pick,
 	Series = H.Series,
 	stableSort = H.stableSort,
 	color = H.Color,
 	eachObject = function (list, func, context) {
-		var key;
 		context = context || this;
-		for (key in list) {
-			if (list.hasOwnProperty(key)) {
-				func.call(context, list[key], key, list);
-			}
-		}
+		H.objectEach(list, function (val, key) {
+			func.call(context, val, key, list);
+		});
 	},
 	reduce = function (arr, func, previous, context) {
 		context = context || this;
@@ -69,6 +67,7 @@ seriesType('treemap', 'scatter', {
 		headerFormat: '',
 		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 	},
+	ignoreHiddenPoint: true,
 	layoutAlgorithm: 'sliceAndDice',
 	layoutStartingDirection: 'vertical',
 	alternateStartingDirection: false,
@@ -99,6 +98,7 @@ seriesType('treemap', 'scatter', {
 }, {
 	pointArrayMap: ['value'],
 	axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
+	directTouch: true,
 	optionalAxis: 'colorAxis',
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value', 'colorValue'],
@@ -137,44 +137,20 @@ seriesType('treemap', 'scatter', {
 	* Creates a tree structured object from the series points
 	*/
 	getTree: function () {
-		var tree,
-			series = this,
+		var series = this,
 			allIds = map(this.data, function (d) {
 				return d.id;
 			}),
 			parentList = series.getListOfParents(this.data, allIds);
 
 		series.nodeMap = [];
-		tree = series.buildNode('', -1, 0, parentList, null);
-		// Parents of the root node is by default visible
-		recursive(this.nodeMap[this.rootNode], function (node) {
-			var next = false,
-				p = node.parent;
-			node.visible = true;
-			if (p || p === '') {
-				next = series.nodeMap[p];
-			}
-			return next;
-		});
-		// Children of the root node is by default visible
-		recursive(this.nodeMap[this.rootNode].children, function (children) {
-			var next = false;
-			each(children, function (child) {
-				child.visible = true;
-				if (child.children.length) {
-					next = (next || []).concat(child.children);
-				}
-			});
-			return next;
-		});
-		this.setTreeValues(tree);
-		return tree;
+		return series.buildNode('', -1, 0, parentList, null);
 	},
 	init: function (chart, options) {
 		var series = this;
 		Series.prototype.init.call(series, chart, options);
 		if (series.options.allowDrillToNode) {
-			series.drillTo();
+			H.addEvent(series, 'click', series.onClickDrillToNode);
 		}
 	},
 	buildNode: function (id, i, level, list, parent) {
@@ -210,6 +186,27 @@ seriesType('treemap', 'scatter', {
 			children = [],
 			val,
 			point = series.points[tree.i];
+		// Parents of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode], function (node) {
+			var next = false,
+				p = node.parent;
+			node.visible = true;
+			if (p || p === '') {
+				next = series.nodeMap[p];
+			}
+			return next;
+		});
+		// Children of the root node is by default visible
+		recursive(series.nodeMap[series.rootNode].children, function (children) {
+			var next = false;
+			each(children, function (child) {
+				child.visible = true;
+				if (child.children.length) {
+					next = (next || []).concat(child.children);
+				}
+			});
+			return next;
+		});
 
 		// First give the children some values
 		each(tree.children, function (child) {
@@ -308,7 +305,19 @@ seriesType('treemap', 'scatter', {
 				x2,
 				y1,
 				y2,
-				crispCorr = 0.5; // Assume 1px borderWidth for simplicity
+				crispCorr = 0;
+
+			/*= if (build.classic) { =*/
+			// Get the crisp correction in classic mode. For this to work in 
+			// styled mode, we would need to first add the shape (without x, y,
+			// width and height), then read the rendered stroke width using
+			// point.graphic.strokeWidth(), then modify and apply the shapeArgs.
+			// This applies also to column series, but the downside is
+			// performance and code complexity.
+			crispCorr = (
+				(series.pointAttribs(point)['stroke-width'] || 0) % 2
+			) / 2;
+			/*= } =*/
 
 			// Points which is ignored, have no values.
 			if (values && node.visible) {
@@ -341,8 +350,19 @@ seriesType('treemap', 'scatter', {
 			point = series.points[node.i];
 			level = series.levelMap[node.levelDynamic];
 			// Select either point color, level color or inherited color.
-			color = pick(point && point.options.color, level && level.color, color);
-			colorIndex = pick(point && point.options.colorIndex, level && level.colorIndex, colorIndex);
+			color = pick(
+				point && point.options.color,
+				level && level.color,
+				color,
+				series.color
+			);
+			colorIndex = pick(
+				point && point.options.colorIndex,
+				level && level.colorIndex,
+				colorIndex,
+				series.colorIndex
+			);
+			
 			if (point) {
 				point.color = color;
 				point.colorIndex = colorIndex;
@@ -552,51 +572,61 @@ seriesType('treemap', 'scatter', {
 		return this.algorithmFill(false, parent, children);
 	},
 	translate: function () {
-		var pointValues,
+		var series = this,
+			rootId = series.rootNode = pick(series.rootNode, series.options.rootId, ''),
+			rootNode,
+			pointValues,
 			seriesArea,
 			tree,
 			val;
 
 		// Call prototype function
-		Series.prototype.translate.call(this);
-
-		// Assign variables
-		this.rootNode = pick(this.options.rootId, '');
+		Series.prototype.translate.call(series);
 		// Create a object map from level to options
-		this.levelMap = reduce(this.options.levels, function (arr, item) {
+		series.levelMap = reduce(series.options.levels, function (arr, item) {
 			arr[item.level] = item;
 			return arr;
 		}, {});
-		tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
+		tree = series.tree = series.getTree(); // @todo Only if series.isDirtyData is true
+		rootNode = series.nodeMap[rootId];
+		if (
+			rootId !== '' &&
+			(!rootNode || !rootNode.children.length)
+		) {
+			series.drillToNode('', false);
+			rootId = series.rootNode;
+			rootNode = series.nodeMap[rootId];
+		}
+		series.setTreeValues(tree);
 
 		// Calculate plotting values.
-		this.axisRatio = (this.xAxis.len / this.yAxis.len);
-		this.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
-		this.nodeMap[''].values = seriesArea = merge(pointValues, {
-			width: (pointValues.width * this.axisRatio),
-			direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+		series.axisRatio = (series.xAxis.len / series.yAxis.len);
+		series.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
+		series.nodeMap[''].values = seriesArea = merge(pointValues, {
+			width: (pointValues.width * series.axisRatio),
+			direction: (series.options.layoutStartingDirection === 'vertical' ? 0 : 1),
 			val: tree.val
 		});
-		this.calculateChildrenAreas(tree, seriesArea);
+		series.calculateChildrenAreas(tree, seriesArea);
 
 		// Logic for point colors
-		if (this.colorAxis) {
-			this.translateColors();
-		} else if (!this.options.colorByPoint) {
-			this.setColorRecursive(this.tree);
+		if (series.colorAxis) {
+			series.translateColors();
+		} else if (!series.options.colorByPoint) {
+			series.setColorRecursive(series.tree);
 		}
 
 		// Update axis extremes according to the root node.
-		if (this.options.allowDrillToNode) {
-			val = this.nodeMap[this.rootNode].pointValues;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
-			this.xAxis.setScale();
-			this.yAxis.setScale();
+		if (series.options.allowDrillToNode) {
+			val = rootNode.pointValues;
+			series.xAxis.setExtremes(val.x, val.x + val.width, false);
+			series.yAxis.setExtremes(val.y, val.y + val.height, false);
+			series.xAxis.setScale();
+			series.yAxis.setScale();
 		}
 
 		// Assign values to points.
-		this.setPointValues();
+		series.setPointValues();
 	},
 	/**
 	 * Extend drawDataLabels with logic to handle custom options related to the treemap series:
@@ -730,20 +760,15 @@ seriesType('treemap', 'scatter', {
 	/**
 	* Add drilling on the suitable points
 	*/
-	drillTo: function () {
-		var series = this;
-		H.addEvent(series, 'click', function (event) {
-			var point = event.point,
-				drillId = point.drillId,
-				drillName;
-			// If a drill id is returned, add click event and cursor. 
-			if (drillId) {
-				drillName = series.nodeMap[series.rootNode].name || series.rootNode;
-				point.setState(''); // Remove hover
-				series.drillToNode(drillId);
-				series.showDrillUpButton(drillName);
-			}
-		});
+	onClickDrillToNode: function (event) {
+		var series = this,
+			point = event.point,
+			drillId = point && point.drillId;
+		// If a drill id is returned, add click event and cursor. 
+		if (isString(drillId)) {
+			point.setState(''); // Remove hover
+			series.drillToNode(drillId);
+		}
 	},
 	/**
 	* Finds the drill id for a parent node.
@@ -781,32 +806,26 @@ seriesType('treemap', 'scatter', {
 		return drillId;
 	},
 	drillUp: function () {
-		var drillPoint = null,
-			node,
-			parent;
-		if (this.rootNode) {
-			node = this.nodeMap[this.rootNode];
-			if (node.parent !== null) {
-				drillPoint = this.nodeMap[node.parent];
-			} else {
-				drillPoint = this.nodeMap[''];
-			}
+		var series = this,
+			node = series.nodeMap[series.rootNode];
+		if (node && isString(node.parent)) {
+			series.drillToNode(node.parent);
 		}
-
-		if (drillPoint !== null) {
-			this.drillToNode(drillPoint.id);
-			if (drillPoint.id === '') {
-				this.drillUpButton = this.drillUpButton.destroy();
-			} else {
-				parent = this.nodeMap[drillPoint.parent];
-				this.showDrillUpButton((parent.name || parent.id));
-			}
-		} 
 	},
-	drillToNode: function (id) {
-		this.options.rootId = id;
+	drillToNode: function (id, redraw) {
+		var series = this,
+			nodeMap = series.nodeMap,
+			node = nodeMap[id];
+		series.rootNode = id;
+		if (id === '') {
+			series.drillUpButton = series.drillUpButton.destroy();
+		} else {
+			series.showDrillUpButton((node && node.name || id));
+		}
 		this.isDirty = true; // Force redraw
-		this.chart.redraw();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
 	},
 	showDrillUpButton: function (name) {
 		var series = this,
@@ -902,9 +921,13 @@ seriesType('treemap', 'scatter', {
 	},
 	setState: function (state) {
 		H.Point.prototype.setState.call(this, state);
-		this.graphic.attr({
-			zIndex: state === 'hover' ? 1 : 0
-		});
+
+		// Graphic does not exist when point is not visible.
+		if (this.graphic) {
+			this.graphic.attr({
+				zIndex: state === 'hover' ? 1 : 0
+			});
+		}
 	},
 	setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 });

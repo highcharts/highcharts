@@ -1,28 +1,27 @@
-$(function () {
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Global temperature change'
-        },
+Highcharts.chart('container', {
 
-        subtitle: {
-            text: 'Data module: Show only last 20 years by limiting start row.'
-        },
+    title: {
+        text: 'Global temperature change'
+    },
 
-        data: {
-            csv: document.getElementById('csv').innerHTML,
-            startRow: 114,
-            endRow: 134,
-            endColumn: 1,
-            firstRowAsNames: false
-        },
+    subtitle: {
+        text: 'Data module: Show only last 20 years by limiting start row.'
+    },
 
-        xAxis: {
-            allowDecimals: false
-        },
+    data: {
+        csv: document.getElementById('csv').innerHTML,
+        startRow: 114,
+        endRow: 134,
+        endColumn: 1,
+        firstRowAsNames: false
+    },
 
-        series: [{
-            name: 'Annual mean'
-        }]
-    });
+    xAxis: {
+        allowDecimals: false
+    },
+
+    series: [{
+        name: 'Annual mean'
+    }]
 });

@@ -1,21 +1,20 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        plotOptions: {
-            candlestick: {
-                color: 'blue',
-                upColor: 'red'
-            }
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    plotOptions: {
+        candlestick: {
+            color: 'blue',
+            upColor: 'red'
+        }
+    },
 
-        series: [{
-            type: 'candlestick',
-            name: 'USD to EUR',
-            data: ohlcdata
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        type: 'candlestick',
+        name: 'USD to EUR',
+        data: ohlcdata
+    }]
 });

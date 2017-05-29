@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -41,29 +41,45 @@ seriesType('ohlc', 'column', {
 		hover: {
 			lineWidth: 3
 		}
-	}
+	},
+	stickyTracking: true
 	//upColor: undefined
 	/*= } =*/
 
 }, /** @lends seriesTypes.ohlc */ {
+	directTouch: false,
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
 		return [point.open, point.high, point.low, point.close];
 	},
-	pointValKey: 'high',
+	pointValKey: 'close',
 
 	/*= if (build.classic) { =*/
+	pointAttrToOptions: {
+		'stroke': 'color',
+		'stroke-width': 'lineWidth'
+	},
+
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	pointAttribs: function (point, state) {
-		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(
+				this,
+				point,
+				state
+			),
 			options = this.options;
 
 		delete attribs.fill;
-		attribs['stroke-width'] = options.lineWidth;
 
-		attribs.stroke = point.options.color || (point.open < point.close ? (options.upColor || this.color) : this.color);
+		if (
+			!point.options.color &&
+			options.upColor &&
+			point.open < point.close
+		) {
+			attribs.stroke = options.upColor;
+		}
 
 		return attribs;
 	},
@@ -76,20 +92,24 @@ seriesType('ohlc', 'column', {
 		var series = this,
 			yAxis = series.yAxis,
 			hasModifyValue = !!series.modifyValue,
-			translatedOLC = ['plotOpen', 'yBottom', 'plotClose'];
+			translated = ['plotOpen', 'plotHigh', 'plotLow', 'plotClose', 'yBottom']; // translate OHLC for
 
 		seriesTypes.column.prototype.translate.apply(series);
 
 		// Do the translation
 		each(series.points, function (point) {
-			each([point.open, point.low, point.close], function (value, i) {
+			each([point.open, point.high, point.low, point.close, point.low], function (value, i) {
 				if (value !== null) {
 					if (hasModifyValue) {
 						value = series.modifyValue(value);
 					}
-					point[translatedOLC[i]] = yAxis.toPixels(value, true);
+					point[translated[i]] = yAxis.toPixels(value, true);
 				}
 			});
+
+			// Align the tooltip to the high value to avoid covering the point
+			point.tooltipPos[1] =
+				point.plotHigh + yAxis.pos - series.chart.plotTop;
 		});
 	},
 
@@ -134,7 +154,7 @@ seriesType('ohlc', 'column', {
 					'M',
 					crispX, Math.round(point.yBottom),
 					'L',
-					crispX, Math.round(point.plotY)
+					crispX, Math.round(point.plotHigh)
 				];
 
 				// open

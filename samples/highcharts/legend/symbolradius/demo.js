@@ -1,33 +1,31 @@
-$(function () {
 
-    Highcharts.chart('container', {
 
-        chart: {
-            type: 'column'
-        },
+Highcharts.chart('container', {
 
-        title: {
-            text: 'Round legend symbols'
-        },
+    chart: {
+        type: 'column'
+    },
 
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr']
-        },
+    title: {
+        text: 'Round legend symbols'
+    },
 
-        legend: {
-            symbolHeight: 12,
-            symbolWidth: 12,
-            symbolRadius: 6
-        },
+    xAxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr']
+    },
 
-        series: [{
-            data: [1, 3, 2, 4]
-        }, {
-            data: [6, 4, 5, 3]
-        }, {
-            data: [2, 7, 6, 5]
-        }]
+    legend: {
+        symbolHeight: 12,
+        symbolWidth: 12,
+        symbolRadius: 6
+    },
 
-    });
+    series: [{
+        data: [1, 3, 2, 4]
+    }, {
+        data: [6, 4, 5, 3]
+    }, {
+        data: [2, 7, 6, 5]
+    }]
 
 });

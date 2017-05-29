@@ -1,93 +1,57 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ge-ab', 0],
+    ['ge-aj', 1],
+    ['ge-gu', 2],
+    ['ge-sz', 3],
+    ['ge-im', 4],
+    ['ge-ka', 5],
+    ['ge-mm', 6],
+    ['ge-rk', 7],
+    ['ge-tb', 8],
+    ['ge-kk', 9],
+    ['ge-sj', 10],
+    ['ge-sd', 11]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ge-ab",
-            "value": 0
-        },
-        {
-            "hc-key": "ge-aj",
-            "value": 1
-        },
-        {
-            "hc-key": "ge-gu",
-            "value": 2
-        },
-        {
-            "hc-key": "ge-sz",
-            "value": 3
-        },
-        {
-            "hc-key": "ge-im",
-            "value": 4
-        },
-        {
-            "hc-key": "ge-ka",
-            "value": 5
-        },
-        {
-            "hc-key": "ge-mm",
-            "value": 6
-        },
-        {
-            "hc-key": "ge-rk",
-            "value": 7
-        },
-        {
-            "hc-key": "ge-tb",
-            "value": 8
-        },
-        {
-            "hc-key": "ge-kk",
-            "value": 9
-        },
-        {
-            "hc-key": "ge-sj",
-            "value": 10
-        },
-        {
-            "hc-key": "ge-sd",
-            "value": 11
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ge/ge-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ge/ge-all.js">Georgia</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ge/ge-all.js">Georgia</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ge/ge-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

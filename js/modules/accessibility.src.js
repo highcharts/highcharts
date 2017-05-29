@@ -1,7 +1,7 @@
 /**
  * Accessibility module
  *
- * (c) 2010-2016 Highsoft AS
+ * (c) 2010-2017 Highsoft AS
  * Author: Oystein Moseng
  *
  * License: www.highcharts.com/license
@@ -60,9 +60,20 @@ var win = H.win,
 		funnel: ' Funnel charts are used to display reduction of data in stages. ',
 		pyramid: ' Pyramid charts consist of a single pyramid with item heights corresponding to each point value. ',
 		waterfall: ' A waterfall chart is a column chart where each column contributes towards a total end value. '
-	},
-	commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'],
-	specialKeys = ['z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close']; // Tell user about all properties if points have one of these defined
+	};
+
+// If a point has one of the special keys defined, we expose all keys to the
+// screen reader.
+H.Series.prototype.commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'];
+H.Series.prototype.specialKeys = [
+	'z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'
+]; 
+
+// A pie is always simple. Don't quote me on that.
+if (H.seriesTypes.pie) {
+	H.seriesTypes.pie.prototype.specialKeys = [];
+}
+
 
 // Default a11y options
 H.setOptions({
@@ -77,6 +88,21 @@ H.setOptions({
 	}
 });
 
+/**
+ * HTML encode some characters vulnerable for XSS.
+ * @param  {string} html The input string
+ * @return {string} The excaped string
+ */
+function htmlencode(html) {
+	return html
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#x27;')
+		.replace(/\//g, '&#x2F;');
+}
+
 // Utility function. Reverses child nodes of a DOM element
 function reverseChildNodes(node) {
 	var i = node.childNodes.length;
@@ -88,7 +114,7 @@ function reverseChildNodes(node) {
 // Utility function to attempt to fake a click event on an element
 function fakeClickEvent(element) {
 	var fakeEvent;
-	if (element && element.onclick) {
+	if (element && element.onclick && doc.createEvent) {
 		fakeEvent = doc.createEvent('Events');
 		fakeEvent.initEvent('click', true, false);
 		element.onclick(fakeEvent);
@@ -121,14 +147,21 @@ H.Series.prototype.setA11yDescription = function () {
 				if (point.graphic) {
 					point.graphic.element.setAttribute('role', 'img');
 					point.graphic.element.setAttribute('tabindex', '-1');
-					point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) ||
+					point.graphic.element.setAttribute('aria-label', 
+						point.series.options.pointDescriptionFormatter && 
+						point.series.options.pointDescriptionFormatter(point) ||
+						a11yOptions.pointDescriptionFormatter && 
+						a11yOptions.pointDescriptionFormatter(point) ||
 						point.buildPointInfoString());
 				}
 			});
 		}
 		// Make series element accessible
 		if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
-			seriesEl.setAttribute('role', 'region');
+			seriesEl.setAttribute(
+				'role', 
+				this.options.exposeElementToA11y ? 'img' : 'region'
+			);
 			seriesEl.setAttribute('tabindex', '-1');
 			seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
 				this.buildSeriesInfoString());
@@ -138,7 +171,7 @@ H.Series.prototype.setA11yDescription = function () {
 
 // Return string with information about series
 H.Series.prototype.buildSeriesInfoString = function () {
-	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap.default,
+	var typeInfo = typeToSeriesMap[this.type] || typeToSeriesMap['default'], // eslint-disable-line dot-notation
 		description = this.description || this.options.description;
 	return (this.name ? this.name + ', ' : '') +
 		(this.chart.types.length === 1 ? typeInfo[0] : 'series') + ' ' + (this.index + 1) + ' of ' + (this.chart.series.length) +
@@ -155,25 +188,21 @@ H.Point.prototype.buildPointInfoString = function () {
 		series = point.series,
 		a11yOptions = series.chart.options.accessibility,
 		infoString = '',
-		hasSpecialKey = false,
 		dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
 		timeDesc = dateTimePoint && dateFormat(a11yOptions.pointDateFormatter && a11yOptions.pointDateFormatter(point) || a11yOptions.pointDateFormat ||
-			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x);
-
-	each(specialKeys, function (key) {
-		if (point[key] !== undefined) {
-			hasSpecialKey = true;
-		}
-	});
+			H.Tooltip.prototype.getXDateFormat(point, series.chart.options.tooltip, series.xAxis), point.x),
+		hasSpecialKey = H.find(series.specialKeys, function (key) {
+			return point[key] !== undefined;
+		});
 
 	// If the point has one of the less common properties defined, display all that are defined
 	if (hasSpecialKey) {
 		if (dateTimePoint) {
 			infoString = timeDesc;
 		}
-		each(commonKeys.concat(specialKeys), function (key) {				
+		each(series.commonKeys.concat(series.specialKeys), function (key) {
 			if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
-				infoString += (infoString ? '. ' : '') + key + ', ' + this[key];
+				infoString += (infoString ? '. ' : '') + key + ', ' + point[key];
 			}
 		});
 	} else {
@@ -315,9 +344,14 @@ H.Point.prototype.highlight = function () {
 	}
 	if (!this.isNull) {
 		this.onMouseOver(); // Show the hover marker
-		chart.tooltip.refresh(chart.tooltip.shared ? [this] : this); // Show the tooltip
+		// Show the tooltip
+		if (chart.tooltip) {
+			chart.tooltip.refresh(chart.tooltip.shared ? [this] : this);
+		}
 	} else {
-		chart.tooltip.hide(0);
+		if (chart.tooltip) {
+			chart.tooltip.hide(0);
+		}
 		// Don't call blur on the element, as it messes up the chart div's focus
 	}
 	chart.highlightedPoint = this;
@@ -330,8 +364,13 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	var series = this.series,
 		curPoint = this.highlightedPoint,
 		curPointIndex = curPoint && curPoint.index || 0,
+		curPoints = curPoint && curPoint.series.points,
 		newSeries,
-		newPoint;
+		newPoint,
+		// Handle connecting ends - where the points array has an extra last
+		// point that is a reference to the first one. We skip this.
+		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
+							curPointIndex > curPoints.length - 3 ? 2 : 1;
 
 	// If no points, return false
 	if (!series[0] || !series[0].points) {
@@ -344,27 +383,35 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 	}
 
 	// Find index of current point in series.points array. Necessary for dataGrouping (and maybe zoom?)
-	if (curPoint.series.points[curPointIndex] !== curPoint) {
-		for (var i = 0; i < curPoint.series.points.length; ++i) {
-			if (curPoint.series.points[i] === curPoint) {
+	if (curPoints[curPointIndex] !== curPoint) {
+		for (var i = 0; i < curPoints.length; ++i) {
+			if (curPoints[i] === curPoint) {
 				curPointIndex = i;
 				break;
 			}
 		}
 	}
 
-	// Try to grab next/prev point
+	// Grab next/prev point & series
 	newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-	newPoint = curPoint.series.points[curPointIndex + (next ? 1 : -1)] || newSeries && newSeries.points[next ? 0 : newSeries.points.length - 1];
+	newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
+				// Done with this series, try next one
+				newSeries &&
+				newSeries.points[next ? 0 : newSeries.points.length - (
+					newSeries.connectEnds ? 2 : 1
+				)];
 
 	// If there is no adjacent point, we return false
 	if (newPoint === undefined) {
 		return false;
 	}
 
-	// Recursively skip null points
-	if (newPoint.isNull && this.options.accessibility.keyboardNavigation &&
-			this.options.accessibility.keyboardNavigation.skipNullPoints) {
+	// Recursively skip null points or points in series that should be skipped
+	if (
+		newPoint.isNull && 
+		this.options.accessibility.keyboardNavigation.skipNullPoints ||
+		newPoint.series.options.skipKeyboardNavigation
+	) {
 		this.highlightedPoint = newPoint;
 		return this.highlightAdjacentPoint(next);
 	}
@@ -780,8 +827,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			}]
 		], {
 			// Only run this module if we have at least one legend - wait for it - item.
+			// Don't run if the legend is populated by a colorAxis.
 			validate: function () {
-				return chart.legend && chart.legend.allItems && !chart.colorAxis;
+				return chart.legend && chart.legend.allItems &&
+					!(chart.colorAxis && chart.colorAxis.length);
 			},
 
 			// Make elements focusable and accessible
@@ -801,10 +850,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	chart.keyboardNavigationModuleIndex = 0;
 
 	// Make chart reachable by tab
-	if (!chart.renderTo.tabIndex) {
-		chart.renderTo.setAttribute('tabindex', '0');
+	if (
+		chart.container.hasAttribute &&
+		!chart.container.hasAttribute('tabIndex')
+	) {
+		chart.container.setAttribute('tabindex', '0');
 	}
-	
+
 	// Handle keyboard events
 	addEvent(chart.renderTo, 'keydown', keydownHandler);
 	addEvent(chart, 'destroy', function () {
@@ -814,15 +866,15 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 
 // Add screen reader region to chart.
 // tableId is the HTML id of the table to focus when clicking the table anchor in the screen reader region.
-H.Chart.prototype.addScreenReaderRegion = function (tableId) {
+H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 	var	chart = this,
 		series = chart.series,
 		options = chart.options,
 		a11yOptions = options.accessibility,
 		hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
-		tableShortcut = doc.createElement('h3'),
+		tableShortcut = doc.createElement('h4'),
 		tableShortcutAnchor = doc.createElement('a'),
-		chartHeading = doc.createElement('h3'),
+		chartHeading = doc.createElement('h4'),
 		hiddenStyle = { // CSS style to hide element from visual users while still exposing it to screen readers
 			position: 'absolute',
 			left: '-9999px',
@@ -834,23 +886,25 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 		chartTypes = chart.types || [],
 		// Build axis info - but not for pies and maps. Consider not adding for certain other types as well (funnel, pyramid?)
 		axesDesc = (chartTypes.length === 1 && chartTypes[0] === 'pie' || chartTypes[0] === 'map') && {} || chart.getAxesDescription(),
-		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap.default;
+		chartTypeInfo = series[0] && typeToSeriesMap[series[0].type] || typeToSeriesMap['default']; // eslint-disable-line dot-notation
 
+	hiddenSection.setAttribute('id', id);
 	hiddenSection.setAttribute('role', 'region');
 	hiddenSection.setAttribute('aria-label', 'Chart screen reader information.');
 
 	hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter && a11yOptions.screenReaderSectionFormatter(chart) ||
-		'<div tabindex="0">Use regions/landmarks to skip ahead to chart' +
-		(series.length > 1 ? ' and navigate between data series' : '') + '.</div><h3>Summary.</h3><div>' + (options.title.text || 'Chart') +
-		(options.subtitle && options.subtitle.text ? '. ' + options.subtitle.text : '') +
-		'</div><h3>Long description.</h3><div>' + (options.chart.description || 'No description available.') +
-		'</div><h3>Structure.</h3><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
+		'<div>Use regions/landmarks to skip ahead to chart' +
+		(series.length > 1 ? ' and navigate between data series' : '') +
+		'.</div><h3>' + (options.title.text ? htmlencode(options.title.text) : 'Chart') +
+		(options.subtitle && options.subtitle.text ? '. ' + htmlencode(options.subtitle.text) : '') +
+		'</h3><h4>Long description.</h4><div>' + (options.chart.description || 'No description available.') +
+		'</div><h4>Structure.</h4><div>Chart type: ' + (options.chart.typeDescription || chart.getTypeDescription()) + '</div>' +
 		(series.length === 1 ? '<div>' + chartTypeInfo[0] + ' with ' + series[0].points.length + ' ' +
 			(series[0].points.length === 1 ? chartTypeInfo[1] : chartTypeInfo[2]) + '.</div>' : '') +
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
-	// Add shortcut to data table if export-csv is loaded
+	// Add shortcut to data table if export-data is loaded
 	if (chart.getCSV) {
 		tableShortcutAnchor.innerHTML = 'View as data table.';
 		tableShortcutAnchor.href = '#' + tableId;
@@ -860,10 +914,11 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 			doc.getElementById(tableId).focus();
 		};
 		tableShortcut.appendChild(tableShortcutAnchor);
-
 		hiddenSection.appendChild(tableShortcut);
 	}
 	
+	// Note: JAWS seems to refuse to read aria-label on the container, so add an
+	// h4 element as title for the chart.
 	chartHeading.innerHTML = 'Chart graphic.';
 	chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
 	chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
@@ -877,7 +932,7 @@ H.Chart.prototype.addScreenReaderRegion = function (tableId) {
 // Make chart container accessible, and wrap table functionality
 H.Chart.prototype.callbacks.push(function (chart) {
 	var options = chart.options,
-		a11yOptions = options.accessibility;			
+		a11yOptions = options.accessibility;
 
 	if (!a11yOptions.enabled) {
 		return;
@@ -889,16 +944,19 @@ H.Chart.prototype.callbacks.push(function (chart) {
 		textElements = chart.container.getElementsByTagName('text'),
 		titleId = 'highcharts-title-' + chart.index,
 		tableId = 'highcharts-data-table-' + chart.index,
+		hiddenSectionId = 'highcharts-information-region-' + chart.index,
 		chartTitle = options.title.text || 'Chart',
 		oldColumnHeaderFormatter = options.exporting && options.exporting.csv && options.exporting.csv.columnHeaderFormatter,
 		topLevelColumns = [];
 
 	// Add SVG title/desc tags
-	titleElement.textContent = chartTitle;
+	titleElement.textContent = htmlencode(chartTitle);
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.renderTo.setAttribute('aria-label', chartTitle + '. Use up and down arrows to navigate.');
+	//chart.container.setAttribute('aria-details', hiddenSectionId); // JAWS currently doesn't handle this too well
+	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
+		'. Use up and down arrows to navigate with most screen readers.');
 
 	// Set screen reader properties on export menu
 	if (chart.exportSVGElements && chart.exportSVGElements[0] && chart.exportSVGElements[0].element) {
@@ -935,34 +993,41 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	});
 
 	// Add top-secret screen reader region
-	chart.addScreenReaderRegion(tableId);
+	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
 	// Enable keyboard navigation
-	if (a11yOptions.keyboardNavigation) {
+	if (a11yOptions.keyboardNavigation.enabled) {
 		chart.addKeyboardNavEvents();
 	}
 
-	/* Wrap table functionality from export-csv */
+	/* Wrap table functionality from export-data */
 
 	// Keep track of columns
 	merge(true, options.exporting, {
 		csv: {
-			columnHeaderFormatter: function (series, key, keyLength) {
+			columnHeaderFormatter: function (item, key, keyLength) {
+				if (!item) {
+					return 'Category';
+				}
+				if (item instanceof H.Axis) {
+					return (item.options.title && item.options.title.text) ||
+						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+				}
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to the ones added by export-csv
-					if ((prevCol && prevCol.text) !== series.name) {
+					// Populate a list of column headers to add in addition to the ones added by export-data
+					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
-							text: series.name,
+							text: item.name,
 							span: keyLength
 						});
 					}
 				}
 				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(this, series, key, keyLength);
+					return oldColumnHeaderFormatter.call(this, item, key, keyLength);
 				}
-				return keyLength > 1 ? key : series.name;
+				return keyLength > 1 ? key : item.name;
 			}
 		}
 	});
@@ -975,12 +1040,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 	// Add accessibility attributes and top level columns
 	H.wrap(chart, 'viewData', function (proceed) {
-		if (!this.insertedTable) {
+		if (!this.dataTableDiv) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 			var table = doc.getElementById(tableId),
+				head = table.getElementsByTagName('thead')[0],
 				body = table.getElementsByTagName('tbody')[0],
-				firstRow = body.firstChild.children,
+				firstRow = head.firstChild.children,
 				columnHeaderRow = '<tr><td></td>',
 				cell,
 				newCell;
@@ -1009,7 +1075,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				each(topLevelColumns, function (col) {
 					columnHeaderRow += '<th scope="col" colspan="' + col.span + '">' + col.text + '</th>';
 				});
-				body.insertAdjacentHTML('afterbegin', columnHeaderRow);
+				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
 			}
 		}
 	});

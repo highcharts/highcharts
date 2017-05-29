@@ -64,9 +64,9 @@ $(function () {
         );
 
         // @todo Create an extensive unit test for PieSeries.updateTotals to replace this
-        assert.equal(
-            chart.series[0].points[5].y,
-            null,
+        assert.strictEqual(
+            chart.series[0].points[5].isNull,
+            true,
             'Disallow negative data. #5322'
         );
 

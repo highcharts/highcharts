@@ -17,10 +17,10 @@ $(function () {
             data: usdeur
         });
 
-        navigator.mouseDownHandler({
+        navigator.handlesMousedown({
             pageX: offset.left + 578,
             pageY: offset.top + 400 - 30
-        });
+        }, 0);
 
         navigator.mouseMoveHandler({
             pageX: offset.left + 309,

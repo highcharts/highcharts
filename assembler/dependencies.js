@@ -71,7 +71,11 @@ const folder = path => {
 const getOrderedDependencies = (file, parent, dependencies) => {
     let filePath = cleanPath(folder(parent) + file),
         content = U.getFile(filePath),
-        imports = getFileImports(content);
+        imports;
+    if (content === null) {
+        throw 'File ' + filePath + ' does not exist. Listed dependency in ' + parent;
+    }
+    imports = getFileImports(content);
     if (parent === '') {
         dependencies.unshift(filePath);
     } else {
@@ -105,7 +109,8 @@ const applyUMD = content => {
 };
 
 const applyModule = content => {
-    return ['(function (factory) {',
+    return ['\'use strict\';',
+        '(function (factory) {',
         'if (typeof module === \'object\' && module.exports) {',
         'module.exports = factory;',
         '} else {',
@@ -198,7 +203,7 @@ const moduleTransform = (content, options) => {
     // Remove license headers from modules
     content = removeLicenseHeader(content);
     // Remove use strict from modules
-    content = content.replace(/\'use strict\';\r\n/, '');
+    content = content.replace(/\'use strict\';\r?\n/, '');
     // Remove import statements
     // @todo Add imported variables to the function arguments. Reuse getImports for this
     content = content.replace(/import\s[^\n]+\n/g, '')

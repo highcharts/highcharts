@@ -1,19 +1,18 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            borderColor: '#EBBA95',
-            borderWidth: 2,
-            borderRadius: 10
-        },
+Highcharts.stockChart('container', {
 
-        rangeSelector: {
-            selected: 1
-        },
+    chart: {
+        borderColor: '#EBBA95',
+        borderWidth: 2,
+        borderRadius: 10
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    rangeSelector: {
+        selected: 1
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

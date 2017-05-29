@@ -1,5 +1,5 @@
  /**
- * (c) 2014-2016 Highsoft AS
+ * (c) 2014-2017 Highsoft AS
  * Authors: Torstein Honsi, Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
@@ -117,6 +117,10 @@ seriesTypes.xrange = extendClass(columnType, {
 
 			plotX = Math.max(plotX, -10);
 			plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
+
+			if (plotX2 < plotX) { // #6107
+				plotX2 = plotX;
+			}
 
 			point.shapeArgs = {
 				x: plotX,

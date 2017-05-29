@@ -68,8 +68,9 @@
 				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>,
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
-				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>;
-
+				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>,
+				controller = window.parent && window.parent.controller,
+				previewSVG;
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
@@ -108,32 +109,7 @@
 					location.href = commentHref;
 				});
 
-				$('#commits').click(function () {
-					var frameset = window.parent.document.querySelector('frameset'),
-						frame = window.parent.document.getElementById('commits-frame'),
-						checked;
-
-					$(this).toggleClass('active');
-					checked = $(this).hasClass('active');
-
-					if (checked) {
-						window.parent.commits = {};
-
-						if (!frame) {
-							frame = window.parent.document.createElement('frame');
-							frame.setAttribute('id', 'commits-frame');
-							frame.setAttribute('src', '/issue-by-commit/commits.php');
-						} else {
-							frame.contentWindow.location.reload();
-						}
-
-						frameset.setAttribute('cols', '400, *, 400');
-						frameset.appendChild(frame);
-					} else {
-						frameset.setAttribute('cols', '400, *');
-					}
-
-				});
+				$('#bisect').click(controller.toggleBisect);
 
 				$(window).bind('keydown', parent.keyDown);
 
@@ -305,7 +281,7 @@
 						}
 					}
 
-					href = href.replace("view.php", "compare-view.php");
+					href = href.replace("/view.php", "/compare-view.php");
 
 
 					window.parent.batchRuns++;
@@ -407,8 +383,14 @@
 								})
 								.animate({
 									left: 0
+								}, {
+									complete: function () {
+										$leftImage.hide();
+									}
 								});
+
 							$leftImage.css('position', 'absolute');
+							
 
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
@@ -416,10 +398,12 @@
 						// Show left
 						} else if (showingRight) {
 							$rightImage.hide();
+							$leftImage.show();
 							$button.html('Showing left. Click to show right');
 							showingRight = false;
 						} else {
 							$rightImage.show();
+							$leftImage.hide();
 							$button.html('Showing right. Click to show left.');
 							showingRight = true;
 						}
@@ -468,11 +452,14 @@
 				}
 
 				if (mode === 'images') {
-					if (rightSVG.indexOf('NaN') !== -1) {
+					if (/[^a-zA-Z]NaN[^a-zA-Z]/.test(rightSVG)) {
 						report += "<div>The generated SVG contains NaN</div>";
 						$('#report').html(report)
 							.css('background', '#f15c80');
 						onDifferent('Error');
+						previewSVG = rightSVG
+								.replace(/</g, '&lt;')
+								.replace(/>/g, '&gt;\n');
 
 					} else if (identical) {
 						report += "<br/>The generated SVG is identical";
@@ -720,7 +707,7 @@
 						);
 						$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
 					} catch (e) {
-						$("#svg").html('Error diffing SVG');
+						$("#svg").html(previewSVG || 'Error diffing SVG');
 					}
 				}
 
@@ -739,7 +726,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2>
 
 			<div style="text-align: right">
-				<a class="button" id="commits" style="margin-left: 1em" >Bisect</a>
+				<a class="button" id="bisect" style="margin-left: 1em" >Bisect</a>
 				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>

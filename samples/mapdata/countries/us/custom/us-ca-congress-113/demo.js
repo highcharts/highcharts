@@ -1,257 +1,98 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ca-26', 0],
+    ['us-ca-24', 1],
+    ['us-ca-47', 2],
+    ['us-ca-14', 3],
+    ['us-ca-51', 4],
+    ['us-ca-28', 5],
+    ['us-ca-33', 6],
+    ['us-ca-36', 7],
+    ['us-ca-31', 8],
+    ['us-ca-45', 9],
+    ['us-ca-48', 10],
+    ['us-ca-46', 11],
+    ['us-ca-34', 12],
+    ['us-ca-40', 13],
+    ['us-ca-30', 14],
+    ['us-ca-12', 15],
+    ['us-ca-18', 16],
+    ['us-ca-13', 17],
+    ['us-ca-20', 18],
+    ['us-ca-16', 19],
+    ['us-ca-37', 20],
+    ['us-ca-43', 21],
+    ['us-ca-32', 22],
+    ['us-ca-35', 23],
+    ['us-ca-42', 24],
+    ['us-ca-44', 25],
+    ['us-ca-09', 26],
+    ['us-ca-15', 27],
+    ['us-ca-10', 28],
+    ['us-ca-41', 29],
+    ['us-ca-08', 30],
+    ['us-ca-27', 31],
+    ['us-ca-17', 32],
+    ['us-ca-53', 33],
+    ['us-ca-52', 34],
+    ['us-ca-49', 35],
+    ['us-ca-25', 36],
+    ['us-ca-07', 37],
+    ['us-ca-06', 38],
+    ['us-ca-04', 39],
+    ['us-ca-39', 40],
+    ['us-ca-38', 41],
+    ['us-ca-05', 42],
+    ['us-ca-02', 43],
+    ['us-ca-11', 44],
+    ['us-ca-03', 45],
+    ['us-ca-23', 46],
+    ['us-ca-50', 47],
+    ['us-ca-01', 48],
+    ['us-ca-21', 49],
+    ['us-ca-22', 50],
+    ['us-ca-19', 51],
+    ['us-ca-29', 52]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ca-26",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ca-24",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ca-47",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ca-14",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ca-51",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ca-28",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ca-33",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ca-36",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ca-31",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ca-45",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ca-48",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ca-46",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ca-34",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ca-40",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ca-30",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ca-12",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ca-18",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ca-13",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ca-20",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ca-16",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ca-37",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ca-43",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ca-32",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ca-35",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ca-42",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ca-44",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ca-09",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ca-15",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ca-10",
-            "value": 28
-        },
-        {
-            "hc-key": "us-ca-41",
-            "value": 29
-        },
-        {
-            "hc-key": "us-ca-08",
-            "value": 30
-        },
-        {
-            "hc-key": "us-ca-27",
-            "value": 31
-        },
-        {
-            "hc-key": "us-ca-17",
-            "value": 32
-        },
-        {
-            "hc-key": "us-ca-53",
-            "value": 33
-        },
-        {
-            "hc-key": "us-ca-52",
-            "value": 34
-        },
-        {
-            "hc-key": "us-ca-49",
-            "value": 35
-        },
-        {
-            "hc-key": "us-ca-25",
-            "value": 36
-        },
-        {
-            "hc-key": "us-ca-07",
-            "value": 37
-        },
-        {
-            "hc-key": "us-ca-06",
-            "value": 38
-        },
-        {
-            "hc-key": "us-ca-04",
-            "value": 39
-        },
-        {
-            "hc-key": "us-ca-39",
-            "value": 40
-        },
-        {
-            "hc-key": "us-ca-38",
-            "value": 41
-        },
-        {
-            "hc-key": "us-ca-05",
-            "value": 42
-        },
-        {
-            "hc-key": "us-ca-02",
-            "value": 43
-        },
-        {
-            "hc-key": "us-ca-11",
-            "value": 44
-        },
-        {
-            "hc-key": "us-ca-03",
-            "value": 45
-        },
-        {
-            "hc-key": "us-ca-23",
-            "value": 46
-        },
-        {
-            "hc-key": "us-ca-50",
-            "value": 47
-        },
-        {
-            "hc-key": "us-ca-01",
-            "value": 48
-        },
-        {
-            "hc-key": "us-ca-21",
-            "value": 49
-        },
-        {
-            "hc-key": "us-ca-22",
-            "value": 50
-        },
-        {
-            "hc-key": "us-ca-19",
-            "value": 51
-        },
-        {
-            "hc-key": "us-ca-29",
-            "value": 52
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-ca-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ca-congress-113.js">California congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ca-congress-113.js">California congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-ca-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,26 +1,25 @@
-$(function () {
-    Highcharts.stockChart('container', {
 
-        chart: {
-            margin: 0,
-            borderWidth: 1
-        },
+Highcharts.stockChart('container', {
 
-        navigator: {
-            top: 340,
-            margin: 30
-        },
+    chart: {
+        margin: 0,
+        borderWidth: 1
+    },
 
-        rangeSelector: {
-            selected: 1
-        },
+    navigator: {
+        top: 340,
+        margin: 30
+    },
 
-        yAxis: {
-        },
+    rangeSelector: {
+        selected: 1
+    },
 
-        series: [{
-            name: 'USD to EUR',
-            data: usdeur
-        }]
-    });
+    yAxis: {
+    },
+
+    series: [{
+        name: 'USD to EUR',
+        data: usdeur
+    }]
 });

@@ -1,113 +1,62 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-nv-005', 0],
+    ['us-nv-013', 1],
+    ['us-nv-021', 2],
+    ['us-nv-023', 3],
+    ['us-nv-011', 4],
+    ['us-nv-017', 5],
+    ['us-nv-003', 6],
+    ['us-nv-015', 7],
+    ['us-nv-027', 8],
+    ['us-nv-007', 9],
+    ['us-nv-510', 10],
+    ['us-nv-019', 11],
+    ['us-nv-029', 12],
+    ['us-nv-033', 13],
+    ['us-nv-009', 14],
+    ['us-nv-031', 15],
+    ['us-nv-001', 16]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-nv-005",
-            "value": 0
-        },
-        {
-            "hc-key": "us-nv-013",
-            "value": 1
-        },
-        {
-            "hc-key": "us-nv-021",
-            "value": 2
-        },
-        {
-            "hc-key": "us-nv-023",
-            "value": 3
-        },
-        {
-            "hc-key": "us-nv-011",
-            "value": 4
-        },
-        {
-            "hc-key": "us-nv-017",
-            "value": 5
-        },
-        {
-            "hc-key": "us-nv-003",
-            "value": 6
-        },
-        {
-            "hc-key": "us-nv-015",
-            "value": 7
-        },
-        {
-            "hc-key": "us-nv-027",
-            "value": 8
-        },
-        {
-            "hc-key": "us-nv-007",
-            "value": 9
-        },
-        {
-            "hc-key": "us-nv-510",
-            "value": 10
-        },
-        {
-            "hc-key": "us-nv-019",
-            "value": 11
-        },
-        {
-            "hc-key": "us-nv-029",
-            "value": 12
-        },
-        {
-            "hc-key": "us-nv-033",
-            "value": 13
-        },
-        {
-            "hc-key": "us-nv-009",
-            "value": 14
-        },
-        {
-            "hc-key": "us-nv-031",
-            "value": 15
-        },
-        {
-            "hc-key": "us-nv-001",
-            "value": 16
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-nv-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-nv-all.js">Nevada</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-nv-all.js">Nevada</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-nv-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

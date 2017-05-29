@@ -1,14 +1,13 @@
-$(function () {
-    // Create the chart
-    Highcharts.chart('container', {
 
-        title: {
-            text: 'Highcharts data from Google Spreadsheets'
-        },
+// Create the chart
+Highcharts.chart('container', {
 
-        data: {
-            googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc'
-        }
+    title: {
+        text: 'Highcharts data from Google Spreadsheets'
+    },
 
-    });
+    data: {
+        googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc'
+    }
+
 });

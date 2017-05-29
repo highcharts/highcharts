@@ -1,133 +1,67 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ye-3662', 0],
+    ['ye-hu', 1],
+    ['ye-3415', 2],
+    ['ye-3427', 3],
+    ['ye-ta', 4],
+    ['ye-sd', 5],
+    ['ye-mw', 6],
+    ['ye-dh', 7],
+    ['ye-hj', 8],
+    ['ye-am', 9],
+    ['ye-ib', 10],
+    ['ye-la', 11],
+    ['ye-mr', 12],
+    ['ye-ba', 13],
+    ['ye-dl', 14],
+    ['ye-ja', 15],
+    ['ye-sh', 16],
+    ['ye-ma', 17],
+    ['ye-3426', 18],
+    ['ye-3428', 19],
+    ['ye-ad', 20],
+    ['ye-3430', 21]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ye-3662",
-            "value": 0
-        },
-        {
-            "hc-key": "ye-hu",
-            "value": 1
-        },
-        {
-            "hc-key": "ye-3415",
-            "value": 2
-        },
-        {
-            "hc-key": "ye-3427",
-            "value": 3
-        },
-        {
-            "hc-key": "ye-ta",
-            "value": 4
-        },
-        {
-            "hc-key": "ye-sd",
-            "value": 5
-        },
-        {
-            "hc-key": "ye-mw",
-            "value": 6
-        },
-        {
-            "hc-key": "ye-dh",
-            "value": 7
-        },
-        {
-            "hc-key": "ye-hj",
-            "value": 8
-        },
-        {
-            "hc-key": "ye-am",
-            "value": 9
-        },
-        {
-            "hc-key": "ye-ib",
-            "value": 10
-        },
-        {
-            "hc-key": "ye-la",
-            "value": 11
-        },
-        {
-            "hc-key": "ye-mr",
-            "value": 12
-        },
-        {
-            "hc-key": "ye-ba",
-            "value": 13
-        },
-        {
-            "hc-key": "ye-dl",
-            "value": 14
-        },
-        {
-            "hc-key": "ye-ja",
-            "value": 15
-        },
-        {
-            "hc-key": "ye-sh",
-            "value": 16
-        },
-        {
-            "hc-key": "ye-ma",
-            "value": 17
-        },
-        {
-            "hc-key": "ye-3426",
-            "value": 18
-        },
-        {
-            "hc-key": "ye-3428",
-            "value": 19
-        },
-        {
-            "hc-key": "ye-ad",
-            "value": 20
-        },
-        {
-            "hc-key": "ye-3430",
-            "value": 21
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ye/ye-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ye/ye-all.js">Yemen</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ye/ye-all.js">Yemen</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ye/ye-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

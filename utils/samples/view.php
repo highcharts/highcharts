@@ -6,20 +6,10 @@ define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
-@$path = $_GET['path'];
-
 if (isset($_GET['styled'])) {
 	$_SESSION['styled'] = $_GET['styled'] == 'true' ? true : false;
 }
 $styled = @$_SESSION['styled'];
-
-if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-	header('Location: start.php');
-	exit;
-}
-
-
-$fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
 
 $httpHost = $_SERVER['HTTP_HOST'];
@@ -29,7 +19,7 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 
 // Get HTML and use dev server
 ob_start();
-@include("$fullpath/demo.html");
+@include("$path/demo.html");
 $html = ob_get_clean();
 $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
@@ -37,7 +27,11 @@ $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$top
 if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
 } else {
-	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+	$time = time();
+	$html = str_replace('.js"', '.js?' . $time . '"', $html); // Force no-cache for debugging
+
+	// No go on github.highcharts.com
+	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
 // Highchart 5 preview
@@ -46,7 +40,7 @@ $html = str_replace("code.highcharts.$topDomain/5/", "code.highcharts.$topDomain
 
 // Get CSS and use dev server
 ob_start();
-@include("$fullpath/demo.css");
+@include("$path/demo.css");
 $css = ob_get_clean();
 $css = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $css);
 
@@ -74,44 +68,43 @@ $themes = array(
 );
 
 
-
 function getResources() {
-	global $fullpath, $styled, $topDomain;
+    global $path, $styled, $topDomain;
 
-	// No idea why file_get_contents doesn't work here...
-	ob_start();
-	@include("$fullpath/demo.details");
-	$s = ob_get_clean();
+    // No idea why file_get_contents doesn't work here...
+    ob_start();
+    @include("$path/demo.details");
+    $s = ob_get_clean();
 
-	$html = '';
-	if ($s) {
-		$lines = explode("\n", $s);
+    $html = '';
+    if ($s) {
+        $lines = explode("\n", $s);
 
-		$run = false;
-		foreach ($lines as $line) {
-			if ($run && substr(trim($line), 0, 1) != '-') {
-				$run = false;
-			}
+        $run = false;
+        foreach ($lines as $line) {
+            if ($run && substr(trim($line), 0, 1) != '-') {
+                $run = false;
+            }
 
-			if ($run) {
-				$url = trim($line, " -\r");
+            if ($run) {
+                $url = trim($line, " -\r");
 
-				if (preg_match('/\.js$/', $url)) {
-					$html .= "<script src='$url'></script>\n";
-				} elseif (preg_match('/\.css$/', $url)) {
-					$html .= "<link type='text/css' rel='stylesheet' href='$url' />\n";
-				}
-			}
-
-
-			if (trim($line) === 'resources:') {
-				$run = true;
-			}
-		}
-	}
+                if (preg_match('/\.js$/', $url)) {
+                    $html .= "<script src='$url'></script>\n";
+                } elseif (preg_match('/\.css$/', $url)) {
+                    $html .= "<link type='text/css' rel='stylesheet' href='$url' />\n";
+                }
+            }
 
 
-	return $html;
+            if (trim($line) === 'resources:') {
+                $run = true;
+            }
+        }
+    }
+
+
+    return $html;
 }
 
 
@@ -122,14 +115,18 @@ function getResources() {
 		<title>Sample viewer - Highcharts</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
+		<?php if ($isUnitTest) { ?>
+		<script src="test-controller.js"></script>
+		<?php } ?>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 
 		<script type="text/javascript">
 		/* eslint-disable */
 		var sampleIndex,
-			path = '<?php echo $path ?>',
-			browser = <?php echo json_encode(getBrowser()); ?>;
+			path = '<?php echo $path ?>'.replace('../../samples/', ''),
+			browser = <?php echo json_encode(getBrowser()); ?>,
+			controller = window.parent && window.parent.controller;
 
 		(function () {
 
@@ -154,6 +151,10 @@ function getResources() {
 							'Highcharts and container are missing</h3><p>Most likely this sample does not exist.</div>';
 					};
 					return;
+				}
+
+				if (controller) {
+					$('#bisect').click(controller.toggleBisect);
 				}
 
 				if (typeof Highcharts !== 'undefined') {
@@ -222,7 +223,7 @@ function getResources() {
 					if (checked) {
 						$('<iframe>').appendTo('#source-box')
 							.attr({
-								src: 'view-source.php?path=<?php echo $path ?>'
+								src: 'view-source.php?path=' + path
 							})
 							.css({
 								width: '100%',
@@ -240,7 +241,9 @@ function getResources() {
 		}());
 		</script>
 		<script>
-		console.clear();
+		if (window.console) {
+			console.clear();
+		}
 		function next() {
 			var a = window.parent.frames[0].document.getElementById('i' + (sampleIndex + 1));
 			if (a) {
@@ -261,7 +264,7 @@ function getResources() {
 		}
 		// Wrappers for recording mouse events in order to write automatic tests 
 		
-		$(function () {
+		function setUp() {
 
 			$(window).bind('keydown', parent.keyDown);
 			
@@ -297,12 +300,18 @@ function getResources() {
 					}
 					return proceed.call(this, e);
 				});
+
+				Highcharts.setOptions({
+					exporting: {
+						// Avoid versioning
+						// libURL: 'https://code.highcharts.com/lib'
+						libURL: 'http://rawgithub.local/highcharts/vendor'
+					}
+				});
 			}
-		});
 		
 
-		<?php if (@$_GET['profile']) : ?>
-		$(function () {
+			<?php if (@$_GET['profile']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -323,10 +332,8 @@ function getResources() {
 
 				});
 			}
-		});
-		<?php endif ?>
-		<?php if (@$_GET['time']) : ?>
-		$(function () {
+			<?php endif ?>
+			<?php if (@$_GET['time']) : ?>
 			if (typeof Highcharts !== 'undefined') {
 				Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					var chart,
@@ -352,11 +359,9 @@ function getResources() {
 
 				});
 			}
-		});
-		<?php endif ?>
+			<?php endif ?>
 
-		<?php if ($styled) { ?>
-		$(function () {
+			<?php if ($styled) { ?>
 			var warnedAboutColors = false;
 			function warnAboutColors () {
 				if (!warnedAboutColors) {
@@ -381,11 +386,10 @@ function getResources() {
 				}
 				return options;
 			});
-		});
-		<?php } ?>
-		
 
-		<?php @include("$fullpath/demo.js"); ?>
+			<?php } ?>
+		}
+		
 		</script>
 
 		<style type="text/css">
@@ -412,26 +416,39 @@ function getResources() {
 					</select>
 				</form>
 				<button id="next" disabled="disabled" title="Next (Arrow Right)">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()"
+
+				<button id="reload" onclick="location.reload()"
 					title="Reload (Ctrl + Enter)">Reload</button>
 				<?php if (!$styled) { ?>
 				<a class="button" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=true">Styled</a>
 				<?php } else { ?>
 				<a class="button active" title="View this sample with CSS and no inline styling"
-					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</button>
+					href="view.php?path=<?php echo $path ?>&amp;styled=false">Styled</a>
 				<?php } ?>
+				
 				<a class="button"
-					href="compare-view.php?path=<?php echo $path ?>">Compare</a>
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0"
+					href="compare-view.php?path=<?php echo $path ?>">Compare
+				</a><a class="button" id="bisect" 
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray">Bisect</a>
+				
+
 				<a class="button"
-					href="view.php?path=<?php echo $path ?>&amp;profile=1">Profile</a>
-				<a class="button"
+					href="view.php?path=<?php echo $path ?>&amp;profile=1"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">Profile
+				</a><a class="button"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					href="view.php?path=<?php echo $path ?>&amp;time=1">Time</a>
-				<a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/<?php echo JQUERY_VERSION; ?>/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+				
+
+				<a id="view-source" class="button" href="javascript:;"
+					style="border-bottom-right-radius: 0; border-top-right-radius: 0; margin-right: 0">View source
+				</a><a class="button"
+					href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
+					style="border-bottom-left-radius: 0; border-top-left-radius: 0; margin-left: 0; border-left: 1px solid gray"
 					target="_blank">jsFiddle</a>
 
-				<a id="view-source" class="button" href="javascript:;">View source</a>
 				
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
@@ -444,7 +461,20 @@ function getResources() {
 
 			<?php echo $html ?>
 			</div>
+			<script>
+			setUp();
+			<?php @include("$path/demo.js"); ?>
+			</script>
+			<?php if (is_file("$path/test-notes.html")) { ?>
+			<section class="test-notes">
+				<header>Test notes</header>
+				<div class="test-notes-content">
+					<?php include("$path/test-notes.html"); ?>
+				</div>
+			</section>
+			<?php } else { ?>
 			<hr/>
+			<?php } ?>
 			<ul>
 				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
 			</ul>
@@ -463,9 +493,6 @@ ob_start();
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
-		<?php @include("$fullpath/demo.js"); ?>
-		</script>
 
 		<style type="text/css">
 			<?php echo $css; ?>
@@ -478,6 +505,9 @@ ob_start();
 
 		<?php echo $html ?>
 		</div>
+		<script type="text/javascript">
+		<?php @include("$path/demo.js"); ?>
+		</script>
 
 	</body>
 </html>

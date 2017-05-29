@@ -1,161 +1,74 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-ak-261', 0],
+    ['us-ak-050', 1],
+    ['us-ak-070', 2],
+    ['us-ak-013', 3],
+    ['us-ak-180', 4],
+    ['us-ak-016', 5],
+    ['us-ak-150', 6],
+    ['us-ak-105', 7],
+    ['us-ak-130', 8],
+    ['us-ak-220', 9],
+    ['us-ak-290', 10],
+    ['us-ak-068', 11],
+    ['us-ak-170', 12],
+    ['us-ak-198', 13],
+    ['us-ak-195', 14],
+    ['us-ak-275', 15],
+    ['us-ak-110', 16],
+    ['us-ak-240', 17],
+    ['us-ak-020', 18],
+    ['us-ak-090', 19],
+    ['us-ak-100', 20],
+    ['us-ak-122', 21],
+    ['us-ak-164', 22],
+    ['us-ak-060', 23],
+    ['us-ak-282', 24],
+    ['us-ak-230', 25],
+    ['us-ak-270', 26],
+    ['us-ak-185', 27],
+    ['us-ak-188', 28]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-ak-261",
-            "value": 0
-        },
-        {
-            "hc-key": "us-ak-050",
-            "value": 1
-        },
-        {
-            "hc-key": "us-ak-070",
-            "value": 2
-        },
-        {
-            "hc-key": "us-ak-013",
-            "value": 3
-        },
-        {
-            "hc-key": "us-ak-180",
-            "value": 4
-        },
-        {
-            "hc-key": "us-ak-016",
-            "value": 5
-        },
-        {
-            "hc-key": "us-ak-150",
-            "value": 6
-        },
-        {
-            "hc-key": "us-ak-105",
-            "value": 7
-        },
-        {
-            "hc-key": "us-ak-130",
-            "value": 8
-        },
-        {
-            "hc-key": "us-ak-220",
-            "value": 9
-        },
-        {
-            "hc-key": "us-ak-290",
-            "value": 10
-        },
-        {
-            "hc-key": "us-ak-068",
-            "value": 11
-        },
-        {
-            "hc-key": "us-ak-170",
-            "value": 12
-        },
-        {
-            "hc-key": "us-ak-198",
-            "value": 13
-        },
-        {
-            "hc-key": "us-ak-195",
-            "value": 14
-        },
-        {
-            "hc-key": "us-ak-275",
-            "value": 15
-        },
-        {
-            "hc-key": "us-ak-110",
-            "value": 16
-        },
-        {
-            "hc-key": "us-ak-240",
-            "value": 17
-        },
-        {
-            "hc-key": "us-ak-020",
-            "value": 18
-        },
-        {
-            "hc-key": "us-ak-090",
-            "value": 19
-        },
-        {
-            "hc-key": "us-ak-100",
-            "value": 20
-        },
-        {
-            "hc-key": "us-ak-122",
-            "value": 21
-        },
-        {
-            "hc-key": "us-ak-164",
-            "value": 22
-        },
-        {
-            "hc-key": "us-ak-060",
-            "value": 23
-        },
-        {
-            "hc-key": "us-ak-282",
-            "value": 24
-        },
-        {
-            "hc-key": "us-ak-230",
-            "value": 25
-        },
-        {
-            "hc-key": "us-ak-270",
-            "value": 26
-        },
-        {
-            "hc-key": "us-ak-185",
-            "value": 27
-        },
-        {
-            "hc-key": "us-ak-188",
-            "value": 28
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-ak-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ak-all.js">Alaska</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ak-all.js">Alaska</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-ak-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });
