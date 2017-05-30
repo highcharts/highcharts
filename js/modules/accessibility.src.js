@@ -508,12 +508,14 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// The module's keyCode handlers determine when to move to another module.
 	// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 	// Init holds a function to run once before any keyCodes are interpreted.
+	// Terminate holds a function to run once before moving to next/prev module.
 	// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 	function KeyboardNavigationModule(options) {
 		this.keyCodeMap = options.keyCodeMap;
 		this.move = options.move;
 		this.validate = options.validate;
 		this.init = options.init;
+		this.terminate = options.terminate;
 		this.transformTabs = options.transformTabs !== false;
 	}
 	KeyboardNavigationModule.prototype = {
@@ -539,6 +541,9 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Move to next/prev valid module, or undefined if none, and init it.
 			// Returns true on success and false if there is no valid module to move to.
 			move: function (direction) {
+				if (this.terminate) {
+					this.terminate(direction);
+				}
 				chart.keyboardNavigationModuleIndex += direction;
 				var newModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
 				if (newModule) {
@@ -621,6 +626,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				if (direction < 0 && lastPoint) {
 					lastPoint.highlight();
 				}
+			},
+			// If leaving points, don't show tooltip anymore
+			terminate: function () {
+				if (chart.tooltip) {
+					chart.tooltip.hide(0);
+				}
+				delete chart.highlightedPoint;
 			}
 		}),
 
