@@ -385,6 +385,19 @@ extend(ColorAxis.prototype, {
 			Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 	},
 
+	render: function () {
+		// ColorAxis should never be drawn in 3D, therefore the
+		// 3D flag is temporarialy disabled while it is rendered in the legend
+		var is3d = this.chart.is3d && this.chart.is3d();
+		if (is3d) {
+			this.chart.options.chart.options3d.enabled = false;
+		}
+		Axis.prototype.render.call(this, arguments);
+		if (is3d) {
+			this.chart.options.chart.options3d.enabled = true;
+		}
+	},
+
 	update: function (newOptions, redraw) {
 		var chart = this.chart,
 			legend = chart.legend;
