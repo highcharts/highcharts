@@ -81,7 +81,7 @@ Axis.prototype.isOuterAxis = function () {
 };
 
 /**
- * Get the maximum label length.
+ * Get the longest label length.
  * This function can be used in states where the axis.maxLabelLength has not
  * been set.
  *
@@ -129,8 +129,8 @@ H.dateFormats = {
 };
 
 /**
- * If chart is stockChart, always return 'left' to avoid first label being
- * placed inside chart.
+ * If chart is stockChart, always return 'left' to avoid labels being placed
+ * inside chart. Stock charts place yAxis labels inside by default.
  * @param {function} proceed - the original function
  * @return {string} 'left' if stockChart, or auto calculated alignment
  */
@@ -146,7 +146,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 /**
- * Center tick labels vertically and horizontally between ticks
+ * Center tick labels in cells.
  *
  * @param {function} proceed - the original function
  *
@@ -192,7 +192,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
 					retVal.x = x + axis.left;
 				}
 			}
-			
+
 			axisYCenter = (axis.tickSize() / 2);
 
 			y += labelYCenter;
@@ -212,6 +212,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
 			}
 
 			// Center x position
+			// TODO: This probably needs to be fixed. Where does 10 come from?
 			xChange = 10;
 			if (align === 'left') {
 				if (!categoryAxis || axis.side === axisSide.left) {
@@ -240,7 +241,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
 });
 
 /**
- * Draw vertical ticks extra long to create cell floors and roofs.
+ * Draw vertical axis ticks extra long to create cell floors and roofs.
  * Overrides the tickLength for vertical axes.
  *
  * @param {function} proceed - the original function
@@ -267,6 +268,7 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 	return retVal;
 });
 
+// TODO: Overrides the default function, don't need to wrap.
 wrap(Axis.prototype, 'getTitlePosition', function () {
 	// compute anchor points for each of the title align options
 	var axis = this,
@@ -283,7 +285,7 @@ wrap(Axis.prototype, 'getTitlePosition', function () {
 		tickSize = axis.tickSize() || [0],
 		xOption = axisTitleOptions.x || 0,
 		yOption = axisTitleOptions.y || 0,
-		titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10),
+		titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10), // TODO: What is 10? And 5 even?
 		titleFontSize = axis.chart.renderer.fontMetrics(
 			axisTitleOptions.style && axisTitleOptions.style.fontSize,
 			title
@@ -323,8 +325,8 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
 /**
  * Creates a left and right wall on horizontal axes:
  * - Places leftmost tick at the start of the axis, to create a left wall
- * - Ensures that the rightmost tick is at the end of the axis, minus the tick
- *   interval, to create a right wall.
+ * - Ensures that the rightmost tick is at the end of the axis, to create a
+ *    right wall.
  *
  * @param {function} proceed - the original function
  * @param {object} options - the pure axis options as input by the user
@@ -360,7 +362,7 @@ wrap(Axis.prototype, 'setOptions', function (proceed, options) {
 });
 
 /**
- * Ensures a left wall on horizontal axes with series inheriting from column:
+ * Ensures a left wall on horizontal axes with series inheriting from column.
  * ColumnSeries normally sets pointRange to null, resulting in Axis to select
  * other values for point ranges. This enforces the above Axis.setOptions()
  * override.
@@ -384,6 +386,8 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	proceed.apply(axis, argsToArray(arguments));
 });
 
+// TODO: Does this function do what the drawing says? Seems to affect ticks and
+//       not the labels directly?
 /**
  * Makes tick labels which are usually ignored in a linked axis displayed if
  * they are within range of linkedParent.min.
@@ -430,8 +434,15 @@ wrap(Axis.prototype, 'trimTicks', function (proceed) {
 });
 
 /**
- * Draw an extra line on the far side of the the axisLine,
- * creating cell roofs of a grid.
+ * Draw an extra line on the far side of the outermost axis,
+ * creating floor/roof/wall of a grid. And some padding.
+ *
+ * Make this:
+ *             (axis.min) __________________________ (axis.max)
+ *                           |    |    |    |    |
+ * Into this:
+ *             (axis.min) __________________________ (axis.max)
+ *                        ___|____|____|____|____|__
  *
  * @param {function} proceed - the original function
  */
@@ -452,11 +463,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 	if (options.grid) {
 		// TODO acutual label padding (top, bottom, left, right)
+		// Label padding is needed to figure out where to draw the outer line.
 		labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
 		distance = axis.getMaxLabelLength() + labelPadding;
 		lineWidth = options.lineWidth;
 
-		// Remove right wall before rendering
+		// Remove right wall before rendering if updating
 		if (axis.rightWall) {
 			axis.rightWall.destroy();
 		}
@@ -528,9 +540,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 });
 
 /**
- * Wraps axis init with the following customizations:
- * 1. Prohibit timespans of multitudes of a time unit
- * 2. Draw cell walls on vertical axes
+ * Wraps axis init to draw cell walls on vertical axes.
  *
  * @param {function} proceed - the original function
  */
@@ -555,6 +565,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		}
 		options.labels.align = pick(options.labels.align, 'center');
 
+    // TODO: Check against tickLabelPlacement between/on etc
 		/**
 		 * Prevents adding the last tick label if the axis is not a category axis.
 		 *
@@ -585,7 +596,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		axis.labelRotation = 0;
 		options.labels.rotation = 0;
 	}
-	
+
 	if (grid) {
 		if (defined(grid.borderColor)) {
 			userOptions.tickColor = userOptions.lineColor = grid.borderColor;
@@ -610,9 +621,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 					type: 'category'
 
 				});
-				
+
 				delete columnOptions.grid.columns; // Prevent recursion
-				
+
 				column = new Axis(chart, columnOptions);
 				column.isColumn = true;
 				column.columnIndex = columnIndex;
@@ -630,7 +641,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 						point = H.find(series.options.data, function (p) {
 							return p[axis.isXAxis ? 'x' : 'y'] === value;
 						});
-					
+
 					if (point) {
 						if (typeof pointProperty === 'function') {
 							value = pointProperty(point);
@@ -638,11 +649,11 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 							value = point[pointProperty];
 						}
 					}
-					
+
 					if (options.dataType === 'datetime') {
 						value = H.dateFormat(dateTimeLabelFormat, value);
 					}
-					
+
 					// Call original labelFormatter
 					return proceed.call({
 						axis: axis,
@@ -652,9 +663,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 						value: value
 					});
 				});
-				
+
 				axis.columns.push(column); // eslint-disable-line no-new
-				
+
 				columnIndex++;
 			}
 		} else {
