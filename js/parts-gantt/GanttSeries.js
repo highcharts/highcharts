@@ -94,7 +94,7 @@ seriesType('gantt', parentName, {
 		}
 	},
 	pathfinder: {
-		type: 'simpleConnect', // TODO: Set to 'fastAvoid' when not crashing
+		type: 'simpleConnect',
 		startMarker: {
 			enabled: true,
 			symbol: 'arrow-filled',
@@ -144,7 +144,7 @@ seriesType('gantt', parentName, {
 	 * Draws a single point in the series.
 	 *
 	 * This override draws the point as a diamond if point.options.milestone is
-	 * true, and uses the parent drawPoint() if it is false or not set.
+	 * true, and uses the original drawPoint() if it is false or not set.
 	 *
 	 * @param  {Object} point an instance of Point in the series
 	 * @param  {string} verb 'animate' (animates changes) or 'attr' (sets

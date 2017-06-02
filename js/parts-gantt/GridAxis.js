@@ -553,6 +553,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		i;
 	function applyGridOptions(axis) {
 		var options = axis.options,
+			// TODO: Consider using cell margins defined in % of font size?
 			// 25 is optimal height for default fontSize (11px)
 			// 25 / 11 ≈ 2.28
 			fontSizeToCellHeightRatio = 25 / 11,
@@ -565,7 +566,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		}
 		options.labels.align = pick(options.labels.align, 'center');
 
-    // TODO: Check against tickLabelPlacement between/on etc
+		// TODO: Check against tickLabelPlacement between/on etc
 		/**
 		 * Prevents adding the last tick label if the axis is not a category axis.
 		 *
@@ -605,8 +606,8 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			userOptions.tickWidth = userOptions.lineWidth = grid.borderWidth;
 		}
 
+		// Handle columns, each column is a grid axis
 		if (isArray(grid.columns)) {
-			axis.columns = [];
 			columnIndex = 0;
 			i = grid.columns.length;
 			while (i--) {
@@ -628,6 +629,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				column.isColumn = true;
 				column.columnIndex = columnIndex;
 
+				// Handle pointProperty
+				// TODO: Consider rewriting this with a custom label formatter 
+				// 		 only?
 				wrap(column, 'labelFormatter', function (proceed) {
 					var axis = this.axis,
 						tickPos = axis.tickPositions,
@@ -663,8 +667,6 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 						value: value
 					});
 				});
-
-				axis.columns.push(column); // eslint-disable-line no-new
 
 				columnIndex++;
 			}

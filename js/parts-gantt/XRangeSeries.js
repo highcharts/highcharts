@@ -49,6 +49,7 @@ defaultPlotOptions.xrange = merge(defaultPlotOptions.column, {
 	},
 	borderRadius: 3
 });
+// TODO: Use new seriesType utility function to do this instead of extendClass
 seriesTypes.xrange = extendClass(columnType, {
 	pointClass: extendClass(Point, {
 		// Add x2 and yCategory to the available properties for tooltip formats
@@ -189,7 +190,7 @@ seriesTypes.xrange = extendClass(columnType, {
 	/**
 	 * Aligns an individual dataLabel.
 	 *
-	 * This override moves the
+	 * TODO: Do we need this for inside datalabels? Seems to work.
 	 *
 	 * @param  {Object} point     the point belonging to the dataLabel
 	 * @param  {Object} dataLabel the dataLabel configuration object
@@ -259,7 +260,7 @@ seriesTypes.xrange = extendClass(columnType, {
 	},
 
 	/**
-	 * Draws a single point in the series.
+	 * Draws a single point in the series. Needed for partial fill.
 	 *
 	 * This override turns point.graphic into a group containing the original
 	 * graphic and an overlay displaying the partial fill.
@@ -369,6 +370,7 @@ seriesTypes.xrange = extendClass(columnType, {
 	
 	/**
 	 * Override to remove stroke from points.
+	 * For partial fill.
 	 */
 	pointAttribs: function () {
 		var series = this,

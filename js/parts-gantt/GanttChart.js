@@ -39,7 +39,7 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
 		options.xAxis[1] = {};
 	}
 
-	// apply X axis options to both single and multi y axes
+	// apply X axis options to both single and multi x axes
 	options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
 		if (i === 1) { // Second xAxis
 			defaultTickInterval = defaultTickInterval * 7; // Week
