@@ -11,8 +11,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var each = H.each,
-	Series = H.Series,
-	defaultOptions;
+	Series = H.Series;
 
 var WordCloudOptions = {
 	borderWidth: 0,
@@ -21,6 +20,7 @@ var WordCloudOptions = {
 	}
 };
 var WordCloudSeries = {
+	animate: Series.prototype.animate,
 	bindAxes: function () {
 		var wordcloudAxis = {
 			endOnTick: false,
@@ -38,7 +38,7 @@ var WordCloudSeries = {
 	// series prototype
 	drawPoints: function () {
 		var series = this,
-			chart = this.chart;
+			chart = series.chart;
 		each(this.points, function (point) {
 			if (!point.graphic) {
 				point.graphic = chart.renderer.text(point.name).css({
@@ -46,18 +46,28 @@ var WordCloudSeries = {
 				})
 				.add(series.group);
 			}
-			/*point.graphic.attr({
-			x: 10,
-			y: 30 + 30 * i,
-			rotation: (i % 2) * 90
+			point.graphic.attr({
+				'text-anchor': 'middle'
 			});
-			/*
-			point.graphic
-
-			console.log('bBox', point.graphic.getBBox());
-
-			point.graphic.attr(series.pointAttribs(point, point.selected && 'select'))*/
 		});
+	},
+	getPlotBox: function () {
+		var series = this,
+			chart = series.chart,
+			inverted = chart.inverted,
+			// Swap axes for inverted (#2339)
+			xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
+			yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
+			width = xAxis ? xAxis.len : chart.plotWidth,
+			height = yAxis ? yAxis.len : chart.plotHeight,
+			x = xAxis ? xAxis.left : chart.plotLeft,
+			y = yAxis ? yAxis.top : chart.plotTop;
+		return {
+			translateX: x + (width / 2),
+			translateY: y + (height / 2),
+			scaleX: 1, // #1623
+			scaleY: 1
+		};
 	}
 };
 
