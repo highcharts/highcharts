@@ -313,8 +313,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
+			x: inverted ? this.yAxis.len - plotY : plotX,
+			y: Math.round(inverted ? this.xAxis.len - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
