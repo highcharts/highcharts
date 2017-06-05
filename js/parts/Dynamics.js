@@ -470,7 +470,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 			if (isObject(options, true)) {
 				// Destroy so we can get new elements
 				if (graphic && graphic.element) {
-					if (options && options.marker && options.marker.symbol) {
+					// "null" is also a valid symbol
+					if (options && options.marker && options.marker.symbol !== undefined) {
 						point.graphic = graphic.destroy();
 					}
 				}

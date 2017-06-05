@@ -155,3 +155,35 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'marker.symbol=null should be accepted in point.update() (#6792)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    data: [{
+                        y: 10,
+                        marker: {
+                            symbol: 'square'
+                        }
+                    }, {
+                        y: 10
+                    }]
+                }]
+            }),
+            point = chart.series[0].points[0],
+            prevGraphic = point.graphic;
+
+        point.update({
+            marker: {
+                symbol: null
+            }
+        });
+
+        assert.strictEqual(
+            point.graphic !== prevGraphic,
+            true,
+            'Point.graphic updated'
+        );
+    }
+);
