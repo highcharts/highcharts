@@ -258,6 +258,25 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
+// Added stackLabels position calculation for 3D charts.
+wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
+	var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
+
+	// Only do this for 3D chart.
+	if (chart.is3d()) {
+		var pos = ({
+			x: stackBox.x,
+			y: stackBox.y,
+			z: 0
+		});
+		pos = H.perspective([pos], chart, true)[0];
+		stackBox.x = pos.x;
+		stackBox.y = pos.y;
+	}
+
+	return stackBox;
+});
+
 /***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
