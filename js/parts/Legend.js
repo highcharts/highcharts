@@ -479,8 +479,13 @@ Highcharts.Legend.prototype = {
 
 		// the width of the widest item
 		legend.offsetWidth = widthOption || Math.max(
-			(horizontal ? legend.itemX - padding - itemDistance : itemWidth) +
-				padding,
+			(
+				horizontal ? legend.itemX - padding - (item.checkbox ?
+					// decrease by itemDistance only when no checkbox #4853
+					0 :
+					itemDistance
+				) : itemWidth
+			) + padding,
 			legend.offsetWidth
 		);
 	},
