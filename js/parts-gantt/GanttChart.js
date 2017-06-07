@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import 'GanttSeries.js';
 
-var defined = H.defined,
-	each = H.each,
+var each = H.each,
 	map = H.map,
 	merge = H.merge,
 	splat = H.splat,
@@ -34,9 +33,10 @@ H.GanttChart = H.ganttChart = function (renderTo, options, callback) {
 		defaultLinkedTo;
 	options = arguments[hasRenderToArg ? 1 : 0];
 
-	options.xAxis = splat(options.xAxis || {});
-	if (!defined(options.xAxis[1])) { // Include second xAxis by default
-		options.xAxis[1] = {};
+	// If user hasn't defined axes as array, make it into an array and add a
+	// second axis by default.
+	if (!H.isArray(options.xAxis)) {
+		options.xAxis = [options.xAxis || {}, {}];
 	}
 
 	// apply X axis options to both single and multi x axes
