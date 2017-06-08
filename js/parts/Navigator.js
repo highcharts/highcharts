@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
-	doc = H.doc,
 	each = H.each,
 	erase = H.erase,
 	error = H.error,
@@ -611,14 +610,14 @@ Navigator.prototype = {
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
 			addEvent(container, 'mousemove', mouseMoveHandler),
-			addEvent(doc, 'mouseup', mouseUpHandler)
+			addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
 		);
 
 		// Touch events
 		if (hasTouch) {
 			eventsToUnbind.push(
 				addEvent(container, 'touchmove', mouseMoveHandler),
-				addEvent(doc, 'touchend', mouseUpHandler)
+				addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
 			);
 			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 		}

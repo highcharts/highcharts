@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
-	doc = H.doc,
 	each = H.each,
 	fireEvent = H.fireEvent,
 	hasTouch = H.hasTouch,
@@ -576,16 +575,16 @@ Scrollbar.prototype = {
 			[buttons[buttonsOrder[1]].element, 'click', this.buttonToMaxClick],
 			[track, 'click', this.trackClick],
 			[bar, 'mousedown', mouseDownHandler],
-			[doc, 'mousemove', mouseMoveHandler],
-			[doc, 'mouseup', mouseUpHandler]
+			[bar.ownerDocument, 'mousemove', mouseMoveHandler],
+			[bar.ownerDocument, 'mouseup', mouseUpHandler]
 		];
 
 		// Touch events
 		if (hasTouch) {
 			_events.push(
 				[bar, 'touchstart', mouseDownHandler],
-				[doc, 'touchmove', mouseMoveHandler],
-				[doc, 'touchend', mouseUpHandler]
+				[bar.ownerDocument, 'touchmove', mouseMoveHandler],
+				[bar.ownerDocument, 'touchend', mouseUpHandler]
 			);
 		}
 
