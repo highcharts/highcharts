@@ -203,9 +203,6 @@ Axis.prototype.buildStacks = function () {
 		i = len;
 		while (i--) {
 			series = axisSeries[reversedStacks ? i : len - i - 1];
-			if (series.setStackCliffs) {
-				series.setStackCliffs();
-			}
 		}
 		// Loop up again to compute percent stack
 		if (this.usePercentage) {
