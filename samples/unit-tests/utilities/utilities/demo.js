@@ -269,6 +269,12 @@ QUnit.test('NumberFormat', function (assert) {
     assertEquals(assert, 'Rounding', "2.0", numberFormat(1.96, 1));
     assertEquals(assert, 'Rounding', "1.00", numberFormat(0.995, 2));
     assertEquals(assert, 'Rounding', "-1.00", numberFormat(-0.995, 2));
+
+    assertEquals(assert, 'Exponential', "3.00e+22", numberFormat(30000000000000000000000));
+    assertEquals(assert, 'Exponential', "3.20e+22", numberFormat(32000000000000000000000));
+    assertEquals(assert, 'Exponential', "3,20e+22", numberFormat(32000000000000000000000, 2, ','));
+    assertEquals(assert, 'Exponential', "3e+22", numberFormat(30000000000000000000000, 0));
+    assertEquals(assert, 'Exponential', "1.5e+36", numberFormat(1.5e+36, -1));
 });
 
 

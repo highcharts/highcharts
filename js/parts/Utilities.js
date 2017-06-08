@@ -1391,11 +1391,12 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	decimals = +decimals;
 
 	var lang = H.defaultOptions.lang,
-		origDec = (number.toString().split('.')[1] || '').length,
+		origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
 		strinteger,
 		thousands,
 		ret,
-		roundedNumber;
+		roundedNumber,
+		exponent = number.toString().split('e');
 
 	if (decimals === -1) {
 		// Preserve decimals. Not huge numbers (#3793).
@@ -1407,7 +1408,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	// Add another decimal to avoid rounding errors of float numbers. (#4573)
 	// Then use toFixed to handle rounding.
 	roundedNumber = (
-		Math.abs(number) + Math.pow(10, -Math.max(decimals, origDec) - 1)
+		Math.abs(exponent[1] ? exponent[0] : number) +
+		Math.pow(10, -Math.max(decimals, origDec) - 1)
 	).toFixed(decimals);
 
 	// A string containing the positive integer component of the number
@@ -1436,6 +1438,10 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	if (decimals) {
 		// Get the decimal component
 		ret += decimalPoint + roundedNumber.slice(-decimals);
+	}
+
+	if (exponent[1]) {
+		ret += 'e' + exponent[1];
 	}
 
 	return ret;
