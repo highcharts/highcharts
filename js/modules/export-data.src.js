@@ -295,7 +295,6 @@ Highcharts.Chart.prototype.fileDownload = function (href, extension, content, MI
     } else if (downloadAttrSupported) {
         a = doc.createElement('a');
         a.href = href;
-        a.target = '_blank';
         a.download = name + '.' + extension;
         this.container.append(a); // #111
         a.click();
