@@ -83,7 +83,6 @@ seriesType('map', 'scatter', {
 // Prototype members
 }, merge(colorSeriesMixin, {
 	type: 'map',
-	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,

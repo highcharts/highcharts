@@ -369,8 +369,6 @@ Chart.prototype.drillUp = function () {
 };
 
 
-ColumnSeries.prototype.supportsDrilldown = true;
-
 /**
  * When drilling up, keep the upper series invisible until the lower series has
  * moved into place
@@ -535,7 +533,6 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
 
 if (PieSeries) {
 	extend(PieSeries.prototype, {
-		supportsDrilldown: true,
 		animateDrillupTo: ColumnSeries.prototype.animateDrillupTo,
 		animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
 
@@ -769,22 +766,38 @@ wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
 	}, this);
 });
 
+
+var applyCursorCSS = function (element, cursor, addClass) {
+	element[addClass ? 'addClass' : 'removeClass']('highcharts-drilldown-point');
+
+	/*= if (build.classic) { =*/
+	element.css({ cursor: cursor });
+	/*= } =*/
+};
+
 // Mark the trackers with a pointer 
 var drawTrackerWrapper = function (proceed) {
 	proceed.call(this);
 	each(this.points, function (point) {
 		if (point.drilldown && point.graphic) {
-			point.graphic.addClass('highcharts-drilldown-point');
-
-			/*= if (build.classic) { =*/
-			point.graphic.css({ cursor: 'pointer' });
-			/*= } =*/
+			applyCursorCSS(point.graphic, 'pointer', true);
 		}
 	});
 };
 
-objectEach(seriesTypes, function (seriesType) {
-	if (seriesType.prototype.supportsDrilldown) {
-		wrap(seriesType.prototype, 'drawTracker', drawTrackerWrapper);
+var setPointStateWrapper = function (proceed, state) {
+	var ret = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+	if (this.drilldown && this.series.halo && state === 'hover') {
+		applyCursorCSS(this.series.halo, 'pointer', true);
+	} else if (this.series.halo) {
+		applyCursorCSS(this.series.halo, 'auto', false);
 	}
+	return ret;
+};
+
+
+objectEach(seriesTypes, function (seriesType) {
+	wrap(seriesType.prototype, 'drawTracker', drawTrackerWrapper);
+	wrap(seriesType.prototype.pointClass.prototype, 'setState', setPointStateWrapper);
 });

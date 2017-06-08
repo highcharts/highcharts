@@ -56,7 +56,6 @@ seriesType('heatmap', 'scatter', {
 }, merge(colorSeriesMixin, {
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
 
