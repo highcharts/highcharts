@@ -40,6 +40,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count,
+		baseOffset, // #6797
 		variableDayLength;
 
 	if (defined(min)) { // #1300
@@ -112,7 +113,8 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 			// Adjust minDate to the offset date
 			minDate = minDate.getTime();
-			minDate = new Date(minDate + getTZOffset(minDate));
+			baseOffset = getTZOffset(minDate);
+			minDate = new Date(minDate + baseOffset);
 		}
 		
 
@@ -132,12 +134,18 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
-			} else if (variableDayLength && (interval === timeUnits.day || interval === timeUnits.week)) {
+			} else if (
+					variableDayLength &&
+					(interval === timeUnits.day || interval === timeUnits.week)
+				) {
 				time = makeTime(minYear, minMonth, minDateDate +
 					i * count * (interval === timeUnits.day ? 1 : 7));
 
 			} else if (variableDayLength && interval === timeUnits.hour) {
-				time = makeTime(minYear, minMonth, minDateDate, minHours + i * count);
+				// corrected by the start date time zone offset (baseOffset)
+				// to hide duplicated label (#6797)
+				time = makeTime(minYear, minMonth, minDateDate, minHours +
+					i * count, 0, 0, baseOffset) - baseOffset;
 
 			// else, the interval is fixed and we use simple addition
 			} else {
