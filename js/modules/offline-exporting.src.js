@@ -76,14 +76,19 @@ Highcharts.downloadURL = function (dataURL, filename) {
 		windowRef;
 
 	// IE specific blob implementation
-	if (nav.msSaveOrOpenBlob) {
+	// Don't use for normal dataURLs
+	if (
+		typeof dataURL !== 'string' &&
+		!(dataURL instanceof String) &&
+		nav.msSaveOrOpenBlob
+	) {
 		nav.msSaveOrOpenBlob(dataURL, filename);
 		return;
 	}
 
 	// Some browsers have limitations for data URL lengths. Try to convert to
-	// Blob or fall back.
-	if (dataURL.length > 2000000) {
+	// Blob or fall back. Edge always needs that blob.
+	if (isEdgeBrowser || dataURL.length > 2000000) {
 		dataURL = Highcharts.dataURLtoBlob(dataURL);
 		if (!dataURL) {
 			throw 'Data URL length limit reached';
@@ -499,7 +504,6 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 
 	// Always fall back on:
 	// - MS browsers: Embedded images JPEG/PNG, or any PDF
-	// - Edge: PNG/JPEG all cases
 	// - Embedded images and PDF
 	if (
 		(
@@ -509,8 +513,6 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 				chart.container.getElementsByTagName('image').length &&
 				options.type !== 'image/svg+xml'
 			)
-		) || (
-			isEdgeBrowser && options.type !== 'image/svg+xml'
 		) || (
 			options.type === 'application/pdf' &&
 			chart.container.getElementsByTagName('image').length
