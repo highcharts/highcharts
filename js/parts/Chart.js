@@ -821,7 +821,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					}
 					
 					H.css(node, tempStyle);
-					if (node.style.setProperty) { // #2631
+
+					// If it still doesn't have an offset width after setting
+					// display to block, it probably has an !important priority
+					// #2631, 6803
+					if (!node.offsetWidth) {
 						node.style.setProperty('display', 'block', 'important');
 					}
 				}
