@@ -1621,8 +1621,14 @@ H.stop = function (el, prop) {
  * * arr - The array that each is being applied to.
  * @param {Object} [ctx] The context.
  */
-H.each = function (arr, fn, ctx) { // modern browsers
-	return Array.prototype.forEach.call(arr, fn, ctx);
+H.each = function (arr, fn, ctx) { // legacy
+	var i = 0, 
+		len = arr.length;
+	for (; i < len; i++) {
+		if (fn.call(ctx, arr[i], i, arr) === false) {
+			return i;
+		}
+	}
 };
 
 /**
@@ -2057,18 +2063,6 @@ if (doc && !doc.defaultView) {
 		}
 		
 		return val === '' ? 1 : H.pInt(val);
-	};
-}
-
-if (!Array.prototype.forEach) {
-	H.each = function (arr, fn, ctx) { // legacy
-		var i = 0, 
-			len = arr.length;
-		for (; i < len; i++) {
-			if (fn.call(ctx, arr[i], i, arr) === false) {
-				return i;
-			}
-		}
 	};
 }
 
