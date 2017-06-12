@@ -1363,7 +1363,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = hardMin = Math.max(axis.min, axis.minFromRange()); // #618
+			axis.userMin = axis.min = hardMin = Math.max(axis.dataMin, axis.minFromRange()); // #618, #6773
 			axis.userMax = hardMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
