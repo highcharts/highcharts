@@ -50,6 +50,7 @@ seriesType('gantt', parentName, {
 		headerFormat:	'<span style="color:{point.color};text-align:right">' +
 							'{series.name}' +
 						'</span><br/>',
+		pointFormat: null,
 		pointFormatter: function () {
 			var point = this,
 				series = point.series,
@@ -68,6 +69,10 @@ seriesType('gantt', parentName, {
 				dateRowStart = '<span style="font-size: 0.8em">',
 				dateRowEnd = '</span><br/>',
 				retVal = '<b>' + taskName + '</b>';
+
+			if (ttOptions.pointFormat) {
+				return point.tooltipFormatter(ttOptions.pointFormat);
+			}
 
 			if (!format) {
 				ttOptions.dateTimeLabelFormat = format = tooltip.getDateFormat(
