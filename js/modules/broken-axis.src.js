@@ -333,18 +333,37 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 H.Series.prototype.gappedPath = function () {
 	var gapSize = this.options.gapSize,
 		points = this.points.slice(),
-		i = points.length - 1;
+		i = points.length - 1,
+		yAxis = this.yAxis,
+		xRange,
+		stack;
 
 	if (gapSize && i > 0) { // #5008
-
 		// extension for ordinal breaks
 		while (i--) {
 			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
+				xRange = (points[i].x + points[i + 1].x) / 2;
+
 				points.splice( // insert after this one
 					i + 1,
 					0,
-					{ isNull: true }
+					{
+						isNull: true,
+						x: xRange
+					}
 				);
+
+				// For stacked chart generate empty stack items, #6546
+				if (this.options.stacking) {
+					stack = yAxis.stacks[this.stackKey][xRange] = new H.StackItem(
+						yAxis,
+						yAxis.options.stackLabels,
+						false,
+						xRange,
+						this.stack
+					);
+					stack.total = 0;
+				}
 			}
 		}
 	}

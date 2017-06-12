@@ -36,7 +36,7 @@ seriesType('area', 'line', {
 	 * Return an array of stacked points, where null and missing points are replaced by 
 	 * dummy points in order for gaps to be drawn correctly in stacks.
 	 */
-	getStackPoints: function () {
+	getStackPoints: function (points) {
 		var series = this,
 			segment = [],
 			keys = [],
@@ -44,13 +44,15 @@ seriesType('area', 'line', {
 			yAxis = this.yAxis,
 			stack = yAxis.stacks[this.stackKey],
 			pointMap = {},
-			points = this.points,
 			seriesIndex = series.index,
 			yAxisSeries = yAxis.series,
 			seriesLength = yAxisSeries.length,
 			visibleSeries,
 			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
 			i;
+
+
+		points = points || this.points;
 
 		if (this.options.stacking) {
 			// Create a map where we can quickly look up the points by their X value.
@@ -214,7 +216,7 @@ seriesType('area', 'line', {
 
 		// Fill in missing points
 		if (stacking) {
-			points = this.getStackPoints();
+			points = this.getStackPoints(points);
 		}
 
 		for (i = 0; i < points.length; i++) {
