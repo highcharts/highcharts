@@ -355,6 +355,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 			each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
+			pointer.initiated = false; // #6804
+
 		} else { // else, zoom in on all axes
 			each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis,
