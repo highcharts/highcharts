@@ -567,81 +567,97 @@ H.Tooltip.prototype = {
 			ren = chart.renderer,
 			rightAligned = true,
 			options = this.options,
-			headerHeight,
+			headerHeight = 0,
 			tooltipLabel = this.getLabel();
 
 		// Create the individual labels for header and points, ignore footer
 		each(labels.slice(0, points.length + 1), function (str, i) {
-			var point = points[i - 1] ||
-					// Item 0 is the header. Instead of this, we could also use the crosshair label
-					{ isHeader: true, plotX: points[0].plotX },
-				owner = point.series || tooltip,
-				tt = owner.tt,
-				series = point.series || {},
-				colorClass = 'highcharts-color-' + pick(point.colorIndex, series.colorIndex, 'none'),
-				target,
-				x,
-				bBox,
-				boxWidth;
-
-			// Store the tooltip referance on the series
-			if (!tt) {
-				owner.tt = tt = ren.label(null, null, null, 'callout')
-					.addClass('highcharts-tooltip-box ' + colorClass)
-					.attr({
-						'padding': options.padding,
-						'r': options.borderRadius,
-						/*= if (build.classic) { =*/
-						'fill': options.backgroundColor,
-						'stroke': point.color || series.color || '${palette.neutralColor80}',
-						'stroke-width': options.borderWidth
-						/*= } =*/
-					})
-					.add(tooltipLabel);
-			}
-
-			tt.isActive = true;
-			tt.attr({
-				text: str
-			});
-			/*= if (build.classic) { =*/
-			tt.css(options.style);
-			/*= } =*/
-
-			// Get X position now, so we can move all to the other side in case of overflow
-			bBox = tt.getBBox();
-			boxWidth = bBox.width + tt.strokeWidth();
-			if (point.isHeader) {
-				headerHeight = bBox.height;
-				x = Math.max(
-					0, // No left overflow
-					Math.min(
-						point.plotX + chart.plotLeft - boxWidth / 2,
-						chart.chartWidth - boxWidth // No right overflow (#5794)
-					)
-				);
-			} else {
-				x = point.plotX + chart.plotLeft - pick(options.distance, 16) -
+			if (str !== false) {
+				var point = points[i - 1] ||
+						// Item 0 is the header. Instead of this, we could also
+						// use the crosshair label
+						{ isHeader: true, plotX: points[0].plotX },
+					owner = point.series || tooltip,
+					tt = owner.tt,
+					series = point.series || {},
+					colorClass = 'highcharts-color-' + pick(
+						point.colorIndex,
+						series.colorIndex,
+						'none'
+					),
+					target,
+					x,
+					bBox,
 					boxWidth;
+
+				// Store the tooltip referance on the series
+				if (!tt) {
+					owner.tt = tt = ren.label(null, null, null, 'callout')
+						.addClass('highcharts-tooltip-box ' + colorClass)
+						.attr({
+							'padding': options.padding,
+							'r': options.borderRadius,
+							/*= if (build.classic) { =*/
+							'fill': options.backgroundColor,
+							'stroke': (
+								point.color ||
+								series.color ||
+								'${palette.neutralColor80}'
+							),
+							'stroke-width': options.borderWidth
+							/*= } =*/
+						})
+						.add(tooltipLabel);
+				}
+
+				tt.isActive = true;
+				tt.attr({
+					text: str
+				});
+				/*= if (build.classic) { =*/
+				tt.css(options.style);
+				/*= } =*/
+
+				// Get X position now, so we can move all to the other side in
+				// case of overflow
+				bBox = tt.getBBox();
+				boxWidth = bBox.width + tt.strokeWidth();
+				if (point.isHeader) {
+					headerHeight = bBox.height;
+					x = Math.max(
+						0, // No left overflow
+						Math.min(
+							point.plotX + chart.plotLeft - boxWidth / 2,
+							// No right overflow (#5794)
+							chart.chartWidth - boxWidth
+						)
+					);
+				} else {
+					x = point.plotX + chart.plotLeft -
+						pick(options.distance, 16) - boxWidth;
+				}
+
+
+				// If overflow left, we don't use this x in the next loop
+				if (x < 0) {
+					rightAligned = false;
+				}
+
+				// Prepare for distribution
+				target = (point.series && point.series.yAxis &&
+					point.series.yAxis.pos) + (point.plotY || 0);
+				target -= chart.plotTop;
+				boxes.push({
+					target: point.isHeader ?
+						chart.plotHeight + headerHeight :
+						target,
+					rank: point.isHeader ? 1 : 0,
+					size: owner.tt.getBBox().height + 1,
+					point: point,
+					x: x,
+					tt: tt
+				});
 			}
-
-
-			// If overflow left, we don't use this x in the next loop
-			if (x < 0) {
-				rightAligned = false;
-			}
-
-			// Prepare for distribution
-			target = (point.series && point.series.yAxis && point.series.yAxis.pos) + (point.plotY || 0);
-			target -= chart.plotTop;
-			boxes.push({
-				target: point.isHeader ? chart.plotHeight + headerHeight : target,
-				rank: point.isHeader ? 1 : 0,
-				size: owner.tt.getBBox().height + 1,
-				point: point,
-				x: x,
-				tt: tt
-			});
 		});
 
 		// Clean previous run (for missing points)
