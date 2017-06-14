@@ -45,7 +45,7 @@
     "xml2js": "^0.4.17",
     "yargs": "^3.32.0"
   },
-  "license": "SEE LICENSE IN <license.txt>",
+  "license": "CC-BY-NC-3.0 OR SEE LICENSE IN <license.txt>",
   "dependencies": {
     "babel-runtime": "^6.20.0"
   }
