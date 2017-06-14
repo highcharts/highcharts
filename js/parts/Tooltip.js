@@ -600,6 +600,7 @@ H.Tooltip.prototype = {
 							/*= if (build.classic) { =*/
 							'fill': options.backgroundColor,
 							'stroke': (
+								options.borderColor ||
 								point.color ||
 								series.color ||
 								'${palette.neutralColor80}'
