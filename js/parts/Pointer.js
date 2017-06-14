@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
 	color = H.color,
 	css = H.css,
 	defined = H.defined,
-	doc = H.doc,
 	each = H.each,
 	extend = H.extend,
 	fireEvent = H.fireEvent,
@@ -421,12 +420,16 @@ H.Pointer.prototype = {
 
 		// Start the event listener to pick up the tooltip and crosshairs
 		if (!pointer.unDocMouseMove) {
-			pointer.unDocMouseMove = addEvent(doc, 'mousemove', function (e) {
-				var chart = charts[H.hoverChartIndex];
-				if (chart) {
-					chart.pointer.onDocumentMouseMove(e);
+			pointer.unDocMouseMove = addEvent(
+				chart.container.ownerDocument,
+				'mousemove',
+				function (e) {
+					var chart = charts[H.hoverChartIndex];
+					if (chart) {
+						chart.pointer.onDocumentMouseMove(e);
+					}
 				}
-			});
+			);
 		}
 
 		// Issues related to crosshair #4927, #5269 #5066, #5658
@@ -877,7 +880,8 @@ H.Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			container = pointer.chart.container;
+			container = pointer.chart.container,
+			ownerDoc = container.ownerDocument;
 
 		container.onmousedown = function (e) {
 			pointer.onContainerMouseDown(e);
@@ -890,7 +894,11 @@ H.Pointer.prototype = {
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
 		if (H.chartCount === 1) {
-			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+			addEvent(
+				ownerDoc,
+				'mouseup',
+				pointer.onDocumentMouseUp
+			);
 		}
 		if (H.hasTouch) {
 			container.ontouchstart = function (e) {
@@ -900,7 +908,11 @@ H.Pointer.prototype = {
 				pointer.onContainerTouchMove(e);
 			};
 			if (H.chartCount === 1) {
-				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+				addEvent(
+					ownerDoc,
+					'touchend',
+					pointer.onDocumentTouchEnd
+				);
 			}
 		}
 
@@ -910,7 +922,8 @@ H.Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this;
+		var pointer = this,
+			ownerDoc = this.chart.container.ownerDocument;
 
 		if (pointer.unDocMouseMove) {
 			pointer.unDocMouseMove();
@@ -922,8 +935,8 @@ H.Pointer.prototype = {
 			pointer.onContainerMouseLeave
 		);
 		if (!H.chartCount) {
-			removeEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
-			removeEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			removeEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
+			removeEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
 		}
 
 		// memory and CPU leak
