@@ -16,7 +16,9 @@ var addEvent = H.addEvent,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
+	find = H.find,
 	fireEvent = H.fireEvent,
+	isObject = H.isObject,
 	offset = H.offset,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
@@ -161,71 +163,66 @@ H.Pointer.prototype = {
 		return coordinates;
 	},
 	/**
-	 * Collects the points closest to a mouseEvent
-	 * @param  {Array} series Array of series to gather points from
-	 * @param  {Boolean} shared True if shared tooltip, otherwise false
-	 * @param  {Object} e Mouse event which possess a position to compare against
-	 * @return {Array} KDPoints sorted by distance
+	 * Finds the closest point to a set of coordinates,
+	 * using the K-D Tree algorithm
+	 *
+	 * @param  {Array.<Series>} series
+	 *         All the series to search in.
+	 * @param  {boolean} shared
+	 *         Whether it is a shared tooltip or not.
+	 * @param  {object} coordinates
+	 *         Chart coordinates of the pointer.
+	 * @param  {number} coordinates.chartX
+	 * @param  {number} coordinates.chartY
+	 *
+	 * @return {Point|undefined} The point closest to given coordinates.
 	 */
-	getKDPoints: function (series, shared, e) {
-		var kdpoints = [],
-			noSharedTooltip,
-			directTouch,
-			kdpointT,
-			i;
+	findNearestKDPoint: function (series, shared, coordinates) {
+		var closest,
+			sort = function (p1, p2) {
+				var isCloserX = p1.distX - p2.distX,
+					isCloser = p1.dist - p2.dist,
+					isAbove =
+						(p2.series.group && p2.series.group.zIndex) -
+						(p1.series.group && p1.series.group.zIndex),
+					result;
 
-		// Find nearest points on all series
+				// We have two points which are not in the same place on xAxis
+				// and shared tooltip:
+				if (isCloserX !== 0 && shared) { // #5721
+					result = isCloserX;
+				// Points are not exactly in the same place on x/yAxis:
+				} else if (isCloser !== 0) {
+					result = isCloser;
+				// The same xAxis and yAxis position, sort by z-index:
+				} else if (isAbove !== 0) {
+					result = isAbove;
+				// The same zIndex, sort by array index:
+				} else {
+					result = p1.series.index > p2.series.index ? -1 : 1;
+				}
+				return result;
+			};
 		each(series, function (s) {
-			// Skip hidden series
-			noSharedTooltip = s.noSharedTooltip && shared;
-			directTouch = !shared && s.directTouch;
-			if (s.visible && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
-				// #3828
-				kdpointT = s.searchPoint(
-					e,
-					!noSharedTooltip && s.options.findNearestPointBy.indexOf('y') < 0
+			var noSharedTooltip = s.noSharedTooltip && shared,
+				compareX = (
+					!noSharedTooltip &&
+					s.options.findNearestPointBy.indexOf('y') < 0
+				),
+				point = s.searchPoint(
+					coordinates,
+					compareX
 				);
-				if (kdpointT && kdpointT.series) { // Point.series becomes null when reset and before redraw (#5197)
-					kdpoints.push(kdpointT);
-				}
+			if (
+				// Check that we actually found a point on the series.
+				isObject(point, true) &&
+				// Use the new point if it is closer.
+				(!isObject(closest, true) || (sort(closest, point) > 0))
+			) {
+				closest = point;
 			}
 		});
-
-		// Sort kdpoints by distance to mouse pointer
-		kdpoints.sort(function (p1, p2) {
-			var isCloserX = p1.distX - p2.distX,
-				isCloser = p1.dist - p2.dist,
-				isAbove =
-					(p2.series.group && p2.series.group.zIndex) -
-					(p1.series.group && p1.series.group.zIndex),
-				result;
-
-			// We have two points which are not in the same place on xAxis and shared tooltip:
-			if (isCloserX !== 0 && shared) { // #5721
-				result = isCloserX;
-			// Points are not exactly in the same place on x/yAxis:
-			} else if (isCloser !== 0) {
-				result = isCloser;
-			// The same xAxis and yAxis position, sort by z-index:
-			} else if (isAbove !== 0) {
-				result = isAbove;
-			// The same zIndex, sort by array index:
-			} else {
-				result = p1.series.index > p2.series.index ? -1 : 1;
-			}
-			return result;
-		});
-
-		// Remove points with different x-positions, required for shared tooltip and crosshairs (#4645):
-		if (shared && kdpoints[0] && !kdpoints[0].series.noSharedTooltip) {
-			i = kdpoints.length;
-			while (i--) {
-				if (kdpoints[i].x !== kdpoints[0].x || kdpoints[i].series.noSharedTooltip) {
-					kdpoints.splice(i, 1);
-				}
-			}
-		}
-		return kdpoints;
+		return closest;
 	},
 	getPointFromEvent: function (e) {
 		var target = e.target,
@@ -285,51 +282,56 @@ H.Pointer.prototype = {
 		shared,
 		coordinates
 	) {
-		var hoverPoint = existingHoverPoint,
+		var hoverPoint,
+			hoverPoints = [],
 			hoverSeries = existingHoverSeries,
-			searchSeries = shared ? series : [hoverSeries],
 			useExisting = !!(isDirectTouch && existingHoverPoint),
 			notSticky = hoverSeries && !hoverSeries.stickyTracking,
-			isHoverPoint = function (point, i) {
-				return i === 0;
+			filter = function (s) {
+				return (
+					s.visible &&
+					!(!shared && s.directTouch) && // #3821
+					pick(s.options.enableMouseTracking, true)
+				);
 			},
-			hoverPoints;
+			// Which series to look in for the hover point
+			searchSeries = notSticky ?
+				// Only search on hovered series if it has stickyTracking false
+				[hoverSeries] :
+				// Filter what series to look in.
+				H.grep(series, function (s) {
+					return filter(s) && s.stickyTracking;
+				});
 
-		// If there is a hoverPoint and its series requires direct touch (like
-		// columns, #3899), or we're on a noSharedTooltip series among shared
-		// tooltip series (#4546), use the existing hoverPoint.
-		if  (useExisting) {
-			isHoverPoint = function (p) {
-				return p === existingHoverPoint;
-			};
-		} else if (notSticky) {
-			isHoverPoint = function (p) {
-				return p.series === hoverSeries;
-			};
-		} else {
-			// Avoid series with stickyTracking false
-			searchSeries = H.grep(series, function (s) {
-				return s.stickyTracking;
-			});
-		}
-		hoverPoints = (useExisting && !shared) ?
-			// Non-shared tooltips with directTouch don't use the k-d-tree
-			[existingHoverPoint] :
-			this.getKDPoints(searchSeries, shared, coordinates);
-		hoverPoint = H.find(hoverPoints, isHoverPoint);
+		// Use existing hovered point or find the one closest to coordinates.
+		hoverPoint = useExisting ?
+			existingHoverPoint :
+			this.findNearestKDPoint(searchSeries, shared, coordinates);
+
+		// Assign hover series
 		hoverSeries = hoverPoint && hoverPoint.series;
 
-		// In this case we could only look for the hoverPoint in series with
-		// stickyTracking, but we should still include all series in the shared
-		// tooltip.
-		if (!useExisting && !notSticky && shared) {
-			hoverPoints = this.getKDPoints(series, shared, coordinates);
+		// If we have a hoverPoint, assign hoverPoints.
+		if (hoverPoint) {
+			// When tooltip is shared, it displays more than one point
+			if (shared && !hoverSeries.noSharedTooltip) {
+				searchSeries = H.grep(series, function (s) {
+					return filter(s) && !s.noSharedTooltip;
+				});
+
+				// Get all points with the same x value as the hoverPoint
+				each(searchSeries, function (s) {
+					var point = find(s.points, function (p) {
+						return p.x === hoverPoint.x;
+					});
+					if (isObject(point) && !point.isNull) {
+						hoverPoints.push(point);
+					}
+				});
+			} else {
+				hoverPoints.push(hoverPoint);
+			}
 		}
-		// Keep the order of series in tooltip
-		// Must be done after assigning of hoverPoint
-		hoverPoints.sort(function (p1, p2) {
-			return p1.series.index - p2.series.index;
-		});
 
 		return {
 			hoverPoint: hoverPoint,
@@ -368,17 +370,11 @@ H.Pointer.prototype = {
 			points;
 		// Update variables from hoverData.
 		hoverPoint = hoverData.hoverPoint;
+		points = hoverData.hoverPoints;
 		hoverSeries = hoverData.hoverSeries;
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		useSharedTooltip = (
-			shared &&
-			hoverPoint &&
-			!hoverPoint.series.noSharedTooltip
-		);
-		points = (useSharedTooltip ? 
-			hoverData.hoverPoints : 
-			(hoverPoint ? [hoverPoint] : [])
-		);
+		useSharedTooltip = shared && hoverSeries && !hoverSeries.noSharedTooltip;
+
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
 		// #3926, #4200
 		if (
