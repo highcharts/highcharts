@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ne-ni', 0],
+    ['ne-tl', 1],
+    ['ne-ag', 2],
+    ['ne-ma', 3],
+    ['ne-zi', 4],
+    ['ne-ds', 5],
+    ['ne-th', 6],
+    ['ne-df', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ne-ni",
-            "value": 0
-        },
-        {
-            "hc-key": "ne-tl",
-            "value": 1
-        },
-        {
-            "hc-key": "ne-ag",
-            "value": 2
-        },
-        {
-            "hc-key": "ne-ma",
-            "value": 3
-        },
-        {
-            "hc-key": "ne-zi",
-            "value": 4
-        },
-        {
-            "hc-key": "ne-ds",
-            "value": 5
-        },
-        {
-            "hc-key": "ne-th",
-            "value": 6
-        },
-        {
-            "hc-key": "ne-df",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ne/ne-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ne/ne-all.js">Niger</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ne/ne-all.js">Niger</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ne/ne-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['cd-bc', 0],
+    ['cd-kv', 1],
+    ['cd-eq', 2],
+    ['cd-hc', 3],
+    ['cd-bn', 4],
+    ['cd-kn', 5],
+    ['cd-kr', 6],
+    ['cd-kt', 7],
+    ['cd-kc', 8],
+    ['cd-1694', 9],
+    ['cd-1697', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "cd-bc",
-            "value": 0
-        },
-        {
-            "hc-key": "cd-kv",
-            "value": 1
-        },
-        {
-            "hc-key": "cd-eq",
-            "value": 2
-        },
-        {
-            "hc-key": "cd-hc",
-            "value": 3
-        },
-        {
-            "hc-key": "cd-bn",
-            "value": 4
-        },
-        {
-            "hc-key": "cd-kn",
-            "value": 5
-        },
-        {
-            "hc-key": "cd-kr",
-            "value": 6
-        },
-        {
-            "hc-key": "cd-kt",
-            "value": 7
-        },
-        {
-            "hc-key": "cd-kc",
-            "value": 8
-        },
-        {
-            "hc-key": "cd-1694",
-            "value": 9
-        },
-        {
-            "hc-key": "cd-1697",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/cd/cd-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cd/cd-all.js">Democratic Republic of the Congo</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cd/cd-all.js">Democratic Republic of the Congo</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/cd/cd-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

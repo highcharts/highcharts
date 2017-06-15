@@ -46,7 +46,7 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 });
 
 // Create chart
-Highcharts.chart('container', {
+var chart = Highcharts.chart('container', {
     accessibility: {
         keyboardNavigation: {
             skipNullPoints: true
@@ -136,3 +136,9 @@ Highcharts.chart('container', {
         ]
     }]
 });
+
+// Remove click events on container to avoid having "clickable" announced by AT
+// These events are needed for custom click events, drag to zoom, and navigator
+// support.
+chart.container.onmousedown = null;
+chart.container.onclick = null;

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -19,7 +19,6 @@ var areaProto = H.seriesTypes.area.prototype,
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
 	getStackPoints: areaProto.getStackPoints,
 	getGraphPath: areaProto.getGraphPath,
-	setStackCliffs: areaProto.setStackCliffs,
 	drawGraph: areaProto.drawGraph,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });

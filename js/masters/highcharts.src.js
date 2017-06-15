@@ -13,6 +13,7 @@ import '../parts/VmlRenderer.js';
 import '../parts/Axis.js';
 import '../parts/DateTimeAxis.js';
 import '../parts/LogarithmicAxis.js';
+import '../parts/PlotLineOrBand.js';
 import '../parts/Tooltip.js';
 import '../parts/Pointer.js';
 import '../parts/TouchPointer.js';

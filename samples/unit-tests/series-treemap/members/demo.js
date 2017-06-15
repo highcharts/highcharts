@@ -1,3 +1,12 @@
+QUnit.test('directTouch', function (assert) {
+    var treemapSeries = Highcharts.seriesTypes.treemap;
+    assert.strictEqual(
+        treemapSeries.prototype.directTouch,
+        true,
+        'directTouch should default to true.'
+    );
+});
+
 QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
     var series = Highcharts.seriesTypes.treemap,
         setState = series.prototype.pointClass.prototype.setState,
@@ -6,6 +15,7 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
         point = {
             node: {},
             graphic: {
+                animate: noop,
                 attr: function (obj) {
                     var graphic = this,
                         keys = Object.keys(obj);
@@ -21,6 +31,11 @@ QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
                 return '';
             },
             series: {
+                chart: {
+                    options: {
+                        chart: {}
+                    }
+                },
                 type: 'treemap',
                 levelMap: {},
                 options: {

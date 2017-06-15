@@ -1,133 +1,67 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['no-ak-216', 0],
+    ['no-ak-217', 1],
+    ['no-ak-213', 2],
+    ['no-ak-214', 3],
+    ['no-ak-211', 4],
+    ['no-os-219', 5],
+    ['no-ak-239', 6],
+    ['no-ak-238', 7],
+    ['no-ak-234', 8],
+    ['no-ak-235', 9],
+    ['no-ak-236', 10],
+    ['no-ak-215', 11],
+    ['no-ak-237', 12],
+    ['no-ak-233', 13],
+    ['no-ak-231', 14],
+    ['no-ak-229', 15],
+    ['no-ak-230', 16],
+    ['no-ak-228', 17],
+    ['no-ak-227', 18],
+    ['no-ak-226', 19],
+    ['no-ak-221', 20],
+    ['no-os-220', 21]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "no-ak-216",
-            "value": 0
-        },
-        {
-            "hc-key": "no-ak-217",
-            "value": 1
-        },
-        {
-            "hc-key": "no-ak-213",
-            "value": 2
-        },
-        {
-            "hc-key": "no-ak-214",
-            "value": 3
-        },
-        {
-            "hc-key": "no-ak-211",
-            "value": 4
-        },
-        {
-            "hc-key": "no-os-219",
-            "value": 5
-        },
-        {
-            "hc-key": "no-ak-239",
-            "value": 6
-        },
-        {
-            "hc-key": "no-ak-238",
-            "value": 7
-        },
-        {
-            "hc-key": "no-ak-234",
-            "value": 8
-        },
-        {
-            "hc-key": "no-ak-235",
-            "value": 9
-        },
-        {
-            "hc-key": "no-ak-236",
-            "value": 10
-        },
-        {
-            "hc-key": "no-ak-215",
-            "value": 11
-        },
-        {
-            "hc-key": "no-ak-237",
-            "value": 12
-        },
-        {
-            "hc-key": "no-ak-233",
-            "value": 13
-        },
-        {
-            "hc-key": "no-ak-231",
-            "value": 14
-        },
-        {
-            "hc-key": "no-ak-229",
-            "value": 15
-        },
-        {
-            "hc-key": "no-ak-230",
-            "value": 16
-        },
-        {
-            "hc-key": "no-ak-228",
-            "value": 17
-        },
-        {
-            "hc-key": "no-ak-227",
-            "value": 18
-        },
-        {
-            "hc-key": "no-ak-226",
-            "value": 19
-        },
-        {
-            "hc-key": "no-ak-221",
-            "value": 20
-        },
-        {
-            "hc-key": "no-os-220",
-            "value": 21
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/no/no-ak-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-ak-all.js">Akershus</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-ak-all.js">Akershus</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/no/no-ak-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

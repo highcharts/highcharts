@@ -1,181 +1,79 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['gn-7097', 0],
+    ['gn-7087', 1],
+    ['gn-7108', 2],
+    ['gn-3417', 3],
+    ['gn-7106', 4],
+    ['gn-3420', 5],
+    ['gn-7098', 6],
+    ['gn-7101', 7],
+    ['gn-7092', 8],
+    ['gn-7088', 9],
+    ['gn-7103', 10],
+    ['gn-3416', 11],
+    ['gn-7094', 12],
+    ['gn-7111', 13],
+    ['gn-7109', 14],
+    ['gn-7091', 15],
+    ['gn-3418', 16],
+    ['gn-7105', 17],
+    ['gn-3421', 18],
+    ['gn-7099', 19],
+    ['gn-7104', 20],
+    ['gn-7093', 21],
+    ['gn-7107', 22],
+    ['gn-7112', 23],
+    ['gn-7090', 24],
+    ['gn-7110', 25],
+    ['gn-7089', 26],
+    ['gn-3419', 27],
+    ['gn-7096', 28],
+    ['gn-7100', 29],
+    ['gn-7102', 30],
+    ['gn-7095', 31],
+    ['gn-3422', 32],
+    ['gn-3423', 33]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "gn-7097",
-            "value": 0
-        },
-        {
-            "hc-key": "gn-7087",
-            "value": 1
-        },
-        {
-            "hc-key": "gn-7108",
-            "value": 2
-        },
-        {
-            "hc-key": "gn-3417",
-            "value": 3
-        },
-        {
-            "hc-key": "gn-7106",
-            "value": 4
-        },
-        {
-            "hc-key": "gn-3420",
-            "value": 5
-        },
-        {
-            "hc-key": "gn-7098",
-            "value": 6
-        },
-        {
-            "hc-key": "gn-7101",
-            "value": 7
-        },
-        {
-            "hc-key": "gn-7092",
-            "value": 8
-        },
-        {
-            "hc-key": "gn-7088",
-            "value": 9
-        },
-        {
-            "hc-key": "gn-7103",
-            "value": 10
-        },
-        {
-            "hc-key": "gn-3416",
-            "value": 11
-        },
-        {
-            "hc-key": "gn-7094",
-            "value": 12
-        },
-        {
-            "hc-key": "gn-7111",
-            "value": 13
-        },
-        {
-            "hc-key": "gn-7109",
-            "value": 14
-        },
-        {
-            "hc-key": "gn-7091",
-            "value": 15
-        },
-        {
-            "hc-key": "gn-3418",
-            "value": 16
-        },
-        {
-            "hc-key": "gn-7105",
-            "value": 17
-        },
-        {
-            "hc-key": "gn-3421",
-            "value": 18
-        },
-        {
-            "hc-key": "gn-7099",
-            "value": 19
-        },
-        {
-            "hc-key": "gn-7104",
-            "value": 20
-        },
-        {
-            "hc-key": "gn-7093",
-            "value": 21
-        },
-        {
-            "hc-key": "gn-7107",
-            "value": 22
-        },
-        {
-            "hc-key": "gn-7112",
-            "value": 23
-        },
-        {
-            "hc-key": "gn-7090",
-            "value": 24
-        },
-        {
-            "hc-key": "gn-7110",
-            "value": 25
-        },
-        {
-            "hc-key": "gn-7089",
-            "value": 26
-        },
-        {
-            "hc-key": "gn-3419",
-            "value": 27
-        },
-        {
-            "hc-key": "gn-7096",
-            "value": 28
-        },
-        {
-            "hc-key": "gn-7100",
-            "value": 29
-        },
-        {
-            "hc-key": "gn-7102",
-            "value": 30
-        },
-        {
-            "hc-key": "gn-7095",
-            "value": 31
-        },
-        {
-            "hc-key": "gn-3422",
-            "value": 32
-        },
-        {
-            "hc-key": "gn-3423",
-            "value": 33
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/gn/gn-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gn/gn-all.js">Guinea</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gn/gn-all.js">Guinea</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/gn/gn-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

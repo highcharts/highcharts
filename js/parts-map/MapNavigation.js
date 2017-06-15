@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -32,7 +32,6 @@ function stopEvent(e) {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  * @param {Chart} chart The Chart instance.
- * @class
  */
 function MapNavigation(chart) {
 	this.init(chart);
@@ -55,9 +54,6 @@ MapNavigation.prototype.init = function (chart) {
 MapNavigation.prototype.update = function (options) {
 	var chart = this.chart,
 		o = chart.options.mapNavigation,
-		buttons,
-		n,
-		button,
 		buttonOptions,
 		attr,
 		states,
@@ -83,59 +79,56 @@ MapNavigation.prototype.update = function (options) {
 	
 	if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
-		buttons = o.buttons;
-		for (n in buttons) {
+		H.objectEach(o.buttons, function (button, n) {
+			buttonOptions = merge(o.buttonOptions, button);
 			
-			if (buttons.hasOwnProperty(n)) {
-				buttonOptions = merge(o.buttonOptions, buttons[n]);
-
-				/*= if (build.classic) { =*/
-				// Presentational
-				attr = buttonOptions.theme;
-				attr.style = merge(
-					buttonOptions.theme.style,
-					buttonOptions.style // #3203
-				);
-				states = attr.states;
-				hoverStates = states && states.hover;
-				selectStates = states && states.select;
-				/*= } =*/
-
-				button = chart.renderer.button(
-						buttonOptions.text,
-						0,
-						0,
-						outerHandler,
-						attr,
-						hoverStates,
-						selectStates,
-						0,
-						n === 'zoomIn' ? 'topbutton' : 'bottombutton'
-					)
-					.addClass('highcharts-map-navigation')
-					.attr({
-						width: buttonOptions.width,
-						height: buttonOptions.height,
-						title: chart.options.lang[n],
-						padding: buttonOptions.padding,
-						zIndex: 5
-					})
-					.add();
-				button.handler = buttonOptions.onclick;
-				button.align(
-					extend(buttonOptions, {
-						width: button.width,
-						height: 2 * button.height
-					}),
-					null,
-					buttonOptions.alignTo
-				);
-				// Stop double click event (#4444)
-				addEvent(button.element, 'dblclick', stopEvent); 
-				
-				mapNavButtons.push(button);
-			}
-		}
+			/*= if (build.classic) { =*/
+			// Presentational
+			attr = buttonOptions.theme;
+			attr.style = merge(
+				buttonOptions.theme.style,
+				buttonOptions.style // #3203
+			);
+			states = attr.states;
+			hoverStates = states && states.hover;
+			selectStates = states && states.select;
+			/*= } =*/
+			
+			button = chart.renderer.button(
+				buttonOptions.text,
+				0,
+				0,
+				outerHandler,
+				attr,
+				hoverStates,
+				selectStates,
+				0,
+				n === 'zoomIn' ? 'topbutton' : 'bottombutton'
+			)
+			.addClass('highcharts-map-navigation')
+			.attr({
+				width: buttonOptions.width,
+				height: buttonOptions.height,
+				title: chart.options.lang[n],
+				padding: buttonOptions.padding,
+				zIndex: 5
+			})
+			.add();
+			button.handler = buttonOptions.onclick;
+			button.align(
+				extend(buttonOptions, {
+					width: button.width,
+					height: 2 * button.height
+				}),
+				null,
+				buttonOptions.alignTo
+			);
+			// Stop double click event (#4444)
+			addEvent(button.element, 'dblclick', stopEvent); 
+			
+			mapNavButtons.push(button);
+			
+		});
 	}
 
 	this.updateEvents(o);
@@ -187,7 +180,7 @@ MapNavigation.prototype.updateEvents = function (options) {
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, {
+extend(Chart.prototype, /** @lends Chart.prototype */ {
 
 	/**
 	 * Fit an inner box to an outer. If the inner box overflows left or right, align it to the sides of the
@@ -220,7 +213,24 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Zoom the map in or out by a certain amount. Less than 1 zooms in, greater than 1 zooms out.
+	 * Highmaps only. Zoom in or out of the map. See also {@link Point#zoomTo}.
+	 * See {@link Chart#fromLatLonToPoint} for how to get the `centerX` and
+	 * `centerY` parameters for a geographic location.
+	 *
+	 * @param  {Number} [howMuch]
+	 *         How much to zoom the map. Values less than 1 zooms in. 0.5 zooms
+	 *         in to half the current view. 2 zooms to twice the current view.
+	 *         If omitted, the zoom is reset.
+	 * @param  {Number} [centerX]
+	 *         The X axis position to center around if available space.
+	 * @param  {Number} [centerY]
+	 *         The Y axis position to center around if available space.
+	 * @param  {Number} [mouseX]
+	 *         Fix the zoom to this position if possible. This is used for
+	 *         example in mousewheel events, where the area under the mouse
+	 *         should be fixed as we zoom in.
+	 * @param  {Number} [mouseY]
+	 *         Fix the zoom to this position if possible.
 	 */
 	mapZoom: function (howMuch, centerXArg, centerYArg, mouseX, mouseY) {
 		/*if (this.isMapZooming) {

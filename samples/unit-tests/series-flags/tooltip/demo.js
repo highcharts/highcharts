@@ -4,7 +4,7 @@ $(function () {
                 yAxis: [{
                     top: 40,
                     height: 100
-                },{
+                }, {
                     top: 200,
                     height: 80
                 }],
@@ -34,7 +34,7 @@ $(function () {
             }),
             yAxis0 = chart.yAxis[0],
             yAxis1 = chart.yAxis[1],
-            ser0 = chart.series[2]
+            ser0 = chart.series[2],
             ser1 = chart.series[3],
             flag0 = ser0.points[0],
             flag1 = ser1.points[0];

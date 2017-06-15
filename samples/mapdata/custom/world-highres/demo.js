@@ -1,897 +1,258 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['fo', 0],
+    ['um', 1],
+    ['us', 2],
+    ['jp', 3],
+    ['sc', 4],
+    ['in', 5],
+    ['fr', 6],
+    ['fm', 7],
+    ['cn', 8],
+    ['sw', 9],
+    ['sh', 10],
+    ['br', 11],
+    ['ec', 12],
+    ['au', 13],
+    ['ki', 14],
+    ['ph', 15],
+    ['mx', 16],
+    ['es', 17],
+    ['bu', 18],
+    ['mv', 19],
+    ['sp', 20],
+    ['gb', 21],
+    ['gr', 22],
+    ['as', 23],
+    ['dk', 24],
+    ['gl', 25],
+    ['gu', 26],
+    ['mp', 27],
+    ['pr', 28],
+    ['vi', 29],
+    ['ca', 30],
+    ['st', 31],
+    ['tz', 32],
+    ['cv', 33],
+    ['dm', 34],
+    ['nl', 35],
+    ['jm', 36],
+    ['ws', 37],
+    ['om', 38],
+    ['vc', 39],
+    ['tr', 40],
+    ['bd', 41],
+    ['sb', 42],
+    ['lc', 43],
+    ['nr', 44],
+    ['no', 45],
+    ['kn', 46],
+    ['bh', 47],
+    ['to', 48],
+    ['fi', 49],
+    ['id', 50],
+    ['mu', 51],
+    ['se', 52],
+    ['tt', 53],
+    ['my', 54],
+    ['bs', 55],
+    ['pa', 56],
+    ['pw', 57],
+    ['tv', 58],
+    ['mh', 59],
+    ['cl', 60],
+    ['th', 61],
+    ['gd', 62],
+    ['ee', 63],
+    ['ag', 64],
+    ['tw', 65],
+    ['bb', 66],
+    ['it', 67],
+    ['mt', 68],
+    ['pg', 69],
+    ['de', 70],
+    ['vu', 71],
+    ['sg', 72],
+    ['cy', 73],
+    ['km', 74],
+    ['fj', 75],
+    ['ru', 76],
+    ['va', 77],
+    ['sm', 78],
+    ['kz', 79],
+    ['az', 80],
+    ['am', 81],
+    ['tj', 82],
+    ['ls', 83],
+    ['uz', 84],
+    ['pt', 85],
+    ['ma', 86],
+    ['co', 87],
+    ['tl', 88],
+    ['kh', 89],
+    ['ar', 90],
+    ['sa', 91],
+    ['pk', 92],
+    ['ye', 93],
+    ['ae', 94],
+    ['ke', 95],
+    ['pe', 96],
+    ['do', 97],
+    ['ht', 98],
+    ['ao', 99],
+    ['vn', 100],
+    ['mz', 101],
+    ['cr', 102],
+    ['ir', 103],
+    ['sv', 104],
+    ['sl', 105],
+    ['gw', 106],
+    ['hr', 107],
+    ['bz', 108],
+    ['za', 109],
+    ['cd', 110],
+    ['kw', 111],
+    ['ie', 112],
+    ['kp', 113],
+    ['kr', 114],
+    ['gy', 115],
+    ['hn', 116],
+    ['mm', 117],
+    ['ga', 118],
+    ['gq', 119],
+    ['ni', 120],
+    ['ug', 121],
+    ['mw', 122],
+    ['sx', 123],
+    ['tm', 124],
+    ['zm', 125],
+    ['nc', 126],
+    ['mr', 127],
+    ['dz', 128],
+    ['lt', 129],
+    ['et', 130],
+    ['sd', 131],
+    ['er', 132],
+    ['gh', 133],
+    ['si', 134],
+    ['gt', 135],
+    ['ba', 136],
+    ['jo', 137],
+    ['sy', 138],
+    ['mc', 139],
+    ['al', 140],
+    ['uy', 141],
+    ['cnm', 142],
+    ['mn', 143],
+    ['rw', 144],
+    ['so', 145],
+    ['bo', 146],
+    ['cm', 147],
+    ['cg', 148],
+    ['eh', 149],
+    ['rs', 150],
+    ['me', 151],
+    ['bj', 152],
+    ['ng', 153],
+    ['tg', 154],
+    ['la', 155],
+    ['af', 156],
+    ['ua', 157],
+    ['sk', 158],
+    ['jk', 159],
+    ['bg', 160],
+    ['qa', 161],
+    ['li', 162],
+    ['at', 163],
+    ['sz', 164],
+    ['hu', 165],
+    ['ro', 166],
+    ['lu', 167],
+    ['ad', 168],
+    ['ci', 169],
+    ['lr', 170],
+    ['bn', 171],
+    ['be', 172],
+    ['iq', 173],
+    ['ge', 174],
+    ['gm', 175],
+    ['ch', 176],
+    ['td', 177],
+    ['kv', 178],
+    ['lb', 179],
+    ['dj', 180],
+    ['bi', 181],
+    ['sr', 182],
+    ['il', 183],
+    ['ml', 184],
+    ['sn', 185],
+    ['gn', 186],
+    ['zw', 187],
+    ['pl', 188],
+    ['mk', 189],
+    ['py', 190],
+    ['by', 191],
+    ['lv', 192],
+    ['cz', 193],
+    ['bf', 194],
+    ['na', 195],
+    ['ne', 196],
+    ['ly', 197],
+    ['tn', 198],
+    ['bt', 199],
+    ['md', 200],
+    ['ss', 201],
+    ['cf', 202],
+    ['nz', 203],
+    ['cu', 204],
+    ['ve', 205],
+    ['mg', 206],
+    ['is', 207],
+    ['eg', 208],
+    ['lk', 209],
+    ['bw', 210],
+    ['kg', 211],
+    ['np', 212]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "fo",
-            "value": 0
-        },
-        {
-            "hc-key": "um",
-            "value": 1
-        },
-        {
-            "hc-key": "us",
-            "value": 2
-        },
-        {
-            "hc-key": "jp",
-            "value": 3
-        },
-        {
-            "hc-key": "sc",
-            "value": 4
-        },
-        {
-            "hc-key": "in",
-            "value": 5
-        },
-        {
-            "hc-key": "fr",
-            "value": 6
-        },
-        {
-            "hc-key": "fm",
-            "value": 7
-        },
-        {
-            "hc-key": "cn",
-            "value": 8
-        },
-        {
-            "hc-key": "sw",
-            "value": 9
-        },
-        {
-            "hc-key": "sh",
-            "value": 10
-        },
-        {
-            "hc-key": "br",
-            "value": 11
-        },
-        {
-            "hc-key": "ec",
-            "value": 12
-        },
-        {
-            "hc-key": "au",
-            "value": 13
-        },
-        {
-            "hc-key": "ki",
-            "value": 14
-        },
-        {
-            "hc-key": "ph",
-            "value": 15
-        },
-        {
-            "hc-key": "mx",
-            "value": 16
-        },
-        {
-            "hc-key": "es",
-            "value": 17
-        },
-        {
-            "hc-key": "bu",
-            "value": 18
-        },
-        {
-            "hc-key": "mv",
-            "value": 19
-        },
-        {
-            "hc-key": "sp",
-            "value": 20
-        },
-        {
-            "hc-key": "gb",
-            "value": 21
-        },
-        {
-            "hc-key": "gr",
-            "value": 22
-        },
-        {
-            "hc-key": "as",
-            "value": 23
-        },
-        {
-            "hc-key": "dk",
-            "value": 24
-        },
-        {
-            "hc-key": "gl",
-            "value": 25
-        },
-        {
-            "hc-key": "gu",
-            "value": 26
-        },
-        {
-            "hc-key": "mp",
-            "value": 27
-        },
-        {
-            "hc-key": "pr",
-            "value": 28
-        },
-        {
-            "hc-key": "vi",
-            "value": 29
-        },
-        {
-            "hc-key": "ca",
-            "value": 30
-        },
-        {
-            "hc-key": "st",
-            "value": 31
-        },
-        {
-            "hc-key": "tz",
-            "value": 32
-        },
-        {
-            "hc-key": "cv",
-            "value": 33
-        },
-        {
-            "hc-key": "dm",
-            "value": 34
-        },
-        {
-            "hc-key": "nl",
-            "value": 35
-        },
-        {
-            "hc-key": "jm",
-            "value": 36
-        },
-        {
-            "hc-key": "ws",
-            "value": 37
-        },
-        {
-            "hc-key": "om",
-            "value": 38
-        },
-        {
-            "hc-key": "vc",
-            "value": 39
-        },
-        {
-            "hc-key": "tr",
-            "value": 40
-        },
-        {
-            "hc-key": "bd",
-            "value": 41
-        },
-        {
-            "hc-key": "sb",
-            "value": 42
-        },
-        {
-            "hc-key": "lc",
-            "value": 43
-        },
-        {
-            "hc-key": "nr",
-            "value": 44
-        },
-        {
-            "hc-key": "no",
-            "value": 45
-        },
-        {
-            "hc-key": "kn",
-            "value": 46
-        },
-        {
-            "hc-key": "bh",
-            "value": 47
-        },
-        {
-            "hc-key": "to",
-            "value": 48
-        },
-        {
-            "hc-key": "fi",
-            "value": 49
-        },
-        {
-            "hc-key": "id",
-            "value": 50
-        },
-        {
-            "hc-key": "mu",
-            "value": 51
-        },
-        {
-            "hc-key": "se",
-            "value": 52
-        },
-        {
-            "hc-key": "tt",
-            "value": 53
-        },
-        {
-            "hc-key": "my",
-            "value": 54
-        },
-        {
-            "hc-key": "bs",
-            "value": 55
-        },
-        {
-            "hc-key": "pa",
-            "value": 56
-        },
-        {
-            "hc-key": "pw",
-            "value": 57
-        },
-        {
-            "hc-key": "tv",
-            "value": 58
-        },
-        {
-            "hc-key": "mh",
-            "value": 59
-        },
-        {
-            "hc-key": "cl",
-            "value": 60
-        },
-        {
-            "hc-key": "th",
-            "value": 61
-        },
-        {
-            "hc-key": "gd",
-            "value": 62
-        },
-        {
-            "hc-key": "ee",
-            "value": 63
-        },
-        {
-            "hc-key": "ag",
-            "value": 64
-        },
-        {
-            "hc-key": "tw",
-            "value": 65
-        },
-        {
-            "hc-key": "bb",
-            "value": 66
-        },
-        {
-            "hc-key": "it",
-            "value": 67
-        },
-        {
-            "hc-key": "mt",
-            "value": 68
-        },
-        {
-            "hc-key": "pg",
-            "value": 69
-        },
-        {
-            "hc-key": "de",
-            "value": 70
-        },
-        {
-            "hc-key": "vu",
-            "value": 71
-        },
-        {
-            "hc-key": "sg",
-            "value": 72
-        },
-        {
-            "hc-key": "cy",
-            "value": 73
-        },
-        {
-            "hc-key": "km",
-            "value": 74
-        },
-        {
-            "hc-key": "fj",
-            "value": 75
-        },
-        {
-            "hc-key": "ru",
-            "value": 76
-        },
-        {
-            "hc-key": "va",
-            "value": 77
-        },
-        {
-            "hc-key": "sm",
-            "value": 78
-        },
-        {
-            "hc-key": "kz",
-            "value": 79
-        },
-        {
-            "hc-key": "az",
-            "value": 80
-        },
-        {
-            "hc-key": "am",
-            "value": 81
-        },
-        {
-            "hc-key": "tj",
-            "value": 82
-        },
-        {
-            "hc-key": "ls",
-            "value": 83
-        },
-        {
-            "hc-key": "uz",
-            "value": 84
-        },
-        {
-            "hc-key": "pt",
-            "value": 85
-        },
-        {
-            "hc-key": "ma",
-            "value": 86
-        },
-        {
-            "hc-key": "co",
-            "value": 87
-        },
-        {
-            "hc-key": "tl",
-            "value": 88
-        },
-        {
-            "hc-key": "kh",
-            "value": 89
-        },
-        {
-            "hc-key": "ar",
-            "value": 90
-        },
-        {
-            "hc-key": "sa",
-            "value": 91
-        },
-        {
-            "hc-key": "pk",
-            "value": 92
-        },
-        {
-            "hc-key": "ye",
-            "value": 93
-        },
-        {
-            "hc-key": "ae",
-            "value": 94
-        },
-        {
-            "hc-key": "ke",
-            "value": 95
-        },
-        {
-            "hc-key": "pe",
-            "value": 96
-        },
-        {
-            "hc-key": "do",
-            "value": 97
-        },
-        {
-            "hc-key": "ht",
-            "value": 98
-        },
-        {
-            "hc-key": "ao",
-            "value": 99
-        },
-        {
-            "hc-key": "vn",
-            "value": 100
-        },
-        {
-            "hc-key": "mz",
-            "value": 101
-        },
-        {
-            "hc-key": "cr",
-            "value": 102
-        },
-        {
-            "hc-key": "ir",
-            "value": 103
-        },
-        {
-            "hc-key": "sv",
-            "value": 104
-        },
-        {
-            "hc-key": "sl",
-            "value": 105
-        },
-        {
-            "hc-key": "gw",
-            "value": 106
-        },
-        {
-            "hc-key": "hr",
-            "value": 107
-        },
-        {
-            "hc-key": "bz",
-            "value": 108
-        },
-        {
-            "hc-key": "za",
-            "value": 109
-        },
-        {
-            "hc-key": "cd",
-            "value": 110
-        },
-        {
-            "hc-key": "kw",
-            "value": 111
-        },
-        {
-            "hc-key": "ie",
-            "value": 112
-        },
-        {
-            "hc-key": "kp",
-            "value": 113
-        },
-        {
-            "hc-key": "kr",
-            "value": 114
-        },
-        {
-            "hc-key": "gy",
-            "value": 115
-        },
-        {
-            "hc-key": "hn",
-            "value": 116
-        },
-        {
-            "hc-key": "mm",
-            "value": 117
-        },
-        {
-            "hc-key": "ga",
-            "value": 118
-        },
-        {
-            "hc-key": "gq",
-            "value": 119
-        },
-        {
-            "hc-key": "ni",
-            "value": 120
-        },
-        {
-            "hc-key": "ug",
-            "value": 121
-        },
-        {
-            "hc-key": "mw",
-            "value": 122
-        },
-        {
-            "hc-key": "sx",
-            "value": 123
-        },
-        {
-            "hc-key": "tm",
-            "value": 124
-        },
-        {
-            "hc-key": "zm",
-            "value": 125
-        },
-        {
-            "hc-key": "nc",
-            "value": 126
-        },
-        {
-            "hc-key": "mr",
-            "value": 127
-        },
-        {
-            "hc-key": "dz",
-            "value": 128
-        },
-        {
-            "hc-key": "lt",
-            "value": 129
-        },
-        {
-            "hc-key": "et",
-            "value": 130
-        },
-        {
-            "hc-key": "sd",
-            "value": 131
-        },
-        {
-            "hc-key": "er",
-            "value": 132
-        },
-        {
-            "hc-key": "gh",
-            "value": 133
-        },
-        {
-            "hc-key": "si",
-            "value": 134
-        },
-        {
-            "hc-key": "gt",
-            "value": 135
-        },
-        {
-            "hc-key": "ba",
-            "value": 136
-        },
-        {
-            "hc-key": "jo",
-            "value": 137
-        },
-        {
-            "hc-key": "sy",
-            "value": 138
-        },
-        {
-            "hc-key": "mc",
-            "value": 139
-        },
-        {
-            "hc-key": "al",
-            "value": 140
-        },
-        {
-            "hc-key": "uy",
-            "value": 141
-        },
-        {
-            "hc-key": "cnm",
-            "value": 142
-        },
-        {
-            "hc-key": "mn",
-            "value": 143
-        },
-        {
-            "hc-key": "rw",
-            "value": 144
-        },
-        {
-            "hc-key": "so",
-            "value": 145
-        },
-        {
-            "hc-key": "bo",
-            "value": 146
-        },
-        {
-            "hc-key": "cm",
-            "value": 147
-        },
-        {
-            "hc-key": "cg",
-            "value": 148
-        },
-        {
-            "hc-key": "eh",
-            "value": 149
-        },
-        {
-            "hc-key": "rs",
-            "value": 150
-        },
-        {
-            "hc-key": "me",
-            "value": 151
-        },
-        {
-            "hc-key": "bj",
-            "value": 152
-        },
-        {
-            "hc-key": "ng",
-            "value": 153
-        },
-        {
-            "hc-key": "tg",
-            "value": 154
-        },
-        {
-            "hc-key": "la",
-            "value": 155
-        },
-        {
-            "hc-key": "af",
-            "value": 156
-        },
-        {
-            "hc-key": "ua",
-            "value": 157
-        },
-        {
-            "hc-key": "sk",
-            "value": 158
-        },
-        {
-            "hc-key": "jk",
-            "value": 159
-        },
-        {
-            "hc-key": "bg",
-            "value": 160
-        },
-        {
-            "hc-key": "qa",
-            "value": 161
-        },
-        {
-            "hc-key": "li",
-            "value": 162
-        },
-        {
-            "hc-key": "at",
-            "value": 163
-        },
-        {
-            "hc-key": "sz",
-            "value": 164
-        },
-        {
-            "hc-key": "hu",
-            "value": 165
-        },
-        {
-            "hc-key": "ro",
-            "value": 166
-        },
-        {
-            "hc-key": "lu",
-            "value": 167
-        },
-        {
-            "hc-key": "ad",
-            "value": 168
-        },
-        {
-            "hc-key": "ci",
-            "value": 169
-        },
-        {
-            "hc-key": "lr",
-            "value": 170
-        },
-        {
-            "hc-key": "bn",
-            "value": 171
-        },
-        {
-            "hc-key": "be",
-            "value": 172
-        },
-        {
-            "hc-key": "iq",
-            "value": 173
-        },
-        {
-            "hc-key": "ge",
-            "value": 174
-        },
-        {
-            "hc-key": "gm",
-            "value": 175
-        },
-        {
-            "hc-key": "ch",
-            "value": 176
-        },
-        {
-            "hc-key": "td",
-            "value": 177
-        },
-        {
-            "hc-key": "kv",
-            "value": 178
-        },
-        {
-            "hc-key": "lb",
-            "value": 179
-        },
-        {
-            "hc-key": "dj",
-            "value": 180
-        },
-        {
-            "hc-key": "bi",
-            "value": 181
-        },
-        {
-            "hc-key": "sr",
-            "value": 182
-        },
-        {
-            "hc-key": "il",
-            "value": 183
-        },
-        {
-            "hc-key": "ml",
-            "value": 184
-        },
-        {
-            "hc-key": "sn",
-            "value": 185
-        },
-        {
-            "hc-key": "gn",
-            "value": 186
-        },
-        {
-            "hc-key": "zw",
-            "value": 187
-        },
-        {
-            "hc-key": "pl",
-            "value": 188
-        },
-        {
-            "hc-key": "mk",
-            "value": 189
-        },
-        {
-            "hc-key": "py",
-            "value": 190
-        },
-        {
-            "hc-key": "by",
-            "value": 191
-        },
-        {
-            "hc-key": "lv",
-            "value": 192
-        },
-        {
-            "hc-key": "cz",
-            "value": 193
-        },
-        {
-            "hc-key": "bf",
-            "value": 194
-        },
-        {
-            "hc-key": "na",
-            "value": 195
-        },
-        {
-            "hc-key": "ne",
-            "value": 196
-        },
-        {
-            "hc-key": "ly",
-            "value": 197
-        },
-        {
-            "hc-key": "tn",
-            "value": 198
-        },
-        {
-            "hc-key": "bt",
-            "value": 199
-        },
-        {
-            "hc-key": "md",
-            "value": 200
-        },
-        {
-            "hc-key": "ss",
-            "value": 201
-        },
-        {
-            "hc-key": "cf",
-            "value": 202
-        },
-        {
-            "hc-key": "nz",
-            "value": 203
-        },
-        {
-            "hc-key": "cu",
-            "value": 204
-        },
-        {
-            "hc-key": "ve",
-            "value": 205
-        },
-        {
-            "hc-key": "mg",
-            "value": 206
-        },
-        {
-            "hc-key": "is",
-            "value": 207
-        },
-        {
-            "hc-key": "eg",
-            "value": 208
-        },
-        {
-            "hc-key": "lk",
-            "value": 209
-        },
-        {
-            "hc-key": "bw",
-            "value": 210
-        },
-        {
-            "hc-key": "kg",
-            "value": 211
-        },
-        {
-            "hc-key": "np",
-            "value": 212
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'custom/world-highres'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-highres.js">World, Miller projection, high resolution</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title: {
-            text: 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-highres.js">World, Miller projection, high resolution</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series: [{
-            data: data,
-            mapData: Highcharts.maps['custom/world-highres'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

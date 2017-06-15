@@ -1,117 +1,63 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['no-te-830', 0],
+    ['no-te-827', 1],
+    ['no-te-826', 2],
+    ['no-te-814', 3],
+    ['no-te-815', 4],
+    ['no-te-817', 5],
+    ['no-te-831', 6],
+    ['no-te-807', 7],
+    ['no-te-821', 8],
+    ['no-te-805', 9],
+    ['no-te-834', 10],
+    ['no-te-811', 11],
+    ['no-te-829', 12],
+    ['no-te-828', 13],
+    ['no-te-822', 14],
+    ['no-te-819', 15],
+    ['no-te-806', 16],
+    ['no-te-833', 17]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "no-te-830",
-            "value": 0
-        },
-        {
-            "hc-key": "no-te-827",
-            "value": 1
-        },
-        {
-            "hc-key": "no-te-826",
-            "value": 2
-        },
-        {
-            "hc-key": "no-te-814",
-            "value": 3
-        },
-        {
-            "hc-key": "no-te-815",
-            "value": 4
-        },
-        {
-            "hc-key": "no-te-817",
-            "value": 5
-        },
-        {
-            "hc-key": "no-te-831",
-            "value": 6
-        },
-        {
-            "hc-key": "no-te-807",
-            "value": 7
-        },
-        {
-            "hc-key": "no-te-821",
-            "value": 8
-        },
-        {
-            "hc-key": "no-te-805",
-            "value": 9
-        },
-        {
-            "hc-key": "no-te-834",
-            "value": 10
-        },
-        {
-            "hc-key": "no-te-811",
-            "value": 11
-        },
-        {
-            "hc-key": "no-te-829",
-            "value": 12
-        },
-        {
-            "hc-key": "no-te-828",
-            "value": 13
-        },
-        {
-            "hc-key": "no-te-822",
-            "value": 14
-        },
-        {
-            "hc-key": "no-te-819",
-            "value": 15
-        },
-        {
-            "hc-key": "no-te-806",
-            "value": 16
-        },
-        {
-            "hc-key": "no-te-833",
-            "value": 17
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/no/no-te-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-te-all.js">Telemark</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-te-all.js">Telemark</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/no/no-te-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

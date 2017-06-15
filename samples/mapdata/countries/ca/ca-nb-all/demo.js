@@ -1,105 +1,60 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['ca-nb-1315', 0],
+    ['ca-nb-1302', 1],
+    ['ca-nb-1314', 2],
+    ['ca-nb-1308', 3],
+    ['ca-nb-1304', 4],
+    ['ca-nb-1306', 5],
+    ['ca-nb-1305', 6],
+    ['ca-nb-1312', 7],
+    ['ca-nb-1311', 8],
+    ['ca-nb-1310', 9],
+    ['ca-nb-1313', 10],
+    ['ca-nb-1307', 11],
+    ['ca-nb-1303', 12],
+    ['ca-nb-1309', 13],
+    ['ca-nb-1301', 14]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "ca-nb-1315",
-            "value": 0
-        },
-        {
-            "hc-key": "ca-nb-1302",
-            "value": 1
-        },
-        {
-            "hc-key": "ca-nb-1314",
-            "value": 2
-        },
-        {
-            "hc-key": "ca-nb-1308",
-            "value": 3
-        },
-        {
-            "hc-key": "ca-nb-1304",
-            "value": 4
-        },
-        {
-            "hc-key": "ca-nb-1306",
-            "value": 5
-        },
-        {
-            "hc-key": "ca-nb-1305",
-            "value": 6
-        },
-        {
-            "hc-key": "ca-nb-1312",
-            "value": 7
-        },
-        {
-            "hc-key": "ca-nb-1311",
-            "value": 8
-        },
-        {
-            "hc-key": "ca-nb-1310",
-            "value": 9
-        },
-        {
-            "hc-key": "ca-nb-1313",
-            "value": 10
-        },
-        {
-            "hc-key": "ca-nb-1307",
-            "value": 11
-        },
-        {
-            "hc-key": "ca-nb-1303",
-            "value": 12
-        },
-        {
-            "hc-key": "ca-nb-1309",
-            "value": 13
-        },
-        {
-            "hc-key": "ca-nb-1301",
-            "value": 14
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/ca/ca-nb-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nb-all.js">New Brunswick</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-nb-all.js">New Brunswick</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/ca/ca-nb-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

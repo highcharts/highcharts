@@ -116,7 +116,7 @@ body.single-col #frame-row {
 }
 body.unit iframe {
 	width: 100%;
-	height: 600px;
+	height: 100vh;
 	border: none;
 }
 body.manual iframe {
@@ -133,8 +133,11 @@ body.manual #comment-placeholder {
 }
 
 .test-notes {
-	margin: 1em;
-	max-width: 600px;
+	margin: 0 0 1em 0;
+	padding: 1em;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background-color: #efefef;
 }
 .test-notes header {
 	font-weight: bold;

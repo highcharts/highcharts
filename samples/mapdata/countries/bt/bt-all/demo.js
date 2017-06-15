@@ -1,125 +1,65 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['bt-ty', 0],
+    ['bt-sg', 1],
+    ['bt-to', 2],
+    ['bt-wp', 3],
+    ['bt-mo', 4],
+    ['bt-pm', 5],
+    ['bt-sj', 6],
+    ['bt-ta', 7],
+    ['bt-ck', 8],
+    ['bt-da', 9],
+    ['bt-ha', 10],
+    ['bt-pr', 11],
+    ['bt-sm', 12],
+    ['bt-tm', 13],
+    ['bt-ga', 14],
+    ['bt-pn', 15],
+    ['bt-cr', 16],
+    ['bt-ge', 17],
+    ['bt-bu', 18],
+    ['bt-lh', 19]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "bt-ty",
-            "value": 0
-        },
-        {
-            "hc-key": "bt-sg",
-            "value": 1
-        },
-        {
-            "hc-key": "bt-to",
-            "value": 2
-        },
-        {
-            "hc-key": "bt-wp",
-            "value": 3
-        },
-        {
-            "hc-key": "bt-mo",
-            "value": 4
-        },
-        {
-            "hc-key": "bt-pm",
-            "value": 5
-        },
-        {
-            "hc-key": "bt-sj",
-            "value": 6
-        },
-        {
-            "hc-key": "bt-ta",
-            "value": 7
-        },
-        {
-            "hc-key": "bt-ck",
-            "value": 8
-        },
-        {
-            "hc-key": "bt-da",
-            "value": 9
-        },
-        {
-            "hc-key": "bt-ha",
-            "value": 10
-        },
-        {
-            "hc-key": "bt-pr",
-            "value": 11
-        },
-        {
-            "hc-key": "bt-sm",
-            "value": 12
-        },
-        {
-            "hc-key": "bt-tm",
-            "value": 13
-        },
-        {
-            "hc-key": "bt-ga",
-            "value": 14
-        },
-        {
-            "hc-key": "bt-pn",
-            "value": 15
-        },
-        {
-            "hc-key": "bt-cr",
-            "value": 16
-        },
-        {
-            "hc-key": "bt-ge",
-            "value": 17
-        },
-        {
-            "hc-key": "bt-bu",
-            "value": 18
-        },
-        {
-            "hc-key": "bt-lh",
-            "value": 19
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/bt/bt-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bt/bt-all.js">Bhutan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bt/bt-all.js">Bhutan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/bt/bt-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

@@ -1,7 +1,7 @@
 /**
  * Accessibility module
  *
- * (c) 2010-2016 Highsoft AS
+ * (c) 2010-2017 Highsoft AS
  * Author: Oystein Moseng
  *
  * License: www.highcharts.com/license
@@ -147,14 +147,21 @@ H.Series.prototype.setA11yDescription = function () {
 				if (point.graphic) {
 					point.graphic.element.setAttribute('role', 'img');
 					point.graphic.element.setAttribute('tabindex', '-1');
-					point.graphic.element.setAttribute('aria-label', a11yOptions.pointDescriptionFormatter && a11yOptions.pointDescriptionFormatter(point) ||
+					point.graphic.element.setAttribute('aria-label', 
+						point.series.options.pointDescriptionFormatter && 
+						point.series.options.pointDescriptionFormatter(point) ||
+						a11yOptions.pointDescriptionFormatter && 
+						a11yOptions.pointDescriptionFormatter(point) ||
 						point.buildPointInfoString());
 				}
 			});
 		}
 		// Make series element accessible
 		if (this.chart.series.length > 1 || a11yOptions.describeSingleSeries) {
-			seriesEl.setAttribute('role', 'region');
+			seriesEl.setAttribute(
+				'role', 
+				this.options.exposeElementToA11y ? 'img' : 'region'
+			);
 			seriesEl.setAttribute('tabindex', '-1');
 			seriesEl.setAttribute('aria-label', a11yOptions.seriesDescriptionFormatter && a11yOptions.seriesDescriptionFormatter(this) ||
 				this.buildSeriesInfoString());
@@ -399,9 +406,12 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		return false;
 	}
 
-	// Recursively skip null points
-	if (newPoint.isNull && this.options.accessibility.keyboardNavigation &&
-			this.options.accessibility.keyboardNavigation.skipNullPoints) {
+	// Recursively skip null points or points in series that should be skipped
+	if (
+		newPoint.isNull && 
+		this.options.accessibility.keyboardNavigation.skipNullPoints ||
+		newPoint.series.options.skipKeyboardNavigation
+	) {
 		this.highlightedPoint = newPoint;
 		return this.highlightAdjacentPoint(next);
 	}
@@ -498,12 +508,14 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 	// The module's keyCode handlers determine when to move to another module.
 	// Validate holds a function to determine if there are prerequisites for this module to run that are not met.
 	// Init holds a function to run once before any keyCodes are interpreted.
+	// Terminate holds a function to run once before moving to next/prev module.
 	// transformTabs determines whether to transform tabs to left/right events or not. Defaults to true.
 	function KeyboardNavigationModule(options) {
 		this.keyCodeMap = options.keyCodeMap;
 		this.move = options.move;
 		this.validate = options.validate;
 		this.init = options.init;
+		this.terminate = options.terminate;
 		this.transformTabs = options.transformTabs !== false;
 	}
 	KeyboardNavigationModule.prototype = {
@@ -529,6 +541,9 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Move to next/prev valid module, or undefined if none, and init it.
 			// Returns true on success and false if there is no valid module to move to.
 			move: function (direction) {
+				if (this.terminate) {
+					this.terminate(direction);
+				}
 				chart.keyboardNavigationModuleIndex += direction;
 				var newModule = chart.keyboardNavigationModules[chart.keyboardNavigationModuleIndex];
 				if (newModule) {
@@ -611,6 +626,13 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				if (direction < 0 && lastPoint) {
 					lastPoint.highlight();
 				}
+			},
+			// If leaving points, don't show tooltip anymore
+			terminate: function () {
+				if (chart.tooltip) {
+					chart.tooltip.hide(0);
+				}
+				delete chart.highlightedPoint;
 			}
 		}),
 
@@ -817,8 +839,10 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			}]
 		], {
 			// Only run this module if we have at least one legend - wait for it - item.
+			// Don't run if the legend is populated by a colorAxis.
 			validate: function () {
-				return chart.legend && chart.legend.allItems && !chart.colorAxis;
+				return chart.legend && chart.legend.allItems &&
+					!(chart.colorAxis && chart.colorAxis.length);
 			},
 
 			// Make elements focusable and accessible
@@ -892,7 +916,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 		(axesDesc.xAxis ? ('<div>' + axesDesc.xAxis + '</div>') : '') +
 		(axesDesc.yAxis ? ('<div>' + axesDesc.yAxis + '</div>') : '');
 
-	// Add shortcut to data table if export-csv is loaded
+	// Add shortcut to data table if export-data is loaded
 	if (chart.getCSV) {
 		tableShortcutAnchor.innerHTML = 'View as data table.';
 		tableShortcutAnchor.href = '#' + tableId;
@@ -942,7 +966,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	titleElement.id = titleId;
 	descElement.parentNode.insertBefore(titleElement, descElement);
 	chart.renderTo.setAttribute('role', 'region');
-	chart.container.setAttribute('aria-details', hiddenSectionId);
+	//chart.container.setAttribute('aria-details', hiddenSectionId); // JAWS currently doesn't handle this too well
 	chart.renderTo.setAttribute('aria-label', 'Interactive chart. ' + chartTitle +
 		'. Use up and down arrows to navigate with most screen readers.');
 
@@ -984,31 +1008,38 @@ H.Chart.prototype.callbacks.push(function (chart) {
 	chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
 	// Enable keyboard navigation
-	if (a11yOptions.keyboardNavigation) {
+	if (a11yOptions.keyboardNavigation.enabled) {
 		chart.addKeyboardNavEvents();
 	}
 
-	/* Wrap table functionality from export-csv */
+	/* Wrap table functionality from export-data */
 
 	// Keep track of columns
 	merge(true, options.exporting, {
 		csv: {
-			columnHeaderFormatter: function (series, key, keyLength) {
+			columnHeaderFormatter: function (item, key, keyLength) {
+				if (!item) {
+					return 'Category';
+				}
+				if (item instanceof H.Axis) {
+					return (item.options.title && item.options.title.text) ||
+						(item.isDatetimeAxis ? 'DateTime' : 'Category');
+				}
 				var prevCol = topLevelColumns[topLevelColumns.length - 1];
 				if (keyLength > 1) {
 					// We need multiple levels of column headers
-					// Populate a list of column headers to add in addition to the ones added by export-csv
-					if ((prevCol && prevCol.text) !== series.name) {
+					// Populate a list of column headers to add in addition to the ones added by export-data
+					if ((prevCol && prevCol.text) !== item.name) {
 						topLevelColumns.push({
-							text: series.name,
+							text: item.name,
 							span: keyLength
 						});
 					}
 				}
 				if (oldColumnHeaderFormatter) {
-					return oldColumnHeaderFormatter.call(this, series, key, keyLength);
+					return oldColumnHeaderFormatter.call(this, item, key, keyLength);
 				}
-				return keyLength > 1 ? key : series.name;
+				return keyLength > 1 ? key : item.name;
 			}
 		}
 	});
@@ -1021,12 +1052,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
 	// Add accessibility attributes and top level columns
 	H.wrap(chart, 'viewData', function (proceed) {
-		if (!this.insertedTable) {
+		if (!this.dataTableDiv) {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 			var table = doc.getElementById(tableId),
+				head = table.getElementsByTagName('thead')[0],
 				body = table.getElementsByTagName('tbody')[0],
-				firstRow = body.firstChild.children,
+				firstRow = head.firstChild.children,
 				columnHeaderRow = '<tr><td></td>',
 				cell,
 				newCell;
@@ -1055,7 +1087,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
 				each(topLevelColumns, function (col) {
 					columnHeaderRow += '<th scope="col" colspan="' + col.span + '">' + col.text + '</th>';
 				});
-				body.insertAdjacentHTML('afterbegin', columnHeaderRow);
+				head.insertAdjacentHTML('afterbegin', columnHeaderRow);
 			}
 		}
 	});

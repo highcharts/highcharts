@@ -1,149 +1,71 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['pe-ic', 0],
+    ['pe-cs', 1],
+    ['pe-uc', 2],
+    ['pe-md', 3],
+    ['pe-sm', 4],
+    ['pe-am', 5],
+    ['pe-lo', 6],
+    ['pe-ay', 7],
+    ['pe-145', 8],
+    ['pe-hv', 9],
+    ['pe-ju', 10],
+    ['pe-lr', 11],
+    ['pe-lb', 12],
+    ['pe-tu', 13],
+    ['pe-ap', 14],
+    ['pe-ar', 15],
+    ['pe-cl', 16],
+    ['pe-mq', 17],
+    ['pe-ta', 18],
+    ['pe-an', 19],
+    ['pe-cj', 20],
+    ['pe-hc', 21],
+    ['pe-3341', 22],
+    ['pe-ll', 23],
+    ['pe-pa', 24],
+    ['pe-pi', 25]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "pe-ic",
-            "value": 0
-        },
-        {
-            "hc-key": "pe-cs",
-            "value": 1
-        },
-        {
-            "hc-key": "pe-uc",
-            "value": 2
-        },
-        {
-            "hc-key": "pe-md",
-            "value": 3
-        },
-        {
-            "hc-key": "pe-sm",
-            "value": 4
-        },
-        {
-            "hc-key": "pe-am",
-            "value": 5
-        },
-        {
-            "hc-key": "pe-lo",
-            "value": 6
-        },
-        {
-            "hc-key": "pe-ay",
-            "value": 7
-        },
-        {
-            "hc-key": "pe-145",
-            "value": 8
-        },
-        {
-            "hc-key": "pe-hv",
-            "value": 9
-        },
-        {
-            "hc-key": "pe-ju",
-            "value": 10
-        },
-        {
-            "hc-key": "pe-lr",
-            "value": 11
-        },
-        {
-            "hc-key": "pe-lb",
-            "value": 12
-        },
-        {
-            "hc-key": "pe-tu",
-            "value": 13
-        },
-        {
-            "hc-key": "pe-ap",
-            "value": 14
-        },
-        {
-            "hc-key": "pe-ar",
-            "value": 15
-        },
-        {
-            "hc-key": "pe-cl",
-            "value": 16
-        },
-        {
-            "hc-key": "pe-mq",
-            "value": 17
-        },
-        {
-            "hc-key": "pe-ta",
-            "value": 18
-        },
-        {
-            "hc-key": "pe-an",
-            "value": 19
-        },
-        {
-            "hc-key": "pe-cj",
-            "value": 20
-        },
-        {
-            "hc-key": "pe-hc",
-            "value": 21
-        },
-        {
-            "hc-key": "pe-3341",
-            "value": 22
-        },
-        {
-            "hc-key": "pe-ll",
-            "value": 23
-        },
-        {
-            "hc-key": "pe-pa",
-            "value": 24
-        },
-        {
-            "hc-key": "pe-pi",
-            "value": 25
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/pe/pe-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pe/pe-all.js">Peru</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pe/pe-all.js">Peru</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/pe/pe-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

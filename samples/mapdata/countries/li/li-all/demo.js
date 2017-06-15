@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['li-6425', 0],
+    ['li-6426', 1],
+    ['li-6427', 2],
+    ['li-6418', 3],
+    ['li-3644', 4],
+    ['li-6419', 5],
+    ['li-6420', 6],
+    ['li-6421', 7],
+    ['li-6422', 8],
+    ['li-6423', 9],
+    ['li-6424', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "li-6425",
-            "value": 0
-        },
-        {
-            "hc-key": "li-6426",
-            "value": 1
-        },
-        {
-            "hc-key": "li-6427",
-            "value": 2
-        },
-        {
-            "hc-key": "li-6418",
-            "value": 3
-        },
-        {
-            "hc-key": "li-3644",
-            "value": 4
-        },
-        {
-            "hc-key": "li-6419",
-            "value": 5
-        },
-        {
-            "hc-key": "li-6420",
-            "value": 6
-        },
-        {
-            "hc-key": "li-6421",
-            "value": 7
-        },
-        {
-            "hc-key": "li-6422",
-            "value": 8
-        },
-        {
-            "hc-key": "li-6423",
-            "value": 9
-        },
-        {
-            "hc-key": "li-6424",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/li/li-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/li/li-all.js">Liechtenstein</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/li/li-all.js">Liechtenstein</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/li/li-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

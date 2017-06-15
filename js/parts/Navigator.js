@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
-	doc = H.doc,
 	each = H.each,
 	erase = H.erase,
 	error = H.error,
@@ -105,7 +104,7 @@ extend(defaultOptions, {
 			threshold: null
 		},
 		//top: undefined,
-		//opposite: undefined, // docs
+		//opposite: undefined,
 		xAxis: {
 			className: 'highcharts-navigator-xaxis',
 			tickLength: 0,
@@ -383,7 +382,7 @@ Navigator.prototype = {
 					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
-					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
+					fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
 				})
 				.css(index === 1 && mouseCursor)
 				/*= } =*/
@@ -453,6 +452,7 @@ Navigator.prototype = {
 			scrollbarHeight = navigator.scrollbarHeight,
 			navigatorSize,
 			xAxis = navigator.xAxis,
+			scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
 			navigatorEnabled = navigator.navigatorEnabled,
 			zoomedMin,
 			zoomedMax,
@@ -553,7 +553,12 @@ Navigator.prototype = {
 			if (inverted) {
 				scrollbarTop = navigator.top - scrollbarHeight;
 				scrollbarLeft = navigator.left - scrollbarHeight +
-					(navigatorEnabled ? 0 : navigator.height);
+					(navigatorEnabled || !scrollbarXAxis.opposite ? 0 :
+						// Multiple axes has offsets:
+						(scrollbarXAxis.titleOffset || 0) +
+						// Self margin from the axis.title
+						scrollbarXAxis.axisTitleMargin
+					);
 				scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
 			} else {
 				scrollbarTop = navigator.top +
@@ -569,8 +574,9 @@ Navigator.prototype = {
 			);
 			// Keep scale 0-1
 			navigator.scrollbar.setRange(
-				zoomedMin / navigatorSize,
-				zoomedMax / navigatorSize
+				// Use real value, not rounded because range can be very small (#1716)
+				navigator.zoomedMin / navigatorSize,
+				navigator.zoomedMax / navigatorSize
 			);
 		}
 		navigator.rendered = true;
@@ -585,11 +591,7 @@ Navigator.prototype = {
 			container = chart.container,
 			eventsToUnbind = [],
 			mouseMoveHandler,
-			mouseUpHandler,
-			// iOS calls both events: mousedown+touchstart and mouseup+touchend
-			// So we add them just once, #6187
-			eventNames = hasTouch ? ['touchstart', 'touchmove', 'touchend'] :
-				['mousedown', 'mousemove', 'mouseup'];
+			mouseUpHandler;
 
 		/**
 		 * Create mouse events' handlers.
@@ -603,13 +605,22 @@ Navigator.prototype = {
 		};
 
 		// Add shades and handles mousedown events
-		eventsToUnbind = navigator.getPartsEvents(eventNames[0]);
+		eventsToUnbind = navigator.getPartsEvents('mousedown');
 		// Add mouse move and mouseup events. These are bind to doc/container,
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
-			addEvent(container, eventNames[1], mouseMoveHandler),
-			addEvent(doc, eventNames[2], mouseUpHandler)
+			addEvent(container, 'mousemove', mouseMoveHandler),
+			addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
 		);
+
+		// Touch events
+		if (hasTouch) {
+			eventsToUnbind.push(
+				addEvent(container, 'touchmove', mouseMoveHandler),
+				addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
+			);
+			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
+		}
 
 		navigator.eventsToUnbind = eventsToUnbind;
 
@@ -1153,6 +1164,7 @@ Navigator.prototype = {
 			navSeriesMixin = {
 				enableMouseTracking: false,
 				index: null, // #6162
+				linkedTo: null, // #6734
 				group: 'nav', // for columns
 				padXAxis: false,
 				xAxis: 'navigator-x-axis',

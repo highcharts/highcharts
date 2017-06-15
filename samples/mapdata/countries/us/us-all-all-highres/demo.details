@@ -1,4 +1,5 @@
 ---
  name: United States of America, admin2, highres - Highmaps
  description: Highmaps demo
+ js_wrap: b
 ...

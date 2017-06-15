@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -20,7 +20,8 @@ var addEvent = H.addEvent,
 	SVGRenderer = H.SVGRenderer,
 	TrackerMixin = H.TrackerMixin,
 	VMLRenderer = H.VMLRenderer,
-	symbols = SVGRenderer.prototype.symbols;
+	symbols = SVGRenderer.prototype.symbols,
+	stableSort = H.stableSort;
 
 /**
  * The flags series type.
@@ -113,6 +114,7 @@ seriesType('flags', 'column', {
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			xAxisExt = xAxis.getExtremes(),
 			xOffset = 0,
 			leftPoint,
@@ -127,7 +129,7 @@ seriesType('flags', 'column', {
 			lastX = onData[i - 1].x + (currentDataGrouping ? currentDataGrouping.totalRange : 0); // #2374
 
 			// sort the data points
-			points.sort(function (a, b) {
+			stableSort(points, function (a, b) {
 				return (a.x - b.x);
 			});
 
@@ -164,12 +166,16 @@ seriesType('flags', 'column', {
 
 			var stackIndex;
 
-			// Undefined plotY means the point is either on axis, outside series range or hidden series.
-			// If the series is outside the range of the x axis it should fall through with
-			// an undefined plotY, but then we must remove the shapeArgs (#847).
+			// Undefined plotY means the point is either on axis, outside series
+			// range or hidden series. If the series is outside the range of the
+			// x axis it should fall through with an undefined plotY, but then
+			// we must remove the shapeArgs (#847).
 			if (point.plotY === undefined) {
-				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
-					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
+				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) {
+					// we're inside xAxis range
+					point.plotY = chart.chartHeight - xAxis.bottom -
+						(xAxis.opposite ? xAxis.height : 0) +
+						xAxis.offset - yAxis.top; // #3517
 				} else {
 					point.shapeArgs = {}; // 847
 				}
@@ -255,6 +261,11 @@ seriesType('flags', 'column', {
 					.addClass('highcharts-point')
 					.add(series.markerGroup);
 
+					// Add reference to the point for tracker (#6303)
+					if (point.graphic.div) {
+						point.graphic.div.point = point;
+					}
+
 					/*= if (build.classic) { =*/
 					graphic.shadow(options.shadow);
 					/*= } =*/
@@ -282,6 +293,15 @@ seriesType('flags', 'column', {
 				point.graphic = graphic.destroy();
 			}
 
+		}
+
+		// Might be a mix of SVG and HTML and we need events for both (#6303)
+		if (options.useHTML) {
+			H.wrap(series.markerGroup, 'on', function (proceed) {
+				return H.SVGElement.prototype.on.apply(
+					proceed.apply(this, [].slice.call(arguments, 1)), // for HTML
+					[].slice.call(arguments, 1)); // and for SVG
+			});
 		}
 
 	},

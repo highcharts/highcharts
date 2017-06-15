@@ -1,77 +1,53 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-mv-13075000', 0],
+    ['de-mv-13004000', 1],
+    ['de-mv-13073000', 2],
+    ['de-mv-13076000', 3],
+    ['de-mv-13072000', 4],
+    ['de-mv-13074000', 5],
+    ['de-mv-13071000', 6],
+    ['de-mv-13003000', 7]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-mv-13075000",
-            "value": 0
-        },
-        {
-            "hc-key": "de-mv-13004000",
-            "value": 1
-        },
-        {
-            "hc-key": "de-mv-13073000",
-            "value": 2
-        },
-        {
-            "hc-key": "de-mv-13076000",
-            "value": 3
-        },
-        {
-            "hc-key": "de-mv-13072000",
-            "value": 4
-        },
-        {
-            "hc-key": "de-mv-13074000",
-            "value": 5
-        },
-        {
-            "hc-key": "de-mv-13071000",
-            "value": 6
-        },
-        {
-            "hc-key": "de-mv-13003000",
-            "value": 7
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-mv-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-mv-all.js">Mecklenburg-Vorpommern</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-mv-all.js">Mecklenburg-Vorpommern</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-mv-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

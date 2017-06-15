@@ -17,7 +17,6 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 }
 
 console.time('bubble');
-console.time('asyncRender');
 Highcharts.chart('container', {
 
     chart: {
@@ -55,18 +54,13 @@ Highcharts.chart('container', {
     series: [{
         type: 'bubble',
         boostBlending: 'alpha',
-        color: 'rgba(152,0,67,0.5)',
+        color: 'rgba(152,0,67,0.1)',
         data: data,
         minSize: 1,
         maxSize: 10,
         tooltip: {
             followPointer: false,
             pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
-        },
-        events: {
-            renderedCanvas: function () {
-                console.timeEnd('asyncRender');
-            }
         }
     }]
 

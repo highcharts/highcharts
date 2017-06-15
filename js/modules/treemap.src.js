@@ -26,13 +26,10 @@ var seriesType = H.seriesType,
 	stableSort = H.stableSort,
 	color = H.Color,
 	eachObject = function (list, func, context) {
-		var key;
 		context = context || this;
-		for (key in list) {
-			if (list.hasOwnProperty(key)) {
-				func.call(context, list[key], key, list);
-			}
-		}
+		H.objectEach(list, function (val, key) {
+			func.call(context, val, key, list);
+		});
 	},
 	reduce = function (arr, func, previous, context) {
 		context = context || this;
@@ -70,7 +67,7 @@ seriesType('treemap', 'scatter', {
 		headerFormat: '',
 		pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 	},
-	ignoreHiddenPoint: true, // docs
+	ignoreHiddenPoint: true,
 	layoutAlgorithm: 'sliceAndDice',
 	layoutStartingDirection: 'vertical',
 	alternateStartingDirection: false,
@@ -101,6 +98,7 @@ seriesType('treemap', 'scatter', {
 }, {
 	pointArrayMap: ['value'],
 	axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
+	directTouch: true,
 	optionalAxis: 'colorAxis',
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value', 'colorValue'],
@@ -307,8 +305,19 @@ seriesType('treemap', 'scatter', {
 				x2,
 				y1,
 				y2,
-				strokeWidth =  series.pointAttribs(point)['stroke-width'] || 0,
-				crispCorr = (strokeWidth % 2) / 2;
+				crispCorr = 0;
+
+			/*= if (build.classic) { =*/
+			// Get the crisp correction in classic mode. For this to work in 
+			// styled mode, we would need to first add the shape (without x, y,
+			// width and height), then read the rendered stroke width using
+			// point.graphic.strokeWidth(), then modify and apply the shapeArgs.
+			// This applies also to column series, but the downside is
+			// performance and code complexity.
+			crispCorr = (
+				(series.pointAttribs(point)['stroke-width'] || 0) % 2
+			) / 2;
+			/*= } =*/
 
 			// Points which is ignored, have no values.
 			if (values && node.visible) {

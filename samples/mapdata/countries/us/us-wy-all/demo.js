@@ -1,137 +1,68 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-wy-011', 0],
+    ['us-wy-023', 1],
+    ['us-wy-037', 2],
+    ['us-wy-039', 3],
+    ['us-wy-005', 4],
+    ['us-wy-027', 5],
+    ['us-wy-009', 6],
+    ['us-wy-045', 7],
+    ['us-wy-031', 8],
+    ['us-wy-021', 9],
+    ['us-wy-019', 10],
+    ['us-wy-043', 11],
+    ['us-wy-033', 12],
+    ['us-wy-029', 13],
+    ['us-wy-013', 14],
+    ['us-wy-007', 15],
+    ['us-wy-001', 16],
+    ['us-wy-035', 17],
+    ['us-wy-041', 18],
+    ['us-wy-025', 19],
+    ['us-wy-015', 20],
+    ['us-wy-017', 21],
+    ['us-wy-003', 22]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-wy-011",
-            "value": 0
-        },
-        {
-            "hc-key": "us-wy-023",
-            "value": 1
-        },
-        {
-            "hc-key": "us-wy-037",
-            "value": 2
-        },
-        {
-            "hc-key": "us-wy-039",
-            "value": 3
-        },
-        {
-            "hc-key": "us-wy-005",
-            "value": 4
-        },
-        {
-            "hc-key": "us-wy-027",
-            "value": 5
-        },
-        {
-            "hc-key": "us-wy-009",
-            "value": 6
-        },
-        {
-            "hc-key": "us-wy-045",
-            "value": 7
-        },
-        {
-            "hc-key": "us-wy-031",
-            "value": 8
-        },
-        {
-            "hc-key": "us-wy-021",
-            "value": 9
-        },
-        {
-            "hc-key": "us-wy-019",
-            "value": 10
-        },
-        {
-            "hc-key": "us-wy-043",
-            "value": 11
-        },
-        {
-            "hc-key": "us-wy-033",
-            "value": 12
-        },
-        {
-            "hc-key": "us-wy-029",
-            "value": 13
-        },
-        {
-            "hc-key": "us-wy-013",
-            "value": 14
-        },
-        {
-            "hc-key": "us-wy-007",
-            "value": 15
-        },
-        {
-            "hc-key": "us-wy-001",
-            "value": 16
-        },
-        {
-            "hc-key": "us-wy-035",
-            "value": 17
-        },
-        {
-            "hc-key": "us-wy-041",
-            "value": 18
-        },
-        {
-            "hc-key": "us-wy-025",
-            "value": 19
-        },
-        {
-            "hc-key": "us-wy-015",
-            "value": 20
-        },
-        {
-            "hc-key": "us-wy-017",
-            "value": 21
-        },
-        {
-            "hc-key": "us-wy-003",
-            "value": 22
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/us-wy-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-wy-all.js">Wyoming</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-wy-all.js">Wyoming</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/us-wy-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

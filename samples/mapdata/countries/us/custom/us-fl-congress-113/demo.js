@@ -1,153 +1,72 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-fl-16', 0],
+    ['us-fl-26', 1],
+    ['us-fl-02', 2],
+    ['us-fl-25', 3],
+    ['us-fl-19', 4],
+    ['us-fl-27', 5],
+    ['us-fl-14', 6],
+    ['us-fl-13', 7],
+    ['us-fl-24', 8],
+    ['us-fl-11', 9],
+    ['us-fl-15', 10],
+    ['us-fl-12', 11],
+    ['us-fl-20', 12],
+    ['us-fl-18', 13],
+    ['us-fl-22', 14],
+    ['us-fl-06', 15],
+    ['us-fl-08', 16],
+    ['us-fl-17', 17],
+    ['us-fl-09', 18],
+    ['us-fl-10', 19],
+    ['us-fl-07', 20],
+    ['us-fl-23', 21],
+    ['us-fl-03', 22],
+    ['us-fl-05', 23],
+    ['us-fl-04', 24],
+    ['us-fl-01', 25],
+    ['us-fl-21', 26]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-fl-16",
-            "value": 0
-        },
-        {
-            "hc-key": "us-fl-26",
-            "value": 1
-        },
-        {
-            "hc-key": "us-fl-02",
-            "value": 2
-        },
-        {
-            "hc-key": "us-fl-25",
-            "value": 3
-        },
-        {
-            "hc-key": "us-fl-19",
-            "value": 4
-        },
-        {
-            "hc-key": "us-fl-27",
-            "value": 5
-        },
-        {
-            "hc-key": "us-fl-14",
-            "value": 6
-        },
-        {
-            "hc-key": "us-fl-13",
-            "value": 7
-        },
-        {
-            "hc-key": "us-fl-24",
-            "value": 8
-        },
-        {
-            "hc-key": "us-fl-11",
-            "value": 9
-        },
-        {
-            "hc-key": "us-fl-15",
-            "value": 10
-        },
-        {
-            "hc-key": "us-fl-12",
-            "value": 11
-        },
-        {
-            "hc-key": "us-fl-20",
-            "value": 12
-        },
-        {
-            "hc-key": "us-fl-18",
-            "value": 13
-        },
-        {
-            "hc-key": "us-fl-22",
-            "value": 14
-        },
-        {
-            "hc-key": "us-fl-06",
-            "value": 15
-        },
-        {
-            "hc-key": "us-fl-08",
-            "value": 16
-        },
-        {
-            "hc-key": "us-fl-17",
-            "value": 17
-        },
-        {
-            "hc-key": "us-fl-09",
-            "value": 18
-        },
-        {
-            "hc-key": "us-fl-10",
-            "value": 19
-        },
-        {
-            "hc-key": "us-fl-07",
-            "value": 20
-        },
-        {
-            "hc-key": "us-fl-23",
-            "value": 21
-        },
-        {
-            "hc-key": "us-fl-03",
-            "value": 22
-        },
-        {
-            "hc-key": "us-fl-05",
-            "value": 23
-        },
-        {
-            "hc-key": "us-fl-04",
-            "value": 24
-        },
-        {
-            "hc-key": "us-fl-01",
-            "value": 25
-        },
-        {
-            "hc-key": "us-fl-21",
-            "value": 26
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-fl-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-fl-congress-113.js">Florida congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-fl-congress-113.js">Florida congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-fl-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

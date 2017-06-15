@@ -7,28 +7,28 @@
  */
  
 // Colors for data series and points.
-$colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1;
+$colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1 !default;
 
 // Chart background, point stroke for markers and columns etc
-$background-color: #ffffff;
+$background-color: #ffffff !default;
 
 // Neutral colors, grayscale by default. The default colors are defined by mixing the 
 // background-color with neutral, with a weight corresponding to the number in the name.
-$neutral-color-100: #000000; // Strong text.
-$neutral-color-80: #333333; // Main text and some strokes.
-$neutral-color-60: #666666; // Axis labels, axis title, connector fallback.
-$neutral-color-40: #999999; // Credits text, export menu stroke.
-$neutral-color-20: #cccccc; // Disabled texts, button strokes, crosshair etc.
-$neutral-color-10: #e6e6e6; // Grid lines etc.
-$neutral-color-5: #f2f2f2; // Minor grid lines etc.
-$neutral-color-3: #f7f7f7; // Tooltip backgroud, button fills, map null points.
+$neutral-color-100: #000000 !default; // Strong text.
+$neutral-color-80: #333333 !default; // Main text and some strokes.
+$neutral-color-60: #666666 !default; // Axis labels, axis title, connector fallback.
+$neutral-color-40: #999999 !default; // Credits text, export menu stroke.
+$neutral-color-20: #cccccc !default; // Disabled texts, button strokes, crosshair etc.
+$neutral-color-10: #e6e6e6 !default; // Grid lines etc.
+$neutral-color-5: #f2f2f2 !default; // Minor grid lines etc.
+$neutral-color-3: #f7f7f7 !default; // Tooltip backgroud, button fills, map null points.
 
 // Colored, shades of blue by default
-$highlight-color-100: #003399; // Drilldown clickable labels, color axis max color.
-$highlight-color-80: #335cad; // Selection marker, menu hover, button hover, chart border, navigator series.
-$highlight-color-60: #6685c2; // Navigator mask fill.
-$highlight-color-20: #ccd6eb; // Ticks and axis line.
-$highlight-color-10: #e6ebf5; // Pressed button, color axis min color.
+$highlight-color-100: #003399 !default; // Drilldown clickable labels, color axis max color.
+$highlight-color-80: #335cad !default; // Selection marker, menu hover, button hover, chart border, navigator series.
+$highlight-color-60: #6685c2 !default; // Navigator mask fill.
+$highlight-color-20: #ccd6eb !default; // Ticks and axis line.
+$highlight-color-10: #e6ebf5 !default; // Pressed button, color axis min color.
 
 .highcharts-container {
     position: relative;
@@ -358,7 +358,7 @@ g.highcharts-series,
 }
 
 /* Plot bands and polar pane backgrounds */
-.highcharts-plot-band {
+.highcharts-plot-band, .highcharts-pane {
     fill: $neutral-color-100;
     fill-opacity: 0.05;
 }

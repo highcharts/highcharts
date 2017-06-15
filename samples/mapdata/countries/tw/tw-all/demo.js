@@ -1,133 +1,67 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['tw-pt', 0],
+    ['tw-tn', 1],
+    ['tw-il', 2],
+    ['tw-ch', 3],
+    ['tw-tt', 4],
+    ['tw-ph', 5],
+    ['tw-km', 6],
+    ['tw-lk', 7],
+    ['tw-tw', 8],
+    ['tw-cs', 9],
+    ['tw-th', 10],
+    ['tw-yl', 11],
+    ['tw-kh', 12],
+    ['tw-tp', 13],
+    ['tw-hs', 14],
+    ['tw-hh', 15],
+    ['tw-cl', 16],
+    ['tw-ml', 17],
+    ['tw-ty', 18],
+    ['tw-cg', 19],
+    ['tw-hl', 20],
+    ['tw-nt', 21]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "tw-pt",
-            "value": 0
-        },
-        {
-            "hc-key": "tw-tn",
-            "value": 1
-        },
-        {
-            "hc-key": "tw-il",
-            "value": 2
-        },
-        {
-            "hc-key": "tw-ch",
-            "value": 3
-        },
-        {
-            "hc-key": "tw-tt",
-            "value": 4
-        },
-        {
-            "hc-key": "tw-ph",
-            "value": 5
-        },
-        {
-            "hc-key": "tw-km",
-            "value": 6
-        },
-        {
-            "hc-key": "tw-lk",
-            "value": 7
-        },
-        {
-            "hc-key": "tw-tw",
-            "value": 8
-        },
-        {
-            "hc-key": "tw-cs",
-            "value": 9
-        },
-        {
-            "hc-key": "tw-th",
-            "value": 10
-        },
-        {
-            "hc-key": "tw-yl",
-            "value": 11
-        },
-        {
-            "hc-key": "tw-kh",
-            "value": 12
-        },
-        {
-            "hc-key": "tw-tp",
-            "value": 13
-        },
-        {
-            "hc-key": "tw-hs",
-            "value": 14
-        },
-        {
-            "hc-key": "tw-hh",
-            "value": 15
-        },
-        {
-            "hc-key": "tw-cl",
-            "value": 16
-        },
-        {
-            "hc-key": "tw-ml",
-            "value": 17
-        },
-        {
-            "hc-key": "tw-ty",
-            "value": 18
-        },
-        {
-            "hc-key": "tw-cg",
-            "value": 19
-        },
-        {
-            "hc-key": "tw-hl",
-            "value": 20
-        },
-        {
-            "hc-key": "tw-nt",
-            "value": 21
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/tw/tw-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/tw/tw-all.js">Taiwan</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tw/tw-all.js">Taiwan</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/tw/tw-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

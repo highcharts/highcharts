@@ -1,257 +1,98 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['de-nw-05334000', 0],
+    ['de-nw-05914000', 1],
+    ['de-nw-05978000', 2],
+    ['de-nw-05754000', 3],
+    ['de-nw-05758000', 4],
+    ['de-nw-05314000', 5],
+    ['de-nw-05370000', 6],
+    ['de-nw-05162000', 7],
+    ['de-nw-05166000', 8],
+    ['de-nw-05915000', 9],
+    ['de-nw-05558000', 10],
+    ['de-nw-05962000', 11],
+    ['de-nw-05954000', 12],
+    ['de-nw-05374000', 13],
+    ['de-nw-05124000', 14],
+    ['de-nw-05974000', 15],
+    ['de-nw-05119000', 16],
+    ['de-nw-05170000', 17],
+    ['de-nw-05120000', 18],
+    ['de-nw-05122000', 19],
+    ['de-nw-05112000', 20],
+    ['de-nw-05911000', 21],
+    ['de-nw-05562000', 22],
+    ['de-nw-05358000', 23],
+    ['de-nw-05378000', 24],
+    ['de-nw-05158000', 25],
+    ['de-nw-05315000', 26],
+    ['de-nw-05316000', 27],
+    ['de-nw-05113000', 28],
+    ['de-nw-05512000', 29],
+    ['de-nw-05913000', 30],
+    ['de-nw-05513000', 31],
+    ['de-nw-05114000', 32],
+    ['de-nw-05766000', 33],
+    ['de-nw-05970000', 34],
+    ['de-nw-05566000', 35],
+    ['de-nw-05116000', 36],
+    ['de-nw-05570000', 37],
+    ['de-nw-05711000', 38],
+    ['de-nw-05966000', 39],
+    ['de-nw-05154000', 40],
+    ['de-nw-05762000', 41],
+    ['de-nw-05958000', 42],
+    ['de-nw-05554000', 43],
+    ['de-nw-05770000', 44],
+    ['de-nw-05382000', 45],
+    ['de-nw-05366000', 46],
+    ['de-nw-05774000', 47],
+    ['de-nw-05515000', 48],
+    ['de-nw-05916000', 49],
+    ['de-nw-05117000', 50],
+    ['de-nw-05111000', 51],
+    ['de-nw-05362000', 52]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "de-nw-05334000",
-            "value": 0
-        },
-        {
-            "hc-key": "de-nw-05914000",
-            "value": 1
-        },
-        {
-            "hc-key": "de-nw-05978000",
-            "value": 2
-        },
-        {
-            "hc-key": "de-nw-05754000",
-            "value": 3
-        },
-        {
-            "hc-key": "de-nw-05758000",
-            "value": 4
-        },
-        {
-            "hc-key": "de-nw-05314000",
-            "value": 5
-        },
-        {
-            "hc-key": "de-nw-05370000",
-            "value": 6
-        },
-        {
-            "hc-key": "de-nw-05162000",
-            "value": 7
-        },
-        {
-            "hc-key": "de-nw-05166000",
-            "value": 8
-        },
-        {
-            "hc-key": "de-nw-05915000",
-            "value": 9
-        },
-        {
-            "hc-key": "de-nw-05558000",
-            "value": 10
-        },
-        {
-            "hc-key": "de-nw-05962000",
-            "value": 11
-        },
-        {
-            "hc-key": "de-nw-05954000",
-            "value": 12
-        },
-        {
-            "hc-key": "de-nw-05374000",
-            "value": 13
-        },
-        {
-            "hc-key": "de-nw-05124000",
-            "value": 14
-        },
-        {
-            "hc-key": "de-nw-05974000",
-            "value": 15
-        },
-        {
-            "hc-key": "de-nw-05119000",
-            "value": 16
-        },
-        {
-            "hc-key": "de-nw-05170000",
-            "value": 17
-        },
-        {
-            "hc-key": "de-nw-05120000",
-            "value": 18
-        },
-        {
-            "hc-key": "de-nw-05122000",
-            "value": 19
-        },
-        {
-            "hc-key": "de-nw-05112000",
-            "value": 20
-        },
-        {
-            "hc-key": "de-nw-05911000",
-            "value": 21
-        },
-        {
-            "hc-key": "de-nw-05562000",
-            "value": 22
-        },
-        {
-            "hc-key": "de-nw-05358000",
-            "value": 23
-        },
-        {
-            "hc-key": "de-nw-05378000",
-            "value": 24
-        },
-        {
-            "hc-key": "de-nw-05158000",
-            "value": 25
-        },
-        {
-            "hc-key": "de-nw-05315000",
-            "value": 26
-        },
-        {
-            "hc-key": "de-nw-05316000",
-            "value": 27
-        },
-        {
-            "hc-key": "de-nw-05113000",
-            "value": 28
-        },
-        {
-            "hc-key": "de-nw-05512000",
-            "value": 29
-        },
-        {
-            "hc-key": "de-nw-05913000",
-            "value": 30
-        },
-        {
-            "hc-key": "de-nw-05513000",
-            "value": 31
-        },
-        {
-            "hc-key": "de-nw-05114000",
-            "value": 32
-        },
-        {
-            "hc-key": "de-nw-05766000",
-            "value": 33
-        },
-        {
-            "hc-key": "de-nw-05970000",
-            "value": 34
-        },
-        {
-            "hc-key": "de-nw-05566000",
-            "value": 35
-        },
-        {
-            "hc-key": "de-nw-05116000",
-            "value": 36
-        },
-        {
-            "hc-key": "de-nw-05570000",
-            "value": 37
-        },
-        {
-            "hc-key": "de-nw-05711000",
-            "value": 38
-        },
-        {
-            "hc-key": "de-nw-05966000",
-            "value": 39
-        },
-        {
-            "hc-key": "de-nw-05154000",
-            "value": 40
-        },
-        {
-            "hc-key": "de-nw-05762000",
-            "value": 41
-        },
-        {
-            "hc-key": "de-nw-05958000",
-            "value": 42
-        },
-        {
-            "hc-key": "de-nw-05554000",
-            "value": 43
-        },
-        {
-            "hc-key": "de-nw-05770000",
-            "value": 44
-        },
-        {
-            "hc-key": "de-nw-05382000",
-            "value": 45
-        },
-        {
-            "hc-key": "de-nw-05366000",
-            "value": 46
-        },
-        {
-            "hc-key": "de-nw-05774000",
-            "value": 47
-        },
-        {
-            "hc-key": "de-nw-05515000",
-            "value": 48
-        },
-        {
-            "hc-key": "de-nw-05916000",
-            "value": 49
-        },
-        {
-            "hc-key": "de-nw-05117000",
-            "value": 50
-        },
-        {
-            "hc-key": "de-nw-05111000",
-            "value": 51
-        },
-        {
-            "hc-key": "de-nw-05362000",
-            "value": 52
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/de/de-nw-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-nw-all.js">Nordrhein-Westfalen</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-nw-all.js">Nordrhein-Westfalen</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/de/de-nw-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

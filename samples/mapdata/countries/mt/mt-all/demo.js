@@ -1,317 +1,113 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['mt-7358', 0],
+    ['mt-7363', 1],
+    ['mt-7369', 2],
+    ['mt-7346', 3],
+    ['mt-7370', 4],
+    ['mt-7374', 5],
+    ['mt-7376', 6],
+    ['mt-7373', 7],
+    ['mt-7378', 8],
+    ['mt-7380', 9],
+    ['mt-7382', 10],
+    ['mt-7384', 11],
+    ['mt-7385', 12],
+    ['mt-7386', 13],
+    ['mt-7396', 14],
+    ['mt-7393', 15],
+    ['mt-7332', 16],
+    ['mt-7353', 17],
+    ['mt-3630', 18],
+    ['mt-7344', 19],
+    ['mt-7345', 20],
+    ['mt-7347', 21],
+    ['mt-7350', 22],
+    ['mt-7352', 23],
+    ['mt-7354', 24],
+    ['mt-7355', 25],
+    ['mt-7351', 26],
+    ['mt-7356', 27],
+    ['mt-7360', 28],
+    ['mt-7361', 29],
+    ['mt-7364', 30],
+    ['mt-7365', 31],
+    ['mt-7366', 32],
+    ['mt-7367', 33],
+    ['mt-7368', 34],
+    ['mt-7372', 35],
+    ['mt-7359', 36],
+    ['mt-7375', 37],
+    ['mt-7377', 38],
+    ['mt-7379', 39],
+    ['mt-7381', 40],
+    ['mt-7383', 41],
+    ['mt-7388', 42],
+    ['mt-7389', 43],
+    ['mt-7390', 44],
+    ['mt-7387', 45],
+    ['mt-7391', 46],
+    ['mt-7394', 47],
+    ['mt-7395', 48],
+    ['mt-7397', 49],
+    ['mt-7343', 50],
+    ['mt-7336', 51],
+    ['mt-7337', 52],
+    ['mt-7331', 53],
+    ['mt-7339', 54],
+    ['mt-7340', 55],
+    ['mt-7342', 56],
+    ['mt-7341', 57],
+    ['mt-7348', 58],
+    ['mt-7349', 59],
+    ['mt-7357', 60],
+    ['mt-7371', 61],
+    ['mt-7392', 62],
+    ['mt-7330', 63],
+    ['mt-7333', 64],
+    ['mt-7335', 65],
+    ['mt-7338', 66],
+    ['mt-7334', 67]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "mt-7358",
-            "value": 0
-        },
-        {
-            "hc-key": "mt-7363",
-            "value": 1
-        },
-        {
-            "hc-key": "mt-7369",
-            "value": 2
-        },
-        {
-            "hc-key": "mt-7346",
-            "value": 3
-        },
-        {
-            "hc-key": "mt-7370",
-            "value": 4
-        },
-        {
-            "hc-key": "mt-7374",
-            "value": 5
-        },
-        {
-            "hc-key": "mt-7376",
-            "value": 6
-        },
-        {
-            "hc-key": "mt-7373",
-            "value": 7
-        },
-        {
-            "hc-key": "mt-7378",
-            "value": 8
-        },
-        {
-            "hc-key": "mt-7380",
-            "value": 9
-        },
-        {
-            "hc-key": "mt-7382",
-            "value": 10
-        },
-        {
-            "hc-key": "mt-7384",
-            "value": 11
-        },
-        {
-            "hc-key": "mt-7385",
-            "value": 12
-        },
-        {
-            "hc-key": "mt-7386",
-            "value": 13
-        },
-        {
-            "hc-key": "mt-7396",
-            "value": 14
-        },
-        {
-            "hc-key": "mt-7393",
-            "value": 15
-        },
-        {
-            "hc-key": "mt-7332",
-            "value": 16
-        },
-        {
-            "hc-key": "mt-7353",
-            "value": 17
-        },
-        {
-            "hc-key": "mt-3630",
-            "value": 18
-        },
-        {
-            "hc-key": "mt-7344",
-            "value": 19
-        },
-        {
-            "hc-key": "mt-7345",
-            "value": 20
-        },
-        {
-            "hc-key": "mt-7347",
-            "value": 21
-        },
-        {
-            "hc-key": "mt-7350",
-            "value": 22
-        },
-        {
-            "hc-key": "mt-7352",
-            "value": 23
-        },
-        {
-            "hc-key": "mt-7354",
-            "value": 24
-        },
-        {
-            "hc-key": "mt-7355",
-            "value": 25
-        },
-        {
-            "hc-key": "mt-7351",
-            "value": 26
-        },
-        {
-            "hc-key": "mt-7356",
-            "value": 27
-        },
-        {
-            "hc-key": "mt-7360",
-            "value": 28
-        },
-        {
-            "hc-key": "mt-7361",
-            "value": 29
-        },
-        {
-            "hc-key": "mt-7364",
-            "value": 30
-        },
-        {
-            "hc-key": "mt-7365",
-            "value": 31
-        },
-        {
-            "hc-key": "mt-7366",
-            "value": 32
-        },
-        {
-            "hc-key": "mt-7367",
-            "value": 33
-        },
-        {
-            "hc-key": "mt-7368",
-            "value": 34
-        },
-        {
-            "hc-key": "mt-7372",
-            "value": 35
-        },
-        {
-            "hc-key": "mt-7359",
-            "value": 36
-        },
-        {
-            "hc-key": "mt-7375",
-            "value": 37
-        },
-        {
-            "hc-key": "mt-7377",
-            "value": 38
-        },
-        {
-            "hc-key": "mt-7379",
-            "value": 39
-        },
-        {
-            "hc-key": "mt-7381",
-            "value": 40
-        },
-        {
-            "hc-key": "mt-7383",
-            "value": 41
-        },
-        {
-            "hc-key": "mt-7388",
-            "value": 42
-        },
-        {
-            "hc-key": "mt-7389",
-            "value": 43
-        },
-        {
-            "hc-key": "mt-7390",
-            "value": 44
-        },
-        {
-            "hc-key": "mt-7387",
-            "value": 45
-        },
-        {
-            "hc-key": "mt-7391",
-            "value": 46
-        },
-        {
-            "hc-key": "mt-7394",
-            "value": 47
-        },
-        {
-            "hc-key": "mt-7395",
-            "value": 48
-        },
-        {
-            "hc-key": "mt-7397",
-            "value": 49
-        },
-        {
-            "hc-key": "mt-7343",
-            "value": 50
-        },
-        {
-            "hc-key": "mt-7336",
-            "value": 51
-        },
-        {
-            "hc-key": "mt-7337",
-            "value": 52
-        },
-        {
-            "hc-key": "mt-7331",
-            "value": 53
-        },
-        {
-            "hc-key": "mt-7339",
-            "value": 54
-        },
-        {
-            "hc-key": "mt-7340",
-            "value": 55
-        },
-        {
-            "hc-key": "mt-7342",
-            "value": 56
-        },
-        {
-            "hc-key": "mt-7341",
-            "value": 57
-        },
-        {
-            "hc-key": "mt-7348",
-            "value": 58
-        },
-        {
-            "hc-key": "mt-7349",
-            "value": 59
-        },
-        {
-            "hc-key": "mt-7357",
-            "value": 60
-        },
-        {
-            "hc-key": "mt-7371",
-            "value": 61
-        },
-        {
-            "hc-key": "mt-7392",
-            "value": 62
-        },
-        {
-            "hc-key": "mt-7330",
-            "value": 63
-        },
-        {
-            "hc-key": "mt-7333",
-            "value": 64
-        },
-        {
-            "hc-key": "mt-7335",
-            "value": 65
-        },
-        {
-            "hc-key": "mt-7338",
-            "value": 66
-        },
-        {
-            "hc-key": "mt-7334",
-            "value": 67
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/mt/mt-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mt/mt-all.js">Malta</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mt/mt-all.js">Malta</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/mt/mt-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

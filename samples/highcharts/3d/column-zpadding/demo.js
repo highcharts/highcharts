@@ -11,7 +11,7 @@ Highcharts.chart('container', {
             frame: {
                 bottom: {
                     size: 1,
-                    color: '#EEE'
+                    color: '#ddd'
                 }
             }
         }

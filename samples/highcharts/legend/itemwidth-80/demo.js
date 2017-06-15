@@ -2,12 +2,15 @@
 Highcharts.chart('container', {
 
     chart: {
-        marginBottom: 120,
         width: 500
     },
 
+    title: {
+        text: 'Legend <em>itemWidth</em> option'
+    },
+
     legend: {
-        itemWidth: 80
+        itemWidth: 100
     },
 
     series: [{

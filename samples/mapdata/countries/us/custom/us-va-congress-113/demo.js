@@ -1,89 +1,56 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['us-va-02', 0],
+    ['us-va-11', 1],
+    ['us-va-10', 2],
+    ['us-va-08', 3],
+    ['us-va-03', 4],
+    ['us-va-04', 5],
+    ['us-va-07', 6],
+    ['us-va-01', 7],
+    ['us-va-05', 8],
+    ['us-va-06', 9],
+    ['us-va-09', 10]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "us-va-02",
-            "value": 0
-        },
-        {
-            "hc-key": "us-va-11",
-            "value": 1
-        },
-        {
-            "hc-key": "us-va-10",
-            "value": 2
-        },
-        {
-            "hc-key": "us-va-08",
-            "value": 3
-        },
-        {
-            "hc-key": "us-va-03",
-            "value": 4
-        },
-        {
-            "hc-key": "us-va-04",
-            "value": 5
-        },
-        {
-            "hc-key": "us-va-07",
-            "value": 6
-        },
-        {
-            "hc-key": "us-va-01",
-            "value": 7
-        },
-        {
-            "hc-key": "us-va-05",
-            "value": 8
-        },
-        {
-            "hc-key": "us-va-06",
-            "value": 9
-        },
-        {
-            "hc-key": "us-va-09",
-            "value": 10
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/us/custom/us-va-congress-113'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-va-congress-113.js">Virginia congressional districts</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-va-congress-113.js">Virginia congressional districts</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/us/custom/us-va-congress-113'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

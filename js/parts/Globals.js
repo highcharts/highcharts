@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -34,10 +34,17 @@ var Highcharts = win.Highcharts ? win.Highcharts.error(16, true) : {
 	svg: svg,
 	vml: vml,
 	win: win,
-	charts: [],
 	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	noop: function () {
 		return undefined;
-	}
+	},
+	/**
+	 * An array containing the current chart objects in the page. A chart's
+	 * position in the array is preserved throughout the page's lifetime. When
+	 * a chart is destroyed, the array item becomes `undefined`.
+	 * @type {Array.<Highcharts.Chart>}
+	 * @memberOf Highcharts
+	 */
+	charts: []
 };
 export default Highcharts;

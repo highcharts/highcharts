@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -45,7 +45,7 @@ seriesType('pie', 'line', {
 		distance: 30,
 		enabled: true,
 		formatter: function () { // #2945
-			return this.y === null ? undefined : this.point.name;
+			return this.point.isNull ? undefined : this.point.name;
 		},
 		// softConnector: true,
 		x: 0
@@ -130,11 +130,9 @@ seriesType('pie', 'line', {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
-			// Disallow negative values (#1530, #3623, #5322)
-			if (point.y < 0) {
-				point.y = null;
-			}
-			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
+			total += (ignoreHiddenPoint && !point.visible) ?
+				0 :
+				point.isNull ? 0 : point.y;
 		}
 		this.total = total;
 
@@ -166,6 +164,7 @@ seriesType('pie', 'line', {
 			options = series.options,
 			slicedOffset = options.slicedOffset,
 			connectorOffset = slicedOffset + (options.borderWidth || 0),
+			finalConnectorOffset,
 			start,
 			end,
 			angle,
@@ -189,20 +188,29 @@ seriesType('pie', 'line', {
 			series.center = positions = series.getCenter();
 		}
 
-		// utility for getting the x value from a given y, used for anticollision logic in data labels
-		series.getX = function (y, left) {
-
-			angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
-
+		// Utility for getting the x value from a given y, used for anticollision
+		// logic in data labels.
+		// Added point for using specific points' label distance.
+		series.getX = function (y, left, point) {
+			angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + point.labelDistance), 1));
 			return positions[0] +
 				(left ? -1 : 1) *
-				(Math.cos(angle) * (positions[2] / 2 + labelDistance));
+				(Math.cos(angle) * (positions[2] / 2 + point.labelDistance));
 		};
 
 		// Calculate the geometry for each point
 		for (i = 0; i < len; i++) {
 
 			point = points[i];
+
+			// Used for distance calculation for specific point.
+			point.labelDistance = pick(
+				point.options.dataLabels && point.options.dataLabels.distance,
+				labelDistance
+			);
+
+			// Saved for later dataLabels distance calculation.
+			series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
 
 			// set start and end angle
 			start = startAngleRad + (cumulative * circ);
@@ -247,16 +255,18 @@ seriesType('pie', 'line', {
 			point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ? 1 : 0;
 			point.angle = angle;
 
-			// set the anchor point for data labels
-			connectorOffset = Math.min(connectorOffset, labelDistance / 5); // #1678
+			// Set the anchor point for data labels. Use point.labelDistance 
+			// instead of labelDistance // #1174
+			// finalConnectorOffset - not override connectorOffset value.
+			finalConnectorOffset = Math.min(connectorOffset, point.labelDistance / 5); // #1678
 			point.labelPos = [
-				positions[0] + radiusX + Math.cos(angle) * labelDistance, // first break of connector
-				positions[1] + radiusY + Math.sin(angle) * labelDistance, // a/a
-				positions[0] + radiusX + Math.cos(angle) * connectorOffset, // second break, right outside pie
-				positions[1] + radiusY + Math.sin(angle) * connectorOffset, // a/a
+				positions[0] + radiusX + Math.cos(angle) * point.labelDistance, // first break of connector
+				positions[1] + radiusY + Math.sin(angle) * point.labelDistance, // a/a
+				positions[0] + radiusX + Math.cos(angle) * finalConnectorOffset, // second break, right outside pie
+				positions[1] + radiusY + Math.sin(angle) * finalConnectorOffset, // a/a
 				positions[0] + radiusX, // landing point for connector
 				positions[1] + radiusY, // a/a
-				labelDistance < 0 ? // alignment
+				point.labelDistance < 0 ? // alignment
 					'center' :
 					point.half ? 'right' : 'left', // alignment
 				angle // center angle
@@ -291,7 +301,7 @@ seriesType('pie', 'line', {
 
 		// draw the slices
 		each(series.points, function (point) {
-			if (point.y !== null) {
+			if (!point.isNull) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 
@@ -404,6 +414,13 @@ seriesType('pie', 'line', {
 	},
 
 	/**
+	 * Negative points are not valid (#1530, #3623, #5322)
+	 */
+	isValid: function () {
+		return H.isNumber(this.y, true) && this.y >= 0;
+	},
+
+	/**
 	 * Toggle the visibility of the pie slice
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
@@ -478,7 +495,7 @@ seriesType('pie', 'line', {
 		/*= } =*/
 	},
 
-	getTranslate() {
+	getTranslate: function () {
 		return this.sliced ? this.slicedTranslation : {
 			translateX: 0,
 			translateY: 0

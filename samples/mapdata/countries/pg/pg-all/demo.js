@@ -1,129 +1,66 @@
-$(function () {
+// Prepare demo data
+// Data is joined to map using value of 'hc-key' property by default.
+// See API docs for 'joinBy' for more info on linking data and map.
+var data = [
+    ['pg-4773', 0],
+    ['pg-es', 1],
+    ['pg-md', 2],
+    ['pg-ns', 3],
+    ['pg-we', 4],
+    ['pg-en', 5],
+    ['pg-mn', 6],
+    ['pg-mb', 7],
+    ['pg-mr', 8],
+    ['pg-ni', 9],
+    ['pg-wn', 10],
+    ['pg-eh', 11],
+    ['pg-gu', 12],
+    ['pg-eg', 13],
+    ['pg-ch', 14],
+    ['pg-1041', 15],
+    ['pg-ce', 16],
+    ['pg-no', 17],
+    ['pg-sa', 18],
+    ['pg-sh', 19],
+    ['pg-wh', 20]
+];
 
-    // Prepare demo data
-    var data = [
-        {
-            "hc-key": "pg-4773",
-            "value": 0
-        },
-        {
-            "hc-key": "pg-es",
-            "value": 1
-        },
-        {
-            "hc-key": "pg-md",
-            "value": 2
-        },
-        {
-            "hc-key": "pg-ns",
-            "value": 3
-        },
-        {
-            "hc-key": "pg-we",
-            "value": 4
-        },
-        {
-            "hc-key": "pg-en",
-            "value": 5
-        },
-        {
-            "hc-key": "pg-mn",
-            "value": 6
-        },
-        {
-            "hc-key": "pg-mb",
-            "value": 7
-        },
-        {
-            "hc-key": "pg-mr",
-            "value": 8
-        },
-        {
-            "hc-key": "pg-ni",
-            "value": 9
-        },
-        {
-            "hc-key": "pg-wn",
-            "value": 10
-        },
-        {
-            "hc-key": "pg-eh",
-            "value": 11
-        },
-        {
-            "hc-key": "pg-gu",
-            "value": 12
-        },
-        {
-            "hc-key": "pg-eg",
-            "value": 13
-        },
-        {
-            "hc-key": "pg-ch",
-            "value": 14
-        },
-        {
-            "hc-key": "pg-1041",
-            "value": 15
-        },
-        {
-            "hc-key": "pg-ce",
-            "value": 16
-        },
-        {
-            "hc-key": "pg-no",
-            "value": 17
-        },
-        {
-            "hc-key": "pg-sa",
-            "value": 18
-        },
-        {
-            "hc-key": "pg-sh",
-            "value": 19
-        },
-        {
-            "hc-key": "pg-wh",
-            "value": 20
+// Create the chart
+Highcharts.mapChart('container', {
+    chart: {
+        map: 'countries/pg/pg-all'
+    },
+
+    title: {
+        text: 'Highmaps basic demo'
+    },
+
+    subtitle: {
+        text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/pg/pg-all.js">Papua New Guinea</a>'
+    },
+
+    mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+            verticalAlign: 'bottom'
         }
-    ];
+    },
 
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    colorAxis: {
+        min: 0
+    },
 
-        title : {
-            text : 'Highmaps basic demo'
+    series: [{
+        data: data,
+        name: 'Random data',
+        states: {
+            hover: {
+                color: '#BADA55'
+            }
         },
-
-        subtitle : {
-            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/pg/pg-all.js">Papua New Guinea</a>'
-        },
-
-        mapNavigation: {
+        dataLabels: {
             enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
-
-        colorAxis: {
-            min: 0
-        },
-
-        series : [{
-            data : data,
-            mapData: Highcharts.maps['countries/pg/pg-all'],
-            joinBy: 'hc-key',
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }]
-    });
+            format: '{point.name}'
+        }
+    }]
 });

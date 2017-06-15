@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2016 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -667,36 +667,6 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 	}
 });
-
-
-
-/**
- * Extend getGraphPath by identifying gaps in the ordinal data so that we can draw a gap in the
- * line or area
- */
-Series.prototype.gappedPath = function () {
-	var gapSize = this.options.gapSize,
-		points = this.points.slice(),
-		i = points.length - 1;
-
-	if (gapSize && i > 0) { // #5008
-
-		// extension for ordinal breaks
-		while (i--) {
-			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
-				points.splice( // insert after this one
-					i + 1,
-					0,
-					{ isNull: true }
-				);
-			}
-		}
-	}
-
-	// Call base method
-	//return proceed.call(this, points, a, b);
-	return this.getGraphPath(points);
-};
 
 /* ****************************************************************************
  * End ordinal axis logic                                                   *

@@ -65,12 +65,10 @@ var win = H.win,
 	extend = H.extend,
 	addEvent = H.addEvent,
 	fireEvent = H.fireEvent,
-	grep = H.grep,
 	isNumber = H.isNumber,
 	merge = H.merge,
 	pick = H.pick,
 	wrap = H.wrap,
-	plotOptions = H.getOptions().plotOptions,
 	CHUNK_SIZE = 50000,
 	destroyLoadingDiv;
 
@@ -109,7 +107,45 @@ function isChartSeriesBoosting(chart) {
 	return chart.series.length >= threshold;
 }
 
-H.initCanvasBoost = function() {
+H.initCanvasBoost = function () {
+
+	if (H.seriesTypes.heatmap) {
+		H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
+			var ctx = this.getContext();
+			if (ctx) {
+
+				// draw the columns
+				each(this.points, function (point) {
+					var plotY = point.plotY,
+						shapeArgs,
+						pointAttr;
+
+					if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+						shapeArgs = point.shapeArgs;
+
+						/*= if (build.classic) { =*/
+						pointAttr = point.series.pointAttribs(point);
+						/*= } else { =*/
+						pointAttr = point.series.colorAttribs(point);
+						/*= } =*/					
+
+						ctx.fillStyle = pointAttr.fill;
+						ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+					}
+				});
+
+				this.canvasToSVG();
+
+			} else {
+				this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>please use a modern browser');
+
+				// Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
+				// charts with more than a few thousand points.
+				// arguments[0].call(this);
+			}
+		});
+	}
+
 
 	/**
 	 * Override a bunch of methods the same way. If the number of points is below the threshold,
@@ -148,6 +184,7 @@ H.initCanvasBoost = function() {
 	// });
 
 	H.extend(Series.prototype, {
+		directTouch: false,
 		pointRange: 0,
 		allowDG: false, // No data grouping, let boost handle large data 
 		hasExtremes: function (checkX) {
@@ -256,8 +293,8 @@ H.initCanvasBoost = function() {
 			});
 
 			target.boostClipRect.attr({
-				x: chart.plotLeft,
-				y: chart.plotTop,
+				x: 0,
+				y: 0,
 				width: chart.plotWidth,
 				height: chart.chartHeight
 			});
@@ -272,7 +309,7 @@ H.initCanvasBoost = function() {
 			if (!isChartSeriesBoosting(this.chart)) {
 				this.image.attr({ href: this.canvas.toDataURL('image/png') });
 			} else if (this.image) {
-				this.image.attr({href: ''});
+				this.image.attr({ href: '' });
 			}
 		},
 
@@ -335,7 +372,6 @@ H.initCanvasBoost = function() {
 				maxI,
 				kdIndex,
 				sdata = isStacked ? series.data : (xData || rawData),
-				boostingOnChartLevel = isChartSeriesBoosting(chart),
 				fillColor = series.fillOpacity ?
 						new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
 						series.color,
@@ -464,7 +500,7 @@ H.initCanvasBoost = function() {
 			}
 
 			if (boostSettings.timeRendering) {
-				console.time('canvas rendering');
+				console.time('canvas rendering'); // eslint-disable-line no-console
 			}
 
 			// Loop over the points
@@ -599,7 +635,7 @@ H.initCanvasBoost = function() {
 				series.canvasToSVG();
 
 				if (boostSettings.timeRendering) {
-					console.timeEnd('canvas rendering');
+					console.timeEnd('canvas rendering'); // eslint-disable-line no-console
 				}
 
 				fireEvent(series, 'renderedCanvas');
@@ -636,13 +672,13 @@ H.initCanvasBoost = function() {
 	});
 
 	wrap(Series.prototype, 'setData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true)) {
+		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 	});
 	
 	wrap(Series.prototype, 'processData', function (proceed) {
-		if (!this.hasExtremes || !this.hasExtremes(true)) {
+		if (!this.hasExtremes || !this.hasExtremes(true) || this.type === 'heatmap') {
 			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		}
 	});
@@ -699,7 +735,7 @@ H.initCanvasBoost = function() {
 
 		function clear() {
 			if (chart.image) {
-				chart.image.attr({href: ''});
+				chart.image.attr({ href: '' });
 			}
 
 			if (chart.canvas) {

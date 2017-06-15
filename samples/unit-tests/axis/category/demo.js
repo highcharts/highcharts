@@ -476,8 +476,7 @@ QUnit.test(
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container',
-                type: 'column',
-
+                type: 'column'
             },
             xAxis: {
                 type: 'category'
@@ -514,5 +513,80 @@ QUnit.test(
             'Preserved names'
         );
 
+    }
+);
+
+QUnit.test(
+    'Lost series with multiple axes and mixed configuration (#6469)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: "column",
+                animation: false
+            },
+            xAxis: {
+                type: "category",
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            yAxis: [{
+                lineWidth: 1,
+                title: {
+                    text: 'Primary Axis'
+                },
+            }, {
+                lineWidth: 1,
+                opposite: true,
+                title: {
+                    text: 'Secondary Axis'
+                }
+            }],
+
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+                yAxis: 0
+            }, {
+                data: [
+                    ["Jan", 14400.0],
+                    ["Feb", 17600.0],
+                    ["Mar", 13500.6],
+                    ["Apr", 14800.5],
+                    ["May", 21600.4],
+                    ["Jun", 19400.1],
+                    ["Jul", 9500.6],
+                    ["Aug", 5400.4],
+                    ["Sep", 2900.9],
+                    ["Oct", 7100.5],
+                    ["Nov", 10600.4],
+                    ["Dec", 12900.2]
+                ],
+                yAxis: 1,
+                type: "spline"
+            }]
+        });
+
+        chart.series[0].hide();
+        chart.series[0].show();
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.length,
+            12,
+            'All ticks intact'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].min,
+            0,
+            'Correct min'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].max,
+            11,
+            'Correct max'
+        );
     }
 );
