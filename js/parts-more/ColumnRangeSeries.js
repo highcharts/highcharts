@@ -41,7 +41,17 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 			start,
 			chart = series.chart,
 			isRadial = series.xAxis.isRadial,
+			safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999,
 			plotHigh;
+
+		// Don't draw too far outside plot area (#6835)
+		function safeBounds(pixelPos) {
+			return Math.min(Math.max(
+				-safeDistance,
+				pixelPos
+			), safeDistance);
+		}
+
 
 		colProto.translate.apply(series);
 
@@ -53,8 +63,10 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 				height,
 				y;
 
-			point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
-			point.plotLow = point.plotY;
+			point.plotHigh = plotHigh = safeBounds(
+				yAxis.translate(point.high, 0, 1, 0, 1)
+			);
+			point.plotLow = safeBounds(point.plotY);
 
 			// adjust shape
 			y = plotHigh;
@@ -80,6 +92,7 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
 					d: series.polarArc(y + height, y, start, start + point.pointWidth)
 				};
 			} else {
+
 				shapeArgs.height = height;
 				shapeArgs.y = y;
 
