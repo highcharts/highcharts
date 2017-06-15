@@ -785,8 +785,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			oldType = series.oldType || series.type,
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
-			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
-			n;
+			n,
+			preserve = [
+				'group',
+				'markerGroup',
+				'dataLabelsGroup',
+				'navigatorSeries',
+				'baseSeries'
+			];
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
@@ -822,7 +828,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		}
 		extend(series, seriesTypes[newType || oldType].prototype);
 
-		// Re-register groups (#3094)
+		// Re-register groups (#3094) and other preserved properties
 		each(preserve, function (prop) {
 			series[prop] = preserve[prop];
 		});
