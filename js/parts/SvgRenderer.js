@@ -2137,8 +2137,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	
 	applyEllipsis: function (wrapper, tspan, text, width) {
 		var renderer = this,
-			actualWidth = renderer.getSpanWidth(wrapper, tspan),
-			wasTooLong = actualWidth > width,
+			rotation = wrapper.rotation,
 			str = text,
 			currentIndex,
 			minIndex = 0,
@@ -2148,7 +2147,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				if (s) {
 					tspan.appendChild(doc.createTextNode(s));
 				}
-			};
+			},
+			actualWidth,
+			wasTooLong;
+		wrapper.rotation = 0; // discard rotation when computing box
+		actualWidth = renderer.getSpanWidth(wrapper, tspan);
+		wasTooLong = actualWidth > width;
 		if (wasTooLong) {
 			while (minIndex <= maxIndex) {
 				currentIndex = Math.ceil((minIndex + maxIndex) / 2);
@@ -2172,6 +2176,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 				updateTSpan('');
 			}
 		}
+		wrapper.rotation = rotation; // Apply rotation again.
 		return wasTooLong;
 	},
 
