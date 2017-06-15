@@ -273,10 +273,10 @@ Chart.prototype.showDrillUpButton = function () {
 
 /**
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
- * will drill up to the parent series.
+ * will drill up to the parent series. Requires the drilldown module.
  *
+ * @function drillUp
  * @memberOf Highcharts.Chart
- * @name #drillUp
  */
 Chart.prototype.drillUp = function () {
 	var chart = this,

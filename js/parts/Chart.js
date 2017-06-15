@@ -59,7 +59,7 @@ var addEvent = H.addEvent,
  *         handler is equivalent.
  *
  * @example
- * var chart = new Highcharts.Chart('container', {
+ * var chart = Highcharts.chart('container', {
  * 	   title: {
  * 	   	   text: 'My chart'
  * 	   },
@@ -103,13 +103,13 @@ H.chart = function (a, b, c) {
 
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
-	/**
-	 * Hook for modules
-	 */
+	// Hook for adding callbacks in modules
 	callbacks: [],
 
 	/**
-	 * Handle the arguments passed to the constructor
+	 * Handle the arguments passed to the constructor.
+	 *
+	 * @private
 	 * @returns {Array} Arguments without renderTo
 	 */
 	getArgs: function () {
@@ -124,7 +124,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Initialize the chart
+	 * Overridable function that initializes the chart. The constructor's
+	 * arguments are passed on directly.
 	 */
 	init: function (userOptions, callback) {
 
@@ -547,7 +548,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Create the Axis instances based on the config options
+	 * Create the Axis instances based on the config options.
+	 *
+	 * @private
 	 */
 	getAxes: function () {
 		var chart = this,
@@ -763,7 +766,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Get chart width and height according to options and container size
+	 * Internal function to get the chart width and height according to options
+	 * and container size. Sets {@link Chart.chartWidth} and {@link
+	 * Chart.chartHeight}.
 	 */
 	getChartSize: function () {
 		var chart = this,
@@ -780,10 +785,24 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			chart.containerHeight = getStyle(renderTo, 'height');
 		}
 		
+		/**
+		 * The current pixel width of the chart.
+		 *
+		 * @name chartWidth
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.chartWidth = Math.max( // #1393
 			0,
 			widthOption || chart.containerWidth || 600 // #1460
 		);
+		/**
+		 * The current pixel height of the chart.
+		 *
+		 * @name chartHeight
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.chartHeight = Math.max(
 			0,
 			H.relativeLength(
@@ -851,7 +870,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Get the containing element, determine the size and create the inner
-	 * container div to hold the chart
+	 * container div to hold the chart.
+	 *
+	 * @private
 	 */
 	getContainer: function () {
 		var chart = this,
@@ -980,7 +1001,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	/**
 	 * Calculate margins by rendering axis labels in a preliminary position.
 	 * Title, subtitle and legend have already been rendered at this stage, but
-	 * will be moved into their final positions
+	 * will be moved into their final positions.
+	 *
+	 * @private
 	 */
 	getMargins: function (skipAxes) {
 		var chart = this,
@@ -1323,7 +1346,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Draw the borders and backgrounds for chart and plot area
+	 * Internal function to draw or redraw the borders and backgrounds for chart
+	 * and plot area.
+	 *
+	 * @private
 	 */
 	drawChartBox: function () {
 		var chart = this,
@@ -1825,7 +1851,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Prepare for first rendering after all data are loaded
+	 * Prepare for first rendering after all data are loaded.
+	 *
+	 * @private
 	 */
 	firstRender: function () {
 		var chart = this,

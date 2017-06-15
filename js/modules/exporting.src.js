@@ -260,7 +260,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Return innerHTML of chart. Used as hook for plugins.
+	 * Return the unfiltered innerHTML of the chart container. Used as hook for
+	 * plugins. In styled mode, it also takes care of inlining CSS style rules.
+	 *
+	 * @see  Chart#getSVG
+	 *
+	 * @returns {String}
+	 *          The unfiltered SVG of the chart.
 	 */
 	getChartHTML: function () {
 		/*= if (!build.classic) { =*/
@@ -543,7 +549,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Display a popup menu for choosing the export type
+	 * Display a popup menu for choosing the export type.
+	 *
+	 * @private
 	 *
 	 * @param {String} className An identifier for the menu
 	 * @param {Array} items A collection with text and onclicks for the items
@@ -687,7 +695,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Add the export button to the chart
+	 * Add the export button to the chart, with options.
+	 *
+	 * @private
 	 */
 	addButton: function (options) {
 		var chart = this,
@@ -800,7 +810,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Destroy the buttons.
+	 * Destroy the export buttons.
+	 *
+	 * @private
 	 */
 	destroyExport: function (e) {
 		var chart = e ? e.target : this,
