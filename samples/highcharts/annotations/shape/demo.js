@@ -1,6 +1,10 @@
 Highcharts.chart('container', {
     chart: {
-       type: 'column',
+        type: 'column'
+    },
+
+    title: {
+        text: 'Basic shape annotations'
     },
 
     series: [{
@@ -30,9 +34,9 @@ Highcharts.chart('container', {
             x: -10,
             y: -25
         }, {
-            point: '1',
             fill: 'none',
-            stroke: Highcharts.getOptions().colors[3],
+            stroke: 'red',
+            strokeWidth: 3,
             type: 'path',
             points: ['0', '3', {
                 x: 6,
