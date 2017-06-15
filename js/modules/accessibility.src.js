@@ -359,14 +359,25 @@ H.Point.prototype.highlight = function () {
 };
 
 // Function to highlight next/previous point in chart
-// Returns highlighted point on success, false on failure (no adjacent point to highlight in chosen direction)
+// Returns highlighted point on success, false on failure (no adjacent point to
+// highlight in chosen direction)
 H.Chart.prototype.highlightAdjacentPoint = function (next) {
-	var series = this.series,
-		curPoint = this.highlightedPoint,
+	var chart = this,
+		series = chart.series,
+		curPoint = chart.highlightedPoint,
 		curPointIndex = curPoint && curPoint.index || 0,
 		curPoints = curPoint && curPoint.series.points,
+		lastSeries = chart.series && chart.series[chart.series.length - 1],
+		lastPoint = lastSeries && lastSeries.points && 
+					lastSeries.points[lastSeries.points.length - 1],
 		newSeries,
 		newPoint,
+		isSkipPoint = function (point) {
+			return point.isNull &&
+				chart.options.accessibility.keyboardNavigation.skipNullPoints ||
+				point.series.options.skipKeyboardNavigation ||
+				!point.series.visible;
+		},
 		// Handle connecting ends - where the points array has an extra last
 		// point that is a reference to the first one. We skip this.
 		forwardSkipAmount = curPoint && curPoint.series.connectEnds &&
@@ -377,47 +388,46 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
 		return false;
 	}
 
-	// Use first point if none already highlighted
 	if (!curPoint) {
-		return series[0].points[0].highlight();
-	}
-
-	// Find index of current point in series.points array. Necessary for dataGrouping (and maybe zoom?)
-	if (curPoints[curPointIndex] !== curPoint) {
-		for (var i = 0; i < curPoints.length; ++i) {
-			if (curPoints[i] === curPoint) {
-				curPointIndex = i;
-				break;
+		// No point is highlighted yet. Try first/last point depending on move
+		// direction
+		newPoint = next ? series[0].points[0] : lastPoint;
+	} else {
+		// We have a highlighted point.
+		// Find index of current point in series.points array. Necessary for
+		// dataGrouping (and maybe zoom?)
+		if (curPoints[curPointIndex] !== curPoint) {
+			for (var i = 0; i < curPoints.length; ++i) {
+				if (curPoints[i] === curPoint) {
+					curPointIndex = i;
+					break;
+				}
 			}
+		}
+
+		// Grab next/prev point & series
+		newSeries = series[curPoint.series.index + (next ? 1 : -1)];
+		newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
+					// Done with this series, try next one
+					newSeries &&
+					newSeries.points[next ? 0 : newSeries.points.length - (
+						newSeries.connectEnds ? 2 : 1
+					)];
+
+		// If there is no adjacent point, we return false
+		if (newPoint === undefined) {
+			return false;
 		}
 	}
 
-	// Grab next/prev point & series
-	newSeries = series[curPoint.series.index + (next ? 1 : -1)];
-	newPoint = curPoints[curPointIndex + (next ? forwardSkipAmount : -1)] || 
-				// Done with this series, try next one
-				newSeries &&
-				newSeries.points[next ? 0 : newSeries.points.length - (
-					newSeries.connectEnds ? 2 : 1
-				)];
-
-	// If there is no adjacent point, we return false
-	if (newPoint === undefined) {
-		return false;
-	}
-
 	// Recursively skip null points or points in series that should be skipped
-	if (
-		newPoint.isNull && 
-		this.options.accessibility.keyboardNavigation.skipNullPoints ||
-		newPoint.series.options.skipKeyboardNavigation
-	) {
-		this.highlightedPoint = newPoint;
-		return this.highlightAdjacentPoint(next);
+	if (isSkipPoint(newPoint)) {
+		chart.highlightedPoint = newPoint;
+		return chart.highlightAdjacentPoint(next);
 	}
 
 	// There is an adjacent point, highlight it
-	return newPoint.highlight();			
+	return newPoint.highlight();
 };
 
 // Show the export menu and focus the first item (if exists)
@@ -619,13 +629,9 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				}
 			}]
 		], {
-			// If coming back to points from other module, highlight last point
-			init: function (direction) {
-				var lastSeries = chart.series && chart.series[chart.series.length - 1],
-					lastPoint = lastSeries && lastSeries.points && lastSeries.points[lastSeries.points.length - 1];
-				if (direction < 0 && lastPoint) {
-					lastPoint.highlight();
-				}
+			// Always start highlighting from scratch when entering this module
+			init: function () {
+				delete chart.highlightedPoint;
 			},
 			// If leaving points, don't show tooltip anymore
 			terminate: function () {
@@ -641,9 +647,7 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 			// Left/Up
 			[[37, 38], function () {
 				var i = chart.highlightedExportItem || 0,
-					reachedEnd = true,
-					series = chart.series,
-					newSeries;
+					reachedEnd = true;
 				// Try to highlight prev item in list. Highlighting e.g. separators will fail.
 				while (i--) {
 					if (chart.highlightExportItem(i)) {
@@ -653,14 +657,6 @@ H.Chart.prototype.addKeyboardNavEvents = function () {
 				}
 				if (reachedEnd) {
 					chart.hideExportMenu();
-					// Wrap to last point
-					if (series && series.length) {
-						newSeries = series[series.length - 1];
-						if (newSeries.points.length) {
-							newSeries.points[newSeries.points.length - 1].highlight();
-						}
-					}
-					// Try to move to prev module (should be points, since we wrapped to last point)
 					return this.move(-1);
 				}
 			}],
