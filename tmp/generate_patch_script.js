@@ -101,7 +101,7 @@ function fixStr (str, prefix, indentation) {
     str = str.replace(/\n/g, ' ').replace(/\r/g, '');
     str = markdownify(str);
 
-    prefix = prefix || '';    
+    prefix = prefix || '';
 
     for (var i = 0; i < str.length; i++) {
         c += str[i];
@@ -112,7 +112,7 @@ function fixStr (str, prefix, indentation) {
             c = '';
             count = indentation;
         }
-        
+
         if (count >= (80 - prefix.length - 10) && splits[str[i]]) {
             lines.push(c.trim());
             c = '';
@@ -121,7 +121,7 @@ function fixStr (str, prefix, indentation) {
     }
 
     if (c.length > 0) {
-        lines.push(c);        
+        lines.push(c);
     }
 
     return lines;
@@ -140,7 +140,7 @@ function fixSample(str) {
 
         if (start >= 0 && stop >= 0) {
             original = str.substr(start, (stop - start) + 4);
-            
+
 
             start = original.indexOf
             url = original.substr(original.indexOf('"'))
@@ -150,7 +150,7 @@ function fixSample(str) {
         }
     }
 
-    str = str.replace(/[^<]*(<a href="([^"]+)"[^>]+>([^<]+)<\/a>)/g, function (o, orig, url, title) {        
+    str = str.replace(/[^<]*(<a href="([^"]+)"[^>]+>([^<]+)<\/a>)/g, function (o, orig, url, title) {
         url = url.substr(url.lastIndexOf('highcharts/'));
         title = title.replace(/\t/g, ' ').trim() || 'View Sample';
         res.push(url + ' ' + title[0].toUpperCase() + title.substr(1));
@@ -165,7 +165,7 @@ function processTarget(target, mergedAPI, fn) {
     console.log('Fetching dump from', target.url);
 
     function fetchRemote() {
-        request(target.url, function (error, response, body) {    
+        request(target.url, function (error, response, body) {
             if (error) return fn(error);
             try {
                 api = JSON.parse(body)
@@ -178,12 +178,12 @@ function processTarget(target, mergedAPI, fn) {
             });
 
             fn(false, flatten(target.name, api, mergedAPI));
-        });        
+        });
     }
 
     fs.readFile(target.name + '.cache.json', function (err, data) {
         if (err) return console.log('could not find mongo dumps');//fetchRemote();
-        
+
         try {
             api = JSON.parse(data.toString());
         } catch (e) {
@@ -214,7 +214,7 @@ function doCompare(code, dump) {
                 - Values (possible values)
                 - Return type
          */
-        
+
          if (dentry.description && dentry.description.length) {
             doclet.push(
                 fixStr(dentry.description, false, indentation).
@@ -226,16 +226,16 @@ function doCompare(code, dump) {
 
             doclet.push('');
         }
-        
+
         if (dentry.values && dentry.values.length) {
             doclet.push('@validvalue ' + dentry.values);
         }
-        
+
         if (dentry.returnType && dentry.returnType.length > 0) {
             doclet.push('@type {' + dentry.returnType + '}');
         }
 
-        if (dentry.seeAlso && dentry.seeAlso.length > 0) {            
+        if (dentry.seeAlso && dentry.seeAlso.length > 0) {
             doclet.push('@see ' + fixStr(dentry.seeAlso, false, indentation).
                     join(
                         '\n' +
@@ -255,17 +255,21 @@ function doCompare(code, dump) {
         if (dentry.defaults && dentry.defaults.length > 0) {
             doclet.push('@default ' + dentry.defaults);
         }
-        
+
         if (dentry.todo) {
             doclet.push('@todo ' + dentry.todo);
         }
-        
+
         if (dentry.excluding) {
             doclet.push('@excluding ' + dentry.excluding);
         }
 
         if (dentry.deprecated) {
             doclet.push('@deprecated');
+        }
+
+        if (dentry.context) {
+          doclet.push('@context ' + dentry.context);
         }
 
         if (dentry.demo) {
@@ -300,14 +304,14 @@ function doCompare(code, dump) {
 
             htmlReport.missingInCode.push(dkey);
 
-            supplementalDoclets.push(                
+            supplementalDoclets.push(
                 '\n' +
                 '/**\n' +
                 //' * ' + '@apioption ' + dump[dkey].fullname.replace('<', '.').replace('>', '') + '\n' +
                 //' * \n' +
                 ' * ' +
                 toDolcet(
-                    dump[dkey], 
+                    dump[dkey],
                     doclet
                 ).concat([
                     '@todo Copy ' + dkey + ' docs to actual source code',
@@ -319,7 +323,7 @@ function doCompare(code, dump) {
     });
 
     fs.writeFile(
-        'supplemental.docs.js', 
+        'supplemental.docs.js',
         '/*\n   This file contains things that are referrenced in the old API dump,\n' +
         '   which can\'t be found in the source code.\n*/\n' +
         supplementalDoclets.join('\n')
@@ -349,11 +353,11 @@ function doCompare(code, dump) {
         if (!dentry) {
             htmlReport.missingInAPI.push(centry);
             console.log(
-                'warning'.yellow, 
-                'found something in the code thats not in the API docs:', 
+                'warning'.yellow,
+                'found something in the code thats not in the API docs:',
                 ckey
             );
-            
+
             dentry
              = {
                 //todo: 'implement docs for ' + ckey
@@ -376,7 +380,7 @@ function doCompare(code, dump) {
         if (Object.keys(centry.doclet || {}).length > 0) {
             // There's already a doclet on in the code
             if (centry) {
-                htmlReport.outOfSync.push(centry);                
+                htmlReport.outOfSync.push(centry);
             }
 
             return console.log(
@@ -399,21 +403,21 @@ function doCompare(code, dump) {
         res[fname] = res[fname] || [];
 
         doclet.push('');
-       
+
         toDolcet(dentry, doclet, spaces, centry.meta.column);
 
         res[fname].push({
             line: centry.meta.line - 1,
             column: centry.meta.column,
             //products: dentry.products,
-            doclet: ('\n' + 
-                    spaces + 
-                    '/**' + 
+            doclet: ('\n' +
+                    spaces +
+                    '/**' +
                     doclet.join(
-                        '\n' + 
-                        spaces + 
+                        '\n' +
+                        spaces +
                         ' * '
-                    ) + 
+                    ) +
                     '\n' +
                     spaces +
                     ' */')//.split('\n')
@@ -425,19 +429,19 @@ function doCompare(code, dump) {
 
     fs.writeFile(
         'report.html',
-        
+
         r.replace('{{MissingCodeCount}}', htmlReport.missingInCode.length)
         .replace('{{MissingCode}}', htmlReport.missingInCode.map(function (t) {
             t.meta = t.meta || {};
             return '<tr><td>' + t + '</td></tr>';
-            // return '<tr>' + 
+            // return '<tr>' +
             //         '<td><code>' + t.fullname + '</code></td>' +
             //         '<td>' + t.description + '</td>' +
             //         '</tr>';
         }).join(''))
         .replace('{{MissingAPI}}', htmlReport.missingInAPI.map(function (t) {
             t.meta = t.meta || {};
-            return '<tr>' + 
+            return '<tr>' +
                     '<td><code>' + t.meta.fullname + '</code></td>' +
                     '<td>' + t.meta.filename + ':' + t.meta.line + '</td>' +
                     '</tr>';
