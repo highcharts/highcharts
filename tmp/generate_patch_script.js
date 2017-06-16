@@ -98,7 +98,7 @@ function fixStr (str, prefix, indentation) {
     indentation = indentation || 0;
     count = indentation;
 
-    str = str.replace(/\n/g, ' ').replace(/\r/g, '');
+    str = str.replace(/\r/g, '');
     str = markdownify(str);
 
     prefix = prefix || '';
