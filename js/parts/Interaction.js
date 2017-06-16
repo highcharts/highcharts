@@ -304,7 +304,9 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 	/**
-	 * Display the zoom button
+	 * Display the zoom button.
+	 *
+	 * @private
 	 */
 	showResetZoom: function () {
 		var chart = this,
@@ -330,7 +332,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Zoom out to 1:1
+	 * Zoom out to 1:1.
+	 *
+	 * @private
 	 */
 	zoomOut: function () {
 		var chart = this;
@@ -340,8 +344,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Zoom into a given portion of the chart given by axis coordinates
+	 * Zoom into a given portion of the chart given by axis coordinates.
 	 * @param {Object} event
+	 *
+	 * @private
 	 */
 	zoom: function (event) {
 		var chart = this,
@@ -390,9 +396,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 	},
 
 	/**
-	 * Pan the chart by dragging the mouse across the pane. This function is called
-	 * on mouse move, and the distance to pan is computed from chartX compared to
-	 * the first chartX position in the dragging operation.
+	 * Pan the chart by dragging the mouse across the pane. This function is
+	 * called on mouse move, and the distance to pan is computed from chartX
+	 * compared to the first chartX position in the dragging operation.
+	 *
+	 * @private
 	 */
 	pan: function (e, panning) {
 

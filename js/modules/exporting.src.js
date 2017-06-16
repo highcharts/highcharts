@@ -197,8 +197,11 @@ H.post = function (url, data, formAttributes) {
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
-	 * A collection of fixes on the produced SVG to account for expando properties,
-	 * browser bugs, VML problems and other. Returns a cleaned SVG.
+	 * Exporting module only. A collection of fixes on the produced SVG to
+	 * account for expando properties, browser bugs, VML problems and other.
+	 * Returns a cleaned SVG.
+	 *
+	 * @private
 	 */
 	sanitizeSVG: function (svg, options) {
 		// Move HTML into a foreignObject

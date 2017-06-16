@@ -412,7 +412,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Setter function to allow use from chart.update
+	 * Shortcut to set the subtitle options. This can also be done from {@link
+	 * Chart#update} or {@link Chart#setTitle}.
+	 *
+	 * @param  {SubtitleOptions} options
+	 *         New subtitle options. The subtitle text itself is set by the
+	 *         `options.text` property.
 	 */
 	setSubtitle: function (options) {
 		this.setTitle(undefined, options);

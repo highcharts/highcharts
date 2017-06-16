@@ -284,7 +284,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Initialize an individual series, called internally before render time
+	 * Internal function to unitialize an individual series.
+	 *
+	 * @private
 	 */
 	initSeries: function (options) {
 		var chart = this,
@@ -308,8 +310,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * by configuration, only the last series is handled (#248, #1123, #2456,
 	 * #6112). This function is called on series initialization and destroy.
 	 *
-	 * @param {number} fromIndex - If this is given, only the series above this
-	 *	 index are handled.
+	 * @private
+	 *
+	 * @param  {number} fromIndex
+	 *         If this is given, only the series above this index are handled.
 	 */
 	orderSeries: function (fromIndex) {
 		var series = this.series,
@@ -324,11 +328,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Check whether a given point is within the plot area
+	 * Check whether a given point is within the plot area.
 	 *
-	 * @param {Number} plotX Pixel x relative to the plot area
-	 * @param {Number} plotY Pixel y relative to the plot area
-	 * @param {Boolean} inverted Whether the chart is inverted
+	 * @param  {Number} plotX
+	 *         Pixel x relative to the plot area.
+	 * @param  {Number} plotY
+	 *         Pixel y relative to the plot area.
+	 * @param  {Boolean} inverted
+	 *         Whether the chart is inverted.
+	 *
+	 * @return {Boolean}
+	 *         Returns true if the given point is inside the plot area.
 	 */
 	isInsidePlot: function (plotX, plotY, inverted) {
 		var x = inverted ? plotY : plotX,
@@ -624,9 +634,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * Set a new title or subtitle for the chart.
 	 *
 	 * @param  titleOptions {TitleOptions}
-	 *         New title options.
+	 *         New title options. The title text itself is set by the
+	 *         `titleOptions.text` property.
 	 * @param  subtitleOptions {SubtitleOptions}
-	 *         New subtitle options.
+	 *         New subtitle options. The subtitle text itself is set by the
+	 *         `subtitleOptions.text` property.
 	 * @param  redraw {Boolean}
 	 *         Whether to redraw the chart or wait for a later call to 
 	 *         `chart.redraw()`.
@@ -710,8 +722,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Lay out the chart titles and cache the full offset height for use
-	 * in getMargins
+	 * Internal function to lay out the chart titles and cache the full offset
+	 * height for use in `getMargins`. The result is stored in 
+	 * `this.titleOffset`.
+	 *
+	 * @private
 	 */
 	layOutTitles: function (redraw) {
 		var titleOffset = 0,
@@ -818,7 +833,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * parents, then save the original display properties, and when the true
 	 * size is retrieved, reset them. Used on first render and on redraws.
 	 *
-	 * @param {Boolean} revert - Revert to the saved original styles.
+	 * @private
+	 * 
+	 * @param  {Boolean} revert
+	 *         Revert to the saved original styles.
 	 */
 	temporaryDisplay: function (revert) {
 		var node = this.renderTo,
@@ -862,7 +880,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Setter for the chart class name
+	 * Set the {@link Chart.container|chart container's} class name, in
+	 * addition to `highcharts-container`. 
 	 */
 	setClassName: function (className) {
 		this.container.className = 'highcharts-container ' + (className || '');
@@ -1122,7 +1141,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Add the event handlers necessary for auto resizing
+	 * Add the event handlers necessary for auto resizing, depending on the 
+	 * `chart.events.reflow` option.
+	 *
+	 * @private
 	 */
 	initReflow: function () {
 		var chart = this,
@@ -1233,7 +1255,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 	/**
 	 * Set the public chart properties. This is done before and after the
-	 * pre-render to determine margin sizes
+	 * pre-render to determine margin sizes.
+	 *
+	 * @private
 	 */
 	setChartSize: function (skipAxes) {
 		var chart = this,
@@ -1257,12 +1281,43 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			return Math.max(plotBorderWidth || offset, offset) / 2;
 		}
 
+		/**
+		 * The current left position of the plot area in pixels.
+		 *
+		 * @name plotLeft
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
+		
+		/**
+		 * The current top position of the plot area in pixels.
+		 *
+		 * @name plotTop
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.plotTop = plotTop = Math.round(chart.plotTop);
+
+		/**
+		 * The current width of the plot area in pixels.
+		 *
+		 * @name plotWidth
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.plotWidth = plotWidth = Math.max(
 			0,
 			Math.round(chartWidth - plotLeft - chart.marginRight)
 		);
+		
+		/**
+		 * The current height of the plot area in pixels.
+		 *
+		 * @name plotHeight
+		 * @memberOf Chart
+		 * @type {Number}
+		 */
 		chart.plotHeight = plotHeight = Math.max(
 			0,
 			Math.round(chartHeight - plotTop - chart.marginBottom)
@@ -1317,7 +1372,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Initial margins before auto size margins are applied
+	 * Initial margins before auto size margins are applied.
+	 *
+	 * @private
 	 */
 	resetMargins: function () {
 		var chart = this,
@@ -1493,6 +1550,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	 * Detect whether a certain chart property is needed based on inspecting its
 	 * options and series. This mainly applies to the chart.inverted property,
 	 * and in extensions to the chart.angular and chart.polar properties.
+	 *
+	 * @private
 	 */
 	propFromSeries: function () {
 		var chart = this,
@@ -1531,8 +1590,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Link two or more series together. This is done initially from
-	 * Chart.render, and after Chart.addSeries and Series.remove.
+	 * Internal function to link two or more series together, based on the 
+	 * `linkedTo` option. This is done from `Chart.render`, and after
+	 * `Chart.addSeries` and `Series.remove`.
+	 *
+	 * @private
 	 */
 	linkSeries: function () {
 		var chart = this,
@@ -1567,7 +1629,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Render series for the chart
+	 * Render series for the chart.
+	 *
+	 * @private
 	 */
 	renderSeries: function () {
 		each(this.series, function (serie) {
@@ -1577,7 +1641,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Render labels for the chart
+	 * Render labels for the chart.
+	 *
+	 * @private
 	 */
 	renderLabels: function () {
 		var chart = this,
@@ -1606,7 +1672,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Render all graphics for the chart
+	 * Render all graphics for the chart. Runs internally on initialization.
+	 *
+	 * @private
 	 */
 	render: function () {
 		var chart = this,
@@ -1833,6 +1901,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	/**
 	 * VML namespaces can't be added until after complete. Listening
 	 * for Perini's doScroll hack is not enough.
+	 *
+	 * @private
 	 */
 	isReadyToRender: function () {
 		var chart = this;
@@ -1910,7 +1980,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/** 
-	 * On chart load
+	 * Internal function that runs on chart load, async if any images are loaded
+	 * in the chart. Runs the callbacks and triggers the `load` and `render`
+	 * events.
+	 *
+	 * @private
 	 */
 	onload: function () {
 
