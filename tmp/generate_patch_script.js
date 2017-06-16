@@ -248,10 +248,6 @@ function doCompare(code, dump) {
             doclet.push('@extends ' + dentry.extending.replace(/\-\-/g, '.').replace(/\-/g, '.'));
         }
 
-        if (dentry.context && dentry.context.length > 0) {
-            doclet.push('@context ' + dentry.context);
-        }
-
         if (dentry.defaults && dentry.defaults.length > 0) {
             doclet.push('@default ' + dentry.defaults);
         }
