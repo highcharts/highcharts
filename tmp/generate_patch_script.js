@@ -269,7 +269,8 @@ function doCompare(code, dump) {
         }
 
         if (dentry.context) {
-          doclet.push('@context ' + dentry.context);
+            console.log('Found @context', dentry.context);
+            doclet.push('@context ' + dentry.context);
         }
 
         if (dentry.demo) {

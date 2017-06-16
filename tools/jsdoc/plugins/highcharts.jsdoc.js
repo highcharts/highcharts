@@ -1,4 +1,4 @@
-/**        
+/**
  * @module plugins/highcharts.jsdoc
  * @uathor Chris Vasseng
  *
@@ -19,12 +19,12 @@ var options = {
 
 function dumpOptions() {
     fs.writeFile(
-        'tree.json', 
+        'tree.json',
         JSON.stringify(
-            options, 
-            undefined, 
+            options,
+            undefined,
             '  '
-        ), 
+        ),
         function () {
             console.log('Wrote tree!');
         }
@@ -37,7 +37,7 @@ function decorateOptions(parent, target, option, filename) {
     if (!option) {
         console.log('WARN: decorateOptions called with no valid AST node');
         return;
-    }    
+    }
 
     index = option.key.name;
 
@@ -59,7 +59,7 @@ function decorateOptions(parent, target, option, filename) {
         filename: filename//.replace('highcharts/', '')
     };
 
-    if (option.value && option.value.type == 'ObjectExpression') {     
+    if (option.value && option.value.type == 'ObjectExpression') {
 
         // This is a nested object probably
         option.value.properties.forEach(function (sub) {
@@ -88,19 +88,19 @@ function decorateOptions(parent, target, option, filename) {
     option.highcharts.isOption = true;
 
     // if (option.comment) {
-    //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');            
+    //     option.comment = option.comment.replace('*/', '\n* @apioption ' + parent + index + '\n*/');
     // } else {
     //     option.comment = '/** @apioption ' + parent + index + ' */';
     // }
 }
 
-function addToComment(comment, line) {    
-    comment = comment || ''; 
+function addToComment(comment, line) {
+    comment = comment || '';
 
-    return '/*' + 
-            comment.replace('/*', '').replace('*/', '') + 
-            '\n * ' + 
-            line + 
+    return '/*' +
+            comment.replace('/*', '').replace('*/', '') +
+            '\n * ' +
+            line +
             '\n*/'
     ;
 }
@@ -116,9 +116,9 @@ function nodeVisitor(node, e, parser, currentSourceName) {
         s
     ;
 
-    if (node.highcharts && node.highcharts.isOption) {     
+    if (node.highcharts && node.highcharts.isOption) {
         if (e.comment) {
-            e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');            
+            e.comment = e.comment.replace('*/', '\n* @optionparent ' + node.highcharts.fullname + '\n*/');
         } else {
             e.comment = '/** @optionparent ' + node.highcharts.fullname + ' */';
         }
@@ -130,20 +130,20 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
     if (node.leadingComments && node.leadingComments.length > 0) {
         comment = node.leadingComments[0].raw;
-       
+
         s = comment.indexOf('@optionparent');
-        
+
         if (s >= 0) {
             s = comment.substr(s).replace(/\*/g, '').trim();
             fullPath = '';
-            
+
             parent = s.split('\n')[0].trim().split(' ');
-            
+
             console.log('doing optionparent:', currentSourceName, '->', parent.length > 1 ? parent[1] : 'root');
-            
+
             if (parent && parent.length > 1) {
                 parent = parent[1].trim() || '';
-                
+
                 s = parent.split('.');
                 target = options;
 
@@ -153,7 +153,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     target[p] = target[p] || {};
 
                     target[p].doclet = target[p].doclet || {};
-                    target[p].children = target[p].children || {};          
+                    target[p].children = target[p].children || {};
 
                     target[p].meta = {
                         filename: currentSourceName,
@@ -162,10 +162,10 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                         line: node.loc.start.line,
                         column: node.loc.start.column
                     };
-                    
-                    target = target[p].children; 
 
-                });                
+                    target = target[p].children;
+
+                });
             } else {
                 parent = '';
 
@@ -173,13 +173,13 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 target = options;
             }
 
-            if (target) {               
+            if (target) {
                 if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
                     properties = node.arguments[2].properties;
                 } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                     properties = node.arguments[0].properties;
                 } else if (node.type === 'ObjectExpression') {
-                    properties = node.properties;                
+                    properties = node.properties;
                 } else if (node.init && node.init.type === 'ObjectExpression') {
                     properties = node.init.properties;
                 } else if (node.value && node.value.type === 'ObjectExpression') {
@@ -188,7 +188,7 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                     properties = node.right.properties;
                 } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
                     properties = node.right.arguments[2].properties;
-                } else {    
+                } else {
                     logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
                 }
 
@@ -201,9 +201,9 @@ function nodeVisitor(node, e, parser, currentSourceName) {
                 }
             } else {
                 logger.error('@optionparent is missing an argument');
-            }       
+            }
         }
-    } 
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ function augmentOption(path, obj) {
     var current = options,
         p = (path || '').split('.')
     ;
-    
+
     if (!obj) {
         return;
     }
@@ -234,7 +234,7 @@ function augmentOption(path, obj) {
         //     return;
         // }
 
-        // if (p.length === 1) {            
+        // if (p.length === 1) {
         //     if (current.children) {
         //         current = current.children;
         //     } else {
@@ -263,14 +263,14 @@ function augmentOption(path, obj) {
                 //     if (!current[thing].meta.filename === '??') {
                 //         current[thing].meta.filename = obj.meta.filename.substr(
                 //             obj.meta.filename.indexOf('highcharts/')
-                //         );                    
+                //         );
                 //     }
-                // } 
-            
+                // }
+
                 return;
             }
 
-            current[thing] = current[thing] || {children: {}}; 
+            current[thing] = current[thing] || {children: {}};
             current = current[thing].children;
         });
 
@@ -299,6 +299,12 @@ exports.defineTags = function (dictionary) {
         }
     });
 
+    dictionary.defineTag('context', {
+      onTagged: function (doclet, tagObj) {
+        doclet.context = tagObj.value;
+      }
+    });
+
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
             //doclet.fullname = tagObj.value;
@@ -315,7 +321,7 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('exclude', {
         onTagged: function (doclet, tagObj) {
             var items = tagObj.text.split(',');
-            
+
             doclet.exclude = doclet.exclude || [];
 
             items.forEach(function (entry) {
@@ -326,7 +332,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('extends', {
         onTagged: function (doclet, tagObj) {
-            doclet.extends = tagObj.value;     
+            doclet.extends = tagObj.value;
         }
     });
 };
@@ -337,7 +343,7 @@ exports.astNodeVisitor = {
 
 exports.handlers = {
     beforeParse: function (e) {
-        
+
     },
 
     jsdocCommentFound: function (e) {
