@@ -239,6 +239,37 @@ H.setOptions({
 });
 
 /**
+ * A text description of the chart.
+ * 
+ * If the Accessibility module is loaded, this is included by default
+ * as a long description of the chart and its contents in the hidden
+ * screen reader information region.
+ * 
+ * @type {String}
+ * @see [typeDescription](#chart.typeDescription)
+ * @default {all} undefined
+ * @since 5.0.0
+ * @apioption chart.description
+ */
+
+ /**
+ * A text description of the chart type.
+ * 
+ * If the Accessibility module is loaded, this will be included in the
+ * description of the chart in the screen reader information region.
+ * 
+ * 
+ * Highcharts will by default attempt to guess the chart type, but for
+ * more complex charts it is recommended to specify this property for
+ * clarity.
+ * 
+ * @type {String}
+ * @default {all} undefined
+ * @since 5.0.0
+ * @apioption chart.typeDescription
+ */
+
+/**
  * HTML encode some characters vulnerable for XSS.
  * @param  {string} html The input string
  * @return {string} The excaped string

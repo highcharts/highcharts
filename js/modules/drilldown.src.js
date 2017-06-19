@@ -196,6 +196,72 @@ defaultOptions.drilldown = {
 	}
 };	
 
+
+
+/**
+ * Fires when a drilldown point is clicked, before the new series is
+ * added. This event is also utilized for async drilldown, where the
+ * seriesOptions are not added by option, but rather loaded async. Note
+ * that when clicking a category label to trigger multiple series drilldown,
+ * one `drilldown` event is triggered per point in the category.
+ * 
+ * Event arguments:
+ * 
+ * <dl>
+ * 
+ * <dt>`category`</dt>
+ * 
+ * <dd>If a category label was clicked, which index.</dd>
+ * 
+ * <dt>`point`</dt>
+ * 
+ * <dd>The originating point.</dd>
+ * 
+ * <dt>`originalEvent`</dt>
+ * 
+ * <dd>The original browser event (usually click) that triggered the
+ * drilldown.</dd>
+ * 
+ * <dt>`points`</dt>
+ * 
+ * <dd>If a category label was clicked, this array holds all points
+ * corresponing to the category.</dd>
+ * 
+ * <dt>`seriesOptions`</dt>
+ * 
+ * <dd>Options for the new series</dd>
+ * 
+ * </dl>
+ * 
+ * @type {Function}
+ * @context Chart
+ * @sample {highcharts} highcharts/drilldown/async/ Async drilldown
+ * @since 3.0.8
+ * @product highcharts highmaps
+ * @apioption chart.events.drilldown
+ */
+
+ /**
+ * Fires when drilling up from a drilldown series.
+ * 
+ * @type {Function}
+ * @context Chart
+ * @since 3.0.8
+ * @product highcharts highmaps
+ * @apioption chart.events.drillup
+ */
+
+/**
+ * In a chart with multiple drilldown series, this event fires after
+ * all the series have been drilled up.
+ * 
+ * @type {Function}
+ * @context Chart
+ * @since 4.2.4
+ * @product highcharts highmaps
+ * @apioption chart.events.drillupall
+ */
+
 /**
  * A general fadeIn method
  */

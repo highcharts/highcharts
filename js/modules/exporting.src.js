@@ -321,7 +321,7 @@ defaultOptions.exporting = {
 	 * sourceWidth)
 	 * @sample {highcharts} highcharts/exporting/scale/ Scale demonstrated
 	 * @sample {highstock} highcharts/exporting/scale/ Scale demonstrated
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/exporting/scale/ Scale demonstrated
+	 * @sample {highmaps} maps/exporting/scale/ Scale demonstrated
 	 * @default {all} 2
 	 * @since 3.0
 	 * @product highcharts highstock highmaps
@@ -535,6 +535,39 @@ defaultOptions.exporting = {
 		}
 	}
 };
+
+/**
+ * Fires after a chart is printed through the context menu item or the
+ * `Chart.print` method. Requires the exporting module.
+ * 
+ * @type {Function}
+ * @context Chart
+ * @sample {highcharts} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @since 4.1.0
+ * @apioption chart.events.afterPrint
+ */
+
+/**
+ * Fires before a chart is printed through the context menu item or
+ * the `Chart.print` method. Requires the exporting module.
+ * 
+ * @type {Function}
+ * @context Chart
+ * @sample {highcharts} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/
+ *         Rescale the chart to print
+ * @since 4.1.0
+ * @apioption chart.events.beforePrint
+ */
+
 
 // Add the H.post utility
 H.post = function (url, data, formAttributes) {
