@@ -128,8 +128,8 @@ H.Series = H.seriesType('line', null,
 	 * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/ Line
 	 * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-column/ Column
 	 * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/ Pie
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Map area
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-allowpointselect/ Map bubble
+	 * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Map area
+	 * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/ Map bubble
 	 * @default {all} false
 	 * @since 1.2.0
 	 * @product highcharts highstock highmaps
@@ -182,10 +182,10 @@ H.Series = H.seriesType('line', null,
 	 * @sample {highcharts} highcharts/plotoptions/series-animation-disabled/ Animation disabled
 	 * @sample {highcharts} highcharts/plotoptions/series-animation-slower/ Slower animation
 	 * @sample {highcharts} highcharts/plotoptions/series-animation-easing/ Custom easing function
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/animation-slower/ Slower animation
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/animation-easing/ Custom easing function
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-animation-true/ Animation enabled on map series
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-animation-false/ Disabled on mapbubble series
+	 * @sample {highstock} stock/plotoptions/animation-slower/ Slower animation
+	 * @sample {highstock} stock/plotoptions/animation-easing/ Custom easing function
+	 * @sample {highmaps} maps/plotoptions/series-animation-true/ Animation enabled on map series
+	 * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/ Disabled on mapbubble series
 	 * @default {highcharts} true
 	 * @default {highstock} true
 	 * @default {highmaps} false
@@ -510,7 +510,7 @@ H.Series = H.seriesType('line', null,
 		 * </table>
 		 * 
 		 * @type {Function}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-format/ Formatted value
+		 * @sample {highmaps} maps/plotoptions/series-datalabels-format/ Formatted value
 		 * @product highcharts highstock highmaps
 		 */
 		formatter: function () {
@@ -533,7 +533,7 @@ H.Series = H.seriesType('line', null,
 		 * 
 		 * @type {CSSObject}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/ Bold labels
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/demo/color-axis/ Bold labels
+		 * @sample {highmaps} maps/demo/color-axis/ Bold labels
 		 * @default {all} {"color": "contrast", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast" }
 		 * @since 4.1.0
 		 * @product highcharts highstock highmaps
@@ -615,7 +615,7 @@ H.Series = H.seriesType('line', null,
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
 		 * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-box/ Data labels box options
+		 * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
 		 * @default {highcharts} 5
 		 * @default {highstock} 5
 		 * @default {highmaps} 0
@@ -813,7 +813,7 @@ H.Series = H.seriesType('line', null,
 		 * @type {Object}
 		 * @extends plotOptions.series.states.hover
 		 * @excluding brightness
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Allow point select demo
+		 * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Allow point select demo
 		 * @product highmaps
 		 */
 		select: {

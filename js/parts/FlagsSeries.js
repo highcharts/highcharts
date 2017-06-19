@@ -48,7 +48,7 @@ seriesType('flags', 'column',
 	 * 
 	 * @validvalue ["flag", "circlepin", "squarepin"]
 	 * @type {String}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/flags/ Different shapes
+	 * @sample {highstock} stock/plotoptions/flags/ Different shapes
 	 * @default {all} flag
 	 * @product highstock
 	 */
@@ -59,7 +59,7 @@ seriesType('flags', 'column',
 	 * number determines the vertical offset between them.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/flags-stackdistance/ A greater stack distance
+	 * @sample {highstock} stock/plotoptions/flags-stackdistance/ A greater stack distance
 	 * @default {all} 12
 	 * @product highstock
 	 */

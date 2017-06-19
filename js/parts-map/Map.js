@@ -41,7 +41,7 @@ defaultOptions.mapNavigation = {
 	 * option set.
 	 * 
 	 * @type {Object}
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/mapnavigation/button-theme/ Theming the navigation buttons
+	 * @sample {highmaps} maps/mapnavigation/button-theme/ Theming the navigation buttons
 	 * @product highmaps
 	 */
 	buttonOptions: {
@@ -146,7 +146,7 @@ defaultOptions.mapNavigation = {
 		 * objects.
 		 * 
 		 * @type {Object}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/mapnavigation/button-theme/ Themed navigation buttons
+		 * @sample {highmaps} maps/mapnavigation/button-theme/ Themed navigation buttons
 		 * @product highmaps
 		 */
 		theme: {

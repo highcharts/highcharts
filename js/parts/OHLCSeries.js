@@ -29,7 +29,7 @@ seriesType('ohlc', 'column',
 	 * The pixel width of the line/border. Defaults to `1`.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/ohlc-linewidth/ A greater line width
+	 * @sample {highstock} stock/plotoptions/ohlc-linewidth/ A greater line width
 	 * @default {all} 1
 	 * @product highstock
 	 */

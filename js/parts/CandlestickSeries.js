@@ -66,7 +66,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	 * 
 	 * @type {Color}
 	 * @see [upLineColor](#plotOptions.candlestick.upLineColor)
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+	 * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
 	 * @default {all} #000000
 	 * @product highstock
 	 */
@@ -94,7 +94,7 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
 	 * candlestick-series .highcharts-point-up` rule.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/candlestick-color/ Custom colors
+	 * @sample {highstock} stock/plotoptions/candlestick-color/ Custom colors
 	 * @sample {highstock} highcharts/css/candlestick/ Colors in styled mode
 	 * @default {all} #ffffff
 	 * @product highstock

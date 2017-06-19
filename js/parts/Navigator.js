@@ -80,7 +80,7 @@ extend(defaultOptions,
 		 * The height of the navigator.
 		 * 
 		 * @type {Number}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/height/ A higher navigator
+		 * @sample {highstock} stock/navigator/height/ A higher navigator
 		 * @default {all} 40
 		 * @product highstock
 		 */
@@ -90,7 +90,7 @@ extend(defaultOptions,
 		 * The distance from the nearest element, the X axis or X axis labels.
 		 * 
 		 * @type {Number}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/margin/ A margin of 2 draws the     navigator closer to the X axis labels
+		 * @sample {highstock} stock/navigator/margin/ A margin of 2 draws the     navigator closer to the X axis labels
 		 * @default {all} 25
 		 * @product highstock
 		 */
@@ -101,7 +101,7 @@ extend(defaultOptions,
 		 * range, or outside. In Highstock 1.x it was always `false`.
 		 * 
 		 * @type {Boolean}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/maskinside-false/ False, mask outside
+		 * @sample {highstock} stock/navigator/maskinside-false/ False, mask outside
 		 * @default {all} true
 		 * @since 2.0
 		 * @product highstock
@@ -115,8 +115,8 @@ extend(defaultOptions,
 		 * (defaults to `#b2b1b6`).
 		 * 
 		 * @type {Object}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/handles/ Colored handles
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/handles/ Colored handles
+		 * @sample {highstock} stock/navigator/handles/ Colored handles
+		 * @sample {highstock} stock/navigator/handles/ Colored handles
 		 * @product highstock
 		 */
 		handles: {
@@ -149,7 +149,7 @@ extend(defaultOptions,
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
 		 * style/style-by-css), the mask is styled with the `.highcharts-navigator-
 		 * mask` and `.highcharts-navigator-mask-inside` classes.
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/maskfill/ Blue, semi transparent mask
+		 * @sample {highstock} stock/navigator/maskfill/ Blue, semi transparent mask
 		 * @default {all} rgba(102,133,194,0.3)
 		 * @product highstock
 		 */
@@ -160,7 +160,7 @@ extend(defaultOptions,
 		 * navigator.
 		 * 
 		 * @type {Color}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/outline/ 2px blue outline
+		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default {all} #cccccc
 		 * @product highstock
 		 */
@@ -174,7 +174,7 @@ extend(defaultOptions,
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
 		 * style/style-by-css), the outline stroke width is set with the `.
 		 * highcharts-navigator-outline` class.
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/outline/ 2px blue outline
+		 * @sample {highstock} stock/navigator/outline/ 2px blue outline
 		 * @default {all} 2
 		 * @product highstock
 		 */
@@ -208,8 +208,8 @@ extend(defaultOptions,
 		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
 		 * style/style-by-css), the navigator series is styled with the `.
 		 * highcharts-navigator-series` class.
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/series-data/ Using a separate data set for the navigator
-		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/series/ A green navigator series
+		 * @sample {highstock} stock/navigator/series-data/ Using a separate data set for the navigator
+		 * @sample {highstock} stock/navigator/series/ A green navigator series
 		 * @product highstock
 		 */
 		series: {

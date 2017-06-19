@@ -616,7 +616,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/exporting/sourcewidth/ Source size demo
  * @sample {highstock} highcharts/exporting/sourcewidth/ Source size demo
- * @sample {highmaps} highcharts/tree/master/samples/maps/exporting/sourcewidth/ Source size demo
+ * @sample {highmaps} maps/exporting/sourcewidth/ Source size demo
  * @since 3.0
  * @apioption exporting.sourceWidth
  */
@@ -892,8 +892,8 @@
  * style/style-by-css), the legend background fill can be applied with
  * the `.highcharts-legend-box` class.
  * @sample {highcharts} highcharts/legend/backgroundcolor/ Yellowish background
- * @sample {highstock} highcharts/tree/master/samples/stock/legend/align/ Various legend options
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/border-background/ Border and background options
+ * @sample {highstock} stock/legend/align/ Various legend options
+ * @sample {highmaps} maps/legend/border-background/ Border and background options
  * @apioption legend.backgroundColor
  */
 
@@ -905,8 +905,8 @@
  * style/style-by-css), the legend border stroke width can be applied
  * with the `.highcharts-legend-box` class.
  * @sample {highcharts} highcharts/legend/borderwidth/ 2px border width
- * @sample {highstock} highcharts/tree/master/samples/stock/legend/align/ Various legend options
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/border-background/ Border and background options
+ * @sample {highstock} stock/legend/align/ Various legend options
+ * @sample {highmaps} maps/legend/border-background/ Border and background options
  * @default {all} 0
  * @apioption legend.borderWidth
  */
@@ -918,7 +918,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/legend/floating-false/ False by default
  * @sample {highcharts} highcharts/legend/floating-true/ True
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/alignment/ Floating legend
+ * @sample {highmaps} maps/legend/alignment/ Floating legend
  * @default {all} false
  * @since 2.1
  * @apioption legend.floating
@@ -944,7 +944,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
+ * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 0
  * @since 2.2.0
  * @apioption legend.itemMarginBottom
@@ -956,7 +956,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
+ * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 0
  * @since 2.2.0
  * @apioption legend.itemMarginTop
@@ -1027,7 +1027,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highstock} highcharts/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
+ * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 8
  * @since 2.2.0
  * @apioption legend.padding
@@ -1075,8 +1075,8 @@
  * in the legend. Defaults to the font size of legend items.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/layout-vertical-sized/ Sized vertical gradient
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ No distance between data classes
+ * @sample {highmaps} maps/legend/layout-vertical-sized/ Sized vertical gradient
+ * @sample {highmaps} maps/legend/padding-itemmargin/ No distance between data classes
  * @since 3.0.8
  * @apioption legend.symbolHeight
  */
@@ -1099,8 +1099,8 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/legend/symbolwidth/ Greater symbol width and padding
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
- * @sample {highmaps} highcharts/tree/master/samples/maps/legend/layout-vertical-sized/ Sized vertical gradient
+ * @sample {highmaps} maps/legend/padding-itemmargin/ Padding and item margins demonstrated
+ * @sample {highmaps} maps/legend/layout-vertical-sized/ Sized vertical gradient
  * @apioption legend.symbolWidth
  */
 
@@ -2074,8 +2074,8 @@
  * should span.
  * 
  * @type {Number}
- * @sample {highcharts} highcharts/tree/master/samples/maps/demo/heatmap/ One day
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/heatmap/ One day
+ * @sample {highcharts} maps/demo/heatmap/ One day
+ * @sample {highmaps} maps/demo/heatmap/ One day
  * @default {all} 1
  * @since 4.0
  * @product highcharts highmaps
@@ -2086,8 +2086,8 @@
  * The row size - how many Y axis units each heatmap row should span.
  * 
  * @type {Number}
- * @sample {highcharts} highcharts/tree/master/samples/maps/demo/heatmap/ 1 by default
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/heatmap/ 1 by default
+ * @sample {highcharts} maps/demo/heatmap/ 1 by default
+ * @sample {highmaps} maps/demo/heatmap/ 1 by default
  * @default {all} 1
  * @since 4.0
  * @product highcharts highmaps
@@ -2107,7 +2107,7 @@
  * @validvalue ["left", "center", "right"]
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/line-step/ Step line
+ * @sample {highstock} stock/plotoptions/line-step/ Step line
  * @default {all} false
  * @since 1.2.5
  * @product highcharts highstock
@@ -2388,7 +2388,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-color-general/ General plot option
  * @sample {highcharts} highcharts/plotoptions/series-color-specific/ One specific series
  * @sample {highcharts} highcharts/plotoptions/series-color-area/ Area color
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Category map by multiple series
+ * @sample {highmaps} maps/demo/category-map/ Category map by multiple series
  * @apioption plotOptions.series.color
  */
 
@@ -2437,9 +2437,9 @@
  * @sample {highcharts} highcharts/plotoptions/series-cursor-line/ On line graph
  * @sample {highcharts} highcharts/plotoptions/series-cursor-column/ On columns
  * @sample {highcharts} highcharts/plotoptions/series-cursor-scatter/ On scatter markers
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/cursor/ Pointer on a line graph
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Map area
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-allowpointselect/ Map bubble
+ * @sample {highstock} stock/plotoptions/cursor/ Pointer on a line graph
+ * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Map area
+ * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/ Map bubble
  * @apioption plotOptions.series.cursor
  */
 
@@ -2470,7 +2470,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-dashstyle/ Chart suitable for printing in black and white
  * @sample {highstock} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
  * @sample {highmaps} highcharts/plotoptions/series-dashstyle-all/ Possible values demonstrated
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-dashstyle/ Dotted borders on a map
+ * @sample {highmaps} maps/plotoptions/series-dashstyle/ Dotted borders on a map
  * @default {all} Solid
  * @since 2.1
  * @apioption plotOptions.series.dashStyle
@@ -2495,7 +2495,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/ No mouse tracking
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-enablemousetracking-false/ No mouse tracking
+ * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/ No mouse tracking
  * @default {all} true
  * @apioption plotOptions.series.enableMouseTracking
  */
@@ -2612,7 +2612,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
+ * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
  * @default {all} 1
  * @product highcharts highstock
  * @apioption plotOptions.series.pointInterval
@@ -2678,7 +2678,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-linear/ Linear
  * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/ Datetime
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
+ * @sample {highstock} stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
  * @default {all} 0
  * @product highcharts highstock
  * @apioption plotOptions.series.pointStart
@@ -2744,7 +2744,7 @@
  * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-column/ Column
  * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-bar/ Bar
  * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/ Area
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/stacking/ Area
+ * @sample {highstock} stock/plotoptions/stacking/ Area
  * @default {all} null
  * @product highcharts highstock
  * @apioption plotOptions.series.stacking
@@ -2758,7 +2758,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/line-step/ Different step line options
  * @sample {highcharts} highcharts/plotoptions/area-step/ Stepped, stacked area
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/line-step/ Step line
+ * @sample {highstock} stock/plotoptions/line-step/ Step line
  * @default {highcharts} null
  * @default {highstock} false
  * @since 1.2.5
@@ -2784,7 +2784,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-visible/ Two series, one hidden and one visible
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-visibility/ Hidden series
+ * @sample {highstock} stock/plotoptions/series-visibility/ Hidden series
  * @default {all} true
  * @apioption plotOptions.series.visible
  */
@@ -2822,7 +2822,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-box/ Data labels box options
+ * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
  * @since 2.2.1
  * @product highcharts highmaps
  * @apioption plotOptions.series.dataLabels.backgroundColor
@@ -2845,7 +2845,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-box/ Data labels box options
+ * @sample {highmaps} maps/plotoptions/series-datalabels-box/ Data labels box options
  * @default {all} 0
  * @since 2.2.1
  * @apioption plotOptions.series.dataLabels.borderRadius
@@ -2884,7 +2884,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/ Red data labels
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/color-axis/ White data labels
+ * @sample {highmaps} maps/demo/color-axis/ White data labels
  * @apioption plotOptions.series.dataLabels.color
  */
 
@@ -2915,7 +2915,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/color-axis/ Data labels enabled
+ * @sample {highmaps} maps/demo/color-axis/ Data labels enabled
  * @default {all} false
  * @apioption plotOptions.series.dataLabels.enabled
  */
@@ -2928,7 +2928,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-format/ Add a unit
  * @sample {highstock} highcharts/plotoptions/series-datalabels-format/ Add a unit
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-format/ Formatted value in the data label
+ * @sample {highmaps} maps/plotoptions/series-datalabels-format/ Formatted value in the data label
  * @default {highcharts} {y}
  * @default {highstock} {y}
  * @default {highmaps} {point.value}
@@ -3057,8 +3057,8 @@
  * @type {Function}
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-click/ Alert click info
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-events-click/ Alert click info
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-events-click/ Display click info in subtitle
+ * @sample {highstock} stock/plotoptions/series-events-click/ Alert click info
+ * @sample {highmaps} maps/plotoptions/series-events-click/ Display click info in subtitle
  * @apioption plotOptions.series.events.click
  */
 
@@ -3131,7 +3131,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-marker-enabled/ Disabled markers
  * @sample {highcharts} highcharts/plotoptions/series-marker-enabled-false/ Disabled in normal state but enabled on hover
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-marker/ Enabled markers
+ * @sample {highstock} stock/plotoptions/series-marker/ Enabled markers
  * @default {highcharts} null
  * @default {highstock} false
  * @product highcharts highstock
@@ -3273,8 +3273,8 @@
  * @sample {highcharts} highcharts/plotoptions/series-point-events-click/ Click marker to alert values
  * @sample {highcharts} highcharts/plotoptions/series-point-events-click-column/ Click column
  * @sample {highcharts} highcharts/plotoptions/series-point-events-click-url/ Go to URL
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-point-events-click/ Click marker to display values
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-point-events-click-url/ Go to URL
+ * @sample {highmaps} maps/plotoptions/series-point-events-click/ Click marker to display values
+ * @sample {highmaps} maps/plotoptions/series-point-events-click-url/ Go to URL
  * @apioption plotOptions.series.point.events.click
  */
 
@@ -3322,7 +3322,7 @@
  * @type {Function}
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-select/ Report the last selected point
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Report select and unselect
+ * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Report select and unselect
  * @since 1.2.0
  * @apioption plotOptions.series.point.events.select
  */
@@ -3335,7 +3335,7 @@
  * @type {Function}
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-unselect/ Report the last unselected point
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Report select and unselect
+ * @sample {highmaps} maps/plotoptions/series-allowpointselect/ Report select and unselect
  * @since 1.2.0
  * @apioption plotOptions.series.point.events.unselect
  */
@@ -3689,7 +3689,7 @@
  * @sample {highcharts} highcharts/responsive/axis/ Axis
  * @sample {highcharts} highcharts/responsive/legend/ Legend
  * @sample {highcharts} highcharts/responsive/classname/ Class name
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/responsive/ Stock chart
+ * @sample {highstock} stock/demo/responsive/ Stock chart
  * @sample {highstock} highcharts/responsive/axis/ Axis
  * @sample {highstock} highcharts/responsive/legend/ Legend
  * @sample {highstock} highcharts/responsive/classname/ Class name
@@ -3857,7 +3857,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/series/name/ Series name
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Series name
+ * @sample {highmaps} maps/demo/category-map/ Series name
  * @apioption series.name
  */
 
@@ -3883,7 +3883,7 @@
  * @validvalue [null, "line", "spline", "column", "area", "areaspline", "pie", "arearange", "areasplinerange", "boxplot", "bubble", "columnrange", "errorbar", "funnel", "gauge", "scatter", "waterfall"]
  * @type {String}
  * @sample {highcharts} highcharts/series/type/ Line and column in the same chart
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Multiple types in the same map
+ * @sample {highmaps} maps/demo/mapline-mappoint/ Multiple types in the same map
  * @apioption series.type
  */
 
@@ -6766,7 +6766,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/subtitle/floating/ Floating title and subtitle
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote floating at bottom right of plot area
+ * @sample {highstock} stock/chart/subtitle-footnote Footnote floating at bottom right of plot area
  * @default {all} false
  * @since 2.1
  * @apioption subtitle.floating
@@ -6782,7 +6782,7 @@
  * @type {CSSObject}
  * @sample {highcharts} highcharts/subtitle/style/ Custom color and weight
  * @sample {highcharts} highcharts/css/titles/ Styled mode
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-style Custom color and weight
+ * @sample {highstock} stock/chart/subtitle-style Custom color and weight
  * @sample {highstock} highcharts/css/titles/ Styled mode
  * @sample {highmaps} highcharts/css/titles/ Styled mode
  * @default {all} { "color": "#666666" }
@@ -6805,7 +6805,7 @@
  * @validvalue ["top", "middle", "bottom"]
  * @type {String}
  * @sample {highcharts} highcharts/subtitle/verticalalign/ Footnote at the bottom right of plot area
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote at the bottom right of plot area
+ * @sample {highstock} stock/chart/subtitle-footnote Footnote at the bottom right of plot area
  * @default {all}  
  * @since 2.1
  * @apioption subtitle.verticalAlign
@@ -6817,7 +6817,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/subtitle/align/ Footnote at right of plot area
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote at the bottom right of plot area
+ * @sample {highstock} stock/chart/subtitle-footnote Footnote at the bottom right of plot area
  * @default {all} 0
  * @since 2.0
  * @apioption subtitle.x
@@ -6830,7 +6830,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/subtitle/verticalalign/ Footnote at the bottom right of plot area
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote at the bottom right of plot area
+ * @sample {highstock} stock/chart/subtitle-footnote Footnote at the bottom right of plot area
  * @default {highcharts}  null
  * @default {highstock}  null
  * @default {highmaps}  
@@ -6845,7 +6845,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/chart/zoomtype-none/ False by default
  * @sample {highcharts} highcharts/title/floating/ True - title on top of the plot area
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-floating/ True - title on top of the plot area
+ * @sample {highstock} stock/chart/title-floating/ True - title on top of the plot area
  * @default {all} false
  * @since 2.1
  * @apioption title.floating
@@ -6862,7 +6862,7 @@
  * @type {CSSObject}
  * @sample {highcharts} highcharts/title/style/ Custom color and weight
  * @sample {highcharts} highcharts/css/titles/ Styled mode
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-style/ Custom color and weight
+ * @sample {highstock} stock/chart/title-style/ Custom color and weight
  * @sample {highstock} highcharts/css/titles/ Styled mode
  * @sample {highmaps} highcharts/css/titles/ Styled mode
  * @default {highcharts} { "color": "#333333", "fontSize": "18px" }
@@ -6888,7 +6888,7 @@
  * @validvalue ["top", "middle", "bottom"]
  * @type {String}
  * @sample {highcharts} highcharts/title/verticalalign/ Chart title in bottom right corner
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-verticalalign/ Chart title in bottom right corner
+ * @sample {highstock} stock/chart/title-verticalalign/ Chart title in bottom right corner
  * @since 2.1
  * @apioption title.verticalAlign
  */
@@ -6899,7 +6899,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/title/align/ Aligned to the plot area (x = 70px     = margin left - spacing left)
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
+ * @sample {highstock} stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
  * @default {all} 0
  * @since 2.0
  * @apioption title.x
@@ -6912,7 +6912,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/title/y/ Title inside the plot area
- * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-verticalalign/ Chart title in bottom right corner
+ * @sample {highstock} stock/chart/title-verticalalign/ Chart title in bottom right corner
  * @since 2.0
  * @apioption title.y
  */
@@ -6924,8 +6924,8 @@
  * @type {Color}
  * @sample {highcharts} highcharts/tooltip/bordercolor-default/ Follow series by default
  * @sample {highcharts} highcharts/tooltip/bordercolor-black/ Black border
- * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/general/ Styled tooltip
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/background-border/ Background and border demo
+ * @sample {highstock} stock/tooltip/general/ Styled tooltip
+ * @sample {highmaps} maps/tooltip/background-border/ Background and border demo
  * @default {all} null
  * @apioption tooltip.borderColor
  */
@@ -7032,8 +7032,8 @@
  * @type {Function}
  * @sample {highcharts} highcharts/tooltip/formatter-simple/ Simple string formatting
  * @sample {highcharts} highcharts/tooltip/formatter-shared/ Formatting with shared tooltip
- * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/formatter/ Formatting with shared tooltip
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/formatter/ String formatting
+ * @sample {highstock} stock/tooltip/formatter/ Formatting with shared tooltip
+ * @sample {highmaps} maps/tooltip/formatter/ String formatting
  * @apioption tooltip.formatter
  */
 
@@ -7070,8 +7070,8 @@
  * 
  * @type {Function}
  * @sample {highcharts} highcharts/tooltip/positioner/ A fixed tooltip position
- * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/positioner/ A fixed tooltip position on top of the chart
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/positioner/ A fixed tooltip position
+ * @sample {highstock} stock/tooltip/positioner/ A fixed tooltip position on top of the chart
+ * @sample {highmaps} maps/tooltip/positioner/ A fixed tooltip position
  * @since 2.2.4
  * @apioption tooltip.positioner
  */
@@ -7135,7 +7135,7 @@
  * @sample {highcharts} highcharts/tooltip/fullhtml/ Full HTML tooltip
  * @sample {highstock} highcharts/tooltip/footerformat/ A table for value alignment
  * @sample {highstock} highcharts/tooltip/fullhtml/ Full HTML tooltip
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/usehtml/ Pure HTML tooltip
+ * @sample {highmaps} maps/tooltip/usehtml/ Pure HTML tooltip
  * @default {all} false
  * @since 2.2
  * @apioption tooltip.useHTML
@@ -7149,7 +7149,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
+ * @sample {highmaps} maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
  * @apioption tooltip.valueDecimals
  */
@@ -7161,7 +7161,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
+ * @sample {highmaps} maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
  * @apioption tooltip.valuePrefix
  */
@@ -7173,7 +7173,7 @@
  * @type {String}
  * @sample {highcharts} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
- * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
+ * @sample {highmaps} maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
  * @apioption tooltip.valueSuffix
  */
@@ -7211,7 +7211,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/yaxis/alternategridcolor/ Alternate grid color on the Y axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/alternategridcolor/ Alternate grid color on the Y axis
+ * @sample {highstock} stock/xaxis/alternategridcolor/ Alternate grid color on the Y axis
  * @default {all} null
  * @apioption xAxis.alternateGridColor
  */
@@ -7279,7 +7279,7 @@
  * @type {Number}
  * @see [ceiling](#yAxis.ceiling)
  * @sample {highcharts} highcharts/yaxis/floor-ceiling/ Floor and ceiling
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/lazy-loading/ Prevent negative stock price on Y axis
+ * @sample {highstock} stock/demo/lazy-loading/ Prevent negative stock price on Y axis
  * @default {all} null
  * @since 4.0
  * @product highcharts highstock
@@ -7294,7 +7294,7 @@
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
  * @type {String}
  * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/ Long dashes
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinedashstyle/ Long dashes
+ * @sample {highstock} stock/xaxis/gridlinedashstyle/ Long dashes
  * @default {all} Solid
  * @since 1.2
  * @apioption xAxis.gridLineDashStyle
@@ -7311,7 +7311,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
  * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinewidth/ 2px lines
+ * @sample {highstock} stock/xaxis/gridlinewidth/ 2px lines
  * @sample {highstock} highcharts/css/axis-grid/ Styled mode
  * @default {all} 0
  * @apioption xAxis.gridLineWidth
@@ -7334,7 +7334,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/id/ Get the object
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/id/ Get the object
+ * @sample {highstock} stock/xaxis/id/ Get the object
  * @default {all} null
  * @since 1.2.0
  * @apioption xAxis.id
@@ -7369,8 +7369,8 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/max-200/ Y axis max of 200
  * @sample {highcharts} highcharts/yaxis/max-logarithmic/ Y axis max on logarithmic axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/min-max/ Fixed min and max
- * @sample {highmaps} highcharts/tree/master/samples/maps/axis/min-max/ Pre-zoomed to a specific area
+ * @sample {highstock} stock/xaxis/min-max/ Fixed min and max
+ * @sample {highmaps} maps/axis/min-max/ Pre-zoomed to a specific area
  * @apioption xAxis.max
  */
 
@@ -7391,8 +7391,8 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/min-startontick-false/ -50 with startOnTick to false
  * @sample {highcharts} highcharts/yaxis/min-startontick-true/ -50 with startOnTick true by default
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/min-max/ Fixed min and max
- * @sample {highmaps} highcharts/tree/master/samples/maps/axis/min-max/ Pre-zoomed to a specific area
+ * @sample {highstock} stock/xaxis/min-max/ Fixed min and max
+ * @sample {highmaps} maps/axis/min-max/ Pre-zoomed to a specific area
  * @apioption xAxis.min
  */
 
@@ -7414,8 +7414,8 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/minrange/ Minimum range of 5
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minrange/ Max zoom of 6 months overrides user selections
- * @sample {highmaps} highcharts/tree/master/samples/maps/axis/minrange/ Minimum range of 1000
+ * @sample {highstock} stock/xaxis/minrange/ Max zoom of 6 months overrides user selections
+ * @sample {highmaps} maps/axis/minrange/ Minimum range of 1000
  * @apioption xAxis.minRange
  */
 
@@ -7438,7 +7438,7 @@
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
  * @type {String}
  * @sample {highcharts} highcharts/yaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
+ * @sample {highstock} stock/xaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
  * @default {all} Solid
  * @since 1.2
  * @apioption xAxis.minorGridLineDashStyle
@@ -7468,8 +7468,8 @@
  * @sample {highcharts} highcharts/yaxis/minortickinterval-5/ 5 units
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log-auto/ "auto"
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log/ 0.1
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/basic-line/ Null by default
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minortickinterval-auto/ "auto"
+ * @sample {highstock} stock/demo/basic-line/ Null by default
+ * @sample {highstock} stock/xaxis/minortickinterval-auto/ "auto"
  * @apioption xAxis.minorTickInterval
  */
 
@@ -7478,7 +7478,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/minortickwidth/ 3px width
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorticks/ 1px width
+ * @sample {highstock} stock/xaxis/minorticks/ 1px width
  * @default {all} 0
  * @apioption xAxis.minorTickWidth
  */
@@ -7494,7 +7494,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/offset/ Y axis offset of 70
  * @sample {highcharts} highcharts/yaxis/offset-centered/ Axes positioned in the center of the plot
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/offset/ Y axis offset by 70 px
+ * @sample {highstock} stock/xaxis/offset/ Y axis offset by 70 px
  * @default {all} 0
  * @apioption xAxis.offset
  */
@@ -7507,7 +7507,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/opposite/ Secondary Y axis opposite
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/opposite/ Y axis on left side
+ * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
  * @default {all} false
  * @apioption xAxis.opposite
  */
@@ -7519,7 +7519,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/yaxis/reversed/ Reversed Y axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/reversed/ Reversed Y axis
+ * @sample {highstock} stock/xaxis/reversed/ Reversed Y axis
  * @default {all} false
  * @apioption xAxis.reversed
  */
@@ -7540,7 +7540,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/showfirstlabel-false/ Set to false on X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
+ * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
  * @default {all} true
  * @apioption xAxis.showFirstLabel
  */
@@ -7550,7 +7550,7 @@
  * 
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
+ * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
  * @default {all} true
  * @apioption xAxis.showLastLabel
  */
@@ -7620,7 +7620,7 @@
  * @see [tickPixelInterval](#xAxis.tickPixelInterval), [tickPositions](#xAxis.
  * tickPositions), [tickPositioner](#xAxis.tickPositioner)
  * @sample {highcharts} highcharts/xaxis/tickinterval-5/ Tick interval of 5 on a linear axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
+ * @sample {highstock} stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
  * @default {all} null
  * @apioption xAxis.tickInterval
  */
@@ -7661,7 +7661,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/tickwidth/ 10 px width
  * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
+ * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
  * @sample {highstock} highcharts/css/axis-grid/ Styled mode
  * @default {highcharts} 1
  * @default {highstock} 1
@@ -7743,7 +7743,7 @@
  * @type {Array}
  * @sample {highcharts} highcharts/axisbreak/break-simple/ Simple break
  * @sample {highcharts} highcharts/axisbreak/break-visualized/ Advanced with callback
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/intraday-breaks/ Break on nights and weekends
+ * @sample {highstock} stock/demo/intraday-breaks/ Break on nights and weekends
  * @sample {highstock} highcharts/axisbreak/break-visualized/ Broken Y axis
  * @since 4.1.0
  * @product highcharts highstock
@@ -7803,7 +7803,7 @@
  * 
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/xaxis/crosshair-both/ Crosshair on both axes
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/crosshairs-xy/ Crosshair on both axes
+ * @sample {highstock} stock/xaxis/crosshairs-xy/ Crosshair on both axes
  * @sample {highmaps} highcharts/xaxis/crosshair-both/ Crosshair on both axes
  * @default {all} false
  * @since 4.1
@@ -7839,7 +7839,7 @@
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/crosshair-dotted/ Dotted crosshair
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/crosshair-dashed/ Dashed X axis crosshair
+ * @sample {highstock} stock/xaxis/crosshair-dashed/ Dashed X axis crosshair
  * @sample {highmaps} highcharts/xaxis/crosshair-dotted/ Dotted crosshair
  * @default {all} Solid
  * @since 4.1
@@ -7853,7 +7853,7 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/xaxis/crosshair-snap-false/ True by default
  * @sample {highstock} highcharts/xaxis/crosshair-snap-false/ True by default
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/latlon-advanced/ Snap is false
+ * @sample {highmaps} maps/demo/latlon-advanced/ Snap is false
  * @default {all} true
  * @since 4.1
  * @apioption xAxis.crosshair.snap
@@ -7957,7 +7957,7 @@
  * 
  * @type {Function}
  * @context Axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/events-setextremes/ Log new extremes on x axis
+ * @sample {highstock} stock/xaxis/events-setextremes/ Log new extremes on x axis
  * @since 1.2.0
  * @apioption xAxis.events.setExtremes
  */
@@ -8048,7 +8048,7 @@
  * @type {Function}
  * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/ Linked category names
  * @sample {highcharts} highcharts/xaxis/labels-formatter-extended/ Modified numeric labels
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/labels-formatter/ Added units on Y axis
+ * @sample {highstock} stock/xaxis/labels-formatter/ Added units on Y axis
  * @apioption xAxis.labels.formatter
  */
 
@@ -8104,7 +8104,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-staggerlines/ Show labels over two lines
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/labels-staggerlines/ Show labels over two lines
+ * @sample {highstock} stock/xaxis/labels-staggerlines/ Show labels over two lines
  * @default {all} null
  * @since 2.1
  * @apioption xAxis.labels.staggerLines
@@ -8206,7 +8206,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Color band
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
+ * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.color
@@ -8230,7 +8230,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
+ * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.from
@@ -8253,7 +8253,7 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotbands-color/ Datetime axis
  * @sample {highcharts} highcharts/xaxis/plotbands-from/ Categorized axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
+ * @sample {highstock} stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotBands.to
@@ -8288,7 +8288,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-align/ Aligned to the right
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
+ * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @default {all} center
  * @since 2.1
  * @product highcharts highstock
@@ -8360,7 +8360,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-verticalalign/ Vertically centered label
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
+ * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @default {all} top
  * @since 2.1
  * @product highcharts highstock
@@ -8372,7 +8372,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-align/ Aligned 10px from the right edge
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
+ * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.x
@@ -8384,7 +8384,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotbands-label-y/ Label on x axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
+ * @sample {highstock} stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotBands.label.y
@@ -8417,7 +8417,7 @@
  * 
  * @type {Color}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ A red line from X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.color
@@ -8431,7 +8431,7 @@
  * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot", "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot", "LongDashDot", "LongDashDotDot"]
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-dashstyle/ Dash and dot pattern
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} Solid
  * @since 1.2
  * @product highcharts highstock
@@ -8465,7 +8465,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ Between two categories on X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.value
@@ -8476,7 +8476,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-color/ 2px wide line from X axis
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
  * @apioption xAxis.plotLines.width
@@ -8508,7 +8508,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/ Aligned to the right
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} left
  * @since 2.1
  * @product highcharts highstock
@@ -8593,7 +8593,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-align-right/ Aligned 10px from the right edge
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotLines.label.x
@@ -8605,7 +8605,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/plotlines-label-y/ Label below the plot line
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
+ * @sample {highstock} stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
  * @product highcharts highstock
  * @apioption xAxis.plotLines.label.y
@@ -8669,7 +8669,7 @@
  * 
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/title-text/ Titles for both axes
+ * @sample {highstock} stock/xaxis/title-text/ Titles for both axes
  * @default {all} null
  * @apioption xAxis.title.text
  */
@@ -8803,7 +8803,7 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/tickwidth/ 10 px width
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
+ * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
  * @default {all} 0
  * @product highcharts highstock
  * @apioption yAxis.tickWidth
@@ -9051,7 +9051,7 @@
  * chart content is updated.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/lazy-loading/ Set to false with async data loading
+ * @sample {highstock} stock/demo/lazy-loading/ Set to false with async data loading
  * @default {all} true
  * @product highstock
  * @apioption navigator.adaptToUpdatedData
@@ -9076,7 +9076,7 @@
  * Enable or disable the navigator.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/navigator/enabled/ Disable the navigator
+ * @sample {highstock} stock/navigator/enabled/ Disable the navigator
  * @default {all} true
  * @product highstock
  * @apioption navigator.enabled
@@ -9119,7 +9119,7 @@
  * the general `lineColor` setting.
  * 
  * @type {Color}
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+ * @sample {highstock} stock/plotoptions/candlestick-linecolor/ Candlestick line colors
  * @default {all} null
  * @since 1.3.6
  * @product highstock
@@ -9167,7 +9167,7 @@
  * two pixels wide. Defaults to `10`.
  * 
  * @type {Number}
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-datagrouping-grouppixelwidth/ Two series with the same data density but different groupPixelWidth
+ * @sample {highstock} stock/plotoptions/series-datagrouping-grouppixelwidth/ Two series with the same data density but different groupPixelWidth
  * @default {all} 10
  * @product highstock
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
@@ -9243,7 +9243,7 @@
  * 
  * @validvalue ["y", "open", "high", "low", "close"]
  * @type {String}
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/flags-onkey/ Range series, flag on high
+ * @sample {highstock} stock/plotoptions/flags-onkey/ Range series, flag on high
  * @default {all} y
  * @since 4.2.2
  * @product highstock
@@ -9255,7 +9255,7 @@
  * is given, the flags are drawn on the x axis.
  * 
  * @type {String}
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/flags/ Flags on series and on x axis
+ * @sample {highstock} stock/plotoptions/flags/ Flags on series and on x axis
  * @default {all} undefined
  * @product highstock
  * @apioption plotOptions.flags.onSeries
@@ -9377,8 +9377,8 @@
  * @type {String}
  * @see [compareBase](#plotOptions.series.compareBase), [Axis.setCompare()](#Axis.
  * setCompare())
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-compare-percent/ Percent
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-compare-value/ Value
+ * @sample {highstock} stock/plotoptions/series-compare-percent/ Percent
+ * @sample {highstock} stock/plotoptions/series-compare-value/ Value
  * @default {all} undefined
  * @since 1.0.1
  * @product highstock
@@ -9409,7 +9409,7 @@
  * 
  * @type {Number}
  * @see [xAxis.breaks](#xAxis.breaks)
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-gapsize/ Setting the gap size to 2 introduces gaps for weekends in daily datasets.
+ * @sample {highstock} stock/plotoptions/series-gapsize/ Setting the gap size to 2 introduces gaps for weekends in daily datasets.
  * @default {all} 0
  * @product highstock
  * @apioption plotOptions.series.gapSize
@@ -9497,7 +9497,7 @@
  * 
  * @validvalue ["average", "averages", "open", "high", "low", "close", "sum"]
  * @type {String|Function}
- * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-datagrouping-approximation Approximation callback with custom data
+ * @sample {highstock} stock/plotoptions/series-datagrouping-approximation Approximation callback with custom data
  * @product highstock
  * @apioption plotOptions.series.dataGrouping.approximation
  */
@@ -9632,7 +9632,7 @@
  * time ranges.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/allbuttonsenabled-true/ All buttons enabled
+ * @sample {highstock} stock/rangeselector/allbuttonsenabled-true/ All buttons enabled
  * @default {all} false
  * @since 2.0.3
  * @product highstock
@@ -9661,7 +9661,7 @@
  * Enable or disable the range selector.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/enabled/ Disable the range selector
+ * @sample {highstock} stock/rangeselector/enabled/ Disable the range selector
  * @default {all} true
  * @product highstock
  * @apioption rangeSelector.enabled
@@ -9671,7 +9671,7 @@
  * The border color of the date input boxes.
  * 
  * @type {Color}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+ * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @default {all} #cccccc
  * @since 1.3.7
  * @product highstock
@@ -9682,7 +9682,7 @@
  * The pixel height of the date input boxes.
  * 
  * @type {Number}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+ * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @default {all} 17
  * @since 1.3.7
  * @product highstock
@@ -9695,7 +9695,7 @@
  * 
  * @type {CSSObject}
  * @deprecated
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+ * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @product highstock
  * @apioption rangeSelector.inputBoxStyle
  */
@@ -9704,7 +9704,7 @@
  * The pixel width of the date input boxes.
  * 
  * @type {Number}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+ * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @default {all} 90
  * @since 1.3.7
  * @product highstock
@@ -9716,7 +9716,7 @@
  *  Defaults to `%b %e, %Y`.
  * 
  * @type {String}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
+ * @sample {highstock} stock/rangeselector/input-format/ Milliseconds in the range selector
  * @default {all} %b %e %Y,
  * @product highstock
  * @apioption rangeSelector.inputDateFormat
@@ -9727,7 +9727,7 @@
  * and return a valid JavaScript time as milliseconds since 1970.
  * 
  * @type {Function}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
+ * @sample {highstock} stock/rangeselector/input-format/ Milliseconds in the range selector
  * @since 1.3.3
  * @product highstock
  * @apioption rangeSelector.inputDateParser
@@ -9738,7 +9738,7 @@
  * This must be a format that is recognized by JavaScript Date.parse.
  * 
  * @type {String}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
+ * @sample {highstock} stock/rangeselector/input-format/ Milliseconds in the range selector
  * @default {all} %Y-%m-%d
  * @product highstock
  * @apioption rangeSelector.inputEditDateFormat
@@ -9749,7 +9749,7 @@
  * there is enough space, disabled if not (typically mobile).
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-datepicker/ Extending the input with a jQuery UI datepicker
+ * @sample {highstock} stock/rangeselector/input-datepicker/ Extending the input with a jQuery UI datepicker
  * @product highstock
  * @apioption rangeSelector.inputEnabled
  */
@@ -9763,7 +9763,7 @@
  * when active.
  * 
  * @type {CSSObject}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+ * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
  * @product highstock
  * @apioption rangeSelector.inputStyle
  */
@@ -9807,7 +9807,7 @@
  * }]</pre>
  * 
  * @type {Array<Object>}
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/datagrouping/ Data grouping by buttons
+ * @sample {highstock} stock/rangeselector/datagrouping/ Data grouping by buttons
  * @product highstock
  * @apioption rangeSelector.buttons
  */
@@ -9827,7 +9827,7 @@
  * 
  * @type {Object}
  * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
- * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/datagrouping/ Data grouping by range selector buttons
+ * @sample {highstock} stock/rangeselector/datagrouping/ Data grouping by range selector buttons
  * @product highstock
  * @apioption rangeSelector.buttons.dataGrouping
  */
@@ -9854,7 +9854,7 @@
  * Enable or disable the scrollbar.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/enabled/ Disable the scrollbar, only use navigator
+ * @sample {highstock} stock/scrollbar/enabled/ Disable the scrollbar, only use navigator
  * @default {all} true
  * @product highstock
  * @apioption scrollbar.enabled
@@ -9874,7 +9874,7 @@
  * The corner radius of the border of the scrollbar track.
  * 
  * @type {Number}
- * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+ * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
  * @default {all} 0
  * @product highstock
  * @apioption scrollbar.trackBorderRadius
@@ -10331,8 +10331,8 @@
  * data for nights or weekends will not take up space in the chart.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ordinal-true/ True by default
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ordinal-false/ False
+ * @sample {highstock} stock/xaxis/ordinal-true/ True by default
+ * @sample {highstock} stock/xaxis/ordinal-false/ False
  * @default {all} true
  * @since 1.1
  * @product highstock
@@ -10345,7 +10345,7 @@
  * can be set.
  * 
  * @type {Number}
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/range/ Setting a zoomed range when the rangeSelector      is disabled
+ * @sample {highstock} stock/xaxis/range/ Setting a zoomed range when the rangeSelector      is disabled
  * @default {all} undefined
  * @product highstock
  * @apioption xAxis.range
@@ -10359,7 +10359,7 @@
  * label` class.
  * 
  * @type {Object}
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/crosshair-label/ Crosshair labels
+ * @sample {highstock} stock/xaxis/crosshair-label/ Crosshair labels
  * @sample {highstock} highcharts/css/crosshair-label/ Style mode
  * @since 2.1
  * @product highstock
@@ -10487,7 +10487,7 @@
  * 
  * @type {Number|String}
  * @see [yAxis.top](#yAxis.top)
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/candlestick-and-volume/ Percentage height panes
+ * @sample {highstock} stock/demo/candlestick-and-volume/ Percentage height panes
  * @default {all} null
  * @product highstock
  * @apioption yAxis.height
@@ -10500,7 +10500,7 @@
  * 1.x, the Y axis was placed on the left side by default.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/opposite/ Y axis on left side
+ * @sample {highstock} stock/xaxis/opposite/ Y axis on left side
  * @default {all} true
  * @product highstock
  * @apioption yAxis.opposite
@@ -10541,7 +10541,7 @@
  * 
  * @type {Number|String}
  * @see [yAxis.height](#yAxis.height)
- * @sample {highstock} highcharts/tree/master/samples/stock/demo/candlestick-and-volume/ Percentage height panes
+ * @sample {highstock} stock/demo/candlestick-and-volume/ Percentage height panes
  * @default {all} null
  * @product highstock
  * @apioption yAxis.top
@@ -10559,7 +10559,7 @@
  * 
  * @extends scrollbar
  * @excluding height
- * @sample {highstock} highcharts/tree/master/samples/stock/yaxis/scrollbar/ Scrollbar on the Y axis
+ * @sample {highstock} stock/yaxis/scrollbar/ Scrollbar on the Y axis
  * @since 4.2.6
  * @product highstock
  * @apioption yAxis.scrollbar
@@ -10569,7 +10569,7 @@
  * Enable the scrollbar on the Y axis.
  * 
  * @type {Boolean}
- * @sample {highstock} highcharts/tree/master/samples/stock/yaxis/scrollbar/ Enabled on Y axis
+ * @sample {highstock} stock/yaxis/scrollbar/ Enabled on Y axis
  * @default {all} false
  * @since 4.2.6
  * @product highstock
@@ -10659,7 +10659,7 @@
  * 
  * @validvalue ["tween", "category"]
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasscolor/ Category colors
+ * @sample {highmaps} maps/coloraxis/dataclasscolor/ Category colors
  * @default {all} tween
  * @product highmaps
  * @apioption colorAxis.dataClassColor
@@ -10669,7 +10669,7 @@
  * Color of the grid lines extending from the axis across the gradient.
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Grid lines demonstrated
+ * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
  * @default {all} #e6e6e6
  * @product highmaps
  * @apioption colorAxis.gridLineColor
@@ -10681,7 +10681,7 @@
  * is true, the max value might be rounded up.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
+ * @sample {highmaps} maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
  * @product highmaps
  * @apioption colorAxis.max
  */
@@ -10692,7 +10692,7 @@
  * option is true, the min value might be rounded down.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
+ * @sample {highmaps} maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
  * @product highmaps
  * @apioption colorAxis.min
  */
@@ -10715,7 +10715,7 @@
  * the gradient, and the second item is the color.
  * 
  * @type {Array<Array>}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/heatmap/ Heatmap with three color stops
+ * @sample {highmaps} maps/demo/heatmap/ Heatmap with three color stops
  * @product highmaps
  * @apioption colorAxis.stops
  */
@@ -10746,8 +10746,8 @@
  * between the minimum and maximum colors.
  * 
  * @type {Array<Object>}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-ranges/ Multiple ranges
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-two-ranges/ Two ranges
+ * @sample {highmaps} maps/demo/data-class-ranges/ Multiple ranges
+ * @sample {highmaps} maps/demo/data-class-two-ranges/ Two ranges
  * @product highmaps
  * @apioption colorAxis.dataClasses
  */
@@ -10757,7 +10757,7 @@
  * the global or chart-specific [colors](#colors) array.
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-two-ranges/ Explicit colors
+ * @sample {highmaps} maps/demo/data-class-two-ranges/ Explicit colors
  * @product highmaps
  * @apioption colorAxis.dataClasses.color
  */
@@ -10779,8 +10779,8 @@
  * to` can be accessed.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasses-name/ Named data classes
- * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
+ * @sample {highmaps} maps/coloraxis/dataclasses-name/ Named data classes
+ * @sample {highmaps} maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
  * @product highmaps
  * @apioption colorAxis.dataClasses.name
  */
@@ -10862,7 +10862,7 @@
  * Whether to zoom in on an area when that area is double clicked.
  * 
  * @type {Boolean}
- * @sample {highmaps} highcharts/tree/master/samples/maps/mapnavigation/doubleclickzoomto/ Enable double click zoom to
+ * @sample {highmaps} maps/mapnavigation/doubleclickzoomto/ Enable double click zoom to
  * @default {all} false
  * @product highmaps
  * @apioption mapNavigation.enableDoubleClickZoomTo
@@ -10931,7 +10931,7 @@
  * the stroke of the bubble. For enhanced control, use `marker` options.
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-color/ Pink bubbles
+ * @sample {highmaps} maps/plotoptions/mapbubble-color/ Pink bubbles
  * @product highmaps
  * @apioption plotOptions.mapbubble.color
  */
@@ -10955,7 +10955,7 @@
  * the smallest one of the plot width and height.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble size
+ * @sample {highmaps} maps/demo/map-bubble/ Bubble size
  * @default {all} 20%
  * @product highmaps
  * @apioption plotOptions.mapbubble.maxSize
@@ -10968,7 +10968,7 @@
  * the smallest one of the plot width and height.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble size
+ * @sample {highmaps} maps/demo/map-bubble/ Bubble size
  * @default {all} 8
  * @product highmaps
  * @apioption plotOptions.mapbubble.minSize
@@ -10979,7 +10979,7 @@
  * zThreshold) setting, this color is used.
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
+ * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
  * @default {all} null
  * @product highmaps
  * @apioption plotOptions.mapbubble.negativeColor
@@ -11045,7 +11045,7 @@
  * is given, points with lower Z is colored.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
+ * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
  * @default {all} 0
  * @product highmaps
  * @apioption plotOptions.mapbubble.zThreshold
@@ -11057,7 +11057,7 @@
  * as `null` points. If `false`, those areas are skipped.
  * 
  * @type {Boolean}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/ All areas set to false
+ * @sample {highmaps} maps/plotoptions/series-allareas-false/ All areas set to false
  * @default {all} true
  * @product highmaps
  * @apioption plotOptions.series.allAreas
@@ -11071,7 +11071,7 @@
  * point` class.
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-border/ Borders demo
+ * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
  * @default {all} #cccccc
  * @product highmaps
  * @apioption plotOptions.series.borderColor
@@ -11085,7 +11085,7 @@
  * point` class.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-border/ Borders demo
+ * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
  * @default {all} 1
  * @product highmaps
  * @apioption plotOptions.series.borderWidth
@@ -11119,9 +11119,9 @@
  * a parallel array of the mapData.
  * 
  * @type {String|Array<String>}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-border/ Joined by "code"
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/geojson/ GeoJSON joined by an array
- * @sample {highmaps} highcharts/tree/master/samples/maps/series/joinby-null/ Simple data joined by null
+ * @sample {highmaps} maps/plotoptions/series-border/ Joined by "code"
+ * @sample {highmaps} maps/demo/geojson/ GeoJSON joined by an array
+ * @sample {highmaps} maps/series/joinby-null/ Simple data joined by null
  * @product highmaps
  * @apioption plotOptions.series.joinBy
  */
@@ -11164,7 +11164,7 @@
  * The color of the shape in this state
  * 
  * @type {Color}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-states-hover/ Hover options
+ * @sample {highmaps} maps/plotoptions/series-states-hover/ Hover options
  * @product highmaps
  * @apioption plotOptions.series.states.hover.color
  */
@@ -11184,7 +11184,7 @@
  * an uneven coastline.
  * 
  * @type {Object|Boolean}
- * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-states-animation-false/ No animation of fill color
+ * @sample {highmaps} maps/plotoptions/series-states-animation-false/ No animation of fill color
  * @default {all} true
  * @product highmaps
  * @apioption plotOptions.series.states.normal.animation
@@ -11195,7 +11195,7 @@
  * a code or property to join in the data as per the `joinBy` option.
  * 
  * @type {Array<Object>}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Map data and joinBy
+ * @sample {highmaps} maps/demo/category-map/ Map data and joinBy
  * @product highmaps
  * @apioption series.mapData
  */
@@ -11216,7 +11216,7 @@
  * dataLabels)
  * 
  * @type {Object}
- * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-datalabels/ Disable data labels for individual areas
+ * @sample {highmaps} maps/series/data-datalabels/ Disable data labels for individual areas
  * @product highmaps
  * @apioption series.map.data.dataLabels
  */
@@ -11226,7 +11226,7 @@
  * array to use for a drilldown for this point.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-drilldown/ Basic drilldown
+ * @sample {highmaps} maps/demo/map-drilldown/ Basic drilldown
  * @product highmaps
  * @apioption series.map.data.drilldown
  */
@@ -11236,7 +11236,7 @@
  * pointer to the point object through `chart.get()`.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-id/ Highlight a point by id
+ * @sample {highmaps} maps/series/data-id/ Highlight a point by id
  * @product highmaps
  * @apioption series.map.data.id
  */
@@ -11257,7 +11257,7 @@
  * to work. Overrides `x` and `y` values.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mappoint-latlon/ Point position by lat/lon
+ * @sample {highmaps} maps/demo/mappoint-latlon/ Point position by lat/lon
  * @since 1.1.0
  * @product highmaps
  * @apioption series.mappoint.data.lat
@@ -11268,7 +11268,7 @@
  * to work. Overrides `x` and `y` values.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mappoint-latlon/ Point position by lat/lon
+ * @sample {highmaps} maps/demo/mappoint-latlon/ Point position by lat/lon
  * @since 1.1.0
  * @product highmaps
  * @apioption series.mappoint.data.lon
@@ -11301,7 +11301,7 @@
  * etc.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-datalabels/ Point names
+ * @sample {highmaps} maps/series/data-datalabels/ Point names
  * @product highmaps
  * @apioption series.map.data.name
  */
@@ -11316,7 +11316,7 @@
  * of defining them on the data points themselves.
  * 
  * @type {String}
- * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-path/ Paths defined in data
+ * @sample {highmaps} maps/series/data-path/ Paths defined in data
  * @product highmaps
  * @apioption series.map.data.path
  */
@@ -11333,7 +11333,7 @@
  * The x coordinate of the point in terms of the map path coordinates.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Map point demo
+ * @sample {highmaps} maps/demo/mapline-mappoint/ Map point demo
  * @product highmaps
  * @apioption series.mappoint.data.x
  */
@@ -11342,7 +11342,7 @@
  * The x coordinate of the point in terms of the map path coordinates.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Map point demo
+ * @sample {highmaps} maps/demo/mapline-mappoint/ Map point demo
  * @product highmaps
  * @apioption series.mappoint.data.y
  */
@@ -11353,7 +11353,7 @@
  * size of the bubble.
  * 
  * @type {Number}
- * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble
+ * @sample {highmaps} maps/demo/map-bubble/ Bubble
  * @product highmaps
  * @apioption series.mapbubble.data.z
  */

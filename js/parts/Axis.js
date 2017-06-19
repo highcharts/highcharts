@@ -104,7 +104,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Object}
 		 * @sample {highcharts} highcharts/xaxis/datetimelabelformats/ Different day format on X axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/datetimelabelformats/ More information in x axis labels
+		 * @sample {highstock} stock/xaxis/datetimelabelformats/ More information in x axis labels
 		 * @product highcharts highstock
 		 */
 		dateTimeLabelFormats: {
@@ -149,8 +149,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/chart/reflow-true/ True by default
 		 * @sample {highcharts} highcharts/yaxis/endontick/ False
-		 * @sample {highstock} highcharts/tree/master/samples/stock/demo/basic-line/ True by default
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/endontick/ False
+		 * @sample {highstock} stock/demo/basic-line/ True by default
+		 * @sample {highstock} stock/xaxis/endontick/ False
 		 * @default {all} false
 		 * @since 1.2.0
 		 * @product highcharts highstock highmaps
@@ -171,7 +171,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * 
 			 * @type {Boolean}
 			 * @sample {highcharts} highcharts/xaxis/labels-enabled/ X axis labels disabled
-			 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/labels-enabled/ X axis labels disabled
+			 * @sample {highstock} stock/xaxis/labels-enabled/ X axis labels disabled
 			 * @default {highstock} true
 			 * @default {highmaps} false
 			 * @product highcharts highstock highmaps
@@ -240,8 +240,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minpadding/ Min padding of 0.2
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotbackgroundcolor-gradient/ Add some padding
+		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
+		 * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/ Add some padding
 		 * @default {highcharts} 0.01
 		 * @default {highstock} 0
 		 * @default {highmaps} 0
@@ -259,8 +259,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/maxpadding/ Max padding of 0.25 on y axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotbackgroundcolor-gradient/ Add some padding
+		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
+		 * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/ Add some padding
 		 * @default {highcharts} 0.01
 		 * @default {highstock} 0
 		 * @default {highmaps} 0
@@ -276,7 +276,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorticklength/ 10px on Y axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorticks/ 10px on Y axis
+		 * @sample {highstock} stock/xaxis/minorticks/ 10px on Y axis
 		 * @default {all} 2
 		 * @product highcharts highstock highmaps
 		 */
@@ -290,7 +290,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {String}
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-outside/ Outside by default
 		 * @sample {highcharts} highcharts/yaxis/minortickposition-inside/ Inside
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorticks/ Inside
+		 * @sample {highstock} stock/xaxis/minorticks/ Inside
 		 * @default {all} outside
 		 * @product highcharts highstock highmaps
 		 */
@@ -319,8 +319,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/xaxis/startofweek-monday/ Monday by default
 		 * @sample {highcharts} highcharts/xaxis/startofweek-sunday/ Sunday
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/startofweek-1 Monday by default
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/startofweek-0 Sunday
+		 * @sample {highstock} stock/xaxis/startofweek-1 Monday by default
+		 * @sample {highstock} stock/xaxis/startofweek-0 Sunday
 		 * @default {all} 1
 		 * @product highcharts highstock
 		 */
@@ -333,7 +333,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/endontick/ False for Y axis
+		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
 		 * @default {all} false
 		 * @since 1.2.0
 		 * @product highcharts highstock highmaps
@@ -346,7 +346,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/xaxis/ticklength/ 20 px tick length on the X axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
+		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
 		 * @default {all} 10
 		 * @product highcharts highstock highmaps
 		 */
@@ -382,7 +382,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @see [tickInterval](#xAxis.tickInterval), [tickPositioner](#xAxis.tickPositioner),
 		 *  [tickPositions](#xAxis.tickPositions)-
 		 * @sample {highcharts} highcharts/xaxis/tickpixelinterval-50/ 50 px on X axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/tickpixelinterval/ 200 px on X axis
+		 * @sample {highstock} stock/xaxis/tickpixelinterval/ 200 px on X axis
 		 * @product highcharts highstock highmaps
 		 */
 		tickPixelInterval: 100,
@@ -395,7 +395,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {String}
 		 * @sample {highcharts} highcharts/xaxis/tickposition-outside/ "outside" by default
 		 * @sample {highcharts} highcharts/xaxis/tickposition-inside/ "inside"
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
+		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
 		 * @default {highcharts} outside
 		 * @default {highstock} "outside"
 		 * @default {highmaps} outside
@@ -421,7 +421,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			 * @sample {highcharts} highcharts/xaxis/title-align-center/ "middle" by default
 			 * @sample {highcharts} highcharts/xaxis/title-align-high/ "high"
 			 * @sample {highcharts} highcharts/yaxis/title-offset/ Place the Y axis title on top of the axis
-			 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/title-align/ Aligned to "high" value
+			 * @sample {highstock} stock/xaxis/title-align/ Aligned to "high" value
 			 * @default {highcharts} middle
 			 * @default {highstock} "middle"
 			 * @default {highmaps} middle
@@ -492,7 +492,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinecolor/ Bright grey lines from Y axis
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorgridlinecolor/ Bright grey lines from Y axis
+		 * @sample {highstock} stock/xaxis/minorgridlinecolor/ Bright grey lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
 		 * @default {all} #f2f2f2
 		 * @product highcharts highstock highmaps
@@ -510,7 +510,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minorgridlinewidth/ 2px lines from Y axis
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorgridlinewidth/ 2px lines from Y axis
+		 * @sample {highstock} stock/xaxis/minorgridlinewidth/ 2px lines from Y axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
 		 * @default {all} 1
 		 * @product highcharts highstock highmaps
@@ -522,7 +522,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/minortickcolor/ Black tick marks on Y axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorticks/ Black tick marks on Y axis
+		 * @sample {highstock} stock/xaxis/minorticks/ Black tick marks on Y axis
 		 * @default {all} #999999
 		 * @product highcharts highstock highmaps
 		 */
@@ -539,7 +539,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A red line on Y axis
 		 * @sample {highcharts} highcharts/css/axis/ Axes in styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/linecolor/ A red line on X axis
+		 * @sample {highstock} stock/xaxis/linecolor/ A red line on X axis
 		 * @sample {highstock} highcharts/css/axis/ Axes in styled mode
 		 * @default {all} #ccd6eb
 		 * @product highcharts highstock highmaps
@@ -556,7 +556,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
 		 * @sample {highcharts} highcharts/css/axis/ Axes in styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/linewidth/ A 2px line on X axis
+		 * @sample {highstock} stock/xaxis/linewidth/ A 2px line on X axis
 		 * @sample {highstock} highcharts/css/axis/ Axes in styled mode
 		 * @default {highcharts} 1
 		 * @default {highstock} 1
@@ -576,7 +576,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/yaxis/gridlinecolor/ Green lines
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinecolor/ Green lines
+		 * @sample {highstock} stock/xaxis/gridlinecolor/ Green lines
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
 		 * @default {all} #e6e6e6
 		 * @product highcharts highstock highmaps
@@ -595,7 +595,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Color}
 		 * @sample {highcharts} highcharts/xaxis/tickcolor/ Red ticks on X axis
 		 * @sample {highcharts} highcharts/css/axis-grid/ Styled mode
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
+		 * @sample {highstock} stock/xaxis/ticks/ Formatted ticks on X axis
 		 * @sample {highstock} highcharts/css/axis-grid/ Styled mode
 		 * @default {all} #ccd6eb
 		 * @product highcharts highstock highmaps
@@ -620,8 +620,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @sample {highcharts} highcharts/chart/reflow-true/ True by default
 		 * @sample {highcharts} highcharts/yaxis/endontick-false/ False
 		 * @sample {highcharts} highcharts/yaxis/endontick-log-false/ False
-		 * @sample {highstock} highcharts/tree/master/samples/stock/demo/basic-line/ True by default
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/endontick/ False
+		 * @sample {highstock} stock/demo/basic-line/ True by default
+		 * @sample {highstock} stock/xaxis/endontick/ False
 		 * @default {all} true
 		 * @since 1.2.0
 		 * @product highcharts highstock
@@ -638,7 +638,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
+		 * @sample {highstock} stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
 		 * @default {all} false
 		 * @product highcharts highstock
 		 */
@@ -670,7 +670,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/maxpadding-02/ Max padding of 0.2
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
+		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
 		 * @default {all} 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
@@ -685,7 +685,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/minpadding/ Min padding of 0.2
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
+		 * @sample {highstock} stock/xaxis/minpadding-maxpadding/ Greater min- and maxPadding
 		 * @default {all} 0.05
 		 * @since 1.2.0
 		 * @product highcharts highstock
@@ -699,7 +699,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * @type {Boolean}
 		 * @sample {highcharts} highcharts/xaxis/startontick-false/ False by default
 		 * @sample {highcharts} highcharts/xaxis/startontick-true/ True
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/endontick/ False for Y axis
+		 * @sample {highstock} stock/xaxis/endontick/ False for Y axis
 		 * @default {all} true
 		 * @since 1.2.0
 		 * @product highcharts highstock
@@ -823,7 +823,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/gridlinewidth/ 2px lines
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinewidth/ 2px lines
+		 * @sample {highstock} stock/xaxis/gridlinewidth/ 2px lines
 		 * @default {all} 1
 		 * @product highcharts highstock
 		 */
@@ -834,7 +834,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		 * 
 		 * @type {Number}
 		 * @sample {highcharts} highcharts/yaxis/linecolor/ A 1px line on Y axis
-		 * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/linewidth/ A 2px line on X axis
+		 * @sample {highstock} stock/xaxis/linewidth/ A 2px line on X axis
 		 * @default {all} 0
 		 * @product highcharts highstock
 		 */

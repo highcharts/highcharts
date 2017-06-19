@@ -67,7 +67,7 @@ extend(ColorAxis.prototype, {
 		 * gradient of a scalar color axis.
 		 * 
 		 * @type {Number}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Grid lines demonstrated
+		 * @sample {highmaps} maps/coloraxis/gridlines/ Grid lines demonstrated
 		 * @default {all} 1
 		 * @product highmaps
 		 */
@@ -114,7 +114,7 @@ extend(ColorAxis.prototype, {
 		 * null`.
 		 * 
 		 * @type {Object}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/marker/ Black marker
+		 * @sample {highmaps} maps/coloraxis/marker/ Black marker
 		 * @product highmaps
 		 */
 		marker: {
@@ -189,8 +189,8 @@ extend(ColorAxis.prototype, {
 		 * dataClassColor) is set.
 		 * 
 		 * @type {Color}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
+		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
+		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
 		 * @default {all} #e6ebf5
 		 * @product highmaps
 		 */
@@ -206,8 +206,8 @@ extend(ColorAxis.prototype, {
 		 * dataClassColor) is set.
 		 * 
 		 * @type {Color}
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
-		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
+		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
+		 * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
 		 * @default {all} #003399
 		 * @product highmaps
 		 */

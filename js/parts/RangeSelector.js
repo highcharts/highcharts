@@ -68,7 +68,7 @@ extend(defaultOptions,
 		 * states.
 		 * 
 		 * @type {Object}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
 		 * @product highstock
 		 */
 		buttonTheme: {
@@ -135,7 +135,7 @@ extend(defaultOptions,
 		 * range-label` class.
 		 * 
 		 * @type {CSSObject}
-		 * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
+		 * @sample {highstock} stock/rangeselector/styling/ Styling the buttons and inputs
 		 * @product highstock
 		 */
 		labelStyle: {

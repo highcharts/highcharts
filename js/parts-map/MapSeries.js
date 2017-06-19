@@ -67,7 +67,7 @@ seriesType('map', 'scatter',
 	 * null-point` class.
 	 * 
 	 * @type {Color}
-	 * @sample {highmaps} highcharts/tree/master/samples/maps/demo/all-areas-as-null/ Null color
+	 * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
 	 * @default {all} #f7f7f7
 	 * @product highmaps
 	 */

@@ -51,7 +51,7 @@ var defaultScrollbarOptions =  {
 	 * 20 for touch devices and 14 for mouse devices.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/height/ A 30px scrollbar
+	 * @sample {highstock} stock/scrollbar/height/ A 30px scrollbar
 	 * @product highstock
 	 */
 	height: isTouchDevice ? 20 : 14,
@@ -61,7 +61,7 @@ var defaultScrollbarOptions =  {
 	 * The border rounding radius of the bar.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} 0
 	 * @product highstock
 	 */
@@ -71,7 +71,7 @@ var defaultScrollbarOptions =  {
 	 * The corner radius of the scrollbar buttons.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} 0
 	 * @product highstock
 	 */
@@ -117,7 +117,7 @@ var defaultScrollbarOptions =  {
 	 * The background color of the scrollbar itself.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #cccccc
 	 * @product highstock
 	 */
@@ -127,7 +127,7 @@ var defaultScrollbarOptions =  {
 	 * The width of the bar's border.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} 1
 	 * @product highstock
 	 */
@@ -146,7 +146,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the small arrow inside the scrollbar buttons.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #333333
 	 * @product highstock
 	 */
@@ -156,7 +156,7 @@ var defaultScrollbarOptions =  {
 	 * The color of scrollbar buttons.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #e6e6e6
 	 * @product highstock
 	 */
@@ -166,7 +166,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the border of the scrollbar buttons.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #cccccc
 	 * @product highstock
 	 */
@@ -176,7 +176,7 @@ var defaultScrollbarOptions =  {
 	 * The border width of the scrollbar buttons.
 	 * 
 	 * @type {Number}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} 1
 	 * @product highstock
 	 */
@@ -195,7 +195,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the track background.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #f2f2f2
 	 * @product highstock
 	 */
@@ -205,7 +205,7 @@ var defaultScrollbarOptions =  {
 	 * The color of the border of the scrollbar track.
 	 * 
 	 * @type {Color}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} #f2f2f2
 	 * @product highstock
 	 */
@@ -215,7 +215,7 @@ var defaultScrollbarOptions =  {
 	 * The width of the border of the scrollbar track.
 	 * 
 	 * @type {#CCC}
-	 * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
 	 * @default {all} 1
 	 * @product highstock
 	 */
