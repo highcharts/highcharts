@@ -99,156 +99,115 @@ H.Series = H.seriesType('line', null,
 	//dashStyle: null,
 	//linecap: 'round',
 
-	/**
-	 */
+
 	lineWidth: 2,
 	//shadow: false,
 	/*= } =*/
 
-	/**
-	 */
+
 	allowPointSelect: false,
 
-	/**
-	 */
+
 	showCheckbox: false,
 
-	/**
-	 */
+
 	animation: {
 
-		/**
-		 */
 		duration: 1000
 	},
 	//clip: true,
 	//connectNulls: false,
 	//enableMouseTracking: true,
 
-	/**
-	 */
+
 	events: {},
 	//legendIndex: 0,
 	// stacking: null,
 
-	/**
-	 */
+
 	marker: {
 		/*= if (build.classic) { =*/
 
-		/**
-		 */
 		lineWidth: 0,
 
-		/**
-		 */
 		lineColor: '${palette.backgroundColor}',
 		//fillColor: null,
 		/*= } =*/
 		//enabled: true,
 		//symbol: null,
 
-		/**
-		 */
 		radius: 4,
 
-		/**
-		 */
 		states: { // states for a single point
 
-			/**
-			 */
+
 			hover: {
 
-				/**
-				 */
+
 				animation: {
 
-					/**
-					 */
 					duration: 50
 				},
 
-				/**
-				 */
+
 				enabled: true,
 
-				/**
-				 */
+
 				radiusPlus: 2,
 				/*= if (build.classic) { =*/
 
-				/**
-				 */
+
 				lineWidthPlus: 1
 				/*= } =*/
 			},
 			/*= if (build.classic) { =*/
 
-			/**
-			 */
+
 			select: {
 
-				/**
-				 */
+
 				fillColor: '${palette.neutralColor20}',
 
-				/**
-				 */
+
 				lineColor: '${palette.neutralColor100}',
 
-				/**
-				 */
+
 				lineWidth: 2
 			}
 			/*= } =*/
 		}
 	},
 
-	/**
-	 */
+
 	point: {
 
-		/**
-		 */
 		events: {}
 	},
 
-	/**
-	 */
+
 	dataLabels: {
 
-		/**
-		 */
 		align: 'center',
 		// defer: true,
 		// enabled: false,
 
-		/**
-		 */
 		formatter: function () {
 			return this.y === null ? '' : H.numberFormat(this.y, -1);
 		},
 		/*= if (build.classic) { =*/
 
-		/**
-		 */
 		style: {
 
-			/**
-			 */
+
 			fontSize: '11px',
 
-			/**
-			 */
+
 			fontWeight: 'bold',
 
-			/**
-			 */
+
 			color: 'contrast',
 
-			/**
-			 */
+
 			textOutline: '1px contrast'
 		},
 		// backgroundColor: undefined,
@@ -257,98 +216,73 @@ H.Series = H.seriesType('line', null,
 		// shadow: false
 		/*= } =*/
 
-		/**
-		 */
 		verticalAlign: 'bottom', // above singular point
 
-		/**
-		 */
 		x: 0,
 
-		/**
-		 */
 		y: 0,
 		// borderRadius: undefined,
 
-		/**
-		 */
 		padding: 5
 	},
 	// draw points outside the plot area when the number of points is less than
 	// this
 
-	/**
-	 */
+
 	cropThreshold: 300,
 
-	/**
-	 */
+
 	pointRange: 0,
 	//pointStart: 0,
 	//pointInterval: 1,
 	//showInLegend: null, // auto = false for linked series
 
-	/**
-	 */
+
 	softThreshold: true,
 
-	/**
-	 */
+
 	states: { // states for the entire series
 
-		/**
-		 */
 		hover: {
 			//enabled: false,
 
-			/**
-			 */
+
 			animation: {
 
-				/**
-				 */
+
 				duration: 50
 			},
 
-			/**
-			 */
+
 			lineWidthPlus: 1,
 
-			/**
-			 */
+
 			marker: {
 				// lineWidth: base + 1,
 				// radius: base + 1
 			},
 
-			/**
-			 */
+
 			halo: {
 
-				/**
-				 */
+
 				size: 10,
 				/*= if (build.classic) { =*/
 
-				/**
-				 */
+
 				opacity: 0.25
 				/*= } =*/
 			}
 		},
 
-		/**
-		 */
 		select: {
 
-			/**
-			 */
+
 			marker: {}
 		}
 	},
 
-	/**
-	 */
+
 	stickyTracking: true,
 	//tooltip: {
 		//pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
@@ -359,13 +293,11 @@ H.Series = H.seriesType('line', null,
 		//ySuffix: ''
 	//}
 
-	/**
-	 */
+
 	turboThreshold: 1000,
 	// zIndex: null
 
-	/**
-	 */
+
 	findNearestPointBy: 'x'
 
 }, /** @lends Highcharts.Series.prototype */ {
