@@ -19,12 +19,36 @@ var colProto = seriesTypes.column.prototype;
 /**
  * The ColumnRangeSeries class
  */
-seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, 
+
+/**
+ * @extends {plotOptions.arearange}
+ * @optionparent plotOptions.columrange
+ */
+{
+
+	/**
+	 */
 	lineWidth: 1,
+
+	/**
+	 */
 	pointRange: null,
+
+	/**
+	 */
 	marker: null,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			halo: false
 		}
 	}

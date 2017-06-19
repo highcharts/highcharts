@@ -75,12 +75,65 @@ if (H.seriesTypes.pie) {
 }
 
 
-// Default a11y options
+/**
+ * Accessibility options
+ * @type {Object}
+ * @optionparent
+ */
 H.setOptions({
+
+	/**
+	 * Options for configuring accessibility for the chart. Requires the
+	 * [accessibility module](//code.highcharts.com/modules/accessibility.
+	 * js) to be loaded. For a description of the module and information
+	 * on its features, see [Highcharts Accessibility](http://www.highcharts.
+	 * com/docs/chart-concepts/accessibility).
+	 * 
+	 * @since 5.0.0
+	 * @product highcharts highstock highmaps
+	 */
 	accessibility: {
+
+		/**
+		 * Enable accessibility features for the chart.
+		 * 
+		 * @type {Boolean}
+		 * @default {all} true
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		enabled: true,
+
+		/**
+		 * When a series contains more points than this, we no longer expose
+		 * information about individual points to screen readers.
+		 * 
+		 * Set to `false` to disable.
+		 * 
+		 * @type {Number|Boolean}
+		 * @default {all} 30
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		pointDescriptionThreshold: 30, // set to false to disable
+
+		/**
+		 * Options for keyboard navigation.
+		 * 
+		 * @type {Object}
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 */
 		keyboardNavigation: {
+
+			/**
+			 * Enable keyboard navigation for the chart.
+			 * 
+			 * @type {Boolean}
+			 * @default {all} true
+			 * @since 5.0.0
+			 * @product highcharts highstock highmaps
+			 */
 			enabled: true
 		//	skipNullPoints: false
 		}

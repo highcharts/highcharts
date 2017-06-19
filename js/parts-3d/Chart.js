@@ -129,29 +129,168 @@ H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
 });
 
 var defaultOptions = H.getOptions();
-merge(true, defaultOptions, {
+
+/**
+ * Options to render charts in 3 dimensions. 
+ * This feature requires highcharts-3d.js, found in the download package, 
+ * or online at code.highcharts.com/highcharts-3d.js.
+ * @optionparent
+ */
+var extendedOptions = 	{
+
+	/**
+	 * Options regarding the chart area and plot area as well as general
+	 * chart options.
+	 * 
+	 * @product highcharts highstock highmaps
+	 */
 	chart: {
+
+		/**
+		 * Options to render charts in 3 dimensions. This feature requires
+		 * `highcharts-3d.js`, found in the download package or online at
+		 * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-
+		 * 3d.js).
+		 * 
+		 * @since 4.0
+		 * @product highcharts
+		 */
 		options3d: {
+
+			/**
+			 * Wether to render the chart using the 3D functionality.
+			 * 
+			 * @type {Boolean}
+			 * @default {all} false
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			enabled: false,
+
+			/**
+			 * One of the two rotation angles for the chart.
+			 * 
+			 * @type {Number}
+			 * @default {all} 0
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			alpha: 0,
+
+			/**
+			 * One of the two rotation angles for the chart.
+			 * 
+			 * @type {Number}
+			 * @default {all} 0
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			beta: 0,
+
+			/**
+			 * The total depth of the chart.
+			 * 
+			 * @type {Number}
+			 * @default {all} 100
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			depth: 100,
+
+			/**
+			 * Whether the 3d box should automatically adjust to the chart plot
+			 * area.
+			 * 
+			 * @type {Boolean}
+			 * @default {all} true
+			 * @since 4.2.4
+			 * @product highcharts
+			 */
 			fitToPlot: true,
+
+			/**
+			 * Defines the distance the viewer is standing in front of the chart,
+			 * this setting is important to calculate the perspective effect
+			 * in column and scatter charts. It is not used for 3D pie charts.
+			 * 
+			 * @type {Number}
+			 * @default {all} 100
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			viewDistance: 25,
+
+			/**
+			 * Set it to `"auto"` to automatically move the labels to the best
+			 * edge.
+			 * 
+			 * @validvalue [null, "auto"]
+			 * @type {String}
+			 * @default {all} null
+			 * @since 5.0.12
+			 * @product highcharts
+			 */
 			axisLabelPosition: 'default',
+
+			/**
+			 * Provides the option to draw a frame around the charts by defining
+			 * a bottom, front and back panel.
+			 * 
+			 * @since 4.0
+			 * @product highcharts
+			 */
 			frame: {
+
+				/**
+				 */
 				visible: 'default',
+
+				/**
+				 */
 				size: 1,
+
+				/**
+				 * The bottom of the frame around a 3D chart.
+				 * 
+				 * @since 4.0
+				 * @product highcharts
+				 */
 				bottom: {},
+
+				/**
+				 * The top of the frame around a 3D chart.
+				 * 
+				 * @type {Object}
+				 * @since 5.0.12
+				 * @product highcharts
+				 */
 				top: {},
+
+				/**
+				 */
 				left: {},
+
+				/**
+				 */
 				right: {},
+
+				/**
+				 * Defines the back panel of the frame around 3D charts.
+				 * 
+				 * @since 4.0
+				 * @product highcharts
+				 */
 				back: {},
+
+				/**
+				 */
 				front: {}
 			}
 		}
 	}
-});
+};
+
+merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
 /**

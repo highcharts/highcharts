@@ -19,26 +19,124 @@ var each = H.each,
 	pointProto = H.Point.prototype;
 /* 
  * The arearangeseries series type
+ * 
  */
-seriesType('arearange', 'area', {
+seriesType('arearange', 'area', 
+
+/**
+ * @extends area
+ * @optionparent plotOptions.arearange
+ */
+{
 	/*= if (build.classic) { =*/
+
+	/**
+	 * Pixel width of the arearange graph line.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1
+	 * @since 2.3.0
+	 * @product highcharts highstock
+	 */
 	lineWidth: 1,
 	/*= } =*/
+
+	/**
+	 */
 	threshold: null,
+
+	/**
+	 */
 	tooltip: {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
 		/*= } else { =*/
+
+		/**
+		 */
 		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
 		/*= } =*/
 	},
+
+	/**
+	 * Whether the whole area or just the line should respond to mouseover
+	 * tooltips and other mouse or touch events.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} true
+	 * @since 2.3.0
+	 * @product highcharts highstock
+	 */
 	trackByArea: true,
+
+	/**
+	 * Extended data labels for range series types. Range series data labels
+	 * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
+	 * `yLow` and `yHigh` options to allow the higher and lower data label
+	 * sets individually.
+	 * 
+	 * @type {Object}
+	 * @extends plotOptions.series.dataLabels
+	 * @excluding x,y
+	 * @since 2.3.0
+	 * @product highcharts highstock
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		align: null,
+
+		/**
+		 */
 		verticalAlign: null,
+
+		/**
+		 * X offset of the lower data labels relative to the point value.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @default {all} 0
+		 * @since 2.3.0
+		 * @product highcharts highstock
+		 */
 		xLow: 0,
+
+		/**
+		 * X offset of the higher data labels relative to the point value.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @default {all} 0
+		 * @since 2.3.0
+		 * @product highcharts highstock
+		 */
 		xHigh: 0,
+
+		/**
+		 * Y offset of the lower data labels relative to the point value.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @default {all} 16
+		 * @since 2.3.0
+		 * @product highcharts highstock
+		 */
 		yLow: 0,
+
+		/**
+		 * Y offset of the higher data labels relative to the point value.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @sample {highstock} highcharts/plotoptions/arearange-datalabels/ Data labels on range series
+		 * @default {all} -6
+		 * @since 2.3.0
+		 * @product highcharts highstock
+		 */
 		yHigh: 0
 	}
 

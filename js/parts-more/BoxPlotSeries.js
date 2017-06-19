@@ -19,8 +19,19 @@ var each = H.each,
  * @constructor seriesTypes.boxplot
  * @augments seriesTypes.column
  */
-seriesType('boxplot', 'column', {
+seriesType('boxplot', 'column', 
+/**
+ * @extends {plotOptions.column}
+ * @optionparent plotOptions.boxplot
+ */
+{
+
+	/**
+	 */
 	threshold: null,
+
+	/**
+	 */
 	tooltip: {
 		/*= if (!build.classic) { =*/
 		pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
@@ -30,6 +41,9 @@ seriesType('boxplot', 'column', {
 			'Lower quartile: {point.q1}<br/>' +
 			'Minimum: {point.low}<br/>',
 		/*= } else { =*/
+
+		/**
+		 */
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // eslint-disable-line no-dupe-keys
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
@@ -38,14 +52,77 @@ seriesType('boxplot', 'column', {
 			'Minimum: {point.low}<br/>'
 		/*= } =*/
 	},
+
+	/**
+	 * The length of the whiskers, the horizontal lines marking low and
+	 * high values. It can be a numerical pixel value, or a percentage
+	 * value of the box width. Set `0` to disable whiskers.
+	 * 
+	 * @type {Number|String}
+	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ True by default
+	 * @default {all} 50%
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	whiskerLength: '50%',
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The fill color of the box.
+	 * 
+	 * @type {Color}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the fill color can be set with the `.highcharts-
+	 * boxplot-box` class.
+	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
+	 * @default {all} #ffffff
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	fillColor: '${palette.backgroundColor}',
+
+	/**
+	 * The width of the line surrounding the box. If any of [stemWidth](#plotOptions.
+	 * boxplot.stemWidth), [medianWidth](#plotOptions.boxplot.medianWidth)
+	 * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
+	 *  the lineWidth also applies to these lines.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
+	 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
+	 * @default {all} 1
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	lineWidth: 1,
 	//medianColor: null,
+
+	/**
+	 * The pixel width of the median line. If `null`, the [lineWidth](#plotOptions.
+	 * boxplot.lineWidth) is used.
+	 * 
+	 * @type {Number}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the median stroke width can be set with the
+	 * `.highcharts-boxplot-median` class ([view live demo](http://jsfiddle.
+	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
+	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
+	 * @default {all} 2
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	medianWidth: 2,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			brightness: -0.3
 		}
 	},
@@ -54,6 +131,22 @@ seriesType('boxplot', 'column', {
 	//stemWidth: null,
 
 	//whiskerColor: null,
+
+	/**
+	 * The line width of the whiskers, the horizontal lines marking low
+	 * and high values. When `null`, the general [lineWidth](#plotOptions.
+	 * boxplot.lineWidth) applies.
+	 * 
+	 * @type {Number}
+	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the whisker stroke width can be set with the
+	 * `.highcharts-boxplot-whisker` class ([view live demo](http://jsfiddle.
+	 * net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/boxplot/)).
+	 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/ Box plot styling
+	 * @default {all} 2
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	whiskerWidth: 2
 	/*= } =*/
 

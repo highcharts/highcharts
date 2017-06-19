@@ -32,31 +32,200 @@ ColorAxis = H.ColorAxis = function () {
 };
 extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
+	/**	 
+	 * @extends {xAxis}
+	 * @optionparent colorAxis
+	 */
 	defaultColorAxisOptions: {
+
+		/**
+		 */
 		lineWidth: 0,
+
+		/**
+		 * Padding of the min value relative to the length of the axis. A
+		 * padding of 0.05 will make a 100px axis 5px longer.
+		 * 
+		 * @type {Number}
+		 * @default {all} 0.05
+		 * @product highmaps
+		 */
 		minPadding: 0,
+
+		/**
+		 * Padding of the max value relative to the length of the axis. A
+		 * padding of 0.05 will make a 100px axis 5px longer.
+		 * 
+		 * @type {Number}
+		 * @default {all} 0.05
+		 * @product highmaps
+		 */
 		maxPadding: 0,
+
+		/**
+		 * The width of the grid lines extending from the axis across the
+		 * gradient of a scalar color axis.
+		 * 
+		 * @type {Number}
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Grid lines demonstrated
+		 * @default {all} 1
+		 * @product highmaps
+		 */
 		gridLineWidth: 1,
+
+		/**
+		 * If [tickInterval](#colorAxis.tickInterval) is `null` this option
+		 * sets the approximate pixel interval of the tick marks.
+		 * 
+		 * @type {Number}
+		 * @default {all} 72
+		 * @product highmaps
+		 */
 		tickPixelInterval: 72,
+
+		/**
+		 * Whether to force the axis to start on a tick. Use this option with
+		 * the `maxPadding` option to control the axis start.
+		 * 
+		 * @type {Boolean}
+		 * @default {all} true
+		 * @product highmaps
+		 */
 		startOnTick: true,
+
+		/**
+		 * Whether to force the axis to end on a tick. Use this option with
+		 * the [maxPadding](#colorAxis.maxPadding) option to control the axis
+		 * end.
+		 * 
+		 * @type {Boolean}
+		 * @default {all} true
+		 * @product highmaps
+		 */
 		endOnTick: true,
+
+		/**
+		 */
 		offset: 0,
+
+		/**
+		 * The triangular marker on a scalar color axis that points to the
+		 * value of the hovered area. To disable the marker, set `marker:
+		 * null`.
+		 * 
+		 * @type {Object}
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/marker/ Black marker
+		 * @product highmaps
+		 */
 		marker: {
+
+			/**
+			 * Animation for the marker as it moves between values. Set to `false`
+			 * to disable animation. Defaults to `{ duration: 50 }`.
+			 * 
+			 * @type {Object|Boolean}
+			 * @product highmaps
+			 */
 			animation: {
+
+				/**
+				 */
 				duration: 50
 			},
+
+			/**
+			 */
 			width: 0.01,
 			/*= if (build.classic) { =*/
+
+			/**
+			 * The color of the marker.
+			 * 
+			 * @type {Color}
+			 * @default {all} #999999
+			 * @product highmaps
+			 */
 			color: '${palette.neutralColor40}'
 			/*= } =*/
 		},
+
+		/**
+		 * The axis labels show the number for each tick.
+		 * 
+		 * For more live examples on label options, see [xAxis.labels in the
+		 * Highcharts API.](/highcharts#xAxis.labels)
+		 * 
+		 * @type {Object}
+		 * @extends xAxis.labels
+		 * @product highmaps
+		 */
 		labels: {
+
+			/**
+			 * How to handle overflowing labels on horizontal axis. Can be undefined
+			 * or "justify". If "justify", labels will not render outside the
+			 * plot area. If there is room to move it, it will be aligned to
+			 * the edge, else it will be removed.
+			 * 
+			 * @validvalue [null, "justify"]
+			 * @type {String}
+			 * @default {all} justify
+			 * @product highmaps
+			 */
 			overflow: 'justify',
+
+			/**
+			 */
 			rotation: 0
 		},
+
+		/**
+		 * The color to represent the minimum of the color axis. Unless [dataClasses](#colorAxis.
+		 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
+		 * starts at this value.
+		 * 
+		 * If dataClasses are set, the color is based on minColor and maxColor
+		 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
+		 * dataClassColor) is set.
+		 * 
+		 * @type {Color}
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
+		 * @default {all} #e6ebf5
+		 * @product highmaps
+		 */
 		minColor: '${palette.highlightColor10}',
+
+		/**
+		 * The color to represent the maximum of the color axis. Unless [dataClasses](#colorAxis.
+		 * dataClasses) or [stops](#colorAxis.stops) are set, the gradient
+		 * ends at this value.
+		 * 
+		 * If dataClasses are set, the color is based on minColor and maxColor
+		 * unless a color is set for each data class, or the [dataClassColor](#colorAxis.
+		 * dataClassColor) is set.
+		 * 
+		 * @type {Color}
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor/ Min and max colors on scalar (gradient) axis
+		 * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/mincolor-maxcolor-dataclasses/ On data classes
+		 * @default {all} #003399
+		 * @product highmaps
+		 */
 		maxColor: '${palette.highlightColor100}',
+
+		/**
+		 */
 		tickLength: 5,
+
+		/**
+		 * Whether to display the colorAxis in the legend.
+		 * 
+		 * @type {Boolean}
+		 * @see [heatmap.showInLegend](#series<heatmap>.showInLegend)
+		 * @default {all} true
+		 * @since 4.2.7
+		 * @product highmaps
+		 */
 		showInLegend: true
 	},
 

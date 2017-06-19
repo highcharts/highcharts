@@ -17,9 +17,23 @@ var merge = H.merge,
 // The mapbubble series type
 if (seriesTypes.bubble) {
 
-	seriesType('mapbubble', 'bubble', {
+	seriesType('mapbubble', 'bubble', 
+	/**
+	 * @extends {plotOptions.bubble}
+	 * @optionparent plotOptions.mapbubble
+	 */
+	{
+
+		/**
+		 */
 		animationLimit: 500,
+
+		/**
+		 */
 		tooltip: {
+
+			/**
+			 */
 			pointFormat: '{point.name}: {point.z}'
 		}
 

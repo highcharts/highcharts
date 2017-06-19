@@ -24,11 +24,61 @@ extend(defaultOptions.lang, {
 });
 
 // Add default display options for message
+/**
+ * Options for displaying a message like "No data to display". 
+ * This feature requires the file no-data-to-display.js to be loaded in the page. 
+ * The actual text to display is set in the lang.noData option.
+ * @type {Object}
+ * @optionparent noData
+ */
 defaultOptions.noData = {
+
+	/**
+	 * The position of the no-data label, relative to the plot area.
+	 * 
+	 * @type {Object}
+	 * @default {all} { "x": 0, "y": 0, "align": "center", "verticalAlign": "middle" }
+	 * @since 3.0.8
+	 * @product highcharts highstock highmaps
+	 */
 	position: {
+
+		/**
+		 * Horizontal offset of the label, in pixels.
+		 * 
+		 * @type {Number}
+		 * @default {all} 0
+		 * @product highcharts highstock
+		 */
 		x: 0,
+
+		/**
+		 * Vertical offset of the label, in pixels.
+		 * 
+		 * @type {Number}
+		 * @default {all} 0
+		 * @product highcharts highstock
+		 */
 		y: 0,			
+
+		/**
+		 * Horizontal alignment of the label.
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @default {all} center
+		 * @product highcharts highstock highmaps
+		 */
 		align: 'center',
+
+		/**
+		 * Vertical alignment of the label.
+		 * 
+		 * @validvalue ["top", "middle", "bottom"]
+		 * @type {String}
+		 * @default {all} middle
+		 * @product highcharts highstock
+		 */
 		verticalAlign: 'middle'
 	}
 	// useHTML: false
@@ -36,9 +86,22 @@ defaultOptions.noData = {
 
 /*= if (build.classic) { =*/
 // Presentational
+/**
+ * CSS styles for the no-data label.
+ * @optionparent noData.style
+ */
 defaultOptions.noData.style = {
+
+	/**
+	 */
 	fontWeight: 'bold',
+
+	/**
+	 */
 	fontSize: '12px',
+
+	/**
+	 */
 	color: '${palette.neutralColor60}'
 };
 /*= } =*/

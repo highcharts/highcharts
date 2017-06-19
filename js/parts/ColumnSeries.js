@@ -28,47 +28,248 @@ var animObject = H.animObject,
  * @constructor seriesTypes.column
  * @augments Series
  */
-seriesType('column', 'line', {
+seriesType('column', 'line', 
+/**
+ * @extends {plotOptions.line}
+ * @optionparent plotOptions.column
+ */
+{
+
+	/**
+	 * The corner radius of the border surrounding each column or bar.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/column-borderradius/ Rounded columns
+	 * @default {all} 0
+	 * @product highcharts highstock
+	 */
 	borderRadius: 0,
 	//colorByPoint: undefined,
+
+	/**
+	 * When true, each column edge is rounded to its nearest pixel in order
+	 * to render sharp on screen. In some cases, when there are a lot of
+	 * densely packed columns, this leads to visible difference in column
+	 * widths or distance between columns. In these cases, setting `crisp`
+	 * to `false` may look better, even though each column is rendered
+	 * blurry.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/plotoptions/column-crisp-false/ Crisp is false
+	 * @default {all} true
+	 * @since 5.0.10
+	 * @product highcharts
+	 */
 	crisp: true,
+
+	/**
+	 * Padding between each value groups, in x axis units.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-default/ 0.2 by default
+	 * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/ No group padding - all     columns are evenly spaced
+	 * @default {all} 0.2
+	 * @product highcharts highstock
+	 */
 	groupPadding: 0.2,
 	//grouping: true,
+
+	/**
+	 */
 	marker: null, // point options are specified in the base options
+
+	/**
+	 * Padding between each column or bar, in x axis units.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-default/ 0.1 by default
+	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-025/ 0.25
+	 * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/ 0 for tightly packed columns
+	 * @default {all} 0.1
+	 * @product highcharts highstock
+	 */
 	pointPadding: 0.1,
 	//pointWidth: null,
+
+	/**
+	 * The minimal height for a column or width for a bar. By default,
+	 * 0 values are not shown. To visualize a 0 (or close to zero) point,
+	 * set the minimal point length to a pixel value like 3\. In stacked
+	 * column charts, minPointLength might not be respected for tightly
+	 * packed values.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength/ Zero base value
+	 * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/ Positive and negative close to zero values
+	 * @default {all} 0
+	 * @product highcharts highstock
+	 */
 	minPointLength: 0,
+
+	/**
+	 * When the series contains less points than the crop threshold, all
+	 * points are drawn, event if the points fall outside the visible plot
+	 * area at the current zoom. The advantage of drawing all points (including
+	 * markers and columns), is that animation is performed on updates.
+	 * On the other hand, when the series contains more points than the
+	 * crop threshold, the series data is cropped to only contain points
+	 * that fall within the plot area. The advantage of cropping away invisible
+	 * points is to increase performance on large series. .
+	 * 
+	 * @type {Number}
+	 * @default {all} 50
+	 * @product highcharts highstock
+	 */
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
+
+	/**
+	 * The X axis range that each point is valid for. This determines the
+	 * width of the column. On a categorized axis, the range will be 1
+	 * by default (one category unit). On linear and datetime axes, the
+	 * range will be computed as the distance between the two closest data
+	 * points.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/column-pointrange/ Set the point range to one day on a data set with one week between the points
+	 * @default {all} null
+	 * @since 2.3
+	 * @product highcharts highstock
+	 */
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+
+	/**
+	 */
 	states: {
+
+		/**
+		 * @extends plotOptions.series.states.hover
+		 * @excluding lineWidth,lineWidthPlus,marker
+		 * @product highcharts highstock
+		 */
 		hover: {
+
+			/**
+			 */
 			halo: false,
 			/*= if (build.classic) { =*/
+
+			/**
+			 * How much to brighten the point on interaction. Requires the main
+			 * color to be defined in hex or rgb(a) format.
+			 * 
+			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+			 * style/style-by-css), the hover brightening is by default replaced
+			 * with a fill-opacity set in the `.highcharts-point:hover` rule.
+			 * 
+			 * @type {Number}
+			 * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/ Brighten by 0.5
+			 * @default {all} 0.1
+			 * @product highcharts highstock
+			 */
 			brightness: 0.1,
+
+			/**
+			 */
 			shadow: false
 			/*= } =*/
 		},
 		/*= if (build.classic) { =*/
+
+		/**
+		 */
 		select: {
+
+			/**
+			 */
 			color: '${palette.neutralColor20}',
+
+			/**
+			 */
 			borderColor: '${palette.neutralColor100}',
+
+			/**
+			 */
 			shadow: false
 		}
 		/*= } =*/
 	},
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		align: null, // auto
+
+		/**
+		 */
 		verticalAlign: null, // auto
+
+		/**
+		 */
 		y: null
 	},
+
+	/**
+	 * When this is true, the series will not cause the Y axis to cross
+	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+	 * unless the data actually crosses the plane.
+	 * 
+	 * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+	 * 3 will make the Y axis show negative values according to the `minPadding`
+	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
+	 * 
+	 * @type {Boolean}
+	 * @default {highcharts} true
+	 * @default {highstock} false
+	 * @since 4.1.9
+	 * @product highcharts highstock
+	 */
 	softThreshold: false,
+
+	/**
+	 */
 	startFromThreshold: true, // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
+
+	/**
+	 */
 	stickyTracking: false,
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		distance: 6
 	},
+
+	/**
+	 * The Y axis value to serve as the base for the columns, for distinguishing
+	 * between values above and below a threshold. If `null`, the columns
+	 * extend from the padding Y axis minimum.
+	 * 
+	 * @type {Number}
+	 * @default {all} 0
+	 * @since 2.0
+	 * @product highcharts
+	 */
 	threshold: 0,
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The color of the border surrounding each column or bar.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the border stroke can be set with the `.highcharts-
+	 * point` rule.
+	 * 
+	 * @type {Color}
+	 * @sample {highcharts} highcharts/plotoptions/column-bordercolor/ Dark gray border
+	 * @default {all} #ffffff
+	 * @product highcharts highstock
+	 */
 	borderColor: '${palette.backgroundColor}'
 	// borderWidth: 1
 	/*= } =*/
