@@ -22,7 +22,7 @@ var each = H.each,
 seriesType('boxplot', 'column', 
 /**
  * @extends {plotOptions.column}
- * @optionparent plotOptions.boxPlot
+ * @optionparent plotOptions.boxplot
  */
 {
 	threshold: null,
