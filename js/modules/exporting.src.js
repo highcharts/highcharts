@@ -37,6 +37,9 @@ var defaultOptions = H.defaultOptions,
 	isFirefoxBrowser = /firefox/i.test(userAgent);
 
 // Add language
+/**
+ * @apioption lang
+ */
 extend(defaultOptions.lang, {
 	printChart: 'Print chart',
 	downloadPNG: 'Download PNG image',
@@ -48,6 +51,10 @@ extend(defaultOptions.lang, {
 
 // Buttons and menus are collected in a separate config option set called 'navigation'.
 // This can be extended later to add control buttons like zoom and pan right click menus.
+
+/**
+ * @apioption navigation
+ */
 defaultOptions.navigation = {
 	buttonOptions: {
 		theme: {},

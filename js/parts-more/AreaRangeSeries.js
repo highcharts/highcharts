@@ -19,11 +19,15 @@ var each = H.each,
 	pointProto = H.Point.prototype;
 /* 
  * The arearangeseries series type
- * @extends area
- * @optionparent plotOptions.arearange
  * 
  */
-seriesType('arearange', 'area', {
+seriesType('arearange', 'area', 
+
+/**
+ * @extends area
+ * @optionparent plotOptions.arearange
+ */
+{
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	/*= } =*/

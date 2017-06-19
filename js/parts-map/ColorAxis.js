@@ -32,6 +32,10 @@ ColorAxis = H.ColorAxis = function () {
 };
 extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
+	/**	 
+	 * @extends {xAxis}
+	 * @optionparent colorAxis
+	 */
 	defaultColorAxisOptions: {
 		lineWidth: 0,
 		minPadding: 0,

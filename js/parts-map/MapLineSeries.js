@@ -11,7 +11,12 @@ var seriesType = H.seriesType,
 	seriesTypes = H.seriesTypes;
 
 // The mapline series type
-seriesType('mapline', 'map', {
+seriesType('mapline', 'map', 
+/**
+ * @extends {plotOptions.map}
+ * @optionparent plotOptions.mapline
+ */
+{
 	/*= if (build.classic) { =*/
 	lineWidth: 1,
 	fillColor: 'none'

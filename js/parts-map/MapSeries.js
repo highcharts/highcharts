@@ -42,7 +42,13 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 /**
  * Add the map series type
  */
-seriesType('map', 'scatter', {
+seriesType('map', 'scatter', 
+/**
+ * @extends {plotOptions.scatter}
+ * @optionparent plotOptions.map
+ */
+
+{
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow

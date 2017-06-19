@@ -28,6 +28,11 @@ extend(defaultOptions.lang, {
 
 
 // Set the default map navigation options
+
+/** 
+ * @products highmaps
+ * @optionparent mapNavigation 
+ */
 defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',

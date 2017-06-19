@@ -24,7 +24,6 @@ var seriesType = H.seriesType,
 seriesType('plotband', 'column', 
 /**
  * @extends {plotOptions.column}
- * @optionparent plotOptions.plotband
  */
 {
 	lineWidth: 0,

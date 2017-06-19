@@ -23,7 +23,12 @@ var colorPointMixin = H.colorPointMixin,
 	seriesTypes = H.seriesTypes;
 
 // The Heatmap series type
-seriesType('heatmap', 'scatter', {
+seriesType('heatmap', 'scatter', 
+/**
+ * @extends {plotOptions.scatter}
+ * @optionparent plotOptions.heatmap
+ */
+{
 	animation: false,
 	borderWidth: 0,
 	/*= if (build.classic) { =*/

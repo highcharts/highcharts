@@ -49,7 +49,7 @@ var addEvent = H.addEvent,
  * {@link Highcharts.Chart.series|series} property that is a collection of all
  * the chart's series. The point objects and axis objects also have the same
  * reference.
- * 
+ *
  * Another way to reference the series programmatically is by `id`. Add an id
  * in the series configuration options, and get the series object by {@link
  * Highcharts.Chart#get}.
@@ -59,8 +59,8 @@ var addEvent = H.addEvent,
  * plotOptions.series} object. Then options for all series of a specific type
  * are given in the plotOptions of that type, for example `plotOptions.line`.
  * Next, options for one single series are given in the series array, or as
- * arguements to `chart.addSeries`. 
- * 
+ * arguements to `chart.addSeries`.
+ *
  * The data in the series is stored in various arrays.
  *
  * - First, `series.options.data` contains all the original config options for
@@ -85,72 +85,170 @@ var addEvent = H.addEvent,
  * @param  {Object} options
  *         The series options.
  *
+ */
+
+H.Series = H.seriesType('line', null, 
+
+/**
  * @optionparent plotOptions.line
  */
 
-H.Series = H.seriesType('line', null, { // base series options
+{ // base series options
 	/*= if (build.classic) { =*/
 	//cursor: 'default',
 	//dashStyle: null,
 	//linecap: 'round',
+
+	/**
+	 */
 	lineWidth: 2,
 	//shadow: false,
 	/*= } =*/
+
+	/**
+	 */
 	allowPointSelect: false,
+
+	/**
+	 */
 	showCheckbox: false,
+
+	/**
+	 */
 	animation: {
+
+		/**
+		 */
 		duration: 1000
 	},
 	//clip: true,
 	//connectNulls: false,
 	//enableMouseTracking: true,
+
+	/**
+	 */
 	events: {},
 	//legendIndex: 0,
 	// stacking: null,
+
+	/**
+	 */
 	marker: {
 		/*= if (build.classic) { =*/
+
+		/**
+		 */
 		lineWidth: 0,
+
+		/**
+		 */
 		lineColor: '${palette.backgroundColor}',
 		//fillColor: null,
-		/*= } =*/				
+		/*= } =*/
 		//enabled: true,
 		//symbol: null,
+
+		/**
+		 */
 		radius: 4,
+
+		/**
+		 */
 		states: { // states for a single point
+
+			/**
+			 */
 			hover: {
+
+				/**
+				 */
 				animation: {
+
+					/**
+					 */
 					duration: 50
 				},
+
+				/**
+				 */
 				enabled: true,
+
+				/**
+				 */
 				radiusPlus: 2,
 				/*= if (build.classic) { =*/
+
+				/**
+				 */
 				lineWidthPlus: 1
 				/*= } =*/
 			},
 			/*= if (build.classic) { =*/
+
+			/**
+			 */
 			select: {
+
+				/**
+				 */
 				fillColor: '${palette.neutralColor20}',
+
+				/**
+				 */
 				lineColor: '${palette.neutralColor100}',
+
+				/**
+				 */
 				lineWidth: 2
 			}
 			/*= } =*/
 		}
 	},
+
+	/**
+	 */
 	point: {
+
+		/**
+		 */
 		events: {}
 	},
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		align: 'center',
 		// defer: true,
 		// enabled: false,
+
+		/**
+		 */
 		formatter: function () {
 			return this.y === null ? '' : H.numberFormat(this.y, -1);
 		},
 		/*= if (build.classic) { =*/
+
+		/**
+		 */
 		style: {
+
+			/**
+			 */
 			fontSize: '11px',
+
+			/**
+			 */
 			fontWeight: 'bold',
+
+			/**
+			 */
 			color: 'contrast',
+
+			/**
+			 */
 			textOutline: '1px contrast'
 		},
 		// backgroundColor: undefined,
@@ -158,42 +256,99 @@ H.Series = H.seriesType('line', null, { // base series options
 		// borderWidth: undefined,
 		// shadow: false
 		/*= } =*/
+
+		/**
+		 */
 		verticalAlign: 'bottom', // above singular point
+
+		/**
+		 */
 		x: 0,
+
+		/**
+		 */
 		y: 0,
 		// borderRadius: undefined,
+
+		/**
+		 */
 		padding: 5
 	},
 	// draw points outside the plot area when the number of points is less than
 	// this
+
+	/**
+	 */
 	cropThreshold: 300,
+
+	/**
+	 */
 	pointRange: 0,
 	//pointStart: 0,
 	//pointInterval: 1,
 	//showInLegend: null, // auto = false for linked series
+
+	/**
+	 */
 	softThreshold: true,
+
+	/**
+	 */
 	states: { // states for the entire series
+
+		/**
+		 */
 		hover: {
 			//enabled: false,
+
+			/**
+			 */
 			animation: {
+
+				/**
+				 */
 				duration: 50
 			},
+
+			/**
+			 */
 			lineWidthPlus: 1,
+
+			/**
+			 */
 			marker: {
 				// lineWidth: base + 1,
 				// radius: base + 1
 			},
+
+			/**
+			 */
 			halo: {
+
+				/**
+				 */
 				size: 10,
 				/*= if (build.classic) { =*/
+
+				/**
+				 */
 				opacity: 0.25
 				/*= } =*/
 			}
 		},
+
+		/**
+		 */
 		select: {
+
+			/**
+			 */
 			marker: {}
 		}
 	},
+
+	/**
+	 */
 	stickyTracking: true,
 	//tooltip: {
 		//pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
@@ -203,8 +358,14 @@ H.Series = H.seriesType('line', null, { // base series options
 		//valuePrefix: '',
 		//ySuffix: ''
 	//}
+
+	/**
+	 */
 	turboThreshold: 1000,
 	// zIndex: null
+
+	/**
+	 */
 	findNearestPointBy: 'x'
 
 }, /** @lends Highcharts.Series.prototype */ {
@@ -282,7 +443,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			/**
 			 * Read only. The series' selected state as set by {@link
 			 * Highcharts.Series#select}.
-			 * 
+			 *
 			 * @name selected
 			 * @memberOf Series
 			 * @type {Boolean}
@@ -328,14 +489,14 @@ H.Series = H.seriesType('line', null, { // base series options
 			lastSeries = chartSeries[chartSeries.length - 1];
 		}
 		series._i = pick(lastSeries && lastSeries._i, -1) + 1;
-		
+
 		// Insert the series and re-order all series above the insertion point.
 		chart.orderSeries(this.insert(chartSeries));
 	},
 
 	/**
 	 * Insert the series in a collection with other series, either the chart
-	 * series or yAxis series, in the correct order according to the index 
+	 * series or yAxis series, in the correct order according to the index
 	 * option.
 	 * @param  {Array} collection A collection of series.
 	 * @returns {Number} The index of the series in the collection.
@@ -512,7 +673,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		this.xIncrement = xIncrement + pointInterval;
 		return xIncrement;
 	},
-	
+
 	/**
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
@@ -555,7 +716,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			plotOptions[this.type].tooltip, // 6
 			itemOptions.tooltip // 7
 		);
-		
+
 		// When shared tooltip, stickyTracking is true by default,
 		// unless user says otherwise.
 		this.stickyTracking = pick(
@@ -569,7 +730,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				options.stickyTracking
 			)
 		);
-		
+
 		// Delete marker object if not allowed (#1125)
 		if (typeOptions.marker === null) {
 			delete options.marker;
@@ -614,7 +775,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			indexName = prop + 'Index',
 			counterName = prop + 'Counter',
 			len = defaults ? defaults.length : pick(
-				chart.options.chart[prop + 'Count'], 
+				chart.options.chart[prop + 'Count'],
 				chart[prop + 'Count']
 			),
 			setting;
@@ -689,11 +850,11 @@ H.Series = H.seriesType('line', null, { // base series options
 	 * Apply a new set of data to the series and optionally redraw it. The new
 	 * data array is passed by reference (except in case of `updatePoints`), and
 	 * may later be mutated when updating the chart data.
-	 * 
+	 *
 	 * Note the difference in behaviour when setting the same amount of points,
 	 * or a different amount of points, as handled by the `updatePoints`
-	 * parameter. 
-	 * 
+	 * parameter.
+	 *
 	 * @param  {SeriesDataOptions} data
 	 *         Takes an array of data in the same format as described under
 	 *         `series<type>data` for the given series type.
@@ -810,7 +971,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				} else {
 					// Highcharts expects configs to be numbers or arrays in
 					// turbo mode
-					H.error(12); 
+					H.error(12);
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
@@ -1094,7 +1255,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				 * @name dataGroup
 				 * @memberOf Point
 				 * @type {Object}
-				 * 
+				 *
 				 */
 				point.dataGroup = series.groupMap[i];
 			}
@@ -1119,7 +1280,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		) {
 			for (i = 0; i < dataLength; i++) {
 				// when has grouped data, clear all points
-				if (i === cropStart && !hasGroupedData) { 
+				if (i === cropStart && !hasGroupedData) {
 					i += processedDataLength;
 				}
 				if (data[i]) {
@@ -1265,7 +1426,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					this.type === 'flags'
 				)), 1e5) // #3923
 			);
-			
+
 			// Calculate the bottom y value for stacked series
 			if (
 				stacking &&
@@ -1319,7 +1480,7 @@ H.Series = H.seriesType('line', null, { // base series options
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = plotY = 
+			point.plotY = plotY =
 				(typeof yValue === 'number' && yValue !== Infinity) ?
 					Math.min(Math.max(
 						-1e5,
@@ -1633,7 +1794,7 @@ H.Series = H.seriesType('line', null, { // base series options
 		}
 
 		return attribs;
-		
+
 	},
 
 	/*= if (build.classic) { =*/
@@ -1666,10 +1827,10 @@ H.Series = H.seriesType('line', null, { // base series options
 			seriesStateOptions = seriesMarkerOptions.states[state];
 			pointStateOptions = (pointMarkerOptions.states && pointMarkerOptions.states[state]) || {};
 			strokeWidth = pick(
-				pointStateOptions.lineWidth, 
-				seriesStateOptions.lineWidth, 
+				pointStateOptions.lineWidth,
+				seriesStateOptions.lineWidth,
 				strokeWidth + pick(
-					pointStateOptions.lineWidthPlus, 
+					pointStateOptions.lineWidthPlus,
 					seriesStateOptions.lineWidthPlus,
 					0
 				)
@@ -1734,12 +1895,12 @@ H.Series = H.seriesType('line', null, { // base series options
 		// Destroy all SVGElements associated to the series
 		objectEach(series, function (val, prop) {
 			if (val instanceof SVGElement && !val.survive) { // Survive provides a hook for not destroying
-				
+
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
 				'hide' :
 				'destroy';
-				
+
 				val[destroy]();
 			}
 		});
@@ -1811,9 +1972,9 @@ H.Series = H.seriesType('line', null, { // base series options
 
 				if (i === 0 || gap) {
 					pathToPoint = ['M', point.plotX, point.plotY];
-				
+
 				} else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-					
+
 					pathToPoint = series.getPointSpline(points, point, i);
 
 				} else if (step) {
@@ -1824,7 +1985,7 @@ H.Series = H.seriesType('line', null, { // base series options
 							lastPoint.plotX,
 							plotY
 						];
-						
+
 					} else if (step === 2) { // center
 						pathToPoint = [
 							'L',
@@ -1834,7 +1995,7 @@ H.Series = H.seriesType('line', null, { // base series options
 							(lastPoint.plotX + plotX) / 2,
 							plotY
 						];
-						
+
 					} else {
 						pathToPoint = [
 							'L',
@@ -1879,10 +2040,10 @@ H.Series = H.seriesType('line', null, { // base series options
 			options = this.options,
 			graphPath = (this.gappedPath || this.getGraphPath).call(this),
 			props = [[
-				'graph', 
-				'highcharts-graph', 
+				'graph',
+				'highcharts-graph',
 				/*= if (build.classic) { =*/
-				options.lineColor || this.color, 
+				options.lineColor || this.color,
 				options.dashStyle
 				/*= } =*/
 			]];
@@ -1893,7 +2054,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				'zone-graph-' + i,
 				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
 				/*= if (build.classic) { =*/
-				zone.color || series.color, 
+				zone.color || series.color,
 				zone.dashStyle || options.dashStyle
 				/*= } =*/
 			]);
@@ -1910,7 +2071,7 @@ H.Series = H.seriesType('line', null, { // base series options
 				graph.animate({ d: graphPath });
 
 			} else if (graphPath.length) { // #1487
-				
+
 				series[graphKey] = series.chart.renderer.path(graphPath)
 					.addClass(prop[1])
 					.attr({ zIndex: 1 }) // #1069
@@ -1990,7 +2151,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					(horiz ? 0 : axis.toPixels(extremes.min));
 				translatedFrom = Math.min(Math.max(pick(translatedTo, translatedFrom), 0), chartSizeMax);
 				translatedTo = Math.min(Math.max(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
-				
+
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
@@ -2121,7 +2282,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					zIndex: zIndex || 0.1 // IE8 and pointer logic use this
 				})
 				.add(parent);
-			
+
 		}
 
 		// Add the class names, and replace existing ones as response to
@@ -2329,7 +2490,7 @@ H.Series = H.seriesType('line', null, { // base series options
 
 	/**
 	 * Build the k-d-tree that is used by mouse and touch interaction to get the
-	 * closest point. Line-like series typically have a one-dimensional tree 
+	 * closest point. Line-like series typically have a one-dimensional tree
 	 * where points are searched along the X axis, while scatter-like series
 	 * typically search in two dimensions, X and Y.
 	 */
@@ -2382,7 +2543,7 @@ H.Series = H.seriesType('line', null, { // base series options
 					null,
 					// For line-type series restrict to plot area, but
 					// column-type series not (#3916, #4511)
-					!series.directTouch 
+					!series.directTouch
 				),
 				dimensions,
 				dimensions

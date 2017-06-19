@@ -127,6 +127,7 @@ extend(Pane.prototype, {
 
 	/**
 	 * The default options object
+	 * @optionparent pane
 	 */
 	defaultOptions: {
 		// background: {conditional},
@@ -138,6 +139,7 @@ extend(Pane.prototype, {
 
 	/**
 	 * The default background options
+	 * @optionparent pane.background
 	 */
 	defaultBackgroundOptions: {
 		//className: 'highcharts-pane',
