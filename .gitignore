@@ -1,6 +1,7 @@
 /.metadata/
 /.settings/
 /api-docs
+/out
 /js/highcharts-3d.src.js
 /js/highcharts-more.src.js
 /js/highcharts.js

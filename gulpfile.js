@@ -295,58 +295,25 @@ gulp.task('nightly', function () {
     });
 });
 
-/**
- * Automated generation for internal API options docs.
- * Run with --watch argument to watch for changes in the JS files.
- */
-gulp.task('jsdoc', function (cb) {
-    const jsdoc = require('gulp-jsdoc3');
-
-    const templateDir = './../highcharts-docstrap';
-    const jsdocPlugin = './tools/jsdoc/plugins/highcharts.jsdoc.js';
-
-    gulp.src(['README.md', './js/parts/*.js', './tmp/supplemental.docs.js'], { read: false })
-    // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
-        .pipe(jsdoc({
-            navOptions: {
-                theme: 'highsoft'
-            },
-            opts: {
-                destination: './internal-docs/',
-                private: false,
-                template: templateDir + '/template'
-            },
-            plugins: [
-                templateDir + '/plugins/markdown',
-                templateDir + '/plugins/optiontag',
-                templateDir + '/plugins/sampletag',
-                jsdocPlugin
-            ],
-            templates: {
-                logoFile: 'img/highcharts-logo.svg',
-                systemName: 'Highcharts',
-                theme: 'highsoft'
-            }
-        }, function (err) {
-            cb(err); // eslint-disable-line
-            if (!err) {
-                console.log(
-                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
-                );
-            }
-        }));
-
-    if (argv.watch) {
-        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
-    }
-});
 
 /**
  * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
- * @todo: Combine with the above
+ * @todo: Combine with API generator, see the following:
+ *
+ * Temporary workflow for the API is different for now:
+ * - In the highcharts repo, run
+ *   jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map js/supplemental.docs.js -c jsdoc.json
+ *   This produces tree.json, which is used as input for the documentation
+ *   generator.
+ * - In the api-docs repo, run
+ *   node gen.docs.js ../../highcharts/tree.json ../docs/ true
+ *   A server is automagically started on port 9700 to serve up the docs. The
+ *   server listens to changes on files in include and templates, and rebuilds
+ *   the docs if there are any. This only works if the ouput folder is a
+ *   folder - docs/ - in the project root.
  */
-gulp.task('jsdoc-classes', function (cb) {
+gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
 
     const templateDir = './../highcharts-docstrap';
