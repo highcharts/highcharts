@@ -11,7 +11,7 @@ for (i = 0; i < n; i += 1) {
     ]);
 }
 
-if (!Highcharts.Series.prototype.renderCanvas) {    
+if (!Highcharts.Series.prototype.renderCanvas) {
     throw 'Module not loaded';
 }
 
@@ -44,15 +44,14 @@ Highcharts.chart('container', {
     title: {
         text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
     },
-    
+
     legend: {
         enabled: false
     },
 
     series: [{
-        boostBlending: 'alpha',
         type: 'scatter',
-        color: 'rgba(152,0,67,0.95)',
+        color: 'rgba(152,0,67,0.1)',
         data: data,
         marker: {
             radius: 0.1

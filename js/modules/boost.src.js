@@ -43,8 +43,8 @@
  *
  * Settings
  *	There are two ways of setting the boost threshold:
- *    - Per. series: boost based on number of points in individual series
- *    - Per. chart: boost based on the number of series 
+ *	- Per. series: boost based on number of points in individual series
+ *	- Per. chart: boost based on the number of series 
  *
  *  To set the series boost threshold, set seriesBoostThreshold on the chart object.
  *  To set the series-specific threshold, set boostThreshold on the series object.
@@ -97,7 +97,7 @@
   * @apioption series.boostThreshold
   */
 
- /* global Float32Array, Image */
+ /* global Float32Array */
 
 'use strict';
 import H from '../parts/Globals.js';
@@ -129,161 +129,206 @@ var win = H.win,
 
 // Register color names since GL can't render those directly.
 Color.prototype.names = {
-    aliceblue: '#f0f8ff',
-    antiquewhite: '#faebd7',
-    aqua: '#00ffff',
-    aquamarine: '#7fffd4',
-    azure: '#f0ffff',
-    beige: '#f5f5dc',
-    bisque: '#ffe4c4',
-    black: '#000000',
-    blanchedalmond: '#ffebcd',
-    blue: '#0000ff',
-    blueviolet: '#8a2be2',
-    brown: '#a52a2a',
-    burlywood: '#deb887',
-    cadetblue: '#5f9ea0',
-    chartreuse: '#7fff00',
-    chocolate: '#d2691e',
-    coral: '#ff7f50',
-    cornflowerblue: '#6495ed',
-    cornsilk: '#fff8dc',
-    crimson: '#dc143c',
-    cyan: '#00ffff',
-    darkblue: '#00008b',
-    darkcyan: '#008b8b',
-    darkgoldenrod: '#b8860b',
-    darkgray: '#a9a9a9',
-    darkgreen: '#006400',
-    darkkhaki: '#bdb76b',
-    darkmagenta: '#8b008b',
-    darkolivegreen: '#556b2f',
-    darkorange: '#ff8c00',
-    darkorchid: '#9932cc',
-    darkred: '#8b0000',
-    darksalmon: '#e9967a',
-    darkseagreen: '#8fbc8f',
-    darkslateblue: '#483d8b',
-    darkslategray: '#2f4f4f',
-    darkturquoise: '#00ced1',
-    darkviolet: '#9400d3',
-    deeppink: '#ff1493',
-    deepskyblue: '#00bfff',
-    dimgray: '#696969',
-    dodgerblue: '#1e90ff',
-    feldspar: '#d19275',
-    firebrick: '#b22222',
-    floralwhite: '#fffaf0',
-    forestgreen: '#228b22',
-    fuchsia: '#ff00ff',
-    gainsboro: '#dcdcdc',
-    ghostwhite: '#f8f8ff',
-    gold: '#ffd700',
-    goldenrod: '#daa520',
-    gray: '#808080',
-    green: '#008000',
-    greenyellow: '#adff2f',
-    honeydew: '#f0fff0',
-    hotpink: '#ff69b4',
-    indianred: '#cd5c5c',
-    indigo: '#4b0082',
-    ivory: '#fffff0',
-    khaki: '#f0e68c',
-    lavender: '#e6e6fa',
-    lavenderblush: '#fff0f5',
-    lawngreen: '#7cfc00',
-    lemonchiffon: '#fffacd',
-    lightblue: '#add8e6',
-    lightcoral: '#f08080',
-    lightcyan: '#e0ffff',
-    lightgoldenrodyellow: '#fafad2',
-    lightgrey: '#d3d3d3',
-    lightgreen: '#90ee90',
-    lightpink: '#ffb6c1',
-    lightsalmon: '#ffa07a',
-    lightseagreen: '#20b2aa',
-    lightskyblue: '#87cefa',
-    lightslateblue: '#8470ff',
-    lightslategray: '#778899',
-    lightsteelblue: '#b0c4de',
-    lightyellow: '#ffffe0',
-    lime: '#00ff00',
-    limegreen: '#32cd32',
-    linen: '#faf0e6',
-    magenta: '#ff00ff',
-    maroon: '#800000',
-    mediumaquamarine: '#66cdaa',
-    mediumblue: '#0000cd',
-    mediumorchid: '#ba55d3',
-    mediumpurple: '#9370d8',
-    mediumseagreen: '#3cb371',
-    mediumslateblue: '#7b68ee',
-    mediumspringgreen: '#00fa9a',
-    mediumturquoise: '#48d1cc',
-    mediumvioletred: '#c71585',
-    midnightblue: '#191970',
-    mintcream: '#f5fffa',
-    mistyrose: '#ffe4e1',
-    moccasin: '#ffe4b5',
-    navajowhite: '#ffdead',
-    navy: '#000080',
-    oldlace: '#fdf5e6',
-    olive: '#808000',
-    olivedrab: '#6b8e23',
-    orange: '#ffa500',
-    orangered: '#ff4500',
-    orchid: '#da70d6',
-    palegoldenrod: '#eee8aa',
-    palegreen: '#98fb98',
-    paleturquoise: '#afeeee',
-    palevioletred: '#d87093',
-    papayawhip: '#ffefd5',
-    peachpuff: '#ffdab9',
-    peru: '#cd853f',
-    pink: '#ffc0cb',
-    plum: '#dda0dd',
-    powderblue: '#b0e0e6',
-    purple: '#800080',
-    red: '#ff0000',
-    rosybrown: '#bc8f8f',
-    royalblue: '#4169e1',
-    saddlebrown: '#8b4513',
-    salmon: '#fa8072',
-    sandybrown: '#f4a460',
-    seagreen: '#2e8b57',
-    seashell: '#fff5ee',
-    sienna: '#a0522d',
-    silver: '#c0c0c0',
-    skyblue: '#87ceeb',
-    slateblue: '#6a5acd',
-    slategray: '#708090',
-    snow: '#fffafa',
-    springgreen: '#00ff7f',
-    steelblue: '#4682b4',
-    tan: '#d2b48c',
-    teal: '#008080',
-    thistle: '#d8bfd8',
-    tomato: '#ff6347',
-    turquoise: '#40e0d0',
-    violet: '#ee82ee',
-    violetred: '#d02090',
-    wheat: '#f5deb3',
-    white: '#ffffff',
-    whitesmoke: '#f5f5f5',
-    yellow: '#ffff00',
-    yellowgreen: '#9acd32'
+	aliceblue: '#f0f8ff',
+	antiquewhite: '#faebd7',
+	aqua: '#00ffff',
+	aquamarine: '#7fffd4',
+	azure: '#f0ffff',
+	beige: '#f5f5dc',
+	bisque: '#ffe4c4',
+	black: '#000000',
+	blanchedalmond: '#ffebcd',
+	blue: '#0000ff',
+	blueviolet: '#8a2be2',
+	brown: '#a52a2a',
+	burlywood: '#deb887',
+	cadetblue: '#5f9ea0',
+	chartreuse: '#7fff00',
+	chocolate: '#d2691e',
+	coral: '#ff7f50',
+	cornflowerblue: '#6495ed',
+	cornsilk: '#fff8dc',
+	crimson: '#dc143c',
+	cyan: '#00ffff',
+	darkblue: '#00008b',
+	darkcyan: '#008b8b',
+	darkgoldenrod: '#b8860b',
+	darkgray: '#a9a9a9',
+	darkgreen: '#006400',
+	darkkhaki: '#bdb76b',
+	darkmagenta: '#8b008b',
+	darkolivegreen: '#556b2f',
+	darkorange: '#ff8c00',
+	darkorchid: '#9932cc',
+	darkred: '#8b0000',
+	darksalmon: '#e9967a',
+	darkseagreen: '#8fbc8f',
+	darkslateblue: '#483d8b',
+	darkslategray: '#2f4f4f',
+	darkturquoise: '#00ced1',
+	darkviolet: '#9400d3',
+	deeppink: '#ff1493',
+	deepskyblue: '#00bfff',
+	dimgray: '#696969',
+	dodgerblue: '#1e90ff',
+	feldspar: '#d19275',
+	firebrick: '#b22222',
+	floralwhite: '#fffaf0',
+	forestgreen: '#228b22',
+	fuchsia: '#ff00ff',
+	gainsboro: '#dcdcdc',
+	ghostwhite: '#f8f8ff',
+	gold: '#ffd700',
+	goldenrod: '#daa520',
+	gray: '#808080',
+	green: '#008000',
+	greenyellow: '#adff2f',
+	honeydew: '#f0fff0',
+	hotpink: '#ff69b4',
+	indianred: '#cd5c5c',
+	indigo: '#4b0082',
+	ivory: '#fffff0',
+	khaki: '#f0e68c',
+	lavender: '#e6e6fa',
+	lavenderblush: '#fff0f5',
+	lawngreen: '#7cfc00',
+	lemonchiffon: '#fffacd',
+	lightblue: '#add8e6',
+	lightcoral: '#f08080',
+	lightcyan: '#e0ffff',
+	lightgoldenrodyellow: '#fafad2',
+	lightgrey: '#d3d3d3',
+	lightgreen: '#90ee90',
+	lightpink: '#ffb6c1',
+	lightsalmon: '#ffa07a',
+	lightseagreen: '#20b2aa',
+	lightskyblue: '#87cefa',
+	lightslateblue: '#8470ff',
+	lightslategray: '#778899',
+	lightsteelblue: '#b0c4de',
+	lightyellow: '#ffffe0',
+	lime: '#00ff00',
+	limegreen: '#32cd32',
+	linen: '#faf0e6',
+	magenta: '#ff00ff',
+	maroon: '#800000',
+	mediumaquamarine: '#66cdaa',
+	mediumblue: '#0000cd',
+	mediumorchid: '#ba55d3',
+	mediumpurple: '#9370d8',
+	mediumseagreen: '#3cb371',
+	mediumslateblue: '#7b68ee',
+	mediumspringgreen: '#00fa9a',
+	mediumturquoise: '#48d1cc',
+	mediumvioletred: '#c71585',
+	midnightblue: '#191970',
+	mintcream: '#f5fffa',
+	mistyrose: '#ffe4e1',
+	moccasin: '#ffe4b5',
+	navajowhite: '#ffdead',
+	navy: '#000080',
+	oldlace: '#fdf5e6',
+	olive: '#808000',
+	olivedrab: '#6b8e23',
+	orange: '#ffa500',
+	orangered: '#ff4500',
+	orchid: '#da70d6',
+	palegoldenrod: '#eee8aa',
+	palegreen: '#98fb98',
+	paleturquoise: '#afeeee',
+	palevioletred: '#d87093',
+	papayawhip: '#ffefd5',
+	peachpuff: '#ffdab9',
+	peru: '#cd853f',
+	pink: '#ffc0cb',
+	plum: '#dda0dd',
+	powderblue: '#b0e0e6',
+	purple: '#800080',
+	red: '#ff0000',
+	rosybrown: '#bc8f8f',
+	royalblue: '#4169e1',
+	saddlebrown: '#8b4513',
+	salmon: '#fa8072',
+	sandybrown: '#f4a460',
+	seagreen: '#2e8b57',
+	seashell: '#fff5ee',
+	sienna: '#a0522d',
+	silver: '#c0c0c0',
+	skyblue: '#87ceeb',
+	slateblue: '#6a5acd',
+	slategray: '#708090',
+	snow: '#fffafa',
+	springgreen: '#00ff7f',
+	steelblue: '#4682b4',
+	tan: '#d2b48c',
+	teal: '#008080',
+	thistle: '#d8bfd8',
+	tomato: '#ff6347',
+	turquoise: '#40e0d0',
+	violet: '#ee82ee',
+	violetred: '#d02090',
+	wheat: '#f5deb3',
+	white: '#ffffff',
+	whitesmoke: '#f5f5f5',
+	yellow: '#ffff00',
+	yellowgreen: '#9acd32'
 };
 
+/**
+ * Tolerant max() funciton
+ * @return {number} max value
+ */
+function patientMax() {
+	var args = Array.prototype.slice.call(arguments),
+		r = -Number.MAX_VALUE;
+
+	each(args, function (t) {
+		if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
+			//r = r < t.length ? t.length : r;
+			if (t.length > 0) {
+				r = t.length;
+				return true;
+			}
+		}
+	});
+
+	return r;
+}
+
+/*
+ * Returns true if we should force chart series boosting
+ */
+function shouldForceChartSeriesBoosting(chart) {
+	// If there are more than five series currently boosting,
+	// we should boost the whole chart to avoid running out of webgl contexts.
+	var sboostCount = 0,
+		series;
+
+	if (chart.series.length > 1) {
+		for (var i = 0; i < chart.series.length; i++) {
+			series = chart.series[i];
+			if (patientMax(
+				series.processedXData, 
+				series.options.data,
+				series.points
+			) >= (series.options.boostThreshold || Number.MAX_VALUE)) {
+				sboostCount++;
+			}
+		}
+	}
+
+	return sboostCount > 5;
+}
 
 /*
  * Returns true if the chart is in series boost mode
  * @param chart {Highchart.Chart} - the chart to check
  * @returns {Boolean} - true if the chart is in series boost mode
  */
-function isChartSeriesBoosting(chart) {	
-	return chart.series.length >= pick(
-		chart.options.boost && chart.options.boost.seriesThreshold, // docs
-		10
+function isChartSeriesBoosting(chart) {
+	return shouldForceChartSeriesBoosting(chart) || chart.series.length >= pick(
+		chart.options.boost && chart.options.boost.seriesThreshold,
+		50
 	);
 }
 
@@ -293,23 +338,6 @@ function isChartSeriesBoosting(chart) {
  * @returns {boolean} - true if the series is in boost mode
  */
 function isSeriesBoosting(series) {
-	function patientMax() {
-		var args = Array.prototype.slice.call(arguments),
-			r = -Number.MAX_VALUE;
-
-		each(args, function (t) {
-			if (typeof t !== 'undefined' && typeof t.length !== 'undefined') {
-				//r = r < t.length ? t.length : r;
-				if (t.length > 0) {
-					r = t.length;
-					return true;
-				}
-			}
-		});
-
-		return r;
-	}		
-
 	return  isChartSeriesBoosting(series.chart) ||
 			patientMax(
 				series.processedXData, 
@@ -360,7 +388,7 @@ function GLShader(gl) {
 			'uniform float yAxisMin;',
 			'uniform float yAxisMinPad;',
 			'uniform float yAxisPointRange;',
-			'uniform float yAxisLen;',          
+			'uniform float yAxisLen;',		  
 			'uniform bool  yAxisPostTranslate;', 
 			'uniform float yAxisOrdinalSlope;',
 			'uniform float yAxisOrdinalOffset;', 
@@ -471,7 +499,7 @@ function GLShader(gl) {
 			'precision highp float;',
 			'uniform vec4 fillColor;',
 			'varying highp vec2 position;',  
-			'varying highp vec4 vColor;',    
+			'varying highp vec4 vColor;',	
   			'uniform sampler2D uSampler;',
   			'uniform bool isCircle;',
   			'uniform bool hasColor;',
@@ -896,7 +924,7 @@ function GLVertexBuffer(gl, shader, dataComponents /*, type */) {
 		render: render,
 		allocate: allocate,
 		push: push
-	};    	
+	};		
 }
 
 /* Main renderer. Used to render series.
@@ -1022,7 +1050,7 @@ function GLRenderer(postRenderCallback) {
 	 * @param {number} width - the width of the viewport in pixels
 	 * @param {number} height - the height of the viewport in pixels
 	 */
-	function orthoMatrix(width, height) {     
+	function orthoMatrix(width, height) {	 
 		var near = 0, 
 			far = 1;
 		
@@ -1037,7 +1065,7 @@ function GLRenderer(postRenderCallback) {
 	/*
 	 * Clear the depth and color buffer
 	 */
-	function clear() {
+	function clear() {		
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	}
 
@@ -1091,8 +1119,8 @@ function GLRenderer(postRenderCallback) {
 			color,
 			scolor,
 			sdata = isStacked ? series.data : (xData || rawData),
-			closestLeft = {x: Number.MIN_VALUE, y: 0},
-			closestRight = {x: Number.MIN_VALUE, y: 0}
+			closestLeft = { x: Number.MIN_VALUE, y: 0 },
+			closestRight = { x: Number.MIN_VALUE, y: 0 }
 			;
 
 		if (options.boostData && options.boostData.length > 0) {			
@@ -1172,9 +1200,13 @@ function GLRenderer(postRenderCallback) {
 
 				if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 					shapeArgs = point.shapeArgs;
-					pointAttr = (point.pointAttr && point.pointAttr['']) || 
-								point.series.pointAttribs(point);
-					swidth = pointAttr['stroke-width'];
+
+					/*= if (build.classic) { =*/
+					pointAttr = point.series.pointAttribs(point);
+					/*= } else { =*/
+					pointAttr = point.series.colorAttribs(point);
+					/*= } =*/
+					swidth = pointAttr['stroke-width'] || 0;
 
 					// Handle point colors
 					color = H.color(pointAttr.fill).rgba;
@@ -1437,8 +1469,8 @@ function GLRenderer(postRenderCallback) {
 		function pushSupplementPoint(point) {
 			if (!settings.useGPUTranslations) {
 				inst.skipTranslation = true;
-				point.x = xAxis.toPixels(x, true);
-				point.y = yAxis.toPixels(y, true);
+				point.x = xAxis.toPixels(point.x, true);
+				point.y = yAxis.toPixels(point.y, true);
 			}
 
 			// We should only do this for lines, and we should ignore markers
@@ -1596,7 +1628,9 @@ function GLRenderer(postRenderCallback) {
 		gl.viewport(0, 0, width, height);
 		shader.setPMatrix(orthoMatrix(width, height));
 
-		gl.lineWidth(settings.lineWidth);
+		if (settings.lineWidth > 1 && !H.isMS) {
+			gl.lineWidth(settings.lineWidth);
+		}
 		
 		vbuffer.build(exports.data, 'aVertexPosition', 4);
 		vbuffer.bind();
@@ -1646,7 +1680,7 @@ function GLRenderer(postRenderCallback) {
 			}
 
 			//Blending
-			if (options.boostBlending === 'add') { // docs
+			if (options.boostBlending === 'add') {
 				gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
 				gl.blendEquation(gl.FUNC_ADD);
 
@@ -1658,8 +1692,9 @@ function GLRenderer(postRenderCallback) {
 				gl.blendEquation(gl.FUNC_MIN);
 			
 			} else {
-				gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
-				gl.blendEquation(gl.FUNC_ADD);
+				//gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);//, gl.ONE, gl.ZERO);
+				//gl.blendEquation(gl.FUNC_ADD);
+				gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 			}
 
 			shader.reset();		
@@ -1767,7 +1802,6 @@ function GLRenderer(postRenderCallback) {
 	 */
 	function init(canvas, noFlush) {
 		var i = 0,
-			activeContext,
 			contexts = [
 				'webgl', 
 				'experimental-webgl', 
@@ -1788,7 +1822,6 @@ function GLRenderer(postRenderCallback) {
 		for (; i < contexts.length; i++) {
 			gl = canvas.getContext(contexts[i]);
 			if (gl) {
-				activeContext = contexts[i];
 				break;
 			}
 		}
@@ -1796,7 +1829,7 @@ function GLRenderer(postRenderCallback) {
 		if (gl) {   
 			if (!noFlush) {
 				flush();				
-			}     	
+			}	 	
 		} else {
 			return false;
 		}
@@ -1819,7 +1852,7 @@ function GLRenderer(postRenderCallback) {
 		circleTexture.width = 512;
 		circleTexture.height = 512;
 
-		circleCtx.fillStyle = '#FFF';
+		circleCtx.fillStyle = '#FFF';		
 		circleCtx.beginPath();
 		circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
 		circleCtx.fill();
@@ -1849,7 +1882,7 @@ function GLRenderer(postRenderCallback) {
 			textureIsReady = true;
 		} catch (e) {}
 
-	 	isInited = true;
+		isInited = true;
 
 		if (settings.timeSetup) {
 			console.timeEnd('gl setup'); //eslint-disable-line no-console
@@ -2259,309 +2292,6 @@ function hasWebGLSupport() {
 	return false;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// We're wrapped in a closure, so just return if there's no webgl support
-
-if (!hasWebGLSupport()) {	
-	if (typeof H.initCanvasBoost !== 'undefined') {
-		// Fallback to canvas boost		
-		H.initCanvasBoost();
-	} else {
-		H.error(26);
-	}
-	//eslint-disable
-	return; 
-	//eslint-enable
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// GL-SPECIFIC WRAPPINGS FOLLOWS
-
-/** If the series is a heatmap or treemap, or if the series is not boosting
- *  do the default behaviour. Otherwise, process if the series has no 
- *  extremes.
- */
-wrap(Series.prototype, 'processData', function (proceed) {
-	// If this is a heatmap, do default behaviour
-	if (!isSeriesBoosting(this) || 
-		this.type === 'heatmap' || 
-		this.type === 'treemap') {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
-	}
-
-	if (!this.hasExtremes || !this.hasExtremes(true)) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-	}
-});
-
-H.extend(Series.prototype, {
-	pointRange: 0,
-	directTouch: false,
-	allowDG: false, // No data grouping, let boost handle large data 
-	hasExtremes: function (checkX) {
-		var options = this.options,
-			data = options.data,
-			xAxis = this.xAxis && this.xAxis.options,
-			yAxis = this.yAxis && this.yAxis.options;
-		
-		return 	data.length > (options.boostThreshold || Number.MAX_VALUE) && 
-				isNumber(yAxis.min) && isNumber(yAxis.max) &&
-				(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
-	},
-
-	/**
-	 * If implemented in the core, parts of this can probably be 
-	 * shared with other similar methods in Highcharts.
-	 */
-	destroyGraphics: function () {
-		var series = this,
-			points = this.points,
-			point,
-			i;
-
-		if (points) {
-			for (i = 0; i < points.length; i = i + 1) {
-				point = points[i];
-				if (point && point.graphic) {
-					point.graphic = point.graphic.destroy();
-				}
-			}
-		}
-
-		each(['graph', 'area', 'tracker'], function (prop) {
-			if (series[prop]) {
-				series[prop] = series[prop].destroy();
-			}
-		});
-	},
-
-	renderCanvas: function () {
-		var series = this,
-			options = series.options || {},
-			renderer = false,
-			chart = series.chart,
-			xAxis = this.xAxis,
-			yAxis = this.yAxis,
-			//ctx,
-			//c = 0,
-			xData = options.xData || series.processedXData,
-			yData = options.yData || series.processedYData,
-
-			rawData = options.data,
-			xExtremes = xAxis.getExtremes(),
-			xMin = xExtremes.min,
-			xMax = xExtremes.max,
-			yExtremes = yAxis.getExtremes(),
-			yMin = yExtremes.min,
-			yMax = yExtremes.max,
-			pointTaken = {},
-			lastClientX,
-			sampling = !!series.sampling,
-			points,
-			// r = options.marker && options.marker.radius,
-			// cvsDrawPoint = this.cvsDrawPoint,
-			// cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
-			// cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
-			enableMouseTracking = options.enableMouseTracking !== false,
-			// lastPoint,
-			threshold = options.threshold,
-			yBottom = yAxis.getThreshold(threshold),
-			hasThreshold = isNumber(threshold),
-			// translatedThreshold = yBottom,
-			// doFill = this.fill,
-			isRange = series.pointArrayMap && 
-					series.pointArrayMap.join(',') === 'low,high',
-			isStacked = !!options.stacking,
-			cropStart = series.cropStart || 0,
-			requireSorting = series.requireSorting,
-			wasNull,
-			connectNulls = options.connectNulls,
-			useRaw = !xData,
-			minVal,
-			maxVal,
-			minI,
-			maxI,			
-			// fillColor = series.fillOpacity ?
-			// 		new Color(series.color).setOpacity(
-			// 				pick(options.fillOpacity, 0.75)
-			// 			).get() : series.color,
-
-			addKDPoint = function (clientX, plotY, i) {
-				//Shaves off about 60ms compared to repeated concatination
-				index = clientX + ',' + plotY;					
-
-				// The k-d tree requires series points. 
-				// Reduce the amount of points, since the time to build the 
-				// tree increases exponentially.
-				if (enableMouseTracking && !pointTaken[index]) {
-					pointTaken[index] = true;
-
-					if (chart.inverted) {
-						clientX = xAxis.len - clientX;
-						plotY = yAxis.len - plotY;
-					}
-
-					points.push({
-						clientX: clientX, 
-						plotX: clientX,
-						plotY: plotY,
-						i: cropStart + i
-					});
-				}
-			};		
-
-		// Get or create the renderer
-		renderer = createAndAttachRenderer(chart, series);
-
-		if (!this.visible) {
-			if (!isChartSeriesBoosting(chart) && renderer) {
-				renderer.clear();
-				this.image.attr({ href: '' });
-			}
-			return;
-		}
-
-		// If we are zooming out from SVG mode, destroy the graphics
-		if (this.points || this.graph) {
-			this.destroyGraphics();
-		}
-
-		// If we're rendering per. series we should create the marker groups
-		// as usual.
-		if (!isChartSeriesBoosting(chart)) {
-			this.markerGroup = series.plotGroup(
-				'markerGroup',
-				'markers',
-				true,
-				1,
-				chart.seriesGroup
-			);
-		} else {
-			//Use a single group for the markers
-			this.markerGroup = chart.markerGroup;			
-		}		
-
-		points = this.points = [];			
-
-		// Do not start building while drawing 
-		series.buildKDTree = noop; 
-		
-		if (renderer) {
-			allocateIfNotSeriesBoosting(renderer, this);
-			renderer.pushSeries(series);				
-			// Perform the actual renderer if we're on series level
-			renderIfNotSeriesBoosting(renderer, this, chart);	
-			//console.log(series, chart);
-		}
-
-		/* This builds the KD-tree */
-		function processPoint(d, i) {
-			var x,
-				y,
-				clientX,
-				plotY,
-				isNull,
-				low,
-				chartDestroyed = typeof chart.index === 'undefined',
-				isYInside = true;
-
-			if (!chartDestroyed) {
-				if (useRaw) {
-					x = d[0];
-					y = d[1];
-				} else {
-					x = d;
-					y = yData[i];
-				}
-
-				// Resolve low and high for range series
-				if (isRange) {
-					if (useRaw) {
-						y = d.slice(1, 3);
-					}
-					low = y[0];
-					y = y[1];
-				} else if (isStacked) {
-					x = d.x;
-					y = d.stackY;
-					low = y - d.y;
-				}
-
-				isNull = y === null;
-
-				// Optimize for scatter zooming
-				if (!requireSorting) {
-					isYInside = y >= yMin && y <= yMax;
-				}
-
-				if (!isNull && x >= xMin && x <= xMax && isYInside) {
-
-					// We use ceil to allow the KD tree to work with sub pixels,
-					// which can be used in boost to space pixels
-					clientX = Math.ceil(xAxis.toPixels(x, true));
-
-					if (sampling) {
-						if (minI === undefined || clientX === lastClientX) {
-							if (!isRange) {
-								low = y;
-							}
-							if (maxI === undefined || y > maxVal) {
-								maxVal = y;
-								maxI = i;
-							}
-							if (minI === undefined || low < minVal) {
-								minVal = low;
-								minI = i;
-							}
-
-						}
-						if (clientX !== lastClientX) { // Add points and reset
-							if (minI !== undefined) { // then maxI is also a number
-								plotY = yAxis.toPixels(maxVal, true);
-								yBottom = yAxis.toPixels(minVal, true);
-
-								addKDPoint(clientX, plotY, maxI);
-								if (yBottom !== plotY) {
-									addKDPoint(clientX, yBottom, minI);
-								}
-							}
-
-							minI = maxI = undefined;
-							lastClientX = clientX;
-						}
-					} else {
-						plotY = Math.ceil(yAxis.toPixels(y, true));						
-						addKDPoint(clientX, plotY, i);
-					}
-				}
-				wasNull = isNull && !connectNulls;
-			}
-
-			return !chartDestroyed;
-		}
-
-		function doneProcessing() {
-			fireEvent(series, 'renderedCanvas');
-			// Pass tests in Pointer. 
-			// Replace this with a single property, and replace when zooming in
-			// below boostThreshold.
-			series.directTouch = false;
-			series.options.stickyTracking = true;
-
-			delete series.buildKDTree; // Go back to prototype, ready to build
-			series.buildKDTree();
-		}
-
-		// Loop over the points to build the k-d tree
-		eachAsync(
-			isStacked ? series.data : (xData || rawData), 
-			processPoint, 
-			doneProcessing, 
-			chart.renderer.forExport ? Number.MAX_VALUE : undefined
-		);
-	}
-});
-
 /* Used for treemap|heatmap.drawPoints */
 function pointDrawHandler(proceed) {
 	if (!isSeriesBoosting(this)) {
@@ -2579,87 +2309,393 @@ function pointDrawHandler(proceed) {
 	renderIfNotSeriesBoosting(renderer, this);
 }
 
-/*
- * We need to handle heatmaps separatly, since we can't perform the size/color
- * calculations in the shader easily.
- *
- * This likely needs future optimization.
- *
- */
-each(['heatmap', 'treemap'],
-	function (t) {
-		if (seriesTypes[t]) {	
-			wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
-			seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
-		}
-	}
-);
 
-if (seriesTypes.bubble) {
-	// By default, the bubble series does not use the KD-tree, so force it to.
-	delete seriesTypes.bubble.prototype.buildKDTree;
-	seriesTypes.bubble.prototype.directTouch = false;
-	
-	// Needed for markers to work correctly
-	wrap(seriesTypes.bubble.prototype, 'markerAttribs', function (proceed) {
-		if (isSeriesBoosting(this)) {
-			return false;
-		}
-		return proceed.apply(this, [].slice.call(arguments, 1));
-	});
-}
 
-seriesTypes.scatter.prototype.fill = true;
+////////////////////////////////////////////////////////////////////////////////
+// We're wrapped in a closure, so just return if there's no webgl support
 
-extend(seriesTypes.area.prototype, {	
-	fill: true,
-	fillOpacity: true,
-	sampling: true
-});
-
-extend(seriesTypes.column.prototype, {
-	fill: true,
-	sampling: true
-});
-
-wrap(Series.prototype, 'setVisible', function (proceed, vis) {
-	proceed.call(this, vis, false);
-	if (this.visible === false && this.ogl && this.canvas && this.image) {
-		this.ogl.clear();
-		this.image.attr({ href: '' });
+if (!hasWebGLSupport()) {	
+	if (typeof H.initCanvasBoost !== 'undefined') {
+		// Fallback to canvas boost		
+		H.initCanvasBoost();
 	} else {
-		this.chart.redraw();		
+		H.error(26);
 	}
-});
+} else {
 
-/**
- * Take care of the canvas blitting
- */
-H.Chart.prototype.callbacks.push(function (chart) {
+	////////////////////////////////////////////////////////////////////////////
+	// GL-SPECIFIC WRAPPINGS FOLLOWS
 
-	/* Convert chart-level canvas to image */
-	function canvasToSVG() {			
-		if (chart.ogl && isChartSeriesBoosting(chart)) {
-			chart.ogl.render(chart);
-		}
-	}
-
-	/* Clear chart-level canvas */
-	function preRender() {
-		if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
-			// Allocate
-			chart.ogl.allocateBuffer(chart);
+	/** If the series is a heatmap or treemap, or if the series is not boosting
+	 *  do the default behaviour. Otherwise, process if the series has no 
+	 *  extremes.
+	 */
+	wrap(Series.prototype, 'processData', function (proceed) {
+		// If this is a heatmap, do default behaviour
+		if (!isSeriesBoosting(this) || 
+			this.type === 'heatmap' || 
+			this.type === 'treemap') {
+			proceed.apply(this, Array.prototype.slice.call(arguments, 1));		
 		}
 
-		//see #6518
-		if (chart.markerGroup) {
-			chart.markerGroup.translate(
-				chart.xAxis[0].pos,
-				chart.yAxis[0].pos
+		if (!this.hasExtremes || !this.hasExtremes(true)) {
+			proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		}
+	});
+
+	H.extend(Series.prototype, {
+		pointRange: 0,
+		directTouch: false,
+		allowDG: false, // No data grouping, let boost handle large data 
+		hasExtremes: function (checkX) {
+			var options = this.options,
+				data = options.data,
+				xAxis = this.xAxis && this.xAxis.options,
+				yAxis = this.yAxis && this.yAxis.options;
+			
+			return 	data.length > (options.boostThreshold || Number.MAX_VALUE) && 
+					isNumber(yAxis.min) && isNumber(yAxis.max) &&
+					(!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
+		},
+
+		/**
+		 * If implemented in the core, parts of this can probably be 
+		 * shared with other similar methods in Highcharts.
+		 */
+		destroyGraphics: function () {
+			var series = this,
+				points = this.points,
+				point,
+				i;
+
+			if (points) {
+				for (i = 0; i < points.length; i = i + 1) {
+					point = points[i];
+					if (point && point.graphic) {
+						point.graphic = point.graphic.destroy();
+					}
+				}
+			}
+
+			each(['graph', 'area', 'tracker'], function (prop) {
+				if (series[prop]) {
+					series[prop] = series[prop].destroy();
+				}
+			});
+		},
+
+		renderCanvas: function () {
+			var series = this,
+				options = series.options || {},
+				renderer = false,
+				chart = series.chart,
+				xAxis = this.xAxis,
+				yAxis = this.yAxis,
+				//ctx,
+				//c = 0,
+				xData = options.xData || series.processedXData,
+				yData = options.yData || series.processedYData,
+
+				rawData = options.data,
+				xExtremes = xAxis.getExtremes(),
+				xMin = xExtremes.min,
+				xMax = xExtremes.max,
+				yExtremes = yAxis.getExtremes(),
+				yMin = yExtremes.min,
+				yMax = yExtremes.max,
+				pointTaken = {},
+				lastClientX,
+				sampling = !!series.sampling,
+				points,
+				enableMouseTracking = options.enableMouseTracking !== false,
+				threshold = options.threshold,
+				yBottom = yAxis.getThreshold(threshold),
+				isRange = series.pointArrayMap && 
+					series.pointArrayMap.join(',') === 'low,high',
+				isStacked = !!options.stacking,
+				cropStart = series.cropStart || 0,
+				requireSorting = series.requireSorting,
+				useRaw = !xData,
+				minVal,
+				maxVal,
+				minI,
+				maxI,			
+				
+				addKDPoint = function (clientX, plotY, i) {
+					//Shaves off about 60ms compared to repeated concatination
+					index = clientX + ',' + plotY;					
+
+					// The k-d tree requires series points. 
+					// Reduce the amount of points, since the time to build the 
+					// tree increases exponentially.
+					if (enableMouseTracking && !pointTaken[index]) {
+						pointTaken[index] = true;
+
+						if (chart.inverted) {
+							clientX = xAxis.len - clientX;
+							plotY = yAxis.len - plotY;
+						}
+
+						points.push({
+							clientX: clientX, 
+							plotX: clientX,
+							plotY: plotY,
+							i: cropStart + i
+						});
+					}
+				};		
+
+			// Get or create the renderer
+			renderer = createAndAttachRenderer(chart, series);
+
+			if (!this.visible) {
+				if (!isChartSeriesBoosting(chart) && renderer) {
+					renderer.clear();
+					this.image.attr({ href: '' });
+				}
+				return;
+			}
+
+			// If we are zooming out from SVG mode, destroy the graphics
+			if (this.points || this.graph) {
+				this.destroyGraphics();
+			}
+
+			// If we're rendering per. series we should create the marker groups
+			// as usual.
+			if (!isChartSeriesBoosting(chart)) {
+				this.markerGroup = series.plotGroup(
+					'markerGroup',
+					'markers',
+					true,
+					1,
+					chart.seriesGroup
+				);
+			} else {
+				//Use a single group for the markers
+				this.markerGroup = chart.markerGroup;			
+			}		
+
+			points = this.points = [];			
+
+			// Do not start building while drawing 
+			series.buildKDTree = noop; 
+			
+			if (renderer) {
+				allocateIfNotSeriesBoosting(renderer, this);
+				renderer.pushSeries(series);				
+				// Perform the actual renderer if we're on series level
+				renderIfNotSeriesBoosting(renderer, this, chart);	
+				//console.log(series, chart);
+			}
+
+			/* This builds the KD-tree */
+			function processPoint(d, i) {
+				var x,
+					y,
+					clientX,
+					plotY,
+					isNull,
+					low,
+					chartDestroyed = typeof chart.index === 'undefined',
+					isYInside = true;
+
+				if (!chartDestroyed) {
+					if (useRaw) {
+						x = d[0];
+						y = d[1];
+					} else {
+						x = d;
+						y = yData[i];
+					}
+
+					// Resolve low and high for range series
+					if (isRange) {
+						if (useRaw) {
+							y = d.slice(1, 3);
+						}
+						low = y[0];
+						y = y[1];
+					} else if (isStacked) {
+						x = d.x;
+						y = d.stackY;
+						low = y - d.y;
+					}
+
+					isNull = y === null;
+
+					// Optimize for scatter zooming
+					if (!requireSorting) {
+						isYInside = y >= yMin && y <= yMax;
+					}
+
+					if (!isNull && x >= xMin && x <= xMax && isYInside) {
+
+						// We use ceil to allow the KD tree to work with sub
+						// pixels, which can be used in boost to space pixels
+						clientX = Math.ceil(xAxis.toPixels(x, true));
+
+						if (sampling) {
+							if (minI === undefined || clientX === lastClientX) {
+								if (!isRange) {
+									low = y;
+								}
+								if (maxI === undefined || y > maxVal) {
+									maxVal = y;
+									maxI = i;
+								}
+								if (minI === undefined || low < minVal) {
+									minVal = low;
+									minI = i;
+								}
+
+							}
+							if (clientX !== lastClientX) { // Add points and reset
+								if (minI !== undefined) { // then maxI is also a number
+									plotY = yAxis.toPixels(maxVal, true);
+									yBottom = yAxis.toPixels(minVal, true);
+
+									addKDPoint(clientX, plotY, maxI);
+									if (yBottom !== plotY) {
+										addKDPoint(clientX, yBottom, minI);
+									}
+								}
+
+								minI = maxI = undefined;
+								lastClientX = clientX;
+							}
+						} else {
+							plotY = Math.ceil(yAxis.toPixels(y, true));						
+							addKDPoint(clientX, plotY, i);
+						}
+					}
+				}
+
+				return !chartDestroyed;
+			}
+
+			function doneProcessing() {
+				fireEvent(series, 'renderedCanvas');
+				// Pass tests in Pointer. 
+				// Replace this with a single property, and replace when zooming
+				// in below boostThreshold.
+				series.directTouch = false;
+				series.options.stickyTracking = true;
+
+				// Go back to prototype, ready to build
+				delete series.buildKDTree;
+				series.buildKDTree();
+			}
+
+			// Loop over the points to build the k-d tree
+			eachAsync(
+				isStacked ? series.data : (xData || rawData), 
+				processPoint, 
+				doneProcessing, 
+				chart.renderer.forExport ? Number.MAX_VALUE : undefined
 			);
 		}
+	});
+
+	/*
+	 * We need to handle heatmaps separatly, since we can't perform the
+	 * size/color calculations in the shader easily.
+	 *
+	 * This likely needs future optimization.
+	 *
+	 */
+	each(['heatmap', 'treemap'],
+		function (t) {
+			if (seriesTypes[t]) {	
+				wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);
+				seriesTypes[t].prototype.directTouch = false; // Use k-d-tree
+			}
+		}
+	);
+
+	if (seriesTypes.bubble) {
+		// By default, the bubble series does not use the KD-tree, so force it
+		// to.
+		delete seriesTypes.bubble.prototype.buildKDTree;
+		seriesTypes.bubble.prototype.directTouch = false;
+		
+		// Needed for markers to work correctly
+		wrap(
+			seriesTypes.bubble.prototype,
+			'markerAttribs',
+			function (proceed) {
+				if (isSeriesBoosting(this)) {
+					return false;
+				}
+				return proceed.apply(this, [].slice.call(arguments, 1));
+			}
+		);
 	}
 
-	addEvent(chart, 'predraw', preRender);
-	addEvent(chart, 'render', canvasToSVG);
-});
+	seriesTypes.scatter.prototype.fill = true;
+
+	extend(seriesTypes.area.prototype, {	
+		fill: true,
+		fillOpacity: true,
+		sampling: true
+	});
+
+	extend(seriesTypes.column.prototype, {
+		fill: true,
+		sampling: true
+	});
+
+	wrap(Series.prototype, 'setVisible', function (proceed, vis) {
+		proceed.call(this, vis, false);
+		if (this.visible === false && this.ogl && this.canvas && this.image) {
+			this.ogl.clear();
+			this.image.attr({ href: '' });
+		} else {
+			this.chart.redraw();		
+		}
+	});
+
+	/**
+	 * Take care of the canvas blitting
+	 */
+	H.Chart.prototype.callbacks.push(function (chart) {
+
+		/* Convert chart-level canvas to image */
+		function canvasToSVG() {			
+			if (chart.ogl && isChartSeriesBoosting(chart)) {
+				chart.ogl.render(chart);
+			}
+		}
+
+		/* Clear chart-level canvas */
+		function preRender() {
+
+			if (!isChartSeriesBoosting(chart) && chart.didBoost) {
+				chart.didBoost = false;
+				// Clear the canvas
+				if (chart.image) {
+					chart.image.attr({ href: '' });
+				}
+			}
+
+			if (chart.canvas && chart.ogl && isChartSeriesBoosting(chart)) {
+				chart.didBoost = true;
+			
+				// Allocate
+				chart.ogl.allocateBuffer(chart);
+			}
+
+			//see #6518 + #6739
+			if (chart.markerGroup && chart.xAxis && chart.xAxis.length > 0 && chart.yAxis && chart.yAxis.length > 0) {
+				chart.markerGroup.translate(
+					chart.xAxis[0].pos,
+					chart.yAxis[0].pos
+				);
+			}
+
+		}
+
+		addEvent(chart, 'predraw', preRender);
+		addEvent(chart, 'render', canvasToSVG);
+	});
+} // if hasCanvasSupport

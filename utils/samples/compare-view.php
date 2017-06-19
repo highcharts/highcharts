@@ -69,7 +69,8 @@
 				rightcommit = <?php echo ($rightcommit ? "'$rightcommit'" : 'false'); ?>,
 				commit = <?php echo ($commit ? "'$commit'" : 'false'); ?>,
 				isUnitTest = <?php echo $isUnitTest ? 'true' : 'false'; ?>,
-				controller = window.parent && window.parent.controller;
+				controller = window.parent && window.parent.controller,
+				previewSVG;
 
 			function showCommentBox() {
 				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
@@ -451,11 +452,14 @@
 				}
 
 				if (mode === 'images') {
-					if (rightSVG.indexOf('NaN') !== -1) {
+					if (/[^a-zA-Z]NaN[^a-zA-Z]/.test(rightSVG)) {
 						report += "<div>The generated SVG contains NaN</div>";
 						$('#report').html(report)
 							.css('background', '#f15c80');
 						onDifferent('Error');
+						previewSVG = rightSVG
+								.replace(/</g, '&lt;')
+								.replace(/>/g, '&gt;\n');
 
 					} else if (identical) {
 						report += "<br/>The generated SVG is identical";
@@ -703,7 +707,7 @@
 						);
 						$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
 					} catch (e) {
-						$("#svg").html('Error diffing SVG');
+						$("#svg").html(previewSVG || 'Error diffing SVG');
 					}
 				}
 

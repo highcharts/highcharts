@@ -22,6 +22,7 @@ H.Tick = function (axis, pos, type, noLabel) {
 	this.pos = pos;
 	this.type = type || '';
 	this.isNew = true;
+	this.isNewLabel = true;
 
 	if (!type && !noLabel) {
 		this.addLabel();
@@ -456,9 +457,11 @@ H.Tick.prototype = {
 			// Set the new position, and show or hide
 			if (show && isNumber(xy.y)) {
 				xy.opacity = opacity;
-				label[tick.isNew ? 'attr' : 'animate'](xy);
+				label[tick.isNewLabel ? 'attr' : 'animate'](xy);
+				tick.isNewLabel = false;
 			} else {
 				label.attr('y', -9999); // #1338
+				tick.isNewLabel = true;
 			}
 			tick.isNew = false;
 		}

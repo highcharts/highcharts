@@ -1,5 +1,6 @@
 /.metadata/
 /.settings/
+/api-docs
 /js/highcharts-3d.src.js
 /js/highcharts-more.src.js
 /js/highcharts.js
@@ -12,7 +13,6 @@
 /js/modules/exporting.js
 /build
 /code
-/internal-docs
 /tools/jsdoc/ink-docstrap
 /.project
 /git-ignore-me.properties

@@ -12,32 +12,30 @@ var addEvent = H.addEvent,
 	css = H.css,
 	doc = H.doc,
 	extend = H.extend,
+	hasTouch = H.hasTouch,
 	noop = H.noop,
 	Pointer = H.Pointer,
 	removeEvent = H.removeEvent,
 	win = H.win,
 	wrap = H.wrap;
 
-if (win.PointerEvent || win.MSPointerEvent) {
+if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
 	
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
 		getWebkitTouches = function () {
-			var key,
-				fake = [];
+			var fake = [];
 			fake.item = function (i) {
 				return this[i];
 			};
-			for (key in touches) {
-				if (touches.hasOwnProperty(key)) {
-					fake.push({
-						pageX: touches[key].pageX,
-						pageY: touches[key].pageY,
-						target: touches[key].target
-					});
-				}
-			}
+			H.objectEach(touches, function (touch) {
+				fake.push({
+					pageX: touch.pageX,
+					pageY: touch.pageY,
+					target: touch.target
+				});
+			});
 			return fake;
 		},
 		translateMSPointer = function (e, method, wktype, func) {

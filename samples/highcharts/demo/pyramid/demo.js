@@ -2,8 +2,7 @@
 
 Highcharts.chart('container', {
     chart: {
-        type: 'pyramid',
-        marginRight: 100
+        type: 'pyramid'
     },
     title: {
         text: 'Sales pyramid',
@@ -16,7 +15,9 @@ Highcharts.chart('container', {
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                 softConnector: true
-            }
+            },
+            center: ['40%', '50%'],
+            width: '80%'
         }
     },
     legend: {

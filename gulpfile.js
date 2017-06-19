@@ -303,21 +303,47 @@ gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
 
     const templateDir = './../highcharts-docstrap';
+    const destination = './api-docs/class-reference/';
 
-    gulp.src(['README.md', './js/parts/*.js'], { read: false })
+
+    gulp.src([
+        'README.md',
+        './js/parts/Utilities.js',
+        './js/parts/Axis.js',
+        './js/parts/Chart.js',
+        './js/parts/DataGrouping.js',
+        './js/parts/Dynamics.js',
+        './js/parts/Globals.js',
+        './js/parts/Interaction.js',
+        './js/parts/Legend.js',
+        './js/parts/Options.js',
+        './js/parts/Point.js',
+        './js/parts/Pointer.js',
+        './js/parts/PlotLineOrBand.js',
+        './js/parts/Series.js',
+        './js/parts/StockChart.js',
+        './js/parts/SVGRenderer.js',
+        './js/parts-map/GeoJSON.js',
+        './js/parts-map/Map.js',
+        './js/parts-map/MapNavigation.js',
+        './js/parts-map/MapSeries.js',
+        './js/modules/drilldown.src.js',
+        './js/modules/exporting.src.js',
+        './js/modules/offline-exporting.src.js'
+    ], { read: false })
     // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
         .pipe(jsdoc({
             navOptions: {
                 theme: 'highsoft'
             },
             opts: {
-                destination: './internal-docs/',
+                destination: destination,
                 private: false,
                 template: templateDir + '/template'
             },
             plugins: [
+                templateDir + '/plugins/add-namespace',
                 templateDir + '/plugins/markdown',
-                templateDir + '/plugins/optiontag',
                 templateDir + '/plugins/sampletag'
             ],
             templates: {
@@ -329,13 +355,21 @@ gulp.task('jsdoc', function (cb) {
             cb(err); // eslint-disable-line
             if (!err) {
                 console.log(
-                    colors.green('Wrote JSDoc to ./internal-docs/index.html')
+                    colors.green(`Wrote JSDoc to ${destination}index.html`)
                 );
             }
         }));
 
     if (argv.watch) {
-        gulp.watch(['./js/!(adapters|builds)/*.js'], ['jsdoc']);
+        gulp.watch([
+            './js/!(adapters|builds)/*.js',
+            templateDir + '/template/tmpl/*.tmpl',
+            templateDir + '/template/static/styles/*.css',
+            templateDir + '/template/static/scripts/*.js'
+        ], ['jsdoc']);
+        console.log('Watching file changes in JS files and templates');
+    } else {
+        console.log('Tip: use the --watch argument to watch JS file changes');
     }
 });
 

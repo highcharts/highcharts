@@ -778,15 +778,15 @@ RangeSelector.prototype = {
 	 * Destroys allocated elements.
 	 */
 	destroy: function () {
-		var minInput = this.minInput,
-			maxInput = this.maxInput,
-			key;
+		var rSelector = this,
+			minInput = rSelector.minInput,
+			maxInput = rSelector.maxInput;
 
-		this.unMouseDown();
-		this.unResize();
+		rSelector.unMouseDown();
+		rSelector.unResize();
 
 		// Destroy elements in collections
-		destroyObjectProperties(this.buttons);
+		destroyObjectProperties(rSelector.buttons);
 
 		// Clear input element events
 		if (minInput) {
@@ -797,18 +797,18 @@ RangeSelector.prototype = {
 		}
 
 		// Destroy HTML and SVG elements
-		for (key in this) {
-			if (this[key] && key !== 'chart') {
-				if (this[key].destroy) { // SVGElement
-					this[key].destroy();
-				} else if (this[key].nodeType) { // HTML element
+		H.objectEach(rSelector, function (val, key) {
+			if (val && key !== 'chart') {
+				if (val.destroy) { // SVGElement
+					val.destroy();
+				} else if (val.nodeType) { // HTML element
 					discardElement(this[key]);
 				}
 			}
-			if (this[key] !== RangeSelector.prototype[key]) {
-				this[key] = null;
+			if (val !== RangeSelector.prototype[key]) {
+				rSelector[key] = null;
 			}
-		}
+		}, this);
 	}
 };
 
@@ -859,8 +859,15 @@ Axis.prototype.minFromRange = function () {
 		range,
 		// Get the true range from a start date
 		getTrueRange = function (base, count) {
-			var date = new Date(base);
-			date['set' + timeName](date['get' + timeName]() + count);
+			var date = new Date(base),
+				basePeriod = date['get' + timeName]();
+
+			date['set' + timeName](basePeriod + count);
+
+			if (basePeriod === date['get' + timeName]()) {
+				date.setDate(0); // #6537
+			}
+
 			return date.getTime() - base;
 		};
 

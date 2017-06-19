@@ -71,13 +71,14 @@ extend(Pane.prototype, {
 		// Render the backgrounds
 		if (backgroundOption) {
 			backgroundOption = splat(backgroundOption);
+
 			len = Math.max(
 				backgroundOption.length,
 				this.background.length || 0
 			);
 
 			for (i = 0; i < len; i++) {
-				if (backgroundOption[i]) {
+				if (backgroundOption[i] && this.axis) { // #6641 - if axis exists, chart is circular and apply background
 					this.renderBackground(
 						merge(
 							this.defaultBackgroundOptions,

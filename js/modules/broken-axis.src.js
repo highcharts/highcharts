@@ -158,17 +158,14 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				length = 0, 
 				inBrk,
 				repeat,
-				brk,
 				min = axis.userMin || axis.min,
 				max = axis.userMax || axis.max,
 				pointRangePadding = pick(axis.pointRangePadding, 0),
 				start,
-				i,
-				j;
+				i;
 
 			// Min & max check (#4247)
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				repeat = brk.repeat || Infinity;
 				if (axis.isInBreak(brk, min)) {
 					min += (brk.to % repeat) - (min % repeat);
@@ -176,33 +173,32 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				if (axis.isInBreak(brk, max)) {
 					max -= (max % repeat) - (brk.from % repeat);
 				}
-			}
+			});
 
 			// Construct an array holding all breaks in the axis
-			for (i in breaks) {
-				brk = breaks[i];
+			each(breaks, function (brk) {
 				start = brk.from;
 				repeat = brk.repeat || Infinity;
-
+				
 				while (start - repeat > min) {
 					start -= repeat;
 				}
 				while (start < min) {
 					start += repeat;
 				}
-
-				for (j = start; j < max; j += repeat) {
+				
+				for (i = start; i < max; i += repeat) {
 					breakArrayT.push({
-						value: j,
+						value: i,
 						move: 'in'
 					});
 					breakArrayT.push({
-						value: j + (brk.to - brk.from),
+						value: i + (brk.to - brk.from),
 						move: 'out',
 						size: brk.breakSize
 					});
 				}
-			}
+			});
 
 			breakArrayT.sort(function (a, b) {
 				var ret;
@@ -218,10 +214,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			inBrk = 0;
 			start = min;
 
-			for (i in breakArrayT) {
-				brk = breakArrayT[i];
+			each(breakArrayT, function (brk) {
 				inBrk += (brk.move === 'in' ? 1 : -1);
-
+				
 				if (inBrk === 1 && brk.move === 'in') {
 					start = brk.value;
 				}
@@ -233,7 +228,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 					});
 					length += brk.value - start - (brk.size || 0);
 				}
-			}
+			});
 
 			axis.breakArray = breakArray;
 
@@ -245,7 +240,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 			
 			if (axis.options.staticScale) {
 				axis.transA = axis.options.staticScale;
-			} else {
+			} else if (axis.unitLength) {
 				axis.transA *= (max - axis.min + pointRangePadding) /
 					axis.unitLength;
 			}
@@ -327,6 +322,54 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
 			});
 		});
 	});
+};
+
+
+/**
+ * Extend getGraphPath by identifying gaps in the data so that we can draw a gap
+ * in the line or area. This was moved from ordinal axis module to broken axis
+ * module as of #5045.
+ */
+H.Series.prototype.gappedPath = function () {
+	var gapSize = this.options.gapSize,
+		points = this.points.slice(),
+		i = points.length - 1,
+		yAxis = this.yAxis,
+		xRange,
+		stack;
+
+	if (gapSize && i > 0) { // #5008
+		// extension for ordinal breaks
+		while (i--) {
+			if (points[i + 1].x - points[i].x > this.closestPointRange * gapSize) {
+				xRange = (points[i].x + points[i + 1].x) / 2;
+
+				points.splice( // insert after this one
+					i + 1,
+					0,
+					{
+						isNull: true,
+						x: xRange
+					}
+				);
+
+				// For stacked chart generate empty stack items, #6546
+				if (this.options.stacking) {
+					stack = yAxis.stacks[this.stackKey][xRange] = new H.StackItem(
+						yAxis,
+						yAxis.options.stackLabels,
+						false,
+						xRange,
+						this.stack
+					);
+					stack.total = 0;
+				}
+			}
+		}
+	}
+
+	// Call base method
+	return this.getGraphPath(points);
 };
 
 wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);

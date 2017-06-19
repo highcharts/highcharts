@@ -12,9 +12,7 @@ import '../parts/Legend.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
-import './ColorAxis.js';
 var color = H.color,
-	ColorAxis = H.ColorAxis,
 	colorPointMixin = H.colorPointMixin,
 	colorSeriesMixin = H.colorSeriesMixin,
 	doc = H.doc,
@@ -85,7 +83,6 @@ seriesType('map', 'scatter', {
 // Prototype members
 }, merge(colorSeriesMixin, {
 	type: 'map',
-	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
@@ -138,11 +135,18 @@ seriesType('map', 'scatter', {
 							even = !even;
 						}
 					}
-					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) *
-						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) *
-						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
+					// Cache point bounding box for use to position data labels,
+					// bubbles etc
+					point._midX = pointMinX + (pointMaxX - pointMinX) *	pick(
+						point.middleX,
+						properties && properties['hc-middle-x'],
+						0.5
+					);
+					point._midY = pointMinY + (pointMaxY - pointMinY) * pick(
+						point.middleY,
+						properties && properties['hc-middle-y'],
+						0.5
+					);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
@@ -248,7 +252,6 @@ seriesType('map', 'scatter', {
 			dataUsed = [],
 			mapMap = {},
 			mapPoint,
-			transform,
 			mapTransforms = this.chart.mapTransforms,
 			props,
 			i;
@@ -302,12 +305,12 @@ seriesType('map', 'scatter', {
 
 		// Cache cos/sin of transform rotation angle
 		if (mapTransforms) {
-			for (transform in mapTransforms) {
-				if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {
+			H.objectEach(mapTransforms, function (transform) {
+				if (transform.rotation) {
 					transform.cosAngle = Math.cos(transform.rotation);
 					transform.sinAngle = Math.sin(transform.rotation);
 				}
-			}
+			});
 		}
 
 		if (mapData) {
@@ -434,11 +437,6 @@ seriesType('map', 'scatter', {
 		/*= } else { =*/
 		attr = this.colorAttribs(point);
 		/*= } =*/
-
-		// Prevent flickering whan called from setState
-		if (point.isFading) {
-			delete attr.fill;
-		}
 
 		// If vector-effect is not supported, we set the stroke-width on the group element
 		// and let all point graphics inherit. That way we don't have to iterate over all 
@@ -790,52 +788,20 @@ seriesType('map', 'scatter', {
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		if (this.value !== null) {
+		if (this.value !== null || this.series.options.nullInteraction) {
 			Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
 	},
-	/*= if (build.classic) { =*/
-	// Todo: check unstyled
-	/**
-	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
-	 * over islands and coast lines. We run a custom implementation of animation becuase we
-	 * need to be able to run this independently from other animations like zoom redraw. Also,
-	 * adding color animation to the adapters would introduce almost the same amount of code.
-	 */
-	onMouseOut: function () {
-		var point = this,
-			start = +new Date(),
-			normalColor = color(this.series.pointAttribs(point).fill),
-			hoverColor = color(this.series.pointAttribs(point, 'hover').fill),
-			animation = point.series.options.states.normal.animation,
-			duration = animation && (animation.duration || 500);
-
-		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
-			clearTimeout(point.colorInterval);
-			point.colorInterval = setInterval(function () {
-				var pos = (new Date() - start) / duration,
-					graphic = point.graphic;
-				if (pos > 1) {
-					pos = 1;
-				}
-				if (graphic) {
-					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
-				}
-				if (pos >= 1) {
-					clearTimeout(point.colorInterval);
-				}
-			}, 13);
-			point.isFading = true;
-		}
-		Point.prototype.onMouseOut.call(point);
-		point.isFading = null;
-	},
-	/*= } =*/
 
 	/**
-	 * Zoom the chart to view a specific area point
+	 * Highmaps only. Zoom in on the point using the global animation.
+	 *
+	 * @function #zoomTo
+	 * @memberOf Point
+	 * @sample maps/members/point-zoomto/
+	 *         Zoom to points from butons
 	 */
 	zoomTo: function () {
 		var point = this,

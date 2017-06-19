@@ -104,38 +104,33 @@ Chart.prototype.currentOptions = function (options) {
 	 * and store the current values in the ret object.
 	 */
 	function getCurrent(options, curr, ret, depth) {
-		var key, i;
-		for (key in options) {
+		var i;
+		H.objectEach(options, function (val, key) {
 			if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
 				options[key] = splat(options[key]);
-			
+				
 				ret[key] = [];
-
+				
 				// Iterate over collections like series, xAxis or yAxis and map
 				// the items by index.
 				for (i = 0; i < options[key].length; i++) {
 					if (curr[key][i]) { // Item exists in current data (#6347)
 						ret[key][i] = {};
 						getCurrent(
-							options[key][i],
+							val[i],
 							curr[key][i],
 							ret[key][i],
 							depth + 1
 						);
 					}
 				}
-			} else if (isObject(options[key])) {
-				ret[key] = isArray(options[key]) ? [] : {};
-				getCurrent(
-					options[key],
-					curr[key] || {},
-					ret[key],
-					depth + 1
-				);
+			} else if (isObject(val)) {
+				ret[key] = isArray(val) ? [] : {};
+				getCurrent(val, curr[key] || {}, ret[key], depth + 1);
 			} else {
 				ret[key] = curr[key] || null;
 			}
-		}
+		});
 	}
 
 	getCurrent(options, this.options, ret, 0);

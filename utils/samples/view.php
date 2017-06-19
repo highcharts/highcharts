@@ -27,7 +27,11 @@ $html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$top
 if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
 } else {
-	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+	$time = time();
+	$html = str_replace('.js"', '.js?' . $time . '"', $html); // Force no-cache for debugging
+
+	// No go on github.highcharts.com
+	$html = str_replace("sonification.js?$time", 'sonification.js', $html);
 }
 
 // Highchart 5 preview

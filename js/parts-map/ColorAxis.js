@@ -91,13 +91,13 @@ extend(ColorAxis.prototype, {
 		Axis.prototype.init.call(this, chart, options);
 
 		// Base init() pushes it to the xAxis array, now pop it again
-		//chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
+		// chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
 
 		// Prepare data classes
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
-		this.initStops(userOptions);
+		this.initStops();
 
 		// Override original axis properties
 		this.horiz = horiz;
@@ -107,39 +107,8 @@ extend(ColorAxis.prototype, {
 		this.defaultLegendLength = 200;
 	},
 
-	/*
-	 * Return an intermediate color between two colors, according to pos where 0
-	 * is the from color and 1 is the to color.
-	 * NOTE: Changes here should be copied
-	 * to the same function in drilldown.src.js and solid-gauge-src.js.
-	 */
-	tweenColors: function (from, to, pos) {
-		// Check for has alpha, because rgba colors perform worse due to lack of
-		// support in WebKit.
-		var hasAlpha,
-			ret;
-
-		// Unsupported color, return to-color (#3920)
-		if (!to.rgba.length || !from.rgba.length) {
-			ret = to.input || 'none';
-
-		// Interpolate
-		} else {
-			from = from.rgba;
-			to = to.rgba;
-			hasAlpha = (to[3] !== 1 || from[3] !== 1);
-			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
-				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
-				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
-				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
-				(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
-		}
-		return ret;
-	},
-
 	initDataClasses: function (userOptions) {
-		var axis = this,
-			chart = this.chart,
+		var chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
 			colorCount = chart.options.chart.colorCount,
@@ -168,8 +137,7 @@ extend(ColorAxis.prototype, {
 						colorCounter = 0;
 					}
 				} else {
-					dataClass.color = axis.tweenColors(
-						color(options.minColor),
+					dataClass.color = color(options.minColor).tweenTo(
 						color(options.maxColor),
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
@@ -178,8 +146,8 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
-	initStops: function (userOptions) {
-		this.stops = userOptions.stops || [
+	initStops: function () {
+		this.stops = this.options.stops || [
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
@@ -218,9 +186,21 @@ extend(ColorAxis.prototype, {
 			this.len = this.horiz ? width : height;
 			this.pos = this.horiz ? x : y;
 		} else {
-			// Fake length for disabled legend to avoid tick issues and such (#5205)
-			this.len = (this.horiz ? legendOptions.symbolWidth : legendOptions.symbolHeight) || this.defaultLegendLength;
+			// Fake length for disabled legend to avoid tick issues
+			// and such (#5205)
+			this.len = (
+					this.horiz ?
+						legendOptions.symbolWidth :
+						legendOptions.symbolHeight
+				) || this.defaultLegendLength;
 		}
+	},
+
+	normalizedValue: function (value) {
+		if (this.isLog) {
+			value = this.val2lin(value);
+		}
+		return 1 - ((this.max - value) / ((this.max - this.min) || 1));
 	},
 
 	/**
@@ -242,7 +222,10 @@ extend(ColorAxis.prototype, {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
+				if (
+					(from === undefined || value >= from) &&
+					(to === undefined || value <= to)
+				) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
@@ -254,10 +237,7 @@ extend(ColorAxis.prototype, {
 
 		} else {
 
-			if (this.isLog) {
-				value = this.val2lin(value);
-			}
-			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
+			pos = this.normalizedValue(value);
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -270,8 +250,7 @@ extend(ColorAxis.prototype, {
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
 
-			color = this.tweenColors(
-				from.color,
+			color = from.color.tweenTo(
 				to.color,
 				pos
 			);
@@ -280,7 +259,8 @@ extend(ColorAxis.prototype, {
 	},
 
 	/**
-	 * Override the getOffset method to add the whole axis groups inside the legend.
+	 * Override the getOffset method to add the whole axis groups inside
+	 * the legend.
 	 */
 	getOffset: function () {
 		var group = this.legendGroup,
@@ -313,18 +293,17 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options,
 			reversed = this.reversed,
 			one = reversed ? 1 : 0,
 			zero = reversed ? 0 : 1;
 
 		grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
 		this.legendColor = {
-			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
-			stops: options.stops || [
-				[0, options.minColor],
-				[1, options.maxColor]
-			]
+			linearGradient: {
+				x1: grad[0], y1: grad[1],
+				x2: grad[2], y2: grad[3]
+			},
+			stops: this.stops
 		};
 	},
 
@@ -335,8 +314,14 @@ extend(ColorAxis.prototype, {
 		var padding = legend.padding,
 			legendOptions = legend.options,
 			horiz = this.horiz,
-			width = pick(legendOptions.symbolWidth, horiz ? this.defaultLegendLength : 12),
-			height = pick(legendOptions.symbolHeight, horiz ? 12 : this.defaultLegendLength),
+			width = pick(
+				legendOptions.symbolWidth,
+				horiz ? this.defaultLegendLength : 12
+			),
+			height = pick(
+				legendOptions.symbolHeight,
+				horiz ? 12 : this.defaultLegendLength
+			),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
 			itemDistance = pick(legendOptions.itemDistance, 10);
 
@@ -353,7 +338,8 @@ extend(ColorAxis.prototype, {
 		}).add(item.legendGroup);
 
 		// Set how much space this legend item takes up
-		this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
+		this.legendItemWidth = width + padding +
+			(horiz ? itemDistance : labelPadding);
 		this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
 	},
 	/**
@@ -410,10 +396,24 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		return isNumber(pos) ? // crosshairs only // #3969 pos can be 0 !!
-			(this.horiz ?
-				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] :
-				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
+		// crosshairs only
+		return isNumber(pos) ? // pos can be 0 (#3969)
+			(
+				this.horiz ? [
+					'M',
+					pos - 4, this.top - 6,
+					'L',
+					pos + 4, this.top - 6,
+					pos, this.top,
+					'Z'
+				] :	[
+					'M',
+					this.left, pos,
+					'L',
+					this.left - 6, pos + 6,
+					this.left - 6, pos - 6,
+					'Z'
+				]
 			) :
 			Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 	},
@@ -423,21 +423,23 @@ extend(ColorAxis.prototype, {
 			legend = chart.legend;
 
 		each(this.series, function (series) {
-			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
+			// Needed for Axis.update when choropleth colors change
+			series.isDirtyData = true;
 		});
 
-		// When updating data classes, destroy old items and make sure new ones are created (#3207)
+		// When updating data classes, destroy old items and make sure new ones
+		// are created (#3207)
 		if (newOptions.dataClasses && legend.allItems) {
 			each(legend.allItems, function (item) {
-				if (item.isDataClass) {
+				if (item.isDataClass && item.legendGroup) {
 					item.legendGroup.destroy();
 				}
 			});
 			chart.isDirtyLegend = true;
 		}
 
-		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is
-		// not an array. (#3207)
+		// Keep the options structure updated for export. Unlike xAxis and
+		// yAxis, the colorAxis is not an array. (#3207)
 		chart.options[this.coll] = merge(this.userOptions, newOptions);
 
 		Axis.prototype.update.call(this, newOptions, redraw);
@@ -445,6 +447,16 @@ extend(ColorAxis.prototype, {
 			this.setLegendColor();
 			legend.colorizeItem(this, true);
 		}
+	},
+
+	/**
+	 * Extend basic axis remove by also removing the legend item.
+	 */
+	remove: function () {
+		if (this.legendItem) {
+			this.chart.legend.destroyItem(this);
+		}
+		Axis.prototype.remove.call(this);
 	},
 
 	/**
@@ -465,7 +477,8 @@ extend(ColorAxis.prototype, {
 					from = dataClass.from,
 					to = dataClass.to;
 
-				// Assemble the default name. This can be overridden by legend.options.labelFormatter
+				// Assemble the default name. This can be overridden
+				// by legend.options.labelFormatter
 				name = '';
 				if (from === undefined) {
 					name = '< ';
@@ -517,8 +530,7 @@ each(['fill', 'stroke'], function (prop) {
 	H.Fx.prototype[prop + 'Setter'] = function () {
 		this.elem.attr(
 			prop,
-			ColorAxis.prototype.tweenColors(
-				color(this.start),
+			color(this.start).tweenTo(
 				color(this.end),
 				this.pos
 			),
@@ -546,8 +558,8 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 
 /**
- * Wrap the legend getAllItems method to add the color axis. This also removes the
- * axis' own series to prevent them from showing up individually.
+ * Wrap the legend getAllItems method to add the color axis. This also removes
+ * the axis' own series to prevent them from showing up individually.
  */
 wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
@@ -557,7 +569,9 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		if (colorAxis.options.showInLegend) {
 			// Data classes
 			if (colorAxis.options.dataClasses) {
-				allItems = allItems.concat(colorAxis.getDataClassLegendSymbols());
+				allItems = allItems.concat(
+					colorAxis.getDataClassLegendSymbols()
+				);
 			// Gradient legend
 			} else {
 				// Add this axis on top

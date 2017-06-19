@@ -16,6 +16,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
 	seriesTypes = Highcharts.seriesTypes,
 	noop = Highcharts.noop,
+	pick = Highcharts.pick,
 	each = Highcharts.each;
 
 
@@ -113,8 +114,8 @@ seriesType('funnel', 'pie',
 				neckWidth :
 				neckWidth + (width - neckWidth) * (1 - (y - top) / (height - neckHeight));
 		};
-		series.getX = function (y, half) {
-			return centerX + (half ? -1 : 1) * ((getWidthAt(reversed ? 2 * centerY - y : y) / 2) + options.dataLabels.distance);
+		series.getX = function (y, half, point) {
+			return centerX + (half ? -1 : 1) * ((getWidthAt(reversed ? 2 * centerY - y : y) / 2) + point.labelDistance);
 		};
 
 		// Expose
@@ -225,13 +226,6 @@ seriesType('funnel', 'pie',
 			}
 		});		
 	},
-	/**
-	 * Draw a single point (wedge)
-	 * @param {Object} point The point object
-	 * @param {Object} color The color of the point
-	 * @param {Number} brightness The brightness relative to the color
-	 */
-	drawPoints: seriesTypes.column.prototype.drawPoints,
 
 	/**
 	 * Funnel items don't have angles (#2289)
@@ -246,8 +240,9 @@ seriesType('funnel', 'pie',
 	 * Extend the pie data label method
 	 */
 	drawDataLabels: function () {
-		var data = this.data,
-			labelDistance = this.options.dataLabels.distance,
+		var series = this,
+			data = series.data,
+			labelDistance = series.options.dataLabels.distance,
 			leftSide,
 			sign,
 			point,
@@ -258,7 +253,7 @@ seriesType('funnel', 'pie',
 		// In the original pie label anticollision logic, the slots are distributed
 		// from one labelDistance above to one labelDistance below the pie. In funnels
 		// we don't want this.
-		this.center[2] -= 2 * labelDistance;
+		series.center[2] -= 2 * labelDistance;
 		
 		// Set the label position array for each point.
 		while (i--) {
@@ -266,15 +261,21 @@ seriesType('funnel', 'pie',
 			leftSide = point.half;
 			sign = leftSide ? 1 : -1;
 			y = point.plotY;
-			x = this.getX(y, leftSide);
-				
+			point.labelDistance = pick(
+				point.options.dataLabels && point.options.dataLabels.distance,
+				labelDistance
+			);
+
+			series.maxLabelDistance = Math.max(point.labelDistance, series.maxLabelDistance || 0);
+			x = series.getX(y, leftSide, point);
+
 			// set the anchor point for data labels
 			point.labelPos = [
 				0, // first break of connector
 				y, // a/a
-				x + (labelDistance - 5) * sign, // second break, right outside point shape
+				x + (point.labelDistance - 5) * sign, // second break, right outside point shape
 				y, // a/a
-				x + labelDistance * sign, // landing point for connector
+				x + point.labelDistance * sign, // landing point for connector
 				y, // a/a
 				leftSide ? 'right' : 'left', // alignment
 				0 // center angle

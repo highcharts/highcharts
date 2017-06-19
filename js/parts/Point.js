@@ -4,9 +4,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import H from './Globals.js';
+import Highcharts from './Globals.js';
 import './Utilities.js';
 var Point,
+	H = Highcharts,
 
 	each = H.each,
 	extend = H.extend,
@@ -19,18 +20,19 @@ var Point,
 	removeEvent = H.removeEvent;
 
 /**
- * The Point object. The point objects are generated from the series.data 
+ * The Point object. The point objects are generated from the `series.data` 
  * configuration objects or raw numbers. They can be accessed from the
- * Series.points array.
- * @constructor Point
+ * `Series.points` array. Other ways to instaniate points are through {@link
+ * Highcharts.Series#addPoint} or {@link Highcharts.Series#setData}.
+ *
+ * @class
  */
-Point = H.Point = function () {};
-Point.prototype = {
+
+Highcharts.Point = Point = function () {};
+Highcharts.Point.prototype = {
 
 	/**
 	 * Initialize the point. Called internally based on the series.data option.
-	 * @function #init
-	 * @memberOf Point
 	 * @param {Object} series The series object containing this point.
 	 * @param {Object} options The data in either number, array or object
 	 *        format.
@@ -44,8 +46,22 @@ Point.prototype = {
 			colorCount = series.chart.options.chart.colorCount,
 			colorIndex;
 
+		/**
+		 * The series object associated with the point.
+		 *
+		 * @name series
+		 * @memberof Highcharts.Point
+		 * @type Highcharts.Series
+		 */
 		point.series = series;
+
 		/*= if (build.classic) { =*/
+		/**
+		 * The point's current color.
+		 * @name color
+		 * @memberof Highcharts.Point
+		 * @type {Color}
+		 */
 		point.color = series.color; // #3445
 		/*= } =*/
 		point.applyOptions(options, x);
@@ -74,8 +90,6 @@ Point.prototype = {
 	 * Apply the options containing the x and y data and possible some extra
 	 * properties. Called on point init or from point.update.
 	 *
-	 * @function #applyOptions
-	 * @memberOf Point
 	 * @param {Object} options The point options as defined in series.data.
 	 * @param {Number} x Optionally, the X value.
 	 * @returns {Object} The Point instance.
@@ -346,5 +360,56 @@ Point.prototype = {
 
 		fireEvent(this, eventType, eventArgs, defaultFunction);
 	},
+
+	/**
+	 * For certain series types, like pie charts, where individual points can
+	 * be shown or hidden. 
+	 *
+	 * @name visible
+	 * @memberOf Highcharts.Point
+	 * @type {Boolean}
+	 */
 	visible: true
 };
+
+/**
+ * For categorized axes this property holds the category name for the 
+ * point. For other axes it holds the X value.
+ *
+ * @name category
+ * @memberOf Highcharts.Point
+ * @type {String|Number}
+ */
+
+/**
+ * The percentage for points in a stacked series or pies.
+ *
+ * @name percentage
+ * @memberOf Highcharts.Point
+ * @type {Number}
+ */
+
+/**
+ * The total of values in either a stack for stacked series, or a pie in a pie
+ * series.
+ *
+ * @name total
+ * @memberOf Highcharts.Point
+ * @type {Number}
+ */
+
+/**
+ * The x value of the point.
+ *
+ * @name x
+ * @memberOf Highcharts.Point
+ * @type {Number}
+ */
+
+/**
+ * The y value of the point.
+ *
+ * @name y
+ * @memberOf Highcharts.Point
+ * @type {Number}
+ */

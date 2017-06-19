@@ -9,7 +9,12 @@ import H from './Globals.js';
 
 /**
  * The Highcharts object is the placeholder for all other members, and various
- * utility functions.
+ * utility functions. The most important member of the namespace would be the
+ * chart constructor.
+ *
+ * @example
+ * var chart = Highcharts.chart('container', { ... });
+ * 
  * @namespace Highcharts
  */
 
@@ -31,6 +36,8 @@ var charts = H.charts,
  *     directly in the console.
  * @param {Boolean} [stop=false] - Whether to throw an error or just log a 
  *     warning in the console.
+ *
+ * @sample highcharts/chart/highcharts-error/ Custom error handler
  */
 H.error = function (code, stop) {
 	var msg = H.isNumber(code) ?
@@ -46,14 +53,20 @@ H.error = function (code, stop) {
 };
 
 /**
- * An animator object. One instance applies to one property (attribute or style
- * prop) on one element.
+ * An animator object used internally. One instance applies to one property
+ * (attribute or style prop) on one element. Animation is always initiated
+ * through {@link SVGElement#animate}.
  *
  * @constructor Fx
  * @memberOf Highcharts
  * @param {HTMLDOMElement|SVGElement} elem - The element to animate.
  * @param {AnimationOptions} options - Animation options.
  * @param {string} prop - The single attribute or CSS property to animate.
+ * @private
+ *
+ * @example
+ * var rect = renderer.rect(0, 0, 10, 10).add();
+ * rect.animate({ width: 100 });
  */
 H.Fx = function (elem, options, prop) {
 	this.options = options;
@@ -189,8 +202,7 @@ H.Fx.prototype = {
 			elem = this.elem,
 			complete = options.complete,
 			duration = options.duration,
-			curAnim = options.curAnim,
-			i;
+			curAnim = options.curAnim;
 		
 		if (elem.attr && !elem.element) { // #2616, element is destroyed
 			ret = false;
@@ -203,11 +215,12 @@ H.Fx.prototype = {
 			curAnim[this.prop] = true;
 
 			done = true;
-			for (i in curAnim) {
-				if (curAnim[i] !== true) {
+			
+			H.objectEach(curAnim, function (val) {
+				if (val !== true) {
 					done = false;
 				}
-			}
+			});
 
 			if (done && complete) {
 				complete.call(elem);
@@ -391,6 +404,19 @@ H.Fx.prototype = {
 	}
 }; // End of Fx prototype
 
+/**
+ * Handle animation of the color attributes directly.
+ */
+H.Fx.prototype.fillSetter = 
+H.Fx.prototype.strokeSetter = function () {
+	this.elem.attr(
+		this.prop,
+		H.color(this.start).tweenTo(H.color(this.end), this.pos),
+		null,
+		true
+	);
+};
+
 
 /**
  * Utility function to extend an object with the members of another.
@@ -434,29 +460,26 @@ H.merge = function () {
 		len,
 		ret = {},
 		doCopy = function (copy, original) {
-			var value, key;
-
 			// An object is replacing a primitive
 			if (typeof copy !== 'object') {
 				copy = {};
 			}
 
-			for (key in original) {
-				if (original.hasOwnProperty(key)) {
-					value = original[key];
-
-					// Copy the contents of objects, but not arrays or DOM nodes
-					if (H.isObject(value, true) &&
-							key !== 'renderTo' &&
-							typeof value.nodeType !== 'number') {
-						copy[key] = doCopy(copy[key] || {}, value);
-
-					// Primitives and arrays are copied over directly
-					} else {
-						copy[key] = original[key];
-					}
+			H.objectEach(original, function (value, key) {
+				
+				// Copy the contents of objects, but not arrays or DOM nodes
+				if (
+						H.isObject(value, true) &&
+						!H.isClass(value) &&
+						!H.isDOMElement(value)
+				) {
+					copy[key] = doCopy(copy[key] || {}, value);
+          
+				// Primitives and arrays are copied over directly
+				} else {
+					copy[key] = original[key];
 				}
-			}
+			});
 			return copy;
 		};
 
@@ -522,7 +545,36 @@ H.isArray = function (obj) {
  * @returns {Boolean} - True if the argument is an object.
  */
 H.isObject = function (obj, strict) {
-	return obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+	return !!obj && typeof obj === 'object' && (!strict || !H.isArray(obj));
+};
+
+/**
+ * Utility function to check if an Object is a HTML Element.
+ *
+ * @function #isDOMElement
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @returns {Boolean} - True if the argument is a HTML Element.
+ */
+H.isDOMElement = function (obj) {
+	return H.isObject(obj) && typeof obj.nodeType === 'number';
+};
+
+/**
+ * Utility function to check if an Object is an class.
+ *
+ * @function #isClass
+ * @memberOf Highcharts
+ * @param {Object} obj - The item to check.
+ * @returns {Boolean} - True if the argument is an class.
+ */
+H.isClass = function (obj) {
+	var c = obj && obj.constructor;
+	return !!(
+		H.isObject(obj, true) &&
+		!H.isDOMElement(obj) &&
+		(c && c.name && c.name !== 'Object')
+	);
 };
 
 /**
@@ -581,8 +633,7 @@ H.defined = function (obj) {
  * @returns {*} When used as a getter, return the value.
  */
 H.attr = function (elem, prop, value) {
-	var key,
-		ret;
+	var ret;
 
 	// if the prop is a string
 	if (H.isString(prop)) {
@@ -597,9 +648,9 @@ H.attr = function (elem, prop, value) {
 
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (H.defined(prop) && H.isObject(prop)) {
-		for (key in prop) {
-			elem.setAttribute(key, prop[key]);
-		}
+		H.objectEach(prop, function (val, key) {
+			elem.setAttribute(key, val);
+		});
 	}
 	return ret;
 };
@@ -820,8 +871,11 @@ H.getTZOffset = function (timestamp) {
 };
 
 /**
- * Format a date, based on the syntax for PHP's [strftime]{@link
- * http://www.php.net/manual/en/function.strftime.php} function.
+ * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
+ * human readable date string. The format is a subset of the formats for PHP's
+ * [strftime]{@link
+ * http://www.php.net/manual/en/function.strftime.php} function. Additional
+ * formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * @function #dateFormat
  * @memberOf Highcharts
@@ -839,7 +893,6 @@ H.dateFormat = function (format, timestamp, capitalize) {
 
 	var D = H.Date,
 		date = new D(timestamp - H.getTZOffset(timestamp)),
-		key, // used in for constuct below
 		// get the basic time values
 		hours = date[D.hcGetHours](),
 		day = date[D.hcGetDay](),
@@ -852,72 +905,87 @@ H.dateFormat = function (format, timestamp, capitalize) {
 		pad = H.pad,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		replacements = H.extend({
+		replacements = H.extend(
+			{
 
-			//-- Day
-			// Short weekday, like 'Mon'
-			'a': shortWeekdays ?
-				shortWeekdays[day] :
-				langWeekdays[day].substr(0, 3),
-			// Long weekday, like 'Monday'
-			'A': langWeekdays[day],
-			// Two digit day of the month, 01 to 31
-			'd': pad(dayOfMonth),
-			// Day of the month, 1 through 31
-			'e': pad(dayOfMonth, 2, ' '),
-			'w': day,
+				//-- Day
+				// Short weekday, like 'Mon'
+				'a': shortWeekdays ?
+					shortWeekdays[day] :
+					langWeekdays[day].substr(0, 3),
+				// Long weekday, like 'Monday'
+				'A': langWeekdays[day],
+				// Two digit day of the month, 01 to 31
+				'd': pad(dayOfMonth),
+				// Day of the month, 1 through 31
+				'e': pad(dayOfMonth, 2, ' '),
+				'w': day,
 
-			// Week (none implemented)
-			//'W': weekNumber(),
+				// Week (none implemented)
+				//'W': weekNumber(),
 
-			//-- Month
-			// Short month, like 'Jan'
-			'b': lang.shortMonths[month],
-			// Long month, like 'January'
-			'B': lang.months[month],
-			// Two digit month number, 01 through 12
-			'm': pad(month + 1),
+				//-- Month
+				// Short month, like 'Jan'
+				'b': lang.shortMonths[month],
+				// Long month, like 'January'
+				'B': lang.months[month],
+				// Two digit month number, 01 through 12
+				'm': pad(month + 1),
 
-			//-- Year
-			// Two digits year, like 09 for 2009
-			'y': fullYear.toString().substr(2, 2),
-			// Four digits year, like 2009
-			'Y': fullYear,
+				//-- Year
+				// Two digits year, like 09 for 2009
+				'y': fullYear.toString().substr(2, 2),
+				// Four digits year, like 2009
+				'Y': fullYear,
 
-			//-- Time
-			// Two digits hours in 24h format, 00 through 23
-			'H': pad(hours),
-			// Hours in 24h format, 0 through 23
-			'k': hours,
-			// Two digits hours in 12h format, 00 through 11
-			'I': pad((hours % 12) || 12),
-			// Hours in 12h format, 1 through 12
-			'l': (hours % 12) || 12,
-			// Two digits minutes, 00 through 59
-			'M': pad(date[D.hcGetMinutes]()),
-			// Upper case AM or PM
-			'p': hours < 12 ? 'AM' : 'PM',
-			// Lower case AM or PM
-			'P': hours < 12 ? 'am' : 'pm',
-			// Two digits seconds, 00 through  59
-			'S': pad(date.getSeconds()),
-			// Milliseconds (naming from Ruby)
-			'L': pad(Math.round(timestamp % 1000), 3)
-		}, H.dateFormats);
+				//-- Time
+				// Two digits hours in 24h format, 00 through 23
+				'H': pad(hours),
+				// Hours in 24h format, 0 through 23
+				'k': hours,
+				// Two digits hours in 12h format, 00 through 11
+				'I': pad((hours % 12) || 12),
+				// Hours in 12h format, 1 through 12
+				'l': (hours % 12) || 12,
+				// Two digits minutes, 00 through 59
+				'M': pad(date[D.hcGetMinutes]()),
+				// Upper case AM or PM
+				'p': hours < 12 ? 'AM' : 'PM',
+				// Lower case AM or PM
+				'P': hours < 12 ? 'am' : 'pm',
+				// Two digits seconds, 00 through  59
+				'S': pad(date.getSeconds()),
+				// Milliseconds (naming from Ruby)
+				'L': pad(Math.round(timestamp % 1000), 3)
+			},
+			
+			/**
+			 * A hook for defining additional date format specifiers. New
+			 * specifiers are defined as key-value pairs by using the specifier
+			 * as key, and a function which takes the timestamp as value. This
+			 * function returns the formatted portion of the date.
+			 *
+			 * @type {Object}
+			 * @name dateFormats
+			 * @memberOf Highcharts
+			 * @sample highcharts/global/dateformats/ Adding support for week
+			 * number
+			 */
+			H.dateFormats
+		);
 
 
 	// Do the replaces
-	for (key in replacements) {
+	H.objectEach(replacements, function (val, key) {
 		// Regex would do it in one line, but this is faster
 		while (format.indexOf('%' + key) !== -1) {
 			format = format.replace(
 				'%' + key,
-				typeof replacements[key] === 'function' ?
-					replacements[key](timestamp) :
-					replacements[key]
+				typeof val === 'function' ? val(timestamp) : val
 			);
 		}
-	}
+		
+	});
 
 	// Optionally capitalize the string and return
 	return capitalize ?
@@ -1201,17 +1269,16 @@ H.arrayMax = function (data) {
  * @returns {void}
  */
 H.destroyObjectProperties = function (obj, except) {
-	var n;
-	for (n in obj) {
+	H.objectEach(obj, function (val, n) {
 		// If the object is non-null and destroy is defined
-		if (obj[n] && obj[n] !== except && obj[n].destroy) {
+		if (val && val !== except && val.destroy) {
 			// Invoke the destroy
-			obj[n].destroy();
+			val.destroy();
 		}
-
+		
 		// Delete the property from the object.
 		delete obj[n];
-	}
+	});
 };
 
 
@@ -1312,21 +1379,24 @@ H.timeUnits = {
  * @param {Number} decimals - The amount of decimals. A value of -1 preserves
  *        the amount in the input number.
  * @param {String} [decimalPoint] - The decimal point, defaults to the one given
- *        in the lang options.
+ *        in the lang options, or a dot.
  * @param {String} [thousandsSep] - The thousands separator, defaults to the one
- *        given in the lang options.
+ *        given in the lang options, or a space character.
  * @returns {String} The formatted number.
+ *
+ * @sample members/highcharts-numberformat/ Custom number format
  */
 H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	number = +number || 0;
 	decimals = +decimals;
 
 	var lang = H.defaultOptions.lang,
-		origDec = (number.toString().split('.')[1] || '').length,
+		origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
 		strinteger,
 		thousands,
 		ret,
-		roundedNumber;
+		roundedNumber,
+		exponent = number.toString().split('e');
 
 	if (decimals === -1) {
 		// Preserve decimals. Not huge numbers (#3793).
@@ -1338,7 +1408,8 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 	// Add another decimal to avoid rounding errors of float numbers. (#4573)
 	// Then use toFixed to handle rounding.
 	roundedNumber = (
-		Math.abs(number) + Math.pow(10, -Math.max(decimals, origDec) - 1)
+		Math.abs(exponent[1] ? exponent[0] : number) +
+		Math.pow(10, -Math.max(decimals, origDec) - 1)
 	).toFixed(decimals);
 
 	// A string containing the positive integer component of the number
@@ -1369,6 +1440,10 @@ H.numberFormat = function (number, decimals, decimalPoint, thousandsSep) {
 		ret += decimalPoint + roundedNumber.slice(-decimals);
 	}
 
+	if (exponent[1]) {
+		ret += 'e' + exponent[1];
+	}
+
 	return ret;
 };
 
@@ -1390,9 +1465,10 @@ Math.easeInOutSine = function (pos) {
  * @memberOf Highcharts
  * @param {HTMLDOMElement} el - A HTML element.
  * @param {String} prop - The property name.
+ * @param {Boolean} [toInt=true] - Parse to integer.
  * @returns {Number} - The numeric value.
  */
-H.getStyle = function (el, prop) {
+H.getStyle = function (el, prop, toInt) {
 
 	var style;
 
@@ -1409,7 +1485,13 @@ H.getStyle = function (el, prop) {
 
 	// Otherwise, get the computed style
 	style = win.getComputedStyle(el, undefined);
-	return style && H.pInt(style.getPropertyValue(prop));
+	if (style) {
+		style = style.getPropertyValue(prop);
+		if (H.pick(toInt, true)) {
+			style = H.pInt(style);
+		}
+	}
+	return style;
 };
 
 /**
@@ -1544,6 +1626,26 @@ H.each = function (arr, fn, ctx) { // modern browsers
 };
 
 /**
+ * Iterate over object key pairs in an object.
+ *
+ * @function #objectEach
+ * @memberOf Highcharts
+ * @param  {Object}   obj - The object to iterate over.
+ * @param  {Function} fn  - The iterator callback. It passes three arguments:
+ * * value - The property value.
+ * * key - The property key.
+ * * obj - The object that objectEach is being applied to.
+ * @param  {Object}   ctx The context
+ */
+H.objectEach = function (obj, fn, ctx) {
+	for (var key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			fn.call(ctx, obj[key], key, obj);
+		}
+	}
+};
+
+/**
  * Add an event listener.
  *
  * @function #addEvent
@@ -1622,8 +1724,7 @@ H.removeEvent = function (el, type, fn) {
 
 	function removeAllEvents() {
 		var types,
-			len,
-			n;
+			len;
 
 		if (!el.nodeName) {
 			return; // break on non-DOM events
@@ -1636,14 +1737,14 @@ H.removeEvent = function (el, type, fn) {
 			types = hcEvents;
 		}
 
-		for (n in types) {
+		H.objectEach(types, function (val, n) {
 			if (hcEvents[n]) {
 				len = hcEvents[n].length;
 				while (len--) {
 					removeOneEvent(n, hcEvents[n][len]);
 				}
 			}
-		}
+		});
 	}
 
 	if (hcEvents) {
@@ -1779,8 +1880,7 @@ H.animate = function (el, params, opt) {
 		unit = '',
 		end,
 		fx,
-		args,
-		prop;
+		args;
 
 	if (!H.isObject(opt)) { // Number or undefined/null
 		args = arguments;
@@ -1798,14 +1898,13 @@ H.animate = function (el, params, opt) {
 		(Math[opt.easing] || Math.easeInOutSine);
 	opt.curAnim = H.merge(params);
 
-	for (prop in params) {
-
+	H.objectEach(params, function (val, prop) {
 		// Stop current running animation of this property
 		H.stop(el, prop);
-
+		
 		fx = new H.Fx(el, opt, prop);
 		end = null;
-
+		
 		if (prop === 'd') {
 			fx.paths = fx.initPath(
 				el,
@@ -1823,15 +1922,15 @@ H.animate = function (el, params, opt) {
 				unit = 'px';
 			}
 		}
-
+		
 		if (!end) {
-			end = params[prop];
+			end = val;
 		}
 		if (end && end.match && end.match('px')) {
 			end = end.replace(/px/g, ''); // #4351
 		}
 		fx.run(start, end, unit);
-	}
+	});
 };
 
 /**
@@ -1856,7 +1955,7 @@ H.animate = function (el, params, opt) {
 H.seriesType = function (type, parent, options, props, pointProps) {
 	var defaultOptions = H.getOptions(),
 		seriesTypes = H.seriesTypes;
-	
+
 	// Merge the options
 	defaultOptions.plotOptions[type] = H.merge(
 		defaultOptions.plotOptions[parent], 

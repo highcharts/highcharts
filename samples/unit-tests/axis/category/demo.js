@@ -542,7 +542,9 @@ QUnit.test(
             }],
 
             plotOptions: {
-                animation: false
+                series: {
+                    animation: false
+                }
             },
 
             series: [{

@@ -1,0 +1,12 @@
+#container {
+	display: none;
+	height: 300px;
+	width: 300px;
+}
+#outer {
+	visibility: hidden;
+}
+#outer-outer {
+	visibility: hidden;
+	display: none;
+}

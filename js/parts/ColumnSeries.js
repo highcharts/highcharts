@@ -135,8 +135,15 @@ seriesType('column', 'line',
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis,
 					columnIndex;
-				if (otherSeries.type === series.type && otherSeries.visible &&
-						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
+				if (
+					otherSeries.type === series.type &&
+					(
+						otherSeries.visible ||
+						!series.chart.options.chart.ignoreHiddenSeries
+					) &&
+					yAxis.len === otherYAxis.len &&
+					yAxis.pos === otherYAxis.pos
+				) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
 						if (stackGroups[stackKey] === undefined) {
@@ -290,8 +297,10 @@ seriesType('column', 'line',
 			point.shapeType = 'rect';
 			point.shapeArgs = series.crispCol.apply(
 				series,
-				point.isNull ? 
-					[point.plotX, yAxis.len / 2, 0, 0] : // #3169, drilldown from null must have a position to work from
+				point.isNull ?
+					// #3169, drilldown from null must have a position to work from
+					// #6585, dataLabel should be placed on xAxis, not floating in the middle of the chart
+					[barX, translatedThreshold, barW, 0] :
 					[barX, barY, barW, barH]
 			);
 		});

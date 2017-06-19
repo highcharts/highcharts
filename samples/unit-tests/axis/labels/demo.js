@@ -24,8 +24,8 @@ QUnit.test('Label ellipsis in Firefox (#5968)', function (assert) {
 
 
     assert.strictEqual(
-        chart.xAxis[0].ticks[0].label.element.getBBox().width,
-        chart.xAxis[0].ticks[11].label.element.getBBox().width,
+        Math.round(chart.xAxis[0].ticks[0].label.element.getBBox().width),
+        Math.round(chart.xAxis[0].ticks[11].label.element.getBBox().width),
         'All labels should have ellipsis and equal length'
     );
 });

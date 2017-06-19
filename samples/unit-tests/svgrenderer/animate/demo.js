@@ -215,3 +215,67 @@ QUnit.test('Animation x-y, stopped by .stop()', function (assert) {
         done();
     }, 1500);
 });
+
+QUnit.test('Fill and stroke animation', function (assert) {
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container6'),
+        600,
+        400
+    );
+    var done = assert.async();
+    var rgbRegex = /^rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)$/;
+
+    var circ = ren.circle(200, 200, 100)
+        .attr({
+            fill: 'rgba(255,255,255,1)',
+            stroke: 'rgba(255,255,255,1)',
+            'stroke-width': '10px'
+        })
+        .add();
+
+    circ.animate({
+        fill: 'rgba(255,0,0,1)',
+        stroke: 'rgba(0,0,255,1)'
+    }, {
+        duration: 1000
+    });
+
+    setTimeout(function () {
+
+        // Fill
+        assert.notEqual(
+            circ.attr('fill'),
+            'rgba(255,255,255,1)',
+            'Fill unlike start'
+        );
+        assert.notEqual(
+            circ.attr('fill'),
+            'rgba(255,0,0,1)',
+            'Fill unlike end'
+        );
+        assert.ok(
+            rgbRegex.test(circ.attr('fill')),
+            'Fill is color'
+        );
+
+        // Stroke
+        assert.notEqual(
+            circ.attr('stroke'),
+            'rgba(255,255,255,1)',
+            'Stroke unlike start'
+        );
+        assert.notEqual(
+            circ.attr('stroke'),
+            'rgba(0,0,255,1)',
+            'Stroke unlike end'
+        );
+        assert.ok(
+            rgbRegex.test(circ.attr('stroke')),
+            'Stroke is color'
+        );
+        console.log('stroke', circ.attr('stroke'))
+
+        Highcharts.stop(circ);
+        done();
+    }, 500);
+});

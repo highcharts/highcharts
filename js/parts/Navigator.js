@@ -23,13 +23,13 @@ var addEvent = H.addEvent,
 	defaultOptions = H.defaultOptions,
 	defined = H.defined,
 	destroyObjectProperties = H.destroyObjectProperties,
-	doc = H.doc,
 	each = H.each,
 	erase = H.erase,
 	error = H.error,
 	extend = H.extend,
 	grep = H.grep,
 	hasTouch = H.hasTouch,
+	isArray = H.isArray,
 	isNumber = H.isNumber,
 	isObject = H.isObject,
 	merge = H.merge,
@@ -387,7 +387,7 @@ Navigator.prototype = {
 					(index === 1 ? '-inside' : '-outside'))
 				/*= if (build.classic) { =*/
 				.attr({
-					fill: hasMask ? navigatorOptions.maskFill : 'transparent'
+					fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
 				})
 				.css(index === 1 && mouseCursor)
 				/*= } =*/
@@ -435,6 +435,13 @@ Navigator.prototype = {
 	 * @param {Object} options Options to merge in when updating navigator
 	 */
 	update: function (options) {
+		// Remove references to old navigator series in base series
+		each(this.series, function (series) {
+			if (series.baseSeries) {
+				delete series.baseSeries.navigatorSeries;
+			}
+		});
+		// Destroy and rebuild navigator
 		this.destroy();
 		var chartOptions = this.chart.options;
 		merge(true, chartOptions.navigator, this.options, options);
@@ -457,6 +464,7 @@ Navigator.prototype = {
 			scrollbarHeight = navigator.scrollbarHeight,
 			navigatorSize,
 			xAxis = navigator.xAxis,
+			scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
 			navigatorEnabled = navigator.navigatorEnabled,
 			zoomedMin,
 			zoomedMax,
@@ -557,7 +565,12 @@ Navigator.prototype = {
 			if (inverted) {
 				scrollbarTop = navigator.top - scrollbarHeight;
 				scrollbarLeft = navigator.left - scrollbarHeight +
-					(navigatorEnabled ? 0 : navigator.height);
+					(navigatorEnabled || !scrollbarXAxis.opposite ? 0 :
+						// Multiple axes has offsets:
+						(scrollbarXAxis.titleOffset || 0) +
+						// Self margin from the axis.title
+						scrollbarXAxis.axisTitleMargin
+					);
 				scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
 			} else {
 				scrollbarTop = navigator.top +
@@ -609,14 +622,14 @@ Navigator.prototype = {
 		// because Navigator.grabbedSomething flags are stored in mousedown events:
 		eventsToUnbind.push(
 			addEvent(container, 'mousemove', mouseMoveHandler),
-			addEvent(doc, 'mouseup', mouseUpHandler)
+			addEvent(container.ownerDocument, 'mouseup', mouseUpHandler)
 		);
 
 		// Touch events
 		if (hasTouch) {
 			eventsToUnbind.push(
 				addEvent(container, 'touchmove', mouseMoveHandler),
-				addEvent(doc, 'touchend', mouseUpHandler)
+				addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
 			);
 			eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 		}
@@ -897,10 +910,12 @@ Navigator.prototype = {
 	 */
 	removeBaseSeriesEvents: function () {
 		var baseSeries = this.baseSeries || [];
-		if (this.navigatorEnabled && baseSeries[0] && this.navigatorOptions.adaptToUpdatedData !== false) {
-			each(baseSeries, function (series) {
-				removeEvent(series, 'updatedData', this.updatedDataHandler);	
-			}, this);
+		if (this.navigatorEnabled && baseSeries[0]) {
+			if (this.navigatorOptions.adaptToUpdatedData !== false) {
+				each(baseSeries, function (series) {
+					removeEvent(series, 'updatedData', this.updatedDataHandler);
+				}, this);
+			}
 
 			// We only listen for extremes-events on the first baseSeries
 			if (baseSeries[0].xAxis) {
@@ -994,7 +1009,7 @@ Navigator.prototype = {
 
 			// If we have a base series, initialize the navigator series
 			if (baseSeries || navigatorOptions.series.data) {
-				navigator.addBaseSeries();
+				navigator.updateNavigatorSeries();
 
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
@@ -1114,55 +1129,56 @@ Navigator.prototype = {
 	},
 
 	/**
-	 * Set the base series. With a bit of modification we should be able to make
-	 * this an API method to be called from the outside
-	 * @param {Object} baseSeriesOptions - series options for a navigator
+	 * Set the base series and update the navigator series from this. With a bit 
+	 * of modification we should be able to make this an API method to be called 
+	 * from the outside
+	 * @param {Object} baseSeriesOptions - additional series options for a navigator
 	 */
 	setBaseSeries: function (baseSeriesOptions) {
 		var chart = this.chart,
-			baseSeries;
+			baseSeries = this.baseSeries = [];
 
-		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;
+		baseSeriesOptions = baseSeriesOptions || chart.options && chart.options.navigator.baseSeries || 0;	
 
-		// If we're resetting, remove the existing series
-		if (this.series) {
-			this.removeBaseSeriesEvents();
-			each(this.series, function (s) { 
-				s.destroy();
-			});
-		}
-
-		baseSeries = this.baseSeries = [];
-
-		// Iterate through series and add the ones that should be shown in navigator
+		// Iterate through series and add the ones that should be shown in navigator.
 		each(chart.series || [], function (series, i) {
-			if (series.options.showInNavigator || (i === baseSeriesOptions || series.options.id === baseSeriesOptions) &&
-					series.options.showInNavigator !== false) {
+			if (
+				!series.options.isInternal && // Don't include existing nav series
+				(
+					series.options.showInNavigator ||
+					(
+						i === baseSeriesOptions ||
+						series.options.id === baseSeriesOptions
+					) &&
+					series.options.showInNavigator !== false
+				)
+			) {
 				baseSeries.push(series);
 			}
 		});
-
+			
 		// When run after render, this.xAxis already exists
 		if (this.xAxis && !this.xAxis.fake) {
-			this.addBaseSeries();
+			this.updateNavigatorSeries();
 		}
 	},
 
 	/*
-	 * Add base series to the navigator.
+	 * Update series in the navigator from baseSeries, adding new if does not
+	 * exist.
 	 */
-	addBaseSeries: function () {
+	updateNavigatorSeries: function () {
 		var navigator = this,
 			chart = navigator.chart,
-			navigatorSeries = navigator.series = [],
 			baseSeries = navigator.baseSeries,
 			baseOptions,
 			mergedNavSeriesOptions,
-			chartNavigatorOptions = navigator.navigatorOptions.series,
+			chartNavigatorSeriesOptions = navigator.navigatorOptions.series,
 			baseNavigatorOptions,
 			navSeriesMixin = {
 				enableMouseTracking: false,
 				index: null, // #6162
+				linkedTo: null, // #6734
 				group: 'nav', // for columns
 				padXAxis: false,
 				xAxis: 'navigator-x-axis',
@@ -1171,32 +1187,108 @@ Navigator.prototype = {
 				stacking: false, // #4823
 				isInternal: true,
 				visible: true
-			};
+			},
+			// Remove navigator series that are no longer in the baseSeries
+			navigatorSeries = navigator.series = H.grep(
+				navigator.series || [], function (navSeries) {
+					var base = navSeries.baseSeries;
+					if (H.inArray(base, baseSeries) < 0) { // Not in array
+						// If there is still a base series connected to this series,
+						// remove event handler and reference.
+						if (base) {
+							removeEvent(
+								base,
+								'updatedData',
+								navigator.updatedDataHandler
+							);
+							delete base.navigatorSeries;
+						}
+						// Kill the nav series
+						navSeries.destroy();
+						return false;
+					}
+					return true;
+				}
+			);
 
 		// Go through each base series and merge the options to create new series
-		if (baseSeries) {
+		if (baseSeries && baseSeries.length) {
 			each(baseSeries, function (base, i) {
+				var linkedNavSeries = base.navigatorSeries,
+					userNavOptions = !isArray(chartNavigatorSeriesOptions) ?
+						chartNavigatorSeriesOptions : {};
+
+				// Don't update if the series exists in nav and we have disabled
+				// adaptToUpdatedData.
+				if (
+					linkedNavSeries &&
+					navigator.navigatorOptions.adaptToUpdatedData === false
+				) {
+					return;
+				}
+
 				navSeriesMixin.name = 'Navigator ' + (i + 1);
 
 				baseOptions = base.options || {};
 				baseNavigatorOptions = baseOptions.navigatorOptions || {};
-				mergedNavSeriesOptions = merge(baseOptions, navSeriesMixin, chartNavigatorOptions, baseNavigatorOptions);
+				mergedNavSeriesOptions = merge(
+					baseOptions, 
+					navSeriesMixin, 
+					userNavOptions,
+					baseNavigatorOptions
+				);
 
 				// Merge data separately. Do a slice to avoid mutating the navigator options from base series (#4923).
-				var navigatorSeriesData = baseNavigatorOptions.data || chartNavigatorOptions.data;
+				var navigatorSeriesData = baseNavigatorOptions.data || userNavOptions.data;
 				navigator.hasNavigatorData = navigator.hasNavigatorData || !!navigatorSeriesData;
 				mergedNavSeriesOptions.data = navigatorSeriesData || baseOptions.data && baseOptions.data.slice(0);
 
-				// Add the series
-				base.navigatorSeries = chart.initSeries(mergedNavSeriesOptions);
-				navigatorSeries.push(base.navigatorSeries);
+				// Update or add the series
+				if (linkedNavSeries) {
+					linkedNavSeries.update(mergedNavSeriesOptions);
+				} else {
+					base.navigatorSeries = chart.initSeries(mergedNavSeriesOptions);
+					base.navigatorSeries.baseSeries = base; // Store ref
+					navigatorSeries.push(base.navigatorSeries);
+				}
 			});
-		} else {
-			// No base series, build from mixin and chart wide options
-			mergedNavSeriesOptions = merge(chartNavigatorOptions, navSeriesMixin);
-			mergedNavSeriesOptions.data = chartNavigatorOptions.data;
-			navigator.hasNavigatorData = !!mergedNavSeriesOptions.data;
-			navigatorSeries.push(chart.initSeries(mergedNavSeriesOptions));
+		}
+
+		// If user has defined data (and no base series) or explicitly defined 
+		// navigator.series as an array, we create these series on top of any 
+		// base series.
+		if (
+			chartNavigatorSeriesOptions.data &&
+			!(baseSeries && baseSeries.length) ||
+			isArray(chartNavigatorSeriesOptions)
+		) {
+			navigator.hasNavigatorData = false;
+			// Allow navigator.series to be an array
+			chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
+			each(chartNavigatorSeriesOptions, function (userSeriesOptions, i) {
+				mergedNavSeriesOptions = merge(
+					{
+						// Since we don't have a base series to pull color from,
+						// try to fake it by using color from series with same
+						// index. Otherwise pull from the colors array. We need 
+						// an explicit color as otherwise updates will increment
+						// color counter and we'll get a new color for each
+						// update of the nav series.
+						color: chart.series[i] &&
+							!chart.series[i].options.isInternal &&
+							chart.series[i].color ||
+							chart.options.colors[i] ||
+							chart.options.colors[0]
+					},
+					userSeriesOptions,
+					navSeriesMixin
+				);
+				mergedNavSeriesOptions.data = userSeriesOptions.data;
+				if (mergedNavSeriesOptions.data) {
+					navigator.hasNavigatorData = true;
+					navigatorSeries.push(chart.initSeries(mergedNavSeriesOptions));
+				}
+			});
 		}
 
 		this.addBaseSeriesEvents();
@@ -1210,29 +1302,44 @@ Navigator.prototype = {
 		var navigator = this,
 			baseSeries = navigator.baseSeries || [];
 
-		// Bind modified extremes event to first base's xAxis only. In event of > 1 base-xAxes, the navigator will ignore those.
+		// Bind modified extremes event to first base's xAxis only.
+		// In event of > 1 base-xAxes, the navigator will ignore those.
+		// Adding this multiple times to the same axis is no problem, as 
+		// duplicates should be discarded by the browser.
 		if (baseSeries[0] && baseSeries[0].xAxis) {
 			addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
 		}
 
-		if (this.navigatorOptions.adaptToUpdatedData !== false) {
-			// Respond to updated data in the base series.
-			// Abort if lazy-loading data from the server.
-			each(baseSeries, function (base) {
+		each(baseSeries, function (base) {
+			// Link base series show/hide to navigator series visibility
+			addEvent(base, 'show', function () {
+				if (this.navigatorSeries) {
+					this.navigatorSeries.show();
+				}
+			});
+			addEvent(base, 'hide', function () {
+				if (this.navigatorSeries) {
+					this.navigatorSeries.hide();
+				}
+			});
+
+			// Respond to updated data in the base series, unless explicitily 
+			// not adapting to data changes.
+			if (this.navigatorOptions.adaptToUpdatedData !== false) {
 				if (base.xAxis) {
 					addEvent(base, 'updatedData', this.updatedDataHandler);
 				}
+			}
 
-				// Handle series removal
-				addEvent(base, 'remove', function () {
-					if (this.navigatorSeries) {
-						erase(navigator.series, this.navigatorSeries);
-						this.navigatorSeries.remove(false);
-						delete this.navigatorSeries;
-					}
-				});		
-			}, this);
-		}
+			// Handle series removal
+			addEvent(base, 'remove', function () {
+				if (this.navigatorSeries) {
+					erase(navigator.series, this.navigatorSeries);
+					this.navigatorSeries.remove(false);
+					delete this.navigatorSeries;
+				}
+			});
+		}, this);
 	},
 
 	/**
@@ -1529,7 +1636,7 @@ wrap(Chart.prototype, 'addSeries', function (proceed, options, redraw, animation
 // Handle updating series
 wrap(Series.prototype, 'update', function (proceed, newOptions, redraw) {
 	proceed.call(this, newOptions, false);
-	if (this.chart.navigator) {
+	if (this.chart.navigator && !this.options.isInternal) {
 		this.chart.navigator.setBaseSeries();
 	}
 	if (pick(redraw, true)) {

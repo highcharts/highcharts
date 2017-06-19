@@ -123,7 +123,11 @@ H.initCanvasBoost = function () {
 					if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 						shapeArgs = point.shapeArgs;
 
-						pointAttr = (point.pointAttr && point.pointAttr['']) || point.series.pointAttribs(point);
+						/*= if (build.classic) { =*/
+						pointAttr = point.series.pointAttribs(point);
+						/*= } else { =*/
+						pointAttr = point.series.colorAttribs(point);
+						/*= } =*/					
 
 						ctx.fillStyle = pointAttr.fill;
 						ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);

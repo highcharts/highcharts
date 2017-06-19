@@ -19,7 +19,6 @@ var areaProto = H.seriesTypes.area.prototype,
 seriesType('areaspline', 'spline', defaultPlotOptions.area, {
 	getStackPoints: areaProto.getStackPoints,
 	getGraphPath: areaProto.getGraphPath,
-	setStackCliffs: areaProto.setStackCliffs,
 	drawGraph: areaProto.drawGraph,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
