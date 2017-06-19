@@ -90,7 +90,7 @@ var addEvent = H.addEvent,
 H.Series = H.seriesType('line', null, 
 
 /**
- * @optionparent plotOptions.line
+ * @optionparent plotOptions.series
  */
 
 { // base series options
