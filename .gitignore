@@ -33,6 +33,8 @@
 /utils/samples/temp/
 /utils/samples/nightly/
 
+tree.json
+
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
 exporting-server/java/highcharts-export/highcharts-export-convert/src/main/java/com/highcharts/export/pool/ServerObjectFactory.java
