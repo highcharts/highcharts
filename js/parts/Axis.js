@@ -93,6 +93,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			month: '%b \'%y',
 			year: '%Y'
 		},
+		endOfMonth: false,
 		endOnTick: false,
 		// reversed: false,
 
