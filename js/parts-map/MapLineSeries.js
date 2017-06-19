@@ -18,7 +18,23 @@ seriesType('mapline', 'map',
  */
 {
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The width of the map line.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1
+	 * @product highmaps
+	 */
 	lineWidth: 1,
+
+	/**
+	 * Fill color for the map line shapes
+	 * 
+	 * @type {Color}
+	 * @default {all} none
+	 * @product highmaps
+	 */
 	fillColor: 'none'
 	/*= } =*/
 }, {

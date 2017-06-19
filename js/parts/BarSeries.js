@@ -19,5 +19,8 @@ seriesType('bar', 'column', null,
  * @optionparent plotOptions.bar
  */
 {
+
+	/**
+	 */
 	inverted: true
 });

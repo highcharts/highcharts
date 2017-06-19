@@ -40,13 +40,31 @@ H.setOptions(
 {
 	plotOptions: {
 		series: {
+
+			/**
+			 */
 			label: {
+
+				/**
+				 */
 				enabled: true,
 				// Allow labels to be placed distant to the graph if necessary, and
 				// draw a connector line to the graph
+
+				/**
+				 */
 				connectorAllowed: true,
+
+				/**
+				 */
 				connectorNeighbourDistance: 24, // If the label is closer than this to a neighbour graph, draw a connector
+
+				/**
+				 */
 				styles: {
+
+					/**
+					 */
 					fontWeight: 'bold'
 				}
 				// boxesToAvoid: []

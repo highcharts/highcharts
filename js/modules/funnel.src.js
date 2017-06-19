@@ -31,26 +31,116 @@ seriesType('funnel', 'pie',
  * @optionparent plotOptions.funnel
  */
 {
+
+	/**
+	 */
 	animation: false,
+
+	/**
+	 * The center of the series. By default, it is centered in the middle
+	 * of the plot area, so it fills the plot area height.
+	 * 
+	 * @type {Array<String|Number>}
+	 * @default {all} ["50%", "50%"]
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	center: ['50%', '50%'],
+
+	/**
+	 * The width of the funnel compared to the width of the plot area,
+	 * or the pixel width if it is a number.
+	 * 
+	 * @type {Number|String}
+	 * @default {all} 90%
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	width: '90%',
+
+	/**
+	 * The width of the neck, the lower part of the funnel. A number defines
+	 * pixel width, a percentage string defines a percentage of the plot
+	 * area width.
+	 * 
+	 * @type {Number|String}
+	 * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
+	 * @default {all} 30%
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	neckWidth: '30%',
+
+	/**
+	 * The height of the funnel or pyramid. If it is a number it defines
+	 * the pixel height, if it is a percentage string it is the percentage
+	 * of the plot area height.
+	 * 
+	 * @type {Number|String}
+	 * @sample {highcharts} highcharts/demo/funnel/ Funnel demo
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	height: '100%',
+
+	/**
+	 * The height of the neck, the lower part of the funnel. A number defines
+	 * pixel width, a percentage string defines a percentage of the plot
+	 * area height.
+	 * 
+	 * @type {Number|String}
+	 * @default {all} 25%
+	 * @product highcharts
+	 */
 	neckHeight: '25%',
+
+	/**
+	 * A reversed funnel has the widest area down. A reversed funnel with
+	 * no neck width and neck height is a pyramid.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} false
+	 * @since 3.0.10
+	 * @product highcharts
+	 */
 	reversed: false,
+
+	/**
+	 */
 	size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
 	/*= if (build.classic) { =*/
 	// Presentational
+
+	/**
+	 */
 	dataLabels: {
 		//position: 'right',
+
+		/**
+		 */
 		connectorWidth: 1
 		//connectorColor: null
 	},
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		select: {
+
+			/**
+			 */
 			color: '${palette.neutralColor20}',
+
+			/**
+			 */
 			borderColor: '${palette.neutralColor100}',
+
+			/**
+			 */
 			shadow: false
 		}
 	}
@@ -297,7 +387,23 @@ seriesType('pyramid', 'funnel',
  * @optionparent plotOptions.pyramid
  */
 {
+
+	/**
+	 */
 	neckWidth: '0%',
+
+	/**
+	 */
 	neckHeight: '0%',
+
+	/**
+	 * The pyramid is reversed by default, as opposed to the funnel, which
+	 * shares the layout engine, and is not reversed.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} true
+	 * @since 3.0.10
+	 * @product highcharts
+	 */
 	reversed: true
 });

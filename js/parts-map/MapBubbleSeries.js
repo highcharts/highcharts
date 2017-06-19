@@ -23,8 +23,17 @@ if (seriesTypes.bubble) {
 	 * @optionparent plotOptions.mapbubble
 	 */
 	{
+
+		/**
+		 */
 		animationLimit: 500,
+
+		/**
+		 */
 		tooltip: {
+
+			/**
+			 */
 			pointFormat: '{point.name}: {point.z}'
 		}
 

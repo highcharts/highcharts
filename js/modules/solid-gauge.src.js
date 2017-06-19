@@ -158,6 +158,9 @@ H.seriesType('solidgauge', 'gauge',
  * @optionparent plotOptions.solidgauge
  */
 {
+
+	/**
+	 */
 	colorByPoint: true
 
 }, {

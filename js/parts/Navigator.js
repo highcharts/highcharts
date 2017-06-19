@@ -65,89 +65,414 @@ extend(defaultOptions,
 	* @optionparent
 	*/
 	{
+
+	/**
+	 * The navigator is a small series below the main series, displaying
+	 * a view of the entire data set. It provides tools to zoom in and
+	 * out on parts of the data as well as panning across the dataset.
+	 * 
+	 * @product highstock
+	 */
 	navigator: {
 		//enabled: true,
+
+		/**
+		 * The height of the navigator.
+		 * 
+		 * @type {Number}
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/height/ A higher navigator
+		 * @default {all} 40
+		 * @product highstock
+		 */
 		height: 40,
+
+		/**
+		 * The distance from the nearest element, the X axis or X axis labels.
+		 * 
+		 * @type {Number}
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/margin/ A margin of 2 draws the     navigator closer to the X axis labels
+		 * @default {all} 25
+		 * @product highstock
+		 */
 		margin: 25,
+
+		/**
+		 * Whether the mask should be inside the range marking the zoomed
+		 * range, or outside. In Highstock 1.x it was always `false`.
+		 * 
+		 * @type {Boolean}
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/maskinside-false/ False, mask outside
+		 * @default {all} true
+		 * @since 2.0
+		 * @product highstock
+		 */
 		maskInside: true,
 		/*= if (build.classic) { =*/
+
+		/**
+		 * Options for the handles for dragging the zoomed area. Available
+		 * options are `backgroundColor` (defaults to `#ebe7e8`) and `borderColor`
+		 * (defaults to `#b2b1b6`).
+		 * 
+		 * @type {Object}
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/handles/ Colored handles
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/handles/ Colored handles
+		 * @product highstock
+		 */
 		handles: {
+
+			/**
+			 * The fill for the handle.
+			 * 
+			 * @type {Color}
+			 * @default {all} #f2f2f2
+			 * @product highstock
+			 */
 			backgroundColor: '${palette.neutralColor5}',
+
+			/**
+			 * The stroke for the handle border and the stripes inside.
+			 * 
+			 * @type {Color}
+			 * @default {all} #999999
+			 * @product highstock
+			 */
 			borderColor: '${palette.neutralColor40}'
 		},
+
+		/**
+		 * The color of the mask covering the areas of the navigator series
+		 * that are currently not visible in the main series. The default
+		 * color is bluish with an opacity of 0.3 to see the series below.
+		 * 
+		 * @type {Color}
+		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), the mask is styled with the `.highcharts-navigator-
+		 * mask` and `.highcharts-navigator-mask-inside` classes.
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/maskfill/ Blue, semi transparent mask
+		 * @default {all} rgba(102,133,194,0.3)
+		 * @product highstock
+		 */
 		maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
+
+		/**
+		 * The color of the line marking the currently zoomed area in the
+		 * navigator.
+		 * 
+		 * @type {Color}
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/outline/ 2px blue outline
+		 * @default {all} #cccccc
+		 * @product highstock
+		 */
 		outlineColor: '${palette.neutralColor20}',
+
+		/**
+		 * The width of the line marking the currently zoomed area in the
+		 * navigator.
+		 * 
+		 * @type {Number}
+		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), the outline stroke width is set with the `.
+		 * highcharts-navigator-outline` class.
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/outline/ 2px blue outline
+		 * @default {all} 2
+		 * @product highstock
+		 */
 		outlineWidth: 1,
 		/*= } =*/
+
+		/**
+		 * Options for the navigator series. Available options are the same
+		 * as any series, documented at [plotOptions](#plotOptions.series)
+		 * and [series](#series).
+		 * 
+		 * Unless data is explicitly defined on navigator.series, the data
+		 * is borrowed from the first series in the chart.
+		 * 
+		 * Default series options for the navigator series are:
+		 * 
+		 * <pre>series: {
+		 * type: 'areaspline',
+		 * color: '#4572A7',
+		 * fillOpacity: 0.05,
+		 * dataGrouping: {
+		 * smoothed: true
+		 * },
+		 * lineWidth: 1,
+		 * marker: {
+		 * enabled: false
+		 * }
+		 * }</pre>
+		 * 
+		 * @type {Object}
+		 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+		 * style/style-by-css), the navigator series is styled with the `.
+		 * highcharts-navigator-series` class.
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/series-data/ Using a separate data set for the navigator
+		 * @sample {highstock} highcharts/tree/master/samples/stock/navigator/series/ A green navigator series
+		 * @product highstock
+		 */
 		series: {
+
+			/**
+			 */
 			type: defaultSeriesType,
 			/*= if (build.classic) { =*/
+
+			/**
+			 */
 			color: '${palette.highlightColor80}',
+
+			/**
+			 */
 			fillOpacity: 0.05,
+
+			/**
+			 */
 			lineWidth: 1,
 			/*= } =*/
+
+			/**
+			 */
 			compare: null,
+
+			/**
+			 */
 			dataGrouping: {
+
+				/**
+				 */
 				approximation: 'average',
+
+				/**
+				 */
 				enabled: true,
+
+				/**
+				 */
 				groupPixelWidth: 2,
+
+				/**
+				 */
 				smoothed: true,
+
+				/**
+				 */
 				units: units
 			},
+
+			/**
+			 */
 			dataLabels: {
+
+				/**
+				 */
 				enabled: false,
+
+				/**
+				 */
 				zIndex: 2 // #1839
 			},
+
+			/**
+			 */
 			id: 'highcharts-navigator-series',
+
+			/**
+			 */
 			className: 'highcharts-navigator-series',
+
+			/**
+			 */
 			lineColor: null, // Allow color setting while disallowing default candlestick setting (#4602)
+
+			/**
+			 */
 			marker: {
+
+				/**
+				 */
 				enabled: false
 			},
+
+			/**
+			 */
 			pointRange: 0,
+
+			/**
+			 */
 			shadow: false,
+
+			/**
+			 */
 			threshold: null
 		},
 		//top: undefined,
 		//opposite: undefined,
+
+		/**
+		 * Options for the navigator X axis. Available options are the same
+		 * as any X axis, documented at [xAxis](#xAxis). Default series options
+		 * for the navigator xAxis are:
+		 * 
+		 * <pre>xAxis: {
+		 * tickWidth: 0,
+		 * lineWidth: 0,
+		 * gridLineWidth: 1,
+		 * tickPixelInterval: 200,
+		 * labels: {
+		 * align: 'left',
+		 * style: {
+		 * color: '#888'
+		 * },
+		 * x: 3,
+		 * y: -4
+		 * }
+		 * }</pre>
+		 * 
+		 * @type {Object}
+		 * @product highstock
+		 */
 		xAxis: {
+
+			/**
+			 */
 			className: 'highcharts-navigator-xaxis',
+
+			/**
+			 */
 			tickLength: 0,
 			/*= if (build.classic) { =*/
+
+			/**
+			 */
 			lineWidth: 0,
+
+			/**
+			 */
 			gridLineColor: '${palette.neutralColor10}',
+
+			/**
+			 */
 			gridLineWidth: 1,
 			/*= } =*/
+
+			/**
+			 */
 			tickPixelInterval: 200,
+
+			/**
+			 */
 			labels: {
+
+				/**
+				 */
 				align: 'left',
 				/*= if (build.classic) { =*/
+
+				/**
+				 */
 				style: {
+
+					/**
+					 */
 					color: '${palette.neutralColor40}'
 				},
 				/*= } =*/
+
+				/**
+				 */
 				x: 3,
+
+				/**
+				 */
 				y: -4
 			},
+
+			/**
+			 */
 			crosshair: false
 		},
+
+		/**
+		 * Options for the navigator Y axis. Available options are the same
+		 * as any y axis, documented at [yAxis](#yAxis). Default series options
+		 * for the navigator yAxis are:
+		 * 
+		 * <pre>yAxis: {
+		 * gridLineWidth: 0,
+		 * startOnTick: false,
+		 * endOnTick: false,
+		 * minPadding: 0.1,
+		 * maxPadding: 0.1,
+		 * labels: {
+		 * enabled: false
+		 * },
+		 * title: {
+		 * text: null
+		 * },
+		 * tickWidth: 0
+		 * }</pre>
+		 * 
+		 * @type {Object}
+		 * @product highstock
+		 */
 		yAxis: {
+
+			/**
+			 */
 			className: 'highcharts-navigator-yaxis',
 			/*= if (build.classic) { =*/
+
+			/**
+			 */
 			gridLineWidth: 0,
 			/*= } =*/
+
+			/**
+			 */
 			startOnTick: false,
+
+			/**
+			 */
 			endOnTick: false,
+
+			/**
+			 */
 			minPadding: 0.1,
+
+			/**
+			 */
 			maxPadding: 0.1,
+
+			/**
+			 */
 			labels: {
+
+				/**
+				 */
 				enabled: false
 			},
+
+			/**
+			 */
 			crosshair: false,
+
+			/**
+			 */
 			title: {
+
+				/**
+				 */
 				text: null
 			},
+
+			/**
+			 */
 			tickLength: 0,
+
+			/**
+			 */
 			tickWidth: 0
 		}
 	}

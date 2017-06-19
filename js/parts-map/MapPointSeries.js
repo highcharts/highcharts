@@ -21,15 +21,39 @@ seriesType('mappoint', 'scatter',
 	 * @optionparent plotOptions.mappoint
 	 */
 	{
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		enabled: true,
+
+		/**
+		 */
 		formatter: function () { // #2945
 			return this.point.name;
 		},
+
+		/**
+		 */
 		crop: false,
+
+		/**
+		 */
 		defer: false,
+
+		/**
+		 */
 		overflow: false,
+
+		/**
+		 */
 		style: {
+
+			/**
+			 */
 			color: '${palette.neutralColor100}'
 		}
 	}

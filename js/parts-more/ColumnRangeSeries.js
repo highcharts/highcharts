@@ -26,11 +26,29 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
  * @optionparent plotOptions.columrange
  */
 {
+
+	/**
+	 */
 	lineWidth: 1,
+
+	/**
+	 */
 	pointRange: null,
+
+	/**
+	 */
 	marker: null,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			halo: false
 		}
 	}

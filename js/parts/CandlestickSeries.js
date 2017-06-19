@@ -25,17 +25,84 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column,
  * @optionparent plotOptions.candlestick
  */
 {
+
+	/**
+	 */
 	states: {
+
+		/**
+		 * @extends plotOptions.column.states.hover
+		 * @product highstock
+		 */
 		hover: {
+
+			/**
+			 * The pixel width of the line/border around the candlestick. Defaults
+			 * to `2`.
+			 * 
+			 * @type {Number}
+			 * @default {all} 2
+			 * @product highstock
+			 */
 			lineWidth: 2
 		}
 	},
+
+	/**
+	 */
 	tooltip: defaultPlotOptions.ohlc.tooltip,
+
+	/**
+	 */
 	threshold: null,
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The color of the line/border of the candlestick.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the line stroke can be set with the `.highcharts-
+	 * candlestick-series .highcahrts-point` rule.
+	 * 
+	 * @type {Color}
+	 * @see [upLineColor](#plotOptions.candlestick.upLineColor)
+	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/candlestick-linecolor/ Candlestick line colors
+	 * @default {all} #000000
+	 * @product highstock
+	 */
 	lineColor: '${palette.neutralColor100}',
+
+	/**
+	 * The pixel width of the candlestick line/border. Defaults to `1`.
+	 * 
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the line stroke width can be set with the `.
+	 * highcharts-candlestick-series .highcahrts-point` rule.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1
+	 * @product highstock
+	 */
 	lineWidth: 1,
+
+	/**
+	 * The fill color of the candlestick when values are rising.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the up color can be set with the `.highcharts-
+	 * candlestick-series .highcharts-point-up` rule.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/candlestick-color/ Custom colors
+	 * @sample {highstock} highcharts/css/candlestick/ Colors in styled mode
+	 * @default {all} #ffffff
+	 * @product highstock
+	 */
 	upColor: '${palette.backgroundColor}',
+
+	/**
+	 */
 	stickyTracking: true
 	// upLineColor: null
 	/*= } =*/
