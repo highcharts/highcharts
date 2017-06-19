@@ -154,7 +154,7 @@ colorAxisMethods = {
 // The solidgauge series type
 H.seriesType('solidgauge', 'gauge', 
 /** 
- * @extends gauge
+ * @extends plotOptions.gauge
  * @optionparent plotOptions.solidgauge
  */
 {
