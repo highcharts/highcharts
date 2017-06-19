@@ -32,7 +32,9 @@ function flatten(productName, dump, target) {
     var res = target || {};
 
     dump.forEach(function (entry) {
-        var key = entry.fullname;
+        var key = entry.fullname,
+            oentry = entry
+        ;
 
         key = key.replace('<', '.').replace('>', '');
 
@@ -43,6 +45,22 @@ function flatten(productName, dump, target) {
         entry = res[key];
 
         entry.products = entry.products || [];
+
+        if (oentry.defaults && oentry.defaults.length > 0) {
+          entry.defaultValues = entry.defaultValues || [];
+          entry.defaultValues.push({
+            product: productName,
+            value: oentry.defaults
+          });
+        }
+
+        if (oentry.demo && oentry.demo.length > 0) {
+          entry.productDemos = entry.productDemos || [];
+          entry.productDemos.push({
+            product: productName,
+            demo: oentry.demo
+          });
+        }
 
         if (entry.products.filter(function (b) {return b === productName}).length === 0) {
             entry.products.push(productName);
@@ -249,7 +267,7 @@ function doCompare(code, dump) {
         }
 
         if (dentry.defaults && dentry.defaults.length > 0) {
-            doclet.push('@default ' + dentry.defaults);
+            //doclet.push('@default ' + dentry.defaults);
         }
 
         if (dentry.todo) {
@@ -272,8 +290,37 @@ function doCompare(code, dump) {
         if (dentry.demo) {
             samples = fixSample(dentry.demo.replace(/\n/g, ' ').replace(/\r/g, ''));
             samples.forEach(function (sample) {
-                doclet.push('@sample ' + sample);
+                // doclet.push('@sample ' + sample);
             });
+        }
+
+        if (dentry.productDemos) {
+          dentry.productDemos.forEach(function (d) {
+            d.demo = fixSample(d.demo.replace(/\n/g, ' ').replace(/\r/g, ''));
+            d.demo.forEach(function (sample) {
+              doclet.push('@sample {' + d.product + '} ' + sample);
+            });
+          });
+        }
+
+        if (dentry.defaultValues && dentry.defaultValues.length > 0) {
+
+          let dval = dentry.defaultValues[0].value;
+          let allDefaultsSame = true;
+
+          dentry.defaultValues.forEach(function (def) {
+            if (def.value !== dval) {
+              allDefaultsSame = false;
+            }
+          });
+
+          if (allDefaultsSame) {
+            doclet.push('@default {all} ' + dval);
+          } else {
+            dentry.defaultValues.forEach(function (def) {
+              doclet.push('@default {' + def.product + '} ' + def.value);
+            });
+          }
         }
 
         if (dentry.since) {
@@ -282,6 +329,10 @@ function doCompare(code, dump) {
 
         if (dentry.products && dentry.products.length > 0) {
             doclet.push('@product ' + dentry.products.join(' '));
+        }
+
+        if (doclet.length === 0) {
+          doclet.push('@todo add docs');
         }
 
         return doclet;
