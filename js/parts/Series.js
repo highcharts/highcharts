@@ -107,8 +107,8 @@ H.Series = H.seriesType('line', null,
 	 * 
 	 * @type {Number}
 	 * @see In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-	 * style/style-by-css), the line stroke-width can be set with the `.
-	 * highcharts-graph` class name.
+	 * style/style-by-css), the line stroke-width can be set with the
+	 * `.highcharts-graph` class name.
 	 * @sample {highcharts} highcharts/plotoptions/series-linewidth-general/ On all series
 	 * @sample {highcharts} highcharts/plotoptions/series-linewidth-specific/ On one single series
 	 * @default {all} 2

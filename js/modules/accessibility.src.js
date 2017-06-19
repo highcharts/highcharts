@@ -132,12 +132,109 @@ H.setOptions({
 			 * @type {Boolean}
 			 * @default {all} true
 			 * @since 5.0.0
-			 * @product highcharts highstock highmaps
 			 */
 			enabled: true
-		//	skipNullPoints: false
+			
+			/**
+			 * Skip null points when navigating through points with the
+			 * keyboard.
+			 * 
+			 * @type {Boolean}
+			 * @default {all} false
+			 * @since 5.0.0
+			 * @apioption accessibility.keyboardNavigation.skipNullPoints
+			 */
 		}
-		// describeSingleSeries: false
+
+		/**
+		 * Whether or not to add series descriptions to charts with a single
+		 * series.
+		 * 
+		 * @type {Boolean}
+		 * @default {all} false
+		 * @since 5.0.0
+		 * @product highcharts highstock highmaps
+		 * @apioption accessibility.describeSingleSeries
+		 */
+
+		/**
+		 * Function to run upon clicking the "View as Data Table" link in the
+		 * screen reader region.
+		 * 
+		 * By default Highcharts will insert and set focus to a data table
+		 * representation of the chart.
+		 * 
+		 * @type {Function}
+		 * @since 5.0.0
+		 * @apioption accessibility.onTableAnchorClick
+		 */
+		
+		/**
+		 * Date format to use for points on datetime axes when describing them
+		 * to screen reader users.
+		 * 
+		 * Defaults to the same format as in tooltip.
+		 * 
+		 * For an overview of the replacement codes, see [dateFormat](
+		 * #Highcharts.dateFormat).
+		 * 
+		 * @type {String}
+		 * @see [pointDateFormatter](#accessibility.pointDateFormatter)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDateFormat
+		 */
+		
+		/**
+		 * Formatter function to determine the date/time format used with points
+		 * on datetime axes when describing them to screen reader users. Receives
+		 * one argument, `point`, referring to the point to describe. Should
+		 * return a date format string compatible with [dateFormat](#Highcharts.
+		 * dateFormat).
+		 * 
+		 * @type {Function}
+		 * @see [pointDateFormat](#accessibility.pointDateFormat)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDateFormatter
+		 */
+		
+		/**
+		 * Formatter function to use instead of the default for point descriptions.
+		 * Receives one argument, `point`, referring to the point to describe.
+		 * Should return a String with the description of the point for a screen
+		 * reader user.
+		 * 
+		 * @type {Function}
+		 * @see [point.description](#series<line>.data.description)
+		 * @since 5.0.0
+		 * @apioption accessibility.pointDescriptionFormatter
+		 */
+		
+		/**
+		 * A formatter function to create the HTML contents of the hidden screen
+		 * reader information region. Receives one argument, `chart`, referring
+		 * to the chart object. Should return a String with the HTML content
+		 * of the region.
+		 * 
+		 * The link to view the chart as a data table will be added automatically
+		 * after the custom HTML content.
+		 * 
+		 * @type {Function}
+		 * @default {all} undefined
+		 * @since 5.0.0
+		 * @apioption accessibility.screenReaderSectionFormatter
+		 */
+		
+		/**
+		 * Formatter function to use instead of the default for series descriptions.
+		 * Receives one argument, `series`, referring to the series to describe.
+		 * Should return a String with the description of the series for a
+		 * screen reader user.
+		 * 
+		 * @type {Function}
+		 * @see [series.description](#plotOptions.series.description)
+		 * @since 5.0.0
+		 * @apioption accessibility.seriesDescriptionFormatter
+		 */
 	}
 });
 

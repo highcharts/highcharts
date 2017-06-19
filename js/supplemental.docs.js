@@ -3,119 +3,8 @@
    which can't be found in the source code.
 */
 
-/**
- * Whether or not to add series descriptions to charts with a single
- * series.
- * 
- * @type {Boolean}
- * @default {all} false
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.describeSingleSeries docs to actual source code
- * @apioption accessibility.describeSingleSeries
- */
 
-/**
- * Function to run upon clicking the "View as Data Table" link in the
- * screen reader region.
- * 
- * By default Highcharts will insert and set focus to a data table representation
- * of the chart.
- * 
- * @type {Function}
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.onTableAnchorClick docs to actual source code
- * @apioption accessibility.onTableAnchorClick
- */
 
-/**
- * Date format to use for points on datetime axes when describing them
- * to screen reader users.
- * 
- * Defaults to the same format as in tooltip.
- * 
- * For an overview of the replacement codes, see [dateFormat](#Highcharts.
- * dateFormat).
- * 
- * @type {String}
- * @see [pointDateFormatter](#accessibility.pointDateFormatter)
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.pointDateFormat docs to actual source code
- * @apioption accessibility.pointDateFormat
- */
-
-/**
- * Formatter function to determine the date/time format used with points
- * on datetime axes when describing them to screen reader users. Receives
- * one argument, `point`, referring to the point to describe. Should
- * return a date format string compatible with [dateFormat](#Highcharts.
- * dateFormat).
- * 
- * @type {Function}
- * @see [pointDateFormat](#accessibility.pointDateFormat)
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.pointDateFormatter docs to actual source code
- * @apioption accessibility.pointDateFormatter
- */
-
-/**
- * Formatter function to use instead of the default for point descriptions.
- * Receives one argument, `point`, referring to the point to describe.
- * Should return a String with the description of the point for a screen
- * reader user.
- * 
- * @type {Function}
- * @see [point.description](#series<line>.data.description)
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.pointDescriptionFormatter docs to actual source code
- * @apioption accessibility.pointDescriptionFormatter
- */
-
-/**
- * A formatter function to create the HTML contents of the hidden screen
- * reader information region. Receives one argument, `chart`, referring
- * to the chart object. Should return a String with the HTML content
- * of the region.
- * 
- * The link to view the chart as a data table will be added automatically
- * after the custom HTML content.
- * 
- * @type {Function}
- * @default {all} undefined
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.screenReaderSectionFormatter docs to actual source code
- * @apioption accessibility.screenReaderSectionFormatter
- */
-
-/**
- * Formatter function to use instead of the default for series descriptions.
- * Receives one argument, `series`, referring to the series to describe.
- * Should return a String with the description of the series for a
- * screen reader user.
- * 
- * @type {Function}
- * @see [series.description](#plotOptions.series.description)
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.seriesDescriptionFormatter docs to actual source code
- * @apioption accessibility.seriesDescriptionFormatter
- */
-
-/**
- * Skip null points when navigating through points with the keyboard.
- * 
- * @type {Boolean}
- * @default {all} false
- * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy accessibility.keyboardNavigation.skipNullPoints docs to actual source code
- * @apioption accessibility.keyboardNavigation.skipNullPoints
- */
 
 /**
  * When using multiple axis, the ticks of two or more opposite axes
@@ -133,7 +22,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/alignticks-false/ False
  * @default {all} true
  * @product highcharts highstock
- * @todo Copy chart.alignTicks docs to actual source code
  * @apioption chart.alignTicks
  */
 
@@ -171,8 +59,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/animation-none/ Updating with no animation
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/animation-duration/ With a longer duration
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy chart.animation docs to actual source code
  * @apioption chart.animation
  */
 
@@ -187,8 +73,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/border/ 2px border
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/border/ Border options
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy chart.borderWidth docs to actual source code
  * @apioption chart.borderWidth
  */
 
@@ -197,8 +81,6 @@
  * unique CSS styling for each chart.
  * 
  * @type {String}
- * @product highcharts highstock highmaps
- * @todo Copy chart.className docs to actual source code
  * @apioption chart.className
  */
 
@@ -213,8 +95,6 @@
  * @see [typeDescription](#chart.typeDescription)
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.description docs to actual source code
  * @apioption chart.description
  */
 
@@ -232,7 +112,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/navigator/inverted/ Inverted stock chart
  * @default {all} false
  * @product highcharts highstock
- * @todo Copy chart.inverted docs to actual source code
  * @apioption chart.inverted
  */
 
@@ -252,8 +131,6 @@
  * @type {Array}
  * @sample {highcharts} highcharts/chart/margins-zero/ Zero margins
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/margin-zero/ Zero margins
- * @product highcharts highstock highmaps
- * @todo Copy chart.margin docs to actual source code
  * @apioption chart.margin
  */
 
@@ -267,8 +144,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/marginbottom/ 100px bottom margin
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/margin/ 100px margins
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.marginBottom docs to actual source code
  * @apioption chart.marginBottom
  */
 
@@ -283,8 +158,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/margin/ 100px margins
  * @default {all} null
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.marginLeft docs to actual source code
  * @apioption chart.marginLeft
  */
 
@@ -299,8 +172,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/margin/ 100px margins
  * @default {all} null
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.marginRight docs to actual source code
  * @apioption chart.marginRight
  */
 
@@ -315,8 +186,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/margin/ 100px margins
  * @default {all} null
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.marginTop docs to actual source code
  * @apioption chart.marginTop
  */
 
@@ -331,7 +200,6 @@
  * @type {String}
  * @since 4.0.3
  * @product highcharts
- * @todo Copy chart.panKey docs to actual source code
  * @apioption chart.panKey
  */
 
@@ -349,7 +217,6 @@
  * @default {highstock} true
  * @since 4.0.3
  * @product highcharts highstock
- * @todo Copy chart.panning docs to actual source code
  * @apioption chart.panning
  */
 
@@ -367,7 +234,6 @@
  * @default {highstock} x
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy chart.pinchType docs to actual source code
  * @apioption chart.pinchType
  */
 
@@ -385,8 +251,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotbackgroundcolor-color/ Color
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotbackgroundcolor-gradient/ Gradient
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy chart.plotBackgroundColor docs to actual source code
  * @apioption chart.plotBackgroundColor
  */
 
@@ -405,8 +269,6 @@
  * @sample {highcharts} highcharts/chart/plotbackgroundimage/ Skies
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/plotbackgroundimage/ Skies
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy chart.plotBackgroundImage docs to actual source code
  * @apioption chart.plotBackgroundImage
  */
 
@@ -418,8 +280,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/plotborder/ 2px border
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotborder/ Plot border options
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy chart.plotBorderWidth docs to actual source code
  * @apioption chart.plotBorderWidth
  */
 
@@ -433,8 +293,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/plotshadow/ Plot shadow
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/plotborder/ Plot border options
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy chart.plotShadow docs to actual source code
  * @apioption chart.plotShadow
  */
 
@@ -447,7 +305,6 @@
  * @default {all} false
  * @since 2.3.0
  * @product highcharts
- * @todo Copy chart.polar docs to actual source code
  * @apioption chart.polar
  */
 
@@ -464,8 +321,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/reflow-false/ False
  * @default {all} true
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy chart.reflow docs to actual source code
  * @apioption chart.reflow
  */
 
@@ -482,8 +337,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/renderto-string/ String
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/renderto-object/ Object reference
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/renderto-jquery/ Object reference through jQuery
- * @product highcharts highstock highmaps
- * @todo Copy chart.renderTo docs to actual source code
  * @apioption chart.renderTo
  */
 
@@ -497,8 +350,6 @@
  * highcharts-selection-marker` class.
  * @default {all} rgba(51,92,173,0.25)
  * @since 2.1.7
- * @product highcharts highstock highmaps
- * @todo Copy chart.selectionMarkerFill docs to actual source code
  * @apioption chart.selectionMarkerFill
  */
 
@@ -512,8 +363,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/shadow/ Shadow
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/border/ Chart border and shadow
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy chart.shadow docs to actual source code
  * @apioption chart.shadow
  */
 
@@ -527,7 +376,6 @@
  * @sample {highcharts} highcharts/chart/showaxes-true/ True
  * @since 1.2.5
  * @product highcharts
- * @todo Copy chart.showAxes docs to actual source code
  * @apioption chart.showAxes
  */
 
@@ -541,8 +389,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/spacing/ Spacing 100 all around
  * @default {all} 15
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy chart.spacingBottom docs to actual source code
  * @apioption chart.spacingBottom
  */
 
@@ -556,8 +402,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/spacing/ Spacing 100 all around
  * @default {all} 10
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy chart.spacingLeft docs to actual source code
  * @apioption chart.spacingLeft
  */
 
@@ -572,8 +416,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/spacing/ Spacing 100 all around
  * @default {all} 10
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy chart.spacingRight docs to actual source code
  * @apioption chart.spacingRight
  */
 
@@ -588,8 +430,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/spacing/ Spacing 100 all around
  * @default {all} 10
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy chart.spacingTop docs to actual source code
  * @apioption chart.spacingTop
  */
 
@@ -607,8 +447,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/style/ Using a serif type font
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/style-serif-font/ Using a serif type font
  * @default {all} {"fontFamily":"\"Lucida Grande\", \"Lucida Sans Unicode\", Verdana, Arial, Helvetica, sans-serif","fontSize":"12px"}
- * @product highcharts highstock highmaps
- * @todo Copy chart.style docs to actual source code
  * @apioption chart.style
  */
 
@@ -625,8 +463,6 @@
  * @default {highstock} line
  * @default {highmaps} map
  * @since 2.1.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.type docs to actual source code
  * @apioption chart.type
  */
 
@@ -644,8 +480,6 @@
  * @type {String}
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.typeDescription docs to actual source code
  * @apioption chart.typeDescription
  */
 
@@ -665,15 +499,12 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/zoomtype-y/ Y
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/zoomtype-xy/ Xy
  * @product highcharts highstock
- * @todo Copy chart.zoomType docs to actual source code
  * @apioption chart.zoomType
  */
 
 /**
  * Event listeners for the chart.
  * 
- * @product highcharts highstock highmaps
- * @todo Copy chart.events docs to actual source code
  * @apioption chart.events
  */
 
@@ -691,8 +522,6 @@
  * @sample {highcharts} highcharts/chart/events-addseries/ Alert on add series
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/events-addseries/ Alert on add series
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.addSeries docs to actual source code
  * @apioption chart.events.addSeries
  */
 
@@ -706,8 +535,6 @@
  * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/ Rescale the chart to print
  * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/ Rescale the chart to print
  * @since 4.1.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.afterPrint docs to actual source code
  * @apioption chart.events.afterPrint
  */
 
@@ -721,8 +548,6 @@
  * @sample {highstock} highcharts/chart/events-beforeprint-afterprint/ Rescale the chart to print
  * @sample {highmaps} highcharts/chart/events-beforeprint-afterprint/ Rescale the chart to print
  * @since 4.1.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.beforePrint docs to actual source code
  * @apioption chart.events.beforePrint
  */
 
@@ -754,8 +579,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/events-click/ Record coordinates on click
  * @sample {highmaps} highcharts/chart/events-container/ Alternatively, attach event to container
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.click docs to actual source code
  * @apioption chart.events.click
  */
 
@@ -799,7 +622,6 @@
  * @sample {highcharts} highcharts/drilldown/async/ Async drilldown
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy chart.events.drilldown docs to actual source code
  * @apioption chart.events.drilldown
  */
 
@@ -810,7 +632,6 @@
  * @context Chart
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy chart.events.drillup docs to actual source code
  * @apioption chart.events.drillup
  */
 
@@ -822,7 +643,6 @@
  * @context Chart
  * @since 4.2.4
  * @product highcharts highmaps
- * @todo Copy chart.events.drillupall docs to actual source code
  * @apioption chart.events.drillupall
  */
 
@@ -841,8 +661,6 @@
  * @sample {highcharts} highcharts/chart/events-load/ Alert on chart load
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/events-load/ Alert on chart load
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/events-load/ Add series on chart load
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.load docs to actual source code
  * @apioption chart.events.load
  */
 
@@ -859,8 +677,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/events-redraw/ Alert on chart redraw,     when adding a series or moving the zoomed range
  * @sample {highmaps} highcharts/tree/master/samples/maps/chart/events-redraw/ Set subtitle on chart redraw
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.redraw docs to actual source code
  * @apioption chart.events.redraw
  */
 
@@ -871,8 +687,6 @@
  * @type {Function}
  * @context Chart
  * @since 5.0.7
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.render docs to actual source code
  * @apioption chart.events.render
  */
 
@@ -907,8 +721,6 @@
  * @sample {highcharts} highcharts/chart/events-selection-points/ Select a range of points through a drag selection
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/events-selection/ Report on selection and reset
  * @sample {highstock} highcharts/chart/events-selection-points/ Select a range of points through a drag selection (Highcharts)
- * @product highcharts highstock highmaps
- * @todo Copy chart.events.selection docs to actual source code
  * @apioption chart.events.selection
  */
 
@@ -1052,8 +864,6 @@
  * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/ Relative to the chart
  * @default {all} plot
  * @since 2.2
- * @product highcharts highstock highmaps
- * @todo Copy chart.resetZoomButton.relativeTo docs to actual source code
  * @apioption chart.resetZoomButton.relativeTo
  */
 
@@ -1063,8 +873,6 @@
  * @validvalue ["top", "middle", "bottom"]
  * @type {String}
  * @default {all} top
- * @product highcharts highstock highmaps
- * @todo Copy chart.resetZoomButton.position.verticalAlign docs to actual source code
  * @apioption chart.resetZoomButton.position.verticalAlign
  */
 
@@ -1084,7 +892,6 @@
  * @sample {highcharts} highcharts/data/csv/ CSV
  * @since 4.0
  * @product highcharts
- * @todo Copy data docs to actual source code
  * @apioption data
  */
 
@@ -1100,7 +907,6 @@
  * @sample {highcharts} highcharts/data/columns/ Columns
  * @since 4.0
  * @product highcharts
- * @todo Copy data.columns docs to actual source code
  * @apioption data.columns
  */
 
@@ -1116,7 +922,6 @@
  * @sample {highcharts} highcharts/data/complete/ Modify data on complete
  * @since 4.0
  * @product highcharts
- * @todo Copy data.complete docs to actual source code
  * @apioption data.complete
  */
 
@@ -1137,7 +942,6 @@
  * @sample {highcharts} highcharts/data/csv/ Data from CSV
  * @since 4.0
  * @product highcharts
- * @todo Copy data.csv docs to actual source code
  * @apioption data.csv
  */
 
@@ -1160,7 +964,6 @@
  * @sample {highcharts} highcharts/data/dateformat-auto/ Best guess date format
  * @since 4.0
  * @product highcharts
- * @todo Copy data.dateFormat docs to actual source code
  * @apioption data.dateFormat
  */
 
@@ -1172,7 +975,6 @@
  * @default {all} .
  * @since 4.1.0
  * @product highcharts
- * @todo Copy data.decimalPoint docs to actual source code
  * @apioption data.decimalPoint
  */
 
@@ -1184,7 +986,6 @@
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0
  * @product highcharts
- * @todo Copy data.endColumn docs to actual source code
  * @apioption data.endColumn
  */
 
@@ -1196,7 +997,6 @@
  * @sample {highcharts} highcharts/data/start-end/ Limited data
  * @since 4.0.4
  * @product highcharts
- * @todo Copy data.endRow docs to actual source code
  * @apioption data.endRow
  */
 
@@ -1209,7 +1009,6 @@
  * @default {all} true
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy data.firstRowAsNames docs to actual source code
  * @apioption data.firstRowAsNames
  */
 
@@ -1221,7 +1020,6 @@
  * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
  * @since 4.0
  * @product highcharts
- * @todo Copy data.googleSpreadsheetKey docs to actual source code
  * @apioption data.googleSpreadsheetKey
  */
 
@@ -1234,7 +1032,6 @@
  * @sample {highcharts} highcharts/data/google-spreadsheet/ Load a Google Spreadsheet
  * @since 4.0
  * @product highcharts
- * @todo Copy data.googleSpreadsheetWorksheet docs to actual source code
  * @apioption data.googleSpreadsheetWorksheet
  */
 
@@ -1247,7 +1044,6 @@
  * @sample {highcharts} highcharts/data/delimiters/ Delimiters
  * @since 4.0
  * @product highcharts
- * @todo Copy data.itemDelimiter docs to actual source code
  * @apioption data.itemDelimiter
  */
 
@@ -1259,7 +1055,6 @@
  * @default {all} \n
  * @since 4.0
  * @product highcharts
- * @todo Copy data.lineDelimiter docs to actual source code
  * @apioption data.lineDelimiter
  */
 
@@ -1271,7 +1066,6 @@
  * @see [dateFormat](#data.dateFormat)
  * @since 4.0
  * @product highcharts
- * @todo Copy data.parseDate docs to actual source code
  * @apioption data.parseDate
  */
 
@@ -1286,7 +1080,6 @@
  * @sample {highcharts} highcharts/data/parsed/ Modify data after parse
  * @since 4.0
  * @product highcharts
- * @todo Copy data.parsed docs to actual source code
  * @apioption data.parsed
  */
 
@@ -1299,7 +1092,6 @@
  * @sample {highcharts} highcharts/data/rows/ Data in rows
  * @since 4.0
  * @product highcharts
- * @todo Copy data.rows docs to actual source code
  * @apioption data.rows
  */
 
@@ -1311,7 +1103,6 @@
  * @sample {highcharts} highcharts/data/seriesmapping-label/ Label from data set
  * @since 4.0.4
  * @product highcharts
- * @todo Copy data.seriesMapping docs to actual source code
  * @apioption data.seriesMapping
  */
 
@@ -1323,7 +1114,6 @@
  * @default {all} 0
  * @since 4.0
  * @product highcharts
- * @todo Copy data.startColumn docs to actual source code
  * @apioption data.startColumn
  */
 
@@ -1335,7 +1125,6 @@
  * @default {all} 0
  * @since 4.0
  * @product highcharts
- * @todo Copy data.startRow docs to actual source code
  * @apioption data.startRow
  */
 
@@ -1349,7 +1138,6 @@
  * @default {all} false
  * @since 4.0
  * @product highcharts
- * @todo Copy data.switchRowsAndColumns docs to actual source code
  * @apioption data.switchRowsAndColumns
  */
 
@@ -1362,7 +1150,6 @@
  * @sample {highcharts} highcharts/demo/column-parsed/ Parsed table
  * @since 4.0
  * @product highcharts
- * @todo Copy data.table docs to actual source code
  * @apioption data.table
  */
 
@@ -1375,8 +1162,6 @@
  * 
  * @type {Object}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy defs docs to actual source code
  * @apioption defs
  */
 
@@ -1390,7 +1175,6 @@
  * @default {all} true
  * @since 4.1.7
  * @product highcharts
- * @todo Copy drilldown.allowPointDrilldown docs to actual source code
  * @apioption drilldown.allowPointDrilldown
  */
 
@@ -1403,7 +1187,6 @@
  * @type {Array<Object>}
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy drilldown.series docs to actual source code
  * @apioption drilldown.series
  */
 
@@ -1414,7 +1197,6 @@
  * @default {all} plotBox
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy drilldown.drillUpButton.relativeTo docs to actual source code
  * @apioption drilldown.drillUpButton.relativeTo
  */
 
@@ -1433,7 +1215,6 @@
  * @sample {highmaps} highcharts/drilldown/drillupbutton/ Button theming
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy drilldown.drillUpButton.theme docs to actual source code
  * @apioption drilldown.drillUpButton.theme
  */
 
@@ -1452,8 +1233,6 @@
  * @type {Boolean}
  * @default {all} false
  * @since 4.1.8
- * @product highcharts highstock highmaps
- * @todo Copy exporting.allowHTML docs to actual source code
  * @apioption exporting.allowHTML
  */
 
@@ -1466,8 +1245,6 @@
  * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/ Added data labels
  * @sample {highstock} highcharts/exporting/chartoptions-data-labels/ Added data labels
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy exporting.chartOptions docs to actual source code
  * @apioption exporting.chartOptions
  */
 
@@ -1480,8 +1257,6 @@
  * @sample {highstock} highcharts/exporting/enabled-false/ Exporting module is loaded but disabled
  * @default {all} true
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.enabled docs to actual source code
  * @apioption exporting.enabled
  */
 
@@ -1495,8 +1270,6 @@
  * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.error docs to actual source code
  * @apioption exporting.error
  */
 
@@ -1507,8 +1280,6 @@
  * @type {Boolean}
  * @default {all} true
  * @since 4.1.8
- * @product highcharts highstock highmaps
- * @todo Copy exporting.fallbackToExportServer docs to actual source code
  * @apioption exporting.fallbackToExportServer
  */
 
@@ -1520,8 +1291,6 @@
  * @sample {highstock} highcharts/exporting/filename/ Custom file name
  * @default {all} chart
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.filename docs to actual source code
  * @apioption exporting.filename
  */
 
@@ -1533,8 +1302,6 @@
  * 
  * @type {Object}
  * @since 3.0.8
- * @product highcharts highstock highmaps
- * @todo Copy exporting.formAttributes docs to actual source code
  * @apioption exporting.formAttributes
  */
 
@@ -1549,8 +1316,6 @@
  * @type {String}
  * @default {all} https://code.highcharts.com/{version}/lib
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.libURL docs to actual source code
  * @apioption exporting.libURL
  */
 
@@ -1559,8 +1324,6 @@
  * 
  * @type {Number}
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.sourceHeight docs to actual source code
  * @apioption exporting.sourceHeight
  */
 
@@ -1574,8 +1337,6 @@
  * @sample {highstock} highcharts/exporting/sourcewidth/ Source size demo
  * @sample {highmaps} highcharts/tree/master/samples/maps/exporting/sourcewidth/ Source size demo
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.sourceWidth docs to actual source code
  * @apioption exporting.sourceWidth
  */
 
@@ -1590,8 +1351,6 @@
  * @sample {highstock} highcharts/exporting/width/ Export to 200px wide images
  * @default {all} undefined
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.width docs to actual source code
  * @apioption exporting.width
  */
 
@@ -1604,8 +1363,6 @@
  * @sample {highstock} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
  * @sample {highmaps} highcharts/exporting/buttons-contextbutton-onclick/ Skip the menu and export the chart directly
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.buttons.contextButton.onclick docs to actual source code
  * @apioption exporting.buttons.contextButton.onclick
  */
 
@@ -1615,8 +1372,6 @@
  * @type {Color}
  * @default {all} #666666
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.buttons.contextButton.symbolFill docs to actual source code
  * @apioption exporting.buttons.contextButton.symbolFill
  */
 
@@ -1626,8 +1381,6 @@
  * @type {Number}
  * @default {all} -10
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy exporting.buttons.contextButton.x docs to actual source code
  * @apioption exporting.buttons.contextButton.x
  */
 
@@ -1638,7 +1391,6 @@
  * @type {Object}
  * @since 4.0.4
  * @product highcharts highstock
- * @todo Copy global.Date docs to actual source code
  * @apioption global.Date
  */
 
@@ -1658,7 +1410,6 @@
  * @deprecated
  * @default {all} http://code.highcharts.com/{version}/modules/canvas-tools.js
  * @product highcharts highmaps
- * @todo Copy global.canvasToolsURL docs to actual source code
  * @apioption global.canvasToolsURL
  */
 
@@ -1675,7 +1426,6 @@
  * @sample {highstock} highcharts/global/gettimezoneoffset/ Use moment.js to draw Oslo time regardless of browser locale
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy global.getTimezoneOffset docs to actual source code
  * @apioption global.getTimezoneOffset
  */
 
@@ -1693,7 +1443,6 @@
  * @default {all} undefined
  * @since 5.0.7
  * @product highcharts highstock
- * @todo Copy global.timezone docs to actual source code
  * @apioption global.timezone
  */
 
@@ -1710,7 +1459,6 @@
  * @default {all} 0
  * @since 3.0.8
  * @product highcharts highstock
- * @todo Copy global.timezoneOffset docs to actual source code
  * @apioption global.timezoneOffset
  */
 
@@ -1718,8 +1466,6 @@
  * A HTML label that can be positioned anywhere in the chart area.
  * 
  * @type {Array<Object>}
- * @product highcharts highstock highmaps
- * @todo Copy labels.items docs to actual source code
  * @apioption labels.items
  */
 
@@ -1727,8 +1473,6 @@
  * Inner HTML or text for the label.
  * 
  * @type {String}
- * @product highcharts highstock highmaps
- * @todo Copy labels.items.html docs to actual source code
  * @apioption labels.items.html
  */
 
@@ -1742,8 +1486,6 @@
  * }</pre>
  * 
  * @type {CSSObject}
- * @product highcharts highstock highmaps
- * @todo Copy labels.items.style docs to actual source code
  * @apioption labels.items.style
  */
 
@@ -1754,8 +1496,6 @@
  * @type {String}
  * @default {all} Chart context menu
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy lang.contextButtonTitle docs to actual source code
  * @apioption lang.contextButtonTitle
  */
 
@@ -1765,8 +1505,6 @@
  * @type {String}
  * @default {all} Download JPEG image
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy lang.downloadJPEG docs to actual source code
  * @apioption lang.downloadJPEG
  */
 
@@ -1776,8 +1514,6 @@
  * @type {String}
  * @default {all} Download PDF document
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy lang.downloadPDF docs to actual source code
  * @apioption lang.downloadPDF
  */
 
@@ -1787,8 +1523,6 @@
  * @type {String}
  * @default {all} Download PNG image
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy lang.downloadPNG docs to actual source code
  * @apioption lang.downloadPNG
  */
 
@@ -1798,8 +1532,6 @@
  * @type {String}
  * @default {all} Download SVG vector image
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy lang.downloadSVG docs to actual source code
  * @apioption lang.downloadSVG
  */
 
@@ -1812,7 +1544,6 @@
  * @default {all} Back to {series.name}
  * @since 3.0.8
  * @product highcharts highmaps
- * @todo Copy lang.drillUpText docs to actual source code
  * @apioption lang.drillUpText
  */
 
@@ -1823,7 +1554,6 @@
  * @type {String}
  * @since 4.1.8
  * @product highcharts highstock
- * @todo Copy lang.invalidDate docs to actual source code
  * @apioption lang.invalidDate
  */
 
@@ -1835,7 +1565,6 @@
  * @default {all} No data to display
  * @since 3.0.8
  * @product highcharts
- * @todo Copy lang.noData docs to actual source code
  * @apioption lang.noData
  */
 
@@ -1850,8 +1579,6 @@
  * @sample {highmaps} highcharts/lang/numericsymbolmagnitude/ 10000 magnitude for Japanese
  * @default {all} 1000
  * @since 5.0.3
- * @product highcharts highstock highmaps
- * @todo Copy lang.numericSymbolMagnitude docs to actual source code
  * @apioption lang.numericSymbolMagnitude
  */
 
@@ -1861,8 +1588,6 @@
  * @type {String}
  * @default {all} Print chart
  * @since 3.0.1
- * @product highcharts highstock highmaps
- * @todo Copy lang.printChart docs to actual source code
  * @apioption lang.printChart
  */
 
@@ -1875,8 +1600,6 @@
  * @sample {highstock} highcharts/lang/shortweekdays/ Finnish two-letter abbreviations
  * @sample {highmaps} highcharts/lang/shortweekdays/ Finnish two-letter abbreviations
  * @since 4.2.4
- * @product highcharts highstock highmaps
- * @todo Copy lang.shortWeekdays docs to actual source code
  * @apioption lang.shortWeekdays
  */
 
@@ -1890,8 +1613,6 @@
  * @sample {highcharts} highcharts/legend/backgroundcolor/ Yellowish background
  * @sample {highstock} highcharts/tree/master/samples/stock/legend/align/ Various legend options
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/border-background/ Border and background options
- * @product highcharts highstock highmaps
- * @todo Copy legend.backgroundColor docs to actual source code
  * @apioption legend.backgroundColor
  */
 
@@ -1906,8 +1627,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/legend/align/ Various legend options
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/border-background/ Border and background options
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy legend.borderWidth docs to actual source code
  * @apioption legend.borderWidth
  */
 
@@ -1921,8 +1640,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/alignment/ Floating legend
  * @default {all} false
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy legend.floating docs to actual source code
  * @apioption legend.floating
  */
 
@@ -1937,8 +1654,6 @@
  * @default {highstock} 20
  * @default {highmaps} 8
  * @since 3.0.3
- * @product highcharts highstock highmaps
- * @todo Copy legend.itemDistance docs to actual source code
  * @apioption legend.itemDistance
  */
 
@@ -1951,8 +1666,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 0
  * @since 2.2.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.itemMarginBottom docs to actual source code
  * @apioption legend.itemMarginBottom
  */
 
@@ -1965,8 +1678,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 0
  * @since 2.2.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.itemMarginTop docs to actual source code
  * @apioption legend.itemMarginTop
  */
 
@@ -1979,8 +1690,6 @@
  * @sample {highcharts} highcharts/legend/itemwidth-80/ 80 for aligned legend items
  * @default {all} null
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.itemWidth docs to actual source code
  * @apioption legend.itemWidth
  */
 
@@ -1992,8 +1701,6 @@
  * @type {String}
  * @default {all} {name}
  * @since 1.3
- * @product highcharts highstock highmaps
- * @todo Copy legend.labelFormat docs to actual source code
  * @apioption legend.labelFormat
  */
 
@@ -2007,7 +1714,6 @@
  * @default {all} 16
  * @since 2.0
  * @product highcharts
- * @todo Copy legend.lineHeight docs to actual source code
  * @apioption legend.lineHeight
  */
 
@@ -2021,8 +1727,6 @@
  * @sample {highcharts} highcharts/legend/margin-30/ 30 pixels
  * @default {all} 12
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy legend.margin docs to actual source code
  * @apioption legend.margin
  */
 
@@ -2033,8 +1737,6 @@
  * @type {Number}
  * @default {all} undefined
  * @since 2.3.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.maxHeight docs to actual source code
  * @apioption legend.maxHeight
  */
 
@@ -2047,8 +1749,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @default {all} 8
  * @since 2.2.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.padding docs to actual source code
  * @apioption legend.padding
  */
 
@@ -2062,8 +1762,6 @@
  * @sample {highcharts} highcharts/legend/reversed/ Stacked bar with reversed legend
  * @default {all} false
  * @since 1.2.5
- * @product highcharts highstock highmaps
- * @todo Copy legend.reversed docs to actual source code
  * @apioption legend.reversed
  */
 
@@ -2076,7 +1774,6 @@
  * @default {all} false
  * @since 2.2
  * @product highcharts highmaps
- * @todo Copy legend.rtl docs to actual source code
  * @apioption legend.rtl
  */
 
@@ -2089,7 +1786,6 @@
  * @type {CSSObject}
  * @deprecated
  * @product highcharts highstock
- * @todo Copy legend.style docs to actual source code
  * @apioption legend.style
  */
 
@@ -2101,8 +1797,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/layout-vertical-sized/ Sized vertical gradient
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ No distance between data classes
  * @since 3.0.8
- * @product highcharts highstock highmaps
- * @todo Copy legend.symbolHeight docs to actual source code
  * @apioption legend.symbolHeight
  */
 
@@ -2115,8 +1809,6 @@
  * @sample {highstock} highcharts/legend/symbolradius/ Round symbols
  * @sample {highmaps} highcharts/legend/symbolradius/ Round symbols
  * @since 3.0.8
- * @product highcharts highstock highmaps
- * @todo Copy legend.symbolRadius docs to actual source code
  * @apioption legend.symbolRadius
  */
 
@@ -2128,8 +1820,6 @@
  * @sample {highcharts} highcharts/legend/symbolwidth/ Greater symbol width and padding
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/padding-itemmargin/ Padding and item margins demonstrated
  * @sample {highmaps} highcharts/tree/master/samples/maps/legend/layout-vertical-sized/ Sized vertical gradient
- * @product highcharts highstock highmaps
- * @todo Copy legend.symbolWidth docs to actual source code
  * @apioption legend.symbolWidth
  */
 
@@ -2141,8 +1831,6 @@
  * 
  * @type {Boolean}
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy legend.useHTML docs to actual source code
  * @apioption legend.useHTML
  */
 
@@ -2153,15 +1841,12 @@
  * @sample {highcharts} highcharts/legend/width/ Aligned to the plot area
  * @default {all} null
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.width docs to actual source code
  * @apioption legend.width
  */
 
 /**
  * @since next
  * @product highcharts
- * @todo Copy legend.keyboardNavigation docs to actual source code
  * @apioption legend.keyboardNavigation
  */
 
@@ -2175,7 +1860,6 @@
  * @default {all} true
  * @since next
  * @product highcharts
- * @todo Copy legend.keyboardNavigation.enabled docs to actual source code
  * @apioption legend.keyboardNavigation.enabled
  */
 
@@ -2190,8 +1874,6 @@
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @default {all} true
  * @since 2.2.4
- * @product highcharts highstock highmaps
- * @todo Copy legend.navigation.animation docs to actual source code
  * @apioption legend.navigation.animation
  */
 
@@ -2204,8 +1886,6 @@
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @default {all} 12
  * @since 2.2.4
- * @product highcharts highstock highmaps
- * @todo Copy legend.navigation.arrowSize docs to actual source code
  * @apioption legend.navigation.arrowSize
  */
 
@@ -2221,8 +1901,6 @@
  * @type {Boolean}
  * @default {all} true
  * @since 4.2.4
- * @product highcharts highstock highmaps
- * @todo Copy legend.navigation.enabled docs to actual source code
  * @apioption legend.navigation.enabled
  */
 
@@ -2236,8 +1914,6 @@
  * @sample {highcharts} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @sample {highstock} highcharts/legend/navigation/ Legend page navigation demonstrated
  * @since 2.2.4
- * @product highcharts highstock highmaps
- * @todo Copy legend.navigation.style docs to actual source code
  * @apioption legend.navigation.style
  */
 
@@ -2247,8 +1923,6 @@
  * @type {String}
  * @default {all} null
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy legend.title.text docs to actual source code
  * @apioption legend.title.text
  */
 
@@ -2259,8 +1933,6 @@
  * @sample {highcharts} highcharts/loading/hideduration/ Fade in and out over a second
  * @default {all} 100
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy loading.hideDuration docs to actual source code
  * @apioption loading.hideDuration
  */
 
@@ -2273,8 +1945,6 @@
  * @default {highstock} 0
  * @default {highmaps} 100
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy loading.showDuration docs to actual source code
  * @apioption loading.showDuration
  */
 
@@ -2288,8 +1958,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-align/ Center aligned
  * @default {all} right
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.align docs to actual source code
  * @apioption navigation.buttonOptions.align
  */
 
@@ -2302,8 +1970,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-enabled/ Exporting module loaded but buttons disabled
  * @default {all} true
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.enabled docs to actual source code
  * @apioption navigation.buttonOptions.enabled
  */
 
@@ -2316,8 +1982,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @default {all} 20
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.height docs to actual source code
  * @apioption navigation.buttonOptions.height
  */
 
@@ -2330,8 +1994,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @default {all} 14
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.symbolSize docs to actual source code
  * @apioption navigation.buttonOptions.symbolSize
  */
 
@@ -2344,8 +2006,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @default {all} 12.5
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.symbolX docs to actual source code
  * @apioption navigation.buttonOptions.symbolX
  */
 
@@ -2358,8 +2018,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @default {all} 10.5
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.symbolY docs to actual source code
  * @apioption navigation.buttonOptions.symbolY
  */
 
@@ -2375,8 +2033,6 @@
  * @sample {highmaps} highcharts/exporting/buttons-text-symbol/ Combined symbol and text
  * @default {all} null
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.text docs to actual source code
  * @apioption navigation.buttonOptions.text
  */
 
@@ -2391,8 +2047,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @default {all} top
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.verticalAlign docs to actual source code
  * @apioption navigation.buttonOptions.verticalAlign
  */
 
@@ -2405,8 +2059,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-height/ Bigger buttons
  * @default {all} 24
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.width docs to actual source code
  * @apioption navigation.buttonOptions.width
  */
 
@@ -2420,8 +2072,6 @@
  * @sample {highmaps} highcharts/navigation/buttonoptions-verticalalign/ Buttons at lower right
  * @default {all} 0
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy navigation.buttonOptions.y docs to actual source code
  * @apioption navigation.buttonOptions.y
  */
 
@@ -2431,7 +2081,6 @@
  * @type {Object}
  * @since 3.0.8
  * @product highcharts highstock
- * @todo Copy noData.attr docs to actual source code
  * @apioption noData.attr
  */
 
@@ -2443,7 +2092,6 @@
  * @default {all} false
  * @since 4.1.10
  * @product highcharts highstock
- * @todo Copy noData.useHTML docs to actual source code
  * @apioption noData.useHTML
  */
 
@@ -2455,7 +2103,6 @@
  * @sample {highcharts} highcharts/demo/gauge-vu-meter/ VU-meter with custom start and end angle
  * @since 2.3.0
  * @product highcharts
- * @todo Copy pane.endAngle docs to actual source code
  * @apioption pane.endAngle
  */
 
@@ -2468,8 +2115,6 @@
  * @sample {highmaps} highcharts/css/pane/ Panes styled by CSS
  * @default {all} highcharts-pane
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy pane.background.className docs to actual source code
  * @apioption pane.background.className
  */
 
@@ -2485,7 +2130,6 @@
  * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/ Gradient
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.area.fillColor docs to actual source code
  * @apioption plotOptions.area.fillColor
  */
 
@@ -2504,7 +2148,6 @@
  * @default {highcharts} 0.75
  * @default {highstock} .75
  * @product highcharts highstock
- * @todo Copy plotOptions.area.fillOpacity docs to actual source code
  * @apioption plotOptions.area.fillOpacity
  */
 
@@ -2520,7 +2163,6 @@
  * @sample {highcharts} highcharts/plotoptions/area-linecolor/ Dark gray line
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.area.lineColor docs to actual source code
  * @apioption plotOptions.area.lineColor
  */
 
@@ -2535,7 +2177,6 @@
  * negative-color/)).
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.area.negativeFillColor docs to actual source code
  * @apioption plotOptions.area.negativeFillColor
  */
 
@@ -2550,7 +2191,6 @@
  * @default {all} false
  * @since 1.2.5
  * @product highcharts
- * @todo Copy plotOptions.area.step docs to actual source code
  * @apioption plotOptions.area.step
  */
 
@@ -2564,7 +2204,6 @@
  * @default {all} false
  * @since 1.1.6
  * @product highcharts highstock
- * @todo Copy plotOptions.area.trackByArea docs to actual source code
  * @apioption plotOptions.area.trackByArea
  */
 
@@ -2575,7 +2214,6 @@
  * 
  * @type {Boolean|Object}
  * @product highcharts
- * @todo Copy plotOptions.arearange.shadow docs to actual source code
  * @apioption plotOptions.arearange.shadow
  */
 
@@ -2589,7 +2227,6 @@
  * @default {all} false
  * @since 1.2.5
  * @product highcharts
- * @todo Copy plotOptions.arearange.step docs to actual source code
  * @apioption plotOptions.arearange.step
  */
 
@@ -2597,7 +2234,6 @@
  * @extends plotOptions.area
  * @excluding step
  * @product highcharts highstock
- * @todo Copy plotOptions.areaspline docs to actual source code
  * @apioption plotOptions.areaspline
  */
 
@@ -2609,14 +2245,12 @@
  * @excluding step
  * @since 2.3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.areasplinerange docs to actual source code
  * @apioption plotOptions.areasplinerange
  */
 
 /**
  * @extends plotOptions.column.dataLabels
  * @product highcharts
- * @todo Copy plotOptions.bar.dataLabels docs to actual source code
  * @apioption plotOptions.bar.dataLabels
  */
 
@@ -2627,7 +2261,6 @@
  * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data labels inside the bar
  * @default {all} left
  * @product highcharts
- * @todo Copy plotOptions.bar.dataLabels.align docs to actual source code
  * @apioption plotOptions.bar.dataLabels.align
  */
 
@@ -2638,7 +2271,6 @@
  * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/ Data labels inside the bar
  * @default {all} 5
  * @product highcharts
- * @todo Copy plotOptions.bar.dataLabels.x docs to actual source code
  * @apioption plotOptions.bar.dataLabels.x
  */
 
@@ -2656,7 +2288,6 @@
  * @default {all} null
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.boxplot.medianColor docs to actual source code
  * @apioption plotOptions.boxplot.medianColor
  */
 
@@ -2673,7 +2304,6 @@
  * @default {all} null
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.boxplot.stemColor docs to actual source code
  * @apioption plotOptions.boxplot.stemColor
  */
 
@@ -2688,7 +2318,6 @@
  * @default {all} Solid
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.boxplot.stemDashStyle docs to actual source code
  * @apioption plotOptions.boxplot.stemDashStyle
  */
 
@@ -2707,7 +2336,6 @@
  * @default {all} null
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.boxplot.stemWidth docs to actual source code
  * @apioption plotOptions.boxplot.stemWidth
  */
 
@@ -2723,7 +2351,6 @@
  * @default {all} null
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.boxplot.whiskerColor docs to actual source code
  * @apioption plotOptions.boxplot.whiskerColor
  */
 
@@ -2738,7 +2365,6 @@
  * @default {all} true
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.bubble.displayNegative docs to actual source code
  * @apioption plotOptions.bubble.displayNegative
  */
 
@@ -2751,7 +2377,6 @@
  * @default {all} null
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.bubble.negativeColor docs to actual source code
  * @apioption plotOptions.bubble.negativeColor
  */
 
@@ -2766,7 +2391,6 @@
  * @default {all} area
  * @since 3.0.7
  * @product highcharts
- * @todo Copy plotOptions.bubble.sizeBy docs to actual source code
  * @apioption plotOptions.bubble.sizeBy
  */
 
@@ -2782,7 +2406,6 @@
  * @default {all} false
  * @since 4.1.9
  * @product highcharts
- * @todo Copy plotOptions.bubble.sizeByAbsoluteValue docs to actual source code
  * @apioption plotOptions.bubble.sizeByAbsoluteValue
  */
 
@@ -2796,7 +2419,6 @@
  * @default {all} null
  * @since 4.0.3
  * @product highcharts
- * @todo Copy plotOptions.bubble.zMax docs to actual source code
  * @apioption plotOptions.bubble.zMax
  */
 
@@ -2810,7 +2432,6 @@
  * @default {all} null
  * @since 4.0.3
  * @product highcharts
- * @todo Copy plotOptions.bubble.zMin docs to actual source code
  * @apioption plotOptions.bubble.zMin
  */
 
@@ -2825,7 +2446,6 @@
  * @sample {highcharts} highcharts/plotoptions/column-borderwidth/ 2px black border
  * @default {all} 1
  * @product highcharts highstock
- * @todo Copy plotOptions.column.borderWidth docs to actual source code
  * @apioption plotOptions.column.borderWidth
  */
 
@@ -2841,7 +2461,6 @@
  * @default {all} false
  * @since 2.0
  * @product highcharts highstock
- * @todo Copy plotOptions.column.colorByPoint docs to actual source code
  * @apioption plotOptions.column.colorByPoint
  */
 
@@ -2853,7 +2472,6 @@
  * @type {Array<Color>}
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.column.colors docs to actual source code
  * @apioption plotOptions.column.colors
  */
 
@@ -2865,7 +2483,6 @@
  * @default {all} 25
  * @since 4.0
  * @product highcharts
- * @todo Copy plotOptions.column.depth docs to actual source code
  * @apioption plotOptions.column.depth
  */
 
@@ -2875,7 +2492,6 @@
  * 
  * @type {Color}
  * @product highcharts
- * @todo Copy plotOptions.column.edgeColor docs to actual source code
  * @apioption plotOptions.column.edgeColor
  */
 
@@ -2885,7 +2501,6 @@
  * @type {Number}
  * @default {all} 1
  * @product highcharts
- * @todo Copy plotOptions.column.edgeWidth docs to actual source code
  * @apioption plotOptions.column.edgeWidth
  */
 
@@ -2897,7 +2512,6 @@
  * @default {all} 1
  * @since 4.0
  * @product highcharts
- * @todo Copy plotOptions.column.groupZPadding docs to actual source code
  * @apioption plotOptions.column.groupZPadding
  */
 
@@ -2912,7 +2526,6 @@
  * @default {all} true
  * @since 2.3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.column.grouping docs to actual source code
  * @apioption plotOptions.column.grouping
  */
 
@@ -2928,7 +2541,6 @@
  * @default {all} null
  * @since 4.1.8
  * @product highcharts highstock
- * @todo Copy plotOptions.column.maxPointWidth docs to actual source code
  * @apioption plotOptions.column.maxPointWidth
  */
 
@@ -2942,13 +2554,11 @@
  * @default {all} null
  * @since 1.2.5
  * @product highcharts highstock
- * @todo Copy plotOptions.column.pointWidth docs to actual source code
  * @apioption plotOptions.column.pointWidth
  */
 
 /**
  * @product highcharts
- * @todo Copy plotOptions.column.dataLabels.inside docs to actual source code
  * @apioption plotOptions.column.dataLabels.inside
  */
 
@@ -2958,7 +2568,6 @@
  * 
  * @type {Color}
  * @product highcharts
- * @todo Copy plotOptions.column.states.hover.borderColor docs to actual source code
  * @apioption plotOptions.column.states.hover.borderColor
  */
 
@@ -2968,7 +2577,6 @@
  * @type {Color}
  * @default {all} undefined
  * @product highcharts
- * @todo Copy plotOptions.column.states.hover.color docs to actual source code
  * @apioption plotOptions.column.states.hover.color
  */
 
@@ -2984,7 +2592,6 @@
  * @sample {highstock} highcharts/demo/columnrange/ Inverted column range
  * @since 2.3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.columnrange docs to actual source code
  * @apioption plotOptions.columnrange
  */
 
@@ -2998,7 +2605,6 @@
  * @extends plotOptions.arearange.dataLabels
  * @since 2.3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.columnrange.dataLabels docs to actual source code
  * @apioption plotOptions.columnrange.dataLabels
  */
 
@@ -3013,7 +2619,6 @@
  * @default {all} 0
  * @since 3.0.10
  * @product highcharts
- * @todo Copy plotOptions.gauge.overshoot docs to actual source code
  * @apioption plotOptions.gauge.overshoot
  */
 
@@ -3027,7 +2632,6 @@
  * @default {all} true
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.wrap docs to actual source code
  * @apioption plotOptions.gauge.wrap
  */
 
@@ -3039,7 +2643,6 @@
  * @default {all} #000000
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.backgroundColor docs to actual source code
  * @apioption plotOptions.gauge.dial.backgroundColor
  */
 
@@ -3052,7 +2655,6 @@
  * @default {all} 70%
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.baseLength docs to actual source code
  * @apioption plotOptions.gauge.dial.baseLength
  */
 
@@ -3065,7 +2667,6 @@
  * @default {all} 3
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.baseWidth docs to actual source code
  * @apioption plotOptions.gauge.dial.baseWidth
  */
 
@@ -3078,7 +2679,6 @@
  * @default {all} #cccccc
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.borderColor docs to actual source code
  * @apioption plotOptions.gauge.dial.borderColor
  */
 
@@ -3090,7 +2690,6 @@
  * @default {all} 0
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.borderWidth docs to actual source code
  * @apioption plotOptions.gauge.dial.borderWidth
  */
 
@@ -3103,7 +2702,6 @@
  * @default {all} 80%
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.radius docs to actual source code
  * @apioption plotOptions.gauge.dial.radius
  */
 
@@ -3116,7 +2714,6 @@
  * @default {all} 10%
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.rearLength docs to actual source code
  * @apioption plotOptions.gauge.dial.rearLength
  */
 
@@ -3129,7 +2726,6 @@
  * @default {all} 1
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.dial.topWidth docs to actual source code
  * @apioption plotOptions.gauge.dial.topWidth
  */
 
@@ -3141,7 +2737,6 @@
  * @default {all} #000000
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.pivot.backgroundColor docs to actual source code
  * @apioption plotOptions.gauge.pivot.backgroundColor
  */
 
@@ -3155,7 +2750,6 @@
  * @default {all} #cccccc
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.pivot.borderColor docs to actual source code
  * @apioption plotOptions.gauge.pivot.borderColor
  */
 
@@ -3167,7 +2761,6 @@
  * @default {all} 0
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.pivot.borderWidth docs to actual source code
  * @apioption plotOptions.gauge.pivot.borderWidth
  */
 
@@ -3179,7 +2772,6 @@
  * @default {all} 5
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.gauge.pivot.radius docs to actual source code
  * @apioption plotOptions.gauge.pivot.radius
  */
 
@@ -3193,7 +2785,6 @@
  * @default {all} null
  * @since 4.0
  * @product highcharts
- * @todo Copy plotOptions.heatmap.color docs to actual source code
  * @apioption plotOptions.heatmap.color
  */
 
@@ -3207,7 +2798,6 @@
  * @default {all} 1
  * @since 4.0
  * @product highcharts highmaps
- * @todo Copy plotOptions.heatmap.colsize docs to actual source code
  * @apioption plotOptions.heatmap.colsize
  */
 
@@ -3220,14 +2810,12 @@
  * @default {all} 1
  * @since 4.0
  * @product highcharts highmaps
- * @todo Copy plotOptions.heatmap.rowsize docs to actual source code
  * @apioption plotOptions.heatmap.rowsize
  */
 
 /**
  * @extends plotOptions.series
  * @product highcharts highstock
- * @todo Copy plotOptions.line docs to actual source code
  * @apioption plotOptions.line
  */
 
@@ -3242,7 +2830,6 @@
  * @default {all} false
  * @since 1.2.5
  * @product highcharts highstock
- * @todo Copy plotOptions.line.step docs to actual source code
  * @apioption plotOptions.line.step
  */
 
@@ -3254,7 +2841,6 @@
  * @sample {highcharts} highcharts/demo/pie-monochrome/ Set default colors for all pies
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.pie.colors docs to actual source code
  * @apioption plotOptions.pie.colors
  */
 
@@ -3265,7 +2851,6 @@
  * @default {all} 0
  * @since 4.0
  * @product highcharts
- * @todo Copy plotOptions.pie.depth docs to actual source code
  * @apioption plotOptions.pie.depth
  */
 
@@ -3278,7 +2863,6 @@
  * @default {all} null
  * @since 1.3.6
  * @product highcharts
- * @todo Copy plotOptions.pie.endAngle docs to actual source code
  * @apioption plotOptions.pie.endAngle
  */
 
@@ -3298,7 +2882,6 @@
  * @default {all} 0
  * @since 2.0
  * @product highcharts
- * @todo Copy plotOptions.pie.innerSize docs to actual source code
  * @apioption plotOptions.pie.innerSize
  */
 
@@ -3311,7 +2894,6 @@
  * @default {all} 80
  * @since 3.0
  * @product highcharts
- * @todo Copy plotOptions.pie.minSize docs to actual source code
  * @apioption plotOptions.pie.minSize
  */
 
@@ -3324,7 +2906,6 @@
  * @default {all} 0
  * @since 2.3.4
  * @product highcharts
- * @todo Copy plotOptions.pie.startAngle docs to actual source code
  * @apioption plotOptions.pie.startAngle
  */
 
@@ -3334,7 +2915,6 @@
  * @type {String}
  * @since 2.1
  * @product highcharts
- * @todo Copy plotOptions.pie.dataLabels.align docs to actual source code
  * @apioption plotOptions.pie.dataLabels.align
  */
 
@@ -3352,7 +2932,6 @@
  * @default {all} {point.color}
  * @since 2.1
  * @product highcharts
- * @todo Copy plotOptions.pie.dataLabels.connectorColor docs to actual source code
  * @apioption plotOptions.pie.dataLabels.connectorColor
  */
 
@@ -3364,7 +2943,6 @@
  * @default {all} 5
  * @since 2.1
  * @product highcharts
- * @todo Copy plotOptions.pie.dataLabels.connectorPadding docs to actual source code
  * @apioption plotOptions.pie.dataLabels.connectorPadding
  */
 
@@ -3382,7 +2960,6 @@
  * @default {all} 1
  * @since 2.1
  * @product highcharts
- * @todo Copy plotOptions.pie.dataLabels.connectorWidth docs to actual source code
  * @apioption plotOptions.pie.dataLabels.connectorWidth
  */
 
@@ -3395,14 +2972,12 @@
  * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/ Non soft
  * @since 2.1.7
  * @product highcharts
- * @todo Copy plotOptions.pie.dataLabels.softConnector docs to actual source code
  * @apioption plotOptions.pie.dataLabels.softConnector
  */
 
 /**
  * @extends plotOptions.series.events
  * @product highcharts
- * @todo Copy plotOptions.pie.events docs to actual source code
  * @apioption plotOptions.pie.events
  */
 
@@ -3418,7 +2993,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/ Alert checkbox status
  * @since 1.2.0
  * @product highcharts
- * @todo Copy plotOptions.pie.events.checkboxClick docs to actual source code
  * @apioption plotOptions.pie.events.checkboxClick
  */
 
@@ -3429,14 +3003,12 @@
  * @type {Function}
  * @since 1.2.0
  * @product highcharts
- * @todo Copy plotOptions.pie.events.legendItemClick docs to actual source code
  * @apioption plotOptions.pie.events.legendItemClick
  */
 
 /**
  * @extends plotOptions.series.point.events
  * @product highcharts
- * @todo Copy plotOptions.pie.point.events docs to actual source code
  * @apioption plotOptions.pie.point.events
  */
 
@@ -3452,7 +3024,6 @@
  * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/ Confirm toggle visibility
  * @since 1.2.0
  * @product highcharts
- * @todo Copy plotOptions.pie.point.events.legendItemClick docs to actual source code
  * @apioption plotOptions.pie.point.events.legendItemClick
  */
 
@@ -3469,7 +3040,6 @@
  * @sample {highstock} highcharts/demo/polygon/ Polygon
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.polygon docs to actual source code
  * @apioption plotOptions.polygon
  */
 
@@ -3485,14 +3055,11 @@
  * @type {Boolean}
  * @default {all} false
  * @product highcharts highstock
- * @todo Copy plotOptions.scatter.stickyTracking docs to actual source code
  * @apioption plotOptions.scatter.stickyTracking
  */
 
 /**
  * @extends plotOptions.series.states.hover
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.scatter.states.hover docs to actual source code
  * @apioption plotOptions.scatter.states.hover
  */
 
@@ -3501,8 +3068,6 @@
  * 
  * @type {Number}
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.scatter.states.hover.lineWidth docs to actual source code
  * @apioption plotOptions.scatter.states.hover.lineWidth
  */
 
@@ -3514,8 +3079,6 @@
  *  set `animationLimit` to `Infinity`.
  * 
  * @type {Number}
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.animationLimit docs to actual source code
  * @apioption plotOptions.series.animationLimit
  */
 
@@ -3524,8 +3087,6 @@
  * 
  * @type {String}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.className docs to actual source code
  * @apioption plotOptions.series.className
  */
 
@@ -3547,8 +3108,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-color-specific/ One specific series
  * @sample {highcharts} highcharts/plotoptions/series-color-area/ Area color
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Category map by multiple series
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.color docs to actual source code
  * @apioption plotOptions.series.color
  */
 
@@ -3560,8 +3119,6 @@
  * 
  * @type {Number}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.colorIndex docs to actual source code
  * @apioption plotOptions.series.colorIndex
  */
 
@@ -3573,7 +3130,6 @@
  * @sample {highcharts} highcharts/plotoptions/line-connectends-false/ Do not connect
  * @since 2.3.0
  * @product highcharts
- * @todo Copy plotOptions.series.connectEnds docs to actual source code
  * @apioption plotOptions.series.connectEnds
  */
 
@@ -3584,7 +3140,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/ False by default
  * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/ True
  * @product highcharts highstock
- * @todo Copy plotOptions.series.connectNulls docs to actual source code
  * @apioption plotOptions.series.connectNulls
  */
 
@@ -3604,8 +3159,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/cursor/ Pointer on a line graph
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Map area
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-allowpointselect/ Map bubble
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.cursor docs to actual source code
  * @apioption plotOptions.series.cursor
  */
 
@@ -3639,8 +3192,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-dashstyle/ Dotted borders on a map
  * @default {all} Solid
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dashStyle docs to actual source code
  * @apioption plotOptions.series.dashStyle
  */
 
@@ -3653,8 +3204,6 @@
  * @type {String}
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.description docs to actual source code
  * @apioption plotOptions.series.description
  */
 
@@ -3667,8 +3216,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/ No mouse tracking
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-enablemousetracking-false/ No mouse tracking
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.enableMouseTracking docs to actual source code
  * @apioption plotOptions.series.enableMouseTracking
  */
 
@@ -3687,7 +3234,6 @@
  * @sample {highmaps} highcharts/accessibility/art-grants/ Accessible data visualization
  * @default {all} undefined
  * @since 5.0.12
- * @product highcharts highstock highmaps
  * @todo Copy plotOptions.series.exposeElementToA11y docs to actual source code
  * @apioption plotOptions.series.exposeElementToA11y
  */
@@ -3702,7 +3248,6 @@
  * @default {all} false
  * @since 4.1.6
  * @product highcharts highstock
- * @todo Copy plotOptions.series.getExtremesFromAll docs to actual source code
  * @apioption plotOptions.series.getExtremesFromAll
  */
 
@@ -3717,7 +3262,6 @@
  * @sample {highstock} highcharts/series/data-keys/ An extended data array with keys
  * @since 4.1.6
  * @product highcharts highstock
- * @todo Copy plotOptions.series.keys docs to actual source code
  * @apioption plotOptions.series.keys
  */
 
@@ -3728,7 +3272,6 @@
  * @type {String}
  * @default {all} round
  * @product highcharts highstock
- * @todo Copy plotOptions.series.linecap docs to actual source code
  * @apioption plotOptions.series.linecap
  */
 
@@ -3743,7 +3286,6 @@
  * @sample {highstock} highcharts/demo/arearange-line/ Linked series
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.linkedTo docs to actual source code
  * @apioption plotOptions.series.linkedTo
  */
 
@@ -3765,8 +3307,6 @@
  * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/ Arearange
  * @default {all} null
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.negativeColor docs to actual source code
  * @apioption plotOptions.series.negativeColor
  */
 
@@ -3777,8 +3317,6 @@
  * 
  * @type {Function}
  * @since 5.0.12
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.pointDescriptionFormatter docs to actual source code
  * @apioption plotOptions.series.pointDescriptionFormatter
  */
 
@@ -3796,7 +3334,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
  * @default {all} 1
  * @product highcharts highstock
- * @todo Copy plotOptions.series.pointInterval docs to actual source code
  * @apioption plotOptions.series.pointInterval
  */
 
@@ -3814,7 +3351,6 @@
  * @sample {highstock} highcharts/plotoptions/series-pointintervalunit/ One point a month
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.pointIntervalUnit docs to actual source code
  * @apioption plotOptions.series.pointIntervalUnit
  */
 
@@ -3850,7 +3386,6 @@
  * @default {all} null
  * @since 2.3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.pointPlacement docs to actual source code
  * @apioption plotOptions.series.pointPlacement
  */
 
@@ -3865,7 +3400,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/pointinterval-pointstart/ Using pointStart and pointInterval
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.pointStart docs to actual source code
  * @apioption plotOptions.series.pointStart
  */
 
@@ -3878,8 +3412,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-selected/ One out of two series selected
  * @default {all} false
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.selected docs to actual source code
  * @apioption plotOptions.series.selected
  */
 
@@ -3891,8 +3423,6 @@
  * @type {Boolean|Object}
  * @sample {highcharts} highcharts/plotoptions/series-shadow/ Shadow enabled
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.shadow docs to actual source code
  * @apioption plotOptions.series.shadow
  */
 
@@ -3904,8 +3434,6 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/plotoptions/series-showinlegend/ One series in the legend, one hidden
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.showInLegend docs to actual source code
  * @apioption plotOptions.series.showInLegend
  */
 
@@ -3915,8 +3443,6 @@
  * 
  * @type {Boolean}
  * @since 5.0.12
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.skipKeyboardNavigation docs to actual source code
  * @apioption plotOptions.series.skipKeyboardNavigation
  */
 
@@ -3940,7 +3466,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/stacking/ Area
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.series.stacking docs to actual source code
  * @apioption plotOptions.series.stacking
  */
 
@@ -3957,7 +3482,6 @@
  * @default {highstock} false
  * @since 1.2.5
  * @product highcharts highstock
- * @todo Copy plotOptions.series.step docs to actual source code
  * @apioption plotOptions.series.step
  */
 
@@ -3971,7 +3495,6 @@
  * @default {all} 0
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.threshold docs to actual source code
  * @apioption plotOptions.series.threshold
  */
 
@@ -3982,8 +3505,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-visible/ Two series, one hidden and one visible
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-visibility/ Hidden series
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.visible docs to actual source code
  * @apioption plotOptions.series.visible
  */
 
@@ -3997,7 +3518,6 @@
  * @default {all} y
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zoneAxis docs to actual source code
  * @apioption plotOptions.series.zoneAxis
  */
 
@@ -4012,8 +3532,6 @@
  * @sample {highmaps} highcharts/plotoptions/series-datalabels-allowoverlap-false/ Don't allow overlap
  * @default {all} false
  * @since 4.1.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.allowOverlap docs to actual source code
  * @apioption plotOptions.series.dataLabels.allowOverlap
  */
 
@@ -4026,7 +3544,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-box/ Data labels box options
  * @since 2.2.1
  * @product highcharts highmaps
- * @todo Copy plotOptions.series.dataLabels.backgroundColor docs to actual source code
  * @apioption plotOptions.series.dataLabels.backgroundColor
  */
 
@@ -4038,8 +3555,6 @@
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @default {all} undefined
  * @since 2.2.1
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.borderColor docs to actual source code
  * @apioption plotOptions.series.dataLabels.borderColor
  */
 
@@ -4052,8 +3567,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-datalabels-box/ Data labels box options
  * @default {all} 0
  * @since 2.2.1
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.borderRadius docs to actual source code
  * @apioption plotOptions.series.dataLabels.borderRadius
  */
 
@@ -4065,8 +3578,6 @@
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @default {all} 0
  * @since 2.2.1
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.borderWidth docs to actual source code
  * @apioption plotOptions.series.dataLabels.borderWidth
  */
 
@@ -4084,8 +3595,6 @@
  * @sample {highstock} highcharts/css/series-datalabels/ Styling by CSS
  * @sample {highmaps} highcharts/css/series-datalabels/ Styling by CSS
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.className docs to actual source code
  * @apioption plotOptions.series.dataLabels.className
  */
 
@@ -4095,8 +3604,6 @@
  * @type {Color}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-color/ Red data labels
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/color-axis/ White data labels
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.color docs to actual source code
  * @apioption plotOptions.series.dataLabels.color
  */
 
@@ -4108,8 +3615,6 @@
  * @type {Boolean}
  * @default {all} true
  * @since 2.3.3
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.crop docs to actual source code
  * @apioption plotOptions.series.dataLabels.crop
  */
 
@@ -4121,7 +3626,6 @@
  * @default {all} true
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.dataLabels.defer docs to actual source code
  * @apioption plotOptions.series.dataLabels.defer
  */
 
@@ -4132,8 +3636,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled/ Data labels enabled
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/color-axis/ Data labels enabled
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.enabled docs to actual source code
  * @apioption plotOptions.series.dataLabels.enabled
  */
 
@@ -4150,8 +3652,6 @@
  * @default {highstock} {y}
  * @default {highmaps} {point.value}
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.format docs to actual source code
  * @apioption plotOptions.series.dataLabels.format
  */
 
@@ -4163,7 +3663,6 @@
  * @type {Boolean}
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.dataLabels.inside docs to actual source code
  * @apioption plotOptions.series.dataLabels.inside
  */
 
@@ -4178,8 +3677,6 @@
  * @type {String}
  * @default {all} justify
  * @since 3.0.6
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.overflow docs to actual source code
  * @apioption plotOptions.series.dataLabels.overflow
  */
 
@@ -4191,8 +3688,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/ Vertical labels
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.rotation docs to actual source code
  * @apioption plotOptions.series.dataLabels.rotation
  */
 
@@ -4206,8 +3701,6 @@
  * @sample {highstock} highcharts/plotoptions/series-datalabels-box/ Data labels box options
  * @default {all} false
  * @since 2.2.1
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.shadow docs to actual source code
  * @apioption plotOptions.series.dataLabels.shadow
  */
 
@@ -4221,24 +3714,18 @@
  * @sample {highmaps} highcharts/plotoptions/series-datalabels-shape/ A callout for annotations (Highcharts demo)
  * @default {all} square
  * @since 4.1.2
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.shape docs to actual source code
  * @apioption plotOptions.series.dataLabels.shape
  */
 
 /**
  * n/a for data labels
  * 
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.staggerLines docs to actual source code
  * @apioption plotOptions.series.dataLabels.staggerLines
  */
 
 /**
  * n/a for data labels
  * 
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.step docs to actual source code
  * @apioption plotOptions.series.dataLabels.step
  */
 
@@ -4249,8 +3736,6 @@
  * @type {Number}
  * @default {all} 6
  * @since 2.3.5
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.dataLabels.zIndex docs to actual source code
  * @apioption plotOptions.series.dataLabels.zIndex
  */
 
@@ -4264,7 +3749,6 @@
  * @sample {highstock} highcharts/plotoptions/series-events-afteranimate/ Show label after animate
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.events.afterAnimate docs to actual source code
  * @apioption plotOptions.series.events.afterAnimate
  */
 
@@ -4279,8 +3763,6 @@
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/ Alert checkbox status
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.checkboxClick docs to actual source code
  * @apioption plotOptions.series.events.checkboxClick
  */
 
@@ -4296,8 +3778,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-events-click/ Alert click info
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-events-click/ Alert click info
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-events-click/ Display click info in subtitle
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.click docs to actual source code
  * @apioption plotOptions.series.events.click
  */
 
@@ -4309,8 +3789,6 @@
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-hide/ Alert when the series is hidden by clicking     the legend item
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.hide docs to actual source code
  * @apioption plotOptions.series.events.hide
  */
 
@@ -4323,8 +3801,6 @@
  * @type {Function}
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-legenditemclick/ Confirm hiding and showing
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.legendItemClick docs to actual source code
  * @apioption plotOptions.series.events.legendItemClick
  */
 
@@ -4340,8 +3816,6 @@
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-sticky/ With sticky tracking    by default
  * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/ Without sticky tracking
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.mouseOut docs to actual source code
  * @apioption plotOptions.series.events.mouseOut
  */
 
@@ -4355,8 +3829,6 @@
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-sticky/ With sticky tracking    by default
  * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/ Without sticky tracking
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.mouseOver docs to actual source code
  * @apioption plotOptions.series.events.mouseOver
  */
 
@@ -4368,8 +3840,6 @@
  * @context Series
  * @sample {highcharts} highcharts/plotoptions/series-events-show/ Alert when the series is shown by clicking     the legend item.
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.events.show docs to actual source code
  * @apioption plotOptions.series.events.show
  */
 
@@ -4384,7 +3854,6 @@
  * @default {highcharts} null
  * @default {highstock} false
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.enabled docs to actual source code
  * @apioption plotOptions.series.marker.enabled
  */
 
@@ -4396,7 +3865,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/ White fill
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.fillColor docs to actual source code
  * @apioption plotOptions.series.marker.fillColor
  */
 
@@ -4410,7 +3878,6 @@
  * @default {all} null
  * @since 4.0.4
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.height docs to actual source code
  * @apioption plotOptions.series.marker.height
  */
 
@@ -4433,7 +3900,6 @@
  * @sample {highstock} highcharts/plotoptions/series-marker-symbol/ Predefined, graphic and custom markers
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.symbol docs to actual source code
  * @apioption plotOptions.series.marker.symbol
  */
 
@@ -4447,7 +3913,6 @@
  * @default {all} null
  * @since 4.0.4
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.width docs to actual source code
  * @apioption plotOptions.series.marker.width
  */
 
@@ -4457,7 +3922,6 @@
  * @type {Color}
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.hover.fillColor docs to actual source code
  * @apioption plotOptions.series.marker.states.hover.fillColor
  */
 
@@ -4469,7 +3933,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/ White fill color, black line color
  * @default {all} #ffffff
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.hover.lineColor docs to actual source code
  * @apioption plotOptions.series.marker.states.hover.lineColor
  */
 
@@ -4480,7 +3943,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linewidth/ 3px line width
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.hover.lineWidth docs to actual source code
  * @apioption plotOptions.series.marker.states.hover.lineWidth
  */
 
@@ -4492,7 +3954,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/ 10px radius
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.hover.radius docs to actual source code
  * @apioption plotOptions.series.marker.states.hover.radius
  */
 
@@ -4503,7 +3964,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-enabled/ Disabled select state
  * @default {all} true
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.select.enabled docs to actual source code
  * @apioption plotOptions.series.marker.states.select.enabled
  */
 
@@ -4514,7 +3974,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/ 10px radius for selected points
  * @product highcharts highstock
- * @todo Copy plotOptions.series.marker.states.select.radius docs to actual source code
  * @apioption plotOptions.series.marker.states.select.radius
  */
 
@@ -4535,8 +3994,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-point-events-click-url/ Go to URL
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-point-events-click/ Click marker to display values
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-point-events-click-url/ Go to URL
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.click docs to actual source code
  * @apioption plotOptions.series.point.events.click
  */
 
@@ -4549,8 +4006,6 @@
  * @type {Function}
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Show values in the chart's corner on mouse over
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.mouseOut docs to actual source code
  * @apioption plotOptions.series.point.events.mouseOut
  */
 
@@ -4563,8 +4018,6 @@
  * @type {Function}
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/ Show values in the chart's corner on mouse over
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.mouseOver docs to actual source code
  * @apioption plotOptions.series.point.events.mouseOver
  */
 
@@ -4577,8 +4030,6 @@
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-remove/ Remove point and confirm
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.remove docs to actual source code
  * @apioption plotOptions.series.point.events.remove
  */
 
@@ -4592,8 +4043,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-point-events-select/ Report the last selected point
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Report select and unselect
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.select docs to actual source code
  * @apioption plotOptions.series.point.events.select
  */
 
@@ -4607,8 +4056,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-point-events-unselect/ Report the last unselected point
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allowpointselect/ Report select and unselect
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.unselect docs to actual source code
  * @apioption plotOptions.series.point.events.unselect
  */
 
@@ -4622,8 +4069,6 @@
  * @context Point
  * @sample {highcharts} highcharts/plotoptions/series-point-events-update/ Confirm point updating
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.point.events.update docs to actual source code
  * @apioption plotOptions.series.point.events.update
  */
 
@@ -4637,8 +4082,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-pie/ Pie
  * @default {all} true
  * @since 1.2
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.states.hover.enabled docs to actual source code
  * @apioption plotOptions.series.states.hover.enabled
  */
 
@@ -4649,7 +4092,6 @@
  * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidth/ 5px line on hover
  * @default {all} 2
  * @product highcharts highstock
- * @todo Copy plotOptions.series.states.hover.lineWidth docs to actual source code
  * @apioption plotOptions.series.states.hover.lineWidth
  */
 
@@ -4660,13 +4102,11 @@
  * @type {Object}
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.states.hover.halo.attributes docs to actual source code
  * @apioption plotOptions.series.states.hover.halo.attributes
  */
 
 /**
  * @product highcharts highstock
- * @todo Copy plotOptions.series.states.hover.marker.states docs to actual source code
  * @apioption plotOptions.series.states.hover.marker.states
  */
 
@@ -4679,8 +4119,6 @@
  * @extends tooltip
  * @excluding animation,backgroundColor,borderColor,borderRadius,borderWidth,crosshairs,enabled,formatter,positioner,shadow,shared,shape,snap,style,useHTML
  * @since 2.3
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.tooltip docs to actual source code
  * @apioption plotOptions.series.tooltip
  */
 
@@ -4701,7 +4139,6 @@
  * @sample {highstock} highcharts/series/color-zones-simple/ Color zones
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zones docs to actual source code
  * @apioption plotOptions.series.zones
  */
 
@@ -4714,8 +4151,6 @@
  * @sample {highstock} highcharts/css/color-zones/ Zones styled by class name
  * @sample {highmaps} highcharts/css/color-zones/ Zones styled by class name
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy plotOptions.series.zones.className docs to actual source code
  * @apioption plotOptions.series.zones.className
  */
 
@@ -4726,7 +4161,6 @@
  * @see [series color](#plotOption.series.color)
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zones.color docs to actual source code
  * @apioption plotOptions.series.zones.color
  */
 
@@ -4739,7 +4173,6 @@
  * @sample {highstock} highcharts/series/color-zones-dashstyle-dot/ Dashed line indicates prognosis
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zones.dashStyle docs to actual source code
  * @apioption plotOptions.series.zones.dashStyle
  */
 
@@ -4750,7 +4183,6 @@
  * @see [fillColor](#plotOption.area.fillColor)
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zones.fillColor docs to actual source code
  * @apioption plotOptions.series.zones.fillColor
  */
 
@@ -4762,7 +4194,6 @@
  * @default {all} undefined
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy plotOptions.series.zones.value docs to actual source code
  * @apioption plotOptions.series.zones.value
  */
 
@@ -4775,7 +4206,6 @@
  * @default {all} round
  * @since 4.2.2
  * @product highcharts
- * @todo Copy plotOptions.solidgauge.linecap docs to actual source code
  * @apioption plotOptions.solidgauge.linecap
  */
 
@@ -4787,7 +4217,6 @@
  * @default {all} false
  * @since 5.0.8
  * @product highcharts
- * @todo Copy plotOptions.solidgauge.rounded docs to actual source code
  * @apioption plotOptions.solidgauge.rounded
  */
 
@@ -4799,7 +4228,6 @@
  * @default {all} null
  * @since 5.0.3
  * @product highcharts
- * @todo Copy plotOptions.solidgauge.threshold docs to actual source code
  * @apioption plotOptions.solidgauge.threshold
  */
 
@@ -4807,7 +4235,6 @@
  * @extends plotOptions.series
  * @excluding step
  * @product highcharts highstock
- * @todo Copy plotOptions.spline docs to actual source code
  * @apioption plotOptions.spline
  */
 
@@ -4821,7 +4248,6 @@
  * @default {all} false
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.allowDrillToNode docs to actual source code
  * @apioption plotOptions.treemap.allowDrillToNode
  */
 
@@ -4839,7 +4265,6 @@
  * @default {all} 300
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.cropThreshold docs to actual source code
  * @apioption plotOptions.treemap.cropThreshold
  */
 
@@ -4855,7 +4280,6 @@
  * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/ InteractByLeaf and allowDrillToNode is true
  * @since 4.1.2
  * @product highcharts
- * @todo Copy plotOptions.treemap.interactByLeaf docs to actual source code
  * @apioption plotOptions.treemap.interactByLeaf
  */
 
@@ -4866,7 +4290,6 @@
  * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/ Sort by years
  * @since 4.1.10
  * @product highcharts
- * @todo Copy plotOptions.treemap.sortIndex docs to actual source code
  * @apioption plotOptions.treemap.sortIndex
  */
 
@@ -4879,7 +4302,6 @@
  * @sample {highcharts} highcharts/demo/treemap-with-levels/ Different layoutAlgorithm
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels docs to actual source code
  * @apioption plotOptions.treemap.levels
  */
 
@@ -4889,7 +4311,6 @@
  * @type {Color}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.borderColor docs to actual source code
  * @apioption plotOptions.treemap.levels.borderColor
  */
 
@@ -4901,7 +4322,6 @@
  * @type {String}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.borderDashStyle docs to actual source code
  * @apioption plotOptions.treemap.levels.borderDashStyle
  */
 
@@ -4911,7 +4331,6 @@
  * @type {Number}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.borderWidth docs to actual source code
  * @apioption plotOptions.treemap.levels.borderWidth
  */
 
@@ -4921,7 +4340,6 @@
  * @type {Color}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.color docs to actual source code
  * @apioption plotOptions.treemap.levels.color
  */
 
@@ -4934,7 +4352,6 @@
  * @default {all} undefined
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.dataLabels docs to actual source code
  * @apioption plotOptions.treemap.levels.dataLabels
  */
 
@@ -4945,7 +4362,6 @@
  * @type {String}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.layoutAlgorithm docs to actual source code
  * @apioption plotOptions.treemap.levels.layoutAlgorithm
  */
 
@@ -4956,7 +4372,6 @@
  * @type {String}
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.layoutStartingDirection docs to actual source code
  * @apioption plotOptions.treemap.levels.layoutStartingDirection
  */
 
@@ -4968,7 +4383,6 @@
  * @sample {highcharts} highcharts/plotoptions/treemap-levels/ Styling of both levels
  * @since 4.1.0
  * @product highcharts
- * @todo Copy plotOptions.treemap.levels.level docs to actual source code
  * @apioption plotOptions.treemap.levels.level
  */
 
@@ -4984,7 +4398,6 @@
  * @type {Color}
  * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
  * @product highcharts
- * @todo Copy plotOptions.waterfall.upColor docs to actual source code
  * @apioption plotOptions.waterfall.upColor
  */
 
@@ -5003,8 +4416,6 @@
  * @sample {highmaps} highcharts/responsive/legend/ Legend
  * @sample {highmaps} highcharts/responsive/classname/ Class name
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive docs to actual source code
  * @apioption responsive
  */
 
@@ -5017,8 +4428,6 @@
  * @sample {highstock} highcharts/responsive/axis/ Axis changes
  * @sample {highmaps} highcharts/responsive/axis/ Axis changes
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules docs to actual source code
  * @apioption responsive.rules
  */
 
@@ -5046,8 +4455,6 @@
  * @sample {highmaps} highcharts/responsive/legend/ Legend
  * @sample {highmaps} highcharts/responsive/classname/ Class name
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.chartOptions docs to actual source code
  * @apioption responsive.rules.chartOptions
  */
 
@@ -5056,8 +4463,6 @@
  * 
  * @type {Object}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition docs to actual source code
  * @apioption responsive.rules.condition
  */
 
@@ -5070,8 +4475,6 @@
  * @type {Function}
  * @context Chart
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition.callback docs to actual source code
  * @apioption responsive.rules.condition.callback
  */
 
@@ -5080,8 +4483,6 @@
  * 
  * @type {Number}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition.maxHeight docs to actual source code
  * @apioption responsive.rules.condition.maxHeight
  */
 
@@ -5093,8 +4494,6 @@
  * @sample {highstock} highcharts/responsive/axis/ Max width is 500
  * @sample {highmaps} highcharts/responsive/axis/ Max width is 500
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition.maxWidth docs to actual source code
  * @apioption responsive.rules.condition.maxWidth
  */
 
@@ -5104,8 +4503,6 @@
  * @type {Number}
  * @default {all} 0
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition.minHeight docs to actual source code
  * @apioption responsive.rules.condition.minHeight
  */
 
@@ -5115,8 +4512,6 @@
  * @type {Number}
  * @default {all} 0
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy responsive.rules.condition.minWidth docs to actual source code
  * @apioption responsive.rules.condition.minWidth
  */
 
@@ -5127,7 +4522,6 @@
  * @type {Function}
  * @deprecated
  * @product highcharts
- * @todo Copy series.dataParser docs to actual source code
  * @apioption series.dataParser
  */
 
@@ -5139,7 +4533,6 @@
  * @type {String}
  * @deprecated
  * @product highcharts
- * @todo Copy series.dataURL docs to actual source code
  * @apioption series.dataURL
  */
 
@@ -5150,8 +4543,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/plotoptions/series-id/ Get series by id
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy series.id docs to actual source code
  * @apioption series.id
  */
 
@@ -5163,8 +4554,6 @@
  * @type {Number}
  * @default {all} undefined
  * @since 2.3.0
- * @product highcharts highstock highmaps
- * @todo Copy series.index docs to actual source code
  * @apioption series.index
  */
 
@@ -5179,8 +4568,6 @@
  * @type {Number}
  * @see [legend.reversed](#legend.reversed), [yAxis.reversedStacks](#yAxis.
  * reversedStacks)
- * @product highcharts highstock highmaps
- * @todo Copy series.legendIndex docs to actual source code
  * @apioption series.legendIndex
  */
 
@@ -5190,8 +4577,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/series/name/ Series name
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Series name
- * @product highcharts highstock highmaps
- * @todo Copy series.name docs to actual source code
  * @apioption series.name
  */
 
@@ -5205,7 +4590,6 @@
  * @default {all} null
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy series.stack docs to actual source code
  * @apioption series.stack
  */
 
@@ -5219,8 +4603,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/series/type/ Line and column in the same chart
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Multiple types in the same map
- * @product highcharts highstock highmaps
- * @todo Copy series.type docs to actual source code
  * @apioption series.type
  */
 
@@ -5233,7 +4615,6 @@
  * @type {Number|String}
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy series.xAxis docs to actual source code
  * @apioption series.xAxis
  */
 
@@ -5247,7 +4628,6 @@
  * @sample {highcharts} highcharts/series/yaxis/ Apply the column series to the secondary Y axis
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy series.yAxis docs to actual source code
  * @apioption series.yAxis
  */
 
@@ -5260,7 +4640,6 @@
  * @sample {highstock} highcharts/plotoptions/series-zindex-default/ With no z index, the series defined last are on top
  * @sample {highstock} highcharts/plotoptions/series-zindex/ With a z index, the series with the highest z index is on top
  * @product highcharts highstock
- * @todo Copy series.zIndex docs to actual source code
  * @apioption series.zIndex
  */
 
@@ -5319,8 +4698,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ 2c) arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ 3) config objects
  * @sample {highcharts} highcharts/demo/3d-column-null-values/ 4) 3D column with null values
- * @product highcharts highstock highmaps
- * @todo Copy series.data docs to actual source code
  * @apioption series.data
  */
 
@@ -5332,7 +4709,6 @@
  * @sample {highcharts} highcharts/point/color/ Mark the highest point
  * @default {all} undefined
  * @product highcharts highstock
- * @todo Copy series.line.data.color docs to actual source code
  * @apioption series.line.data.color
  */
 
@@ -5345,7 +4721,6 @@
  * @default {all} undefined
  * @since 4.1.0
  * @product highcharts
- * @todo Copy series.treemap.data.colorValue docs to actual source code
  * @apioption series.treemap.data.colorValue
  */
 
@@ -5358,7 +4733,6 @@
  * @sample {highcharts} highcharts/point/datalabels/ Show a label for the last value
  * @sample {highstock} highcharts/point/datalabels/ Show a label for the last value
  * @product highcharts highstock
- * @todo Copy series.line.data.dataLabels docs to actual source code
  * @apioption series.line.data.dataLabels
  */
 
@@ -5370,7 +4744,6 @@
  * @sample {highcharts} highcharts/drilldown/basic/ Basic drilldown
  * @since 3.0.8
  * @product highcharts
- * @todo Copy series.line.data.drilldown docs to actual source code
  * @apioption series.line.data.drilldown
  */
 
@@ -5383,7 +4756,6 @@
  * @default {all} null
  * @since 1.2.0
  * @product highcharts highstock
- * @todo Copy series.line.data.id docs to actual source code
  * @apioption series.line.data.id
  */
 
@@ -5396,7 +4768,6 @@
  * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
  * @default {all} false
  * @product highcharts
- * @todo Copy series.waterfall.data.isIntermediateSum docs to actual source code
  * @apioption series.waterfall.data.isIntermediateSum
  */
 
@@ -5408,7 +4779,6 @@
  * @sample {highcharts} highcharts/demo/waterfall/ Waterfall
  * @default {all} false
  * @product highcharts
- * @todo Copy series.waterfall.data.isSum docs to actual source code
  * @apioption series.waterfall.data.isSum
  */
 
@@ -5417,7 +4787,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.pie.data.legendIndex docs to actual source code
  * @apioption series.pie.data.legendIndex
  */
 
@@ -5433,7 +4802,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Point names
  * @product highcharts highstock
- * @todo Copy series.line.data.name docs to actual source code
  * @apioption series.line.data.name
  */
 
@@ -5449,7 +4817,6 @@
  * @default {all} undefined
  * @since 4.1.0
  * @product highcharts
- * @todo Copy series.treemap.data.parent docs to actual source code
  * @apioption series.treemap.data.parent
  */
 
@@ -5459,7 +4826,6 @@
  * @type {Boolean}
  * @sample {highcharts} highcharts/point/sliced/ One sliced point
  * @product highcharts
- * @todo Copy series.pie.data.sliced docs to actual source code
  * @apioption series.pie.data.sliced
  */
 
@@ -5469,7 +4835,6 @@
  * 
  * @type {Number}
  * @product highcharts highstock
- * @todo Copy series.line.data.x docs to actual source code
  * @apioption series.line.data.x
  */
 
@@ -5479,7 +4844,6 @@
  * @type {Number}
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy series.line.data.y docs to actual source code
  * @apioption series.line.data.y
  */
 
@@ -5488,14 +4852,12 @@
  * 
  * @extends plotOptions.series.point.events
  * @product highcharts highstock
- * @todo Copy series.line.data.events docs to actual source code
  * @apioption series.line.data.events
  */
 
 /**
  * @extends plotOptions.series.marker
  * @product highcharts highstock
- * @todo Copy series.line.data.marker docs to actual source code
  * @apioption series.line.data.marker
  */
 
@@ -5512,7 +4874,6 @@
  * @extends series,plotOptions.area
  * @excluding dataParser,dataURL
  * @product highcharts highstock
- * @todo Copy series.area docs to actual source code
  * @apioption series.area
  */
 
@@ -5563,63 +4924,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.area.data docs to actual source code
  * @apioption series.area.data
  */
 
 /**
  * @extends plotOptions.area.states
  * @product highcharts highstock
- * @todo Copy series.area.data.marker.states docs to actual source code
  * @apioption series.area.data.marker.states
  */
 
 /**
  * @extends plotOptions.area.dataLabels
  * @product highcharts highstock
- * @todo Copy series.area.dataLabels docs to actual source code
  * @apioption series.area.dataLabels
  */
 
 /**
  * @extends plotOptions.area.events
  * @product highcharts highstock
- * @todo Copy series.area.events docs to actual source code
  * @apioption series.area.events
  */
 
 /**
  * @extends plotOptions.area.marker
  * @product highcharts highstock
- * @todo Copy series.area.marker docs to actual source code
  * @apioption series.area.marker
  */
 
 /**
  * @extends plotOptions.area.point
  * @product highcharts highstock
- * @todo Copy series.area.point docs to actual source code
  * @apioption series.area.point
  */
 
 /**
  * @extends plotOptions.area.states
  * @product highcharts highstock
- * @todo Copy series.area.states docs to actual source code
  * @apioption series.area.states
  */
 
 /**
  * @extends plotOptions.area.tooltip
  * @product highcharts highstock
- * @todo Copy series.area.tooltip docs to actual source code
  * @apioption series.area.tooltip
  */
 
 /**
  * @extends plotOptions.area.zones
  * @product highcharts highstock
- * @todo Copy series.area.zones docs to actual source code
  * @apioption series.area.zones
  */
 
@@ -5637,7 +4989,6 @@
  * @extends series,plotOptions.arearange
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock
- * @todo Copy series.arearange docs to actual source code
  * @apioption series.arearange
  */
 
@@ -5687,7 +5038,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.arearange.data docs to actual source code
  * @apioption series.arearange.data
  */
 
@@ -5696,7 +5046,6 @@
  * 
  * @type {Number}
  * @product highcharts highstock
- * @todo Copy series.arearange.data.high docs to actual source code
  * @apioption series.arearange.data.high
  */
 
@@ -5705,63 +5054,54 @@
  * 
  * @type {Number}
  * @product highcharts highstock
- * @todo Copy series.arearange.data.low docs to actual source code
  * @apioption series.arearange.data.low
  */
 
 /**
  * @extends plotOptions.arearange.states
  * @product highcharts highstock
- * @todo Copy series.arearange.data.marker.states docs to actual source code
  * @apioption series.arearange.data.marker.states
  */
 
 /**
  * @extends plotOptions.arearange.dataLabels
  * @product highcharts highstock
- * @todo Copy series.arearange.dataLabels docs to actual source code
  * @apioption series.arearange.dataLabels
  */
 
 /**
  * @extends plotOptions.arearange.events
  * @product highcharts highstock
- * @todo Copy series.arearange.events docs to actual source code
  * @apioption series.arearange.events
  */
 
 /**
  * @extends plotOptions.arearange.marker
  * @product highcharts highstock
- * @todo Copy series.arearange.marker docs to actual source code
  * @apioption series.arearange.marker
  */
 
 /**
  * @extends plotOptions.arearange.point
  * @product highcharts highstock
- * @todo Copy series.arearange.point docs to actual source code
  * @apioption series.arearange.point
  */
 
 /**
  * @extends plotOptions.arearange.states
  * @product highcharts highstock
- * @todo Copy series.arearange.states docs to actual source code
  * @apioption series.arearange.states
  */
 
 /**
  * @extends plotOptions.arearange.tooltip
  * @product highcharts highstock
- * @todo Copy series.arearange.tooltip docs to actual source code
  * @apioption series.arearange.tooltip
  */
 
 /**
  * @extends plotOptions.arearange.zones
  * @product highcharts highstock
- * @todo Copy series.arearange.zones docs to actual source code
  * @apioption series.arearange.zones
  */
 
@@ -5779,7 +5119,6 @@
  * @extends series,plotOptions.areaspline
  * @excluding dataParser,dataURL
  * @product highcharts highstock
- * @todo Copy series.areaspline docs to actual source code
  * @apioption series.areaspline
  */
 
@@ -5830,63 +5169,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.areaspline.data docs to actual source code
  * @apioption series.areaspline.data
  */
 
 /**
  * @extends plotOptions.areaspline.states
  * @product highcharts highstock
- * @todo Copy series.areaspline.data.marker.states docs to actual source code
  * @apioption series.areaspline.data.marker.states
  */
 
 /**
  * @extends plotOptions.areaspline.dataLabels
  * @product highcharts highstock
- * @todo Copy series.areaspline.dataLabels docs to actual source code
  * @apioption series.areaspline.dataLabels
  */
 
 /**
  * @extends plotOptions.areaspline.events
  * @product highcharts highstock
- * @todo Copy series.areaspline.events docs to actual source code
  * @apioption series.areaspline.events
  */
 
 /**
  * @extends plotOptions.areaspline.marker
  * @product highcharts highstock
- * @todo Copy series.areaspline.marker docs to actual source code
  * @apioption series.areaspline.marker
  */
 
 /**
  * @extends plotOptions.areaspline.point
  * @product highcharts highstock
- * @todo Copy series.areaspline.point docs to actual source code
  * @apioption series.areaspline.point
  */
 
 /**
  * @extends plotOptions.areaspline.states
  * @product highcharts highstock
- * @todo Copy series.areaspline.states docs to actual source code
  * @apioption series.areaspline.states
  */
 
 /**
  * @extends plotOptions.areaspline.tooltip
  * @product highcharts highstock
- * @todo Copy series.areaspline.tooltip docs to actual source code
  * @apioption series.areaspline.tooltip
  */
 
 /**
  * @extends plotOptions.areaspline.zones
  * @product highcharts highstock
- * @todo Copy series.areaspline.zones docs to actual source code
  * @apioption series.areaspline.zones
  */
 
@@ -5904,7 +5234,6 @@
  * @extends series,plotOptions.areasplinerange
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock
- * @todo Copy series.areasplinerange docs to actual source code
  * @apioption series.areasplinerange
  */
 
@@ -5953,63 +5282,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.data docs to actual source code
  * @apioption series.areasplinerange.data
  */
 
 /**
  * @extends plotOptions.areasplinerange.states
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.data.marker.states docs to actual source code
  * @apioption series.areasplinerange.data.marker.states
  */
 
 /**
  * @extends plotOptions.areasplinerange.dataLabels
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.dataLabels docs to actual source code
  * @apioption series.areasplinerange.dataLabels
  */
 
 /**
  * @extends plotOptions.areasplinerange.events
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.events docs to actual source code
  * @apioption series.areasplinerange.events
  */
 
 /**
  * @extends plotOptions.areasplinerange.marker
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.marker docs to actual source code
  * @apioption series.areasplinerange.marker
  */
 
 /**
  * @extends plotOptions.areasplinerange.point
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.point docs to actual source code
  * @apioption series.areasplinerange.point
  */
 
 /**
  * @extends plotOptions.areasplinerange.states
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.states docs to actual source code
  * @apioption series.areasplinerange.states
  */
 
 /**
  * @extends plotOptions.areasplinerange.tooltip
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.tooltip docs to actual source code
  * @apioption series.areasplinerange.tooltip
  */
 
 /**
  * @extends plotOptions.areasplinerange.zones
  * @product highcharts highstock
- * @todo Copy series.areasplinerange.zones docs to actual source code
  * @apioption series.areasplinerange.zones
  */
 
@@ -6026,7 +5346,6 @@
  * @extends series,plotOptions.bar
  * @excluding dataParser,dataURL
  * @product highcharts
- * @todo Copy series.bar docs to actual source code
  * @apioption series.bar
  */
 
@@ -6077,63 +5396,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.bar.data docs to actual source code
  * @apioption series.bar.data
  */
 
 /**
  * @extends plotOptions.bar.states
  * @product highcharts
- * @todo Copy series.bar.data.marker.states docs to actual source code
  * @apioption series.bar.data.marker.states
  */
 
 /**
  * @extends plotOptions.bar.dataLabels
  * @product highcharts
- * @todo Copy series.bar.dataLabels docs to actual source code
  * @apioption series.bar.dataLabels
  */
 
 /**
  * @extends plotOptions.bar.events
  * @product highcharts
- * @todo Copy series.bar.events docs to actual source code
  * @apioption series.bar.events
  */
 
 /**
  * @extends plotOptions.bar.marker
  * @product highcharts
- * @todo Copy series.bar.marker docs to actual source code
  * @apioption series.bar.marker
  */
 
 /**
  * @extends plotOptions.bar.point
  * @product highcharts
- * @todo Copy series.bar.point docs to actual source code
  * @apioption series.bar.point
  */
 
 /**
  * @extends plotOptions.bar.states
  * @product highcharts
- * @todo Copy series.bar.states docs to actual source code
  * @apioption series.bar.states
  */
 
 /**
  * @extends plotOptions.bar.tooltip
  * @product highcharts
- * @todo Copy series.bar.tooltip docs to actual source code
  * @apioption series.bar.tooltip
  */
 
 /**
  * @extends plotOptions.bar.zones
  * @product highcharts
- * @todo Copy series.bar.zones docs to actual source code
  * @apioption series.bar.zones
  */
 
@@ -6150,7 +5460,6 @@
  * @extends series,plotOptions.boxplot
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.boxplot docs to actual source code
  * @apioption series.boxplot
  */
 
@@ -6206,7 +5515,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.boxplot.data docs to actual source code
  * @apioption series.boxplot.data
  */
 
@@ -6216,7 +5524,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.boxplot.data.high docs to actual source code
  * @apioption series.boxplot.data.high
  */
 
@@ -6226,7 +5533,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.boxplot.data.low docs to actual source code
  * @apioption series.boxplot.data.low
  */
 
@@ -6236,7 +5542,6 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.boxplot.data.median docs to actual source code
  * @apioption series.boxplot.data.median
  */
 
@@ -6262,56 +5567,48 @@
 /**
  * @extends plotOptions.boxplot.states
  * @product highcharts
- * @todo Copy series.boxplot.data.marker.states docs to actual source code
  * @apioption series.boxplot.data.marker.states
  */
 
 /**
  * @extends plotOptions.boxplot.dataLabels
  * @product highcharts
- * @todo Copy series.boxplot.dataLabels docs to actual source code
  * @apioption series.boxplot.dataLabels
  */
 
 /**
  * @extends plotOptions.boxplot.events
  * @product highcharts
- * @todo Copy series.boxplot.events docs to actual source code
  * @apioption series.boxplot.events
  */
 
 /**
  * @extends plotOptions.boxplot.marker
  * @product highcharts
- * @todo Copy series.boxplot.marker docs to actual source code
  * @apioption series.boxplot.marker
  */
 
 /**
  * @extends plotOptions.boxplot.point
  * @product highcharts
- * @todo Copy series.boxplot.point docs to actual source code
  * @apioption series.boxplot.point
  */
 
 /**
  * @extends plotOptions.boxplot.states
  * @product highcharts
- * @todo Copy series.boxplot.states docs to actual source code
  * @apioption series.boxplot.states
  */
 
 /**
  * @extends plotOptions.boxplot.tooltip
  * @product highcharts
- * @todo Copy series.boxplot.tooltip docs to actual source code
  * @apioption series.boxplot.tooltip
  */
 
 /**
  * @extends plotOptions.boxplot.zones
  * @product highcharts
- * @todo Copy series.boxplot.zones docs to actual source code
  * @apioption series.boxplot.zones
  */
 
@@ -6328,7 +5625,6 @@
  * @extends series,plotOptions.bubble
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.bubble docs to actual source code
  * @apioption series.bubble
  */
 
@@ -6378,7 +5674,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.bubble.data docs to actual source code
  * @apioption series.bubble.data
  */
 
@@ -6389,63 +5684,54 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.bubble.data.z docs to actual source code
  * @apioption series.bubble.data.z
  */
 
 /**
  * @extends plotOptions.bubble.states
  * @product highcharts
- * @todo Copy series.bubble.data.marker.states docs to actual source code
  * @apioption series.bubble.data.marker.states
  */
 
 /**
  * @extends plotOptions.bubble.dataLabels
  * @product highcharts
- * @todo Copy series.bubble.dataLabels docs to actual source code
  * @apioption series.bubble.dataLabels
  */
 
 /**
  * @extends plotOptions.bubble.events
  * @product highcharts
- * @todo Copy series.bubble.events docs to actual source code
  * @apioption series.bubble.events
  */
 
 /**
  * @extends plotOptions.bubble.marker
  * @product highcharts
- * @todo Copy series.bubble.marker docs to actual source code
  * @apioption series.bubble.marker
  */
 
 /**
  * @extends plotOptions.bubble.point
  * @product highcharts
- * @todo Copy series.bubble.point docs to actual source code
  * @apioption series.bubble.point
  */
 
 /**
  * @extends plotOptions.bubble.states
  * @product highcharts
- * @todo Copy series.bubble.states docs to actual source code
  * @apioption series.bubble.states
  */
 
 /**
  * @extends plotOptions.bubble.tooltip
  * @product highcharts
- * @todo Copy series.bubble.tooltip docs to actual source code
  * @apioption series.bubble.tooltip
  */
 
 /**
  * @extends plotOptions.bubble.zones
  * @product highcharts
- * @todo Copy series.bubble.zones docs to actual source code
  * @apioption series.bubble.zones
  */
 
@@ -6462,7 +5748,6 @@
  * @extends series,plotOptions.column
  * @excluding dataParser,dataURL
  * @product highcharts highstock
- * @todo Copy series.column docs to actual source code
  * @apioption series.column
  */
 
@@ -6514,63 +5799,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.column.data docs to actual source code
  * @apioption series.column.data
  */
 
 /**
  * @extends plotOptions.column.states
  * @product highcharts highstock
- * @todo Copy series.column.data.marker.states docs to actual source code
  * @apioption series.column.data.marker.states
  */
 
 /**
  * @extends plotOptions.column.dataLabels
  * @product highcharts highstock
- * @todo Copy series.column.dataLabels docs to actual source code
  * @apioption series.column.dataLabels
  */
 
 /**
  * @extends plotOptions.column.events
  * @product highcharts highstock
- * @todo Copy series.column.events docs to actual source code
  * @apioption series.column.events
  */
 
 /**
  * @extends plotOptions.column.marker
  * @product highcharts highstock
- * @todo Copy series.column.marker docs to actual source code
  * @apioption series.column.marker
  */
 
 /**
  * @extends plotOptions.column.point
  * @product highcharts highstock
- * @todo Copy series.column.point docs to actual source code
  * @apioption series.column.point
  */
 
 /**
  * @extends plotOptions.column.states
  * @product highcharts highstock
- * @todo Copy series.column.states docs to actual source code
  * @apioption series.column.states
  */
 
 /**
  * @extends plotOptions.column.tooltip
  * @product highcharts highstock
- * @todo Copy series.column.tooltip docs to actual source code
  * @apioption series.column.tooltip
  */
 
 /**
  * @extends plotOptions.column.zones
  * @product highcharts highstock
- * @todo Copy series.column.zones docs to actual source code
  * @apioption series.column.zones
  */
 
@@ -6588,7 +5864,6 @@
  * @extends series,plotOptions.columnrange
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock
- * @todo Copy series.columnrange docs to actual source code
  * @apioption series.columnrange
  */
 
@@ -6638,63 +5913,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.columnrange.data docs to actual source code
  * @apioption series.columnrange.data
  */
 
 /**
  * @extends plotOptions.columnrange.states
  * @product highcharts highstock
- * @todo Copy series.columnrange.data.marker.states docs to actual source code
  * @apioption series.columnrange.data.marker.states
  */
 
 /**
  * @extends plotOptions.columnrange.dataLabels
  * @product highcharts highstock
- * @todo Copy series.columnrange.dataLabels docs to actual source code
  * @apioption series.columnrange.dataLabels
  */
 
 /**
  * @extends plotOptions.columnrange.events
  * @product highcharts highstock
- * @todo Copy series.columnrange.events docs to actual source code
  * @apioption series.columnrange.events
  */
 
 /**
  * @extends plotOptions.columnrange.marker
  * @product highcharts highstock
- * @todo Copy series.columnrange.marker docs to actual source code
  * @apioption series.columnrange.marker
  */
 
 /**
  * @extends plotOptions.columnrange.point
  * @product highcharts highstock
- * @todo Copy series.columnrange.point docs to actual source code
  * @apioption series.columnrange.point
  */
 
 /**
  * @extends plotOptions.columnrange.states
  * @product highcharts highstock
- * @todo Copy series.columnrange.states docs to actual source code
  * @apioption series.columnrange.states
  */
 
 /**
  * @extends plotOptions.columnrange.tooltip
  * @product highcharts highstock
- * @todo Copy series.columnrange.tooltip docs to actual source code
  * @apioption series.columnrange.tooltip
  */
 
 /**
  * @extends plotOptions.columnrange.zones
  * @product highcharts highstock
- * @todo Copy series.columnrange.zones docs to actual source code
  * @apioption series.columnrange.zones
  */
 
@@ -6712,7 +5978,6 @@
  * @extends series,plotOptions.errorbar
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.errorbar docs to actual source code
  * @apioption series.errorbar
  */
 
@@ -6762,63 +6027,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.errorbar.data docs to actual source code
  * @apioption series.errorbar.data
  */
 
 /**
  * @extends plotOptions.errorbar.states
  * @product highcharts
- * @todo Copy series.errorbar.data.marker.states docs to actual source code
  * @apioption series.errorbar.data.marker.states
  */
 
 /**
  * @extends plotOptions.errorbar.dataLabels
  * @product highcharts
- * @todo Copy series.errorbar.dataLabels docs to actual source code
  * @apioption series.errorbar.dataLabels
  */
 
 /**
  * @extends plotOptions.errorbar.events
  * @product highcharts
- * @todo Copy series.errorbar.events docs to actual source code
  * @apioption series.errorbar.events
  */
 
 /**
  * @extends plotOptions.errorbar.marker
  * @product highcharts
- * @todo Copy series.errorbar.marker docs to actual source code
  * @apioption series.errorbar.marker
  */
 
 /**
  * @extends plotOptions.errorbar.point
  * @product highcharts
- * @todo Copy series.errorbar.point docs to actual source code
  * @apioption series.errorbar.point
  */
 
 /**
  * @extends plotOptions.errorbar.states
  * @product highcharts
- * @todo Copy series.errorbar.states docs to actual source code
  * @apioption series.errorbar.states
  */
 
 /**
  * @extends plotOptions.errorbar.tooltip
  * @product highcharts
- * @todo Copy series.errorbar.tooltip docs to actual source code
  * @apioption series.errorbar.tooltip
  */
 
 /**
  * @extends plotOptions.errorbar.zones
  * @product highcharts
- * @todo Copy series.errorbar.zones docs to actual source code
  * @apioption series.errorbar.zones
  */
 
@@ -6835,7 +6091,6 @@
  * @extends series,plotOptions.funnel
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts
- * @todo Copy series.funnel docs to actual source code
  * @apioption series.funnel
  */
 
@@ -6872,63 +6127,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.funnel.data docs to actual source code
  * @apioption series.funnel.data
  */
 
 /**
  * @extends plotOptions.funnel.states
  * @product highcharts
- * @todo Copy series.funnel.data.marker.states docs to actual source code
  * @apioption series.funnel.data.marker.states
  */
 
 /**
  * @extends plotOptions.funnel.dataLabels
  * @product highcharts
- * @todo Copy series.funnel.dataLabels docs to actual source code
  * @apioption series.funnel.dataLabels
  */
 
 /**
  * @extends plotOptions.funnel.events
  * @product highcharts
- * @todo Copy series.funnel.events docs to actual source code
  * @apioption series.funnel.events
  */
 
 /**
  * @extends plotOptions.funnel.marker
  * @product highcharts
- * @todo Copy series.funnel.marker docs to actual source code
  * @apioption series.funnel.marker
  */
 
 /**
  * @extends plotOptions.funnel.point
  * @product highcharts
- * @todo Copy series.funnel.point docs to actual source code
  * @apioption series.funnel.point
  */
 
 /**
  * @extends plotOptions.funnel.states
  * @product highcharts
- * @todo Copy series.funnel.states docs to actual source code
  * @apioption series.funnel.states
  */
 
 /**
  * @extends plotOptions.funnel.tooltip
  * @product highcharts
- * @todo Copy series.funnel.tooltip docs to actual source code
  * @apioption series.funnel.tooltip
  */
 
 /**
  * @extends plotOptions.funnel.zones
  * @product highcharts
- * @todo Copy series.funnel.zones docs to actual source code
  * @apioption series.funnel.zones
  */
 
@@ -6945,7 +6191,6 @@
  * @extends series,plotOptions.gauge
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.gauge docs to actual source code
  * @apioption series.gauge
  */
 
@@ -6984,63 +6229,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.gauge.data docs to actual source code
  * @apioption series.gauge.data
  */
 
 /**
  * @extends plotOptions.gauge.states
  * @product highcharts
- * @todo Copy series.gauge.data.marker.states docs to actual source code
  * @apioption series.gauge.data.marker.states
  */
 
 /**
  * @extends plotOptions.gauge.dataLabels
  * @product highcharts
- * @todo Copy series.gauge.dataLabels docs to actual source code
  * @apioption series.gauge.dataLabels
  */
 
 /**
  * @extends plotOptions.gauge.events
  * @product highcharts
- * @todo Copy series.gauge.events docs to actual source code
  * @apioption series.gauge.events
  */
 
 /**
  * @extends plotOptions.gauge.marker
  * @product highcharts
- * @todo Copy series.gauge.marker docs to actual source code
  * @apioption series.gauge.marker
  */
 
 /**
  * @extends plotOptions.gauge.point
  * @product highcharts
- * @todo Copy series.gauge.point docs to actual source code
  * @apioption series.gauge.point
  */
 
 /**
  * @extends plotOptions.gauge.states
  * @product highcharts
- * @todo Copy series.gauge.states docs to actual source code
  * @apioption series.gauge.states
  */
 
 /**
  * @extends plotOptions.gauge.tooltip
  * @product highcharts
- * @todo Copy series.gauge.tooltip docs to actual source code
  * @apioption series.gauge.tooltip
  */
 
 /**
  * @extends plotOptions.gauge.zones
  * @product highcharts
- * @todo Copy series.gauge.zones docs to actual source code
  * @apioption series.gauge.zones
  */
 
@@ -7057,7 +6293,6 @@
  * @extends series,plotOptions.heatmap
  * @excluding dataParser,dataURL,stack
  * @product highcharts highmaps
- * @todo Copy series.heatmap docs to actual source code
  * @apioption series.heatmap
  */
 
@@ -7107,7 +6342,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highmaps
- * @todo Copy series.heatmap.data docs to actual source code
  * @apioption series.heatmap.data
  */
 
@@ -7118,7 +6352,6 @@
  * 
  * @type {Color}
  * @product highcharts highmaps
- * @todo Copy series.heatmap.data.color docs to actual source code
  * @apioption series.heatmap.data.color
  */
 
@@ -7128,63 +6361,54 @@
  * 
  * @type {Number}
  * @product highcharts highmaps
- * @todo Copy series.heatmap.data.value docs to actual source code
  * @apioption series.heatmap.data.value
  */
 
 /**
  * @extends plotOptions.heatmap.states
  * @product highcharts highmaps
- * @todo Copy series.heatmap.data.marker.states docs to actual source code
  * @apioption series.heatmap.data.marker.states
  */
 
 /**
  * @extends plotOptions.heatmap.dataLabels
  * @product highcharts highmaps
- * @todo Copy series.heatmap.dataLabels docs to actual source code
  * @apioption series.heatmap.dataLabels
  */
 
 /**
  * @extends plotOptions.heatmap.events
  * @product highcharts highmaps
- * @todo Copy series.heatmap.events docs to actual source code
  * @apioption series.heatmap.events
  */
 
 /**
  * @extends plotOptions.heatmap.marker
  * @product highcharts highmaps
- * @todo Copy series.heatmap.marker docs to actual source code
  * @apioption series.heatmap.marker
  */
 
 /**
  * @extends plotOptions.heatmap.point
  * @product highcharts highmaps
- * @todo Copy series.heatmap.point docs to actual source code
  * @apioption series.heatmap.point
  */
 
 /**
  * @extends plotOptions.heatmap.states
  * @product highcharts highmaps
- * @todo Copy series.heatmap.states docs to actual source code
  * @apioption series.heatmap.states
  */
 
 /**
  * @extends plotOptions.heatmap.tooltip
  * @product highcharts highmaps
- * @todo Copy series.heatmap.tooltip docs to actual source code
  * @apioption series.heatmap.tooltip
  */
 
 /**
  * @extends plotOptions.heatmap.zones
  * @product highcharts highmaps
- * @todo Copy series.heatmap.zones docs to actual source code
  * @apioption series.heatmap.zones
  */
 
@@ -7201,7 +6425,6 @@
  * @extends series,plotOptions.line
  * @excluding dataParser,dataURL
  * @product highcharts highstock
- * @todo Copy series.line docs to actual source code
  * @apioption series.line
  */
 
@@ -7250,8 +6473,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/ Arrays of datetime x and y
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
- * @product highcharts highstock highmaps
- * @todo Copy series.line.data docs to actual source code
  * @apioption series.line.data
  */
 
@@ -7262,7 +6483,6 @@
  * @type {String}
  * @since 5.0.0
  * @product highcharts
- * @todo Copy series.line.data.className docs to actual source code
  * @apioption series.line.data.className
  */
 
@@ -7275,7 +6495,6 @@
  * @type {Number}
  * @since 5.0.0
  * @product highcharts
- * @todo Copy series.line.data.colorIndex docs to actual source code
  * @apioption series.line.data.colorIndex
  */
 
@@ -7288,8 +6507,6 @@
  * @type {String}
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy series.line.data.description docs to actual source code
  * @apioption series.line.data.description
  */
 
@@ -7299,8 +6516,6 @@
  * will be drawn.
  * 
  * @type {Number}
- * @product highcharts highstock highmaps
- * @todo Copy series.line.data.labelrank docs to actual source code
  * @apioption series.line.data.labelrank
  */
 
@@ -7310,63 +6525,54 @@
  * @type {Boolean}
  * @default {all} false
  * @product highcharts highstock
- * @todo Copy series.line.data.selected docs to actual source code
  * @apioption series.line.data.selected
  */
 
 /**
  * @extends plotOptions.line.states
  * @product highcharts highstock
- * @todo Copy series.line.data.marker.states docs to actual source code
  * @apioption series.line.data.marker.states
  */
 
 /**
  * @extends plotOptions.line.dataLabels
  * @product highcharts highstock
- * @todo Copy series.line.dataLabels docs to actual source code
  * @apioption series.line.dataLabels
  */
 
 /**
  * @extends plotOptions.line.events
  * @product highcharts highstock
- * @todo Copy series.line.events docs to actual source code
  * @apioption series.line.events
  */
 
 /**
  * @extends plotOptions.line.marker
  * @product highcharts highstock
- * @todo Copy series.line.marker docs to actual source code
  * @apioption series.line.marker
  */
 
 /**
  * @extends plotOptions.line.point
  * @product highcharts highstock
- * @todo Copy series.line.point docs to actual source code
  * @apioption series.line.point
  */
 
 /**
  * @extends plotOptions.line.states
  * @product highcharts highstock
- * @todo Copy series.line.states docs to actual source code
  * @apioption series.line.states
  */
 
 /**
  * @extends plotOptions.line.tooltip
  * @product highcharts highstock
- * @todo Copy series.line.tooltip docs to actual source code
  * @apioption series.line.tooltip
  */
 
 /**
  * @extends plotOptions.line.zones
  * @product highcharts highstock
- * @todo Copy series.line.zones docs to actual source code
  * @apioption series.line.zones
  */
 
@@ -7383,7 +6589,6 @@
  * @extends series,plotOptions.pie
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts
- * @todo Copy series.pie docs to actual source code
  * @apioption series.pie
  */
 
@@ -7420,63 +6625,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.pie.data docs to actual source code
  * @apioption series.pie.data
  */
 
 /**
  * @extends plotOptions.pie.states
  * @product highcharts
- * @todo Copy series.pie.data.marker.states docs to actual source code
  * @apioption series.pie.data.marker.states
  */
 
 /**
  * @extends plotOptions.pie.dataLabels
  * @product highcharts
- * @todo Copy series.pie.dataLabels docs to actual source code
  * @apioption series.pie.dataLabels
  */
 
 /**
  * @extends plotOptions.pie.events
  * @product highcharts
- * @todo Copy series.pie.events docs to actual source code
  * @apioption series.pie.events
  */
 
 /**
  * @extends plotOptions.pie.marker
  * @product highcharts
- * @todo Copy series.pie.marker docs to actual source code
  * @apioption series.pie.marker
  */
 
 /**
  * @extends plotOptions.pie.point
  * @product highcharts
- * @todo Copy series.pie.point docs to actual source code
  * @apioption series.pie.point
  */
 
 /**
  * @extends plotOptions.pie.states
  * @product highcharts
- * @todo Copy series.pie.states docs to actual source code
  * @apioption series.pie.states
  */
 
 /**
  * @extends plotOptions.pie.tooltip
  * @product highcharts
- * @todo Copy series.pie.tooltip docs to actual source code
  * @apioption series.pie.tooltip
  */
 
 /**
  * @extends plotOptions.pie.zones
  * @product highcharts
- * @todo Copy series.pie.zones docs to actual source code
  * @apioption series.pie.zones
  */
 
@@ -7493,7 +6689,6 @@
  * @extends series,plotOptions.polygon
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock
- * @todo Copy series.polygon docs to actual source code
  * @apioption series.polygon
  */
 
@@ -7544,63 +6739,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.polygon.data docs to actual source code
  * @apioption series.polygon.data
  */
 
 /**
  * @extends plotOptions.polygon.states
  * @product highcharts highstock
- * @todo Copy series.polygon.data.marker.states docs to actual source code
  * @apioption series.polygon.data.marker.states
  */
 
 /**
  * @extends plotOptions.polygon.dataLabels
  * @product highcharts highstock
- * @todo Copy series.polygon.dataLabels docs to actual source code
  * @apioption series.polygon.dataLabels
  */
 
 /**
  * @extends plotOptions.polygon.events
  * @product highcharts highstock
- * @todo Copy series.polygon.events docs to actual source code
  * @apioption series.polygon.events
  */
 
 /**
  * @extends plotOptions.polygon.marker
  * @product highcharts highstock
- * @todo Copy series.polygon.marker docs to actual source code
  * @apioption series.polygon.marker
  */
 
 /**
  * @extends plotOptions.polygon.point
  * @product highcharts highstock
- * @todo Copy series.polygon.point docs to actual source code
  * @apioption series.polygon.point
  */
 
 /**
  * @extends plotOptions.polygon.states
  * @product highcharts highstock
- * @todo Copy series.polygon.states docs to actual source code
  * @apioption series.polygon.states
  */
 
 /**
  * @extends plotOptions.polygon.tooltip
  * @product highcharts highstock
- * @todo Copy series.polygon.tooltip docs to actual source code
  * @apioption series.polygon.tooltip
  */
 
 /**
  * @extends plotOptions.polygon.zones
  * @product highcharts highstock
- * @todo Copy series.polygon.zones docs to actual source code
  * @apioption series.polygon.zones
  */
 
@@ -7617,7 +6803,6 @@
  * @extends series,plotOptions.pyramid
  * @excluding dataParser,dataURL,stack,xAxis,yAxis
  * @product highcharts
- * @todo Copy series.pyramid docs to actual source code
  * @apioption series.pyramid
  */
 
@@ -7654,63 +6839,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.pyramid.data docs to actual source code
  * @apioption series.pyramid.data
  */
 
 /**
  * @extends plotOptions.pyramid.states
  * @product highcharts
- * @todo Copy series.pyramid.data.marker.states docs to actual source code
  * @apioption series.pyramid.data.marker.states
  */
 
 /**
  * @extends plotOptions.pyramid.dataLabels
  * @product highcharts
- * @todo Copy series.pyramid.dataLabels docs to actual source code
  * @apioption series.pyramid.dataLabels
  */
 
 /**
  * @extends plotOptions.pyramid.events
  * @product highcharts
- * @todo Copy series.pyramid.events docs to actual source code
  * @apioption series.pyramid.events
  */
 
 /**
  * @extends plotOptions.pyramid.marker
  * @product highcharts
- * @todo Copy series.pyramid.marker docs to actual source code
  * @apioption series.pyramid.marker
  */
 
 /**
  * @extends plotOptions.pyramid.point
  * @product highcharts
- * @todo Copy series.pyramid.point docs to actual source code
  * @apioption series.pyramid.point
  */
 
 /**
  * @extends plotOptions.pyramid.states
  * @product highcharts
- * @todo Copy series.pyramid.states docs to actual source code
  * @apioption series.pyramid.states
  */
 
 /**
  * @extends plotOptions.pyramid.tooltip
  * @product highcharts
- * @todo Copy series.pyramid.tooltip docs to actual source code
  * @apioption series.pyramid.tooltip
  */
 
 /**
  * @extends plotOptions.pyramid.zones
  * @product highcharts
- * @todo Copy series.pyramid.zones docs to actual source code
  * @apioption series.pyramid.zones
  */
 
@@ -7727,7 +6903,6 @@
  * @extends series,plotOptions.scatter
  * @excluding dataParser,dataURL,stack
  * @product highcharts highstock
- * @todo Copy series.scatter docs to actual source code
  * @apioption series.scatter
  */
 
@@ -7778,63 +6953,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.scatter.data docs to actual source code
  * @apioption series.scatter.data
  */
 
 /**
  * @extends plotOptions.scatter.states
  * @product highcharts highstock
- * @todo Copy series.scatter.data.marker.states docs to actual source code
  * @apioption series.scatter.data.marker.states
  */
 
 /**
  * @extends plotOptions.scatter.dataLabels
  * @product highcharts highstock
- * @todo Copy series.scatter.dataLabels docs to actual source code
  * @apioption series.scatter.dataLabels
  */
 
 /**
  * @extends plotOptions.scatter.events
  * @product highcharts highstock
- * @todo Copy series.scatter.events docs to actual source code
  * @apioption series.scatter.events
  */
 
 /**
  * @extends plotOptions.scatter.marker
  * @product highcharts highstock
- * @todo Copy series.scatter.marker docs to actual source code
  * @apioption series.scatter.marker
  */
 
 /**
  * @extends plotOptions.scatter.point
  * @product highcharts highstock
- * @todo Copy series.scatter.point docs to actual source code
  * @apioption series.scatter.point
  */
 
 /**
  * @extends plotOptions.scatter.states
  * @product highcharts highstock
- * @todo Copy series.scatter.states docs to actual source code
  * @apioption series.scatter.states
  */
 
 /**
  * @extends plotOptions.scatter.tooltip
  * @product highcharts highstock
- * @todo Copy series.scatter.tooltip docs to actual source code
  * @apioption series.scatter.tooltip
  */
 
 /**
  * @extends plotOptions.scatter.zones
  * @product highcharts highstock
- * @todo Copy series.scatter.zones docs to actual source code
  * @apioption series.scatter.zones
  */
 
@@ -7852,7 +7018,6 @@
  * @extends series,plotOptions.solidgauge
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.solidgauge docs to actual source code
  * @apioption series.solidgauge
  */
 
@@ -7865,7 +7030,6 @@
  * @default {all} false
  * @since 5.0.11
  * @product highcharts
- * @todo Copy series.solidgauge.rounded docs to actual source code
  * @apioption series.solidgauge.rounded
  */
 
@@ -7903,7 +7067,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.solidgauge.data docs to actual source code
  * @apioption series.solidgauge.data
  */
 
@@ -7915,7 +7078,6 @@
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
  * @since 4.1.6
  * @product highcharts
- * @todo Copy series.solidgauge.data.innerRadius docs to actual source code
  * @apioption series.solidgauge.data.innerRadius
  */
 
@@ -7927,63 +7089,54 @@
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/ Individual radius and innerRadius
  * @since 4.1.6
  * @product highcharts
- * @todo Copy series.solidgauge.data.radius docs to actual source code
  * @apioption series.solidgauge.data.radius
  */
 
 /**
  * @extends plotOptions.solidgauge.states
  * @product highcharts
- * @todo Copy series.solidgauge.data.marker.states docs to actual source code
  * @apioption series.solidgauge.data.marker.states
  */
 
 /**
  * @extends plotOptions.solidgauge.dataLabels
  * @product highcharts
- * @todo Copy series.solidgauge.dataLabels docs to actual source code
  * @apioption series.solidgauge.dataLabels
  */
 
 /**
  * @extends plotOptions.solidgauge.events
  * @product highcharts
- * @todo Copy series.solidgauge.events docs to actual source code
  * @apioption series.solidgauge.events
  */
 
 /**
  * @extends plotOptions.solidgauge.marker
  * @product highcharts
- * @todo Copy series.solidgauge.marker docs to actual source code
  * @apioption series.solidgauge.marker
  */
 
 /**
  * @extends plotOptions.solidgauge.point
  * @product highcharts
- * @todo Copy series.solidgauge.point docs to actual source code
  * @apioption series.solidgauge.point
  */
 
 /**
  * @extends plotOptions.solidgauge.states
  * @product highcharts
- * @todo Copy series.solidgauge.states docs to actual source code
  * @apioption series.solidgauge.states
  */
 
 /**
  * @extends plotOptions.solidgauge.tooltip
  * @product highcharts
- * @todo Copy series.solidgauge.tooltip docs to actual source code
  * @apioption series.solidgauge.tooltip
  */
 
 /**
  * @extends plotOptions.solidgauge.zones
  * @product highcharts
- * @todo Copy series.solidgauge.zones docs to actual source code
  * @apioption series.solidgauge.zones
  */
 
@@ -8000,7 +7153,6 @@
  * @extends series,plotOptions.spline
  * @excluding dataParser,dataURL
  * @product highcharts highstock
- * @todo Copy series.spline docs to actual source code
  * @apioption series.spline
  */
 
@@ -8051,63 +7203,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts highstock
- * @todo Copy series.spline.data docs to actual source code
  * @apioption series.spline.data
  */
 
 /**
  * @extends plotOptions.spline.states
  * @product highcharts highstock
- * @todo Copy series.spline.data.marker.states docs to actual source code
  * @apioption series.spline.data.marker.states
  */
 
 /**
  * @extends plotOptions.spline.dataLabels
  * @product highcharts highstock
- * @todo Copy series.spline.dataLabels docs to actual source code
  * @apioption series.spline.dataLabels
  */
 
 /**
  * @extends plotOptions.spline.events
  * @product highcharts highstock
- * @todo Copy series.spline.events docs to actual source code
  * @apioption series.spline.events
  */
 
 /**
  * @extends plotOptions.spline.marker
  * @product highcharts highstock
- * @todo Copy series.spline.marker docs to actual source code
  * @apioption series.spline.marker
  */
 
 /**
  * @extends plotOptions.spline.point
  * @product highcharts highstock
- * @todo Copy series.spline.point docs to actual source code
  * @apioption series.spline.point
  */
 
 /**
  * @extends plotOptions.spline.states
  * @product highcharts highstock
- * @todo Copy series.spline.states docs to actual source code
  * @apioption series.spline.states
  */
 
 /**
  * @extends plotOptions.spline.tooltip
  * @product highcharts highstock
- * @todo Copy series.spline.tooltip docs to actual source code
  * @apioption series.spline.tooltip
  */
 
 /**
  * @extends plotOptions.spline.zones
  * @product highcharts highstock
- * @todo Copy series.spline.zones docs to actual source code
  * @apioption series.spline.zones
  */
 
@@ -8124,7 +7267,6 @@
  * @extends series,plotOptions.treemap
  * @excluding dataParser,dataURL,stack
  * @product highcharts
- * @todo Copy series.treemap docs to actual source code
  * @apioption series.treemap
  */
 
@@ -8161,7 +7303,6 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.treemap.data docs to actual source code
  * @apioption series.treemap.data
  */
 
@@ -8171,63 +7312,54 @@
  * 
  * @type {Number}
  * @product highcharts
- * @todo Copy series.treemap.data.value docs to actual source code
  * @apioption series.treemap.data.value
  */
 
 /**
  * @extends plotOptions.treemap.states
  * @product highcharts
- * @todo Copy series.treemap.data.marker.states docs to actual source code
  * @apioption series.treemap.data.marker.states
  */
 
 /**
  * @extends plotOptions.treemap.dataLabels
  * @product highcharts
- * @todo Copy series.treemap.dataLabels docs to actual source code
  * @apioption series.treemap.dataLabels
  */
 
 /**
  * @extends plotOptions.treemap.events
  * @product highcharts
- * @todo Copy series.treemap.events docs to actual source code
  * @apioption series.treemap.events
  */
 
 /**
  * @extends plotOptions.treemap.marker
  * @product highcharts
- * @todo Copy series.treemap.marker docs to actual source code
  * @apioption series.treemap.marker
  */
 
 /**
  * @extends plotOptions.treemap.point
  * @product highcharts
- * @todo Copy series.treemap.point docs to actual source code
  * @apioption series.treemap.point
  */
 
 /**
  * @extends plotOptions.treemap.states
  * @product highcharts
- * @todo Copy series.treemap.states docs to actual source code
  * @apioption series.treemap.states
  */
 
 /**
  * @extends plotOptions.treemap.tooltip
  * @product highcharts
- * @todo Copy series.treemap.tooltip docs to actual source code
  * @apioption series.treemap.tooltip
  */
 
 /**
  * @extends plotOptions.treemap.zones
  * @product highcharts
- * @todo Copy series.treemap.zones docs to actual source code
  * @apioption series.treemap.zones
  */
 
@@ -8245,7 +7377,6 @@
  * @extends series,plotOptions.waterfall
  * @excluding dataParser,dataURL
  * @product highcharts
- * @todo Copy series.waterfall docs to actual source code
  * @apioption series.waterfall
  */
 
@@ -8297,63 +7428,54 @@
  * @sample {highcharts} highcharts/series/data-array-of-name-value/ Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/ Config objects
  * @product highcharts
- * @todo Copy series.waterfall.data docs to actual source code
  * @apioption series.waterfall.data
  */
 
 /**
  * @extends plotOptions.waterfall.states
  * @product highcharts
- * @todo Copy series.waterfall.data.marker.states docs to actual source code
  * @apioption series.waterfall.data.marker.states
  */
 
 /**
  * @extends plotOptions.waterfall.dataLabels
  * @product highcharts
- * @todo Copy series.waterfall.dataLabels docs to actual source code
  * @apioption series.waterfall.dataLabels
  */
 
 /**
  * @extends plotOptions.waterfall.events
  * @product highcharts
- * @todo Copy series.waterfall.events docs to actual source code
  * @apioption series.waterfall.events
  */
 
 /**
  * @extends plotOptions.waterfall.marker
  * @product highcharts
- * @todo Copy series.waterfall.marker docs to actual source code
  * @apioption series.waterfall.marker
  */
 
 /**
  * @extends plotOptions.waterfall.point
  * @product highcharts
- * @todo Copy series.waterfall.point docs to actual source code
  * @apioption series.waterfall.point
  */
 
 /**
  * @extends plotOptions.waterfall.states
  * @product highcharts
- * @todo Copy series.waterfall.states docs to actual source code
  * @apioption series.waterfall.states
  */
 
 /**
  * @extends plotOptions.waterfall.tooltip
  * @product highcharts
- * @todo Copy series.waterfall.tooltip docs to actual source code
  * @apioption series.waterfall.tooltip
  */
 
 /**
  * @extends plotOptions.waterfall.zones
  * @product highcharts
- * @todo Copy series.waterfall.zones docs to actual source code
  * @apioption series.waterfall.zones
  */
 
@@ -8366,8 +7488,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote floating at bottom right of plot area
  * @default {all} false
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.floating docs to actual source code
  * @apioption subtitle.floating
  */
 
@@ -8385,8 +7505,6 @@
  * @sample {highstock} highcharts/css/titles/ Styled mode
  * @sample {highmaps} highcharts/css/titles/ Styled mode
  * @default {all} { "color": "#666666" }
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.style docs to actual source code
  * @apioption subtitle.style
  */
 
@@ -8396,8 +7514,6 @@
  * 
  * @type {Boolean}
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.useHTML docs to actual source code
  * @apioption subtitle.useHTML
  */
 
@@ -8411,8 +7527,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote at the bottom right of plot area
  * @default {all}  
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.verticalAlign docs to actual source code
  * @apioption subtitle.verticalAlign
  */
 
@@ -8425,8 +7539,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/subtitle-footnote Footnote at the bottom right of plot area
  * @default {all} 0
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.x docs to actual source code
  * @apioption subtitle.x
  */
 
@@ -8442,8 +7554,6 @@
  * @default {highstock}  null
  * @default {highmaps}  
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy subtitle.y docs to actual source code
  * @apioption subtitle.y
  */
 
@@ -8457,8 +7567,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-floating/ True - title on top of the plot area
  * @default {all} false
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy title.floating docs to actual source code
  * @apioption title.floating
  */
 
@@ -8479,8 +7587,6 @@
  * @default {highcharts} { "color": "#333333", "fontSize": "18px" }
  * @default {highstock} { "color": "#333333", "fontSize": "16px" }
  * @default {highmaps} { "color": "#333333", "fontSize": "18px" }
- * @product highcharts highstock highmaps
- * @todo Copy title.style docs to actual source code
  * @apioption title.style
  */
 
@@ -8490,8 +7596,6 @@
  * 
  * @type {Boolean}
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy title.useHTML docs to actual source code
  * @apioption title.useHTML
  */
 
@@ -8505,8 +7609,6 @@
  * @sample {highcharts} highcharts/title/verticalalign/ Chart title in bottom right corner
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-verticalalign/ Chart title in bottom right corner
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy title.verticalAlign docs to actual source code
  * @apioption title.verticalAlign
  */
 
@@ -8519,8 +7621,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-align/ Aligned to the plot area (x = 50px     = margin left - spacing left)
  * @default {all} 0
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy title.x docs to actual source code
  * @apioption title.x
  */
 
@@ -8533,8 +7633,6 @@
  * @sample {highcharts} highcharts/title/y/ Title inside the plot area
  * @sample {highstock} highcharts/tree/master/samples/stock/chart/title-verticalalign/ Chart title in bottom right corner
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy title.y docs to actual source code
  * @apioption title.y
  */
 
@@ -8548,8 +7646,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/general/ Styled tooltip
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/background-border/ Background and border demo
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.borderColor docs to actual source code
  * @apioption tooltip.borderColor
  */
 
@@ -8562,8 +7658,6 @@
  * @deprecated
  * @sample {highcharts} highcharts/tooltip/crosshairs-x/ Enable a crosshair for the x value
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.crosshairs docs to actual source code
  * @apioption tooltip.crosshairs
  */
 
@@ -8581,8 +7675,6 @@
  * @default {highstock} false
  * @default {highmaps} true
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.followPointer docs to actual source code
  * @apioption tooltip.followPointer
  */
 
@@ -8597,8 +7689,6 @@
  * @default {highstock} true
  * @default {highmaps} false
  * @since 3.0.1
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.followTouchMove docs to actual source code
  * @apioption tooltip.followTouchMove
  */
 
@@ -8663,8 +7753,6 @@
  * @sample {highcharts} highcharts/tooltip/formatter-shared/ Formatting with shared tooltip
  * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/formatter/ Formatting with shared tooltip
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/formatter/ String formatting
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.formatter docs to actual source code
  * @apioption tooltip.formatter
  */
 
@@ -8676,7 +7764,6 @@
  * @default {all} 500
  * @since 3.0
  * @product highcharts highmaps
- * @todo Copy tooltip.hideDelay docs to actual source code
  * @apioption tooltip.hideDelay
  */
 
@@ -8687,8 +7774,6 @@
  * @type {Function}
  * @context Point
  * @since 4.1.0
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.pointFormatter docs to actual source code
  * @apioption tooltip.pointFormatter
  */
 
@@ -8707,8 +7792,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/tooltip/positioner/ A fixed tooltip position on top of the chart
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/positioner/ A fixed tooltip position
  * @since 2.2.4
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.positioner docs to actual source code
  * @apioption tooltip.positioner
  */
 
@@ -8720,7 +7803,6 @@
  * @default {all} callout
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy tooltip.shape docs to actual source code
  * @apioption tooltip.shape
  */
 
@@ -8743,7 +7825,6 @@
  * @default {highstock} true
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy tooltip.shared docs to actual source code
  * @apioption tooltip.shared
  */
 
@@ -8759,8 +7840,6 @@
  * @sample {highmaps} highcharts/tooltip/split/ Split tooltip
  * @default {all} false
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.split docs to actual source code
  * @apioption tooltip.split
  */
 
@@ -8778,8 +7857,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/usehtml/ Pure HTML tooltip
  * @default {all} false
  * @since 2.2
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.useHTML docs to actual source code
  * @apioption tooltip.useHTML
  */
 
@@ -8793,8 +7870,6 @@
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.valueDecimals docs to actual source code
  * @apioption tooltip.valueDecimals
  */
 
@@ -8807,8 +7882,6 @@
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.valuePrefix docs to actual source code
  * @apioption tooltip.valuePrefix
  */
 
@@ -8821,8 +7894,6 @@
  * @sample {highstock} highcharts/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @sample {highmaps} highcharts/tree/master/samples/maps/tooltip/valuedecimals/ Set decimals, prefix and suffix for the value
  * @since 2.2
- * @product highcharts highstock highmaps
- * @todo Copy tooltip.valueSuffix docs to actual source code
  * @apioption tooltip.valueSuffix
  */
 
@@ -8834,7 +7905,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/tooltip/xdateformat/ A different format
  * @product highcharts highstock
- * @todo Copy tooltip.xDateFormat docs to actual source code
  * @apioption tooltip.xDateFormat
  */
 
@@ -8851,8 +7921,6 @@
  * @sample {highstock} highcharts/yaxis/allowdecimals-false/ False
  * @default {all} true
  * @since 2.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.allowDecimals docs to actual source code
  * @apioption xAxis.allowDecimals
  */
 
@@ -8864,8 +7932,6 @@
  * @sample {highcharts} highcharts/yaxis/alternategridcolor/ Alternate grid color on the Y axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/alternategridcolor/ Alternate grid color on the Y axis
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.alternateGridColor docs to actual source code
  * @apioption xAxis.alternateGridColor
  */
 
@@ -8886,7 +7952,6 @@
  * @sample {highcharts} highcharts/chart/reflow-true/ With
  * @sample {highcharts} highcharts/xaxis/categories/ Without
  * @product highcharts
- * @todo Copy xAxis.categories docs to actual source code
  * @apioption xAxis.categories
  */
 
@@ -8899,7 +7964,6 @@
  * @sample {highstock} highcharts/yaxis/floor-ceiling/ Floor and ceiling
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy xAxis.ceiling docs to actual source code
  * @apioption xAxis.ceiling
  */
 
@@ -8914,8 +7978,6 @@
  * @sample {highstock} highcharts/css/axis/ Multiple axes with separate styling
  * @sample {highmaps} highcharts/css/axis/ Multiple axes with separate styling
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.className docs to actual source code
  * @apioption xAxis.className
  */
 
@@ -8927,8 +7989,6 @@
  * @type {String}
  * @default {all} undefined
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.description docs to actual source code
  * @apioption xAxis.description
  */
 
@@ -8942,7 +8002,6 @@
  * @default {all} null
  * @since 4.0
  * @product highcharts highstock
- * @todo Copy xAxis.floor docs to actual source code
  * @apioption xAxis.floor
  */
 
@@ -8957,8 +8016,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinedashstyle/ Long dashes
  * @default {all} Solid
  * @since 1.2
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.gridLineDashStyle docs to actual source code
  * @apioption xAxis.gridLineDashStyle
  */
 
@@ -8976,8 +8033,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/gridlinewidth/ 2px lines
  * @sample {highstock} highcharts/css/axis-grid/ Styled mode
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.gridLineWidth docs to actual source code
  * @apioption xAxis.gridLineWidth
  */
 
@@ -8989,7 +8044,6 @@
  * @sample {highstock} highcharts/xaxis/gridzindex/ A Z index of 4 renders the grid above the graph
  * @default {all} 1
  * @product highcharts highstock
- * @todo Copy xAxis.gridZIndex docs to actual source code
  * @apioption xAxis.gridZIndex
  */
 
@@ -9002,8 +8056,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/id/ Get the object
  * @default {all} null
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.id docs to actual source code
  * @apioption xAxis.id
  */
 
@@ -9020,7 +8072,6 @@
  * @default {all} null
  * @since 2.0.2
  * @product highcharts highstock
- * @todo Copy xAxis.linkedTo docs to actual source code
  * @apioption xAxis.linkedTo
  */
 
@@ -9039,8 +8090,6 @@
  * @sample {highcharts} highcharts/yaxis/max-logarithmic/ Y axis max on logarithmic axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/min-max/ Fixed min and max
  * @sample {highmaps} highcharts/tree/master/samples/maps/axis/min-max/ Pre-zoomed to a specific area
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.max docs to actual source code
  * @apioption xAxis.max
  */
 
@@ -9050,7 +8099,6 @@
  * @type {Number}
  * @deprecated
  * @product highcharts highstock
- * @todo Copy xAxis.maxZoom docs to actual source code
  * @apioption xAxis.maxZoom
  */
 
@@ -9064,8 +8112,6 @@
  * @sample {highcharts} highcharts/yaxis/min-startontick-true/ -50 with startOnTick true by default
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/min-max/ Fixed min and max
  * @sample {highmaps} highcharts/tree/master/samples/maps/axis/min-max/ Pre-zoomed to a specific area
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.min docs to actual source code
  * @apioption xAxis.min
  */
 
@@ -9089,8 +8135,6 @@
  * @sample {highcharts} highcharts/xaxis/minrange/ Minimum range of 5
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minrange/ Max zoom of 6 months overrides user selections
  * @sample {highmaps} highcharts/tree/master/samples/maps/axis/minrange/ Minimum range of 1000
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.minRange docs to actual source code
  * @apioption xAxis.minRange
  */
 
@@ -9102,8 +8146,6 @@
  * 
  * @type {Number}
  * @since 2.3.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.minTickInterval docs to actual source code
  * @apioption xAxis.minTickInterval
  */
 
@@ -9118,8 +8160,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorgridlinedashstyle/ Long dashes on minor grid lines
  * @default {all} Solid
  * @since 1.2
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.minorGridLineDashStyle docs to actual source code
  * @apioption xAxis.minorGridLineDashStyle
  */
 
@@ -9149,8 +8189,6 @@
  * @sample {highcharts} highcharts/yaxis/minortickinterval-log/ 0.1
  * @sample {highstock} highcharts/tree/master/samples/stock/demo/basic-line/ Null by default
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minortickinterval-auto/ "auto"
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.minorTickInterval docs to actual source code
  * @apioption xAxis.minorTickInterval
  */
 
@@ -9161,8 +8199,6 @@
  * @sample {highcharts} highcharts/yaxis/minortickwidth/ 3px width
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/minorticks/ 1px width
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.minorTickWidth docs to actual source code
  * @apioption xAxis.minorTickWidth
  */
 
@@ -9179,8 +8215,6 @@
  * @sample {highcharts} highcharts/yaxis/offset-centered/ Axes positioned in the center of the plot
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/offset/ Y axis offset by 70 px
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.offset docs to actual source code
  * @apioption xAxis.offset
  */
 
@@ -9194,8 +8228,6 @@
  * @sample {highcharts} highcharts/yaxis/opposite/ Secondary Y axis opposite
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/opposite/ Y axis on left side
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.opposite docs to actual source code
  * @apioption xAxis.opposite
  */
 
@@ -9208,8 +8240,6 @@
  * @sample {highcharts} highcharts/yaxis/reversed/ Reversed Y axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/reversed/ Reversed Y axis
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.reversed docs to actual source code
  * @apioption xAxis.reversed
  */
 
@@ -9221,8 +8251,6 @@
  * @sample {highstock} highcharts/yaxis/showempty/ When clicking the legend to hide series, one axis preserves line and title, the other doesn't
  * @default {all} true
  * @since 1.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.showEmpty docs to actual source code
  * @apioption xAxis.showEmpty
  */
 
@@ -9233,8 +8261,6 @@
  * @sample {highcharts} highcharts/xaxis/showfirstlabel-false/ Set to false on X axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.showFirstLabel docs to actual source code
  * @apioption xAxis.showFirstLabel
  */
 
@@ -9245,8 +8271,6 @@
  * @sample {highcharts} highcharts/xaxis/showlastlabel-true/ Set to true on X axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/showfirstlabel/ Labels below plot lines on Y axis
  * @default {all} true
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.showLastLabel docs to actual source code
  * @apioption xAxis.showLastLabel
  */
 
@@ -9259,7 +8283,6 @@
  * @sample {highcharts} highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
  * @product highcharts
- * @todo Copy xAxis.softMax docs to actual source code
  * @apioption xAxis.softMax
  */
 
@@ -9273,8 +8296,6 @@
  * @sample {highstock} highcharts/yaxis/softmin-softmax/ Soft min and max
  * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.softMin docs to actual source code
  * @apioption xAxis.softMin
  */
 
@@ -9291,7 +8312,6 @@
  * @sample {highstock} highcharts/yaxis/tickamount/ 8 ticks on Y axis
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.tickAmount docs to actual source code
  * @apioption xAxis.tickAmount
  */
 
@@ -9321,8 +8341,6 @@
  * @sample {highcharts} highcharts/xaxis/tickinterval-5/ Tick interval of 5 on a linear axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/tickinterval/ Tick interval of 0.01 on Y axis
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.tickInterval docs to actual source code
  * @apioption xAxis.tickInterval
  */
 
@@ -9337,8 +8355,6 @@
  * @see [tickPositions](#xAxis.tickPositions)
  * @sample {highcharts} highcharts/xaxis/tickpositions-tickpositioner/ Demo of tickPositions and tickPositioner
  * @sample {highstock} highcharts/xaxis/tickpositions-tickpositioner/ Demo of tickPositions and tickPositioner
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.tickPositioner docs to actual source code
  * @apioption xAxis.tickPositioner
  */
 
@@ -9351,8 +8367,6 @@
  * @see [tickPositioner](#xAxis.tickPositioner)
  * @sample {highcharts} highcharts/xaxis/tickpositions-tickpositioner/ Demo of tickPositions and tickPositioner
  * @sample {highstock} highcharts/xaxis/tickpositions-tickpositioner/ Demo of tickPositions and tickPositioner
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.tickPositions docs to actual source code
  * @apioption xAxis.tickPositions
  */
 
@@ -9371,8 +8385,6 @@
  * @default {highcharts} 1
  * @default {highstock} 1
  * @default {highmaps} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.tickWidth docs to actual source code
  * @apioption xAxis.tickWidth
  */
 
@@ -9391,7 +8403,6 @@
  * @default {all} true
  * @since 4.2.7
  * @product highcharts
- * @todo Copy xAxis.uniqueNames docs to actual source code
  * @apioption xAxis.uniqueNames
  */
 
@@ -9429,7 +8440,6 @@
  * 
  * @type {Array}
  * @product highcharts highstock
- * @todo Copy xAxis.units docs to actual source code
  * @apioption xAxis.units
  */
 
@@ -9441,7 +8451,6 @@
  * @default {all} true
  * @since 4.1.9
  * @product highcharts highstock
- * @todo Copy xAxis.visible docs to actual source code
  * @apioption xAxis.visible
  */
 
@@ -9457,7 +8466,6 @@
  * @sample {highstock} highcharts/axisbreak/break-visualized/ Broken Y axis
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.breaks docs to actual source code
  * @apioption xAxis.breaks
  */
 
@@ -9471,7 +8479,6 @@
  * @default {all} 0
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.breaks.breakSize docs to actual source code
  * @apioption xAxis.breaks.breakSize
  */
 
@@ -9481,7 +8488,6 @@
  * @type {Number}
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.breaks.from docs to actual source code
  * @apioption xAxis.breaks.from
  */
 
@@ -9493,7 +8499,6 @@
  * @default {all} 0
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.breaks.repeat docs to actual source code
  * @apioption xAxis.breaks.repeat
  */
 
@@ -9503,7 +8508,6 @@
  * @type {Number}
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.breaks.to docs to actual source code
  * @apioption xAxis.breaks.to
  */
 
@@ -9522,8 +8526,6 @@
  * @sample {highmaps} highcharts/xaxis/crosshair-both/ Crosshair on both axes
  * @default {all} false
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair docs to actual source code
  * @apioption xAxis.crosshair
  */
 
@@ -9532,8 +8534,6 @@
  * 
  * @type {String}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.className docs to actual source code
  * @apioption xAxis.crosshair.className
  */
 
@@ -9548,8 +8548,6 @@
  * @sample {highmaps} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @default {all} #cccccc
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.color docs to actual source code
  * @apioption xAxis.crosshair.color
  */
 
@@ -9564,8 +8562,6 @@
  * @sample {highmaps} highcharts/xaxis/crosshair-dotted/ Dotted crosshair
  * @default {all} Solid
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.dashStyle docs to actual source code
  * @apioption xAxis.crosshair.dashStyle
  */
 
@@ -9579,8 +8575,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/latlon-advanced/ Snap is false
  * @default {all} true
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.snap docs to actual source code
  * @apioption xAxis.crosshair.snap
  */
 
@@ -9594,8 +8588,6 @@
  * @sample {highmaps} highcharts/xaxis/crosshair-customized/ Customized crosshairs
  * @default {all} 1
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.width docs to actual source code
  * @apioption xAxis.crosshair.width
  */
 
@@ -9606,16 +8598,12 @@
  * @type {Number}
  * @default {all} 2
  * @since 4.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.crosshair.zIndex docs to actual source code
  * @apioption xAxis.crosshair.zIndex
  */
 
 /**
  * Event handlers for the axis.
  * 
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.events docs to actual source code
  * @apioption xAxis.events
  */
 
@@ -9627,7 +8615,6 @@
  * @sample {highcharts} highcharts/axisbreak/break-event// AfterBreak Event
  * @since 4.1.0
  * @product highcharts
- * @todo Copy xAxis.events.afterBreaks docs to actual source code
  * @apioption xAxis.events.afterBreaks
  */
 
@@ -9650,8 +8637,6 @@
  * @type {Function}
  * @context Axis
  * @since 2.3
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.events.afterSetExtremes docs to actual source code
  * @apioption xAxis.events.afterSetExtremes
  */
 
@@ -9664,7 +8649,6 @@
  * @sample {highcharts} highcharts/axisbreak/break-visualized/ Visualization of a Break
  * @since 4.1.0
  * @product highcharts
- * @todo Copy xAxis.events.pointBreak docs to actual source code
  * @apioption xAxis.events.pointBreak
  */
 
@@ -9674,7 +8658,6 @@
  * @type {Function}
  * @context Axis
  * @product highcharts highstock
- * @todo Copy xAxis.events.pointInBreak docs to actual source code
  * @apioption xAxis.events.pointInBreak
  */
 
@@ -9695,8 +8678,6 @@
  * @context Axis
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/events-setextremes/ Log new extremes on x axis
  * @since 1.2.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.events.setExtremes docs to actual source code
  * @apioption xAxis.events.setExtremes
  */
 
@@ -9711,8 +8692,6 @@
  * @type {String}
  * @sample {highcharts} highcharts/xaxis/labels-align-left/ Left
  * @sample {highcharts} highcharts/xaxis/labels-align-right/ Right
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.align docs to actual source code
  * @apioption xAxis.labels.align
  */
 
@@ -9732,7 +8711,6 @@
  * @default {all} [-45]
  * @since 4.1.0
  * @product highcharts highstock
- * @todo Copy xAxis.labels.autoRotation docs to actual source code
  * @apioption xAxis.labels.autoRotation
  */
 
@@ -9748,7 +8726,6 @@
  * @default {all} 80
  * @since 4.1.5
  * @product highcharts
- * @todo Copy xAxis.labels.autoRotationLimit docs to actual source code
  * @apioption xAxis.labels.autoRotationLimit
  */
 
@@ -9759,7 +8736,6 @@
  * @type {Number}
  * @default {all} 15
  * @product highcharts
- * @todo Copy xAxis.labels.distance docs to actual source code
  * @apioption xAxis.labels.distance
  */
 
@@ -9772,8 +8748,6 @@
  * @sample {highstock} highcharts/yaxis/labels-format/ Add units to Y axis label
  * @default {all} {value}
  * @since 3.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.format docs to actual source code
  * @apioption xAxis.labels.format
  */
 
@@ -9794,8 +8768,6 @@
  * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/ Linked category names
  * @sample {highcharts} highcharts/xaxis/labels-formatter-extended/ Modified numeric labels
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/labels-formatter/ Added units on Y axis
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.formatter docs to actual source code
  * @apioption xAxis.labels.formatter
  */
 
@@ -9810,8 +8782,6 @@
  * @type {String}
  * @deprecated
  * @since 2.2.5
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.overflow docs to actual source code
  * @apioption xAxis.labels.overflow
  */
 
@@ -9822,7 +8792,6 @@
  * @type {Number}
  * @default {all} 5
  * @product highcharts
- * @todo Copy xAxis.labels.padding docs to actual source code
  * @apioption xAxis.labels.padding
  */
 
@@ -9836,7 +8805,6 @@
  * @default {all} true
  * @since 4.1.10
  * @product highcharts
- * @todo Copy xAxis.labels.reserveSpace docs to actual source code
  * @apioption xAxis.labels.reserveSpace
  */
 
@@ -9846,8 +8814,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-rotation/ X axis labels rotated 90°
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.rotation docs to actual source code
  * @apioption xAxis.labels.rotation
  */
 
@@ -9860,8 +8826,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/labels-staggerlines/ Show labels over two lines
  * @default {all} null
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.staggerLines docs to actual source code
  * @apioption xAxis.labels.staggerLines
  */
 
@@ -9880,8 +8844,6 @@
  * @sample {highcharts} highcharts/xaxis/labels-step-auto/ Auto steps on a category axis
  * @default {all} null
  * @since 2.1
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.step docs to actual source code
  * @apioption xAxis.labels.step
  */
 
@@ -9891,8 +8853,6 @@
  * 
  * @type {Boolean}
  * @default {all} false
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.useHTML docs to actual source code
  * @apioption xAxis.labels.useHTML
  */
 
@@ -9904,8 +8864,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/labels-x/ Y axis labels placed on grid lines
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.y docs to actual source code
  * @apioption xAxis.labels.y
  */
 
@@ -9914,8 +8872,6 @@
  * 
  * @type {Number}
  * @default {all} 7
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.labels.zIndex docs to actual source code
  * @apioption xAxis.labels.zIndex
  */
 
@@ -9932,7 +8888,6 @@
  * 
  * @type {Array<Object>}
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands docs to actual source code
  * @apioption xAxis.plotBands
  */
 
@@ -9943,7 +8898,6 @@
  * @type {Color}
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.borderColor docs to actual source code
  * @apioption xAxis.plotBands.borderColor
  */
 
@@ -9954,7 +8908,6 @@
  * @type {Number}
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.borderWidth docs to actual source code
  * @apioption xAxis.plotBands.borderWidth
  */
 
@@ -9964,8 +8917,6 @@
  * 
  * @type {String}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.plotBands.className docs to actual source code
  * @apioption xAxis.plotBands.className
  */
 
@@ -9977,7 +8928,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.color docs to actual source code
  * @apioption xAxis.plotBands.color
  */
 
@@ -9990,7 +8940,6 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-events/ Mouse events demonstrated
  * @since 1.2
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.events docs to actual source code
  * @apioption xAxis.plotBands.events
  */
 
@@ -10003,7 +8952,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.from docs to actual source code
  * @apioption xAxis.plotBands.from
  */
 
@@ -10015,7 +8963,6 @@
  * @sample {highstock} highcharts/xaxis/plotbands-id/ Remove plot band by id
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.id docs to actual source code
  * @apioption xAxis.plotBands.id
  */
 
@@ -10028,7 +8975,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands/ Plot band on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.to docs to actual source code
  * @apioption xAxis.plotBands.to
  */
 
@@ -10045,7 +8991,6 @@
  * @default {all} null
  * @since 1.2
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.zIndex docs to actual source code
  * @apioption xAxis.plotBands.zIndex
  */
 
@@ -10053,7 +8998,6 @@
  * Text labels for the plot bands
  * 
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label docs to actual source code
  * @apioption xAxis.plotBands.label
  */
 
@@ -10067,7 +9011,6 @@
  * @default {all} center
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.align docs to actual source code
  * @apioption xAxis.plotBands.label.align
  */
 
@@ -10079,7 +9022,6 @@
  * @default {all} 0
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.rotation docs to actual source code
  * @apioption xAxis.plotBands.label.rotation
  */
 
@@ -10094,7 +9036,6 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-label-style/ Blue and bold label
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.style docs to actual source code
  * @apioption xAxis.plotBands.label.style
  */
 
@@ -10104,7 +9045,6 @@
  * @type {String}
  * @since 2.1
  * @product highcharts
- * @todo Copy xAxis.plotBands.label.text docs to actual source code
  * @apioption xAxis.plotBands.label.text
  */
 
@@ -10119,7 +9059,6 @@
  * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/ Vertical text in center position but text-aligned left
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.textAlign docs to actual source code
  * @apioption xAxis.plotBands.label.textAlign
  */
 
@@ -10131,7 +9070,6 @@
  * @default {all} false
  * @since 3.0.3
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.useHTML docs to actual source code
  * @apioption xAxis.plotBands.label.useHTML
  */
 
@@ -10145,7 +9083,6 @@
  * @default {all} top
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.verticalAlign docs to actual source code
  * @apioption xAxis.plotBands.label.verticalAlign
  */
 
@@ -10157,7 +9094,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.x docs to actual source code
  * @apioption xAxis.plotBands.label.x
  */
 
@@ -10170,7 +9106,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotbands-label/ Plot band with labels
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotBands.label.y docs to actual source code
  * @apioption xAxis.plotBands.label.y
  */
 
@@ -10184,7 +9119,6 @@
  * 
  * @type {Array<Object>}
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines docs to actual source code
  * @apioption xAxis.plotLines
  */
 
@@ -10194,8 +9128,6 @@
  * 
  * @type {String}
  * @since 5.0.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.plotLines.className docs to actual source code
  * @apioption xAxis.plotLines.className
  */
 
@@ -10207,7 +9139,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.color docs to actual source code
  * @apioption xAxis.plotLines.color
  */
 
@@ -10223,7 +9154,6 @@
  * @default {all} Solid
  * @since 1.2
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.dashStyle docs to actual source code
  * @apioption xAxis.plotLines.dashStyle
  */
 
@@ -10236,7 +9166,6 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-events/ Mouse events demonstrated
  * @since 1.2
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.events docs to actual source code
  * @apioption xAxis.plotLines.events
  */
 
@@ -10247,7 +9176,6 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-id/ Remove plot line by id
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.id docs to actual source code
  * @apioption xAxis.plotLines.id
  */
 
@@ -10259,7 +9187,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.value docs to actual source code
  * @apioption xAxis.plotLines.value
  */
 
@@ -10271,7 +9198,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
  * @default {all} null
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.width docs to actual source code
  * @apioption xAxis.plotLines.width
  */
 
@@ -10285,7 +9211,6 @@
  * @default {all} null
  * @since 1.2
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.zIndex docs to actual source code
  * @apioption xAxis.plotLines.zIndex
  */
 
@@ -10293,7 +9218,6 @@
  * Text labels for the plot bands
  * 
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label docs to actual source code
  * @apioption xAxis.plotLines.label
  */
 
@@ -10307,7 +9231,6 @@
  * @default {all} left
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.align docs to actual source code
  * @apioption xAxis.plotLines.label.align
  */
 
@@ -10319,7 +9242,6 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/ Slanted text
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.rotation docs to actual source code
  * @apioption xAxis.plotLines.label.rotation
  */
 
@@ -10334,7 +9256,6 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-label-style/ Blue and bold label
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.style docs to actual source code
  * @apioption xAxis.plotLines.label.style
  */
 
@@ -10344,7 +9265,6 @@
  * @type {String}
  * @since 2.1
  * @product highcharts
- * @todo Copy xAxis.plotLines.label.text docs to actual source code
  * @apioption xAxis.plotLines.label.text
  */
 
@@ -10359,7 +9279,6 @@
  * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/ Text label in bottom position
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.textAlign docs to actual source code
  * @apioption xAxis.plotLines.label.textAlign
  */
 
@@ -10371,7 +9290,6 @@
  * @default {all} false
  * @since 3.0.3
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.useHTML docs to actual source code
  * @apioption xAxis.plotLines.label.useHTML
  */
 
@@ -10386,7 +9304,6 @@
  * @default {highstock} "top"
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.verticalAlign docs to actual source code
  * @apioption xAxis.plotLines.label.verticalAlign
  */
 
@@ -10398,7 +9315,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.x docs to actual source code
  * @apioption xAxis.plotLines.label.x
  */
 
@@ -10411,7 +9327,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/plotlines/ Plot line on Y axis
  * @since 2.1
  * @product highcharts highstock
- * @todo Copy xAxis.plotLines.label.y docs to actual source code
  * @apioption xAxis.plotLines.label.y
  */
 
@@ -10422,7 +9337,6 @@
  * @deprecated
  * @default {all} middle
  * @product highcharts
- * @todo Copy xAxis.title.enabled docs to actual source code
  * @apioption xAxis.title.enabled
  */
 
@@ -10432,8 +9346,6 @@
  * 
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/title-margin/ Y axis title margin of 60
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.title.margin docs to actual source code
  * @apioption xAxis.title.margin
  */
 
@@ -10447,8 +9359,6 @@
  * @sample {highcharts} highcharts/yaxis/title-offset/ Place the axis title on top of the axis
  * @sample {highstock} highcharts/yaxis/title-offset/ Place the axis title on top of the Y axis
  * @since 2.2.0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.title.offset docs to actual source code
  * @apioption xAxis.title.offset
  */
 
@@ -10459,7 +9369,6 @@
  * @default {all} true
  * @since 5.0.11
  * @product highcharts highstock
- * @todo Copy xAxis.title.reserveSpace docs to actual source code
  * @apioption xAxis.title.reserveSpace
  */
 
@@ -10470,8 +9379,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/yaxis/title-offset/ Horizontal
  * @default {all} 0
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.title.rotation docs to actual source code
  * @apioption xAxis.title.rotation
  */
 
@@ -10483,8 +9390,6 @@
  * @sample {highcharts} highcharts/xaxis/title-text/ Custom HTML
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/title-text/ Titles for both axes
  * @default {all} null
- * @product highcharts highstock highmaps
- * @todo Copy xAxis.title.text docs to actual source code
  * @apioption xAxis.title.text
  */
 
@@ -10495,7 +9400,6 @@
  * @default {all} 0
  * @since 4.1.6
  * @product highcharts highstock
- * @todo Copy xAxis.title.x docs to actual source code
  * @apioption xAxis.title.x
  */
 
@@ -10504,7 +9408,6 @@
  * 
  * @type {Number}
  * @product highcharts highstock
- * @todo Copy xAxis.title.y docs to actual source code
  * @apioption xAxis.title.y
  */
 
@@ -10518,7 +9421,6 @@
  * @default {all} 0
  * @since 4.2.7
  * @product highcharts
- * @todo Copy yAxis.angle docs to actual source code
  * @apioption yAxis.angle
  */
 
@@ -10533,7 +9435,6 @@
  * @sample {highcharts} highcharts/yaxis/gridlineinterpolation/ Circle and polygon
  * @default {all} null
  * @product highcharts
- * @todo Copy yAxis.gridLineInterpolation docs to actual source code
  * @apioption yAxis.gridLineInterpolation
  */
 
@@ -10546,7 +9447,6 @@
  * @default {all} #003399
  * @since 4.0
  * @product highcharts
- * @todo Copy yAxis.maxColor docs to actual source code
  * @apioption yAxis.maxColor
  */
 
@@ -10569,7 +9469,6 @@
  * @sample {highstock} highcharts/yaxis/min-startontick-false/ -50 with startOnTick to false
  * @sample {highstock} highcharts/yaxis/min-startontick-true/ -50 with startOnTick true by default
  * @product highcharts highstock
- * @todo Copy yAxis.min docs to actual source code
  * @apioption yAxis.min
  */
 
@@ -10582,7 +9481,6 @@
  * @default {all} #e6ebf5
  * @since 4.0
  * @product highcharts
- * @todo Copy yAxis.minColor docs to actual source code
  * @apioption yAxis.minColor
  */
 
@@ -10597,7 +9495,6 @@
  * @default {all} true
  * @since 3.0.10
  * @product highcharts highstock
- * @todo Copy yAxis.reversedStacks docs to actual source code
  * @apioption yAxis.reversedStacks
  */
 
@@ -10617,7 +9514,6 @@
  * @sample {highcharts} highcharts/demo/gauge-solid/ True by default
  * @since 4.0
  * @product highcharts
- * @todo Copy yAxis.stops docs to actual source code
  * @apioption yAxis.stops
  */
 
@@ -10629,14 +9525,12 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/ticks/ Formatted ticks on X axis
  * @default {all} 0
  * @product highcharts highstock
- * @todo Copy yAxis.tickWidth docs to actual source code
  * @apioption yAxis.tickWidth
  */
 
 /**
  * @extends xAxis.events
  * @product highcharts highstock
- * @todo Copy yAxis.events docs to actual source code
  * @apioption yAxis.events
  */
 
@@ -10652,8 +9546,6 @@
  * @default {highcharts} right
  * @default {highstock} left
  * @default {highmaps} right
- * @product highcharts highstock highmaps
- * @todo Copy yAxis.labels.align docs to actual source code
  * @apioption yAxis.labels.align
  */
 
@@ -10664,7 +9556,6 @@
  * @type {Number}
  * @default {all} -25
  * @product highcharts
- * @todo Copy yAxis.labels.distance docs to actual source code
  * @apioption yAxis.labels.distance
  */
 
@@ -10677,8 +9568,6 @@
  * @default {highcharts} 3
  * @default {highstock} -2
  * @default {highmaps} 3
- * @product highcharts highstock highmaps
- * @todo Copy yAxis.labels.y docs to actual source code
  * @apioption yAxis.labels.y
  */
 
@@ -10688,7 +9577,6 @@
  * @type {Array<Object>}
  * @extends xAxis.plotBands
  * @product highcharts highstock
- * @todo Copy yAxis.plotBands docs to actual source code
  * @apioption yAxis.plotBands
  */
 
@@ -10704,7 +9592,6 @@
  * @default {all} null
  * @since 2.3
  * @product highcharts
- * @todo Copy yAxis.plotBands.innerRadius docs to actual source code
  * @apioption yAxis.plotBands.innerRadius
  */
 
@@ -10718,7 +9605,6 @@
  * @default {all} 100%
  * @since 2.3
  * @product highcharts
- * @todo Copy yAxis.plotBands.outerRadius docs to actual source code
  * @apioption yAxis.plotBands.outerRadius
  */
 
@@ -10734,7 +9620,6 @@
  * @default {all} 10
  * @since 2.3
  * @product highcharts
- * @todo Copy yAxis.plotBands.thickness docs to actual source code
  * @apioption yAxis.plotBands.thickness
  */
 
@@ -10744,7 +9629,6 @@
  * @type {Array<Object>}
  * @extends xAxis.plotLines
  * @product highcharts
- * @todo Copy yAxis.plotLines docs to actual source code
  * @apioption yAxis.plotLines
  */
 
@@ -10761,7 +9645,6 @@
  * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/ Aligned to the right
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.align docs to actual source code
  * @apioption yAxis.stackLabels.align
  */
 
@@ -10773,7 +9656,6 @@
  * @default {all} {total}
  * @since 3.0.2
  * @product highcharts highstock
- * @todo Copy yAxis.stackLabels.format docs to actual source code
  * @apioption yAxis.stackLabels.format
  */
 
@@ -10785,7 +9667,6 @@
  * @default {all} 0
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.rotation docs to actual source code
  * @apioption yAxis.stackLabels.rotation
  */
 
@@ -10802,7 +9683,6 @@
  * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/ Label in center position but text-aligned left
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.textAlign docs to actual source code
  * @apioption yAxis.stackLabels.textAlign
  */
 
@@ -10814,7 +9694,6 @@
  * @default {all} false
  * @since 3.0
  * @product highcharts highstock
- * @todo Copy yAxis.stackLabels.useHTML docs to actual source code
  * @apioption yAxis.stackLabels.useHTML
  */
 
@@ -10831,7 +9710,6 @@
  * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/ "Vertically aligned bottom"
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.verticalAlign docs to actual source code
  * @apioption yAxis.stackLabels.verticalAlign
  */
 
@@ -10844,7 +9722,6 @@
  * @sample {highcharts} highcharts/yaxis/stacklabels-x/ Stack total labels with x offset
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.x docs to actual source code
  * @apioption yAxis.stackLabels.x
  */
 
@@ -10857,7 +9734,6 @@
  * @sample {highcharts} highcharts/yaxis/stacklabels-y/ Stack total labels with y offset
  * @since 2.1.5
  * @product highcharts
- * @todo Copy yAxis.stackLabels.y docs to actual source code
  * @apioption yAxis.stackLabels.y
  */
 
@@ -10868,8 +9744,6 @@
  * @type {Number}
  * @sample {highcharts} highcharts/xaxis/title-margin/ Y axis title margin of 60
  * @default {all} 40
- * @product highcharts highstock highmaps
- * @todo Copy yAxis.title.margin docs to actual source code
  * @apioption yAxis.title.margin
  */
 
@@ -10884,7 +9758,6 @@
  * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/ Z-Axis with styling
  * @since 5.0.0
  * @product highcharts
- * @todo Copy zAxis docs to actual source code
  * @apioption zAxis
  */
 
@@ -10900,7 +9773,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/demo/lazy-loading/ Set to false with async data loading
  * @default {all} true
  * @product highstock
- * @todo Copy navigator.adaptToUpdatedData docs to actual source code
  * @apioption navigator.adaptToUpdatedData
  */
 
@@ -10916,7 +9788,6 @@
  * @deprecated
  * @default {all} 0
  * @product highstock
- * @todo Copy navigator.baseSeries docs to actual source code
  * @apioption navigator.baseSeries
  */
 
@@ -10927,7 +9798,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/navigator/enabled/ Disable the navigator
  * @default {all} true
  * @product highstock
- * @todo Copy navigator.enabled docs to actual source code
  * @apioption navigator.enabled
  */
 
@@ -10939,7 +9809,6 @@
  * @default {all} false
  * @since 5.0.8
  * @product highstock
- * @todo Copy navigator.opposite docs to actual source code
  * @apioption navigator.opposite
  */
 
@@ -10947,7 +9816,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.candlestick.borderColor docs to actual source code
  * @apioption plotOptions.candlestick.borderColor
  */
 
@@ -10955,7 +9823,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.candlestick.borderRadius docs to actual source code
  * @apioption plotOptions.candlestick.borderRadius
  */
 
@@ -10963,7 +9830,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.candlestick.borderWidth docs to actual source code
  * @apioption plotOptions.candlestick.borderWidth
  */
 
@@ -10976,7 +9842,6 @@
  * @default {all} null
  * @since 1.3.6
  * @product highstock
- * @todo Copy plotOptions.candlestick.upLineColor docs to actual source code
  * @apioption plotOptions.candlestick.upLineColor
  */
 
@@ -11003,14 +9868,12 @@
  * @type {String|Function}
  * @default {all} ohlc
  * @product highstock
- * @todo Copy plotOptions.candlestick.dataGrouping.approximation docs to actual source code
  * @apioption plotOptions.candlestick.dataGrouping.approximation
  */
 
 /**
  * @extends plotOptions.series.dataGrouping
  * @product highstock
- * @todo Copy plotOptions.column.dataGrouping docs to actual source code
  * @apioption plotOptions.column.dataGrouping
  */
 
@@ -11026,7 +9889,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-datagrouping-grouppixelwidth/ Two series with the same data density but different groupPixelWidth
  * @default {all} 10
  * @product highstock
- * @todo Copy plotOptions.column.dataGrouping.groupPixelWidth docs to actual source code
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
 
@@ -11034,7 +9896,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.animation docs to actual source code
  * @apioption plotOptions.flags.animation
  */
 
@@ -11042,7 +9903,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.borderColor docs to actual source code
  * @apioption plotOptions.flags.borderColor
  */
 
@@ -11050,7 +9910,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.borderRadius docs to actual source code
  * @apioption plotOptions.flags.borderRadius
  */
 
@@ -11058,7 +9917,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.borderWidth docs to actual source code
  * @apioption plotOptions.flags.borderWidth
  */
 
@@ -11066,7 +9924,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.colorByPoint docs to actual source code
  * @apioption plotOptions.flags.colorByPoint
  */
 
@@ -11074,7 +9931,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.dashStyle docs to actual source code
  * @apioption plotOptions.flags.dashStyle
  */
 
@@ -11082,7 +9938,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.dataGrouping docs to actual source code
  * @apioption plotOptions.flags.dataGrouping
  */
 
@@ -11096,7 +9951,6 @@
  * @type {Color}
  * @default {all} #000000
  * @product highstock
- * @todo Copy plotOptions.flags.lineColor docs to actual source code
  * @apioption plotOptions.flags.lineColor
  */
 
@@ -11112,7 +9966,6 @@
  * @default {all} y
  * @since 4.2.2
  * @product highstock
- * @todo Copy plotOptions.flags.onKey docs to actual source code
  * @apioption plotOptions.flags.onKey
  */
 
@@ -11124,7 +9977,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/flags/ Flags on series and on x axis
  * @default {all} undefined
  * @product highstock
- * @todo Copy plotOptions.flags.onSeries docs to actual source code
  * @apioption plotOptions.flags.onSeries
  */
 
@@ -11132,7 +9984,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.pointPadding docs to actual source code
  * @apioption plotOptions.flags.pointPadding
  */
 
@@ -11140,7 +9991,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.pointWidth docs to actual source code
  * @apioption plotOptions.flags.pointWidth
  */
 
@@ -11151,7 +10001,6 @@
  * @type {Text}
  * @default {all} "A"
  * @product highstock
- * @todo Copy plotOptions.flags.title docs to actual source code
  * @apioption plotOptions.flags.title
  */
 
@@ -11159,7 +10008,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.flags.turboThreshold docs to actual source code
  * @apioption plotOptions.flags.turboThreshold
  */
 
@@ -11173,7 +10021,6 @@
  * @default {all} false
  * @since 1.3
  * @product highstock
- * @todo Copy plotOptions.flags.useHTML docs to actual source code
  * @apioption plotOptions.flags.useHTML
  */
 
@@ -11187,7 +10034,6 @@
  * @default {all} round
  * @since 3.0.7
  * @product highstock
- * @todo Copy plotOptions.line.linecap docs to actual source code
  * @apioption plotOptions.line.linecap
  */
 
@@ -11195,7 +10041,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.ohlc.borderColor docs to actual source code
  * @apioption plotOptions.ohlc.borderColor
  */
 
@@ -11203,7 +10048,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.ohlc.borderRadius docs to actual source code
  * @apioption plotOptions.ohlc.borderRadius
  */
 
@@ -11211,7 +10055,6 @@
  * N/A
  * 
  * @product highstock
- * @todo Copy plotOptions.ohlc.borderWidth docs to actual source code
  * @apioption plotOptions.ohlc.borderWidth
  */
 
@@ -11220,7 +10063,6 @@
  * 
  * @type {Color}
  * @product highstock
- * @todo Copy plotOptions.ohlc.upColor docs to actual source code
  * @apioption plotOptions.ohlc.upColor
  */
 
@@ -11235,14 +10077,12 @@
  * @type {Number}
  * @default {all} 5
  * @product highstock
- * @todo Copy plotOptions.ohlc.dataGrouping.groupPixelWidth docs to actual source code
  * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
  */
 
 /**
  * @extends plotOptions.series.dataLabels
  * @product highstock
- * @todo Copy plotOptions.scatter.dataLabels docs to actual source code
  * @apioption plotOptions.scatter.dataLabels
  */
 
@@ -11261,7 +10101,6 @@
  * @default {all} undefined
  * @since 1.0.1
  * @product highstock
- * @todo Copy plotOptions.series.compare docs to actual source code
  * @apioption plotOptions.series.compare
  */
 
@@ -11275,7 +10114,6 @@
  * @default {all} 0
  * @since 5.0.6
  * @product highstock
- * @todo Copy plotOptions.series.compareBase docs to actual source code
  * @apioption plotOptions.series.compareBase
  */
 
@@ -11293,7 +10131,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-gapsize/ Setting the gap size to 2 introduces gaps for weekends in daily datasets.
  * @default {all} 0
  * @product highstock
- * @todo Copy plotOptions.series.gapSize docs to actual source code
  * @apioption plotOptions.series.gapSize
  */
 
@@ -11303,7 +10140,6 @@
  * @type {Number}
  * @default {all} 0
  * @product highstock
- * @todo Copy plotOptions.series.legendIndex docs to actual source code
  * @apioption plotOptions.series.legendIndex
  */
 
@@ -11322,7 +10158,6 @@
  * @default {all} undefined
  * @since 5.0.0
  * @product highstock
- * @todo Copy plotOptions.series.navigatorOptions docs to actual source code
  * @apioption plotOptions.series.navigatorOptions
  */
 
@@ -11334,7 +10169,6 @@
  * @default {all} undefined
  * @since 5.0.0
  * @product highstock
- * @todo Copy plotOptions.series.showInNavigator docs to actual source code
  * @apioption plotOptions.series.showInNavigator
  */
 
@@ -11349,7 +10183,6 @@
  * points can be read from the [Point.dataGroup](#Point.dataGroup).
  * 
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping docs to actual source code
  * @apioption plotOptions.series.dataGrouping
  */
 
@@ -11385,7 +10218,6 @@
  * @type {String|Function}
  * @sample {highstock} highcharts/tree/master/samples/stock/plotoptions/series-datagrouping-approximation Approximation callback with custom data
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.approximation docs to actual source code
  * @apioption plotOptions.series.dataGrouping.approximation
  */
 
@@ -11420,7 +10252,6 @@
  * 
  * @type {Object}
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.dateTimeLabelFormats docs to actual source code
  * @apioption plotOptions.series.dataGrouping.dateTimeLabelFormats
  */
 
@@ -11430,7 +10261,6 @@
  * @type {Boolean}
  * @default {all} true
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.enabled docs to actual source code
  * @apioption plotOptions.series.dataGrouping.enabled
  */
 
@@ -11442,7 +10272,6 @@
  * @type {Boolean}
  * @default {all} false
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.forced docs to actual source code
  * @apioption plotOptions.series.dataGrouping.forced
  */
 
@@ -11461,7 +10290,6 @@
  * @type {Number}
  * @default {all} 2
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.groupPixelWidth docs to actual source code
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
@@ -11476,7 +10304,6 @@
  * @type {Boolean}
  * @default {all} false
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.smoothed docs to actual source code
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 
@@ -11514,7 +10341,6 @@
  * 
  * @type {Array}
  * @product highstock
- * @todo Copy plotOptions.series.dataGrouping.units docs to actual source code
  * @apioption plotOptions.series.dataGrouping.units
  */
 
@@ -11529,7 +10355,6 @@
  * @default {all} false
  * @since 2.0.3
  * @product highstock
- * @todo Copy rangeSelector.allButtonsEnabled docs to actual source code
  * @apioption rangeSelector.allButtonsEnabled
  */
 
@@ -11539,7 +10364,6 @@
  * 
  * @type {Object}
  * @product highstock
- * @todo Copy rangeSelector.buttonPosition docs to actual source code
  * @apioption rangeSelector.buttonPosition
  */
 
@@ -11549,7 +10373,6 @@
  * @type {Number}
  * @default {all} 0
  * @product highstock
- * @todo Copy rangeSelector.buttonSpacing docs to actual source code
  * @apioption rangeSelector.buttonSpacing
  */
 
@@ -11560,7 +10383,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/enabled/ Disable the range selector
  * @default {all} true
  * @product highstock
- * @todo Copy rangeSelector.enabled docs to actual source code
  * @apioption rangeSelector.enabled
  */
 
@@ -11572,7 +10394,6 @@
  * @default {all} #cccccc
  * @since 1.3.7
  * @product highstock
- * @todo Copy rangeSelector.inputBoxBorderColor docs to actual source code
  * @apioption rangeSelector.inputBoxBorderColor
  */
 
@@ -11584,7 +10405,6 @@
  * @default {all} 17
  * @since 1.3.7
  * @product highstock
- * @todo Copy rangeSelector.inputBoxHeight docs to actual source code
  * @apioption rangeSelector.inputBoxHeight
  */
 
@@ -11596,7 +10416,6 @@
  * @deprecated
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
  * @product highstock
- * @todo Copy rangeSelector.inputBoxStyle docs to actual source code
  * @apioption rangeSelector.inputBoxStyle
  */
 
@@ -11608,7 +10427,6 @@
  * @default {all} 90
  * @since 1.3.7
  * @product highstock
- * @todo Copy rangeSelector.inputBoxWidth docs to actual source code
  * @apioption rangeSelector.inputBoxWidth
  */
 
@@ -11620,7 +10438,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
  * @default {all} %b %e %Y,
  * @product highstock
- * @todo Copy rangeSelector.inputDateFormat docs to actual source code
  * @apioption rangeSelector.inputDateFormat
  */
 
@@ -11632,7 +10449,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
  * @since 1.3.3
  * @product highstock
- * @todo Copy rangeSelector.inputDateParser docs to actual source code
  * @apioption rangeSelector.inputDateParser
  */
 
@@ -11644,7 +10460,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-format/ Milliseconds in the range selector
  * @default {all} %Y-%m-%d
  * @product highstock
- * @todo Copy rangeSelector.inputEditDateFormat docs to actual source code
  * @apioption rangeSelector.inputEditDateFormat
  */
 
@@ -11655,7 +10470,6 @@
  * @type {Boolean}
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/input-datepicker/ Extending the input with a jQuery UI datepicker
  * @product highstock
- * @todo Copy rangeSelector.inputEnabled docs to actual source code
  * @apioption rangeSelector.inputEnabled
  */
 
@@ -11670,7 +10484,6 @@
  * @type {CSSObject}
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/styling/ Styling the buttons and inputs
  * @product highstock
- * @todo Copy rangeSelector.inputStyle docs to actual source code
  * @apioption rangeSelector.inputStyle
  */
 
@@ -11680,7 +10493,6 @@
  * @type {Number}
  * @default {all} undefined
  * @product highstock
- * @todo Copy rangeSelector.selected docs to actual source code
  * @apioption rangeSelector.selected
  */
 
@@ -11716,7 +10528,6 @@
  * @type {Array<Object>}
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/datagrouping/ Data grouping by buttons
  * @product highstock
- * @todo Copy rangeSelector.buttons docs to actual source code
  * @apioption rangeSelector.buttons
  */
 
@@ -11727,7 +10538,6 @@
  * @type {Number}
  * @default {all} 1
  * @product highstock
- * @todo Copy rangeSelector.buttons.count docs to actual source code
  * @apioption rangeSelector.buttons.count
  */
 
@@ -11738,7 +10548,6 @@
  * @see [series.dataGrouping](#plotOptions.series.dataGrouping)
  * @sample {highstock} highcharts/tree/master/samples/stock/rangeselector/datagrouping/ Data grouping by range selector buttons
  * @product highstock
- * @todo Copy rangeSelector.buttons.dataGrouping docs to actual source code
  * @apioption rangeSelector.buttons.dataGrouping
  */
 
@@ -11747,7 +10556,6 @@
  * 
  * @type {String}
  * @product highstock
- * @todo Copy rangeSelector.buttons.text docs to actual source code
  * @apioption rangeSelector.buttons.text
  */
 
@@ -11758,7 +10566,6 @@
  * @validvalue ["millisecond", "second", "minute", "day", "week", "month", "ytd", "all"]
  * @type {String}
  * @product highstock
- * @todo Copy rangeSelector.buttons.type docs to actual source code
  * @apioption rangeSelector.buttons.type
  */
 
@@ -11769,7 +10576,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/enabled/ Disable the scrollbar, only use navigator
  * @default {all} true
  * @product highstock
- * @todo Copy scrollbar.enabled docs to actual source code
  * @apioption scrollbar.enabled
  */
 
@@ -11780,7 +10586,6 @@
  * @type {Boolean}
  * @default {all} true
  * @product highstock
- * @todo Copy scrollbar.showFull docs to actual source code
  * @apioption scrollbar.showFull
  */
 
@@ -11791,35 +10596,30 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/scrollbar/style/ Scrollbar styling
  * @default {all} 0
  * @product highstock
- * @todo Copy scrollbar.trackBorderRadius docs to actual source code
  * @apioption scrollbar.trackBorderRadius
  */
 
 /**
  * @extends plotOptions.area.dataGrouping
  * @product highstock
- * @todo Copy series.area.dataGrouping docs to actual source code
  * @apioption series.area.dataGrouping
  */
 
 /**
  * @extends plotOptions.arearange.dataGrouping
  * @product highstock
- * @todo Copy series.arearange.dataGrouping docs to actual source code
  * @apioption series.arearange.dataGrouping
  */
 
 /**
  * @extends plotOptions.areaspline.dataGrouping
  * @product highstock
- * @todo Copy series.areaspline.dataGrouping docs to actual source code
  * @apioption series.areaspline.dataGrouping
  */
 
 /**
  * @extends plotOptions.areasplinerange.dataGrouping
  * @product highstock
- * @todo Copy series.areasplinerange.dataGrouping docs to actual source code
  * @apioption series.areasplinerange.dataGrouping
  */
 
@@ -11837,7 +10637,6 @@
  * @extends series,plotOptions.candlestick
  * @excluding dataParser,dataURL
  * @product highstock
- * @todo Copy series.candlestick docs to actual source code
  * @apioption series.candlestick
  */
 
@@ -11886,84 +10685,72 @@
  * @extends series<ohlc>.data
  * @excluding y
  * @product highstock
- * @todo Copy series.candlestick.data docs to actual source code
  * @apioption series.candlestick.data
  */
 
 /**
  * @extends plotOptions.candlestick.states
  * @product highstock
- * @todo Copy series.candlestick.data.marker.states docs to actual source code
  * @apioption series.candlestick.data.marker.states
  */
 
 /**
  * @extends plotOptions.candlestick.dataGrouping
  * @product highstock
- * @todo Copy series.candlestick.dataGrouping docs to actual source code
  * @apioption series.candlestick.dataGrouping
  */
 
 /**
  * @extends plotOptions.candlestick.dataLabels
  * @product highstock
- * @todo Copy series.candlestick.dataLabels docs to actual source code
  * @apioption series.candlestick.dataLabels
  */
 
 /**
  * @extends plotOptions.candlestick.events
  * @product highstock
- * @todo Copy series.candlestick.events docs to actual source code
  * @apioption series.candlestick.events
  */
 
 /**
  * @extends plotOptions.candlestick.marker
  * @product highstock
- * @todo Copy series.candlestick.marker docs to actual source code
  * @apioption series.candlestick.marker
  */
 
 /**
  * @extends plotOptions.candlestick.point
  * @product highstock
- * @todo Copy series.candlestick.point docs to actual source code
  * @apioption series.candlestick.point
  */
 
 /**
  * @extends plotOptions.candlestick.states
  * @product highstock
- * @todo Copy series.candlestick.states docs to actual source code
  * @apioption series.candlestick.states
  */
 
 /**
  * @extends plotOptions.candlestick.tooltip
  * @product highstock
- * @todo Copy series.candlestick.tooltip docs to actual source code
  * @apioption series.candlestick.tooltip
  */
 
 /**
  * @extends plotOptions.candlestick.zones
  * @product highstock
- * @todo Copy series.candlestick.zones docs to actual source code
  * @apioption series.candlestick.zones
  */
 
 /**
  * @extends plotOptions.column.dataGrouping
  * @product highstock
- * @todo Copy series.column.dataGrouping docs to actual source code
  * @apioption series.column.dataGrouping
  */
 
 /**
  * @extends plotOptions.columnrange.dataGrouping
  * @product highstock
- * @todo Copy series.columnrange.dataGrouping docs to actual source code
  * @apioption series.columnrange.dataGrouping
  */
 
@@ -11980,7 +10767,6 @@
  * @extends series,plotOptions.flags
  * @excluding dataParser,dataURL
  * @product highstock
- * @todo Copy series.flags docs to actual source code
  * @apioption series.flags
  */
 
@@ -12007,7 +10793,6 @@
  * @extends series<line>.data
  * @excluding y,dataLabels,marker,name
  * @product highstock
- * @todo Copy series.flags.data docs to actual source code
  * @apioption series.flags.data
  */
 
@@ -12017,7 +10802,6 @@
  * 
  * @type {Color}
  * @product highstock
- * @todo Copy series.flags.data.fillColor docs to actual source code
  * @apioption series.flags.data.fillColor
  */
 
@@ -12026,7 +10810,6 @@
  * 
  * @type {String}
  * @product highstock
- * @todo Copy series.flags.data.text docs to actual source code
  * @apioption series.flags.data.text
  */
 
@@ -12035,77 +10818,66 @@
  * 
  * @type {String}
  * @product highstock
- * @todo Copy series.flags.data.title docs to actual source code
  * @apioption series.flags.data.title
  */
 
 /**
  * @extends plotOptions.flags.states
  * @product highstock
- * @todo Copy series.flags.data.marker.states docs to actual source code
  * @apioption series.flags.data.marker.states
  */
 
 /**
  * @extends plotOptions.flags.dataGrouping
  * @product highstock
- * @todo Copy series.flags.dataGrouping docs to actual source code
  * @apioption series.flags.dataGrouping
  */
 
 /**
  * @extends plotOptions.flags.dataLabels
  * @product highstock
- * @todo Copy series.flags.dataLabels docs to actual source code
  * @apioption series.flags.dataLabels
  */
 
 /**
  * @extends plotOptions.flags.events
  * @product highstock
- * @todo Copy series.flags.events docs to actual source code
  * @apioption series.flags.events
  */
 
 /**
  * @extends plotOptions.flags.marker
  * @product highstock
- * @todo Copy series.flags.marker docs to actual source code
  * @apioption series.flags.marker
  */
 
 /**
  * @extends plotOptions.flags.point
  * @product highstock
- * @todo Copy series.flags.point docs to actual source code
  * @apioption series.flags.point
  */
 
 /**
  * @extends plotOptions.flags.states
  * @product highstock
- * @todo Copy series.flags.states docs to actual source code
  * @apioption series.flags.states
  */
 
 /**
  * @extends plotOptions.flags.tooltip
  * @product highstock
- * @todo Copy series.flags.tooltip docs to actual source code
  * @apioption series.flags.tooltip
  */
 
 /**
  * @extends plotOptions.flags.zones
  * @product highstock
- * @todo Copy series.flags.zones docs to actual source code
  * @apioption series.flags.zones
  */
 
 /**
  * @extends plotOptions.line.dataGrouping
  * @product highstock
- * @todo Copy series.line.dataGrouping docs to actual source code
  * @apioption series.line.dataGrouping
  */
 
@@ -12122,7 +10894,6 @@
  * @extends series,plotOptions.ohlc
  * @excluding dataParser,dataURL
  * @product highstock
- * @todo Copy series.ohlc docs to actual source code
  * @apioption series.ohlc
  */
 
@@ -12171,7 +10942,6 @@
  * @extends series<arearange>.data
  * @excluding y,marker
  * @product highstock
- * @todo Copy series.ohlc.data docs to actual source code
  * @apioption series.ohlc.data
  */
 
@@ -12180,7 +10950,6 @@
  * 
  * @type {Number}
  * @product highstock
- * @todo Copy series.ohlc.data.close docs to actual source code
  * @apioption series.ohlc.data.close
  */
 
@@ -12189,91 +10958,78 @@
  * 
  * @type {Number}
  * @product highstock
- * @todo Copy series.ohlc.data.open docs to actual source code
  * @apioption series.ohlc.data.open
  */
 
 /**
  * @extends plotOptions.ohlc.states
  * @product highstock
- * @todo Copy series.ohlc.data.marker.states docs to actual source code
  * @apioption series.ohlc.data.marker.states
  */
 
 /**
  * @extends plotOptions.ohlc.dataGrouping
  * @product highstock
- * @todo Copy series.ohlc.dataGrouping docs to actual source code
  * @apioption series.ohlc.dataGrouping
  */
 
 /**
  * @extends plotOptions.ohlc.dataLabels
  * @product highstock
- * @todo Copy series.ohlc.dataLabels docs to actual source code
  * @apioption series.ohlc.dataLabels
  */
 
 /**
  * @extends plotOptions.ohlc.events
  * @product highstock
- * @todo Copy series.ohlc.events docs to actual source code
  * @apioption series.ohlc.events
  */
 
 /**
  * @extends plotOptions.ohlc.marker
  * @product highstock
- * @todo Copy series.ohlc.marker docs to actual source code
  * @apioption series.ohlc.marker
  */
 
 /**
  * @extends plotOptions.ohlc.point
  * @product highstock
- * @todo Copy series.ohlc.point docs to actual source code
  * @apioption series.ohlc.point
  */
 
 /**
  * @extends plotOptions.ohlc.states
  * @product highstock
- * @todo Copy series.ohlc.states docs to actual source code
  * @apioption series.ohlc.states
  */
 
 /**
  * @extends plotOptions.ohlc.tooltip
  * @product highstock
- * @todo Copy series.ohlc.tooltip docs to actual source code
  * @apioption series.ohlc.tooltip
  */
 
 /**
  * @extends plotOptions.ohlc.zones
  * @product highstock
- * @todo Copy series.ohlc.zones docs to actual source code
  * @apioption series.ohlc.zones
  */
 
 /**
  * @extends plotOptions.polygon.dataGrouping
  * @product highstock
- * @todo Copy series.polygon.dataGrouping docs to actual source code
  * @apioption series.polygon.dataGrouping
  */
 
 /**
  * @extends plotOptions.scatter.dataGrouping
  * @product highstock
- * @todo Copy series.scatter.dataGrouping docs to actual source code
  * @apioption series.scatter.dataGrouping
  */
 
 /**
  * @extends plotOptions.spline.dataGrouping
  * @product highstock
- * @todo Copy series.spline.dataGrouping docs to actual source code
  * @apioption series.spline.dataGrouping
  */
 
@@ -12285,7 +11041,6 @@
  * @type {Number}
  * @since 1.0.1
  * @product highstock
- * @todo Copy tooltip.changeDecimals docs to actual source code
  * @apioption tooltip.changeDecimals
  */
 
@@ -12300,7 +11055,6 @@
  * @default {all} true
  * @since 1.1
  * @product highstock
- * @todo Copy xAxis.ordinal docs to actual source code
  * @apioption xAxis.ordinal
  */
 
@@ -12313,7 +11067,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/range/ Setting a zoomed range when the rangeSelector      is disabled
  * @default {all} undefined
  * @product highstock
- * @todo Copy xAxis.range docs to actual source code
  * @apioption xAxis.range
  */
 
@@ -12329,7 +11082,6 @@
  * @sample {highstock} highcharts/css/crosshair-label/ Style mode
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label docs to actual source code
  * @apioption xAxis.crosshair.label
  */
 
@@ -12341,7 +11093,6 @@
  * @type {String}
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.align docs to actual source code
  * @apioption xAxis.crosshair.label.align
  */
 
@@ -12352,7 +11103,6 @@
  * @type {Color}
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.backgroundColor docs to actual source code
  * @apioption xAxis.crosshair.label.backgroundColor
  */
 
@@ -12362,7 +11112,6 @@
  * @type {Color}
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.borderColor docs to actual source code
  * @apioption xAxis.crosshair.label.borderColor
  */
 
@@ -12373,7 +11122,6 @@
  * @default {all} 3
  * @since 2.1.10
  * @product highstock
- * @todo Copy xAxis.crosshair.label.borderRadius docs to actual source code
  * @apioption xAxis.crosshair.label.borderRadius
  */
 
@@ -12384,7 +11132,6 @@
  * @default {all} 0
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.borderWidth docs to actual source code
  * @apioption xAxis.crosshair.label.borderWidth
  */
 
@@ -12395,7 +11142,6 @@
  * @type {String}
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.format docs to actual source code
  * @apioption xAxis.crosshair.label.format
  */
 
@@ -12405,7 +11151,6 @@
  * @type {Function}
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.formatter docs to actual source code
  * @apioption xAxis.crosshair.label.formatter
  */
 
@@ -12416,7 +11161,6 @@
  * @default {all} 8
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.padding docs to actual source code
  * @apioption xAxis.crosshair.label.padding
  */
 
@@ -12427,7 +11171,6 @@
  * @default {all} callout
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.shape docs to actual source code
  * @apioption xAxis.crosshair.label.shape
  */
 
@@ -12438,7 +11181,6 @@
  * @default {all} { "color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center" }
  * @since 2.1
  * @product highstock
- * @todo Copy xAxis.crosshair.label.style docs to actual source code
  * @apioption xAxis.crosshair.label.style
  */
 
@@ -12452,7 +11194,6 @@
  * @default {all} 5
  * @since 1.3.3
  * @product highstock highmaps
- * @todo Copy xAxis.labels.maxStaggerLines docs to actual source code
  * @apioption xAxis.labels.maxStaggerLines
  */
 
@@ -12468,7 +11209,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/demo/candlestick-and-volume/ Percentage height panes
  * @default {all} null
  * @product highstock
- * @todo Copy yAxis.height docs to actual source code
  * @apioption yAxis.height
  */
 
@@ -12482,7 +11222,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/xaxis/opposite/ Y axis on left side
  * @default {all} true
  * @product highstock
- * @todo Copy yAxis.opposite docs to actual source code
  * @apioption yAxis.opposite
  */
 
@@ -12496,7 +11235,6 @@
  * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
  * @product highstock highmaps
- * @todo Copy yAxis.softMax docs to actual source code
  * @apioption yAxis.softMax
  */
 
@@ -12510,7 +11248,6 @@
  * @sample {highmaps} highcharts/yaxis/softmin-softmax/ Soft min and max
  * @since 5.0.1
  * @product highstock highmaps
- * @todo Copy yAxis.softMin docs to actual source code
  * @apioption yAxis.softMin
  */
 
@@ -12526,7 +11263,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/demo/candlestick-and-volume/ Percentage height panes
  * @default {all} null
  * @product highstock
- * @todo Copy yAxis.top docs to actual source code
  * @apioption yAxis.top
  */
 
@@ -12545,7 +11281,6 @@
  * @sample {highstock} highcharts/tree/master/samples/stock/yaxis/scrollbar/ Scrollbar on the Y axis
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar docs to actual source code
  * @apioption yAxis.scrollbar
  */
 
@@ -12557,7 +11292,6 @@
  * @default {all} false
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar.enabled docs to actual source code
  * @apioption yAxis.scrollbar.enabled
  */
 
@@ -12568,7 +11302,6 @@
  * @default {all} 10
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar.margin docs to actual source code
  * @apioption yAxis.scrollbar.margin
  */
 
@@ -12581,7 +11314,6 @@
  * @default {all} true
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar.showFull docs to actual source code
  * @apioption yAxis.scrollbar.showFull
  */
 
@@ -12593,7 +11325,6 @@
  * @default {all} 14
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar.size docs to actual source code
  * @apioption yAxis.scrollbar.size
  */
 
@@ -12604,7 +11335,6 @@
  * @default {all} 3
  * @since 4.2.6
  * @product highstock
- * @todo Copy yAxis.scrollbar.zIndex docs to actual source code
  * @apioption yAxis.scrollbar.zIndex
  */
 
@@ -12618,7 +11348,6 @@
  * @default {all} undefined
  * @since 5.0.0
  * @product highmaps
- * @todo Copy chart.map docs to actual source code
  * @apioption chart.map
  */
 
@@ -12630,7 +11359,6 @@
  * @default {all} undefined
  * @since 5.0.0
  * @product highmaps
- * @todo Copy chart.mapTransforms docs to actual source code
  * @apioption chart.mapTransforms
  */
 
@@ -12638,7 +11366,6 @@
  * @type {Boolean}
  * @default {all} true
  * @product highmaps
- * @todo Copy colorAxis.allowDecimals docs to actual source code
  * @apioption colorAxis.allowDecimals
  */
 
@@ -12654,7 +11381,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasscolor/ Category colors
  * @default {all} tween
  * @product highmaps
- * @todo Copy colorAxis.dataClassColor docs to actual source code
  * @apioption colorAxis.dataClassColor
  */
 
@@ -12665,7 +11391,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Grid lines demonstrated
  * @default {all} #e6e6e6
  * @product highmaps
- * @todo Copy colorAxis.gridLineColor docs to actual source code
  * @apioption colorAxis.gridLineColor
  */
 
@@ -12677,7 +11402,6 @@
  * @type {Number}
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
  * @product highmaps
- * @todo Copy colorAxis.max docs to actual source code
  * @apioption colorAxis.max
  */
 
@@ -12689,7 +11413,6 @@
  * @type {Number}
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/gridlines/ Explicit min and max to reduce the effect of outliers
  * @product highmaps
- * @todo Copy colorAxis.min docs to actual source code
  * @apioption colorAxis.min
  */
 
@@ -12700,7 +11423,6 @@
  * 
  * @type {Boolean}
  * @product highmaps
- * @todo Copy colorAxis.reversed docs to actual source code
  * @apioption colorAxis.reversed
  */
 
@@ -12714,7 +11436,6 @@
  * @type {Array<Array>}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/heatmap/ Heatmap with three color stops
  * @product highmaps
- * @todo Copy colorAxis.stops docs to actual source code
  * @apioption colorAxis.stops
  */
 
@@ -12724,7 +11445,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy colorAxis.tickInterval docs to actual source code
  * @apioption colorAxis.tickInterval
  */
 
@@ -12736,7 +11456,6 @@
  * @type {String}
  * @default {all} linear
  * @product highmaps
- * @todo Copy colorAxis.type docs to actual source code
  * @apioption colorAxis.type
  */
 
@@ -12749,7 +11468,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-ranges/ Multiple ranges
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-two-ranges/ Two ranges
  * @product highmaps
- * @todo Copy colorAxis.dataClasses docs to actual source code
  * @apioption colorAxis.dataClasses
  */
 
@@ -12760,7 +11478,6 @@
  * @type {Color}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/data-class-two-ranges/ Explicit colors
  * @product highmaps
- * @todo Copy colorAxis.dataClasses.color docs to actual source code
  * @apioption colorAxis.dataClasses.color
  */
 
@@ -12770,7 +11487,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy colorAxis.dataClasses.from docs to actual source code
  * @apioption colorAxis.dataClasses.from
  */
 
@@ -12785,7 +11501,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasses-name/ Named data classes
  * @sample {highmaps} highcharts/tree/master/samples/maps/coloraxis/dataclasses-labelformatter/ Formatted data classes
  * @product highmaps
- * @todo Copy colorAxis.dataClasses.name docs to actual source code
  * @apioption colorAxis.dataClasses.name
  */
 
@@ -12795,7 +11510,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy colorAxis.dataClasses.to docs to actual source code
  * @apioption colorAxis.dataClasses.to
  */
 
@@ -12809,7 +11523,6 @@
  * @default {all} \u00a9 <a href="{geojson.copyrightUrl}">{geojson.copyrightShort}</a>
  * @since 4.2.2
  * @product highmaps
- * @todo Copy credits.mapText docs to actual source code
  * @apioption credits.mapText
  */
 
@@ -12823,7 +11536,6 @@
  * @default {all} {geojson.copyright}
  * @since 4.2.2
  * @product highmaps
- * @todo Copy credits.mapTextFull docs to actual source code
  * @apioption credits.mapTextFull
  */
 
@@ -12834,7 +11546,6 @@
  * @type {String}
  * @default {all} Zoom in
  * @product highmaps
- * @todo Copy lang.zoomIn docs to actual source code
  * @apioption lang.zoomIn
  */
 
@@ -12845,7 +11556,6 @@
  * @type {String}
  * @default {all} Zoom out
  * @product highmaps
- * @todo Copy lang.zoomOut docs to actual source code
  * @apioption lang.zoomOut
  */
 
@@ -12855,7 +11565,6 @@
  * 
  * @type {Boolean}
  * @product highmaps
- * @todo Copy mapNavigation.enableButtons docs to actual source code
  * @apioption mapNavigation.enableButtons
  */
 
@@ -12865,7 +11574,6 @@
  * 
  * @type {Boolean}
  * @product highmaps
- * @todo Copy mapNavigation.enableDoubleClickZoom docs to actual source code
  * @apioption mapNavigation.enableDoubleClickZoom
  */
 
@@ -12876,7 +11584,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/mapnavigation/doubleclickzoomto/ Enable double click zoom to
  * @default {all} false
  * @product highmaps
- * @todo Copy mapNavigation.enableDoubleClickZoomTo docs to actual source code
  * @apioption mapNavigation.enableDoubleClickZoomTo
  */
 
@@ -12886,7 +11593,6 @@
  * 
  * @type {Boolean}
  * @product highmaps
- * @todo Copy mapNavigation.enableMouseWheelZoom docs to actual source code
  * @apioption mapNavigation.enableMouseWheelZoom
  */
 
@@ -12899,7 +11605,6 @@
  * 
  * @type {Boolean}
  * @product highmaps
- * @todo Copy mapNavigation.enableTouchZoom docs to actual source code
  * @apioption mapNavigation.enableTouchZoom
  */
 
@@ -12917,7 +11622,6 @@
  * @type {Boolean}
  * @default {all} false
  * @product highmaps
- * @todo Copy mapNavigation.enabled docs to actual source code
  * @apioption mapNavigation.enabled
  */
 
@@ -12927,7 +11631,6 @@
  * @type {Object}
  * @extends mapNavigation.buttonOptions
  * @product highmaps
- * @todo Copy mapNavigation.buttons. docs to actual source code
  * @apioption mapNavigation.buttons.
  */
 
@@ -12939,7 +11642,6 @@
  * @default {all} false
  * @since 4.2.7
  * @product highmaps
- * @todo Copy plotOptions.map.nullInteraction docs to actual source code
  * @apioption plotOptions.map.nullInteraction
  */
 
@@ -12950,7 +11652,6 @@
  * @type {Color}
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-color/ Pink bubbles
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.color docs to actual source code
  * @apioption plotOptions.mapbubble.color
  */
 
@@ -12963,7 +11664,6 @@
  * @type {Boolean}
  * @default {all} true
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.displayNegative docs to actual source code
  * @apioption plotOptions.mapbubble.displayNegative
  */
 
@@ -12977,7 +11677,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble size
  * @default {all} 20%
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.maxSize docs to actual source code
  * @apioption plotOptions.mapbubble.maxSize
  */
 
@@ -12991,7 +11690,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble size
  * @default {all} 8
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.minSize docs to actual source code
  * @apioption plotOptions.mapbubble.minSize
  */
 
@@ -13003,7 +11701,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
  * @default {all} null
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.negativeColor docs to actual source code
  * @apioption plotOptions.mapbubble.negativeColor
  */
 
@@ -13016,7 +11713,6 @@
  * @type {String}
  * @default {all} area
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.sizeBy docs to actual source code
  * @apioption plotOptions.mapbubble.sizeBy
  */
 
@@ -13032,7 +11728,6 @@
  * @default {all} false
  * @since 1.1.9
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.sizeByAbsoluteValue docs to actual source code
  * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
  */
 
@@ -13046,7 +11741,6 @@
  * @default {all} null
  * @since 1.0.3
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.zMax docs to actual source code
  * @apioption plotOptions.mapbubble.zMax
  */
 
@@ -13060,7 +11754,6 @@
  * @default {all} null
  * @since 1.0.3
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.zMin docs to actual source code
  * @apioption plotOptions.mapbubble.zMin
  */
 
@@ -13074,7 +11767,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/mapbubble-negativecolor/ Negative color below a threshold
  * @default {all} 0
  * @product highmaps
- * @todo Copy plotOptions.mapbubble.zThreshold docs to actual source code
  * @apioption plotOptions.mapbubble.zThreshold
  */
 
@@ -13087,7 +11779,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/ All areas set to false
  * @default {all} true
  * @product highmaps
- * @todo Copy plotOptions.series.allAreas docs to actual source code
  * @apioption plotOptions.series.allAreas
  */
 
@@ -13102,7 +11793,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-border/ Borders demo
  * @default {all} #cccccc
  * @product highmaps
- * @todo Copy plotOptions.series.borderColor docs to actual source code
  * @apioption plotOptions.series.borderColor
  */
 
@@ -13117,7 +11807,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-border/ Borders demo
  * @default {all} 1
  * @product highmaps
- * @todo Copy plotOptions.series.borderWidth docs to actual source code
  * @apioption plotOptions.series.borderWidth
  */
 
@@ -13129,7 +11818,6 @@
  * @type {Boolean}
  * @default {all} undefined
  * @product highmaps
- * @todo Copy plotOptions.series.colorAxis docs to actual source code
  * @apioption plotOptions.series.colorAxis
  */
 
@@ -13154,7 +11842,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/geojson/ GeoJSON joined by an array
  * @sample {highmaps} highcharts/tree/master/samples/maps/series/joinby-null/ Simple data joined by null
  * @product highmaps
- * @todo Copy plotOptions.series.joinBy docs to actual source code
  * @apioption plotOptions.series.joinBy
  */
 
@@ -13163,7 +11850,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy plotOptions.series.zIndex docs to actual source code
  * @apioption plotOptions.series.zIndex
  */
 
@@ -13172,7 +11858,6 @@
  * 
  * @type {Color}
  * @product highmaps
- * @todo Copy plotOptions.series.states.hover.borderColor docs to actual source code
  * @apioption plotOptions.series.states.hover.borderColor
  */
 
@@ -13181,7 +11866,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy plotOptions.series.states.hover.borderWidth docs to actual source code
  * @apioption plotOptions.series.states.hover.borderWidth
  */
 
@@ -13192,7 +11876,6 @@
  * @type {Number}
  * @default {all} 0.2
  * @product highmaps
- * @todo Copy plotOptions.series.states.hover.brightness docs to actual source code
  * @apioption plotOptions.series.states.hover.brightness
  */
 
@@ -13202,7 +11885,6 @@
  * @type {Color}
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-states-hover/ Hover options
  * @product highmaps
- * @todo Copy plotOptions.series.states.hover.color docs to actual source code
  * @apioption plotOptions.series.states.hover.color
  */
 
@@ -13211,7 +11893,6 @@
  * 
  * @type {Object}
  * @product highmaps
- * @todo Copy plotOptions.series.states.normal docs to actual source code
  * @apioption plotOptions.series.states.normal
  */
 
@@ -13225,7 +11906,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/plotoptions/series-states-animation-false/ No animation of fill color
  * @default {all} true
  * @product highmaps
- * @todo Copy plotOptions.series.states.normal.animation docs to actual source code
  * @apioption plotOptions.series.states.normal.animation
  */
 
@@ -13236,7 +11916,6 @@
  * @type {Array<Object>}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/category-map/ Map data and joinBy
  * @product highmaps
- * @todo Copy series.mapData docs to actual source code
  * @apioption series.mapData
  */
 
@@ -13247,7 +11926,6 @@
  * @type {Color}
  * @default {all} undefined
  * @product highmaps
- * @todo Copy series.map.data.color docs to actual source code
  * @apioption series.map.data.color
  */
 
@@ -13259,7 +11937,6 @@
  * @type {Object}
  * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-datalabels/ Disable data labels for individual areas
  * @product highmaps
- * @todo Copy series.map.data.dataLabels docs to actual source code
  * @apioption series.map.data.dataLabels
  */
 
@@ -13270,7 +11947,6 @@
  * @type {String}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-drilldown/ Basic drilldown
  * @product highmaps
- * @todo Copy series.map.data.drilldown docs to actual source code
  * @apioption series.map.data.drilldown
  */
 
@@ -13281,7 +11957,6 @@
  * @type {String}
  * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-id/ Highlight a point by id
  * @product highmaps
- * @todo Copy series.map.data.id docs to actual source code
  * @apioption series.map.data.id
  */
 
@@ -13293,7 +11968,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy series.map.data.labelrank docs to actual source code
  * @apioption series.map.data.labelrank
  */
 
@@ -13305,7 +11979,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mappoint-latlon/ Point position by lat/lon
  * @since 1.1.0
  * @product highmaps
- * @todo Copy series.mappoint.data.lat docs to actual source code
  * @apioption series.mappoint.data.lat
  */
 
@@ -13317,7 +11990,6 @@
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mappoint-latlon/ Point position by lat/lon
  * @since 1.1.0
  * @product highmaps
- * @todo Copy series.mappoint.data.lon docs to actual source code
  * @apioption series.mappoint.data.lon
  */
 
@@ -13329,7 +12001,6 @@
  * @type {Number}
  * @default {all} 0.5
  * @product highmaps
- * @todo Copy series.map.data.middleX docs to actual source code
  * @apioption series.map.data.middleX
  */
 
@@ -13341,7 +12012,6 @@
  * @type {Number}
  * @default {all} 0.5
  * @product highmaps
- * @todo Copy series.map.data.middleY docs to actual source code
  * @apioption series.map.data.middleY
  */
 
@@ -13352,7 +12022,6 @@
  * @type {String}
  * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-datalabels/ Point names
  * @product highmaps
- * @todo Copy series.map.data.name docs to actual source code
  * @apioption series.map.data.name
  */
 
@@ -13368,7 +12037,6 @@
  * @type {String}
  * @sample {highmaps} highcharts/tree/master/samples/maps/series/data-path/ Paths defined in data
  * @product highmaps
- * @todo Copy series.map.data.path docs to actual source code
  * @apioption series.map.data.path
  */
 
@@ -13377,7 +12045,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy series.map.data.value docs to actual source code
  * @apioption series.map.data.value
  */
 
@@ -13387,7 +12054,6 @@
  * @type {Number}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Map point demo
  * @product highmaps
- * @todo Copy series.mappoint.data.x docs to actual source code
  * @apioption series.mappoint.data.x
  */
 
@@ -13397,7 +12063,6 @@
  * @type {Number}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/mapline-mappoint/ Map point demo
  * @product highmaps
- * @todo Copy series.mappoint.data.y docs to actual source code
  * @apioption series.mappoint.data.y
  */
 
@@ -13409,7 +12074,6 @@
  * @type {Number}
  * @sample {highmaps} highcharts/tree/master/samples/maps/demo/map-bubble/ Bubble
  * @product highmaps
- * @todo Copy series.mapbubble.data.z docs to actual source code
  * @apioption series.mapbubble.data.z
  */
 
@@ -13418,7 +12082,6 @@
  * 
  * @extends plotOptions.series.point.events
  * @product highmaps
- * @todo Copy series.map.data.events docs to actual source code
  * @apioption series.map.data.events
  */
 
@@ -13427,7 +12090,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy series.heatmap.data.x docs to actual source code
  * @apioption series.heatmap.data.x
  */
 
@@ -13436,7 +12098,6 @@
  * 
  * @type {Number}
  * @product highmaps
- * @todo Copy series.heatmap.data.y docs to actual source code
  * @apioption series.heatmap.data.y
  */
 
@@ -13453,7 +12114,6 @@
  * @extends series,plotOptions.map
  * @excluding dataParser,dataURL
  * @product highmaps
- * @todo Copy series.map docs to actual source code
  * @apioption series.map
  */
 
@@ -13489,63 +12149,54 @@
  * 
  * @type {Array<Object>}
  * @product highmaps
- * @todo Copy series.map.data docs to actual source code
  * @apioption series.map.data
  */
 
 /**
  * @extends plotOptions.map.states
  * @product highmaps
- * @todo Copy series.map.data.marker.states docs to actual source code
  * @apioption series.map.data.marker.states
  */
 
 /**
  * @extends plotOptions.map.dataLabels
  * @product highmaps
- * @todo Copy series.map.dataLabels docs to actual source code
  * @apioption series.map.dataLabels
  */
 
 /**
  * @extends plotOptions.map.events
  * @product highmaps
- * @todo Copy series.map.events docs to actual source code
  * @apioption series.map.events
  */
 
 /**
  * @extends plotOptions.map.marker
  * @product highmaps
- * @todo Copy series.map.marker docs to actual source code
  * @apioption series.map.marker
  */
 
 /**
  * @extends plotOptions.map.point
  * @product highmaps
- * @todo Copy series.map.point docs to actual source code
  * @apioption series.map.point
  */
 
 /**
  * @extends plotOptions.map.states
  * @product highmaps
- * @todo Copy series.map.states docs to actual source code
  * @apioption series.map.states
  */
 
 /**
  * @extends plotOptions.map.tooltip
  * @product highmaps
- * @todo Copy series.map.tooltip docs to actual source code
  * @apioption series.map.tooltip
  */
 
 /**
  * @extends plotOptions.map.zones
  * @product highmaps
- * @todo Copy series.map.zones docs to actual source code
  * @apioption series.map.zones
  */
 
@@ -13563,7 +12214,6 @@
  * @extends series,plotOptions.mapbubble
  * @excluding dataParser,dataURL
  * @product highmaps
- * @todo Copy series.mapbubble docs to actual source code
  * @apioption series.mapbubble
  */
 
@@ -13595,63 +12245,54 @@
  * @extends series<mappoint>.data
  * @excluding labelrank,middleX,middleY,path,value,x,y,lat,lon
  * @product highmaps
- * @todo Copy series.mapbubble.data docs to actual source code
  * @apioption series.mapbubble.data
  */
 
 /**
  * @extends plotOptions.mapbubble.states
  * @product highmaps
- * @todo Copy series.mapbubble.data.marker.states docs to actual source code
  * @apioption series.mapbubble.data.marker.states
  */
 
 /**
  * @extends plotOptions.mapbubble.dataLabels
  * @product highmaps
- * @todo Copy series.mapbubble.dataLabels docs to actual source code
  * @apioption series.mapbubble.dataLabels
  */
 
 /**
  * @extends plotOptions.mapbubble.events
  * @product highmaps
- * @todo Copy series.mapbubble.events docs to actual source code
  * @apioption series.mapbubble.events
  */
 
 /**
  * @extends plotOptions.mapbubble.marker
  * @product highmaps
- * @todo Copy series.mapbubble.marker docs to actual source code
  * @apioption series.mapbubble.marker
  */
 
 /**
  * @extends plotOptions.mapbubble.point
  * @product highmaps
- * @todo Copy series.mapbubble.point docs to actual source code
  * @apioption series.mapbubble.point
  */
 
 /**
  * @extends plotOptions.mapbubble.states
  * @product highmaps
- * @todo Copy series.mapbubble.states docs to actual source code
  * @apioption series.mapbubble.states
  */
 
 /**
  * @extends plotOptions.mapbubble.tooltip
  * @product highmaps
- * @todo Copy series.mapbubble.tooltip docs to actual source code
  * @apioption series.mapbubble.tooltip
  */
 
 /**
  * @extends plotOptions.mapbubble.zones
  * @product highmaps
- * @todo Copy series.mapbubble.zones docs to actual source code
  * @apioption series.mapbubble.zones
  */
 
@@ -13668,63 +12309,54 @@
  * @extends series,plotOptions.mapline
  * @excluding dataParser,dataURL
  * @product highmaps
- * @todo Copy series.mapline docs to actual source code
  * @apioption series.mapline
  */
 
 /**
  * @extends plotOptions.mapline.states
  * @product highmaps
- * @todo Copy series.mapline.data.marker.states docs to actual source code
  * @apioption series.mapline.data.marker.states
  */
 
 /**
  * @extends plotOptions.mapline.dataLabels
  * @product highmaps
- * @todo Copy series.mapline.dataLabels docs to actual source code
  * @apioption series.mapline.dataLabels
  */
 
 /**
  * @extends plotOptions.mapline.events
  * @product highmaps
- * @todo Copy series.mapline.events docs to actual source code
  * @apioption series.mapline.events
  */
 
 /**
  * @extends plotOptions.mapline.marker
  * @product highmaps
- * @todo Copy series.mapline.marker docs to actual source code
  * @apioption series.mapline.marker
  */
 
 /**
  * @extends plotOptions.mapline.point
  * @product highmaps
- * @todo Copy series.mapline.point docs to actual source code
  * @apioption series.mapline.point
  */
 
 /**
  * @extends plotOptions.mapline.states
  * @product highmaps
- * @todo Copy series.mapline.states docs to actual source code
  * @apioption series.mapline.states
  */
 
 /**
  * @extends plotOptions.mapline.tooltip
  * @product highmaps
- * @todo Copy series.mapline.tooltip docs to actual source code
  * @apioption series.mapline.tooltip
  */
 
 /**
  * @extends plotOptions.mapline.zones
  * @product highmaps
- * @todo Copy series.mapline.zones docs to actual source code
  * @apioption series.mapline.zones
  */
 
@@ -13742,7 +12374,6 @@
  * @extends series,plotOptions.mappoint
  * @excluding dataParser,dataURL
  * @product highmaps
- * @todo Copy series.mappoint docs to actual source code
  * @apioption series.mappoint
  */
 
@@ -13789,62 +12420,53 @@
  * @extends series<map>.data
  * @excluding labelrank,middleX,middleY,path,value
  * @product highmaps
- * @todo Copy series.mappoint.data docs to actual source code
  * @apioption series.mappoint.data
  */
 
 /**
  * @extends plotOptions.mappoint.states
  * @product highmaps
- * @todo Copy series.mappoint.data.marker.states docs to actual source code
  * @apioption series.mappoint.data.marker.states
  */
 
 /**
  * @extends plotOptions.mappoint.dataLabels
  * @product highmaps
- * @todo Copy series.mappoint.dataLabels docs to actual source code
  * @apioption series.mappoint.dataLabels
  */
 
 /**
  * @extends plotOptions.mappoint.events
  * @product highmaps
- * @todo Copy series.mappoint.events docs to actual source code
  * @apioption series.mappoint.events
  */
 
 /**
  * @extends plotOptions.mappoint.marker
  * @product highmaps
- * @todo Copy series.mappoint.marker docs to actual source code
  * @apioption series.mappoint.marker
  */
 
 /**
  * @extends plotOptions.mappoint.point
  * @product highmaps
- * @todo Copy series.mappoint.point docs to actual source code
  * @apioption series.mappoint.point
  */
 
 /**
  * @extends plotOptions.mappoint.states
  * @product highmaps
- * @todo Copy series.mappoint.states docs to actual source code
  * @apioption series.mappoint.states
  */
 
 /**
  * @extends plotOptions.mappoint.tooltip
  * @product highmaps
- * @todo Copy series.mappoint.tooltip docs to actual source code
  * @apioption series.mappoint.tooltip
  */
 
 /**
  * @extends plotOptions.mappoint.zones
  * @product highmaps
- * @todo Copy series.mappoint.zones docs to actual source code
  * @apioption series.mappoint.zones
  */
