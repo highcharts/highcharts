@@ -642,11 +642,16 @@ H.defaultOptions = {
 		 * around it even if the axis is not affected.
 		 * 
 		 * @type {Boolean}
-		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-true/ True by default
-		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-false/ False
-		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-true-stacked/ True with stack
-		 * @sample {highmaps} stock/chart/ignorehiddenseries-true/ True by default
-		 * @sample {highmaps} stock/chart/ignorehiddenseries-false/ False
+		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-true/
+		 *         True by default
+		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-false/
+		 *         False
+		 * @sample {highcharts} highcharts/chart/ignorehiddenseries-true-stacked/
+		 *         True with stack
+		 * @sample {highmaps} stock/chart/ignorehiddenseries-true/
+		 *         True by default
+		 * @sample {highmaps} stock/chart/ignorehiddenseries-false/
+		 *         False
 		 * @default {all} true
 		 * @since 1.2.0
 		 * @product highcharts highstock
@@ -657,8 +662,8 @@ H.defaultOptions = {
 		/**
 		 * Whether to invert the axes so that the x axis is vertical and y axis
 		 * is horizontal. When true, the x axis is [reversed](#xAxis.reversed)
-		 * by default. If a bar series is present in the chart, it will be inverted
-		 * automatically.
+		 * by default. If a bar series is present in the chart, it will be
+		 * inverted automatically.
 		 * 
 		 * Inverting the chart doesn't have an effect if there are no cartesian
 		 * series in the chart, or if the chart is [polar](#chart.polar).
@@ -675,7 +680,7 @@ H.defaultOptions = {
 
 		/**
 		 * The distance between the outer edge of the chart and the content,
-		 * like title or legend, or axis title or labels if present. The
+		 * like title or legend, or axis title and labels if present. The
 		 * numbers in the array designate top, right, bottom and left respectively.
 		 * Use the options spacingTop, spacingRight, spacingBottom and spacingLeft
 		 * options for shorthand setting of one option.
@@ -687,11 +692,6 @@ H.defaultOptions = {
 		 * @product highcharts highstock highmaps
 		 */
 		spacing: [10, 10, 15, 10],
-		//spacingTop: 10,
-		//spacingRight: 10,
-		//spacingBottom: 15,
-		//spacingLeft: 10,
-		//zoomType: ''
 
 		/**
 		 * The button that appears after a selection zoom, allowing the user
