@@ -295,9 +295,23 @@ gulp.task('nightly', function () {
     });
 });
 
+
 /**
- * Automated generation for internal API docs.
+ * Automated generation for internal Class reference.
  * Run with --watch argument to watch for changes in the JS files.
+ * @todo: Combine with API generator, see the following:
+ *
+ * Temporary workflow for the API is different for now:
+ * - In the highcharts repo, run
+ *   jsdoc js/modules js/parts js/parts-3d js/parts-more js/parts-map js/supplemental.docs.js -c jsdoc.json
+ *   This produces tree.json, which is used as input for the documentation
+ *   generator.
+ * - In the api-docs repo, run
+ *   node gen.docs.js ../../highcharts/tree.json ../docs/ true
+ *   A server is automagically started on port 9700 to serve up the docs. The
+ *   server listens to changes on files in include and templates, and rebuilds
+ *   the docs if there are any. This only works if the ouput folder is a
+ *   folder - docs/ - in the project root.
  */
 gulp.task('jsdoc', function (cb) {
     const jsdoc = require('gulp-jsdoc3');
@@ -512,20 +526,23 @@ const copyToDist = () => {
     });
 };
 
-const createProductJS = () => {
+const getBuildProperties = () => {
     const U = require('./assembler/utilities.js');
     const D = require('./assembler/dependencies.js');
-    const path = './build/dist/products.js';
-
-    // @todo Get rid of build.properties and perhaps use package.json in stead.
     const buildProperties = U.getFile('./build.properties');
-    let date = D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties);
-    let version = D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties);
+    // @todo Get rid of build.properties and perhaps use package.json in stead.
+    return {
+        date: D.regexGetCapture(/highcharts\.product\.date=(.+)/, buildProperties),
+        version: D.regexGetCapture(/highcharts\.product\.version=(.+)/, buildProperties)
+    };
+};
 
+const createProductJS = () => {
+    const path = './build/dist/products.js';
+    const buildProperties = getBuildProperties();
     // @todo Add reasonable defaults
-    date = date === null ? '' : date;
-    version = version === null ? '' : version;
-
+    const date = buildProperties.date || '';
+    const version = buildProperties.version || '';
     const content = `var products = {
     "Highcharts": {
     "date": "${date}", 
@@ -870,6 +887,79 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
+const generateAPIDocs = () => {
+    const generate = require('highcharts-api-doc-gen/lib/index.js');
+    const fs = require('fs');
+    const treeFile = './tree.json';
+    const output = './build/api';
+    const onlyBuildCurrent = true;
+    const version = getBuildProperties().version;
+    const message = {
+        'noSeries': 'Missing series in tree.json. Run merge script.',
+        'noTree': 'Missing tree.json. This task is dependent upon the jsdoc task.',
+        'successGenerate': 'Finished with my Special api.',
+        'successCopy': 'Finished with building copying current API to '
+    };
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(treeFile)) {
+            const json = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
+            if (!json.series) {
+                reject(message.noSeries);
+            }
+            generate(json, output, onlyBuildCurrent, function () {
+                resolve(message.successGenerate);
+            });
+        } else {
+            reject(message.noTree);
+        }
+    }).then((resolve) => {
+        /**
+         * Copy new current version files into a versioned folder
+         */
+        const B = require('./assembler/build.js');
+        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            const files = B.getFilesInFolder(`${output}/${lib}/`, true, '');
+            files.filter((file) => {
+                // Filter away versioned folders
+                return !(
+                    (file.split('/').length > 1) && // is folder
+                    !isNaN(file.charAt(0)) // is numbered
+                );
+            }).forEach((file) => {
+                copyFile(`${output}/${lib}/${file}`, `${output}/${lib}/${version}/${file}`);
+            });
+        });
+        resolve(message.successCopy);
+    })
+    .then(console.log)
+    .catch(console.log);
+};
+
+const uploadAPIDocs = () => {
+    const B = require('./assembler/build.js');
+    const U = require('./assembler/utilities.js');
+    const storage = require('./tools/jsdoc/storage/cdn.storage');
+    const sourceFolder = './build/api/';
+    const mimeType = {
+        'css': 'text/css',
+        'html': 'text/html',
+        'js': 'text/javascript',
+        'json': 'application/json'
+    };
+    const files = B.getFilesInFolder(sourceFolder, true, '');
+    const cdn = storage.strategy.s3({
+        Bucket: 'api-docs-bucket.highcharts.com'
+    });
+    const promises = files.map((fileName) => {
+        const content = U.getFile(sourceFolder + fileName);
+        const fileType = fileName.split('.').pop();
+        return storage.push(cdn, fileName, content, mimeType[fileType]);
+    });
+    return Promise.all(promises);
+};
+
+gulp.task('upload-api', uploadAPIDocs);
+gulp.task('generate-api', generateAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);

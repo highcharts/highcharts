@@ -23,33 +23,98 @@ var colorPointMixin = H.colorPointMixin,
 	seriesTypes = H.seriesTypes;
 
 // The Heatmap series type
-seriesType('heatmap', 'scatter', {
+seriesType('heatmap', 'scatter', 
+/**
+ * @extends {plotOptions.scatter}
+ * @optionparent plotOptions.heatmap
+ */
+{
+
+	/**
+	 */
 	animation: false,
+
+	/**
+	 */
 	borderWidth: 0,
 	/*= if (build.classic) { =*/
+
+	/**
+	 */
 	nullColor: '${palette.neutralColor3}',
 	/*= } =*/
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+
+		/**
+		 */
 		inside: true,
+
+		/**
+		 */
 		verticalAlign: 'middle',
+
+		/**
+		 */
 		crop: false,
+
+		/**
+		 */
 		overflow: false,
+
+		/**
+		 */
 		padding: 0 // #3837
 	},
+
+	/**
+	 */
 	marker: null,
+
+	/**
+	 */
 	pointRange: null, // dynamically set to colsize by default
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
 	},
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		normal: {
+
+			/**
+			 */
 			animation: true
 		},
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			halo: false,  // #3406, halo is not required on heatmaps
+
+			/**
+			 */
 			brightness: 0.2
 		}
 	}

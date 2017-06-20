@@ -29,47 +29,199 @@ var arrayMax = H.arrayMax,
  * Start Bubble series code											          *
  *****************************************************************************/
 
-seriesType('bubble', 'scatter', {
+seriesType('bubble', 'scatter', 
+
+/**
+ * @extends plotOptions.scatter
+ * @optionparent plotOptions.bubble
+ */
+{
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		formatter: function () { // #2945
 			return this.point.z;
 		},
+
+		/**
+		 */
 		inside: true,
+
+		/**
+		 */
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,
+
+	/**
+	 * Options for the point markers of line-like series. Properties like
+	 * `fillColor`, `lineColor` and `lineWidth` define the visual appearance
+	 * of the markers. Other series types, like column series, don't have
+	 * markers, but have visual options on the series level instead.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the markers can be styled with the `.highcharts-
+	 * point`, `.highcharts-point-hover` and `.highcharts-point-select`
+	 * class names.
+	 * 
+	 * @type {Object}
+	 * @extends plotOptions.series.marker
+	 * @excluding radius
+	 * @product highcharts
+	 */
 	marker: {
 		/*= if (build.classic) { =*/
 		// fillOpacity: 0.5,
+
+		/**
+		 */
 		lineColor: null, // inherit from series.color
+
+		/**
+		 */
 		lineWidth: 1,
 		/*= } =*/
 		// Avoid offset in Point.setState
+
+		/**
+		 */
 		radius: null,
+
+		/**
+		 */
 		states: {
+
+			/**
+			 */
 			hover: {
+
+				/**
+				 */
 				radiusPlus: 0
 			}
 		},
+
+		/**
+		 * A predefined shape or symbol for the marker. Possible values are
+		 * "circle", "square", "diamond", "triangle" and "triangle-down".
+		 * 
+		 * Additionally, the URL to a graphic can be given on the form `url(graphic.
+		 * png)`. Note that for the image to be applied to exported charts,
+		 * its URL needs to be accessible by the export server.
+		 * 
+		 * Custom callbacks for symbol path generation can also be added to
+		 * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+		 * used by its method name, as shown in the demo.
+		 * 
+		 * @validvalue ["circle", "square", "diamond", "triangle", "triangle-down"]
+		 * @type {String}
+		 * @sample {highcharts} highcharts/plotoptions/bubble-symbol/ Bubble chart with various symbols
+		 * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/ General chart with predefined, graphic and custom markers
+		 * @default {all} circle
+		 * @since 5.0.11
+		 * @product highcharts
+		 */
 		symbol: 'circle'
 	},
+
+	/**
+	 * Minimum bubble size. Bubbles will automatically size between the
+	 * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+	 * Can be either pixels (when no unit is given), or a percentage of
+	 * the smallest one of the plot width and height.
+	 * 
+	 * @type {String}
+	 * @sample {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
+	 * @default {all} 8
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	minSize: 8,
+
+	/**
+	 * Maximum bubble size. Bubbles will automatically size between the
+	 * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+	 * Can be either pixels (when no unit is given), or a percentage of
+	 * the smallest one of the plot width and height.
+	 * 
+	 * @type {String}
+	 * @sample {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
+	 * @default {all} 20%
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
+
+	/**
+	 * When this is true, the series will not cause the Y axis to cross
+	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+	 * unless the data actually crosses the plane.
+	 * 
+	 * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+	 * 3 will make the Y axis show negative values according to the `minPadding`
+	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} false
+	 * @since 4.1.9
+	 * @product highcharts
+	 */
 	softThreshold: false,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			halo: {
+
+				/**
+				 */
 				size: 5
 			}
 		}
 	},
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
+
+	/**
+	 */
 	turboThreshold: 0,
+
+	/**
+	 * When [displayNegative](#plotOptions.bubble.displayNegative) is `false`,
+	 * bubbles with lower Z values are skipped. When `displayNegative`
+	 * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
+	 * is given, points with lower Z is colored.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/bubble-negative/ Negative bubbles
+	 * @default {all} 0
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	zThreshold: 0,
+
+	/**
+	 */
 	zoneAxis: 'z'
 
 // Prototype members

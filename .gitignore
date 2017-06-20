@@ -1,6 +1,7 @@
 /.metadata/
 /.settings/
 /api-docs
+/out
 /js/highcharts-3d.src.js
 /js/highcharts-more.src.js
 /js/highcharts.js
@@ -33,6 +34,8 @@
 /utils/samples/temp/
 /utils/samples/nightly/
 
+tree.json
+
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github
 exporting-server/java/highcharts-export/highcharts-export-convert/src/main/java/com/highcharts/export/pool/ServerObjectFactory.java
@@ -60,3 +63,9 @@ nbproject/
 samples/highcharts/common-js/browserify/demo.js
 samples/highcharts/common-js/webpack/demo.js
 /samples/cloud/charts
+
+/tmp/report.html
+
+/tmp/missing.in.code.json
+
+/tmp/processed.api.json

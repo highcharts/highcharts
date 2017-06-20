@@ -25,30 +25,197 @@ var addEvent = H.addEvent,
 	wrap = H.wrap,
 	swapXY;
 
+/**
+ * 
+ * The scrollbar is a means of panning over the X axis of a chart.
+ * 
+ * In [styled mode](http://www.highcharts.com/docs/chart-design-
+ * and-style/style-by-css), all the presentational options for the
+ * scrollbar are replaced by the classes `.highcharts-scrollbar-
+ * thumb`, `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-
+ * button`, `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-
+ * track`.
+ * 
+ * @product highstock
+ * @optionparent scrollbar
+ */
 var defaultScrollbarOptions =  {
 	//enabled: true
+
+	/**
+	 * The height of the scrollbar. The height also applies to the width
+	 * of the scroll arrows so that they are always squares. Defaults to
+	 * 20 for touch devices and 14 for mouse devices.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/height/ A 30px scrollbar
+	 * @product highstock
+	 */
 	height: isTouchDevice ? 20 : 14,
 	// trackBorderRadius: 0
+
+	/**
+	 * The border rounding radius of the bar.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} 0
+	 * @product highstock
+	 */
 	barBorderRadius: 0,
+
+	/**
+	 * The corner radius of the scrollbar buttons.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} 0
+	 * @product highstock
+	 */
 	buttonBorderRadius: 0,
+
+	/**
+	 * Whether to redraw the main chart as the scrollbar or the navigator
+	 * zoomed window is moved. Defaults to `true` for modern browsers and
+	 * `false` for legacy IE browsers as well as mobile devices.
+	 * 
+	 * @type {Boolean}
+	 * @since 1.3
+	 * @product highstock
+	 */
 	liveRedraw: svg && !isTouchDevice,
+
+	/**
+	 */
 	margin: 10,
+
+	/**
+	 * The minimum width of the scrollbar.
+	 * 
+	 * @type {Number}
+	 * @default {all} 6
+	 * @since 1.2.5
+	 * @product highstock
+	 */
 	minWidth: 6,
 	//showFull: true,
 	//size: null,
+
+	/**
+	 */
 	step: 0.2,
+
+	/**
+	 */
 	zIndex: 3,
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The background color of the scrollbar itself.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #cccccc
+	 * @product highstock
+	 */
 	barBackgroundColor: '${palette.neutralColor20}',
+
+	/**
+	 * The width of the bar's border.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} 1
+	 * @product highstock
+	 */
 	barBorderWidth: 1,
+
+	/**
+	 * The color of the scrollbar's border.
+	 * 
+	 * @type {Color}
+	 * @default {all} #cccccc
+	 * @product highstock
+	 */
 	barBorderColor: '${palette.neutralColor20}',
+
+	/**
+	 * The color of the small arrow inside the scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #333333
+	 * @product highstock
+	 */
 	buttonArrowColor: '${palette.neutralColor80}',
+
+	/**
+	 * The color of scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #e6e6e6
+	 * @product highstock
+	 */
 	buttonBackgroundColor: '${palette.neutralColor10}',
+
+	/**
+	 * The color of the border of the scrollbar buttons.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #cccccc
+	 * @product highstock
+	 */
 	buttonBorderColor: '${palette.neutralColor20}',
+
+	/**
+	 * The border width of the scrollbar buttons.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} 1
+	 * @product highstock
+	 */
 	buttonBorderWidth: 1,
+
+	/**
+	 * The color of the small rifles in the middle of the scrollbar.
+	 * 
+	 * @type {Color}
+	 * @default {all} #333333
+	 * @product highstock
+	 */
 	rifleColor: '${palette.neutralColor80}',
+
+	/**
+	 * The color of the track background.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #f2f2f2
+	 * @product highstock
+	 */
 	trackBackgroundColor: '${palette.neutralColor5}',
+
+	/**
+	 * The color of the border of the scrollbar track.
+	 * 
+	 * @type {Color}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} #f2f2f2
+	 * @product highstock
+	 */
 	trackBorderColor: '${palette.neutralColor5}',
+
+	/**
+	 * The width of the border of the scrollbar track.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/scrollbar/style/ Scrollbar styling
+	 * @default {all} 1
+	 * @product highstock
+	 */
 	trackBorderWidth: 1
 	/*= } =*/
 };

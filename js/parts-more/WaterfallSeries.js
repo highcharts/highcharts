@@ -20,17 +20,114 @@ var correctFloat = H.correctFloat,
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
-seriesType('waterfall', 'column', {
+
+
+seriesType('waterfall', 'column', 
+/**
+ * @extends {plotOptions.column}
+ * @optionparent plotOptions.waterfall
+ */
+
+/**
+ * The plotOptions is a wrapper object for config objects for each series
+ * type. The config objects for each series can also be overridden for
+ * each series item as given in the series array.
+ * 
+ * Configuration options for the series are given in three levels. Options
+ * for all series in a chart are given in the [plotOptions.series](#plotOptions.
+ * series) object. Then options for all series of a specific type are
+ * given in the plotOptions of that type, for example plotOptions.line.
+ * Next, options for one single series are given in [the series array](#series).
+ * 
+ * @product highcharts highstock highmaps
+ */
+{
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		inside: true
 	},
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The width of the line connecting waterfall columns.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1
+	 * @product highcharts
+	 */
 	lineWidth: 1,
+
+	/**
+	 * The color of the line that connects columns in a waterfall series.
+	 * 
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the stroke can be set with the `.highcharts-
+	 * graph` class.
+	 * 
+	 * @type {Color}
+	 * @default {all} #333333
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	lineColor: '${palette.neutralColor80}',
+
+	/**
+	 * A name for the dash style to use for the line connecting the columns
+	 * of the waterfall series. Possible values:
+	 * 
+	 * *   Solid
+	 * *   ShortDash
+	 * *   ShortDot
+	 * *   ShortDashDot
+	 * *   ShortDashDotDot
+	 * *   Dot
+	 * *   Dash
+	 * *   LongDash
+	 * *   DashDot
+	 * *   LongDashDot
+	 * *   LongDashDotDot
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the stroke dash-array can be set with the `.
+	 * highcharts-graph` class.
+	 * 
+	 * @type {String}
+	 * @default {all} Dot
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	dashStyle: 'dot',
+
+	/**
+	 * The color of the border of each waterfall column.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the border stroke can be set with the `.highcharts-
+	 * point` class.
+	 * 
+	 * @type {Color}
+	 * @default {all} #333333
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	borderColor: '${palette.neutralColor80}',
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			lineWidthPlus: 0 // #3126
 		}
 	}

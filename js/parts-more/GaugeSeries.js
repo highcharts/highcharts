@@ -19,24 +19,120 @@ var each = H.each,
 	Series = H.Series,
 	seriesType = H.seriesType,
 	TrackerMixin = H.TrackerMixin;
-/* 
+
+seriesType('gauge', 'line', 
+/** 
  * The GaugeSeries class
+ * @extends {plotOptions.line}
+ * @optionparent plotOptions.gauge
  */
-seriesType('gauge', 'line', {
+{
+
+	/**
+	 * Data labels for the gauge. For gauges, the data labels are enabled
+	 * by default and shown in a bordered box below the point.
+	 * 
+	 * @type {Object}
+	 * @extends plotOptions.series.dataLabels
+	 * @since 2.3.0
+	 * @product highcharts
+	 */
 	dataLabels: {
+
+		/**
+		 * Enable or disable the data labels.
+		 * 
+		 * @type {Boolean}
+		 * @since 2.3.0
+		 * @product highcharts highmaps
+		 */
 		enabled: true,
+
+		/**
+		 */
 		defer: false,
+
+		/**
+		 * The y position offset of the label relative to the center of the
+		 * gauge.
+		 * 
+		 * @type {Number}
+		 * @default {all} 15
+		 * @since 2.3.0
+		 * @product highcharts highmaps
+		 */
 		y: 15,
+
+		/**
+		 * The border radius in pixels for the gauge's data label.
+		 * 
+		 * @type {Number}
+		 * @default {all} 3
+		 * @since 2.3.0
+		 * @product highcharts highmaps
+		 */
 		borderRadius: 3,
+
+		/**
+		 */
 		crop: false,
+
+		/**
+		 * The vertical alignment of the data label.
+		 * 
+		 * @type {String}
+		 * @default {all} top
+		 * @product highcharts highmaps
+		 */
 		verticalAlign: 'top',
+
+		/**
+		 * The Z index of the data labels. A value of 2 display them behind
+		 * the dial.
+		 * 
+		 * @type {Number}
+		 * @default {all} 2
+		 * @since 2.1.5
+		 * @product highcharts highmaps
+		 */
 		zIndex: 2,
 		/*= if (build.classic) { =*/
 		// Presentational
+
+		/**
+		 * The border width in pixels for the gauge data label.
+		 * 
+		 * @type {Number}
+		 * @default {all} 1
+		 * @since 2.3.0
+		 * @product highcharts highmaps
+		 */
 		borderWidth: 1,
+
+		/**
+		 * The border color for the data label.
+		 * 
+		 * @type {Color}
+		 * @default {all} #cccccc
+		 * @since 2.3.0
+		 * @product highcharts highmaps
+		 */
 		borderColor: '${palette.neutralColor20}'
 		/*= } =*/
 	},
+
+	/**
+	 * Options for the dial or arrow pointer of the gauge.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the dial is styled with the `.highcharts-gauge-
+	 * series .highcharts-dial` rule.
+	 * 
+	 * @type {Object}
+	 * @sample {highcharts} highcharts/css/gauge/ Styled mode
+	 * @since 2.3.0
+	 * @product highcharts
+	 */
 	dial: {
 		// radius: '80%',
 		// baseWidth: 3,
@@ -50,6 +146,19 @@ seriesType('gauge', 'line', {
 		/*= } =*/
 		
 	},
+
+	/**
+	 * Options for the pivot or the center point of the gauge.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the pivot is styled with the `.highcharts-gauge-
+	 * series .highcharts-pivot` rule.
+	 * 
+	 * @type {Object}
+	 * @sample {highcharts} highcharts/css/gauge/ Styled mode
+	 * @since 2.3.0
+	 * @product highcharts
+	 */
 	pivot: {
 		//radius: 5,
 		/*= if (build.classic) { =*/
@@ -58,9 +167,24 @@ seriesType('gauge', 'line', {
 		//backgroundColor: '${palette.neutralColor100}'
 		/*= } =*/
 	},
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		headerFormat: ''
 	},
+
+	/**
+	 * Whether to display this particular series or series type in the
+	 * legend. Defaults to false for gauge series.
+	 * 
+	 * @type {Boolean}
+	 * @since 2.3.0
+	 * @product highcharts
+	 */
 	showInLegend: false
 
 // Prototype members

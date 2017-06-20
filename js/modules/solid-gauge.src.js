@@ -152,7 +152,15 @@ colorAxisMethods = {
 };
 
 // The solidgauge series type
-H.seriesType('solidgauge', 'gauge', {
+H.seriesType('solidgauge', 'gauge', 
+/** 
+ * @extends plotOptions.gauge
+ * @optionparent plotOptions.solidgauge
+ */
+{
+
+	/**
+	 */
 	colorByPoint: true
 
 }, {

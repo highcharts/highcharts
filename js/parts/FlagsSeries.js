@@ -29,29 +29,150 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.flags
  * @augments seriesTypes.column
  */
-seriesType('flags', 'column', {
+seriesType('flags', 'column', 
+/**
+ * @extends {plotOptions.column}
+ * @optionparent plotOptions.flags
+ */
+{
+
+	/**
+	 */
 	pointRange: 0, // #673
 	//radius: 2,
+
+	/**
+	 * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
+	 * or an image on the format `url(/path-to-image.jpg)`. Individual
+	 * shapes can also be set for each point.
+	 * 
+	 * @validvalue ["flag", "circlepin", "squarepin"]
+	 * @type {String}
+	 * @sample {highstock} stock/plotoptions/flags/ Different shapes
+	 * @default {all} flag
+	 * @product highstock
+	 */
 	shape: 'flag',
+
+	/**
+	 * When multiple flags in the same series fall on the same value, this
+	 * number determines the vertical offset between them.
+	 * 
+	 * @type {Number}
+	 * @sample {highstock} stock/plotoptions/flags-stackdistance/ A greater stack distance
+	 * @default {all} 12
+	 * @product highstock
+	 */
 	stackDistance: 12,
+
+	/**
+	 * Text alignment for the text inside the flag.
+	 * 
+	 * @validvalue ["left", "center", "right"]
+	 * @type {String}
+	 * @default {all} center
+	 * @since 5.0.0
+	 * @product highstock
+	 */
 	textAlign: 'center',
+
+	/**
+	 * Specific tooltip options for flag series. Flag series tooltips are
+	 * different from most other types in that a flag doesn't have a data
+	 * value, so the tooltip rather displays the `text` option for each
+	 * point.
+	 * 
+	 * @type {Object}
+	 * @extends plotOptions.series.tooltip
+	 * @excluding changeDecimals,valueDecimals,valuePrefix,valueSuffix
+	 * @product highstock
+	 */
 	tooltip: {
+
+		/**
+		 */
 		pointFormat: '{point.text}<br/>'
 	},
+
+	/**
+	 */
 	threshold: null,
+
+	/**
+	 * The y position of the top left corner of the flag relative to either
+	 * the series (if onSeries is defined), or the x axis. Defaults to
+	 * `-30`.
+	 * 
+	 * @type {Number}
+	 * @default {all} -30
+	 * @product highstock
+	 */
 	y: -30,
 	/*= if (build.classic) { =*/
+
+	/**
+	 */
 	fillColor: '${palette.backgroundColor}',
 	// lineColor: color,
+
+	/**
+	 * The pixel width of the candlestick line/border. Defaults to `1`.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1
+	 * @product highstock
+	 */
 	lineWidth: 1,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 * @extends plotOptions.column.states.hover
+		 * @product highstock
+		 */
 		hover: {
+
+			/**
+			 * The color of the line/border of the flag Defaults to `"black"`.
+			 * 
+			 * @type {String}
+			 * @default {all} "black"
+			 * @product highstock
+			 */
 			lineColor: '${palette.neutralColor100}',
+
+			/**
+			 * The fill or background color of the flag Defaults to `"#FCFFC5"`.
+			 * 
+			 * @type {String}
+			 * @default {all} "#FCFFC5"
+			 * @product highstock
+			 */
 			fillColor: '${palette.highlightColor20}'
 		}
 	},
+
+	/**
+	 * The text styles of the flag.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the styles are set in the `.highcharts-flag-
+	 * series .highcharts-point` rule.
+	 * 
+	 * @type {CSSObject}
+	 * @default {all} { "fontSize": "11px", "fontWeight": "bold" }
+	 * @product highstock
+	 */
 	style: {
+
+		/**
+		 */
 		fontSize: '11px',
+
+		/**
+		 */
 		fontWeight: 'bold'
 	}
 	/*= } =*/

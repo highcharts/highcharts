@@ -17,15 +17,65 @@ var each = H.each,
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
-seriesType('errorbar', 'boxplot', {
+
+
+seriesType('errorbar', 'boxplot', 
+/**  
+ * @extends {plotOptions.boxplot}
+ * @optionparent plotOptions.errorbar
+ */
+{
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The main color of the bars. This can be overridden by [stemColor](#plotOptions.
+	 * errorbar.stemColor) and [whiskerColor](#plotOptions.errorbar.whiskerColor)
+	 * individually.
+	 * 
+	 * @type {Color}
+	 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
+	 * @default {all} #000000
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	color: '${palette.neutralColor100}',
 	/*= } =*/
+
+	/**
+	 */
 	grouping: false,
+
+	/**
+	 * The parent series of the error bar. The default value links it to
+	 * the previous series. Otherwise, use the id of the parent series.
+	 * 
+	 * @type {String}
+	 * @default {all} :previous
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	linkedTo: ':previous',
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
+
+	/**
+	 * The line width of the whiskers, the horizontal lines marking low
+	 * and high values. When `null`, the general [lineWidth](#plotOptions.
+	 * errorbar.lineWidth) applies.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/ Error bar styling
+	 * @default {all} null
+	 * @since 3.0
+	 * @product highcharts
+	 */
 	whiskerWidth: null
 
 // Prototype members

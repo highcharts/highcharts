@@ -23,8 +23,41 @@ var color = H.color,
  * @constructor seriesTypes.area
  * @extends {Series}
  */
-seriesType('area', 'line', {
+seriesType('area', 'line', 
+	/**
+	 * @extends {plotOptions.line}
+	 * @optionparent plotOptions.area
+	 */
+	{
+
+	/**
+	 * When this is true, the series will not cause the Y axis to cross
+	 * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+	 * unless the data actually crosses the plane.
+	 * 
+	 * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+	 * 3 will make the Y axis show negative values according to the `minPadding`
+	 * option. If `softThreshold` is `true`, the Y axis starts at 0.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} false
+	 * @since 4.1.9
+	 * @product highcharts highstock
+	 */
 	softThreshold: false,
+
+	/**
+	 * The Y axis value to serve as the base for the area, for distinguishing
+	 * between values above and below a threshold. If `null`, the area
+	 * behaves like a line series with fill between the graph and the Y
+	 * axis minimum.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/area-threshold/ A threshold of 100
+	 * @default {all} 0
+	 * @since 2.0
+	 * @product highcharts highstock
+	 */
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered

@@ -28,42 +28,251 @@ extend(defaultOptions.lang, {
 
 
 // Set the default map navigation options
+
+/** 
+ * @products highmaps
+ * @optionparent mapNavigation 
+ */
 defaultOptions.mapNavigation = {
+
+	/**
+	 * General options for the map navigation buttons. Individual options
+	 * can be given from the [mapNavigation.buttons](#mapNavigation.buttons)
+	 * option set.
+	 * 
+	 * @type {Object}
+	 * @sample {highmaps} maps/mapnavigation/button-theme/ Theming the navigation buttons
+	 * @product highmaps
+	 */
 	buttonOptions: {
+
+		/**
+		 * What box to align the buttons to. Possible values are `plotBox`
+		 * and `spacingBox`.
+		 * 
+		 * @validvalue ["plotBox", "spacingBox"]
+		 * @type {String}
+		 * @default {all} plotBox
+		 * @product highmaps
+		 */
 		alignTo: 'plotBox',
+
+		/**
+		 * The alignment of the navigation buttons.
+		 * 
+		 * @validvalue ["left", "center", "right"]
+		 * @type {String}
+		 * @default {all} left
+		 * @product highmaps
+		 */
 		align: 'left',
+
+		/**
+		 * The vertical alignment of the buttons. Individual alignment can
+		 * be adjusted by each button's `y` offset.
+		 * 
+		 * @validvalue ["top", "middle", "bottom"]
+		 * @type {String}
+		 * @default {all} bottom
+		 * @product highmaps
+		 */
 		verticalAlign: 'top',
+
+		/**
+		 * The X offset of the buttons relative to its `align` setting.
+		 * 
+		 * @type {Number}
+		 * @default {all} 0
+		 * @product highmaps
+		 */
 		x: 0,
+
+		/**
+		 * The width of the map navigation buttons.
+		 * 
+		 * @type {Number}
+		 * @default {all} 18
+		 * @product highmaps
+		 */
 		width: 18,
+
+		/**
+		 * The pixel height of the map navigation buttons.
+		 * 
+		 * @type {Number}
+		 * @default {all} 18
+		 * @product highmaps
+		 */
 		height: 18,
+
+		/**
+		 * Padding for the navigation buttons.
+		 * 
+		 * @type {Number}
+		 * @default {all} 5
+		 * @since 5.0.0
+		 * @product highmaps
+		 */
 		padding: 5,
 		/*= if (build.classic) { =*/
+
+		/**
+		 * Text styles for the map navigation buttons. Defaults to
+		 * 
+		 * <pre>{
+		 * fontSize: '15px',
+		 * fontWeight: 'bold',
+		 * textAlign: 'center'
+		 * }</pre>
+		 * 
+		 * @type {CSSObject}
+		 * @product highmaps
+		 */
 		style: {
+
+			/**
+			 */
 			fontSize: '15px',
+
+			/**
+			 */
 			fontWeight: 'bold'
 		},
+
+		/**
+		 * A configuration object for the button theme. The object accepts
+		 * SVG properties like `stroke-width`, `stroke` and `fill`. Tri-state
+		 * button styles are supported by the `states.hover` and `states.select`
+		 * objects.
+		 * 
+		 * @type {Object}
+		 * @sample {highmaps} maps/mapnavigation/button-theme/ Themed navigation buttons
+		 * @product highmaps
+		 */
 		theme: {
 			'stroke-width': 1,
+
+			/**
+			 */
 			'text-align': 'center'
 		}
 		/*= } =*/
 	},
+
+	/**
+	 * The individual buttons for the map navigation. This usually includes
+	 * the zoom in and zoom out buttons. Properties for each button is
+	 * inherited from [mapNavigation.buttonOptions](#mapNavigation.buttonOptions),
+	 * while individual options can be overridden. But default, the `onclick`,
+	 *  `text` and `y` options are individual.
+	 * 
+	 * @type {Object}
+	 * @product highmaps
+	 */
 	buttons: {
+
+		/**
+		 * Options for the zoom in button. Properties for the zoom in and
+		 * zoom out buttons are inherited from [mapNavigation.buttonOptions](#mapNavigation.
+		 * buttonOptions), while individual options can be overridden. By
+		 * default, the `onclick`, `text` and `y` options are individual.
+		 * 
+		 * @type {Object}
+		 * @extends mapNavigation.buttonOptions
+		 * @product highmaps
+		 */
 		zoomIn: {
+
+			/**
+			 * Click handler for the button. Defaults to:
+			 * 
+			 * <pre>function () {
+			 * this.mapZoom(0.5);
+			 * }</pre>
+			 * 
+			 * @type {Function}
+			 * @product highmaps
+			 */
 			onclick: function () {
 				this.mapZoom(0.5);
 			},
+
+			/**
+			 * The text for the button. The tooltip (title) is a language option
+			 * given by [lang.zoomIn](#lang.zoomIn).
+			 * 
+			 * @type {String}
+			 * @default {all} +
+			 * @product highmaps
+			 */
 			text: '+',
+
+			/**
+			 * The position of the zoomIn button relative to the vertical alignment.
+			 * 
+			 * @type {Number}
+			 * @default {all} 0
+			 * @product highmaps
+			 */
 			y: 0
 		},
+
+		/**
+		 * Options for the zoom out button. Properties for the zoom in and
+		 * zoom out buttons are inherited from [mapNavigation.buttonOptions](#mapNavigation.
+		 * buttonOptions), while individual options can be overridden. By
+		 * default, the `onclick`, `text` and `y` options are individual.
+		 * 
+		 * @type {Object}
+		 * @extends mapNavigation.buttonOptions
+		 * @product highmaps
+		 */
 		zoomOut: {
+
+			/**
+			 * Click handler for the button. Defaults to:
+			 * 
+			 * <pre>function () {
+			 * this.mapZoom(2);
+			 * }</pre>
+			 * 
+			 * @type {Function}
+			 * @product highmaps
+			 */
 			onclick: function () {
 				this.mapZoom(2);
 			},
+
+			/**
+			 * The text for the button. The tooltip (title) is a language option
+			 * given by [lang.zoomOut](#lang.zoomIn).
+			 * 
+			 * @type {String}
+			 * @default {all} -
+			 * @product highmaps
+			 */
 			text: '-',
+
+			/**
+			 * The position of the zoomOut button relative to the vertical alignment.
+			 * 
+			 * @type {Number}
+			 * @default {all} 28
+			 * @product highmaps
+			 */
 			y: 28
 		}
 	},
+
+	/**
+	 * Sensitivity of mouse wheel or trackpad scrolling. 1 is no sensitivity,
+	 *  while with 2, one mousewheel delta will zoom in 50%.
+	 * 
+	 * @type {Number}
+	 * @default {all} 1.1
+	 * @since 4.2.4
+	 * @product highmaps
+	 */
 	mouseWheelSensitivity: 1.1
 	// enabled: false,
 	// enableButtons: null, // inherit from enabled

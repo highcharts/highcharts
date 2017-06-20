@@ -33,41 +33,232 @@ var addEvent = H.addEvent,
  * @constructor seriesTypes.pie
  * @augments Series
  */
-seriesType('pie', 'line', {
+seriesType('pie', 'line', 
+	/**
+	 * @extends {plotOptions.line}
+	 * @optionparent plotOptions.pie
+	 */
+{
+
+	/**
+	 * The center of the pie chart relative to the plot area. Can be percentages
+	 * or pixel values. The default behaviour (as of 3.0) is to center
+	 * the pie so that all slices and data labels are within the plot area.
+	 * As a consequence, the pie may actually jump around in a chart with
+	 * dynamic values, as the data labels move. In that case, the center
+	 * should be explicitly set, for example to `["50%", "50%"]`.
+	 * 
+	 * @type {Array<String|Number>}
+	 * @sample {highcharts} highcharts/plotoptions/pie-center/ Centered at 100, 100
+	 * @default {all} [null, null]
+	 * @product highcharts
+	 */
 	center: [null, null],
+
+	/**
+	 */
 	clip: false,
+
+	/**
+	 */
 	colorByPoint: true, // always true for pies
+
+	/**
+	 * @extends plotOptions.series.dataLabels
+	 * @excluding align,allowOverlap,staggerLines,step
+	 * @product highcharts
+	 */
 	dataLabels: {
 		// align: null,
 		// connectorWidth: 1,
 		// connectorColor: point.color,
 		// connectorPadding: 5,
+
+		/**
+		 * The distance of the data label from the pie's edge. Negative numbers
+		 * put the data label on top of the pie slices. Connectors are only
+		 * shown for data labels outside the pie.
+		 * 
+		 * @type {Number}
+		 * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/ Data labels on top of the pie
+		 * @default {all} 30
+		 * @since 2.1
+		 * @product highcharts
+		 */
 		distance: 30,
+
+		/**
+		 * Enable or disable the data labels.
+		 * 
+		 * @type {Boolean}
+		 * @since 2.1
+		 * @product highcharts
+		 */
 		enabled: true,
+
+		/**
+		 */
 		formatter: function () { // #2945
 			return this.point.isNull ? undefined : this.point.name;
 		},
 		// softConnector: true,
+
+		/**
+		 */
 		x: 0
 		// y: 0
 	},
+
+	/**
+	 * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
+	 * this option tells whether the series shall be redrawn as if the
+	 * hidden point were `null`.
+	 * 
+	 * The default value changed from `false` to `true` with Highcharts
+	 * 3.0.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/ True, the hiddden point is ignored
+	 * @default {all} true
+	 * @since 2.3.0
+	 * @product highcharts
+	 */
 	ignoreHiddenPoint: true,
 	//innerSize: 0,
+
+	/**
+	 */
 	legendType: 'point',
+
+	/**
+	 */
 	marker: null, // point options are specified in the base options
+
+	/**
+	 * The diameter of the pie relative to the plot area. Can be a percentage
+	 * or pixel value. Pixel values are given as integers. The default
+	 * behaviour (as of 3.0) is to scale to the plot area and give room
+	 * for data labels within the plot area. As a consequence, the size
+	 * of the pie may vary when points are updated and data labels more
+	 * around. In that case it is best to set a fixed value, for example
+	 * `"75%"`.
+	 * 
+	 * @type {String|Number}
+	 * @sample {highcharts} highcharts/plotoptions/pie-size/ Smaller pie
+	 * @default {all}  
+	 * @product highcharts
+	 */
 	size: null,
+
+	/**
+	 * Whether to display this particular series or series type in the
+	 * legend. Since 2.1, pies are not shown in the legend by default.
+	 * 
+	 * @type {Boolean}
+	 * @sample {highcharts} highcharts/plotoptions/series-showinlegend/ One series in the legend, one hidden
+	 * @product highcharts
+	 */
 	showInLegend: false,
+
+	/**
+	 * If a point is sliced, moved out from the center, how many pixels
+	 * should it be moved?.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/ 20px offset
+	 * @default {all} 10
+	 * @product highcharts
+	 */
 	slicedOffset: 10,
+
+	/**
+	 * Sticky tracking of mouse events. When true, the `mouseOut` event
+	 * on a series isn't triggered until the mouse moves over another series,
+	 * or out of the plot area. When false, the `mouseOut` event on a
+	 * series is triggered when the mouse leaves the area around the series'
+	 * graph or markers. This also implies the tooltip. When `stickyTracking`
+	 * is false and `tooltip.shared` is false, the tooltip will be hidden
+	 * when moving the mouse between series.
+	 * 
+	 * @type {Boolean}
+	 * @default {all} false
+	 * @product highcharts
+	 */
 	stickyTracking: false,
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		followPointer: true
 	},
 	/*= if (build.classic) { =*/
+
+	/**
+	 * The color of the border surrounding each slice. When `null`, the
+	 * border takes the same color as the slice fill. This can be used
+	 * together with a `borderWidth` to fill drawing gaps created by antialiazing
+	 * artefacts in borderless pies.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the border stroke is given in the `.highcharts-
+	 * point` class.
+	 * 
+	 * @type {Color}
+	 * @sample {highcharts} highcharts/plotoptions/pie-bordercolor-black/ Black border
+	 * @default {all} #ffffff
+	 * @product highcharts
+	 */
 	borderColor: '${palette.backgroundColor}',
+
+	/**
+	 * The width of the border surrounding each slice.
+	 * 
+	 * When setting the border width to 0, there may be small gaps between
+	 * the slices due to SVG antialiasing artefacts. To work around this,
+	 * keep the border width at 0.5 or 1, but set the `borderColor` to
+	 * `null` instead.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the border stroke width is given in the `.highcharts-
+	 * point` class.
+	 * 
+	 * @type {Number}
+	 * @sample {highcharts} highcharts/plotoptions/pie-borderwidth/ 3px border
+	 * @default {all} 1
+	 * @product highcharts
+	 */
 	borderWidth: 1,
+
+	/**
+	 */
 	states: {
+
+		/**
+		 * @extends plotOptions.series.states.hover
+		 * @product highcharts
+		 */
 		hover: {
+
+			/**
+			 * How much to brighten the point on interaction. Requires the main
+			 * color to be defined in hex or rgb(a) format.
+			 * 
+			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+			 * style/style-by-css), the hover brightness is by default replaced
+			 * by a fill-opacity given in the `.highcharts-point-hover` class.
+			 * 
+			 * @type {Number}
+			 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/ Brightened by 0.5
+			 * @default {all} 0.1
+			 * @product highcharts
+			 */
 			brightness: 0.1,
+
+			/**
+			 */
 			shadow: false
 		}
 	}

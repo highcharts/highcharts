@@ -183,9 +183,12 @@ MapNavigation.prototype.updateEvents = function (options) {
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
 	/**
-	 * Fit an inner box to an outer. If the inner box overflows left or right, align it to the sides of the
-	 * outer. If it overflows both sides, fit it within the outer. This is a pattern that occurs more places
-	 * in Highcharts, perhaps it should be elevated to a common utility function.
+	 * Fit an inner box to an outer. If the inner box overflows left or right,
+	 * align it to the sides of the outer. If it overflows both sides, fit it
+	 * within the outer. This is a pattern that occurs more places in
+	 * Highcharts, perhaps it should be elevated to a common utility function.
+	 *
+	 * @private
 	 */
 	fitToBox: function (inner, outer) {
 		each([['x', 'width'], ['y', 'height']], function (dim) {

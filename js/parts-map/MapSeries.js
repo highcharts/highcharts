@@ -42,40 +42,137 @@ var supportsVectorEffect = doc.documentElement.style.vectorEffect !== undefined;
 /**
  * Add the map series type
  */
-seriesType('map', 'scatter', {
+seriesType('map', 'scatter', 
+/**
+ * @extends {plotOptions.scatter}
+ * @optionparent plotOptions.map
+ */
+
+{
+
+	/**
+	 */
 	allAreas: true,
 
+
+	/**
+	 */
 	animation: false, // makes the complex shapes slow
+
+	/**
+	 * The color to apply to null points.
+	 * 
+	 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
+	 * style/style-by-css), the null point fill is set in the `.highcharts-
+	 * null-point` class.
+	 * 
+	 * @type {Color}
+	 * @sample {highmaps} maps/demo/all-areas-as-null/ Null color
+	 * @default {all} #f7f7f7
+	 * @product highmaps
+	 */
 	nullColor: '${palette.neutralColor3}',
+
+	/**
+	 */
 	borderColor: '${palette.neutralColor20}',
+
+	/**
+	 */
 	borderWidth: 1,
+
+	/**
+	 */
 	marker: null,
+
+	/**
+	 */
 	stickyTracking: false,
+
+	/**
+	 */
 	joinBy: 'hc-key',
+
+	/**
+	 */
 	dataLabels: {
+
+		/**
+		 */
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+
+		/**
+		 */
 		inside: true, // for the color
+
+		/**
+		 */
 		verticalAlign: 'middle',
+
+		/**
+		 */
 		crop: false,
+
+		/**
+		 */
 		overflow: false,
+
+		/**
+		 */
 		padding: 0
 	},
+
+	/**
+	 */
 	turboThreshold: 0,
+
+	/**
+	 */
 	tooltip: {
+
+		/**
+		 */
 		followPointer: true,
+
+		/**
+		 */
 		pointFormat: '{point.name}: {point.value}<br/>'
 	},
+
+	/**
+	 */
 	states: {
+
+		/**
+		 */
 		normal: {
+
+			/**
+			 */
 			animation: true
 		},
+
+		/**
+		 */
 		hover: {
+
+			/**
+			 */
 			brightness: 0.2,
+
+			/**
+			 */
 			halo: null
 		},
+
+		/**
+		 */
 		select: {
+
+			/**
+			 */
 			color: '${palette.neutralColor20}'
 		}
 	}

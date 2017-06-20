@@ -412,7 +412,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 	},
 
 	/**
-	 * Setter function to allow use from chart.update
+	 * Shortcut to set the subtitle options. This can also be done from {@link
+	 * Chart#update} or {@link Chart#setTitle}.
+	 *
+	 * @param  {SubtitleOptions} options
+	 *         New subtitle options. The subtitle text itself is set by the
+	 *         `options.text` property.
 	 */
 	setSubtitle: function (options) {
 		this.setTitle(undefined, options);
@@ -780,8 +785,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 			oldType = series.oldType || series.type,
 			newType = newOptions.type || oldOptions.type || chart.options.chart.type,
 			proto = seriesTypes[oldType].prototype,
-			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
-			n;
+			n,
+			preserve = [
+				'group',
+				'markerGroup',
+				'dataLabelsGroup',
+				'navigatorSeries',
+				'baseSeries'
+			];
 
 		// Running Series.update to update the data only is an intuitive usage,
 		// so we want to make sure that when used like this, we run the
@@ -817,7 +828,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 		}
 		extend(series, seriesTypes[newType || oldType].prototype);
 
-		// Re-register groups (#3094)
+		// Re-register groups (#3094) and other preserved properties
 		each(preserve, function (prop) {
 			series[prop] = preserve[prop];
 		});
