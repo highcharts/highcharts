@@ -345,12 +345,22 @@ Annotation.prototype = {
 	},
 
 	/**
-	 * Default options for an annotation
+	 * Options for configuring annotations, for example labels, arrows or 
+	 * shapes. Annotations can be tied to points, axis coordinates or chart
+	 * pixel coordinates.
 	 *
-	 * @memberOf Highcharts.Annotation#
-	 * @type {Object}
+	 * @type {Array<Object>}
+	 * @since 6.0.0
+	 * @optionparent annotations
 	**/
 	defaultOptions: {
+
+		/**
+		 * Whether the annotation is visible.
+		 * 
+		 * @type {Boolean}
+		 * @since 6.0.0
+		 */
 		visible: true,
 
 		labelOptions: {
