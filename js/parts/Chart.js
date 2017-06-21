@@ -843,7 +843,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 			tempStyle;
 		if (!revert) {
 			while (node && node.style) {
-				if (getStyle(node, 'display', false) === 'none') {
+
+				// When rendering to a detached node, it needs to be temporarily
+				// attached in order to read styling and bounding boxes (#5783).
+				if (!doc.body.contains(node)) {
+					node.hcOrigDetached = true;
+					doc.body.appendChild(node);
+				}
+				if (
+					getStyle(node, 'display', false) === 'none' ||
+					node.hcOricDetached
+				) {
 					node.hcOrigStyle = {
 						display: node.style.display,
 						height: node.style.height,
@@ -867,12 +877,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 					}
 				}
 				node = node.parentNode;
+
+				if (node === doc.body) {
+					break;
+				}
 			}
 		} else {
 			while (node && node.style) {
 				if (node.hcOrigStyle) {
 					H.css(node, node.hcOrigStyle);
 					delete node.hcOrigStyle;
+				}
+				if (node.hcOrigDetached) {
+					doc.body.removeChild(node);
 				}
 				node = node.parentNode;
 			}
