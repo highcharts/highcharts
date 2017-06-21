@@ -751,6 +751,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 		stackLabels: {
 
 			/**
+			 * Allow the stack labels to overlap.
+			 * 
+			 * @type {Boolean}
+			 * @sample {highcharts} highcharts/yaxis/stacklabels-allowoverlap-false/
+			 *         Default false
+			 * @since 5.0.13
+			 * @product highcharts
+			 */
+			allowOverlap: false,
+
+			/**
 			 * Enable or disable the stack total labels.
 			 * 
 			 * @type {Boolean}
