@@ -82,7 +82,7 @@ var addEvent = H.addEvent,
  * @class Highcharts.Series
  * @param  {Highcharts.Chart} chart
  *         The chart instance.
- * @param  {Object} options
+ * @param  {Options.plotOptions.series} options
  *         The series options.
  *
  */
@@ -1060,9 +1060,7 @@ H.Series = H.seriesType('line', null,
 	 * Set the xAxis and yAxis properties of cartesian series, and register the
 	 * series in the `axis.series` array.
 	 *
-	 * @function #bindAxes
-	 * @memberOf Series
-	 * @returns {void}
+	 * @private
 	 */
 	bindAxes: function () {
 		var series = this,
@@ -1160,6 +1158,8 @@ H.Series = H.seriesType('line', null,
 	 * Return an auto incremented x value based on the pointStart and
 	 * pointInterval options. This is only used if an x value is not given for
 	 * the point that calls autoIncrement.
+	 *
+	 * @private
 	 */
 	autoIncrement: function () {
 
@@ -1337,7 +1337,10 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Get the series' color
+	 * Get the series' color based on either the options or pulled from global
+	 * options.
+	 *
+	 * @return  {Color} The series color.
 	 */
 	/*= if (!build.classic) { =*/
 	getColor: function () {
@@ -1360,7 +1363,8 @@ H.Series = H.seriesType('line', null,
 	},
 	/*= } =*/
 	/**
-	 * Get the series' symbol
+	 * Get the series' symbol based on either the options or pulled from global
+	 * options.
 	 */
 	getSymbol: function () {
 		var seriesMarkerOption = this.options.marker;
@@ -1520,15 +1524,6 @@ H.Series = H.seriesType('line', null,
 				H.error(14, true);
 			}
 
-			/**
-			 * Read only. An array containing the series' data point objects. To
-			 * modify the data, use {@link Highcharts.Series#setData} or {@link
-			 * Highcharts.Point#update}.
-			 *
-			 * @name data
-			 * @memberOf Highcharts.Series
-			 * @type {Array.<Highcharts.Point>}
-			 */
 			series.data = [];
 			series.options.data = series.userOptions.data = data;
 
@@ -1683,7 +1678,9 @@ H.Series = H.seriesType('line', null,
 	/**
 	 * Iterate over xData and crop values between min and max. Returns object
 	 * containing crop start/end cropped xData with corresponding part of yData,
-	 * dataMin and dataMax within the cropped range
+	 * dataMin and dataMax within the cropped range.
+	 *
+	 * @private
 	 */
 	cropData: function (xData, yData, min, max) {
 		var dataLength = xData.length,
@@ -1722,6 +1719,8 @@ H.Series = H.seriesType('line', null,
 	/**
 	 * Generate the data point after the data has been processed by cropping
 	 * away unused points and optionally grouped in Highcharts Stock.
+	 *
+	 * @private
 	 */
 	generatePoints: function () {
 		var series = this,
@@ -1818,12 +1817,40 @@ H.Series = H.seriesType('line', null,
 			}
 		}
 
+		/**
+		 * Read only. An array containing the series' data point objects. To
+		 * modify the data, use {@link Highcharts.Series#setData} or {@link
+		 * Highcharts.Point#update}.
+		 *
+		 * @name data
+		 * @memberOf Highcharts.Series
+		 * @type {Array.<Highcharts.Point>}
+		 */
 		series.data = data;
+
+		/**
+		 * An array containing all currently visible point objects. In case of
+		 * cropping, the cropped-away points are not part of this array. The
+		 * `series.points` array starts at `series.cropStart` compared to
+		 * `series.data` and `series.options.data`. If however the series data
+		 * is grouped, these can't be correlated one to one. To
+		 * modify the data, use {@link Highcharts.Series#setData} or {@link
+		 * Highcharts.Point#update}.
+		 * @name point
+		 * @memberof Series
+		 * @type {Array.<Point>}
+		 */
 		series.points = points;
 	},
 
 	/**
-	 * Calculate Y extremes for visible data
+	 * Calculate Y extremes for the visible data. The result is set as 
+	 * `dataMin` and `dataMax` on the Series item.
+	 *
+	 * @param  {Array.<Number>} [yData]
+	 *         The data to inspect. Defaults to the current data within the
+	 *         visible range.
+	 * 
 	 */
 	getExtremes: function (yData) {
 		var xAxis = this.xAxis,
@@ -2055,7 +2082,16 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Return the series points with null points filtered out
+	 * Return the series points with null points filtered out.
+	 *
+	 * @param  {Array.<Point>} [points]
+	 *         The points to inspect, defaults to {@link Series.points}.
+	 * @param  {Boolean} [insideOnly=false]
+	 *         Whether to inspect only the points that are inside the visible
+	 *         view.
+	 *
+	 * @return {Array.<Point>}
+	 *         The valid points.
 	 */
 	getValidPoints: function (points, insideOnly) {
 		var chart = this.chart;
@@ -2149,7 +2185,14 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Animate in the series
+	 * Animate in the series. Called internally twice. First with the `init`
+	 * parameter set to true, which sets up the initial state of the animation.
+	 * Then when ready, it is called with the `init` parameter undefined, in 
+	 * order to perform the actual animation. After the second run, the function
+	 * is removed.
+	 *
+	 * @param  {Boolean} init
+	 *         Initialize the animation.
 	 */
 	animate: function (init) {
 		var series = this,
@@ -2185,7 +2228,9 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * This runs after animation to land on the final plot clipping
+	 * This runs after animation to land on the final plot clipping.
+	 *
+	 * @private
 	 */
 	afterAnimate: function () {
 		this.setClip();
@@ -2193,11 +2238,11 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Draw the markers.
-	 *
-	 * @function #drawPoints
-	 * @memberOf Series
-	 * @returns {void}
+	 * Draw the markers for line-like series types, and columns or other
+	 * graphical representation for {@link Point} objects for other series
+	 * types. The resulting element is typically stored as {@link
+	 * Point.graphic}, and is created on the first call and updated and moved on
+	 * subsequent calls.
 	 */
 	drawPoints: function () {
 		var series = this,
@@ -2251,6 +2296,21 @@ H.Series = H.seriesType('line', null,
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
 							.animate(markerAttribs);
 					} else if (isInside && (markerAttribs.width > 0 || point.hasImage)) {
+
+						/**
+						 * The graphic representation of the point. Typically
+						 * this is a simple shape, like a `rect` for column
+						 * charts or `path` for line markers, but for some 
+						 * complex series types like boxplot or 3D charts, the
+						 * graphic may be a `g` element containing other shapes.
+						 * The graphic is generated the first time {@link
+						 * Series#drawPoints} runs, and updated and moved on
+						 * subsequent runs.
+						 *
+						 * @memberof Point
+						 * @name graphic
+						 * @type {SVGElement}
+						 */
 						point.graphic = graphic = chart.renderer.symbol(
 							symbol,
 							markerAttribs.x,
@@ -2375,7 +2435,9 @@ H.Series = H.seriesType('line', null,
 	},
 	/*= } =*/
 	/**
-	 * Clear DOM objects and free up memory
+	 * Clear DOM objects and free up memory.
+	 *
+	 * @private
 	 */
 	destroy: function () {
 		var series = this,
@@ -2447,7 +2509,9 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Get the graph path
+	 * Get the graph path.
+	 *
+	 * @private
 	 */
 	getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
 		var series = this,
@@ -2561,7 +2625,10 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Draw the actual graph
+	 * Draw the graph. Called internally when rendering line-like series types.
+	 * The first time it generates the `series.graph` item and optionally other
+	 * series-wide items like `series.area` for area charts. On subsequent calls
+	 * these items are updated with new positions and attributes.
 	 */
 	drawGraph: function () {
 		var series = this,
@@ -2634,7 +2701,9 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Clip the graphs into the positive and negative coloured graphs
+	 * Clip the graphs into zones for colors and styling.
+	 *
+	 * @private
 	 */
 	applyZones: function () {
 		var series = this,
@@ -2834,7 +2903,7 @@ H.Series = H.seriesType('line', null,
 	},
 
 	/**
-	 * Get the translation and scale for the plot area of this series
+	 * Get the translation and scale for the plot area of this series.
 	 */
 	getPlotBox: function () {
 		var chart = this.chart,
@@ -2994,10 +3063,6 @@ H.Series = H.seriesType('line', null,
 		}
 	},
 
-	/**
-	 * KD Tree && PointSearching Implementation
-	 */
-
 	kdAxisArray: ['clientX', 'plotY'],
 
 	searchPoint: function (e, compareX) {
@@ -3021,6 +3086,8 @@ H.Series = H.seriesType('line', null,
 	 * closest point. Line-like series typically have a one-dimensional tree
 	 * where points are searched along the X axis, while scatter-like series
 	 * typically search in two dimensions, X and Y.
+	 *
+	 * @private
 	 */
 	buildKDTree: function () {
 
