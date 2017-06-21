@@ -1981,6 +1981,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// depends on inverted and on margins being set
 		if (Pointer) {
+
+			/**
+			 * The Pointer that keeps track of mouse and touch interaction.
+			 *
+			 * @memberof Chart
+			 * @name pointer
+			 * @type Pointer
+			 */
 			chart.pointer = new Pointer(chart, options);
 		}
 
