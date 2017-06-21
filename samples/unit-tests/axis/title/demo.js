@@ -217,5 +217,64 @@ QUnit.test('title.reserveSpace', function (assert) {
             axisName + ': reserveSpaceFalse === noTitle'
         );
     });
-    console.log(axes);
 });
+
+QUnit.test('Axis title multiline', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 300,
+            height: 300
+        },
+        yAxis: [{
+            title: {
+                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+            },
+            lineWidth: 3
+        }, {
+            title: {
+                text: 'A really long y axis title for this example. It is wrapped but shouldnt overlap axis labels'
+            },
+            opposite: true,
+            lineWidth: 3,
+            linkedTo: 0
+        }],
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.ok(
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        'Title is multiline'
+    );
+
+    assert.ok(
+        chart.yAxis[1].axisTitle.element.getElementsByTagName('tspan').length > 1,
+        'Title is multiline'
+    );
+
+    var crammedPlotWidth = chart.plotWidth;
+    assert.ok(
+        chart.plotWidth < 150,
+        'Plot area adapted'
+    );
+
+    chart.yAxis[0].update({
+        title: {
+            style: {
+                textOverflow: 'ellipsis'
+            }
+        }
+    });
+
+    assert.ok(
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length === 1,
+        'Title is single line'
+    );
+    assert.ok(
+        chart.plotWidth > crammedPlotWidth,
+        'Plot width increased'
+    );
+
+});
+

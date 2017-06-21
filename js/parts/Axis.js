@@ -435,13 +435,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			/*= if (build.classic) { =*/
 
 			/**
-			 * CSS styles for the title. When titles are rotated they are rendered
-			 * using vector graphic techniques and not all styles are applicable.
+			 * CSS styles for the title. If the title text is longer than the
+			 * axis length, it will wrap to multiple lines by default. This can
+			 * be customized by setting `textOverflow: 'ellipsis'`, by 
+			 * setting a specific `width` or by setting `wordSpace: 'nowrap'`.
 			 * 
 			 * 
 			 * In [styled mode](http://www.highcharts.com/docs/chart-design-and-
-			 * style/style-by-css), the stroke width is given in the `.highcharts-
-			 * axis-title` class.
+			 * style/style-by-css), the stroke width is given in the
+			 * `.highcharts-axis-title` class.
 			 * 
 			 * @type {CSSObject}
 			 * @sample {highcharts} highcharts/xaxis/title-style/ Red
@@ -2977,6 +2979,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			.add(axis.axisGroup);
 			axis.axisTitle.isNew = true;
 		}
+
+		// Max width defaults to the length of the axis
+		/*= if (build.classic) { =*/
+		if (!axisTitleOptions.style.width) {
+		/*= } =*/
+			axis.axisTitle.css({
+				width: axis.len
+			});
+		/*= if (build.classic) { =*/
+		}
+		/*= } =*/
+			
 		
 		// hide or show the title depending on whether showEmpty is set
 		axis.axisTitle[display ? 'show' : 'hide'](true);
@@ -3230,10 +3244,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = this.chart.renderer.fontMetrics(
+			fontMetrics = this.chart.renderer.fontMetrics(
 				axisTitleOptions.style && axisTitleOptions.style.fontSize,
 				this.axisTitle
-			).f,
+			),
+			titleOffset = this.titleOffset,
+			// The part of a multiline text that is below the baseline of the
+			// first line. Subtract 1 to preserve pixel-perfectness from the 
+			// old behaviour (v5.0.12), where only one line was allowed.
+			textHeightOvershoot = Math.max(titleOffset - fontMetrics.h - 1, 0),
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -3247,7 +3266,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 				(horiz ? 1 : -1) * // horizontal axis reverses the margin
 				(opposite ? -1 : 1) * // so does opposite axes
 				this.axisTitleMargin +
-				(this.side === 2 ? fontSize : 0);
+				[
+					-textHeightOvershoot, // top
+					textHeightOvershoot, // right
+					fontMetrics.f, // bottom
+					-textHeightOvershoot // left
+				][this.side];
+
 
 		return {
 			x: horiz ?
