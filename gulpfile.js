@@ -313,14 +313,9 @@ gulp.task('nightly', function () {
  *   the docs if there are any. This only works if the ouput folder is a
  *   folder - docs/ - in the project root.
  */
-gulp.task('jsdoc', function (cb) {
+const generateClassReferences = ({ templateDir, destination, callback }) => {
     const jsdoc = require('gulp-jsdoc3');
-
-    const templateDir = './../highcharts-docstrap';
-    const destination = './api-docs/class-reference/';
-
-
-    gulp.src([
+    const sourceFiles = [
         'README.md',
         './js/parts/Utilities.js',
         './js/parts/Axis.js',
@@ -345,48 +340,43 @@ gulp.task('jsdoc', function (cb) {
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/offline-exporting.src.js'
-    ], { read: false })
-    // gulp.src(['README.md', './js/parts/Options.js'], { read: false })
-        .pipe(jsdoc({
-            navOptions: {
-                theme: 'highsoft'
-            },
-            opts: {
-                destination: destination,
-                private: false,
-                template: templateDir + '/template'
-            },
-            plugins: [
-                templateDir + '/plugins/add-namespace',
-                templateDir + '/plugins/markdown',
-                templateDir + '/plugins/sampletag'
-            ],
-            templates: {
-                logoFile: 'img/highcharts-logo.svg',
-                systemName: 'Highcharts',
-                theme: 'highsoft'
-            }
-        }, function (err) {
-            cb(err); // eslint-disable-line
-            if (!err) {
-                console.log(
-                    colors.green(`Wrote JSDoc to ${destination}index.html`)
-                );
-            }
-        }));
-
-    if (argv.watch) {
-        gulp.watch([
-            './js/!(adapters|builds)/*.js',
-            templateDir + '/template/tmpl/*.tmpl',
-            templateDir + '/template/static/styles/*.css',
-            templateDir + '/template/static/scripts/*.js'
-        ], ['jsdoc']);
-        console.log('Watching file changes in JS files and templates');
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
-});
+    ];
+    const optionsJSDoc = {
+        navOptions: {
+            theme: 'highsoft'
+        },
+        opts: {
+            destination: destination,
+            private: false,
+            template: templateDir + '/template'
+        },
+        plugins: [
+            templateDir + '/plugins/add-namespace',
+            templateDir + '/plugins/markdown',
+            templateDir + '/plugins/sampletag'
+        ],
+        templates: {
+            logoFile: 'img/highcharts-logo.svg',
+            systemName: 'Highcharts',
+            theme: 'highsoft'
+        }
+    };
+    const message = {
+        success: colors.green(`Wrote JSDoc to ${destination}index.html`)
+    };
+    return new Promise((resolve, reject) => {
+        gulp.src(sourceFiles, { read: false })
+            .pipe(jsdoc(optionsJSDoc, function (err) {
+                callback(err); // eslint-disable-line
+                if (err) {
+                    reject(err);
+                } else {
+                    console.log(message.success);
+                    resolve(message.success);
+                }
+            }));
+    });
+};
 
 const compile = (files, sourceFolder) => {
     const createSourceMap = true;
@@ -539,25 +529,6 @@ const getBuildProperties = () => {
 };
 
 const createProductJS = () => {
-    const path = './build/dist/products.js';
-    const buildProperties = getBuildProperties();
-    // @todo Add reasonable defaults
-    const date = buildProperties.date || '';
-    const version = buildProperties.version || '';
-    const content = `var products = {
-    "Highcharts": {
-    "date": "${date}", 
-    "nr": "${version}"
-    },
-    "Highstock": {
-        "date": "${date}",
-        "nr": "${version}"
-    },
-    "Highmaps": {
-        "date": "${date}",
-        "nr": "${version}"
-    }
-}`;
     U.writeFile(path, content);
 };
 
@@ -888,18 +859,27 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
-const generateAPIDocs = () => {
+
+/**
+ * Creates the Highcharts API
+ *
+ * @param {object} options The options for generating the API
+ * @param {string} options.treeFile Location of the json file to generate the
+ *      API from.
+ * @param {string} options.output Location of where to output resulting API
+ * @param {boolean} options.onlyBuildCurrent Whether or not to build only
+ *  only latest version or all of them.
+ * @return {Promise} A Promise which resolves into undefined when done.
+ */
+const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
     const generate = require('highcharts-api-doc-gen/lib/index.js');
     const fs = require('fs');
-    const treeFile = './tree.json';
-    const output = './build/api';
-    const onlyBuildCurrent = true;
     const version = getBuildProperties().version;
     const message = {
         'noSeries': 'Missing series in tree.json. Run merge script.',
         'noTree': 'Missing tree.json. This task is dependent upon the jsdoc task.',
         'successGenerate': 'Finished with my Special api.',
-        'successCopy': 'Finished with building copying current API to '
+        'successCopy': 'Finished with copying current API to '
     };
     return new Promise((resolve, reject) => {
         if (fs.existsSync(treeFile)) {
@@ -976,6 +956,37 @@ gulp.task('compile-lib', compileLib);
 gulp.task('download-api', downloadAllAPI);
 gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
 gulp.task('examples', createAllExamples);
+/**
+ * Create Highcharts API and class refrences from JSDOC
+ */
+gulp.task('jsdoc', (cb) => {
+    const optionsClassReference = {
+        templateDir: './../highcharts-docstrap',
+        destination: './build/api/class-reference/',
+        callback: cb
+    };
+    const optionsAPI = {
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    };
+    const dir = optionsClassReference.templateDir;
+    const watchFiles = [
+        './js/!(adapters|builds)/*.js',
+        dir + '/template/tmpl/*.tmpl',
+        dir + '/template/static/styles/*.css',
+        dir + '/template/static/scripts/*.js'
+    ];
+    if (argv.watch) {
+        gulp.watch(watchFiles, ['jsdoc']);
+        console.log('Watching file changes in JS files and templates');
+    } else {
+        console.log('Tip: use the --watch argument to watch JS file changes');
+    }
+
+    return generateClassReferences(optionsClassReference)
+        .then(() => generateAPIDocs(optionsAPI));
+});
 /**
  * Create distribution files
  */
