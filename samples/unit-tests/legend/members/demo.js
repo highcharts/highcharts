@@ -64,6 +64,57 @@ QUnit.test('Legend.update', function (assert) {
     );
 });
 
+QUnit.test('Legend.update with color axis (#6888)', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'heatmap'
+        },
+
+
+        title: {
+            text: 'Legend update'
+        },
+
+        colorAxis: {
+            min: 0,
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[0],
+            tickWidth: 10,
+            tickColor: 'red',
+            gridLineColor: 'blue',
+            gridLineWidth: 2,
+            tickInterval: 1
+        },
+
+        series: [{
+            data: [
+                [1, 2, 3],
+                [2, 3, 4],
+                [3, 4, 5],
+                [4, 5, 6]
+            ]
+        }]
+
+    });
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-legend').textContent,
+        '0123456',
+        'Labels are there'
+    );
+
+    chart.legend.update({
+        symbolWidth: 300
+    });
+
+    assert.strictEqual(
+        document.querySelector('.highcharts-legend').textContent,
+        '0123456',
+        'Labels are still there'
+    );
+});
+
 QUnit.test('Legend.title renders after update', function (assert) {
     var config = {
             legend: {

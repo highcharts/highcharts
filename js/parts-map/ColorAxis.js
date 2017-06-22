@@ -763,3 +763,12 @@ wrap(Legend.prototype, 'colorizeItem', function (proceed, item, visible) {
 		});
 	}
 });
+
+// Updates in the legend need to be reflected in the color axis (6888)
+wrap(Legend.prototype, 'update', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.colorAxis[0]) {
+		this.chart.colorAxis[0].update({});
+	}
+});
