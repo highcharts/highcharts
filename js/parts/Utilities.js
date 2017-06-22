@@ -150,7 +150,7 @@ H.Fx.prototype = {
 	 * @param {Number} from - The current value, value to start from.
 	 * @param {Number} to - The end value, value to land on.
 	 * @param {String} [unit] - The property unit, for example `px`.
-	 * @returns {void}
+	 * 
 	 */
 	run: function (from, to, unit) {
 		var self = this,
@@ -725,7 +725,7 @@ H.pick = function () {
  * @memberOf Highcharts
  * @param {HTMLDOMElement} el - A HTML DOM element.
  * @param {CSSObject} styles - Style object with camel case property names.
- * @returns {void}
+ * 
  */
 H.css = function (el, styles) {
 	if (H.isMS && !H.svg) { // #2686
@@ -836,7 +836,7 @@ H.relativeLength = function (value, base) {
  * @param {Function} func - A wrapper function callback. This function is called
  *        with the same arguments as the original function, except that the
  *        original function is unshifted and passed as the first argument.
- * @returns {void}
+ * 
  */
 H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
@@ -1189,7 +1189,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
  * @param {Array} arr - The array to sort.
  * @param {Function} sortFunction - The function to sort it with, like with 
  *        regular Array.prototype.sort.
- * @returns {void}
+ * 
  */
 H.stableSort = function (arr, sortFunction) {
 	var length = arr.length,
@@ -1266,7 +1266,7 @@ H.arrayMax = function (data) {
  * @param {Object} obj - The object to destroy properties on.
  * @param {Object} [except] - Exception, do not destroy this property, only
  *    delete it.
- * @returns {void}
+ * 
  */
 H.destroyObjectProperties = function (obj, except) {
 	H.objectEach(obj, function (val, n) {
@@ -1288,7 +1288,7 @@ H.destroyObjectProperties = function (obj, except) {
  * @function #discardElement
  * @memberOf Highcharts
  * @param {HTMLDOMElement} element - The HTML node to discard.
- * @returns {void}
+ * 
  */
 H.discardElement = function (element) {
 	var garbageBin = H.garbageBin;
@@ -1327,7 +1327,7 @@ H.correctFloat = function (num, prec) {
  * @memberOf Highcharts
  * @param {Boolean|Animation} animation - The animation object.
  * @param {Object} chart - The chart instance.
- * @returns {void}
+ * 
  * @todo This function always relates to a chart, and sets a property on the
  *        renderer, so it should be moved to the SVGRenderer.
  */
@@ -1595,7 +1595,7 @@ H.offset = function (el) {
  * @param {SVGElement} el - The SVGElement to stop animation on.
  * @param {string} [prop] - The property to stop animating. If given, the stop
  *    method will stop a single property from animating, while others continue.
- * @returns {void}
+ * 
  */
 H.stop = function (el, prop) {
 
@@ -1705,7 +1705,7 @@ H.addEvent = function (el, type, fn) {
  *        events are removed from the element.
  * @param {Function} [fn] - The specific callback to remove. If undefined, all
  *        events that match the element and optionally the type are removed.
- * @returns {void}
+ * 
  */
 H.removeEvent = function (el, type, fn) {
 	
@@ -1781,7 +1781,7 @@ H.removeEvent = function (el, type, fn) {
  *        as an argument to the event handler.
  * @param {Function} [defaultFunction] - The default function to execute if the 
  *        other listeners haven't returned false.
- * @returns {void}
+ * 
  */
 H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 	var e,

@@ -1010,6 +1010,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 		// Initialize the renderer
 		Ren = H[optionsChart.renderer] || Renderer;
+		/**
+		 * The renderer instance of the chart. Each chart instance has only one
+		 * associated renderer.
+		 * @type {SVGRenderer}
+		 * @name renderer
+		 * @memberOf Chart
+		 */
 		chart.renderer = new Ren(
 			container,
 			chartWidth,

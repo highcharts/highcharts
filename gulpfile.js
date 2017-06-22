@@ -325,6 +325,7 @@ gulp.task('jsdoc', function (cb) {
         './js/parts/Utilities.js',
         './js/parts/Axis.js',
         './js/parts/Chart.js',
+        './js/parts/Color.js',
         './js/parts/DataGrouping.js',
         './js/parts/Dynamics.js',
         './js/parts/Globals.js',

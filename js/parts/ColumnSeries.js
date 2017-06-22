@@ -287,7 +287,7 @@ seriesType('column', 'line',
 	 *
 	 * @function #init
 	 * @memberOf seriesTypes.column
-	 * @returns {void}
+	 * 
 	 */
 	init: function () {
 		Series.prototype.init.apply(this, arguments);

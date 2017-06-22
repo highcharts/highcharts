@@ -77,6 +77,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 	/**
 	 * For labels, these CSS properties are applied to the `text` node directly.
+	 *
+	 * @private
 	 * @type {Array.<string>}
 	 */
 	textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily',
@@ -87,26 +89,32 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * Initialize the SVG renderer. This function only exists to make the
 	 * initiation process overridable. It should not be called directly.
 	 *
-	 * @param  {HighchartsSVGRenderer} renderer
+	 * @param  {SVGRenderer} renderer
 	 *         The SVGRenderer instance to initialize to.
 	 * @param  {String} nodeName
 	 *         The SVG node name.
-	 * @returns {void}
+	 * 
 	 */
 	init: function (renderer, nodeName) {
 		
 		/** 
-		 * The DOM node. Each SVGRenderer instance wraps a main DOM node, but 
-		 * may also represent more nodes.
+		 * The primary DOM node. Each `SVGElement` instance wraps a main DOM
+		 * node, but may also represent more nodes.
+		 *
+		 * @name  element
+		 * @memberOf SVGElement
 		 * @type {SVGDOMNode|HTMLDOMNode}
 		 */
 		this.element = nodeName === 'span' ?
-				createElement(nodeName) :
-				doc.createElementNS(this.SVG_NS, nodeName);
+			createElement(nodeName) :
+			doc.createElementNS(this.SVG_NS, nodeName);
 
 		/**
 		 * The renderer that the SVGElement belongs to.
-		 * @type {Highcharts.SVGRenderer}
+		 *
+		 * @name renderer
+		 * @memberOf SVGElement
+		 * @type {SVGRenderer}
 		 */
 		this.renderer = renderer;
 	},
@@ -558,10 +566,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	},
 
 	/**
-	 * This method is executed in the end of {attr}, after setting all
+	 * This method is executed in the end of `attr()`, after setting all
 	 * attributes in the hash. In can be used to efficiently consolidate
 	 * multiple attributes in one SVG property -- e.g., translate, rotate and
 	 * scale are merged in one "transform" attribute in the SVG node.
+	 *
+	 * @private
 	 */
 	afterSetters: function () {
 		// Update transform. Do this outside the loop to prevent redundant
@@ -581,7 +591,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * @param {String|Number} value - The value of the attribute.
 	 * @param {Function} setter - The setter function, inherited from the
 	 *   parent wrapper
-	 * @returns {void}
+	 * 
 	 */
 	updateShadows: function (key, value, setter) {
 		var shadows = this.shadows,
@@ -625,8 +635,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 	/**
 	 * Check if an element has the given class name.
-	 * @param  {string}  className - The class name to check for.
+	 * @param  {string} className
+	 *         The class name to check for.
 	 * @return {Boolean}
+	 *         Whether the class name is found.
 	 */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
@@ -875,18 +887,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
 	/**
 	 * Get the computed stroke width in pixel values. This is used extensively
-	 * when drawing shapes to ensure the shapes are rendered crsip and
+	 * when drawing shapes to ensure the shapes are rendered crisp and
 	 * positioned correctly relative to each other. Using `shape-rendering: 
 	 * crispEdges` leaves us less control over positioning, for example when we
 	 * want to stack columns next to each other, or position things 
 	 * pixel-perfectly within the plot box.
 	 *
 	 * The common pattern when placing a shape is:
-	 * * Create the SVGElement and add it to the DOM.
+	 * * Create the SVGElement and add it to the DOM. In styled mode, it will
+	 *   now receive a stroke width from the style sheet. In classic mode we
+	 *   will add the `stroke-width` attribute.
 	 * * Read the computed `elem.strokeWidth()`.
 	 * * Place it based on the stroke width.
 	 *
-	 * @returns {number} The stroke width in pixels. Even if the given stroke
+	 * @returns {Number} The stroke width in pixels. Even if the given stroke
 	 * widtch (in CSS or by attributes) is based on `em` or other units, the 
 	 * pixel size is returned.
 	 */
@@ -938,7 +952,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 				e.preventDefault();
 				handler.call(element, e);
 			};
-			element.onclick = function (e) {												
+			element.onclick = function (e) {
 				if (win.navigator.userAgent.indexOf('Android') === -1 ||
 						Date.now() - (svgElement.touchEventFired || 0) > 1100) {
 					handler.call(element, e);
@@ -997,9 +1011,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * charts, where the points and graphs are drawn as if not inverted, then
 	 * the series group elements are inverted.
 	 *
-	 * @param {boolean} inverted - Whether to invert or not. An inverted shape
-	 *    can be un-inverted by setting it to false.
-	 * @returns {SVGElement} Return the SVGElement for chaining.
+	 * @param  {boolean} inverted
+	 *         Whether to invert or not. An inverted shape can be un-inverted by
+	 *         setting it to false.
+	 * @return {SVGElement}
+	 *         Return the SVGElement for chaining.
 	 */
 	invert: function (inverted) {
 		var wrapper = this;
@@ -1013,7 +1029,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * the custom `translateX`, `translateY`, `rotation`, `scaleX` and `scaleY`
 	 * attributes and updates the SVG `transform` attribute.
 	 * @private
-	 * @returns {void}
+	 * 
 	 */
 	updateTransform: function () {
 		var wrapper = this,
@@ -1034,7 +1050,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 		}
 
 		// Apply translate. Nearly all transformed elements have translation,
-		// so instead of checking for translate = 0, do it always (#1767, #1846).
+		// so instead of checking for translate = 0, do it always (#1767,
+		// #1846).
 		transform = ['translate(' + translateX + ',' + translateY + ')'];
 
 		// apply rotation
@@ -1445,7 +1462,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 	 * Destroy the element and element wrapper and clear up the DOM and event
 	 * hooks.
 	 *
-	 * @returns {void}
+	 * 
 	 */
 	destroy: function () {
 		var wrapper = this,
@@ -1841,7 +1858,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
  * or independent from any chart. The SVGRenderer represents a wrapper object
  * for SVGin modern browsers and through the VMLRenderer, for VML in IE < 8.
  *
- * An existing chart's renderer can be accessed through {@link Chart#renderer}.
+ * An existing chart's renderer can be accessed through {@link Chart.renderer}.
  * The renderer can also be used completely decoupled from a chart.
  *
  * @param {HTMLDOMElement} container - Where to put the SVG in the web page.
@@ -1857,7 +1874,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
  * var renderer = new Highcharts.Renderer(parentNode, 600, 400);
  *
  * @sample highcharts/members/renderer-on-chart - Annotating a chart programmatically.
- * @sample highcharts/members/renderer-basic - Independedt SVG drawing.
+ * @sample highcharts/members/renderer-basic - Independent SVG drawing.
  *
  * @class Highcharts.SVGRenderer
  */
@@ -1903,11 +1920,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 		/** 
 		 * The root `svg` node of the renderer.
+		 * @name box
+		 * @memberOf SVGRenderer
 		 * @type {SVGDOMElement}
 		 */
 		this.box = element;
 		/** 
 		 * The wrapper for the root `svg` node of the renderer.
+		 *
+		 * @name boxWrapper
+		 * @memberOf SVGRenderer
 		 * @type {SVGElement}
 		 */
 		this.boxWrapper = boxWrapper;
@@ -1930,7 +1952,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 		desc = this.createElement('desc').add();
 		desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
 
-
+		/**
+		 * A pointer to the `defs` node of the root SVG.
+		 * @type {SVGElement}
+		 * @name defs
+		 * @memberOf SVGRenderer
+		 */
 		renderer.defs = this.createElement('defs').add();
 		renderer.allowHTML = allowHTML;
 		renderer.forExport = forExport;
@@ -2038,6 +2065,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 	/**
 	 * Apply the global style on the renderer, mixed with the default styles.
+	 * 
 	 * @param {CSSObject} style - CSS to apply.
 	 */
 	setStyle: function (style) {
@@ -2047,8 +2075,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the
-	 * parent elements has display: none. Used internally to detect when we need
-	 * to render preliminarily in another div to get the text bounding boxes 
+	 * parent elements has `display: none`. Used internally to detect when we
+	 * needto render preliminarily in another div to get the text bounding boxes 
 	 * right.
 	 *
 	 * @returns {boolean} True if it is hidden.
@@ -2902,7 +2930,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
-	 * Draw a symbol out of pre-defined shape paths from {@SVGRenderer#symbols}.
+	 * Draw a symbol out of pre-defined shape paths from {@link SVGRenderer#symbols}.
 	 * It is used in Highcharts for point makers, which cake a `symbol` option,
 	 * and label and button backgrounds like in the tooltip and stock flags.
 	 *
@@ -3300,13 +3328,25 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	 * circle.clip(clipRect);
 	 */
 	/**
-	 * Define a clipping rectangle
+	 * Define a clipping rectangle. The clipping rectangle is later applied
+	 * to {@link SVGElement} objects through the {@link SVGElement#clip}
+	 * function.
+	 * 
 	 * @param {String} id
 	 * @param {number} x
 	 * @param {number} y
 	 * @param {number} width
 	 * @param {number} height
 	 * @returns {ClipRect} A clipping rectangle.
+	 *
+	 * @example
+	 * var circle = renderer.circle(100, 100, 100)
+	 *     .attr({ fill: 'red' })
+	 *     .add();
+	 * var clipRect = renderer.clipRect(100, 100, 100, 100);
+	 *
+	 * // Leave only the lower right quarter visible
+	 * circle.clip(clipRect);
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,
@@ -3455,7 +3495,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 	},
 
 	/**
-	 * Correct X and Y positioning of a label for rotation (#1764)
+	 * Correct X and Y positioning of a label for rotation (#1764).
+	 *
+	 * @private
 	 */
 	rotCorr: function (baseline, rotation, alterY) {
 		var y = baseline;
